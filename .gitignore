@@ -1,0 +1,9 @@
+# package directories
+node_modules
+jspm_packages
+
+# local os
+dump.rdb
+
+# coverage
+coverage
