@@ -1,0 +1,14 @@
+{
+  "name": "dynamodb-toolbox",
+  "version": "0.0.0-alpha",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeremy Daly <jeremy@jeremydaly.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "aws-sdk": "^2.575.0"
+  }
+}
