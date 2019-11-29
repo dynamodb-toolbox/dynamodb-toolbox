@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest unit",
-    "test-ci": "eslint . && jest unit --coverage | ./node_modules/coveralls/bin/coveralls.js",
+    "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "lint": "eslint ."
   },
   "license": "MIT",
