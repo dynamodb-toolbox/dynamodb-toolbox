@@ -604,6 +604,27 @@ let item = {
 }
 ```
 
+### Adding custom parameters and clauses
+
+If you need to pass custom parameters, simply pass them in an object as the second parameter.
+
+```javascript
+let params = MyModel.update(item, {
+  ReturnConsumedCapacity: 'TOTAL',
+  ReturnValues: 'ALL_NEW'
+})
+```
+
+If you want to add additional statements to the claues, you can add them as arrays to the `SET`, `ADD`, `REMOVE` and `DELETE` properties in the second parameter. You can also specify additional `ExpressionAttributeNames` and `ExpressionAttributeValues` with object values and the system will merge them in with the generated ones.
+
+```javascript
+let params = MyModel.update(item, {
+  SET: ['#somefield = :somevalue'],
+  ExpressionAttributeNames: { '#somefield': 'somefield' },
+  ExpressionAttributeValues: { ':somevalue': 123 }  
+})
+```
+
 ## Parsing and Formatting Data
 
 The DynamoDB Toolbox offers a `parse` method that will convert the output of your DynamoDB queries into JavaScript objects mapped to your aliases. The `parse` method behaves differently based on the input.
