@@ -57,7 +57,7 @@ const MyModel = new Model('MyModel',{
 })
 ```
 
-Put and item using the DocumentClient:
+Put an item using the DocumentClient:
 
 ```javascript
 // Require AWS SDK and instantiate DocumentClient
@@ -501,7 +501,7 @@ let item = {
   name: 'Test Name',
   status: 'active',
   date_added: '2019-11-28',
-  roles: { $add: ['author','support'] } 
+  roles: { $add: ['author','support'] }
 }
 ```
 
@@ -515,7 +515,7 @@ let item = {
   name: 'Test Name',
   status: 'active',
   date_added: '2019-11-28',
-  roles: { $delete: ['admin'] } 
+  roles: { $delete: ['admin'] }
 }
 ```
 
@@ -529,7 +529,7 @@ let item = {
   name: 'Test Name',
   status: 'active',
   date_added: '2019-11-28',
-  sessions: { $append: [ { date: '2019-11-28', duration: 101 } ] } 
+  sessions: { $append: [ { date: '2019-11-28', duration: 101 } ] }
 }
 ```
 
@@ -545,7 +545,7 @@ let item = {
   name: 'Test Name',
   status: 'active',
   date_added: '2019-11-28',
-  sessions: { $remove: [1,4,5] } 
+  sessions: { $remove: [1,4,5] }
 }
 ```
 
@@ -562,7 +562,7 @@ let item = {
   sessions: {
     1: 'some new value for the second item',
     3: 'new value for the fourth value'
-  } 
+  }
 }
 ```
 
@@ -576,13 +576,13 @@ let item = {
   name: 'Test Name',
   status: 'active',
   date_added: '2019-11-28',
-  metadata: { 
+  metadata: {
     $set: {
       'title': 'Developer', // update metadata.title
       'contact.name': 'Jane Smith', // update metadata.contact.name
       'contact.addresses[0]': '123 Main Street' // update the first array item in metadata.contact.addresses
     }
-  } 
+  }
 }
 ```
 
@@ -594,13 +594,13 @@ let item = {
   name: 'Test Name',
   status: 'active',
   date_added: '2019-11-28',
-  metadata: { 
+  metadata: {
     $set: {
       'vacation_days': { $add: -2 },
       'contact.addresses': { $append: ['99 South Street'] },
       'contact.phone': { $remove: [1,3] }
     }
-  } 
+  }
 }
 ```
 
