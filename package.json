@@ -1,14 +1,37 @@
 {
   "name": "dynamodb-toolbox",
-  "version": "0.0.0-alpha",
+  "version": "1.0.0-beta",
   "description": "",
+  "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest unit",
+    "test-ci": "eslint . && jest unit --coverage | ./node_modules/coveralls/bin/coveralls.js",
+    "lint": "eslint ."
   },
-  "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.580.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeremydaly/dynamodb-toolbox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jeremydaly/dynamodb-toolbox/issues"
+  },
+  "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/__tests__/models/*"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/__tests__/*"
+    ]
+  },
   "devDependencies": {
-    "aws-sdk": "^2.575.0"
+    "coveralls": "^3.0.9",
+    "eslint": "^6.7.1",
+    "jest": "^24.9.0"
   }
 }

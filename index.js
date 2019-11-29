@@ -1,7 +1,3 @@
-// TODO: Allow for multiple LIST actions
-// You can SET specific values in a list and REMOVE items from it
-// All other combinations do not work (need to check sets)
-
 // TODO: Add delimiter option
 
 // TODO: prevent reserved field names ?
@@ -16,7 +12,7 @@ class Model {
 
   constructor(name,model) {
     if (typeof model !== 'object' || Array.isArray(model))
-      error(`Please provide a valid model definition`)
+      error('Please provide a valid model definition')
     this.Model = parseModel(name,model)
   }
 
@@ -49,19 +45,22 @@ class Model {
     }
   }
 
-  get(item={}) {
+  get(item={},params={}) {
     // Extract schema and merge defaults
     let { schema, defaults, linked, partitionKey, sortKey, table } = this.Model
     let data = normalizeData(schema,linked,Object.assign({},defaults,item),true)
 
-    return {
-      TableName: table,
-      Key: getKey(data,schema,partitionKey,sortKey)
-    }
+    return Object.assign(
+      {
+        TableName: table,
+        Key: getKey(data,schema,partitionKey,sortKey)
+      },
+      typeof params === 'object' ? params : {}
+    )
   }
 
-  delete(item={}) {
-    return this.get(item)
+  delete(item={},params={}) {
+    return this.get(item,params)
   }
 
   // Generate update expression
@@ -72,22 +71,25 @@ class Model {
       ADD=[],
       DELETE=[],
       ExpressionAttributeNames={},
-      ExpressionAttributeValues={}
-     } = {}) {
+      ExpressionAttributeValues={},
+      ...params
+    } = {}) {
 
     // Validate operation types
-    if (!Array.isArray(SET)) error(`SET must be an array`)
-    if (!Array.isArray(REMOVE)) error(`REMOVE must be an array`)
-    if (!Array.isArray(ADD)) error(`ADD must be an array`)
-    if (!Array.isArray(DELETE)) error(`DELETE must be an array`)
+    if (!Array.isArray(SET)) error('SET must be an array')
+    if (!Array.isArray(REMOVE)) error('REMOVE must be an array')
+    if (!Array.isArray(ADD)) error('ADD must be an array')
+    if (!Array.isArray(DELETE)) error('DELETE must be an array')
 
     // Validate attribute names and values
     if (typeof ExpressionAttributeNames !== 'object'
       || Array.isArray(ExpressionAttributeNames))
-        error(`ExpressionAttributeNames must be an object`)
+      error('ExpressionAttributeNames must be an object')
     if (typeof ExpressionAttributeValues !== 'object'
       || Array.isArray(ExpressionAttributeValues))
-        error(`ExpressionAttributeValues must be an object`)
+      error('ExpressionAttributeValues must be an object')
+    // if (ConditionExpression && typeof ConditionExpression !== 'string')
+    //     error(`ConditionExpression must be a string`)
 
     // Extract schema and defaults
     let { schema, defaults, required, linked, partitionKey, sortKey, table } = this.Model
@@ -164,6 +166,9 @@ class Model {
         // if a map and updating by nested attribute/index
         } else if (mapping.type === 'map' && data[field].$set) {
           Object.keys(data[field].$set).forEach(f => {
+
+            // TODO: handle null values to remove
+
             let props = f.split('.')
             let acc = [`#${field}`]
             props.forEach((prop,i) => {
@@ -186,7 +191,7 @@ class Model {
                   SET.push(`${path} = list_append(:${value},${path})`)
                   values[`:${value}`] = input.$prepend
                 } else if (input.$remove) {
-                  console.log('REMOVE:',input.$remove);
+                  // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach(i => {
                     if (typeof i !== 'number') error(`Remove array for '${field}' must only contain numeric indexes`)
                     REMOVE.push(`${path}[${i}]`)
@@ -241,18 +246,24 @@ class Model {
       + (DELETE.length > 0 ? ' DELETE ' + DELETE.join(', ') : '')
     ).trim()
 
-    // TODO: return values conditionally (e.g. values on just REMOVE)
-    return {
-      TableName: table,
-      Key,
-      UpdateExpression: expression,
-      ExpressionAttributeNames: Object.assign(names,ExpressionAttributeNames),
-      ExpressionAttributeValues: Object.assign(values,ExpressionAttributeValues)
-    }
+
+    let attr_values = Object.assign(values,ExpressionAttributeValues)
+
+    // Return the parameters
+    return Object.assign(
+      {
+        TableName: table,
+        Key,
+        UpdateExpression: expression,
+        ExpressionAttributeNames: Object.assign(names,ExpressionAttributeNames)
+      },
+      typeof params === 'object' ? params : {},
+      Object.keys(attr_values).length > 0 ? { ExpressionAttributeValues: attr_values } : {}
+    ) // end assign
 
   } // end update
 
-  put(item={}) {
+  put(item={},params={}) {
     // Extract schema and defaults
     let { schema, defaults, required, linked, partitionKey, sortKey, table } = this.Model
 
@@ -265,22 +276,25 @@ class Model {
     ) // end required field check
 
     // Checks for partition and sort keys
-    let key = getKey(data,schema,partitionKey,sortKey)
+    getKey(data,schema,partitionKey,sortKey)
 
     // Loop through valid fields and add appropriate action
-    return {
-      TableName: table,
-      Item: Object.keys(data).reduce((acc,field) => {
-        let mapping = schema[field]
-        let value = validateType(mapping,field,data[field],data)
-        return hasValue(value)
-          && (mapping.save === undefined || mapping.save === true)
-          && (!mapping.link || (mapping.link && mapping.save === true))
-          ? Object.assign(acc, {
-            [field]: value
-          }) : acc
-      },{})
-    }
+    return Object.assign(
+      {
+        TableName: table,
+        Item: Object.keys(data).reduce((acc,field) => {
+          let mapping = schema[field]
+          let value = validateType(mapping,field,data[field],data)
+          return hasValue(value)
+            && (mapping.save === undefined || mapping.save === true)
+            && (!mapping.link || (mapping.link && mapping.save === true))
+            ? Object.assign(acc, {
+              [field]: value
+            }) : acc
+        },{})
+      },
+      typeof params === 'object' ? params : {}
+    )
   }
 
 } // end Model
@@ -291,12 +305,12 @@ const parseModel = (name,model) => {
 
   let model_name = typeof name === 'string'
     && name.trim().length > 0 ? name.trim()
-    : error(`Please provide a string value for the model name`)
+    : error('Please provide a string value for the model name')
 
   let model_field = model.model === false ? false
     : typeof model.model === 'string' && model.model.trim().length > 0 ?
       model.model.trim()
-    : '__model'
+      : '__model'
 
   let timestamps = typeof model.timestamps === 'boolean' ? model.timestamps : false
 
@@ -443,11 +457,13 @@ const compositeKeyConfig = (field,config,track,schema) => {
     track.linked[link][pos] = field
 
     // Merge/validate extra config data and add link and pos
-    return Object.assign({
-      [field]: Object.assign(
-        mappingConfig(field,sub_config,track)[field],
-        { link, pos }
-      )},
+    return Object.assign(
+      {
+        [field]: Object.assign(
+          mappingConfig(field,sub_config,track)[field],
+          { link, pos }
+        )
+      },
       sub_config.alias ? {
         [sub_config.alias]: Object.assign({},sub_config, { mapped: field })
       } : {}
@@ -478,7 +494,7 @@ const validateType = (mapping,field,input,data={}) => {
     case 'number':
       return typeof value === 'number' || mapping.coerce ?
         (String(parseInt(value)) === String(value) ? parseInt(value)
-          : error(`Could not convert '${value}' to a number for '${field}'`))
+        : error(`Could not convert '${value}' to a number for '${field}'`))
         : error(`'${field}' must be of type number`)
     case 'list':
       return Array.isArray(value) ? value
@@ -499,6 +515,7 @@ const validateType = (mapping,field,input,data={}) => {
       } else {
         error(`'${field}' must be a valid set (array)`)
       }
+      break
     default:
       return value
   }
@@ -589,8 +606,8 @@ const normalizeData = (schema,linked,data,filter=false) => {
 // Boolean conversion
 const toBool = val =>
   typeof val === 'boolean' ? val
-    : ['false','0','no'].includes(String(val).toLowerCase()) ? false
-    : Boolean(val)
+  : ['false','0','no'].includes(String(val).toLowerCase()) ? false
+  : Boolean(val)
 
 // has value shortcut
 const hasValue = val => val !== undefined && val !== null
