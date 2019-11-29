@@ -1,7 +1,7 @@
 {
   "name": "dynamodb-toolbox",
   "version": "1.0.0-beta",
-  "description": "",
+  "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,12 @@
     "type": "git",
     "url": "git+https://github.com/jeremydaly/dynamodb-toolbox.git"
   },
+  "keywords": [
+    "serverless",
+    "aws",
+    "dynamodb",
+    "nosql"
+  ],
   "bugs": {
     "url": "https://github.com/jeremydaly/dynamodb-toolbox/issues"
   },
