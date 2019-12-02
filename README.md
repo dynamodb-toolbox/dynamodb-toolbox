@@ -105,10 +105,10 @@ let item = {
 let params = MyModel.get(item)
 
 // Pass the parameters to the DocumentClient's `get` method
-let response = await DDB.get(params).promise()
+let response = await DocumentClient.get(params).promise()
 
 // Parse the raw response with the `parse` method
-let result = MyModel.parse(get)
+let result = MyModel.parse(response)
 ```
 
 This will return the object mapped to your aliases and composite key mappings:
