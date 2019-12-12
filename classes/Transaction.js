@@ -6,6 +6,8 @@
  * @license MIT
  */
 
- class Transaction {
-   constructor() {}
- }
+class Transaction {
+  constructor() {}
+}
+
+module.exports = Transaction

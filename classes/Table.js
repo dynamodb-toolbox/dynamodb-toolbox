@@ -6,6 +6,8 @@
  * @license MIT
  */
 
- class Table {
-   constructor() {}
- }
+class Table {
+  constructor() {}
+}
+
+module.exports = Table
