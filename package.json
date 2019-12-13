@@ -5,7 +5,7 @@
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "index.js",
   "scripts": {
-    "test": "jest unit --watch",
+    "test": "jest unit",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "lint": "eslint ."
   },
