@@ -46,7 +46,7 @@ class Model {
   get(item={},params={}) {
     // Extract schema and merge defaults
     let { schema, defaults, linked, partitionKey, sortKey, table, delimiter } = this.Model
-    let data = normalizeData(schema,linked,Object.assign({},defaults,item),true,delimiter)
+    let data = normalizeData(schema,linked,Object.assign({},defaults,item),delimiter,true)
 
     return Object.assign(
       {
@@ -575,7 +575,7 @@ const formatItem = (schema,linked,item,omit,delimiter) => {
 }
 
 
-const normalizeData = (schema,linked,data,filter=false,delimiter) => {
+const normalizeData = (schema,linked,data,delimiter,filter=false) => {
   let _data = Object.keys(data).reduce((acc,field) => {
     return Object.assign(acc,
       schema[field] ? { [schema[field].mapped || field] : data[field] }
