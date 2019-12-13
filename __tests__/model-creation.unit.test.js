@@ -265,6 +265,18 @@ describe('model creation', ()=> {
     expect(result).toThrow(`'sortKey' must be string value`)
   })
 
+  it('fails when creating a model with a non-string delimiter', () => {
+    let result = () => new Model('TestModel',{
+      table: 'test-table',
+      partitionKey: 'pk',
+      delimiter: 123,
+      schema: {
+        pk: 'string'
+      }
+    })
+    expect(result).toThrow(`'delimiter' must be string value`)
+  })
+
   it('fails when creating a model without a table', () => {
     let result = () => new Model('TestModel',{
       partitionKey: 'pk',

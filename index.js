@@ -31,22 +31,22 @@ class Model {
 
   parse(input,omit=[]) {
     // Load the schema
-    let { schema, linked } = this.Model
+    let { schema, linked, delimiter } = this.Model
 
     // Assume standard response from DynamoDB
     let data = input.Item || input.Items || input
 
     if (Array.isArray(data)) {
-      return data.map(item => formatItem(schema,linked,item,omit))
+      return data.map(item => formatItem(schema,linked,item,omit,delimiter))
     } else {
-      return formatItem(schema,linked,data,omit)
+      return formatItem(schema,linked,data,omit,delimiter)
     }
   }
 
   get(item={},params={}) {
     // Extract schema and merge defaults
-    let { schema, defaults, linked, partitionKey, sortKey, table } = this.Model
-    let data = normalizeData(schema,linked,Object.assign({},defaults,item),true)
+    let { schema, defaults, linked, partitionKey, sortKey, table, delimiter } = this.Model
+    let data = normalizeData(schema,linked,Object.assign({},defaults,item),true,delimiter)
 
     return Object.assign(
       {
@@ -90,10 +90,10 @@ class Model {
     //     error(`ConditionExpression must be a string`)
 
     // Extract schema and defaults
-    let { schema, defaults, required, linked, partitionKey, sortKey, table } = this.Model
+    let { schema, defaults, required, linked, partitionKey, sortKey, table, delimiter } = this.Model
 
     // Merge defaults
-    let data = normalizeData(schema,linked,Object.assign({},defaults,item))
+    let data = normalizeData(schema,linked,Object.assign({},defaults,item),delimiter)
 
     // Check for required fields
     Object.keys(required).forEach(field =>
@@ -263,10 +263,10 @@ class Model {
 
   put(item={},params={}) {
     // Extract schema and defaults
-    let { schema, defaults, required, linked, partitionKey, sortKey, table } = this.Model
+    let { schema, defaults, required, linked, partitionKey, sortKey, table, delimiter } = this.Model
 
     // Merge defaults
-    let data = normalizeData(schema,linked,Object.assign({},defaults,item))
+    let data = normalizeData(schema,linked,Object.assign({},defaults,item),delimiter)
 
     // Check for required fields
     Object.keys(required).forEach(field =>
@@ -336,7 +336,10 @@ const parseModel = (name,model) => {
   let schema = typeof model.schema === 'object' && !Array.isArray(model.schema) ?
     model.schema : error(`Please provide a valid 'schema'`)
 
-  let delimiter = '#'
+  let delimiter = typeof model.delimiter === 'string'
+    && model.delimiter.trim().length > 0 ? model.delimiter.trim()
+    : model.delimiter ? error(`'delimiter' must be string value`)
+    : '#'
 
   // Add model_field
   if (model_field) {
@@ -552,14 +555,14 @@ const getKey = (data,schema,partitionKey,sortKey) => {
 
 
 // Format item based on schema
-const formatItem = (schema,linked,item,omit) => {
+const formatItem = (schema,linked,item,omit,delimiter) => {
   return Object.keys(item).reduce((acc,field) => {
 
     if (linked[field]) {
       Object.assign(acc, linked[field].reduce((acc,f,i) => {
         if (schema[f].save || schema[f].hidden || omit.includes(f)) return acc
         return Object.assign(acc,{
-          [schema[f].alias || f]: validateType(schema[f],f,item[field].split('#')[i])
+          [schema[f].alias || f]: validateType(schema[f],f,item[field].split(delimiter)[i])
         })
       },{}))
     }
@@ -572,7 +575,7 @@ const formatItem = (schema,linked,item,omit) => {
 }
 
 
-const normalizeData = (schema,linked,data,filter=false) => {
+const normalizeData = (schema,linked,data,filter=false,delimiter) => {
   let _data = Object.keys(data).reduce((acc,field) => {
     return Object.assign(acc,
       schema[field] ? { [schema[field].mapped || field] : data[field] }
@@ -593,7 +596,7 @@ const normalizeData = (schema,linked,data,filter=false) => {
     //   error(`${linked[field].join(', ')} are all required for composite key`)
     // } else
     if (values.length === linked[field].length) {
-      return Object.assign(acc, { [field]: values.join('#') })
+      return Object.assign(acc, { [field]: values.join(delimiter) })
     } else {
       return acc
     }
