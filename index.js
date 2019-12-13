@@ -336,6 +336,8 @@ const parseModel = (name,model) => {
   let schema = typeof model.schema === 'object' && !Array.isArray(model.schema) ?
     model.schema : error(`Please provide a valid 'schema'`)
 
+  let delimiter = '#'
+
   // Add model_field
   if (model_field) {
     schema[model_field] = { type: 'string', default: model_name, hidden: true }
@@ -360,6 +362,7 @@ const parseModel = (name,model) => {
     table,
     partitionKey,
     sortKey,
+    delimiter,
     schema: Object.keys(schema).reduce((acc,field) => {
       if (typeof schema[field] === 'string') {
         return validTypes.includes(schema[field]) ?
