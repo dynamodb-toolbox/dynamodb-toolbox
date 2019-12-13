@@ -1,5 +1,3 @@
-// TODO: Add delimiter option
-
 // TODO: prevent reserved field names ?
 
 // TODO: Add date type
