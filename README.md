@@ -136,6 +136,7 @@ timestamps | `Boolean` | no | Automatically add and manage `created` and `modifi
 created | `string` | no | Override default `created` field name |
 modified | `string` | no | Override default `modified` field name |
 schema | `object` | yes | Complex type that specifies the schema for the model (see below) |
+delimiter | `string` | no | The string that separates composite values in your sort key (`#` default) |
 
 ### Schema Definition
 
