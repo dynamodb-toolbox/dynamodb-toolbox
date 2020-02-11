@@ -25,10 +25,11 @@ describe('put',()=>{
   })
 
   it('creates item with aliases',() => {
-    let { Item } = TestModel.put({ email: 'test-pk', type: 'test-sk', count: 5 })
+    let { Item } = TestModel.put({ email: 'test-pk', type: 'test-sk', count: 5, amount: 1.23 })
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
     expect(Item.test_number).toBe(5)
+    expect(Item.test_float).toBe(1.23)
     expect(Item.__model).toBe('TestModel')
     expect(Item.test_string).toBe('test string')
     expect(Item).toHaveProperty('created')
@@ -131,6 +132,22 @@ describe('put',()=>{
       'sk': 'test-sk',
       'test_number_coerce': 'x1'
     })).toThrow(`Could not convert 'x1' to a number for 'test_number_coerce'`)
+  })
+
+  it('fails when invalid float number provided with no coercion', () => {
+     expect(() => TestModel.put({
+       'pk': 'test-pk',
+       'sk': 'test-sk',
+       'test_float': 'x'
+     })).toThrow(`'test_float' must be of type number`)
+   })
+
+   it('fails when invalid float number cannot be coerced', () => {
+     expect(() => TestModel.put({
+       'pk': 'test-pk',
+       'sk': 'test-sk',
+       'test_float_coerce': 'x1'
+     })).toThrow(`Could not convert 'x1' to a number for 'test_float_coerce'`)
   })
 
   it('fails when invalid array provided with no coercion', () => {

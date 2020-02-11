@@ -493,8 +493,8 @@ const validateType = (mapping,field,input,data={}) => {
         : error(`'${field}' must be of type boolean`)
     case 'number':
       return typeof value === 'number' || mapping.coerce ?
-        (String(parseInt(value)) === String(value) ? parseInt(value)
-        : error(`Could not convert '${value}' to a number for '${field}'`))
+        (String(parseInt(value)) === String(value) && Number.isNaN(value) === false ? parseInt(value)
+        : (Number.isNaN(Number.parseFloat(value)) ? error(`Could not convert '${value}' to a number for '${field}'`) : Number.parseFloat(value)))
         : error(`'${field}' must be of type number`)
     case 'list':
       return Array.isArray(value) ? value
