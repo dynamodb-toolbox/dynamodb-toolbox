@@ -336,10 +336,10 @@ const parseModel = (name,model) => {
   let schema = typeof model.schema === 'object' && !Array.isArray(model.schema) ?
     model.schema : error(`Please provide a valid 'schema'`)
 
-  let delimiter = typeof model.delimiter === 'string'
-    && model.delimiter.trim().length > 0 ? model.delimiter.trim()
-    : model.delimiter ? error(`'delimiter' must be string value`)
-    : '#'
+  let delimiter = '#'
+  if (typeof model.delimiter === 'string' && model.delimiter.trim().length > 0) {
+    delimiter = model.delimiter.trim()
+  } else if (model.delimiter) error(`'delimiter' must be string value with length >= 1`)
 
   // Add model_field
   if (model_field) {
