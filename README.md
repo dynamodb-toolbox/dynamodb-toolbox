@@ -357,6 +357,83 @@ let params = MyModel.get(item, {
 })
 ```
 
+### `query` Items
+
+Querying items requires the `partitionKey` and (if wanted) the `options` with some additional data. The DocumentClient [`query`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#query-property) method accepts a number of parameters. The DynamoDB Toolbox will generate the `TableName` and `Index` parameters for you based on your input. 
+
+Based on our model from before:
+
+```javascript
+// Specify my item
+let item = {
+  id: 123,
+  status: 'active',
+  date_added: '2019-11-28'
+}
+
+// Use the 'query' method of MyModel to generate parameters
+let params = MyModel.get(item.id)
+```
+
+This will generate the following parameters:
+
+```javascript
+{ 
+  TableName: 'my-dynamodb-table',
+  ConsistentRead: false,
+  KeyConditionExpression: '#pk = :pk',
+  ExpressionAttributeNames: { '#pk': 'pk' },
+  ExpressionAttributeValues: { ':pk': '123' }
+}
+```
+
+You can pass in additional options to the query.  The most useful is the `sortKey` object, but you can also specify:
+* limit (number) - maximum number of items to return
+* consistentRead (boolean) - run the query with/without consistent reads
+* index (string) - run the query against a different LSI or GSI
+
+The `sortKey` option is an object that looks like this:
+```javascript
+{
+  value: 'someValue',
+  operator: '=', // =, >, >=, <, <=, between, begins_with
+  secondaryValue: 'secondValue' // optional, only used with between operator
+}
+```
+
+A more complex query could look like this:
+```javascript
+let params = MyModel.query(
+  '123', 
+  { 
+    sortKey: { value: '2011', secondaryValue: '2020', operator: 'between' }, 
+    limit: 10, 
+    index: 'gsi1',
+    consistentRead: true
+  }
+})
+```
+
+Which would return parameters for DocumentClient that looks like:
+```javscript
+{ 
+  TableName: 'my-dynamodb-table',
+  IndexName: 'gsi1',
+  ConsistentRead: true,
+  KeyConditionExpression: '#pk = :pk and #sk between :value1 and :value2',
+  ExpressionAttributeNames: { 
+    '#pk': 'pk',
+    '#sk': 'sk' 
+  },
+  ExpressionAttributeValues: { 
+    ':pk': '123',
+    ':value1': '2011',
+    ':value2': '2020' 
+  },
+  Limit: '10'
+}
+```
+
 ### `delete` Items
 
 The DocumentClient [`delete`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#delete-property) method accepts a number of parameters. Similar to the `get` method, the DynamoDB Toolbox will generate the `TableName` and `Key` parameters for you based on your input. If you have composite key mappings or aliases on your `partitionKey` or `sortKey`, the appropriate values will be generated. You can add custom parameters as a second argument.

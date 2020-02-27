@@ -297,6 +297,49 @@ class Model {
     )
   }
 
+  query(pk, opts={}) {
+    // TODO: add filter to opts
+    const { index, limit, sortKey: sortKeyObj, consistentRead } = opts
+    if (typeof pk !== 'string') {
+      error('Query requires option pk have value of type string')
+    }
+    const { partitionKey, sortKey, table } = this.Model
+    const ExpressionAttributeNames = {
+      '#pk': partitionKey
+    }
+    const ExpressionAttributeValues = {
+      ':pk': pk
+    }
+    let KeyConditionExpression = `#pk = :pk`
+    if (sortKeyObj) {
+      const { operator, value, secondaryValue } = sortKeyObj
+      if(!['=', '<', '<=', '>', '>=', 'between', 'begins_with'].includes(operator)) {
+        error('sortKey.operator must be one of: =, >, >=, <, <=, between, begins_with')
+      }
+      if (operator === 'between' && !secondaryValue) {
+        error('sortKey.secondaryValue is required when sortKey.operator is "between"')
+      }
+      ExpressionAttributeNames['#sk'] = sortKey
+      KeyConditionExpression += ` and #sk ${operator} :value1`
+      ExpressionAttributeValues[':value1'] = value
+      if (operator === 'between') {
+        KeyConditionExpression += ' and :value2'
+        ExpressionAttributeValues[':value2'] = secondaryValue
+      }
+    }
+
+    return Object.assign(
+      {
+        TableName: table,
+        ConsistentRead: Boolean(consistentRead),
+        KeyConditionExpression,
+        ExpressionAttributeNames,
+        ExpressionAttributeValues
+      },
+      index ? { IndexName: index } : null,
+      limit ? { Limit: String(limit) } : null
+    )
+  }
 } // end Model
 
 
