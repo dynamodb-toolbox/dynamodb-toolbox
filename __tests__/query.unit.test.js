@@ -173,4 +173,12 @@ describe('query',()=>{
   it('throws error for invalid operator', () => {
     expect(() => TestModel.query('testPK', { sortKey: { value: '2019', operator: '?' } })).toThrow()
   })
+
+  it('throws error if pk is ommited', () => {
+    expect(() => TestModel.query()).toThrow()
+  })
+
+  it('throws error on between operator if secondaryValue is ommited', () => {
+    expect(() => TestModel.query('testPK', { sortKey: { value: '2019', operator: 'between' } })).toThrow()
+  })
 })

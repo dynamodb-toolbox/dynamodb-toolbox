@@ -300,8 +300,8 @@ class Model {
   query(pk, opts={}) {
     // TODO: add filter to opts
     const { index, limit, sortKey: sortKeyObj, consistentRead } = opts
-    if (typeof pk !== 'string') {
-      error('Query requires option pk have value of type string')
+    if (!pk) {
+      error('Query requires pk value to be supplied')
     }
     const { partitionKey, sortKey, table } = this.Model
     const ExpressionAttributeNames = {
