@@ -359,7 +359,10 @@ let params = MyModel.get(item, {
 
 ### `query` Items
 
-Querying items requires the `partitionKey` and (if wanted) the `options` with some additional data. The DocumentClient [`query`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#query-property) method accepts a number of parameters. The DynamoDB Toolbox will generate the `TableName` and `Index` parameters for you based on your input. 
+Querying items requires the `partitionKey` and (if wanted) you can include `options` with some additional query data. 
+The DocumentClient [`query`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#query-property) 
+method accepts a number of parameters. The DynamoDB Toolbox will generate the `TableName` and other parameters 
+for you based on your input. 
 
 Based on our model from before:
 
@@ -372,7 +375,7 @@ let item = {
 }
 
 // Use the 'query' method of MyModel to generate parameters
-let params = MyModel.get(item.id)
+let params = MyModel.query(item.id)
 ```
 
 This will generate the following parameters:
