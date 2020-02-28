@@ -182,6 +182,10 @@ describe('query',()=>{
     expect(() => TestModel.query('testPK', { sortKey: { value: '2019', operator: 'between' } })).toThrow()
   })
 
+  it('throws error if requested index is not defined', () => {
+    expect(() => TestModel.query('testPK', { index: 'notDefined' })).toThrow()
+  })
+
   it('throws error if using and index and sort key but the sort key is not defined', () => {
     expect(() => TestModel.query('testPK', { sortKey: { value: '2019', operator: '?' }, index: 'bySimple' })).toThrow()
   })
