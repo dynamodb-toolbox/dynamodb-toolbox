@@ -28,14 +28,14 @@ describe('query',()=>{
   })
 
   it('handles a basic partionKey query of an index', () => {
-    const params = TestModel.query('testPK', { index: 'gsi1' })
+    const params = TestModel.query('testSimpleString', { index: 'bySimple' })
     expect(params).toMatchObject({ 
       TableName: 'test-table',
-      IndexName: 'gsi1',
+      IndexName: 'bySimple',
       ConsistentRead: false,
       KeyConditionExpression: '#pk = :pk',
-      ExpressionAttributeNames: { '#pk': 'pk' },
-      ExpressionAttributeValues: { ':pk': 'testPK' }
+      ExpressionAttributeNames: { '#pk': 'simple_string' },
+      ExpressionAttributeValues: { ':pk': 'testSimpleString' }
     })
   })
 
@@ -180,5 +180,9 @@ describe('query',()=>{
 
   it('throws error on between operator if secondaryValue is ommited', () => {
     expect(() => TestModel.query('testPK', { sortKey: { value: '2019', operator: 'between' } })).toThrow()
+  })
+
+  it('throws error if using and index and sort key but the sort key is not defined', () => {
+    expect(() => TestModel.query('testPK', { sortKey: { value: '2019', operator: '?' }, index: 'bySimple' })).toThrow()
   })
 })

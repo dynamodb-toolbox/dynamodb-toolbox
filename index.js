@@ -297,21 +297,36 @@ class Model {
     )
   }
 
-  query(pk, opts={}) {
-    // TODO: add filter to opts
+  query(pkValue, opts={}) {
+    // TODO: add filter to opts, key selection, projected keys
     const { index, limit, sortKey: sortKeyObj, consistentRead } = opts
-    if (!pk) {
+    if (!pkValue) {
       error('Query requires pk value to be supplied')
     }
-    const { partitionKey, sortKey, table } = this.Model
+    const { partitionKey, sortKey, table, indexes } = this.Model
+
+    let pk = partitionKey
+    let sk = sortKey
+    if (index) {
+      if (!indexes[index]) {
+        error(`Index ${index} not defined in model`)
+      } else {
+        pk = indexes[index].partitionKey
+        sk = indexes[index].sortKey
+      }
+    }
+
     const ExpressionAttributeNames = {
-      '#pk': partitionKey
+      '#pk': pk
     }
     const ExpressionAttributeValues = {
-      ':pk': pk
+      ':pk': pkValue
     }
     let KeyConditionExpression = `#pk = :pk`
     if (sortKeyObj) {
+      if (!sk) {
+        error(`${index ? `Index ${index}` : 'Model'} does not define a valid sortKey, you cannot query using the sortKey`)
+      }
       const { operator, value, secondaryValue } = sortKeyObj
       if(!['=', '<', '<=', '>', '>=', 'between', 'begins_with'].includes(operator)) {
         error('sortKey.operator must be one of: =, >, >=, <, <=, between, begins_with')
@@ -319,7 +334,7 @@ class Model {
       if (operator === 'between' && !secondaryValue) {
         error('sortKey.secondaryValue is required when sortKey.operator is "between"')
       }
-      ExpressionAttributeNames['#sk'] = sortKey
+      ExpressionAttributeNames['#sk'] = sk
       KeyConditionExpression += ` and #sk ${operator} :value1`
       ExpressionAttributeValues[':value1'] = value
       if (operator === 'between') {
@@ -381,6 +396,15 @@ const parseModel = (name,model) => {
   let schema = typeof model.schema === 'object' && !Array.isArray(model.schema) ?
     model.schema : error(`Please provide a valid 'schema'`)
 
+  let indexes = typeof model.indexes === 'object' && !Array.isArray(model.indexes) ?
+    model.indexes : {}
+
+  Object.keys(indexes).forEach((index) => {
+    if (typeof indexes[index].partitionKey !== 'string' || indexes[index].partitionKey.trim().length === 0) {
+      error(`Index ${index} must have valid partitionKey`)
+    }
+  })
+  
   // Add model_field
   if (model_field) {
     schema[model_field] = { type: 'string', default: model_name, hidden: true }
@@ -420,7 +444,8 @@ const parseModel = (name,model) => {
     },{}),
     defaults: track.defaults,
     required: track.required,
-    linked: track.linked
+    linked: track.linked,
+    indexes
   } // end mapping object
 
 } // end parseMapping

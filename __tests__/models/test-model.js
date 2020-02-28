@@ -37,5 +37,10 @@ module.exports = {
     test_number_set_type_coerce: { type: 'set', setType: 'number', coerce: true },
     test_binary: { type: 'binary' },
     simple_string: 'string'
+  },
+  indexes: {
+    bySimple: {
+      partitionKey: 'simple_string'
+    }
   }
 }

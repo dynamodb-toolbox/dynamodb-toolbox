@@ -136,6 +136,7 @@ timestamps | `Boolean` | no | Automatically add and manage `created` and `modifi
 created | `string` | no | Override default `created` field name |
 modified | `string` | no | Override default `modified` field name |
 schema | `object` | yes | Complex type that specifies the schema for the model (see below) |
+index | `object` | no | Complex type that specifies the indexs available to the model (see below |
 
 ### Schema Definition
 
@@ -256,6 +257,19 @@ schema: {
   status: 'boolean',
   date_added: 'string'
   ...
+}
+```
+
+### Inedexes Defnition
+
+The `indexes` key is an optional argument that you can use to define the LSI and GSI indexes.  This is primarily useful for `query` operations.
+To define an index, you only need a few pieces of information, and you can define as many indexes as you have:
+```javascript
+indexes: {
+  myFirstIndex: { // the key name is the index name
+    partitionKey: 'status', // required: this must be a key defined in the schema
+    sortKey: 'updatedAt' // optional: this must be a key defined in the schema if the index uses it
+  }
 }
 ```
 
@@ -404,6 +418,8 @@ The `sortKey` option is an object that looks like this:
 }
 ```
 
+NOTE: in order to use an index, you must first DEFINE an index in your model that matches your DynamoDB indexes.
+
 A more complex query could look like this:
 ```javascript
 let params = MyModel.query(
@@ -417,16 +433,26 @@ let params = MyModel.query(
 })
 ```
 
+This assumes a model that was created with the index:
+```javascript
+indexes: {
+  gsi1: {
+    partitionKey: 'gsiPk',
+    sortKey: 'gsiSk'
+  }
+}
+```
+
 Which would return parameters for DocumentClient that looks like:
-```javscript
+```javascript
 { 
   TableName: 'my-dynamodb-table',
   IndexName: 'gsi1',
   ConsistentRead: true,
   KeyConditionExpression: '#pk = :pk and #sk between :value1 and :value2',
   ExpressionAttributeNames: { 
-    '#pk': 'pk',
-    '#sk': 'sk' 
+    '#pk': 'gsiPk',
+    '#sk': 'gsiSk' 
   },
   ExpressionAttributeValues: { 
     ':pk': '123',

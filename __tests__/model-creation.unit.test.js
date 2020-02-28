@@ -36,7 +36,8 @@ describe('model creation', ()=> {
         __model: 'Default'
       },
       required: {},
-      linked: {}
+      linked: {},
+      indexes: {}
     })
   })
 
@@ -59,7 +60,8 @@ describe('model creation', ()=> {
       },
       defaults: {},
       required: {},
-      linked: {}
+      linked: {},
+      indexes: {}
     })
   })
 
@@ -93,7 +95,8 @@ describe('model creation', ()=> {
         modified: ()=> new Date().toISOString(),
       },
       required: {},
-      linked: {}
+      linked: {},
+      indexes: {}
     }))
     expect(model.schema.created).toHaveProperty('default')
     expect(model.schema.modified).toHaveProperty('default')
@@ -123,7 +126,8 @@ describe('model creation', ()=> {
         my_model_field: 'Default'
       },
       required: {},
-      linked: {}
+      linked: {},
+      indexes: {}
     })
   })
 
@@ -159,7 +163,8 @@ describe('model creation', ()=> {
         modifiedAt: ()=> new Date().toISOString(),
       },
       required: {},
-      linked: {}
+      linked: {},
+      indexes: {}
     }))
     expect(model.schema.createdAt).toHaveProperty('default')
     expect(model.schema.modifiedAt).toHaveProperty('default')
@@ -195,7 +200,8 @@ describe('model creation', ()=> {
         test: false,
         test2: true
       },
-      linked: {}
+      linked: {},
+      indexes: {}
     })
   })
 
@@ -224,6 +230,46 @@ describe('model creation', ()=> {
       }
     })
     expect(Default.model().schema.test2.mapped).toBe('test')
+  })
+
+  it('creates basic model w/ indexes', () => {
+    let Default = new Model('Default',{
+      table: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      schema: {
+        pk: 'string',
+        sk: 'string',
+        gsipk: 'string'
+      },
+      indexes: {
+        gsi: {
+          partitionKey: 'gsiPk'
+        }
+      }
+    })
+
+    expect(Default.model()).toEqual({
+      table: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      schema: {
+        pk: { type: 'string', coerce: true },
+        sk: { type: 'string', coerce: true },
+        gsipk: { type: 'string', coerce: true },
+        __model: { type: 'string', default: 'Default', coerce: true, hidden: true }
+      },
+      defaults: {
+        __model: 'Default'
+      },
+      required: {},
+      linked: {},
+      indexes: {
+        gsi: {
+          partitionKey: 'gsiPk'
+        }
+      }
+    })
   })
 
   it('fails when creating a model without a name', () => {
@@ -429,6 +475,23 @@ describe('model creation', ()=> {
     expect(result).toThrow(`Composite key configurations must have 2 or 3 items`)
   })
 
+  it('fails when index partitionKey is missing', () => {
+    let result = () => new Model('Default',{
+      table: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      schema: {
+        pk: 'string',
+        sk: 'string'
+      },
+      indexes: {
+        gsi: {
+          sortKey: 'I am missing the partitionKey'
+        }
+      }
+    })
+    expect(result).toThrow(`Index gsi must have valid partitionKey`)
+  })
 
   it(`fails when missing model definition`, () => {
     let result = () => new Model('TestModel')
