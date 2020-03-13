@@ -3,7 +3,7 @@
 module.exports = {
   // Include table name
   table: 'test-table',
-  
+
   // Include model field
   model: true,
 
