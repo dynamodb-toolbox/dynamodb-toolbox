@@ -261,7 +261,7 @@ schema: {
 }
 ```
 
-### Inedexes Defnition
+### Indexes Definition
 
 The `indexes` key is an optional argument that you can use to define the LSI and GSI indexes.  This is primarily useful for `query` operations.
 To define an index, you only need a few pieces of information, and you can define as many indexes as you have:
