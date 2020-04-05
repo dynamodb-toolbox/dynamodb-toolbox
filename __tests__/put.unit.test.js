@@ -84,7 +84,7 @@ describe('put',()=>{
       test_composite2: 'test2'
     })
     expect(Item.pk).toBe('test-pk')
-    expect(Item.sk).toBe('test#test2')
+    expect(Item.sk).toBe('test|test2')
     expect(Item.test_composite).toBe('test')
     expect(Item).not.toHaveProperty('test_composite2')
   })

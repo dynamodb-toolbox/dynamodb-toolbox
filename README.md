@@ -137,6 +137,7 @@ created | `string` | no | Override default `created` field name |
 modified | `string` | no | Override default `modified` field name |
 schema | `object` | yes | Complex type that specifies the schema for the model (see below) |
 index | `object` | no | Complex type that specifies the indexs available to the model (see below |
+delimiter | `string` | no | The string that separates composite values in your sort key (`#` default) |
 
 ### Schema Definition
 
