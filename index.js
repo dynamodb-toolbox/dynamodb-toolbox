@@ -297,7 +297,7 @@ class Model {
 
   query(pkValue, opts={}) {
     // TODO: add filter to opts, key selection, projected keys
-    const { index, limit, sortKey: sortKeyObj, consistentRead } = opts
+    const { index, limit, sortKey: sortKeyObj, consistentRead, startKey } = opts
     if (!pkValue) {
       error('Query requires pk value to be supplied')
     }
@@ -350,7 +350,8 @@ class Model {
         ExpressionAttributeValues
       },
       index ? { IndexName: index } : null,
-      limit ? { Limit: String(limit) } : null
+      limit ? { Limit: String(limit) } : null,
+      startKey ? { ExclusiveStartKey: startKey } : null
     )
   }
 } // end Model

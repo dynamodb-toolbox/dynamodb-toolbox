@@ -409,6 +409,7 @@ You can pass in additional options to the query.  The most useful is the `sortKe
 * limit (number) - maximum number of items to return
 * consistentRead (boolean) - run the query with/without consistent reads
 * index (string) - run the query against a different LSI or GSI
+* startKey (object) - this object will be used at the ExclusiveStartKey in the query
 
 The `sortKey` option is an object that looks like this:
 ```javascript
