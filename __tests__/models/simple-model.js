@@ -21,5 +21,8 @@ module.exports = {
     test_composite: ['sk',0, { save: true }],
     test_composite2: ['sk',1],
     test_undefined: { default: () => undefined }
-  }
+  },
+  
+  // Define delimiter
+  delimiter: '|'
 }

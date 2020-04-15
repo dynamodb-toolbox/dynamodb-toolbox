@@ -71,7 +71,7 @@ describe('parse',()=>{
   })
 
   it('parses composite field', ()=>{
-    let item = SimpleModel.parse({ pk: 'test@test.com', sk: 'active#email', test_composite: 'test' })
+    let item = SimpleModel.parse({ pk: 'test@test.com', sk: 'active|email', test_composite: 'test' })
     expect(item).toEqual({
       pk: 'test@test.com',
       test_composite: 'test',
