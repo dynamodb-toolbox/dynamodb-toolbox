@@ -9,6 +9,8 @@
 
 ### **NOTE:** This project is in BETA. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
+## Important Update: [v0.2](https://github.com/jeremydaly/dynamodb-toolbox/tree/v0.2) is currently in development and is a major diversion from v0.1 with several breaking changes. Please check the v0.2 branch for updates. 
+
 The **DynamoDB Toolbox** is a simple set of tools for working with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It lets you define your data models (with typings and aliases) and map them to your DynamoDB table. You can then **generate parameters** to `put`, `get`, `delete`, and `update` data by passing in a JavaScript object. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
 
 ### This is *NOT* an ORM (at least I hope it's not)
