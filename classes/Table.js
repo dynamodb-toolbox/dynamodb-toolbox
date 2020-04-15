@@ -180,8 +180,6 @@ class Table {
   // TODO: Query the table
   async query(pk,options={},params={}) { 
     
-    // TODO: allow omits per entity type (opposite of projections?)
-    
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
     // Deconstruct valid options
@@ -201,6 +199,7 @@ class Table {
       filters, // filter object,
       attributes, // Projections
       startKey,
+      entity, // optional entity name to filter aliases
       ..._args // capture extra arguments
     } = options
     
@@ -215,6 +214,10 @@ class Table {
     if (typeof pk !== 'string' || pk.trim().length === 0)
       error(`Query requires a string 'partitionKey' as its first parameter`)
 
+    // Verify index
+    if (index !== undefined && !this.Table.indexes[index])
+      error(`'${index}' is not a valid index name`)
+
     // Verify limit
     if (limit !== undefined && (!Number.isInteger(limit) || limit < 0))
       error(`'limit' must be a positive integer`)
@@ -226,6 +229,10 @@ class Table {
     // Verify consistent read
     if (consistent !== undefined && typeof consistent !== 'boolean')
       error(`'consistent' requires a boolean`)
+  
+    // Verify entity
+    if (entity !== undefined && (typeof entity !== 'string' || !(entity in this)))
+      error(`'entity' must be a string and a valid table Entity name`)
 
     // Verify capacity
     if (capacity !== undefined
@@ -238,7 +245,7 @@ class Table {
       error(`'startKey' requires a valid object`)
 
     // Default names and values
-    let ExpressionAttributeNames = { '#pk': this.Table.partitionKey }
+    let ExpressionAttributeNames = { '#pk': (index && this.Table.indexes[index].partitionKey) || this.Table.partitionKey }
     let ExpressionAttributeValues = { ':pk': pk }
     let KeyConditionExpression = '#pk = :pk'
     let FilterExpression // init FilterExpression
@@ -258,16 +265,23 @@ class Table {
 
     // If a sortKey condition was set
     if (operator) {
+
       // Get sortKey configuration
-      // TODO: make this work with indexes
-      const sk = this.Table.sortKey ? this.Table.attributes[this.Table.sortKey]
-        : error(`Conditional expressions require the table/index to have a sortKey`)
+      const sk = index ? 
+        (
+          this.Table.indexes[index].sortKey ? (
+            this.Table.attributes[this.Table.indexes[index].sortKey] || { type: 'string'}
+          )
+            : error(`Conditional expressions require the index to have a sortKey`)
+        )
+        : this.Table.sortKey ? this.Table.attributes[this.Table.sortKey]
+        : error(`Conditional expressions require the table to have a sortKey`)        
 
       // Init validateType
       const validateType = validateTypes()
 
       // Add the sortKey attribute name
-      ExpressionAttributeNames['#sk'] = this.Table.sortKey
+      ExpressionAttributeNames['#sk'] = (index && this.Table.indexes[index].sortKey) || this.Table.sortKey
       // If between operation
       if (operator === 'BETWEEN') {
         // Verify array input
@@ -292,14 +306,19 @@ class Table {
 
     // If filter expressions
     if (filters) {
+      
       // Parse the filter
       const {
         expression,
         names,
         values
-      } = parseFilter(filters)
+      } = parseFilter(filters,this,entity)
 
       if (Object.keys(names).length > 0) {
+
+        // TODO: alias attribute field names
+        // console.log(names)
+        
         // Merge names and values and add filter expression
         ExpressionAttributeNames = Object.assign(ExpressionAttributeNames,names)
         ExpressionAttributeValues = Object.assign(ExpressionAttributeValues,values)
@@ -310,7 +329,7 @@ class Table {
 
     // If projections
     if (attributes) {
-      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this)     
+      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this,entity)     
 
       if (Object.keys(names).length > 0) {
         // Merge names and add projection expression

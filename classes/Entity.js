@@ -119,12 +119,13 @@ class Entity {
   // Parses the item
   parse(input,include=[]) {
 
-    // console.log('PARSE:',input._tp,omit)
-    // TODO: include needs to deal with maps
-    
+    // TODO: 'include' needs to handle nested maps?
 
-    // TODO: omit aliases
-    // omit = []
+    // Convert include to roots and de-alias
+    include = include.map(attr => {
+      const _attr = attr.split('.')[0].split('[')[0]
+      return this.schema.attributes[_attr].mapped || _attr
+    })
 
     // Load the schema
     const { schema, linked } = this
@@ -458,6 +459,13 @@ class Entity {
       return payload
     } // end-if
   } // end put
+
+
+  // Query pass-through (default entity)
+  query(pk,options={},params={}) {
+    options.entity = this.name
+    return this.Table.query(pk,options,params)
+  }
 
 
   // Allow for instantiation of an Entity type
