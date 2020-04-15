@@ -17,9 +17,9 @@ There are several really good Object-Relational Mapping tools (ORMs) out there f
 If you like working with ORMs, that's great, and you should definitely give these projects a look. But personally, I really dislike ORMs (especially ones for relational databases). I typically find them cumbersome and likely to generate terribly inefficient queries (you know who you are). So this project is not an ORM, or at least it's not trying to be. You still need to use the DocumentClient directly, handle transactions and failures, and deal with things like `ConditionExpression`s, `ProjectionExpressions`, and `ConsistentRead`s. But this library will (hopefully) make the vast majority of your DynamoDB interactions super simple, and maybe even a little bit fun! 😎
 
 ## Features
-- **Table Schemas and DynamoDB Typings:** Define your data model using a simple JavaScript object structure, assign DynamoDB data types, and optionally set defaults.
+- **Table Schemas and DynamoDB Typings:** Define your data models using a simple JavaScript object structure, assign DynamoDB data types, and optionally set defaults.
 - **Magic UpdateExpressions:** Writing complex `UpdateExpression` strings is a major pain, especially if the input data changes the underlying clauses or requires dynamic (or nested) attributes. This library handles everything from simple `SET` clauses, to complex `list` and `set` manipulations, to defaulting values with smartly applied `if_not_exists()` to avoid overwriting data.
-- **Bidirectional Aliasing:** When building single table data models, you can define multiple schemas that map to the same table. Each schema can reuse fields (like `pk`,`sk`, and `data`) and map them to different aliases depending on the record type. Your data is automatically mapped correctly when reading and writing data.
+- **Bidirectional Aliasing:** When building single table data models, you can define multiple schemas that map to the same table. Each schema can reuse fields (like `pk`,`sk`, and `data`) and map them to different aliases depending on the item type. Your data is automatically mapped correctly when reading and writing data.
 - **Composite Key Generation and Field Mapping:** Doing some fancy data modeling with composite keys? Like setting your `sortKey` to `[country]#[region]#[state]#[county]#[city]#[neighborhood]` model hierarchies? DynamoDB Toolbox lets you map data to these composite keys which will both autogenerate the value *and* parse them into fields for you.
 - **Type Coercion and Validation:** Automatically coerce values to strings, numbers and booleans to ensure consistent data types in your DynamoDB tables. Validate `list`, `map`, and `set` types against your data. Oh yeah, and `set`s are automatically handled for you. 😉
 
@@ -31,18 +31,18 @@ Install the DynamoDB Toolbox with npm:
 npm i dynamodb-toolbox
 ```
 
-Require or import `Model` from `dynamodb-toolbox`:
+Require or import `ItemType` from `dynamodb-toolbox`:
 
 ```javascript
-const { Model } = require('dynamodb-toolbox')
+const { ItemType } = require('dynamodb-toolbox')
 ```
 
 Create your schema:
 
 ```javascript
-const MyModel = new Model('MyModel',{
-  // Specify table name
-  table: 'my-dynamodb-table',
+const Customer = new ItemType({
+  // Specify item type name
+  name: 'Customer',
 
   // Define partition and sort keys
   partitionKey: 'pk',
@@ -75,7 +75,7 @@ let item = {
 }
 
 // Use the 'put' method of MyModel to generate parameters
-let params = MyModel.put(item)
+let params = Customer.put(item)
 
 // Pass the parameters to the DocumentClient's `put` method
 let result = await DocumentClient.put(params).promise()
@@ -188,7 +188,7 @@ schema: {
 
 Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In many cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data *and* parse the output into separate fields.
 
-The basic syntax is to specify an `array` with the mapped field name as he first element, and the index in the composite key as the second element. For example:
+The basic syntax is to specify an `array` with the mapped field name as the first element, and the index in the composite key as the second element. For example:
 
 ```javascript
 schema: {

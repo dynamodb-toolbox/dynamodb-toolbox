@@ -7,10 +7,12 @@
  * @license MIT
  */
 
-const Model = require('./classes/Model')
+const Table = require('./classes/Table')
+const Entity = require('./classes/Entity')
 
 module.exports = {
-  Model
+  Table,
+  Entity
 }
 
 

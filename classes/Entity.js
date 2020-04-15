@@ -1,77 +1,198 @@
 'use strict'
 
+// TODO: make sure pks and sks are of correct types
+
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const parseModel = require('../lib/parseModel')
+// Import parseTable 
+const parseEntity = require('../lib/parseEntity')
+
+// Import additional libraries
+const validateTypes = require('../lib/validateTypes')
 const normalizeData = require('../lib/normalizeData')
 const formatItem = require('../lib/formatItem')
-const validateType = require('../lib/validateType')
 const getKey = require('../lib/getKey')
+
+// Import error handlers
 const { hasValue, error } = require('../lib/utils')
 
 
-class Model {
+// Declare Entity class
+class Entity {
 
-  constructor(name,model) {
-    // TODO: add better validation
-    if (typeof model !== 'object' || Array.isArray(model))
-      error('Please provide a valid model definition')
-    this.Model = parseModel(name,model)
+  // Declare constructor (entity config)
+  constructor(entity) {
+
+    // Sanity check the entity object
+    if (typeof entity !== 'object' || Array.isArray(entity))
+      error('Please provide a valid entity definition')
+ 
+    // Parse the entity and merge into this
+    Object.assign(this,parseEntity(entity))
+    
+  } // end construcor
+
+
+  // Set the Entity's Table
+  set Table(table) {
+    
+    // If a Table (note that instanceof doesn't work here)
+    if (table.constructor.name === 'Table') {
+      
+      // If the Entity doesn't exist in the Table, add it
+      if (!table.Entities.includes(this.name)) {
+        table.Entity = this
+
+      // If a Table has already been added, throw an error
+      } else if (this._table) {
+        error(`This entity is already assigned a Table (${table.name})`)
+      }
+
+      // Set the Entity's table
+      this._table = table
+      
+      // If an entity tracking field is enabled, add the attribute and the default
+      if (table.Table.entityField) {
+        this.schema.attributes[table.Table.entityField] = { 
+          type: 'string', alias: 'type', default: this.name
+        }
+        this.defaults[table.Table.entityField] = this.name
+      } // end if entity tracking
+    
+    // Throw an error if not a valid Table
+    } else {
+      error('Invalid Table')
+    }
+
+  } // end set table
+
+
+  // Returns the Entity's Table
+  get Table() {
+    return this._table
   }
 
-  // returns the model object
-  model() {
-    return this.Model
+  // Return reference to the DocumentClient
+  get DocumentClient() {
+    return this._table.DocumentClient
   }
 
-  field(field) {
-    // console.log(this.model.schema);
-    return this.Model.schema[field] && this.Model.schema[field].mapped ? this.Model.schema[field].mapped
-      : this.Model.schema[field] ? field
-      : error(`'${field}' does not exist or is an invalid alias`)
+
+  // Sets the auto execute mode (default to true)
+  set autoExecute(val) { this._execute = typeof val === 'boolean' ? val : undefined }
+
+  // Gets the current auto execute mode
+  get autoExecute() { 
+    return typeof this._execute === 'boolean' ? this._execute
+      : typeof this.Table.autoExecute === 'boolean' ? this.Table.autoExecute
+      : true
   }
 
-  partitionKey() { return this.Model.partitionKey }
-  sortKey() { return this.Model.sortKey }
+  // Sets the auto parse mode (default to true)
+  set autoParse(val) { this._parse = typeof val === 'boolean' ? val : undefined }
 
-  parse(input,omit=[]) {
+  // Gets the current auto execute mode
+  get autoParse() {
+    return typeof this._parse === 'boolean' ? this._parse
+      : typeof this.Table.autoParse === 'boolean' ? this.Table.autoParse
+      : true
+  }
+
+  // Primary key getters
+  get partitionKey() { return this.schema.partitionKey }
+  get sortKey() { return this.schema.sortKey }
+
+  // Single attribute getter
+  // TODO: is this necessary?
+  attribute(attr) {
+    return this.Entity.attributes[attr] && this.Entity.attributes[attr].mapped ? 
+      this.Entity.attributes[attr].mapped
+      : this.Entity.attributes[attr] ? attr
+      : error(`'${attr}' does not exist or is an invalid alias`)
+  }
+
+
+  // Parses the item
+  parse(input,include=[]) {
+
+    // console.log('PARSE:',input._tp,omit)
+    // TODO: include needs to deal with maps
+    
+
+    // TODO: omit aliases
+    // omit = []
+
     // Load the schema
-    let { schema, linked } = this.Model
+    const { schema, linked } = this
 
     // Assume standard response from DynamoDB
-    let data = input.Item || input.Items || input
+    const data = input.Item || input.Items || input
 
     if (Array.isArray(data)) {
-      return data.map(item => formatItem(schema,linked,item,omit))
+      return data.map(item => formatItem(this.DocumentClient)(schema.attributes,linked,item,include))
     } else {
-      return formatItem(schema,linked,data,omit)
+      return formatItem(this.DocumentClient)(schema.attributes,linked,data,include)
     }
-  }
+  } // end parse
 
-  get(item={},params={}) {
+
+  // GET - get item
+  async get(item={},options={},params={}) {
     // Extract schema and merge defaults
-    let { schema, defaults, linked, partitionKey, sortKey, table } = this.Model
-    let data = normalizeData(schema,linked,Object.assign({},defaults,item),true)
+    const { schema, defaults, linked, _table } = this
+    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item),true)
 
-    return Object.assign(
+    // Generate the payload
+    const payload = Object.assign(
       {
-        TableName: table,
-        Key: getKey(data,schema,partitionKey,sortKey)
+        TableName: _table.name,
+        Key: getKey(this.DocumentClient)(data,schema.attributes,schema.partitionKey,schema.sortKey)
       },
       typeof params === 'object' ? params : {}
     )
-  }
 
-  delete(item={},params={}) {
-    return this.get(item,params)
-  }
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = await this.DocumentClient.get(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+      } else {
+        return result
+      }
+    } else {
+      return payload
+    } // end if-else
+  } // end get
 
-  // Generate update expression
+
+  // DELETE - delete item
+  async delete(item={},options={},params={}) {
+    // Generate the payload (same as get)
+    const payload = await this.get(item,params,{ execute: false })
+    
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = this.DocumentClient.delete(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+      } else {
+        return result
+      }
+    } else {
+      return payload
+    } // end if-else
+  } // end delete
+
+
+  // UPDATE - update item
   update(item={},
+    options={},
     {
       SET=[],
       REMOVE=[],
@@ -99,10 +220,13 @@ class Model {
     //     error(`ConditionExpression must be a string`)
 
     // Extract schema and defaults
-    let { schema, defaults, required, linked, partitionKey, sortKey, table } = this.Model
+    let { schema, defaults, required, linked, _table } = this
+
+    // Initialize validateType with the DocumentClient
+    let validateType = validateTypes(this.DocumentClient)
 
     // Merge defaults
-    let data = normalizeData(schema,linked,Object.assign({},defaults,item))
+    let data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
 
     // Check for required fields
     Object.keys(required).forEach(field =>
@@ -110,7 +234,7 @@ class Model {
     ) // end required field check
 
     // Check for partition and sort keys
-    let Key = getKey(data,schema,partitionKey,sortKey)
+    let Key = getKey(this.DocumentClient)(data,schema.attributes,schema.partitionKey,schema.sortKey)
 
     // Init names and values
     let names = {}
@@ -118,15 +242,15 @@ class Model {
 
     // Loop through valid fields and add appropriate action
     Object.keys(data).forEach(function(field) {
-      let mapping = schema[field]
+      let mapping = schema.attributes[field]
 
       // Remove null or empty fields
       if ((data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
         REMOVE.push(`#${field}`)
         names[`#${field}`] = field
       } else if (
-        field !== partitionKey
-        && field !== sortKey
+        field !== schema.partitionKey
+        && field !== schema.sortKey
         && (mapping.save === undefined || mapping.save === true)
         && (!mapping.link || (mapping.link && mapping.save === true))
       ) {
@@ -246,20 +370,20 @@ class Model {
     })
 
     // Create the update expression
-    let expression = (
+    const expression = (
       (SET.length > 0 ? 'SET ' + SET.join(', ') : '')
       + (REMOVE.length > 0 ? ' REMOVE ' + REMOVE.join(', ') : '')
       + (ADD.length > 0 ? ' ADD ' + ADD.join(', ') : '')
       + (DELETE.length > 0 ? ' DELETE ' + DELETE.join(', ') : '')
     ).trim()
 
+    // Merge attribute values
+    const attr_values = Object.assign(values,ExpressionAttributeValues)
 
-    let attr_values = Object.assign(values,ExpressionAttributeValues)
-
-    // Return the parameters
-    return Object.assign(
+    // Generate the payload
+    const payload = Object.assign(
       {
-        TableName: table,
+        TableName: _table.name,
         Key,
         UpdateExpression: expression,
         ExpressionAttributeNames: Object.assign(names,ExpressionAttributeNames)
@@ -268,14 +392,31 @@ class Model {
       Object.keys(attr_values).length > 0 ? { ExpressionAttributeValues: attr_values } : {}
     ) // end assign
 
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = this.DocumentClient.update(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+      } else {
+        return result
+      }      
+    } else {
+      return payload
+    } // end if-else
   } // end update
 
-  put(item={},params={}) {
+
+  // PUT - put item
+  put(item={},options={},params={}) {
     // Extract schema and defaults
-    let { schema, defaults, required, linked, partitionKey, sortKey, table } = this.Model
+    const { schema, defaults, required, linked, _table } = this
+
+    // Initialize validateType with the DocumentClient
+    const validateType = validateTypes(this.DocumentClient)
 
     // Merge defaults
-    let data = normalizeData(schema,linked,Object.assign({},defaults,item))
+    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
 
     // Check for required fields
     Object.keys(required).forEach(field =>
@@ -283,14 +424,15 @@ class Model {
     ) // end required field check
 
     // Checks for partition and sort keys
-    getKey(data,schema,partitionKey,sortKey)
+    getKey(this.DocumentClient)(data,schema.attributes,schema.partitionKey,schema.sortKey)
 
-    // Loop through valid fields and add appropriate action
-    return Object.assign(
+    // Generate the payload
+    const payload = Object.assign(
       {
-        TableName: table,
+        TableName: _table.name,
+        // Loop through valid fields and add appropriate action
         Item: Object.keys(data).reduce((acc,field) => {
-          let mapping = schema[field]
+          let mapping = schema.attributes[field]
           let value = validateType(mapping,field,data[field],data)
           return hasValue(value)
             && (mapping.save === undefined || mapping.save === true)
@@ -302,8 +444,40 @@ class Model {
       },
       typeof params === 'object' ? params : {}
     )
+
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = this.DocumentClient.put(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+      } else {
+        return result
+      }       
+    } else {
+      return payload
+    } // end-if
+  } // end put
+
+
+  // Allow for instantiation of an Entity type
+  // TODO: This needs more thought.
+  item() {
+    const entity = this.Entity
+    return new class {
+      constructor() {
+        this.type = entity.name
+        this.entity = entity
+      } // end
+
+      save() {
+        console.log('saving the item')
+        
+      }
+    }
   }
 
-} // end Model
+} // end Entity
 
-module.exports = Model
+// Export the Entity class
+module.exports = Entity
