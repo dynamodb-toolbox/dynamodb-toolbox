@@ -7,6 +7,8 @@
 
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
+# DOCUMENTATION IS NOT COMPLETE FOR v0.2
+
 ### **NOTE:** This project is in BETA. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
 The **DynamoDB Toolbox** is a simple set of tools for working with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It lets you define your data models (with typings and aliases) and map them to your DynamoDB table. You can then **generate parameters** to `put`, `get`, `delete`, and `update` data by passing in a JavaScript object. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
@@ -31,24 +33,41 @@ Install the DynamoDB Toolbox with npm:
 npm i dynamodb-toolbox
 ```
 
-Require or import `ItemType` from `dynamodb-toolbox`:
+Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 
 ```javascript
-const { ItemType } = require('dynamodb-toolbox')
+const { Table, Entity } = require('dynamodb-toolbox')
 ```
 
-Create your schema:
+Create a Table:
 
 ```javascript
-const Customer = new ItemType({
-  // Specify item type name
-  name: 'Customer',
+// Require AWS SDK and instantiate DocumentClient
+const DynamoDB = require('aws-sdk/clients/dynamodb')
+const DocumentClient = new DynamoDB.DocumentClient()
+
+// Instantiate a table
+const MyTable = new Table({
+  // Specify table name
+  name: 'my-table',
 
   // Define partition and sort keys
   partitionKey: 'pk',
-  sortKey: 'sk',
+  sortKey: 'sk'
+})
 
-  // Define schema
+// Add DocumentClient to the table
+MyTable.DocumentClient = DocumentClient
+```
+
+Create an Entity:
+
+```javascript
+const Customer = new Entity({
+  // Specify entity name
+  name: 'Customer',
+
+  // Define attributes
   schema: {
     pk: { type: 'string', alias: 'id' },
     sk: { type: 'string', hidden: true },
@@ -59,12 +78,15 @@ const Customer = new ItemType({
 })
 ```
 
-Put an item using the DocumentClient:
+Add the entity to the table:
 
 ```javascript
-// Require AWS SDK and instantiate DocumentClient
-const DynamoDB = require('aws-sdk/clients/dynamodb')
-const DocumentClient = new DynamoDB.DocumentClient()
+MyTable.Entity = Customer
+```
+
+Put an item:
+
+```javascript
 
 // Create my item (using my aliases)
 let item = {
@@ -74,11 +96,8 @@ let item = {
   date_added: '2019-11-28'
 }
 
-// Use the 'put' method of MyModel to generate parameters
-let params = Customer.put(item)
-
-// Pass the parameters to the DocumentClient's `put` method
-let result = await DocumentClient.put(params).promise()
+// Use the 'put' method of Customer to generate parameters
+let result = await Customer.put(item)
 ```
 
 The item will be saved to DynamoDB like this:
@@ -101,14 +120,8 @@ let item = {
   date_added: '2019-11-28'
 }
 
-// Use the 'get' method of MyModel to generate parameters
-let params = MyModel.get(item)
-
-// Pass the parameters to the DocumentClient's `get` method
-let response = await DocumentClient.get(params).promise()
-
-// Parse the raw response with the `parse` method
-let result = MyModel.parse(response)
+// Use the 'get' method of Customer
+let response = await Customer.get(item)
 ```
 
 This will return the object mapped to your aliases and composite key mappings:
@@ -122,35 +135,31 @@ This will return the object mapped to your aliases and composite key mappings:
 }
 ```
 
-## Specifying Models and Schemas
+## Specifying Entities and Attributes
 
-The `Model` takes two parameters. The first is a `string` that represents the **name** of the model. The second parameter is an `object` that accepts the following properties:
+`Entity` takes a single parameter of type `object` that accepts the following properties:
 
 | Property | Type | Required | Description |
 | -------- | :--: | :--: | ----------- |
-| table  | `String` | yes | The name of your DynamoDB table |
-partitionKey | `String` | yes | Name of the field that represents your partition key |
-sortKey | `String` | no | Name of the field that represents your sort key |
-model | `Boolean` | no | Add and manage `__model` field |
 timestamps | `Boolean` | no | Automatically add and manage `created` and `modified` fields |
 created | `string` | no | Override default `created` field name |
 modified | `string` | no | Override default `modified` field name |
-schema | `object` | yes | Complex type that specifies the schema for the model (see below) |
+attributes | `object` | yes | Complex type that specifies the schema for the model (see below) |
 
-### Schema Definition
+### Attributes
 
-The `schema` is an `object` that represents the field names, types, and other properties related to each field. Each key in the object represents the **field name** and the value represents its properties. The value can be a `string` that represents the field type, an an `object` that allows for additional configurations, or an `array` that maps to composite keys.
+The `attributes` property is an `object` that represents the attribute names, types, and other properties related to each attribute. Each key in the object represents the **attribute name** and the value represents its properties. The value can be a `string` that represents the DynamoDB type, an `object` that allows for additional configurations, or an `array` that maps to composite keys.
 
 #### Using a `string`
 
-Schema fields can be defined using only a `string` value that corresponds to a DynamoDB type.
+Attributes can be defined using only a `string` value that corresponds to a DynamoDB type.
 
 ```javascript
 schema: {
-  field1: 'string',
-  field2: 'number',
-  field3: 'list',
-  field4: 'map',
+  attr1: 'string',
+  attr2: 'number',
+  attr3: 'list',
+  attr4: 'map',
   ...
 }
 ```
@@ -159,23 +168,23 @@ Valid types are: `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set
 
 #### Using an `object`
 
-For more control over a field's behavior, you can specify an object as the field's value. Some options are specific to certain types. The following properties and options are available, all of which are optional:
+For more control over an attribute's behavior, you can specify an object as the attribute's value. Some options are specific to certain types. The following properties and options are available, all of which are optional:
 
 | Property | Type | For Types | Description |
 | -------- | :--: | :--: | ----------- |
-| type  | `String` | all | The DynamoDB type for this field. Valid values are `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`. Defaults to `string`. |
+| type  | `String` | all | The DynamoDB type for this attribute. Valid values are `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`. Defaults to `string`. |
 | coerce  | `boolean` | `string`, `boolean`, `number`, `list` | Coerce values to the specified type. Enabled by default on `string`, `boolean`, and `number`. If enabled on `list` types, the interpreter will try to split a string by commas. |
 | default  | *same as* `type` or `function` | all | Specifies a default value (if none provided) when using `put` or `update`. This also supports functions for creating custom default. See more below.  |
 | onUpdate  | `boolean` | all | Forces `default` values to be passed on every `update`. |
-| hidden  | `boolean` | all | Hides field from returned JavaScript object when using the `parse` method. |
-| required  | `boolean` or "always" | all | Specifies whether a field is required. A value of `true` requires the field for all `put` operations. A `string` value of "always" requires the field for `put` *and* `update` operations. |
-| alias  | `string` | all | Adds a bidirectional alias to the field. All input methods can use either the field name or the alias when passing in data. The `parse` method will map fields to their alias. |
-| setType  | `string` | `set` | Specifies the type for `set` fields. Allowed values are `string`,`number`,`binary` |
+| hidden  | `boolean` | all | Hides attribute from returned JavaScript object when auto-parsing is enabled or when using the `parse` method. |
+| required  | `boolean` or "always" | all | Specifies whether an attribute is required. A value of `true` requires the attribute for all `put` operations. A `string` value of "always" requires the attribute for `put` *and* `update` operations. |
+| alias  | `string` | all | Adds a bidirectional alias to the attribute. All input methods can use either the attribute name or the alias when passing in data. Auto-parsing and the `parse` method will map attributes to their alias. |
+| setType  | `string` | `set` | Specifies the type for `set` attributes. Allowed values are `string`,`number`,`binary` |
 
 Example:
 
 ```javascript
-schema: {
+attributes: {
   pk: { type: 'string', alias: 'user_id' },
   sk: { type: 'number', hidden: true },
   data: { coerce: false, required: true, alias: 'name' },
@@ -186,12 +195,12 @@ schema: {
 
 #### Using an `array` for composite keys
 
-Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In many cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data *and* parse the output into separate fields.
+Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In many cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data *and* parse the output into separate attributes.
 
-The basic syntax is to specify an `array` with the mapped field name as the first element, and the index in the composite key as the second element. For example:
+The basic syntax is to specify an `array` with the mapped attribute name as the first element, and the index in the composite key as the second element. For example:
 
 ```javascript
-schema: {
+attributes: {
   pk: { alias: 'user_id' },
   sk: { hidden: true },
   status: ['sk',0],
@@ -200,13 +209,13 @@ schema: {
 }
 ```
 
-This maps the `status` and `date` fields to the `sk` field. If a `status` and `date` are supplied, they will be combined into the `sk` field as `[status]#[date]`. When the data is retrieved, the `parse` method will automatically split the `sk` field and return the values with `status` and `date` keys. By default, the values of composite keys are not stored as separate attributes, but that can be changed by adding in an option configuration as the third array element.
+This maps the `status` and `date` attributes to the `sk` attribute. If a `status` and `date` are supplied, they will be combined into the `sk` attribute as `[status]#[date]`. When the data is retrieved, the `parse` method will automatically split the `sk` attribute and return the values with `status` and `date` keys. By default, the values of composite keys are not stored as separate attributes, but that can be changed by adding in an option configuration as the third array element.
 
 **Passing in a configuration**
 Composite key mappings are `string`s by default, but can be overridden by specifying either `string`,`number`, or `boolean` as the third element in the array. Composite keys are automatically coerced into `string`s, so only the aforementioned types are allowed. You can also pass in a configuration `object` as the third element. This uses the same configuration properties as above. In addition to these properties, you can also specify a `boolean` property of `save`. This will write the value to the mapped composite key, but also add a separate attribute that stores the value.
 
 ```javascript
-schema: {
+attributes: {
   pk: { alias: 'user_id' },
   sk: { hidden: true },
   status: ['sk',0, { type: 'boolean', save: true, default: true }],
@@ -222,7 +231,7 @@ In simple situations, defaults can be static values. However, for advanced use c
 **Generate the current date and time:**
 
 ```javascript
-schema: {
+attributes: {
   pk: { alias: 'user_id' },
   created: { default: () => new Date().toISOString() },
   ...
@@ -232,7 +241,7 @@ schema: {
 **Generate a custom composite key:**
 
 ```javascript
-schema: {
+attributes: {
   pk: { alias: 'user_id' },
   sk: { default: (data) => `sort-${data.status}|${data.date_added}` },
   status: 'boolean',
@@ -244,7 +253,7 @@ schema: {
 **Create conditional defaults:**
 
 ```javascript
-schema: {
+attributes: {
   pk: { alias: 'user_id' },
   sk: { default: (data) => {
     if (data.status && data.date_added) {
