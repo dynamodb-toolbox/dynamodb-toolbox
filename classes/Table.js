@@ -8,7 +8,7 @@
 
 // Import parseTable 
 const parseTable = require('../lib/parseTable')
-const parseFilter = require('../lib/expressionBuilder')
+const parseFilters = require('../lib/expressionBuilder')
 const parseProjections = require('../lib/projectionBuilder')
 const validateTypes = require('../lib/validateTypes')
 
@@ -177,7 +177,7 @@ class Table {
   // Table actions
   // ----------------------------------------------------------------//
 
-  // TODO: Query the table
+  // Query the table
   async query(pk,options={},params={}) { 
     
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
@@ -312,7 +312,7 @@ class Table {
         expression,
         names,
         values
-      } = parseFilter(filters,this,entity)
+      } = parseFilters(filters,this,entity)
 
       if (Object.keys(names).length > 0) {
 
