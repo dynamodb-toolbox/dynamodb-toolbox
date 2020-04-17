@@ -109,8 +109,8 @@ class Entity {
   // Single attribute getter
   // TODO: is this necessary?
   attribute(attr) {
-    return this.Entity.attributes[attr] && this.Entity.attributes[attr].mapped ? 
-      this.Entity.attributes[attr].mapped
+    return this.Entity.attributes[attr] && this.Entity.attributes[attr].map ? 
+      this.Entity.attributes[attr].map
       : this.Entity.attributes[attr] ? attr
       : error(`'${attr}' does not exist or is an invalid alias`)
   }
@@ -124,7 +124,7 @@ class Entity {
     // Convert include to roots and de-alias
     include = include.map(attr => {
       const _attr = attr.split('.')[0].split('[')[0]
-      return this.schema.attributes[_attr].mapped || _attr
+      return this.schema.attributes[_attr].map || _attr
     })
 
     // Load the schema

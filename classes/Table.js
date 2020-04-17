@@ -139,7 +139,7 @@ class Table {
             } // end check type
 
           // else if the attribute doesn't exist
-          } else if (!entity.schema.attributes[attr].mapped) {
+          } else if (!entity.schema.attributes[attr].map) {
             
             // Add type and entity map
             this.Table.attributes[attr] = Object.assign(
