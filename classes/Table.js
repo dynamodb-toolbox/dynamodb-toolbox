@@ -26,23 +26,14 @@ const conditonError = (op) =>
 class Table {
 
   // Declare constructor (table config and optional entities)
-  constructor(table,docClient,entities) {
+  constructor(table) { //},docClient,entities) {
 
     // Sanity check the table definition
     if (typeof table !== 'object' || Array.isArray(table))
       error('Please provide a valid table definition')
     
-    
     // Parse the table and merge into this
     Object.assign(this,parseTable(table))
-
-    // If 'entities' are passed, attempt to add them
-    if (typeof entities === 'object') {
-      this.Entity = entities
-    }
-
-    // Set the document client
-    if (docClient) this.DocumentClient = docClient
     
   } // end constructor
 
@@ -71,8 +62,8 @@ class Table {
     }
   } // end DocmentClient
 
-  // Adds a new Entity to the table
-  set Entity(entity) {
+  // Adds a new Entities to the table
+  set entities(entity) {
 
     // Coerce entity to array
     let entities = Array.isArray(entity) ? entity : [entity]
@@ -85,7 +76,7 @@ class Table {
       if (entity instanceof Entity) {    
         
         // Check for existing entity name
-        if (this.Entities.includes(entity.name)) {
+        if (this._entities.includes(entity.name)) {
           error(`Entity name '${entity.name}' already exists`)
         }
 
@@ -98,21 +89,85 @@ class Table {
           error(`'${entity.name}' is a reserved word and cannot be used to name an Entity`)
         }
 
-        // Check for matching partitionKeys
-        if (this.Table.partitionKey != entity.schema.partitionKey) {
-          error(`Entity's partitionKey does not match Table's`)
+        // Check for partitionKey
+        if (!entity.schema.keys.partitionKey) {
+          error(`Entity must have a partitionKey`)
         }
 
-        // Check for matching sortKeys (if applicable)
-        if (this.Table.sortKey && this.Table.sortKey != entity.schema.sortKey) {
-          error(`${entity.name} entity's sortKey does not match Table's`)
-        } else if (!this.Table.sortKey && entity.schema.sortKey) {
-          error(`Entity contains a sortKey, but the Table does not`)
+        // Check for sortKeys (if applicable)
+        if (!this.Table.sortKey && entity.schema.keys.sortKey) {
+          error(`${entity.name} entity contains a sortKey, but the Table does not`)
+        } else if (this.Table.sortKey && !entity.schema.keys.sortKey) {
+          error(`${entity.name} entity does not have a sortKey defined`)
         }
+
+        // Process Entity index keys
+        for (const key in entity.schema.keys) {
+          // Set the value of the key
+          const attr = entity.schema.keys[key]
+
+          // Switch based on key type (pk, sk, or index)
+          switch(key) {
+
+            // For the primary index
+            case 'partitionKey':
+            case 'sortKey':
+              // If the attribute's name doesn't match the table's pk/sk name
+              if (attr !== this.Table[key]) {
+                // If the table's index attribute name does not conflict with another entity attribute
+                if (!entity.schema.attributes[this.Table[key]]) {
+                  // Add the attribute using the same config and add alias
+                  entity.schema.attributes[this.Table[key]] = Object.assign(
+                    {},
+                    entity.schema.attributes[attr],
+                    { alias: attr }
+                  ) // end assign
+                  // Add a map from the attribute to the new index attribute
+                  entity.schema.attributes[attr].map = this.Table[key]
+                // Otherwise, throw an error
+                } else {
+                  error(`The Table's ${key} name (${this.Table[key]}) conflicts with an Entity attribute name`)
+                } // end if-else
+              } // end if
+              break
+            
+            // For secondary indexes
+            default:
+              // Verify that the table has this index
+              if (!this.Table.indexes[key]) error(`'${key}' is not a valid secondary index name`)
+              
+              // Loop through the key types (pk/sk) defined in the key mapping
+              for (const keyType in attr) {
+                // If the attribute's name doesn't match the indexes attribute name
+                if (attr[keyType] !== this.Table.indexes[key][keyType]) {
+                  // If the indexes attribute name does not conflict with another entity attribute
+                  if (!entity.schema.attributes[this.Table.indexes[key][keyType]]) {
+                    // Add the index attribute using the same config and add alias
+                    entity.schema.attributes[this.Table.indexes[key][keyType]] = Object.assign(
+                      {},
+                      entity.schema.attributes[attr[keyType]],
+                      { alias: attr[keyType] }
+                    ) // end assign
+                    // Add a map from the attribute to the new index attribute
+                    entity.schema.attributes[attr[keyType]].map = this.Table.indexes[key][keyType]
+                  // Otherwise, throw an error
+                  } else {
+                    // console.log(
+                    //   entity.schema.attributes[this.Table.indexes[key][keyType]][keyType]
+                    //   // || entity.schema.attributes[this.Table.indexes[key][keyType]][keyType].includes(key)
+                    // )
+                    error(`${key}'s ${keyType} name (${this.Table.indexes[key][keyType]}) conflicts with an Entity attribute name`)
+                  } // end if-else
+                } // end if
+              } // end for
+              break
+
+          } // end switch
+        } // end for
 
         // Loop through the Entity's attributes and validate their types against the Table definition
         // Add attribute to table if not defined
-        for (let attr in entity.schema.attributes) {          
+        for (let attr in entity.schema.attributes) {
           
           // If an entity field conflicts with the entityField or its alias, throw an error
           if (this.Table.entityField && (attr === this.Table.entityField || attr === entity._tpAlias)) {
@@ -126,16 +181,11 @@ class Table {
                 && (this.Table.attributes[attr].type !== 'set' 
                   || this.Table.attributes[attr].setType === entity.schema.attributes[attr].setType)
             ) {
-              // If entity map exists, append to array
-              if (Array.isArray(this.Table.attributes[attr].entities)) {
-                this.Table.attributes[attr].entities.push(entity.name)
-              // else create a new array w/ entity name
-              } else {
-                this.Table.attributes[attr].entities = [entity.name]
-              } // end if-else entity map exists
+              // Add entity mappings
+              this.Table.attributes[attr].mappings[entity.name] = entity.schema.attributes[attr].alias || attr
             // Otherwise throw an error
             } else {
-              error(`${entity.name} attribute type '${attr}' (${entity.schema.attributes[attr].type}) does not match table`)
+              error(`${entity.name} attribute type '${attr}' (${entity.schema.attributes[attr].type}) does not match table's type (${this.Table.attributes[attr].type})`)
             } // end check type
 
           // else if the attribute doesn't exist
@@ -145,7 +195,7 @@ class Table {
             this.Table.attributes[attr] = Object.assign(
               {
                 type: entity.schema.attributes[attr].type,
-                entities: [entity.name] 
+                mappings: { [entity.name]: entity.schema.attributes[attr].alias || attr }
               },
               // Add setType if type 'set'
               entity.schema.attributes[attr].type === 'set' 
@@ -157,14 +207,14 @@ class Table {
           
         } // end for loop to check/add attributes
         
-        // Add the Entity to the Table's Entities list
-        this.Entities.push(entity.name)
+        // Add the Entity to the Table's entities list
+        this._entities.push(entity.name)
 
         // Add the entity to the Table object
         this[entity.name] = entity
 
         // Set the Entity's table by reference
-        entity.Table = this
+        entity.table = this
 
       } else {
         error('Invalid Entity')
@@ -172,6 +222,10 @@ class Table {
     } // end for
 
   } // end addEntity
+
+  get entities() {
+    return this._entities
+  }
 
   // ----------------------------------------------------------------//
   // Table actions

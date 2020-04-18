@@ -8,7 +8,7 @@
  * @license MIT
  */
 
-// Import parseTable 
+// Import parseEntity 
 const parseEntity = require('../lib/parseEntity')
 
 // Import additional libraries
@@ -38,14 +38,14 @@ class Entity {
 
 
   // Set the Entity's Table
-  set Table(table) {
+  set table(table) {
     
     // If a Table (note that instanceof doesn't work here)
     if (table.constructor.name === 'Table') {
       
       // If the Entity doesn't exist in the Table, add it
-      if (!table.Entities.includes(this.name)) {
-        table.Entity = this
+      if (!table._entities.includes(this.name)) {
+        table.entities = this
 
       // If a Table has already been added, throw an error
       } else if (this._table) {
@@ -72,13 +72,22 @@ class Entity {
 
 
   // Returns the Entity's Table
-  get Table() {
-    return this._table
+  get table() {
+    if (this._table) {
+      return this._table
+    } else {
+      return error(`The '${this.name}' entity must be attached to a Table to perform this operation`)
+    }
   }
+
 
   // Return reference to the DocumentClient
   get DocumentClient() {
-    return this._table.DocumentClient
+    if (this.table.DocumentClient) {
+      return this.table.DocumentClient
+    } else {
+      return error('DocumentClient required for this operation')
+    }
   }
 
 
@@ -88,7 +97,7 @@ class Entity {
   // Gets the current auto execute mode
   get autoExecute() { 
     return typeof this._execute === 'boolean' ? this._execute
-      : typeof this.Table.autoExecute === 'boolean' ? this.Table.autoExecute
+      : typeof this.table.autoExecute === 'boolean' ? this.table.autoExecute
       : true
   }
 
@@ -98,7 +107,7 @@ class Entity {
   // Gets the current auto execute mode
   get autoParse() {
     return typeof this._parse === 'boolean' ? this._parse
-      : typeof this.Table.autoParse === 'boolean' ? this.Table.autoParse
+      : typeof this.table.autoParse === 'boolean' ? this.table.autoParse
       : true
   }
 
@@ -462,28 +471,28 @@ class Entity {
 
 
   // Query pass-through (default entity)
-  query(pk,options={},params={}) {
+  query(pk,options={},params={}) {    
     options.entity = this.name
-    return this.Table.query(pk,options,params)
+    return this.table.query(pk,options,params)
   }
 
 
   // Allow for instantiation of an Entity type
   // TODO: This needs more thought.
-  item() {
-    const entity = this.Entity
-    return new class {
-      constructor() {
-        this.type = entity.name
-        this.entity = entity
-      } // end
+  // item() {
+  //   const entity = this.Entity
+  //   return new class {
+  //     constructor() {
+  //       this.type = entity.name
+  //       this.entity = entity
+  //     } // end
 
-      save() {
-        console.log('saving the item')
+  //     save() {
+  //       console.log('saving the item')
         
-      }
-    }
-  }
+  //     }
+  //   }
+  // }
 
 } // end Entity
 
