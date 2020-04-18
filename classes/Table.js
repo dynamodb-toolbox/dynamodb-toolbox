@@ -138,10 +138,22 @@ class Table {
               
               // Loop through the key types (pk/sk) defined in the key mapping
               for (const keyType in attr) {
+
+                // Make sure the table index contains the defined key types
+                if (!this.Table.indexes[key][keyType])
+                  error(`${entity.name} contains a ${keyType}, but it is not used by ${key}`)
+
+
                 // If the attribute's name doesn't match the indexes attribute name
                 if (attr[keyType] !== this.Table.indexes[key][keyType]) {
                   // If the indexes attribute name does not conflict with another entity attribute
                   if (!entity.schema.attributes[this.Table.indexes[key][keyType]]) {
+
+                    // If there is already a mapping for this attribute, make sure they match
+                    if (entity.schema.attributes[attr[keyType]].map
+                      && entity.schema.attributes[attr[keyType]].map !== this.Table.indexes[key][keyType])
+                      error(`${key}'s ${keyType} cannot map to the '${attr[keyType]}' alias because it is already mapped to another table attribute`)
+
                     // Add the index attribute using the same config and add alias
                     entity.schema.attributes[this.Table.indexes[key][keyType]] = Object.assign(
                       {},
@@ -150,16 +162,29 @@ class Table {
                     ) // end assign
                     // Add a map from the attribute to the new index attribute
                     entity.schema.attributes[attr[keyType]].map = this.Table.indexes[key][keyType]
-                  // Otherwise, throw an error
                   } else {
-                    // console.log(
-                    //   entity.schema.attributes[this.Table.indexes[key][keyType]][keyType]
-                    //   // || entity.schema.attributes[this.Table.indexes[key][keyType]][keyType].includes(key)
-                    // )
-                    error(`${key}'s ${keyType} name (${this.Table.indexes[key][keyType]}) conflicts with an Entity attribute name`)
+                    const config = entity.schema.attributes[this.Table.indexes[key][keyType]]
+                    
+                    // If the existing attribute isn't used by this index
+                    if (
+                      (!config.partitionKey && !config.sortKey)
+                      || (config.partitionKey && !config.partitionKey.includes(key))
+                      || (config.sortKey && !config.sortKey.includes(key))
+                    ) {
+                      error(`${key}'s ${keyType} name (${this.Table.indexes[key][keyType]}) conflicts with another Entity attribute name`)
+                    } // end if
                   } // end if-else
                 } // end if
               } // end for
+
+              // Check that composite keys define both keys
+              if (this.Table.indexes[key].partitionKey && this.Table.indexes[key].sortKey
+                && (
+                  !entity.schema.attributes[this.Table.indexes[key].partitionKey]
+                  || !entity.schema.attributes[this.Table.indexes[key].sortKey]
+                )) {
+                error(`${key} requires mappings for both the partitionKey and the sortKey`)
+              }
               break
 
           } // end switch
