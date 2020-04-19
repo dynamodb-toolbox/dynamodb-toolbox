@@ -215,17 +215,35 @@ class Entity {
 
 
   // UPDATE - update item
-  update(item={},
-    options={},
-    {
-      SET=[],
-      REMOVE=[],
-      ADD=[],
-      DELETE=[],
-      ExpressionAttributeNames={},
-      ExpressionAttributeValues={},
-      ...params
-    } = {}) {
+  async update(item={},options={},params = {}) {
+
+    // Generate the payload
+    let payload = this.updateSync(item,params)
+
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = this.DocumentClient.update(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+      } else {
+        return result
+      }      
+    } else {
+      return payload
+    } // end if-else
+  } // end delete
+
+  // UPDATE - update item
+  updateSync(item={},{
+    SET=[],
+    REMOVE=[],
+    ADD=[],
+    DELETE=[],
+    ExpressionAttributeNames={},
+    ExpressionAttributeValues={},
+    ...params
+  } = {}) {
 
     // Validate operation types
     if (!Array.isArray(SET)) error('SET must be an array')
@@ -258,7 +276,7 @@ class Entity {
     ) // end required field check
 
     // Check for partition and sort keys
-    let Key = getKey(this.DocumentClient)(data,schema.attributes,schema.partitionKey,schema.sortKey)
+    let Key = getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
 
     // Init names and values
     let names = {}
@@ -415,24 +433,14 @@ class Entity {
       typeof params === 'object' ? params : {},
       Object.keys(attr_values).length > 0 ? { ExpressionAttributeValues: attr_values } : {}
     ) // end assign
+    
+    return payload
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = this.DocumentClient.update(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
-      } else {
-        return result
-      }      
-    } else {
-      return payload
-    } // end if-else
-  } // end update
+  } // end updateSync
 
 
   // PUT - put item
-  put(item={},options={},params={}) {
+  async put(item={},options={},params={}) {
     // Generate the payload
     const payload = this.putSync(item,params)
 
