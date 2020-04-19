@@ -6,6 +6,8 @@
  * @license MIT
  */
 
+// TODO: Check duplicate entity names code
+
 // Import parseTable 
 const parseTable = require('../lib/parseTable')
 const parseFilters = require('../lib/expressionBuilder')

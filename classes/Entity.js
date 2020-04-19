@@ -433,6 +433,26 @@ class Entity {
 
   // PUT - put item
   put(item={},options={},params={}) {
+    // Generate the payload
+    const payload = this.putSync(item,params)
+
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = this.DocumentClient.put(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+      } else {
+        return result
+      }       
+    } else {
+      return payload
+    } // end-if
+  } // end put
+
+
+  // PUT - put item
+  putSync(item={},params={}) {
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
 
@@ -448,7 +468,7 @@ class Entity {
     ) // end required field check
 
     // Checks for partition and sort keys
-    getKey(this.DocumentClient)(data,schema.attributes,schema.partitionKey,schema.sortKey)
+    getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
 
     // Generate the payload
     const payload = Object.assign(
@@ -469,19 +489,8 @@ class Entity {
       typeof params === 'object' ? params : {}
     )
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = this.DocumentClient.put(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
-      } else {
-        return result
-      }       
-    } else {
-      return payload
-    } // end-if
-  } // end put
+    return payload
+  } // end putSync
 
 
   // Query pass-through (default entity)

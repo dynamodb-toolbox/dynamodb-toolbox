@@ -1,61 +1,119 @@
-const { Model } = require('../index')
+const { Table, Entity } = require('../index')
+const { DocumentClient } = require('./bootstrap-tests')
 
-// Define main model for testing
-const TestModel = new Model('TestModel',require('./models/test-model'))
+const TestTable = new Table({
+  name: 'test-table',
+  partitionKey: 'pk',
+  sortKey: 'sk',
+  DocumentClient
+})
 
-// Define simple model for testing
-const SimpleModel = new Model('SimpleModel',require('./models/simple-model'))
+const TestEntity = new Entity({
+  name: 'TestEntity',
+  autoExecute: false,
+  attributes: {
+    email: { type: 'string', partitionKey: true },
+    sort: { type: 'string', sortKey: true },
+    test_string: { type: 'string', coerce: false, default: 'test string' },
+    test_string_coerce: { type: 'string' },
+    test_number: { type: 'number', alias: 'count', coerce: false },
+    test_number_coerce: { type: 'number', default: 0 },
+    test_boolean: { type: 'boolean', coerce: false },
+    test_boolean_coerce: { type: 'boolean' },
+    test_list: { type: 'list' },
+    test_list_coerce: { type: 'list', coerce: true },
+    test_map: { type: 'map', alias: 'contents' },
+    test_string_set: { type: 'set' },
+    test_number_set: { type: 'set' },
+    test_binary_set: { type: 'set' },
+    test_string_set_type: { type: 'set', setType: 'string' },
+    test_number_set_type: { type: 'set', setType: 'number' },
+    test_binary_set_type: { type: 'set', setType: 'binary' },
+    test_string_set_type_coerce: { type: 'set', setType: 'string', coerce: true },
+    test_number_set_type_coerce: { type: 'set', setType: 'number', coerce: true },
+    test_binary: { type: 'binary' },
+    simple_string: 'string',
+    test_composite: ['sort',0, { save: true }],
+    test_composite2: ['sort',1]
+  },
+  table: TestTable
+})
 
-// Define simple model wity sortKey for testing
-const SimpleModelSk = new Model('SimpleModelSk',require('./models/simple-model-sk'))
+const TestTable2 = new Table({
+  name: 'test-table',
+  partitionKey: 'pk',
+  DocumentClient
+})
 
-// Define simple model for testing
-const SimpleModelReq = new Model('SimpleModelReq',require('./models/simple-model-req'))
+const TestEntity2 = new Entity({
+  name: 'TestEntity2',
+  autoExecute: false,
+  attributes: {
+    email: { type: 'string', partitionKey: true },
+    sort: { type: 'string', map: 'sk' },
+    test_composite: ['sort',0, { save: true }],
+    test_composite2: ['sort',1]
+  },
+  table: TestTable2
+})
+
+const TestEntity3 = new Entity({
+  name: 'TestEntity3',
+  autoExecute: false,
+  attributes: {
+    email: { type: 'string', partitionKey: true },
+    test: { required: true },
+    test2: 'string'
+  },
+  table: TestTable2
+})
 
 describe('put',()=>{
 
   it('creates basic item',() => {
-    let { TableName, Item } = TestModel.put({ pk: 'test-pk', sk: 'test-sk' })
+    let { TableName, Item } = TestEntity.putSync({ pk: 'test-pk', sk: 'test-sk' })
+
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
-    expect(Item.__model).toBe('TestModel')
+    expect(Item._tp).toBe('TestEntity')
     expect(Item.test_string).toBe('test string')
-    expect(Item).toHaveProperty('created')
-    expect(Item).toHaveProperty('modified')
+    expect(Item).toHaveProperty('_ct')
+    expect(Item).toHaveProperty('_md')
   })
 
   it('creates item with aliases',() => {
-    let { Item } = TestModel.put({ email: 'test-pk', type: 'test-sk', count: 5 })
+    let { Item } = TestEntity.putSync({ email: 'test-pk', sort: 'test-sk', count: 5 })
+    
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
     expect(Item.test_number).toBe(5)
-    expect(Item.__model).toBe('TestModel')
+    expect(Item._tp).toBe('TestEntity')
     expect(Item.test_string).toBe('test string')
-    expect(Item).toHaveProperty('created')
-    expect(Item).toHaveProperty('modified')
+    expect(Item).toHaveProperty('_ct')
+    expect(Item).toHaveProperty('_md')
   })
 
   it('creates item with default override',() => {
-    let { Item } = TestModel.put({ pk: 'test-pk', sk: 'test-sk', test_string: 'different value' })
+    let { Item } = TestEntity.putSync({ pk: 'test-pk', sk: 'test-sk', test_string: 'different value' })
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
-    expect(Item.__model).toBe('TestModel')
+    expect(Item._tp).toBe('TestEntity')
     expect(Item.test_string).toBe('different value')
-    expect(Item).toHaveProperty('created')
-    expect(Item).toHaveProperty('modified')
+    expect(Item).toHaveProperty('_ct')
+    expect(Item).toHaveProperty('_md')
   })
 
   it('creates item with saved composite field',() => {
-    let { Item } = SimpleModel.put({
+    let { Item } = TestEntity2.putSync({
       pk: 'test-pk',
-      test_composite: 'test'
-    })
+      test_composite: 'test',
+    })  
     expect(Item.pk).toBe('test-pk')
     expect(Item.test_composite).toBe('test')
   })
 
   it('creates item that ignores field with no value',() => {
-    let { Item } = SimpleModel.put({
+    let { Item } = TestEntity2.putSync({
       pk: 'test-pk',
       test_composite: undefined
     })
@@ -65,7 +123,7 @@ describe('put',()=>{
   })
 
   it('creates item that overrides composite key',() => {
-    let { Item } = SimpleModel.put({
+    let { Item } = TestEntity2.putSync({
       pk: 'test-pk',
       sk: 'override',
       test_composite: 'test',
@@ -78,7 +136,7 @@ describe('put',()=>{
   })
 
   it('creates item that generates composite key',() => {
-    let { Item } = SimpleModel.put({
+    let { Item } = TestEntity2.putSync({
       pk: 'test-pk',
       test_composite: 'test',
       test_composite2: 'test2'
@@ -90,11 +148,11 @@ describe('put',()=>{
   })
 
   it('fails with undefined input', () => {
-    expect(() => TestModel.put()).toThrow(`'pk' or 'email' is required`)
+    expect(() => TestEntity.putSync()).toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails when using an undefined schema field', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'unknown': '?'
@@ -102,7 +160,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid string provided with no coercion', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string': 1
@@ -110,7 +168,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid boolean provided with no coercion', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_boolean': 'x'
@@ -118,7 +176,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid number provided with no coercion', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_number': 'x'
@@ -126,7 +184,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid number cannot be coerced', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_number_coerce': 'x1'
@@ -134,7 +192,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid array provided with no coercion', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_list': 'x'
@@ -142,7 +200,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid map provided', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_map': 'x'
@@ -150,7 +208,7 @@ describe('put',()=>{
   })
 
   it('fails when set contains different types', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set_type': [1,2,3]
@@ -158,7 +216,7 @@ describe('put',()=>{
   })
 
   it('fails when set contains multiple types', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set': ['test',1]
@@ -166,7 +224,7 @@ describe('put',()=>{
   })
 
   it('fails when set coerces array and doesn\'t match type', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_number_set_type_coerce': "1,2,3"
@@ -174,7 +232,7 @@ describe('put',()=>{
   })
 
   it('coerces array into set', () => {
-    let { Item } = TestModel.put({
+    let { Item } = TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set_type_coerce': "1,2,3"
@@ -183,7 +241,7 @@ describe('put',()=>{
   })
 
   it('fails when set doesn\'t contain array with no coercion', () => {
-    expect(() => TestModel.put({
+    expect(() => TestEntity.putSync({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set': 'test'
@@ -191,7 +249,7 @@ describe('put',()=>{
   })
 
   it('fails when missing a required field', () => {
-    expect(() => SimpleModelReq.put({
+    expect(() => TestEntity3.putSync({
       'pk': 'test-pk',
       'test2': 'test'
     })).toThrow(`'test' is a required field`)
