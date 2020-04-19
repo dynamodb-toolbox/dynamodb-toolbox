@@ -191,7 +191,7 @@ class Entity {
   // DELETE - delete item
   async delete(item={},options={},params={}) {
     // Generate the payload (same as get)
-    const payload = await this.get(item,params,{ execute: false })
+    const payload = await this.getSync(item,params)
     
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -205,6 +205,12 @@ class Entity {
     } else {
       return payload
     } // end if-else
+  } // end delete
+
+  // DELETE - delete item
+  deleteSync(item={},params={}) {
+    // Generate the payload (same as get)
+    return this.getSync(item,params,{ execute: false })
   } // end delete
 
 
