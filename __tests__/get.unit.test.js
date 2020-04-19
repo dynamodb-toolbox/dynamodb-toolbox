@@ -1,57 +1,122 @@
-const { Model } = require('../index')
+const { Table, Entity } = require('../index')
+const { DocumentClient } = require('./bootstrap-tests')
 
-// Define main model for testing
-const TestModel = new Model('TestModel',require('./models/test-model'))
+const TestTable = new Table({
+  name: 'test-table',
+  partitionKey: 'pk',
+  sortKey: 'sk',
+  DocumentClient
+})
 
-// Define simple model for testing
-const SimpleModel = new Model('SimpleModel',require('./models/simple-model'))
+const TestEntity = new Entity({
+  name: 'TestEntity',
+  autoExecute: false,
+  attributes: {
+    email: { type: 'string', partitionKey: true },
+    sort: { type: 'string', sortKey: true },
+    test: 'string'
+  },
+  table: TestTable
+})
 
-// Define simple model wity sortKey for testing
-const SimpleModelSk = new Model('SimpleModelSk',require('./models/simple-model-sk'))
+const TestTable2 = new Table({
+  name: 'test-table',
+  partitionKey: 'pk',
+  sortKey: 'sk',
+  DocumentClient
+})
 
-// Define simple model for testing
-const SimpleModelReq = new Model('SimpleModelReq',require('./models/simple-model-req'))
+const TestEntity2 = new Entity({
+  name: 'TestEntity',
+  autoExecute: false,
+  attributes: {
+    pk: { type: 'string', partitionKey: true },
+    sk: { type: 'string', sortKey: true },
+    test: 'string'
+  },
+  table: TestTable2
+})
 
 describe('get',()=>{
 
-  it('gets the key from inputs', () => {
-    let { TableName, Key } = TestModel.get({ pk: 'test-pk', sk: 'test-sk' })
+  it('gets the key from inputs (sync)', async () => {
+    const { TableName, Key } = TestEntity.getSync({ pk: 'test-pk', sk: 'test-sk' })    
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('gets the key from input aliases', () => {
-    let { TableName, Key } = TestModel.get({ email: 'test-pk', type: 'test-sk' })
+  it('gets the key from inputs (async)', async () => {
+    const { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk' })    
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('filters out extra data', () => {
-    let { TableName, Key } = TestModel.get({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
+  it('gets the key from input aliases (sync)', async () => {
+    let { TableName, Key } = TestEntity.getSync({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('coerces key values to correct types', () => {
-    let { TableName, Key } = TestModel.get({ pk: 1, sk: true })
+  it('gets the key from input aliases (async)', async () => {
+    let { TableName, Key } = await TestEntity.get({ email: 'test-pk', sort: 'test-sk' })
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
+  })
+
+  it('filters out extra data (sync)', async () => {
+    let { TableName, Key } = TestEntity.getSync({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
+  })
+
+  it('filters out extra data (async)', async () => {
+    let { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
+  })
+
+  it('coerces key values to correct types (sync)', async () => {
+    let { TableName, Key } = TestEntity.getSync({ pk: 1, sk: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
 
-  it('fails with undefined input', () => {
-    expect(() => TestModel.get()).toThrow(`'pk' or 'email' is required`)
+  it('coerces key values to correct types (async)', async () => {
+    let { TableName, Key } = await TestEntity.get({ pk: 1, sk: true })
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
 
-  it('fails when missing the sortKey', () => {
-    expect(() => TestModel.get({ pk: 'test-pk' })).toThrow(`'sk' or 'type' is required`)
+  it('fails with undefined input (sync)', () => {
+    expect(() => TestEntity.getSync()).toThrow(`'pk' or 'email' is required`)
   })
 
-  it('fails when missing the partitionKey is missing (no alias)', () => {
-    expect(() => SimpleModel.get()).toThrow(`'pk' is required`)
+  it('fails with undefined input (async)', async () => {
+    expect(TestEntity.get()).rejects.toBe(`'pk' or 'email' is required`)
   })
 
-  it('fails when missing the sortKey is missing (no alias)', () => {
-    expect(() => SimpleModelSk.get({ pk: 'test-pk' })).toThrow(`'sk' is required`)
+  it('fails when missing the sortKey (sync)', () => {
+    expect(() => TestEntity.getSync({ pk: 'test-pk' })).toThrow(`'sk' or 'sort' is required`)
+  })
+
+  it('fails when missing the sortKey (async)', () => {
+    expect(TestEntity.get({ pk: 'test-pk' })).rejects.toBe(`'sk' or 'sort' is required`)
+  })
+
+  it('fails when missing partitionKey (no alias) (sync)', () => {
+    expect(() => TestEntity2.getSync()).toThrow(`'pk' is required`)
+  })
+
+  it('fails when missing partitionKey (no alias) (async)', () => {
+    expect(TestEntity2.get()).rejects.toBe(`'pk' is required`)
+  })
+
+  it('fails when missing the sortKey (no alias) (sync)', () => {
+    expect(() => TestEntity2.getSync({ pk: 'test-pk' })).toThrow(`'sk' is required`)
+  })
+
+  it('fails when missing the sortKey (no alias) (async)', () => {
+    expect(TestEntity2.get({ pk: 'test-pk' })).rejects.toBe(`'sk' is required`)
   })
 
 })

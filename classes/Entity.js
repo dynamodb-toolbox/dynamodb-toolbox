@@ -152,6 +152,25 @@ class Entity {
 
   // GET - get item
   async get(item={},options={},params={}) {
+    // Generate the payload
+    let payload = this.getSync(item,params)
+
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = await this.DocumentClient.get(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return this.parse(result,Array.isArray(options.include) ? options.include : [])
+      } else {
+        return result
+      }
+    } else {
+      return payload
+    } // end if-else
+  } // end get
+
+  // GET - sync
+  getSync(item={},params={}) {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item),true)
@@ -160,23 +179,12 @@ class Entity {
     const payload = Object.assign(
       {
         TableName: _table.name,
-        Key: getKey(this.DocumentClient)(data,schema.attributes,schema.partitionKey,schema.sortKey)
+        Key: getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
       },
       typeof params === 'object' ? params : {}
-    )
+    )  
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.get(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
-      } else {
-        return result
-      }
-    } else {
-      return payload
-    } // end if-else
+    return payload
   } // end get
 
 
