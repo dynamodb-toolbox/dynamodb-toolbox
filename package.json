@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest unit",
+    "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "lint": "eslint ."
   },
@@ -27,7 +28,7 @@
   "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
   "jest": {
     "testPathIgnorePatterns": [
-      "/__tests__/models/*"
+      "/__tests__/entities/*"
     ],
     "coveragePathIgnorePatterns": [
       "/__tests__/*"

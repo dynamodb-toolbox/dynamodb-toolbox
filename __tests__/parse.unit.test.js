@@ -1,18 +1,5 @@
-const { Model } = require('../index')
 
-// Define main model for testing
-const TestModel = new Model('TestModel',require('./models/test-model'))
-
-// Define simple model for testing
-const SimpleModel = new Model('SimpleModel',require('./models/simple-model'))
-
-// Define simple model wity sortKey for testing
-const SimpleModelSk = new Model('SimpleModelSk',require('./models/simple-model-sk'))
-
-// Define simple model for testing
-const SimpleModelReq = new Model('SimpleModelReq',require('./models/simple-model-req'))
-
-describe('parse',()=>{
+describe.skip('parse',()=>{
 
   it('parses single item', ()=>{
     let item = TestModel.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', __model: 'Test' })

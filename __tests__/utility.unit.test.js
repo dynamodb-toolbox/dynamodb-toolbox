@@ -1,18 +1,4 @@
-const { Model } = require('../index')
-
-// Define main model for testing
-const TestModel = new Model('TestModel',require('./models/test-model'))
-
-// Define simple model for testing
-const SimpleModel = new Model('SimpleModel',require('./models/simple-model'))
-
-// Define simple model wity sortKey for testing
-const SimpleModelSk = new Model('SimpleModelSk',require('./models/simple-model-sk'))
-
-// Define simple model for testing
-const SimpleModelReq = new Model('SimpleModelReq',require('./models/simple-model-req'))
-
-describe('utility functions',()=>{
+describe.skip('utility functions',()=>{
 
   test('get/verify fields in model schema', ()=>{
     expect(TestModel.field('test_string')).toBe('test_string')
