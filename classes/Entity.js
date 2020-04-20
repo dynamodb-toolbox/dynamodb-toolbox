@@ -245,6 +245,8 @@ class Entity {
     ...params
   } = {}) {
 
+    // TODO: remove pk/sk from Item payload
+
     // Validate operation types
     if (!Array.isArray(SET)) error('SET must be an array')
     if (!Array.isArray(REMOVE)) error('REMOVE must be an array')
@@ -274,8 +276,8 @@ class Entity {
     Object.keys(required).forEach(field =>
       required[field] && !data[field] && error(`'${field}' is a required field`)
     ) // end required field check
-
-    // Check for partition and sort keys
+    
+    // Get partition and sort keys
     let Key = getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
 
     // Init names and values
@@ -291,8 +293,8 @@ class Entity {
         REMOVE.push(`#${field}`)
         names[`#${field}`] = field
       } else if (
-        field !== schema.partitionKey
-        && field !== schema.sortKey
+        !mapping.partitionKey
+        && !mapping.sortKey
         && (mapping.save === undefined || mapping.save === true)
         && (!mapping.link || (mapping.link && mapping.save === true))
       ) {
@@ -433,6 +435,8 @@ class Entity {
       typeof params === 'object' ? params : {},
       Object.keys(attr_values).length > 0 ? { ExpressionAttributeValues: attr_values } : {}
     ) // end assign
+    
+    // console.log(payload)
     
     return payload
 
