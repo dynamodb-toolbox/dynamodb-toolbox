@@ -71,7 +71,7 @@ const TestEntity3 = new Entity({
 describe('put',()=>{
 
   it('creates basic item',() => {
-    let { TableName, Item } = TestEntity.putSync({ pk: 'test-pk', sk: 'test-sk' })
+    let { TableName, Item } = TestEntity.generatePutParams({ pk: 'test-pk', sk: 'test-sk' })
 
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
@@ -82,7 +82,7 @@ describe('put',()=>{
   })
 
   it('creates item with aliases',() => {
-    let { Item } = TestEntity.putSync({ email: 'test-pk', sort: 'test-sk', count: 5 })
+    let { Item } = TestEntity.generatePutParams({ email: 'test-pk', sort: 'test-sk', count: 5 })
     
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
@@ -94,7 +94,7 @@ describe('put',()=>{
   })
 
   it('creates item with default override',() => {
-    let { Item } = TestEntity.putSync({ pk: 'test-pk', sk: 'test-sk', test_string: 'different value' })
+    let { Item } = TestEntity.generatePutParams({ pk: 'test-pk', sk: 'test-sk', test_string: 'different value' })
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
     expect(Item._tp).toBe('TestEntity')
@@ -104,7 +104,7 @@ describe('put',()=>{
   })
 
   it('creates item with saved composite field',() => {
-    let { Item } = TestEntity2.putSync({
+    let { Item } = TestEntity2.generatePutParams({
       pk: 'test-pk',
       test_composite: 'test',
     })  
@@ -113,17 +113,18 @@ describe('put',()=>{
   })
 
   it('creates item that ignores field with no value',() => {
-    let { Item } = TestEntity2.putSync({
+    let { Item } = TestEntity2.generatePutParams({
       pk: 'test-pk',
       test_composite: undefined
     })
+    
     expect(Item.pk).toBe('test-pk')
     expect(Item).not.toHaveProperty('sk')
     expect(Item).not.toHaveProperty('test_composite')
   })
 
   it('creates item that overrides composite key',() => {
-    let { Item } = TestEntity2.putSync({
+    let { Item } = TestEntity2.generatePutParams({
       pk: 'test-pk',
       sk: 'override',
       test_composite: 'test',
@@ -136,7 +137,7 @@ describe('put',()=>{
   })
 
   it('creates item that generates composite key',() => {
-    let { Item } = TestEntity2.putSync({
+    let { Item } = TestEntity2.generatePutParams({
       pk: 'test-pk',
       test_composite: 'test',
       test_composite2: 'test2'
@@ -148,11 +149,11 @@ describe('put',()=>{
   })
 
   it('fails with undefined input', () => {
-    expect(() => TestEntity.putSync()).toThrow(`'pk' or 'email' is required`)
+    expect(() => TestEntity.generatePutParams()).toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails when using an undefined schema field', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'unknown': '?'
@@ -160,7 +161,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid string provided with no coercion', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string': 1
@@ -168,7 +169,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid boolean provided with no coercion', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_boolean': 'x'
@@ -176,7 +177,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid number provided with no coercion', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_number': 'x'
@@ -184,7 +185,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid number cannot be coerced', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_number_coerce': 'x1'
@@ -192,7 +193,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid array provided with no coercion', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_list': 'x'
@@ -200,7 +201,7 @@ describe('put',()=>{
   })
 
   it('fails when invalid map provided', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_map': 'x'
@@ -208,7 +209,7 @@ describe('put',()=>{
   })
 
   it('fails when set contains different types', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set_type': [1,2,3]
@@ -216,7 +217,7 @@ describe('put',()=>{
   })
 
   it('fails when set contains multiple types', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set': ['test',1]
@@ -224,7 +225,7 @@ describe('put',()=>{
   })
 
   it('fails when set coerces array and doesn\'t match type', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_number_set_type_coerce': "1,2,3"
@@ -232,7 +233,7 @@ describe('put',()=>{
   })
 
   it('coerces array into set', () => {
-    let { Item } = TestEntity.putSync({
+    let { Item } = TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set_type_coerce': "1,2,3"
@@ -241,7 +242,7 @@ describe('put',()=>{
   })
 
   it('fails when set doesn\'t contain array with no coercion', () => {
-    expect(() => TestEntity.putSync({
+    expect(() => TestEntity.generatePutParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set': 'test'
@@ -249,7 +250,7 @@ describe('put',()=>{
   })
 
   it('fails when missing a required field', () => {
-    expect(() => TestEntity3.putSync({
+    expect(() => TestEntity3.generatePutParams({
       'pk': 'test-pk',
       'test2': 'test'
     })).toThrow(`'test' is a required field`)

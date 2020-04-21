@@ -23,7 +23,8 @@ module.exports.DynamoDB = new AWS.DynamoDB({
 module.exports.DocumentClient = new AWS.DynamoDB.DocumentClient({
   endpoint: 'http://localhost:4567',
   region: 'us-east-1',
-  credentials: new AWS.Credentials({ accessKeyId: 'test', secretAccessKey: 'test' })
+  credentials: new AWS.Credentials({ accessKeyId: 'test', secretAccessKey: 'test' }),
+  // convertEmptyValues: true
 })
 
 // Delay helper

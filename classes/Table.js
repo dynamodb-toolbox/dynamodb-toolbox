@@ -58,6 +58,9 @@ class Table {
   set DocumentClient(docClient) {
     // If a valid document client
     if (docClient.constructor.name === 'DocumentClient') {
+      // Automatically set convertEmptyValues to true, unless false
+      if (docClient.options.convertEmptyValues !== false)
+        docClient.options.convertEmptyValues = true
       this._docClient = docClient
     } else {
       error('Invalid DocumentClient')
@@ -410,7 +413,7 @@ class Table {
 
     // If projections
     if (attributes) {
-      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this,entity)     
+      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this,entity,true)     
 
       if (Object.keys(names).length > 0) {
         // Merge names and add projection expression

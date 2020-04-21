@@ -16,6 +16,8 @@ const validateTypes = require('../lib/validateTypes')
 const normalizeData = require('../lib/normalizeData')
 const formatItem = require('../lib/formatItem')
 const getKey = require('../lib/getKey')
+const parseConditions = require('../lib/expressionBuilder')
+const parseProjections = require('../lib/projectionBuilder')
 
 // Import error handlers
 const { hasValue, error } = require('../lib/utils')
@@ -122,7 +124,7 @@ class Entity {
       this.Entity.attributes[attr].map
       : this.Entity.attributes[attr] ? attr
       : error(`'${attr}' does not exist or is an invalid alias`)
-  }
+  } // end attribute
 
 
   // Parses the item
@@ -153,11 +155,11 @@ class Entity {
   // GET - get item
   async get(item={},options={},params={}) {
     // Generate the payload
-    let payload = this.getSync(item,params)
+    let payload = this.generateGetParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.get(payload).promise()
+      const result = await this.DocumentClient.get(payload).promise()      
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
         return this.parse(result,Array.isArray(options.include) ? options.include : [])
@@ -169,11 +171,49 @@ class Entity {
     } // end if-else
   } // end get
 
-  // GET - sync
-  getSync(item={},params={}) {
+  // Generate GET parameters
+  generateGetParams(item={},options={},params={}) {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item),true)
+
+    const {
+      consistent, // ConsistentRead (boolean)
+      capacity, // ReturnConsumedCapacity (none, total, or indexes)
+      attributes, // Projections
+      ..._args
+    } = options
+
+    // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
+
+    // Error on extraneous arguments
+    if (args.length > 0)
+      error(`Invalid get options: ${args.join(', ')}`)
+
+    // Verify consistent read
+    if (consistent !== undefined && typeof consistent !== 'boolean')
+      error(`'consistent' requires a boolean`)
+
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+    
+    let ExpressionAttributeNames // init ExpressionAttributeNames
+    let ProjectionExpression // init ProjectionExpression
+
+    // If projections
+    if (attributes) {
+      const { names, projections } = parseProjections(attributes,this.table,this.name)
+
+      if (Object.keys(names).length > 0) {
+        // Merge names and add projection expression
+        ExpressionAttributeNames = names
+        ProjectionExpression = projections
+      } // end if names
+
+    } // end if projections
 
     // Generate the payload
     const payload = Object.assign(
@@ -181,17 +221,21 @@ class Entity {
         TableName: _table.name,
         Key: getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
       },
+      ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
+      ProjectionExpression ? { ProjectionExpression } : null,
+      consistent ? { ConsistentRead: consistent } : null,
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       typeof params === 'object' ? params : {}
     )  
 
     return payload
-  } // end get
+  } // end generateGetParams
 
 
   // DELETE - delete item
   async delete(item={},options={},params={}) {
     // Generate the payload (same as get)
-    const payload = await this.getSync(item,params)
+    const payload = await this.generateDeleteParams(item,options,params)
     
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -207,18 +251,92 @@ class Entity {
     } // end if-else
   } // end delete
 
-  // DELETE - delete item
-  deleteSync(item={},params={}) {
-    // Generate the payload (same as get)
-    return this.getSync(item,params,{ execute: false })
-  } // end delete
+  // Generate DELETE parameters
+  generateDeleteParams(item={},options={},params={}) {
+    // Extract schema and merge defaults
+    const { schema, defaults, linked, _table } = this
+    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item),true)
+
+    const {
+      conditions, // ConditionExpression
+      capacity, // ReturnConsumedCapacity (none, total, or indexes)
+      metrics, // ReturnItemCollectionMetrics: (size or none)
+      returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
+      ..._args
+    } = options
+
+    // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
+
+    // Error on extraneous arguments
+    if (args.length > 0)
+      error(`Invalid delete options: ${args.join(', ')}`)
+    
+    // Verify metrics
+    if (metrics !== undefined
+      && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
+      error(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Verify returnValues
+    if (returnValues !== undefined
+      && (typeof returnValues !== 'string' 
+      || !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(returnValues.toUpperCase())))
+      error(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`)
+    
+    let ExpressionAttributeNames // init ExpressionAttributeNames
+    let ExpressionAttributeValues // init ExpressionAttributeValues
+    let ConditionExpression // init ConditionExpression
+
+    // If conditions
+    if (conditions) {
+      
+      // Parse the conditions
+      const {
+        expression,
+        names,
+        values
+      } = parseConditions(conditions,this.table,this.name)
+
+      if (Object.keys(names).length > 0) {
+
+        // TODO: alias attribute field names        
+        // Merge names and values and add condition expression
+        ExpressionAttributeNames = names
+        ExpressionAttributeValues = values
+        ConditionExpression = expression
+      } // end if names
+      
+    } // end if filters
+
+    // Generate the payload
+    const payload = Object.assign(
+      {
+        TableName: _table.name,
+        Key: getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
+      },
+      ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
+      ExpressionAttributeValues ? { ExpressionAttributeValues } : null,
+      ConditionExpression ? { ConditionExpression } : null,
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
+      metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
+      returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
+      typeof params === 'object' ? params : {}
+    )
+
+    return payload
+  } // end generateDeleteParams
 
 
   // UPDATE - update item
   async update(item={},options={},params = {}) {
 
     // Generate the payload
-    let payload = this.updateSync(item,params)
+    let payload = this.generateUpdateParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -234,18 +352,20 @@ class Entity {
     } // end if-else
   } // end delete
 
-  // UPDATE - update item
-  updateSync(item={},{
-    SET=[],
-    REMOVE=[],
-    ADD=[],
-    DELETE=[],
-    ExpressionAttributeNames={},
-    ExpressionAttributeValues={},
-    ...params
-  } = {}) {
-
-    // TODO: remove pk/sk from Item payload
+  // Generate UPDATE Parameters
+  generateUpdateParams(
+    item={},
+    options={},
+    {
+      SET=[],
+      REMOVE=[],
+      ADD=[],
+      DELETE=[],
+      ExpressionAttributeNames={},
+      ExpressionAttributeValues={},
+      ...params
+    } = {}
+  ) {
 
     // Validate operation types
     if (!Array.isArray(SET)) error('SET must be an array')
@@ -264,13 +384,13 @@ class Entity {
     //     error(`ConditionExpression must be a string`)
 
     // Extract schema and defaults
-    let { schema, defaults, required, linked, _table } = this
+    const { schema, defaults, required, linked, _table } = this
 
     // Initialize validateType with the DocumentClient
-    let validateType = validateTypes(this.DocumentClient)
+    const validateType = validateTypes(this.DocumentClient)
 
     // Merge defaults
-    let data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
+    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
 
     // Check for required fields
     Object.keys(required).forEach(field =>
@@ -278,20 +398,31 @@ class Entity {
     ) // end required field check
     
     // Get partition and sort keys
-    let Key = getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
+    const Key = getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
 
     // Init names and values
-    let names = {}
-    let values = {}
+    const names = {}
+    const values = {}
 
     // Loop through valid fields and add appropriate action
     Object.keys(data).forEach(function(field) {
-      let mapping = schema.attributes[field]
+      const mapping = schema.attributes[field]
 
-      // Remove null or empty fields
-      if ((data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
-        REMOVE.push(`#${field}`)
-        names[`#${field}`] = field
+      // Remove attributes
+      if (field === '$remove') {
+        const attrs = Array.isArray(data[field]) ? data[field] : [data[field]]
+        for (const i in attrs) {
+          // Verify attribute
+          if (!schema.attributes[attrs[i]])
+            error(`'${attrs[i]}' is not a valid attribute and cannot be removed`)
+          // Verify attribute is not a pk/sk
+          if (schema.attributes[attrs[i]].partitionKey === true || schema.attributes[attrs[i]].sortKey === true)
+            error(`'${attrs[i]}' is the ${schema.attributes[attrs[i]].partitionKey === true ? 'partitionKey' : 'sortKey' } and cannot be removed`)
+          // Grab the attribute name and add to REMOVE and names
+          const attr = schema.attributes[attrs[i]].map || attrs[i]        
+          REMOVE.push(`#${attr}`)
+          names[`#${attr}`] = attr
+        } // end for
       } else if (
         !mapping.partitionKey
         && !mapping.sortKey
@@ -356,7 +487,9 @@ class Entity {
                 let path = `${acc.join('.')}.#${id}`
                 let value = `${id.replace(/\[(\d+)\]/,'_$1')}`
 
-                if (input.$add) {
+                if (input === undefined) {
+                  REMOVE.push(`${path}`)
+                } else if (input.$add) {
                   ADD.push(`${path} :${value}`)
                   values[`:${value}`] = input.$add
                 } else if (input.$append) {
@@ -395,11 +528,11 @@ class Entity {
           names[`#${field}`] = field
         // else add to SET
         } else {
-
           let value = validateType(mapping,field,data[field],data)
 
           // It's possible that defaults can purposely return undefined values
-          if (hasValue(value)) {
+          // if (hasValue(value)) {
+          if (value !== undefined) {
             // Push the update to SET
             SET.push(mapping.default && !item[field] && !mapping.onUpdate ?
               `#${field} = if_not_exists(#${field},:${field})`
@@ -410,7 +543,7 @@ class Entity {
           }
         }
 
-      } // end if null
+      } // end if undefined
     })
 
     // Create the update expression
@@ -446,7 +579,7 @@ class Entity {
   // PUT - put item
   async put(item={},options={},params={}) {
     // Generate the payload
-    const payload = this.putSync(item,params)
+    const payload = this.generatePutParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -463,8 +596,8 @@ class Entity {
   } // end put
 
 
-  // PUT - put item
-  putSync(item={},params={}) {
+  // Generate PUT Parameters
+  generatePutParams(item={},options={},params={}) {
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
 
@@ -490,7 +623,7 @@ class Entity {
         Item: Object.keys(data).reduce((acc,field) => {
           let mapping = schema.attributes[field]
           let value = validateType(mapping,field,data[field],data)
-          return hasValue(value)
+          return value !== undefined
             && (mapping.save === undefined || mapping.save === true)
             && (!mapping.link || (mapping.link && mapping.save === true))
             ? Object.assign(acc, {

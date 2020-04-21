@@ -22,7 +22,7 @@ const TestEntity = new Entity({
 describe('delete',()=>{
 
   it('gets the key from inputs (sync)', () => {
-    let { TableName, Key } = TestEntity.deleteSync({ pk: 'test-pk', sk: 'test-sk' })
+    let { TableName, Key } = TestEntity.generateDeleteParams({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -34,7 +34,7 @@ describe('delete',()=>{
   })
 
   it('gets the key from input aliases (sync)', () => {
-    let { TableName, Key } = TestEntity.deleteSync({ email: 'test-pk', sort: 'test-sk' })
+    let { TableName, Key } = TestEntity.generateDeleteParams({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -46,7 +46,7 @@ describe('delete',()=>{
   })
 
   it('filters out extra data (sync)', () => {
-    let { TableName, Key } = TestEntity.deleteSync({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
+    let { TableName, Key } = TestEntity.generateDeleteParams({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -58,7 +58,7 @@ describe('delete',()=>{
   })
 
   it('coerces key values to correct types (sync)', () => {
-    let { TableName, Key } = TestEntity.deleteSync({ pk: 1, sk: true })
+    let { TableName, Key } = TestEntity.generateDeleteParams({ pk: 1, sk: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
@@ -70,7 +70,7 @@ describe('delete',()=>{
   })
 
   it('fails with undefined input (sync)', () => {
-    expect(() => TestEntity.deleteSync()).toThrow(`'pk' or 'email' is required`)
+    expect(() => TestEntity.generateDeleteParams()).toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails with undefined input (async)', () => {
