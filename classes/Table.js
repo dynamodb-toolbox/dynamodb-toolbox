@@ -261,8 +261,62 @@ class Table {
   // Table actions
   // ----------------------------------------------------------------//
 
+  async query(pk,options={},params={}) {
+  
+    // Generate query parameters with projection data
+    const { 
+      payload,
+      EntityProjections,
+      TableProjections 
+    } = this.generateQueryParams(pk,options,params,true)
+
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = await this.DocumentClient.query(payload).promise()
+      
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+
+        return Object.assign(
+          result,
+          { 
+            Items: result.Items && result.Items.map(item => {
+              if (this[item[this.Table.entityField]]) {
+                return this[item[this.Table.entityField]].parse(
+                  item,
+                  // Array.isArray(options.omit) ? options.omit : [],
+                  EntityProjections[item[this.Table.entityField]] ? EntityProjections[item[this.Table.entityField]]
+                  : TableProjections ? TableProjections
+                  : []
+                ) 
+              } else {
+                return item
+              }
+            })
+          },
+          // If last evaluated key, return a next function
+          result.LastEvaluatedKey ? { 
+            next: () => { 
+              return this.query(
+                pk,
+                Object.assign(options, { startKey: result.LastEvaluatedKey }), 
+                params
+              ) 
+            } 
+          } : null
+        )
+      } else {
+        return result
+      }
+    } else {
+      return payload
+    } // end if-else
+  }
+
+
+
   // Query the table
-  async query(pk,options={},params={}) { 
+  generateQueryParams(pk,options={},params={},projections=false) { 
     
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
@@ -273,6 +327,7 @@ class Table {
       reverse, // ScanIndexForward
       consistent, // ConsistentRead (boolean)
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
+      select, // Select (all_attributes, all_projected_attributes, specific_attributes, count)
       eq, // =
       lt, // <
       lte, // <=
@@ -313,7 +368,14 @@ class Table {
     // Verify consistent read
     if (consistent !== undefined && typeof consistent !== 'boolean')
       error(`'consistent' requires a boolean`)
-  
+
+    // Verify select
+    // TODO: Make dependent on whether or not an index is supplied
+    if (select !== undefined
+      && (typeof select !== 'string' 
+      || !['ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', 'COUNT'].includes(select.toUpperCase())))
+      error(`'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`)
+
     // Verify entity
     if (entity !== undefined && (typeof entity !== 'string' || !(entity in this)))
       error(`'entity' must be a string and a valid table Entity name`)
@@ -440,13 +502,28 @@ class Table {
       reverse ? { ScanIndexForward: !reverse } : null,
       consistent ? { ConsistentRead: consistent } : null,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
+      select ? { Select: select.toUpperCase() } : null,
       startKey ? { ExclusiveStartKey: startKey } : null,
       typeof params === 'object' ? params : null
     )
 
+    return projections ? { payload, EntityProjections, TableProjections } : payload
+  } // end query
+
+
+
+  async scan(options={},params={}) {
+  
+    // Generate query parameters with projection data
+    const { 
+      payload,
+      EntityProjections,
+      TableProjections 
+    } = this.generateScanParams(options,params,true)
+
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.query(payload).promise()
+      const result = await this.DocumentClient.scan(payload).promise()
       
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -454,7 +531,7 @@ class Table {
         return Object.assign(
           result,
           { 
-            Items: result.Items.map(item => {
+            Items: result.Items && result.Items.map(item => {
               if (this[item[this.Table.entityField]]) {
                 return this[item[this.Table.entityField]].parse(
                   item,
@@ -471,8 +548,7 @@ class Table {
           // If last evaluated key, return a next function
           result.LastEvaluatedKey ? { 
             next: () => { 
-              return this.query(
-                pk,
+              return this.scan(
                 Object.assign(options, { startKey: result.LastEvaluatedKey }), 
                 params
               ) 
@@ -485,27 +561,168 @@ class Table {
     } else {
       return payload
     } // end if-else
-  } // end get
-
-
-  get(entity,item={},params={}) {
-    if (!this[entity]) error(`'${entity}' is not a valid Entity`)
-    return this[entity].get(item,params)
   }
 
-  delete(entity,item={},params={}) {
+
+
+  // Scan the table
+  generateScanParams(options={},params={},projections=false) { 
+      
+    // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
+
+    // Deconstruct valid options
+    const { 
+      index,
+      limit,
+      consistent, // ConsistentRead (boolean)
+      capacity, // ReturnConsumedCapacity (none, total, or indexes)
+      select, // Select (all_attributes, all_projected_attributes, specific_attributes, count)
+      filters, // filter object,
+      attributes, // Projections
+      segments, // Segments,
+      segment, // Segment
+      startKey,
+      entity, // optional entity name to filter aliases
+      ..._args // capture extra arguments
+    } = options
+    
+    // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
+
+    // Error on extraneous arguments
+    if (args.length > 0)
+      error(`Invalid scan options: ${args.join(', ')}`)
+
+    // Verify index
+    if (index !== undefined && !this.Table.indexes[index])
+      error(`'${index}' is not a valid index name`)
+
+    // Verify limit
+    if (limit !== undefined && (!Number.isInteger(limit) || limit < 0))
+      error(`'limit' must be a positive integer`)
+
+    // Verify consistent read
+    if (consistent !== undefined && typeof consistent !== 'boolean')
+      error(`'consistent' requires a boolean`)
+
+    // Verify select
+    // TODO: Make dependent on whether or not an index is supplied
+    if (select !== undefined
+      && (typeof select !== 'string' 
+      || !['ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', 'COUNT'].includes(select.toUpperCase())))
+      error(`'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`)
+
+    // Verify entity
+    if (entity !== undefined && (typeof entity !== 'string' || !(entity in this)))
+      error(`'entity' must be a string and a valid table Entity name`)
+
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Verify startKey
+    // TODO: validate startKey shape
+    if (startKey && (typeof startKey !== 'object' || Array.isArray(startKey)))
+      error(`'startKey' requires a valid object`)
+
+    // Verify consistent segments
+    if (segments !== undefined && (!Number.isInteger(segments) || segments < 1))
+      error(`'segments' must be an integer greater than 1`)
+
+    if (segment !== undefined && (!Number.isInteger(segment) || segment < 0 || segment >= segments))
+      error(`'segment' must be an integer greater than or equal to 0 and less than the total number of segments`)
+
+    if ((segments !== undefined && segment === undefined) || (segments === undefined && segment !== undefined))
+      error(`Both 'segments' and 'segment' must be provided`)
+
+    // Default names and values
+    let ExpressionAttributeNames = {}
+    let ExpressionAttributeValues = {}
+    let FilterExpression // init FilterExpression
+    let ProjectionExpression // init ProjectionExpression
+    let EntityProjections = {}
+    let TableProjections = []
+
+    // If filter expressions
+    if (filters) {
+      
+      // Parse the filter
+      const {
+        expression,
+        names,
+        values
+      } = parseFilters(filters,this,entity)
+
+      if (Object.keys(names).length > 0) {
+
+        // TODO: alias attribute field names
+        // console.log(names)
+        
+        // Merge names and values and add filter expression
+        ExpressionAttributeNames = Object.assign(ExpressionAttributeNames,names)
+        ExpressionAttributeValues = Object.assign(ExpressionAttributeValues,values)
+        FilterExpression = expression
+      } // end if names
+      
+    } // end if filters
+
+    // If projections
+    if (attributes) {
+      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this,entity,true)     
+
+      if (Object.keys(names).length > 0) {
+        // Merge names and add projection expression
+        ExpressionAttributeNames = Object.assign(ExpressionAttributeNames,names)
+        ProjectionExpression = projections
+        EntityProjections = entities
+        TableProjections = tableAttrs
+      } // end if names
+
+    } // end if projections
+
+    // Generate the payload
+    const payload = Object.assign(
+      {
+        TableName: this.name,
+      },
+      Object.keys(ExpressionAttributeNames).length ? { ExpressionAttributeNames } : null,
+      Object.keys(ExpressionAttributeValues).length ? { ExpressionAttributeValues } : null,
+      FilterExpression ? { FilterExpression } : null,
+      ProjectionExpression ? { ProjectionExpression } : null,
+      index ? { IndexName: index } : null,
+      segments ? { TotalSegments: segments } : null,
+      Number.isInteger(segment) ? { Segment: segment } : null,
+      limit ? { Limit: String(limit) } : null,
+      consistent ? { ConsistentRead: consistent } : null,
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
+      select ? { Select: select.toUpperCase() } : null,
+      startKey ? { ExclusiveStartKey: startKey } : null,
+      typeof params === 'object' ? params : null
+    )
+
+    return projections ? { payload, EntityProjections, TableProjections } : payload
+  } // end query
+
+  // Entity operation references
+  get(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
-    return this[entity].delete(item,params)
+    return this[entity].get(item,options,params)
+  }
+
+  delete(entity,item={},options={},params={}) {
+    if (!this[entity]) error(`'${entity}' is not a valid Entity`)
+    return this[entity].delete(item,options,params)
   }
   
-  update(entity,item={},params={}) {
+  update(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
-    return this[entity].update(item,params)
+    return this[entity].update(item,options,params)
   }
 
-  put(entity,item={},params={}) {
+  put(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
-    return this[entity].put(item,params)
+    return this[entity].put(item,options,params)
   }
 
 } // end Table class

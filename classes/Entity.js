@@ -392,6 +392,62 @@ class Entity {
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
 
+    // Extract valid options
+    const {
+      conditions, // ConditionExpression
+      capacity, // ReturnConsumedCapacity (none, total, or indexes)
+      metrics, // ReturnItemCollectionMetrics: (size or none)
+      returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
+      ..._args
+    } = options
+
+    // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
+
+    // Error on extraneous arguments
+    if (args.length > 0)
+      error(`Invalid delete options: ${args.join(', ')}`)
+    
+    // Verify metrics
+    if (metrics !== undefined
+      && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
+      error(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Verify returnValues
+    if (returnValues !== undefined
+      && (typeof returnValues !== 'string' 
+      || !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(returnValues.toUpperCase())))
+      error(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', OR 'UPDATED_NEW'`)
+    
+    let ConditionExpression // init ConditionExpression
+
+    // If conditions
+    if (conditions) {
+      
+      // Parse the conditions
+      const {
+        expression,
+        names,
+        values
+      } = parseConditions(conditions,this.table,this.name)
+
+      if (Object.keys(names).length > 0) {
+
+        // TODO: alias attribute field names        
+        // Add names, values and condition expression
+        ExpressionAttributeNames = Object.assign(ExpressionAttributeNames,names)
+        ExpressionAttributeValues = Object.assign(ExpressionAttributeValues,values)
+        ConditionExpression = expression
+      } // end if names
+      
+    } // end if conditions
+
+
     // Check for required fields
     Object.keys(required).forEach(field =>
       required[field] && !data[field] && error(`'${field}' is a required field`)
@@ -555,7 +611,7 @@ class Entity {
     ).trim()
 
     // Merge attribute values
-    const attr_values = Object.assign(values,ExpressionAttributeValues)
+    ExpressionAttributeValues = Object.assign(values,ExpressionAttributeValues)
 
     // Generate the payload
     const payload = Object.assign(
@@ -566,12 +622,15 @@ class Entity {
         ExpressionAttributeNames: Object.assign(names,ExpressionAttributeNames)
       },
       typeof params === 'object' ? params : {},
-      Object.keys(attr_values).length > 0 ? { ExpressionAttributeValues: attr_values } : {}
+      Object.keys(ExpressionAttributeValues).length > 0 ? { ExpressionAttributeValues } : {},
+      ConditionExpression ? { ConditionExpression } : {}
     ) // end assign
     
     // console.log(payload)
     
     return payload
+
+    // TODO: Check why primary/secondary GSIs are using if_not_exists
 
   } // end updateSync
 
@@ -607,6 +666,65 @@ class Entity {
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
 
+    // Extract valid options
+    const {
+      conditions, // ConditionExpression
+      capacity, // ReturnConsumedCapacity (none, total, or indexes)
+      metrics, // ReturnItemCollectionMetrics: (size or none)
+      returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
+      ..._args
+    } = options
+
+    // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
+
+    // Error on extraneous arguments
+    if (args.length > 0)
+      error(`Invalid delete options: ${args.join(', ')}`)
+    
+    // Verify metrics
+    if (metrics !== undefined
+      && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
+      error(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Verify returnValues
+    // TODO: Check this, conflicts with dynalite
+    if (returnValues !== undefined
+      && (typeof returnValues !== 'string' 
+      || !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(returnValues.toUpperCase())))
+      error(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`)
+    
+    let ExpressionAttributeNames // init ExpressionAttributeNames
+    let ExpressionAttributeValues // init ExpressionAttributeValues
+    let ConditionExpression // init ConditionExpression
+
+    // If conditions
+    if (conditions) {
+      
+      // Parse the conditions
+      const {
+        expression,
+        names,
+        values
+      } = parseConditions(conditions,this.table,this.name)
+
+      if (Object.keys(names).length > 0) {
+
+        // TODO: alias attribute field names        
+        // Add names, values and condition expression
+        ExpressionAttributeNames = names
+        ExpressionAttributeValues = values
+        ConditionExpression = expression
+      } // end if names
+      
+    } // end if filters
+
+
     // Check for required fields
     Object.keys(required).forEach(field =>
       required[field] !== undefined && !data[field] && error(`'${field}' is a required field`)
@@ -631,6 +749,12 @@ class Entity {
             }) : acc
         },{})
       },
+      ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
+      ExpressionAttributeValues ? { ExpressionAttributeValues } : null,
+      ConditionExpression ? { ConditionExpression } : null,
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
+      metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
+      returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
       typeof params === 'object' ? params : {}
     )
 

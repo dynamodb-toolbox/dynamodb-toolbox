@@ -49,10 +49,10 @@ describe('projectionBuilder',() => {
       { User: ['family','name','roles','test.subpath','friends[1]'] }
     ]
 
-    const result = projectionBuilder(proj, DefaultTable)
+    // Get projection with type
+    const result = projectionBuilder(proj, DefaultTable,null,true)
 
     // console.log(JSON.stringify(result.names,null,2))
-    // console.log(result)
     expect(result.names).toEqual({
       '#proj1': 'pk',
       '#proj2': 'sk',

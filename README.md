@@ -9,6 +9,61 @@
 
 # DOCUMENTATION IS NOT COMPLETE FOR v0.2
 
+### TODOs:
+
+**QUERY** implementation:
+- [x] Select (ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT)
+- [x] Sync generateQueryParams - how to handle entity projections?
+
+**GET** implemention:
+- [x] Consistent Read
+- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
+- [x] Projections
+- [x] Update tests
+
+**DELETE** implemention:
+- [x] Conditions
+- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
+- [x] Collection Metrics (SIZE, NONE)
+- [x] Return Values (NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW)
+
+**PUT** implemention:
+- [x] Conditions
+- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
+- [x] Collection Metrics (SIZE, NONE)
+- [x] Return Values (NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW)
+- [x] Null values
+
+**UPDATE** implemention:
+- [x] Conditions
+- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
+- [x] Collection Metrics (SIZE, NONE)
+- [x] Return Values (NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW)
+- [x] Null values
+
+**BATCH GET**
+- [ ] Implement interface
+
+**BATCH WRITE**
+- [ ] Implement interface
+
+**SCAN**
+- [x] Specify index
+- [x] Limit
+- [x] Consistent Read
+- [x] Select (ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT)
+- [x] Start Key
+- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
+- [x] Segments
+- [x] Segment
+- [x] Projections
+- [x] Filters
+
+**MISC:**
+- [x] convertEmptyValues (update DocumentClient options)
+- [x] Make `convertEmptyValues` optional - set it to false in your DocumentClient options
+- [ ] Check param merging
+
 ### **NOTE:** This project is in BETA. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
 The **DynamoDB Toolbox** is a simple set of tools for working with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It lets you define your data models (with typings and aliases) and map them to your DynamoDB table. You can then **generate parameters** to `put`, `get`, `delete`, and `update` data by passing in a JavaScript object. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
