@@ -20,7 +20,7 @@ const parseConditions = require('../lib/expressionBuilder')
 const parseProjections = require('../lib/projectionBuilder')
 
 // Import error handlers
-const { hasValue, error } = require('../lib/utils')
+const { error } = require('../lib/utils')
 
 
 // Declare Entity class
