@@ -703,7 +703,6 @@ class Table {
     return meta ? { payload, EntityProjections, TableProjections } : payload
   } // end query
 
-
   // BatchGet Items
   async batchGet(items,options={},params={}) {
     // Generate the payload with meta information
@@ -719,34 +718,11 @@ class Table {
       const result = await this.DocumentClient.batchGet(payload).promise()
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
-        return Object.assign(
-          result,
-          // If reponses exist
-          result.Responses ? {
-            // Loop through the tables 
-            Responses: Object.keys(result.Responses).reduce((acc,table) => {
-              // Merge in tables
-              return Object.assign(acc,{ 
-                // Map over the items
-                [(Tables[table] && Tables[table].Table.alias) || table]: result.Responses[table].map(item => {            
-                  // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
-                  if (Tables[table] && Tables[table][item[Tables[table].Table.entityField]]) {
-                    // Parse the item and pass in projection references
-                    return Tables[table][item[Tables[table].Table.entityField]].parse(
-                      item,
-                      EntityProjections[table] && EntityProjections[table][item[Tables[table].Table.entityField]] ? EntityProjections[table][item[Tables[table].Table.entityField]]
-                      : TableProjections[table] ? TableProjections[table]
-                      : []
-                    )
-                  // Else, just return the original item
-                  } else {
-                    return item
-                  }
-                }) // end item map
-              }) // end assign
-            }, {}) // end table reduce
-          } : null // end if Responses
-        ) // end parse assign
+
+        // TODO: Left in for testing. Needs to be removed
+        // result.UnprocessedKeys = testUnprocessedKeys
+
+        return this.parseBatchGetResponse(result,Tables,EntityProjections,TableProjections,options)
       } else {
         return result
       }       
@@ -755,6 +731,47 @@ class Table {
     } // end-if
   } // end put
 
+
+  parseBatchGetResponse(result,Tables,EntityProjections,TableProjections,options={}) {
+    return Object.assign(
+      result,
+      // If reponses exist
+      result.Responses ? {
+        // Loop through the tables 
+        Responses: Object.keys(result.Responses).reduce((acc,table) => {
+          // Merge in tables
+          return Object.assign(acc,{ 
+            // Map over the items
+            [(Tables[table] && Tables[table].Table.alias) || table]: result.Responses[table].map(item => {            
+              // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
+              if (Tables[table] && Tables[table][item[Tables[table].Table.entityField]]) {
+                // Parse the item and pass in projection references
+                return Tables[table][item[Tables[table].Table.entityField]].parse(
+                  item,
+                  EntityProjections[table] && EntityProjections[table][item[Tables[table].Table.entityField]] ? EntityProjections[table][item[Tables[table].Table.entityField]]
+                  : TableProjections[table] ? TableProjections[table]
+                  : []
+                )
+              // Else, just return the original item
+              } else {
+                return item
+              }
+            }) // end item map
+          }) // end assign
+        }, {}) // end table reduce
+      } : null, // end if Responses
+      // If UnprocessedKeys, return a next function
+      result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length > 0 ? { 
+        next: () => { 
+          const nextResult = this.DocumentClient.batchGet(Object.assign(
+            { RequestItems: result.UnprocessedKeys },
+            options.capacity ? { ReturnConsumedCapacity: options.capacity.toUpperCase() } : null
+          )).promise()
+          return this.parseBatchGetResponse(nextResult,Tables,EntityProjections,TableProjections,options)
+        } 
+      } : { next: () => false } // TODO: How should this return?
+    ) // end parse assign
+  }
 
 
 
@@ -891,11 +908,6 @@ class Table {
           error(`'keys' must be an array of objects`)
         }
 
-        // test
-        // console.log('EntityProjections:', EntityProjections)
-        // console.log('TableProjections:', TableProjections)
-        
-
         // Create the table in the Request Item if it doesn't exist
         if (!RequestItems[table.name]) {
 
@@ -969,3 +981,39 @@ class Table {
 
 // Export the Table class
 module.exports = Table
+
+
+// Left in for testing
+// TODO: remove
+// const testUnprocessedKeys = {
+//   "test-table": {
+//     "Keys": [
+//       {
+//         "pk": "Brady",
+//         "sk": "Mike"
+//       },
+//       {
+//         "pk": "Brady",
+//         "sk": "Tiger"
+//       },
+//       {
+//         "pk": "test",
+//         "sk": "MikeX"
+//       },
+//       {
+//         "pk": "Brady",
+//         "sk": "CarolX"
+//       }
+//     ],
+//     "ExpressionAttributeNames": {
+//       "#proj1": "age",
+//       "#proj2": "sk",
+//       "#proj3": "pk",
+//       "#proj4": "mapTest",
+//       "#proj5": "typey",
+//       "#proj6": "_tp"
+//     },
+//     "ProjectionExpression": "#proj1,#proj2,#proj3,#proj4,#proj5,#proj6"
+//   }
+// }
+    

@@ -13,7 +13,7 @@
 
 **BATCH GET**
 - [x] Implement interface
-- [ ] UnprocessedKeys
+- [x] UnprocessedKeys
 - [x] Projections
 - [x] ConsistentRead
 - [x] Responses
