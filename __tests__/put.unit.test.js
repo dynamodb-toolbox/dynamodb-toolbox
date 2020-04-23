@@ -18,6 +18,8 @@ const TestEntity = new Entity({
     test_string_coerce: { type: 'string' },
     test_number: { type: 'number', alias: 'count', coerce: false },
     test_number_coerce: { type: 'number', default: 0 },
+    test_float: { type: 'number', alias: 'float', coerce: false },
+    test_float_coerce: { type: 'number' },
     test_boolean: { type: 'boolean', coerce: false },
     test_boolean_coerce: { type: 'boolean' },
     test_list: { type: 'list' },
@@ -89,6 +91,19 @@ describe('put',()=>{
     expect(Item.test_number).toBe(5)
     expect(Item._tp).toBe('TestEntity')
     expect(Item.test_string).toBe('test string')
+    expect(Item).toHaveProperty('_ct')
+    expect(Item).toHaveProperty('_md')
+  })
+
+  it('creates basic item with float values',() => {
+    let { TableName, Item } = TestEntity.generatePutParams({ pk: 'test-pk', sk: 'test-sk', float: 1.234, test_float_coerce: '1.234' })
+    
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.sk).toBe('test-sk')
+    expect(Item._tp).toBe('TestEntity')
+    expect(Item.test_string).toBe('test string')
+    expect(Item.test_float).toBe(1.234)
+    expect(Item.test_float_coerce).toBe(1.234)
     expect(Item).toHaveProperty('_ct')
     expect(Item).toHaveProperty('_md')
   })
