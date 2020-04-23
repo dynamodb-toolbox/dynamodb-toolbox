@@ -704,6 +704,211 @@ class Table {
     return projections ? { payload, EntityProjections, TableProjections } : payload
   } // end query
 
+
+
+
+
+  // PUT - put item
+  async batchGet(items,options={},params={}) {
+    // Generate the payload
+    const payload = this.generateBatchGetParams(items,options,params)
+
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = await this.DocumentClient.batchGet(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return Object.assign(
+          result,
+          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.omit) ? options.omit : []) } : null
+        )
+      } else {
+        return result
+      }       
+    } else {
+      return payload
+    } // end-if
+  } // end put
+
+
+
+
+
+  generateBatchGetParams(_items,options={}) {
+
+    let items = Array.isArray(_items) ? _items : [_items]
+
+    const {
+      capacity,
+      ..._args
+    } = options
+  
+    // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
+
+    // Error on extraneous arguments
+    if (args.length > 0)
+      error(`Invalid batchGet options: ${args.join(', ')}`)
+
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Init RequestItems
+    const RequestItems = {}
+    
+    // Loop through items
+    for (const i in items) {
+      const item = items[i]
+      let Keys = []
+      
+      // Item must be an object
+      if (typeof item === 'object' && !Array.isArray(item)) {
+        
+        // Extract known parameters
+        let {
+          table, // table object
+          keys, // array of keys
+          consistent, // boolean for ConsistentRead
+          attributes, // Projections
+          entity, // entity name
+          ...args
+        } = item   
+
+        // If table supplied, verify, else default to current table
+        if (table !== undefined) {
+          if (table.constructor.name !== 'Table')
+            error(`'table' requires a valid Table object`)
+        } else {
+          table = this
+        }
+         
+        // Verify consistent read
+        if (consistent !== undefined && typeof consistent !== 'boolean')
+          error(`'consistent' requires a boolean`)
+
+        // Verify entity, set default for this table
+        if (entity !== undefined) {
+          if (typeof entity !== 'string' || (!table[entity] || table[entity].constructor.name !== 'Entity'))
+            error(`'entity' value of '${entity}' must be a string and a valid table Entity name`)
+        } else if (table.name === this.name) {
+          // entity = this.name
+        }
+
+        let ExpressionAttributeNames // init ExpressionAttributeNames
+        let ProjectionExpression // init ProjectionExpression
+        let EntityProjections
+        let TableProjections
+    
+        // If projections
+        if (attributes) {
+          const { names, projections, entities, tableAttrs } = parseProjections(attributes,table)
+    
+          if (Object.keys(names).length > 0) {
+            // Merge names and add projection expression
+            ExpressionAttributeNames = names
+            ProjectionExpression = projections
+            EntityProjections = entities
+            TableProjections = tableAttrs
+          } // end if names
+    
+        } // end if projections
+
+        // Error if extra arguments are provided along with keys
+        if (keys !== undefined && Object.keys(args).length > 0)
+          error(`Invalid options when specifying 'keys': ${args.join(', ')}`)
+        
+        // If no keys, convert extra args to a keys array
+        if (keys === undefined) keys = [ { entity, ...args }]        
+
+        // Process keys
+        if (Array.isArray(keys)) {
+          // Loop through keys
+          for (const x in keys) {
+            // Extract entity (if provided) and remaining attributes
+            let { 
+              entity: _entity,
+              ...keyMap
+            } = keys[x]
+
+            // Inherit entity
+            const ent = _entity || entity
+
+            // Track key combos
+            let primaryKey = {}
+
+            // Loop through the remaining attributes and check if a pk/sk
+            for (const attr in keyMap) {
+              
+              // Load the schema for entity, or default to table
+              const schema = ent ? table[ent].schema.attributes : table.Table.attributes
+
+              // Merge keys into the primary Key
+              primaryKey = Object.assign(
+                primaryKey,
+                { 
+                  [(schema[attr] && (schema[attr].partitionKey || schema[attr].sortKey || table.Table.partitionKey === attr || table.Table.sortKey === attr)) ? schema[attr].map || attr
+                  : error(`'${attr}' is not a valid partition or sort key`)]: keyMap[attr]
+                }
+              )
+            } // end for keyMap
+
+            // Push primaryKey onto Keys
+            Keys.push(primaryKey)
+
+          } // end for loop
+
+        } else {
+          error(`'keys' must be an array of objects`)
+        }
+
+        // test
+        // console.log('EntityProjections:', EntityProjections)
+        // console.log('TableProjections:', TableProjections)
+        
+
+        // Create the table in the Request Item if it doesn't exist
+        if (!RequestItems[table.name]) {
+
+          // Merge keys, fail on dupe configs
+          RequestItems[table.name] = Object.assign(
+            { Keys },
+            // Prevent multiple table definitons with more than just Keys
+            consistent ? { ConsistentRead: consistent } : null,
+            ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
+            ProjectionExpression ? { ProjectionExpression } : null
+          )
+        } else {
+          if (consistent || attributes) { error(`Only one configuration object per table is allowed`) }
+          RequestItems[table.name].Keys = RequestItems[table.name].Keys.concat(Keys)
+        } // end if table exists
+
+      // Else, throw an error
+      } else {
+        error(`Invalid input, batchGet accepts and array of objects`)
+      }
+
+    } // end loop
+
+    const payload = Object.assign(
+      { RequestItems },
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null
+    )
+
+
+    return payload
+  } // generateBatchGetParams
+
+
+
+
+
+
+
+
+
+
   // Entity operation references
   get(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)

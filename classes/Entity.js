@@ -1,6 +1,8 @@
 'use strict'
 
 // TODO: make sure pks and sks are of correct types
+// TODO: remove 'omit' options
+// TODO: pass 'include' into parse function?
 
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
@@ -140,7 +142,7 @@ class Entity {
 
     // Load the schema
     const { schema, linked } = this
-
+    
     // Assume standard response from DynamoDB
     const data = input.Item || input.Items || input
 
@@ -155,14 +157,18 @@ class Entity {
   // GET - get item
   async get(item={},options={},params={}) {
     // Generate the payload
-    let payload = this.generateGetParams(item,options,params)
+    const payload = this.generateGetParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.get(payload).promise()      
+      const result = await this.DocumentClient.get(payload).promise()    
+        
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
-        return this.parse(result,Array.isArray(options.include) ? options.include : [])
+        return Object.assign(
+          result,
+          result.Item ? { Item: this.parse(result.Item,Array.isArray(options.include) ? options.include : []) } : null
+        )
       } else {
         return result
       }
@@ -234,15 +240,18 @@ class Entity {
 
   // DELETE - delete item
   async delete(item={},options={},params={}) {
-    // Generate the payload (same as get)
-    const payload = await this.generateDeleteParams(item,options,params)
+
+    const payload = this.generateDeleteParams(item,options,params)
     
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = this.DocumentClient.delete(payload).promise()
+      const result = await this.DocumentClient.delete(payload).promise()
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
-        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+        return Object.assign(
+          result,
+          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.omit) ? options.omit : []) } : null
+        )
       } else {
         return result
       }
@@ -250,6 +259,7 @@ class Entity {
       return payload
     } // end if-else
   } // end delete
+
 
   // Generate DELETE parameters
   generateDeleteParams(item={},options={},params={}) {
@@ -285,8 +295,8 @@ class Entity {
     // Verify returnValues
     if (returnValues !== undefined
       && (typeof returnValues !== 'string' 
-      || !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(returnValues.toUpperCase())))
-      error(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`)
+      || !['NONE', 'ALL_OLD'].includes(returnValues.toUpperCase())))
+      error(`'returnValues' must be one of 'NONE' OR 'ALL_OLD'`)
     
     let ExpressionAttributeNames // init ExpressionAttributeNames
     let ExpressionAttributeValues // init ExpressionAttributeValues
@@ -336,14 +346,17 @@ class Entity {
   async update(item={},options={},params = {}) {
 
     // Generate the payload
-    let payload = this.generateUpdateParams(item,options,params)
+    const payload = this.generateUpdateParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = this.DocumentClient.update(payload).promise()
+      const result = await this.DocumentClient.update(payload).promise()
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
-        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+        return Object.assign(
+          result,
+          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.omit) ? options.omit : []) } : null
+        )
       } else {
         return result
       }      
@@ -623,7 +636,10 @@ class Entity {
       },
       typeof params === 'object' ? params : {},
       Object.keys(ExpressionAttributeValues).length > 0 ? { ExpressionAttributeValues } : {},
-      ConditionExpression ? { ConditionExpression } : {}
+      ConditionExpression ? { ConditionExpression } : {},
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
+      metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
+      returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
     ) // end assign
     
     // console.log(payload)
@@ -642,10 +658,13 @@ class Entity {
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = this.DocumentClient.put(payload).promise()
+      const result = await this.DocumentClient.put(payload).promise()
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
-        return this.parse(result,Array.isArray(options.omit) ? options.omit : [])
+        return Object.assign(
+          result,
+          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.omit) ? options.omit : []) } : null
+        )
       } else {
         return result
       }       
@@ -760,6 +779,9 @@ class Entity {
 
     return payload
   } // end putSync
+
+
+
 
 
   // Query pass-through (default entity)

@@ -11,58 +11,21 @@
 
 ### TODOs:
 
-**QUERY** implementation:
-- [x] Select (ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT)
-- [x] Sync generateQueryParams - how to handle entity projections?
-
-**GET** implemention:
-- [x] Consistent Read
-- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
-- [x] Projections
-- [x] Update tests
-
-**DELETE** implemention:
-- [x] Conditions
-- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
-- [x] Collection Metrics (SIZE, NONE)
-- [x] Return Values (NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW)
-
-**PUT** implemention:
-- [x] Conditions
-- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
-- [x] Collection Metrics (SIZE, NONE)
-- [x] Return Values (NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW)
-- [x] Null values
-
-**UPDATE** implemention:
-- [x] Conditions
-- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
-- [x] Collection Metrics (SIZE, NONE)
-- [x] Return Values (NONE, ALL_OLD, UPDATED_OLD, ALL_NEW, UPDATED_NEW)
-- [x] Null values
-
 **BATCH GET**
-- [ ] Implement interface
+- [x] Implement interface
+- [ ] UnprocessedKeys
+- [x] Projections
+- [x] ConsistentRead
+- [ ] Responses
 
 **BATCH WRITE**
 - [ ] Implement interface
-
-**SCAN**
-- [x] Specify index
-- [x] Limit
-- [x] Consistent Read
-- [x] Select (ALL_ATTRIBUTES, ALL_PROJECTED_ATTRIBUTES, SPECIFIC_ATTRIBUTES, COUNT)
-- [x] Start Key
-- [x] Consumed Capacity (INDEXES, TOTAL, NONE)
-- [x] Segments
-- [x] Segment
-- [x] Projections
-- [x] Filters
 
 **MISC:**
 - [x] convertEmptyValues (update DocumentClient options)
 - [x] Make `convertEmptyValues` optional - set it to false in your DocumentClient options
 - [ ] Check param merging
+- [ ] Remove null fields option
 
 ### **NOTE:** This project is in BETA. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
