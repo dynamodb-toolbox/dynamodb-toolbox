@@ -262,6 +262,11 @@ class Entity {
     } // end if-else
   } // end delete
 
+  // Shortcut for batch operations
+  deleteBatch(item={}) {
+    const payload = this.generateDeleteParams(item)
+    return { [payload.TableName] : { DeleteRequest: { Key: payload.Key } } }
+  }
 
   // Generate DELETE parameters
   generateDeleteParams(item={},options={},params={}) {
@@ -675,6 +680,11 @@ class Entity {
     } // end-if
   } // end put
 
+  // Shortcut for batch operations
+  putBatch(item={}) {
+    const payload = this.generatePutParams(item)
+    return { [payload.TableName] : { PutRequest: { Item: payload.Item } } }
+  }
 
   // Generate PUT Parameters
   generatePutParams(item={},options={},params={}) {

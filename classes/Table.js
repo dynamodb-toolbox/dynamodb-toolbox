@@ -771,7 +771,7 @@ class Table {
         } 
       } : { next: () => false } // TODO: How should this return?
     ) // end parse assign
-  }
+  } // end parseBatchGetResponse
 
 
 
@@ -949,9 +949,106 @@ class Table {
 
 
 
+  // BatchGet Items
+  async batchWrite(items,options={},params={}) {
+    // Generate the payload with meta information
+    const payload = this.generateBatchWriteParams(items,options,params)
+
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = await this.DocumentClient.batchWrite(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+
+        // TODO: Left in for testing. Needs to be removed
+        // result.UnprocessedKeys = testUnprocessedKeys
+
+        return this.parseBatchWriteResponse(result,options)
+      } else {
+        return result
+      }       
+    } else {
+      return payload
+    } // end-if
+  } // end put
 
 
 
+  parseBatchWriteResponse(result,options={}) {
+    return Object.assign(
+      result,
+      // If UnprocessedKeys, return a next function
+      result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length > 0 ? { 
+        next: () => { 
+          const nextResult = this.DocumentClient.batchWrite(Object.assign(
+            { RequestItems: result.UnprocessedKeys },
+            options.capacity ? { ReturnConsumedCapacity: options.capacity.toUpperCase() } : null,
+            options.metrics ? { ReturnItemCollectionMetrics: options.metrics.toUpperCase() } : null
+          )).promise()
+          return this.parseBatchWriteResponse(nextResult,options)
+        } 
+      } : { next: () => false } // TODO: How should this return?
+    ) // end parse assign
+  } // end parseBatchWriteResponse
+
+
+
+  // Generate BatchWrite Params
+  generateBatchWriteParams(_items,options={},params={},meta) {
+    // Convert items to array
+    let items = Array.isArray(_items) ? _items : [_items]
+
+    const {
+      capacity,
+      metrics,
+      ..._args
+    } = options
+
+    // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
+
+    // Error on extraneous arguments
+    if (args.length > 0)
+      error(`Invalid batchWrite options: ${args.join(', ')}`)
+
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Verify metrics
+    if (metrics !== undefined
+      && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
+      error(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+
+    // Init RequestItems
+    const RequestItems = {}
+    
+    // Loop through items
+    for (const i in items) {
+      const item = items[i]
+      const table = Object.keys(item)[0]
+
+      // Create a table property with an empty array if it doesn't exist
+      if (!RequestItems[table]) RequestItems[table] = []
+
+      // TODO: Add some validation here?
+
+      // Push request onto the table array
+      RequestItems[table].push(item[table])      
+    }
+
+    const payload = Object.assign(
+      { RequestItems },
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
+      metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
+      typeof params === 'object' ? params : null
+    )
+    
+    const Tables = {}
+    return meta ? { payload, Tables } : payload
+
+  } // generateBatchWriteParams
 
 
 
@@ -982,38 +1079,3 @@ class Table {
 // Export the Table class
 module.exports = Table
 
-
-// Left in for testing
-// TODO: remove
-// const testUnprocessedKeys = {
-//   "test-table": {
-//     "Keys": [
-//       {
-//         "pk": "Brady",
-//         "sk": "Mike"
-//       },
-//       {
-//         "pk": "Brady",
-//         "sk": "Tiger"
-//       },
-//       {
-//         "pk": "test",
-//         "sk": "MikeX"
-//       },
-//       {
-//         "pk": "Brady",
-//         "sk": "CarolX"
-//       }
-//     ],
-//     "ExpressionAttributeNames": {
-//       "#proj1": "age",
-//       "#proj2": "sk",
-//       "#proj3": "pk",
-//       "#proj4": "mapTest",
-//       "#proj5": "typey",
-//       "#proj6": "_tp"
-//     },
-//     "ProjectionExpression": "#proj1,#proj2,#proj3,#proj4,#proj5,#proj6"
-//   }
-// }
-    

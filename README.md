@@ -11,15 +11,11 @@
 
 ### TODOs:
 
-**BATCH GET**
-- [x] Implement interface
-- [x] UnprocessedKeys
-- [x] Projections
-- [x] ConsistentRead
-- [x] Responses
-
 **BATCH WRITE**
-- [ ] Implement interface
+- [x] Implement interface
+- [x] Put/Delete separation
+- [x] ReturnConsumedCapacity
+- [x] ReturnItemCollectionMetrics
 
 **MISC:**
 - [x] convertEmptyValues (update DocumentClient options)
