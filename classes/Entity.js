@@ -133,11 +133,13 @@ class Entity {
   parse(input,include=[]) {
 
     // TODO: 'include' needs to handle nested maps?
+    // console.log('INCLUDE:',include,this.schema.attributes);
+    
 
     // Convert include to roots and de-alias
     include = include.map(attr => {
       const _attr = attr.split('.')[0].split('[')[0]
-      return this.schema.attributes[_attr].map || _attr
+      return (this.schema.attributes[_attr] && this.schema.attributes[_attr].map) || _attr
     })
 
     // Load the schema

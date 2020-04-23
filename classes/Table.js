@@ -511,10 +511,10 @@ class Table {
   } // end query
 
 
-
+  // SCAN the table
   async scan(options={},params={}) {
   
-    // Generate query parameters with projection data
+    // Generate query parameters with meta data
     const { 
       payload,
       EntityProjections,
@@ -535,7 +535,6 @@ class Table {
               if (this[item[this.Table.entityField]]) {
                 return this[item[this.Table.entityField]].parse(
                   item,
-                  // Array.isArray(options.omit) ? options.omit : [],
                   EntityProjections[item[this.Table.entityField]] ? EntityProjections[item[this.Table.entityField]]
                   : TableProjections ? TableProjections
                   : []
@@ -565,8 +564,8 @@ class Table {
 
 
 
-  // Scan the table
-  generateScanParams(options={},params={},projections=false) { 
+  // Generate SCAN Parameters
+  generateScanParams(options={},params={},meta=false) { 
       
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
@@ -701,17 +700,19 @@ class Table {
       typeof params === 'object' ? params : null
     )
 
-    return projections ? { payload, EntityProjections, TableProjections } : payload
+    return meta ? { payload, EntityProjections, TableProjections } : payload
   } // end query
 
 
-
-
-
-  // PUT - put item
+  // BatchGet Items
   async batchGet(items,options={},params={}) {
-    // Generate the payload
-    const payload = this.generateBatchGetParams(items,options,params)
+    // Generate the payload with meta information
+    const {
+      payload, // batcGet payload
+      Tables, // table reference
+      EntityProjections,
+      TableProjections
+    } = this.generateBatchGetParams(items,options,params,true)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -720,8 +721,32 @@ class Table {
       if (options.parse || (this.autoParse && options.parse !== false)) {
         return Object.assign(
           result,
-          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.omit) ? options.omit : []) } : null
-        )
+          // If reponses exist
+          result.Responses ? {
+            // Loop through the tables 
+            Responses: Object.keys(result.Responses).reduce((acc,table) => {
+              // Merge in tables
+              return Object.assign(acc,{ 
+                // Map over the items
+                [(Tables[table] && Tables[table].Table.alias) || table]: result.Responses[table].map(item => {            
+                  // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
+                  if (Tables[table] && Tables[table][item[Tables[table].Table.entityField]]) {
+                    // Parse the item and pass in projection references
+                    return Tables[table][item[Tables[table].Table.entityField]].parse(
+                      item,
+                      EntityProjections[table] && EntityProjections[table][item[Tables[table].Table.entityField]] ? EntityProjections[table][item[Tables[table].Table.entityField]]
+                      : TableProjections[table] ? TableProjections[table]
+                      : []
+                    )
+                  // Else, just return the original item
+                  } else {
+                    return item
+                  }
+                }) // end item map
+              }) // end assign
+            }, {}) // end table reduce
+          } : null // end if Responses
+        ) // end parse assign
       } else {
         return result
       }       
@@ -733,8 +758,8 @@ class Table {
 
 
 
-
-  generateBatchGetParams(_items,options={}) {
+  // Generate BatchGet Params
+  generateBatchGetParams(_items,options={},params={},meta=false) {
 
     let items = Array.isArray(_items) ? _items : [_items]
 
@@ -755,8 +780,11 @@ class Table {
       && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
       error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
 
-    // Init RequestItems
+    // Init RequestItems and Tables reference
     const RequestItems = {}
+    const Tables = {}
+    let EntityProjections = {}
+    let TableProjections = {}
     
     // Loop through items
     for (const i in items) {
@@ -798,19 +826,19 @@ class Table {
 
         let ExpressionAttributeNames // init ExpressionAttributeNames
         let ProjectionExpression // init ProjectionExpression
-        let EntityProjections
-        let TableProjections
+        let _EntityProjections // scoped to this loop
+        let _TableProjections // scoped to this loop
     
         // If projections
         if (attributes) {
-          const { names, projections, entities, tableAttrs } = parseProjections(attributes,table)
+          const { names, projections, entities, tableAttrs } = parseProjections(attributes,table,null,true)
     
           if (Object.keys(names).length > 0) {
             // Merge names and add projection expression
             ExpressionAttributeNames = names
             ProjectionExpression = projections
-            EntityProjections = entities
-            TableProjections = tableAttrs
+            _EntityProjections = entities
+            _TableProjections = tableAttrs
           } // end if names
     
         } // end if projections
@@ -871,6 +899,13 @@ class Table {
         // Create the table in the Request Item if it doesn't exist
         if (!RequestItems[table.name]) {
 
+          // Add the table reference
+          Tables[table.name] = table
+
+          // Create meta data references projections
+          EntityProjections[table.name] = _EntityProjections
+          TableProjections[table.name] = _TableProjections
+
           // Merge keys, fail on dupe configs
           RequestItems[table.name] = Object.assign(
             { Keys },
@@ -893,11 +928,11 @@ class Table {
 
     const payload = Object.assign(
       { RequestItems },
-      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
+      typeof params === 'object' ? params : null
     )
 
-
-    return payload
+    return meta ? { payload, Tables, EntityProjections, TableProjections } : payload
   } // generateBatchGetParams
 
 

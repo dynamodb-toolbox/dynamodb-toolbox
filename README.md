@@ -16,7 +16,7 @@
 - [ ] UnprocessedKeys
 - [x] Projections
 - [x] ConsistentRead
-- [ ] Responses
+- [x] Responses
 
 **BATCH WRITE**
 - [ ] Implement interface
