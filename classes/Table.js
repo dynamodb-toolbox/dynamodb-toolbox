@@ -742,7 +742,7 @@ class Table {
           // Merge in tables
           return Object.assign(acc,{ 
             // Map over the items
-            [(Tables[table] && Tables[table].Table.alias) || table]: result.Responses[table].map(item => {            
+            [(Tables[table] && Tables[table].alias) || table]: result.Responses[table].map(item => {            
               // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
               if (Tables[table] && Tables[table][item[Tables[table].Table.entityField]]) {
                 // Parse the item and pass in projection references
@@ -807,6 +807,7 @@ class Table {
     // Init RequestItems and Tables reference
     const RequestItems = {}
     const Tables = {}
+    const TableAliases = {}
     let EntityProjections = {}
     let TableProjections = {}
     
@@ -831,8 +832,9 @@ class Table {
         if (!RequestItems[table]) {
           // Create a table property with an empty array
           RequestItems[table] = { Keys: [] }
-          // Add the table reference
+          // Add the table/table alias reference
           Tables[table] = item.Table
+          if (item.Table.alias) TableAliases[item.Table.alias] = table
         }
 
         // Push request onto the table array
@@ -851,12 +853,12 @@ class Table {
         for (const tbl in RequestItems) RequestItems[tbl].ConsistentRead = true
       } else if (typeof consistent === 'object' && !Array.isArray(consistent)) {
         for (const tbl in consistent) {
-          // TODO: support table alias
-          if (RequestItems[tbl]) {
-            if (typeof consistent[tbl] === 'boolean') { RequestItems[tbl].ConsistentRead = consistent[tbl] }
+          const tbl_name = TableAliases[tbl] || tbl  
+          if (RequestItems[tbl_name]) {
+            if (typeof consistent[tbl] === 'boolean') { RequestItems[tbl_name].ConsistentRead = consistent[tbl] }
             else { error(`'consistent' values must be booleans (${tbl})`) }
           } else {
-            error(`There are no items for the table: ${tbl}`)
+            error(`There are no items for the table or table alias: ${tbl}`)
           }
         } // end if
       } else {
@@ -879,13 +881,13 @@ class Table {
       } // end if array
 
       for (const tbl in attrs) {        
-        // TODO: support table alias
-        if (Tables[tbl]) {
-          const { names, projections, entities, tableAttrs } = parseProjections(attrs[tbl],Tables[tbl],null,true)
-          RequestItems[tbl].ExpressionAttributeNames = names
-          RequestItems[tbl].ProjectionExpression = projections
-          EntityProjections[tbl] = entities
-          TableProjections[tbl] = tableAttrs
+        const tbl_name = TableAliases[tbl] || tbl 
+        if (Tables[tbl_name]) {
+          const { names, projections, entities, tableAttrs } = parseProjections(attrs[tbl],Tables[tbl_name],null,true)
+          RequestItems[tbl_name].ExpressionAttributeNames = names
+          RequestItems[tbl_name].ProjectionExpression = projections
+          EntityProjections[tbl_name] = entities
+          TableProjections[tbl_name] = tableAttrs
         } else {
           error(`There are no items for the table: ${tbl}`)
         }

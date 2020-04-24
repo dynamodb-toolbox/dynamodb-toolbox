@@ -812,6 +812,12 @@ class Entity {
     return this.table.query(pk,options,params)
   }
 
+  // Scan pass-through (default entity)
+  scan(options={},params={}) {    
+    options.entity = this.name
+    return this.table.scan(options,params)
+  }
+
 
 } // end Entity
 
