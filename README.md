@@ -10,18 +10,10 @@
 # DOCUMENTATION IS NOT COMPLETE FOR v0.2
 
 ### TODOs:
-
-**BATCH WRITE**
-- [x] Implement interface
-- [x] Put/Delete separation
-- [x] ReturnConsumedCapacity
-- [x] ReturnItemCollectionMetrics
-
-**MISC:**
-- [x] convertEmptyValues (update DocumentClient options)
-- [x] Make `convertEmptyValues` optional - set it to false in your DocumentClient options
 - [ ] Check param merging
-- [ ] Remove null fields option
+- [ ] 'Remove null fields' option
+- [ ] Tests, tests, and more tests
+- [ ] Documentation updates 😳
 
 ### **NOTE:** This project is in BETA. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
