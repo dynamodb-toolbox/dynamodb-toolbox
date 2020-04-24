@@ -438,7 +438,7 @@ class Entity {
 
     // Error on extraneous arguments
     if (args.length > 0)
-      error(`Invalid delete options: ${args.join(', ')}`)
+      error(`Invalid update options: ${args.join(', ')}`)
     
     // Verify metrics
     if (metrics !== undefined

@@ -206,32 +206,41 @@ class Table {
           // If the atribute already exists in the table definition
           } else if (this.Table.attributes[attr]) {
 
-            // Check type (and setType if exists)
-            if (this.Table.attributes[attr].type === entity.schema.attributes[attr].type
-                && (this.Table.attributes[attr].type !== 'set' 
-                  || this.Table.attributes[attr].setType === entity.schema.attributes[attr].setType)
-            ) {
-              // Add entity mappings
-              this.Table.attributes[attr].mappings[entity.name] = entity.schema.attributes[attr].alias || attr
-            // Otherwise throw an error
-            } else {
-              error(`${entity.name} attribute type '${attr}' (${entity.schema.attributes[attr].type}) does not match table's type (${this.Table.attributes[attr].type})`)
-            } // end check type
+            // If type is specified, check for attribute match
+            if (this.Table.attributes[attr].type 
+              && this.Table.attributes[attr].type !== entity.schema.attributes[attr].type) 
+              error(`${entity.name} attribute type for '${attr}' (${entity.schema.attributes[attr].type}) does not match table's type (${this.Table.attributes[attr].type})`)
+          
+            // Add entity mappings
+            this.Table.attributes[attr].mappings[entity.name] = Object.assign({
+              [entity.schema.attributes[attr].alias || attr]: entity.schema.attributes[attr].type 
+            },
+            // Add setType if type 'set'
+            entity.schema.attributes[attr].type === 'set' 
+              ? { _setType: entity.schema.attributes[attr].setType }
+              : {}
+            )
 
           // else if the attribute doesn't exist
           } else if (!entity.schema.attributes[attr].map) {
-            
+
             // Add type and entity map
             this.Table.attributes[attr] = Object.assign(
               {
-                type: entity.schema.attributes[attr].type,
-                mappings: { [entity.name]: entity.schema.attributes[attr].alias || attr }
+                mappings: { 
+                  [entity.name]: Object.assign({
+                    [entity.schema.attributes[attr].alias || attr]: entity.schema.attributes[attr].type 
+                  },
+                  // Add setType if type 'set'
+                  entity.schema.attributes[attr].type === 'set' 
+                    ? { _setType: entity.schema.attributes[attr].setType }
+                    : {}
+                  )
+                }
               },
-              // Add setType if type 'set'
-              entity.schema.attributes[attr].type === 'set' 
-                ? { setType: entity.schema.attributes[attr].setType }
-                : {}
-            ) // end Object.assign
+              entity.schema.attributes[attr].partitionKey || entity.schema.attributes[attr].sortKey 
+                ? { type: entity.schema.attributes[attr].type } : null
+            ) // end assign
 
           } // end if-else Table attribute exists
           
