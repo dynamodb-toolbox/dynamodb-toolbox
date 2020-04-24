@@ -1,4 +1,4 @@
-# DynamoDB Toolbox - v0.2 (WIP)
+# DynamoDB Toolbox - v0.2 (WIP: Not Production Ready)
 
 [![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=v0.2)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
@@ -7,13 +7,8 @@
 
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
-# DOCUMENTATION IS NOT COMPLETE FOR v0.2
-
-### TODOs:
-- [ ] Check param merging
-- [ ] 'Remove null fields' option
-- [ ] Tests, tests, and more tests
-- [ ] Documentation updates 😳
+## DOCUMENTATION IS BEING UPDATED FOR v0.2
+**Please note that names and references are subject to change.**
 
 ### **NOTE:** This project is in BETA. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
@@ -30,6 +25,12 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - **Bidirectional Aliasing:** When building single table data models, you can define multiple schemas that map to the same table. Each schema can reuse fields (like `pk`,`sk`, and `data`) and map them to different aliases depending on the item type. Your data is automatically mapped correctly when reading and writing data.
 - **Composite Key Generation and Field Mapping:** Doing some fancy data modeling with composite keys? Like setting your `sortKey` to `[country]#[region]#[state]#[county]#[city]#[neighborhood]` model hierarchies? DynamoDB Toolbox lets you map data to these composite keys which will both autogenerate the value *and* parse them into fields for you.
 - **Type Coercion and Validation:** Automatically coerce values to strings, numbers and booleans to ensure consistent data types in your DynamoDB tables. Validate `list`, `map`, and `set` types against your data. Oh yeah, and `set`s are automatically handled for you. 😉
+- [ ] **Query Builder**
+- [ ] **Scan**
+- [ ] **Expression Builder**
+- [ ] **Projection Builder**
+- [ ] **Secondary Index Support**
+- [ ] **Batch Operations**
 
 
 ## Installation and Basic Usage
@@ -54,20 +55,21 @@ const DocumentClient = new DynamoDB.DocumentClient()
 
 // Instantiate a table
 const MyTable = new Table({
-  // Specify table name
+  // Specify table name (used by DynamoDB)
   name: 'my-table',
 
   // Define partition and sort keys
   partitionKey: 'pk',
-  sortKey: 'sk'
-})
+  sortKey: 'sk',
 
-// Add DocumentClient to the table
-MyTable.DocumentClient = DocumentClient
+  // Add the DocumentClient
+  DocumentClient
+})
 ```
 
 Create an Entity:
-
+- [ ] Better examples?
+ 
 ```javascript
 const Customer = new Entity({
   // Specify entity name
@@ -75,34 +77,35 @@ const Customer = new Entity({
 
   // Define attributes
   schema: {
-    pk: { type: 'string', alias: 'id' },
-    sk: { type: 'string', hidden: true },
-    data: { type: 'string', alias: 'name' },
+    id: { partitionKey: true }, // flag as partitionKey
+    sk: { hidden: true, sortKey: true }, // flag as sortKey and mark hidden
+    name: { map: 'data' }, // map 'name' to table attribute 'data'
+    co: { alias: 'company' }, // alias table attribute 'co' to 'company'
+    age: { type: 'number' }, // set the attribute type
     status: ['sk',0], // composite key mapping
     date_added: ['sk',1] // composite key mapping
-  }
+  },
+
+  // Assign it to our table
+  table: MyTable
 })
-```
-
-Add the entity to the table:
-
-```javascript
-MyTable.Entity = Customer
 ```
 
 Put an item:
 
 ```javascript
 
-// Create my item (using my aliases)
+// Create my item (using table attribute names or aliases)
 let item = {
   id: 123,
-  name: 'Test Name',
+  name: 'Jane Smith',
+  company: 'ACME',
+  age: 35,
   status: 'active',
-  date_added: '2019-11-28'
+  date_added: '2020-04-24'
 }
 
-// Use the 'put' method of Customer to generate parameters
+// Use the 'put' method of Customer
 let result = await Customer.put(item)
 ```
 
@@ -111,8 +114,10 @@ The item will be saved to DynamoDB like this:
 ```javascript
 {
   "pk": 123,
-  "sk": "active#2019-11-28",
-  "data": "Test Name"
+  "sk": "active#2020-04-24",
+  "data": "Jane Smith",
+  "co": "ACME",
+  "age": 35
 }
 ```
 
@@ -123,7 +128,7 @@ You can then get the data:
 let item = {
   id: 123,
   status: 'active',
-  date_added: '2019-11-28'
+  date_added: '2019-04-24'
 }
 
 // Use the 'get' method of Customer
@@ -135,22 +140,120 @@ This will return the object mapped to your aliases and composite key mappings:
 ```javascript
 {
   id: 123,
-  name: 'Test Name',
+  name: 'Jane Smith',
+  company: 'ACME',
+  age: 35,
   status: 'active',
-  date_added: '2019-11-28'
+  date_added: '2020-04-24'
 }
 ```
 
-## Specifying Entities and Attributes
+## Tables
+
+**Tables** represent one-to-one mappings to your DynamoDB tables. Then contain information about your table's name, primary keys, indexes, and more. They are also used organize and coordinate operations between **entities**. Tables support a number of methods that allow you to interact with your entities including performing **queries**, **scans**, **batch gets** and **batch writes**.
+
+To define a new table, import it into your script:
+
+```javascript
+const { Table } = require('dynamodb-toolbox')
+```
+
+Then create a new `Table` instance by passing in a valid `Table` definition.
+
+```javascript
+const MyTable = new Table({
+  ... table definition...
+})
+```
+
+### Specifying Table Definitions
+
+`Table` takes a single parameter of type `object` that accepts the following properties:
+
+| Property | Type | Required | Description |
+| -------- | :--: | :--: | ----------- |
+name | `string` | yes | The name of your DynamoDB table (this will be used as the `TableName` property) |
+alias | `string` | no | An optional alias to reference your table when using "batch" features |
+partitionKey | `string` | yes | The attribute name of your table's partitionKey |
+sortKey | `string` | no | The attribute name of your table's sortKey |
+entityField | `boolean` or `string` | no | Disables or overrides entity tracking field name (default: `_ty`) |
+attributes | `object` | no | Complex type that optionally specifies the name and type of each attributes (see below) |
+indexes | `object` | no | Complex type that optionally specifies the name keys of your secondary indexes (see below) |
+autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
+autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`) |
+DocumentClient | `DocumentClient` | * | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
+\* *A Table can be instantiated without a DocumentClient, but most methods require it before execution*
+
+### Table Attributes
+
+The Table `attributes` property is an `object` that specifies the *names* and *types* of attributes associated with your DynamoDB table. This is an optional input that allows you to control attribute types. If an `Entity` object contains an attribute with the same name, but a different type, an error will be thrown. Each key in the object represents the **attribute name** and the value represents its DynamoDB **type**.
+
+```javascript
+attributes: {
+  pk: 'string',
+  sk: 'number',
+  attr1: 'list',
+  attr2: 'map',
+  attr3: 'boolean',
+  ...
+}
+```
+
+Valid DynamoDB types are: `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`.
+
+### Table Indexes
+
+The `indexes` property is an `object` that specifies the *names* and *keys* of the secondary indexes on your DynamoDB table. Each key represents the **index name** and its value must contain an object with a `partitionKey` AND/OR a `sortKey`. `partitionKey`s and `sortKey`s require a value of type `string` that references an table attribute. If you use the same `partitionKey` as the table's `partitionKey`, or you only specify a `sortKey`, the library will recognize them as Local Secondary Indexes (LSIs). Otherwise, they will be Global Secondary Indexes (GSIs).
+
+```javascript
+indexes: {
+  GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSI1sk' },
+  GSI2: { partitionKey: 'test' },
+  LSI1: { partitionKey: 'pk', sortKey: 'other_sk' },
+  LSI2: { sortKey: 'data' }
+}
+```
+
+**NOTE:** The **index name** must match the index name on your table as it will be used in queries and other operations.
+
+## Entities
+
+An **Entity** represent a well-defined schema for a DynamoDB item. An Entity can represent things like a *User*, an *Order*, an *Invoice Line Item*, a *Configuration Object*, or whatever else you want. Each `Entity` defined with the DynamoDB Toolbox must be attached to a `Table`. An `Entity` defines its own attributes, but can share these attributes with other entities on the same table (either explicitly or coincidentally). Entities must flag an attribute as a `partitionKey` and if enabled on the table, a `sortKey` as well. 
+
+Note tha a `Table` can have multiple Entities, but an `Entity` can only have one `Table`.
+
+To define a new entity, import it into your script:
+
+```javascript
+const { Entity } = require('dynamodb-toolbox')
+```
+
+Then create a new `Entity` instance by passing in a valid `Entity` definition.
+
+```javascript
+const MyEntity = new Table({
+  ... entity definition...
+})
+```
+
+### Specifying Entity Definitions
 
 `Entity` takes a single parameter of type `object` that accepts the following properties:
 
 | Property | Type | Required | Description |
 | -------- | :--: | :--: | ----------- |
-timestamps | `Boolean` | no | Automatically add and manage `created` and `modified` fields |
-created | `string` | no | Override default `created` field name |
-modified | `string` | no | Override default `modified` field name |
-attributes | `object` | yes | Complex type that specifies the schema for the model (see below) |
+name | `string` | yes | The name of your entity (must be unique to its associated `Table`)
+timestamps | `boolean` | no | Automatically add and manage *created* and *modified* attributes  |
+created | `string` | no | Override default *created* attribute name (default: `_ct`) |
+modified | `string` | no | Override default *modified* attribute name (default: `_md`) |
+createdAlias | `string` | no | Override default *created* alias name (default: `created`) |
+modifiedAlias | `string` | no | Override default *modified* alias name (default: `modified`) |
+typeAlias | `string` | no | Override default *entity type* alias name (default: `type`) |
+attributes | `object` | yes | Complex type that specifies the schema for the entity (see below) |
+autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
+autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`) |
+table | `Table` | * | A valid `Table` instance |
+\* *An Entity can be instantiated without a `table`, but most methods require one before execution*
 
 ### Attributes
 
@@ -185,21 +288,27 @@ For more control over an attribute's behavior, you can specify an object as the 
 | hidden  | `boolean` | all | Hides attribute from returned JavaScript object when auto-parsing is enabled or when using the `parse` method. |
 | required  | `boolean` or "always" | all | Specifies whether an attribute is required. A value of `true` requires the attribute for all `put` operations. A `string` value of "always" requires the attribute for `put` *and* `update` operations. |
 | alias  | `string` | all | Adds a bidirectional alias to the attribute. All input methods can use either the attribute name or the alias when passing in data. Auto-parsing and the `parse` method will map attributes to their alias. |
+| map  | `string` | all | The inverse of the `alias` option, allowing you to specify your alias as the key and map it to an attribute name. |
 | setType  | `string` | `set` | Specifies the type for `set` attributes. Allowed values are `string`,`number`,`binary` |
+| partitionKey  | `boolean` or `string` | all | Flags an attribute as the 'partitionKey' for this Entity. If set to `true`, it will be mapped to the Table's `partitionKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `partitionKey` |
+| sortKey  | `boolean` or `string` | all | Flags an attribute as the 'sortKey' for this Entity. If set to `true`, it will be mapped to the Table's `sortKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `sortKey` |
+
+**NOTE:** One attribute *must* be set as the `partitionKey`. If the table defines a `sortKey`, one attribute *must* be set as the `sortKey`. Assignment of secondary indexes is optional. If an attribute is used across multiple indexes, an `array` can be used to specify multiple values.
 
 Example:
 
 ```javascript
 attributes: {
-  pk: { type: 'string', alias: 'user_id' },
-  sk: { type: 'number', hidden: true },
+  user_id: { partitionKey: true },
+  sk: { type: 'number', hidden: true, sortKey: true },
   data: { coerce: false, required: true, alias: 'name' },
-  departments: { type: 'set', setType: 'string' },
+  departments: { type: 'set', setType: 'string', map: 'dept' },
   ...
 }
 ```
 
 #### Using an `array` for composite keys
+- [ ] This needs some work
 
 Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In many cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data *and* parse the output into separate attributes.
 
@@ -207,8 +316,8 @@ The basic syntax is to specify an `array` with the mapped attribute name as the 
 
 ```javascript
 attributes: {
-  pk: { alias: 'user_id' },
-  sk: { hidden: true },
+  user_id: { partitionKey: true  },
+  sk: { hidden: true, sortKey: true },
   status: ['sk',0],
   date: ['sk',1],
   ...
@@ -222,8 +331,8 @@ Composite key mappings are `string`s by default, but can be overridden by specif
 
 ```javascript
 attributes: {
-  pk: { alias: 'user_id' },
-  sk: { hidden: true },
+  user_id: { partitionKey: true  },
+  sk: { hidden: true, sortKey: true },
   status: ['sk',0, { type: 'boolean', save: true, default: true }],
   date: ['sk',1, { required: true }],
   ...
@@ -238,7 +347,7 @@ In simple situations, defaults can be static values. However, for advanced use c
 
 ```javascript
 attributes: {
-  pk: { alias: 'user_id' },
+  user_id: { partitionKey: true },
   created: { default: () => new Date().toISOString() },
   ...
 }
@@ -248,8 +357,8 @@ attributes: {
 
 ```javascript
 attributes: {
-  pk: { alias: 'user_id' },
-  sk: { default: (data) => `sort-${data.status}|${data.date_added}` },
+  user_id: { partitionKey: true  },
+  sk: { sortKey: true, default: (data) => `sort-${data.status}|${data.date_added}` },
   status: 'boolean',
   date_added: 'string'
   ...
@@ -260,425 +369,116 @@ attributes: {
 
 ```javascript
 attributes: {
-  pk: { alias: 'user_id' },
-  sk: { default: (data) => {
-    if (data.status && data.date_added) {
-      return data.date_added
-    } else {
-      return null // field will not be defaulted
+  user_id: { partitionKey: true  },
+  sk: { 
+    sortKey: true,
+    default: (data) => {
+      if (data.status && data.date_added) {
+        return data.date_added
+      } else {
+        return null // field will not be defaulted
+      }
     }
-  } },
+  },
   status: 'boolean',
   date_added: 'string'
   ...
 }
 ```
 
-## Putting, Getting, and Deleting Data
-
-The DynamoDB Toolbox has several convenience methods that helps you generate the parameters required by the DocumentClient. The three most basic are the `put`, `get` and `delete` methods.
-
-### `put` Items
-
-The DocumentClient [`put`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#put-property) method accepts several parameters. The DynamoDB Toolbox will generate the `TableName` and `Items` parameters for you when you use the `put` method on your model.
+## Table Properties
 
-```javascript
-// Create my item (using aliases)
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28'
-}
+### get/set `DocumentClient`
+- [ ] Document get `DocumentClient`
 
-// Use the 'put' method of MyModel to generate parameters
-let params = MyModel.put(item)
-```
+### get/set `entities`
+- [ ] Document get/set `entities`
 
-Based on our Model specified earlier, the `params` variable will be set to:
+### get/set `autoExecute`
+- [ ] Document get/set `autoExecute`
 
-```javascript
-{
-  TableName: 'my-dynamodb-table',
-  Item: {
-    "pk": 123,
-    "sk": "active#2019-11-28",
-    "data": "Test Name"
-  }
-}
-```
-
-This can be sent directly to the `put` method of the DocumentClient:
-
-```javascript
-// Pass the parameters to the DocumentClient's `put` method
-let result = await DocumentClient.put(params).promise()
-```
+### get/set `autoParse`
+- [ ] Document get/set `autoParse`
 
-If you need to add additional parameters, you can either merge the `params` object with your settings, or even easier, pass them in as the second argument to the `put` method:
-
-```javascript
-let params = MyModel.put(item, {
-  ReturnConsumedCapacity: 'TOTAL',
-  ReturnValues: 'ALL_NEW'
-})
-```
-
-### `get` Items
 
-Getting items requires the `partitionKey` and (if configured) the `sortKey`. The DocumentClient [`get`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#get-property) method accepts a number of parameters. The DynamoDB Toolbox will generate the `TableName` and `Key` parameters for you based on your input. If you have composite key mappings or aliases on your `partitionKey` or `sortKey`, the appropriate values will be generated.
-
-Based on our model from before:
-
-```javascript
-// Specify my item
-let item = {
-  id: 123,
-  status: 'active',
-  date_added: '2019-11-28'
-}
-
-// Use the 'get' method of MyModel to generate parameters
-let params = MyModel.get(item)
-```
-
-This will generate the following parameters:
-
-```javascript
-{
-  TableName: 'my-dynamodb-table',
-  Key: {
-    "pk": 123,
-    "sk": "active#2019-11-28"
-  }
-}
-```
-
-You could also specify the `pk` and `sk` values directly and achieve the same result:
-
-```javascript
-let params = MyModel.get({
-  pk: 123,
-  sk: 'active#2019-11-28'
-})
-```
-
-As with the `put` method, you can add your own parameters as the second argument:
-
-```javascript
-let params = MyModel.get(item, {
-  ConsistentRead: true,
-  ReturnConsumedCapacity: 'TOTAL'
-})
-```
-
-### `delete` Items
-
-The DocumentClient [`delete`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#delete-property) method accepts a number of parameters. Similar to the `get` method, the DynamoDB Toolbox will generate the `TableName` and `Key` parameters for you based on your input. If you have composite key mappings or aliases on your `partitionKey` or `sortKey`, the appropriate values will be generated. You can add custom parameters as a second argument.
-
-## Updating Data (the fun stuff)
-
-The DocumentClient [`update`](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#update-property) method accepts a number of parameters. The DynamoDB Toolbox will generate the `TableName`, `Key`, `ExpressionAttributeNames`, `ExpressionAttributeValues`, and the `ConditionExpression` for you. The values of these parameters are determined by your model's schema and the input data.
-
-`ConditionExpression`s can get complicated very quickly, so this library makes it super simple to build complex clauses with type guarantees, defaults, composite key generation, and more. Like with the other methods, you can pass the parameters directly into the DocumentClient's `update` method.
-
-The DynamoDB Toolbox's `update` method is optimized for **upserts** that can safely insert and update items using conditionals on defaults.
-
-Basic example:
-
-```javascript
-// Data to insert update
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28'
-}
-
-let params = MyModel.update(item)
-```
-
-Will generate the following params:
-
-```javascript
-{
-  TableName: 'my-dynamodb-table',
-  Key: { pk: '123', sk: 'active#2019-11-28' },
-  UpdateExpression: 'SET #data = :data',
-  ExpressionAttributeNames: { '#data': 'data' },
-  ExpressionAttributeValues: { ':data': 'Test Name' }
-}
-```
-
-This is a fairly straightforward update query (but notice the `sk` value is generated from the input). Let's build something more complex.
-
-```javascript
-const MyNewModel = new Model('MyNewModel',{
-  // Specify table name
-  table: 'my-dynamodb-table',
-
-  // Add timestamps
-  timestamps: true,
-
-  // Define partition and sort keys
-  partitionKey: 'pk',
-  sortKey: 'sk',
-
-  // Define schema
-  schema: {
-    pk: { type: 'string', alias: 'id' },
-    sk: { type: 'string', hidden: true },
-    data: { type: 'string', alias: 'name' },
-    status: ['sk',0], // composite key mapping
-    date_added: ['sk',1], // composite key mapping
-    roles: { type: 'set', setType: 'string' },
-    level: { type: 'number', default: 1 },
-    sessions: { type: 'list' },
-    metadata: { type: 'map' }
-  }
-})
-
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  roles: ['user','admin']
-}
-
-let params = MyNewModel.update(item)
-```
-
-Will generate the following parameters:
-
-```javascript
-{
-  TableName: 'my-dynamodb-table',
-  Key: { pk: '123', sk: 'active#2019-11-28' },
-  UpdateExpression: 'SET #level = if_not_exists(#level,:level), #__model = if_not_exists(#__model,:__model), #created = if_not_exists(#created,:created), #modified = :modified, #data = :data, #roles = :roles',
-  ExpressionAttributeNames: {
-    '#level': 'level',
-    '#__model': '__model',
-    '#created': 'created',
-    '#modified': 'modified',
-    '#data': 'data',
-    '#roles': 'roles'
-  },
-  ExpressionAttributeValues: {
-    ':level': 1,
-    ':__model': 'MyNewModel',
-    ':created': '2019-11-29T03:22:16.552Z',
-    ':modified': '2019-11-29T03:22:16.552Z',
-    ':data': 'Test Name',
-    ':roles': Set { wrapperName: 'Set', values: ['user','admin'], type: 'String' }
-  }
-}
-```
-
-This `UpdateExpression` is now getting more complex, but all you needed to do was supply a simple JavaScript object with your data and the library handles the rest. Notice that the `level` was automatically defaulted to `1`, but also has the `if_not_exists` guarantee to avoid overwriting the data on a partial update. We've also added automatic timestamps to this model, so the `created` attribute is created when the item is created, and is left untouched for subsequent updates. The `modified` value is updated on every update.
-
-**But wait, there's more!** The `UpdateExpression` lets you do all kinds of crazy things like `REMOVE` attributes, `ADD` values to numbers and sets, and manipulate arrays. The DynamoDB Toolbox has simple ways to deal with all these different operations by properly formatting your input data.
-
-### Removing an attribute
-
-To remove an attribute, set the value in your object to `null` or an empty string.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  roles: null
-}
-```
-
-### Adding a number to a `number` attribute
-
-DynamoDB lets us add (or subtract) numeric values from an attribute in the table. If no value exists, it simply puts the value. Adding with the DynamoDB Toolbox is just a matter of supplying an `object` with an `$add` key on the number fields you want to update.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  level: { $add: 2 } // add 2 to level
-}
-```
-
-
-### Adding values to a `set`
-
-Sets are similar to lists, but they enforce unique values of the same type. To add new values to a set, use an `object` with an `$add` key and an array of values.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  roles: { $add: ['author','support'] }
-}
-```
-
-### Deleting values from a `set`
-
-To delete values from a `set`, use an `object` with a `$delete` key and an array of values to delete.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  roles: { $delete: ['admin'] }
-}
-```
-
-### Appending (or prepending) values to a `list`
-
-To append values to a `list`, use an `object` with an `$append` key and an array of values to append.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  sessions: { $append: [ { date: '2019-11-28', duration: 101 } ] }
-}
-```
-
-Alternatively, you can use the `$prepend` key and it will add the values to the beginning of the list.
-
-### Remove items from a `list`
-
-To remove values from a `list`, use an `object` with a `$remove` key and an array of **indexes** to remove. Lists are indexed starting at `0`, so the update below would remove the second, fifth, and sixth item in the array.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  sessions: { $remove: [1,4,5] }
-}
-```
-
-### Update items in a `list`
-
-To update values in a `list`, specify an `object` with array indexes as the keys and the update data as the values. Lists are indexed starting at `0`, so the update below would update the second and fourth items in the array.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  sessions: {
-    1: 'some new value for the second item',
-    3: 'new value for the fourth value'
-  }
-}
-```
-
-### Update nested data in a `map`
-
-Maps can be complex, deeply nested JavaScript objects with a variety of data types. The DynamoDB Toolbox doesn't support schemas for `map`s (yet), but you can still manipulate them by wrapping your updates in a `$set` parameter and using dot notation and array index notation to target fields.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  metadata: {
-    $set: {
-      'title': 'Developer', // update metadata.title
-      'contact.name': 'Jane Smith', // update metadata.contact.name
-      'contact.addresses[0]': '123 Main Street' // update the first array item in metadata.contact.addresses
-    }
-  }
-}
-```
-
-We can also use our handy `$add`, `$append`, `$prepend`, and `$remove` properties to manipulate nested values.
-
-```javascript
-let item = {
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28',
-  metadata: {
-    $set: {
-      'vacation_days': { $add: -2 },
-      'contact.addresses': { $append: ['99 South Street'] },
-      'contact.phone': { $remove: [1,3] }
-    }
-  }
-}
-```
-
-### Adding custom parameters and clauses
-
-If you need to pass custom parameters, simply pass them in an object as the second parameter.
-
-```javascript
-let params = MyModel.update(item, {
-  ReturnConsumedCapacity: 'TOTAL',
-  ReturnValues: 'ALL_NEW'
-})
-```
-
-If you want to add additional statements to the claues, you can add them as arrays to the `SET`, `ADD`, `REMOVE` and `DELETE` properties in the second parameter. You can also specify additional `ExpressionAttributeNames` and `ExpressionAttributeValues` with object values and the system will merge them in with the generated ones.
-
-```javascript
-let params = MyModel.update(item, {
-  SET: ['#somefield = :somevalue'],
-  ExpressionAttributeNames: { '#somefield': 'somefield' },
-  ExpressionAttributeValues: { ':somevalue': 123 }  
-})
-```
-
-## Parsing and Formatting Data
-
-The DynamoDB Toolbox offers a `parse` method that will convert the output of your DynamoDB queries into JavaScript objects mapped to your aliases. The `parse` method behaves differently based on the input.
-
-### Passing an object containing an `Item`
-
-If you pass an object that has a single `Item`, the `parse` method will return a single object mapped to your aliases.
-
-```javascript
-// Object returned from DynamoDB
-let response = {
-  Item: {
-    "pk": 123,
-    "sk": "active#2019-11-28",
-    "data": "Test Name"
-  }
-}
-
-// Parse the raw response with the `parse` method
-let result = MyModel.parse(response)
-
-// Output:
-{
-  id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2019-11-28'
-}
-```
-
-### Passing an object containing multiple `Items`
-
-If you pass an object that has an `Items` field, the `parse` method will iterate through the `Items` and return an array of objects mapped to your aliases.
-
-### Passing a plain object
-
-If you pass an object that has niether an `Item` nor `Items` key, the `parse` method will attempt to map the object to your schema and return a single object.
+## Table Methods
+
+### Query
+- [ ] Document `query` method
+
+### Scan
+- [ ] Document `scan` method
+
+### BatchGet
+- [ ] Document `batchGet` method
+
+### BatchWrite
+- [ ] Document `batchWrite` method
+
+### Parse
+- [ ] Document `parse` method
+
+### Get
+- [ ] Document `get` method
+
+### Delete
+- [ ] Document `delete` method
+
+### Put
+- [ ] Document `put` method
+
+### Update
+- [ ] Document `update` method
+
+
+
+## Entity Properties
+
+### get/set `table`
+- [ ] Document get/set `table`
+
+### get `DocumentClient`
+- [ ] Document get `DocumentClient`
+
+### get/set `autoExecute`
+- [ ] Document get/set `autoExecute`
+
+### get/set `autoParse`
+- [ ] Document get/set `autoParse`
+
+### get `partitionKey`
+- [ ] Document get `partitionKey`
+
+### get `sortKey`
+- [ ] Document get `sortKey`
+
+
+## Entity Methods
+
+### attribute
+- [ ] Document `attribute` method
+
+### Parse
+- [ ] Document `parse` method
+
+### Get
+- [ ] Document `get` method
+
+### Delete
+- [ ] Document `delete` method
+
+### Put
+- [ ] Document `put` method
+
+### Update
+- [ ] Document `update` method
+
+### Query
+- [ ] Document `query` method
+
+### Scan
+- [ ] Document `scan` method
+
 
 ## Additional References
 
