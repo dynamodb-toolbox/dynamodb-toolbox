@@ -179,6 +179,15 @@ class Entity {
     } // end if-else
   } // end get
 
+  
+  // Shortcut for batch operations
+  getBatch(item={}) {
+    return { 
+      Table: this.table, 
+      Key: this.generateGetParams(item).Key
+    }
+  }
+
   // Generate GET parameters
   generateGetParams(item={},options={},params={}) {
     // Extract schema and merge defaults

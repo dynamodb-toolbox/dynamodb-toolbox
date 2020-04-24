@@ -775,16 +775,23 @@ class Table {
 
 
 
+
   // Generate BatchGet Params
   generateBatchGetParams(_items,options={},params={},meta=false) {
 
     let items = Array.isArray(_items) ? _items : [_items]
 
+    // Error on extraneous arguments
+    if (items.length === 0)
+      error(`No items supplied`)
+
     const {
       capacity,
+      consistent,
+      attributes,
       ..._args
     } = options
-  
+
     // Remove other valid options from options
     const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
 
@@ -803,140 +810,88 @@ class Table {
     let EntityProjections = {}
     let TableProjections = {}
     
-    // Loop through items
+    // // Loop through items
     for (const i in items) {
       const item = items[i]
-      let Keys = []
-      
-      // Item must be an object
-      if (typeof item === 'object' && !Array.isArray(item)) {
-        
-        // Extract known parameters
-        let {
-          table, // table object
-          keys, // array of keys
-          consistent, // boolean for ConsistentRead
-          attributes, // Projections
-          entity, // entity name
-          ...args
-        } = item   
 
-        // If table supplied, verify, else default to current table
-        if (table !== undefined) {
-          if (table.constructor.name !== 'Table')
-            error(`'table' requires a valid Table object`)
-        } else {
-          table = this
-        }
-         
-        // Verify consistent read
-        if (consistent !== undefined && typeof consistent !== 'boolean')
-          error(`'consistent' requires a boolean`)
+      // Check item for Table reference and key
+      if (
+        item
+        && item.Table 
+        && item.Table.constructor.name === 'Table'
+        && item.Key
+        && typeof item.Key === 'object'
+        && !Array.isArray(item.Key)
+      ) {
 
-        // Verify entity, set default for this table
-        if (entity !== undefined) {
-          if (typeof entity !== 'string' || (!table[entity] || table[entity].constructor.name !== 'Entity'))
-            error(`'entity' value of '${entity}' must be a string and a valid table Entity name`)
-        } else if (table.name === this.name) {
-          // entity = this.name
-        }
+        // Set the table
+        const table = item.Table.name
 
-        let ExpressionAttributeNames // init ExpressionAttributeNames
-        let ProjectionExpression // init ProjectionExpression
-        let _EntityProjections // scoped to this loop
-        let _TableProjections // scoped to this loop
-    
-        // If projections
-        if (attributes) {
-          const { names, projections, entities, tableAttrs } = parseProjections(attributes,table,null,true)
-    
-          if (Object.keys(names).length > 0) {
-            // Merge names and add projection expression
-            ExpressionAttributeNames = names
-            ProjectionExpression = projections
-            _EntityProjections = entities
-            _TableProjections = tableAttrs
-          } // end if names
-    
-        } // end if projections
-
-        // Error if extra arguments are provided along with keys
-        if (keys !== undefined && Object.keys(args).length > 0)
-          error(`Invalid options when specifying 'keys': ${args.join(', ')}`)
-        
-        // If no keys, convert extra args to a keys array
-        if (keys === undefined) keys = [ { entity, ...args }]        
-
-        // Process keys
-        if (Array.isArray(keys)) {
-          // Loop through keys
-          for (const x in keys) {
-            // Extract entity (if provided) and remaining attributes
-            let { 
-              entity: _entity,
-              ...keyMap
-            } = keys[x]
-
-            // Inherit entity
-            const ent = _entity || entity
-
-            // Track key combos
-            let primaryKey = {}
-
-            // Loop through the remaining attributes and check if a pk/sk
-            for (const attr in keyMap) {
-              
-              // Load the schema for entity, or default to table
-              const schema = ent ? table[ent].schema.attributes : table.Table.attributes
-
-              // Merge keys into the primary Key
-              primaryKey = Object.assign(
-                primaryKey,
-                { 
-                  [(schema[attr] && (schema[attr].partitionKey || schema[attr].sortKey || table.Table.partitionKey === attr || table.Table.sortKey === attr)) ? schema[attr].map || attr
-                  : error(`'${attr}' is not a valid partition or sort key`)]: keyMap[attr]
-                }
-              )
-            } // end for keyMap
-
-            // Push primaryKey onto Keys
-            Keys.push(primaryKey)
-
-          } // end for loop
-
-        } else {
-          error(`'keys' must be an array of objects`)
-        }
-
-        // Create the table in the Request Item if it doesn't exist
-        if (!RequestItems[table.name]) {
-
+        // If it doesn't exist
+        if (!RequestItems[table]) {
+          // Create a table property with an empty array
+          RequestItems[table] = { Keys: [] }
           // Add the table reference
-          Tables[table.name] = table
+          Tables[table] = item.Table
+        }
 
-          // Create meta data references projections
-          EntityProjections[table.name] = _EntityProjections
-          TableProjections[table.name] = _TableProjections
+        // Push request onto the table array
+        RequestItems[table].Keys.push(item.Key) 
 
-          // Merge keys, fail on dupe configs
-          RequestItems[table.name] = Object.assign(
-            { Keys },
-            // Prevent multiple table definitons with more than just Keys
-            consistent ? { ConsistentRead: consistent } : null,
-            ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
-            ProjectionExpression ? { ProjectionExpression } : null
-          )
-        } else {
-          if (consistent || attributes) { error(`Only one configuration object per table is allowed`) }
-          RequestItems[table.name].Keys = RequestItems[table.name].Keys.concat(Keys)
-        } // end if table exists
-
-      // Else, throw an error
       } else {
-        error(`Invalid input, batchGet accepts and array of objects`)
+        error(`Item references must contain a valid Table object and Key`)
+      }
+    
+    } // end item loop
+
+    // Parse 'consistent' option
+    if (consistent) {
+      // If true, add to all table mappings
+      if (consistent === true) {
+        for (const tbl in RequestItems) RequestItems[tbl].ConsistentRead = true
+      } else if (typeof consistent === 'object' && !Array.isArray(consistent)) {
+        for (const tbl in consistent) {
+          // TODO: support table alias
+          if (RequestItems[tbl]) {
+            if (typeof consistent[tbl] === 'boolean') { RequestItems[tbl].ConsistentRead = consistent[tbl] }
+            else { error(`'consistent' values must be booleans (${tbl})`) }
+          } else {
+            error(`There are no items for the table: ${tbl}`)
+          }
+        } // end if
+      } else {
+        error(`'consistent' must be a boolean or an map of table names`)
+      }
+    } // end consistent
+
+    // If projections
+    if (attributes) {
+
+      let attrs = attributes
+
+      // If an Array, ensure single table and convert to standard format
+      if (Array.isArray(attributes)) {
+        if (Object.keys(RequestItems).length === 1) {
+          attrs = { [Object.keys(RequestItems)[0]]: attributes }
+        } else {
+          error(`'attributes' must use a table map when requesting items from multiple tables`)
+        }
+      } // end if array
+
+      for (const tbl in attrs) {        
+        // TODO: support table alias
+        if (Tables[tbl]) {
+          const { names, projections, entities, tableAttrs } = parseProjections(attrs[tbl],Tables[tbl],null,true)
+          RequestItems[tbl].ExpressionAttributeNames = names
+          RequestItems[tbl].ProjectionExpression = projections
+          EntityProjections[tbl] = entities
+          TableProjections[tbl] = tableAttrs
+        } else {
+          error(`There are no items for the table: ${tbl}`)
+        }
       }
 
-    } // end loop
+    } // end if projections
 
     const payload = Object.assign(
       { RequestItems },
@@ -946,6 +901,7 @@ class Table {
 
     return meta ? { payload, Tables, EntityProjections, TableProjections } : payload
   } // generateBatchGetParams
+  
 
 
 
@@ -1078,4 +1034,3 @@ class Table {
 
 // Export the Table class
 module.exports = Table
-
