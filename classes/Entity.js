@@ -1,8 +1,6 @@
 'use strict'
 
 // TODO: make sure pks and sks are of correct types
-// TODO: remove 'omit' options
-// TODO: pass 'include' into parse function?
 
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
@@ -116,15 +114,22 @@ class Entity {
   }
 
   // Primary key getters
-  get partitionKey() { return this.schema.partitionKey }
-  get sortKey() { return this.schema.sortKey }
+  get partitionKey() {   
+    return this.schema.keys.partitionKey ? 
+      this.attribute(this.schema.keys.partitionKey) 
+      : error(`No partitionKey defined`)
+  }
+  get sortKey() { 
+    return this.schema.keys.sortKey ? 
+      this.attribute(this.schema.keys.sortKey) 
+      : null
+  }
 
-  // Single attribute getter
-  // TODO: is this necessary?
+  // Get mapped attribute name
   attribute(attr) {
-    return this.Entity.attributes[attr] && this.Entity.attributes[attr].map ? 
-      this.Entity.attributes[attr].map
-      : this.Entity.attributes[attr] ? attr
+    return this.schema.attributes[attr] && this.schema.attributes[attr].map ? 
+      this.schema.attributes[attr].map
+      : this.schema.attributes[attr] ? attr
       : error(`'${attr}' does not exist or is an invalid alias`)
   } // end attribute
 
@@ -133,8 +138,6 @@ class Entity {
   parse(input,include=[]) {
 
     // TODO: 'include' needs to handle nested maps?
-    // console.log('INCLUDE:',include,this.schema.attributes);
-    
 
     // Convert include to roots and de-alias
     include = include.map(attr => {
@@ -179,7 +182,7 @@ class Entity {
     } // end if-else
   } // end get
 
-  
+
   // Shortcut for batch operations
   getBatch(item={}) {
     return { 
@@ -261,7 +264,7 @@ class Entity {
       if (options.parse || (this.autoParse && options.parse !== false)) {
         return Object.assign(
           result,
-          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.omit) ? options.omit : []) } : null
+          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.include) ? options.include : []) } : null
         )
       } else {
         return result
@@ -371,7 +374,7 @@ class Entity {
       if (options.parse || (this.autoParse && options.parse !== false)) {
         return Object.assign(
           result,
-          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.omit) ? options.omit : []) } : null
+          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.include) ? options.include : []) } : null
         )
       } else {
         return result
@@ -664,7 +667,7 @@ class Entity {
 
     // TODO: Check why primary/secondary GSIs are using if_not_exists
 
-  } // end updateSync
+  } // end generateUpdateParams
 
 
   // PUT - put item
@@ -679,7 +682,7 @@ class Entity {
       if (options.parse || (this.autoParse && options.parse !== false)) {
         return Object.assign(
           result,
-          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.omit) ? options.omit : []) } : null
+          result.Attributes ? { Attributes: this.parse(result.Attributes,Array.isArray(options.include) ? options.include : []) } : null
         )
       } else {
         return result
@@ -799,9 +802,7 @@ class Entity {
     )
 
     return payload
-  } // end putSync
-
-
+  } // end generatePutParams
 
 
 
@@ -811,23 +812,6 @@ class Entity {
     return this.table.query(pk,options,params)
   }
 
-
-  // Allow for instantiation of an Entity type
-  // TODO: This needs more thought.
-  // item() {
-  //   const entity = this.Entity
-  //   return new class {
-  //     constructor() {
-  //       this.type = entity.name
-  //       this.entity = entity
-  //     } // end
-
-  //     save() {
-  //       console.log('saving the item')
-        
-  //     }
-  //   }
-  // }
 
 } // end Entity
 

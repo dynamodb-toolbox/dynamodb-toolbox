@@ -57,7 +57,7 @@ class Table {
   // Validate and sets the document client
   set DocumentClient(docClient) {
     // If a valid document client
-    if (docClient.constructor.name === 'DocumentClient') {
+    if (docClient.get && docClient.put && docClient.delete && docClient.update) {
       // Automatically set convertEmptyValues to true, unless false
       if (docClient.options.convertEmptyValues !== false)
         docClient.options.convertEmptyValues = true
