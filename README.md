@@ -182,6 +182,7 @@ indexes | `object` | no | Complex type that optionally specifies the name keys o
 autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
 autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`) |
 DocumentClient | `DocumentClient` | * | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
+
 \* *A Table can be instantiated without a DocumentClient, but most methods require it before execution*
 
 ### Table Attributes
@@ -253,6 +254,7 @@ attributes | `object` | yes | Complex type that specifies the schema for the ent
 autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
 autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`) |
 table | `Table` | * | A valid `Table` instance |
+
 \* *An Entity can be instantiated without a `table`, but most methods require one before execution*
 
 ### Attributes
