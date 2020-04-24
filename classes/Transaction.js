@@ -6,6 +6,8 @@
  * @license MIT
  */
 
+// TODO: Implement transaction support
+
 class Transaction {
   constructor() {}
 }
