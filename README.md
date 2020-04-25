@@ -405,8 +405,33 @@ attributes: {
 
 ## Table Methods
 
-### Query
+### query(partitionKey, options [,parameters])
 - [ ] Document `query` method
+
+The `query()` method accepts three arguments. The first argument is used to specify the `partitionKey` you wish to query against. The value must match the type of your table's partition key.
+
+The second argument is an `options` object that specifies the details of your query. The following options are all optional:
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| index | `string` | Name of secondary index to query. If not specified, the query executes on the primary index. (IndexName) |
+| limit | `number` | The maximum number of items to retrieve per query. (Limit) |
+| reverse | `boolean` | Reverse the order or returned items. (ScanIndexForward) |
+| consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| select | `string` | The attributes to be returned in the result.One of either `string` | `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
+| eq | same as `sortKey` | Specifies `sortKey` condition to be *equal* to supplied value. |
+| lt | same as `sortKey` | Specifies `sortKey` condition to be *less than* supplied value. |
+| lte | same as `sortKey` | Specifies `sortKey` condition to be *less than or equal to* supplied value. |
+| gt | same as `sortKey` | Specifies `sortKey` condition to be *greater than* supplied value. |
+| gte | same as `sortKey` | Specifies `sortKey` condition to be *greater than or equal to* supplied value. |
+| between | `array` | Specifies `sortKey` condition to be *between* the supplied values. Array should have two values matching the `sortKey` type. |
+| beginsWith | same as `sortKey` | begins_with |
+| filters | `array` or `object` | see filter object |
+| attributes | `array` or `object` | see attributes (Projections) |
+| startKey | `object` | |
+| entity | `string` | |
+
 
 ### Scan
 - [ ] Document `scan` method
