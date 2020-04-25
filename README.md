@@ -251,8 +251,8 @@ createdAlias | `string` | no | Override default *created* alias name (default: `
 modifiedAlias | `string` | no | Override default *modified* alias name (default: `modified`) |
 typeAlias | `string` | no | Override default *entity type* alias name (default: `type`) |
 attributes | `object` | yes | Complex type that specifies the schema for the entity (see below) |
-autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
-autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`) |
+autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: *inherited from Table*) |
+autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Table*) |
 table | `Table` | * | A valid `Table` instance |
 
 \* *An Entity can be instantiated without a `table`, but most methods require one before execution*
@@ -406,11 +406,14 @@ attributes: {
 ## Table Methods
 
 ### query(partitionKey, options [,parameters])
-- [ ] Document `query` method
 
-The `query()` method accepts three arguments. The first argument is used to specify the `partitionKey` you wish to query against. The value must match the type of your table's partition key.
+> The Query operation finds items based on primary key values. You can query any table or secondary index that has a composite primary key (a partition key and a sort key).
 
-The second argument is an `options` object that specifies the details of your query. The following options are all optional:
+The `query` method is a wrapper for the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). The DynamoDB Toolbox `query` method supports all **Query** API operations. The `query` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `queryParams` can be used, but will only retrieve the generated parameters.
+
+The `query()` method accepts three arguments. The first argument is used to specify the `partitionKey` you wish to query against (KeyConditionExpression). The value must match the type of your table's partition key.
+
+The second argument is an `options` object that specifies the details of your query. The following options are all optional (corresponding Query API references in parentheses):
 
 | Option | Type | Description |
 | -------- | :--: | ----------- |
@@ -420,18 +423,19 @@ The second argument is an `options` object that specifies the details of your qu
 | consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | select | `string` | The attributes to be returned in the result.One of either `string` | `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
-| eq | same as `sortKey` | Specifies `sortKey` condition to be *equal* to supplied value. |
-| lt | same as `sortKey` | Specifies `sortKey` condition to be *less than* supplied value. |
-| lte | same as `sortKey` | Specifies `sortKey` condition to be *less than or equal to* supplied value. |
-| gt | same as `sortKey` | Specifies `sortKey` condition to be *greater than* supplied value. |
-| gte | same as `sortKey` | Specifies `sortKey` condition to be *greater than or equal to* supplied value. |
-| between | `array` | Specifies `sortKey` condition to be *between* the supplied values. Array should have two values matching the `sortKey` type. |
-| beginsWith | same as `sortKey` | begins_with |
-| filters | `array` or `object` | see filter object |
-| attributes | `array` or `object` | see attributes (Projections) |
-| startKey | `object` | |
-| entity | `string` | |
-
+| eq | same as `sortKey` | Specifies `sortKey` condition to be *equal* to supplied value. (KeyConditionExpression) |
+| lt | same as `sortKey` | Specifies `sortKey` condition to be *less than* supplied value. (KeyConditionExpression) |
+| lte | same as `sortKey` | Specifies `sortKey` condition to be *less than or equal to* supplied value. (KeyConditionExpression) |
+| gt | same as `sortKey` | Specifies `sortKey` condition to be *greater than* supplied value. (KeyConditionExpression) |
+| gte | same as `sortKey` | Specifies `sortKey` condition to be *greater than or equal to* supplied value. (KeyConditionExpression) |
+| between | `array` | Specifies `sortKey` condition to be *between* the supplied values. Array should have two values matching the `sortKey` type. (KeyConditionExpression) |
+| beginsWith | same as `sortKey` | Specifies `sortKey` condition to *begin with* the supplied values. (KeyConditionExpression) |
+| filters | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression) |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
+| startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey) |
+| entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
+autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 ### Scan
 - [ ] Document `scan` method
@@ -506,6 +510,75 @@ The second argument is an `options` object that specifies the details of your qu
 ### Scan
 - [ ] Document `scan` method
 
+
+## Filters and Conditions
+
+DynamoDB supports [**Filter**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.FilterExpression) and [**Condition**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html) conditions. **Filter Expressions** are used to limit data returned by `query` and `scan` operations. **Condition Expressions** are used for data manipulation operations (`put`, `update`, `delete` and `batchWrite`), allowing you to specify a condition to determine which items should be modified.
+
+The DynamoDB Toolbox provides an **Expression Builder** that allows you to generate complex filters and conditions based on your Entity definitions. Any method that requires `filters` or `conditions` accepts an `array` of *conditions*, or a single *condition*. *Condition* objects support the following properties:
+
+| Properties | Type | Description |
+| -------- | :--: | ----------- |
+| attr | `string` | Specifies the attribute to filter on. If an `entity` property is provided (or inherited from the calling operation), aliases can be used. Either `attr` or `size` must be provided. |
+| size | `string` | Specifies which attribute's calculated size to filter on (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information). If an `entity` property is provided (or inherited from the calling operation), aliases can be used. Either `attr` or `size` must be provided. |
+| eq | `*` | Specifies value to *equal* attribute or size of attribute. |
+| ne | `*` | Specifies value to *not equal* attribute or size of attribute. |
+| lt | `*` | Specifies value for attribute or size to be *less than*. |
+| lte | `*` | Specifies value for attribute or size to be *less than or equal to*. |
+| gt | `*` | Specifies value for attribute or size to be *greater than*. |
+| gte | `*` | Specifies value for attribute or size to be *greater than or equal to*. |
+| between | `array` | Specifies values for attribute or size to be *between*. E.g. `[18,49]`. |
+| beginsWith | `*` | Specifies value for the attribute to *begin with* |
+| in | `array` | Specifies and `array` of values that the attribute or size must match one value. |
+| contains | `string` | Specifies value that must be contained within a string or Set. (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information) |
+| exists | `boolean` | Checks whether or not the attribute exists for an item. A value of `true` uses the `attribute_exists()` function and a value of `false` uses the `attribute_not_exists()` function (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information) |
+| type | `string` | A value that compares the attribute's type. Value must be one of `S`,`SS`, `N`, `NS`, `B`, `BS`, `BOOL`, `NULL`, `L`, or `M` (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information) |
+| or | `boolean` | Changes the logical evaluation to `OR` (by default it's `AND`) |
+| negate | `boolean` | Adds `NOT` to the condition. |
+| entity | `string` | The entity this attribute applies to. If supplied (or inherited from the calling operation), `attr` and `size` properties can use the entity's aliases to reference attributes. |
+
+### Complex Filters and Conditions
+
+In order to create complex filters and conditions, the DynamoDB Toolbox allows you to nest and combine filters by using nested `array`s. Array brackets (`[` and `]`) act as parentheses when constructing your condition. Using `or` in the first condition within an array will change the logical evaluation for group of conditions.
+
+Condition where `age` is between 18 and 54 **AND** `region` equals "US":
+```javascript 
+filters: [
+  { attr: 'age', between: [18,54]},
+  { attr: 'region', eq: 'US' }
+]
+```
+
+Condition where `age` is between 18 and 54 **AND** `region` equals "US" **OR** "EU":
+```javascript 
+filters: [
+  { attr: 'age', between: [18,54]},
+  [
+    { attr: 'region', eq: 'US' },
+    { or: true, attr: 'region', eq: 'EU' }
+  ]
+]
+```
+
+Condition where `age` is greater than 21  **OR** `region` equals "US" **OR** "EU" **AND** `interests` contain `nodejs`, `dynamodb`, or `serverless`:
+```javascript 
+filters: [
+  { attr: 'age', gt: 21},
+  [
+    { or: true, attr: 'region', eq: 'US' },
+    { size: 'interests', gt: 10 },
+    [
+      { attr: 'interests', contains: 'nodejs' }
+      { or: true, attr: 'interests', contains: 'dynamodb' }
+      { or: true, attr: 'interests', contains: 'serverless' }
+    ]
+  ]
+]
+```
+
+## Projection Expressions
+
+...
 
 ## Additional References
 
