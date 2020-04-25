@@ -562,13 +562,15 @@ filters: [
 ]
 ```
 
-Condition where `age` is greater than 21  **OR** `region` equals "US" **OR** "EU" **AND** `interests` contain `nodejs`, `dynamodb`, or `serverless`:
+Condition where `age` is greater than 21  **OR** ((`region` equals "US" **AND** `interests` size is greater than 10) **AND** `interests` contain `nodejs`, `dynamodb`, or `serverless`):
 ```javascript 
 filters: [
   { attr: 'age', gt: 21},
   [
-    { or: true, attr: 'region', eq: 'US' },
-    { size: 'interests', gt: 10 },
+    [
+      { or: true, attr: 'region', eq: 'US' },
+      { size: 'interests', gt: 10 }
+    ],
     [
       { attr: 'interests', contains: 'nodejs' }
       { or: true, attr: 'interests', contains: 'dynamodb' }
