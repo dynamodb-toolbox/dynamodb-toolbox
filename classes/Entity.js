@@ -162,7 +162,7 @@ class Entity {
   // GET - get item
   async get(item={},options={},params={}) {
     // Generate the payload
-    const payload = this.generateGetParams(item,options,params)
+    const payload = this.getParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -187,12 +187,12 @@ class Entity {
   getBatch(item={}) {
     return { 
       Table: this.table, 
-      Key: this.generateGetParams(item).Key
+      Key: this.getParams(item).Key
     }
   }
 
   // Generate GET parameters
-  generateGetParams(item={},options={},params={}) {
+  getParams(item={},options={},params={}) {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item),true)
@@ -249,13 +249,13 @@ class Entity {
     )  
 
     return payload
-  } // end generateGetParams
+  } // end getParams
 
 
   // DELETE - delete item
   async delete(item={},options={},params={}) {
 
-    const payload = this.generateDeleteParams(item,options,params)
+    const payload = this.deleteParams(item,options,params)
     
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -276,12 +276,12 @@ class Entity {
 
   // Shortcut for batch operations
   deleteBatch(item={}) {
-    const payload = this.generateDeleteParams(item)
+    const payload = this.deleteParams(item)
     return { [payload.TableName] : { DeleteRequest: { Key: payload.Key } } }
   }
 
   // Generate DELETE parameters
-  generateDeleteParams(item={},options={},params={}) {
+  deleteParams(item={},options={},params={}) {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item),true)
@@ -358,14 +358,14 @@ class Entity {
     )
 
     return payload
-  } // end generateDeleteParams
+  } // end deleteParams
 
 
   // UPDATE - update item
   async update(item={},options={},params = {}) {
 
     // Generate the payload
-    const payload = this.generateUpdateParams(item,options,params)
+    const payload = this.updateParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -385,7 +385,7 @@ class Entity {
   } // end delete
 
   // Generate UPDATE Parameters
-  generateUpdateParams(
+  updateParams(
     item={},
     options={},
     {
@@ -667,13 +667,13 @@ class Entity {
 
     // TODO: Check why primary/secondary GSIs are using if_not_exists
 
-  } // end generateUpdateParams
+  } // end updateParams
 
 
   // PUT - put item
   async put(item={},options={},params={}) {
     // Generate the payload
-    const payload = this.generatePutParams(item,options,params)
+    const payload = this.putParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -694,12 +694,12 @@ class Entity {
 
   // Shortcut for batch operations
   putBatch(item={}) {
-    const payload = this.generatePutParams(item)
+    const payload = this.putParams(item)
     return { [payload.TableName] : { PutRequest: { Item: payload.Item } } }
   }
 
   // Generate PUT Parameters
-  generatePutParams(item={},options={},params={}) {
+  putParams(item={},options={},params={}) {
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
 
@@ -802,7 +802,7 @@ class Entity {
     )
 
     return payload
-  } // end generatePutParams
+  } // end putParams
 
 
 

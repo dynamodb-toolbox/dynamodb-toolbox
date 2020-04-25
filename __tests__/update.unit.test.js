@@ -82,7 +82,7 @@ const TestEntity3 = new Entity({
 describe('update',()=>{
 
   it('creates default update', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({ pk: 'test-pk', sk: 'test-sk' })
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({ pk: 'test-pk', sk: 'test-sk' })
     
     expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_tp = if_not_exists(#_tp,:_tp)')
     expect(ExpressionAttributeNames).toEqual({ '#_md': '_md', '#_ct': '_ct', '#test_string': 'test_string', '#_tp': '_tp' })
@@ -97,7 +97,7 @@ describe('update',()=>{
 
 
   it('creates update with multiple fields (default types)', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_string: 'test string'
@@ -117,7 +117,7 @@ describe('update',()=>{
 
   // TODO: Fix removes with default values
   it.skip('creates update that removes fields', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       $remove: 'test_string'
@@ -136,7 +136,7 @@ describe('update',()=>{
   })
 
   it.skip('creates update that just removes a field', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity2.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity2.updateParams({
       pk: 'test-pk',
       test: null
     })
@@ -147,7 +147,7 @@ describe('update',()=>{
   })
 
   it.skip('creates update that just removes a composite field', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity2.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity2.updateParams({
       pk: 'test-pk',
       test_composite: null
     })
@@ -158,7 +158,7 @@ describe('update',()=>{
   })
 
   it('creates update that just saves a composite field', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity2.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity2.updateParams({
       pk: 'test-pk',
       test_composite: 'test'
     })
@@ -171,7 +171,7 @@ describe('update',()=>{
 
 
   it('validates field types', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_string: 'test',
@@ -192,7 +192,7 @@ describe('update',()=>{
   })
 
   it('coerces values to proper type', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_string_coerce: 1,
@@ -209,7 +209,7 @@ describe('update',()=>{
   })
 
   it('coerces falsy string values to boolean', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_boolean_coerce: 'false'
@@ -219,7 +219,7 @@ describe('update',()=>{
 
 
   it('creates a set', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_string_set: ['1','2','3'],
@@ -241,7 +241,7 @@ describe('update',()=>{
 
 
   it('performs an add operation', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_number: { $add: 10 },
@@ -263,7 +263,7 @@ describe('update',()=>{
 
 
   it('performs a delete operation', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_string_set_type: { $delete: ['1','2','3'] },
@@ -292,7 +292,7 @@ describe('update',()=>{
   })
 
   it('removes items from a list', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_list: { $remove: [2,3,8] }
@@ -316,7 +316,7 @@ describe('update',()=>{
   })
 
   it('updates specific items in a list', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_list: { 2: 'Test2', 5: 'Test5' }
@@ -343,7 +343,7 @@ describe('update',()=>{
 
 
   it('appends and prepends data to a list', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_list: { $append: [1,2,3] },
@@ -372,7 +372,7 @@ describe('update',()=>{
 
 
   it('updates nested data in a map', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
       test_map: { $set: {
@@ -410,7 +410,7 @@ describe('update',()=>{
 
 
   it('uses an alias', async () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
       email: 'test@test.com',
       sort: 'test-sk',
       count: { $add: 10 },
@@ -435,11 +435,11 @@ describe('update',()=>{
   })
 
   it('fails with undefined input', () => {
-    expect(() => TestEntity.generateUpdateParams()).toThrow(`'pk' or 'email' is required`)
+    expect(() => TestEntity.updateParams()).toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails when using an undefined schema field', () => {
-    expect(() => TestEntity.generateUpdateParams({
+    expect(() => TestEntity.updateParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'unknown': '?'
@@ -447,13 +447,13 @@ describe('update',()=>{
   })
 
   it('fails when missing an \'always\' required field', () => {
-    expect(() => TestEntity3.generateUpdateParams({
+    expect(() => TestEntity3.updateParams({
       'pk': 'test-pk'
     })).toThrow(`'test2' is a required field`)
   })
 
   it('fails when using non-numeric fields for indexed list updates', () => {
-    expect(() => TestEntity.generateUpdateParams({
+    expect(() => TestEntity.updateParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_list': { 'test': 'some value' }
@@ -461,7 +461,7 @@ describe('update',()=>{
   })
 
   it('fails when using non-numeric values for indexed list removals', () => {
-    expect(() => TestEntity.generateUpdateParams({
+    expect(() => TestEntity.updateParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_list': { $remove: [ 1,2,'test' ] }
@@ -469,49 +469,49 @@ describe('update',()=>{
   })
 
   it('fails when supplying non-array value for SET', () => {
-    expect(() => TestEntity2.generateUpdateParams({
+    expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
     }, {}, { SET: 'test' })).toThrow(`SET must be an array`)
   })
 
   it('fails when supplying non-array value for REMOVE', () => {
-    expect(() => TestEntity2.generateUpdateParams({
+    expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
     }, {}, { REMOVE: 'test' })).toThrow(`REMOVE must be an array`)
   })
 
   it('fails when supplying non-array value for ADD', () => {
-    expect(() => TestEntity2.generateUpdateParams({
+    expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
     }, {}, { ADD: 'test' })).toThrow(`ADD must be an array`)
   })
 
   it('fails when supplying non-array value for DELETE', () => {
-    expect(() => TestEntity2.generateUpdateParams({
+    expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
     }, {}, { DELETE: 'test' })).toThrow(`DELETE must be an array`)
   })
 
   it('fails when supplying non-object value for ExpressionAttributeNames', () => {
-    expect(() => TestEntity2.generateUpdateParams({
+    expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
     }, {}, { ExpressionAttributeNames: 'test' })).toThrow(`ExpressionAttributeNames must be an object`)
   })
 
   it('fails when supplying non-object value for ExpressionAttributeValues', () => {
-    expect(() => TestEntity2.generateUpdateParams({
+    expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
     }, {}, { ExpressionAttributeValues: 'test' })).toThrow(`ExpressionAttributeValues must be an object`)
   })
 
   it.skip('fails when supplying a non-string for ConditionExpression', () => {
-    expect(() => TestEntity2.generateUpdateParams({
+    expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
     }, {}, { ConditionExpression: 1 })).toThrow(`ConditionExpression must be a string`)
   })
 
   it('adds statements to SET, REMOVE, ADD and DELETE (with names and values) and a ConditionExpression', ()=> {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = TestEntity2.generateUpdateParams({
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = TestEntity2.updateParams({
       'pk': 'test-pk',
       'test': 'test'
     }, {}, {
@@ -531,7 +531,7 @@ describe('update',()=>{
   })
 
   it('conditionally contains returned fields (e.g. when no values)', ()=> {
-    let params = TestEntity2.generateUpdateParams({
+    let params = TestEntity2.updateParams({
       'pk': 'test-pk',
       '$remove': 'test'
     })

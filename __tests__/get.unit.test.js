@@ -40,7 +40,7 @@ const TestEntity2 = new Entity({
 describe('get',()=>{
 
   it('gets the key from inputs (sync)', async () => {
-    const { TableName, Key } = TestEntity.generateGetParams({ pk: 'test-pk', sk: 'test-sk' })    
+    const { TableName, Key } = TestEntity.getParams({ pk: 'test-pk', sk: 'test-sk' })    
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -52,7 +52,7 @@ describe('get',()=>{
   })
 
   it('gets the key from input aliases (sync)', async () => {
-    let { TableName, Key } = TestEntity.generateGetParams({ email: 'test-pk', sort: 'test-sk' })
+    let { TableName, Key } = TestEntity.getParams({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -64,7 +64,7 @@ describe('get',()=>{
   })
 
   it('filters out extra data (sync)', async () => {
-    let { TableName, Key } = TestEntity.generateGetParams({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
+    let { TableName, Key } = TestEntity.getParams({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -76,7 +76,7 @@ describe('get',()=>{
   })
 
   it('coerces key values to correct types (sync)', async () => {
-    let { TableName, Key } = TestEntity.generateGetParams({ pk: 1, sk: true })
+    let { TableName, Key } = TestEntity.getParams({ pk: 1, sk: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
@@ -88,7 +88,7 @@ describe('get',()=>{
   })
 
   it('fails with undefined input (sync)', () => {
-    expect(() => TestEntity.generateGetParams()).toThrow(`'pk' or 'email' is required`)
+    expect(() => TestEntity.getParams()).toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails with undefined input (async)', async () => {
@@ -96,7 +96,7 @@ describe('get',()=>{
   })
 
   it('fails when missing the sortKey (sync)', () => {
-    expect(() => TestEntity.generateGetParams({ pk: 'test-pk' })).toThrow(`'sk' or 'sort' is required`)
+    expect(() => TestEntity.getParams({ pk: 'test-pk' })).toThrow(`'sk' or 'sort' is required`)
   })
 
   it('fails when missing the sortKey (async)', () => {
@@ -104,7 +104,7 @@ describe('get',()=>{
   })
 
   it('fails when missing partitionKey (no alias) (sync)', () => {
-    expect(() => TestEntity2.generateGetParams()).toThrow(`'pk' is required`)
+    expect(() => TestEntity2.getParams()).toThrow(`'pk' is required`)
   })
 
   it('fails when missing partitionKey (no alias) (async)', () => {
@@ -112,7 +112,7 @@ describe('get',()=>{
   })
 
   it('fails when missing the sortKey (no alias) (sync)', () => {
-    expect(() => TestEntity2.generateGetParams({ pk: 'test-pk' })).toThrow(`'sk' is required`)
+    expect(() => TestEntity2.getParams({ pk: 'test-pk' })).toThrow(`'sk' is required`)
   })
 
   it('fails when missing the sortKey (no alias) (async)', () => {

@@ -277,7 +277,7 @@ class Table {
       payload,
       EntityProjections,
       TableProjections 
-    } = this.generateQueryParams(pk,options,params,true)
+    } = this.queryParams(pk,options,params,true)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -325,7 +325,7 @@ class Table {
 
 
   // Query the table
-  generateQueryParams(pk,options={},params={},projections=false) { 
+  queryParams(pk,options={},params={},projections=false) { 
     
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
@@ -528,7 +528,7 @@ class Table {
       payload,
       EntityProjections,
       TableProjections 
-    } = this.generateScanParams(options,params,true)
+    } = this.scanParams(options,params,true)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -574,7 +574,7 @@ class Table {
 
 
   // Generate SCAN Parameters
-  generateScanParams(options={},params={},meta=false) { 
+  scanParams(options={},params={},meta=false) { 
       
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
@@ -720,7 +720,7 @@ class Table {
       Tables, // table reference
       EntityProjections,
       TableProjections
-    } = this.generateBatchGetParams(items,options,params,true)
+    } = this.batchGetParams(items,options,params,true)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -786,7 +786,7 @@ class Table {
 
 
   // Generate BatchGet Params
-  generateBatchGetParams(_items,options={},params={},meta=false) {
+  batchGetParams(_items,options={},params={},meta=false) {
 
     let items = Array.isArray(_items) ? _items : [_items]
 
@@ -911,7 +911,7 @@ class Table {
     )
 
     return meta ? { payload, Tables, EntityProjections, TableProjections } : payload
-  } // generateBatchGetParams
+  } // batchGetParams
   
 
 
@@ -919,7 +919,7 @@ class Table {
   // BatchGet Items
   async batchWrite(items,options={},params={}) {
     // Generate the payload with meta information
-    const payload = this.generateBatchWriteParams(items,options,params)
+    const payload = this.batchWriteParams(items,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -961,7 +961,7 @@ class Table {
 
 
   // Generate BatchWrite Params
-  generateBatchWriteParams(_items,options={},params={},meta) {
+  batchWriteParams(_items,options={},params={},meta) {
     // Convert items to array
     let items = Array.isArray(_items) ? _items : [_items]
 
@@ -1015,7 +1015,7 @@ class Table {
     const Tables = {}
     return meta ? { payload, Tables } : payload
 
-  } // generateBatchWriteParams
+  } // batchWriteParams
 
 
 
