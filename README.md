@@ -422,7 +422,7 @@ The second argument is an `options` object that specifies the details of your qu
 | reverse | `boolean` | Reverse the order or returned items. (ScanIndexForward) |
 | consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| select | `string` | The attributes to be returned in the result.One of either `string` | `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
+| select | `string` | The attributes to be returned in the result. One of either `string` | `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
 | eq | same as `sortKey` | Specifies `sortKey` condition to be *equal* to supplied value. (KeyConditionExpression) |
 | lt | same as `sortKey` | Specifies `sortKey` condition to be *less than* supplied value. (KeyConditionExpression) |
 | lte | same as `sortKey` | Specifies `sortKey` condition to be *less than or equal to* supplied value. (KeyConditionExpression) |
@@ -437,8 +437,54 @@ The second argument is an `options` object that specifies the details of your qu
 autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
+```javascript
+let result = await MyTable.query(
+  'user#12345', // partition key
+  {
+    limit: 50, // limit to 50 items
+    beginsWith: 'order#', // select items where sort key begins with value
+    reverse: true, // return items in descending order (newest first)
+    capacity: 'indexes', // return the total capacity consumed by the indexes
+    filters: { attr: 'total', gt: 100 }, // only show orders above $100
+    index: 'GSI1' // query the GSI1 secondary index
+  }
+)
+```
+
 ### Scan
-- [ ] Document `scan` method
+
+> The Scan operation returns one or more items and item attributes by accessing every item in a table or a secondary index.
+
+The `scan` method is a wrapper for the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). The DynamoDB Toolbox `scan` method supports all **Scan** API operations. The `scan` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `scanParams` can be used, but will only retrieve the generated parameters.
+
+The `scan()` method accepts two arguments. The first argument is an `options` object that specifies the details of your scan. The following options are all optional (corresponding Scan API references in parentheses):
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| index | `string` | Name of secondary index to scan. If not specified, the query executes on the primary index. (IndexName) |
+| limit | `number` | The maximum number of items to retrieve per scan. (Limit) |
+| consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| select | `string` | The attributes to be returned in the result. One of either `string` | `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
+| filters | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression) |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
+| startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey) |
+| segments | `number` | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments) |
+| segment | `number` | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment) |
+| entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
+autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+
+```javascript
+let result = await MyTable.scan(
+  {
+    limit: 100, // limit to 50 items
+    capacity: 'indexes', // return the total capacity consumed by the indexes
+    filters: { attr: 'total', between: [100,500] }, // only return orders between $100 and $500
+    index: 'GSI1' // scan the GSI1 secondary index
+  }
+)
+```
 
 ### BatchGet
 - [ ] Document `batchGet` method
