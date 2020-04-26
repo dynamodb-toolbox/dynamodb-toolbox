@@ -486,27 +486,32 @@ let result = await MyTable.scan(
 )
 ```
 
-### BatchGet
+### batchGet(items [,options] [,parameters])
 - [ ] Document `batchGet` method
 
-### BatchWrite
+### batchWrite(items [,options] [,parameters])
 - [ ] Document `batchWrite` method
 
-### Parse
-- [ ] Document `parse` method
+### parse(input [,include])
 
-### get(entity, item [,options] [,params])
+Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](#parseinput-include) for additional parameters and behavior.
 
-Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#get) for additional parameters and behavior.
+### get(entity, item [,options] [,parameters])
 
-### Delete
-- [ ] Document `delete` method
+Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#getitem-options-parameters) for additional parameters and behavior.
 
-### Put
-- [ ] Document `put` method
+## delete(entity, item [,options] [,parameters])
 
-### Update
-- [ ] Document `update` method
+Executes the `delete` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `delete` method](#deleteitem-options-parameters) for additional parameters and behavior.
+
+## put(entity, item [,options] [,parameters])
+
+Executes the `put` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `put` method](#putitem-options-parameters) for additional parameters and behavior.
+
+## update(entity, item [,options] [,parameters])
+
+Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](#updateitem-options-parameters) for additional parameters and behavior.
+
 
 
 
@@ -533,22 +538,22 @@ Executes the `get` method of the supplied `entity`. The `entity` must be a `stri
 
 ## Entity Methods
 
-### attribute
-- [ ] Document `attribute` method
+### attribute(attribute)
+Returns the Table's attribute name for the suppled `attribute`. The `attribute` must be a `string` and can be either a valid attribute name or alias.
 
-### parse(item [,include])
+### parse(input [,include])
 - [ ] Document `parse` method
 
-### get(item [,options] [,params])
+### get(item [,options] [,parameters])
 - [ ] Document `get` method
 
-### delete(item [,options] [,params])
+### delete(item [,options] [,parameters])
 - [ ] Document `delete` method
 
-### put(item [,options] [,params])
+### put(item [,options] [,parameters])
 - [ ] Document `put` method
 
-### update(item [,options] [,params])
+### update(item [,options] [,parameters])
 - [ ] Document `update` method
 
 ### query(partitionKey [,options] [,parameters])
@@ -556,7 +561,7 @@ Executes the `get` method of the supplied `entity`. The `entity` must be a `stri
 Executes the `query` method on the parent Table. This method accepts the same parameters as the [Table `query` method](#querypartitionkey-options-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB queries, this method **does not** guarantee that only items of the current entity type will be returned.
 
 ### scan([options] [,parameters])
-Executes the `scan` method on the parent Table. This method accepts the same parameters as the [Table `scan` method](#scan-options-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB scans, this method **does not** guarantee that only items of the current entity type will be returned.
+Executes the `scan` method on the parent Table. This method accepts the same parameters as the [Table `scan` method](#scanoptions-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB scans, this method **does not** guarantee that only items of the current entity type will be returned.
 
 ## Filters and Conditions
 
