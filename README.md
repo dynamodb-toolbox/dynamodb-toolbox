@@ -492,7 +492,7 @@ let result = await MyTable.scan(
 ### batchWrite(items [,options] [,parameters])
 - [ ] Document `batchWrite` method
 
-### parse(input [,include])
+### parse(entity, input [,include])
 
 Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](#parseinput-include) for additional parameters and behavior.
 
