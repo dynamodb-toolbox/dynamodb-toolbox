@@ -1021,6 +1021,11 @@ class Table {
 
 
   // Entity operation references
+  parse(entity,input,include=[]) {
+    if (!this[entity]) error(`'${entity}' is not a valid Entity`)
+    return this[entity].parse(input,include)
+  }
+ 
   get(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].get(item,options,params)
