@@ -405,7 +405,7 @@ attributes: {
 
 ## Table Methods
 
-### query(partitionKey, options [,parameters])
+### query(partitionKey [,options] [,parameters])
 
 > The Query operation finds items based on primary key values. You can query any table or secondary index that has a composite primary key (a partition key and a sort key).
 
@@ -451,7 +451,7 @@ let result = await MyTable.query(
 )
 ```
 
-### Scan
+### scan([options] [,parameters])
 
 > The Scan operation returns one or more items and item attributes by accessing every item in a table or a secondary index.
 
@@ -495,8 +495,9 @@ let result = await MyTable.scan(
 ### Parse
 - [ ] Document `parse` method
 
-### Get
-- [ ] Document `get` method
+### get(entity, item [,options] [,params])
+
+Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#get) for additional parameters and behavior.
 
 ### Delete
 - [ ] Document `delete` method
@@ -535,27 +536,27 @@ let result = await MyTable.scan(
 ### attribute
 - [ ] Document `attribute` method
 
-### Parse
+### parse(item [,include])
 - [ ] Document `parse` method
 
-### Get
+### get(item [,options] [,params])
 - [ ] Document `get` method
 
-### Delete
+### delete(item [,options] [,params])
 - [ ] Document `delete` method
 
-### Put
+### put(item [,options] [,params])
 - [ ] Document `put` method
 
-### Update
+### update(item [,options] [,params])
 - [ ] Document `update` method
 
-### Query
-- [ ] Document `query` method
+### query(partitionKey [,options] [,parameters])
 
-### Scan
-- [ ] Document `scan` method
+Executes the `query` method on the parent Table. This method accepts the same parameters as the [Table `query` method](#querypartitionkey-options-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB queries, this method **does not** guarantee that only items of the current entity type will be returned.
 
+### scan([options] [,parameters])
+Executes the `scan` method on the parent Table. This method accepts the same parameters as the [Table `scan` method](#scan-options-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB scans, this method **does not** guarantee that only items of the current entity type will be returned.
 
 ## Filters and Conditions
 
