@@ -500,15 +500,15 @@ Executes the `parse` method of the supplied `entity`. The `entity` must be a `st
 
 Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#getitem-options-parameters) for additional parameters and behavior.
 
-## delete(entity, item [,options] [,parameters])
+### delete(entity, item [,options] [,parameters])
 
 Executes the `delete` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `delete` method](#deleteitem-options-parameters) for additional parameters and behavior.
 
-## put(entity, item [,options] [,parameters])
+### put(entity, item [,options] [,parameters])
 
 Executes the `put` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `put` method](#putitem-options-parameters) for additional parameters and behavior.
 
-## update(entity, item [,options] [,parameters])
+### update(entity, item [,options] [,parameters])
 
 Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](#updateitem-options-parameters) for additional parameters and behavior.
 
