@@ -436,6 +436,8 @@ The second argument is an `options` object that specifies the details of your qu
 | autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
+
 ```javascript
 let result = await MyTable.query(
   'user#12345', // partition key
@@ -474,6 +476,8 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 | autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
+If you prefer to specify your own parameters, the optional second argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
+
 ```javascript
 let result = await MyTable.scan(
   {
@@ -510,8 +514,6 @@ Executes the `put` method of the supplied `entity`. The `entity` must be a `stri
 ### update(entity, key [,options] [,parameters])
 
 Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](#updateitem-options-parameters) for additional parameters and behavior.
-
-
 
 
 ## Entity Properties
@@ -567,7 +569,7 @@ The optional second argument accepts an `options` object. The following options 
 | autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
-If you prefer to specify your own parameters, the optional third argument allows you to pass an `object` that contains valid `GetItem` API parameters. These will be merged into the final payload.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 ```javascript
 // Specify my key
@@ -603,7 +605,7 @@ The optional second argument accepts an `options` object. The following options 
 | autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
-If you prefer to specify your own parameters, the optional third argument allows you to pass an `object` that contains valid `DeleteItem` API parameters. These will be merged into the final payload.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 ```javascript
 // Specify my key
@@ -640,7 +642,7 @@ The optional second argument accepts an `options` object. The following options 
 | autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
-If you prefer to specify your own parameters, the optional third argument allows you to pass an `object` that contains valid `PutItem` API parameters. These will be merged into the final payload.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 ```javascript
 // Create my item (using table attribute names or aliases)
@@ -658,7 +660,168 @@ let result = await MyEntity.put(item)
 ```
 
 ### update(key [,options] [,parameters])
-- [ ] Document `update` method
+
+> Edits an existing item's attributes, or adds a new item to the table if it does not already exist. You can put, delete, or add attribute values.
+
+The `update` method is a wrapper for the [DynamoDB UpdateItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html). The DynamoDB Toolbox `update` method supports all **UpdateItem** API operations. The `update` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `updateParams` can be used, but will only retrieve the generated parameters.
+
+The `update` method accepts three arguments. The first argument accepts an `object` that represents the item key and attributes to be updated. The item can use attribute names or aliases and will convert the object into the appropriate shape defined by your Entity.
+
+The optional second argument accepts an `options` object. The following options are all optional (corresponding UpdateItem API references in parentheses):
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| conditions | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression) |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| returnValues | `string` | Determins whether to return item attributes as they appeared before or after the item was updated. One of either `none`, `all_old`, `updated_old`, `all_new`, `updated_new`. (ReturnValues) |
+| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters and clauses. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
+
+**But wait, there's more!** The `UpdateExpression` lets you do all kinds of crazy things like `REMOVE` attributes, `ADD` values to numbers and sets, and manipulate arrays. The DynamoDB Toolbox has simple ways to deal with all these different operations by properly formatting your input data.
+
+#### Removing an attribute
+
+To remove attributes, add a `$remove` key to your item and provide an array of attributes or aliases to remove.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  $remove: ['roles','age']
+}
+```
+
+#### Adding a number to a `number` attribute
+
+DynamoDB lets us add (or subtract) numeric values from an attribute in the table. If no value exists, it simply puts the value. Adding with the DynamoDB Toolbox is just a matter of supplying an `object` with an `$add` key on the number fields you want to update.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  level: { $add: 2 } // add 2 to level
+}
+```
+
+#### Adding values to a `set`
+
+Sets are similar to lists, but they enforce unique values of the same type. To add new values to a set, use an `object` with an `$add` key and an array of values.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  roles: { $add: ['author','support'] }
+}
+```
+
+#### Deleting values from a `set`
+
+To delete values from a `set`, use an `object` with a `$delete` key and an array of values to delete.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  roles: { $delete: ['admin'] }
+}
+```
+
+#### Appending (or prepending) values to a `list`
+
+To append values to a `list`, use an `object` with an `$append` key and an array of values to append.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  sessions: { $append: [ { date: '2020-04-24', duration: 101 } ] }
+}
+```
+
+Alternatively, you can use the `$prepend` key and it will add the values to the beginning of the list.
+
+#### Remove items from a `list`
+
+To remove values from a `list`, use an `object` with a `$remove` key and an array of **indexes** to remove. Lists are indexed starting at `0`, so the update below would remove the second, fifth, and sixth item in the array.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  sessions: { $remove: [1,4,5] }
+}
+```
+
+#### Update items in a `list`
+
+To update values in a `list`, specify an `object` with array indexes as the keys and the update data as the values. Lists are indexed starting at `0`, so the update below would update the second and fourth items in the array.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  sessions: {
+    1: 'some new value for the second item',
+    3: 'new value for the fourth value'
+  }
+}
+```
+
+#### Update nested data in a `map`
+
+Maps can be complex, deeply nested JavaScript objects with a variety of data types. The DynamoDB Toolbox doesn't support schemas for `map`s (yet), but you can still manipulate them by wrapping your updates in a `$set` parameter and using dot notation and array index notation to target fields.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  metadata: {
+    $set: {
+      'title': 'Developer', // update metadata.title
+      'contact.name': 'Jane Smith', // update metadata.contact.name
+      'contact.addresses[0]': '123 Main Street' // update the first array item in metadata.contact.addresses
+    }
+  }
+}
+```
+
+We can also use our handy `$add`, `$append`, `$prepend`, and `$remove` properties to manipulate nested values.
+
+```javascript
+let item = {
+  id: 123,
+  name: 'Test Name',
+  status: 'active',
+  date_added: '2020-04-24',
+  metadata: {
+    $set: {
+      'vacation_days': { $add: -2 },
+      'contact.addresses': { $append: ['99 South Street'] },
+      'contact.phone': { $remove: [1,3] }
+    }
+  }
+}
+```
 
 ### query(partitionKey [,options] [,parameters])
 
@@ -769,6 +932,31 @@ attributes: [
 When using the `get` method of an entity, the "entity" is assumed for the attributes. This lets you specify attributes and aliases without needing to use the object reference.
 
 **NOTE:** When specifying entities in `query` and `scan` operations, it's possible that shared attributes will retrieve data for other matching entity types. However, the library attempts to return only the attributes specified for each entity when parsing the response.
+
+## Adding custom parameters and clauses
+
+This libary supports all API options for the available API methods, so it is unnecessary for you to provide additional parameters. However, if you would like to pass custom parameters, simply pass them in an object as the last parameter to any appropriate method.
+
+```javascript
+let result = await MyEntity.update(
+  item, // the item to update
+  { ..options... }, // method options
+  { // your custom parameters
+    ReturnConsumedCapacity: 'TOTAL',
+    ReturnValues: 'ALL_NEW'
+  }
+)
+```
+
+For the `update` method, you can add additional statements to the clauses by specifying arrays as the `SET`, `ADD`, `REMOVE` and `DELETE` properties. You can also specify additional `ExpressionAttributeNames` and `ExpressionAttributeValues` with object values and the system will merge them in with the generated ones.
+
+```javascript
+let results = await MyEntity.update(item, {}, {
+  SET: ['#somefield = :somevalue'],
+  ExpressionAttributeNames: { '#somefield': 'somefield' },
+  ExpressionAttributeValues: { ':somevalue': 123 }  
+})
+```
 
 ## Additional References
 
