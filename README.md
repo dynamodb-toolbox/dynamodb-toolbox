@@ -501,20 +501,20 @@ let result = await MyTable.scan(
 
 The `batchGet` method is a wrapper for the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). The DynamoDB Toolbox `batchGet` method supports all **BatchGetItem** API operations. The `batchGet` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `batchGetParams` can be used, but will only retrieve the generated parameters.
 
-The `batchGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `batchGet` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
+The `batchGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `getBatch` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding BatchGetItem API references in parentheses):
 
 | Option | Type | Description |
 | -------- | :--: | ----------- |
 | consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead) |
-| capacity | `string` or `object` (see below) | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | attributes | `array` or `object` (see below) | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
 | autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 #### Specifying options for multiple tables
-The library is built for making working with single table designs easier, but it is possible that you may need to retrieve data from multiple tables within the same batch get. If your `items` contain references to multiple tables, the `consistent` and `capacity` options will accept objects that use either the table `name` or `alias` as the key, and the setting as the value. For example, to specify different `consistent` settings on two tables, you would use something like following:
+The library is built for making working with single table designs easier, but it is possible that you may need to retrieve data from multiple tables within the same batch get. If your `items` contain references to multiple tables, the `consistent` option will accept objects that use either the table `name` or `alias` as the key, and the setting as the value. For example, to specify different `consistent` settings on two tables, you would use something like following:
 
 ```javascript
 consistent: {
@@ -523,7 +523,6 @@ consistent: {
 }
 ```
 Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use te same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](#projection-expression) formatting.
-
 
 
 ```javascript
@@ -545,9 +544,39 @@ const results = await MyTable.batchGet(
 )
 ```
 
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 ### batchWrite(items [,options] [,parameters])
-- [ ] Document `batchWrite` method
+
+> The BatchWriteItem operation puts or deletes multiple items in one or more tables. A single call to BatchWriteItem can write up to 16 MB of data, which can comprise as many as 25 put or delete requests.
+
+The `batchWrite` method is a wrapper for the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html). The DynamoDB Toolbox `batchWrite` method supports all **BatchWriteItem** API operations. The `batchWrite` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `batchWriteParams` can be used, but will only retrieve the generated parameters.
+
+The `batchWrite` method accepts three arguments. The first is an `array` of item keys to either `put` or `delete`. The DynamoDB Toolbox provides a `putBatch` and `deleteBatch` method on your entities to help you generate the proper key configuration for each item. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
+
+The optional second argument accepts an `options` object. The following options are all optional (corresponding BatchWriteItem API references in parentheses):
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| capacity | `string` or `object` (see below) | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+
+```javascript
+const result = await Default.batchWrite(
+  [
+    MyTable.User.putBatch({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother','wife'] }),
+    MyTable.User.putBatch({ family: 'Brady', name: 'Mike', age: 42, roles: ['father','husband'] }),
+    MyTable.Pet.deleteBatch({ family: 'Brady', name: 'Tiger' })
+  ],{ 
+    capacity: 'total',
+    metrics: 'size',
+  }
+)
+```
+
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 ### parse(entity, input [,include])
 
