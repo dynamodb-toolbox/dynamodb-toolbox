@@ -19,7 +19,7 @@ The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amaz
 ### This is *NOT* an ORM (at least it's not trying to be)
 There are several really good Object-Relational Mapping tools (ORMs) out there for DynamoDB. There's the [Amazon DynamoDB DataMapper For JavaScript](https://github.com/awslabs/dynamodb-data-mapper-js), [@Awspilot's DynamoDB](https://awspilot.dev/) project, [@baseprime's dynamodb](https://github.com/baseprime/dynamodb) package, and many more.
 
-If you like working with ORMs, that's great, and you should definitely give these projects a look. But personally, I really dislike ORMs (especially ones for relational databases). I typically find them cumbersome and likely to generate terribly inefficient queries (you know who you are). So this project is not an ORM, or at least it's not trying to be. This library helps you generate the necessary parameters needed to interact with the DynamoDB API by giving you a **consistent interface** and **handling all the heavy lifting** when working with the DynamoDB API. For convenience, this library will call the DynamoDB API for you and automatically parse the results, but you're welcome to just let it generate the parameters for you. Hopefully this library will make the vast majority of your DynamoDB interactions super simple, and maybe even a little bit fun! 😎
+If you like working with ORMs, that's great, and you should definitely give these projects a look. But personally, I really dislike ORMs (especially ones for relational databases). I typically find them cumbersome and likely to generate terribly inefficient queries (you know who you are). So this project is not an ORM, or at least it's not trying to be. This library helps you generate the necessary parameters needed to interact with the DynamoDB API by giving you a **consistent interface** and **handling all the heavy lifting** when working with the DynamoDB API. For convenience, this library will call the DynamoDB API for you and automatically parse the results, but you're welcome to just let it generate all (or just some) of the parameters for you. Hopefully this library will make the vast majority of your DynamoDB interactions super simple, and maybe even a little bit fun! 😎
 
 ## Features
 - **Table Schemas and DynamoDB Typings:** Define your Table and Entity data models using a simple JavaScript object structure, assign DynamoDB data types, and optionally set defaults.
@@ -37,7 +37,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
 ## Table of Contents
 
 - [Installation and Basic Usage](#installation-and-basic-usage)
-- [Table](#tables)
+- [Tables](#tables)
   - [Table Attributes](#table-attributes)
   - [Table Indexes](#table-indexes)
 - [Entities](#entities)
@@ -647,11 +647,11 @@ Executes the `parse` method of the supplied `entity`. The `entity` must be a `st
 
 ### get(entity, key [,options] [,parameters])
 
-Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#getitem-options-parameters) for additional parameters and behavior.
+Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#getkey-options-parameters) for additional parameters and behavior.
 
 ### delete(entity, key [,options] [,parameters])
 
-Executes the `delete` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `delete` method](#deleteitem-options-parameters) for additional parameters and behavior.
+Executes the `delete` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `delete` method](#deletekey-options-parameters) for additional parameters and behavior.
 
 ### put(entity, item [,options] [,parameters])
 
@@ -659,7 +659,7 @@ Executes the `put` method of the supplied `entity`. The `entity` must be a `stri
 
 ### update(entity, key [,options] [,parameters])
 
-Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](#updateitem-options-parameters) for additional parameters and behavior.
+Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](#updatekey-options-parameters) for additional parameters and behavior.
 
 
 ## Entity Properties
