@@ -36,6 +36,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
 
 ## Table of Contents
 
+- [Conventions and Motivations](#conventions-and-motivations)
 - [Installation and Basic Usage](#installation-and-basic-usage)
 - [Tables](#tables)
   - [Table Attributes](#table-attributes)
@@ -92,6 +93,17 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
 - [Additional References](#additional-references)
 - [Contributions and Feedback](#contributions-and-feedback)
+
+## Conventions, Motivations, and Migrations from v0.1
+
+One of the most important goals of this library is to be as **unopinionated** as possible, giving you the flexibility to bend it to your will and build amazing applications. But another important goal is developer efficiency and ease of use. In order to balance these two goals, some assumptions had to be made. These include the "default" behavior of the library (all of which, btw, can be disabled with a simple configuration change). If you are using v0.1, you'll notice **a lot** of changes.
+
+- **`autoExecute` and `autoParse` are enabled by default.** The original version of this library only handled limited `parameter generation`, so it was necessary for you to pass the payloads to the `DocumentClient`. The library now provides support for all API options for each supported method, so by default, it will make the DynamoDB API call and parse the results, saving you redundant code. If you'd rather it didn't do this, you can disable it.
+- **It assumes a Single Table DynamoDB design.** Watch the Rick Houlihan videos and read [Alex DeBrie's book](https://www.dynamodbbook.com). The jury is no longer out on this: Single Table designs are what all the cool kids are doing. This library assumes that you will have multiple "Entities" associated with a single "Table", so this requires you to instantiate a `Table` and add at least one `Entity` to it. If you have multiple `Table`s and just one `Entity` type per `Table`, that's fine, it'll still make your life much easier. Also, `batchGet` and `batchWrite` support multiple tables, so we've got you covered.
+- **Types are added to all items.** Since this library assumes a Single Table design, it needs a way to reliably distinguish between Entity types. It does this by adding a "Type" field to each item in you table. v0.1 used `__model`, but this has been changed to `_tp` (short for Type). Don't like this? Well, you can either disable it completely (but the library won't be able to parse entities into their aliases for you), or change the attribute name to something more snappy. It is purposefully short to minimize table storage (because item storage size includes the attribute names). Also, by default, Entities will alias this field to `type` (but you can change that too).
+- **Created and modified timestamps are enabled by default.** I can think of many instances where created and modified timestamps are used in database records, so the library now automatically adds `_ct` and `_md` attributes when items are `put` or `update`d. Again, these are kept purposefully short. You can disable them, change them, or even implement them yourself if you really want. By default, Entities will alias these attributes to `created` and `modified` (customizable, of course), and will automatically apply an `if_not_exists()` on updates so that the `created` date isn't overwritten.
+- **Option names have been shortened using camelCase.** Nothing against long and descriptive names, but typing `ReturnConsumedCapacity` over and over again just seems like extra work. For simplification purposes, all API request parameters have been shortened to things like `capacity`, `consistent` and `metrics`. The documentation shows which parameter they map to, but they should be intuitive enough to guess.
+- **All configurations and options are plain JavaScript `objects`.** There are lots of JS libraries that use function chaining (like `table.query('some pk value').condition('some condition').limit(50)`). I really like this style for lots of use cases, but it **just feels wrong** to me when using DynamoDB. DynamoDB is the OG of cloud native databases. It's configured using IaC and its API is HTTP-based and uses structured JSON, so writing queries and other interactions using its native format just seems like the right thing to do. IMO, this makes your code more explicit and easy to reason about. Your `options` could actually be JSON and (unless you're using functions to define defaults on Entity attribtes) your Table and Entity configurations could be too.  
 
 ## Installation and Basic Usage
 
