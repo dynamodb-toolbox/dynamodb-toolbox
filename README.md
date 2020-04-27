@@ -7,8 +7,8 @@
 
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
-## DOCUMENTATION IS BEING UPDATED FOR v0.2
-**Please note that names and references are subject to change.**
+## THIS IS A DRAFT OF THE DOCUMENTATION
+This is a draft of the v0.2 documentation. Please excuse any typos or missing information. Feedback or PRs are welcome to fix any issues.
 
 ### **NOTE:** This project is in BETA. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
@@ -535,6 +535,9 @@ let result = await MyTable.query(
 )
 ```
 
+#### Return Data
+The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `query` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
+
 ### scan([options] [,parameters])
 
 > The Scan operation returns one or more items and item attributes by accessing every item in a table or a secondary index.
@@ -571,6 +574,9 @@ let result = await MyTable.scan(
   }
 )
 ```
+
+#### Return Data
+The data is returned with the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `scan` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
 
 ### batchGet(items [,options] [,parameters])
 
@@ -623,6 +629,9 @@ const results = await MyTable.batchGet(
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
+#### Return Data
+The data is returned with the same response syntax as the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `batchGet` method again using the same options and passing any `UnprocessedKeys` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
+
 ### batchWrite(items [,options] [,parameters])
 
 > The BatchWriteItem operation puts or deletes multiple items in one or more tables. A single call to BatchWriteItem can write up to 16 MB of data, which can comprise as many as 25 put or delete requests.
@@ -654,6 +663,9 @@ const result = await Default.batchWrite(
 ```
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
+
+#### Return Data
+The data is returned with the same response syntax as the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html). If `autoExecute` and `autoParse` are enabled, a `.next()` method will be available on the returned object. Calling this function will call the `batchWrite` method again using the same options and passing any `UnprocessedKeys` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
 
 ### parse(entity, input [,include])
 
