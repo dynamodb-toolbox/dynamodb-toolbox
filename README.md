@@ -544,11 +544,11 @@ Returns the Table's attribute name for the suppled `attribute`. The `attribute` 
 
 ### parse(input [,include])
 
-Parses attributes returned from a DynamoDB action and unmarshalls them into entity aliases. The `input` argument accepts an `object` with attributes as keys, an `array` of `objects` with attributes as keys, or an `object` with either an `Item` or `Items` property. This method will return a result of the same type of `input`. For example, if you supply and `array` of objects, an `array` will be returned. If you supply an object with an `Item` property, an `object` will be returned.
+Parses attributes returned from a DynamoDB action and unmarshalls them into entity aliases. The `input` argument accepts an `object` with attributes as keys, an `array` of `objects` with attributes as keys, or an `object` with either an `Item` or `Items` property. This method will return a result of the same type of `input`. For example, if you supply an `array` of objects, an `array` will be returned. If you supply an object with an `Item` property, an `object` will be returned.
 
 You can also pass in an `array` of strings as the second argument. The unmarshalling will only return the attributes (or aliases) specified in this `include` array.
 
-If auto execute and auto parsing is enable, data returned from a DynamoDB action will automatically be parsed.
+If auto execute and auto parsing are enable, data returned from a DynamoDB action will automatically be parsed.
 
 ### get(key [,options] [,parameters])
 
@@ -571,19 +571,55 @@ The optional second argument accepts an `options` object. The following options 
 If you prefer to specify your own parameters, the optional third argument allows you to pass an `object` that contains valid `GetItem` API parameters. These will be merged into the final payload.
 
 ```javascript
-// Specify my item
-let item = {
+// Specify my key
+let key = {
   id: 123,
   status: 'active',
   date_added: '2020-04-24'
 }
 
 // Use the 'get' method of MyEntity to retrieve the item from DynamoDB
-let result = await MyEntity.get(item)
+let result = await MyEntity.get(
+  key,
+  { consistent: true }
+)
 ```
 
 ### delete(key [,options] [,parameters])
-- [ ] Document `delete` method
+
+> Deletes a single item in a table by primary key.
+
+The `delete` method is a wrapper for the [DynamoDB DeleteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html). The DynamoDB Toolbox `delete` method supports all **DeleteItem** API operations. The `delete` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `deleteParams` can be used, but will only retrieve the generated parameters.
+
+The `delete` method accepts three arguments. The first argument accepts an `object` that is used to specify the primary key of the item you wish to "delete" (Key). For example: `{ user_id: 123, status: 'active' }`
+
+The optional second argument accepts an `options` object. The following options are all optional (corresponding DeleteItem API references in parentheses):
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| conditions | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression) |
+| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| returnValues | `string` | Determins whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues) |
+| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+
+If you prefer to specify your own parameters, the optional third argument allows you to pass an `object` that contains valid `DeleteItem` API parameters. These will be merged into the final payload.
+
+```javascript
+// Specify my key
+let key = {
+  id: 123,
+  status: 'active',
+  date_added: '2020-04-24'
+}
+
+// Use the 'delete' method of MyEntity to delete the item from DynamoDB
+let result = await MyEntity.delete(
+  key,
+  condition: { attr: 'date_modified' lt: '2020-01-01' },
+  returnValues: 'all_old'
+)
+```
 
 ### put(item [,options] [,parameters])
 - [ ] Document `put` method
