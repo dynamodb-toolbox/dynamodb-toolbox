@@ -1,4 +1,4 @@
-# DynamoDB Toolbox - v0.2 (WIP: Not Production Ready)
+# DynamoDB Toolbox - v0.2
 
 [![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=v0.2)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
@@ -12,26 +12,86 @@
 
 ### **NOTE:** This project is in BETA. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
-The **DynamoDB Toolbox** is a simple set of tools for working with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It lets you define your data models (with typings and aliases) and map them to your DynamoDB table. You can then **generate parameters** to `put`, `get`, `delete`, and `update` data by passing in a JavaScript object. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
+## Single Table Designs have never been this easy!
 
-### This is *NOT* an ORM (at least I hope it's not)
+The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It's designed with **Single Tables** in mind, but works just as well with multiple tables. It lets you define your Entities (with typings and aliases) and map them to your DynamoDB tables. You can then **generate the API parameters** to `put`, `get`, `delete`, `update`, `query`, `scan`, `batchGet`, and `batchWrite` data by passing in JavaScript objects. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
+
+### This is *NOT* an ORM (at least it's not trying to be)
 There are several really good Object-Relational Mapping tools (ORMs) out there for DynamoDB. There's the [Amazon DynamoDB DataMapper For JavaScript](https://github.com/awslabs/dynamodb-data-mapper-js), [@Awspilot's DynamoDB](https://awspilot.dev/) project, [@baseprime's dynamodb](https://github.com/baseprime/dynamodb) package, and many more.
 
-If you like working with ORMs, that's great, and you should definitely give these projects a look. But personally, I really dislike ORMs (especially ones for relational databases). I typically find them cumbersome and likely to generate terribly inefficient queries (you know who you are). So this project is not an ORM, or at least it's not trying to be. You still need to use the DocumentClient directly, handle transactions and failures, and deal with things like `ConditionExpression`s, `ProjectionExpressions`, and `ConsistentRead`s. But this library will (hopefully) make the vast majority of your DynamoDB interactions super simple, and maybe even a little bit fun! 😎
+If you like working with ORMs, that's great, and you should definitely give these projects a look. But personally, I really dislike ORMs (especially ones for relational databases). I typically find them cumbersome and likely to generate terribly inefficient queries (you know who you are). So this project is not an ORM, or at least it's not trying to be. This library helps you generate the necessary parameters needed to interact with the DynamoDB API by giving you a **consistent interface** and **handling all the heavy lifting** when working with the DynamoDB API. For convenience, this library will call the DynamoDB API for you and automatically parse the results, but you're welcome to just let it generate the parameters for you. Hopefully this library will make the vast majority of your DynamoDB interactions super simple, and maybe even a little bit fun! 😎
 
 ## Features
-- **Table Schemas and DynamoDB Typings:** Define your data models using a simple JavaScript object structure, assign DynamoDB data types, and optionally set defaults.
+- **Table Schemas and DynamoDB Typings:** Define your Table and Entity data models using a simple JavaScript object structure, assign DynamoDB data types, and optionally set defaults.
 - **Magic UpdateExpressions:** Writing complex `UpdateExpression` strings is a major pain, especially if the input data changes the underlying clauses or requires dynamic (or nested) attributes. This library handles everything from simple `SET` clauses, to complex `list` and `set` manipulations, to defaulting values with smartly applied `if_not_exists()` to avoid overwriting data.
-- **Bidirectional Aliasing:** When building single table data models, you can define multiple schemas that map to the same table. Each schema can reuse fields (like `pk`,`sk`, and `data`) and map them to different aliases depending on the item type. Your data is automatically mapped correctly when reading and writing data.
+- **Bidirectional Mapping and Aliasing:** When building a single table design, you can define multiple entities that map to the same table. Each entity can reuse fields (like `pk` and`sk`) and map them to different aliases depending on the item type. Your data is automatically mapped correctly when reading and writing data.
 - **Composite Key Generation and Field Mapping:** Doing some fancy data modeling with composite keys? Like setting your `sortKey` to `[country]#[region]#[state]#[county]#[city]#[neighborhood]` model hierarchies? DynamoDB Toolbox lets you map data to these composite keys which will both autogenerate the value *and* parse them into fields for you.
 - **Type Coercion and Validation:** Automatically coerce values to strings, numbers and booleans to ensure consistent data types in your DynamoDB tables. Validate `list`, `map`, and `set` types against your data. Oh yeah, and `set`s are automatically handled for you. 😉
-- [ ] **Query Builder**
-- [ ] **Scan**
-- [ ] **Expression Builder**
-- [ ] **Projection Builder**
-- [ ] **Secondary Index Support**
-- [ ] **Batch Operations**
+- **Powerful Query Builder:** Specify a `partitionKey`, and then easily configure your sortKey conditions, filters, and attribute projections to query your primary or secondary indexes. This library can even handle pagination with a simple `.next()` method.
+- **Simple Table Scans:** Scan through your table or secondary indexes and add filters, projections, parallel scans and more. And don't forget the pagination support with `.next()`.
+- **Filter and Condition Expression Builder:** Build complex Filter and Condition expressions using a standardized `array` and `object` notation. No more appending strings!
+- **Projection Builder:** Specify which attributes and paths should be returned for each entity type, and automatically filter the results.
+- **Secondary Index Support:** Map your secondary indexes (GSIs and LSIs) to your table, and dynamically link your entity attributes.
+- **Batch Operations:** Full support for batch operations with a simpler interface to work with multiple entities and tables.
 
+## Table of Contents
+
+- [Installation and Basic Usage](#installation-and-basic-usage)
+- [Table](#tables)
+  - [Table Attributes](#table-attributes)
+  - [Table Indexes](#table-indexes)
+- [Entities](#entities)
+  - [Specifying Entity Definitions](#specifying-entity-definitions)
+  - [Entity Attributes](#entity-attributes)
+    - [Using a `string`](#using-a-string)
+    - [Using an `object`](#using-an-object)
+    - [Using an `array` for composite keys](#using-an-array-for-composite-keys)
+    - [Customize defaults with a `function`](#customize-defaults-with-a-function)
+- [Table Properties](#table-properties)
+  - [get/set `DocumentClient`](#getset-documentclient)
+  - [get/set `entities`](#getset-entities)
+  - [get/set `autoExecute`](#getset-autoexecute)
+  - [get/set `autoParse`](#getset-autoparse)
+- [Table Methods](#table-methods)
+  - [query()](#querypartitionkey-options-parameters)
+  - [scan()](#scanoptions-parameters)
+  - [batchGet()](#batchgetitems-options-parameters)
+  - [batchWrite()](#batchwriteitems-options-parameters)
+  - [parse()](#parseentity-input-include)
+  - [get()](#getentity-key-options-parameters)
+  - [delete()](#deleteentity-key-options-parameters)
+  - [put()](#putentity-item-options-parameters)
+  - [update()](#updateentity-key-options-parameters)
+- [Entity Properties](#entity-properties)
+  - [get/set `table`](#getset-table)
+  - [get `DocumentClient`](#get-documentclient)
+  - [get/set `autoExecute`](#getset-autoexecute-1)
+  - [get/set `autoParse`](#getset-autoparse-1)
+  - [get `partitionKey`](#get-partitionkey)
+  - [get `sortKey`](#get-sortkey)
+- [Entity Methods](#entity-methods)
+  - [attribute()](#attributeattribute)
+  - [parse()](#parseinput-include)
+  - [get()](#getkey-options-parameters)
+  - [delete()](#deletekey-options-parameters)
+  - [put()](#putitem-options-parameters)
+  - [update()](#updatekey-options-parameters)
+    - [Removing an attribute](#removing-an-attribute)
+    - [Adding a number to a `number` attribute](#adding-a-number-to-a-number-attribute)
+    - [Adding values to a `set`](#adding-values-to-a-set)
+    - [Deleting values from a `set`](#deleting-values-from-a-set)
+    - [Appending (or prepending) values to a `list`](#appending-or-prepending-values-to-a-list)
+    - [Remove items from a `list`](#remove-items-from-a-list)
+    - [Update items in a `list`](#update-items-in-a-list)
+    - [Update nested data in a `map`](#update-nested-data-in-a-map)
+  - [query()](#querypartitionkey-options-parameters-1)
+  - [scan()](#scanoptions-parameters-1)
+- [Filters and Conditions](#filters-and-conditions)
+  - [Complex Filters and Conditions](#complex-filters-and-conditions)
+- [Projection Expressions](#projection-expressions)
+- [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
+- [Additional References](#additional-references)
+- [Contributions and Feedback](#contributions-and-feedback)
 
 ## Installation and Basic Usage
 
@@ -46,7 +106,7 @@ Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 const { Table, Entity } = require('dynamodb-toolbox')
 ```
 
-Create a Table:
+Create a Table (with the DocumentClient):
 
 ```javascript
 // Require AWS SDK and instantiate DocumentClient
@@ -68,7 +128,6 @@ const MyTable = new Table({
 ```
 
 Create an Entity:
-- [ ] Better examples?
  
 ```javascript
 const Customer = new Entity({
@@ -146,6 +205,10 @@ This will return the object mapped to your aliases and composite key mappings:
   date_added: '2020-04-24'
 }
 ```
+
+
+
+
 
 ## Tables
 
@@ -256,7 +319,7 @@ const MyEntity = new Table({
 
 \* *An Entity can be instantiated without a `table`, but most methods require one before execution*
 
-### Attributes
+### Entity Attributes
 
 The `attributes` property is an `object` that represents the attribute names, types, and other properties related to each attribute. Each key in the object represents the **attribute name** and the value represents its properties. The value can be a `string` that represents the DynamoDB type, an `object` that allows for additional configurations, or an `array` that maps to composite keys.
 
@@ -1020,7 +1083,7 @@ When using the `get` method of an entity, the "entity" is assumed for the attrib
 
 **NOTE:** When specifying entities in `query` and `scan` operations, it's possible that shared attributes will retrieve data for other matching entity types. However, the library attempts to return only the attributes specified for each entity when parsing the response.
 
-## Adding custom parameters and clauses
+## Adding Custom Parameters and Clauses
 
 This libary supports all API options for the available API methods, so it is unnecessary for you to provide additional parameters. However, if you would like to pass custom parameters, simply pass them in an object as the last parameter to any appropriate method.
 
