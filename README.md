@@ -94,7 +94,6 @@ const Customer = new Entity({
 Put an item:
 
 ```javascript
-
 // Create my item (using table attribute names or aliases)
 let item = {
   id: 123,
@@ -598,6 +597,7 @@ The optional second argument accepts an `options` object. The following options 
 | Option | Type | Description |
 | -------- | :--: | ----------- |
 | conditions | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression) |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
 | returnValues | `string` | Determins whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues) |
 | autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
@@ -622,7 +622,40 @@ let result = await MyEntity.delete(
 ```
 
 ### put(item [,options] [,parameters])
-- [ ] Document `put` method
+
+> Creates a new item, or replaces an old item with a new item. If an item that has the same primary key as the new item already exists in the specified table, the new item completely replaces the existing item.
+
+The `put` method is a wrapper for the [DynamoDB PutItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html). The DynamoDB Toolbox `put` method supports all **PutItem** API operations. The `put` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `putParams` can be used, but will only retrieve the generated parameters.
+
+The `put` method accepts three arguments. The first argument accepts an `object` that represents the item to add to the DynamoDB table. The item can use attribute names or aliases and will convert the object into the appropriate shape defined by your Entity.
+
+The optional second argument accepts an `options` object. The following options are all optional (corresponding PutItem API references in parentheses):
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| conditions | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression) |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| returnValues | `string` | Determins whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues) |
+| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+
+If you prefer to specify your own parameters, the optional third argument allows you to pass an `object` that contains valid `PutItem` API parameters. These will be merged into the final payload.
+
+```javascript
+// Create my item (using table attribute names or aliases)
+let item = {
+  id: 123,
+  name: 'Jane Smith',
+  company: 'ACME',
+  age: 35,
+  status: 'active',
+  date_added: '2020-04-24'
+}
+
+// Use the 'put' method of your entity instance
+let result = await MyEntity.put(item)
+```
 
 ### update(key [,options] [,parameters])
 - [ ] Document `update` method
