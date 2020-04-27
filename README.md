@@ -390,16 +390,22 @@ attributes: {
 ## Table Properties
 
 ### get/set `DocumentClient`
-- [ ] Document get `DocumentClient`
+
+The `DocumentClient` property allows you to get reference to the table's assigned `DocumentClient`, or to add/update the table's `DocumentClient`. When setting this property, it must be a valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html).
 
 ### get/set `entities`
-- [ ] Document get/set `entities`
+
+The `entities` property is used to add entities to the table. When adding entities, property accepts either an `array` of `Entity` instances, or a single `Entity` instance. This will add the entities to the table and create a table property with the same name as your entities `name`. For example, if an entity with the name `User` is assigned: `MyTable.entities = User`, then the Entity and its properties and methods will be accessible via `MyTable.User`.
+
+The `entities` property will retrieve an `array` of `string`s containing all entity names attached to the table.
 
 ### get/set `autoExecute`
-- [ ] Document get/set `autoExecute`
+
+This property will retrieve a `boolean` indicating the current `autoExecute` setting on the table. You can change this setting by supplying a `boolean` value.
 
 ### get/set `autoParse`
-- [ ] Document get/set `autoParse`
+
+This property will retrieve a `boolean` indicating the current `autoParse` setting on the table. You can change this setting by supplying a `boolean` value.
 
 
 ## Table Methods
@@ -519,22 +525,26 @@ Executes the `update` method of the supplied `entity`. The `entity` must be a `s
 ## Entity Properties
 
 ### get/set `table`
-- [ ] Document get/set `table`
+Retrieves a reference to the Table instance that the Entity is attached to. You can use this property to add the Entity to a Table by assigning it a valid Table instance. Note that you cannot change a table once it has been assigned.
 
 ### get `DocumentClient`
-- [ ] Document get `DocumentClient`
+
+The `DocumentClient` property retrieves a reference to the table's assigned `DocumentClient`. This value cannot be updated by the Entity.
 
 ### get/set `autoExecute`
-- [ ] Document get/set `autoExecute`
+
+This property will retrieve a `boolean` indicating the current `autoExecute` setting on the entity. If no value is set, it will return the inherited value from the attached table. You can change this setting for the current entity by supplying a `boolean` value.
 
 ### get/set `autoParse`
-- [ ] Document get/set `autoParse`
+
+This property will retrieve a `boolean` indicating the current `autoParse` setting on the entity. If no value is set, it will return the inherited value from the attached table. You can change this setting for the current entity by supplying a `boolean` value.
 
 ### get `partitionKey`
-- [ ] Document get `partitionKey`
+
+Returns the Entity's assigned `partitionKey`.
 
 ### get `sortKey`
-- [ ] Document get `sortKey`
+Returns the Entity's assigned `sortKey`.
 
 
 ## Entity Methods
