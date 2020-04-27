@@ -172,16 +172,16 @@ const MyTable = new Table({
 
 | Property | Type | Required | Description |
 | -------- | :--: | :--: | ----------- |
-name | `string` | yes | The name of your DynamoDB table (this will be used as the `TableName` property) |
-alias | `string` | no | An optional alias to reference your table when using "batch" features |
-partitionKey | `string` | yes | The attribute name of your table's partitionKey |
-sortKey | `string` | no | The attribute name of your table's sortKey |
-entityField | `boolean` or `string` | no | Disables or overrides entity tracking field name (default: `_ty`) |
-attributes | `object` | no | Complex type that optionally specifies the name and type of each attributes (see below) |
-indexes | `object` | no | Complex type that optionally specifies the name keys of your secondary indexes (see below) |
-autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
-autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`) |
-DocumentClient | `DocumentClient` | * | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
+| name | `string` | yes | The name of your DynamoDB table (this will be used as the `TableName` property) |
+| alias | `string` | no | An optional alias to reference your table when using "batch" features |
+| partitionKey | `string` | yes | The attribute name of your table's partitionKey |
+| sortKey | `string` | no | The attribute name of your table's sortKey |
+| entityField | `boolean` or `string` | no | Disables or overrides entity tracking field name (default: `_ty`) |
+| attributes | `object` | no | Complex type that optionally specifies the name and type of each attributes (see below) |
+| indexes | `object` | no | Complex type that optionally specifies the name keys of your secondary indexes (see below) |
+| autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
+| autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`) |
+| DocumentClient | `DocumentClient` | * | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
 
 \* *A Table can be instantiated without a DocumentClient, but most methods require it before execution*
 
@@ -243,17 +243,17 @@ const MyEntity = new Table({
 
 | Property | Type | Required | Description |
 | -------- | :--: | :--: | ----------- |
-name | `string` | yes | The name of your entity (must be unique to its associated `Table`)
-timestamps | `boolean` | no | Automatically add and manage *created* and *modified* attributes  |
-created | `string` | no | Override default *created* attribute name (default: `_ct`) |
-modified | `string` | no | Override default *modified* attribute name (default: `_md`) |
-createdAlias | `string` | no | Override default *created* alias name (default: `created`) |
-modifiedAlias | `string` | no | Override default *modified* alias name (default: `modified`) |
-typeAlias | `string` | no | Override default *entity type* alias name (default: `type`) |
-attributes | `object` | yes | Complex type that specifies the schema for the entity (see below) |
-autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: *inherited from Table*) |
-autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Table*) |
-table | `Table` | * | A valid `Table` instance |
+| name | `string` | yes | The name of your entity (must be unique to its associated `Table`)
+| timestamps | `boolean` | no | Automatically add and manage *created* and *modified* attributes  |
+| created | `string` | no | Override default *created* attribute name (default: `_ct`) |
+| modified | `string` | no | Override default *modified* attribute name (default: `_md`) |
+| createdAlias | `string` | no | Override default *created* alias name (default: `created`) |
+| modifiedAlias | `string` | no | Override default *modified* alias name (default: `modified`) |
+| typeAlias | `string` | no | Override default *entity type* alias name (default: `type`) |
+| attributes | `object` | yes | Complex type that specifies the schema for the entity (see below) |
+| autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: *inherited from Table*) |
+| autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Table*) |
+| table | `Table` | * | A valid `Table` instance |
 
 \* *An Entity can be instantiated without a `table`, but most methods require one before execution*
 
@@ -434,8 +434,8 @@ The second argument is an `options` object that specifies the details of your qu
 | attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
 | startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey) |
 | entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
-autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 ```javascript
 let result = await MyTable.query(
@@ -472,8 +472,8 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 | segments | `number` | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments) |
 | segment | `number` | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment) |
 | entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
-autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 ```javascript
 let result = await MyTable.scan(
@@ -496,11 +496,11 @@ let result = await MyTable.scan(
 
 Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](#parseinput-include) for additional parameters and behavior.
 
-### get(entity, item [,options] [,parameters])
+### get(entity, key [,options] [,parameters])
 
 Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#getitem-options-parameters) for additional parameters and behavior.
 
-### delete(entity, item [,options] [,parameters])
+### delete(entity, key [,options] [,parameters])
 
 Executes the `delete` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `delete` method](#deleteitem-options-parameters) for additional parameters and behavior.
 
@@ -508,7 +508,7 @@ Executes the `delete` method of the supplied `entity`. The `entity` must be a `s
 
 Executes the `put` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `put` method](#putitem-options-parameters) for additional parameters and behavior.
 
-### update(entity, item [,options] [,parameters])
+### update(entity, key [,options] [,parameters])
 
 Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](#updateitem-options-parameters) for additional parameters and behavior.
 
@@ -539,21 +539,56 @@ Executes the `update` method of the supplied `entity`. The `entity` must be a `s
 ## Entity Methods
 
 ### attribute(attribute)
+
 Returns the Table's attribute name for the suppled `attribute`. The `attribute` must be a `string` and can be either a valid attribute name or alias.
 
 ### parse(input [,include])
-- [ ] Document `parse` method
 
-### get(item [,options] [,parameters])
-- [ ] Document `get` method
+Parses attributes returned from a DynamoDB action and unmarshalls them into entity aliases. The `input` argument accepts an `object` with attributes as keys, an `array` of `objects` with attributes as keys, or an `object` with either an `Item` or `Items` property. This method will return a result of the same type of `input`. For example, if you supply and `array` of objects, an `array` will be returned. If you supply an object with an `Item` property, an `object` will be returned.
 
-### delete(item [,options] [,parameters])
+You can also pass in an `array` of strings as the second argument. The unmarshalling will only return the attributes (or aliases) specified in this `include` array.
+
+If auto execute and auto parsing is enable, data returned from a DynamoDB action will automatically be parsed.
+
+### get(key [,options] [,parameters])
+
+> The GetItem operation returns a set of attributes for the item with the given primary key.
+
+The `get` method is a wrapper for the [DynamoDB GetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html). The DynamoDB Toolbox `get` method supports all **GetItem** API operations. The `get` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `getParams` can be used, but will only retrieve the generated parameters.
+
+The `get` method accepts three arguments. The first argument accepts an `object` that is used to specify the primary key of the item you wish to "get" (Key). The `object` must contain keys for the attributes that represent your `partitionKey` and `sortKey` (if a compound key) with their values as the key values. For example, if `user_id` represents your `partitionKey`, and `status` represents your `sortKey`, to retrieve user_id "123" with a status of "active", you would specify `{ user_id: 123, status: 'active' }` as your `key`.
+
+The optional second argument accepts an `options` object. The following options are all optional (corresponding GetItem API references in parentheses):
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
+| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+
+If you prefer to specify your own parameters, the optional third argument allows you to pass an `object` that contains valid `GetItem` API parameters. These will be merged into the final payload.
+
+```javascript
+// Specify my item
+let item = {
+  id: 123,
+  status: 'active',
+  date_added: '2020-04-24'
+}
+
+// Use the 'get' method of MyEntity to retrieve the item from DynamoDB
+let result = await MyEntity.get(item)
+```
+
+### delete(key [,options] [,parameters])
 - [ ] Document `delete` method
 
 ### put(item [,options] [,parameters])
 - [ ] Document `put` method
 
-### update(item [,options] [,parameters])
+### update(key [,options] [,parameters])
 - [ ] Document `update` method
 
 ### query(partitionKey [,options] [,parameters])
