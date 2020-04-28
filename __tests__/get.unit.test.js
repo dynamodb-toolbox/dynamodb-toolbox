@@ -92,7 +92,7 @@ describe('get',()=>{
   })
 
   it('fails with undefined input (async)', async () => {
-    expect(TestEntity.get()).rejects.toBe(`'pk' or 'email' is required`)
+    expect(TestEntity.get()).rejects.toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails when missing the sortKey (sync)', () => {
@@ -100,7 +100,7 @@ describe('get',()=>{
   })
 
   it('fails when missing the sortKey (async)', () => {
-    expect(TestEntity.get({ pk: 'test-pk' })).rejects.toBe(`'sk' or 'sort' is required`)
+    expect(TestEntity.get({ pk: 'test-pk' })).rejects.toThrow(`'sk' or 'sort' is required`)
   })
 
   it('fails when missing partitionKey (no alias) (sync)', () => {
@@ -108,7 +108,7 @@ describe('get',()=>{
   })
 
   it('fails when missing partitionKey (no alias) (async)', () => {
-    expect(TestEntity2.get()).rejects.toBe(`'pk' is required`)
+    expect(TestEntity2.get()).rejects.toThrow(`'pk' is required`)
   })
 
   it('fails when missing the sortKey (no alias) (sync)', () => {
@@ -116,7 +116,7 @@ describe('get',()=>{
   })
 
   it('fails when missing the sortKey (no alias) (async)', () => {
-    expect(TestEntity2.get({ pk: 'test-pk' })).rejects.toBe(`'sk' is required`)
+    expect(TestEntity2.get({ pk: 'test-pk' })).rejects.toThrow(`'sk' is required`)
   })
 
 })

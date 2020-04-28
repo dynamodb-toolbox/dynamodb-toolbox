@@ -74,7 +74,7 @@ describe('delete',()=>{
   })
 
   it('fails with undefined input (async)', () => {
-    expect(TestEntity.delete()).rejects.toBe(`'pk' or 'email' is required`)
+    expect(TestEntity.delete()).rejects.toThrow(`'pk' or 'email' is required`)
   })
 
 })
