@@ -149,7 +149,7 @@ const Customer = new Entity({
   name: 'Customer',
 
   // Define attributes
-  schema: {
+  attributes: {
     id: { partitionKey: true }, // flag as partitionKey
     sk: { hidden: true, sortKey: true }, // flag as sortKey and mark hidden
     name: { map: 'data' }, // map 'name' to table attribute 'data'
@@ -211,22 +211,20 @@ This will return the object mapped to your aliases and composite key mappings:
 
 ```javascript
 {
-  id: 123,
-  name: 'Jane Smith',
-  company: 'ACME',
-  age: 35,
-  status: 'active',
-  date_added: '2020-04-24'
+  Item: {
+    id: 123,
+    name: 'Jane Smith',
+    company: 'ACME',
+    age: 35,
+    status: 'active',
+    date_added: '2020-04-24'
+  }
 }
 ```
 
-
-
-
-
 ## Tables
 
-**Tables** represent one-to-one mappings to your DynamoDB tables. Then contain information about your table's name, primary keys, indexes, and more. They are also used organize and coordinate operations between **entities**. Tables support a number of methods that allow you to interact with your entities including performing **queries**, **scans**, **batch gets** and **batch writes**.
+**Tables** represent one-to-one mappings to your DynamoDB tables. They contain information about your table's name, primary keys, indexes, and more. They are also used to organize and coordinate operations between **entities**. Tables support a number of methods that allow you to interact with your entities including performing **queries**, **scans**, **batch gets** and **batch writes**.
 
 To define a new table, import it into your script:
 
@@ -252,7 +250,7 @@ const MyTable = new Table({
 | alias | `string` | no | An optional alias to reference your table when using "batch" features |
 | partitionKey | `string` | yes | The attribute name of your table's partitionKey |
 | sortKey | `string` | no | The attribute name of your table's sortKey |
-| entityField | `boolean` or `string` | no | Disables or overrides entity tracking field name (default: `_ty`) |
+| entityField | `boolean` or `string` | no | Disables or overrides entity tracking field name (default: `_tp`) |
 | attributes | `object` | no | Complex type that optionally specifies the name and type of each attributes (see below) |
 | indexes | `object` | no | Complex type that optionally specifies the name keys of your secondary indexes (see below) |
 | autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
@@ -1079,7 +1077,7 @@ filters: [
 
 DynamoDB supports [Projection Expressions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html) that allow you to selectively return attributes when using the `get`, `query` or `scan` operations.  
 
-The DynamoDB Toolbox provides a **Projection Builder** that allows you to generate `ProjectionExpression`s that automatically generates `ExpressionAttributeNames` as placeholders to avoid reservered word collisions. The libary allows you to work with both table attribute names and Entity aliases to specify projections.
+The DynamoDB Toolbox provides a **Projection Builder** that allows you to generate `ProjectionExpression`s that automatically generates `ExpressionAttributeNames` as placeholders to avoid reservered word collisions. The library allows you to work with both table attribute names and Entity aliases to specify projections.
 
 Read operations that provide an `attributes` property accept an `array` of attribute names and/or objects that specify the Entity as the key with an array of attributes and aliases.
 
