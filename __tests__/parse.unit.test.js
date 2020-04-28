@@ -1,64 +1,81 @@
+const { DocumentClient } = require('./bootstrap-tests')
 
-describe.skip('parse',()=>{
+// Require Table and Entity classes
+const Table = require('../classes/Table')
+const Entity = require('../classes/Entity')
+
+// Create basic entity
+const TestEntity = new Entity(require('./entities/test-entity.js'))
+const SimpleEntity = new Entity(require('./entities/simple-entity.js'))
+
+// Create basic table
+const TestTable = new Table({
+  name: 'test-table',
+  partitionKey: 'pk',
+  sortKey: 'sk',
+  entities: [TestEntity,SimpleEntity],
+  DocumentClient
+})
+
+
+describe('parse',()=>{
 
   it('parses single item', ()=>{
-    let item = TestModel.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', __model: 'Test' })
+    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _tp: 'TestEntity' })
     expect(item).toEqual({
       email: 'test@test.com',
-      type: 'email',
-      test_string: 'test'
+      test_type: 'email',
+      test_string: 'test',
+      type: 'TestEntity'
     })
   })
 
-  it('parses single item and omits a field', ()=>{
-    let item = TestModel.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', __model: 'Test', to_omit: 'test' },['to_omit'])
+  it('parses single item and includes certain fields', ()=>{
+    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _tp: 'TestEntity' }, ['email','sk'])
     expect(item).toEqual({
       email: 'test@test.com',
-      type: 'email',
-      test_string: 'test'
+      test_type: 'email'
     })
   })
 
   it('parses multiple items', ()=>{
-    let items = TestModel.parse([
+    let items = TestEntity.parse([
       { pk: 'test@test.com', sk: 'email', test_string: 'test' },
       { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
     ])
     expect(items).toEqual([
       {
         email: 'test@test.com',
-        type: 'email',
+        test_type: 'email',
         test_string: 'test'
       },
       {
         email: 'test2@test.com',
-        type: 'email2',
+        test_type: 'email2',
         test_string: 'test2'
       }
     ])
   })
 
-  it('parses multiple items and omits a field', ()=>{
-    let items = TestModel.parse([
-      { pk: 'test@test.com', sk: 'email', test_string: 'test', to_omit: 'test' },
-      { pk: 'test2@test.com', sk: 'email2', test_string: 'test2', to_omit: 'test' }
-    ],['to_omit'])
+  it('parses multiple items and incudes certain field', ()=>{
+    let items = TestEntity.parse([
+      { pk: 'test@test.com', sk: 'email', test_string: 'test' },
+      { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
+    ],['pk','test_string'])
     expect(items).toEqual([
       {
         email: 'test@test.com',
-        type: 'email',
         test_string: 'test'
       },
       {
         email: 'test2@test.com',
-        type: 'email2',
         test_string: 'test2'
       }
     ])
   })
 
   it('parses composite field', ()=>{
-    let item = SimpleModel.parse({ pk: 'test@test.com', sk: 'active#email', test_composite: 'test' })
+    let item = SimpleEntity.parse({ pk: 'test@test.com', sk: 'active#email', test_composite: 'test' })
     expect(item).toEqual({
       pk: 'test@test.com',
       test_composite: 'test',

@@ -45,14 +45,13 @@ class Entity {
     // If a Table (note that instanceof doesn't work here)
     if (table.constructor.name === 'Table') {
       
-      // If the Entity doesn't exist in the Table, add it
-      if (!table._entities.includes(this.name)) {
+      // If this Entity already has a Table, throw an error
+      if (this._table) {
+        error(`This entity is already assigned a Table (${this._table.name})`)
+      // Else if the Entity doesn't exist in the Table, add it
+      } else if (!table.entities.includes(this.name)) {
         table.entities = this
-
-      // If a Table has already been added, throw an error
-      } else if (this._table) {
-        error(`This entity is already assigned a Table (${table.name})`)
-      }
+      } 
 
       // Set the Entity's table
       this._table = table
