@@ -22,7 +22,6 @@ const parseProjections = require('../lib/projectionBuilder')
 // Import error handlers
 const { error } = require('../lib/utils')
 
-
 // Declare Entity class
 class Entity {
 
@@ -42,8 +41,8 @@ class Entity {
   // Set the Entity's Table
   set table(table) {
     
-    // If a Table (note that instanceof doesn't work here)
-    if (table.constructor.name === 'Table') {
+    // If a Table
+    if (table.Table && table.Table.attributes) {
       
       // If this Entity already has a Table, throw an error
       if (this._table) {
