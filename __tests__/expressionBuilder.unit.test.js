@@ -30,28 +30,7 @@ const TestTable = new Table({
 
 describe('expressionBuilder',() => {
 
-  it('test', () => {
-
-    // const exp = [
-    //   { attr: 'a', eq: 'b' },
-    //   { attr: 'a', ne: 'b' },
-    //   { attr: 'a', lt: 'b' },
-    //   { attr: 'a', lte: 'b' },
-    //   { attr: 'a', gt: 'b' },
-    //   { attr: 'a', gte: 'b' },
-    //   { attr: 'a', between: ['b','c'] },
-    //   { attr: 'a', in: ['b','c','d'] },
-    //   { attr: 'a', exists: true },
-    //   { attr: 'a', exists: false },
-    //   { attr: 'a', contains: 'b' },
-    //   { attr: 'a', beginsWith: 'b' },
-    //   { attr: 'a', type: 'string' },
-    //   { size: 'a', eq: 'b' },
-    //   { size: 'a', between: [1,5] },
-    //   { attr: 'a', eq: 'b', negate: true },
-    //   { attr: 'a', beginsWith: 'b', negate: true }
-    // ]
-
+  it('builds complex expression', () => {
 
     const nested_exp = [
       { attr: 'a', eq: 'b' },
@@ -88,10 +67,6 @@ describe('expressionBuilder',() => {
     ]
 
     const result = expressionBuilder(nested_exp,TestTable,'TestEntity')
-
-    // console.log(result.names)
-    // console.log(result.values)
-    // console.log(result.expression)
 
     expect(result.names).toEqual({
       '#attr1': 'a',
@@ -133,4 +108,228 @@ describe('expressionBuilder',() => {
 
   })
 
+  it('coerces expression input to array', () => {
+    let result = expressionBuilder({ attr: 'a', eq: 'b' },TestTable,'TestEntity')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it('fail with conditional operator errors', () => {
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', ne: 'b' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', in: ['b'] },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', lt: 'b' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', lte: 'b' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', gt: 'b' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', gte: 'b' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', between: ['b','c'] },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', exists: 'b' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', contains: 'b' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', beginsWith: 'b' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', type: 'string' },TestTable,'TestEntity'))
+      .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
+  })
+
+  it('fails with unknown arguments', () => {
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', invalidArg: true },TestTable,'TestEntity'))
+      .toThrow(`Invalid expression options: invalidArg`)
+  })
+
+  it('fails with invalid entity', () => {
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b' },TestTable,'UnknownEntity'))
+      .toThrow(`'entity' value of 'UnknownEntity' must be a string and a valid table Entity name`)
+  })
+
+  it('fails when no attr or size argument', () => {
+    expect(() => expressionBuilder({ eq: 'b' },TestTable,'TestEntity'))
+      .toThrow(`A string for 'attr' or 'size' is required for condition expressions`)
+  })
+
+  it('falls back to table attributes if no entity specified', () => {
+    let result = expressionBuilder({ attr: 'a', eq: 'b' },TestTable)
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it('uses size value and checks entity attribute', () => {
+    let result = expressionBuilder({ size: 'a', eq: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('size(#attr1) = :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it('uses size value and checks table attribute', () => {
+    let result = expressionBuilder({ size: 'a', eq: 'b' },TestTable)
+    expect(result.expression).toBe('size(#attr1) = :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates an 'eq' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', eq: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 = :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates a 'ne' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', ne: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 <> :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates an 'in' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', in: ['b','c'] },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 IN (:attr1_0,:attr1_1)')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1_0': 'b', ':attr1_1': 'c' })
+  })
+
+  it(`generates a 'lt' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', lt: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 < :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates a 'lte' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', lte: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 <= :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates a 'gt' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', gt: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 > :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates a 'gte' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', gte: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 >= :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates a 'between' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', between: ['b','c'] },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 between :attr1_0 and :attr1_1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1_0': 'b',':attr1_1': 'c' })
+  })
+
+  it(`generates a 'between' clause with 'size'`, () => {
+    let result = expressionBuilder({ size: 'a', between: ['b','c'] },TestTable,'TestEntity')
+    expect(result.expression).toBe('size(#attr1) between :attr1_0 and :attr1_1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1_0': 'b',':attr1_1': 'c' })
+  })
+
+  it(`generates an 'exists' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', exists: true },TestTable,'TestEntity')
+    expect(result.expression).toBe('attribute_exists(#attr1)')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+  })
+
+  it(`generates a 'not exists' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', exists: false },TestTable,'TestEntity')
+    expect(result.expression).toBe('attribute_not_exists(#attr1)')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+  })
+
+  it(`generates a 'contains' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', contains: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('contains(#attr1,:attr1)')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates a 'beginsWith' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', beginsWith: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('begins_with(#attr1,:attr1)')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates a 'type' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', type: 'b' },TestTable,'TestEntity')
+    expect(result.expression).toBe('attribute_type(#attr1,:attr1)')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`fails when 'between' value is not an array`, () => {
+    expect(() => expressionBuilder({ attr: 'a', between: 'b' },TestTable,'TestEntity'))
+      .toThrow(`'between' conditions require an array with two values.`)
+  })
+
+  it(`fails when 'in' value is not an array`, () => {
+    expect(() => expressionBuilder({ attr: 'a', in: 'b' },TestTable,'TestEntity'))
+      .toThrow(`'in' conditions require an array.`)
+  })
+
+  it(`fails when 'in' clause doesn't have an attr`, () => {
+    expect(() => expressionBuilder({ size: 'a', in: ['b'] },TestTable,'TestEntity'))
+      .toThrow(`'in' conditions require an 'attr'.`)
+  })
+
+  it(`fails when 'exists' clause doesn't have an attr`, () => {
+    expect(() => expressionBuilder({ size: 'a', exists: true },TestTable,'TestEntity'))
+      .toThrow(`'exists' conditions require an 'attr'.`)
+  })
+
+  it(`fails when 'beginsWith' clause doesn't have an attr`, () => {
+    expect(() => expressionBuilder({ size: 'a', beginsWith: 'b' },TestTable,'TestEntity'))
+      .toThrow(`'beginsWith' conditions require an 'attr'.`)
+  })
+
+  it(`fails when 'contains' clause doesn't have an attr`, () => {
+    expect(() => expressionBuilder({ size: 'a', contains: 'b' },TestTable,'TestEntity'))
+      .toThrow(`'contains' conditions require an 'attr'.`)
+  })
+
+  it(`fails when 'type' clause doesn't have an attr`, () => {
+    expect(() => expressionBuilder({ size: 'a', type: 'b' },TestTable,'TestEntity'))
+      .toThrow(`'type' conditions require an 'attr'.`)
+  })
+
+  it(`fails when no condition is provided`, () => {
+    expect(() => expressionBuilder({ attr: 'a' },TestTable,'TestEntity'))
+      .toThrow(`A condition is required`)
+  })
+
 })
+
+
+
+// const exp = [
+    //   { attr: 'a', eq: 'b' },
+    //   { attr: 'a', ne: 'b' },
+    //   { attr: 'a', lt: 'b' },
+    //   { attr: 'a', lte: 'b' },
+    //   { attr: 'a', gt: 'b' },
+    //   { attr: 'a', gte: 'b' },
+    //   { attr: 'a', between: ['b','c'] },
+    //   { attr: 'a', in: ['b','c','d'] },
+    //   { attr: 'a', exists: true },
+    //   { attr: 'a', exists: false },
+    //   { attr: 'a', contains: 'b' },
+    //   { attr: 'a', beginsWith: 'b' },
+    //   { attr: 'a', type: 'string' },
+    //   { size: 'a', eq: 'b' },
+    //   { size: 'a', between: [1,5] },
+    //   { attr: 'a', eq: 'b', negate: true },
+    //   { attr: 'a', beginsWith: 'b', negate: true }
+    // ]
