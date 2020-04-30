@@ -238,7 +238,7 @@ describe('Entity creation', ()=> {
         test: { type: 'string', required: 'x' }
       }
     })
-    expect(result).toThrow(`'require' must be a boolean or set to 'always'`)
+    expect(result).toThrow(`'required' must be a boolean or set to 'always'`)
   })
 
   it(`fails when composite references missing field`, () => {
@@ -271,7 +271,7 @@ describe('Entity creation', ()=> {
         test: ['pk',1,'x']
       }
     })
-    expect(result).toThrow(`'test' type must be 'string','number', 'boolean' or a configuration object`)
+    expect(result).toThrow(`'test' type must be 'string', 'number', 'boolean' or a configuration object`)
   })
 
   it(`fails when composite array length is incorrect`, () => {
