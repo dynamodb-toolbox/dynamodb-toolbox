@@ -119,4 +119,83 @@ describe('get',()=>{
     expect(TestEntity2.get({ pk: 'test-pk' })).rejects.toThrow(`'sk' is required`)
   })
 
+  it('allows execute and parse options', () => {
+    let { TableName, Key } = TestEntity.getParams(
+      { pk: 'x', sk: 'y' },
+      { execute: false, parse: false }
+    )
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'x', sk: 'y' })
+  })
+
+  it('fails on extra options', () => {
+    expect(() => TestEntity.getParams(
+      { pk: 'x', sk: 'y' },
+      { execute: false, parse: false, extra: true }
+    )).toThrow('Invalid get options: extra')
+  })
+
+  it('fails on invalid consistent option', () => {
+    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { consistent: 'true' }))
+      .toThrow(`'consistent' requires a boolean`)
+  })
+
+  it('fails on invalid capacity option', () => {
+    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
+      .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+  })
+
+  it('parses attribute projections', () => {
+    let { TableName, Key, ExpressionAttributeNames, ProjectionExpression } = TestEntity.getParams(
+      { pk: 'x', sk: 'y' },
+      { attributes: ['pk'] }
+    )
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'x', sk: 'y' })
+    expect(ExpressionAttributeNames).toEqual({ '#proj1': 'pk' })
+    expect(ProjectionExpression).toBe('#proj1')
+  })
+
+  it('sets consistent and capacity options', () => {
+    let { TableName, Key, ConsistentRead, ReturnConsumedCapacity } = TestEntity.getParams(
+      { pk: 'x', sk: 'y' },
+      { consistent: true, capacity: 'none' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'x', sk: 'y' })
+    expect(ConsistentRead).toBe(true)
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
+
+  it('handles extra parameters', () => {
+    let { TableName, Key, ConsistentRead } = TestEntity.getParams(
+      { pk: 'x', sk: 'y' },
+      { },
+      { ConsistentRead: true }
+    )
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'x', sk: 'y' })
+    expect(ConsistentRead).toBe(true)
+  })
+
+  it('handles invalid parameter input', () => {
+    let { TableName, Key } = TestEntity.getParams(
+      { pk: 'x', sk: 'y' },
+      { },
+      'string'
+    )
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'x', sk: 'y' })
+  })
+
+  it('formats a batch get response', async () => {
+    let { Table, Key } = TestEntity.getBatch({ pk: 'a', sk: 'b' })
+    expect(Table.name).toBe('test-table')
+    expect(Key).toEqual({ pk: 'a', sk: 'b' })
+  })
+
+  it('fails if no value is provided to the getBatch method', () => {
+    expect(() => TestEntity.getBatch()).toThrow(`'pk' or 'email' is required`)
+  })
+
 })

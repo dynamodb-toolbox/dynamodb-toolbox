@@ -157,6 +157,24 @@ describe('update',()=>{
     expect(TableName).toBe('test-table2')
   })
 
+  it('fails removing an invalid attribute', () => {
+    expect(() => TestEntity.updateParams(
+      { pk: 'x', sk: 'y', $remove: 'missing'  }
+    )).toThrow(`'missing' is not a valid attribute and cannot be removed`)
+  })
+
+  it('fails when trying to remove the paritionKey', () => {
+    expect(() => TestEntity.updateParams(
+      { pk: 'x', sk: 'y', $remove: 'pk'  }
+    )).toThrow(`'pk' is the partitionKey and cannot be removed`)
+  })
+
+  it('fails when trying to remove the sortKey', () => {
+    expect(() => TestEntity.updateParams(
+      { pk: 'x', sk: 'y', $remove: ['sk']  }
+    )).toThrow(`'sk' is the sortKey and cannot be removed`)
+  })
+
   it('creates update that just saves a composite field', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity2.updateParams({
       pk: 'test-pk',
@@ -541,5 +559,93 @@ describe('update',()=>{
     expect(params).not.toHaveProperty('ExpressionAttributeValues')
     expect(params).not.toHaveProperty('ConditionExpression')
   })
+
+
+  it('fails on extra options', () => {
+    expect(() => TestEntity.updateParams(
+      { pk: 'x', sk: 'y' },
+      { extra: true }
+    )).toThrow('Invalid update options: extra')
+  })
+
+  it('sets capacity options', () => {
+    let { TableName, ReturnConsumedCapacity } = TestEntity.updateParams(
+      { pk: 'x', sk: 'y' },
+      { capacity: 'none' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
+
+  it('sets metrics options', () => {
+    let { TableName, ReturnItemCollectionMetrics } = TestEntity.updateParams(
+      { pk: 'x', sk: 'y' },
+      { metrics: 'size' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
+  })
+
+  it('sets returnValues options', () => {
+    let { TableName, ReturnValues } = TestEntity.updateParams(
+      { pk: 'x', sk: 'y' },
+      { returnValues: 'ALL_OLD' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ReturnValues).toBe('ALL_OLD')
+  })
+
+  it('fails on invalid capacity option', () => {
+    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
+      .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+  })
+
+  it('fails on invalid metrics option', () => {
+    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y' }, { metrics: 'test' }))
+      .toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+  })
+
+  it('fails on invalid returnValues option', () => {
+    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' }))
+      .toThrow(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', OR 'UPDATED_NEW'`)
+  })
+
+
+  it('sets conditions', () => {
+    let { TableName, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = TestEntity.updateParams(
+      { pk: 'x', sk: 'y' },
+      { conditions: { attr: 'pk', gt: 'test' } }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ExpressionAttributeNames).toEqual({
+      '#test_string': 'test_string',
+      '#_ct': '_ct',
+      '#_md': '_md',
+      '#_tp': '_tp',
+      '#attr1': 'pk'
+    })
+    expect(ExpressionAttributeValues).toHaveProperty(':attr1')
+    expect(ConditionExpression).toBe('#attr1 > :attr1')
+  })
+
+  it('handles extra parameters', () => {
+    let { TableName, Key, ReturnConsumedCapacity } = TestEntity.updateParams(
+      { pk: 'x', sk: 'y' },
+      { },
+      { ReturnConsumedCapacity: 'NONE' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
+
+  it('handles invalid parameter input', () => {
+    let { TableName, Key } = TestEntity.updateParams(
+      { pk: 'x', sk: 'y' },
+      { },
+      'string'
+    )
+    expect(TableName).toBe('test-table')
+  })
+
 
 }) // end describe

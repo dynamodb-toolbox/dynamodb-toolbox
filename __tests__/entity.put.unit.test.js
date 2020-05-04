@@ -271,4 +271,98 @@ describe('put',()=>{
     })).toThrow(`'test' is a required field`)
   })
 
+  it('formats a batch put response', async () => {
+    let result = TestEntity.putBatch({ pk: 'x', sk: 'y' })  
+    expect(result).toHaveProperty('test-table.PutRequest')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('_ct')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('_md')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('_tp')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('pk')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('sk')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('test_string')
+  })
+
+  it('fails if no value is provided to the putBatch method', () => {
+    expect(() => TestEntity.putBatch()).toThrow(`'pk' or 'email' is required`)
+  })
+
+  it('fails on extra options', () => {
+    expect(() => TestEntity.putParams(
+      { pk: 'x', sk: 'y' },
+      { extra: true }
+    )).toThrow('Invalid put options: extra')
+  })
+
+  it('sets capacity options', () => {
+    let { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
+      { pk: 'x', sk: 'y' },
+      { capacity: 'none' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
+
+  it('sets metrics options', () => {
+    let { TableName, ReturnItemCollectionMetrics } = TestEntity.putParams(
+      { pk: 'x', sk: 'y' },
+      { metrics: 'size' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
+  })
+
+  it('sets returnValues options', () => {
+    let { TableName, ReturnValues } = TestEntity.putParams(
+      { pk: 'x', sk: 'y' },
+      { returnValues: 'ALL_OLD' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ReturnValues).toBe('ALL_OLD')
+  })
+
+  it('fails on invalid capacity option', () => {
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
+      .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+  })
+
+  it('fails on invalid metrics option', () => {
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { metrics: 'test' }))
+      .toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+  })
+
+  it('fails on invalid returnValues option', () => {
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' }))
+      .toThrow(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`)
+  })
+
+  it('sets conditions', () => {
+    let { TableName, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = TestEntity.putParams(
+      { pk: 'x', sk: 'y' },
+      { conditions: { attr: 'pk', gt: 'test' } }
+    )    
+    expect(TableName).toBe('test-table')
+    expect(ExpressionAttributeNames).toEqual({ '#attr1': 'pk' })
+    expect(ExpressionAttributeValues).toEqual({ ':attr1': 'test' })
+    expect(ConditionExpression).toBe('#attr1 > :attr1')
+  })
+
+  it('handles extra parameters', () => {
+    let { TableName, Key, ReturnConsumedCapacity } = TestEntity.putParams(
+      { pk: 'x', sk: 'y' },
+      { },
+      { ReturnConsumedCapacity: 'NONE' }
+    )
+    expect(TableName).toBe('test-table')
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
+
+  it('handles invalid parameter input', () => {
+    let { TableName, Key } = TestEntity.putParams(
+      { pk: 'x', sk: 'y' },
+      { },
+      'string'
+    )
+    expect(TableName).toBe('test-table')
+  })
+
 })

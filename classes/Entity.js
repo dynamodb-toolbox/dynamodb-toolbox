@@ -414,13 +414,13 @@ class Entity {
     //     error(`ConditionExpression must be a string`)
 
     // Extract schema and defaults
-    const { schema, defaults, required, linked, _table } = this
+    const { schema, defaults, required, linked, _table } = this  
 
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
     // Merge defaults
-    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
+    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))    
 
     // Extract valid options
     const {
@@ -721,7 +721,7 @@ class Entity {
 
     // Error on extraneous arguments
     if (args.length > 0)
-      error(`Invalid delete options: ${args.join(', ')}`)
+      error(`Invalid put options: ${args.join(', ')}`)
     
     // Verify metrics
     if (metrics !== undefined
