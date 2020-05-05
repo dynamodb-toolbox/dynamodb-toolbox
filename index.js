@@ -7,11 +7,8 @@
  * @license MIT
  */
 
-
 // TODO: Check param merging
 // TODO: 'Remove null fields' option
-// TODO: Tests, tests, and more tests
-// TODO: Documentation updates 😳
 // TODO: prevent reserved field names?
 
 const Table = require('./classes/Table')

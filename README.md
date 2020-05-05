@@ -385,7 +385,8 @@ attributes: {
 ```
 
 #### Using an `array` for composite keys
-- [ ] This needs some work
+
+**NOTE:** The interface for composite keys may be changing in v0.2 to make it easier to customize.
 
 Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In many cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data *and* parse the output into separate attributes.
 

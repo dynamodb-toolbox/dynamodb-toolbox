@@ -1,7 +1,5 @@
 'use strict'
 
-// TODO: make sure pks and sks are of correct types
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -658,8 +656,6 @@ class Entity {
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
       returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
     ) // end assign
-    
-    // console.log(payload)
     
     return payload
 
