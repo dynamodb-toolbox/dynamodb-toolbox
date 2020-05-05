@@ -410,13 +410,13 @@ class Table {
 
     // Parse sortKey condition operator and value
     let operator, value, f
-    if (eq) { f = 'eq'; value = value ? conditonError(f) : eq; operator = '=' }
-    if (lt) { f = 'lt'; value = value ? conditonError(f) : lt; operator = '<' }
-    if (lte) { f = 'lte'; value = value ? conditonError(f) : lte; operator = '<=' }
-    if (gt) { f = 'gt'; value = value ? conditonError(f) : gt; operator = '>' }
-    if (gte) { f = ''; value = value ? conditonError(f) : gte; operator = '>=' }
-    if (beginsWith) { f = 'beginsWith'; value = value ? conditonError(f) : beginsWith; operator = 'BEGINS_WITH' }
-    if (between) { f = 'between'; value = value ? conditonError(f) : between; operator = 'BETWEEN' }
+    if (eq) { value = eq; f = 'eq'; operator = '=' }
+    if (lt) { value = value ? conditonError(f) : lt; f = 'lt'; operator = '<' }
+    if (lte) { value = value ? conditonError(f) : lte; f = 'lte'; operator = '<=' }
+    if (gt) { value = value ? conditonError(f) : gt; f = 'gt'; operator = '>' }
+    if (gte) { value = value ? conditonError(f) : gte; f = 'gte'; operator = '>=' }
+    if (beginsWith) { value = value ? conditonError(f) : beginsWith; f = 'beginsWith'; operator = 'BEGINS_WITH' }
+    if (between) { value = value ? conditonError(f) : between; f = 'between'; operator = 'BETWEEN' }
 
     // If a sortKey condition was set
     if (operator) {
