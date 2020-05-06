@@ -78,7 +78,7 @@ class Table {
       let entity = entities[i]
 
       // If an instance of Entity, add it
-      if (entity instanceof Entity) {    
+      if (entity instanceof Entity) {
         
         // Check for existing entity name
         if (this._entities.includes(entity.name)) {
@@ -94,10 +94,10 @@ class Table {
           error(`'${entity.name}' is a reserved word and cannot be used to name an Entity`)
         }
 
-        // Check for partitionKey
-        if (!entity.schema.keys.partitionKey) {
-          error(`Entity must have a partitionKey`)
-        }
+        // Check for partitionKey - Entity checks for this
+        // if (!entity.schema.keys.partitionKey) {
+        //   error(`Entity must have a partitionKey`)
+        // }
 
         // Check for sortKeys (if applicable)
         if (!this.Table.sortKey && entity.schema.keys.sortKey) {
@@ -148,13 +148,17 @@ class Table {
                 if (!this.Table.indexes[key][keyType])
                   error(`${entity.name} contains a ${keyType}, but it is not used by ${key}`)
 
+                // console.log(key,keyType,this.Table.indexes[key])
+                
 
                 // If the attribute's name doesn't match the indexes attribute name
                 if (attr[keyType] !== this.Table.indexes[key][keyType]) {
+
                   // If the indexes attribute name does not conflict with another entity attribute
                   if (!entity.schema.attributes[this.Table.indexes[key][keyType]]) {
-
+                    
                     // If there is already a mapping for this attribute, make sure they match
+                    // TODO: Figure out if this is even possible anymore. I don't think it is.
                     if (entity.schema.attributes[attr[keyType]].map
                       && entity.schema.attributes[attr[keyType]].map !== this.Table.indexes[key][keyType])
                       error(`${key}'s ${keyType} cannot map to the '${attr[keyType]}' alias because it is already mapped to another table attribute`)
@@ -183,6 +187,7 @@ class Table {
               } // end for
 
               // Check that composite keys define both keys
+              // TODO: This only checks for the attribute, not the explicit assignment
               if (this.Table.indexes[key].partitionKey && this.Table.indexes[key].sortKey
                 && (
                   !entity.schema.attributes[this.Table.indexes[key].partitionKey]
