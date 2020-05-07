@@ -795,7 +795,7 @@ class Table {
 
     let items = Array.isArray(_items) ? _items : [_items]
 
-    // Error on extraneous arguments
+    // Error on no items
     if (items.length === 0)
       error(`No items supplied`)
 
@@ -968,7 +968,11 @@ class Table {
   // Generate BatchWrite Params
   batchWriteParams(_items,options={},params={},meta) {
     // Convert items to array
-    let items = Array.isArray(_items) ? _items : [_items]
+    let items = (Array.isArray(_items) ? _items : [_items]).filter(x => x)    
+
+    // Error on no items
+    if (items.length === 0)
+      error(`No items supplied`)
 
     const {
       capacity,
