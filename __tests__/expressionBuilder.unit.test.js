@@ -179,6 +179,18 @@ describe('expressionBuilder',() => {
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
+  it(`generates an 'eq' clause with empty/false values`, () => {
+    let result = expressionBuilder({ attr: 'a', eq: false },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 = :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': false })
+
+    result = expressionBuilder({ attr: 'a', eq: "" },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 = :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': "" })
+  })
+
   it(`generates a 'ne' clause`, () => {
     let result = expressionBuilder({ attr: 'a', ne: 'b' },TestTable,'TestEntity')
     expect(result.expression).toBe('#attr1 <> :attr1')
