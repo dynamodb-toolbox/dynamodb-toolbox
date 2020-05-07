@@ -20,7 +20,7 @@ const parseConditions = require('../lib/expressionBuilder')
 const parseProjections = require('../lib/projectionBuilder')
 
 // Import error handlers
-const { error } = require('../lib/utils')
+const { error, hasValue } = require('../lib/utils')
 
 // Declare Entity class
 class Entity {
@@ -620,7 +620,9 @@ class Entity {
           // if (hasValue(value)) {
           if (value !== undefined) {
             // Push the update to SET
-            SET.push(mapping.default && !item[field] && !mapping.onUpdate ?
+            const fieldIsSet = hasValue(item[field]);
+
+            SET.push(mapping.default && !fieldIsSet && !mapping.onUpdate ?
               `#${field} = if_not_exists(#${field},:${field})`
               : `#${field} = :${field}`)
             // Add names and values

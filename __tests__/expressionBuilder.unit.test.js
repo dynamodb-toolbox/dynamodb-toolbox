@@ -309,7 +309,6 @@ describe('expressionBuilder',() => {
     expect(() => expressionBuilder({ attr: 'a' },TestTable,'TestEntity'))
       .toThrow(`A condition is required`)
   })
-
 })
 
 
