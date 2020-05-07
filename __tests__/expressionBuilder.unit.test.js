@@ -1,5 +1,3 @@
-// TODO: Additional expression builder tests
-
 const expressionBuilder = require('../lib/expressionBuilder')
 
 // Require Table and Entity classes

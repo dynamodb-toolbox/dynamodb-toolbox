@@ -1,7 +1,5 @@
 'use strict'
 
-// TODO: make sure pks and sks are of correct types
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -414,13 +412,13 @@ class Entity {
     //     error(`ConditionExpression must be a string`)
 
     // Extract schema and defaults
-    const { schema, defaults, required, linked, _table } = this
+    const { schema, defaults, required, linked, _table } = this  
 
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
     // Merge defaults
-    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
+    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))    
 
     // Extract valid options
     const {
@@ -661,8 +659,6 @@ class Entity {
       returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
     ) // end assign
     
-    // console.log(payload)
-    
     return payload
 
     // TODO: Check why primary/secondary GSIs are using if_not_exists
@@ -723,7 +719,7 @@ class Entity {
 
     // Error on extraneous arguments
     if (args.length > 0)
-      error(`Invalid delete options: ${args.join(', ')}`)
+      error(`Invalid put options: ${args.join(', ')}`)
     
     // Verify metrics
     if (metrics !== undefined

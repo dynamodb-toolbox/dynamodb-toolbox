@@ -2,9 +2,6 @@
 const Table = require('../classes/Table')
 const Entity = require('../classes/Entity')
 
-// TODO: Secondary index test
-// TODO: execute/parse setting tests, etc.
-
 describe('Entity creation', ()=> {
 
   it('creates basic entity w/ defaults', async () => {
