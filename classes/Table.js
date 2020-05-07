@@ -51,6 +51,12 @@ class Table {
   // Gets the current auto execute mode
   get autoParse() { return this._parse }
 
+  // Sets the auto execute mode (default to true)
+  set removeNullAttributes(val) { this._removeNulls = typeof val === 'boolean' ? val : true }
+
+  // Gets the current auto execute mode
+  get removeNullAttributes() { return this._removeNulls }
+
   // Retrieves the document client
   get DocumentClient() { return this._docClient }
 

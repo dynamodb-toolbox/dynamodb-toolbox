@@ -488,8 +488,9 @@ class Entity {
     const names = {}
     const values = {}
 
+
     // Loop through valid fields and add appropriate action
-    Object.keys(data).forEach(function(field) {
+    Object.keys(data).forEach((field) => {
       const mapping = schema.attributes[field]
 
       // Remove attributes
@@ -507,6 +508,9 @@ class Entity {
           REMOVE.push(`#${attr}`)
           names[`#${attr}`] = attr
         } // end for
+      } else if (this._table._removeNulls === true && (data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
+        REMOVE.push(`#${field}`)
+        names[`#${field}`] = field
       } else if (
         !mapping.partitionKey
         && !mapping.sortKey
@@ -781,6 +785,7 @@ class Entity {
           return value !== undefined
             && (mapping.save === undefined || mapping.save === true)
             && (!mapping.link || (mapping.link && mapping.save === true))
+            && (!_table._removeNulls || (_table._removeNulls && value !== null))
             ? Object.assign(acc, {
               [field]: value
             }) : acc
