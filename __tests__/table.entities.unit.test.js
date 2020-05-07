@@ -201,12 +201,12 @@ describe('entities',()=>{
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        _tp: 'string'
+        _et: 'string'
         
       }
     }) 
     expect(() => { TestTable.entities = TestEntity })
-      .toThrow(`Attribute or alias '_tp' conflicts with the table's 'entityField' mapping or entity alias`)
+      .toThrow(`Attribute or alias '_et' conflicts with the table's 'entityField' mapping or entity alias`)
   })
 
   it(`fails when attribute type conflicts with table's type`, () => {

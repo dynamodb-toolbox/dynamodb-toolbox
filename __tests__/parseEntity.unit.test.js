@@ -33,7 +33,7 @@ describe('parseEntity', () => {
     expect(ent.linked).toEqual({})
     expect(ent.autoExecute).toBe(true)
     expect(ent.autoParse).toBe(true)
-    expect(ent._tpAlias).toBe('typeAlias')
+    expect(ent._etAlias).toBe('typeAlias')
   }) 
 
   it('fails on extra config option', async () => {

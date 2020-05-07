@@ -21,17 +21,17 @@ const TestTable = new Table({
 describe('parse',()=>{
 
   it('parses single item', ()=>{
-    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _tp: 'TestEntity' })
+    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' })
     expect(item).toEqual({
       email: 'test@test.com',
       test_type: 'email',
       test_string: 'test',
-      type: 'TestEntity'
+      entity: 'TestEntity'
     })
   })
 
   it('parses single item and includes certain fields', ()=>{
-    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _tp: 'TestEntity' }, ['email','sk'])
+    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' }, ['email','sk'])
     expect(item).toEqual({
       email: 'test@test.com',
       test_type: 'email'

@@ -34,11 +34,11 @@ describe('scan',()=>{
     expect(result).toEqual({
       payload: {
         TableName: 'test-table',
-        ExpressionAttributeNames: { '#proj1': 'pk', '#proj2': '_tp' },
+        ExpressionAttributeNames: { '#proj1': 'pk', '#proj2': '_et' },
         ProjectionExpression: '#proj1,#proj2'
       },
       EntityProjections: {},
-      TableProjections: [ 'pk', '_tp' ]
+      TableProjections: [ 'pk', '_et' ]
     })
   })
 
@@ -73,7 +73,7 @@ describe('scan',()=>{
         '#proj1': 'pk',
         '#proj2': 'sk',
         '#proj3': 'test',
-        '#proj4': '_tp'
+        '#proj4': '_et'
       },
       ExpressionAttributeValues: { ':attr1': 'testFilter' },
       FilterExpression: '#attr1 = :attr1',

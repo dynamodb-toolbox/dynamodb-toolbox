@@ -18,9 +18,9 @@ describe('Table creation', ()=> {
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
-    expect(TestTable.Table.entityField).toBe('_tp')
+    expect(TestTable.Table.entityField).toBe('_et')
     expect(TestTable.Table.indexes).toEqual({})
-    expect(TestTable.Table.attributes).toEqual({ _tp: { type: 'string' } })
+    expect(TestTable.Table.attributes).toEqual({ _et: { type: 'string' } })
     expect(TestTable.autoExecute).toBe(true)
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
@@ -71,7 +71,7 @@ describe('Table creation', ()=> {
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
-    expect(TestTable.Table.entityField).toBe('_tp')
+    expect(TestTable.Table.entityField).toBe('_et')
     expect(TestTable.Table.indexes).toEqual({})
     expect(TestTable.autoExecute).toBe(true)
     expect(TestTable.autoParse).toBe(true)
@@ -88,7 +88,7 @@ describe('Table creation', ()=> {
       stringSetAttr: { type: 'set' },
       numberSetAttr: { type: 'set', setType: 'number' },
       binarySetAttr: { type: 'set', setType: 'binary' },
-      _tp: { type: 'string' }
+      _et: { type: 'string' }
     })
   }) // end table w/ attributes
 
@@ -113,8 +113,8 @@ describe('Table creation', ()=> {
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
-    expect(TestTable.Table.entityField).toBe('_tp')
-    expect(TestTable.Table.attributes).toEqual({ _tp: { type: 'string' } })
+    expect(TestTable.Table.entityField).toBe('_et')
+    expect(TestTable.Table.attributes).toEqual({ _et: { type: 'string' } })
     expect(TestTable.autoExecute).toBe(true)
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
@@ -141,9 +141,9 @@ describe('Table creation', ()=> {
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
-    expect(TestTable.Table.entityField).toBe('_tp')
+    expect(TestTable.Table.entityField).toBe('_et')
     expect(TestTable.Table.indexes).toEqual({})
-    expect(TestTable.Table.attributes).toEqual({ _tp: { type: 'string' } })
+    expect(TestTable.Table.attributes).toEqual({ _et: { type: 'string' } })
     expect(TestTable.autoExecute).toBe(true)
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
@@ -164,9 +164,9 @@ describe('Table creation', ()=> {
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
-    expect(TestTable.Table.entityField).toBe('_tp')
+    expect(TestTable.Table.entityField).toBe('_et')
     expect(TestTable.Table.indexes).toEqual({})
-    expect(TestTable.Table.attributes).toEqual({ _tp: { type: 'string' } })
+    expect(TestTable.Table.attributes).toEqual({ _et: { type: 'string' } })
     expect(TestTable.autoExecute).toBe(true)
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
@@ -195,10 +195,10 @@ describe('Table creation', ()=> {
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
-    expect(TestTable.Table.entityField).toBe('_tp')
+    expect(TestTable.Table.entityField).toBe('_et')
     expect(TestTable.Table.indexes).toEqual({})
     // expect(TestTable.Table.attributes).toEqual({
-    //   _tp: { type: 'string' },
+    //   _et: { type: 'string' },
     //   pk: { type: 'string', mappings: { TestEnt: 'pk' } },
     //   _ct: { type: 'string', mappings: { TestEnt: 'created' } },
     //   _md: { type: 'string', mappings: { TestEnt: 'modified' } }

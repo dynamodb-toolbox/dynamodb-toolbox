@@ -38,12 +38,12 @@ describe('query',()=>{
       payload: {
         TableName: 'test-table',
         KeyConditionExpression: '#pk = :pk',
-        ExpressionAttributeNames: { '#pk': 'pk', '#proj1': 'pk', '#proj2': '_tp' },
+        ExpressionAttributeNames: { '#pk': 'pk', '#proj1': 'pk', '#proj2': '_et' },
         ExpressionAttributeValues: { ':pk': 'test' },
         ProjectionExpression: '#proj1,#proj2'
       },
       EntityProjections: {},
-      TableProjections: [ 'pk', '_tp' ]
+      TableProjections: [ 'pk', '_et' ]
     })
   })
 
@@ -83,7 +83,7 @@ describe('query',()=>{
         '#proj1': 'pk',
         '#proj2': 'sk',
         '#proj3': 'test',
-        '#proj4': '_tp'
+        '#proj4': '_et'
       },
       ExpressionAttributeValues: { ':pk': 'test', ':sk': 'skVal', ':attr1': 'testFilter' },
       FilterExpression: '#attr1 = :attr1',

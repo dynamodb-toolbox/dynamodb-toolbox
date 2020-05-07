@@ -61,7 +61,7 @@ describe('projectionBuilder',() => {
       '#proj5': 'set',
       '#proj6': 'test.subpath',
       '#proj7': 'friends[1]',
-      '#proj8': '_tp'
+      '#proj8': '_et'
     })
     expect(result.projections).toBe('#proj1,#proj2,#proj3,#proj4,#proj5,#proj6,#proj7,#proj8')
   })

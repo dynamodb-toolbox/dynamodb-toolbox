@@ -179,13 +179,18 @@ describe('expressionBuilder',() => {
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
-  it(`generates an 'eq' clause with empty/false values`, () => {
+  it(`generates an 'eq' clause with null/false values`, () => {
     let result = expressionBuilder({ attr: 'a', eq: false },TestTable,'TestEntity')
     expect(result.expression).toBe('#attr1 = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': false })
 
-    result = expressionBuilder({ attr: 'a', eq: "" },TestTable,'TestEntity')
+    result = expressionBuilder({ attr: 'a', eq: null },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 = :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': null })
+
+    result = expressionBuilder({ attr: 'a', eq: '' },TestTable,'TestEntity')
     expect(result.expression).toBe('#attr1 = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': '' })
@@ -198,13 +203,18 @@ describe('expressionBuilder',() => {
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
-  it(`generates an 'ne' clause with empty/false values`, () => {
+  it(`generates an 'ne' clause with null/false values`, () => {
     let result = expressionBuilder({ attr: 'a', ne: false },TestTable,'TestEntity')
     expect(result.expression).toBe('#attr1 <> :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': false })
 
-    result = expressionBuilder({ attr: 'a', ne: "" },TestTable,'TestEntity')
+    result = expressionBuilder({ attr: 'a', ne: null },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 <> :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': null })
+
+    result = expressionBuilder({ attr: 'a', ne: '' },TestTable,'TestEntity')
     expect(result.expression).toBe('#attr1 <> :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': '' })

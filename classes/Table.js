@@ -205,7 +205,7 @@ class Table {
         for (let attr in entity.schema.attributes) {
           
           // If an entity field conflicts with the entityField or its alias, throw an error
-          if (this.Table.entityField && (attr === this.Table.entityField || attr === entity._tpAlias)) {
+          if (this.Table.entityField && (attr === this.Table.entityField || attr === entity._etAlias)) {
             error(`Attribute or alias '${attr}' conflicts with the table's 'entityField' mapping or entity alias`)
 
           // If the atribute already exists in the table definition

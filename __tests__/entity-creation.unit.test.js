@@ -29,7 +29,7 @@ describe('Entity creation', ()=> {
     expect(TestEntity.schema.attributes).toHaveProperty('_md')
     expect(TestEntity.defaults).toHaveProperty('_ct')
     expect(TestEntity.defaults).toHaveProperty('_md')
-    expect(TestEntity._tpAlias).toBe('type')
+    expect(TestEntity._etAlias).toBe('entity')
   })
 
 
@@ -55,7 +55,7 @@ describe('Entity creation', ()=> {
     expect(TestEntity.schema.attributes).not.toHaveProperty('_md')
     expect(TestEntity.defaults).not.toHaveProperty('_ct')
     expect(TestEntity.defaults).not.toHaveProperty('_md')
-    expect(TestEntity._tpAlias).toBe('type')
+    expect(TestEntity._etAlias).toBe('entity')
   })
 
 
@@ -320,10 +320,10 @@ describe('Entity creation', ()=> {
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
-    expect(TestTable.Table.entityField).toBe('_tp')
+    expect(TestTable.Table.entityField).toBe('_et')
     expect(TestTable.Table.indexes).toEqual({})
     expect(TestTable.Table.attributes).toEqual({
-      _tp: { type: 'string' },
+      _et: { type: 'string' },
       pk: { type: 'string', mappings: { TestEnt: { pk: 'string' } } },
       _ct: { mappings: { TestEnt: { created: 'string' } } },
       _md: { mappings: { TestEnt: { modified: 'string' } } }
@@ -340,7 +340,7 @@ describe('Entity creation', ()=> {
     expect(TestEntity.schema.attributes).toHaveProperty('_md')
     expect(TestEntity.defaults).toHaveProperty('_ct')
     expect(TestEntity.defaults).toHaveProperty('_md')
-    expect(TestEntity._tpAlias).toBe('type')
+    expect(TestEntity._etAlias).toBe('entity')
   }) // creates entity w/ table
 
 })
