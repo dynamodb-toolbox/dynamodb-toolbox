@@ -188,7 +188,7 @@ describe('expressionBuilder',() => {
     result = expressionBuilder({ attr: 'a', eq: "" },TestTable,'TestEntity')
     expect(result.expression).toBe('#attr1 = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
-    expect(result.values).toEqual({ ':attr1': "" })
+    expect(result.values).toEqual({ ':attr1': '' })
   })
 
   it(`generates a 'ne' clause`, () => {
@@ -196,6 +196,18 @@ describe('expressionBuilder',() => {
     expect(result.expression).toBe('#attr1 <> :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
+  })
+
+  it(`generates an 'ne' clause with empty/false values`, () => {
+    let result = expressionBuilder({ attr: 'a', ne: false },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 <> :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': false })
+
+    result = expressionBuilder({ attr: 'a', ne: "" },TestTable,'TestEntity')
+    expect(result.expression).toBe('#attr1 <> :attr1')
+    expect(result.names).toEqual({ '#attr1': 'a' })
+    expect(result.values).toEqual({ ':attr1': '' })
   })
 
   it(`generates an 'in' clause`, () => {
@@ -321,25 +333,3 @@ describe('expressionBuilder',() => {
   })
 
 })
-
-
-
-// const exp = [
-    //   { attr: 'a', eq: 'b' },
-    //   { attr: 'a', ne: 'b' },
-    //   { attr: 'a', lt: 'b' },
-    //   { attr: 'a', lte: 'b' },
-    //   { attr: 'a', gt: 'b' },
-    //   { attr: 'a', gte: 'b' },
-    //   { attr: 'a', between: ['b','c'] },
-    //   { attr: 'a', in: ['b','c','d'] },
-    //   { attr: 'a', exists: true },
-    //   { attr: 'a', exists: false },
-    //   { attr: 'a', contains: 'b' },
-    //   { attr: 'a', beginsWith: 'b' },
-    //   { attr: 'a', type: 'string' },
-    //   { size: 'a', eq: 'b' },
-    //   { size: 'a', between: [1,5] },
-    //   { attr: 'a', eq: 'b', negate: true },
-    //   { attr: 'a', beginsWith: 'b', negate: true }
-    // ]
