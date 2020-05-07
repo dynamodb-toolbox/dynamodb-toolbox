@@ -17,7 +17,7 @@ const TestEntity = new Entity({
     test_string: { type: 'string', coerce: false, default: 'test string' },
     test_string_coerce: { type: 'string' },
     test_number: { type: 'number', alias: 'count', coerce: false },
-    test_number_coerce: { type: 'number', default: 0 },
+    test_number_coerce: { type: 'number' },
     test_boolean: { type: 'boolean', coerce: false },
     test_boolean_coerce: { type: 'boolean' },
     test_list: { type: 'list' },

@@ -149,4 +149,9 @@ describe('parseMapping', () => {
     }).toThrow(`'attr' cannot contain both an alias and a map`)
   })
 
+  it('allows false as default value', async () => {
+    expect(parseMapping('attr', { type: 'boolean', default: false }, { defaults: {} }))
+      .toEqual({ attr: { coerce: true, type: 'boolean', default: false } })
+  })
+
 })
