@@ -1030,27 +1030,27 @@ class Table {
 
 
   // Entity operation references
-  parse(entity,input,include=[]) {
+  async parse(entity,input,include=[]) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].parse(input,include)
   }
  
-  get(entity,item={},options={},params={}) {
+  async get(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].get(item,options,params)
   }
 
-  delete(entity,item={},options={},params={}) {
+  async delete(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].delete(item,options,params)
   }
   
-  update(entity,item={},options={},params={}) {
+  async update(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].update(item,options,params)
   }
 
-  put(entity,item={},options={},params={}) {
+  async put(entity,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].put(item,options,params)
   }
