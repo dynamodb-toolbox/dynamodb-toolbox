@@ -1,11 +1,8 @@
-// SIMPLE MODEL w/ REQUIRED fields for testing
+// SIMPLE ENTITY w/ REQUIRED fields for testing
 
 module.exports = {
-  // Include table name
-  table: 'simple-table',
-
-  // Include model field
-  model: false,
+  // Specify entity name
+  name: 'SimpleEntityReq',
 
   // Include timestamps
   timestamps: false,
@@ -13,8 +10,8 @@ module.exports = {
   // Define partition and sort keys
   partitionKey: 'pk',
 
-  // Define schema
-  schema: {
+  // Define attributes
+  attributes: {
     pk: { type: 'string' },
     test: { type: 'string', required: true },
     test2: { type: 'string', required: 'always' }

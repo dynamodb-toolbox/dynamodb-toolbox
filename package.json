@@ -1,18 +1,17 @@
 {
   "name": "dynamodb-toolbox",
-  "version": "0.1.0",
+  "version": "0.2.0-alpha",
   "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "index.js",
   "scripts": {
     "test": "jest unit",
+    "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "lint": "eslint ."
   },
   "license": "MIT",
-  "dependencies": {
-    "aws-sdk": "^2.580.0"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jeremydaly/dynamodb-toolbox.git"
@@ -29,15 +28,17 @@
   "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
   "jest": {
     "testPathIgnorePatterns": [
-      "/__tests__/models/*"
+      "/__tests__/entities/*"
     ],
     "coveragePathIgnorePatterns": [
       "/__tests__/*"
     ]
   },
   "devDependencies": {
-    "coveralls": "^3.0.9",
-    "eslint": "^6.7.1",
+    "aws-sdk": "^2.673.0",
+    "coveralls": "^3.1.0",
+    "dynalite": "^3.1.6",
+    "eslint": "^6.8.0",
     "jest": "^24.9.0"
   }
 }
