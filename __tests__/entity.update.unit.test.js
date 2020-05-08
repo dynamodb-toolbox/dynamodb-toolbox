@@ -50,7 +50,7 @@ const TestEntity2 = new Entity({
   attributes: {
     email: { type: 'string', partitionKey: true },
     sort: { type: 'string', map: 'sk' },
-    test: { type: 'string' },
+    test: { type: 'string', prefix: 'test---' },
     test_composite: ['sort',0, { save: true }],
     test_composite2: ['sort',1],
     test_undefined: { default: () => undefined }
@@ -552,7 +552,7 @@ describe('update',()=>{
 
     expect(UpdateExpression).toBe('SET #field = :field, #test = :test REMOVE #field_remove = :field_remove ADD #field_add :field_add DELETE #field_delete')
     expect(ExpressionAttributeNames).toEqual({ '#test': 'test', '#field': 'field' })
-    expect(ExpressionAttributeValues).toEqual({ ':test': 'test', ':field': 'my value' })
+    expect(ExpressionAttributeValues).toEqual({ ':test': 'test---test', ':field': 'my value' })
     expect(ConditionExpression).toBe('#field > 0')
   })
 

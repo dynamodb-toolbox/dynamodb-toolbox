@@ -18,7 +18,7 @@ const parseConditions = require('../lib/expressionBuilder')
 const parseProjections = require('../lib/projectionBuilder')
 
 // Import error handlers
-const { error } = require('../lib/utils')
+const { error, transformAttr } = require('../lib/utils')
 
 // Declare Entity class
 class Entity {
@@ -616,7 +616,7 @@ class Entity {
           names[`#${field}`] = field
         // else add to SET
         } else {
-          let value = validateType(mapping,field,data[field],data)
+          let value = transformAttr(mapping,validateType(mapping,field,data[field],data),data)
 
           // It's possible that defaults can purposely return undefined values
           // if (hasValue(value)) {
@@ -787,7 +787,7 @@ class Entity {
             && (!mapping.link || (mapping.link && mapping.save === true))
             && (!_table._removeNulls || (_table._removeNulls && value !== null))
             ? Object.assign(acc, {
-              [field]: value
+              [field]: transformAttr(mapping,value,data)
             }) : acc
         },{})
       },
@@ -802,7 +802,6 @@ class Entity {
 
     return payload
   } // end putParams
-
 
 
   // Query pass-through (default entity)

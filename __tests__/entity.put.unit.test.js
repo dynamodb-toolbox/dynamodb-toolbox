@@ -84,11 +84,11 @@ describe('put',()=>{
   })
 
   it('creates item with aliases',() => {
-    let { Item } = TestEntity.putParams({ email: 'test-pk', sort: 'test-sk', count: 5 })
+    let { Item } = TestEntity.putParams({ email: 'test-pk', sort: 'test-sk', count: 0 })
     
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
-    expect(Item.test_number).toBe(5)
+    expect(Item.test_number).toBe(0)
     expect(Item._et).toBe('TestEntity')
     expect(Item.test_string).toBe('test string')
     expect(Item).toHaveProperty('_ct')

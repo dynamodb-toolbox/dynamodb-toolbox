@@ -471,7 +471,99 @@ describe('Entity creation', ()=> {
         entity: 'TestEnt', pk: 'test', test: 'testx', num: 5
       })
 
-
   }) // creates attribute with prefix/suffix
+
+
+  it('creates an attribute a transformation function', async () => {
+    
+    // Create basic table
+    const TestTable = new Table({
+      name: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      DocumentClient
+    })
+
+    // Create basic entity
+    const TestEntity = new Entity({
+      name: 'TestEnt',
+      attributes: {
+        pk: { partitionKey: true, transform: (val) => val.toUpperCase(), default: 'pkDef' },
+        test: { 
+          transform: (val,data) => {
+            return val.toUpperCase()
+          },
+          default: () => 'defaultVal',
+          prefix: 'pre-'
+        },
+        sk: { type: 'string', prefix: 'testprev-', sortKey: true, delimiter: '|' },
+        testx: ['sk',0],
+        testy: ['sk',1, { 
+          default: () => 'testDefaultX', 
+          transform: (val) => { return '__'+val.toUpperCase() }
+        }]
+      },
+      table: TestTable,
+      timestamps: false
+    })
+
+    let result = TestEntity.putParams({
+      testx: 1
+    })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      Item: {
+        sk: 'testprev-1|__TESTDEFAULTX',
+        pk: 'PKDEF',
+        test: 'pre-DEFAULTVAL',
+        testy: '__TESTDEFAULTX',
+        _et: 'TestEnt',
+        testx: '1'
+      }
+    })
+
+    let result2 = TestEntity.getParams({
+      testx: 'test',
+      testy: 'testx'
+    })
+
+    expect(result2).toEqual({
+      TableName: 'test-table',
+      Key: { pk: 'PKDEF', sk: 'testprev-test|__TESTX' }
+    })
+
+    let result3 = TestEntity.updateParams({
+      testx: 'test',
+      testy: 'testx',
+      test: 'uppercase'
+    })
+
+    expect(result3).toEqual({
+      TableName: 'test-table',
+      Key: { pk: 'PKDEF', sk: 'testprev-test|__TESTX' },
+      UpdateExpression: 'SET #test = :test, #testy = :testy, #_et = if_not_exists(#_et,:_et), #testx = :testx',
+      ExpressionAttributeNames: {
+        '#test': 'test',
+        '#testy': 'testy',
+        '#_et': '_et',
+        '#testx': 'testx'
+      },
+      ExpressionAttributeValues: {
+        ':test': 'pre-UPPERCASE',
+        ':testy': '__TESTX',
+        ':_et': 'TestEnt',
+        ':testx': 'test'
+      }
+    })
+
+    // console.log(result);
+    // console.log(result2);
+    // console.log(result3);
+    
+
+
+  }) // creates attribute with transformations
+
 
 })
