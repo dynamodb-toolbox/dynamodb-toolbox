@@ -323,7 +323,7 @@ describe('Entity creation', ()=> {
     expect(TestTable.Table.entityField).toBe('_et')
     expect(TestTable.Table.indexes).toEqual({})
     expect(TestTable.Table.attributes).toEqual({
-      _et: { type: 'string' },
+      _et: { type: 'string', mappings: {} },
       pk: { type: 'string', mappings: { TestEnt: { pk: 'string' } } },
       _ct: { mappings: { TestEnt: { created: 'string' } } },
       _md: { mappings: { TestEnt: { modified: 'string' } } }
