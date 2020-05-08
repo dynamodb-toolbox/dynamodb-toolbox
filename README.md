@@ -372,6 +372,7 @@ For more control over an attribute's behavior, you can specify an object as the 
 | delimiter  | `string` | *composite keys* | Specifies the delimiter to use if this attribute stores a composite key (see [Using an `array` for composite keys](#using-an-array-for-composite-keys)) |
 | prefix  | `string` | `string` | A prefix to be added to an attribute when saved to DynamoDB. This prefix will be removed when parsing the data. |
 | suffix  | `string` | `string` | A suffix to be added to an attribute when saved to DynamoDB. This suffix will be removed when parsing the data. |
+| transform  | `function` | all | A function that transforms the input before sending to DynamoDB. This accepts two arguments, the value passed to the attribute and the value of the other attributes data. |
 | partitionKey  | `boolean` or `string` | all | Flags an attribute as the 'partitionKey' for this Entity. If set to `true`, it will be mapped to the Table's `partitionKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `partitionKey` |
 | sortKey  | `boolean` or `string` | all | Flags an attribute as the 'sortKey' for this Entity. If set to `true`, it will be mapped to the Table's `sortKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `sortKey` |
 
