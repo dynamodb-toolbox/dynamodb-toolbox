@@ -68,7 +68,7 @@ declare module "dynamodb-toolbox" {
       item: Schema,
       options?: {
         consistent?: boolean;
-        capacity?: "none" | "total" | "indexes";
+        capacity?: NoneOption | TotalOption | IndexesOption;
         attributes?: [] | {};
         autoExecute?: boolean;
         autoParse?: boolean;
@@ -79,9 +79,9 @@ declare module "dynamodb-toolbox" {
       key: {},
       options?: {
         conditions?: [] | {};
-        capacity?: "none" | "total" | "indexes";
-        metrics?: "none" | "size";
-        returnValues?: "none" | "all_old";
+        capacity?: NoneOption | TotalOption | IndexesOption;
+        metrics?: NoneOption | SizeOption;
+        returnValues?: NoneOption | AllOldOption;
         autoExecute?: boolean;
         autoParse?: boolean;
       },
@@ -91,9 +91,9 @@ declare module "dynamodb-toolbox" {
       item: Schema,
       options?: {
         conditions?: [] | {};
-        capacity?: "none" | "total" | "indexes"; // Cannot use DynamoDB type as it's upper-case
-        metrics?: "none" | "size";
-        returnValues?: "none" | "all_old";
+        capacity?: NoneOption | TotalOption | IndexesOption; // Cannot use DynamoDB type as it's upper-case
+        metrics?: NoneOption | SizeOption;
+        returnValues?: NoneOption | AllOldOption;
         autoExecute?: boolean;
         autoParse?: boolean;
       },
@@ -103,21 +103,21 @@ declare module "dynamodb-toolbox" {
       key: Schema & { $remove?: string[] }, // Complex part to type
       options?: {
         conditions?: [] | {};
-        capacity?: "none" | "total" | "indexes";
-        metrics?: "none" | "size";
+        capacity?: NoneOption | TotalOption | IndexesOption;
+        metrics?: NoneOption | SizeOption;
         returnValues?:
-          | "none"
-          | "all_old"
-          | "updated_old"
-          | "all_new"
-          | "updated_new";
+          | NoneOption
+          | AllOldOption
+          | UpdatedOldOption
+          | AllNewOption
+          | UpdatedNewOption;
         autoExecute?: boolean;
         autoParse?: boolean;
       },
       parameters?
     ): Promise<UpdateOutput<Schema>>;
-    query();
-    scan();
+    query(partionKey, options?, parameters?);
+    scan(options?, parameters?);
   }
 
   // Table
@@ -148,7 +148,7 @@ declare module "dynamodb-toolbox" {
     default?: string | boolean | number | [] | {} | ((data: any) => any); // Value "type" or a function
     onUpdate?: boolean;
     hidden?: boolean;
-    required?: boolean | "always";
+    required?: boolean | AlwaysOption;
     alias?: string;
     map?: string;
     setType?: DynamoDBStringType | DynamoDBNumberType | DynamoDBBinaryType;
@@ -207,4 +207,15 @@ declare module "dynamodb-toolbox" {
     | DynamoDBMapType
     | DynamoDBBinaryType
     | DynamoDBSetType;
+
+  // Options
+  type NoneOption = "none";
+  type AllOldOption = "all_old";
+  type AlwaysOption = "allways";
+  type UpdatedOldOption = "updated_old";
+  type AllNewOption = "all_new";
+  type UpdatedNewOption = "updated_new";
+  type TotalOption = "total";
+  type IndexesOption = "indexes";
+  type SizeOption = "size";
 }
