@@ -151,8 +151,8 @@ If you like working with ORMs, that's great, and you should definitely give thes
 
 ## Table of Contents
 
-- [Conventions and Motivations](#conventions-and-motivations)
 - [Installation and Basic Usage](#installation-and-basic-usage)
+- [Conventions and Motivations](#conventions-and-motivations)
 - [Tables](#tables)
   - [Table Attributes](#table-attributes)
   - [Table Indexes](#table-indexes)
