@@ -29,3 +29,10 @@ module.exports.DocumentClient = new AWS.DynamoDB.DocumentClient({
 
 // Delay helper
 module.exports.delay = ms => new Promise(res => setTimeout(res, ms))
+
+
+module.exports.DocumentClient2 = new AWS.DynamoDB.DocumentClient({
+  region: 'us-east-1',
+  credentials: new AWS.SharedIniFileCredentials({profile: ''}),
+  // convertEmptyValues: false
+})
