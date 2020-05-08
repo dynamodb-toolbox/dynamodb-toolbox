@@ -5,6 +5,7 @@ declare module "dynamodb-toolbox" {
     GetItemOutput,
     PutItemOutput,
     DeleteItemOutput,
+    UpdateItemOutput,
   } from "aws-sdk/clients/dynamodb";
 
   // Exports
@@ -19,7 +20,6 @@ declare module "dynamodb-toolbox" {
     set entities(entity: any);
     autoExecute: boolean;
     autoParse: boolean;
-    [entity: string]: Entity<any>;
 
     // Methods
     attribute();
@@ -35,23 +35,25 @@ declare module "dynamodb-toolbox" {
   }
 
   interface SchemaBase {
-    type?: string;
-    created?: string;
-    modified?: string;
+    entity: string;
+    created: string;
+    modified: string;
   }
-  interface GetOuput<Schema> extends GetItemOutput {
+  interface GetOuput<Schema> extends Omit<GetItemOutput, "Item"> {
     Item?: Schema & SchemaBase;
   }
-  interface PutOutput<Schema> extends PutItemOutput {
+  interface PutOutput<Schema> extends Omit<PutItemOutput, "Attributes"> {
     Attributes?: Schema & SchemaBase;
   }
-  interface DeleteOutput<Schema> extends DeleteItemOutput {
+  interface DeleteOutput<Schema> extends Omit<DeleteItemOutput, "Attributes"> {
     Attributes?: Schema & SchemaBase;
   }
-  interface UpdateOutput<Schema> {}
-  // Todo: Define UpdateOutput
+  interface UpdateOutput<Schema> extends Omit<UpdateItemOutput, "Attributes"> {
+    Attributes?: Schema & SchemaBase;
+  }
+
   export class Entity<Schema> {
-    constructor(options: EntityConstructor);
+    constructor(options: EntityConstructor<Schema>);
 
     // Properties
     table: Table;
@@ -169,13 +171,11 @@ declare module "dynamodb-toolbox" {
       | DynamoDBBooleanType
     )?
   ];
-  interface EntityAttributes {
-    [attribute: string]:
-      | AnyDynamoDBType
-      | EntityAttributesConfiguration
-      | CompositeKey;
-  }
-  interface EntityConstructor {
+  type EntityAttributes<Schema> = Record<
+    keyof Schema,
+    AnyDynamoDBType | EntityAttributesConfiguration | CompositeKey
+  >;
+  interface EntityConstructor<Schema> {
     name: string;
     timestamps?: boolean;
     created?: string;
@@ -183,7 +183,7 @@ declare module "dynamodb-toolbox" {
     createdAlias?: string;
     modifiedAlias?: string;
     typeAlias?: string;
-    attributes: EntityAttributes;
+    attributes: EntityAttributes<Schema>;
     autoExecute?: boolean;
     autoParse?: boolean;
     table?: Table;
