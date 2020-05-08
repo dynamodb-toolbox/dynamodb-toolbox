@@ -35,8 +35,8 @@ const TestEntity = new Entity({
     test_number_set_type_coerce: { type: 'set', setType: 'number', coerce: true },
     test_binary: { type: 'binary' },
     simple_string: 'string',
-    test_composite: ['sort',0, { save: true }],
-    test_composite2: ['sort',1]
+    test_composite: ['sort',0],
+    test_composite2: ['sort',1, { save: false }]
   },
   table: TestTable
 })
@@ -53,8 +53,8 @@ const TestEntity2 = new Entity({
   attributes: {
     email: { type: 'string', partitionKey: true },
     sort: { type: 'string', map: 'sk' },
-    test_composite: ['sort',0, { save: true }],
-    test_composite2: ['sort',1]
+    test_composite: ['sort',0],
+    test_composite2: ['sort',1, { save: false }]
   },
   table: TestTable2
 })
@@ -145,6 +145,7 @@ describe('put',()=>{
       test_composite: 'test',
       test_composite2: 'test2'
     })
+    
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('override')
     expect(Item.test_composite).toBe('test')

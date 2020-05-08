@@ -369,6 +369,9 @@ For more control over an attribute's behavior, you can specify an object as the 
 | alias  | `string` | all | Adds a bidirectional alias to the attribute. All input methods can use either the attribute name or the alias when passing in data. Auto-parsing and the `parse` method will map attributes to their alias. |
 | map  | `string` | all | The inverse of the `alias` option, allowing you to specify your alias as the key and map it to an attribute name. |
 | setType  | `string` | `set` | Specifies the type for `set` attributes. Allowed values are `string`,`number`,`binary` |
+| delimiter  | `string` | *composite keys* | Specifies the delimiter to use if this attribute stores a composite key (see [Using an `array` for composite keys](#using-an-array-for-composite-keys)) |
+| prefix  | `string` | `string` | A prefix to be added to an attribute when saved to DynamoDB. This prefix will be removed when parsing the data. |
+| suffix  | `string` | `string` | A suffix to be added to an attribute when saved to DynamoDB. This suffix will be removed when parsing the data. |
 | partitionKey  | `boolean` or `string` | all | Flags an attribute as the 'partitionKey' for this Entity. If set to `true`, it will be mapped to the Table's `partitionKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `partitionKey` |
 | sortKey  | `boolean` or `string` | all | Flags an attribute as the 'sortKey' for this Entity. If set to `true`, it will be mapped to the Table's `sortKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `sortKey` |
 
@@ -390,7 +393,7 @@ attributes: {
 
 **NOTE:** The interface for composite keys may be changing in v0.2 to make it easier to customize.
 
-Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In many cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data *and* parse the output into separate attributes.
+Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In some cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data *and* parse the output into separate attributes.
 
 The basic syntax is to specify an `array` with the mapped attribute name as the first element, and the index in the composite key as the second element. For example:
 
@@ -404,7 +407,7 @@ attributes: {
 }
 ```
 
-This maps the `status` and `date` attributes to the `sk` attribute. If a `status` and `date` are supplied, they will be combined into the `sk` attribute as `[status]#[date]`. When the data is retrieved, the `parse` method will automatically split the `sk` attribute and return the values with `status` and `date` keys. By default, the values of composite keys are not stored as separate attributes, but that can be changed by adding in an option configuration as the third array element.
+This maps the `status` and `date` attributes to the `sk` attribute. If a `status` and `date` are supplied, they will be combined into the `sk` attribute as `[status]#[date]`. When the data is retrieved, the `parse` method will automatically split the `sk` attribute and return the values with `status` and `date` keys. By default, the values of composite keys are stored as separate attributes, but that can be changed by adding in an option configuration as the third array element.
 
 **Passing in a configuration**
 Composite key mappings are `string`s by default, but can be overridden by specifying either `string`,`number`, or `boolean` as the third element in the array. Composite keys are automatically coerced into `string`s, so only the aforementioned types are allowed. You can also pass in a configuration `object` as the third element. This uses the same configuration properties as above. In addition to these properties, you can also specify a `boolean` property of `save`. This will write the value to the mapped composite key, but also add a separate attribute that stores the value.
@@ -413,7 +416,7 @@ Composite key mappings are `string`s by default, but can be overridden by specif
 attributes: {
   user_id: { partitionKey: true  },
   sk: { hidden: true, sortKey: true },
-  status: ['sk',0, { type: 'boolean', save: true, default: true }],
+  status: ['sk',0, { type: 'boolean', save: false, default: true }],
   date: ['sk',1, { required: true }],
   ...
 }

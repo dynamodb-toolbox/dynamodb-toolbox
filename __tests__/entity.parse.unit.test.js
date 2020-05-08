@@ -79,7 +79,7 @@ describe('parse',()=>{
     expect(item).toEqual({
       pk: 'test@test.com',
       test_composite: 'test',
-      test_composite2: 'email',
+      test_composite2: 'email'
     })
   })
 

@@ -27,8 +27,8 @@ DefaultTable.entities = new Entity({
     list: { type: 'list', alias: 'list_alias' },
     list_alias2: { type: 'list', map: 'list2' },
     test: 'map',
-    linked1: ['sk',0],
-    linked2: ['sk',1]
+    linked1: ['sk',0, { save: false }],
+    linked2: ['sk',1, { save: false }]
   }
 })
 
@@ -64,7 +64,7 @@ describe('formatItem', () => {
   })
 
   it('formats item with linked fields', () => {
-    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ sk: 'test1#test2' })
+    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ sk: 'test1#test2' })  
     expect(result).toEqual({ sk: 'test1#test2', linked1: 'test1', linked2: 'test2' })
   })
 

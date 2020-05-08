@@ -8,10 +8,10 @@ const attributes = {
 describe('parseCompositeKey', () => {
 
   it('converts item config to linked mapping', async () => {
-    let result = parseCompositeKey('linked',['sk',0, { save:true }],{linked:{}},attributes)  
-    expect(result).toEqual({ linked: { save: true, type: 'string', coerce: true, link: 'sk', pos: 0 } })
+    let result = parseCompositeKey('linked',['sk',0, { save:false }],{linked:{}},attributes)  
+    expect(result).toEqual({ linked: { save: false, type: 'string', coerce: true, link: 'sk', pos: 0 } })
     let result2 = parseCompositeKey('linked2',['sk',1],{linked:{}},attributes)  
-    expect(result2).toEqual({ linked2: { type: 'string', coerce: true, link: 'sk', pos: 1 } })
+    expect(result2).toEqual({ linked2: { save: true, type: 'string', coerce: true, link: 'sk', pos: 1 } })
   })
 
   it('fails on missing mapped field', async () => {

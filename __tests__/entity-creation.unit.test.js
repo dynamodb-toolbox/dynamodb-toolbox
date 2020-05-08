@@ -2,6 +2,8 @@
 const Table = require('../classes/Table')
 const Entity = require('../classes/Entity')
 
+const { DocumentClient } = require('./bootstrap-tests')
+
 describe('Entity creation', ()=> {
 
   it('creates basic entity w/ defaults', async () => {
@@ -342,5 +344,134 @@ describe('Entity creation', ()=> {
     expect(TestEntity.defaults).toHaveProperty('_md')
     expect(TestEntity._etAlias).toBe('entity')
   }) // creates entity w/ table
+
+
+  it('creates entity composite key delimiter, prefix and suffix', async () => {
+  
+    // Create basic table
+    const TestTable = new Table({
+      name: 'test-table',
+      partitionKey: 'pk',
+      DocumentClient
+    })
+
+    // Create basic entity
+    const TestEntity = new Entity({
+      name: 'TestEnt',
+      attributes: {
+        pk: { partitionKey: true },
+        sk: { delimiter: '|', prefix: 'test---', suffix: '-end', map: 'skx' },
+        test0: ['sk',0],
+        test1: ['sk',1],
+        test2: ['sk',2],
+        comp1: {},
+        test0c: ['comp1',0, { save: false }],
+        test1c: ['comp1',1],
+        test2c: ['comp1',2]
+      },
+      table: TestTable,
+      timestamps: false
+    })
+
+    let result = TestEntity.putParams({
+      pk: 'test',
+      test0: '0',
+      test1: '1',
+      test2: '2',
+      test0c: '0',
+      test1c: 1,
+      test2c: '2'
+    })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      Item: {
+        skx: 'test---0|1|2-end',
+        comp1: '0#1#2',
+        _et: 'TestEnt',
+        pk: 'test',
+        test0: '0',
+        test1: '1',
+        test2: '2',
+        test1c: '1',
+        test2c: '2'
+      }
+    })
+    
+    expect(TestEntity.parse({
+      skx: 'test---0|1|2-end',
+      comp1: '0#1#2',
+      _et: 'TestEnt',
+      pk: 'test',
+      test0: '0',
+      test1: '1',
+      test2: '2',
+      test1c: '1',
+      test2c: '2'
+    })).toEqual({
+      sk: '0|1|2',
+      test0c: '0',
+      comp1: '0#1#2',
+      entity: 'TestEnt',
+      pk: 'test',
+      test0: '0',
+      test1: '1',
+      test2: '2',
+      test1c: '1',
+      test2c: '2'
+    })
+
+
+  })
+
+
+  it('creates an attribute with a prefix and suffix', async () => {
+    
+    // Create basic table
+    const TestTable = new Table({
+      name: 'test-table',
+      partitionKey: 'pk',
+      DocumentClient
+    })
+
+    // Create basic entity
+    const TestEntity = new Entity({
+      name: 'TestEnt',
+      attributes: {
+        pk: { partitionKey: true, prefix: '#user#' },
+        test: { prefix: 'startX--', suffix: '--endX' },
+        num: { type: 'number' }
+      },
+      table: TestTable,
+      timestamps: false
+    })
+
+    let result = TestEntity.putParams({
+      pk: 'test',
+      test: 'testx',
+      num: 5
+    })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      Item: {
+        _et: 'TestEnt',
+        pk: '#user#test',
+        test: 'startX--testx--endX',
+        num: 5
+      }
+    })
+    
+    expect(TestEntity.parse({
+        _et: 'TestEnt',
+        pk: '#user#test',
+        test: 'startX--testx--endX',
+        num: 5
+      })).toEqual({
+        entity: 'TestEnt', pk: 'test', test: 'testx', num: 5
+      })
+
+
+  }) // creates attribute with prefix/suffix
 
 })

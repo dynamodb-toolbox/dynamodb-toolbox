@@ -14,7 +14,7 @@
     },
     {
       "AttributeName": "GSI1sk",
-      "AttributeType": "S"
+      "AttributeType": "N"
     }
   ],
   "KeySchema": [
