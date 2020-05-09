@@ -52,7 +52,7 @@ declare module "dynamodb-toolbox" {
     Attributes?: Schema & SchemaBase;
   }
 
-  export class Entity<Schema> {
+  export class Entity<Schema extends { [key in keyof Schema]: SchemaType }> {
     constructor(options: EntityConstructor<Schema>);
 
     // Properties
@@ -144,10 +144,10 @@ declare module "dynamodb-toolbox" {
   }
 
   // Entity
-  interface EntityAttributesConfiguration {
+  interface EntityAttributeConfiguration<Schema> {
     type?: AnyDynamoDBType;
     coerce?: boolean;
-    default?: string | boolean | number | [] | {} | ((data: any) => any); // Value "type" or a function
+    default?: SchemaType | ((data: Schema) => SchemaType); // Value "type" or a function
     onUpdate?: boolean;
     hidden?: boolean;
     required?: boolean | AlwaysOption;
@@ -157,15 +157,16 @@ declare module "dynamodb-toolbox" {
     partitionKey?: boolean | string;
     sortKey?: boolean | string;
   }
-  interface CompositeKeyConfiguration extends EntityAttributesConfiguration {
+  interface CompositeKeyConfiguration<Schema>
+    extends EntityAttributeConfiguration<Schema> {
     type?: DynamoDBStringType | DynamoDBNumberType | DynamoDBBooleanType;
     save?: boolean;
   }
-  type CompositeKey = [
+  type CompositeKey<Schema> = [
     string,
     number,
     (
-      | CompositeKeyConfiguration
+      | CompositeKeyConfiguration<Schema>
       | DynamoDBStringType
       | DynamoDBNumberType
       | DynamoDBBooleanType
@@ -173,7 +174,9 @@ declare module "dynamodb-toolbox" {
   ];
   type EntityAttributes<Schema> = Record<
     keyof Schema,
-    AnyDynamoDBType | EntityAttributesConfiguration | CompositeKey
+    | AnyDynamoDBType
+    | EntityAttributeConfiguration<Schema>
+    | CompositeKey<Schema>
   >;
   interface EntityConstructor<Schema> {
     name: string;
@@ -211,11 +214,18 @@ declare module "dynamodb-toolbox" {
   // Options
   type NoneOption = "none";
   type AllOldOption = "all_old";
-  type AlwaysOption = "allways";
+  type AlwaysOption = "always";
   type UpdatedOldOption = "updated_old";
   type AllNewOption = "all_new";
   type UpdatedNewOption = "updated_new";
   type TotalOption = "total";
   type IndexesOption = "indexes";
   type SizeOption = "size";
+
+  type SchemaType =
+    | string
+    | number
+    | boolean
+    | { [key: string]: SchemaType }
+    | SchemaType[];
 }
