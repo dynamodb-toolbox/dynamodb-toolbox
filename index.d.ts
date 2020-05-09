@@ -22,16 +22,16 @@ declare module "dynamodb-toolbox" {
     autoParse: boolean;
 
     // Methods
-    attribute();
-    parse();
-    get();
-    delete();
-    put();
-    update();
-    query();
-    scan();
-    batchWrite();
-    batchGet();
+    attribute(...args: any);
+    parse(...args: any);
+    get(...args: any);
+    delete(...args: any);
+    put(...args: any);
+    update(...args: any);
+    query(...args: any);
+    scan(...args: any);
+    batchWrite(...args: any);
+    batchGet(...args: any);
   }
 
   interface SchemaBase {
