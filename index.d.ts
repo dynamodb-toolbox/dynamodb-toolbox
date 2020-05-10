@@ -52,8 +52,11 @@ declare module "dynamodb-toolbox" {
     Attributes?: Schema & SchemaBase;
   }
 
-  export class Entity<Schema extends { [key in keyof Schema]: SchemaType }> {
-    constructor(options: EntityConstructor<Schema>);
+  export class Entity<
+    Schema extends { [key in keyof Schema]: SchemaType },
+    HiddenKeys extends Omit<Partial<string>, keyof Schema>
+  > {
+    constructor(options: EntityConstructor<Schema, HiddenKeys>);
 
     // Properties
     table: Table;
@@ -149,7 +152,6 @@ declare module "dynamodb-toolbox" {
     coerce?: boolean;
     default?: SchemaType | ((data: Schema) => SchemaType); // Value "type" or a function
     onUpdate?: boolean;
-    hidden?: boolean;
     required?: boolean | AlwaysOption;
     alias?: string;
     map?: string;
@@ -157,28 +159,45 @@ declare module "dynamodb-toolbox" {
     partitionKey?: boolean | string;
     sortKey?: boolean | string;
   }
-  interface CompositeKeyConfiguration<Schema>
+
+  interface VisibleEntityAttributeConfiguration<Schema>
     extends EntityAttributeConfiguration<Schema> {
+    hidden?: false;
+  }
+
+  interface HiddenEntityAttributeConfiguration<Schema>
+    extends EntityAttributeConfiguration<Schema> {
+    hidden: true;
+  }
+
+  type CompositeKeyConfiguration<Schema, EAC> = EAC & {
     type?: DynamoDBStringType | DynamoDBNumberType | DynamoDBBooleanType;
     save?: boolean;
-  }
-  type CompositeKey<Schema> = [
+  };
+
+  type CompositeKey<Schema, EAC> = [
     string,
     number,
     (
-      | CompositeKeyConfiguration<Schema>
+      | CompositeKeyConfiguration<Schema, EAC>
       | DynamoDBStringType
       | DynamoDBNumberType
       | DynamoDBBooleanType
     )?
   ];
-  type EntityAttributes<Schema> = Record<
+
+  type EntityAttributes<Schema, HiddenKeys extends Partial<string>> = Record<
     keyof Schema,
-    | AnyDynamoDBType
-    | EntityAttributeConfiguration<Schema>
-    | CompositeKey<Schema>
-  >;
-  interface EntityConstructor<Schema> {
+    AnyDynamoDBType | any
+  > &
+    Record<
+      HiddenKeys,
+      | AnyDynamoDBType
+      | HiddenEntityAttributeConfiguration<Schema>
+      | CompositeKey<Schema, HiddenEntityAttributeConfiguration<Schema>>
+    >;
+
+  interface EntityConstructor<Schema, HiddenKeys extends Partial<string>> {
     name: string;
     timestamps?: boolean;
     created?: string;
@@ -186,7 +205,7 @@ declare module "dynamodb-toolbox" {
     createdAlias?: string;
     modifiedAlias?: string;
     typeAlias?: string;
-    attributes: EntityAttributes<Schema>;
+    attributes: EntityAttributes<Schema, HiddenKeys>;
     autoExecute?: boolean;
     autoParse?: boolean;
     table?: Table;
