@@ -2,6 +2,7 @@
 //
 // Improvements:
 // 1. Type Table methods parameters and returns
+// 1bis. Improve sortKey typing and impact on gt, lt, etc.
 // 2. Separate this file in several for better code understanding
 // 3. Improve input/output to methods thanks to "Schema"
 // 4. Improve complex "key" type from update and delete methods
@@ -37,12 +38,52 @@ declare module "dynamodb-toolbox" {
     delete(entity, key, options?, parameters?);
     put(entity, item, options?, parameters?);
     update(entity, key, options?, parameters?);
-    query(partitionKey, options?, parameters?);
-    scan(options?, parameters?);
+    query(
+      partitionKey: string,
+      options?: QueryInputOptions,
+      parameters?
+    ): Promise<any>;
+    scan(options?: ScanInputOptions, parameters?): Promise<any>;
     batchWrite(items, options?, parameters?);
     batchGet(items, options?, parameters?);
   }
 
+  interface ScanInputOptions {
+    index?: string;
+    limit?: number;
+    consistent?: boolean;
+    capacity: string;
+    select: string;
+    filters?: {} | [];
+    attributes?: {} | [];
+    startKey?: {};
+    segments?: number;
+    segment?: number;
+    entity?: string;
+    autoExecute?: boolean;
+    autoParse?: boolean;
+  }
+  interface QueryInputOptions {
+    index?: string;
+    limit?: number;
+    reverse?: boolean;
+    consistent?: boolean;
+    capacity?: string;
+    select?: string;
+    eq?: string;
+    lt?: string;
+    lte?: string;
+    gt?: string;
+    gte?: string;
+    between?: [string, string];
+    beginsWith?: string;
+    filters?: {} | [];
+    attributes?: {} | [];
+    startKey?: {};
+    entity?: string;
+    autoExecute?: boolean;
+    autoParse?: boolean;
+  }
   interface SchemaBase {
     entity: string;
     created: string;
@@ -130,7 +171,11 @@ declare module "dynamodb-toolbox" {
       },
       parameters?
     ): Promise<UpdateOutput<Schema>>;
-    query(partionKey, options?, parameters?);
+    query(
+      partitionKey: string,
+      options?: QueryInputOptions,
+      parameters?
+    ): Promise<any>;
     scan(options?, parameters?);
   }
 
