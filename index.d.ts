@@ -1,3 +1,12 @@
+// DynamoDB Toolbox TypeScript Definition
+//
+// Improvements:
+// 1. Type Table methods parameters and returns
+// 2. Separate this file in several for better code understanding
+// 3. Improve input/output to methods thanks to "Schema"
+// 4. Improve complex "key" type from update and delete methods
+// 5. Pass DynamoDB Toolbox to TypeScript :fear:
+
 declare module "dynamodb-toolbox" {
   // Imports
   import {
@@ -22,16 +31,16 @@ declare module "dynamodb-toolbox" {
     autoParse: boolean;
 
     // Methods
-    attribute(...args: any);
-    parse(...args: any);
-    get(...args: any);
-    delete(...args: any);
-    put(...args: any);
-    update(...args: any);
-    query(...args: any);
-    scan(...args: any);
-    batchWrite(...args: any);
-    batchGet(...args: any);
+    attribute(...args: any); // Not documented
+    parse(entity, input, include?);
+    get(entity, key, options?, parameters?);
+    delete(entity, key, options?, parameters?);
+    put(entity, item, options?, parameters?);
+    update(entity, key, options?, parameters?);
+    query(partitionKey, options?, parameters?);
+    scan(options?, parameters?);
+    batchWrite(items, options?, parameters?);
+    batchGet(items, options?, parameters?);
   }
 
   interface SchemaBase {
