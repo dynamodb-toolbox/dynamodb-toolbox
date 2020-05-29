@@ -83,4 +83,9 @@ describe('formatItem', () => {
     expect(result).toEqual({ linked1: 'test1' })
   })
 
+  it('passes through attribute not specified in entity', () => {
+    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ unspecified: 'value' })  
+    expect(result).toEqual({ unspecified: 'value' })
+  })
+
 })
