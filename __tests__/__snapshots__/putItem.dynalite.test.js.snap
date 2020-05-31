@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`put item integration test should create customer record 1`] = `
+Object {
+  "Count": 1,
+  "Items": Array [
+    Object {
+      "_ct": "2020-05-31T00:00:00.000Z",
+      "_et": "Customer",
+      "_md": "2020-05-31T00:00:00.000Z",
+      "age": 35,
+      "co": "ACME",
+      "data": "Jane Smith",
+      "date_added": "2020-04-24",
+      "pk": "123",
+      "sk": "active#2020-04-24",
+      "status": "active",
+    },
+  ],
+  "ScannedCount": 1,
+}
+`;

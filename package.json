@@ -5,7 +5,7 @@
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "index.js",
   "scripts": {
-    "test": "jest unit",
+    "test": "jest",
     "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "lint": "eslint ."
@@ -26,19 +26,12 @@
     "url": "https://github.com/jeremydaly/dynamodb-toolbox/issues"
   },
   "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
-  "jest": {
-    "testPathIgnorePatterns": [
-      "/__tests__/entities/*"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/__tests__/*"
-    ]
-  },
   "devDependencies": {
     "aws-sdk": "^2.673.0",
     "coveralls": "^3.1.0",
     "dynalite": "^3.1.6",
     "eslint": "^6.8.0",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "jest-date-mock": "^1.0.8"
   }
 }
