@@ -1,15 +1,13 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const { toBool, hasValue, error } = require('./utils')
+import { toBool, hasValue, error } from './utils';
 
 // Performs type validation/coercian
-module.exports = (DocumentClient) => (mapping,field,input,data={}) => {
+export default (DocumentClient) => (mapping,field,input,data={}) => {
 
   // Evaluate function expressions
   // TODO: should this happen here?
@@ -56,4 +54,4 @@ module.exports = (DocumentClient) => (mapping,field,input,data={}) => {
       // TODO: Binary validation
       return value
   }
-} // end validateTypes
+}; // end validateTypes

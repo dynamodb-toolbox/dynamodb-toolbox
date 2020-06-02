@@ -1,16 +1,15 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const parseMapping = require('./parseMapping')
-const parseCompositeKey = require('./parseCompositeKey')
-const { error, typeError, validTypes } = require('./utils')
+import parseMapping from './parseMapping';
 
-module.exports = (attributes,track,nested) => {
+import parseCompositeKey from './parseCompositeKey';
+import { error, typeError, validTypes } from './utils';
+
+export default (attributes,track,nested) => {
   attributes = Object.keys(attributes).reduce((acc,field) => {
     if (typeof attributes[field] === 'string') {
       return validTypes.includes(attributes[field]) ?
@@ -34,4 +33,4 @@ module.exports = (attributes,track,nested) => {
     attributes
   }
     
-} // end parseEntityAttrbutes
+}; // end parseEntityAttrbutes

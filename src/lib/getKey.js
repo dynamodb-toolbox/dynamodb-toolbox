@@ -1,16 +1,15 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const validateTypes = require('./validateTypes')
-const { error, transformAttr } = require('./utils')
+import validateTypes from './validateTypes';
+
+import { error, transformAttr } from './utils';
 
 // Get partitionKey/sortKey
-module.exports = (DocumentClient) => (data,schema,partitionKey,sortKey) => {
+export default (DocumentClient) => (data,schema,partitionKey,sortKey) => {
 
   // TODO: Think about a better way to reference pk/sk - can it work with secondary indexes?
   partitionKey = schema[partitionKey].map || partitionKey
@@ -29,4 +28,4 @@ module.exports = (DocumentClient) => (data,schema,partitionKey,sortKey) => {
     { [partitionKey]: transformAttr(schema[partitionKey],validateType(schema[partitionKey],partitionKey,pk,data),data) },
     sortKey !== null ? { [sortKey]: transformAttr(schema[sortKey],validateType(schema[sortKey],sortKey,sk,data),data) } : {}
   ) // end assign
-} // end get keys
+}; // end get keys

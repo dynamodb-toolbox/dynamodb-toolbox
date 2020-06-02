@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -7,18 +5,19 @@
  */
 
 // Import parseEntity 
-const parseEntity = require('../lib/parseEntity')
+import parseEntity from '../lib/parseEntity';
 
 // Import additional libraries
-const validateTypes = require('../lib/validateTypes')
-const normalizeData = require('../lib/normalizeData')
-const formatItem = require('../lib/formatItem')
-const getKey = require('../lib/getKey')
-const parseConditions = require('../lib/expressionBuilder')
-const parseProjections = require('../lib/projectionBuilder')
+import validateTypes from '../lib/validateTypes';
+
+import normalizeData from '../lib/normalizeData';
+import formatItem from '../lib/formatItem';
+import getKey from '../lib/getKey';
+import parseConditions from '../lib/expressionBuilder';
+import parseProjections from '../lib/projectionBuilder';
 
 // Import error handlers
-const { error, transformAttr } = require('../lib/utils')
+import { error, transformAttr } from '../lib/utils';
 
 // Declare Entity class
 class Entity {
@@ -820,4 +819,4 @@ class Entity {
 } // end Entity
 
 // Export the Entity class
-module.exports = Entity
+export default Entity;

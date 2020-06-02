@@ -1,16 +1,15 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const parseAttributes = require('./parseEntityAttributes')
-const { error } = require('./utils')
+import parseAttributes from './parseEntityAttributes';
+
+import { error } from './utils';
 
 // Parse entity
-module.exports = (entity) => {
+export default (entity) => {
 
   let {
     name,
@@ -99,4 +98,4 @@ module.exports = (entity) => {
   table ? { table } : {}
   ) // end mapping object
 
-} // end parseEntity
+}; // end parseEntity

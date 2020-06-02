@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -10,8 +8,9 @@
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html
 
 // Import standard error handler
-const { error } = require('./utils')
-const checkAttribute = require('./checkAttribute')
+import { error } from './utils';
+
+import checkAttribute from './checkAttribute';
 
 const buildExpression = (exp,table,entity,group=0,level=0) => {
   
@@ -74,7 +73,7 @@ const buildExpression = (exp,table,entity,group=0,level=0) => {
 }
 
 // Export buildExpression
-module.exports = buildExpression
+export default buildExpression;
 
 
 // Define condition expression error

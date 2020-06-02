@@ -1,15 +1,13 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const validateTypes = require('./validateTypes')
+import validateTypes from './validateTypes';
 
 // Format item based on attribute defnition
-module.exports = (DocumentClient) => (attributes,linked,item,include=[]) => {
+export default (DocumentClient) => (attributes,linked,item,include=[]) => {
   
   // TODO: Support nested maps?
   // TODO: include alias support?
@@ -46,7 +44,7 @@ module.exports = (DocumentClient) => (attributes,linked,item,include=[]) => {
       )
     })
   },{})
-}
+};
 
 function escapeRegExp(text) {
   return text ? text.replace(/[-[\]{}()*+?.,\\^$|#]/g, '\\$&') : ''

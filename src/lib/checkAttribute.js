@@ -1,15 +1,13 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const { error } = require('./utils')
+import { error } from './utils';
 
 // Check attribute against attribute set
-module.exports = (attr,attrs) => {
+export default (attr,attrs) => {
 
   // Split paths with dot notation and list brackets
   const path = attr.split('.')
@@ -28,4 +26,4 @@ module.exports = (attr,attrs) => {
     error(`'${attr}' is not a valid attribute.`)
   } 
 
-} // end checkAttribute
+}; // end checkAttribute

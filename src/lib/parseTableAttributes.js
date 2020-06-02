@@ -1,15 +1,13 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const { error, typeError, keyTypeError, validTypes, validKeyTypes } = require('./utils')
+import { error, typeError, keyTypeError, validTypes, validKeyTypes } from './utils';
 
 // Parse the attributes and verify valid types
-module.exports = (attrs,partitionKey,sortKey) => Object.keys(attrs).reduce((acc,field) => {
+export default (attrs,partitionKey,sortKey) => Object.keys(attrs).reduce((acc,field) => {
   if (typeof attrs[field] === 'string') {
     return [partitionKey,sortKey].includes(field) && !validKeyTypes.includes(attrs[field]) ?
       keyTypeError(field)
@@ -23,7 +21,7 @@ module.exports = (attrs,partitionKey,sortKey) => Object.keys(attrs).reduce((acc,
         Object.assign(acc,parseAttributeConfig(field,attrs[field]))
         : typeError(field)
   }
-},{})
+},{});
 
 // Parse and validate attributes config
 const parseAttributeConfig = (field,config) => {

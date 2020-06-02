@@ -1,15 +1,13 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const { error } = require('./utils')
+import { error } from './utils';
 
 // Parse and validate mapping config
-module.exports = (field,config,track) => {
+export default (field,config,track) => {
 
   // Validate props
   Object.keys(config).forEach(prop => {
@@ -118,4 +116,4 @@ module.exports = (field,config,track) => {
       [map]: Object.assign({},_config, { alias: field })
     } : {}
   ) // end assign
-}
+};

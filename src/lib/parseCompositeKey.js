@@ -1,15 +1,14 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const { error } = require('./utils')
-const parseMapping = require('./parseMapping')
+import { error } from './utils';
 
-module.exports = (field,config,track,schema) => {
+import parseMapping from './parseMapping';
+
+export default (field,config,track,schema) => {
   if (config.length >= 2 && config.length <= 3) {
     let link = schema[config[0]] ? config[0]
       : error(`'${field}' must reference another field`)
@@ -41,4 +40,4 @@ module.exports = (field,config,track,schema) => {
   } else {
     error(`Composite key configurations must have 2 or 3 items`)
   }
-}
+};

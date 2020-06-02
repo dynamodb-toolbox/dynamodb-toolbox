@@ -1,16 +1,15 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
 
-const validateTypes = require('./validateTypes')
-const { error, transformAttr } = require('./utils')
+import validateTypes from './validateTypes';
+
+import { error, transformAttr } from './utils';
 
 // Normalize Data
-module.exports = (DocumentClient) => (schema,linked,data,filter=false) => {
+export default (DocumentClient) => (schema,linked,data,filter=false) => {
 
   // Intialize validate type
   const validateType = validateTypes(DocumentClient)
@@ -55,4 +54,4 @@ module.exports = (DocumentClient) => (schema,linked,data,filter=false) => {
   // Return the merged data
   return Object.assign(composites,_data)
 
-} // end normalizeData
+}; // end normalizeData

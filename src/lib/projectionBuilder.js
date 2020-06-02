@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -9,8 +7,9 @@
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html
 
 // Import standard error handler
-const { error } = require('./utils')
-const checkAttribute = require('./checkAttribute')
+import { error } from './utils';
+
+import checkAttribute from './checkAttribute';
 
 // This should be able to parse and array with values,
 // or an object that uses the name of the entity plus and array of values
@@ -18,7 +17,7 @@ const checkAttribute = require('./checkAttribute')
 // Ths should also be able to parse any combination,
 // e.g. [ 'attr1', 'attr2', { MyEntity: ['attr3','attr4'] }]
 
-module.exports = (attributes,table={},entity,type=false) => {
+export default (attributes,table={},entity,type=false) => {
   
   // Create an attribute names counter
   let index = 0
@@ -109,4 +108,4 @@ module.exports = (attributes,table={},entity,type=false) => {
     tableAttrs
   }
 
-} // end module
+}; // end module

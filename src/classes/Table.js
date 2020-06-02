@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -9,16 +7,17 @@
 // TODO: Check duplicate entity names code
 
 // Import parseTable 
-const parseTable = require('../lib/parseTable')
-const parseFilters = require('../lib/expressionBuilder')
-const parseProjections = require('../lib/projectionBuilder')
-const validateTypes = require('../lib/validateTypes')
+import parseTable from '../lib/parseTable';
+
+import parseFilters from '../lib/expressionBuilder';
+import parseProjections from '../lib/projectionBuilder';
+import validateTypes from '../lib/validateTypes';
 
 // Import standard error handler
-const { error } = require('../lib/utils')
+import { error } from '../lib/utils';
 
 // Import Entity class
-const Entity = require('./Entity')
+import Entity from './Entity';
 
 // Define condition error
 const conditonError = (op) =>
@@ -1064,4 +1063,4 @@ class Table {
 } // end Table class
 
 // Export the Table class
-module.exports = Table
+export default Table;
