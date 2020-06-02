@@ -1,10 +1,10 @@
-const parseTable = require('../lib/parseTable')
+const parseTable = require('../src/lib/parseTable')
 
 // Bootstrap testing
 const { DocumentClient } = require('./bootstrap-tests')
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
+const Table = require('../src/classes/Table')
 
 let table = {
   name: 'test-table',

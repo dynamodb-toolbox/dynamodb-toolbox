@@ -1,4 +1,4 @@
-const parseMapping = require('../lib/parseMapping')
+const parseMapping = require('../src/lib/parseMapping')
 
 
 describe('parseMapping', () => {

@@ -1,8 +1,8 @@
-const checkAttribute = require('../lib/checkAttribute')
+const checkAttribute = require('../src/lib/checkAttribute')
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
+const Table = require('../src/classes/Table')
+const Entity = require('../src/classes/Entity')
 
 
 // Create basic table

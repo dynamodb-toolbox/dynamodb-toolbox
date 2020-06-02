@@ -7,3 +7,6 @@ dump.rdb
 
 # coverage
 coverage
+
+.idea
+/build

@@ -1,4 +1,4 @@
-const parseCompositeKey = require('../lib/parseCompositeKey')
+const parseCompositeKey = require('../src/lib/parseCompositeKey')
 
 // Simulate attributes
 const attributes = {

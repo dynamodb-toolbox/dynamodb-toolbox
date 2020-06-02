@@ -1,10 +1,10 @@
-const normalizeData = require('../lib/normalizeData')
+const normalizeData = require('../src/lib/normalizeData')
 
 const { DocumentClient } = require('./bootstrap-tests')
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
+const Table = require('../src/classes/Table')
+const Entity = require('../src/classes/Entity')
 
 
 // Create basic table

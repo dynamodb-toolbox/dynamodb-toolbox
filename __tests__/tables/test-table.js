@@ -1,4 +1,4 @@
-const Table = require('../../classes/Table')
+const Table = require('../../src/classes/Table')
 const { DocumentClient } = require('../bootstrap-tests')
 
 module.exports = new Table({

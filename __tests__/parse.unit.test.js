@@ -1,8 +1,8 @@
 const { DocumentClient } = require('./bootstrap-tests')
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
+const Table = require('../src/classes/Table')
+const Entity = require('../src/classes/Entity')
 
 // Create basic entity
 const TestEntity = new Entity(require('./entities/test-entity.js'))

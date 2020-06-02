@@ -1,4 +1,4 @@
-const parseTableAttributes = require('../lib/parseTableAttributes')
+const parseTableAttributes = require('../src/lib/parseTableAttributes')
 
 let attrs = {
   pk: 'string', 

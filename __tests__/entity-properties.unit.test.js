@@ -1,6 +1,6 @@
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
+const Table = require('../src/classes/Table')
+const Entity = require('../src/classes/Entity')
 
 describe('Entity properties', ()=> {
 

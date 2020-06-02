@@ -1,4 +1,4 @@
-const validateTypes = require('../lib/validateTypes')
+const validateTypes = require('../src/lib/validateTypes')
 
 const { DocumentClient } = require('./bootstrap-tests')
 

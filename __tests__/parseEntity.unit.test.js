@@ -1,4 +1,4 @@
-const parseEntity = require('../lib/parseEntity')
+const parseEntity = require('../src/lib/parseEntity')
 
 // Simulate Entity config
 const entity = {
