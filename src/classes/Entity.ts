@@ -21,7 +21,25 @@ import { error, transformAttr } from '../lib/utils';
 
 // Declare Entity class
 class Entity {
-
+	public _table: any;
+	public name: any;
+	public schema: any;
+	public defaults: any;
+	public _execute: any;
+	public _parse: any;
+	public linked: any;
+	public consistent: any;
+	public capacity: any;
+	public attributes: any;
+	public _args: any;
+	public names: any;
+	public projections: any;
+	public conditions: any;
+	public metrics: any;
+	public returnValues: any;
+	public expression: any;
+	public values: any;
+	public required: any;
   // Declare constructor (entity config)
   constructor(entity) {
 

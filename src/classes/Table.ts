@@ -25,7 +25,43 @@ const conditonError = (op) =>
 
 // Declare Table class
 class Table {
-
+	public _execute: any;
+	public _parse: any;
+	public _removeNulls: any;
+	public _docClient: any;
+	public _entities: any;
+	public Table: any;
+	public name: any;
+	public payload: any;
+	public EntityProjections: any;
+	public TableProjections: any;
+	public index: any;
+	public limit: any;
+	public reverse: any;
+	public consistent: any;
+	public capacity: any;
+	public select: any;
+	public eq: any;
+	public lt: any;
+	public lte: any;
+	public gt: any;
+	public gte: any;
+	public between: any;
+	public beginsWith: any;
+	public filters: any;
+	public attributes: any;
+	public startKey: any;
+	public entity: any;
+	public _args: any;
+	public expression: any;
+	public names: any;
+	public values: any;
+	public projections: any;
+	public tableAttrs: any;
+	public segments: any;
+	public segment: any;
+	public Tables: any;
+	public metrics: any;
   // Declare constructor (table config and optional entities)
   constructor(table) { //},docClient,entities) {
 
@@ -971,7 +1007,7 @@ class Table {
 
 
   // Generate BatchWrite Params
-  batchWriteParams(_items,options={},params={},meta) {
+  batchWriteParams(_items,options={},params={},meta?) {
     // Convert items to array
     let items = (Array.isArray(_items) ? _items : [_items]).filter(x => x)    
 
