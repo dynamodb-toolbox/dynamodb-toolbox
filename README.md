@@ -552,7 +552,7 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 
 | Option | Type | Description |
 | -------- | :--: | ----------- |
-| index | `string` | Name of secondary index to scan. If not specified, the query executes on the primary index. (IndexName) |
+| index | `string` | Name of secondary index to scan. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName) |
 | limit | `number` | The maximum number of items to retrieve per scan. (Limit) |
 | consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
