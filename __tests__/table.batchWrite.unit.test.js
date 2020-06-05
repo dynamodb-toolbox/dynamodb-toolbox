@@ -88,7 +88,7 @@ describe('batchWrite',()=>{
     expect(result.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test')
   })
 
-  it('returns meta data', () => {
+  xit('returns meta data', () => { // FIXME this is not used. should keep this.?
     let result = TestTable.batchWriteParams(
       TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
       {},null,true

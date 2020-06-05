@@ -1,4 +1,4 @@
-const parseTable = require('../src/lib/parseTable')
+const parseTable = require('../src/lib/parseTable').parseTable
 
 // Bootstrap testing
 const { DocumentClient } = require('./bootstrap-tests')
