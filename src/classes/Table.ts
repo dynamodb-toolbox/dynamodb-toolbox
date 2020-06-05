@@ -741,7 +741,7 @@ class Table {
 
   // Generate SCAN Parameters
   scanParams(
-    options: DynamoToolbox.ScanInputOptions,
+    options: DynamoToolbox.ScanInputOptions = {} as FIXME,
     params: DynamoToolbox.FIXME = {},
     meta = false
   ) {
@@ -1213,7 +1213,7 @@ class Table {
   } // end parseBatchWriteResponse
 
   // Generate BatchWrite Params
-  public batchWriteParams(_items, options, params) {
+  public batchWriteParams(_items, options: FIXME = {}, params: FIXME = {}) {
     // Convert items to array
     let items = (Array.isArray(_items) ? _items : [_items]).filter((x) => x)
 

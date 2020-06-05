@@ -18,7 +18,8 @@
     "pretty": true /* Stylize errors and messages using color and context. */,
     "lib": ["esnext"],
     "types": ["node", "jest"],
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   },
   "compileOnSave": false
 }
