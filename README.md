@@ -250,7 +250,7 @@ const MyTable = new Table({
 | alias | `string` | no | An optional alias to reference your table when using "batch" features |
 | partitionKey | `string` | yes | The attribute name of your table's partitionKey |
 | sortKey | `string` | no | The attribute name of your table's sortKey |
-| entityField | `boolean` or `string` | no | Disables or overrides entity tracking field name (default: `_tp`) |
+| entityField | `boolean` or `string` | no | Disables or overrides entity tracking field name (default: `_et`) |
 | attributes | `object` | no | Complex type that optionally specifies the name and type of each attributes (see below) |
 | indexes | `object` | no | Complex type that optionally specifies the name keys of your secondary indexes (see below) |
 | autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
@@ -290,7 +290,7 @@ indexes: {
 }
 ```
 
-**NOTE:** The **index name** must match the index name on your table as it will be used in queries and other operations.
+**NOTE:** The **index name** must match the index name on your table as it will be used in queries and other operations. The index must include the table's `entityField` attribute for automatic parsing of returned data.
 
 ## Entities
 
@@ -503,7 +503,7 @@ The second argument is an `options` object that specifies the details of your qu
 
 | Option | Type | Description |
 | -------- | :--: | ----------- |
-| index | `string` | Name of secondary index to query. If not specified, the query executes on the primary index. (IndexName) |
+| index | `string` | Name of secondary index to query. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName) |
 | limit | `number` | The maximum number of items to retrieve per query. (Limit) |
 | reverse | `boolean` | Reverse the order or returned items. (ScanIndexForward) |
 | consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
