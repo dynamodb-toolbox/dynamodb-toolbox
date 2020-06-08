@@ -1,0 +1,2 @@
+- removed batchWriteParams returns meta data parameter and test
+- added addEntity/entityNames - deprecated getter/setter for entities
