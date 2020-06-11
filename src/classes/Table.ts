@@ -119,7 +119,7 @@ class Table {
     return this.entityNames as any
   }
 
-  // Adds a new Entities to the table
+  // Adds a new Entity to the table
   addEntity(entity: Entity[] | Entity) {
     // Coerce entity to array
     let entities = Array.isArray(entity) ? entity : [entity]
@@ -349,6 +349,13 @@ class Table {
       }
     } // end for
   } // end addEntity
+
+  getEntity(name: string) {
+    const entity: Entity | undefined = (<any>this)[name]
+    if (entity instanceof Entity) {
+      return entity
+    }
+  }
 
   get entityNames() {
     return this._entities

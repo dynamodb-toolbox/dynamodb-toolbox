@@ -139,7 +139,7 @@ describe('expressionBuilder',() => {
   })
 
   it('fails with unknown arguments', () => {
-    expect(() => expressionBuilder({ attr: 'a', eq: 'b', invalidArg: true },TestTable,'TestEntity'))
+    expect(() => expressionBuilder(({ attr: 'a', eq: 'b', invalidArg: true } as any),TestTable,'TestEntity'))
       .toThrow(`Invalid expression options: invalidArg`)
   })
 
@@ -304,12 +304,12 @@ describe('expressionBuilder',() => {
   })
 
   it(`fails when 'between' value is not an array`, () => {
-    expect(() => expressionBuilder({ attr: 'a', between: 'b' },TestTable,'TestEntity'))
+    expect(() => expressionBuilder(({ attr: 'a', between: 'b' } as any),TestTable,'TestEntity'))
       .toThrow(`'between' conditions require an array with two values.`)
   })
 
   it(`fails when 'in' value is not an array`, () => {
-    expect(() => expressionBuilder({ attr: 'a', in: 'b' },TestTable,'TestEntity'))
+    expect(() => expressionBuilder(({ attr: 'a', in: 'b' } as any),TestTable,'TestEntity'))
       .toThrow(`'in' conditions require an array.`)
   })
 

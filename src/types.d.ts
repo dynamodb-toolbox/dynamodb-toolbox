@@ -267,7 +267,7 @@ export declare namespace DynamoToolbox {
     createdAlias?: string
     modifiedAlias?: string
     typeAlias?: string
-    attributes: EntityAttributes<Schema, HiddenKeys>
+    attributes: FIXME, //EntityAttributes<Schema, HiddenKeys>
     autoExecute?: boolean
     autoParse?: boolean
     table?: Table
