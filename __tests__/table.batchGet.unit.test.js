@@ -1,5 +1,15 @@
 const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+
+const MockDocumentClient = {
+  scan: jest.fn(),
+  query: jest.fn(),
+  get: jest.fn(),
+  put: jest.fn(),
+  delete: jest.fn(),
+  update: jest.fn(),
+  batchGet: jest.fn(),
+  options: {},
+}
 
 const TestTable = new Table({
   name: 'test-table',
@@ -7,7 +17,7 @@ const TestTable = new Table({
   partitionKey: 'pk',
   sortKey: 'sk',
   indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
-  DocumentClient
+  DocumentClient: MockDocumentClient
 })
 
 const TestEntity = new Entity({
@@ -71,7 +81,7 @@ describe('batchGet',()=>{
       partitionKey: 'pk',
       sortKey: 'sk',
       indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
-      DocumentClient
+      DocumentClient: MockDocumentClient
     })
     
     const TestEntity2 = new Entity({
@@ -107,7 +117,7 @@ describe('batchGet',()=>{
       partitionKey: 'pk',
       sortKey: 'sk',
       indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
-      DocumentClient
+      DocumentClient: MockDocumentClient
     })
     
     const TestEntity2 = new Entity({
@@ -143,5 +153,42 @@ describe('batchGet',()=>{
       .toThrow(`There are no items for the table or table alias: test-table2`)
   })
   
+  it('fails on invalid autoExecute setting', () => {
+    expect(() => TestTable.batchGetParams([
+        TestEntity.getBatch({ pk: 'test', sk: 'testsk'})
+      ],
+      { autoExecute: 'test' }
+    )).toThrow(`'autoExecute' requires a boolean`)
+  })
+
+  it('fails on invalid autoParse setting', () => {
+    expect(() => TestTable.batchGetParams([
+      TestEntity.getBatch({ pk: 'test', sk: 'testsk'})
+    ],
+      { autoParse: 'test' }
+    )).toThrow(`'autoParse' requires a boolean`)
+  })
+
+  it('doesn\'t parse result if autoParse is false', async () => {
+    const mockResponse = {
+      Responses: {
+        'test-table': [
+          {email: 'test@email.com', sort: 'yes', test: 'true', _et: 'TestEntity'}
+        ]
+      }
+    }
+    jest.spyOn(TestEntity, 'parse')
+    MockDocumentClient.batchGet.mockImplementationOnce(
+      () => ({ promise: () => Promise.resolve(mockResponse) })
+    )
+    const res = await TestTable.batchGet(
+      [
+        TestEntity.getBatch({ pk: 'test', sk: 'testsk'})
+      ],
+      { autoParse: false }
+    )
+    expect(res).toEqual(mockResponse)
+    expect(TestEntity.parse).not.toHaveBeenCalled()
+  })
 
 })

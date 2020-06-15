@@ -291,11 +291,11 @@ class Table {
     } = this.queryParams(pk,options,params,true)
 
     // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
+    if (options.autoExecute || (this.autoExecute && options.autoExecute !== false)) {
       const result = await this.DocumentClient.query(payload).promise()
       
       // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
+      if (options.autoParse || (this.autoParse && options.autoParse !== false)) {
 
         return Object.assign(
           result,
@@ -359,6 +359,8 @@ class Table {
       attributes, // Projections
       startKey,
       entity, // optional entity name to filter aliases
+      autoExecute,
+      autoParse,
       ..._args // capture extra arguments
     } = options
     
@@ -409,6 +411,14 @@ class Table {
     // TODO: validate startKey shape
     if (startKey && (typeof startKey !== 'object' || Array.isArray(startKey)))
       error(`'startKey' requires a valid object`)
+
+    // Verify autoExecute
+    if (autoExecute !== undefined && typeof autoExecute !== 'boolean')
+      error(`'autoExecute' requires a boolean`)
+
+    // Verify autoParse
+    if (autoParse !== undefined && typeof autoParse !== 'boolean')
+      error(`'autoParse' requires a boolean`)
 
     // Default names and values
     let ExpressionAttributeNames = { '#pk': (index && this.Table.indexes[index].partitionKey) || this.Table.partitionKey }
@@ -542,11 +552,11 @@ class Table {
     } = this.scanParams(options,params,true)
 
     // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
+    if (options.autoExecute || (this.autoExecute && options.autoExecute !== false)) {
       const result = await this.DocumentClient.scan(payload).promise()
       
       // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
+      if (options.autoParse || (this.autoParse && options.autoParse !== false)) {
 
         return Object.assign(
           result,
@@ -602,6 +612,8 @@ class Table {
       segment, // Segment
       startKey,
       entity, // optional entity name to filter aliases
+      autoExecute,
+      autoParse,
       ..._args // capture extra arguments
     } = options
     
@@ -654,6 +666,14 @@ class Table {
 
     if ((segments !== undefined && segment === undefined) || (segments === undefined && segment !== undefined))
       error(`Both 'segments' and 'segment' must be provided`)
+
+    // Verify autoExecute
+    if (autoExecute !== undefined && typeof autoExecute !== 'boolean')
+      error(`'autoExecute' requires a boolean`)
+
+    // Verify autoParse
+    if (autoParse !== undefined && typeof autoParse !== 'boolean')
+      error(`'autoParse' requires a boolean`)
 
     // Default names and values
     let ExpressionAttributeNames = {}
@@ -733,11 +753,11 @@ class Table {
       TableProjections
     } = this.batchGetParams(items,options,params,true)
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
+    // If autoExecute enabled
+    if (options.autoExecute || (this.autoExecute && options.autoExecute !== false)) {
       const result = await this.DocumentClient.batchGet(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
+      // If autoParse enable
+      if (options.autoParse || (this.autoParse && options.autoParse !== false)) {
 
         // TODO: Left in for testing. Needs to be removed
         // result.UnprocessedKeys = testUnprocessedKeys
@@ -809,6 +829,8 @@ class Table {
       capacity,
       consistent,
       attributes,
+      autoExecute,
+      autoParse,
       ..._args
     } = options
 
@@ -823,6 +845,14 @@ class Table {
     if (capacity !== undefined
       && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
       error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Verify autoExecute
+    if (autoExecute !== undefined && typeof autoExecute !== 'boolean')
+      error(`'autoExecute' requires a boolean`)
+
+    // Verify autoParse
+    if (autoParse !== undefined && typeof autoParse !== 'boolean')
+      error(`'autoParse' requires a boolean`)
 
     // Init RequestItems and Tables reference
     const RequestItems = {}
@@ -933,10 +963,10 @@ class Table {
     const payload = this.batchWriteParams(items,options,params)
 
     // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
+    if (options.autoExecute || (this.autoExecute && options.autoExecute !== false)) {
       const result = await this.DocumentClient.batchWrite(payload).promise()
       // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
+      if (options.autoParse || (this.autoParse && options.autoParse !== false)) {
 
         // TODO: Left in for testing. Needs to be removed
         // result.UnprocessedKeys = testUnprocessedKeys
@@ -983,6 +1013,8 @@ class Table {
     const {
       capacity,
       metrics,
+      autoExecute,
+      autoParse,
       ..._args
     } = options
 
@@ -1002,6 +1034,14 @@ class Table {
     if (metrics !== undefined
       && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
       error(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+    
+    // Verify autoExecute
+    if (autoExecute !== undefined && typeof autoExecute !== 'boolean')
+      error(`'autoExecute' requires a boolean`)
+
+    // Verify autoParse
+    if (autoParse !== undefined && typeof autoParse !== 'boolean')
+      error(`'autoParse' requires a boolean`)
 
     // Init RequestItems
     const RequestItems = {}

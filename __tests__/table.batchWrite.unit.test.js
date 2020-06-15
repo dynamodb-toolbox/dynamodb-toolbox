@@ -157,4 +157,20 @@ describe('batchWrite',()=>{
 
   })
 
+  it('fails on invalid autoExecute setting', () => {
+    expect(() => TestTable.batchWriteParams([
+        TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
+      ],
+      { autoExecute: 'test' }
+    )).toThrow(`'autoExecute' requires a boolean`)
+  })
+
+  it('fails on invalid autoParse setting', () => {
+    expect(() => TestTable.batchWriteParams([
+      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
+    ],
+      { autoParse: 'test' }
+    )).toThrow(`'autoParse' requires a boolean`)
+  })
+
 })

@@ -1,12 +1,21 @@
 const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+
+const MockDocumentClient = {
+  scan: jest.fn(),
+  query: jest.fn(),
+  get: jest.fn(),
+  put: jest.fn(),
+  delete: jest.fn(),
+  update: jest.fn(),
+  options: {},
+}
 
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
   indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
-  DocumentClient
+  DocumentClient: MockDocumentClient
 })
 
 const TestEntity = new Entity({
@@ -264,6 +273,33 @@ describe('query',()=>{
     expect(() => TestTable.queryParams('test',
       { between: ['val1'] }
     )).toThrow(`'between' conditions requires an array with two values.`)
+  })
+
+  it('fails on invalid autoExecute setting', () => {
+    expect(() => TestTable.queryParams('test',
+      { autoExecute: 'test' }
+    )).toThrow(`'autoExecute' requires a boolean`)
+  })
+
+  it('fails on invalid autoParse setting', () => {
+    expect(() => TestTable.queryParams('test',     
+      { autoParse: 'test' }
+    )).toThrow(`'autoParse' requires a boolean`)
+  })
+
+  it('doesn\'t parse result if autoParse is false', async () => {
+    const mockResponse = {
+      Items: [{
+        email: 'test@email.com', sort: 'yes', test: 'true', _et: 'TestEntity'
+      }]
+    }
+    jest.spyOn(TestEntity, 'parse')
+    MockDocumentClient.query.mockImplementationOnce(
+      () => ({ promise: () => Promise.resolve(mockResponse) })
+    )
+    const res = await TestTable.query('pk', { autoParse: false })
+    expect(res).toEqual(mockResponse)
+    expect(TestEntity.parse).not.toHaveBeenCalled()
   })
 
 })
