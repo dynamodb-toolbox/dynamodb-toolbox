@@ -70,6 +70,16 @@ const TestEntity3 = new Entity({
   table: TestTable2
 })
 
+const TestEntity4 = new Entity({
+  name: 'TestEntity4',
+  autoExecute: false,
+  attributes: {
+    email: { type: 'string', partitionKey: true },
+    mappedRequired: { required: true, map: 'GSIpk' },
+  },
+  table: TestTable2
+})
+
 describe('put',()=>{
 
   it('creates basic item',() => {
@@ -270,6 +280,21 @@ describe('put',()=>{
       'pk': 'test-pk',
       'test2': 'test'
     })).toThrow(`'test' is a required field`)
+  })
+
+  it('validade mapped required field (issue #63)', () => {
+    const sut1 = TestEntity4.putParams({
+      'email': 'test-pk',
+      'mappedRequired': 'test'
+    })
+
+    expect(sut1.Item['pk']).toBe('test-pk')
+    expect(sut1.Item['GSIpk']).toBe('test')
+
+    expect(() => TestEntity4.putBatch({
+      'email': 'test-pk',
+      'mappedRequired': 'test'
+    })).not.toThrow()
   })
 
   it('formats a batch put response', async () => {

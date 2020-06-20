@@ -477,9 +477,16 @@ class Entity {
 
 
     // Check for required fields
-    Object.keys(required).forEach(field =>
-      required[field] && !data[field] && error(`'${field}' is a required field`)
-    ) // end required field check
+    Object.keys(required).forEach(field => {
+      let value = data[field]
+      if(!value) {
+        let fieldDefinition = schema.attributes[field]
+        if(fieldDefinition.map) {
+          value = data[fieldDefinition.map]
+        }
+      }
+      required[field] && !value && error(`'${field}' is a required field`)
+    }) // end required field check
     
     // Get partition and sort keys
     const Key = getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
@@ -767,8 +774,16 @@ class Entity {
 
 
     // Check for required fields
-    Object.keys(required).forEach(field =>
-      required[field] !== undefined && !data[field] && error(`'${field}' is a required field`)
+    Object.keys(required).forEach(field => {
+      let value = data[field]
+      if(!value) {
+        let fieldDefinition = schema.attributes[field]
+        if(fieldDefinition.map) {
+          value = data[fieldDefinition.map]
+        }
+      }
+      required[field] !== undefined && !value && error(`'${field}' is a required field`)
+    }
     ) // end required field check
 
     // Checks for partition and sort keys
