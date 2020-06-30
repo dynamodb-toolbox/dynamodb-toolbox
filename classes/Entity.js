@@ -488,7 +488,6 @@ class Entity {
     const names = {}
     const values = {}
 
-
     // Loop through valid fields and add appropriate action
     Object.keys(data).forEach((field) => {
       const mapping = schema.attributes[field]
@@ -512,8 +511,10 @@ class Entity {
         REMOVE.push(`#${field}`)
         names[`#${field}`] = field
       } else if (
-        !mapping.partitionKey
-        && !mapping.sortKey
+        // !mapping.partitionKey
+        // && !mapping.sortKey
+        mapping.partitionKey !== true
+        && mapping.sortKey !== true
         && (mapping.save === undefined || mapping.save === true)
         && (!mapping.link || (mapping.link && mapping.save === true))
       ) {

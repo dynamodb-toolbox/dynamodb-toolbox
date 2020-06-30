@@ -5,7 +5,10 @@ const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
-  DocumentClient
+  DocumentClient,
+  indexes: {
+    GSI1: { partitionKey: 'GSI1pk' }
+  }
 })
 
 const TestEntity = new Entity({
@@ -78,6 +81,20 @@ const TestEntity3 = new Entity({
   table: TestTable3
 })
 
+const TestEntityGSI = new Entity({
+  name: 'TestEntityGSI',
+  autoExecute: false,
+  attributes: {
+    email: { type: 'string', partitionKey: true },
+    sk: { type: 'string', sortKey: true },
+    test: { type: 'string' },
+    test2: { type: 'string' },
+    GSI1pk: { partitionKey: 'GSI1'}
+  },
+  timestamps: false,
+  table: TestTable
+})
+
 
 describe('update',()=>{
 
@@ -94,6 +111,11 @@ describe('update',()=>{
     expect(ExpressionAttributeValues[':_et']).toBe('TestEntity')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
+  })
+
+  it('creates update with GSI', () => {
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntityGSI.updateParams({ pk: 'test-pk', sk: 'test-sk', GSI1pk: 'test' })
+    expect(UpdateExpression).toBe('SET #_et = if_not_exists(#_et,:_et), #GSI1pk = :GSI1pk')
   })
 
 
