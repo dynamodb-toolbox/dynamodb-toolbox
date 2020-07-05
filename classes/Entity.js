@@ -760,8 +760,11 @@ class Entity {
         // TODO: alias attribute field names        
         // Add names, values and condition expression
         ExpressionAttributeNames = names
-        ExpressionAttributeValues = values
         ConditionExpression = expression
+        
+        if (Object.keys(values).length > 0) {
+          ExpressionAttributeValues = values
+        }
       } // end if names
       
     } // end if filters
