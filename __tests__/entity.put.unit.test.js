@@ -70,6 +70,23 @@ const TestEntity3 = new Entity({
   table: TestTable2
 })
 
+const TestTable3 = new Table({
+  name: 'TestTable3',
+  partitionKey: 'pk',
+  sortKey: 'sk',
+  DocumentClient
+})
+
+const TestEntity4 = new Entity({
+  name: 'TestEntity4',
+  attributes: {
+    id: { partitionKey: true},
+    sk: { hidden: true, sortKey: true, default: (data) => data.id },
+    test: { alias: 'xyz' }
+  },
+  table: TestTable3
+});
+
 describe('put',()=>{
 
   it('creates basic item',() => {
@@ -365,5 +382,13 @@ describe('put',()=>{
     )
     expect(TableName).toBe('test-table')
   })
+
+
+  it('correctly aliases pks', () => {
+    let { Item } = TestEntity4.putParams({ id: 3, xyz: '123' })
+    expect(Item.sk).toBe('3')
+    // expect(TableName).toBe('test-table')
+  })
+
 
 })

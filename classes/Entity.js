@@ -701,12 +701,15 @@ class Entity {
   putParams(item={},options={},params={}) {
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
-
+    
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
+
+    // console.log(data);
+    
 
     // Extract valid options
     const {
