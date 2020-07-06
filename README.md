@@ -149,63 +149,75 @@ If you like working with ORMs, that's great, and you should definitely give thes
 
 ## Table of Contents
 
-- [Installation and Basic Usage](#installation-and-basic-usage)
-- [Conventions and Motivations](#conventions-and-motivations)
-- [Tables](#tables)
-  - [Table Attributes](#table-attributes)
-  - [Table Indexes](#table-indexes)
-- [Entities](#entities)
-  - [Specifying Entity Definitions](#specifying-entity-definitions)
-  - [Entity Attributes](#entity-attributes)
-    - [Using a `string`](#using-a-string)
-    - [Using an `object`](#using-an-object)
-    - [Using an `array` for composite keys](#using-an-array-for-composite-keys)
-    - [Customize defaults with a `function`](#customize-defaults-with-a-function)
-- [Table Properties](#table-properties)
-  - [get/set `DocumentClient`](#getset-documentclient)
-  - [get/set `entities`](#getset-entities)
-  - [get/set `autoExecute`](#getset-autoexecute)
-  - [get/set `autoParse`](#getset-autoparse)
-- [Table Methods](#table-methods)
-  - [query()](#querypartitionkey-options-parameters)
-  - [scan()](#scanoptions-parameters)
-  - [batchGet()](#batchgetitems-options-parameters)
-  - [batchWrite()](#batchwriteitems-options-parameters)
-  - [parse()](#parseentity-input-include)
-  - [get()](#getentity-key-options-parameters)
-  - [delete()](#deleteentity-key-options-parameters)
-  - [put()](#putentity-item-options-parameters)
-  - [update()](#updateentity-key-options-parameters)
-- [Entity Properties](#entity-properties)
-  - [get/set `table`](#getset-table)
-  - [get `DocumentClient`](#get-documentclient)
-  - [get/set `autoExecute`](#getset-autoexecute-1)
-  - [get/set `autoParse`](#getset-autoparse-1)
-  - [get `partitionKey`](#get-partitionkey)
-  - [get `sortKey`](#get-sortkey)
-- [Entity Methods](#entity-methods)
-  - [attribute()](#attributeattribute)
-  - [parse()](#parseinput-include)
-  - [get()](#getkey-options-parameters)
-  - [delete()](#deletekey-options-parameters)
-  - [put()](#putitem-options-parameters)
-  - [update()](#updatekey-options-parameters)
-    - [Removing an attribute](#removing-an-attribute)
-    - [Adding a number to a `number` attribute](#adding-a-number-to-a-number-attribute)
-    - [Adding values to a `set`](#adding-values-to-a-set)
-    - [Deleting values from a `set`](#deleting-values-from-a-set)
-    - [Appending (or prepending) values to a `list`](#appending-or-prepending-values-to-a-list)
-    - [Remove items from a `list`](#remove-items-from-a-list)
-    - [Update items in a `list`](#update-items-in-a-list)
-    - [Update nested data in a `map`](#update-nested-data-in-a-map)
-  - [query()](#querypartitionkey-options-parameters-1)
-  - [scan()](#scanoptions-parameters-1)
-- [Filters and Conditions](#filters-and-conditions)
-  - [Complex Filters and Conditions](#complex-filters-and-conditions)
-- [Projection Expressions](#projection-expressions)
-- [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
-- [Additional References](#additional-references)
-- [Contributions and Feedback](#contributions-and-feedback)
+- [DynamoDB Toolbox - v0.2](#dynamodb-toolbox---v02)
+    - [**NOTE:** This project is in BETA. Please submit issues/feedback or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).](#note-this-project-is-in-beta-please-submit-issuesfeedback-or-feel-free-to-contact-me-on-twitter-jeremy_daly)
+  - [Single Table Designs have never been this easy!](#single-table-designs-have-never-been-this-easy)
+  - [Installation and Basic Usage](#installation-and-basic-usage)
+    - [This is *NOT* an ORM (at least it's not trying to be)](#this-is-not-an-orm-at-least-its-not-trying-to-be)
+  - [Features](#features)
+  - [Table of Contents](#table-of-contents)
+  - [Conventions, Motivations, and Migrations from v0.1](#conventions-motivations-and-migrations-from-v01)
+  - [Tables](#tables)
+    - [Specifying Table Definitions](#specifying-table-definitions)
+    - [Table Attributes](#table-attributes)
+    - [Table Indexes](#table-indexes)
+  - [Entities](#entities)
+    - [Specifying Entity Definitions](#specifying-entity-definitions)
+    - [Entity Attributes](#entity-attributes)
+      - [Using a `string`](#using-a-string)
+      - [Using an `object`](#using-an-object)
+      - [Using an `array` for composite keys](#using-an-array-for-composite-keys)
+      - [Customize defaults with a `function`](#customize-defaults-with-a-function)
+  - [Table Properties](#table-properties)
+    - [get/set `DocumentClient`](#getset-documentclient)
+    - [get/set `entities`](#getset-entities)
+    - [get/set `autoExecute`](#getset-autoexecute)
+    - [get/set `autoParse`](#getset-autoparse)
+  - [Table Methods](#table-methods)
+    - [query(partitionKey [,options] [,parameters])](#querypartitionkey-options-parameters)
+      - [Return Data](#return-data)
+    - [scan([options] [,parameters])](#scanoptions-parameters)
+      - [Return Data](#return-data-1)
+    - [batchGet(items [,options] [,parameters])](#batchgetitems-options-parameters)
+      - [Specifying options for multiple tables](#specifying-options-for-multiple-tables)
+      - [Return Data](#return-data-2)
+    - [batchWrite(items [,options] [,parameters])](#batchwriteitems-options-parameters)
+      - [Return Data](#return-data-3)
+    - [parse(entity, input [,include])](#parseentity-input-include)
+    - [get(entity, key [,options] [,parameters])](#getentity-key-options-parameters)
+    - [delete(entity, key [,options] [,parameters])](#deleteentity-key-options-parameters)
+    - [put(entity, item [,options] [,parameters])](#putentity-item-options-parameters)
+    - [update(entity, key [,options] [,parameters])](#updateentity-key-options-parameters)
+  - [Entity Properties](#entity-properties)
+    - [get/set `table`](#getset-table)
+    - [get `DocumentClient`](#get-documentclient)
+    - [get/set `autoExecute`](#getset-autoexecute-1)
+    - [get/set `autoParse`](#getset-autoparse-1)
+    - [get `partitionKey`](#get-partitionkey)
+    - [get `sortKey`](#get-sortkey)
+  - [Entity Methods](#entity-methods)
+    - [attribute(attribute)](#attributeattribute)
+    - [parse(input [,include])](#parseinput-include)
+    - [get(key [,options] [,parameters])](#getkey-options-parameters)
+    - [delete(key [,options] [,parameters])](#deletekey-options-parameters)
+    - [put(item [,options] [,parameters])](#putitem-options-parameters)
+    - [update(key [,options] [,parameters])](#updatekey-options-parameters)
+      - [Removing an attribute](#removing-an-attribute)
+      - [Adding a number to a `number` attribute](#adding-a-number-to-a-number-attribute)
+      - [Adding values to a `set`](#adding-values-to-a-set)
+      - [Deleting values from a `set`](#deleting-values-from-a-set)
+      - [Appending (or prepending) values to a `list`](#appending-or-prepending-values-to-a-list)
+      - [Remove items from a `list`](#remove-items-from-a-list)
+      - [Update items in a `list`](#update-items-in-a-list)
+      - [Update nested data in a `map`](#update-nested-data-in-a-map)
+    - [query(partitionKey [,options] [,parameters])](#querypartitionkey-options-parameters-1)
+    - [scan([options] [,parameters])](#scanoptions-parameters-1)
+  - [Filters and Conditions](#filters-and-conditions)
+    - [Complex Filters and Conditions](#complex-filters-and-conditions)
+  - [Projection Expressions](#projection-expressions)
+  - [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
+  - [Additional References](#additional-references)
+  - [Contributions and Feedback](#contributions-and-feedback)
 
 ## Conventions, Motivations, and Migrations from v0.1
 
@@ -520,8 +532,8 @@ The second argument is an `options` object that specifies the details of your qu
 | attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
 | startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey) |
 | entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
-| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -563,8 +575,8 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 | segments | `number` | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments) |
 | segment | `number` | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment) |
 | entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
-| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 If you prefer to specify your own parameters, the optional second argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -597,8 +609,8 @@ The optional second argument accepts an `options` object. The following options 
 | consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead) |
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | attributes | `array` or `object` (see below) | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
-| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 #### Specifying options for multiple tables
 The library is built for making working with single table designs easier, but it is possible that you may need to retrieve data from multiple tables within the same batch get. If your `items` contain references to multiple tables, the `consistent` option will accept objects that use either the table `name` or `alias` as the key, and the setting as the value. For example, to specify different `consistent` settings on two tables, you would use something like following:
@@ -650,8 +662,8 @@ The optional second argument accepts an `options` object. The following options 
 | -------- | :--: | ----------- |
 | capacity | `string` or `object` (see below) | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 ```javascript
 const result = await Default.batchWrite(
@@ -746,8 +758,8 @@ The optional second argument accepts an `options` object. The following options 
 | consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
-| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -782,8 +794,8 @@ The optional second argument accepts an `options` object. The following options 
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
 | returnValues | `string` | Determins whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues) |
-| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -819,8 +831,8 @@ The optional second argument accepts an `options` object. The following options 
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
 | returnValues | `string` | Determins whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues) |
-| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -855,8 +867,8 @@ The optional second argument accepts an `options` object. The following options 
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
 | returnValues | `string` | Determins whether to return item attributes as they appeared before or after the item was updated. One of either `none`, `all_old`, `updated_old`, `all_new`, `updated_new`. (ReturnValues) |
-| autoExecute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| autoParse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters and clauses. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
