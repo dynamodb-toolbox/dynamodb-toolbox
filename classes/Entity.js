@@ -479,7 +479,8 @@ class Entity {
 
     // Check for required fields
     Object.keys(required).forEach(field =>
-      required[field] && !data[field] && error(`'${field}' is a required field`)
+      required[field] && !data[field]
+        && error(`'${field}${this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''}' is a required field`)
     ) // end required field check
     
     // Get partition and sort keys
@@ -773,8 +774,9 @@ class Entity {
 
 
     // Check for required fields
-    Object.keys(required).forEach(field =>
-      required[field] !== undefined && !data[field] && error(`'${field}' is a required field`)
+    Object.keys(required).forEach(field => 
+      required[field] !== undefined && !data[field] 
+        && error(`'${field}${this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''}' is a required field`)
     ) // end required field check
 
     // Checks for partition and sort keys
