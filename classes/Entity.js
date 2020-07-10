@@ -18,7 +18,7 @@ const parseConditions = require('../lib/expressionBuilder')
 const parseProjections = require('../lib/projectionBuilder')
 
 // Import error handlers
-const { error, transformAttr } = require('../lib/utils')
+const { error, transformAttr, isEmpty } = require('../lib/utils')
 
 // Declare Entity class
 class Entity {
@@ -346,7 +346,7 @@ class Entity {
         Key: getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
       },
       ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
-      ExpressionAttributeValues ? { ExpressionAttributeValues } : null,
+      !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : null,
       ConditionExpression ? { ConditionExpression } : null,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
@@ -657,7 +657,7 @@ class Entity {
         ExpressionAttributeNames: Object.assign(names,ExpressionAttributeNames)
       },
       typeof params === 'object' ? params : {},
-      Object.keys(ExpressionAttributeValues).length > 0 ? { ExpressionAttributeValues } : {},
+      !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : {},
       ConditionExpression ? { ConditionExpression } : {},
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
@@ -800,7 +800,7 @@ class Entity {
         },{})
       },
       ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
-      ExpressionAttributeValues ? { ExpressionAttributeValues } : null,
+      !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : null,
       ConditionExpression ? { ConditionExpression } : null,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
