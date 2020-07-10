@@ -319,7 +319,7 @@ const { Entity } = require('dynamodb-toolbox')
 Then create a new `Entity` instance by passing in a valid `Entity` definition.
 
 ```javascript
-const MyEntity = new Table({
+const MyEntity = new Entity({
   ... entity definition...
 })
 ```
