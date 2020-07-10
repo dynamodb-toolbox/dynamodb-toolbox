@@ -28,7 +28,13 @@ DefaultTable.entities = new Entity({
     list_alias2: { type: 'list', map: 'list2' },
     test: 'map',
     linked1: ['sk',0, { save: false }],
-    linked2: ['sk',1, { save: false }]
+    linked2: ['sk',1, { save: false }],
+    composite1: { type: 'string', alias: 'composite1_alias' },
+    linked3: ['composite1',0, { save: false }],
+    linked4: ['composite1',1, { save: false, alias: 'linked4_alias' }],
+    composite2_alias: { type: 'string', map: 'composite2' },
+    linked5: ['composite2_alias',0, { save: false, }],
+    linked6: ['composite2_alias',1, { save: false, alias: 'linked6_alias' }],
   }
 })
 
@@ -81,6 +87,21 @@ describe('formatItem', () => {
   it('specifies attributes to include with linked fields', () => {
     let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ sk: 'test1#test2' }, ['linked1'])
     expect(result).toEqual({ linked1: 'test1' })
+  })
+
+  it('formats item with linked aliased composite field', () => {
+    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ composite1: 'test1#test2' })  
+    expect(result).toEqual({ composite1_alias: 'test1#test2', linked3: 'test1', linked4_alias: 'test2' })
+  })
+
+  it('formats item with linked mapped composite field', () => {
+    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ composite2: 'test1#test2'  })  
+    expect(result).toEqual({ composite2_alias: 'test1#test2', linked5: 'test1', linked6_alias: 'test2' })
+  })
+
+  it('passes through attribute not specified in entity', () => {
+    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ unspecified: 'value' })  
+    expect(result).toEqual({ unspecified: 'value' })
   })
 
 })
