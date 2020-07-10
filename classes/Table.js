@@ -782,8 +782,8 @@ class Table {
       } : null, // end if Responses
       // If UnprocessedKeys, return a next function
       result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length > 0 ? { 
-        next: () => { 
-          const nextResult = this.DocumentClient.batchGet(Object.assign(
+        next: async () => { 
+          const nextResult = await this.DocumentClient.batchGet(Object.assign(
             { RequestItems: result.UnprocessedKeys },
             options.capacity ? { ReturnConsumedCapacity: options.capacity.toUpperCase() } : null
           )).promise()
@@ -957,8 +957,8 @@ class Table {
       result,
       // If UnprocessedItems, return a next function
       result.UnprocessedItems && Object.keys(result.UnprocessedItems).length > 0 ? { 
-        next: () => { 
-          const nextResult = this.DocumentClient.batchWrite(Object.assign(
+        next: async () => { 
+          const nextResult = await this.DocumentClient.batchWrite(Object.assign(
             { RequestItems: result.UnprocessedItems },
             options.capacity ? { ReturnConsumedCapacity: options.capacity.toUpperCase() } : null,
             options.metrics ? { ReturnItemCollectionMetrics: options.metrics.toUpperCase() } : null
