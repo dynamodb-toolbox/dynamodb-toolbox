@@ -271,6 +271,7 @@ class Entity {
   } // end delete
 
   // Shortcut for batch operations
+  // Only Key is supported (e.g. no conditions) https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
   deleteBatch(item={}) {
     const payload = this.deleteParams(item)
     return { [payload.TableName] : { DeleteRequest: { Key: payload.Key } } }
@@ -692,6 +693,7 @@ class Entity {
   } // end put
 
   // Shortcut for batch operations
+  // Only Item is supported (e.g. no conditions) https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
   putBatch(item={}) {
     const payload = this.putParams(item)
     return { [payload.TableName] : { PutRequest: { Item: payload.Item } } }

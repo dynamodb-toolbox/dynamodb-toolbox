@@ -665,6 +665,8 @@ The optional second argument accepts an `options` object. The following options 
 | execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
+**NOTE:** The `BatchWriteItem` does not support conditions or return deleted items. *"BatchWriteItem does not behave in the same way as individual PutItem and DeleteItem calls would. For example, you cannot specify conditions on individual put and delete requests, and BatchWriteItem does not return deleted items in the response."* ~ [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html)
+
 ```javascript
 const result = await Default.batchWrite(
   [
