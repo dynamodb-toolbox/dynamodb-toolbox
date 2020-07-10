@@ -955,11 +955,11 @@ class Table {
   parseBatchWriteResponse(result,options={}) {
     return Object.assign(
       result,
-      // If UnprocessedKeys, return a next function
-      result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length > 0 ? { 
+      // If UnprocessedItems, return a next function
+      result.UnprocessedItems && Object.keys(result.UnprocessedItems).length > 0 ? { 
         next: () => { 
           const nextResult = this.DocumentClient.batchWrite(Object.assign(
-            { RequestItems: result.UnprocessedKeys },
+            { RequestItems: result.UnprocessedItems },
             options.capacity ? { ReturnConsumedCapacity: options.capacity.toUpperCase() } : null,
             options.metrics ? { ReturnItemCollectionMetrics: options.metrics.toUpperCase() } : null
           )).promise()
