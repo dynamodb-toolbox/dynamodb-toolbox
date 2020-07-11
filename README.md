@@ -146,6 +146,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - **Projection Builder:** Specify which attributes and paths should be returned for each entity type, and automatically filter the results.
 - **Secondary Index Support:** Map your secondary indexes (GSIs and LSIs) to your table, and dynamically link your entity attributes.
 - **Batch Operations:** Full support for batch operations with a simpler interface to work with multiple entities and tables.
+- **Default Value Dependency Graphs:** Create dynamic attribute defaults by chaining other dynamic attribute defaults together.
 
 ## Table of Contents
 
