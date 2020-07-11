@@ -373,6 +373,7 @@ For more control over an attribute's behavior, you can specify an object as the 
 | type  | `String` | all | The DynamoDB type for this attribute. Valid values are `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`. Defaults to `string`. |
 | coerce  | `boolean` | `string`, `boolean`, `number`, `list` | Coerce values to the specified type. Enabled by default on `string`, `boolean`, and `number`. If enabled on `list` types, the interpreter will try to split a string by commas. |
 | default  | *same as* `type` or `function` | all | Specifies a default value (if none provided) when using `put` or `update`. This also supports functions for creating custom default. See more below.  |
+| dependsOn  | `string` or `array` of `string`s | all | Creates a dependency graph for default values. For example, if the attribute uses a default value that requires another attribute's default value, this will ensure dependent attributes' default values are calcuated first.  |
 | onUpdate  | `boolean` | all | Forces `default` values to be passed on every `update`. |
 | hidden  | `boolean` | all | Hides attribute from returned JavaScript object when auto-parsing is enabled or when using the `parse` method. |
 | required  | `boolean` or "always" | all | Specifies whether an attribute is required. A value of `true` requires the attribute for all `put` operations. A `string` value of "always" requires the attribute for `put` *and* `update` operations. |
