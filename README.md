@@ -308,7 +308,7 @@ indexes: {
 
 An **Entity** represent a well-defined schema for a DynamoDB item. An Entity can represent things like a *User*, an *Order*, an *Invoice Line Item*, a *Configuration Object*, or whatever else you want. Each `Entity` defined with the DynamoDB Toolbox must be attached to a `Table`. An `Entity` defines its own attributes, but can share these attributes with other entities on the same table (either explicitly or coincidentally). Entities must flag an attribute as a `partitionKey` and if enabled on the table, a `sortKey` as well. 
 
-Note tha a `Table` can have multiple Entities, but an `Entity` can only have one `Table`.
+Note that a `Table` can have multiple Entities, but an `Entity` can only have one `Table`.
 
 To define a new entity, import it into your script:
 
