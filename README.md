@@ -623,7 +623,7 @@ consistent: {
   'my-other-table-name': false
 }
 ```
-Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use te same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](#projection-expression) formatting.
+Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use the same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](#projection-expression) formatting.
 
 
 ```javascript
