@@ -224,4 +224,39 @@ describe('delete',()=>{
     expect(() => TestEntity.deleteBatch()).toThrow(`'pk' or 'email' is required`)
   })
 
+
+  // Adding this for regression testing
+  it('Non-Key Index Generated on Delete #74', async () => {
+    const FoosTable = new Table({
+      name: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      indexes: {
+        'GSI-1': { partitionKey: 'gsi1pk', sortKey: 'gsi1sk' },
+      },
+      DocumentClient,
+    });
+    const Foos = new Entity({
+      name: 'Foo',
+      table: FoosTable,
+      timestamps: true,
+      attributes: {
+        pk: { hidden: true, partitionKey: true, default: (data) => (`FOO#${data.id}`) },
+        sk: { hidden: true, sortKey: true, default: (data) => (`FOO#${data.id}`) },
+    
+        // This next `default` gets executed on delete() and fails with "Cannot read property 'tenant' of undefined"
+        gsi1pk: { hidden: true, default: (data) => (`TENANT#${data.meta.tenant}`) }, 
+    
+        gsi1sk: { hidden: true, default: (data) => (`FOO#${data.id}`) },
+        id: { required: 'always' },
+        meta: { type: 'map', required: 'always' },
+        __context__: { hidden: true },
+      },
+    });
+
+    const key = { id: 'xyz' }
+    let result = Foos.deleteParams(key) // Fails with v0.2.0-beta. Fine with v0.2.0-alpha
+    expect(result).toEqual({ TableName: 'test-table', Key: { pk: 'FOO#xyz', sk: 'FOO#xyz' } })
+  })
+
 })
