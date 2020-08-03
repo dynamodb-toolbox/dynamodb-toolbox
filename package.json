@@ -8,10 +8,11 @@
     "test": "jest unit",
     "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "changeset": "changeset",
+    "release": "changeset publish"
   },
   "license": "MIT",
-  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jeremydaly/dynamodb-toolbox.git"
@@ -35,6 +36,7 @@
     ]
   },
   "devDependencies": {
+    "@changesets/cli": "^2.9.2",
     "aws-sdk": "^2.713.0",
     "coveralls": "^3.1.0",
     "dynalite": "^3.2.0",
