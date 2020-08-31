@@ -7,11 +7,14 @@
  * @license MIT
  */
 
-const Model = require('./classes/Model')
+// TODO: Check param merging
+// TODO: 'Remove null fields' option
+// TODO: prevent reserved field names?
+
+const Table = require('./classes/Table')
+const Entity = require('./classes/Entity')
 
 module.exports = {
-  Model
+  Table,
+  Entity
 }
-
-
-// TODO: prevent reserved field names?

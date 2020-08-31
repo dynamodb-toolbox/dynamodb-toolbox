@@ -1,23 +1,14 @@
-// TEST MODEL for testing
+// TEST ENTITY for testing
 
 module.exports = {
-  // Include table name
-  table: 'test-table',
-
-  // Include model field
-  model: true,
-
-  // Include timestamps
-  timestamps: true,
-
-  // Define partition and sort keys
-  partitionKey: 'pk',
-  sortKey: 'sk',
-
-  // Define schema
-  schema: {
-    pk: { type: 'string', alias: 'email' },
-    sk: { type: 'string', alias: 'type' },
+  // Specify name
+  name: 'TestEntity',
+  // Optional description
+  // description: 'This is a test description for this entity',
+  // Define attributes
+  attributes: {
+    email: { type: 'string', partitionKey: true },
+    test_type: { type: 'string', sortKey: true },
     test_string: { type: 'string', coerce: false, default: 'test string' },
     test_string_coerce: { type: 'string' },
     test_number: { type: 'number', alias: 'count', coerce: false },

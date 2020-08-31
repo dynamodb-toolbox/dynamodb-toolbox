@@ -1,11 +1,8 @@
-// SIMPLE MODEL w/ SORT KEY for testing
+// SIMPLE ENTITY w/ SORT KEY for testing
 
 module.exports = {
-  // Include table name
-  table: 'simple-table',
-
-  // Include model field
-  model: false,
+  // Specify entity name
+  name: 'SimpleEntitySK',
 
   // Include timestamps
   timestamps: false,
@@ -14,8 +11,8 @@ module.exports = {
   partitionKey: 'pk',
   sortKey: 'sk',
 
-  // Define schema
-  schema: {
+  // Define attributes
+  attributes: {
     pk: { type: 'string' },
     sk: { type: 'string' },
     test: { type: 'string' }
