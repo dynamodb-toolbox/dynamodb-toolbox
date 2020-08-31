@@ -17,12 +17,13 @@ const TestEntity = new Entity({
   attributes: {
     email: { type: 'string', partitionKey: true },
     sort: { type: 'string', sortKey: true },
-    test_string: { type: 'string', coerce: false, default: 'test string' },
+    test_string: { type: 'string', coerce: false, default: 'default string' },
     test_string_coerce: { type: 'string' },
     test_number: { type: 'number', alias: 'count', coerce: false },
     test_number_coerce: { type: 'number', default: 0 },
     test_boolean: { type: 'boolean', coerce: false },
     test_boolean_coerce: { type: 'boolean' },
+    test_boolean_default: { type: 'boolean', default: false },
     test_list: { type: 'list' },
     test_list_coerce: { type: 'list', coerce: true },
     test_map: { type: 'map', alias: 'contents' },
@@ -101,12 +102,13 @@ describe('update',()=>{
   it('creates default update', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({ pk: 'test-pk', sk: 'test-sk' })
     
-    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)')
-    expect(ExpressionAttributeNames).toEqual({ '#_md': '_md', '#_ct': '_ct', '#test_string': 'test_string', '#test_number_coerce':'test_number_coerce', '#_et': '_et' })
+    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)')
+    expect(ExpressionAttributeNames).toEqual({ '#_md': '_md', '#_ct': '_ct', '#test_string': 'test_string', '#test_boolean_default': 'test_boolean_default', '#test_number_coerce':'test_number_coerce', '#_et': '_et' })
     expect(ExpressionAttributeValues).toHaveProperty(':_ct')
     expect(ExpressionAttributeValues).toHaveProperty(':_md')
     expect(ExpressionAttributeValues).toHaveProperty(':test_string')
     expect(ExpressionAttributeValues).toHaveProperty(':test_number_coerce')
+    expect(ExpressionAttributeValues).toHaveProperty(':test_boolean_default')
     expect(ExpressionAttributeValues).toHaveProperty(':_et')
     expect(ExpressionAttributeValues[':_et']).toBe('TestEntity')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
@@ -125,14 +127,15 @@ describe('update',()=>{
       sk: 'test-sk',
       test_string: 'test string'
     })
-    expect(UpdateExpression).toBe('SET #test_string = :test_string, #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)')
-    expect(ExpressionAttributeNames).toEqual({ '#_md': '_md', '#_ct': '_ct', '#test_string': 'test_string', '#test_number_coerce':'test_number_coerce', '#_et': '_et' })
+    expect(UpdateExpression).toBe('SET #test_string = :test_string, #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)')
+    expect(ExpressionAttributeNames).toEqual({ '#_md': '_md', '#_ct': '_ct', '#test_string': 'test_string', '#test_boolean_default': 'test_boolean_default', '#test_number_coerce':'test_number_coerce', '#_et': '_et' })
     expect(ExpressionAttributeValues).toHaveProperty(':_md')
     expect(ExpressionAttributeValues).toHaveProperty(':_ct')
     expect(ExpressionAttributeValues).not.toHaveProperty(':pk')
     expect(ExpressionAttributeValues).not.toHaveProperty(':sk')
     expect(ExpressionAttributeValues[':test_string']).toBe('test string')
     expect(ExpressionAttributeValues).toHaveProperty(':test_number_coerce')
+    expect(ExpressionAttributeValues).toHaveProperty(':test_boolean_default')
     expect(ExpressionAttributeValues).toHaveProperty(':_et')
     expect(ExpressionAttributeValues[':_et']).toBe('TestEntity')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
@@ -221,11 +224,17 @@ describe('update',()=>{
       test_boolean: false,
       test_list: ['a','b','c'],
       test_map: { a: 1, b: 2 },
-      test_binary: Buffer.from('test')
+      test_binary: Buffer.from('test'),
+      test_boolean_default: false,
+      test_number_coerce: 0
     })
+    expect(UpdateExpression).toBe('SET #test_string = :test_string, #test_number_coerce = :test_number_coerce, #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_number = :test_number, #test_boolean = :test_boolean, #test_list = :test_list, #test_map = :test_map, #test_binary = :test_binary')
+  
     expect(ExpressionAttributeValues[':test_string']).toBe('test')
     expect(ExpressionAttributeValues[':test_number']).toBe(1)
+    expect(ExpressionAttributeValues[':test_number_coerce']).toBe(0)
     expect(ExpressionAttributeValues[':test_boolean']).toBe(false)
+    expect(ExpressionAttributeValues[':test_boolean_default']).toBe(false)
     expect(ExpressionAttributeValues[':test_list']).toEqual(['a','b','c'])
     expect(ExpressionAttributeValues[':test_map']).toEqual({ a: 1, b: 2 })
     expect(ExpressionAttributeValues[':test_binary']).toEqual(Buffer.from('test'))
@@ -289,8 +298,8 @@ describe('update',()=>{
       test_number: { $add: 10 },
       test_number_set_type: { $add: [1,2,3] }
     })
-    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type')
-    expect(ExpressionAttributeNames).toEqual({ '#_md': '_md', '#_ct': '_ct', '#test_string': 'test_string', '#_et': '_et', '#test_number': 'test_number', '#test_number_set_type': 'test_number_set_type', '#test_number_coerce': 'test_number_coerce' })
+    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type')
+    expect(ExpressionAttributeNames).toEqual({ '#_md': '_md', '#_ct': '_ct', '#test_string': 'test_string', '#_et': '_et','#test_boolean_default': 'test_boolean_default', '#test_number': 'test_number', '#test_number_set_type': 'test_number_set_type', '#test_number_coerce': 'test_number_coerce' })
     expect(ExpressionAttributeValues).toHaveProperty(':_md')
     expect(ExpressionAttributeValues).toHaveProperty(':_ct')
     expect(ExpressionAttributeValues).not.toHaveProperty(':pk')
@@ -311,12 +320,13 @@ describe('update',()=>{
       test_string_set_type: { $delete: ['1','2','3'] },
       test_number_set_type: { $delete: [1,2,3] }
     })
-    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) DELETE #test_string_set_type :test_string_set_type, #test_number_set_type :test_number_set_type')
+    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) DELETE #test_string_set_type :test_string_set_type, #test_number_set_type :test_number_set_type')
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
       '#_et': '_et',
       '#_ct': '_ct',
       '#_md': '_md',
+      '#test_boolean_default': 'test_boolean_default',
       '#test_string_set_type': 'test_string_set_type',
       '#test_number_set_type': 'test_number_set_type',
       '#test_number_coerce': 'test_number_coerce'
@@ -340,12 +350,13 @@ describe('update',()=>{
       sk: 'test-sk',
       test_list: { $remove: [2,3,8] }
     })
-    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_list[2], #test_list[3], #test_list[8]')
+    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_list[2], #test_list[3], #test_list[8]')
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
       '#_et': '_et',
       '#_ct': '_ct',
       '#_md': '_md',
+      '#test_boolean_default': 'test_boolean_default',
       '#test_list': 'test_list',
       '#test_number_coerce': 'test_number_coerce'
     })
@@ -365,12 +376,13 @@ describe('update',()=>{
       sk: 'test-sk',
       test_list: { 2: 'Test2', 5: 'Test5' }
     })
-    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list[2] = :test_list_2, #test_list[5] = :test_list_5')
+    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list[2] = :test_list_2, #test_list[5] = :test_list_5')
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
       '#_et': '_et',
       '#_ct': '_ct',
       '#_md': '_md',
+      '#test_boolean_default': 'test_boolean_default',
       '#test_list': 'test_list',
       '#test_number_coerce': 'test_number_coerce'
     })
@@ -394,12 +406,13 @@ describe('update',()=>{
       test_list: { $append: [1,2,3] },
       test_list_coerce: { $prepend: [1,2,3] }
     })
-    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(#test_list,:test_list), #test_list_coerce = list_append(:test_list_coerce,#test_list_coerce)')
+    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(#test_list,:test_list), #test_list_coerce = list_append(:test_list_coerce,#test_list_coerce)')
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
       '#_et': '_et',
       '#_ct': '_ct',
       '#_md': '_md',
+      '#test_boolean_default': 'test_boolean_default',
       '#test_list': 'test_list',
       '#test_list_coerce': 'test_list_coerce',
       '#test_number_coerce': 'test_number_coerce'
@@ -429,11 +442,12 @@ describe('update',()=>{
         'prop5': [1,2,3]
       }}
     })
-    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1, #test_map.#test_map_prop2[1] = :test_map_prop2_1, #test_map.#test_map_prop2[4] = :test_map_prop2_4, #test_map.#test_map_prop3.#test_map_prop3_prop4 = :test_map_prop3_prop4, #test_map.#test_map_prop5 = :test_map_prop5')
+    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1, #test_map.#test_map_prop2[1] = :test_map_prop2_1, #test_map.#test_map_prop2[4] = :test_map_prop2_4, #test_map.#test_map_prop3.#test_map_prop3_prop4 = :test_map_prop3_prop4, #test_map.#test_map_prop5 = :test_map_prop5')
     expect(ExpressionAttributeNames).toEqual({
       '#_et': '_et',
       '#_ct': '_ct',
       '#_md': '_md',
+      '#test_boolean_default': 'test_boolean_default',
       '#test_string': 'test_string',
       '#test_map_prop1': 'prop1',
       '#test_map_prop2': 'prop2',
@@ -445,7 +459,7 @@ describe('update',()=>{
     })
     expect(ExpressionAttributeValues).toHaveProperty(':_et')
     expect(ExpressionAttributeValues[':_et']).toBe('TestEntity')
-    expect(ExpressionAttributeValues[':test_string']).toBe('test string')
+    expect(ExpressionAttributeValues[':test_string']).toBe('default string')
     expect(ExpressionAttributeValues[':test_map_prop1']).toBe('some value')
     expect(ExpressionAttributeValues[':test_map_prop2_1']).toBe('list value')
     expect(ExpressionAttributeValues[':test_map_prop2_4']).toBe('list value4')
@@ -463,11 +477,12 @@ describe('update',()=>{
       count: { $add: 10 },
       contents: { a: 1, b: 2 }
     })
-    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map = :test_map ADD #test_number :test_number')
+    expect(UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map = :test_map ADD #test_number :test_number')
     expect(ExpressionAttributeNames).toEqual({
       '#_et': '_et',
       '#_ct': '_ct',
       '#_md': '_md',
+      '#test_boolean_default': 'test_boolean_default',
       '#test_string': 'test_string',
       '#test_number': 'test_number',
       '#test_map': 'test_map',
@@ -475,7 +490,7 @@ describe('update',()=>{
     })
     expect(ExpressionAttributeValues).toHaveProperty(':_et')
     expect(ExpressionAttributeValues[':_et']).toBe('TestEntity')
-    expect(ExpressionAttributeValues[':test_string']).toBe('test string')
+    expect(ExpressionAttributeValues[':test_string']).toBe('default string')
     expect(ExpressionAttributeValues[':test_number']).toBe(10)
     expect(ExpressionAttributeValues[':test_map']).toEqual({ a: 1, b: 2 })
     expect(Key).toEqual({ pk: 'test@test.com', sk: 'test-sk' })
@@ -653,6 +668,7 @@ describe('update',()=>{
       '#_md': '_md',
       '#_et': '_et',
       '#attr1': 'pk',
+      '#test_boolean_default': 'test_boolean_default',
       '#test_number_coerce': 'test_number_coerce'
     })
     expect(ExpressionAttributeValues).toHaveProperty(':attr1')
