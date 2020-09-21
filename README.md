@@ -878,6 +878,19 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 **But wait, there's more!** The `UpdateExpression` lets you do all kinds of crazy things like `REMOVE` attributes, `ADD` values to numbers and sets, and manipulate arrays. The DynamoDB Toolbox has simple ways to deal with all these different operations by properly formatting your input data.
 
+#### Updating an attribute
+
+To update an attribute, include the key and any fields that you want to update.
+
+```javascript
+let item = {
+   id: 123,
+   sk: 'abc',
+   status: 'inactive',
+}
+await MyEntity.update(item)
+```
+
 #### Removing an attribute
 
 To remove attributes, add a `$remove` key to your item and provide an array of attributes or aliases to remove.
