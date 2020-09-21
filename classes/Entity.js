@@ -625,7 +625,7 @@ class Entity {
           // if (hasValue(value)) {
           if (value !== undefined) {
             // Push the update to SET
-            SET.push(mapping.default && !item[field] && !mapping.onUpdate ?
+            SET.push(mapping.default !== undefined  && item[field] === undefined && !mapping.onUpdate ?
               `#${field} = if_not_exists(#${field},:${field})`
               : `#${field} = :${field}`)
             // Add names and values
