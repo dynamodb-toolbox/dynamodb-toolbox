@@ -3,8 +3,10 @@
   "version": "0.2.0-beta.1",
   "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "prepublish": "tsc",
     "test": "jest unit",
     "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
@@ -35,10 +37,14 @@
     ]
   },
   "devDependencies": {
-    "aws-sdk": "^2.713.0",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.11.2",
+    "aws-sdk": "^2.763.0",
     "coveralls": "^3.1.0",
-    "dynalite": "^3.2.0",
+    "dynalite": "^3.2.1",
     "eslint": "^6.8.0",
-    "jest": "^24.9.0"
+    "jest": "^26.4.2",
+    "ts-jest": "^26.4.1",
+    "typescript": "^4.0.3"
   }
 }
