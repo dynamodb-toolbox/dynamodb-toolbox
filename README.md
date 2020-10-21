@@ -203,6 +203,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
     - [delete(key [,options] [,parameters])](#deletekey-options-parameters)
     - [put(item [,options] [,parameters])](#putitem-options-parameters)
     - [update(key [,options] [,parameters])](#updatekey-options-parameters)
+      - [Updating an attribute](#updating-an-attribute)
       - [Removing an attribute](#removing-an-attribute)
       - [Adding a number to a `number` attribute](#adding-a-number-to-a-number-attribute)
       - [Adding values to a `set`](#adding-values-to-a-set)
@@ -218,6 +219,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
   - [Projection Expressions](#projection-expressions)
   - [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
   - [Additional References](#additional-references)
+  - [Sponsors](#sponsors)
   - [Contributions and Feedback](#contributions-and-feedback)
 
 ## Conventions, Motivations, and Migrations from v0.1
@@ -1173,6 +1175,11 @@ let results = await MyEntity.update(item, {}, {
 - [Best Practices for DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
 - [DynamoDB, explained.](https://www.dynamodbguide.com/)
 - [The DynamoDB Book](https://www.dynamodbbook.com/)
+
+## Sponsors
+
+[![New Relic](https://user-images.githubusercontent.com/2053544/96728664-55238700-1382-11eb-93cb-82fe7cb5e043.png)](https://ad.doubleclick.net/ddm/trackclk/N1116303.3950900PODSEARCH.COM/B24770737.285235234;dc_trk_aid=479074825;dc_trk_cid=139488579;dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua=;gdpr=${GDPR};gdpr_consent=${GDPR_CONSENT_755})
+<IMG SRC="https://ad.doubleclick.net/ddm/trackimp/N1116303.3950900PODSEARCH.COM/B24770737.285235234;dc_trk_aid=479074825;dc_trk_cid=139488579;ord=[timestamp];dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua=;gdpr=${GDPR};gdpr_consent=${GDPR_CONSENT_755}?" BORDER="0" HEIGHT="1" WIDTH="1" ALT="Advertisement">
 
 ## Contributions and Feedback
 Contributions, ideas and bug reports are welcome and greatly appreciated. Please add [issues](https://github.com/jeremydaly/dynamodb-toolbox/issues) for suggestions and bug reports or create a pull request. You can also contact me on Twitter: [@jeremy_daly](https://twitter.com/jeremy_daly).
