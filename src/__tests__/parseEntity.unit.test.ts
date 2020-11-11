@@ -1,7 +1,11 @@
-const parseEntity = require('../lib/parseEntity')
+import { EntityConstructor } from 'classes/Entity'
+import parseEntity from '../lib/parseEntity'
+
+type Schema = any
+type HiddenKeys = any
 
 // Simulate Entity config
-const entity = {
+const entity: EntityConstructor<Schema,HiddenKeys> = {
   name: 'TestEntity',
   timestamps: true,
   created: '_created',

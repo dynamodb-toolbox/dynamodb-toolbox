@@ -1,8 +1,8 @@
-const projectionBuilder = require('../lib/projectionBuilder')
+import projectionBuilder from '../lib/projectionBuilder'
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
+import Table from '../classes/Table'
+import Entity from '../classes/Entity'
 
 
 // Create basic table
@@ -13,7 +13,7 @@ let DefaultTable = new Table({
 })
 
 // Create basic entity
-DefaultTable.entities = new Entity({
+const User = new Entity({
   name: 'User',
   attributes: {
     family: { type: 'string', partitionKey: true },
@@ -23,17 +23,19 @@ DefaultTable.entities = new Entity({
     friends: 'list',
     test: 'map',
     test2: { type: 'map', alias: 'mapAlias' }
-  }
+  },
+  table: DefaultTable
 })
 
 
-DefaultTable.entities = new Entity({
+const Pet = new Entity({
   name: 'Pet',
   attributes: {
     family: { type: 'string', partitionKey: true },
     name: { type: 'string', sortKey: true },
     petType: 'string'
-  }
+  },
+  table: DefaultTable
 })
 
 
@@ -67,11 +69,13 @@ describe('projectionBuilder',() => {
   })
 
   it('fails when no table is passed', () => {
+    // @ts-expect-error
     expect(() => { projectionBuilder(['pk']) })
       .toThrow('Tables must be valid and contain attributes')
   })
 
   it('fails when invalid table is passed', () => {
+    // @ts-expect-error
     expect(() => { projectionBuilder(['pk'], { test: true }) })
       .toThrow('Tables must be valid and contain attributes')
   })
@@ -155,21 +159,25 @@ describe('projectionBuilder',() => {
   })
 
   it('fails when invalid type is passed in object', () => {
+    // @ts-expect-error
     expect(() => { projectionBuilder({ User: {} }, DefaultTable) })
       .toThrow('Only arrays or strings are supported')
   })
 
   it('fails when projections are not strings', () => {
+    // @ts-expect-error
     expect(() => { projectionBuilder({ User: ['pk',[]] }, DefaultTable) })
       .toThrow('Entity projections must be string values')
   })
 
   it('fails when entity is invalid', () => {
+    // @ts-expect-error
     expect(() => { projectionBuilder({ Test: 'pk,sk' }, DefaultTable) })
       .toThrow(`'Test' is not a valid entity on this table`)
   })
 
   it('fails when projection is an invalid type', () => {
+    // @ts-expect-error
     expect(() => { projectionBuilder(['pk',1], DefaultTable) })
       .toThrow(`'number' is an invalid type. Projections require strings or arrays`)
   })

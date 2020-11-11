@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -7,7 +5,6 @@
  */
 
 import { EntityAttributeConfig } from '../classes/Entity'
-
 
 export const validTypes = ['string','boolean','number','list','map','binary','set']
 export const validKeyTypes = ['string','number','binary']

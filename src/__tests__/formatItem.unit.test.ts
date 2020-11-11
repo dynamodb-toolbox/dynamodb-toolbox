@@ -1,11 +1,10 @@
-const formatItem = require('../lib/formatItem')
+import formatItem from '../lib/formatItem'
 
-const { DocumentClient } = require('./bootstrap-tests')
+import { DocumentClient } from './bootstrap-tests'
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
-
+import Table from '../classes/Table'
+import Entity from '../classes/Entity'
 
 // Create basic table
 let DefaultTable = new Table({
@@ -16,7 +15,7 @@ let DefaultTable = new Table({
 })
 
 // Create basic entity
-DefaultTable.entities = new Entity({
+DefaultTable.addEntity(new Entity({
   name: 'User',
   attributes: {
     pk: { type: 'string', partitionKey: true },
@@ -36,7 +35,7 @@ DefaultTable.entities = new Entity({
     linked5: ['composite2_alias',0, { save: false, }],
     linked6: ['composite2_alias',1, { save: false, alias: 'linked6_alias' }],
   }
-})
+}))
 
 // console.log(DefaultTable.User);
 

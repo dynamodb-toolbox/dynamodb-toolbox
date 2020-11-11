@@ -1,8 +1,9 @@
-const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+import { Table, Entity } from '../index'
+import { DocumentClient } from'./bootstrap-tests'
 
-let TestTable
-let TestEntity
+let TestTable: any
+let TestEntity: any
+let TestEntity2: any
 
 describe('entities',()=>{
 
@@ -33,8 +34,8 @@ describe('entities',()=>{
   })
 
   it('fails when assigning the same entity to the table', () => {
-    TestTable.entities = TestEntity
-    expect(() => { TestTable.entities = TestEntity })
+    TestTable.addEntity(TestEntity)
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`Entity name 'TestEntity' already exists`)
   })
 
@@ -49,8 +50,8 @@ describe('entities',()=>{
       }
     }) 
 
-    TestTable.entities = TestEntity
-    expect(() => { TestTable.entities = TestEntity2 })
+    TestTable.addEntity(TestEntity)
+    expect(() => { TestTable.addEntity(TestEntity2) })
       .toThrow(`Entity name 'TestEntity' already exists`)
   })
 
@@ -64,7 +65,7 @@ describe('entities',()=>{
       }
     }) 
 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`'query' is a reserved word and cannot be used to name an Entity`)
   })
 
@@ -78,7 +79,7 @@ describe('entities',()=>{
       }
     }) 
 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`TestEntity entity does not have a sortKey defined`)
   })
 
@@ -97,7 +98,7 @@ describe('entities',()=>{
       }
     }) 
 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`TestEntity entity contains a sortKey, but the Table does not`)
   })
 
@@ -112,7 +113,7 @@ describe('entities',()=>{
       }
     }) 
 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`The Table's partitionKey name (pk) conflicts with an Entity attribute name`)
   })
 
@@ -143,7 +144,7 @@ describe('entities',()=>{
       }
     }) 
 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`'GSI1x' is not a valid secondary index name`)
   })
 
@@ -159,7 +160,7 @@ describe('entities',()=>{
       }
     }) 
 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`TestEntity contains a sortKey, but it is not used by GSI2`)
   })
 
@@ -175,7 +176,7 @@ describe('entities',()=>{
         GSI1sk: 'string'
       }
     }) 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`GSI1's sortKey name (GSI1sk) conflicts with another Entity attribute name`)
   })
 
@@ -190,7 +191,7 @@ describe('entities',()=>{
         // GSI1sk: {  },
       }
     }) 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`GSI1 requires mappings for both the partitionKey and the sortKey`)
   })
 
@@ -205,7 +206,7 @@ describe('entities',()=>{
         
       }
     }) 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`Attribute or alias '_et' conflicts with the table's 'entityField' mapping or entity alias`)
   })
 
@@ -220,7 +221,7 @@ describe('entities',()=>{
         
       }
     }) 
-    expect(() => { TestTable.entities = TestEntity })
+    expect(() => { TestTable.addEntity(TestEntity) })
       .toThrow(`TestEntity attribute type for 'strongType' (number) does not match table's type (list)`)
   })
 
@@ -251,7 +252,7 @@ describe('entities',()=>{
 
   
   it(`fails on invalid entity assignement`, () => {    
-    expect(() => { TestTable.entities = {} })
+    expect(() => { TestTable.addEntity({}) })
       .toThrow(`Invalid Entity`)
   })
 

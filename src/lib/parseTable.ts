@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -87,7 +85,7 @@ export const parseTable = (table: TableConstructor) => {
       partitionKey,
       sortKey,
       entityField,
-      attributes: parseAttributes(attributes,partitionKey,sortKey),
+      attributes: parseAttributes(attributes,partitionKey,sortKey) as any,
       indexes
     },
     autoExecute,

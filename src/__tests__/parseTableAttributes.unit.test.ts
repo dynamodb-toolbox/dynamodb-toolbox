@@ -1,6 +1,7 @@
-const parseTableAttributes = require('../lib/parseTableAttributes')
+import { TableAttributes } from 'classes/Table'
+import parseTableAttributes from '../lib/parseTableAttributes'
 
-let attrs = {
+let attrs: TableAttributes = {
   pk: 'string', 
   sk: 'string'
 }
@@ -12,6 +13,7 @@ describe('parseTableAttributes', () => {
     expect(parseTableAttributes(attrs,'pk','sk')).toEqual({ pk: { type: 'string', mappings: {} }, sk: { type: 'string', mappings: {} } })
   })
 
+    // Removed this requirement 
   it.skip('fails when attribute is missing type', async () => {
     expect(() => {
       parseTableAttributes(Object.assign({},attrs,{ test: {} }),'pk','sk')

@@ -1,5 +1,5 @@
-const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+import { Table, Entity } from '../index'
+import { DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -88,6 +88,7 @@ describe('table.parse',()=>{
   })
 
   it('fails on invalid entity when performing a parse', () => {
+    // @ts-expect-error
     expect(TestTable.parse('TestEntityX')).rejects.toThrow(`'TestEntityX' is not a valid Entity`)
   })
 

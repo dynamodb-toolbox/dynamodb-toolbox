@@ -1,12 +1,12 @@
-const parseTable = require('../lib/parseTable')
+import parseTable from '../lib/parseTable'
 
 // Bootstrap testing
-const { DocumentClient } = require('./bootstrap-tests')
+import { DocumentClient } from './bootstrap-tests'
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
+import Table, { TableConstructor } from '../classes/Table'
 
-let table = {
+let table: TableConstructor = {
   name: 'test-table',
   alias: 'test-table-alias',
   partitionKey: 'pk',

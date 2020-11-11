@@ -1,5 +1,5 @@
-const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+import { Table, Entity } from '../index'
+import { DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -88,6 +88,7 @@ describe('get',()=>{
   })
 
   it('fails with undefined input (sync)', () => {
+    // @ts-expect-error
     expect(() => TestEntity.getParams()).toThrow(`'pk' or 'email' is required`)
   })
 
@@ -104,6 +105,7 @@ describe('get',()=>{
   })
 
   it('fails when missing partitionKey (no alias) (sync)', () => {
+    // @ts-expect-error
     expect(() => TestEntity2.getParams()).toThrow(`'pk' is required`)
   })
 
@@ -131,16 +133,19 @@ describe('get',()=>{
   it('fails on extra options', () => {
     expect(() => TestEntity.getParams(
       { pk: 'x', sk: 'y' },
+      // @ts-expect-error
       { execute: false, parse: false, extra: true }
     )).toThrow('Invalid get options: extra')
   })
 
   it('fails on invalid consistent option', () => {
+    // @ts-expect-error
     expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { consistent: 'true' }))
       .toThrow(`'consistent' requires a boolean`)
   })
 
   it('fails on invalid capacity option', () => {
+    // ts-expect-error
     expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
       .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })

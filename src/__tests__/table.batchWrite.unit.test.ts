@@ -1,5 +1,6 @@
-const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { Table, Entity } from '../index'
+import { DocumentClient as docClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -7,7 +8,7 @@ const TestTable = new Table({
   partitionKey: 'pk',
   sortKey: 'sk',
   indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
-  DocumentClient
+  DocumentClient: docClient
 })
 
 const TestEntity = new Entity({
@@ -24,6 +25,7 @@ const TestEntity = new Entity({
 describe('batchWrite',()=>{
 
   it('fails when batchWrite is empty', () => {
+    // @ts-expect-error
     expect(() => { TestTable.batchWriteParams() })
       .toThrow(`No items supplied`)
   })
@@ -36,10 +38,10 @@ describe('batchWrite',()=>{
   it('batchWrites data to a single table', () => {
     let result = TestTable.batchWriteParams(
       TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'})
-    )
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.pk).toBe('test')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.sk).toBe('testsk')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test')
+    ) as DocumentClient.BatchWriteItemInput
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.test).toBe('test')
   })
 
   it('fails when extra options', () => {
@@ -70,10 +72,10 @@ describe('batchWrite',()=>{
     let result = TestTable.batchWriteParams(
       TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
       { capacity: 'total', metrics: 'size' }
-    )
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.pk).toBe('test')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.sk).toBe('testsk')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test')
+    ) as DocumentClient.BatchWriteItemInput
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.test).toBe('test')
     expect(result.ReturnConsumedCapacity).toBe('TOTAL')
     expect(result.ReturnItemCollectionMetrics).toBe('SIZE')
   })
@@ -82,21 +84,21 @@ describe('batchWrite',()=>{
     let result = TestTable.batchWriteParams(
       TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
       {}, 'test'
-    )
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.pk).toBe('test')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.sk).toBe('testsk')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test')
+    ) as DocumentClient.BatchWriteItemInput
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.test).toBe('test')
   })
 
   it('returns meta data', () => {
     let result = TestTable.batchWriteParams(
       TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
-      {},null,true
-    )
+      {},{},true
+    ) as { payload: DocumentClient.BatchWriteItemInput, Tables: any }
 
-    expect(result.payload.RequestItems['test-table'][0].PutRequest.Item.pk).toBe('test')
-    expect(result.payload.RequestItems['test-table'][0].PutRequest.Item.sk).toBe('testsk')
-    expect(result.payload.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test')
+    expect(result.payload.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
+    expect(result.payload.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk')
+    expect(result.payload.RequestItems['test-table'][0].PutRequest!.Item.test).toBe('test')
     expect(result).toHaveProperty('Tables')
   })
 
@@ -105,15 +107,15 @@ describe('batchWrite',()=>{
       TestEntity.putBatch({ pk: 'test', sk: 'testsk1', test: 'test1' }),
       TestEntity.putBatch({ pk: 'test', sk: 'testsk2', test: 'test2' }),
       TestEntity.deleteBatch({ pk: 'test', sk: 'testsk3' })
-    ])    
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.pk).toBe('test')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.sk).toBe('testsk1')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test1')
-    expect(result.RequestItems['test-table'][1].PutRequest.Item.pk).toBe('test')
-    expect(result.RequestItems['test-table'][1].PutRequest.Item.sk).toBe('testsk2')
-    expect(result.RequestItems['test-table'][1].PutRequest.Item.test).toBe('test2')
-    expect(result.RequestItems['test-table'][2].DeleteRequest.Key.pk).toBe('test')
-    expect(result.RequestItems['test-table'][2].DeleteRequest.Key.sk).toBe('testsk3')
+    ]) as DocumentClient.BatchWriteItemInput
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk1')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.test).toBe('test1')
+    expect(result.RequestItems['test-table'][1].PutRequest!.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table'][1].PutRequest!.Item.sk).toBe('testsk2')
+    expect(result.RequestItems['test-table'][1].PutRequest!.Item.test).toBe('test2')
+    expect(result.RequestItems['test-table'][2].DeleteRequest!.Key.pk).toBe('test')
+    expect(result.RequestItems['test-table'][2].DeleteRequest!.Key.sk).toBe('testsk3')
   })
 
   it('batchWrites data to multiple tables', () => {
@@ -124,7 +126,7 @@ describe('batchWrite',()=>{
       partitionKey: 'pk',
       sortKey: 'sk',
       indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
-      DocumentClient
+      DocumentClient: docClient
     })
     
     const TestEntity2 = new Entity({
@@ -142,18 +144,18 @@ describe('batchWrite',()=>{
       TestEntity.putBatch({ pk: 'test', sk: 'testsk1', test: 'test1' }),
       TestEntity.putBatch({ pk: 'test', sk: 'testsk2', test: 'test2' }),
       TestEntity2.putBatch({ pk: 'test', sk: 'testsk3', test: 'test3' })
-    ])
+    ]) as DocumentClient.BatchWriteItemInput
     // console.log(JSON.stringify(result,null,2));
     
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.pk).toBe('test')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.sk).toBe('testsk1')
-    expect(result.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test1')
-    expect(result.RequestItems['test-table'][1].PutRequest.Item.pk).toBe('test')
-    expect(result.RequestItems['test-table'][1].PutRequest.Item.sk).toBe('testsk2')
-    expect(result.RequestItems['test-table'][1].PutRequest.Item.test).toBe('test2')
-    expect(result.RequestItems['test-table2'][0].PutRequest.Item.pk).toBe('test')
-    expect(result.RequestItems['test-table2'][0].PutRequest.Item.sk).toBe('testsk3')
-    expect(result.RequestItems['test-table2'][0].PutRequest.Item.test).toBe('test3')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk1')
+    expect(result.RequestItems['test-table'][0].PutRequest!.Item.test).toBe('test1')
+    expect(result.RequestItems['test-table'][1].PutRequest!.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table'][1].PutRequest!.Item.sk).toBe('testsk2')
+    expect(result.RequestItems['test-table'][1].PutRequest!.Item.test).toBe('test2')
+    expect(result.RequestItems['test-table2'][0].PutRequest!.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table2'][0].PutRequest!.Item.sk).toBe('testsk3')
+    expect(result.RequestItems['test-table2'][0].PutRequest!.Item.test).toBe('test3')
 
   })
 

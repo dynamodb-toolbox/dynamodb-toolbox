@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -9,7 +7,7 @@
 import { error } from './utils'
 
 // Check attribute against attribute set
-export default (attr,attrs) => {
+export default (attr: string, attrs: any): string  => {
 
   // Split paths with dot notation and list brackets
   const path = attr.split('.')
@@ -25,7 +23,7 @@ export default (attr,attrs) => {
   // Throw an error if not a valid attribute or alias
   } else {
     // TODO: make this error more helpful
-    error(`'${attr}' is not a valid attribute.`)
+    return error(`'${attr}' is not a valid attribute.`)
   } 
 
 } // end checkAttribute

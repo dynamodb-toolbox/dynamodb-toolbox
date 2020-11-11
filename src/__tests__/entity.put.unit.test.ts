@@ -1,5 +1,6 @@
-const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+// @ts-nocheckx
+import { Table, Entity } from '../index'
+import { DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -81,7 +82,7 @@ const TestEntity4 = new Entity({
   name: 'TestEntity4',
   attributes: {
     id: { partitionKey: true},
-    sk: { hidden: true, sortKey: true, default: (data) => data.id },
+    sk: { hidden: true, sortKey: true, default: (data: any) => data.id },
     test: { alias: 'xyz' }
   },
   table: TestTable3
@@ -271,6 +272,7 @@ describe('put',()=>{
       'sk': 'test-sk',
       'test_string_set_type_coerce': "1,2,3"
     })
+    // @ts-ignore    
     expect(Item['test_string_set_type_coerce'].values).toEqual(['1','2','3'])
   })
 
@@ -290,7 +292,8 @@ describe('put',()=>{
   })
 
   it('formats a batch put response', async () => {
-    let result = TestEntity.putBatch({ pk: 'x', sk: 'y' })  
+    let result = TestEntity.putBatch({ pk: 'x', sk: 'y' })
+    
     expect(result).toHaveProperty('test-table.PutRequest')
     expect(result['test-table'].PutRequest.Item).toHaveProperty('_ct')
     expect(result['test-table'].PutRequest.Item).toHaveProperty('_md')
@@ -365,7 +368,7 @@ describe('put',()=>{
   })
 
   it('handles extra parameters', () => {
-    let { TableName, Key, ReturnConsumedCapacity } = TestEntity.putParams(
+    let { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
       { pk: 'x', sk: 'y' },
       { },
       { ReturnConsumedCapacity: 'NONE' }
@@ -375,7 +378,7 @@ describe('put',()=>{
   })
 
   it('handles invalid parameter input', () => {
-    let { TableName, Key } = TestEntity.putParams(
+    let { TableName } = TestEntity.putParams(
       { pk: 'x', sk: 'y' },
       { },
       'string'

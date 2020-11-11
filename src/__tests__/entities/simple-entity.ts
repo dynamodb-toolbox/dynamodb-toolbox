@@ -1,6 +1,6 @@
 // SIMPLE ENTITY for testing
 
-module.exports = {
+export = {
   // Specify entity name
   name: 'SimpleEntity',
 

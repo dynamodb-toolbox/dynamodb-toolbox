@@ -1,6 +1,6 @@
-const validateTypes = require('../lib/validateTypes')
+import validateTypes from '../lib/validateTypes'
 
-const { DocumentClient } = require('./bootstrap-tests')
+import { DocumentClient } from './bootstrap-tests'
 
 describe('validateTypes', () => {
 
@@ -70,11 +70,13 @@ describe('validateTypes', () => {
   })
 
   it('fails with parsing set if DocumentClient is missing', async () => {
+    // @ts-expect-error
     expect(() => { validateTypes()({ type: 'set', setType: 'string' },'attr',[]) })
       .toThrow(`DocumentClient required for this operation`)
   })
 
   it('fails with parsing set if DocumentClient is missing', async () => {
+    // @ts-expect-error
     expect(() => { validateTypes()({ type: 'set', setType: 'string', coerce: true },'attr','test') })
       .toThrow(`DocumentClient required for this operation`)
   })

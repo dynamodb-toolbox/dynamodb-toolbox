@@ -1,6 +1,6 @@
 // TEST ENTITY for testing
 
-module.exports = {
+export = {
   // Specify name
   name: 'TestEntity',
   // Optional description

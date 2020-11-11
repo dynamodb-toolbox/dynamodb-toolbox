@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -7,7 +5,7 @@
  */
 
  
-import { EntityAttributes, EntityAttributeConfig, EntityCompositeAttributes } from '../classes/Entity'
+import { EntityAttributes, EntityAttributeConfig, EntityCompositeAttributes, EntityAttributeConfiguration } from '../classes/Entity'
 import { TrackingInfo } from './parseEntity'
 import parseMapping from './parseMapping'
 import parseCompositeKey from './parseCompositeKey'
@@ -42,7 +40,7 @@ export default (attributes: EntityAttributes, track: TrackingInfo) => {
   // Return keys and attributes
   return { 
     keys: track.keys,
-    attributes
+    attributes: attributes as EntityAttributeConfiguration
   }
     
 } // end parseEntityAttrbutes

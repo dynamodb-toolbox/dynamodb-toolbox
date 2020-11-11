@@ -1,6 +1,6 @@
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
+import Table from '../classes/Table'
+import Entity from '../classes/Entity'
 
 describe('Entity properties', ()=> {
 
@@ -37,6 +37,7 @@ describe('Entity properties', ()=> {
         attributes: {
           pk: { partitionKey: true }
         },
+        // @ts-expect-error
         table: TestTable
       })
     }).toThrow('Invalid Table')

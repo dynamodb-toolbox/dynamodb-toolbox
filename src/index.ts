@@ -11,10 +11,7 @@
 // TODO: 'Remove null fields' option
 // TODO: prevent reserved field names?
 
-const Table = require('./classes/Table')
-const Entity = require('./classes/Entity')
+import Table from './classes/Table'
+import Entity from './classes/Entity'
 
-module.exports = {
-  Table,
-  Entity
-}
+export { Table, Entity }

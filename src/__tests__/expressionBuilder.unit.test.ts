@@ -1,8 +1,15 @@
-const expressionBuilder = require('../lib/expressionBuilder')
+// @ts-nocheckx
+import expressionBuilder from '../lib/expressionBuilder'
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
+import Table from '../classes/Table'
+import Entity from '../classes/Entity'
+
+// Create basic table
+const TestTable = new Table({
+  name: 'test-table',
+  partitionKey: 'pk'
+})
 
 // Create basic entity
 const TestEntity = new Entity({
@@ -15,14 +22,8 @@ const TestEntity = new Entity({
     d: 'string',
     x: 'string',
     y: 'string'
-  }
-})
-
-// Create basic table
-const TestTable = new Table({
-  name: 'test-table',
-  partitionKey: 'pk',
-  entities: TestEntity
+  },
+  table: TestTable
 })
 
 
@@ -127,7 +128,7 @@ describe('expressionBuilder',() => {
       .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() => expressionBuilder({ attr: 'a', eq: 'b', between: ['b','c'] },TestTable,'TestEntity'))
       .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
-    expect(() => expressionBuilder({ attr: 'a', eq: 'b', exists: 'b' },TestTable,'TestEntity'))
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b', exists: false },TestTable,'TestEntity'))
       .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() => expressionBuilder({ attr: 'a', eq: 'b', contains: 'b' },TestTable,'TestEntity'))
       .toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
@@ -138,6 +139,7 @@ describe('expressionBuilder',() => {
   })
 
   it('fails with unknown arguments', () => {
+    // @ts-expect-error
     expect(() => expressionBuilder({ attr: 'a', eq: 'b', invalidArg: true },TestTable,'TestEntity'))
       .toThrow(`Invalid expression options: invalidArg`)
   })
@@ -303,11 +305,13 @@ describe('expressionBuilder',() => {
   })
 
   it(`fails when 'between' value is not an array`, () => {
+    // @ts-expect-error
     expect(() => expressionBuilder({ attr: 'a', between: 'b' },TestTable,'TestEntity'))
       .toThrow(`'between' conditions require an array with two values.`)
   })
 
   it(`fails when 'in' value is not an array`, () => {
+    // @ts-expect-error
     expect(() => expressionBuilder({ attr: 'a', in: 'b' },TestTable,'TestEntity'))
       .toThrow(`'in' conditions require an array.`)
   })

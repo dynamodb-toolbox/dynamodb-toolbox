@@ -1,9 +1,9 @@
 // Bootstrap testing
-const { DocumentClient } = require('./bootstrap-tests')
+import { DocumentClient } from './bootstrap-tests'
 
 // Require Table and Entity classes
-const Table = require('../classes/Table')
-const Entity = require('../classes/Entity')
+import Table from '../classes/Table'
+import Entity from '../classes/Entity'
 
 
 describe('Table creation', ()=> {
@@ -137,7 +137,7 @@ describe('Table creation', ()=> {
     })
 
     expect(TestTable instanceof Table).toBe(true)
-    expect(TestTable.DocumentClient.constructor.name).toBe('DocumentClient')
+    expect(TestTable.DocumentClient!.constructor.name).toBe('DocumentClient')
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
@@ -171,42 +171,6 @@ describe('Table creation', ()=> {
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
   }) // end create table w/ DocumentClient
-
-
-
-  it('creates table w/ entity', async () => {
-  
-    // Create basic entity
-    const TestEntity = new Entity({
-      name: 'TestEnt',
-      attributes: {
-        pk: { partitionKey: true }
-      }
-    })
-
-    // Create basic table
-    const TestTable = new Table({
-      name: 'test-table',
-      partitionKey: 'pk',
-      entities: TestEntity
-    })
-
-    expect(TestTable instanceof Table).toBe(true)
-    expect(TestTable.name).toBe('test-table')
-    expect(TestTable.Table.partitionKey).toBe('pk')
-    expect(TestTable.Table.sortKey).toBeNull()
-    expect(TestTable.Table.entityField).toBe('_et')
-    expect(TestTable.Table.indexes).toEqual({})
-    // expect(TestTable.Table.attributes).toEqual({
-    //   _et: { type: 'string' },
-    //   pk: { type: 'string', mappings: { TestEnt: 'pk' } },
-    //   _ct: { type: 'string', mappings: { TestEnt: 'created' } },
-    //   _md: { type: 'string', mappings: { TestEnt: 'modified' } }
-    // })
-    expect(TestTable.autoExecute).toBe(true)
-    expect(TestTable.autoParse).toBe(true)
-    expect(TestTable.entities).toEqual(['TestEnt'])
-  }) // creates table w/ entity
 
 
 })

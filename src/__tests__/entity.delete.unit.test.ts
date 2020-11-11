@@ -1,5 +1,5 @@
-const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+import { Table, Entity } from '../index'
+import { DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -184,7 +184,8 @@ describe('delete',()=>{
     let result = TestEntity.deleteParams(
       { pk: 'x', sk: 'y' },
       { conditions: { attr: 'pk', gt: 'test' } }
-    )    
+    )
+    
     expect(result).toEqual({
       TableName: 'test-table',
       Key: { pk: 'x', sk: 'y' },
@@ -241,13 +242,13 @@ describe('delete',()=>{
       table: FoosTable,
       timestamps: true,
       attributes: {
-        pk: { hidden: true, partitionKey: true, default: (data) => (`FOO#${data.id}`) },
-        sk: { hidden: true, sortKey: true, default: (data) => (`FOO#${data.id}`) },
+        pk: { hidden: true, partitionKey: true, default: (data: any) => (`FOO#${data.id}`) },
+        sk: { hidden: true, sortKey: true, default: (data: any) => (`FOO#${data.id}`) },
     
         // This next `default` gets executed on delete() and fails with "Cannot read property 'tenant' of undefined"
-        gsi1pk: { hidden: true, default: (data) => (`TENANT#${data.meta.tenant}`) }, 
+        gsi1pk: { hidden: true, default: (data: any) => (`TENANT#${data.meta.tenant}`) }, 
     
-        gsi1sk: { hidden: true, default: (data) => (`FOO#${data.id}`) },
+        gsi1sk: { hidden: true, default: (data: any) => (`FOO#${data.id}`) },
         id: { required: 'always' },
         meta: { type: 'map', required: 'always' },
         __context__: { hidden: true },

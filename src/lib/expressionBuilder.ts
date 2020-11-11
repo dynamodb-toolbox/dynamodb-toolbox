@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -15,8 +13,30 @@ import { error } from './utils'
 import checkAttribute from './checkAttribute'
 import Table from '../classes/Table'
 
+interface FilterExpression {
+  attr?: string
+  size?: string
+  eq?: string | number | boolean | null
+  ne?: string | number | boolean | null
+  lt?: string | number
+  lte?: string | number
+  gt?: string | number
+  gte?: string | number
+  between?:	string[] | number[]
+  beginsWith?: string
+  in?: any[]
+  contains?: string
+  exists?: boolean
+  type?: string
+  or?: boolean
+  negate?: boolean
+  entity?:string
+}
+
+export type FilterExpressions = FilterExpression | FilterExpression[] | FilterExpressions[]
+
 const buildExpression = (
-    exp: any,
+    exp: FilterExpressions,
     table: Table,
     entity?: string,
     group=0,
@@ -28,12 +48,12 @@ const buildExpression = (
   let expression = ''
   let names = {}
   let values = {}
-  let logic // init undefined at each level
+  let logic: string | undefined // init undefined at each level
 
   // group logic tracker - need to mark the first clause
 
   // Loop through the clauses
-  for (let id in clauses) {
+  clauses.forEach((x,id) => {
 
     // If clause is nested in an array
     if (Array.isArray(clauses[id])) {
@@ -53,14 +73,17 @@ const buildExpression = (
     // Else process the clause
     } else {
 
+      // Make sure TS knows this is a FilterExpression
+      const exp = clauses[id] as FilterExpression
+
       // Increment group counter for each clause
       group++ // guarantees uniqueness
 
       // Default entity reference
-      if (entity && !clauses[id].entity) clauses[id].entity = entity
+      if (entity && !exp.entity) exp.entity = entity
 
       // Parse the clause
-      const clause = parseClause(clauses[id],group,table)
+      const clause = parseClause(exp,group,table)
       
       // Concat to expression and merge names and values
       expression += `${id > 0 ? ` ${clause.logic} `: ''}${clause.clause}`
@@ -70,7 +93,7 @@ const buildExpression = (
       // Capture the first logic indicator at this level      
       logic = logic ? logic : clause.logic
     }
-  } // end for
+  }) // end for
 
   return { 
     logic,
@@ -91,12 +114,12 @@ const conditionError = (op?: string) =>
 
 
 // Parses expression clause and returns structured clause object
-const parseClause = (_clause,grp,table) => {
+const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
 
   // Init clause, names, and values
   let clause = ''
-  const names = {}
-  const values = {}
+  const names: { [key: string]: string } = {}
+  const values: { [key: string]: any } = {}
 
   // Deconstruct valid expression options
   const { 
@@ -154,22 +177,26 @@ const parseClause = (_clause,grp,table) => {
     // If begins_with
     if (operator === 'BETWEEN') {
       // Verify array input
-      if (!Array.isArray(value) || value.length !== 2)
+      if (Array.isArray(value) && value.length === 2) {      
+        // Add values and special key condition
+        values[`:attr${grp}_0`] = value[0]
+        values[`:attr${grp}_1`] = value[1]
+        clause = `${size ? `size(#attr${grp})` : `#attr${grp}`} between :attr${grp}_0 and :attr${grp}_1`
+      } else {
         error(`'between' conditions require an array with two values.`)
-      // Add values and special key condition
-      values[`:attr${grp}_0`] = value[0]
-      values[`:attr${grp}_1`] = value[1]
-      clause = `${size ? `size(#attr${grp})` : `#attr${grp}`} between :attr${grp}_0 and :attr${grp}_1`
+      }
     } else if (operator === 'IN') {
-      // Verify array input
-      if (!Array.isArray(value))
-        error(`'in' conditions require an array.`)
       if (!attr) error(`'in' conditions require an 'attr'.`)
-      // Add values and special key condition
-      clause = `#attr${grp} IN (${value.map((x,i)=>{
-        values[`:attr${grp}_${i}`] = x  
-        return `:attr${grp}_${i}`
-      }).join(',')})`
+      // Verify array input
+      if (Array.isArray(value)) {
+        // Add values and special key condition
+        clause = `#attr${grp} IN (${value.map((x,i)=>{
+          values[`:attr${grp}_${i}`] = x  
+          return `:attr${grp}_${i}`
+        }).join(',')})`
+      } else {
+        error(`'in' conditions require an array.`)
+      }
     } else if (operator === 'EXISTS') {
       if (!attr) error(`'exists' conditions require an 'attr'.`)
       clause = value ? `attribute_exists(#attr${grp})` : `attribute_not_exists(#attr${grp})`

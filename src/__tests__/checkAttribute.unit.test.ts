@@ -13,7 +13,7 @@ let DefaultTable = new Table({
 })
 
 // Create basic entity
-DefaultTable.entities = new Entity({
+DefaultTable.addEntity(new Entity({
   name: 'User',
   attributes: {
     pk: { type: 'string', partitionKey: true },
@@ -25,7 +25,7 @@ DefaultTable.entities = new Entity({
     list_alias2: { type: 'list', map: 'list2' },
     test: 'map',
   }
-})
+}))
 
 
 describe('checkAttribute', () => {

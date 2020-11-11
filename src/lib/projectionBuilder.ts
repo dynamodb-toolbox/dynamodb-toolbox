@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -11,14 +9,17 @@
 // Import standard error handler
 import { error } from './utils'
 import checkAttribute from './checkAttribute'
+import Table from '../classes/Table'
 
-// This should be able to parse and array with values,
-// or an object that uses the name of the entity plus and array of values
+// This should be able to parse an array with values,
+// or an object that uses the name of the entity plus an array of values
 // e.g. ['attr1','attr2'] or { MyEntity: ['attr1', 'attr2'] }
 // Ths should also be able to parse any combination,
 // e.g. [ 'attr1', 'attr2', { MyEntity: ['attr3','attr4'] }]
+type ProjectionAttributes = string | ProjectionAttributeType | (string | ProjectionAttributeType)[]
+type ProjectionAttributeType = { [key: string]: string | string[] }
 
-export default (attributes,table={},entity,type=false) => {
+export default (attributes: ProjectionAttributes, table: Table, entity: string | null, type=false) => {
   
   // Create an attribute names counter
   let index = 0
@@ -31,7 +32,7 @@ export default (attributes,table={},entity,type=false) => {
 
   // Check that table is valid and contains attributes
   if (
-    table.constructor.name !== 'Table' 
+    !table
     || !table.Table 
     || Object.keys(table.Table.attributes).length == 0
   ) {
@@ -42,49 +43,54 @@ export default (attributes,table={},entity,type=false) => {
   if (type && table.Table.entityField) attrs.push(table.Table.entityField)
 
   // Default collectors
-  const names = {}
-  let tableAttrs = []
-  const entities = {}
+  let names: { [key:string]: string } = {}
+  let tableAttrs: string[] = []
+  let entities: { [key:string]: string[] } = {}
 
   // Loop through the attributes and add to the map
-  for (const i in attrs) {
+  for (const attribute of attrs) {
 
     // If a string
-    if (typeof attrs[i] === 'string') {
+    if (typeof attribute === 'string') {
 
       // Check single attribute and merge results
-      const attr = checkAttribute(attrs[i],(entity ? table[entity].schema.attributes : table.Table.attributes))
+      const attr = checkAttribute(attribute,(entity ? table[entity].schema.attributes : table.Table.attributes))
+
       if (!Object.values(names).includes(attr)) {
         names[`#proj${++index}`] = attr
-        tableAttrs.push(attrs[i])
+        tableAttrs.push(attribute)
       } // end if
 
-    } else if (typeof attrs[i] === 'object') {
+    } else if (typeof attribute === 'object') {
 
       // If an object, loop through keys
-      for (const entity in attrs[i]) {
+      for (const entity in attribute) {    
+
         // Check that the entity name exists
         if (table[entity]) {
           
           // Track entity attributes
-          if (!entities[entity]) entities[entity] = []
+          if (!entities[entity]) entities[entity] = []    
 
           // If attributes isn't an array, make it one
-          const ent_attrs = Array.isArray(attrs[i][entity]) ? attrs[i][entity]
+          const ent_attrs = Array.isArray(attribute[entity]) ? attribute[entity]
             // support simple string list
-            : typeof attrs[i][entity] === 'string' ? attrs[i][entity].split(',').map(x=>x.trim())
+            : typeof attribute[entity] === 'string' ? String(attribute[entity]).split(',').map(x=>x.trim())
             : error(`Only arrays or strings are supported`)
 
           // Loop entity projections
-          for (const i in ent_attrs) {
-            // Check for string type
-            if (typeof ent_attrs[i] != 'string') error(`Entity projections must be string values`)
-            // Check the attribute and merge results
+          for (const ent_attribute of ent_attrs) {
 
-            const attr = checkAttribute(ent_attrs[i],table[entity].schema.attributes)
+            // Check for string type
+            if (typeof ent_attribute != 'string') error(`Entity projections must be string values`)
+
+            // Check the attribute and merge results
+            const attr = checkAttribute(ent_attribute,table[entity].schema.attributes)
+
             if (!Object.values(names).includes(attr)) {
               names[`#proj${++index}`] = attr  
             } // end if
+
             entities[entity].push(attr)
           } // end for
 
@@ -96,7 +102,7 @@ export default (attributes,table={},entity,type=false) => {
      
     // Throw error if invalid type
     } else {
-      error(`'${typeof attrs[i]}' is an invalid type. Projections require strings or arrays`)
+      error(`'${typeof attribute}' is an invalid type. Projections require strings or arrays`)
     }
   } // end for
 

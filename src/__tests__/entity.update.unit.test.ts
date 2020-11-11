@@ -1,5 +1,5 @@
-const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+import { Table, Entity } from '../index'
+import { DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -534,42 +534,49 @@ describe('update',()=>{
   it('fails when supplying non-array value for SET', () => {
     expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
+      // @ts-expect-error
     }, {}, { SET: 'test' })).toThrow(`SET must be an array`)
   })
 
   it('fails when supplying non-array value for REMOVE', () => {
     expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
+      // @ts-expect-error
     }, {}, { REMOVE: 'test' })).toThrow(`REMOVE must be an array`)
   })
 
   it('fails when supplying non-array value for ADD', () => {
     expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
+      // @ts-expect-error
     }, {}, { ADD: 'test' })).toThrow(`ADD must be an array`)
   })
 
   it('fails when supplying non-array value for DELETE', () => {
     expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
+      //@ts-expect-error
     }, {}, { DELETE: 'test' })).toThrow(`DELETE must be an array`)
   })
 
   it('fails when supplying non-object value for ExpressionAttributeNames', () => {
     expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
+      // @ts-expect-error
     }, {}, { ExpressionAttributeNames: 'test' })).toThrow(`ExpressionAttributeNames must be an object`)
   })
 
   it('fails when supplying non-object value for ExpressionAttributeValues', () => {
     expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
+      // @ts-expect-error
     }, {}, { ExpressionAttributeValues: 'test' })).toThrow(`ExpressionAttributeValues must be an object`)
   })
 
   it.skip('fails when supplying a non-string for ConditionExpression', () => {
     expect(() => TestEntity2.updateParams({
       'pk': 'test-pk'
+      // @ts-expect-error
     }, {}, { ConditionExpression: 1 })).toThrow(`ConditionExpression must be a string`)
   })
 
@@ -583,7 +590,7 @@ describe('update',()=>{
       ADD: ['#field_add :field_add'],
       DELETE: ['#field_delete'],
       ExpressionAttributeNames: { '#field': 'field' },
-      ExpressionAttributeValues: { ':field': 'my value'},
+      ExpressionAttributeValues: { ':field': 'my value' },
       ConditionExpression: '#field > 0'
     })
 
@@ -609,6 +616,7 @@ describe('update',()=>{
   it('fails on extra options', () => {
     expect(() => TestEntity.updateParams(
       { pk: 'x', sk: 'y' },
+      // @ts-expect-error
       { extra: true }
     )).toThrow('Invalid update options: extra')
   })
@@ -689,6 +697,7 @@ describe('update',()=>{
     let { TableName, Key } = TestEntity.updateParams(
       { pk: 'x', sk: 'y' },
       { },
+      // @ts-expect-error
       'string'
     )
     expect(TableName).toBe('test-table')

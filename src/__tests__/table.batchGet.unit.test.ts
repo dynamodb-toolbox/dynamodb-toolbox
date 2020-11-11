@@ -1,5 +1,5 @@
-const { Table, Entity } = require('../index')
-const { DocumentClient } = require('./bootstrap-tests')
+import { Table, Entity } from '../index'
+import { DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -24,6 +24,7 @@ const TestEntity = new Entity({
 describe('batchGet',()=>{
 
   it('fails when batchGet is empty', () => {
+    // @ts-expect-error
     expect(() => { TestTable.batchGetParams() })
       .toThrow(`Item references must contain a valid Table object and Key`)
   })

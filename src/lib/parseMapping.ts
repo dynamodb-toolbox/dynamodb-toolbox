@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -8,7 +6,7 @@
 
 
 import { EntityAttributeConfig } from '../classes/Entity'
-import { TrackingInfo, TrackingInfoKeys } from './parseEntity'
+import { TrackingInfo } from './parseEntity'
 import { error } from './utils'
 
 // Parse and validate mapping config

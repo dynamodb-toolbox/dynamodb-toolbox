@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -126,8 +124,6 @@ export default (DocumentClient: DocumentClient) => (schema:any,linked:any,data:a
 // },{})
 
 // console.log(_data)
-
-
 
 // map[schema[attr].dependsOn] = typeof map[schema[attr].dependsOn] === 'function' ? 
 //   dependsOn(map,schema[attr].dependsOn) // map[schema[attr].dependsOn](map) 

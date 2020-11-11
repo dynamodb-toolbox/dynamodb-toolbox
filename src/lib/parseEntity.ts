@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -17,8 +15,12 @@ export interface TrackingInfo {
   fields: string[]
   defaults: any
   required: any,
-  linked: any,
+  linked: Linked,
   keys: any
+}
+
+export interface Linked {
+  [key: string]: string[]
 }
 
 export interface TrackingInfoKeys {
@@ -29,7 +31,7 @@ export interface TrackingInfoKeys {
 export type ParsedEntity = ReturnType<typeof parseEntity>
 
 // Parse entity
-export const parseEntity = (entity: EntityConstructor) => {
+export function parseEntity<Schema,HiddenKeys>(entity: EntityConstructor<Schema,HiddenKeys>) {
 
   let {
     name,
