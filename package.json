@@ -6,11 +6,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "prepublish": "tsc",
     "test": "jest unit",
     "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "tsc"
   },
   "license": "MIT",
   "dependencies": {},
@@ -30,7 +30,8 @@
   "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
   "jest": {
     "testPathIgnorePatterns": [
-      "/__tests__/entities/*"
+      "/__tests__/entities/*",
+      "/__tests__/tables/*"
     ],
     "coveragePathIgnorePatterns": [
       "/__tests__/*"

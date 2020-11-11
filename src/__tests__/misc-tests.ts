@@ -1,5 +1,5 @@
 // // Bootstrap testing
-// const { createTableParams, dynaliteServer, DynamoDB, DocumentClient, DocumentClient2, delay } = require('./bootstrap-tests')
+const { createTableParams, dynaliteServer, DynamoDB, DocumentClient, DocumentClient2, delay } = require('./bootstrap-tests')
 
 // // console.log(DocumentClient);
 // // console.log(DocumentClient.constructor.name);
@@ -25,38 +25,43 @@
 
 
 // // Require Table and Entity classes
-// import Table from '../classes/Table'
-// import Entity from '../classes/Entity'
+import Table from '../classes/Table'
+import Entity from '../classes/Entity'
 
 
-// describe('Misc Tests (development only)', ()=> {
+describe('Misc Tests (development only)', ()=> {
 
 
 
-//   it('uses a numeric pk value', async () => {
+  it('uses a numeric pk value', async () => {
 
-//     const table = new Table({
-//       name: 'test-table',
-//       partitionKey: 'pk',
-//       sortKey: 'sk',
-//       DocumentClient
-//     })
+    const table = new Table({
+      name: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      DocumentClient
+    })
 
-//     const TestEntity = new Entity({
-//       name: 'Test',
-//       attributes: {
-//         id: { partitionKey: true, type: 'number' },
-//         sk: { sortKey: true, type: 'string' },
-//         test: 'string'
-//       },
-//       table
-//     })
+    const TestEntity = new Entity({
+      name: 'Test',
+      attributes: {
+        id: { partitionKey: true, type: 'number' },
+        sk: { sortKey: true, type: 'string' },
+        test: 'string',
+        test2: ['test',0],
+        test3: ['test',1]
 
-//     console.log(
-//       await TestEntity.query(1)
-//     )
+      },
+      table
+    })
 
-//   })
+    console.log(TestEntity.schema);
+    
+    // console.log(
+    //   await TestEntity.query(1)
+    // )
+
+  })
 
 
 
@@ -923,7 +928,7 @@
 //   // //     required: {},
 //   // //     linked: {}
 //   // //   })
-// })
+})
 
 
 
