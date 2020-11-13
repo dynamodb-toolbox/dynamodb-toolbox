@@ -9,8 +9,8 @@
 // TODO: Check duplicate entity names code
 
 // Import libraries, types, and classes
-import Entity from './Entity'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import Entity, { FilterExpressions, ProjectionAttributes } from './Entity'
+import { DynamoDb,DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { parseTable, ParsedTable } from '../lib/parseTable'
 import parseFilters from '../lib/expressionBuilder'
 import parseProjections from '../lib/projectionBuilder'
@@ -18,6 +18,7 @@ import validateTypes from '../lib/validateTypes'
 
 // Import standard error handler
 import { error, conditonError } from '../lib/utils'
+import { Document } from 'aws-sdk/clients/textract'
 
 // Declare Table types
 export interface TableConstructor {
@@ -30,7 +31,7 @@ export interface TableConstructor {
   indexes?: TableIndexes
   autoExecute?: boolean
   autoParse?: boolean
-  DocumentClient?: DocumentClient
+  DocumentClient?: DynamoDb.DocumentClient
   entities?: {} // improve - not documented
   removeNullAttributes?: boolean
 }
@@ -54,6 +55,45 @@ export interface ParsedTableAttribute {
 export interface TableIndexes {
   [index: string]: { partitionKey?: string; sortKey?: string }
 }
+
+export interface queryOptions {
+  index?: string
+  limit?: number
+  reverse?: boolean
+  consistent?: boolean
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  select?: DocumentClient.Select
+  eq?: string
+  lt?: string
+  lte?: string
+  gt?: string
+  gte?: string
+  between?: [string, string] | [number, number]
+  beginsWith?: string
+  filters?: FilterExpressions
+  attributes?: ProjectionAttributes
+  startKey?: {}
+  entity?: string
+  execute?: boolean
+  parse?: boolean
+}
+
+export interface scanOptions {
+  index?: string
+  limit?: number
+  consistent?: boolean
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  select?: DocumentClient.Select
+  filters?: FilterExpressions
+  attributes?: ProjectionAttributes
+  startKey?: {}
+  segments?: number
+  segment?: number
+  entity?: string
+  execute?: boolean
+  parse?: boolean
+}
+
 
 // Declare Table class
 class Table {
@@ -323,7 +363,11 @@ class Table {
   // Table actions
   // ----------------------------------------------------------------//
 
-  async query(pk,options={},params={}) {
+  async query(
+    pk: any,
+    options: queryOptions = {},
+    params: Partial<DocumentClient.QueryInput> = {}
+  ) {
   
     // Generate query parameters with projection data
     const { 
@@ -378,7 +422,12 @@ class Table {
 
 
   // Query the table
-  queryParams(pk,options={},params={},projections=false) { 
+  queryParams(
+    pk: any,
+    options: queryOptions = {},
+    params: Partial<DocumentClient.QueryInput> = {},
+    projections = false
+  ) { 
     
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
@@ -574,7 +623,10 @@ class Table {
 
 
   // SCAN the table
-  async scan(options={},params={}) {
+  async scan(
+    options: scanOptions = {},
+    params: Partial<DocumentClient.ScanInput> = {}
+  ) {
   
     // Generate query parameters with meta data
     const { 
@@ -627,7 +679,11 @@ class Table {
 
 
   // Generate SCAN Parameters
-  scanParams(options={},params={},meta=false) { 
+  scanParams(
+    options: scanOptions = {},
+    params: Partial<DocumentClient.ScanInput> = {},
+    meta=false
+  ) { 
       
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 

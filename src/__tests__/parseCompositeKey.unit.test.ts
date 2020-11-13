@@ -2,6 +2,8 @@ import { EntityAttributes } from 'classes/Entity'
 import { TrackingInfo } from 'lib/parseEntity'
 import parseCompositeKey from '../lib/parseCompositeKey'
 
+type Schema = {}
+
 // Simulate attributes
 const attributes: EntityAttributes = {
   sk: { type: 'string', sortKey: true }

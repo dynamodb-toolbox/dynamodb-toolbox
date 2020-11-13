@@ -48,6 +48,7 @@ describe('query',()=>{
   })
 
   it('queries a table and ignores bad parameters', () => {
+    // @ts-expect-error
     let result = TestTable.queryParams('test',{},'test')
     expect(result).toEqual({
       TableName: 'test-table',
@@ -101,6 +102,7 @@ describe('query',()=>{
 
   it('fails on an invalid option', () => {
     expect(() => TestTable.queryParams('test',
+      // @ts-expect-error
       { invalidParam: true }
     )).toThrow('Invalid query options: invalidParam')
   })
@@ -119,18 +121,21 @@ describe('query',()=>{
 
   it('fails on an invalid limit', () => {
     expect(() => TestTable.queryParams('test',
+      // @ts-expect-error
       { limit: 'test' }
     )).toThrow(`'limit' must be a positive integer`)
   })
 
   it('fails on invalid reverse setting', () => {
     expect(() => TestTable.queryParams('test',
+      // @ts-expect-error
       { reverse: 'test' }
     )).toThrow(`'reverse' requires a boolean`)
   })
 
   it('fails on invalid consistent setting', () => {
     expect(() => TestTable.queryParams('test',
+      // @ts-expect-error
       { consistent: 'test' }
     )).toThrow(`'consistent' requires a boolean`)
   })
@@ -263,6 +268,7 @@ describe('query',()=>{
 
   it('fails on in valid between condition', () => {
     expect(() => TestTable.queryParams('test',
+      // @ts-expect-error
       { between: ['val1'] }
     )).toThrow(`'between' conditions requires an array with two values.`)
   })

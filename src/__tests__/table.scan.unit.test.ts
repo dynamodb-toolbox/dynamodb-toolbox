@@ -43,6 +43,7 @@ describe('scan',()=>{
   })
 
   it('scans a table and ignores bad parameters', () => {
+    // @ts-expect-error
     let result = TestTable.scanParams({},'test')
     expect(result).toEqual({
       TableName: 'test-table'
@@ -92,6 +93,7 @@ describe('scan',()=>{
 
   it('fails on an invalid option', () => {
     expect(() => TestTable.scanParams(
+      // @ts-expect-error
       { invalidParam: true }
     )).toThrow('Invalid scan options: invalidParam')
   })
@@ -104,12 +106,14 @@ describe('scan',()=>{
 
   it('fails on an invalid limit', () => {
     expect(() => TestTable.scanParams(
+      // @ts-expect-error
       { limit: 'test' }
     )).toThrow(`'limit' must be a positive integer`)
   })
 
   it('fails on invalid consistent setting', () => {
     expect(() => TestTable.scanParams(
+      // @ts-expect-error
       { consistent: 'test' }
     )).toThrow(`'consistent' requires a boolean`)
   })
@@ -140,12 +144,14 @@ describe('scan',()=>{
 
   it('fails on invalid segments', () => {
     expect(() => TestTable.scanParams(
+      // @ts-expect-error
       { segments: 'test' }
     )).toThrow(`'segments' must be an integer greater than 1`)
   })
 
   it('fails on invalid segment', () => {
     expect(() => TestTable.scanParams(
+      // @ts-expect-error
       { segment: 'test' }
     )).toThrow(`segment' must be an integer greater than or equal to 0 and less than the total number of segments`)
   })

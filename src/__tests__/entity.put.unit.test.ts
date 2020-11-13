@@ -295,12 +295,12 @@ describe('put',()=>{
     let result = TestEntity.putBatch({ pk: 'x', sk: 'y' })
     
     expect(result).toHaveProperty('test-table.PutRequest')
-    expect(result['test-table'].PutRequest.Item).toHaveProperty('_ct')
-    expect(result['test-table'].PutRequest.Item).toHaveProperty('_md')
-    expect(result['test-table'].PutRequest.Item).toHaveProperty('_et')
-    expect(result['test-table'].PutRequest.Item).toHaveProperty('pk')
-    expect(result['test-table'].PutRequest.Item).toHaveProperty('sk')
-    expect(result['test-table'].PutRequest.Item).toHaveProperty('test_string')
+    expect(result['test-table'].PutRequest!.Item).toHaveProperty('_ct')
+    expect(result['test-table'].PutRequest!.Item).toHaveProperty('_md')
+    expect(result['test-table'].PutRequest!.Item).toHaveProperty('_et')
+    expect(result['test-table'].PutRequest!.Item).toHaveProperty('pk')
+    expect(result['test-table'].PutRequest!.Item).toHaveProperty('sk')
+    expect(result['test-table'].PutRequest!.Item).toHaveProperty('test_string')
   })
 
   it('fails if no value is provided to the putBatch method', () => {
@@ -310,6 +310,7 @@ describe('put',()=>{
   it('fails on extra options', () => {
     expect(() => TestEntity.putParams(
       { pk: 'x', sk: 'y' },
+      // @ts-expect-error
       { extra: true }
     )).toThrow('Invalid put options: extra')
   })
@@ -381,6 +382,7 @@ describe('put',()=>{
     let { TableName } = TestEntity.putParams(
       { pk: 'x', sk: 'y' },
       { },
+      // @ts-expect-error
       'string'
     )
     expect(TableName).toBe('test-table')

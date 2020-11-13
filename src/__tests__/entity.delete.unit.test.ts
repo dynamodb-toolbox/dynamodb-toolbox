@@ -131,6 +131,7 @@ describe('delete',()=>{
   it('fails on extra options', () => {
     expect(() => TestEntity.deleteParams(
       { pk: 'x', sk: 'y' },
+      // @ts-expect-error
       { execute: false, parse: false, extra: true }
     )).toThrow('Invalid delete options: extra')
   })
@@ -210,6 +211,7 @@ describe('delete',()=>{
     let { TableName, Key } = TestEntity.deleteParams(
       { pk: 'x', sk: 'y' },
       { },
+      // @ts-expect-error
       'string'
     )
     expect(TableName).toBe('test-table')

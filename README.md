@@ -572,7 +572,7 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 | limit | `number` | The maximum number of items to retrieve per scan. (Limit) |
 | consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| select | `string` | The attributes to be returned in the result. One of either `string` | `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
+| select | `string` | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
 | filters | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression) |
 | attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
 | startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey) |

@@ -31,7 +31,7 @@ export interface TrackingInfoKeys {
 export type ParsedEntity = ReturnType<typeof parseEntity>
 
 // Parse entity
-export function parseEntity<Schema,HiddenKeys>(entity: EntityConstructor<Schema,HiddenKeys>) {
+export function parseEntity(entity: EntityConstructor) {
 
   let {
     name,

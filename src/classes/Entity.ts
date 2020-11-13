@@ -7,7 +7,7 @@
  */
 
 // Import classes
-import Table, { DynamoDBSetTypes, DynamoDBTypes } from './Table'
+import Table, { DynamoDBSetTypes, DynamoDBTypes, queryOptions, scanOptions } from './Table'
 
 // Import libraries & types
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
@@ -21,8 +21,16 @@ import parseProjections, { ProjectionAttributes } from '../lib/projectionBuilder
 
 // Import error handlers
 import { error, transformAttr, isEmpty } from '../lib/utils'
+import { Document } from 'aws-sdk/clients/textract'
 
-export interface EntityConstructor<Schema, HiddenKeys> {
+type SchemaType =
+  | string
+  | number
+  | boolean
+  | { [key: string]: SchemaType }
+  | SchemaType[]
+
+export interface EntityConstructor {
   name: string
   timestamps?: boolean
   created?: string
@@ -72,11 +80,28 @@ interface getOptions {
   parse?: boolean
 }
 
+interface deleteOptions {
+  conditions?: FilterExpressions
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  metrics?: DocumentClient.ReturnItemCollectionMetrics
+  returnValues?: DocumentClient.ReturnValue
+  execute?: boolean
+  parse?: boolean
+}
+
+interface putOptions {
+  conditions?: FilterExpressions
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  metrics?: DocumentClient.ReturnItemCollectionMetrics
+  returnValues?: DocumentClient.ReturnValue
+  execute?: boolean
+  parse?: boolean
+}
+
 interface updateOptions {
   conditions?: FilterExpressions
   capacity?: DocumentClient.ReturnConsumedCapacity
   metrics?: DocumentClient.ReturnItemCollectionMetrics
-  attributes?: ProjectionAttributes
   returnValues?: DocumentClient.ReturnValue
   execute?: boolean
   parse?: boolean
@@ -93,7 +118,9 @@ type updateCustomParams = updateCustomParameters
   & Partial<DocumentClient.UpdateItemInput>
 
 // Declare Entity class
-class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
+class Entity<
+  Schema extends { [key in keyof Schema]: SchemaType }
+> {
 
   private _table?: Table
   private _execute?: boolean
@@ -106,7 +133,7 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
   public required: any
 
   // Declare constructor (entity config)
-  constructor(entity: EntityConstructor<Schema, HiddenKeys>) {
+  constructor(entity: EntityConstructor) {
 
     // Sanity check the entity object
     if (typeof entity !== 'object' || Array.isArray(entity))
@@ -237,8 +264,18 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
   } // end parse
 
 
-  // GET - get item
-  async get(item={},options={},params={}) {
+  /**
+   * Generate GET parameters and execute operation
+   * @param {object} item - The keys from item you wish to get.
+   * @param {object} [options] - Additional get options.
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the get request.
+   */
+  async get(
+    item: Partial<Schema> = {},
+    options: getOptions = {},
+    params: Partial<DocumentClient.GetItemInput> = {}
+  ) {
+    
     // Generate the payload
     const payload = this.getParams(item,options,params)
 
@@ -261,16 +298,28 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
   } // end get
 
 
-  // Shortcut for batch operations
-  getBatch(item={}) {
+  /**
+   * Generate parameters for GET batch operation
+   * @param {object} item - The keys from item you wish to get.
+   */
+  getBatch(item: Partial<Schema> = {}) {
     return { 
       Table: this.table, 
       Key: this.getParams(item).Key
     }
   }
 
-  // Generate GET parameters
-  getParams<Schema>(item: Schema, options: getOptions={},params={}) {
+  /**
+   * Generate GET parameters
+   * @param {object} item - The keys from item you wish to get.
+   * @param {object} [options] - Additional get options.
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the get request.
+   */
+  getParams(
+    item: Partial<Schema> = {},
+    options: getOptions = {},
+    params: Partial<DocumentClient.GetItemInput> = {}
+  ) {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item),true)
@@ -330,8 +379,17 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
   } // end getParams
 
 
-  // DELETE - delete item
-  async delete(item={},options={},params={}) {
+  /**
+   * Generate DELETE parameters and execute operation
+   * @param {object} item - The keys from item you wish to delete.
+   * @param {object} [options] - Additional delete options.
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the delete request.
+   */
+  async delete(
+    item: Partial<Schema> = {},
+    options: deleteOptions = {},
+    params: Partial<DocumentClient.DeleteItemInput> = {}
+  ) {
 
     const payload = this.deleteParams(item,options,params)
     
@@ -352,15 +410,29 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
     } // end if-else
   } // end delete
 
-  // Shortcut for batch operations
-  // Only Key is supported (e.g. no conditions) https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
-  deleteBatch(item={}) {
+  /**
+   * Generate parameters for DELETE batch operation
+   * @param {object} item - The keys from item you wish to delete.
+   * 
+   * Only Key is supported (e.g. no conditions) https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
+   */
+  deleteBatch(item: Partial<Schema> = {}): { [key: string]: DocumentClient.WriteRequest } {
     const payload = this.deleteParams(item)
     return { [payload.TableName] : { DeleteRequest: { Key: payload.Key } } }
   }
 
-  // Generate DELETE parameters
-  deleteParams(item={},options={},params={}) {
+  /**
+   * Generate DELETE parameters
+   * @param {object} item - The keys from item you wish to delete.
+   * @param {object} [options] - Additional delete options.
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the delete request.
+   */
+  deleteParams(
+    item: Partial<Schema> = {},
+    options: deleteOptions = {},
+    params: Partial<DocumentClient.DeleteItemInput> = {}
+  ) {
+
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item),true)
@@ -440,8 +512,17 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
   } // end deleteParams
 
 
-  // UPDATE - update item
-  async update(item={},options={},params = {}) {
+  /**
+   * Generate UPDATE parameters and execute operations
+   * @param {object} item - The keys from item you wish to update.
+   * @param {object} [options] - Additional update options.
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the update request.
+   */
+  async update(
+    item: Partial<Schema> = {},
+    options: updateOptions = {},
+    params: Partial<DocumentClient.UpdateItemInput> = {}
+  ): DocumentClient.UpdateItemOutput {
 
     // Generate the payload
     const payload = this.updateParams(item,options,params)
@@ -465,7 +546,7 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
 
   // Generate UPDATE Parameters
   updateParams(
-    item = {},
+    item: Partial<Schema> = {},
     options: updateOptions = {},
     {
       SET=[],
@@ -476,7 +557,7 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
       ExpressionAttributeValues={},
       ...params
     }: updateCustomParams = {}
-  ) {
+  ): DocumentClient.UpdateItemInput {
 
     // Validate operation types
     if (!Array.isArray(SET)) error('SET must be an array')
@@ -754,7 +835,12 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
 
 
   // PUT - put item
-  async put(item={},options={},params={}) {
+  async put(
+    item: Partial<Schema> = {},
+    options: putOptions = {},
+    params: Partial<DocumentClient.PutItemInput> = {}
+  ) {
+
     // Generate the payload
     const payload = this.putParams(item,options,params)
 
@@ -775,15 +861,24 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
     } // end-if
   } // end put
 
-  // Shortcut for batch operations
-  // Only Item is supported (e.g. no conditions) https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
-  putBatch(item={}) {
+  /**
+   * Generate parameters for PUT batch operation
+   * @param {object} item - The item you wish to put.
+   * 
+   * Only Item is supported (e.g. no conditions) https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
+   */
+  putBatch(item: Partial<Schema> = {}): { [key: string]: DocumentClient.WriteRequest } {
     const payload = this.putParams(item)
     return { [payload.TableName] : { PutRequest: { Item: payload.Item } } }
   }
 
   // Generate PUT Parameters
-  putParams(item={},options={},params={}): DocumentClient.PutItemInput {
+  putParams(
+    item: Partial<Schema> = {},
+    options: putOptions = {},
+    params: Partial<DocumentClient.PutItemInput> = {}
+  ) {
+
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
     
@@ -895,13 +990,20 @@ class Entity<Schema = never, HiddenKeys extends Partial<string> = never> {
 
 
   // Query pass-through (default entity)
-  query(pk,options={},params={}) {    
+  query(
+    pk: any,
+    options: queryOptions = {},
+    params: DocumentClient.QueryInput = {}
+  ) {    
     options.entity = this.name
     return this.table.query(pk,options,params)
   }
 
   // Scan pass-through (default entity)
-  scan(options={},params={}) {    
+  scan(
+    options: scanOptions = {},
+    params: DocumentClient.ScanInput = {}
+  ) {    
     options.entity = this.name
     return this.table.scan(options,params)
   }

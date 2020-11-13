@@ -88,7 +88,6 @@ describe('get',()=>{
   })
 
   it('fails with undefined input (sync)', () => {
-    // @ts-expect-error
     expect(() => TestEntity.getParams()).toThrow(`'pk' or 'email' is required`)
   })
 
@@ -105,7 +104,6 @@ describe('get',()=>{
   })
 
   it('fails when missing partitionKey (no alias) (sync)', () => {
-    // @ts-expect-error
     expect(() => TestEntity2.getParams()).toThrow(`'pk' is required`)
   })
 
@@ -187,6 +185,7 @@ describe('get',()=>{
     let { TableName, Key } = TestEntity.getParams(
       { pk: 'x', sk: 'y' },
       { },
+      // @ts-expect-error
       'string'
     )
     expect(TableName).toBe('test-table')

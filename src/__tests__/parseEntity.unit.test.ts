@@ -5,7 +5,7 @@ type Schema = any
 type HiddenKeys = any
 
 // Simulate Entity config
-const entity: EntityConstructor<Schema,HiddenKeys> = {
+const entity: EntityConstructor = {
   name: 'TestEntity',
   timestamps: true,
   created: '_created',

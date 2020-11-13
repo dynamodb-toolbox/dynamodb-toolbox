@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap-tests'
 

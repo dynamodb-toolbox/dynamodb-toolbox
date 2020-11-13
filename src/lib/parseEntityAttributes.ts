@@ -3,7 +3,6 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
-
  
 import { EntityAttributes, EntityAttributeConfig, EntityCompositeAttributes, EntityAttributeConfiguration } from '../classes/Entity'
 import { TrackingInfo } from './parseEntity'
