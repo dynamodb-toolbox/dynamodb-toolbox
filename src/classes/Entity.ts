@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -76,6 +74,7 @@ interface getOptions {
   consistent?: boolean
   capacity?: DocumentClient.ReturnConsumedCapacity
   attributes?: ProjectionAttributes
+  include?: string[]
   execute?: boolean
   parse?: boolean
 }
@@ -85,6 +84,7 @@ interface deleteOptions {
   capacity?: DocumentClient.ReturnConsumedCapacity
   metrics?: DocumentClient.ReturnItemCollectionMetrics
   returnValues?: DocumentClient.ReturnValue
+  include?: string[]
   execute?: boolean
   parse?: boolean
 }
@@ -94,6 +94,7 @@ interface putOptions {
   capacity?: DocumentClient.ReturnConsumedCapacity
   metrics?: DocumentClient.ReturnItemCollectionMetrics
   returnValues?: DocumentClient.ReturnValue
+  include?: string[]
   execute?: boolean
   parse?: boolean
 }
@@ -103,6 +104,7 @@ interface updateOptions {
   capacity?: DocumentClient.ReturnConsumedCapacity
   metrics?: DocumentClient.ReturnItemCollectionMetrics
   returnValues?: DocumentClient.ReturnValue
+  include?: string[]
   execute?: boolean
   parse?: boolean
 }
@@ -240,7 +242,7 @@ class Entity<
 
 
   // Parses the item
-  parse(input: any,include:string[]=[]) {
+  parse(input: any, include:string[]=[]) {
 
     // TODO: 'include' needs to handle nested maps?
 
@@ -496,7 +498,7 @@ class Entity<
     // Generate the payload
     const payload = Object.assign(
       {
-        TableName: _table.name,
+        TableName: _table!.name,
         Key: getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
       },
       ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
@@ -522,7 +524,7 @@ class Entity<
     item: Partial<Schema> = {},
     options: updateOptions = {},
     params: Partial<DocumentClient.UpdateItemInput> = {}
-  ): DocumentClient.UpdateItemOutput {
+  ) {
 
     // Generate the payload
     const payload = this.updateParams(item,options,params)
@@ -650,8 +652,8 @@ class Entity<
     const Key = getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
 
     // Init names and values
-    const names = {}
-    const values = {}
+    const names: { [key:string]: any } = {}
+    const values: { [key:string]: any } = {}
 
     // Loop through valid fields and add appropriate action
     Object.keys(data).forEach((field) => {
@@ -672,7 +674,7 @@ class Entity<
           REMOVE.push(`#${attr}`)
           names[`#${attr}`] = attr
         } // end for
-      } else if (this._table._removeNulls === true && (data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
+      } else if (this._table!._removeNulls === true && (data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
         REMOVE.push(`#${field}`)
         names[`#${field}`] = field
       } else if (
@@ -686,18 +688,18 @@ class Entity<
         // If a number or a set and adding
         if (['number','set'].includes(mapping.type) && data[field].$add) {
           ADD.push(`#${field} :${field}`)
-          values[`:${field}`] = validateType(mapping,field,data[field].$add,data)
+          values[`:${field}`] = validateType(mapping,field,data[field].$add)
           // Add field to names
           names[`#${field}`] = field
         // if a set and deleting items
         } else if (mapping.type === 'set' && data[field].$delete) {
           DELETE.push(`#${field} :${field}`)
-          values[`:${field}`] = validateType(mapping,field,data[field].$delete,data)
+          values[`:${field}`] = validateType(mapping,field,data[field].$delete)
           // Add field to names
           names[`#${field}`] = field
         // if a list and removing items by index
         } else if (mapping.type === 'list' && Array.isArray(data[field].$remove)) {
-          data[field].$remove.forEach(i => {
+          data[field].$remove.forEach((i:number) => {
             if (typeof i !== 'number') error(`Remove array for '${field}' must only contain numeric indexes`)
             REMOVE.push(`#${field}[${i}]`)
           })
@@ -707,10 +709,10 @@ class Entity<
         } else if (mapping.type === 'list' && (data[field].$append || data[field].$prepend)) {
           if (data[field].$append) {
             SET.push(`#${field} = list_append(#${field},:${field})`)
-            values[`:${field}`] = validateType(mapping,field,data[field].$append,data)
+            values[`:${field}`] = validateType(mapping,field,data[field].$append)
           } else {
             SET.push(`#${field} = list_append(:${field},#${field})`)
-            values[`:${field}`] = validateType(mapping,field,data[field].$prepend,data)
+            values[`:${field}`] = validateType(mapping,field,data[field].$prepend)
           }
           // Add field to names
           names[`#${field}`] = field
@@ -754,7 +756,7 @@ class Entity<
                   values[`:${value}`] = input.$prepend
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
-                  input.$remove.forEach(i => {
+                  input.$remove.forEach((i: number) => {
                     if (typeof i !== 'number') error(`Remove array for '${field}' must only contain numeric indexes`)
                     REMOVE.push(`${path}[${i}]`)
                   })
@@ -782,12 +784,13 @@ class Entity<
           names[`#${field}`] = field
         // else add to SET
         } else {
-          let value = transformAttr(mapping,validateType(mapping,field,data[field],data),data)
+          let value = transformAttr(mapping,validateType(mapping,field,data[field]),data)
 
           // It's possible that defaults can purposely return undefined values
           // if (hasValue(value)) {
           if (value !== undefined) {
             // Push the update to SET
+            // @ts-ignore
             SET.push(mapping.default !== undefined  && item[field] === undefined && !mapping.onUpdate ?
               `#${field} = if_not_exists(#${field},:${field})`
               : `#${field} = :${field}`)
@@ -814,7 +817,7 @@ class Entity<
     // Generate the payload
     const payload = Object.assign(
       {
-        TableName: _table.name,
+        TableName: _table!.name,
         Key,
         UpdateExpression: expression,
         ExpressionAttributeNames: Object.assign(names,ExpressionAttributeNames)
@@ -962,15 +965,15 @@ class Entity<
     // Generate the payload
     const payload = Object.assign(
       {
-        TableName: _table.name,
+        TableName: _table!.name,
         // Loop through valid fields and add appropriate action
         Item: Object.keys(data).reduce((acc,field) => {
           let mapping = schema.attributes[field]
-          let value = validateType(mapping,field,data[field],data)
+          let value = validateType(mapping,field,data[field])
           return value !== undefined
             && (mapping.save === undefined || mapping.save === true)
             && (!mapping.link || (mapping.link && mapping.save === true))
-            && (!_table._removeNulls || (_table._removeNulls && value !== null))
+            && (!_table!._removeNulls || (_table!._removeNulls && value !== null))
             ? Object.assign(acc, {
               [field]: transformAttr(mapping,value,data)
             }) : acc
@@ -993,7 +996,7 @@ class Entity<
   query(
     pk: any,
     options: queryOptions = {},
-    params: DocumentClient.QueryInput = {}
+    params: Partial<DocumentClient.QueryInput> = {}
   ) {    
     options.entity = this.name
     return this.table.query(pk,options,params)
@@ -1002,7 +1005,7 @@ class Entity<
   // Scan pass-through (default entity)
   scan(
     options: scanOptions = {},
-    params: DocumentClient.ScanInput = {}
+    params: Partial<DocumentClient.ScanInput> = {}
   ) {    
     options.entity = this.name
     return this.table.scan(options,params)

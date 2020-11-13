@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -9,16 +7,19 @@
 // TODO: Check duplicate entity names code
 
 // Import libraries, types, and classes
-import Entity, { FilterExpressions, ProjectionAttributes } from './Entity'
-import { DynamoDb,DocumentClient } from 'aws-sdk/clients/dynamodb'
+import Entity from './Entity'
+import DynamoDb, { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { parseTable, ParsedTable } from '../lib/parseTable'
 import parseFilters from '../lib/expressionBuilder'
-import parseProjections from '../lib/projectionBuilder'
 import validateTypes from '../lib/validateTypes'
+import { FilterExpressions } from '../lib/expressionBuilder'
+import parseProjections, { ProjectionAttributes } from '../lib/projectionBuilder'
+import { ParsedEntity } from '../lib/parseEntity'
 
 // Import standard error handler
 import { error, conditonError } from '../lib/utils'
 import { Document } from 'aws-sdk/clients/textract'
+
 
 // Declare Table types
 export interface TableConstructor {
@@ -94,13 +95,21 @@ export interface scanOptions {
   parse?: boolean
 }
 
+interface batchGetOptions {
+  consistent?: boolean
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  attributes?: ProjectionAttributes
+  include?: string[]
+  execute?: boolean
+  parse?: boolean
+}
 
 // Declare Table class
 class Table {
 
   private _execute: boolean = true
   private _parse: boolean = true
-  private _removeNulls: boolean = true
+  public _removeNulls: boolean = true
   private _docClient?: DocumentClient
   private _entities: string[] = []
   public Table!: ParsedTable['Table']
@@ -155,7 +164,7 @@ class Table {
   } // end DocumentClient
 
   // Adds a new Entity to the table
-  addEntity(entity: Entity | Entity[]) {
+  addEntity(entity: ParsedEntity | ParsedEntity[]) {
 
     // Coerce entity to array
     let entities = Array.isArray(entity) ? entity : [entity]
@@ -202,9 +211,9 @@ class Table {
               // If the attribute's name doesn't match the table's pk/sk name
               if (attr !== this.Table[key] && this.Table[key]) {
                 // If the table's index attribute name does not conflict with another entity attribute
-                if (!entity.schema.attributes[this.Table[key]]) { // FIX: better way to do this?
+                if (!entity.schema.attributes[this.Table[key]!]) { // FIX: better way to do this?
                   // Add the attribute using the same config and add alias
-                  entity.schema.attributes[this.Table[key]] = Object.assign(
+                  entity.schema.attributes[this.Table[key]!] = Object.assign(
                     {},
                     entity.schema.attributes[attr],
                     { alias: attr }
@@ -227,6 +236,7 @@ class Table {
               for (const keyType in attr) {
 
                 // Make sure the table index contains the defined key types
+                // @ts-ignore
                 if (!this.Table.indexes[key][keyType])
                   error(`${entity.name} contains a ${keyType}, but it is not used by ${key}`)
 
@@ -234,26 +244,32 @@ class Table {
                 
 
                 // If the attribute's name doesn't match the indexes attribute name
+                // @ts-ignore
                 if (attr[keyType] !== this.Table.indexes[key][keyType]) {
 
                   // If the indexes attribute name does not conflict with another entity attribute
+                  // @ts-ignore
                   if (!entity.schema.attributes[this.Table.indexes[key][keyType]]) {
                     
                     // If there is already a mapping for this attribute, make sure they match
                     // TODO: Figure out if this is even possible anymore. I don't think it is.
                     if (entity.schema.attributes[attr[keyType]].map
+                      // @ts-ignore
                       && entity.schema.attributes[attr[keyType]].map !== this.Table.indexes[key][keyType])
                       error(`${key}'s ${keyType} cannot map to the '${attr[keyType]}' alias because it is already mapped to another table attribute`)
 
                     // Add the index attribute using the same config and add alias
+                    // @ts-ignore
                     entity.schema.attributes[this.Table.indexes[key][keyType]] = Object.assign(
                       {},
                       entity.schema.attributes[attr[keyType]],
                       { alias: attr[keyType] }
                     ) // end assign
                     // Add a map from the attribute to the new index attribute
+                    // @ts-ignore
                     entity.schema.attributes[attr[keyType]].map = this.Table.indexes[key][keyType]
                   } else {
+                    // @ts-ignore
                     const config = entity.schema.attributes[this.Table.indexes[key][keyType]]
                     
                     // If the existing attribute isn't used by this index
@@ -262,6 +278,7 @@ class Table {
                       || (config.partitionKey && !config.partitionKey.includes(key))
                       || (config.sortKey && !config.sortKey.includes(key))
                     ) {
+                      // @ts-ignore
                       error(`${key}'s ${keyType} name (${this.Table.indexes[key][keyType]}) conflicts with another Entity attribute name`)
                     } // end if
                   } // end if-else
@@ -272,8 +289,8 @@ class Table {
               // TODO: This only checks for the attribute, not the explicit assignment
               if (this.Table.indexes[key].partitionKey && this.Table.indexes[key].sortKey
                 && (
-                  !entity.schema.attributes[this.Table.indexes[key].partitionKey]
-                  || !entity.schema.attributes[this.Table.indexes[key].sortKey]
+                  !entity.schema.attributes[this.Table.indexes[key].partitionKey!]
+                  || !entity.schema.attributes[this.Table.indexes[key].sortKey!]
                 )) {
                 error(`${key} requires mappings for both the partitionKey and the sortKey`)
               }
@@ -378,7 +395,7 @@ class Table {
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.query(payload).promise()
+      const result = await this.DocumentClient!.query(payload).promise()
       
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -387,11 +404,11 @@ class Table {
           result,
           { 
             Items: result.Items && result.Items.map(item => {
-              if (this[item[this.Table.entityField]]) {
-                return this[item[this.Table.entityField]].parse(
+              if (this[item[String(this.Table.entityField)]]) {
+                return this[item[String(this.Table.entityField)]].parse(
                   item,
                   // Array.isArray(options.omit) ? options.omit : [],
-                  EntityProjections[item[this.Table.entityField]] ? EntityProjections[item[this.Table.entityField]]
+                  EntityProjections[item[String(this.Table.entityField)]] ? EntityProjections[item[String(this.Table.entityField)]]
                   : TableProjections ? TableProjections
                   : []
                 ) 
@@ -502,16 +519,16 @@ class Table {
       error(`'startKey' requires a valid object`)
 
     // Default names and values
-    let ExpressionAttributeNames = { '#pk': (index && this.Table.indexes[index].partitionKey) || this.Table.partitionKey }
-    let ExpressionAttributeValues = { ':pk': pk }
+    let ExpressionAttributeNames: { [key: string]: any }  = { '#pk': (index && this.Table.indexes[index].partitionKey) || this.Table.partitionKey }
+    let ExpressionAttributeValues: { [key: string]: any } = { ':pk': pk }
     let KeyConditionExpression = '#pk = :pk'
     let FilterExpression // init FilterExpression
     let ProjectionExpression // init ProjectionExpression
     let EntityProjections = {}
-    let TableProjections = []
+    let TableProjections // FIXME: removed default
 
     // Parse sortKey condition operator and value
-    let operator, value, f
+    let operator, value: any, f: string = ''
     if (eq) { value = eq; f = 'eq'; operator = '=' }
     if (lt) { value = value ? conditonError(f) : lt; f = 'lt'; operator = '<' }
     if (lte) { value = value ? conditonError(f) : lte; f = 'lte'; operator = '<=' }
@@ -527,7 +544,7 @@ class Table {
       const sk = index ? 
         (
           this.Table.indexes[index].sortKey ? (
-            this.Table.attributes[this.Table.indexes[index].sortKey] || { type: 'string'}
+            this.Table.attributes[this.Table.indexes[index].sortKey!] || { type: 'string'}
           )
             : error(`Conditional expressions require the index to have a sortKey`)
         )
@@ -535,7 +552,7 @@ class Table {
         : error(`Conditional expressions require the table to have a sortKey`)        
 
       // Init validateType
-      const validateType = validateTypes()
+      const validateType = validateTypes(this.DocumentClient!)
 
       // Add the sortKey attribute name
       ExpressionAttributeNames['#sk'] = (index && this.Table.indexes[index].sortKey) || this.Table.sortKey
@@ -586,7 +603,7 @@ class Table {
 
     // If projections
     if (attributes) {
-      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this,entity,true)     
+      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this,entity!,true)     
 
       if (Object.keys(names).length > 0) {
         // Merge names and add projection expression
@@ -637,7 +654,7 @@ class Table {
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.scan(payload).promise()
+      const result = await this.DocumentClient!.scan(payload).promise()
       
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -646,10 +663,10 @@ class Table {
           result,
           { 
             Items: result.Items && result.Items.map(item => {
-              if (this[item[this.Table.entityField]]) {
-                return this[item[this.Table.entityField]].parse(
+              if (this[item[String(this.Table.entityField)]]) {
+                return this[item[String(this.Table.entityField)]].parse(
                   item,
-                  EntityProjections[item[this.Table.entityField]] ? EntityProjections[item[this.Table.entityField]]
+                  EntityProjections[item[String(this.Table.entityField)]] ? EntityProjections[item[String(this.Table.entityField)]]
                   : TableProjections ? TableProjections
                   : []
                 ) 
@@ -747,7 +764,7 @@ class Table {
     if (segments !== undefined && (!Number.isInteger(segments) || segments < 1))
       error(`'segments' must be an integer greater than 1`)
 
-    if (segment !== undefined && (!Number.isInteger(segment) || segment < 0 || segment >= segments))
+    if (segment !== undefined && (!Number.isInteger(segment) || segment < 0 || segment >= segments!))
       error(`'segment' must be an integer greater than or equal to 0 and less than the total number of segments`)
 
     if ((segments !== undefined && segment === undefined) || (segments === undefined && segment !== undefined))
@@ -759,7 +776,7 @@ class Table {
     let FilterExpression // init FilterExpression
     let ProjectionExpression // init ProjectionExpression
     let EntityProjections = {}
-    let TableProjections = []
+    let TableProjections
 
     // If filter expressions
     if (filters) {
@@ -786,7 +803,7 @@ class Table {
 
     // If projections
     if (attributes) {
-      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this,entity,true)     
+      const { names, projections, entities, tableAttrs } = parseProjections(attributes,this,entity!,true)     
 
       if (Object.keys(names).length > 0) {
         // Merge names and add projection expression
@@ -822,10 +839,14 @@ class Table {
   } // end query
 
   // BatchGet Items
-  async batchGet(items,options={},params={}) {
+  async batchGet(
+    items: any,
+    options: batchGetOptions = {},
+    params: Partial<DocumentClient.BatchGetItemInput> = {}
+  ) {
     // Generate the payload with meta information
     const {
-      payload, // batcGet payload
+      payload, // batchGet payload
       Tables, // table reference
       EntityProjections,
       TableProjections
@@ -895,7 +916,12 @@ class Table {
 
 
   // Generate BatchGet Params
-  batchGetParams(_items,options={},params={},meta=false) {
+  batchGetParams(
+    _items: any,
+    options: batchGetOptions = {},
+    params: Partial<DocumentClient.BatchGetItemInput> = {},
+    meta=false
+  ) {
 
     let items = Array.isArray(_items) ? _items : [_items]
 
@@ -923,11 +949,11 @@ class Table {
       error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
 
     // Init RequestItems and Tables reference
-    const RequestItems = {}
-    const Tables = {}
-    const TableAliases = {}
-    let EntityProjections = {}
-    let TableProjections = {}
+    let RequestItems: DocumentClient.BatchGetRequestMap = {}
+    let Tables: { [key:string]: any } = {}
+    let TableAliases: { [key:string]: any } = {}
+    let EntityProjections: { [key:string]: any } = {}
+    let TableProjections: { [key:string]: any } = {}
     
     // // Loop through items
     for (const i in items) {
@@ -970,7 +996,7 @@ class Table {
       if (consistent === true) {
         for (const tbl in RequestItems) RequestItems[tbl].ConsistentRead = true
       } else if (typeof consistent === 'object' && !Array.isArray(consistent)) {
-        for (const tbl in consistent) {
+        for (const tbl in consistent as Object) {
           const tbl_name = TableAliases[tbl] || tbl  
           if (RequestItems[tbl_name]) {
             if (typeof consistent[tbl] === 'boolean') { RequestItems[tbl_name].ConsistentRead = consistent[tbl] }
@@ -987,6 +1013,7 @@ class Table {
     // If projections
     if (attributes) {
 
+      // FIXME: Need a new type that creates a table map
       let attrs = attributes
 
       // If an Array, ensure single table and convert to standard format

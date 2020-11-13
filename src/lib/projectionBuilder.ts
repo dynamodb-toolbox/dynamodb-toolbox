@@ -16,8 +16,8 @@ import Table from '../classes/Table'
 // e.g. ['attr1','attr2'] or { MyEntity: ['attr1', 'attr2'] }
 // Ths should also be able to parse any combination,
 // e.g. [ 'attr1', 'attr2', { MyEntity: ['attr3','attr4'] }]
-type ProjectionAttributes = string | ProjectionAttributeType | (string | ProjectionAttributeType)[]
-type ProjectionAttributeType = { [key: string]: string | string[] }
+export type ProjectionAttributes = string | ProjectionAttributeType | (string | ProjectionAttributeType)[]
+export type ProjectionAttributeType = { [key: string]: string | string[] }
 
 export default (attributes: ProjectionAttributes, table: Table, entity: string | null, type=false) => {
   
