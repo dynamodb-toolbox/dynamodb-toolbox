@@ -21,5 +21,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
   },
-  "compileOnSave": false
+  "compileOnSave": false,
+  "exclude": ["node_modules", "**/__tests__/*"]
 }
