@@ -10,4 +10,4 @@ class Transaction {
   constructor() {}
 }
 
-module.exports = Transaction
+export default Transaction
