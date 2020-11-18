@@ -47,6 +47,7 @@ describe('batchWrite',()=>{
   it('fails when extra options', () => {
     expect(() => { TestTable.batchWriteParams(
       TestEntity.putBatch({ pk: 'test', sk: 'testsk'}),
+      // @ts-expect-error
       { invalid: true }
     ) })
       .toThrow(`Invalid batchWrite options: invalid`)
@@ -83,6 +84,7 @@ describe('batchWrite',()=>{
   it('batchWrites data to a single table with invalid params', () => {
     let result = TestTable.batchWriteParams(
       TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
+      // @ts-expect-error
       {}, 'test'
     ) as DocumentClient.BatchWriteItemInput
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')

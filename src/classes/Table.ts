@@ -1,3 +1,5 @@
+// @ts-nocheckx
+
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
@@ -13,7 +15,7 @@ import { parseTable, ParsedTable } from '../lib/parseTable'
 import parseFilters from '../lib/expressionBuilder'
 import validateTypes from '../lib/validateTypes'
 import { FilterExpressions } from '../lib/expressionBuilder'
-import parseProjections, { ProjectionAttributes } from '../lib/projectionBuilder'
+import parseProjections, { ProjectionAttributes, ProjectionAttributesTable } from '../lib/projectionBuilder'
 import { ParsedEntity } from '../lib/parseEntity'
 
 // Import standard error handler
@@ -100,6 +102,20 @@ interface batchGetOptions {
   capacity?: DocumentClient.ReturnConsumedCapacity
   attributes?: ProjectionAttributes
   include?: string[]
+  execute?: boolean
+  parse?: boolean
+}
+
+interface batchGetParamsMeta {
+  payload: any
+  Tables: { [key: string]: Table }
+  EntityProjections: { [key: string]: any },
+  TableProjections: { [key:string]: string[] }
+}
+
+interface batchWriteOptions {
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  metrics?: DocumentClient.ReturnItemCollectionMetrics
   execute?: boolean
   parse?: boolean
 }
@@ -850,11 +866,11 @@ class Table {
       Tables, // table reference
       EntityProjections,
       TableProjections
-    } = this.batchGetParams(items,options,params,true)
-
+    } = this.batchGetParams(items,options,params,true) as batchGetParamsMeta
+    
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.batchGet(payload).promise()
+      const result = await this.DocumentClient!.batchGet(payload).promise()
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
 
@@ -871,7 +887,14 @@ class Table {
   } // end put
 
 
-  parseBatchGetResponse(result,Tables,EntityProjections,TableProjections,options={}) {
+
+  parseBatchGetResponse(
+    result: any,
+    Tables: { [key: string]: Table },
+    EntityProjections: { [key: string]: any },
+    TableProjections: { [key:string]: string[] },
+    options: batchGetOptions = {}
+  ) {
     return Object.assign(
       result,
       // If reponses exist
@@ -881,13 +904,13 @@ class Table {
           // Merge in tables
           return Object.assign(acc,{ 
             // Map over the items
-            [(Tables[table] && Tables[table].alias) || table]: result.Responses[table].map(item => {            
+            [(Tables[table] && Tables[table].alias) || table]: result.Responses[table].map((item: Table) => {            
               // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
-              if (Tables[table] && Tables[table][item[Tables[table].Table.entityField]]) {
+              if (Tables[table] && Tables[table][item[String(Tables[table].Table.entityField)]]) {
                 // Parse the item and pass in projection references
-                return Tables[table][item[Tables[table].Table.entityField]].parse(
+                return Tables[table][item[String(Tables[table].Table.entityField)]].parse(
                   item,
-                  EntityProjections[table] && EntityProjections[table][item[Tables[table].Table.entityField]] ? EntityProjections[table][item[Tables[table].Table.entityField]]
+                  EntityProjections[table] && EntityProjections[table][item[String(Tables[table].Table.entityField)]] ? EntityProjections[table][item[String(Tables[table].Table.entityField)]]
                   : TableProjections[table] ? TableProjections[table]
                   : []
                 )
@@ -901,8 +924,8 @@ class Table {
       } : null, // end if Responses
       // If UnprocessedKeys, return a next function
       result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length > 0 ? { 
-        next: async () => { 
-          const nextResult = await this.DocumentClient.batchGet(Object.assign(
+        next: async (): Promise<any> => { 
+          const nextResult = await this.DocumentClient!.batchGet(Object.assign(
             { RequestItems: result.UnprocessedKeys },
             options.capacity ? { ReturnConsumedCapacity: options.capacity.toUpperCase() } : null
           )).promise()
@@ -1013,8 +1036,7 @@ class Table {
     // If projections
     if (attributes) {
 
-      // FIXME: Need a new type that creates a table map
-      let attrs = attributes
+      let attrs: ProjectionAttributesTable | ProjectionAttributes = attributes
 
       // If an Array, ensure single table and convert to standard format
       if (Array.isArray(attributes)) {
@@ -1025,10 +1047,10 @@ class Table {
         }
       } // end if array
 
-      for (const tbl in attrs) {        
+      for (const tbl in attrs as ProjectionAttributesTable) {        
         const tbl_name = TableAliases[tbl] || tbl 
         if (Tables[tbl_name]) {
-          const { names, projections, entities, tableAttrs } = parseProjections(attrs[tbl],Tables[tbl_name],null,true)
+          const { names, projections, entities, tableAttrs } = parseProjections((attrs as ProjectionAttributesTable)[tbl],Tables[tbl_name],null,true)
           RequestItems[tbl_name].ExpressionAttributeNames = names
           RequestItems[tbl_name].ProjectionExpression = projections
           EntityProjections[tbl_name] = entities
@@ -1046,20 +1068,29 @@ class Table {
       typeof params === 'object' ? params : null
     )
 
-    return meta ? { payload, Tables, EntityProjections, TableProjections } : payload
+    return meta ? { 
+      payload,
+      Tables, 
+      EntityProjections, 
+      TableProjections 
+    } : payload
   } // batchGetParams
   
 
 
 
   // BatchGet Items
-  async batchWrite(items,options={},params={}) {
+  async batchWrite(
+    items: any,
+    options: batchWriteOptions = {},
+    params: Partial<DocumentClient.BatchWriteItemInput> = {}
+  ) {
     // Generate the payload with meta information
-    const payload = this.batchWriteParams(items,options,params)
+    const payload = this.batchWriteParams(items,options,params) as DocumentClient.BatchWriteItemInput
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.batchWrite(payload).promise()
+      const result = await this.DocumentClient!.batchWrite(payload).promise()
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
 
@@ -1077,13 +1108,16 @@ class Table {
 
 
 
-  parseBatchWriteResponse(result,options={}) {
+  parseBatchWriteResponse(
+    result: any,
+    options:batchWriteOptions = {}
+  ): any {
     return Object.assign(
       result,
       // If UnprocessedItems, return a next function
       result.UnprocessedItems && Object.keys(result.UnprocessedItems).length > 0 ? { 
         next: async () => { 
-          const nextResult = await this.DocumentClient.batchWrite(Object.assign(
+          const nextResult = await this.DocumentClient!.batchWrite(Object.assign(
             { RequestItems: result.UnprocessedItems },
             options.capacity ? { ReturnConsumedCapacity: options.capacity.toUpperCase() } : null,
             options.metrics ? { ReturnItemCollectionMetrics: options.metrics.toUpperCase() } : null
@@ -1097,7 +1131,12 @@ class Table {
 
 
   // Generate BatchWrite Params
-  batchWriteParams(_items,options?={},params?={},meta=false) {
+  batchWriteParams(
+    _items: any,
+    options: batchWriteOptions = {},
+    params: Partial<DocumentClient.BatchWriteItemInput> = {},
+    meta=false
+  ) {
     // Convert items to array
     let items = (Array.isArray(_items) ? _items : [_items]).filter(x => x)    
 
@@ -1129,7 +1168,7 @@ class Table {
       error(`'metrics' must be one of 'NONE' OR 'SIZE'`)
 
     // Init RequestItems
-    const RequestItems = {}
+    const RequestItems: { [key:string]: any } = {}
     
     // Loop through items
     for (const i in items) {
@@ -1161,7 +1200,7 @@ class Table {
 
 
   // Entity operation references
-  async parse(entity,input,include=[]) {
+  async parse(entity: string,input: any, include=[]) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].parse(input,include)
   }
@@ -1171,17 +1210,17 @@ class Table {
     return this[entity].get(item,options,params)
   }
 
-  async delete(entity,item={},options={},params={}) {
+  async delete(entity:string,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].delete(item,options,params)
   }
   
-  async update(entity,item={},options={},params={}) {
+  async update(entity:string,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].update(item,options,params)
   }
 
-  async put(entity,item={},options={},params={}) {
+  async put(entity:string,item={},options={},params={}) {
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].put(item,options,params)
   }

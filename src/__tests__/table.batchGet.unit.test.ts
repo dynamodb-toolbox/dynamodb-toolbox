@@ -44,6 +44,7 @@ describe('batchGet',()=>{
   it('fails when extra options', () => {
     expect(() => { TestTable.batchGetParams(
       TestEntity.getBatch({ pk: 'test', sk: 'testsk'}),
+      // @ts-expect-error
       { invalid: true }
     ) })
       .toThrow(`Invalid batchGet options: invalid`)
@@ -90,6 +91,7 @@ describe('batchGet',()=>{
         TestEntity.getBatch({ pk: 'test', sk: 'testsk'}),
         TestEntity2.getBatch({ pk: 'test', sk: 'testsk'})
       ],
+      // @ts-expect-error: FIXME: this isn't right
       { consistent: { testTable: true, 'test-table2': false } }
     )
     
@@ -127,6 +129,7 @@ describe('batchGet',()=>{
         TestEntity.getBatch({ pk: 'test', sk: 'testsk'}),
         TestEntity2.getBatch({ pk: 'test', sk: 'testsk'})
       ],
+      // @ts-expect-error
       { consistent: { testTable: true, 'test-table2': 'test' } }
     )})
       .toThrow(`'consistent' values must be booleans (test-table2)`)
@@ -139,10 +142,21 @@ describe('batchGet',()=>{
       TestTable.batchGetParams([
         TestEntity.getBatch({ pk: 'test', sk: 'testsk'})
       ],
+      // @ts-expect-error
       { consistent: { testTable: true, 'test-table2': 'test' } }
     )})
       .toThrow(`There are no items for the table or table alias: test-table2`)
   })
   
+
+
+  // it('add consistent flag', () => {
+  //   let result = TestTable.batchGet(
+  //     TestEntity.getBatch({ pk: 'test', sk: 'testsk'}),
+  //     { consistent: true, execute: false,  attributes: [{ 'TestEntity': ['pk','sk'] }] }
+  //   )
+  //   // expect(result).toEqual({ RequestItems: { 'test-table': { ConsistentRead: true, Keys: [ { pk: 'test', sk: 'testsk' } ] } } })
+  // })
+
 
 })
