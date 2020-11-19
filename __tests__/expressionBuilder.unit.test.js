@@ -342,4 +342,15 @@ describe('expressionBuilder',() => {
       .toThrow(`A condition is required`)
   })
 
+  it('allows 0 in comparaison expression', () => {
+    expect(() => expressionBuilder({ attr: 'a', lte: 0 },TestTable,'TestEntity'))
+      .not.toThrow(`A condition is required`)
+    expect(() => expressionBuilder({ attr: 'a', lt: 0 },TestTable,'TestEntity'))
+      .not.toThrow(`A condition is required`)
+    expect(() => expressionBuilder({ attr: 'a', gte: 0 },TestTable,'TestEntity'))
+      .not.toThrow(`A condition is required`)
+    expect(() => expressionBuilder({ attr: 'a', gt: 0 },TestTable,'TestEntity'))
+      .not.toThrow(`A condition is required`)
+  })
+
 })
