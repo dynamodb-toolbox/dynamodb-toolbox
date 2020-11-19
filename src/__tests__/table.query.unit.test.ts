@@ -32,6 +32,16 @@ describe('query',()=>{
     })
   })
 
+  it('queries a table with no options using numeric pk', () => {
+    let result = TestTable.queryParams(1)
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk',
+      ExpressionAttributeNames: { '#pk': 'pk' },
+      ExpressionAttributeValues: { ':pk': 1 }
+    })
+  })
+
   it('queries a table with projections', () => {
     let result = TestTable.queryParams('test',{attributes:['pk']},{},true)
     expect(result).toEqual({
@@ -110,7 +120,7 @@ describe('query',()=>{
   it('fails on an invalid partionKey', () => {
     // @ts-expect-error
     expect(() => TestTable.queryParams())
-      .toThrow(`Query requires a string 'partitionKey' as its first parameter`)
+      .toThrow(`Query requires a string, number or binary 'partitionKey' as its first parameter`)
   })
 
   it('fails on an invalid index', () => {

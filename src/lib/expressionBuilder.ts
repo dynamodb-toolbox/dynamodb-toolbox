@@ -161,10 +161,10 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
   if (eq !== undefined) { value = eq; f = 'eq'; operator = '=' }
   if (ne !== undefined) { value = value ? conditionError(f) : ne; f = 'ne'; operator = '<>' }
   if (_in) { value = value ? conditionError(f) : _in; f = 'in'; operator = 'IN' }
-  if (lt) { value = value ? conditionError(f) : lt; f = 'lt'; operator = '<' }
-  if (lte) { value = value ? conditionError(f) : lte; f = 'lte'; operator = '<=' }
-  if (gt) { value = value ? conditionError(f) : gt; f = 'gt'; operator = '>' }
-  if (gte) { value = value ? conditionError(f) : gte; f = 'gte';  operator = '>=' }
+  if (lt !== undefined) { value = value ? conditionError(f) : lt; f = 'lt'; operator = '<' }
+  if (lte !== undefined) { value = value ? conditionError(f) : lte; f = 'lte'; operator = '<=' }
+  if (gt !== undefined) { value = value ? conditionError(f) : gt; f = 'gt'; operator = '>' }
+  if (gte !== undefined) { value = value ? conditionError(f) : gte; f = 'gte';  operator = '>=' }
   if (between) { value = value ? conditionError(f) : between; f = 'between'; operator = 'BETWEEN' }
   if (exists !== undefined) { value = value ? conditionError(f) : exists; f = 'exists'; operator = 'EXISTS' }
   if (contains) { value = value ? conditionError(f) : contains; f = 'contains'; operator = 'CONTAINS' }

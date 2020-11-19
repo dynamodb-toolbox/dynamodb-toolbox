@@ -18,11 +18,16 @@ export default (DocumentClient: DocumentClient) => (data: any, schema: any, part
   // Intialize validate type
   let validateType = validateTypes(DocumentClient)
 
-  let pk = data[partitionKey] ||
-      error(`'${partitionKey}'${schema[partitionKey].alias ? ` or '${schema[partitionKey].alias}'` : ''} is required`)
+  // TODO: Add tests for 0 values
+  let pk = data[partitionKey]
+  if (pk === undefined || pk === null || pk === '') {
+    error(`'${partitionKey}'${schema[partitionKey].alias ? ` or '${schema[partitionKey].alias}'` : ''} is required`)
+  }
 
-  let sk = sortKey === null || data[sortKey] ||
-      error(`'${sortKey}'${schema[sortKey].alias ? ` or '${schema[sortKey].alias}'` : ''} is required`)
+  const sk = data[sortKey]
+  if (sortKey && (sk === undefined || sk === null || sk === '')) {
+    error(`'${sortKey}'${schema[sortKey].alias ? ` or '${schema[sortKey].alias}'` : ''} is required`)
+  }
 
   return Object.assign(
     { [partitionKey]: transformAttr(schema[partitionKey],validateType(schema[partitionKey],partitionKey,pk),data) },

@@ -492,8 +492,8 @@ class Table {
       error(`Invalid query options: ${args.join(', ')}`)
 
     // Verify pk
-    if (typeof pk !== 'string' || pk.trim().length === 0)
-      error(`Query requires a string 'partitionKey' as its first parameter`)
+    if ((typeof pk !== 'string' && typeof pk !== 'number') || (typeof pk === 'string' && pk.trim().length === 0))
+      error(`Query requires a string, number or binary 'partitionKey' as its first parameter`)
 
     // Verify index
     if (index !== undefined && !this.Table.indexes[index])
