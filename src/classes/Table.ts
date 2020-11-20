@@ -984,7 +984,7 @@ class Table {
       if (
         item
         && item.Table 
-        && item.Table.constructor.name === 'Table'
+        && item.Table.Table
         && item.Key
         && typeof item.Key === 'object'
         && !Array.isArray(item.Key)

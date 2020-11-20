@@ -148,7 +148,7 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
     error(`Invalid expression options: ${Object.keys(args).join(', ')}`)
 
   // Verify entity
-  if (entity !== undefined && (typeof entity !== 'string' || (!table[entity] || table[entity].constructor.name !== 'Entity')))
+  if (entity !== undefined && (typeof entity !== 'string' || (!table[entity] || !table[entity].schema || !table[entity].schema.attributes)))
     error(`'entity' value of '${entity}' must be a string and a valid table Entity name`)
 
   // Add filter attribute to names
