@@ -40,6 +40,11 @@ export interface TableConstructor {
 export type DynamoDBTypes = 'string' | 'boolean' | 'number' | 'list' | 'map' | 'binary' | 'set'
 export type DynamoDBSetTypes = 'string' | 'number' | 'binary'
 
+export interface executeParse {
+  execute?: boolean
+  parse?: boolean
+}
+
 export interface TableAttributeConfig {
   type: DynamoDBTypes,
   setType?: DynamoDBSetTypes
@@ -118,10 +123,23 @@ interface batchWriteOptions {
   parse?: boolean
 }
 
-interface transactWriteOptions {
+interface transactGetParamsOptions {
+  capacity?: DocumentClient.ReturnConsumedCapacity
+}
+
+type transactGetOptions = transactGetParamsOptions & executeParse
+
+interface transactWriteParamsOptions {
   capacity?: DocumentClient.ReturnConsumedCapacity
   metrics?: DocumentClient.ReturnItemCollectionMetrics
   token?: string
+}
+
+type transactWriteOptions = transactWriteParamsOptions & executeParse
+
+interface transactGetParamsMeta {
+  Entities: (any | undefined)[] 
+  payload: DocumentClient.TransactGetItemsInput
 }
 
 // Declare Table class
@@ -858,6 +876,7 @@ class Table {
     return meta ? { payload, EntityProjections, TableProjections } : payload
   } // end query
 
+
   // BatchGet Items
   async batchGet(
     items: any,
@@ -888,7 +907,7 @@ class Table {
     } else {
       return payload
     } // end-if
-  } // end put
+  } // end batchGet
 
 
 
@@ -1083,7 +1102,7 @@ class Table {
 
 
 
-  // BatchGet Items
+  // BatchWrite Items
   async batchWrite(
     items: any,
     options: batchWriteOptions = {},
@@ -1201,6 +1220,48 @@ class Table {
   } // batchWriteParams
 
 
+
+  /**
+   * Performs a transactGet operation
+   * @param {object} items - An array of objects generated from getTransaction entity calls.
+   * @param {object} [options] - Additional transactGet options
+   * 
+  */
+  async transactGet(
+    items: ({ Entity?: any } & DocumentClient.TransactGetItem)[] = [],
+    options: transactGetOptions = {},
+    params: Partial<DocumentClient.TransactGetItemsInput> = {}
+  ) {
+    // Generate the payload with meta information
+    const { payload, Entities } = this.transactGetParams(items,options,true) as transactGetParamsMeta
+    
+    // If auto execute enabled
+    if (options.execute || (this.autoExecute && options.execute !== false)) {
+      const result = await this.DocumentClient!.transactGet(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        //return this.parseBatchGetResponse(result)
+        //return result as DocumentClient.TransactGetItemsOutput
+        return Object.assign(
+          result,
+          result.Responses ? { 
+            Responses: result.Responses!.map((res,i) => {                 
+              return { Item: Entities[i].parse ? Entities[i].parse(res.Item) : res.Item }
+            })
+          } : null
+        ) as DocumentClient.TransactGetItemsOutput
+
+      } else {
+        return result as DocumentClient.TransactGetItemsOutput
+      }       
+    } else {
+      return payload as DocumentClient.TransactGetItemsInput
+    } // end-if
+  } // end batchGet
+
+
+
+
   /**
    * Generate parameters for a transactGet operation
    * @param {object} items - An array of objects generated from getTransaction entity calls.
@@ -1209,15 +1270,19 @@ class Table {
    * Creates a TransactGetItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
    */
   transactGetParams(
-    items: DocumentClient.TransactGetItemList = [],
-    options: { capacity?: DocumentClient.ReturnConsumedCapacity } = {}
-  ): DocumentClient.TransactGetItemsInput {
+    items: ({ Entity?: any } & DocumentClient.TransactGetItem)[] = [],
+    options: transactGetParamsOptions = {},
+    meta: boolean = false
+  ) {
 
     // Extract valid options
     const {
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
-      ...args
+      ..._args
     } = options
+
+        // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
 
     // Error on extraneous arguments
     if (Object.keys(args).length > 0)
@@ -1228,12 +1293,16 @@ class Table {
       && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
       error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
 
+    let Entities: (any | undefined)[] = []
+
     // Generate the payload
     const payload = Object.assign(
       {
         // Loop through items and verify transaction objects
-        TransactItems: items.map(item => {
-          if (!('Get' in item) || Object.keys(item).length > 1)
+        TransactItems: items.map(item => {          
+          let { Entity, ..._item } = item
+          Entities.push(Entity)
+          if (!('Get' in _item) || Object.keys(_item).length > 1)
             error(`Invalid transaction item. Use the 'getTransaction' method on an entity.`)
           return item
         })
@@ -1241,7 +1310,9 @@ class Table {
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null
     )
 
-    return payload
+    return meta ? 
+      { Entities, payload } as transactGetParamsMeta
+        : payload as DocumentClient.TransactGetItemsInput
   } // end transactGetParams
 
 
@@ -1256,7 +1327,7 @@ class Table {
    */
   transactWriteParams(
     items: DocumentClient.TransactGetItemList = [],
-    options: transactWriteOptions = {}
+    options: transactWriteParamsOptions = {}
   ): DocumentClient.TransactGetItemsInput {
 
     // Extract valid options

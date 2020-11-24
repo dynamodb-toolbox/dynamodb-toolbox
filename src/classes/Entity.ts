@@ -326,7 +326,7 @@ class Entity<
   getTransaction(
     item: Partial<Schema> = {}, 
     options: { attributes?: ProjectionAttributes } = {}
-  ): DocumentClient.TransactGetItem {
+  ): { Entity: Entity<Schema> } & DocumentClient.TransactGetItem {
   
     // Destructure options to check for extraneous arguments
     const {
@@ -339,10 +339,13 @@ class Entity<
     error(`Invalid get transaction options: ${Object.keys(args).join(', ')}`)
     
     // Generate the get parameters
-    let payload = this.getParams(item, options)
+    let payload = this.getParams(item, options)    
 
     // Return in transaction format
-    return { Get: payload }
+    return { 
+      Entity: this,
+      Get: payload
+    }
   }
 
 
