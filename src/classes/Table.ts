@@ -118,6 +118,12 @@ interface batchWriteOptions {
   parse?: boolean
 }
 
+interface transactWriteOptions {
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  metrics?: DocumentClient.ReturnItemCollectionMetrics
+  token?: string
+}
+
 // Declare Table class
 class Table {
 
@@ -1194,6 +1200,118 @@ class Table {
 
   } // batchWriteParams
 
+
+  /**
+   * Generate parameters for a transactGet operation
+   * @param {object} items - An array of objects generated from getTransaction entity calls.
+   * @param {object} [options] - Additional transactGet options
+   * 
+   * Creates a TransactGetItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
+   */
+  transactGetParams(
+    items: DocumentClient.TransactGetItemList = [],
+    options: { capacity?: DocumentClient.ReturnConsumedCapacity } = {}
+  ): DocumentClient.TransactGetItemsInput {
+
+    // Extract valid options
+    const {
+      capacity, // ReturnConsumedCapacity (none, total, or indexes)
+      ...args
+    } = options
+
+    // Error on extraneous arguments
+    if (Object.keys(args).length > 0)
+      error(`Invalid transactGet options: ${Object.keys(args).join(', ')}`)
+    
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Generate the payload
+    const payload = Object.assign(
+      {
+        // Loop through items and verify transaction objects
+        TransactItems: items.map(item => {
+          if (!('Get' in item) || Object.keys(item).length > 1)
+            error(`Invalid transaction item. Use the 'getTransaction' method on an entity.`)
+          return item
+        })
+      },
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null
+    )
+
+    return payload
+  } // end transactGetParams
+
+
+
+
+  /**
+   * Generate parameters for a transactWrite operation
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
+   * @param {object} [options] - Additional options
+   * 
+   * Creates a TransactWriteItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
+   */
+  transactWriteParams(
+    items: DocumentClient.TransactGetItemList = [],
+    options: transactWriteOptions = {}
+  ): DocumentClient.TransactGetItemsInput {
+
+    // Extract valid options
+    const {
+      capacity, // ReturnConsumedCapacity (none, total, or indexes)
+      metrics, // ReturnItemCollectionMetrics (size or none)
+      token, // ClientRequestToken (1-36 characters)
+      ...args
+    } = options
+
+    // Error on extraneous arguments
+    if (Object.keys(args).length > 0)
+      error(`Invalid transactWrite options: ${Object.keys(args).join(', ')}`)
+    
+    // Verify capacity
+    if (capacity !== undefined
+      && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
+      error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+
+    // Verify metrics
+    if (metrics !== undefined
+      && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
+      error(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+
+    // Verify token
+    if (token !== undefined
+      && (typeof token !== 'string' || token.trim().length === 0 || token.trim().length > 36))
+      error(`'token' must be a string up to 36 characters long `)
+
+
+    // Generate the payload
+    const payload = Object.assign(
+      {
+        // Loop through items
+        TransactItems: items.map(item => {
+          if (
+            ( // Check for valid transaction object
+              !('ConditionCheck' in item)
+              && !('Delete' in item)
+              && !('Put' in item)
+              && !('Update' in item)
+            ) 
+            || Object.keys(item).length > 1
+          )
+            error(`Invalid transaction item. Use the 'putTransaction', 'updateTransaction', 'deleteTransaction', or 'conditionCheck' methods on an entity.`)
+          return item
+        })
+      },
+      capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
+      metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
+      token ? { ClientRequestToken: token.trim() } : null
+    )
+
+    return payload
+  } // end transactWriteParams
 
 
 

@@ -89,6 +89,11 @@ interface deleteOptions {
   parse?: boolean
 }
 
+interface transactionOptions {
+  conditions?: FilterExpressions
+  returnValues?: DocumentClient.ReturnValuesOnConditionCheckFailure
+}
+
 interface putOptions {
   conditions?: FilterExpressions
   capacity?: DocumentClient.ReturnConsumedCapacity
@@ -312,6 +317,36 @@ class Entity<
   }
 
   /**
+   * Generate parameters for GET transaction operation
+   * @param {object} item - The keys from item you wish to get.
+   * @param {object} [options] - Additional get options
+   * 
+   * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Get.html
+   */
+  getTransaction(
+    item: Partial<Schema> = {}, 
+    options: { attributes?: ProjectionAttributes } = {}
+  ): DocumentClient.TransactGetItem {
+  
+    // Destructure options to check for extraneous arguments
+    const {
+      attributes, // ProjectionExpression
+      ...args
+    } = options
+
+    // Error on extraneous arguments
+    if (Object.keys(args).length > 0)
+    error(`Invalid get transaction options: ${Object.keys(args).join(', ')}`)
+    
+    // Generate the get parameters
+    let payload = this.getParams(item, options)
+
+    // Return in transaction format
+    return { Get: payload }
+  }
+
+
+  /**
    * Generate GET parameters
    * @param {object} item - The keys from item you wish to get.
    * @param {object} [options] - Additional get options.
@@ -423,6 +458,44 @@ class Entity<
     return { [payload.TableName] : { DeleteRequest: { Key: payload.Key } } }
   }
 
+  
+  /**
+   * Generate parameters for DELETE transaction operation
+   * @param {object} item - The keys from item you wish to delete.
+   * @param {object} [options] - Additional delete options
+   * 
+   * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Delete.html
+   */
+  deleteTransaction(
+    item: Partial<Schema> = {},
+    options: transactionOptions = {}
+  ): { 'Delete': DocumentClient.Delete } {
+  
+    // Destructure options to check for extraneous arguments
+    const {
+      conditions, // ConditionExpression
+      returnValues, // ReturnValuesOnConditionCheckFailure (none, all_old)
+      ...args
+    } = options
+
+    // Error on extraneous arguments
+    if (Object.keys(args).length > 0)
+    error(`Invalid delete transaction options: ${Object.keys(args).join(', ')}`)
+    
+    // Generate the delete parameters
+    let payload = this.deleteParams(item, options)
+
+    // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
+    if ('ReturnValues' in payload) {
+      let { ReturnValues, ..._payload } = payload
+      payload = Object.assign({},_payload, { ReturnValuesOnConditionCheckFailure: ReturnValues })
+    }
+
+    // Return in transaction format
+    return { Delete: payload }
+  }
+
+
   /**
    * Generate DELETE parameters
    * @param {object} item - The keys from item you wish to delete.
@@ -443,7 +516,7 @@ class Entity<
       conditions, // ConditionExpression
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
       metrics, // ReturnItemCollectionMetrics: (size or none)
-      returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
+      returnValues, // Return Values (none, all_old)
       ..._args
     } = options
 
@@ -545,6 +618,44 @@ class Entity<
       return payload
     } // end if-else
   } // end delete
+
+
+  /**
+   * Generate parameters for UPDATE transaction operation
+   * @param {object} item - The item you wish to update.
+   * @param {object} [options] - Additional update options
+   * 
+   * Creates an Update object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Update.html
+   */
+  updateTransaction(
+    item: Partial<Schema> = {},
+    options: transactionOptions = {}
+  ): { 'Update': DocumentClient.Update } {
+  
+    // Destructure options to check for extraneous arguments
+    const {
+      conditions, // ConditionExpression
+      returnValues, // ReturnValuesOnConditionCheckFailure (none, all_old)
+      ...args
+    } = options
+
+    // Error on extraneous arguments
+    if (Object.keys(args).length > 0)
+    error(`Invalid update transaction options: ${Object.keys(args).join(', ')}`)
+    
+    // Generate the update parameters
+    let payload = this.updateParams(item, options)
+
+    // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
+    if ('ReturnValues' in payload) {
+      let { ReturnValues, ..._payload } = payload
+      payload = Object.assign({},_payload, { ReturnValuesOnConditionCheckFailure: ReturnValues })
+    }
+
+    // Return in transaction format (cast as Update since UpdateExpression can't be undefined)
+    return { Update: payload as DocumentClient.Update }
+  }
+
 
   // Generate UPDATE Parameters
   updateParams(
@@ -864,6 +975,7 @@ class Entity<
     } // end-if
   } // end put
 
+
   /**
    * Generate parameters for PUT batch operation
    * @param {object} item - The item you wish to put.
@@ -874,6 +986,45 @@ class Entity<
     const payload = this.putParams(item)
     return { [payload.TableName] : { PutRequest: { Item: payload.Item } } }
   }
+
+
+  /**
+   * Generate parameters for PUT transaction operation
+   * @param {object} item - The item you wish to put.
+   * @param {object} [options] - Additional put options
+   * 
+   * Creates a Put object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Put.html
+   */
+  putTransaction(
+    item: Partial<Schema> = {},
+    options: transactionOptions = {}
+  ): { 'Put': DocumentClient.Put } {
+  
+    // Destructure options to check for extraneous arguments
+    const {
+      conditions, // ConditionExpression
+      returnValues, // ReturnValuesOnConditionCheckFailure (none, all_old)
+      ...args
+    } = options
+
+    // Error on extraneous arguments
+    if (Object.keys(args).length > 0)
+    error(`Invalid put transaction options: ${Object.keys(args).join(', ')}`)
+    
+    // Generate the put parameters
+    let payload = this.putParams(item, options)
+
+    // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
+    if ('ReturnValues' in payload) {
+      let { ReturnValues, ..._payload } = payload
+      payload = Object.assign({},_payload, { ReturnValuesOnConditionCheckFailure: ReturnValues })
+    }
+
+    // Return in transaction format
+    return { Put: payload }
+  }
+
+
 
   // Generate PUT Parameters
   putParams(
@@ -990,6 +1141,51 @@ class Entity<
 
     return payload
   } // end putParams
+
+
+
+  /**
+   * Generate parameters for ConditionCheck transaction operation
+   * @param {object} item - The keys from item you wish to check.
+   * @param {object} [options] - Additional condition check options
+   * 
+   * Creates a ConditionCheck object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_ConditionCheck.html
+   */
+  conditionCheck(
+    item: Partial<Schema> = {}, 
+    options: transactionOptions = {}
+  ): { 'ConditionCheck': DocumentClient.ConditionCheck } {
+  
+    // Destructure options to check for extraneous arguments
+    const {
+      conditions, // ConditionExpression
+      returnValues, // ReturnValuesOnConditionCheckFailure (none, all_old)
+      ...args
+    } = options
+
+    // Error on extraneous arguments
+    if (Object.keys(args).length > 0)
+      error(`Invalid conditionCheck options: ${Object.keys(args).join(', ')}`)
+
+    // Generate the condition parameters (same params as delete)
+    let payload = this.deleteParams(item, options)
+
+    // Error on missing conditions
+    if (!('ConditionExpression' in payload))
+      error(`'conditions' are required in a conditionCheck`)
+    
+
+    // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
+    if ('ReturnValues' in payload) {
+      let { ReturnValues, ..._payload } = payload
+      payload = Object.assign({},_payload, { ReturnValuesOnConditionCheckFailure: ReturnValues })
+    }
+
+    // Return in transaction format
+    return { ConditionCheck: payload }
+  }
+
+
 
 
   // Query pass-through (default entity)
