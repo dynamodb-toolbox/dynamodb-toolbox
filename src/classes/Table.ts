@@ -1240,8 +1240,7 @@ class Table {
       const result = await this.DocumentClient!.transactGet(payload).promise()
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
-        //return this.parseBatchGetResponse(result)
-        //return result as DocumentClient.TransactGetItemsOutput
+        // Parse the items using the appropriate entity
         return Object.assign(
           result,
           result.Responses ? { 
@@ -1257,9 +1256,7 @@ class Table {
     } else {
       return payload as DocumentClient.TransactGetItemsInput
     } // end-if
-  } // end batchGet
-
-
+  } // end transactGet
 
 
   /**
@@ -1281,7 +1278,7 @@ class Table {
       ..._args
     } = options
 
-        // Remove other valid options from options
+    // Remove other valid options from options
     const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
 
     // Error on extraneous arguments
@@ -1319,6 +1316,38 @@ class Table {
 
 
   /**
+   * Performs a transactWrite operation
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
+   * @param {object} [options] - Additional transactWrite options
+   * 
+  */
+ async transactWrite(
+  items: DocumentClient.TransactWriteItemList,
+  options: transactWriteOptions = {},
+  params: Partial<DocumentClient.TransactWriteItemsInput> = {}
+) {
+  // Generate the payload with meta information
+  const payload = this.transactWriteParams(items,options)
+  
+  // If auto execute enabled
+  if (options.execute || (this.autoExecute && options.execute !== false)) {
+    const result = await this.DocumentClient!.transactWrite(payload).promise()
+    // If auto parse enable
+    if (options.parse || (this.autoParse && options.parse !== false)) {
+
+      return result as DocumentClient.TransactWriteItemsOutput
+
+    } else {
+      return result as DocumentClient.TransactWriteItemsOutput
+    }       
+  } else {
+    return payload as DocumentClient.TransactWriteItemsInput
+  } // end-if
+} // end transactGet
+
+
+
+  /**
    * Generate parameters for a transactWrite operation
    * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
    * @param {object} [options] - Additional options
@@ -1326,17 +1355,20 @@ class Table {
    * Creates a TransactWriteItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
    */
   transactWriteParams(
-    items: DocumentClient.TransactGetItemList = [],
+    items: DocumentClient.TransactWriteItemList = [],
     options: transactWriteParamsOptions = {}
-  ): DocumentClient.TransactGetItemsInput {
+  ): DocumentClient.TransactWriteItemsInput {
 
     // Extract valid options
     const {
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
       metrics, // ReturnItemCollectionMetrics (size or none)
       token, // ClientRequestToken (1-36 characters)
-      ...args
+      ..._args
     } = options
+
+    // Remove other valid options from options
+    const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
 
     // Error on extraneous arguments
     if (Object.keys(args).length > 0)
