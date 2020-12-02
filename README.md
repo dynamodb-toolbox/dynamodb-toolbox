@@ -8,7 +8,7 @@
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
 
-### **NOTE:** This version is a work in progress. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
+**NOTE:** This version is a work in progress. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
 ## Single Table Designs have never been this easy!
 
@@ -146,12 +146,12 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - **Projection Builder:** Specify which attributes and paths should be returned for each entity type, and automatically filter the results.
 - **Secondary Index Support:** Map your secondary indexes (GSIs and LSIs) to your table, and dynamically link your entity attributes.
 - **Batch Operations:** Full support for batch operations with a simpler interface to work with multiple entities and tables.
+- **Transactions:** Full support for transaction with a simpler interface to work with multiple entities and tables.
 - **Default Value Dependency Graphs:** Create dynamic attribute defaults by chaining other dynamic attribute defaults together.
 
 ## Table of Contents
 
 - [DynamoDB Toolbox - v0.3 (WIP: TypeScript Conversion)](#dynamodb-toolbox---v03-wip-typescript-conversion)
-    - [**NOTE:** This version is a work in progress. Please submit issues/feedback or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).](#note-this-version-is-a-work-in-progress-please-submit-issuesfeedback-or-feel-free-to-contact-me-on-twitter-jeremy_daly)
   - [Single Table Designs have never been this easy!](#single-table-designs-have-never-been-this-easy)
   - [Installation and Basic Usage](#installation-and-basic-usage)
     - [This is *NOT* an ORM (at least it's not trying to be)](#this-is-not-an-orm-at-least-its-not-trying-to-be)
@@ -184,6 +184,11 @@ If you like working with ORMs, that's great, and you should definitely give thes
       - [Return Data](#return-data-2)
     - [batchWrite(items [,options] [,parameters])](#batchwriteitems-options-parameters)
       - [Return Data](#return-data-3)
+    - [transactGet(items [,options] [,parameters])](#transactgetitems-options-parameters)
+      - [Accessing items from multiple tables](#accessing-items-from-multiple-tables)
+      - [Return Data](#return-data-4)
+    - [transactWrite(items [,options] [,parameters])](#transactwriteitems-options-parameters)
+      - [Return Data](#return-data-5)
     - [parse(entity, input [,include])](#parseentity-input-include)
     - [get(entity, key [,options] [,parameters])](#getentity-key-options-parameters)
     - [delete(entity, key [,options] [,parameters])](#deleteentity-key-options-parameters)
@@ -688,6 +693,82 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 #### Return Data
 The data is returned with the same response syntax as the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html). If `autoExecute` and `autoParse` are enabled, a `.next()` method will be available on the returned object. Calling this function will call the `batchWrite` method again using the same options and passing any `UnprocessedItems` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
+
+
+
+
+
+### transactGet(items [,options] [,parameters])
+
+> TransactGetItems is a synchronous operation that atomically retrieves multiple items from one or more tables (but not from indexes) in a single account and Region. 
+
+The `transactGet` method is a wrapper for the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). The DynamoDB Toolbox `transactGet` method supports all **TransactGetItem** API operations. The `transactGet` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `transactGetParams` can be used, but will only retrieve the generated parameters.
+
+The `transacthGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `getTransaction` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
+
+The optional second argument accepts an `options` object. The following options are all optional (corresponding TransactGetItems API references in parentheses):
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Table*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Table*) |
+
+#### Accessing items from multiple tables
+Transaction items are atomic, so each `Get` contains the table name and key necessary to retrieve the item. The library will automatically handle adding the necessary information and will parse each entity automatically for you.
+
+```javascript
+const results = await MyTable.transactGet(
+  [
+    User.getTransaction({ family: 'Brady', name: 'Mike' }),
+    User.getTransaction({ family: 'Brady', name: 'Carol' }),
+    Pet.getTransaction({ family: 'Brady', name: 'Tiger' })
+  ], 
+  { capacity: 'total' }
+)
+```
+
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
+
+#### Return Data
+The data is returned with the same response syntax as the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data.
+
+### transactWrite(items [,options] [,parameters])
+
+> TransactWriteItems is a synchronous write operation that groups up to 25 action requests. The actions are completed atomically so that either all of them succeed, or all of them fail.
+
+The `transactWrite` method is a wrapper for the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html). The DynamoDB Toolbox `transactWrite` method supports all **TransactWriteItems** API operations. The `transactWrite` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `transactWriteParams` can be used, but will only retrieve the generated parameters.
+
+The `transactWrite` method accepts three arguments. The first is an `array` of item keys to either `put`, `delete`, `update` or `conditionCheck`. The DynamoDB Toolbox provides `putTransaction`,`deleteTransaction`, `updateTransaction`, and `conditionCheck` methods on your entities to help you generate the proper configuration for each item. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
+
+The optional second argument accepts an `options` object. The following options are all optional (corresponding TransactWriteItems API references in parentheses):
+
+| Option | Type | Description |
+| -------- | :--: | ----------- |
+| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| token | `string` | Optional token to make the call idempotent, meaning that multiple identical calls have the same effect as one single call. (ClientRequestToken) |
+| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
+| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+
+```javascript
+const result = await Default.transactWrite(
+  [
+    Pet.conditionCheck({ family: 'Brady', name: 'Tiger' }, { conditions: { attr: 'alive', eq: false } },
+    Pet.deleteTransaction({ family: 'Brady', name: 'Tiger' }),
+    User.putTransaction({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother','wife'] }),
+    User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, roles: ['father','husband'] })
+  ],{ 
+    capacity: 'total',
+    metrics: 'size',
+  }
+)
+```
+
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
+
+#### Return Data
+The data is returned with the same response syntax as the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
 
 ### parse(entity, input [,include])
 
