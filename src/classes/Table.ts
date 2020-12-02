@@ -201,7 +201,10 @@ class Table {
     }
   } // end DocumentClient
 
-  // Adds a new Entity to the table
+  /**
+   * Adds an entity to the table
+   * @param {Entity|Entity[]} Entity - An Entity or array of Entities to add to the table.
+  */
   addEntity(entity: ParsedEntity | ParsedEntity[]) {
 
     // Coerce entity to array
@@ -1153,7 +1156,14 @@ class Table {
 
 
 
-  // Generate BatchWrite Params
+  /**
+   * Generates parameters for a batchWrite
+   * @param {object} items - An array of objects generated from putBatch and/or deleteBatch entity calls.
+   * @param {object} [options] - Additional batchWrite options
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the batchWrite request.
+   * @param {boolean} [meta] - Internal flag to enable entity parsing
+   * 
+  */
   batchWriteParams(
     _items: any,
     options: batchWriteOptions = {},
@@ -1260,7 +1270,7 @@ class Table {
 
 
   /**
-   * Generate parameters for a transactGet operation
+   * Generates parameters for a transactGet operation
    * @param {object} items - An array of objects generated from getTransaction entity calls.
    * @param {object} [options] - Additional transactGet options
    * 
@@ -1301,7 +1311,7 @@ class Table {
           Entities.push(Entity)
           if (!('Get' in _item) || Object.keys(_item).length > 1)
             error(`Invalid transaction item. Use the 'getTransaction' method on an entity.`)
-          return item
+          return _item
         })
       },
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null
@@ -1348,7 +1358,7 @@ class Table {
 
 
   /**
-   * Generate parameters for a transactWrite operation
+   * Generates parameters for a transactWrite operation
    * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
    * @param {object} [options] - Additional options
    * 
