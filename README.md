@@ -800,7 +800,7 @@ The optional second argument accepts an `options` object. The following options 
 | capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
 | metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
 | returnValues | `string` | Determines whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues) |
-| makeFieldName | `(fieldName: string, index: number) => string` | Convert the field name for use in update expressions. This is necessary if you use [hyphens/dashes](https://github.com/jeremydaly/dynamodb-toolbox/issues/94) in your field names. Examples: `(fieldName, index) => `f_${index}` or `(fieldName, index) => f.gsub(/-/g, '_')`. |
+| makeFieldName | `(fieldName: string, index: number) => string` | Convert the field name for use in update expressions. This is necessary if you use [hyphens/dashes](https://github.com/jeremydaly/dynamodb-toolbox/issues/94) in your field names. Examples: `(fieldName, index) => `f_${index}` or `(fieldName, index) => f.replace(/-/g, '_')`. |
 | execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
 
