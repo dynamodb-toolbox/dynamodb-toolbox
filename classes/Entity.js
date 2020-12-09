@@ -427,6 +427,7 @@ class Entity {
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
       metrics, // ReturnItemCollectionMetrics: (size or none)
       returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
+      makeFieldName, // Optional function for making valid field names
       ..._args
     } = options
 
@@ -491,8 +492,10 @@ class Entity {
     const values = {}
 
     // Loop through valid fields and add appropriate action
-    Object.keys(data).forEach((field) => {
+    Object.keys(data).forEach((field, n) => {
       const mapping = schema.attributes[field]
+
+      const fieldName = makeFieldName ? makeFieldName(field, n) : field
 
       // Remove attributes
       if (field === '$remove') {
@@ -510,8 +513,8 @@ class Entity {
           names[`#${attr}`] = attr
         } // end for
       } else if (this._table._removeNulls === true && (data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
-        REMOVE.push(`#${field}`)
-        names[`#${field}`] = field
+        REMOVE.push(`#${fieldName}`)
+        names[`#${fieldName}`] = field
       } else if (
         // !mapping.partitionKey
         // && !mapping.sortKey
@@ -522,44 +525,44 @@ class Entity {
       ) {
         // If a number or a set and adding
         if (['number','set'].includes(mapping.type) && data[field].$add) {
-          ADD.push(`#${field} :${field}`)
-          values[`:${field}`] = validateType(mapping,field,data[field].$add,data)
+          ADD.push(`#${fieldName} :${fieldName}`)
+          values[`:${fieldName}`] = validateType(mapping,field,data[field].$add,data)
           // Add field to names
-          names[`#${field}`] = field
+          names[`#${fieldName}`] = field
         // if a set and deleting items
         } else if (mapping.type === 'set' && data[field].$delete) {
-          DELETE.push(`#${field} :${field}`)
-          values[`:${field}`] = validateType(mapping,field,data[field].$delete,data)
+          DELETE.push(`#${fieldName} :${fieldName}`)
+          values[`:${fieldName}`] = validateType(mapping,field,data[field].$delete,data)
           // Add field to names
-          names[`#${field}`] = field
+          names[`#${fieldName}`] = field
         // if a list and removing items by index
         } else if (mapping.type === 'list' && Array.isArray(data[field].$remove)) {
           data[field].$remove.forEach(i => {
             if (typeof i !== 'number') error(`Remove array for '${field}' must only contain numeric indexes`)
-            REMOVE.push(`#${field}[${i}]`)
+            REMOVE.push(`#${fieldName}[${i}]`)
           })
           // Add field to names
-          names[`#${field}`] = field
+          names[`#${fieldName}`] = field
         // if list and appending or prepending
         } else if (mapping.type === 'list' && (data[field].$append || data[field].$prepend)) {
           if (data[field].$append) {
-            SET.push(`#${field} = list_append(#${field},:${field})`)
-            values[`:${field}`] = validateType(mapping,field,data[field].$append,data)
+            SET.push(`#${fieldName} = list_append(#${fieldName},:${fieldName})`)
+            values[`:${fieldName}`] = validateType(mapping,field,data[field].$append,data)
           } else {
-            SET.push(`#${field} = list_append(:${field},#${field})`)
-            values[`:${field}`] = validateType(mapping,field,data[field].$prepend,data)
+            SET.push(`#${fieldName} = list_append(:${fieldName},#${fieldName})`)
+            values[`:${fieldName}`] = validateType(mapping,field,data[field].$prepend,data)
           }
           // Add field to names
-          names[`#${field}`] = field
+          names[`#${fieldName}`] = field
         // if a list and updating by index
         } else if (mapping.type === 'list' && !Array.isArray(data[field]) && typeof data[field] === 'object') {
           Object.keys(data[field]).forEach(i => {
             if (String(parseInt(i)) !== i) error(`Properties must be numeric to update specific list items in '${field}'`)
-            SET.push(`#${field}[${i}] = :${field}_${i}`)
-            values[`:${field}_${i}`] = data[field][i]
+            SET.push(`#${fieldName}[${i}] = :${fieldName}_${i}`)
+            values[`:${fieldName}_${i}`] = data[field][i]
           })
           // Add field to names
-          names[`#${field}`] = field
+          names[`#${fieldName}`] = field
         // if a map and updating by nested attribute/index
         } else if (mapping.type === 'map' && data[field].$set) {
           Object.keys(data[field].$set).forEach(f => {
@@ -567,7 +570,7 @@ class Entity {
             // TODO: handle null values to remove
 
             let props = f.split('.')
-            let acc = [`#${field}`]
+            let acc = [`#${fieldName}`]
             props.forEach((prop,i) => {
               let id = `${field}_${props.slice(0,i+1).join('_')}`
               // Add names and values
@@ -616,7 +619,7 @@ class Entity {
             })
           })
           // Add field to names
-          names[`#${field}`] = field
+          names[`#${fieldName}`] = field
         // else add to SET
         } else {
           let value = transformAttr(mapping,validateType(mapping,field,data[field],data),data)
@@ -626,11 +629,11 @@ class Entity {
           if (value !== undefined) {
             // Push the update to SET
             SET.push(mapping.default !== undefined  && item[field] === undefined && !mapping.onUpdate ?
-              `#${field} = if_not_exists(#${field},:${field})`
-              : `#${field} = :${field}`)
+              `#${fieldName} = if_not_exists(#${fieldName},:${fieldName})`
+              : `#${fieldName} = :${fieldName}`)
             // Add names and values
-            names[`#${field}`] = field
-            values[`:${field}`] = value
+            names[`#${fieldName}`] = field
+            values[`:${fieldName}`] = value
           }
         }
 

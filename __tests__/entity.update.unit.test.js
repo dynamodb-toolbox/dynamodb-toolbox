@@ -268,6 +268,37 @@ describe('update',()=>{
     expect(ExpressionAttributeValues[':test_boolean_coerce']).toBe(false)
   })
 
+  it('maps field names', () => {
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
+      pk: 'test-pk',
+      sk: 'test-sk',
+      test_boolean_coerce: 'false',
+      _ct: '2020-12-08T21:36:47.000Z',
+      _md: '2020-12-08T21:36:47.050Z'
+
+    }, {
+      makeFieldName: (field, index) => `f_${index}`
+    })
+    expect(UpdateExpression).toEqual('SET #f_0 = if_not_exists(#f_0,:f_0), #f_1 = if_not_exists(#f_1,:f_1), #f_2 = if_not_exists(#f_2,:f_2), #f_3 = :f_3, #f_4 = :f_4, #f_5 = if_not_exists(#f_5,:f_5), #f_8 = :f_8')
+    expect(ExpressionAttributeValues).toEqual({
+      ':f_0': 'default string',
+      ':f_1': 0,
+      ':f_2': false,
+      ':f_3': '2020-12-08T21:36:47.000Z',
+      ':f_4': '2020-12-08T21:36:47.050Z',
+      ':f_5': 'TestEntity',
+      ':f_8': false
+    })
+    expect(ExpressionAttributeNames).toEqual({
+      '#f_0': 'test_string',
+      '#f_1': 'test_number_coerce',
+      '#f_2': 'test_boolean_default',
+      '#f_3': '_ct',
+      '#f_4': '_md',
+      '#f_5': '_et',
+      '#f_8': 'test_boolean_coerce'
+    })
+  })
 
   it('creates a set', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams({
