@@ -1,14 +1,11 @@
-# DynamoDB Toolbox - v0.3 (WIP: TypeScript Conversion)
+# DynamoDB Toolbox
 
-[![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=v0.3)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
+[![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=master)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/l/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
-[![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=v0.3)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=v0.3)
+[![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=master)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=master)
 
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
-
-
-**NOTE:** This version is a work in progress. Please submit [issues/feedback](https://github.com/jeremydaly/dynamodb-toolbox/issues) or feel free to contact me on Twitter [@jeremy_daly](https://twitter.com/jeremy_daly).
 
 ## Single Table Designs have never been this easy!
 
@@ -148,10 +145,11 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - **Batch Operations:** Full support for batch operations with a simpler interface to work with multiple entities and tables.
 - **Transactions:** Full support for transaction with a simpler interface to work with multiple entities and tables.
 - **Default Value Dependency Graphs:** Create dynamic attribute defaults by chaining other dynamic attribute defaults together.
+- **TypeScript Support:** v0.3 of this library was rewritten in TypeScript to provide strong typing support. Additional work is still required to support schema typing.
 
 ## Table of Contents
 
-- [DynamoDB Toolbox - v0.3 (WIP: TypeScript Conversion)](#dynamodb-toolbox---v03-wip-typescript-conversion)
+- [DynamoDB Toolbox](#dynamodb-toolbox)
   - [Single Table Designs have never been this easy!](#single-table-designs-have-never-been-this-easy)
   - [Installation and Basic Usage](#installation-and-basic-usage)
     - [This is *NOT* an ORM (at least it's not trying to be)](#this-is-not-an-orm-at-least-its-not-trying-to-be)
