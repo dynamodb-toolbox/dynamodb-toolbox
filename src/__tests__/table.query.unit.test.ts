@@ -23,7 +23,7 @@ const TestEntity = new Entity({
 describe('query',()=>{
 
   it('queries a table with no options', async () => {
-    let result = TestTable.query('test',{ execute: false })
+    let result = await TestTable.query('test',{ execute: false })
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk',
