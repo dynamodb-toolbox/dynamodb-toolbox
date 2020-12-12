@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-toolbox",
-  "version": "0.3.0-alpha.0",
+  "version": "0.3.0",
   "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "dist/index.js",
@@ -47,5 +47,8 @@
     "jest": "^26.4.2",
     "ts-jest": "^26.4.1",
     "typescript": "^4.0.3"
-  }
+  },
+  "files": [
+    "dist/"
+  ]
 }
