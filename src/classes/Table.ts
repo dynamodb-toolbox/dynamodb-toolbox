@@ -436,6 +436,7 @@ class Table {
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
+      
       const result = await this.DocumentClient!.query(payload).promise()
       
       // If auto parse enable
@@ -1134,7 +1135,7 @@ class Table {
 
 
 
-  parseBatchWriteResponse(
+  private parseBatchWriteResponse(
     result: any,
     options:batchWriteOptions = {}
   ): any {
@@ -1277,10 +1278,26 @@ class Table {
    * Creates a TransactGetItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
    */
   transactGetParams(
-    items: ({ Entity?: any } & DocumentClient.TransactGetItem)[] = [],
+    _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
+    options?: transactGetParamsOptions,
+    meta?: false | undefined
+  ) : DocumentClient.TransactGetItemsInput
+  transactGetParams(
+    _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
+    options: transactGetParamsOptions,
+    meta: true
+  ) : transactGetParamsMeta
+  transactGetParams(
+    _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
     options: transactGetParamsOptions = {},
     meta: boolean = false
-  ) {
+  ): DocumentClient.TransactGetItemsInput | transactGetParamsMeta {
+
+    let items = Array.isArray(_items) ? _items : _items ? [_items] : []
+
+    // Error on no items
+    if (items.length === 0)
+      error(`No items supplied`)
 
     // Extract valid options
     const {
@@ -1292,8 +1309,8 @@ class Table {
     const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
 
     // Error on extraneous arguments
-    if (Object.keys(args).length > 0)
-      error(`Invalid transactGet options: ${Object.keys(args).join(', ')}`)
+    if (args.length > 0)
+      error(`Invalid transactGet options: ${args.join(', ')}`)
     
     // Verify capacity
     if (capacity !== undefined
@@ -1317,9 +1334,9 @@ class Table {
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null
     )
 
-    return meta ? 
-      { Entities, payload } as transactGetParamsMeta
-        : payload as DocumentClient.TransactGetItemsInput
+    // Return transact items
+    return (meta) ? { Entities, payload } : payload
+        
   } // end transactGetParams
 
 
@@ -1365,9 +1382,15 @@ class Table {
    * Creates a TransactWriteItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
    */
   transactWriteParams(
-    items: DocumentClient.TransactWriteItemList = [],
+    _items: DocumentClient.TransactWriteItemList,
     options: transactWriteParamsOptions = {}
   ): DocumentClient.TransactWriteItemsInput {
+
+    let items = Array.isArray(_items) ? _items : _items ? [_items] : []
+
+    // Error on no items
+    if (items.length === 0)
+      error(`No items supplied`)
 
     // Extract valid options
     const {
@@ -1381,8 +1404,8 @@ class Table {
     const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
 
     // Error on extraneous arguments
-    if (Object.keys(args).length > 0)
-      error(`Invalid transactWrite options: ${Object.keys(args).join(', ')}`)
+    if (args.length > 0)
+      error(`Invalid transactWrite options: ${args.join(', ')}`)
     
     // Verify capacity
     if (capacity !== undefined

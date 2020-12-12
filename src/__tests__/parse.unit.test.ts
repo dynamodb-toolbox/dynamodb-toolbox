@@ -17,6 +17,21 @@ const TestTable = new Table({
   DocumentClient
 })
 
+const CompositeEntity = new Entity({
+  // Specify entity name
+  name: 'CompositeEntity',
+
+  // Define attributes
+  attributes: {
+    pk: { type: 'string', partitionKey: true },
+    sk: { type: 'string', sortKey: true, hidden: true },
+    test_composite: ['sk',0, { save: true }],
+    test_composite2: ['sk',1, { save: false }],
+    test_composite3: ['sk',2, { }]
+  },
+  table: TestTable
+})
+
 
 describe('parse',()=>{
 
@@ -82,6 +97,20 @@ describe('parse',()=>{
       test_composite2: 'email',
     })
   })
+
+  // it('parses composite field without "save"', ()=>{
+  //   let item = CompositeEntity.parse({ 
+  //     pk: 'test@test.com',
+  //     sk: 'active#email#foo',
+  //     test_composite: 'test'
+  //   })
+  //   expect(item).toEqual({
+  //     pk: 'test@test.com',
+  //     test_composite: 'test',
+  //     test_composite2: 'email',
+  //     test_composite3: 'foo'
+  //   })
+  // })
 
 
 }) // end parse
