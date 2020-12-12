@@ -346,7 +346,10 @@ describe('expressionBuilder',() => {
       .toThrow(`A condition is required`)
   })
 
+<<<<<<< HEAD:src/__tests__/expressionBuilder.unit.test.ts
 
+=======
+>>>>>>> 877eeb1df4a89f26e6c5ff08c685178d729010c2:__tests__/expressionBuilder.unit.test.js
   it('allows 0 in comparaison expression', () => {
     expect(() => expressionBuilder({ attr: 'a', lte: 0 },TestTable,'TestEntity'))
       .not.toThrow(`A condition is required`)
