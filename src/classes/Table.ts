@@ -69,11 +69,11 @@ export interface queryOptions {
   consistent?: boolean
   capacity?: DocumentClient.ReturnConsumedCapacity
   select?: DocumentClient.Select
-  eq?: string
-  lt?: string
-  lte?: string
-  gt?: string
-  gte?: string
+  eq?: string | number
+  lt?: string | number
+  lte?: string | number
+  gt?: string | number
+  gte?: string | number
   between?: [string, string] | [number, number]
   beginsWith?: string
   filters?: FilterExpressions
