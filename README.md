@@ -104,7 +104,7 @@ You can then get the data:
 let item = {
   id: 123,
   status: 'active',
-  date_added: '2019-04-24'
+  date_added: '2020-04-24'
 }
 
 // Use the 'get' method of Customer
