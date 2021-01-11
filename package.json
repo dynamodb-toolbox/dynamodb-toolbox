@@ -9,7 +9,6 @@
     "test": "jest unit",
     "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "test:integration": "jest integ",
     "lint": "eslint .",
     "build": "tsc",
     "prepare": "npm run build",
@@ -48,7 +47,6 @@
     "dynalite": "^3.2.1",
     "eslint": "^6.8.0",
     "jest": "^26.6.3",
-    "testcontainers": "^6.4.1",
     "ts-jest": "^26.4.4",
     "typescript": "^4.1.3"
   },
