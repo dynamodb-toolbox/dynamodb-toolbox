@@ -1256,7 +1256,7 @@ class Table {
           result,
           result.Responses ? { 
             Responses: result.Responses!.map((res,i) => {                 
-              return { Item: Entities[i].parse ? Entities[i].parse(res.Item) : res.Item }
+              return { Item: Entities[i].parse ? Entities[i].parse(res) : res.Item }
             })
           } : null
         ) as DocumentClient.TransactGetItemsOutput
