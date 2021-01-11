@@ -1255,8 +1255,12 @@ class Table {
         return Object.assign(
           result,
           result.Responses ? { 
-            Responses: result.Responses!.map((res,i) => {                 
-              return { Item: Entities[i].parse ? Entities[i].parse(res) : res.Item }
+            Responses: result.Responses!.map((res,i) => {   
+              if (res.Item) {
+                return { Item: Entities[i].parse ? Entities[i].parse(res.Item) : res.Item }
+              } else {
+                return {}
+              }
             })
           } : null
         ) as DocumentClient.TransactGetItemsOutput
