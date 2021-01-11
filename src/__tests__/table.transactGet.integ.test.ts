@@ -8,8 +8,8 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 let container: any;
 
-let TestTable: Table, 
-    TestEntity: Entity<{}>;
+let TestTable: Table,
+  TestEntity: Entity<{}>;
 
 const dynamodbLocalVersion = process.env.TEST_LOCAL_DYNAMO_DB_VERSION || 'latest';
 const dynamoPort = 8000;
@@ -74,9 +74,9 @@ describe('transactGetIntegration', () => {
     ]) as DocumentClient.TransactGetItemsOutput;
 
     console.log(getTransactionResult);
-    
+
     expect(getTransactionResult.Responses).toBeTruthy();
-    expect(getTransactionResult.Responses![0].Item).toEqual({})
+    expect(getTransactionResult.Responses![0].Item).toEqual({});
   });
 
   it('returns an item', async () => {
@@ -89,7 +89,7 @@ describe('transactGetIntegration', () => {
     const getTransactionResult = await TestTable.transactGet([
       TestEntity.getTransaction({ pk: 'test', sk: 'notempty' })
     ]) as DocumentClient.TransactGetItemsOutput;
-    
+
     expect(getTransactionResult.Responses).toBeTruthy();
     expect(getTransactionResult.Responses![0].Item!.email).toEqual(pk);
     expect(getTransactionResult.Responses![0].Item!.sort).toEqual(sk);
