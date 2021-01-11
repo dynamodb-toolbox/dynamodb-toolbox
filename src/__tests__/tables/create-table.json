@@ -46,10 +46,6 @@
       ],
       "Projection": {
         "ProjectionType": "ALL"
-      },
-      "ProvisionedThroughput": {
-        "ReadCapacityUnits": 5,
-        "WriteCapacityUnits": 5
       }
     }
   ]
