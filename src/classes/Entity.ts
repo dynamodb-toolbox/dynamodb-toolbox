@@ -21,10 +21,11 @@ import parseProjections, { ProjectionAttributes } from '../lib/projectionBuilder
 import { error, transformAttr, isEmpty } from '../lib/utils'
 import { Document } from 'aws-sdk/clients/textract'
 
-type SchemaType =
+export type SchemaType =
   | string
   | number
   | boolean
+  | null
   | { [key: string]: SchemaType }
   | SchemaType[]
 
