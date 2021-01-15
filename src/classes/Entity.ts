@@ -121,6 +121,14 @@ interface updateCustomParameters {
   DELETE?: string[]
 }
 
+export interface Schema {
+  keys: {
+    partitionKey: string
+    sortKey?: string
+  }
+  attributes: EntityAttributes
+}
+
 type updateCustomParams = updateCustomParameters 
   & Partial<DocumentClient.UpdateItemInput>
 
