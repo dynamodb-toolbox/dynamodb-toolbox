@@ -121,7 +121,7 @@ interface updateCustomParameters {
   DELETE?: string[]
 }
 
-export interface Schema {
+export interface schema {
   keys: {
     partitionKey: string
     sortKey?: string
@@ -141,7 +141,7 @@ class Entity<
   private _execute?: boolean
   private _parse?: boolean
   public name!: string
-  public schema: any
+  public schema: schema
   public _etAlias!: string
   public defaults: any
   public linked: any
