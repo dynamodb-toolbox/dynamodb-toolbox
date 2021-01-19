@@ -36,13 +36,13 @@ interface FilterExpression {
 export type FilterExpressions = FilterExpression | FilterExpression[] | FilterExpressions[]
 
 const buildExpression = (
-    exp: FilterExpressions,
-    table: Table,
-    entity?: string,
-    group=0,
-    level=0
-  ): any => {
-  
+  exp: FilterExpressions,
+  table: Table,
+  entity?: string,
+  group=0,
+  level=0
+): any => {
+
   // Coerce to array if not already
   const clauses = Array.isArray(exp) ? exp : [exp]
   let expression = ''
@@ -69,8 +69,8 @@ const buildExpression = (
       names = Object.assign(names,sub.names)
       values = Object.assign(values,sub.values)
       group = sub.group
-    
-    // Else process the clause
+
+      // Else process the clause
     } else {
 
       // Make sure TS knows this is a FilterExpression
@@ -84,7 +84,7 @@ const buildExpression = (
 
       // Parse the clause
       const clause = parseClause(exp,group,table)
-      
+
       // Concat to expression and merge names and values
       expression += `${id > 0 ? ` ${clause.logic} `: ''}${clause.clause}`
       names = Object.assign(names,clause.names)
@@ -95,7 +95,7 @@ const buildExpression = (
     }
   }) // end for
 
-  return { 
+  return {
     logic,
     expression,
     names,
@@ -122,7 +122,7 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
   const values: { [key: string]: any } = {}
 
   // Deconstruct valid expression options
-  const { 
+  const {
     attr, // attribute
     size, // wraps attr in size()
     negate, // negates expression
@@ -142,7 +142,7 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
     entity, // optional entity reference for aliasing
     ...args
   } = _clause
-  
+
   // Error on extraneous arguments
   if (Object.keys(args).length > 0)
     error(`Invalid expression options: ${Object.keys(args).join(', ')}`)
@@ -151,10 +151,13 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
   if (entity !== undefined && (typeof entity !== 'string' || (!table[entity] || !table[entity].schema || !table[entity].schema.attributes)))
     error(`'entity' value of '${entity}' must be a string and a valid table Entity name`)
 
-  // Add filter attribute to names
-  names[`#attr${grp}`] = typeof attr === 'string' ? checkAttribute(attr,(entity ? table[entity].schema.attributes : table.Table.attributes))
-    : typeof size === 'string' ? checkAttribute(size,(entity ? table[entity].schema.attributes : table.Table.attributes))
-    : error(`A string for 'attr' or 'size' is required for condition expressions`)
+  // Add filter attribute to names  
+  let attrName = "";
+  const path = typeof attr === 'string' ? attr.split('.') : typeof size === 'string' ? size.split('.') : error(`A string for 'attr' or 'size' is required for condition expressions`);;
+  for (let i = 0; i < path.length; i++) {
+    names[i == 0 ? `#attr${grp}` : `#attr${grp}${i}`] = i == 0 ? checkAttribute(path[i], (entity ? table[entity].schema.attributes : table.Table.attributes)) : path[i];
+    attrName += i == 0 ? `#attr${grp}` : `.#attr${grp}${i}`;
+  }
 
   // Parse clause operator and value
   let operator, value, f
@@ -170,18 +173,18 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
   if (contains) { value = value ? conditionError(f) : contains; f = 'contains'; operator = 'CONTAINS' }
   if (beginsWith) { value = value ? conditionError(f) : beginsWith; f = 'beginsWith'; operator = 'BEGINS_WITH' }
   if (type) { value = value ? conditionError(f) : type; f = 'type'; operator = 'ATTRIBUTE_TYPE' }
-  
+
 
   // If a operator was set
   if (operator) {
     // If begins_with
     if (operator === 'BETWEEN') {
       // Verify array input
-      if (Array.isArray(value) && value.length === 2) {      
+      if (Array.isArray(value) && value.length === 2) {
         // Add values and special key condition
         values[`:attr${grp}_0`] = value[0]
         values[`:attr${grp}_1`] = value[1]
-        clause = `${size ? `size(#attr${grp})` : `#attr${grp}`} between :attr${grp}_0 and :attr${grp}_1`
+        clause = `${size ? `size(${attrName})` : `${attrName}`} between :attr${grp}_0 and :attr${grp}_1`
       } else {
         error(`'between' conditions require an array with two values.`)
       }
@@ -191,7 +194,7 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
       if (Array.isArray(value)) {
         // Add values and special key condition
         clause = `#attr${grp} IN (${value.map((x,i)=>{
-          values[`:attr${grp}_${i}`] = x  
+          values[`:attr${grp}_${i}`] = x
           return `:attr${grp}_${i}`
         }).join(',')})`
       } else {
@@ -199,23 +202,23 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
       }
     } else if (operator === 'EXISTS') {
       if (!attr) error(`'exists' conditions require an 'attr'.`)
-      clause = value ? `attribute_exists(#attr${grp})` : `attribute_not_exists(#attr${grp})`
+      clause = value ? `attribute_exists(${attrName})` : `attribute_not_exists(${attrName})`
     } else {
       // Add value
       values[`:attr${grp}`] = value
       // If begins_with, add special key condition
       if (operator === 'BEGINS_WITH') {
         if (!attr) error(`'beginsWith' conditions require an 'attr'.`)
-        clause = `begins_with(#attr${grp},:attr${grp})`
+        clause = `begins_with(${attrName},:attr${grp})`
       } else if (operator === 'CONTAINS') {
         if (!attr) error(`'contains' conditions require an 'attr'.`)
-        clause = `contains(#attr${grp},:attr${grp})`
+        clause = `contains(${attrName},:attr${grp})`
       } else if (operator === 'ATTRIBUTE_TYPE') {
         if (!attr) error(`'type' conditions require an 'attr'.`)
         // TODO: validate/convert types
-        clause = `attribute_type(#attr${grp},:attr${grp})`
+        clause = `attribute_type(${attrName},:attr${grp})`
       } else {
-        clause = `${size ? `size(#attr${grp})` : `#attr${grp}`} ${operator} :attr${grp}`
+        clause = `${size ? `size(${attrName})` : `${attrName}`} ${operator} :attr${grp}`
       }
     } // end if-else
 
@@ -226,9 +229,9 @@ const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
   } // end if operator
 
   // console.log('CLAUSE:',clause,'\nNAMES:',names,'\nVALUES:',values)
-  
+
   return {
-    logic: or ? 'OR' : 'AND', 
+    logic: or ? 'OR' : 'AND',
     clause,
     names,
     values
