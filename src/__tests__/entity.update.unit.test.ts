@@ -76,7 +76,8 @@ const TestEntity3 = new Entity({
   attributes: {
     email: { type: 'string', partitionKey: true },
     test: { type: 'string', required: true },
-    test2: { type: 'string', required: 'always' }
+    test2: { type: 'string', required: 'always' },
+    test3: { type: 'number', required: true }
   },
   timestamps: false,
   table: TestTable3
@@ -495,6 +496,15 @@ describe('update',()=>{
     expect(ExpressionAttributeValues![':test_map']).toEqual({ a: 1, b: 2 })
     expect(Key).toEqual({ pk: 'test@test.com', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
+  })
+
+  it('accepts 0 as a valid value for required fields', () => {
+    let { ExpressionAttributeValues } = TestEntity3.updateParams({
+      pk: 'test-pk',
+      test2: 'test',
+      test3: 0
+    })
+    expect(ExpressionAttributeValues![':test3']).toBe(0)
   })
 
   it('fails with undefined input', () => {
