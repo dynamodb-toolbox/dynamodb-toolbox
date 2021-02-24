@@ -36,8 +36,8 @@ const TestEntity = new Entity({
     test_number_set_type_coerce: { type: 'set', setType: 'number', coerce: true },
     test_binary: { type: 'binary' },
     simple_string: 'string',
-    test_composite: ['sort',0],
-    test_composite2: ['sort',1, { save: false }]
+    test_composite: ['sort', 0],
+    test_composite2: ['sort', 1, { save: false }]
   },
   table: TestTable
 })
@@ -54,8 +54,8 @@ const TestEntity2 = new Entity({
   attributes: {
     email: { type: 'string', partitionKey: true },
     sort: { type: 'string', map: 'sk' },
-    test_composite: ['sort',0],
-    test_composite2: ['sort',1, { save: false }]
+    test_composite: ['sort', 0],
+    test_composite2: ['sort', 1, { save: false }]
   },
   table: TestTable2
 })
@@ -81,12 +81,12 @@ const TestTable3 = new Table({
 const TestEntity4 = new Entity({
   name: 'TestEntity4',
   attributes: {
-    id: { partitionKey: true},
+    id: { partitionKey: true },
     sk: { hidden: true, sortKey: true, default: (data: any) => data.id },
     test: { alias: 'xyz' }
   },
   table: TestTable3
-});
+})
 
 const TestEntity5 = new Entity({
   name: 'TestEntity5',
@@ -94,15 +94,14 @@ const TestEntity5 = new Entity({
   attributes: {
     pk: { partitionKey: true },
     test_required_boolean: { type: 'boolean', required: true },
-    test_required_number: { type: 'number', required: true },
+    test_required_number: { type: 'number', required: true }
   },
   table: TestTable2
 })
 
-describe('put',()=>{
-
-  it('creates basic item',() => {
-    let { TableName, Item } = TestEntity.putParams({ pk: 'test-pk', sk: 'test-sk' })
+describe('put', () => {
+  it('creates basic item', () => {
+    let { Item } = TestEntity.putParams({ pk: 'test-pk', sk: 'test-sk' })
 
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
@@ -112,9 +111,9 @@ describe('put',()=>{
     expect(Item).toHaveProperty('_md')
   })
 
-  it('creates item with aliases',() => {
+  it('creates item with aliases', () => {
     let { Item } = TestEntity.putParams({ email: 'test-pk', sort: 'test-sk', count: 0 })
-    
+
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
     expect(Item.test_number).toBe(0)
@@ -124,9 +123,14 @@ describe('put',()=>{
     expect(Item).toHaveProperty('_md')
   })
 
-  it('creates basic item with float values',() => {
-    let { TableName, Item } = TestEntity.putParams({ pk: 'test-pk', sk: 'test-sk', float: 1.234, test_float_coerce: '1.234' })
-    
+  it('creates basic item with float values', () => {
+    let { TableName, Item } = TestEntity.putParams({
+      pk: 'test-pk',
+      sk: 'test-sk',
+      float: 1.234,
+      test_float_coerce: '1.234'
+    })
+
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
     expect(Item._et).toBe('TestEntity')
@@ -137,8 +141,12 @@ describe('put',()=>{
     expect(Item).toHaveProperty('_md')
   })
 
-  it('creates item with default override',() => {
-    let { Item } = TestEntity.putParams({ pk: 'test-pk', sk: 'test-sk', test_string: 'different value' })
+  it('creates item with default override', () => {
+    let { Item } = TestEntity.putParams({
+      pk: 'test-pk',
+      sk: 'test-sk',
+      test_string: 'different value'
+    })
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
     expect(Item._et).toBe('TestEntity')
@@ -147,41 +155,41 @@ describe('put',()=>{
     expect(Item).toHaveProperty('_md')
   })
 
-  it('creates item with saved composite field',() => {
+  it('creates item with saved composite field', () => {
     let { Item } = TestEntity2.putParams({
       pk: 'test-pk',
-      test_composite: 'test',
-    })  
+      test_composite: 'test'
+    })
     expect(Item.pk).toBe('test-pk')
     expect(Item.test_composite).toBe('test')
   })
 
-  it('creates item that ignores field with no value',() => {
+  it('creates item that ignores field with no value', () => {
     let { Item } = TestEntity2.putParams({
       pk: 'test-pk',
       test_composite: undefined
     })
-    
+
     expect(Item.pk).toBe('test-pk')
     expect(Item).not.toHaveProperty('sk')
     expect(Item).not.toHaveProperty('test_composite')
   })
 
-  it('creates item that overrides composite key',() => {
+  it('creates item that overrides composite key', () => {
     let { Item } = TestEntity2.putParams({
       pk: 'test-pk',
       sk: 'override',
       test_composite: 'test',
       test_composite2: 'test2'
     })
-    
+
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('override')
     expect(Item.test_composite).toBe('test')
     expect(Item).not.toHaveProperty('test_composite2')
   })
 
-  it('creates item that generates composite key',() => {
+  it('creates item that generates composite key', () => {
     let { Item } = TestEntity2.putParams({
       pk: 'test-pk',
       test_composite: 'test',
@@ -198,108 +206,132 @@ describe('put',()=>{
   })
 
   it('fails when using an undefined schema field', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'unknown': '?'
-    })).toThrow(`Field 'unknown' does not have a mapping or alias`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        unknown: '?'
+      })
+    ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
   it('fails when invalid string provided with no coercion', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_string': 1
-    })).toThrow(`'test_string' must be of type string`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_string: 1
+      })
+    ).toThrow(`'test_string' must be of type string`)
   })
 
   it('fails when invalid boolean provided with no coercion', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_boolean': 'x'
-    })).toThrow(`'test_boolean' must be of type boolean`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_boolean: 'x'
+      })
+    ).toThrow(`'test_boolean' must be of type boolean`)
   })
 
   it('fails when invalid number provided with no coercion', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_number': 'x'
-    })).toThrow(`'test_number' must be of type number`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_number: 'x'
+      })
+    ).toThrow(`'test_number' must be of type number`)
   })
 
   it('fails when invalid number cannot be coerced', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_number_coerce': 'x1'
-    })).toThrow(`Could not convert 'x1' to a number for 'test_number_coerce'`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_number_coerce: 'x1'
+      })
+    ).toThrow(`Could not convert 'x1' to a number for 'test_number_coerce'`)
   })
 
   it('fails when invalid array provided with no coercion', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_list': 'x'
-    })).toThrow(`'test_list' must be a list (array)`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_list: 'x'
+      })
+    ).toThrow(`'test_list' must be a list (array)`)
   })
 
   it('fails when invalid map provided', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_map': 'x'
-    })).toThrow(`'test_map' must be a map (object)`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_map: 'x'
+      })
+    ).toThrow(`'test_map' must be a map (object)`)
   })
 
   it('fails when set contains different types', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_string_set_type': [1,2,3]
-    })).toThrow(`'test_string_set_type' must be a valid set (array) containing only string types`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_string_set_type: [1, 2, 3]
+      })
+    ).toThrow(`'test_string_set_type' must be a valid set (array) containing only string types`)
   })
 
   it('fails when set contains multiple types', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_string_set': ['test',1]
-    })).toThrow(`String Set contains Number value`)
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_string_set: ['test', 1]
+      })
+    ).toThrow(`String Set contains Number value`)
   })
 
-  it('fails when set coerces array and doesn\'t match type', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_number_set_type_coerce': "1,2,3"
-    })).toThrow(`'test_number_set_type_coerce' must be a valid set (array) of type number`)
+  it("fails when set coerces array and doesn't match type", () => {
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_number_set_type_coerce: '1,2,3'
+      })
+    ).toThrow(`'test_number_set_type_coerce' must be a valid set (array) of type number`)
   })
 
   it('coerces array into set', () => {
     let { Item } = TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_string_set_type_coerce': "1,2,3"
+      pk: 'test-pk',
+      sk: 'test-sk',
+      test_string_set_type_coerce: '1,2,3'
     })
-    // @ts-ignore    
-    expect(Item['test_string_set_type_coerce'].values).toEqual(['1','2','3'])
+    // @ts-ignore
+    expect(Item['test_string_set_type_coerce'].values).toEqual(['1', '2', '3'])
   })
 
-  it('fails when set doesn\'t contain array with no coercion', () => {
-    expect(() => TestEntity.putParams({
-      'pk': 'test-pk',
-      'sk': 'test-sk',
-      'test_string_set': 'test'
-    })).toThrow(`'test_string_set' must be a valid set (array)`)
+  it("fails when set doesn't contain array with no coercion", () => {
+    expect(() =>
+      TestEntity.putParams({
+        pk: 'test-pk',
+        sk: 'test-sk',
+        test_string_set: 'test'
+      })
+    ).toThrow(`'test_string_set' must be a valid set (array)`)
   })
 
   it('fails when missing a required field', () => {
-    expect(() => TestEntity3.putParams({
-      'pk': 'test-pk',
-      'test2': 'test'
-    })).toThrow(`'test' is a required field`)
+    expect(() =>
+      TestEntity3.putParams({
+        pk: 'test-pk',
+        test2: 'test'
+      })
+    ).toThrow(`'test' is a required field`)
   })
 
   it('puts 0 and false to required fields', () => {
@@ -315,7 +347,7 @@ describe('put',()=>{
 
   it('formats a batch put response', async () => {
     let result = TestEntity.putBatch({ pk: 'x', sk: 'y' })
-    
+
     expect(result).toHaveProperty('test-table.PutRequest')
     expect(result['test-table'].PutRequest!.Item).toHaveProperty('_ct')
     expect(result['test-table'].PutRequest!.Item).toHaveProperty('_md')
@@ -330,11 +362,13 @@ describe('put',()=>{
   })
 
   it('fails on extra options', () => {
-    expect(() => TestEntity.putParams(
-      { pk: 'x', sk: 'y' },
-      // @ts-expect-error
-      { extra: true }
-    )).toThrow('Invalid put options: extra')
+    expect(() =>
+      TestEntity.putParams(
+        { pk: 'x', sk: 'y' },
+        // @ts-expect-error
+        { extra: true }
+      )
+    ).toThrow('Invalid put options: extra')
   })
 
   it('sets capacity options', () => {
@@ -365,25 +399,30 @@ describe('put',()=>{
   })
 
   it('fails on invalid capacity option', () => {
-    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
-      .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { capacity: 'test' })).toThrow(
+      `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
+    )
   })
 
   it('fails on invalid metrics option', () => {
-    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { metrics: 'test' }))
-      .toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { metrics: 'test' })).toThrow(
+      `'metrics' must be one of 'NONE' OR 'SIZE'`
+    )
   })
 
   it('fails on invalid returnValues option', () => {
-    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' }))
-      .toThrow(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`)
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' })).toThrow(
+      `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`
+    )
   })
 
   it('sets conditions', () => {
-    let { TableName, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = TestEntity.putParams(
-      { pk: 'x', sk: 'y' },
-      { conditions: { attr: 'pk', gt: 'test' } }
-    )    
+    let {
+      TableName,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    } = TestEntity.putParams({ pk: 'x', sk: 'y' }, { conditions: { attr: 'pk', gt: 'test' } })
     expect(TableName).toBe('test-table')
     expect(ExpressionAttributeNames).toEqual({ '#attr1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':attr1': 'test' })
@@ -393,7 +432,7 @@ describe('put',()=>{
   it('handles extra parameters', () => {
     let { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
       { pk: 'x', sk: 'y' },
-      { },
+      {},
       { ReturnConsumedCapacity: 'NONE' }
     )
     expect(TableName).toBe('test-table')
@@ -403,19 +442,16 @@ describe('put',()=>{
   it('handles invalid parameter input', () => {
     let { TableName } = TestEntity.putParams(
       { pk: 'x', sk: 'y' },
-      { },
+      {},
       // @ts-expect-error
       'string'
     )
     expect(TableName).toBe('test-table')
   })
 
-
   it('correctly aliases pks', () => {
     let { Item } = TestEntity4.putParams({ id: 3, xyz: '123' })
     expect(Item.sk).toBe('3')
     // expect(TableName).toBe('test-table')
   })
-
-
 })

@@ -22,22 +22,23 @@ const TestEntity = new Entity({
   table: TestTable
 })
 
-describe('batchWrite',()=>{
-
+describe('batchWrite', () => {
   it('fails when batchWrite is empty', () => {
-    // @ts-expect-error
-    expect(() => { TestTable.batchWriteParams() })
-      .toThrow(`No items supplied`)
+    expect(() => {
+      // @ts-expect-error
+      TestTable.batchWriteParams()
+    }).toThrow(`No items supplied`)
   })
 
   it('fails when batchWrite items is an empty array', () => {
-    expect(() => { TestTable.batchWriteParams([]) })
-      .toThrow(`No items supplied`)
+    expect(() => {
+      TestTable.batchWriteParams([])
+    }).toThrow(`No items supplied`)
   })
 
   it('batchWrites data to a single table', () => {
     let result = TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'})
+      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test' })
     ) as DocumentClient.BatchWriteItemInput
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk')
@@ -45,33 +46,34 @@ describe('batchWrite',()=>{
   })
 
   it('fails when extra options', () => {
-    expect(() => { TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk'}),
-      // @ts-expect-error
-      { invalid: true }
-    ) })
-      .toThrow(`Invalid batchWrite options: invalid`)
+    expect(() => {
+      TestTable.batchWriteParams(
+        TestEntity.putBatch({ pk: 'test', sk: 'testsk' }),
+        // @ts-expect-error
+        { invalid: true }
+      )
+    }).toThrow(`Invalid batchWrite options: invalid`)
   })
 
   it('fails when providing an invalid capacity setting', () => {
-    expect(() => { TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk'}),
-      { capacity: 'test' }
-    ) })
-      .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+    expect(() => {
+      TestTable.batchWriteParams(TestEntity.putBatch({ pk: 'test', sk: 'testsk' }), {
+        capacity: 'test'
+      })
+    }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
   it('fails when providing an invalid metrics setting', () => {
-    expect(() => { TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk'}),
-      { metrics: 'test' }
-    ) })
-      .toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+    expect(() => {
+      TestTable.batchWriteParams(TestEntity.putBatch({ pk: 'test', sk: 'testsk' }), {
+        metrics: 'test'
+      })
+    }).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   })
 
   it('batchWrites data to a single table with options', () => {
     let result = TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
+      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test' }),
       { capacity: 'total', metrics: 'size' }
     ) as DocumentClient.BatchWriteItemInput
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
@@ -83,9 +85,10 @@ describe('batchWrite',()=>{
 
   it('batchWrites data to a single table with invalid params', () => {
     let result = TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
+      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test' }),
+      {},
       // @ts-expect-error
-      {}, 'test'
+      'test'
     ) as DocumentClient.BatchWriteItemInput
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk')
@@ -94,9 +97,11 @@ describe('batchWrite',()=>{
 
   it('returns meta data', () => {
     let result = TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test'}),
-      {},{},true
-    ) as { payload: DocumentClient.BatchWriteItemInput, Tables: any }
+      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test' }),
+      {},
+      {},
+      true
+    ) as { payload: DocumentClient.BatchWriteItemInput; Tables: any }
 
     expect(result.payload.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
     expect(result.payload.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk')
@@ -121,7 +126,6 @@ describe('batchWrite',()=>{
   })
 
   it('batchWrites data to multiple tables', () => {
-
     const TestTable2 = new Table({
       name: 'test-table2',
       alias: 'testTable2',
@@ -130,7 +134,7 @@ describe('batchWrite',()=>{
       indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
       DocumentClient: docClient
     })
-    
+
     const TestEntity2 = new Entity({
       name: 'TestEntity2',
       autoExecute: false,
@@ -148,7 +152,7 @@ describe('batchWrite',()=>{
       TestEntity2.putBatch({ pk: 'test', sk: 'testsk3', test: 'test3' })
     ]) as DocumentClient.BatchWriteItemInput
     // console.log(JSON.stringify(result,null,2));
-    
+
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk1')
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.test).toBe('test1')
@@ -158,7 +162,5 @@ describe('batchWrite',()=>{
     expect(result.RequestItems['test-table2'][0].PutRequest!.Item.pk).toBe('test')
     expect(result.RequestItems['test-table2'][0].PutRequest!.Item.sk).toBe('testsk3')
     expect(result.RequestItems['test-table2'][0].PutRequest!.Item.test).toBe('test3')
-
   })
-
 })

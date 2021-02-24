@@ -4,7 +4,6 @@ import projectionBuilder from '../lib/projectionBuilder'
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
-
 // Create basic table
 let DefaultTable = new Table({
   name: 'test-table',
@@ -27,7 +26,6 @@ const User = new Entity({
   table: DefaultTable
 })
 
-
 const Pet = new Entity({
   name: 'Pet',
   attributes: {
@@ -38,21 +36,18 @@ const Pet = new Entity({
   table: DefaultTable
 })
 
-
-describe('projectionBuilder',() => {
-
+describe('projectionBuilder', () => {
   it('generate test projection expression', () => {
-
     const proj = [
       'pk',
       'sk',
       'petType',
       'test2.path',
-      { User: ['family','name','roles','test.subpath','friends[1]'] }
+      { User: ['family', 'name', 'roles', 'test.subpath', 'friends[1]'] }
     ]
 
     // Get projection with type
-    const result = projectionBuilder(proj,DefaultTable,null,true)
+    const result = projectionBuilder(proj, DefaultTable, null, true)
 
     // console.log(JSON.stringify(result.names,null,2))
     expect(result.names).toEqual({
@@ -69,37 +64,37 @@ describe('projectionBuilder',() => {
   })
 
   it('fails when no table is passed', () => {
-    // @ts-expect-error
-    expect(() => { projectionBuilder(['pk']) })
-      .toThrow('Tables must be valid and contain attributes')
+    expect(() => {
+      // @ts-expect-error
+      projectionBuilder(['pk'])
+    }).toThrow('Tables must be valid and contain attributes')
   })
 
   it('fails when invalid table is passed', () => {
-    // @ts-expect-error
-    expect(() => { projectionBuilder(['pk'], { test: true }) })
-      .toThrow('Tables must be valid and contain attributes')
+    expect(() => {
+      // @ts-expect-error
+      projectionBuilder(['pk'], { test: true })
+    }).toThrow('Tables must be valid and contain attributes')
   })
 
   it('converts string to array', () => {
-
     // Get projection with type
-    const result = projectionBuilder('pk,sk,test',DefaultTable,null,false)
+    const result = projectionBuilder('pk,sk,test', DefaultTable, null, false)
 
     // console.log(JSON.stringify(result.names,null,2))
     expect(result.names).toEqual({
       '#proj1': 'pk',
       '#proj2': 'sk',
-      '#proj3': 'test',
+      '#proj3': 'test'
     })
     expect(result.projections).toBe('#proj1,#proj2,#proj3')
   })
 
   it('accepts object input', () => {
-
-    const proj = { User: ['family','name'] }
+    const proj = { User: ['family', 'name'] }
 
     // Get projection with type
-    const result = projectionBuilder(proj,DefaultTable,null,false)
+    const result = projectionBuilder(proj, DefaultTable, null, false)
 
     // console.log(JSON.stringify(result.names,null,2))
     expect(result.names).toEqual({
@@ -110,11 +105,10 @@ describe('projectionBuilder',() => {
   })
 
   it('uses an entity alias', () => {
-
-    const proj = ['family','name']
+    const proj = ['family', 'name']
 
     // Get projection with type
-    const result = projectionBuilder(proj,DefaultTable,'User',false)
+    const result = projectionBuilder(proj, DefaultTable, 'User', false)
 
     // console.log(JSON.stringify(result.names,null,2))
     expect(result.names).toEqual({
@@ -125,11 +119,10 @@ describe('projectionBuilder',() => {
   })
 
   it('parses string from object assignment', () => {
-
     const proj = { User: 'family,name' }
 
     // Get projection with type
-    const result = projectionBuilder(proj,DefaultTable,null,false)
+    const result = projectionBuilder(proj, DefaultTable, null, false)
 
     // console.log(JSON.stringify(result.names,null,2))
     expect(result.names).toEqual({
@@ -140,14 +133,10 @@ describe('projectionBuilder',() => {
   })
 
   it('merges mulitple entity references of the same type', () => {
-
-    const proj = [
-      { User: 'family,name' },
-      { User: 'test' }
-    ]
+    const proj = [{ User: 'family,name' }, { User: 'test' }]
 
     // Get projection with type
-    const result = projectionBuilder(proj,DefaultTable,null,false)
+    const result = projectionBuilder(proj, DefaultTable, null, false)
 
     // console.log(JSON.stringify(result.names,null,2))
     expect(result.names).toEqual({
@@ -159,40 +148,42 @@ describe('projectionBuilder',() => {
   })
 
   it('fails when invalid type is passed in object', () => {
-    // @ts-expect-error
-    expect(() => { projectionBuilder({ User: {} }, DefaultTable) })
-      .toThrow('Only arrays or strings are supported')
+    expect(() => {
+      // @ts-expect-error
+      projectionBuilder({ User: {} }, DefaultTable)
+    }).toThrow('Only arrays or strings are supported')
   })
 
   it('fails when projections are not strings', () => {
-    // @ts-expect-error
-    expect(() => { projectionBuilder({ User: ['pk',[]] }, DefaultTable) })
-      .toThrow('Entity projections must be string values')
+    expect(() => {
+      // @ts-expect-error
+      projectionBuilder({ User: ['pk', []] }, DefaultTable)
+    }).toThrow('Entity projections must be string values')
   })
 
   it('fails when entity is invalid', () => {
-    // @ts-expect-error
-    expect(() => { projectionBuilder({ Test: 'pk,sk' }, DefaultTable) })
-      .toThrow(`'Test' is not a valid entity on this table`)
+    expect(() => {
+      // @ts-expect-error
+      projectionBuilder({ Test: 'pk,sk' }, DefaultTable)
+    }).toThrow(`'Test' is not a valid entity on this table`)
   })
 
   it('fails when projection is an invalid type', () => {
-    // @ts-expect-error
-    expect(() => { projectionBuilder(['pk',1], DefaultTable) })
-      .toThrow(`'number' is an invalid type. Projections require strings or arrays`)
+    expect(() => {
+      // @ts-expect-error
+      projectionBuilder(['pk', 1], DefaultTable)
+    }).toThrow(`'number' is an invalid type. Projections require strings or arrays`)
   })
 
   it('skips duplicate attributes', () => {
-
     // Get projection with type
-    const result = projectionBuilder('pk,sk,pk',DefaultTable,null,false)
+    const result = projectionBuilder('pk,sk,pk', DefaultTable, null, false)
 
     // console.log(JSON.stringify(result.names,null,2))
     expect(result.names).toEqual({
       '#proj1': 'pk',
-      '#proj2': 'sk',
+      '#proj2': 'sk'
     })
     expect(result.projections).toBe('#proj1,#proj2')
   })
-
 })

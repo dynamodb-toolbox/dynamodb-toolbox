@@ -37,16 +37,15 @@ const TestEntity2 = new Entity({
   table: TestTable2
 })
 
-describe('delete',()=>{
-
+describe('delete', () => {
   it('deletes the key from inputs (sync)', async () => {
-    const { TableName, Key } = TestEntity.deleteParams({ pk: 'test-pk', sk: 'test-sk' })    
+    const { TableName, Key } = TestEntity.deleteParams({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('deletes the key from inputs (async)', async () => {
-    const { TableName, Key } = await TestEntity.delete({ pk: 'test-pk', sk: 'test-sk' })    
+    const { TableName, Key } = await TestEntity.delete({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -129,26 +128,31 @@ describe('delete',()=>{
   })
 
   it('fails on extra options', () => {
-    expect(() => TestEntity.deleteParams(
-      { pk: 'x', sk: 'y' },
-      // @ts-expect-error
-      { execute: false, parse: false, extra: true }
-    )).toThrow('Invalid delete options: extra')
+    expect(() =>
+      TestEntity.deleteParams(
+        { pk: 'x', sk: 'y' },
+        // @ts-expect-error
+        { execute: false, parse: false, extra: true }
+      )
+    ).toThrow('Invalid delete options: extra')
   })
 
   it('fails on invalid capacity option', () => {
-    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
-      .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { capacity: 'test' })).toThrow(
+      `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
+    )
   })
 
   it('fails on invalid metrics option', () => {
-    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { metrics: 'test' }))
-      .toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
+    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { metrics: 'test' })).toThrow(
+      `'metrics' must be one of 'NONE' OR 'SIZE'`
+    )
   })
 
   it('fails on invalid returnValues option', () => {
-    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' }))
-      .toThrow(`'returnValues' must be one of 'NONE' OR 'ALL_OLD'`)
+    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' })).toThrow(
+      `'returnValues' must be one of 'NONE' OR 'ALL_OLD'`
+    )
   })
 
   it('sets capacity options', () => {
@@ -186,7 +190,7 @@ describe('delete',()=>{
       { pk: 'x', sk: 'y' },
       { conditions: { attr: 'pk', gt: 'test' } }
     )
-    
+
     expect(result).toEqual({
       TableName: 'test-table',
       Key: { pk: 'x', sk: 'y' },
@@ -199,7 +203,7 @@ describe('delete',()=>{
   it('handles extra parameters', () => {
     let { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
       { pk: 'x', sk: 'y' },
-      { },
+      {},
       { ReturnConsumedCapacity: 'NONE' }
     )
     expect(TableName).toBe('test-table')
@@ -210,7 +214,7 @@ describe('delete',()=>{
   it('handles invalid parameter input', () => {
     let { TableName, Key } = TestEntity.deleteParams(
       { pk: 'x', sk: 'y' },
-      { },
+      {},
       // @ts-expect-error
       'string'
     )
@@ -219,14 +223,13 @@ describe('delete',()=>{
   })
 
   it('formats a batch delete response', async () => {
-    let result = TestEntity.deleteBatch({ pk: 'x', sk: 'y' })  
+    let result = TestEntity.deleteBatch({ pk: 'x', sk: 'y' })
     expect(result).toEqual({ 'test-table': { DeleteRequest: { Key: { pk: 'x', sk: 'y' } } } })
   })
 
   it('fails if no value is provided to the deleteBatch method', () => {
     expect(() => TestEntity.deleteBatch()).toThrow(`'pk' or 'email' is required`)
   })
-
 
   // Adding this for regression testing
   it('Non-Key Index Generated on Delete #74', async () => {
@@ -235,31 +238,30 @@ describe('delete',()=>{
       partitionKey: 'pk',
       sortKey: 'sk',
       indexes: {
-        'GSI-1': { partitionKey: 'gsi1pk', sortKey: 'gsi1sk' },
+        'GSI-1': { partitionKey: 'gsi1pk', sortKey: 'gsi1sk' }
       },
-      DocumentClient,
-    });
+      DocumentClient
+    })
     const Foos = new Entity({
       name: 'Foo',
       table: FoosTable,
       timestamps: true,
       attributes: {
-        pk: { hidden: true, partitionKey: true, default: (data: any) => (`FOO#${data.id}`) },
-        sk: { hidden: true, sortKey: true, default: (data: any) => (`FOO#${data.id}`) },
-    
+        pk: { hidden: true, partitionKey: true, default: (data: any) => `FOO#${data.id}` },
+        sk: { hidden: true, sortKey: true, default: (data: any) => `FOO#${data.id}` },
+
         // This next `default` gets executed on delete() and fails with "Cannot read property 'tenant' of undefined"
-        gsi1pk: { hidden: true, default: (data: any) => (`TENANT#${data.meta.tenant}`) }, 
-    
-        gsi1sk: { hidden: true, default: (data: any) => (`FOO#${data.id}`) },
+        gsi1pk: { hidden: true, default: (data: any) => `TENANT#${data.meta.tenant}` },
+
+        gsi1sk: { hidden: true, default: (data: any) => `FOO#${data.id}` },
         id: { required: 'always' },
         meta: { type: 'map', required: 'always' },
-        __context__: { hidden: true },
-      },
-    });
+        __context__: { hidden: true }
+      }
+    })
 
     const key = { id: 'xyz' }
     let result = Foos.deleteParams(key) // Fails with v0.2.0-beta. Fine with v0.2.0-alpha
     expect(result).toEqual({ TableName: 'test-table', Key: { pk: 'FOO#xyz', sk: 'FOO#xyz' } })
   })
-
 })

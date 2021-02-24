@@ -1,9 +1,8 @@
 // // Bootstrap testing
-const { createTableParams, dynaliteServer, DynamoDB, DocumentClient, DocumentClient2, delay } = require('./bootstrap-tests')
+const { DocumentClient } = require('./bootstrap-tests')
 
 // // console.log(DocumentClient);
 // // console.log(DocumentClient.constructor.name);
-
 
 // // Start up Dynalite on port 4567
 // beforeAll(async () => {
@@ -23,18 +22,12 @@ const { createTableParams, dynaliteServer, DynamoDB, DocumentClient, DocumentCli
 //   dynaliteServer.close()
 // })
 
-
 // // Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
-
-describe('Misc Tests (development only)', ()=> {
-
-
-
+describe('Misc Tests (development only)', () => {
   it('uses a numeric pk value', async () => {
-
     const table = new Table({
       name: 'test-table',
       partitionKey: 'pk',
@@ -48,890 +41,836 @@ describe('Misc Tests (development only)', ()=> {
         id: { partitionKey: true, type: 'number' },
         sk: { sortKey: true, type: 'string' },
         test: 'string',
-        test2: ['test',0],
-        test3: ['test',1]
-
+        test2: ['test', 0],
+        test3: ['test', 1]
       },
       table
     })
 
-    console.log(TestEntity.schema);
-    
+    console.log(TestEntity.schema)
+
     // console.log(
     //   await TestEntity.query(1)
     // )
-
   })
 
-
-
-//   it.skip('Non-Key Index Generated on Delete #74', async () => {
-    
-//     const FoosTable = new Table({
-//       name: 'test-table',
-//       partitionKey: 'pk',
-//       sortKey: 'sk',
-//       indexes: {
-//         'GSI-1': { partitionKey: 'gsi1pk', sortKey: 'gsi1sk' },
-//       },
-//       DocumentClient,
-//     });
-//     const Foos = new Entity({
-//       name: 'Foo',
-//       table: FoosTable,
-//       timestamps: true,
-//       attributes: {
-//         pk: { hidden: true, partitionKey: true, default: (data) => (`FOO#${data.id}`) },
-//         sk: { hidden: true, sortKey: true, default: (data) => (`FOO#${data.id}`) },
-    
-//         // This next `default` gets executed on delete() and fails with "Cannot read property 'tenant' of undefined"
-//         gsi1pk: { hidden: true, default: (data) => (`TENANT#${data.meta.tenant}`) }, 
-    
-//         gsi1sk: { hidden: true, default: (data) => (`FOO#${data.id}`) },
-//         id: { required: 'always' },
-//         meta: { type: 'map', required: 'always' },
-//         __context__: { hidden: true },
-//       },
-//     });
-
-//     const foo = {
-//       id: 'xyz',
-//       meta: { tenant: 'abc' },
-//     };
-//     await Foos.put(foo);
-//     const key = { id: foo.id };
-//     await Foos.delete(key); // Fails with v0.2.0-beta. Fine with v0.2.0-alpha
-//   })
-
-
-
-
-//   it.skip('Function default dependency issue #68', async () => {
-
-//     const { randomBytes } = require('crypto')
-
-//     const table = new Table({
-//       name: 'test-table',
-//       partitionKey: 'pk',
-//       sortKey: 'sk',
-//       DocumentClient
-//     })
-
-//     const TestEntity = new Entity({
-//       name: 'Test',
-//       attributes: {
-//         sk: { 
-//           sortKey: true,
-//           // default: (data) => data.id,
-//           default: (data) => `${data.id}---${data.test}---${data.modified}---${data.test3}`,
-//           prefix:'SK#',
-//           // dependsOn: 'id'
-//           dependsOn: ['id','test','modified']//,'test3']
-//         },
-//         id: { 
-//           partitionKey: true,
-//           default: (data) => `${randomBytes(32).toString('hex')}`, 
-//           prefix:'PK#',
-//           // dependsOn: 'sk'
-//         },
-//         test: { 
-//           default: (data) => data.test2,
-//           dependsOn: 'test2'
-//         },
-//         test2: { default: () => Math.random() },
-//         test3: { default: 'STATICDEFAULT', map: 'testMap' },
-//         test4: { default: (data) => data.sk + '###' + Math.random(), alias: 'test4alias' },
-//         other: {}
-//         // id: {
-//         //   partitionKey: true,
-//         //   prefix: 'USER_ID#',
-//         //   suffix:'#####SUFFIX',
-//         //   default: (data) => randomBytes(32).toString('hex'),// + ' ' + data.test,
-//         //   transform: (val) => val.toUpperCase(),
-//         //   // dependsOn: 'test'
-//         // },
-//         // sk: {
-//         //   sortKey: true,
-//         //   prefix: 'USER_ID#',
-//         //   default: (data) => `~~~${data.id}~~~#test#${data.test2}`,
-//         //   dependsOn: 'id'
-//         // },
-//         // test2: {
-//         //   default: (data) => `----ID2:${data.test}----`,
-//         //   dependsOn: 'test'
-//         // },
-//         // test3: {
-//         //   default: () => Math.random()
-//         // },
-//         // test: {
-//         //   default: (data) => `----TEST3:${data.test3}----`,
-//         //   dependsOn: 'test3'
-//         // }
-//       },
-//       table
-//     })
-
-//     // console.log(TestEntity.schema.attributes);
-    
-
-//     console.log(
-//       TestEntity.putParams({ 
-//         other: 'test data',
-//         test2: 'override test2',
-//         test: 'overide test value'
-//       })
-//     )
-
-//   })
-
-
-
-//   it.skip('put fails when a field is required and mapped with map: \'destination\' #63', async () => {
-
-//     const table = new Table({
-//       name: 'test-table',
-//       partitionKey: 'pk',
-//       sortKey: 'sk',
-//       DocumentClient
-//     })
-
-//     const TestEntity = new Entity({
-//       name: 'Test',
-//       attributes: {
-//         email: { partitionKey: true, type: 'string' },
-//         sk: { sortKey: true, type: 'string' }
-//       },
-//       table
-//     })
-
-//     console.log(
-//       TestEntity.putParams({ 
-//         pk: 'test',
-//         sk: 'testsk'
-//       }, {
-//         conditions: [
-//           { attr: 'pk', exists: false },
-//           { attr: 'sk', exists: false }
-//         ]
-//       })
-//     )
-
-//   })
-
-
-
-//   it.skip('put fails when a field is required and mapped with map: \'destination\' #63', async () => {
-
-//     const table = new Table({
-//       name: 'test-table',
-//       partitionKey: 'pk',
-//       // sortKey: 'sk',
-//       DocumentClient
-//     })
-
-//     const TestEntity = new Entity({
-//       name: 'Test',
-//       attributes: {
-//         email: { partitionKey: true, type: 'string' },
-//         // sk: { sortKey: true, type: 'string' },
-//         mappedRequired: { required: 'always', map: 'GSIpk' },
-//       },
-//       table
-//     })
-
-//     console.log(
-//       await TestEntity.updateParams({
-//         email: 'test',
-//         mappedRequired: 'test'
-//       })
-//     )
-
-//   })
-
-
-
-
-//   it.skip('Batch writes does not support conditions #65', async () => {
-    
-//     const table = new Table({
-//       name: 'dynamodb-toolbox-test-test-table',
-//       partitionKey: 'pk',
-//       sortKey: 'sk',
-    
-//       DocumentClient: DocumentClient2
-//     })
-//     const TestEntity = new Entity({
-//       name: 'Test',
-    
-//       attributes: {
-//         pk: {
-//           partitionKey: true,
-//           type: 'string'
-//         },
-//         sk: {
-//           sortKey: true,
-//           type: 'string'
-//         },
-//         test: {}
-//       },
-//       table
-//     })
-    
-//     // console.log(
-//     //   JSON.stringify(
-//     //     await table.batchWrite([
-//     //       TestEntity.putBatch(
-//     //         {
-//     //           pk: 'test',
-//     //           sk: 'testsk',
-//     //           test: 'some value'
-//     //         },
-//     //         {
-//     //           // conditions: [{ attr: 'pk', exists: false }]
-//     //           conditions: [{ attr: 'modified', lt: '020-07-10T16:40:50.575Z' }]
-//     //         }
-//     //       )
-//     //     ],
-//     //     { execute: false }
-//     //     )
-//     //   ,null,2)
-//     // )
-
-//     // console.log(await TestEntity.put(
-//     //   {
-//     //     pk: 'test',
-//     //     sk: 'test2',
-//     //     test: 'some value'
-//     //   },
-//     //   {
-//     //     // conditions: [{ attr: 'pk', exists: false }],
-//     //     conditions: [{ attr: 'modified', lt: '020-07-10T16:40:50.575Z' }],
-//     //     execute: true
-//     //   }
-//     // ))
-
-//     console.log(await table.scan());
-    
-
-//   })
-
-
-//   // let test = 
-//   // {
-//   //   "RequestItems": {
-//   //     "test-table": [
-//   //       {
-//   //         "PutRequest": {
-//   //           "Item": {
-//   //             "_ct": "2020-07-10T16:40:57.575Z",
-//   //             "_md": "2020-07-10T16:40:57.575Z",
-//   //             "_et": "Test",
-//   //             "pk": "test",
-//   //             "sk": "testsk",
-//   //             "test": "some value"
-//   //           },
-//   //           "ExpressionAttributeNames": {
-//   //             "#attr1": "pk"
-//   //           },
-//   //           "ConditionExpression": "attribute_not_exists(#attr1)"
-//   //         }
-//   //       }
-//   //     ]
-//   //   }
-//   // }
-
-
-
-
-
-//   it.skip('Auto-generated property "entity" interferes with update #66', async () => {
-    
-//     const FoosTable = new Table({
-//       name: 'test-table',
-//       partitionKey: 'pk',
-//       sortKey: 'sk',
-//       DocumentClient,
-//     });
-    
-//     const Foos = new Entity({
-//       name: 'Foo',
-//       table: FoosTable,
-//       timestamps: true,
-//       // typeAlias: 'testType',
-//       attributes: {
-//         pk: { hidden: true, partitionKey: true, default: (data) => (`FOO#${data.id}`) },
-//         sk: { hidden: true, sortKey: true, default: (data) => (`FOO#${data.id}`) },
-//         id: { required: 'always' },
-//         name: 'string',
-//       },
-//     });
-
-//     // console.log(await Foos.scan());
-    
-
-//     console.log(Foos.schema.attributes);
-//     // console.log(Foos);
-    
-//     //const insertAndUpdate = async () => {
-//       const foo = { id: 'abc', name: 'Alfred' };
-//       await Foos.put(foo);
-//       const { Item: fooFromDB } = await Foos.get({ id: foo.id });
-
-//       console.log(fooFromDB);
-      
-//       fooFromDB.name = 'Bob'
-//       await Foos.update(fooFromDB); // FAILS - "Error: Field 'entity' does not have a mapping or alias"
-//    // };
-
-//   })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//   it.skip('misc tests', async () => {
-
-//     let Default = new Table({
-//       // name: 'dynamodb-toolbox-test-test-table',
-//       name: 'test-table',
-//       alias: 'aliased-table-name',
-//       partitionKey: 'pk',
-//       sortKey: 'sk',
-//       attributes: {
-//         GSI1sk: 'number',
-//         data: {}
-//       //   // pk: { type: 'string' },
-//       //   // sk: 'string',
-//       //   // data: 'number',
-//       //   // test: 'string',
-//       //   // // testx: 'test',
-//       //   // test2: { type: 'set', setType: 'string' }
-//       },
-//       indexes: {
-//         GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSI1sk' },
-//         LSI2: { partitionKey: 'pk', sortKey: 'test' },
-//         GSI3: { partitionKey: 'test' },
-//         LSI1: { sortKey: 'data' }
-//       },
-//       // DocumentClient
-//       // autoExecute: false,
-//       // autoParse: false
-//       removeNullAttributes: true
-//     })
-
-//     Default.DocumentClient = DocumentClient//2
-    
-
-//     console.log(Default.Table.attributes);
-    
-
-//     let Default2 = new Table({
-//       name: 'other-table',
-//       partitionKey: 'pk',
-//       sortKey: 'sk',
-//       DocumentClient
-//     })
-
-//     Default2.entities = new Entity({
-//       name: 'UserX',
-//       // timestamps: false,
-//       attributes: {
-//         family: { type: 'string', partitionKey: true },
-//         name: { type: 'string', sortKey: true }
-//       }
-//       // autoExecute: true,
-//       // autoParse: false
-//     })
-
-//     // console.log(Default2);
-    
-
-//     // Default.DocumentClient = DocumentClient
-
-//     // SimpleEntity.name = '_Table'
-//     // console.log(DefaultTable)
-
-//     // Default.Entity = TestEntity
-//     // SimpleEntity.Table = Default
-
-//     Default.entities = new Entity({
-//       name: 'User',
-//       // timestamps: false,
-//       attributes: {
-//         family: { type: 'string', partitionKey: true },
-//         name: { type: 'string', sortKey: true },
-//         data: 'number',
-//         set: { type: 'set', setType: 'string', alias: 'roles' },
-//         age: { type: 'number' },
-//         friends: 'list',
-//         mapTest: { type: 'map', alias: 'mapper' },
-//         test: { map: 'testvar' },
-//         GSI1pk: { default: (x) => `family#${x.pk}`, hidden: true },
-//         GSI1sk: { type: 'number', default: (x) => `${x.age}`, hidden: true },
-//         shared: 'string',
-//         testDefaultF: { type: 'boolean', default: false },
-//         testDefault0: { type: 'boolean', default: 0 },
-//         testDefaultT: { type: 'boolean', default: true },
-//         comp: {},
-//         cp1: ['comp',0, { save: false }],
-//         cp2: ['comp',1, { save: false }]
-//       },
-//       // table: Default
-//       // autoExecute: true,
-//       // autoParse: false
-//     })
-
-//     // console.log(Default.User.schema.attributes);
-    
-
-//     Default.entities = new Entity({
-//       name: 'Pet',
-//       // timestamps: true,
-//       attributes: {
-//         family: { type: 'string', partitionKey: true },
-//         name: { type: 'string', sortKey: true },
-//         data: 'set',
-//         petType: 'string',
-//         typey: { type: 'string', alias: 'typex' },
-//         // set: { type: 'set', setType: 'string', alias: 'roles' },
-//         // test: { default: 'some default' }
-//         shared: 'boolean',
-//         // GSI1pkx: 'string',
-//         // GSIpk: { partitionKey: 'GSI1' } 
-        
-//       },
-//       // table: Default
-//       // autoExecute: true,
-//       // autoParse: false
-//     })
-
-//     // console.log(Default.User.attribute('family'));
-//     // console.log(JSON.stringify(Default.Table.attributes,null,2));
-    
-
-//     // Default.name = 'New Table Name'
-//     // console.log(Object.getPrototypeOf())
-//     // console.log(Object.getOwnPropertyNames(Table.prototype))
-// // console.log(Default);
-
-//     // console.log(Default.User.put({ id: 'test', sk: '123', test: 123, setx: ['test','test2'] },{},{ execute: false}));
-    
-      
-//     console.log(
-//       await Default.User.put({ 
-//         family: 'Brady', 
-//         name: 'Mike', 
-//         age: 41,
-//         roles: ['father','husband'],
-//         test: null,
-//         mapper: {
-//           test: true,
-//           test2: false
-//         },
-//         cp1: 'test',
-//         cp2: 'test2'
-//       },{ 
-//         // capacity: 'total',
-//         // metrics: 'size',
-//         // returnValues: 'all_old',
-//         // conditions: { attr: 'test', type: 'S', negate: true},
-//         // execute: false
-//         // parse: false
-//       })
-//     )
-    
-//     await delay(10)
-//     // console.log(
-//     //   await Default.User.update({ 
-//     //     family: 'Brady', 
-//     //     name: 'Mike',
-//     //     age: 41,
-//     //     test: null,
-//     //     // $remove: ['mapper']
-//     //   },{
-//     //     // capacity: 'total',
-//     //     // metrics: 'size',
-//     //     // returnValues: 'all_new',
-//     //     // conditions: { attr: 'test', type: 'S', negate: true},
-//     //     execute: false
-//     //     // parse: false
-//     //   })
-//     // )
-
-//     await Default.User.put({ family: 'Brady', name: 'Carol', age: 42, roles: ['mother','wife'] })
-//     await Default.User.put({ family: 'Brady', name: 'Alice', age: 50, roles: ['housekeeper'], mapTest: { test: 'Test level 1', test2: { test3: 'Test level 2'}} })
-//     await Default.User.put({ family: 'Brady', name: 'Greg', age: 18, roles: ['son','brother'] })
-//     await Default.User.put({ family: 'Brady', name: 'Marcia', age: 18, roles: ['daughter','sister'] })
-//     await Default.User.put({ family: 'Brady', name: 'Peter', age: 16, roles: ['son','brother'] })
-//     await Default.User.put({ family: 'Brady', name: 'Jan', age: 16, roles: ['daughter','sister'], friends: ['George Glass'] })
-//     await Default.User.put({ family: 'Brady', name: 'Bobby', age: 14, roles: ['son','brother'] })
-//     await Default.User.put({ family: 'Brady', name: 'Cindy', age: 14, roles: ['daughter','sister'] })
-//     await Default.User.put({ family: 'Franklin', name: 'Sam', age: 52, roles: ['butcher'] })
-//     await Default.Pet.put({ family: 'Brady', name: 'Tiger', petType: 'dog', typex: 'some value' })
-//     await Default.Pet.put({ family: 'Brady', name: 'Fluffy', petType: 'cat' })
-//     await delay(10)
-
-//     // console.log(JSON.stringify(
-//     //   await Default.User.get({ family: 'Brady', name: 'Alice' },{},{ omit: [] })
-//     //   ,null,2))
-
-//     console.log(JSON.stringify(
-//       await Default.query('Brady',{ eq: 'Mike' })
-//     ,null,2))
-
-
-//     // const query = await Default.query('family#Brady',{
-//     //   // execute: false,
-//     //   // parse: false,
-//     //   // test: true,
-//     //   limit: 50,
-//     //   // beginsWith: 'C',
-//     //   // between: ['Cindy','Jan'],
-//     //   // gt: 'Cindy',
-//     //   gt: '18',
-//     //   // reverse: true,
-//     //   // omit: ['set']
-//     //   // capacity: 'none',
-//     //   // consistent: true,
-//     //   // filters: [{ size: 'family[4].testing', gt: 18, entity:'User' },{attr:'sk',lte:'test'}],
-//     //   // filters: [{ attr: 'age', between: [16,18] },
-//     //   //   // { attr: 'friends', exists: false }],
-//     //   //   // { attr: 'age', gte: 16 },
-//     //   // ],
-//     //   // filter: { attr: 'age', in: [14,16,18] },
-//     //   // filters: { size: 'roles', gt: 1, entity: 'User' },
-//     //   filters: { attr: 'age', gt: 40 },
-//     //   // filter: { attr: 'roles', notContains: 'brother' }
-//     //   // startKey: { pk: 'Brady', sk: 'Jan' }
-//     //   // test: true,
-//     //   // test2: true,
-//     //   // attributes: [
-//     //   //   { User: 'name,family,age,roles' },
-//     //   //   { Pet: 'name,petType' }
-//     //   // ],
-//     //   index: 'GSI1'
-//     // },
-//     // // { ProjectionExpression: 'age'}
-//     // )
-
-
-//     // console.log(
-//     //   await Default.User.get({
-//     //     family: 'Brady', 
-//     //     name: 'Mike',
-//     //   },{
-//     //     consistent: true,
-//     //     capacity: 'total',
-//     //     attributes: ['age','roles','sk','modified'],
-//     //     // execute: false
-//     //     // parse: false
-//     //   })
-//     // )
-
-//     // console.log(
-//     //   await Default.User.delete({
-//     //     family: 'Brady', 
-//     //     name: 'Mike',
-//     //   },{
-//     //     capacity: 'total',
-//     //     // metrics: 'size',
-//     //     returnValues: 'all_old',
-//     //     conditions: { attr: 'test', type: 'S', negate: true},
-//     //     // execute: false
-//     //   })
-//     // )
-    
-//     // await delay(10)
-  
-//     // const query = await Default.User.query('Brady',{
-//     //   // execute: false,
-//     //   // parse: false,
-//     //   eq: 'Mike',
-//     //   // limit: 5,
-//     //   // gt: 'Cindy',
-//     //   // parse: false,
-//     //   // filters: [
-//     //   //   { attr: 'agex', between: [18,90]},
-//     //   //   { attr: 'petType', ne: 16, entity: 'Pet' }
-//     //   // ],
-//     //   // attributes: { User: ['name', 'family', 'mapper' ] }
-//     //   // attributes: ['name', 'family', 'mapper','pk','sk' ],
-//     //   // index: 'GSI1',
-//     //   // select: 'COUNT'
-//     //   // capacity: 'indexes'
-//     // })
-//     // console.log(JSON.stringify(query,null,2))
-
-
-//     // const scan = await Default.scan({
-//     //   // execute: false,
-//     //   // parse: false,
-//     //   // limit: 5,
-//     //   // filters: [
-//     //   //   { attr: 'age', between: [18,90]},
-//     //   //   { attr: 'petType', ne: 16, entity: 'Pet' }
-//     //   // ],
-//     //   // attributes: { User: ['name', 'family', 'mapper' ] },
-//     //   // attributes: ['name','family', 'mapper','pk','sk' ],
-//     //   // index: 'GSI1',
-//     //   // select: 'COUNT',
-//     //   // capacity: 'indexes',
-//     //   // consistent: true,
-//     //   // segments: 2,
-//     //   // segment: 1,
-//     //   // startKey: { test: 'test' }
-//     // })
-//     // console.log(JSON.stringify(scan,null,2))
-    
-//     // console.log(JSON.stringify(await query.next(),null,2))
-//     // console.log(query)
-    
-    
-    
-//     // const batchTest = await Default.batchGet(
-//     //     [
-//     //       { 
-//     //         // table: Default,
-//     //         keys: [
-//     //           { family: 'Brady', name: 'Mike', entity: 'User' },
-//     //           { family: 'Brady', name: 'Tiger', entity:'Pet' }
-//     //         ],
-//     //         consistent: false,
-//     //         attributes: [ 
-//     //           'age',
-//     //           { User: ['name', 'family', 'mapper' ] },
-//     //           { Pet: ['typex','name'] }
-//     //         ],
-//     //         // entity: 'User',
-//     //       },
-//     //       { family: 'Brady', name: 'MikeX', pk: 'test', entity: 'User' },
-//     //       { family: 'Brady', name: 'CarolX', entity: 'Pet' },
-//     //       // { 
-//     //       //   table: Default,
-//     //       //   keys: [
-//     //       //     { family: 'Brady', name: 'MikeY', entity: 'Pet' },
-//     //       //     { family: 'Brady', name: 'CarolY' }
-//     //       //   ],
-//     //       //   consistent: false,
-//     //       //   attributes: [ 'age','pk','sk' ]
-//     //       // },
-//     //       // { 
-//     //       //   table: Default2,
-//     //       //   keys: [
-//     //       //     { pk: 'Brady', sk: 'Mike' },
-//     //       //     { family: 'Brady', sk: 'Carol', entity: 'UserX' }
-//     //       //   ],
-//     //       //   // consistent: true,
-//     //       //   // entity: 'UserX',
-//     //       //   attributes: [ { UserX: ['name', 'family' ] } ]
-//     //       // }
-//     //     ], 
-//     //     { 
-//     //       capacity: 'total',
-//     //       // execute: false,
-//     //       // parse: false
-//     //     }
-//     //   )
-//     //   console.log(JSON.stringify(batchTest,null,2))
-//     //   console.log(JSON.stringify(await batchTest.next(),null,2))
-  
-//     // console.log(
-//     //   // JSON.stringify(
-//     //    Default.User.getBatch({ family: 'Brady', name: 'CarolX' })
-//     // ) //)
-
-//     // const batchTest = await Default.batchGet(
-//     //   [
-//     //     Default.User.getBatch({ family: 'Brady', name: 'Mike' }),
-//     //     Default.User.getBatch({ family: 'Brady', name: 'Carol' }),
-//     //     // Default2.UserX.getBatch({ family: 'Brady', name: 'other' }),
-//     //     Default.Pet.getBatch({ family: 'Brady', name: 'Tiger' })
-//     //   ], 
-//     //   { 
-//     //     capacity: 'total',
-//     //     // consistent: true,
-//     //     // consistent: {
-//     //     //   'aliased-table-name': true,
-//     //     //   // 'other-table': true
-//     //     // },
-//     //     attributes: {
-//     //       'aliased-table-name': [ 
-//     //         'age',
-//     //         { User: ['name', 'family', 'mapper' ] },
-//     //         { Pet: ['typex','name'] }
-//     //       ],
-//     //       // 'other-table': ['pk','sk']
-//     //     },
-//     //     // execute: false,
-//     //     // parse: false
-//     //   }
-//     // )
-//     //   console.log(JSON.stringify(batchTest,null,2))
-//     //   // console.log(JSON.stringify(await batchTest.next(),null,2))
-
-
-
-//     // console.log(
-//     //    Default.User.putBatch({ family: 'Brady', name: 'CarolX', age: 40, roles: ['mother','wife'] })
-//     // )
-
-//   //   console.log(
-//   //     Default.User.deleteBatch({ family: 'Brady', name: 'CarolX', age: 40, roles: ['mother','wife'] })
-//   //  )
-//     // const batchWriteTest = await Default.batchWrite(
-//     //   [
-//     //     Default.User.putBatch({ family: 'Brady', name: 'CarolX', age: 40, roles: ['mother','wife'] }),
-//     //     Default.User.putBatch({ family: 'Brady', name: 'CarolY', age: 42, roles: ['wife'] }),
-//     //     Default.User.deleteBatch({ family: 'Brady', name: 'Tiger' })
-//     //   ],{ 
-//     //     capacity: 'total',
-//     //     metrics: 'size',
-//     //     // execute: false,
-//     //     // parse: false
-//     //   }
-//     // )
-//     // console.log(JSON.stringify(batchWriteTest,null,2))
-//     // console.log(JSON.stringify(await batchWriteTest.next(),null,2))
-
-
-//     // console.log(JSON.stringify(
-//     //   await DocumentClient2.batchGet({
-//     //     RequestItems: {
-//     //       'dynamodb-toolbox-test-test-table': {
-//     //         Keys: [
-//     //           { pk: 'Brady', sk: 'Mike' },
-//     //           { pk: 'Brady', sk: 'Alice' },
-//     //           // { pk: 'Brady', sk: 'Mike' }
-//     //         ]
-//     //       }
-//     //     }
-//     //   }).promise()
-//     // ,null,2))
-
-//     // console.log(JSON.stringify(
-//     //   await DocumentClient2.query({
-//     //       TableName: 'dynamodb-toolbox-test-test-table',
-//     //       KeyConditionExpression: `#pk = :pk`,
-//     //       ExpressionAttributeNames: { '#pk': 'pk', '#test': 'age' },
-//     //       ExpressionAttributeValues: { ':pk': 'Brady', ':test': '' },
-//     //       FilterExpression: '#test = :test'
-//     //   }).promise()
-//     // ,null,2))
-
-//     // console.log(JSON.stringify(
-//     //   await DocumentClient2.query({
-//     //       TableName: 'dynamodb-toolbox-test-test-table',
-//     //       KeyConditionExpression: `#pk = :pk`,
-//     //       ExpressionAttributeNames: { '#pk': 'pk', '#test': 'age' },
-//     //       ExpressionAttributeValues: { ':pk': 'Brady', ':test': '' },
-//     //       FilterExpression: '#test = :test'
-//     //   }).promise()
-//     // ,null,2))
-
-//     await delay(100)
-  
-//     // const query = await Default.User.query('Brady',{
-//     //   // execute: false,
-//     //   // parse: false,
-//     //   eq: 'Tiger',
-//     //   // limit: 5,
-//     //   // gt: 'Cindy',
-//     //   // parse: false,
-//     //   // filters: [
-//     //   //   { attr: 'agex', between: [18,90]},
-//     //   //   { attr: 'petType', ne: 16, entity: 'Pet' }
-//     //   // ],
-//     //   // filters: { attr: 'name', eq: 'Tiger', entity: 'Pet'}
-//     //   // attributes: { User: ['name', 'family', 'mapper' ] }
-//     //   // attributes: ['name', 'family', 'mapper','pk','sk' ],
-//     //   // index: 'GSI1',
-//     //   // select: 'COUNT'
-//     //   // capacity: 'indexes'
-//     // })
-//     // console.log(JSON.stringify(query,null,2))
-
-//     // console.log(await Default.User.update({ pk: 'test', sk: '123', testABC: true }))
-//     // console.log(JSON.stringify(await Default.User.get({ pk: 'test', sk: '123' }),null,2))
-//     // console.log(await Default.User.delete({ pk: 'test', sk: '123' }))
-//     // console.log(JSON.stringify(await Default.User.get({ pk: 'test', sk: '123' }),null,2))
-
-//     // console.log(Default.User.put({ pk: 'test', sk: '123', test: 123, setx: ['test','test2'] }))
-
-//     // console.log(Default.get('User', { pk: 'test', sk: '123' }))
-//     // console.log(Default.delete('User', { pk: 'test', sk: '123' }))
-//     // console.log(Default.update('User', { pk: 'test', sk: '123', testABC: true }))
-//     // console.log(Default.put('User', { pk: 'test', sk: '123', test: 123 }))
-
-
-//     // expect(Default.Table).toEqual({
-//     //   table: 'test-table',
-//     //   partitionKey: 'pk',
-//     //   sortKey: null,
-//     //   schema: {
-//     //     pk: { type: 'string', coerce: true },
-//     //     __model: { type: 'string', default: 'Default', coerce: true, hidden: true }
-//     //   },
-//     //   defaults: {
-//     //     __model: 'Default'
-//     //   },
-//     //   required: {},
-//     //   linked: {}
-//     // })
-//   })
-
-
-//   // it('creates basic table', () => {
-//   //   let Default = new Table({
-//   //     name: 'test-table',
-//   //     partitionKey: 'pk',
-//   //     sortKey: 'sk',
-//   //     attributes: {
-//   //       pk: { type: 'string' },
-//   //       sk: 'string',
-//   //       data: 'number',
-//   //       test: 'list',
-//   //       // testx: 'test',
-//   //       test2: { type: 'set', setType: 'string' }
-//   //     },
-//   //     lsis: {
-//   //       LSI1: { sortKey: 'data' },
-//   //       LSI2: { partitionKey: 'pk', sortKey: 'test' }
-//   //     },
-//   //     gsis: {
-//   //       GSI1: { partitionKey: 'sk', sortKey: 'pk' },
-//   //       GSI2: { partitionKey: 'sk', sortKey: 'test' }
-//   //     }
-//   //   })
-//   //
-//   //   console.log(JSON.stringify(Default.table(),null,2))
-//   //
-//   // //   expect(Default.model()).toEqual({
-//   // //     table: 'test-table',
-//   // //     partitionKey: 'pk',
-//   // //     sortKey: null,
-//   // //     schema: {
-//   // //       pk: { type: 'string', coerce: true },
-//   // //       __model: { type: 'string', default: 'Default', coerce: true, hidden: true }
-//   // //     },
-//   // //     defaults: {
-//   // //       __model: 'Default'
-//   // //     },
-//   // //     required: {},
-//   // //     linked: {}
-//   // //   })
+  //   it.skip('Non-Key Index Generated on Delete #74', async () => {
+
+  //     const FoosTable = new Table({
+  //       name: 'test-table',
+  //       partitionKey: 'pk',
+  //       sortKey: 'sk',
+  //       indexes: {
+  //         'GSI-1': { partitionKey: 'gsi1pk', sortKey: 'gsi1sk' },
+  //       },
+  //       DocumentClient,
+  //     });
+  //     const Foos = new Entity({
+  //       name: 'Foo',
+  //       table: FoosTable,
+  //       timestamps: true,
+  //       attributes: {
+  //         pk: { hidden: true, partitionKey: true, default: (data) => (`FOO#${data.id}`) },
+  //         sk: { hidden: true, sortKey: true, default: (data) => (`FOO#${data.id}`) },
+
+  //         // This next `default` gets executed on delete() and fails with "Cannot read property 'tenant' of undefined"
+  //         gsi1pk: { hidden: true, default: (data) => (`TENANT#${data.meta.tenant}`) },
+
+  //         gsi1sk: { hidden: true, default: (data) => (`FOO#${data.id}`) },
+  //         id: { required: 'always' },
+  //         meta: { type: 'map', required: 'always' },
+  //         __context__: { hidden: true },
+  //       },
+  //     });
+
+  //     const foo = {
+  //       id: 'xyz',
+  //       meta: { tenant: 'abc' },
+  //     };
+  //     await Foos.put(foo);
+  //     const key = { id: foo.id };
+  //     await Foos.delete(key); // Fails with v0.2.0-beta. Fine with v0.2.0-alpha
+  //   })
+
+  //   it.skip('Function default dependency issue #68', async () => {
+
+  //     const { randomBytes } = require('crypto')
+
+  //     const table = new Table({
+  //       name: 'test-table',
+  //       partitionKey: 'pk',
+  //       sortKey: 'sk',
+  //       DocumentClient
+  //     })
+
+  //     const TestEntity = new Entity({
+  //       name: 'Test',
+  //       attributes: {
+  //         sk: {
+  //           sortKey: true,
+  //           // default: (data) => data.id,
+  //           default: (data) => `${data.id}---${data.test}---${data.modified}---${data.test3}`,
+  //           prefix:'SK#',
+  //           // dependsOn: 'id'
+  //           dependsOn: ['id','test','modified']//,'test3']
+  //         },
+  //         id: {
+  //           partitionKey: true,
+  //           default: (data) => `${randomBytes(32).toString('hex')}`,
+  //           prefix:'PK#',
+  //           // dependsOn: 'sk'
+  //         },
+  //         test: {
+  //           default: (data) => data.test2,
+  //           dependsOn: 'test2'
+  //         },
+  //         test2: { default: () => Math.random() },
+  //         test3: { default: 'STATICDEFAULT', map: 'testMap' },
+  //         test4: { default: (data) => data.sk + '###' + Math.random(), alias: 'test4alias' },
+  //         other: {}
+  //         // id: {
+  //         //   partitionKey: true,
+  //         //   prefix: 'USER_ID#',
+  //         //   suffix:'#####SUFFIX',
+  //         //   default: (data) => randomBytes(32).toString('hex'),// + ' ' + data.test,
+  //         //   transform: (val) => val.toUpperCase(),
+  //         //   // dependsOn: 'test'
+  //         // },
+  //         // sk: {
+  //         //   sortKey: true,
+  //         //   prefix: 'USER_ID#',
+  //         //   default: (data) => `~~~${data.id}~~~#test#${data.test2}`,
+  //         //   dependsOn: 'id'
+  //         // },
+  //         // test2: {
+  //         //   default: (data) => `----ID2:${data.test}----`,
+  //         //   dependsOn: 'test'
+  //         // },
+  //         // test3: {
+  //         //   default: () => Math.random()
+  //         // },
+  //         // test: {
+  //         //   default: (data) => `----TEST3:${data.test3}----`,
+  //         //   dependsOn: 'test3'
+  //         // }
+  //       },
+  //       table
+  //     })
+
+  //     // console.log(TestEntity.schema.attributes);
+
+  //     console.log(
+  //       TestEntity.putParams({
+  //         other: 'test data',
+  //         test2: 'override test2',
+  //         test: 'overide test value'
+  //       })
+  //     )
+
+  //   })
+
+  //   it.skip('put fails when a field is required and mapped with map: \'destination\' #63', async () => {
+
+  //     const table = new Table({
+  //       name: 'test-table',
+  //       partitionKey: 'pk',
+  //       sortKey: 'sk',
+  //       DocumentClient
+  //     })
+
+  //     const TestEntity = new Entity({
+  //       name: 'Test',
+  //       attributes: {
+  //         email: { partitionKey: true, type: 'string' },
+  //         sk: { sortKey: true, type: 'string' }
+  //       },
+  //       table
+  //     })
+
+  //     console.log(
+  //       TestEntity.putParams({
+  //         pk: 'test',
+  //         sk: 'testsk'
+  //       }, {
+  //         conditions: [
+  //           { attr: 'pk', exists: false },
+  //           { attr: 'sk', exists: false }
+  //         ]
+  //       })
+  //     )
+
+  //   })
+
+  //   it.skip('put fails when a field is required and mapped with map: \'destination\' #63', async () => {
+
+  //     const table = new Table({
+  //       name: 'test-table',
+  //       partitionKey: 'pk',
+  //       // sortKey: 'sk',
+  //       DocumentClient
+  //     })
+
+  //     const TestEntity = new Entity({
+  //       name: 'Test',
+  //       attributes: {
+  //         email: { partitionKey: true, type: 'string' },
+  //         // sk: { sortKey: true, type: 'string' },
+  //         mappedRequired: { required: 'always', map: 'GSIpk' },
+  //       },
+  //       table
+  //     })
+
+  //     console.log(
+  //       await TestEntity.updateParams({
+  //         email: 'test',
+  //         mappedRequired: 'test'
+  //       })
+  //     )
+
+  //   })
+
+  //   it.skip('Batch writes does not support conditions #65', async () => {
+
+  //     const table = new Table({
+  //       name: 'dynamodb-toolbox-test-test-table',
+  //       partitionKey: 'pk',
+  //       sortKey: 'sk',
+
+  //       DocumentClient: DocumentClient2
+  //     })
+  //     const TestEntity = new Entity({
+  //       name: 'Test',
+
+  //       attributes: {
+  //         pk: {
+  //           partitionKey: true,
+  //           type: 'string'
+  //         },
+  //         sk: {
+  //           sortKey: true,
+  //           type: 'string'
+  //         },
+  //         test: {}
+  //       },
+  //       table
+  //     })
+
+  //     // console.log(
+  //     //   JSON.stringify(
+  //     //     await table.batchWrite([
+  //     //       TestEntity.putBatch(
+  //     //         {
+  //     //           pk: 'test',
+  //     //           sk: 'testsk',
+  //     //           test: 'some value'
+  //     //         },
+  //     //         {
+  //     //           // conditions: [{ attr: 'pk', exists: false }]
+  //     //           conditions: [{ attr: 'modified', lt: '020-07-10T16:40:50.575Z' }]
+  //     //         }
+  //     //       )
+  //     //     ],
+  //     //     { execute: false }
+  //     //     )
+  //     //   ,null,2)
+  //     // )
+
+  //     // console.log(await TestEntity.put(
+  //     //   {
+  //     //     pk: 'test',
+  //     //     sk: 'test2',
+  //     //     test: 'some value'
+  //     //   },
+  //     //   {
+  //     //     // conditions: [{ attr: 'pk', exists: false }],
+  //     //     conditions: [{ attr: 'modified', lt: '020-07-10T16:40:50.575Z' }],
+  //     //     execute: true
+  //     //   }
+  //     // ))
+
+  //     console.log(await table.scan());
+
+  //   })
+
+  //   // let test =
+  //   // {
+  //   //   "RequestItems": {
+  //   //     "test-table": [
+  //   //       {
+  //   //         "PutRequest": {
+  //   //           "Item": {
+  //   //             "_ct": "2020-07-10T16:40:57.575Z",
+  //   //             "_md": "2020-07-10T16:40:57.575Z",
+  //   //             "_et": "Test",
+  //   //             "pk": "test",
+  //   //             "sk": "testsk",
+  //   //             "test": "some value"
+  //   //           },
+  //   //           "ExpressionAttributeNames": {
+  //   //             "#attr1": "pk"
+  //   //           },
+  //   //           "ConditionExpression": "attribute_not_exists(#attr1)"
+  //   //         }
+  //   //       }
+  //   //     ]
+  //   //   }
+  //   // }
+
+  //   it.skip('Auto-generated property "entity" interferes with update #66', async () => {
+
+  //     const FoosTable = new Table({
+  //       name: 'test-table',
+  //       partitionKey: 'pk',
+  //       sortKey: 'sk',
+  //       DocumentClient,
+  //     });
+
+  //     const Foos = new Entity({
+  //       name: 'Foo',
+  //       table: FoosTable,
+  //       timestamps: true,
+  //       // typeAlias: 'testType',
+  //       attributes: {
+  //         pk: { hidden: true, partitionKey: true, default: (data) => (`FOO#${data.id}`) },
+  //         sk: { hidden: true, sortKey: true, default: (data) => (`FOO#${data.id}`) },
+  //         id: { required: 'always' },
+  //         name: 'string',
+  //       },
+  //     });
+
+  //     // console.log(await Foos.scan());
+
+  //     console.log(Foos.schema.attributes);
+  //     // console.log(Foos);
+
+  //     //const insertAndUpdate = async () => {
+  //       const foo = { id: 'abc', name: 'Alfred' };
+  //       await Foos.put(foo);
+  //       const { Item: fooFromDB } = await Foos.get({ id: foo.id });
+
+  //       console.log(fooFromDB);
+
+  //       fooFromDB.name = 'Bob'
+  //       await Foos.update(fooFromDB); // FAILS - "Error: Field 'entity' does not have a mapping or alias"
+  //    // };
+
+  //   })
+
+  //   it.skip('misc tests', async () => {
+
+  //     let Default = new Table({
+  //       // name: 'dynamodb-toolbox-test-test-table',
+  //       name: 'test-table',
+  //       alias: 'aliased-table-name',
+  //       partitionKey: 'pk',
+  //       sortKey: 'sk',
+  //       attributes: {
+  //         GSI1sk: 'number',
+  //         data: {}
+  //       //   // pk: { type: 'string' },
+  //       //   // sk: 'string',
+  //       //   // data: 'number',
+  //       //   // test: 'string',
+  //       //   // // testx: 'test',
+  //       //   // test2: { type: 'set', setType: 'string' }
+  //       },
+  //       indexes: {
+  //         GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSI1sk' },
+  //         LSI2: { partitionKey: 'pk', sortKey: 'test' },
+  //         GSI3: { partitionKey: 'test' },
+  //         LSI1: { sortKey: 'data' }
+  //       },
+  //       // DocumentClient
+  //       // autoExecute: false,
+  //       // autoParse: false
+  //       removeNullAttributes: true
+  //     })
+
+  //     Default.DocumentClient = DocumentClient//2
+
+  //     console.log(Default.Table.attributes);
+
+  //     let Default2 = new Table({
+  //       name: 'other-table',
+  //       partitionKey: 'pk',
+  //       sortKey: 'sk',
+  //       DocumentClient
+  //     })
+
+  //     Default2.entities = new Entity({
+  //       name: 'UserX',
+  //       // timestamps: false,
+  //       attributes: {
+  //         family: { type: 'string', partitionKey: true },
+  //         name: { type: 'string', sortKey: true }
+  //       }
+  //       // autoExecute: true,
+  //       // autoParse: false
+  //     })
+
+  //     // console.log(Default2);
+
+  //     // Default.DocumentClient = DocumentClient
+
+  //     // SimpleEntity.name = '_Table'
+  //     // console.log(DefaultTable)
+
+  //     // Default.Entity = TestEntity
+  //     // SimpleEntity.Table = Default
+
+  //     Default.entities = new Entity({
+  //       name: 'User',
+  //       // timestamps: false,
+  //       attributes: {
+  //         family: { type: 'string', partitionKey: true },
+  //         name: { type: 'string', sortKey: true },
+  //         data: 'number',
+  //         set: { type: 'set', setType: 'string', alias: 'roles' },
+  //         age: { type: 'number' },
+  //         friends: 'list',
+  //         mapTest: { type: 'map', alias: 'mapper' },
+  //         test: { map: 'testvar' },
+  //         GSI1pk: { default: (x) => `family#${x.pk}`, hidden: true },
+  //         GSI1sk: { type: 'number', default: (x) => `${x.age}`, hidden: true },
+  //         shared: 'string',
+  //         testDefaultF: { type: 'boolean', default: false },
+  //         testDefault0: { type: 'boolean', default: 0 },
+  //         testDefaultT: { type: 'boolean', default: true },
+  //         comp: {},
+  //         cp1: ['comp',0, { save: false }],
+  //         cp2: ['comp',1, { save: false }]
+  //       },
+  //       // table: Default
+  //       // autoExecute: true,
+  //       // autoParse: false
+  //     })
+
+  //     // console.log(Default.User.schema.attributes);
+
+  //     Default.entities = new Entity({
+  //       name: 'Pet',
+  //       // timestamps: true,
+  //       attributes: {
+  //         family: { type: 'string', partitionKey: true },
+  //         name: { type: 'string', sortKey: true },
+  //         data: 'set',
+  //         petType: 'string',
+  //         typey: { type: 'string', alias: 'typex' },
+  //         // set: { type: 'set', setType: 'string', alias: 'roles' },
+  //         // test: { default: 'some default' }
+  //         shared: 'boolean',
+  //         // GSI1pkx: 'string',
+  //         // GSIpk: { partitionKey: 'GSI1' }
+
+  //       },
+  //       // table: Default
+  //       // autoExecute: true,
+  //       // autoParse: false
+  //     })
+
+  //     // console.log(Default.User.attribute('family'));
+  //     // console.log(JSON.stringify(Default.Table.attributes,null,2));
+
+  //     // Default.name = 'New Table Name'
+  //     // console.log(Object.getPrototypeOf())
+  //     // console.log(Object.getOwnPropertyNames(Table.prototype))
+  // // console.log(Default);
+
+  //     // console.log(Default.User.put({ id: 'test', sk: '123', test: 123, setx: ['test','test2'] },{},{ execute: false}));
+
+  //     console.log(
+  //       await Default.User.put({
+  //         family: 'Brady',
+  //         name: 'Mike',
+  //         age: 41,
+  //         roles: ['father','husband'],
+  //         test: null,
+  //         mapper: {
+  //           test: true,
+  //           test2: false
+  //         },
+  //         cp1: 'test',
+  //         cp2: 'test2'
+  //       },{
+  //         // capacity: 'total',
+  //         // metrics: 'size',
+  //         // returnValues: 'all_old',
+  //         // conditions: { attr: 'test', type: 'S', negate: true},
+  //         // execute: false
+  //         // parse: false
+  //       })
+  //     )
+
+  //     await delay(10)
+  //     // console.log(
+  //     //   await Default.User.update({
+  //     //     family: 'Brady',
+  //     //     name: 'Mike',
+  //     //     age: 41,
+  //     //     test: null,
+  //     //     // $remove: ['mapper']
+  //     //   },{
+  //     //     // capacity: 'total',
+  //     //     // metrics: 'size',
+  //     //     // returnValues: 'all_new',
+  //     //     // conditions: { attr: 'test', type: 'S', negate: true},
+  //     //     execute: false
+  //     //     // parse: false
+  //     //   })
+  //     // )
+
+  //     await Default.User.put({ family: 'Brady', name: 'Carol', age: 42, roles: ['mother','wife'] })
+  //     await Default.User.put({ family: 'Brady', name: 'Alice', age: 50, roles: ['housekeeper'], mapTest: { test: 'Test level 1', test2: { test3: 'Test level 2'}} })
+  //     await Default.User.put({ family: 'Brady', name: 'Greg', age: 18, roles: ['son','brother'] })
+  //     await Default.User.put({ family: 'Brady', name: 'Marcia', age: 18, roles: ['daughter','sister'] })
+  //     await Default.User.put({ family: 'Brady', name: 'Peter', age: 16, roles: ['son','brother'] })
+  //     await Default.User.put({ family: 'Brady', name: 'Jan', age: 16, roles: ['daughter','sister'], friends: ['George Glass'] })
+  //     await Default.User.put({ family: 'Brady', name: 'Bobby', age: 14, roles: ['son','brother'] })
+  //     await Default.User.put({ family: 'Brady', name: 'Cindy', age: 14, roles: ['daughter','sister'] })
+  //     await Default.User.put({ family: 'Franklin', name: 'Sam', age: 52, roles: ['butcher'] })
+  //     await Default.Pet.put({ family: 'Brady', name: 'Tiger', petType: 'dog', typex: 'some value' })
+  //     await Default.Pet.put({ family: 'Brady', name: 'Fluffy', petType: 'cat' })
+  //     await delay(10)
+
+  //     // console.log(JSON.stringify(
+  //     //   await Default.User.get({ family: 'Brady', name: 'Alice' },{},{ omit: [] })
+  //     //   ,null,2))
+
+  //     console.log(JSON.stringify(
+  //       await Default.query('Brady',{ eq: 'Mike' })
+  //     ,null,2))
+
+  //     // const query = await Default.query('family#Brady',{
+  //     //   // execute: false,
+  //     //   // parse: false,
+  //     //   // test: true,
+  //     //   limit: 50,
+  //     //   // beginsWith: 'C',
+  //     //   // between: ['Cindy','Jan'],
+  //     //   // gt: 'Cindy',
+  //     //   gt: '18',
+  //     //   // reverse: true,
+  //     //   // omit: ['set']
+  //     //   // capacity: 'none',
+  //     //   // consistent: true,
+  //     //   // filters: [{ size: 'family[4].testing', gt: 18, entity:'User' },{attr:'sk',lte:'test'}],
+  //     //   // filters: [{ attr: 'age', between: [16,18] },
+  //     //   //   // { attr: 'friends', exists: false }],
+  //     //   //   // { attr: 'age', gte: 16 },
+  //     //   // ],
+  //     //   // filter: { attr: 'age', in: [14,16,18] },
+  //     //   // filters: { size: 'roles', gt: 1, entity: 'User' },
+  //     //   filters: { attr: 'age', gt: 40 },
+  //     //   // filter: { attr: 'roles', notContains: 'brother' }
+  //     //   // startKey: { pk: 'Brady', sk: 'Jan' }
+  //     //   // test: true,
+  //     //   // test2: true,
+  //     //   // attributes: [
+  //     //   //   { User: 'name,family,age,roles' },
+  //     //   //   { Pet: 'name,petType' }
+  //     //   // ],
+  //     //   index: 'GSI1'
+  //     // },
+  //     // // { ProjectionExpression: 'age'}
+  //     // )
+
+  //     // console.log(
+  //     //   await Default.User.get({
+  //     //     family: 'Brady',
+  //     //     name: 'Mike',
+  //     //   },{
+  //     //     consistent: true,
+  //     //     capacity: 'total',
+  //     //     attributes: ['age','roles','sk','modified'],
+  //     //     // execute: false
+  //     //     // parse: false
+  //     //   })
+  //     // )
+
+  //     // console.log(
+  //     //   await Default.User.delete({
+  //     //     family: 'Brady',
+  //     //     name: 'Mike',
+  //     //   },{
+  //     //     capacity: 'total',
+  //     //     // metrics: 'size',
+  //     //     returnValues: 'all_old',
+  //     //     conditions: { attr: 'test', type: 'S', negate: true},
+  //     //     // execute: false
+  //     //   })
+  //     // )
+
+  //     // await delay(10)
+
+  //     // const query = await Default.User.query('Brady',{
+  //     //   // execute: false,
+  //     //   // parse: false,
+  //     //   eq: 'Mike',
+  //     //   // limit: 5,
+  //     //   // gt: 'Cindy',
+  //     //   // parse: false,
+  //     //   // filters: [
+  //     //   //   { attr: 'agex', between: [18,90]},
+  //     //   //   { attr: 'petType', ne: 16, entity: 'Pet' }
+  //     //   // ],
+  //     //   // attributes: { User: ['name', 'family', 'mapper' ] }
+  //     //   // attributes: ['name', 'family', 'mapper','pk','sk' ],
+  //     //   // index: 'GSI1',
+  //     //   // select: 'COUNT'
+  //     //   // capacity: 'indexes'
+  //     // })
+  //     // console.log(JSON.stringify(query,null,2))
+
+  //     // const scan = await Default.scan({
+  //     //   // execute: false,
+  //     //   // parse: false,
+  //     //   // limit: 5,
+  //     //   // filters: [
+  //     //   //   { attr: 'age', between: [18,90]},
+  //     //   //   { attr: 'petType', ne: 16, entity: 'Pet' }
+  //     //   // ],
+  //     //   // attributes: { User: ['name', 'family', 'mapper' ] },
+  //     //   // attributes: ['name','family', 'mapper','pk','sk' ],
+  //     //   // index: 'GSI1',
+  //     //   // select: 'COUNT',
+  //     //   // capacity: 'indexes',
+  //     //   // consistent: true,
+  //     //   // segments: 2,
+  //     //   // segment: 1,
+  //     //   // startKey: { test: 'test' }
+  //     // })
+  //     // console.log(JSON.stringify(scan,null,2))
+
+  //     // console.log(JSON.stringify(await query.next(),null,2))
+  //     // console.log(query)
+
+  //     // const batchTest = await Default.batchGet(
+  //     //     [
+  //     //       {
+  //     //         // table: Default,
+  //     //         keys: [
+  //     //           { family: 'Brady', name: 'Mike', entity: 'User' },
+  //     //           { family: 'Brady', name: 'Tiger', entity:'Pet' }
+  //     //         ],
+  //     //         consistent: false,
+  //     //         attributes: [
+  //     //           'age',
+  //     //           { User: ['name', 'family', 'mapper' ] },
+  //     //           { Pet: ['typex','name'] }
+  //     //         ],
+  //     //         // entity: 'User',
+  //     //       },
+  //     //       { family: 'Brady', name: 'MikeX', pk: 'test', entity: 'User' },
+  //     //       { family: 'Brady', name: 'CarolX', entity: 'Pet' },
+  //     //       // {
+  //     //       //   table: Default,
+  //     //       //   keys: [
+  //     //       //     { family: 'Brady', name: 'MikeY', entity: 'Pet' },
+  //     //       //     { family: 'Brady', name: 'CarolY' }
+  //     //       //   ],
+  //     //       //   consistent: false,
+  //     //       //   attributes: [ 'age','pk','sk' ]
+  //     //       // },
+  //     //       // {
+  //     //       //   table: Default2,
+  //     //       //   keys: [
+  //     //       //     { pk: 'Brady', sk: 'Mike' },
+  //     //       //     { family: 'Brady', sk: 'Carol', entity: 'UserX' }
+  //     //       //   ],
+  //     //       //   // consistent: true,
+  //     //       //   // entity: 'UserX',
+  //     //       //   attributes: [ { UserX: ['name', 'family' ] } ]
+  //     //       // }
+  //     //     ],
+  //     //     {
+  //     //       capacity: 'total',
+  //     //       // execute: false,
+  //     //       // parse: false
+  //     //     }
+  //     //   )
+  //     //   console.log(JSON.stringify(batchTest,null,2))
+  //     //   console.log(JSON.stringify(await batchTest.next(),null,2))
+
+  //     // console.log(
+  //     //   // JSON.stringify(
+  //     //    Default.User.getBatch({ family: 'Brady', name: 'CarolX' })
+  //     // ) //)
+
+  //     // const batchTest = await Default.batchGet(
+  //     //   [
+  //     //     Default.User.getBatch({ family: 'Brady', name: 'Mike' }),
+  //     //     Default.User.getBatch({ family: 'Brady', name: 'Carol' }),
+  //     //     // Default2.UserX.getBatch({ family: 'Brady', name: 'other' }),
+  //     //     Default.Pet.getBatch({ family: 'Brady', name: 'Tiger' })
+  //     //   ],
+  //     //   {
+  //     //     capacity: 'total',
+  //     //     // consistent: true,
+  //     //     // consistent: {
+  //     //     //   'aliased-table-name': true,
+  //     //     //   // 'other-table': true
+  //     //     // },
+  //     //     attributes: {
+  //     //       'aliased-table-name': [
+  //     //         'age',
+  //     //         { User: ['name', 'family', 'mapper' ] },
+  //     //         { Pet: ['typex','name'] }
+  //     //       ],
+  //     //       // 'other-table': ['pk','sk']
+  //     //     },
+  //     //     // execute: false,
+  //     //     // parse: false
+  //     //   }
+  //     // )
+  //     //   console.log(JSON.stringify(batchTest,null,2))
+  //     //   // console.log(JSON.stringify(await batchTest.next(),null,2))
+
+  //     // console.log(
+  //     //    Default.User.putBatch({ family: 'Brady', name: 'CarolX', age: 40, roles: ['mother','wife'] })
+  //     // )
+
+  //   //   console.log(
+  //   //     Default.User.deleteBatch({ family: 'Brady', name: 'CarolX', age: 40, roles: ['mother','wife'] })
+  //   //  )
+  //     // const batchWriteTest = await Default.batchWrite(
+  //     //   [
+  //     //     Default.User.putBatch({ family: 'Brady', name: 'CarolX', age: 40, roles: ['mother','wife'] }),
+  //     //     Default.User.putBatch({ family: 'Brady', name: 'CarolY', age: 42, roles: ['wife'] }),
+  //     //     Default.User.deleteBatch({ family: 'Brady', name: 'Tiger' })
+  //     //   ],{
+  //     //     capacity: 'total',
+  //     //     metrics: 'size',
+  //     //     // execute: false,
+  //     //     // parse: false
+  //     //   }
+  //     // )
+  //     // console.log(JSON.stringify(batchWriteTest,null,2))
+  //     // console.log(JSON.stringify(await batchWriteTest.next(),null,2))
+
+  //     // console.log(JSON.stringify(
+  //     //   await DocumentClient2.batchGet({
+  //     //     RequestItems: {
+  //     //       'dynamodb-toolbox-test-test-table': {
+  //     //         Keys: [
+  //     //           { pk: 'Brady', sk: 'Mike' },
+  //     //           { pk: 'Brady', sk: 'Alice' },
+  //     //           // { pk: 'Brady', sk: 'Mike' }
+  //     //         ]
+  //     //       }
+  //     //     }
+  //     //   }).promise()
+  //     // ,null,2))
+
+  //     // console.log(JSON.stringify(
+  //     //   await DocumentClient2.query({
+  //     //       TableName: 'dynamodb-toolbox-test-test-table',
+  //     //       KeyConditionExpression: `#pk = :pk`,
+  //     //       ExpressionAttributeNames: { '#pk': 'pk', '#test': 'age' },
+  //     //       ExpressionAttributeValues: { ':pk': 'Brady', ':test': '' },
+  //     //       FilterExpression: '#test = :test'
+  //     //   }).promise()
+  //     // ,null,2))
+
+  //     // console.log(JSON.stringify(
+  //     //   await DocumentClient2.query({
+  //     //       TableName: 'dynamodb-toolbox-test-test-table',
+  //     //       KeyConditionExpression: `#pk = :pk`,
+  //     //       ExpressionAttributeNames: { '#pk': 'pk', '#test': 'age' },
+  //     //       ExpressionAttributeValues: { ':pk': 'Brady', ':test': '' },
+  //     //       FilterExpression: '#test = :test'
+  //     //   }).promise()
+  //     // ,null,2))
+
+  //     await delay(100)
+
+  //     // const query = await Default.User.query('Brady',{
+  //     //   // execute: false,
+  //     //   // parse: false,
+  //     //   eq: 'Tiger',
+  //     //   // limit: 5,
+  //     //   // gt: 'Cindy',
+  //     //   // parse: false,
+  //     //   // filters: [
+  //     //   //   { attr: 'agex', between: [18,90]},
+  //     //   //   { attr: 'petType', ne: 16, entity: 'Pet' }
+  //     //   // ],
+  //     //   // filters: { attr: 'name', eq: 'Tiger', entity: 'Pet'}
+  //     //   // attributes: { User: ['name', 'family', 'mapper' ] }
+  //     //   // attributes: ['name', 'family', 'mapper','pk','sk' ],
+  //     //   // index: 'GSI1',
+  //     //   // select: 'COUNT'
+  //     //   // capacity: 'indexes'
+  //     // })
+  //     // console.log(JSON.stringify(query,null,2))
+
+  //     // console.log(await Default.User.update({ pk: 'test', sk: '123', testABC: true }))
+  //     // console.log(JSON.stringify(await Default.User.get({ pk: 'test', sk: '123' }),null,2))
+  //     // console.log(await Default.User.delete({ pk: 'test', sk: '123' }))
+  //     // console.log(JSON.stringify(await Default.User.get({ pk: 'test', sk: '123' }),null,2))
+
+  //     // console.log(Default.User.put({ pk: 'test', sk: '123', test: 123, setx: ['test','test2'] }))
+
+  //     // console.log(Default.get('User', { pk: 'test', sk: '123' }))
+  //     // console.log(Default.delete('User', { pk: 'test', sk: '123' }))
+  //     // console.log(Default.update('User', { pk: 'test', sk: '123', testABC: true }))
+  //     // console.log(Default.put('User', { pk: 'test', sk: '123', test: 123 }))
+
+  //     // expect(Default.Table).toEqual({
+  //     //   table: 'test-table',
+  //     //   partitionKey: 'pk',
+  //     //   sortKey: null,
+  //     //   schema: {
+  //     //     pk: { type: 'string', coerce: true },
+  //     //     __model: { type: 'string', default: 'Default', coerce: true, hidden: true }
+  //     //   },
+  //     //   defaults: {
+  //     //     __model: 'Default'
+  //     //   },
+  //     //   required: {},
+  //     //   linked: {}
+  //     // })
+  //   })
+
+  //   // it('creates basic table', () => {
+  //   //   let Default = new Table({
+  //   //     name: 'test-table',
+  //   //     partitionKey: 'pk',
+  //   //     sortKey: 'sk',
+  //   //     attributes: {
+  //   //       pk: { type: 'string' },
+  //   //       sk: 'string',
+  //   //       data: 'number',
+  //   //       test: 'list',
+  //   //       // testx: 'test',
+  //   //       test2: { type: 'set', setType: 'string' }
+  //   //     },
+  //   //     lsis: {
+  //   //       LSI1: { sortKey: 'data' },
+  //   //       LSI2: { partitionKey: 'pk', sortKey: 'test' }
+  //   //     },
+  //   //     gsis: {
+  //   //       GSI1: { partitionKey: 'sk', sortKey: 'pk' },
+  //   //       GSI2: { partitionKey: 'sk', sortKey: 'test' }
+  //   //     }
+  //   //   })
+  //   //
+  //   //   console.log(JSON.stringify(Default.table(),null,2))
+  //   //
+  //   // //   expect(Default.model()).toEqual({
+  //   // //     table: 'test-table',
+  //   // //     partitionKey: 'pk',
+  //   // //     sortKey: null,
+  //   // //     schema: {
+  //   // //       pk: { type: 'string', coerce: true },
+  //   // //       __model: { type: 'string', default: 'Default', coerce: true, hidden: true }
+  //   // //     },
+  //   // //     defaults: {
+  //   // //       __model: 'Default'
+  //   // //     },
+  //   // //     required: {},
+  //   // //     linked: {}
+  //   // //   })
 })
-
-
-
 
 // /*
 // // Generate BatchGet Params
@@ -943,7 +882,7 @@ describe('Misc Tests (development only)', ()=> {
 //       capacity,
 //       ..._args
 //     } = options
-  
+
 //     // Remove other valid options from options
 //     const args = Object.keys(_args).filter(x => !['execute','parse'].includes(x))
 
@@ -961,15 +900,15 @@ describe('Misc Tests (development only)', ()=> {
 //     const Tables = {}
 //     let EntityProjections = {}
 //     let TableProjections = {}
-    
+
 //     // Loop through items
 //     for (const i in items) {
 //       const item = items[i]
 //       let Keys = []
-      
+
 //       // Item must be an object
 //       if (typeof item === 'object' && !Array.isArray(item)) {
-        
+
 //         // Extract known parameters
 //         let {
 //           table, // table object
@@ -978,7 +917,7 @@ describe('Misc Tests (development only)', ()=> {
 //           attributes, // Projections
 //           entity, // entity name
 //           ...args
-//         } = item   
+//         } = item
 
 //         // If table supplied, verify, else default to current table
 //         if (table !== undefined) {
@@ -987,7 +926,7 @@ describe('Misc Tests (development only)', ()=> {
 //         } else {
 //           table = this
 //         }
-         
+
 //         // Verify consistent read
 //         if (consistent !== undefined && typeof consistent !== 'boolean')
 //           error(`'consistent' requires a boolean`)
@@ -1004,11 +943,11 @@ describe('Misc Tests (development only)', ()=> {
 //         let ProjectionExpression // init ProjectionExpression
 //         let _EntityProjections // scoped to this loop
 //         let _TableProjections // scoped to this loop
-    
+
 //         // If projections
 //         if (attributes) {
 //           const { names, projections, entities, tableAttrs } = parseProjections(attributes,table,null,true)
-    
+
 //           if (Object.keys(names).length > 0) {
 //             // Merge names and add projection expression
 //             ExpressionAttributeNames = names
@@ -1016,22 +955,22 @@ describe('Misc Tests (development only)', ()=> {
 //             _EntityProjections = entities
 //             _TableProjections = tableAttrs
 //           } // end if names
-    
+
 //         } // end if projections
 
 //         // Error if extra arguments are provided along with keys
 //         if (keys !== undefined && Object.keys(args).length > 0)
 //           error(`Invalid options when specifying 'keys': ${args.join(', ')}`)
-        
+
 //         // If no keys, convert extra args to a keys array
-//         if (keys === undefined) keys = [ { entity, ...args }]        
+//         if (keys === undefined) keys = [ { entity, ...args }]
 
 //         // Process keys
 //         if (Array.isArray(keys)) {
 //           // Loop through keys
 //           for (const x in keys) {
 //             // Extract entity (if provided) and remaining attributes
-//             let { 
+//             let {
 //               entity: _entity,
 //               ...keyMap
 //             } = keys[x]
@@ -1044,14 +983,14 @@ describe('Misc Tests (development only)', ()=> {
 
 //             // Loop through the remaining attributes and check if a pk/sk
 //             for (const attr in keyMap) {
-              
+
 //               // Load the schema for entity, or default to table
 //               const schema = ent ? table[ent].schema.attributes : table.Table.attributes
 
 //               // Merge keys into the primary Key
 //               primaryKey = Object.assign(
 //                 primaryKey,
-//                 { 
+//                 {
 //                   [(schema[attr] && (schema[attr].partitionKey || schema[attr].sortKey || table.Table.partitionKey === attr || table.Table.sortKey === attr)) ? schema[attr].map || attr
 //                   : error(`'${attr}' is not a valid partition or sort key`)]: keyMap[attr]
 //                 }
@@ -1106,17 +1045,16 @@ describe('Misc Tests (development only)', ()=> {
 //     return meta ? { payload, Tables, EntityProjections, TableProjections } : payload
 //   } // generateBatchGetParams
 
-
 //     // const batchTest = await Default.batchGet(
 //     //     [
-//     //       { 
+//     //       {
 //     //         // table: Default,
 //     //         keys: [
 //     //           { family: 'Brady', name: 'Mike', entity: 'User' },
 //     //           { family: 'Brady', name: 'Tiger', entity:'Pet' }
 //     //         ],
 //     //         consistent: false,
-//     //         attributes: [ 
+//     //         attributes: [
 //     //           'age',
 //     //           { User: ['name', 'family', 'mapper' ] },
 //     //           { Pet: ['typex','name'] }
@@ -1125,7 +1063,7 @@ describe('Misc Tests (development only)', ()=> {
 //     //       },
 //     //       { family: 'Brady', name: 'MikeX', pk: 'test', entity: 'User' },
 //     //       { family: 'Brady', name: 'CarolX', entity: 'Pet' },
-//     //       // { 
+//     //       // {
 //     //       //   table: Default,
 //     //       //   keys: [
 //     //       //     { family: 'Brady', name: 'MikeY', entity: 'Pet' },
@@ -1134,7 +1072,7 @@ describe('Misc Tests (development only)', ()=> {
 //     //       //   consistent: false,
 //     //       //   attributes: [ 'age','pk','sk' ]
 //     //       // },
-//     //       // { 
+//     //       // {
 //     //       //   table: Default2,
 //     //       //   keys: [
 //     //       //     { pk: 'Brady', sk: 'Mike' },
@@ -1144,8 +1082,8 @@ describe('Misc Tests (development only)', ()=> {
 //     //       //   // entity: 'UserX',
 //     //       //   attributes: [ { UserX: ['name', 'family' ] } ]
 //     //       // }
-//     //     ], 
-//     //     { 
+//     //     ],
+//     //     {
 //     //       capacity: 'total',
 //     //       // execute: false,
 //     //       // parse: false

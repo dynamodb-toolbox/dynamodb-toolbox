@@ -6,7 +6,6 @@ import { DocumentClient } from './bootstrap-tests'
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
-
 // Create basic table
 let DefaultTable = new Table({
   name: 'test-table',
@@ -27,8 +26,8 @@ DefaultTable.entities = new Entity({
     list: { type: 'list', alias: 'list_alias' },
     list_alias2: { type: 'list', map: 'list2' },
     test: 'map',
-    linked1: ['sk',0, { save:true }],
-    linked2: ['sk',1]
+    linked1: ['sk', 0, { save: true }],
+    linked2: ['sk', 1]
   }
 })
 
@@ -38,11 +37,10 @@ const attributes = DefaultTable.User.schema.attributes
 const linked = DefaultTable.User.linked
 
 describe('normalizeData', () => {
-
   it('converts entity input to table attributes', async () => {
-    let result = normalizeData(DocumentClient)(attributes,linked,{
+    let result = normalizeData(DocumentClient)(attributes, linked, {
       pk: 'test',
-      set_alias: ['1','2','3'],
+      set_alias: ['1', '2', '3'],
       number: 1,
       test: { test: true },
       linked1: 'test1',
@@ -53,7 +51,7 @@ describe('normalizeData', () => {
     expect(result).toEqual({
       sk: 'test1#test2',
       pk: 'test',
-      set: [ '1', '2', '3' ],
+      set: ['1', '2', '3'],
       number: 1,
       test: { test: true },
       linked1: 'test1',
@@ -63,11 +61,16 @@ describe('normalizeData', () => {
   })
 
   it('filter out non-mapped fields', async () => {
-    let result = normalizeData(DocumentClient)(attributes,linked,{
-      pk: 'test',
-      $remove: 'testx',
-      notAField: 'test123'
-    },true)
+    let result = normalizeData(DocumentClient)(
+      attributes,
+      linked,
+      {
+        pk: 'test',
+        $remove: 'testx',
+        notAField: 'test123'
+      },
+      true
+    )
 
     expect(result).toEqual({
       pk: 'test'
@@ -76,13 +79,11 @@ describe('normalizeData', () => {
 
   it('fails on non-mapped fields', async () => {
     expect(() => {
-      normalizeData(DocumentClient)(attributes,linked,{
+      normalizeData(DocumentClient)(attributes, linked, {
         pk: 'test',
         $remove: 'testx',
         notAField: 'test123'
       })
     }).toThrow(`Field 'notAField' does not have a mapping or alias`)
-
   })
-
 })

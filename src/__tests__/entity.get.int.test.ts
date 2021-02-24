@@ -38,10 +38,9 @@ const TestEntity2 = new Entity({
   table: TestTable2
 })
 
-describe.skip('get - integration',()=>{
-
+describe.skip('get - integration', () => {
   it('gets the key from inputs (async)', async () => {
-    const { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk' })    
+    const { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -79,5 +78,4 @@ describe.skip('get - integration',()=>{
   it('fails when missing the sortKey (no alias) (async)', () => {
     expect(TestEntity2.get({ pk: 'test-pk' })).rejects.toThrow(`'sk' is required`)
   })
-
 })

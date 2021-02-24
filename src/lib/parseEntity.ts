@@ -4,7 +4,7 @@
  * @license MIT
  */
 
- // Import libraries & types
+// Import libraries & types
 import parseEntityAttributes from './parseEntityAttributes'
 import { EntityConstructor } from '../classes/Entity'
 
@@ -14,8 +14,8 @@ import { error } from './utils'
 export interface TrackingInfo {
   fields: string[]
   defaults: any
-  required: any,
-  linked: Linked,
+  required: any
+  linked: Linked
   keys: any
 }
 
@@ -25,14 +25,13 @@ export interface Linked {
 
 export interface TrackingInfoKeys {
   partitionKey?: string
-  sortKey?: string 
+  sortKey?: string
 }
 
 export type ParsedEntity = ReturnType<typeof parseEntity>
 
 // Parse entity
 export function parseEntity(entity: EntityConstructor) {
-
   let {
     name,
     timestamps,
@@ -55,46 +54,55 @@ export function parseEntity(entity: EntityConstructor) {
     error(`Invalid Entity configuration options: ${Object.keys(args).join(', ')}`)
 
   // Entity name
-  name = typeof name === 'string'
-    && name.trim().length > 0 ? name.trim()
-    : error(`'name' must be defined`)
+  name =
+    typeof name === 'string' && name.trim().length > 0
+      ? name.trim()
+      : error(`'name' must be defined`)
 
   // Enable created/modified timestamps on items
   timestamps = typeof timestamps === 'boolean' ? timestamps : true
 
   // Define 'created' attribute name
-  created = typeof created === 'string'
-    && created.trim().length > 0 ? created.trim()
-    : '_ct'
+  created = typeof created === 'string' && created.trim().length > 0 ? created.trim() : '_ct'
 
   // Define 'createdAlias'
-  createdAlias = typeof createdAlias === 'string'
-    && createdAlias.trim().length > 0 ? createdAlias.trim()
-    : 'created'
+  createdAlias =
+    typeof createdAlias === 'string' && createdAlias.trim().length > 0
+      ? createdAlias.trim()
+      : 'created'
 
   // Define 'modified' attribute anme
-  modified = typeof modified === 'string'
-    && modified.trim().length > 0 ? modified.trim()
-    : '_md'
+  modified = typeof modified === 'string' && modified.trim().length > 0 ? modified.trim() : '_md'
 
   // Define 'modifiedAlias'
-  modifiedAlias = typeof modifiedAlias === 'string'
-    && modifiedAlias.trim().length > 0 ? modifiedAlias.trim()
-    : 'modified'
+  modifiedAlias =
+    typeof modifiedAlias === 'string' && modifiedAlias.trim().length > 0
+      ? modifiedAlias.trim()
+      : 'modified'
 
   // Define 'entityAlias'
-  typeAlias = typeof typeAlias === 'string'
-    && typeAlias.trim().length > 0 ? typeAlias.trim()
-    : 'entity'
+  typeAlias =
+    typeof typeAlias === 'string' && typeAlias.trim().length > 0 ? typeAlias.trim() : 'entity'
 
   // Sanity check the attributes
-  attributes = typeof attributes === 'object' && !Array.isArray(attributes) ?
-    attributes : error(`Please provide a valid 'attributes' object`)
+  attributes =
+    typeof attributes === 'object' && !Array.isArray(attributes)
+      ? attributes
+      : error(`Please provide a valid 'attributes' object`)
 
   // Add timestamps
   if (timestamps) {
-    attributes[created] = { type: 'string', alias: createdAlias, default: ()=> new Date().toISOString() }
-    attributes[modified] = { type: 'string', alias: modifiedAlias, default: ()=> new Date().toISOString(), onUpdate: true }
+    attributes[created] = {
+      type: 'string',
+      alias: createdAlias,
+      default: () => new Date().toISOString()
+    }
+    attributes[modified] = {
+      type: 'string',
+      alias: modifiedAlias,
+      default: () => new Date().toISOString(),
+      onUpdate: true
+    }
   }
 
   // Tracking info
@@ -107,19 +115,19 @@ export function parseEntity(entity: EntityConstructor) {
   }
 
   // Return the entity
-  return Object.assign({
-    name,
-    schema: parseEntityAttributes(attributes,track), // removed nested attribute?
-    defaults: track.defaults,
-    required: track.required,
-    linked: track.linked,
-    autoExecute,
-    autoParse,
-    _etAlias: typeAlias 
-  },
-  table ? { table } : {}
+  return Object.assign(
+    {
+      name,
+      schema: parseEntityAttributes(attributes, track), // removed nested attribute?
+      defaults: track.defaults,
+      required: track.required,
+      linked: track.linked,
+      autoExecute,
+      autoParse,
+      _etAlias: typeAlias
+    },
+    table ? { table } : {}
   ) // end mapping object
-
 } // end parseEntity
 
 export default parseEntity

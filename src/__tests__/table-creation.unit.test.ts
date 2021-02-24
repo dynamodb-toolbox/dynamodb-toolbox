@@ -3,11 +3,8 @@ import { DocumentClient } from './bootstrap-tests'
 
 // Require Table and Entity classes
 import Table from '../classes/Table'
-import Entity from '../classes/Entity'
 
-
-describe('Table creation', ()=> {
-
+describe('Table creation', () => {
   it('creates table w/ minimum options', async () => {
     const TestTable = new Table({
       name: 'test-table',
@@ -25,7 +22,6 @@ describe('Table creation', ()=> {
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
   }) // end table
-
 
   it('creates table w/ options', async () => {
     const TestTable = new Table({
@@ -49,7 +45,6 @@ describe('Table creation', ()=> {
     expect(TestTable.entities).toEqual([])
   }) // end table w/ options
 
-
   it('creates table w/ attributes', async () => {
     const TestTable = new Table({
       name: 'test-table',
@@ -62,8 +57,8 @@ describe('Table creation', ()=> {
         listAttr: 'list',
         mapAttr: 'map',
         stringSetAttr: 'set',
-        numberSetAttr: { type: 'set', setType: 'number'},
-        binarySetAttr: { type: 'set', setType: 'binary'}
+        numberSetAttr: { type: 'set', setType: 'number' },
+        binarySetAttr: { type: 'set', setType: 'binary' }
       }
     })
 
@@ -92,7 +87,6 @@ describe('Table creation', ()=> {
     })
   }) // end table w/ attributes
 
-
   it('creates table w/ indexes', async () => {
     const TestTable = new Table({
       name: 'test-table',
@@ -107,7 +101,7 @@ describe('Table creation', ()=> {
         // LSI w/ only sk
         LSI2: { sortKey: 'LSI2sk' }
       }
-    })    
+    })
 
     expect(TestTable instanceof Table).toBe(true)
     expect(TestTable.name).toBe('test-table')
@@ -128,7 +122,6 @@ describe('Table creation', ()=> {
     })
   }) // end table w/ indexes
 
-
   it('creates table w/ DocumentClient', async () => {
     const TestTable = new Table({
       name: 'test-table',
@@ -148,7 +141,6 @@ describe('Table creation', ()=> {
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
   }) // end create table w/ DocumentClient
-
 
   it('creates table, then add DocumentClient', async () => {
     const TestTable = new Table({
@@ -171,6 +163,4 @@ describe('Table creation', ()=> {
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
   }) // end create table w/ DocumentClient
-
-
 })

@@ -1,13 +1,11 @@
 // Require Table and Entity classes
 import Table from '../classes/Table'
-import Entity, { EntityConstructor} from '../classes/Entity'
+import Entity, { EntityConstructor } from '../classes/Entity'
 
 import { DocumentClient } from './bootstrap-tests'
 
-describe('Entity creation', ()=> {
-
+describe('Entity creation', () => {
   it('creates basic entity w/ defaults', async () => {
-
     // Create entity
     const TestEntity = new Entity({
       name: 'TestEntity',
@@ -15,11 +13,11 @@ describe('Entity creation', ()=> {
         pk: { partitionKey: true }
       }
     })
-    
+
     expect(TestEntity.name).toBe('TestEntity')
-    expect(TestEntity.schema.attributes.pk).toEqual({ 
+    expect(TestEntity.schema.attributes.pk).toEqual({
       partitionKey: true,
-      type: 'string', 
+      type: 'string',
       coerce: true
     })
     expect(TestEntity.schema.keys).toEqual({ partitionKey: 'pk' })
@@ -34,7 +32,6 @@ describe('Entity creation', ()=> {
     expect(TestEntity._etAlias).toBe('entity')
   })
 
-
   it('creates basic entity w/o timestamps', () => {
     let TestEntity = new Entity({
       name: 'TestEntity',
@@ -45,9 +42,9 @@ describe('Entity creation', ()=> {
     })
 
     expect(TestEntity.name).toBe('TestEntity')
-    expect(TestEntity.schema.attributes.pk).toEqual({ 
+    expect(TestEntity.schema.attributes.pk).toEqual({
       partitionKey: true,
-      type: 'string', 
+      type: 'string',
       coerce: true
     })
     expect(TestEntity.schema.keys).toEqual({ partitionKey: 'pk' })
@@ -59,7 +56,6 @@ describe('Entity creation', ()=> {
     expect(TestEntity.defaults).not.toHaveProperty('_md')
     expect(TestEntity._etAlias).toBe('entity')
   })
-
 
   it('creates entity that overrides timestamp names', () => {
     let TestEntity = new Entity({
@@ -97,14 +93,14 @@ describe('Entity creation', ()=> {
       name: 'TestEntity',
       attributes: {
         pk: { partitionKey: true },
-        test: ['pk',0],
-        test2: ['pk',1,'number']
+        test: ['pk', 0],
+        test2: ['pk', 1, 'number']
       }
     })
-    
+
     expect(TestEntity.schema.attributes.test.type).toBe('string')
     expect(TestEntity.schema.attributes.test2.type).toBe('number')
-    expect(TestEntity.linked).toEqual({ pk: [ 'test', 'test2' ] })
+    expect(TestEntity.linked).toEqual({ pk: ['test', 'test2'] })
   })
 
   it('creates entity w/ composite field alias', () => {
@@ -112,7 +108,7 @@ describe('Entity creation', ()=> {
       name: 'TestEntity',
       attributes: {
         pk: { partitionKey: true },
-        test: ['pk',0, {alias: 'test2' }]
+        test: ['pk', 0, { alias: 'test2' }]
       }
     })
 
@@ -120,181 +116,200 @@ describe('Entity creation', ()=> {
   })
 
   it('fails when creating a entity without a partitionKey', () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {}
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {}
+      })
     expect(result).toThrow(`Entity requires a partitionKey attribute`)
   })
 
-
   it('fails when creating a entity without a name', () => {
-    // @ts-expect-error
-    let result = () => new Entity({
-      attributes: {
-        pk: { partitionKey: true }
-      }
-    })
+    let result = () =>
+      // @ts-expect-error
+      new Entity({
+        attributes: {
+          pk: { partitionKey: true }
+        }
+      })
     expect(result).toThrow(`'name' must be defined`)
   })
 
-
   it('fails when creating a entity with an invalid attributes object (array)', () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      // @ts-expect-error
-      attributes: [1,2,3]
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        // @ts-expect-error
+        attributes: [1, 2, 3]
+      })
     expect(result).toThrow(`Please provide a valid 'attributes' object`)
   })
 
   it('fails when creating a entity with an invalid attributes object (string)', () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      // @ts-expect-error
-      attributes: 'test'
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        // @ts-expect-error
+        attributes: 'test'
+      })
     expect(result).toThrow(`Please provide a valid 'attributes' object`)
   })
 
   it('fails when attribute has an invalid type (string style)', () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        // @ts-expect-error
-        pk: 'x'
-      }
-    })
-    expect(result).toThrow(`Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`)
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          // @ts-expect-error
+          pk: 'x'
+        }
+      })
+    expect(result).toThrow(
+      `Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
+    )
   })
 
   it('fails when attribute has an invalid type (object style)', () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        // @ts-expect-error
-        pk: { type: 'x' }
-      }
-    })
-    expect(result).toThrow(`Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`)
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          // @ts-expect-error
+          pk: { type: 'x' }
+        }
+      })
+    expect(result).toThrow(
+      `Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
+    )
   })
 
   it(`fails when an attribute has invalid 'onUpdate' setting`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        // @ts-expect-error
-        test: { type: 'string', onUpdate: 'x' }
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          // @ts-expect-error
+          test: { type: 'string', onUpdate: 'x' }
+        }
+      })
     expect(result).toThrow(`'onUpdate' must be a boolean`)
   })
 
   it(`fails when attribute alias duplicates existing property`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        test: { type: 'string', alias: 'pk' }
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          test: { type: 'string', alias: 'pk' }
+        }
+      })
     expect(result).toThrow(`'alias' must be a unique string`)
   })
 
   it(`fails when an attribute uses 'setType' when not a 'set'`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        test: { type: 'string', setType: 'string' }
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          test: { type: 'string', setType: 'string' }
+        }
+      })
     expect(result).toThrow(`'setType' is only valid for type 'set'`)
   })
 
   it(`fails when attribute uses invalid 'setType'`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        // @ts-expect-error
-        test: { type: 'set', setType: 'test' }
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          // @ts-expect-error
+          test: { type: 'set', setType: 'test' }
+        }
+      })
     expect(result).toThrow(`Invalid 'setType', must be 'string', 'number', or 'binary'`)
   })
 
   it(`fails when setting an invalid attribute property type`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        // @ts-expect-error
-        test: { type: 'string', unknown: true }
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          // @ts-expect-error
+          test: { type: 'string', unknown: true }
+        }
+      })
     expect(result).toThrow(`'unknown' is not a valid property type`)
   })
 
   it(`fails when setting an invalid required property`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        // @ts-expect-error
-        test: { type: 'string', required: 'x' }
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          // @ts-expect-error
+          test: { type: 'string', required: 'x' }
+        }
+      })
     expect(result).toThrow(`'required' must be a boolean or set to 'always'`)
   })
 
   it(`fails when composite references missing field`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        test: ['x',0]
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          test: ['x', 0]
+        }
+      })
     expect(result).toThrow(`'test' must reference another field`)
   })
 
   it(`fails when composite uses non-numeric index`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        // @ts-expect-error
-        test: ['pk','x']
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          // @ts-expect-error
+          test: ['pk', 'x']
+        }
+      })
     expect(result).toThrow(`'test' position value must be numeric`)
   })
 
   it(`fails when composite uses invalid type`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        test: ['pk',1,'x']
-      }
-    })
-    expect(result).toThrow(`'test' type must be 'string', 'number', 'boolean' or a configuration object`)
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          test: ['pk', 1, 'x']
+        }
+      })
+    expect(result).toThrow(
+      `'test' type must be 'string', 'number', 'boolean' or a configuration object`
+    )
   })
 
   it(`fails when composite array length is incorrect`, () => {
-    let result = () => new Entity({
-      name: 'TestEntity',
-      attributes: {
-        pk: { partitionKey: true },
-        // @ts-expect-error
-        test: ['pk']
-      }
-    })
+    let result = () =>
+      new Entity({
+        name: 'TestEntity',
+        attributes: {
+          pk: { partitionKey: true },
+          // @ts-expect-error
+          test: ['pk']
+        }
+      })
     expect(result).toThrow(`Composite key configurations must have 2 or 3 items`)
   })
-
 
   it(`fails when missing entity definition`, () => {
     // @ts-expect-error
@@ -314,9 +329,8 @@ describe('Entity creation', ()=> {
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
-
   // it('creates entity w/ table', async () => {
-  
+
   //   // Create basic table
   //   const TestTable = new Table({
   //     name: 'test-table',
@@ -359,9 +373,8 @@ describe('Entity creation', ()=> {
   //   expect(TestEntity._etAlias).toBe('entity')
   // }) // creates entity w/ table
 
-
   // it('creates entity composite key delimiter, prefix and suffix', async () => {
-  
+
   //   // Create basic table
   //   const TestTable = new Table({
   //     name: 'test-table',
@@ -411,7 +424,7 @@ describe('Entity creation', ()=> {
   //       test2c: '2'
   //     }
   //   })
-    
+
   //   expect(TestEntity.parse({
   //     skx: 'test---0|1|2-end',
   //     comp1: '0#1#2',
@@ -435,12 +448,10 @@ describe('Entity creation', ()=> {
   //     test2c: '2'
   //   })
 
-
   // })
 
-
   // it('creates an attribute with a prefix and suffix', async () => {
-    
+
   //   // Create basic table
   //   const TestTable = new Table({
   //     name: 'test-table',
@@ -475,7 +486,7 @@ describe('Entity creation', ()=> {
   //       num: 5
   //     }
   //   })
-    
+
   //   expect(TestEntity.parse({
   //       _et: 'TestEnt',
   //       pk: '#user#test',
@@ -487,9 +498,8 @@ describe('Entity creation', ()=> {
 
   // }) // creates attribute with prefix/suffix
 
-
   // it('creates an attribute a transformation function', async () => {
-    
+
   //   // Create basic table
   //   const TestTable = new Table({
   //     name: 'test-table',
@@ -503,7 +513,7 @@ describe('Entity creation', ()=> {
   //     name: 'TestEnt',
   //     attributes: {
   //       pk: { partitionKey: true, transform: (val) => val.toUpperCase(), default: 'pkDef' },
-  //       test: { 
+  //       test: {
   //         transform: (val,data) => {
   //           return val.toUpperCase()
   //         },
@@ -512,8 +522,8 @@ describe('Entity creation', ()=> {
   //       },
   //       sk: { type: 'string', prefix: 'testprev-', sortKey: true, delimiter: '|' },
   //       testx: ['sk',0],
-  //       testy: ['sk',1, { 
-  //         default: () => 'testDefaultX', 
+  //       testy: ['sk',1, {
+  //         default: () => 'testDefaultX',
   //         transform: (val) => { return '__'+val.toUpperCase() }
   //       }]
   //     },
@@ -574,10 +584,6 @@ describe('Entity creation', ()=> {
   //   // console.log(result);
   //   // console.log(result2);
   //   // console.log(result3);
-    
-
 
   // }) // creates attribute with transformations
-
-
 })

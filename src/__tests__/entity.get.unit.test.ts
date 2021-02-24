@@ -37,16 +37,15 @@ const TestEntity2 = new Entity({
   table: TestTable2
 })
 
-describe('get',()=>{
-
+describe('get', () => {
   it('gets the key from inputs (sync)', async () => {
-    const { TableName, Key } = TestEntity.getParams({ pk: 'test-pk', sk: 'test-sk' })    
+    const { TableName, Key } = TestEntity.getParams({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('gets the key from inputs (async)', async () => {
-    const { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk' })    
+    const { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
@@ -129,23 +128,27 @@ describe('get',()=>{
   })
 
   it('fails on extra options', () => {
-    expect(() => TestEntity.getParams(
-      { pk: 'x', sk: 'y' },
-      // @ts-expect-error
-      { execute: false, parse: false, extra: true }
-    )).toThrow('Invalid get options: extra')
+    expect(() =>
+      TestEntity.getParams(
+        { pk: 'x', sk: 'y' },
+        // @ts-expect-error
+        { execute: false, parse: false, extra: true }
+      )
+    ).toThrow('Invalid get options: extra')
   })
 
   it('fails on invalid consistent option', () => {
     // @ts-expect-error
-    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { consistent: 'true' }))
-      .toThrow(`'consistent' requires a boolean`)
+    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { consistent: 'true' })).toThrow(
+      `'consistent' requires a boolean`
+    )
   })
 
   it('fails on invalid capacity option', () => {
     // ts-expect-error
-    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
-      .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { capacity: 'test' })).toThrow(
+      `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
+    )
   })
 
   it('parses attribute projections', () => {
@@ -173,7 +176,7 @@ describe('get',()=>{
   it('handles extra parameters', () => {
     let { TableName, Key, ConsistentRead } = TestEntity.getParams(
       { pk: 'x', sk: 'y' },
-      { },
+      {},
       { ConsistentRead: true }
     )
     expect(TableName).toBe('test-table')
@@ -184,7 +187,7 @@ describe('get',()=>{
   it('handles invalid parameter input', () => {
     let { TableName, Key } = TestEntity.getParams(
       { pk: 'x', sk: 'y' },
-      { },
+      {},
       // @ts-expect-error
       'string'
     )
@@ -201,5 +204,4 @@ describe('get',()=>{
   it('fails if no value is provided to the getBatch method', () => {
     expect(() => TestEntity.getBatch()).toThrow(`'pk' or 'email' is required`)
   })
-
 })
