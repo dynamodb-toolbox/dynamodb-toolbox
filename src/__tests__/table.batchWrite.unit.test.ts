@@ -20,7 +20,7 @@ const TestEntity = new Entity({
     test: 'string'
   },
   table: TestTable
-})
+} as const)
 
 describe('batchWrite', () => {
   it('fails when batchWrite is empty', () => {
@@ -38,7 +38,7 @@ describe('batchWrite', () => {
 
   it('batchWrites data to a single table', () => {
     let result = TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test' })
+      TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' })
     ) as DocumentClient.BatchWriteItemInput
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk')
@@ -48,7 +48,7 @@ describe('batchWrite', () => {
   it('fails when extra options', () => {
     expect(() => {
       TestTable.batchWriteParams(
-        TestEntity.putBatch({ pk: 'test', sk: 'testsk' }),
+        TestEntity.putBatch({ email: 'test', sort: 'testsk' }),
         // @ts-expect-error
         { invalid: true }
       )
@@ -57,7 +57,7 @@ describe('batchWrite', () => {
 
   it('fails when providing an invalid capacity setting', () => {
     expect(() => {
-      TestTable.batchWriteParams(TestEntity.putBatch({ pk: 'test', sk: 'testsk' }), {
+      TestTable.batchWriteParams(TestEntity.putBatch({ email: 'test', sort: 'testsk' }), {
         capacity: 'test'
       })
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
@@ -65,7 +65,7 @@ describe('batchWrite', () => {
 
   it('fails when providing an invalid metrics setting', () => {
     expect(() => {
-      TestTable.batchWriteParams(TestEntity.putBatch({ pk: 'test', sk: 'testsk' }), {
+      TestTable.batchWriteParams(TestEntity.putBatch({ email: 'test', sort: 'testsk' }), {
         metrics: 'test'
       })
     }).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
@@ -73,7 +73,7 @@ describe('batchWrite', () => {
 
   it('batchWrites data to a single table with options', () => {
     let result = TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test' }),
+      TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       { capacity: 'total', metrics: 'size' }
     ) as DocumentClient.BatchWriteItemInput
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
@@ -85,7 +85,7 @@ describe('batchWrite', () => {
 
   it('batchWrites data to a single table with invalid params', () => {
     let result = TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test' }),
+      TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       {},
       // @ts-expect-error
       'test'
@@ -97,7 +97,7 @@ describe('batchWrite', () => {
 
   it('returns meta data', () => {
     let result = TestTable.batchWriteParams(
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk', test: 'test' }),
+      TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       {},
       {},
       true
@@ -111,9 +111,9 @@ describe('batchWrite', () => {
 
   it('batchWrites data to a single table with multiple items', () => {
     let result = TestTable.batchWriteParams([
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk1', test: 'test1' }),
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk2', test: 'test2' }),
-      TestEntity.deleteBatch({ pk: 'test', sk: 'testsk3' })
+      TestEntity.putBatch({ email: 'test', sort: 'testsk1', test: 'test1' }),
+      TestEntity.putBatch({ email: 'test', sort: 'testsk2', test: 'test2' }),
+      TestEntity.deleteBatch({ email: 'test', sort: 'testsk3' })
     ]) as DocumentClient.BatchWriteItemInput
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.sk).toBe('testsk1')
@@ -144,12 +144,12 @@ describe('batchWrite', () => {
         test: 'string'
       },
       table: TestTable2
-    })
+    } as const)
 
     let result = TestTable.batchWriteParams([
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk1', test: 'test1' }),
-      TestEntity.putBatch({ pk: 'test', sk: 'testsk2', test: 'test2' }),
-      TestEntity2.putBatch({ pk: 'test', sk: 'testsk3', test: 'test3' })
+      TestEntity.putBatch({ email: 'test', sort: 'testsk1', test: 'test1' }),
+      TestEntity.putBatch({ email: 'test', sort: 'testsk2', test: 'test2' }),
+      TestEntity2.putBatch({ email: 'test', sort: 'testsk3', test: 'test3' })
     ]) as DocumentClient.BatchWriteItemInput
     // console.log(JSON.stringify(result,null,2));
 

@@ -1,4 +1,3 @@
-// @xts-nocheck
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap-tests'
 
@@ -20,7 +19,7 @@ const TestEntity = new Entity({
     test: 'string'
   },
   table: TestTable
-})
+} as const)
 
 describe('transactGet', () => {
   it('fails when transactGet is empty', () => {
@@ -38,7 +37,7 @@ describe('transactGet', () => {
 
   it('transactGets data from a single table', () => {
     let result = TestTable.transactGetParams([
-      TestEntity.getTransaction({ pk: 'test', sk: 'testsk' })
+      TestEntity.getTransaction({ email: 'test', sort: 'testsk' })
     ])
     expect(result).toHaveProperty('TransactItems')
     expect(result.TransactItems[0]).toHaveProperty('Get')
@@ -49,7 +48,7 @@ describe('transactGet', () => {
   it('fails when extra options', () => {
     expect(() => {
       TestTable.transactGetParams(
-        [TestEntity.getTransaction({ pk: 'test', sk: 'testsk' })],
+        [TestEntity.getTransaction({ email: 'test', sort: 'testsk' })],
         // @ts-expect-error
         { invalid: true }
       )
@@ -58,7 +57,7 @@ describe('transactGet', () => {
 
   it('fails when providing an invalid capacity setting', () => {
     expect(() => {
-      TestTable.transactGetParams([TestEntity.getTransaction({ pk: 'test', sk: 'testsk' })], {
+      TestTable.transactGetParams([TestEntity.getTransaction({ email: 'test', sort: 'testsk' })], {
         capacity: 'test'
       })
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)

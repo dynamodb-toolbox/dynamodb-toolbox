@@ -30,7 +30,7 @@ const CompositeEntity = new Entity({
     test_composite3: ['sk', 2, {}]
   },
   table: TestTable
-})
+} as const)
 
 describe('parse', () => {
   it('parses single item', () => {

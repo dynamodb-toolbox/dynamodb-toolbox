@@ -1,8 +1,7 @@
 // Require Table and Entity classes
-import Table from '../classes/Table'
-import Entity, { EntityConstructor } from '../classes/Entity'
-
-import { DocumentClient } from './bootstrap-tests'
+import '../classes/Table'
+import Entity from '../classes/Entity'
+import './bootstrap-tests'
 
 describe('Entity creation', () => {
   it('creates basic entity w/ defaults', async () => {
@@ -12,7 +11,7 @@ describe('Entity creation', () => {
       attributes: {
         pk: { partitionKey: true }
       }
-    })
+    } as const)
 
     expect(TestEntity.name).toBe('TestEntity')
     expect(TestEntity.schema.attributes.pk).toEqual({
@@ -39,7 +38,7 @@ describe('Entity creation', () => {
       attributes: {
         pk: { partitionKey: true }
       }
-    })
+    } as const)
 
     expect(TestEntity.name).toBe('TestEntity')
     expect(TestEntity.schema.attributes.pk).toEqual({
@@ -65,7 +64,7 @@ describe('Entity creation', () => {
       attributes: {
         pk: { partitionKey: true }
       }
-    })
+    } as const)
 
     expect(TestEntity.schema.keys).toEqual({ partitionKey: 'pk' })
     expect(TestEntity.schema.attributes.createdAt).toHaveProperty('default')
@@ -82,7 +81,7 @@ describe('Entity creation', () => {
         test: { type: 'string', required: true },
         test2: { type: 'string', required: 'always' }
       }
-    })
+    } as const)
 
     expect(TestEntity.required.test).toEqual(false)
     expect(TestEntity.required.test2).toEqual(true)
@@ -96,7 +95,7 @@ describe('Entity creation', () => {
         test: ['pk', 0],
         test2: ['pk', 1, 'number']
       }
-    })
+    } as const)
 
     expect(TestEntity.schema.attributes.test.type).toBe('string')
     expect(TestEntity.schema.attributes.test2.type).toBe('number')
@@ -110,7 +109,7 @@ describe('Entity creation', () => {
         pk: { partitionKey: true },
         test: ['pk', 0, { alias: 'test2' }]
       }
-    })
+    } as const)
 
     expect(TestEntity.schema.attributes.test2.map).toBe('test')
   })
@@ -131,39 +130,39 @@ describe('Entity creation', () => {
         attributes: {
           pk: { partitionKey: true }
         }
-      })
+      } as const)
     expect(result).toThrow(`'name' must be defined`)
   })
 
   it('fails when creating a entity with an invalid attributes object (array)', () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
-        // @ts-expect-error
         attributes: [1, 2, 3]
-      })
+      } as const)
     expect(result).toThrow(`Please provide a valid 'attributes' object`)
   })
 
   it('fails when creating a entity with an invalid attributes object (string)', () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
-        // @ts-expect-error
         attributes: 'test'
-      })
+      } as const)
     expect(result).toThrow(`Please provide a valid 'attributes' object`)
   })
 
   it('fails when attribute has an invalid type (string style)', () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
         attributes: {
-          // @ts-expect-error
           pk: 'x'
         }
-      })
+      } as const)
     expect(result).toThrow(
       `Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
     )
@@ -171,13 +170,13 @@ describe('Entity creation', () => {
 
   it('fails when attribute has an invalid type (object style)', () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
         attributes: {
-          // @ts-expect-error
           pk: { type: 'x' }
         }
-      })
+      } as const)
     expect(result).toThrow(
       `Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
     )
@@ -185,14 +184,14 @@ describe('Entity creation', () => {
 
   it(`fails when an attribute has invalid 'onUpdate' setting`, () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
         attributes: {
           pk: { partitionKey: true },
-          // @ts-expect-error
           test: { type: 'string', onUpdate: 'x' }
         }
-      })
+      } as const)
     expect(result).toThrow(`'onUpdate' must be a boolean`)
   })
 
@@ -204,7 +203,7 @@ describe('Entity creation', () => {
           pk: { partitionKey: true },
           test: { type: 'string', alias: 'pk' }
         }
-      })
+      } as const)
     expect(result).toThrow(`'alias' must be a unique string`)
   })
 
@@ -216,20 +215,20 @@ describe('Entity creation', () => {
           pk: { partitionKey: true },
           test: { type: 'string', setType: 'string' }
         }
-      })
+      } as const)
     expect(result).toThrow(`'setType' is only valid for type 'set'`)
   })
 
   it(`fails when attribute uses invalid 'setType'`, () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
         attributes: {
           pk: { partitionKey: true },
-          // @ts-expect-error
           test: { type: 'set', setType: 'test' }
         }
-      })
+      } as const)
     expect(result).toThrow(`Invalid 'setType', must be 'string', 'number', or 'binary'`)
   })
 
@@ -239,23 +238,22 @@ describe('Entity creation', () => {
         name: 'TestEntity',
         attributes: {
           pk: { partitionKey: true },
-          // @ts-expect-error
           test: { type: 'string', unknown: true }
         }
-      })
+      } as const)
     expect(result).toThrow(`'unknown' is not a valid property type`)
   })
 
   it(`fails when setting an invalid required property`, () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
         attributes: {
           pk: { partitionKey: true },
-          // @ts-expect-error
           test: { type: 'string', required: 'x' }
         }
-      })
+      } as const)
     expect(result).toThrow(`'required' must be a boolean or set to 'always'`)
   })
 
@@ -267,32 +265,33 @@ describe('Entity creation', () => {
           pk: { partitionKey: true },
           test: ['x', 0]
         }
-      })
+      } as const)
     expect(result).toThrow(`'test' must reference another field`)
   })
 
   it(`fails when composite uses non-numeric index`, () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
         attributes: {
           pk: { partitionKey: true },
-          // @ts-expect-error
           test: ['pk', 'x']
         }
-      })
+      } as const)
     expect(result).toThrow(`'test' position value must be numeric`)
   })
 
   it(`fails when composite uses invalid type`, () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
         attributes: {
           pk: { partitionKey: true },
           test: ['pk', 1, 'x']
         }
-      })
+      } as const)
     expect(result).toThrow(
       `'test' type must be 'string', 'number', 'boolean' or a configuration object`
     )
@@ -300,14 +299,14 @@ describe('Entity creation', () => {
 
   it(`fails when composite array length is incorrect`, () => {
     let result = () =>
+      // @ts-expect-error
       new Entity({
         name: 'TestEntity',
         attributes: {
           pk: { partitionKey: true },
-          // @ts-expect-error
           test: ['pk']
         }
-      })
+      } as const)
     expect(result).toThrow(`Composite key configurations must have 2 or 3 items`)
   })
 

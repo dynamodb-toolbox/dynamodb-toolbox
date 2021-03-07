@@ -24,7 +24,7 @@ const TestEntity = new Entity({
     y: 'string'
   },
   table: TestTable
-})
+} as const)
 
 describe('expressionBuilder', () => {
   it('builds complex expression', () => {

@@ -1,4 +1,4 @@
-import { Table, Entity } from '../index'
+import { Table, Entity } from '..'
 import { DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
@@ -17,7 +17,7 @@ const TestEntity = new Entity({
     test: 'string'
   },
   table: TestTable
-})
+} as const)
 
 const TestTable2 = new Table({
   name: 'test-table',
@@ -35,92 +35,102 @@ const TestEntity2 = new Entity({
     test: 'string'
   },
   table: TestTable2
-})
+} as const)
 
 describe('get', () => {
   it('gets the key from inputs (sync)', async () => {
-    const { TableName, Key } = TestEntity.getParams({ pk: 'test-pk', sk: 'test-sk' })
+    const { TableName, Key } = TestEntity.getParams({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('gets the key from inputs (async)', async () => {
-    const { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk' })
-    expect(TableName).toBe('test-table')
-    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
-  })
-
-  it('gets the key from input aliases (sync)', async () => {
-    let { TableName, Key } = TestEntity.getParams({ email: 'test-pk', sort: 'test-sk' })
-    expect(TableName).toBe('test-table')
-    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
-  })
-
-  it('gets the key from input aliases (async)', async () => {
-    let { TableName, Key } = await TestEntity.get({ email: 'test-pk', sort: 'test-sk' })
+    // @ts-expect-error 💥 TODO: Correct interface ?
+    const { TableName, Key } = await TestEntity.get({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('filters out extra data (sync)', async () => {
-    let { TableName, Key } = TestEntity.getParams({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
+    let { TableName, Key } = TestEntity.getParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      // @ts-expect-error
+      test: 'test'
+    })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('filters out extra data (async)', async () => {
-    let { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
+    // @ts-expect-error 💥 TODO: Correct interface ?
+    let { TableName, Key } = await TestEntity.get({
+      email: 'test-pk',
+      sort: 'test-sk',
+      // @ts-expect-error
+      test: 'test'
+    })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('coerces key values to correct types (sync)', async () => {
-    let { TableName, Key } = TestEntity.getParams({ pk: 1, sk: true })
+    // @ts-expect-error 💥 TODO: Support coerce keyword
+    let { TableName, Key } = TestEntity.getParams({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
 
   it('coerces key values to correct types (async)', async () => {
-    let { TableName, Key } = await TestEntity.get({ pk: 1, sk: true })
+    // @ts-expect-error 💥 TODO: Correct interface ? + Support coerce keyword
+    let { TableName, Key } = await TestEntity.get({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
 
   it('fails with undefined input (sync)', () => {
+    // @ts-expect-error
     expect(() => TestEntity.getParams()).toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails with undefined input (async)', async () => {
+    // @ts-expect-error
     expect(TestEntity.get()).rejects.toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails when missing the sortKey (sync)', () => {
+    // @ts-expect-error
     expect(() => TestEntity.getParams({ pk: 'test-pk' })).toThrow(`'sk' or 'sort' is required`)
   })
 
   it('fails when missing the sortKey (async)', () => {
+    // @ts-expect-error
     expect(TestEntity.get({ pk: 'test-pk' })).rejects.toThrow(`'sk' or 'sort' is required`)
   })
 
   it('fails when missing partitionKey (no alias) (sync)', () => {
+    // @ts-expect-error
     expect(() => TestEntity2.getParams()).toThrow(`'pk' is required`)
   })
 
   it('fails when missing partitionKey (no alias) (async)', () => {
+    // @ts-expect-error
     expect(TestEntity2.get()).rejects.toThrow(`'pk' is required`)
   })
 
   it('fails when missing the sortKey (no alias) (sync)', () => {
+    // @ts-expect-error
     expect(() => TestEntity2.getParams({ pk: 'test-pk' })).toThrow(`'sk' is required`)
   })
 
   it('fails when missing the sortKey (no alias) (async)', () => {
+    // @ts-expect-error
     expect(TestEntity2.get({ pk: 'test-pk' })).rejects.toThrow(`'sk' is required`)
   })
 
   it('allows execute and parse options', () => {
     let { TableName, Key } = TestEntity.getParams(
-      { pk: 'x', sk: 'y' },
+      { email: 'x', sort: 'y' },
       { execute: false, parse: false }
     )
     expect(TableName).toBe('test-table')
@@ -130,7 +140,7 @@ describe('get', () => {
   it('fails on extra options', () => {
     expect(() =>
       TestEntity.getParams(
-        { pk: 'x', sk: 'y' },
+        { email: 'x', sort: 'y' },
         // @ts-expect-error
         { execute: false, parse: false, extra: true }
       )
@@ -139,22 +149,22 @@ describe('get', () => {
 
   it('fails on invalid consistent option', () => {
     // @ts-expect-error
-    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { consistent: 'true' })).toThrow(
+    expect(() => TestEntity.getParams({ email: 'x', sort: 'y' }, { consistent: 'true' })).toThrow(
       `'consistent' requires a boolean`
     )
   })
 
   it('fails on invalid capacity option', () => {
-    // ts-expect-error
-    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { capacity: 'test' })).toThrow(
+    // 💥 TODO: Improve capacity type
+    expect(() => TestEntity.getParams({ email: 'x', sort: 'y' }, { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
   })
 
   it('parses attribute projections', () => {
     let { TableName, Key, ExpressionAttributeNames, ProjectionExpression } = TestEntity.getParams(
-      { pk: 'x', sk: 'y' },
-      { attributes: ['pk'] }
+      { email: 'x', sort: 'y' },
+      { attributes: ['email'] }
     )
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'x', sk: 'y' })
@@ -164,7 +174,7 @@ describe('get', () => {
 
   it('sets consistent and capacity options', () => {
     let { TableName, Key, ConsistentRead, ReturnConsumedCapacity } = TestEntity.getParams(
-      { pk: 'x', sk: 'y' },
+      { email: 'x', sort: 'y' },
       { consistent: true, capacity: 'none' }
     )
     expect(TableName).toBe('test-table')
@@ -175,7 +185,7 @@ describe('get', () => {
 
   it('handles extra parameters', () => {
     let { TableName, Key, ConsistentRead } = TestEntity.getParams(
-      { pk: 'x', sk: 'y' },
+      { email: 'x', sort: 'y' },
       {},
       { ConsistentRead: true }
     )
@@ -186,7 +196,7 @@ describe('get', () => {
 
   it('handles invalid parameter input', () => {
     let { TableName, Key } = TestEntity.getParams(
-      { pk: 'x', sk: 'y' },
+      { email: 'x', sort: 'y' },
       {},
       // @ts-expect-error
       'string'
@@ -196,12 +206,13 @@ describe('get', () => {
   })
 
   it('formats a batch get response', async () => {
-    let { Table, Key } = TestEntity.getBatch({ pk: 'a', sk: 'b' })
+    let { Table, Key } = TestEntity.getBatch({ email: 'a', sort: 'b' })
     expect(Table.name).toBe('test-table')
     expect(Key).toEqual({ pk: 'a', sk: 'b' })
   })
 
   it('fails if no value is provided to the getBatch method', () => {
+    // @ts-expect-error
     expect(() => TestEntity.getBatch()).toThrow(`'pk' or 'email' is required`)
   })
 })

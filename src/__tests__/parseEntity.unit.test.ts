@@ -1,11 +1,10 @@
-import { EntityConstructor } from '../classes/Entity'
 import parseEntity from '../lib/parseEntity'
 
 type Schema = any
 type HiddenKeys = any
 
 // Simulate Entity config
-const entity: EntityConstructor = {
+const entity = {
   name: 'TestEntity',
   timestamps: true,
   created: '_created',
@@ -21,7 +20,7 @@ const entity: EntityConstructor = {
   },
   autoExecute: true,
   autoParse: true
-}
+} as const
 
 describe('parseEntity', () => {
   it('parses entity definition with all available options', async () => {

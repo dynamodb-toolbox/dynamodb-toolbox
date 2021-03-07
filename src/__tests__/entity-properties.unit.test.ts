@@ -17,7 +17,7 @@ describe('Entity properties', () => {
         pk: { partitionKey: true }
       },
       table: TestTable
-    })
+    } as const)
 
     expect(() => {
       TestEntity.table = TestTable
@@ -30,14 +30,14 @@ describe('Entity properties', () => {
 
     expect(() => {
       // Create basic entity
-      const TestEntity = new Entity({
+      // @ts-expect-error
+      new Entity({
         name: 'TestEnt',
         attributes: {
           pk: { partitionKey: true }
         },
-        // @ts-expect-error
         table: TestTable
-      })
+      } as const)
     }).toThrow('Invalid Table')
   })
 
@@ -48,7 +48,7 @@ describe('Entity properties', () => {
       attributes: {
         pk: { partitionKey: true }
       }
-    })
+    } as const)
 
     expect(() => {
       TestEntity.table
@@ -69,7 +69,7 @@ describe('Entity properties', () => {
         pk: { partitionKey: true }
       },
       table: TestTable
-    })
+    } as const)
 
     expect(() => {
       TestEntity.DocumentClient
@@ -92,7 +92,7 @@ describe('Entity properties', () => {
         pk: { partitionKey: true }
       },
       table: TestTable
-    })
+    } as const)
 
     expect(TestEntity.autoExecute).toBe(false)
     expect(TestEntity.autoParse).toBe(false)
@@ -120,7 +120,7 @@ describe('Entity properties', () => {
         sk: { sortKey: true }
       },
       table: TestTable
-    })
+    } as const)
 
     expect(TestEntity.partitionKey).toBe('pk')
     expect(TestEntity.sortKey).toBe('sk')
@@ -140,7 +140,7 @@ describe('Entity properties', () => {
         pk: { partitionKey: true }
       },
       table: TestTable
-    })
+    } as const)
 
     expect(TestEntity.sortKey).toBeNull()
   })
@@ -160,7 +160,7 @@ describe('Entity properties', () => {
         test: { map: 'sk' }
       },
       table: TestTable
-    })
+    } as const)
 
     expect(TestEntity.attribute('pk')).toBe('pk')
     expect(TestEntity.attribute('test')).toBe('sk')

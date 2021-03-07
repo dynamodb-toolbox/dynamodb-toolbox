@@ -29,7 +29,7 @@ DefaultTable.entities = new Entity({
     linked1: ['sk', 0, { save: true }],
     linked2: ['sk', 1]
   }
-})
+} as const)
 
 // console.log(DefaultTable.User);
 
@@ -64,11 +64,7 @@ describe('normalizeData', () => {
     let result = normalizeData(DocumentClient)(
       attributes,
       linked,
-      {
-        pk: 'test',
-        $remove: 'testx',
-        notAField: 'test123'
-      },
+      { pk: 'test', $remove: 'testx', notAField: 'test123' },
       true
     )
 

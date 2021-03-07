@@ -36,7 +36,7 @@ DefaultTable.addEntity(
       linked5: ['composite2_alias', 0, { save: false }],
       linked6: ['composite2_alias', 1, { save: false, alias: 'linked6_alias' }]
     }
-  })
+  } as const)
 )
 
 // console.log(DefaultTable.User);

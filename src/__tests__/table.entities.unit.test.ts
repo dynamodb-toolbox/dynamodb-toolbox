@@ -29,7 +29,7 @@ describe('entities', () => {
         sort: { type: 'string', sortKey: true },
         test: 'string'
       }
-    })
+    } as const)
   })
 
   it('fails when assigning the same entity to the table', () => {
@@ -46,7 +46,7 @@ describe('entities', () => {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true }
       }
-    })
+    } as const)
 
     TestTable.addEntity(TestEntity)
     expect(() => {
@@ -61,7 +61,7 @@ describe('entities', () => {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true }
       }
-    })
+    } as const)
 
     expect(() => {
       TestTable.addEntity(TestEntity)
@@ -75,7 +75,7 @@ describe('entities', () => {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string' }
       }
-    })
+    } as const)
 
     expect(() => {
       TestTable.addEntity(TestEntity)
@@ -94,7 +94,7 @@ describe('entities', () => {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true }
       }
-    })
+    } as const)
 
     expect(() => {
       TestTable.addEntity(TestEntity)
@@ -109,7 +109,7 @@ describe('entities', () => {
         sort: { type: 'string', sortKey: true },
         pk: 'string'
       }
-    })
+    } as const)
 
     expect(() => {
       TestTable.addEntity(TestEntity)
@@ -117,6 +117,7 @@ describe('entities', () => {
   })
 
   it('Maps a secondary index', () => {
+    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -126,12 +127,13 @@ describe('entities', () => {
         GSI1sk: { sortKey: 'GSI1' }
       },
       table: TestTable
-    })
+    } as const)
 
     expect(TestEntity.schema.keys).toHaveProperty('GSI1')
   })
 
   it('fails when mapping an invalid secondary index', () => {
+    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -139,7 +141,7 @@ describe('entities', () => {
         sort: { type: 'string', sortKey: true },
         GSI1pk: { partitionKey: 'GSI1x' }
       }
-    })
+    } as const)
 
     expect(() => {
       TestTable.addEntity(TestEntity)
@@ -147,6 +149,7 @@ describe('entities', () => {
   })
 
   it('fails when mapping an invalid key for a secondary index', () => {
+    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -155,7 +158,7 @@ describe('entities', () => {
         GSI2pk: { partitionKey: 'GSI2' },
         GSI2sk: { sortKey: 'GSI2' }
       }
-    })
+    } as const)
 
     expect(() => {
       TestTable.addEntity(TestEntity)
@@ -163,6 +166,7 @@ describe('entities', () => {
   })
 
   it('fails when secondary index mapping conflicts with an entity attribute', () => {
+    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -172,13 +176,14 @@ describe('entities', () => {
         GSI1skx: { sortKey: 'GSI1' },
         GSI1sk: 'string'
       }
-    })
+    } as const)
     expect(() => {
       TestTable.addEntity(TestEntity)
     }).toThrow(`GSI1's sortKey name (GSI1sk) conflicts with another Entity attribute name`)
   })
 
   it('fails when secondary index mapping is missing either the partition or sort key', () => {
+    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -187,7 +192,7 @@ describe('entities', () => {
         GSI1pk: { partitionKey: 'GSI1' }
         // GSI1sk: {  },
       }
-    })
+    } as const)
     expect(() => {
       TestTable.addEntity(TestEntity)
     }).toThrow(`GSI1 requires mappings for both the partitionKey and the sortKey`)
@@ -201,7 +206,7 @@ describe('entities', () => {
         sort: { type: 'string', sortKey: true },
         _et: 'string'
       }
-    })
+    } as const)
     expect(() => {
       TestTable.addEntity(TestEntity)
     }).toThrow(
@@ -217,7 +222,7 @@ describe('entities', () => {
         sort: { type: 'string', sortKey: true },
         strongType: 'number'
       }
-    })
+    } as const)
     expect(() => {
       TestTable.addEntity(TestEntity)
     }).toThrow(
@@ -234,7 +239,7 @@ describe('entities', () => {
         testSet: { type: 'set', setType: 'number' }
       },
       table: TestTable
-    })
+    } as const)
 
     TestEntity2 = new Entity({
       name: 'TestEntity2',
@@ -244,7 +249,7 @@ describe('entities', () => {
         testSet: { type: 'set', setType: 'string' }
       },
       table: TestTable
-    })
+    } as const)
     expect(TestTable.Table.attributes.testSet.mappings.TestEntity._setType).toBe('number')
     expect(TestTable.Table.attributes.testSet.mappings.TestEntity2._setType).toBe('string')
   })

@@ -18,7 +18,7 @@ const TestEntity = new Entity({
     test: 'string'
   },
   table: TestTable
-})
+} as const)
 
 const TestTable2 = new Table({
   name: 'test-table',
@@ -36,7 +36,7 @@ const TestEntity2 = new Entity({
     test: 'string'
   },
   table: TestTable2
-})
+} as const)
 
 describe.skip('get - integration', () => {
   it('gets the key from inputs (async)', async () => {

@@ -18,7 +18,7 @@ const TestEntity = new Entity({
     test: 'string'
   },
   table: TestTable
-})
+} as const)
 
 describe('scan', () => {
   it('scans a table with no options', () => {

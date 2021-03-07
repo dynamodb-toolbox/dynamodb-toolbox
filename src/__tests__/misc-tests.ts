@@ -45,7 +45,7 @@ describe('Misc Tests (development only)', () => {
         test3: ['test', 1]
       },
       table
-    })
+    } as const)
 
     console.log(TestEntity.schema)
 

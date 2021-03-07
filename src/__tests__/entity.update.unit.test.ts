@@ -39,7 +39,7 @@ const TestEntity = new Entity({
     simple_string: 'string'
   },
   table: TestTable
-})
+} as const)
 
 const TestTable2 = new Table({
   name: 'test-table2',
@@ -61,7 +61,7 @@ const TestEntity2 = new Entity({
   },
   timestamps: false,
   table: TestTable2
-})
+} as const)
 
 const TestTable3 = new Table({
   name: 'test-table3',
@@ -81,8 +81,9 @@ const TestEntity3 = new Entity({
   },
   timestamps: false,
   table: TestTable3
-})
+} as const)
 
+// @ts-expect-error 💥 TODO: Support GSIs
 const TestEntityGSI = new Entity({
   name: 'TestEntityGSI',
   autoExecute: false,
@@ -95,7 +96,7 @@ const TestEntityGSI = new Entity({
   },
   timestamps: false,
   table: TestTable
-})
+} as const)
 
 describe('update', () => {
   it('creates default update', () => {
@@ -105,7 +106,7 @@ describe('update', () => {
       UpdateExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues
-    } = TestEntity.updateParams({ pk: 'test-pk', sk: 'test-sk' })
+    } = TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk' })
 
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
@@ -130,13 +131,11 @@ describe('update', () => {
   })
 
   it('creates update with GSI', () => {
-    let {
-      TableName,
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntityGSI.updateParams({ pk: 'test-pk', sk: 'test-sk', GSI1pk: 'test' })
+    let { UpdateExpression } = TestEntityGSI.updateParams({
+      pk: 'test-pk',
+      sk: 'test-sk',
+      GSI1pk: 'test'
+    })
     expect(UpdateExpression).toBe('SET #_et = if_not_exists(#_et,:_et), #GSI1pk = :GSI1pk')
   })
 
@@ -148,8 +147,8 @@ describe('update', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues
     } = TestEntity.updateParams({
-      pk: 'test-pk',
-      sk: 'test-sk',
+      email: 'test-pk',
+      sort: 'test-sk',
       test_string: 'test string'
     })
     expect(UpdateExpression).toBe(
@@ -184,11 +183,8 @@ describe('update', () => {
       UpdateExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues
-    } = TestEntity.updateParams({
-      pk: 'test-pk',
-      sk: 'test-sk',
-      $remove: 'test_string'
-    })
+    } = TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })
+
     expect(UpdateExpression).toBe(
       'SET #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_string'
     )
@@ -210,14 +206,8 @@ describe('update', () => {
   })
 
   it.skip('creates update that just removes a field', () => {
-    let {
-      TableName,
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity2.updateParams({
-      pk: 'test-pk',
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
+      email: 'test-pk',
       test: null
     })
     expect(UpdateExpression).toBe('REMOVE #test')
@@ -227,14 +217,8 @@ describe('update', () => {
   })
 
   it.skip('creates update that just removes a composite field', () => {
-    let {
-      TableName,
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity2.updateParams({
-      pk: 'test-pk',
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
+      email: 'test-pk',
       test_composite: null
     })
     expect(UpdateExpression).toBe('REMOVE #test_composite')
@@ -244,19 +228,22 @@ describe('update', () => {
   })
 
   it('fails removing an invalid attribute', () => {
-    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y', $remove: 'missing' })).toThrow(
+    // @ts-expect-error
+    expect(() => TestEntity.updateParams({ email: 'x', sort: 'y', $remove: 'missing' })).toThrow(
       `'missing' is not a valid attribute and cannot be removed`
     )
   })
 
   it('fails when trying to remove the paritionKey', () => {
-    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y', $remove: 'pk' })).toThrow(
+    // @ts-expect-error
+    expect(() => TestEntity.updateParams({ email: 'x', sort: 'y', $remove: 'pk' })).toThrow(
       `'pk' is the partitionKey and cannot be removed`
     )
   })
 
   it('fails when trying to remove the sortKey', () => {
-    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y', $remove: ['sk'] })).toThrow(
+    // @ts-expect-error
+    expect(() => TestEntity.updateParams({ email: 'x', sort: 'y', $remove: ['sk'] })).toThrow(
       `'sk' is the sortKey and cannot be removed`
     )
   })
@@ -268,10 +255,8 @@ describe('update', () => {
       UpdateExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues
-    } = TestEntity2.updateParams({
-      pk: 'test-pk',
-      test_composite: 'test'
-    })
+    } = TestEntity2.updateParams({ email: 'test-pk', test_composite: 'test' })
+
     expect(UpdateExpression).toBe('SET #test_composite = :test_composite')
     expect(ExpressionAttributeNames).toEqual({ '#test_composite': 'test_composite' })
     expect(ExpressionAttributeValues).toEqual({ ':test_composite': 'test' })
@@ -280,15 +265,9 @@ describe('update', () => {
   })
 
   it('validates field types', () => {
-    let {
-      TableName,
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.updateParams({
-      pk: 'test-pk',
-      sk: 'test-sk',
+    let { TableName, Key, UpdateExpression, ExpressionAttributeValues } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
       test_string: 'test',
       test_number: 1,
       test_boolean: false,
@@ -298,6 +277,7 @@ describe('update', () => {
       test_boolean_default: false,
       test_number_coerce: 0
     })
+
     expect(UpdateExpression).toBe(
       'SET #test_string = :test_string, #test_number_coerce = :test_number_coerce, #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_number = :test_number, #test_boolean = :test_boolean, #test_list = :test_list, #test_map = :test_map, #test_binary = :test_binary'
     )
@@ -315,20 +295,19 @@ describe('update', () => {
   })
 
   it('coerces values to proper type', () => {
-    let {
-      TableName,
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.updateParams({
+    let { TableName, Key, ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
+      // @ts-expect-error 💥 TODO: Support coerce keyword
       test_string_coerce: 1,
+      // @ts-expect-error 💥 TODO: Support coerce keyword
       test_number_coerce: '1',
+      // @ts-expect-error 💥 TODO: Support coerce keyword
       test_boolean_coerce: 'true',
+      // @ts-expect-error 💥 TODO: Support coerce keyword
       test_list_coerce: 'a, b, c'
     })
+
     expect(ExpressionAttributeValues![':test_string_coerce']).toBe('1')
     expect(ExpressionAttributeValues![':test_number_coerce']).toBe(1)
     expect(ExpressionAttributeValues![':test_boolean_coerce']).toBe(true)
@@ -338,30 +317,19 @@ describe('update', () => {
   })
 
   it('coerces falsy string values to boolean', () => {
-    let {
-      TableName,
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.updateParams({
+    let { ExpressionAttributeValues } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
+      // @ts-expect-error 💥 TODO: Support coerce keyword
       test_boolean_coerce: 'false'
     })
     expect(ExpressionAttributeValues![':test_boolean_coerce']).toBe(false)
   })
 
   it('creates a set', () => {
-    let {
-      TableName,
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.updateParams({
-      pk: 'test-pk',
-      sk: 'test-sk',
+    let { TableName, Key, ExpressionAttributeValues } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
       test_string_set: ['1', '2', '3'],
       test_number_set: [1, 2, 3],
       test_binary_set: [Buffer.from('1'), Buffer.from('2'), Buffer.from('3')],
@@ -369,6 +337,7 @@ describe('update', () => {
       test_number_set_type: [1, 2, 3],
       test_binary_set_type: [Buffer.from('1'), Buffer.from('2'), Buffer.from('3')]
     })
+
     expect(ExpressionAttributeValues![':test_string_set'].type).toBe('String')
     expect(ExpressionAttributeValues![':test_number_set'].type).toBe('Number')
     expect(ExpressionAttributeValues![':test_binary_set'].type).toBe('Binary')
@@ -387,8 +356,8 @@ describe('update', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues
     } = TestEntity.updateParams({
-      pk: 'test-pk',
-      sk: 'test-sk',
+      email: 'test-pk',
+      sort: 'test-sk',
       test_number: { $add: 10 },
       test_number_set_type: { $add: [1, 2, 3] }
     })
@@ -448,6 +417,7 @@ describe('update', () => {
       pk: 'test-pk',
       sk: 'test-sk',
       test_string_set_type: { $delete: ['1', '2', '3'] },
+      // @ts-expect-error 💥 TODO: Improve list support
       test_number_set_type: { $delete: [1, 2, 3] }
     })
     expect(UpdateExpression).toBe(
@@ -485,6 +455,7 @@ describe('update', () => {
     } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
+      // @ts-expect-error 💥 TODO: Improve list support
       test_list: { $remove: [2, 3, 8] }
     })
     expect(UpdateExpression).toBe(
@@ -519,6 +490,7 @@ describe('update', () => {
     } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
+      // @ts-expect-error 💥 TODO: Improve list support
       test_list: { 2: 'Test2', 5: 'Test5' }
     })
     expect(UpdateExpression).toBe(
@@ -555,7 +527,9 @@ describe('update', () => {
     } = TestEntity.updateParams({
       pk: 'test-pk',
       sk: 'test-sk',
+      // @ts-expect-error 💥 TODO: Improve list support
       test_list: { $append: [1, 2, 3] },
+      // @ts-expect-error 💥 TODO: Improve list support
       test_list_coerce: { $prepend: [1, 2, 3] }
     })
     expect(UpdateExpression).toBe(
@@ -591,8 +565,8 @@ describe('update', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues
     } = TestEntity.updateParams({
-      pk: 'test-pk',
-      sk: 'test-sk',
+      email: 'test-pk',
+      sort: 'test-sk',
       test_map: {
         $set: {
           prop1: 'some value',
@@ -642,6 +616,7 @@ describe('update', () => {
     } = TestEntity.updateParams({
       email: 'test@test.com',
       sort: 'test-sk',
+      // @ts-expect-error 💥 TODO: Handle aliases
       count: { $add: 10 },
       contents: { a: 1, b: 2 }
     })
@@ -669,7 +644,7 @@ describe('update', () => {
 
   it('accepts 0 as a valid value for required fields', () => {
     let { ExpressionAttributeValues } = TestEntity3.updateParams({
-      pk: 'test-pk',
+      email: 'test-pk',
       test2: 'test',
       test3: 0
     })
@@ -677,25 +652,26 @@ describe('update', () => {
   })
 
   it('fails with undefined input', () => {
+    // @ts-expect-error
     expect(() => TestEntity.updateParams()).toThrow(`'pk' or 'email' is required`)
   })
 
   it('fails when using an undefined schema field', () => {
     expect(() =>
       TestEntity.updateParams({
-        pk: 'test-pk',
-        sk: 'test-sk',
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
         unknown: '?'
       })
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
   it("fails when missing an 'always' required field", () => {
-    expect(() =>
-      TestEntity3.updateParams({
-        pk: 'test-pk'
-      })
-    ).toThrow(`'test2' is a required field`)
+    // @ts-expect-error
+    expect(() => TestEntity3.updateParams({ email: 'test-pk' })).toThrow(
+      `'test2' is a required field`
+    )
   })
 
   it('fails when using non-numeric fields for indexed list updates', () => {
@@ -703,6 +679,7 @@ describe('update', () => {
       TestEntity.updateParams({
         pk: 'test-pk',
         sk: 'test-sk',
+        // @ts-expect-error
         test_list: { test: 'some value' }
       })
     ).toThrow(`Properties must be numeric to update specific list items in 'test_list'`)
@@ -713,6 +690,7 @@ describe('update', () => {
       TestEntity.updateParams({
         pk: 'test-pk',
         sk: 'test-sk',
+        // @ts-expect-error
         test_list: { $remove: [1, 2, 'test'] }
       })
     ).toThrow(`Remove array for 'test_list' must only contain numeric indexes`)
@@ -721,9 +699,7 @@ describe('update', () => {
   it('fails when supplying non-array value for SET', () => {
     expect(() =>
       TestEntity2.updateParams(
-        {
-          pk: 'test-pk'
-        },
+        { email: 'test-pk' },
         {},
         // @ts-expect-error
         { SET: 'test' }
@@ -734,9 +710,7 @@ describe('update', () => {
   it('fails when supplying non-array value for REMOVE', () => {
     expect(() =>
       TestEntity2.updateParams(
-        {
-          pk: 'test-pk'
-        },
+        { email: 'test-pk' },
         {},
         // @ts-expect-error
         { REMOVE: 'test' }
@@ -747,9 +721,7 @@ describe('update', () => {
   it('fails when supplying non-array value for ADD', () => {
     expect(() =>
       TestEntity2.updateParams(
-        {
-          pk: 'test-pk'
-        },
+        { email: 'test-pk' },
         {},
         // @ts-expect-error
         { ADD: 'test' }
@@ -760,9 +732,7 @@ describe('update', () => {
   it('fails when supplying non-array value for DELETE', () => {
     expect(() =>
       TestEntity2.updateParams(
-        {
-          pk: 'test-pk'
-        },
+        { email: 'test-pk' },
         {},
         //@ts-expect-error
         { DELETE: 'test' }
@@ -773,9 +743,7 @@ describe('update', () => {
   it('fails when supplying non-object value for ExpressionAttributeNames', () => {
     expect(() =>
       TestEntity2.updateParams(
-        {
-          pk: 'test-pk'
-        },
+        { email: 'test-pk' },
         {},
         // @ts-expect-error
         { ExpressionAttributeNames: 'test' }
@@ -786,9 +754,7 @@ describe('update', () => {
   it('fails when supplying non-object value for ExpressionAttributeValues', () => {
     expect(() =>
       TestEntity2.updateParams(
-        {
-          pk: 'test-pk'
-        },
+        { email: 'test-pk' },
         {},
         // @ts-expect-error
         { ExpressionAttributeValues: 'test' }
@@ -799,9 +765,7 @@ describe('update', () => {
   it.skip('fails when supplying a non-string for ConditionExpression', () => {
     expect(() =>
       TestEntity2.updateParams(
-        {
-          pk: 'test-pk'
-        },
+        { email: 'test-pk' },
         {},
         // @ts-expect-error
         { ConditionExpression: 1 }
@@ -811,17 +775,12 @@ describe('update', () => {
 
   it('adds statements to SET, REMOVE, ADD and DELETE (with names and values) and a ConditionExpression', () => {
     let {
-      TableName,
-      Key,
       UpdateExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
     } = TestEntity2.updateParams(
-      {
-        pk: 'test-pk',
-        test: 'test'
-      },
+      { email: 'test-pk', test: 'test' },
       {},
       {
         SET: ['#field = :field'],
@@ -844,7 +803,7 @@ describe('update', () => {
 
   it('conditionally contains returned fields (e.g. when no values)', () => {
     let params = TestEntity2.updateParams({
-      pk: 'test-pk',
+      email: 'test-pk',
       $remove: 'test'
     })
 
@@ -857,7 +816,7 @@ describe('update', () => {
   it('fails on extra options', () => {
     expect(() =>
       TestEntity.updateParams(
-        { pk: 'x', sk: 'y' },
+        { email: 'x', sort: 'y' },
         // @ts-expect-error
         { extra: true }
       )
@@ -866,7 +825,7 @@ describe('update', () => {
 
   it('sets capacity options', () => {
     let { TableName, ReturnConsumedCapacity } = TestEntity.updateParams(
-      { pk: 'x', sk: 'y' },
+      { email: 'x', sort: 'y' },
       { capacity: 'none' }
     )
     expect(TableName).toBe('test-table')
@@ -875,7 +834,7 @@ describe('update', () => {
 
   it('sets metrics options', () => {
     let { TableName, ReturnItemCollectionMetrics } = TestEntity.updateParams(
-      { pk: 'x', sk: 'y' },
+      { email: 'x', sort: 'y' },
       { metrics: 'size' }
     )
     expect(TableName).toBe('test-table')
@@ -884,7 +843,7 @@ describe('update', () => {
 
   it('sets returnValues options', () => {
     let { TableName, ReturnValues } = TestEntity.updateParams(
-      { pk: 'x', sk: 'y' },
+      { email: 'x', sort: 'y' },
       { returnValues: 'ALL_OLD' }
     )
     expect(TableName).toBe('test-table')
@@ -892,19 +851,22 @@ describe('update', () => {
   })
 
   it('fails on invalid capacity option', () => {
-    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y' }, { capacity: 'test' })).toThrow(
+    expect(() => TestEntity.updateParams({ email: 'x', sort: 'y' }, { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
   })
 
   it('fails on invalid metrics option', () => {
-    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y' }, { metrics: 'test' })).toThrow(
+    expect(() => TestEntity.updateParams({ email: 'x', sort: 'y' }, { metrics: 'test' })).toThrow(
       `'metrics' must be one of 'NONE' OR 'SIZE'`
     )
   })
 
   it('fails on invalid returnValues option', () => {
-    expect(() => TestEntity.updateParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' })).toThrow(
+    expect(() =>
+      // @ts-expect-error
+      TestEntity.updateParams({ email: 'x', sort: 'y' }, { returnValues: 'test' })
+    ).toThrow(
       `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', OR 'UPDATED_NEW'`
     )
   })
@@ -915,7 +877,10 @@ describe('update', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = TestEntity.updateParams({ pk: 'x', sk: 'y' }, { conditions: { attr: 'pk', gt: 'test' } })
+    } = TestEntity.updateParams(
+      { email: 'x', sort: 'y' },
+      { conditions: { attr: 'email', gt: 'test' } }
+    )
     expect(TableName).toBe('test-table')
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
@@ -931,8 +896,8 @@ describe('update', () => {
   })
 
   it('handles extra parameters', () => {
-    let { TableName, Key, ReturnConsumedCapacity } = TestEntity.updateParams(
-      { pk: 'x', sk: 'y' },
+    let { TableName, ReturnConsumedCapacity } = TestEntity.updateParams(
+      { email: 'x', sort: 'y' },
       {},
       { ReturnConsumedCapacity: 'NONE' }
     )
@@ -941,8 +906,8 @@ describe('update', () => {
   })
 
   it('handles invalid parameter input', () => {
-    let { TableName, Key } = TestEntity.updateParams(
-      { pk: 'x', sk: 'y' },
+    let { TableName } = TestEntity.updateParams(
+      { email: 'x', sort: 'y' },
       {},
       // @ts-expect-error
       'string'

@@ -24,7 +24,7 @@ const User = new Entity({
     test2: { type: 'map', alias: 'mapAlias' }
   },
   table: DefaultTable
-})
+} as const)
 
 const Pet = new Entity({
   name: 'Pet',
@@ -34,7 +34,7 @@ const Pet = new Entity({
     petType: 'string'
   },
   table: DefaultTable
-})
+} as const)
 
 describe('projectionBuilder', () => {
   it('generate test projection expression', () => {

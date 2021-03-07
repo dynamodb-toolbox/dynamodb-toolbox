@@ -19,7 +19,7 @@ const TestEntity = new Entity({
     test: 'string'
   },
   table: TestTable
-})
+} as const)
 
 describe('table.get', () => {
   it('gets an entity from the table', async () => {

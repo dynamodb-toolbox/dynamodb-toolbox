@@ -19,7 +19,7 @@ const TestEntity = new Entity({
     test: 'string'
   },
   table: TestTable
-})
+} as const)
 
 describe('batchGet', () => {
   it('fails when batchGet is empty', () => {
@@ -36,7 +36,7 @@ describe('batchGet', () => {
   })
 
   it('batchGets data from a single table', () => {
-    let result = TestTable.batchGetParams(TestEntity.getBatch({ pk: 'test', sk: 'testsk' }))
+    let result = TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }))
     expect(result).toEqual({
       RequestItems: { 'test-table': { Keys: [{ pk: 'test', sk: 'testsk' }] } }
     })
@@ -45,7 +45,7 @@ describe('batchGet', () => {
   it('fails when extra options', () => {
     expect(() => {
       TestTable.batchGetParams(
-        TestEntity.getBatch({ pk: 'test', sk: 'testsk' }),
+        TestEntity.getBatch({ email: 'test', sort: 'testsk' }),
         // @ts-expect-error
         { invalid: true }
       )
@@ -54,14 +54,14 @@ describe('batchGet', () => {
 
   it('fails when providing an invalid capactiy setting', () => {
     expect(() => {
-      TestTable.batchGetParams(TestEntity.getBatch({ pk: 'test', sk: 'testsk' }), {
+      TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }), {
         capacity: 'test'
       })
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
   it('add consistent flag', () => {
-    let result = TestTable.batchGetParams(TestEntity.getBatch({ pk: 'test', sk: 'testsk' }), {
+    let result = TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }), {
       consistent: true
     })
     expect(result).toEqual({
@@ -87,12 +87,12 @@ describe('batchGet', () => {
         test: 'string'
       },
       table: TestTable2
-    })
+    } as const)
 
     let result = TestTable.batchGetParams(
       [
-        TestEntity.getBatch({ pk: 'test', sk: 'testsk' }),
-        TestEntity2.getBatch({ pk: 'test', sk: 'testsk' })
+        TestEntity.getBatch({ email: 'test', sort: 'testsk' }),
+        TestEntity2.getBatch({ email: 'test', sort: 'testsk' })
       ],
       // @ts-expect-error: FIXME: this isn't right
       { consistent: { testTable: true, 'test-table2': false } }
@@ -124,13 +124,13 @@ describe('batchGet', () => {
         test: 'string'
       },
       table: TestTable2
-    })
+    } as const)
 
     expect(() => {
       TestTable.batchGetParams(
         [
-          TestEntity.getBatch({ pk: 'test', sk: 'testsk' }),
-          TestEntity2.getBatch({ pk: 'test', sk: 'testsk' })
+          TestEntity.getBatch({ email: 'test', sort: 'testsk' }),
+          TestEntity2.getBatch({ email: 'test', sort: 'testsk' })
         ],
         // @ts-expect-error
         { consistent: { testTable: true, 'test-table2': 'test' } }
@@ -141,7 +141,7 @@ describe('batchGet', () => {
   it('fails on consistent setting for unreferenced table', () => {
     expect(() => {
       TestTable.batchGetParams(
-        [TestEntity.getBatch({ pk: 'test', sk: 'testsk' })],
+        [TestEntity.getBatch({ email: 'test', sort: 'testsk' })],
         // @ts-expect-error
         { consistent: { testTable: true, 'test-table2': 'test' } }
       )

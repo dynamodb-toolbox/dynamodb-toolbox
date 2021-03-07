@@ -101,35 +101,41 @@ describe('parseMapping', () => {
 
   it('fails when a partitionKey field has an alias', async () => {
     expect(() => {
+      // @ts-expect-error
       parseMapping('attr', { type: 'string', partitionKey: true, alias: 'attr1' }, track)
     }).toThrow(`Attributes with a partitionKey cannot have a 'map' or 'alias' associated`)
   })
 
   it('fails when a partitionKey field has a map', async () => {
     expect(() => {
+      // @ts-expect-error
       parseMapping('attr', { type: 'string', partitionKey: true, map: 'attr1' }, track)
     }).toThrow(`Attributes with a partitionKey cannot have a 'map' or 'alias' associated`)
   })
 
   it('fails when a sortKey field has an alias', async () => {
     expect(() => {
+      // @ts-expect-error
       parseMapping('attr', { type: 'string', sortKey: true, alias: 'attr1' }, track)
     }).toThrow(`Attributes with a sortKey cannot have a 'map' or 'alias' associated`)
   })
 
   it('fails when a sortKey field has a map', async () => {
     expect(() => {
+      // @ts-expect-error
       parseMapping('attr', { type: 'string', sortKey: true, map: 'attr1' }, track)
     }).toThrow(`Attributes with a sortKey cannot have a 'map' or 'alias' associated`)
   })
 
   it('parses partitionKey as string', async () => {
+    // @ts-expect-error 💥 TODO: Support GSIs
     expect(parseMapping('attr', { type: 'string', partitionKey: 'GSI' }, track)).toEqual({
       attr: { type: 'string', partitionKey: 'GSI', coerce: true }
     })
   })
 
   it('parses partitionKey as an array', async () => {
+    // @ts-expect-error 💥 TODO: Support GSIs
     expect(parseMapping('attr', { type: 'string', partitionKey: [true, 'GSI'] }, track)).toEqual({
       attr: { type: 'string', partitionKey: [true, 'GSI'], coerce: true }
     })
@@ -172,6 +178,7 @@ describe('parseMapping', () => {
     expect(() => {
       parseMapping(
         'attr',
+        // @ts-expect-error 💥 TODO: Support GSIs
         { type: 'string', partitionKey: 'GSI' },
         Object.assign({}, track, { keys: { GSI: { partitionKey: 'GSIpk' } } })
       )
@@ -193,6 +200,7 @@ describe('parseMapping', () => {
     expect(() => {
       parseMapping(
         'attr',
+        // @ts-expect-error 💥 TODO: Support GSIs
         { type: 'string', sortKey: 'GSI' },
         Object.assign({}, track, { keys: { GSI: { partitionKey: 'attr' } } })
       )

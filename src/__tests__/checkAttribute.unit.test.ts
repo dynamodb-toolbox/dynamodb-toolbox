@@ -25,7 +25,7 @@ DefaultTable.addEntity(
       list_alias2: { type: 'list', map: 'list2' },
       test: 'map'
     }
-  })
+  } as const)
 )
 
 describe('checkAttribute', () => {
