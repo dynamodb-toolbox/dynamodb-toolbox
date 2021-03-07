@@ -3,15 +3,15 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
-
-import validateTypes from './validateTypes'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { EntityAttributeConfig } from 'classes/Entity'
+
+import { PureAttributeDefinition } from '../classes/Entity'
+import validateTypes from './validateTypes'
 import { Linked } from './parseEntity'
 
 // Format item based on attribute defnition
 export default (DocumentClient: DocumentClient) => (
-  attributes: { [key: string]: EntityAttributeConfig },
+  attributes: { [key: string]: PureAttributeDefinition },
   linked: Linked,
   item: any,
   include: string[] = []

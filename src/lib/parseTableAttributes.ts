@@ -5,44 +5,40 @@
  */
 
 import { TableAttributes, TableAttributeConfig, ParsedTableAttribute } from '../classes/Table'
-
-import { error, typeError, keyTypeError, validTypes, validKeyTypes } from './utils'
+import { error, typeError, keyTypeError, isDynamoDbType, isDynamoDbKeyType } from './utils'
 
 // Parse the attributes and verify valid types
 export default (attrs: TableAttributes, partitionKey: string, sortKey: string | null) =>
   Object.keys(attrs).reduce((acc, field) => {
-    if (typeof attrs[field] === 'string') {
-      // TODO: Calling .toString() to satisfy TS even though I'm type checking
+    const attribute = attrs[field]
+
+    if (typeof attribute === 'string') {
       // Error if invalid key type
-      if (
-        [partitionKey, sortKey].includes(field) &&
-        !validKeyTypes.includes(attrs[field].toString())
-      ) {
+      if ([partitionKey, sortKey].includes(field) && !isDynamoDbKeyType(attribute)) {
         keyTypeError(field)
       }
+
       // Error if invalid type
-      if (!validTypes.includes(attrs[field].toString())) {
+      if (!isDynamoDbType(attribute)) {
         typeError(field)
       }
+
       // Merge and return parsed attribute
-      return Object.assign(
-        acc,
-        parseAttributeConfig(field, { type: attrs[field] } as TableAttributeConfig)
-      )
-    } else {
-      // TODO: Is there a better way to do this without casting this value?
-      const fieldVal = attrs[field] as TableAttributeConfig
-      // Error if invalid key type
-      if ([partitionKey, sortKey].includes(field) && !validKeyTypes.includes(fieldVal.type)) {
-        keyTypeError(field)
-      }
-      // Error if invalid type
-      if (!validTypes.includes(fieldVal.type)) {
-        typeError(field)
-      }
-      // Merge and return parsed attribute
-      return Object.assign(acc, parseAttributeConfig(field, fieldVal))
-    } // end else
+      return Object.assign(acc, parseAttributeConfig(field, { type: attribute }))
+    }
+
+    // Error if invalid key type
+    if ([partitionKey, sortKey].includes(field) && !isDynamoDbKeyType(attribute.type)) {
+      keyTypeError(field)
+    }
+
+    // Error if invalid type
+    if (!isDynamoDbType(attribute.type)) {
+      typeError(field)
+    }
+
+    // Merge and return parsed attribute
+    return Object.assign(acc, parseAttributeConfig(field, attribute))
   }, {})
 
 // Parse and validate attributes config

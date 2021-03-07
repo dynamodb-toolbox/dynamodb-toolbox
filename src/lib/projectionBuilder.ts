@@ -6,10 +6,12 @@
 
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html
 
+import { A } from 'ts-toolbelt'
+
 // Import standard error handler
+import { TableType } from '../classes/Table'
 import { error } from './utils'
 import checkAttribute from './checkAttribute'
-import Table from '../classes/Table'
 
 // This should be able to parse an array with values,
 // or an object that uses the name of the entity plus an array of values
@@ -18,14 +20,14 @@ import Table from '../classes/Table'
 // e.g. [ 'attr1', 'attr2', { MyEntity: ['attr3','attr4'] }]
 export type ProjectionAttributesTable = { [key: string]: ProjectionAttributes }
 export type ProjectionAttributes =
-  | string
+  | A.Key
   | ProjectionAttributeType
-  | (string | ProjectionAttributeType)[]
+  | (A.Key | ProjectionAttributeType)[]
 export type ProjectionAttributeType = { [key: string]: string | string[] }
 
-export default (
+const projectionBuilder = <EntityTable extends TableType | undefined>(
   attributes: ProjectionAttributes,
-  table: Table,
+  table: EntityTable,
   entity: string | null,
   type = false
 ) => {
@@ -42,7 +44,7 @@ export default (
 
   // Check that table is valid and contains attributes
   if (!table || !table.Table || Object.keys(table.Table.attributes).length == 0) {
-    error(`Tables must be valid and contain attributes`)
+    throw new Error('Tables must be valid and contain attributes')
   } // end check table
 
   // Add entityField if exists
@@ -119,3 +121,5 @@ export default (
     tableAttrs
   }
 } // end module
+
+export default projectionBuilder

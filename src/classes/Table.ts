@@ -7,8 +7,10 @@
 // TODO: Check duplicate entity names code
 
 // Import libraries, types, and classes
-import Entity from './Entity'
 import DynamoDb, { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { A, O } from 'ts-toolbelt'
+
+import Entity, { ReadOptions, ConditionsOrFilters } from './Entity'
 import { parseTable, ParsedTable } from '../lib/parseTable'
 import parseFilters from '../lib/expressionBuilder'
 import validateTypes from '../lib/validateTypes'
@@ -20,15 +22,18 @@ import parseProjections, {
 import { ParsedEntity } from '../lib/parseEntity'
 
 // Import standard error handler
-import { error, conditonError } from '../lib/utils'
-import { Document } from 'aws-sdk/clients/textract'
+import { error, conditonError, hasProperty } from '../lib/utils'
 
 // Declare Table types
-export interface TableConstructor {
-  name: string
+export interface TableConstructor<
+  Name extends string,
+  PartitionKey extends A.Key,
+  SortKey extends A.Key | null
+> {
+  name: Name
   alias?: string | null
-  partitionKey: string
-  sortKey?: string | null
+  partitionKey: PartitionKey
+  sortKey?: SortKey
   entityField?: boolean | string
   attributes?: TableAttributes
   indexes?: TableIndexes
@@ -40,7 +45,7 @@ export interface TableConstructor {
 }
 
 export type DynamoDBTypes = 'string' | 'boolean' | 'number' | 'list' | 'map' | 'binary' | 'set'
-export type DynamoDBSetTypes = 'string' | 'number' | 'binary'
+export type DynamoDBKeyTypes = 'string' | 'number' | 'binary'
 
 export interface executeParse {
   execute?: boolean
@@ -49,7 +54,7 @@ export interface executeParse {
 
 export interface TableAttributeConfig {
   type: DynamoDBTypes
-  setType?: DynamoDBSetTypes
+  setType?: DynamoDBKeyTypes
 }
 
 export interface TableAttributes {
@@ -64,29 +69,30 @@ export interface TableIndexes {
   [index: string]: { partitionKey?: string; sortKey?: string }
 }
 
-export interface queryOptions {
-  index?: string
-  limit?: number
-  reverse?: boolean
-  consistent?: boolean
-  capacity?: DocumentClient.ReturnConsumedCapacity
-  select?: DocumentClient.Select
-  eq?: string | number
-  lt?: string | number
-  lte?: string | number
-  gt?: string | number
-  gte?: string | number
-  between?: [string, string] | [number, number]
-  beginsWith?: string
-  filters?: FilterExpressions
-  attributes?: ProjectionAttributes
-  startKey?: {}
-  entity?: string
-  execute?: boolean
-  parse?: boolean
-}
+export type QueryOptions<
+  Attributes extends A.Key = A.Key,
+  FiltersAttributes extends A.Key = Attributes
+> = O.Partial<
+  ReadOptions<Attributes> & {
+    index: string
+    limit: number
+    reverse: boolean
+    entity: string
+    select: DocumentClient.Select
+    filters: ConditionsOrFilters<FiltersAttributes>
+    // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
+    eq: string | number
+    lt: string | number
+    lte: string | number
+    gt: string | number
+    gte: string | number
+    between: [string, string] | [number, number]
+    beginsWith: string
+    startKey: {}
+  }
+>
 
-export interface scanOptions {
+export interface ScanOptions {
   index?: string
   limit?: number
   consistent?: boolean
@@ -113,7 +119,7 @@ interface batchGetOptions {
 
 interface batchGetParamsMeta {
   payload: any
-  Tables: { [key: string]: Table }
+  Tables: { [key: string]: TableType }
   EntityProjections: { [key: string]: any }
   TableProjections: { [key: string]: string[] }
 }
@@ -145,7 +151,7 @@ interface transactGetParamsMeta {
 }
 
 // Declare Table class
-class Table {
+class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
   private _execute: boolean = true
   private _parse: boolean = true
   public _removeNulls: boolean = true
@@ -154,10 +160,11 @@ class Table {
   public Table!: ParsedTable['Table']
   public name!: string
   public alias?: string;
+  // 🔨 TOIMPROVE: Put entities in Table.entities key & type
   [key: string]: any
 
   // Declare constructor (table config and optional entities)
-  constructor(table: TableConstructor) {
+  constructor(table: TableConstructor<Name, PartitionKey, SortKey>) {
     // Sanity check the table definition
     if (typeof table !== 'object' || Array.isArray(table))
       error('Please provide a valid table definition')
@@ -278,7 +285,9 @@ class Table {
                   // Otherwise, throw an error
                 } else {
                   error(
-                    `The Table's ${key} name (${this.Table[key]}) conflicts with an Entity attribute name`
+                    `The Table's ${key} name (${String(
+                      this.Table[key]
+                    )}) conflicts with an Entity attribute name`
                   )
                 } // end if-else
               } // end if
@@ -446,11 +455,15 @@ class Table {
   // Table actions
   // ----------------------------------------------------------------//
 
-  async query(
+  async query<Item extends unknown = unknown>(
     pk: any,
-    options: queryOptions = {},
+    options: QueryOptions = {},
     params: Partial<DocumentClient.QueryInput> = {}
-  ) {
+  ): Promise<
+    A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>> & {
+      next?: () => Promise<A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>>>
+    }
+  > {
     // Generate query parameters with projection data
     const { payload, EntityProjections, TableProjections } = this.queryParams(
       pk,
@@ -461,7 +474,9 @@ class Table {
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient!.query(payload).promise()
+      const result = (await this.DocumentClient!.query(payload).promise()) as A.Compute<
+        O.Update<DocumentClient.QueryOutput, 'Items', Item[]>
+      >
 
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -470,20 +485,33 @@ class Table {
           {
             Items:
               result.Items &&
-              result.Items.map(item => {
-                if (this[item[String(this.Table.entityField)]]) {
-                  return this[item[String(this.Table.entityField)]].parse(
+              result.Items.map((item: unknown) => {
+                if (typeof item !== 'object' || item === null) {
+                  return item
+                }
+
+                const entityField = String(this.table.entityField)
+                if (!hasProperty(item, entityField)) {
+                  return item
+                }
+
+                const entityName = item[entityField]
+                if (typeof entityName !== 'string') {
+                  return item
+                }
+
+                if (this[entityName]) {
+                  return this[entityName].parse(
                     item,
-                    // Array.isArray(options.omit) ? options.omit : [],
-                    EntityProjections[item[String(this.Table.entityField)]]
-                      ? EntityProjections[item[String(this.Table.entityField)]]
+                    EntityProjections[entityName]
+                      ? EntityProjections[entityName]
                       : TableProjections
                       ? TableProjections
                       : []
                   )
-                } else {
-                  return item
                 }
+
+                return item
               })
           },
           // If last evaluated key, return a next function
@@ -498,7 +526,7 @@ class Table {
                 }
               }
             : null
-        )
+        ) as A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>>
       } else {
         return result
       }
@@ -510,10 +538,11 @@ class Table {
   // Query the table
   queryParams(
     pk: any,
-    options: queryOptions = {},
+    options: QueryOptions = {},
     params: Partial<DocumentClient.QueryInput> = {},
     projections = false
-  ) {
+    // 🔨 TOIMPROVE: Type queryParams return
+  ): any {
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
     // Deconstruct valid options
@@ -743,7 +772,11 @@ class Table {
   } // end query
 
   // SCAN the table
-  async scan(options: scanOptions = {}, params: Partial<DocumentClient.ScanInput> = {}) {
+  async scan(
+    options: ScanOptions = {},
+    params: Partial<DocumentClient.ScanInput> = {}
+    // 🔨 TOIMPROVE: Type scan return
+  ): Promise<any> {
     // Generate query parameters with meta data
     const { payload, EntityProjections, TableProjections } = this.scanParams(options, params, true)
 
@@ -795,10 +828,11 @@ class Table {
 
   // Generate SCAN Parameters
   scanParams(
-    options: scanOptions = {},
+    options: ScanOptions = {},
     params: Partial<DocumentClient.ScanInput> = {},
     meta = false
-  ) {
+    // 🔨 TOIMPROVE: Type scanParams return
+  ): any {
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
     // Deconstruct valid options
@@ -987,7 +1021,8 @@ class Table {
 
   parseBatchGetResponse(
     result: any,
-    Tables: { [key: string]: Table },
+    // 💥 Retype as Record<string, Table> with inferred type
+    Tables: any,
     EntityProjections: { [key: string]: any },
     TableProjections: { [key: string]: string[] },
     options: batchGetOptions = {}
@@ -1003,7 +1038,7 @@ class Table {
               return Object.assign(acc, {
                 // Map over the items
                 [(Tables[table] && Tables[table].alias) || table]: result.Responses[table].map(
-                  (item: Table) => {
+                  (item: TableType) => {
                     // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
                     if (
                       Tables[table] &&
@@ -1568,3 +1603,5 @@ class Table {
 
 // Export the Table class
 export default Table
+
+export type TableType = Table<string, A.Key, A.Key | null>

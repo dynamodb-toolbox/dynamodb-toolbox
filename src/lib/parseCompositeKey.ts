@@ -3,21 +3,26 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
+import { A, O } from 'ts-toolbelt'
 
 import { error } from './utils'
 import parseMapping from './parseMapping'
 import {
-  EntityAttributes,
-  EntityAttributeConfig,
-  EntityCompositeAttributes
+  CompositeAttributeDefinition,
+  PureAttributeDefinition,
+  AttributeDefinitions
 } from '../classes/Entity'
 import { TrackingInfo } from './parseEntity'
 
-export default (
+const parseCompositeKey = <
+  ReadonlyAttributeDefinitions extends
+    | AttributeDefinitions
+    | O.Readonly<AttributeDefinitions, A.Key, 'deep'>
+>(
   field: string,
-  config: EntityCompositeAttributes,
+  config: CompositeAttributeDefinition,
   track: TrackingInfo,
-  schema: EntityAttributes
+  schema: ReadonlyAttributeDefinitions
 ) => {
   if (config.length >= 2 && config.length <= 3) {
     let link = schema[config[0]] ? config[0] : error(`'${field}' must reference another field`)
@@ -25,6 +30,7 @@ export default (
       parseInt(config[1].toString()) === config[1]
         ? config[1]
         : error(`'${field}' position value must be numeric`)
+    // 🔨 TOIMPROVE: Prevent casting if possible
     let sub_config = (!config[2]
       ? { type: 'string' }
       : ['string', 'number', 'boolean'].includes(config[2].toString())
@@ -33,7 +39,7 @@ export default (
       ? config[2]
       : error(
           `'${field}' type must be 'string', 'number', 'boolean' or a configuration object`
-        )) as EntityAttributeConfig
+        )) as PureAttributeDefinition
 
     // Add linked fields
     if (!track.linked[link]) track.linked[link] = []
@@ -58,3 +64,5 @@ export default (
     error(`Composite key configurations must have 2 or 3 items`)
   }
 }
+
+export default parseCompositeKey

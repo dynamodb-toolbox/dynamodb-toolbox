@@ -8,13 +8,14 @@
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html
 
 // Import standard error handler
-import { error } from './utils'
+import { A } from 'ts-toolbelt'
 
 import checkAttribute from './checkAttribute'
-import Table from '../classes/Table'
+import { error } from './utils'
+import { TableType } from '../classes/Table'
 
-interface FilterExpression {
-  attr?: string
+interface FilterExpression<Attr extends A.Key = A.Key> {
+  attr?: Attr
   size?: string
   eq?: string | number | boolean | null
   ne?: string | number | boolean | null
@@ -33,11 +34,17 @@ interface FilterExpression {
   entity?: string
 }
 
-export type FilterExpressions = FilterExpression | FilterExpression[] | FilterExpressions[]
+export type FilterExpressions<Attr extends A.Key = A.Key> =
+  | FilterExpression<Attr>
+  | FilterExpression<Attr>[]
+  | FilterExpressions<Attr>[]
 
-const buildExpression = (
-  exp: FilterExpressions,
-  table: Table,
+const buildExpression = <
+  Attr extends A.Key = A.Key,
+  EntityTable extends TableType | undefined = undefined
+>(
+  exp: FilterExpressions<Attr>,
+  table: EntityTable,
   entity?: string,
   group = 0,
   level = 0
@@ -79,7 +86,7 @@ const buildExpression = (
       if (entity && !exp.entity) exp.entity = entity
 
       // Parse the clause
-      const clause = parseClause(exp, group, table)
+      const clause = parseClause<EntityTable>(exp, group, table)
 
       // Concat to expression and merge names and values
       expression += `${id > 0 ? ` ${clause.logic} ` : ''}${clause.clause}`
@@ -108,7 +115,15 @@ const conditionError = (op?: string) =>
   error(`You can only supply one filter condition per query. Already using '${op}'`)
 
 // Parses expression clause and returns structured clause object
-const parseClause = (_clause: FilterExpression, grp: number, table: Table) => {
+const parseClause = <EntityTable extends TableType | undefined = undefined>(
+  _clause: FilterExpression,
+  grp: number,
+  table: EntityTable
+) => {
+  if (!table) {
+    throw new Error(`'table' should be defined`)
+  }
+
   // Init clause, names, and values
   let clause = ''
   const names: { [key: string]: string } = {}

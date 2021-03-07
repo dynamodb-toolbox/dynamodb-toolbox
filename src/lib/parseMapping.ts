@@ -4,12 +4,20 @@
  * @license MIT
  */
 
-import { EntityAttributeConfig } from '../classes/Entity'
+import {
+  PartitionKeyDefinition,
+  SortKeyDefinition,
+  PureAttributeDefinition
+} from '../classes/Entity'
 import { TrackingInfo } from './parseEntity'
 import { error } from './utils'
 
 // Parse and validate mapping config
-export default (field: string, config: EntityAttributeConfig, track: TrackingInfo) => {
+export default (
+  field: string,
+  config: PartitionKeyDefinition | SortKeyDefinition | PureAttributeDefinition,
+  track: TrackingInfo
+) => {
   // Validate props
   Object.keys(config).forEach(prop => {
     switch (prop) {
