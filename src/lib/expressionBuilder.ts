@@ -14,16 +14,24 @@ import checkAttribute from './checkAttribute'
 import { error } from './utils'
 import { TableDef } from '../classes/Table'
 
-interface FilterExpression<Attr extends A.Key = A.Key> {
-  attr?: Attr
+
+import checkAttribute from './checkAttribute'
+import Table from '../classes/Table'
+
+interface AttrRef {
+  attr: string
+}
+
+interface FilterExpression {
+  attr?: string
   size?: string
-  eq?: string | number | boolean | null
-  ne?: string | number | boolean | null
-  lt?: string | number
-  lte?: string | number
-  gt?: string | number
-  gte?: string | number
-  between?: string[] | number[]
+  eq?: string | number | boolean | null | AttrRef
+  ne?: string | number | boolean | null | AttrRef
+  lt?: string | number | AttrRef
+  lte?: string | number | AttrRef
+  gt?: string | number | AttrRef
+  gte?: string | number | AttrRef
+  between?:	string[] | number[]
   beginsWith?: string
   in?: any[]
   contains?: string
@@ -275,6 +283,11 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
     } else if (operator === 'EXISTS') {
       if (!attr) error(`'exists' conditions require an 'attr'.`)
       clause = value ? `attribute_exists(${operand})` : `attribute_not_exists(${operand})`
+    } else if (value && typeof value === 'object') {
+      const ref = value as Partial<AttrRef>;
+      if (ref && (!ref.attr || typeof ref.attr !== 'string')) error(`AttrRef must have an attr field which references another attribute in the same entity.`)
+      names[`#attr${grp}_ref`] = checkAttribute(ref.attr!, (entity ? table[entity].schema.attributes : table.Table.attributes))
+      clause = `${operand} ${operator} #attr${grp}_ref`
     } else {
       // Add value
       values[`:attr${grp}`] = value
