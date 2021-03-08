@@ -406,6 +406,12 @@ describe('expressionBuilder', () => {
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
+  
+  it(`references a secondary attribute in an 'eq' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', eq: { attr: 'b' } }, TestTable, 'TestEntity')
+    expect(result.expression).toBe('#attr1 = #attr1_0')
+    expect(result.names).toEqual({ '#attr1': 'a', '#attr1_0': 'b' })
+  })
 
   it(`generates a 'type' clause for a nested attribute`, () => {
     let result = expressionBuilder({ attr: 'a.b.c', type: 'd' }, TestTable, 'TestEntity')
@@ -456,6 +462,16 @@ describe('expressionBuilder', () => {
     expect(() => expressionBuilder({ size: 'a', type: 'b' }, TestTable, 'TestEntity')).toThrow(
       `'type' conditions require an 'attr'.`
     )
+  })
+
+  it(`fails when 'value' type AttrRef is used without a property name`, () => {
+    expect(() => expressionBuilder({ attr: 'a', eq: { attr: '' } }, TestTable, 'TestEntity'))
+      .toThrow(`AttrRef must have an attr field which references another attribute in the same entity.`);
+  })
+
+  it(`fails when 'value' type AttrRef is used with a non-existing property name`, () => {
+    expect(() => expressionBuilder({ attr: 'a', eq: { attr: 'nonexistent' } }, TestTable, 'TestEntity'))
+      .toThrow(`'nonexistent' is not a valid attribute.`);
   })
 
   it(`fails when no condition is provided`, () => {
