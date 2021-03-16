@@ -801,7 +801,7 @@ class Entity<
         && (!mapping.link || (mapping.link && mapping.save === true))
       ) {
         // If a number or a set and adding
-        if (['number','set'].includes(mapping.type) && data[field].$add) {
+        if (['number','set'].includes(mapping.type) && (data[field].$add !== undefined && data[field].$add !== null)) {
           ADD.push(`#${field} :${field}`)
           values[`:${field}`] = validateType(mapping,field,data[field].$add)
           // Add field to names
