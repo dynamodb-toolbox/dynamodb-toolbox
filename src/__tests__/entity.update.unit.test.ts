@@ -312,6 +312,26 @@ describe('update',()=>{
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
   })
+  
+  it('ignores fields with no value', () => {
+    let { ExpressionAttributeValues } = TestEntity.updateParams({
+      pk: 'test-pk',
+      sk: 'test-pk',
+      test_string: undefined,
+      test_number: undefined,
+      test_number_set: undefined,
+      test_string_set: undefined,
+      test_list: undefined,
+      test_map: undefined,
+    })
+    
+    expect(ExpressionAttributeValues).not.toHaveProperty(':test_string')
+    expect(ExpressionAttributeValues).not.toHaveProperty(':test_number')
+    expect(ExpressionAttributeValues).not.toHaveProperty(':test_number_set')
+    expect(ExpressionAttributeValues).not.toHaveProperty(':test_string_set')
+    expect(ExpressionAttributeValues).not.toHaveProperty(':test_list')
+    expect(ExpressionAttributeValues).not.toHaveProperty(':test_map')
+  })
 
 
   it('performs a delete operation', () => {

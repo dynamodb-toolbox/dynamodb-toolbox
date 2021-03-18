@@ -801,19 +801,19 @@ class Entity<
         && (!mapping.link || (mapping.link && mapping.save === true))
       ) {
         // If a number or a set and adding
-        if (['number','set'].includes(mapping.type) && data[field].$add) {
+        if (['number','set'].includes(mapping.type) && data[field]?.$add) {
           ADD.push(`#${field} :${field}`)
           values[`:${field}`] = validateType(mapping,field,data[field].$add)
           // Add field to names
           names[`#${field}`] = field
         // if a set and deleting items
-        } else if (mapping.type === 'set' && data[field].$delete) {
+        } else if (mapping.type === 'set' && data[field]?.$delete) {
           DELETE.push(`#${field} :${field}`)
           values[`:${field}`] = validateType(mapping,field,data[field].$delete)
           // Add field to names
           names[`#${field}`] = field
         // if a list and removing items by index
-        } else if (mapping.type === 'list' && Array.isArray(data[field].$remove)) {
+        } else if (mapping.type === 'list' && Array.isArray(data[field]?.$remove)) {
           data[field].$remove.forEach((i:number) => {
             if (typeof i !== 'number') error(`Remove array for '${field}' must only contain numeric indexes`)
             REMOVE.push(`#${field}[${i}]`)
@@ -821,7 +821,7 @@ class Entity<
           // Add field to names
           names[`#${field}`] = field
         // if list and appending or prepending
-        } else if (mapping.type === 'list' && (data[field].$append || data[field].$prepend)) {
+        } else if (mapping.type === 'list' && (data[field]?.$append || data[field]?.$prepend)) {
           if (data[field].$append) {
             SET.push(`#${field} = list_append(#${field},:${field})`)
             values[`:${field}`] = validateType(mapping,field,data[field].$append)
@@ -841,7 +841,7 @@ class Entity<
           // Add field to names
           names[`#${field}`] = field
         // if a map and updating by nested attribute/index
-        } else if (mapping.type === 'map' && data[field].$set) {
+        } else if (mapping.type === 'map' && data[field]?.$set) {
           Object.keys(data[field].$set).forEach(f => {
 
             // TODO: handle null values to remove
