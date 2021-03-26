@@ -896,8 +896,10 @@ let key = {
 // Use the 'delete' method of MyEntity to delete the item from DynamoDB
 let result = await MyEntity.delete(
   key,
-  condition: { attr: 'date_modified' lt: '2020-01-01' },
-  returnValues: 'all_old'
+  {
+    condition: { attr: 'date_modified' lt: '2020-01-01' },
+    returnValues: 'all_old'
+  }
 )
 ```
 
