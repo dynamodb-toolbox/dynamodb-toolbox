@@ -538,7 +538,7 @@ The second argument is an `options` object that specifies the details of your qu
 | beginsWith | same as `sortKey` | Specifies `sortKey` condition to *begin with* the supplied values. (KeyConditionExpression) |
 | filters | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression) |
 | attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
-| startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey) |
+| startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate (if you're querying a secondary index, the keys for the primary index will also need to be included in the object - see `LastEvaluatedKey` result for details). (ExclusiveStartKey) |
 | entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
 | execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
 | parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
