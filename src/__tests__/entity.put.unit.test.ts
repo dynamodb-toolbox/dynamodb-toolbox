@@ -88,6 +88,17 @@ const TestEntity4 = new Entity({
   table: TestTable3
 });
 
+const TestEntity5 = new Entity({
+  name: 'TestEntity5',
+  autoExecute: false,
+  attributes: {
+    pk: { partitionKey: true },
+    test_required_boolean: { type: 'boolean', required: true },
+    test_required_number: { type: 'number', required: true },
+  },
+  table: TestTable2
+})
+
 describe('put',()=>{
 
   it('creates basic item',() => {
@@ -289,6 +300,17 @@ describe('put',()=>{
       'pk': 'test-pk',
       'test2': 'test'
     })).toThrow(`'test' is a required field`)
+  })
+
+  it('puts 0 and false to required fields', () => {
+    let { Item } = TestEntity5.putParams({
+      pk: 'test-pk',
+      test_required_boolean: false,
+      test_required_number: 0
+    })
+
+    expect(Item.test_required_boolean).toBe(false)
+    expect(Item.test_required_number).toBe(0)
   })
 
   it('formats a batch put response', async () => {

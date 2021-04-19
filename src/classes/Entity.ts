@@ -1109,8 +1109,7 @@ class Entity<
 
 
     // Check for required fields
-    Object.keys(required).forEach(field => 
-      required[field] !== undefined && !data[field] 
+    Object.keys(required).forEach(field => required[field] !== undefined && (data[field] === undefined || data[field] === null)
         && error(`'${field}${this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''}' is a required field`)
     ) // end required field check
 
