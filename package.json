@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-toolbox",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "dist/index.js",
@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "build": "rm -rf dist && tsc",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint"
+    "prepublishOnly": "npm test && npm run lint",
+    "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
   },
   "license": "MIT",
   "dependencies": {
