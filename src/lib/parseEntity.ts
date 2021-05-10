@@ -4,18 +4,19 @@
  * @license MIT
  */
 
- // Import libraries & types
-import parseEntityAttributes from './parseEntityAttributes'
-import { EntityConstructor } from '../classes/Entity'
+// Import libraries & types
+import { A, O } from 'ts-toolbelt'
 
-// Import error handlers
-import { error } from './utils'
+import parseEntityAttributes from './parseEntityAttributes'
+import { TableType } from '../classes/Table'
+import { AttributeDefinitions, EntityConstructor } from '../classes/Entity'
+import { error, PreventKeys } from './utils'
 
 export interface TrackingInfo {
   fields: string[]
   defaults: any
-  required: any,
-  linked: Linked,
+  required: any
+  linked: Linked
   keys: any
 }
 
@@ -25,14 +26,32 @@ export interface Linked {
 
 export interface TrackingInfoKeys {
   partitionKey?: string
-  sortKey?: string 
+  sortKey?: string
 }
 
 export type ParsedEntity = ReturnType<typeof parseEntity>
 
 // Parse entity
-export function parseEntity(entity: EntityConstructor) {
-
+export function parseEntity<
+  EntityTable extends TableType | undefined,
+  Name extends string,
+  CreatedAlias extends string,
+  ModifiedAlias extends string,
+  TypeAlias extends string,
+  ReadonlyAttributeDefinitions extends PreventKeys<
+    AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
+    CreatedAlias | ModifiedAlias | TypeAlias
+  >
+>(
+  entity: EntityConstructor<
+    EntityTable,
+    Name,
+    CreatedAlias,
+    ModifiedAlias,
+    TypeAlias,
+    ReadonlyAttributeDefinitions
+  >
+) {
   let {
     name,
     timestamps,
@@ -54,47 +73,58 @@ export function parseEntity(entity: EntityConstructor) {
   if (Object.keys(args).length > 0)
     error(`Invalid Entity configuration options: ${Object.keys(args).join(', ')}`)
 
+  // 🔨 TOIMPROVE: Not triming would be better for type safety (no need to cast)
   // Entity name
-  name = typeof name === 'string'
-    && name.trim().length > 0 ? name.trim()
-    : error(`'name' must be defined`)
+  name = (typeof name === 'string' && name.trim().length > 0
+    ? name.trim()
+    : error(`'name' must be defined`)) as Name
 
   // Enable created/modified timestamps on items
   timestamps = typeof timestamps === 'boolean' ? timestamps : true
 
   // Define 'created' attribute name
-  created = typeof created === 'string'
-    && created.trim().length > 0 ? created.trim()
-    : '_ct'
+  created = typeof created === 'string' && created.trim().length > 0 ? created.trim() : '_ct'
 
+  // 🔨 TOIMPROVE: Not triming would be better for type safety (no need to cast)
   // Define 'createdAlias'
-  createdAlias = typeof createdAlias === 'string'
-    && createdAlias.trim().length > 0 ? createdAlias.trim()
-    : 'created'
+  createdAlias = (typeof createdAlias === 'string' && createdAlias.trim().length > 0
+    ? createdAlias.trim()
+    : 'created') as CreatedAlias
 
   // Define 'modified' attribute anme
-  modified = typeof modified === 'string'
-    && modified.trim().length > 0 ? modified.trim()
-    : '_md'
+  modified = typeof modified === 'string' && modified.trim().length > 0 ? modified.trim() : '_md'
 
+  // 🔨 TOIMPROVE: Not triming would be better for type safety (no need to cast)
   // Define 'modifiedAlias'
-  modifiedAlias = typeof modifiedAlias === 'string'
-    && modifiedAlias.trim().length > 0 ? modifiedAlias.trim()
-    : 'modified'
+  modifiedAlias = (typeof modifiedAlias === 'string' && modifiedAlias.trim().length > 0
+    ? modifiedAlias.trim()
+    : 'modified') as ModifiedAlias
 
+  // 🔨 TOIMPROVE: Not triming would be better for type safety (no need to cast)
   // Define 'entityAlias'
-  typeAlias = typeof typeAlias === 'string'
-    && typeAlias.trim().length > 0 ? typeAlias.trim()
-    : 'entity'
+  typeAlias = (typeof typeAlias === 'string' && typeAlias.trim().length > 0
+    ? typeAlias.trim()
+    : 'entity') as TypeAlias
 
   // Sanity check the attributes
-  attributes = typeof attributes === 'object' && !Array.isArray(attributes) ?
-    attributes : error(`Please provide a valid 'attributes' object`)
+  attributes =
+    typeof attributes === 'object' && !Array.isArray(attributes)
+      ? attributes
+      : error(`Please provide a valid 'attributes' object`)
 
   // Add timestamps
   if (timestamps) {
-    attributes[created] = { type: 'string', alias: createdAlias, default: ()=> new Date().toISOString() }
-    attributes[modified] = { type: 'string', alias: modifiedAlias, default: ()=> new Date().toISOString(), onUpdate: true }
+    ;(attributes as AttributeDefinitions)[created] = {
+      type: 'string',
+      alias: createdAlias,
+      default: () => new Date().toISOString()
+    }
+    ;(attributes as AttributeDefinitions)[modified] = {
+      type: 'string',
+      alias: modifiedAlias,
+      default: () => new Date().toISOString(),
+      onUpdate: true
+    }
   }
 
   // Tracking info
@@ -107,19 +137,19 @@ export function parseEntity(entity: EntityConstructor) {
   }
 
   // Return the entity
-  return Object.assign({
-    name,
-    schema: parseEntityAttributes(attributes,track), // removed nested attribute?
-    defaults: track.defaults,
-    required: track.required,
-    linked: track.linked,
-    autoExecute,
-    autoParse,
-    _etAlias: typeAlias 
-  },
-  table ? { table } : {}
+  return Object.assign(
+    {
+      name,
+      schema: parseEntityAttributes<ReadonlyAttributeDefinitions>(attributes, track), // removed nested attribute?
+      defaults: track.defaults,
+      required: track.required,
+      linked: track.linked,
+      autoExecute,
+      autoParse,
+      _etAlias: typeAlias
+    },
+    table ? { table } : {}
   ) // end mapping object
-
 } // end parseEntity
 
 export default parseEntity

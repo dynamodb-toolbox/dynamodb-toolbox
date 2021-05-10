@@ -1,11 +1,10 @@
-import { EntityConstructor } from 'classes/Entity'
 import parseEntity from '../lib/parseEntity'
 
 type Schema = any
 type HiddenKeys = any
 
 // Simulate Entity config
-const entity: EntityConstructor = {
+const entity = {
   name: 'TestEntity',
   timestamps: true,
   created: '_created',
@@ -21,10 +20,9 @@ const entity: EntityConstructor = {
   },
   autoExecute: true,
   autoParse: true
-}
+} as const
 
 describe('parseEntity', () => {
-
   it('parses entity definition with all available options', async () => {
     let ent = parseEntity(entity)
     expect(ent.name).toBe('TestEntity')
@@ -33,17 +31,16 @@ describe('parseEntity', () => {
     expect(ent.schema.attributes).toHaveProperty('_modified')
     expect(ent.schema.attributes).toHaveProperty('createdAlias')
     expect(ent.schema.attributes).toHaveProperty('modifiedAlias')
-    expect(ent.required).toEqual({attr2: false})
+    expect(ent.required).toEqual({ attr2: false })
     expect(ent.linked).toEqual({})
     expect(ent.autoExecute).toBe(true)
     expect(ent.autoParse).toBe(true)
     expect(ent._etAlias).toBe('typeAlias')
-  }) 
+  })
 
   it('fails on extra config option', async () => {
     expect(() => {
-      parseEntity(Object.assign({},entity,{ invalidConfig: true }))
+      parseEntity(Object.assign({}, entity, { invalidConfig: true }))
     }).toThrow(`Invalid Entity configuration options: invalidConfig`)
   })
-
 })
