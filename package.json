@@ -16,7 +16,6 @@
     "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
   },
   "license": "MIT",
-  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jeremydaly/dynamodb-toolbox.git"
