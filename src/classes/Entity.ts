@@ -64,17 +64,23 @@ type KeyAttributeDefinition = {
 }
 
 export type PartitionKeyDefinition = O.Partial<KeyAttributeDefinition> & {
-  // 💥 TODO: Support GSIs
-  // previously: partitionKey: boolean | string | (string | boolean)[]
   partitionKey: true
   sortKey?: false
 }
 
+export type GSIPartitionKeyDefinition = O.Partial<KeyAttributeDefinition> & {
+  partitionKey: string
+  sortKey?: false
+}
+
 export type SortKeyDefinition = O.Partial<KeyAttributeDefinition> & {
-  // 💥 TODO: Support GSIs
-  // previously: sortKey: boolean | string
   sortKey: true
   partitionKey?: false
+}
+
+export type GSISortKeyDefinition = O.Partial<KeyAttributeDefinition> & {
+  partitionKey?: false
+  sortKey: string
 }
 
 export type PureAttributeDefinition = O.Partial<{
@@ -108,6 +114,8 @@ type AttributeDefinition =
   | DynamoDBTypes
   | PartitionKeyDefinition
   | SortKeyDefinition
+  | GSIPartitionKeyDefinition
+  | GSISortKeyDefinition
   | PureAttributeDefinition
   | CompositeAttributeDefinition
 
@@ -210,7 +218,7 @@ type InferItemAttributeValue<
   Definition = Definitions[AttributeName]
 > = {
   dynamoDbType: Definition extends DynamoDBTypes ? FromDynamoData<Definition> : never
-  pure: Definition extends PartitionKeyDefinition | SortKeyDefinition | PureAttributeDefinition
+  pure: Definition extends PartitionKeyDefinition | GSIPartitionKeyDefinition | SortKeyDefinition | GSISortKeyDefinition | PureAttributeDefinition
     ? Definition['type'] extends DynamoDBTypes
       ? FromDynamoData<A.Cast<Definition['type'], DynamoDBTypes>>
       : any
@@ -222,7 +230,7 @@ type InferItemAttributeValue<
     : never
 }[Definition extends DynamoDBTypes
   ? 'dynamoDbType'
-  : Definition extends PartitionKeyDefinition | SortKeyDefinition | PureAttributeDefinition
+  : Definition extends PartitionKeyDefinition | GSIPartitionKeyDefinition | SortKeyDefinition | GSISortKeyDefinition | PureAttributeDefinition
   ? 'pure'
   : Definition extends CompositeAttributeDefinition
   ? 'composite'

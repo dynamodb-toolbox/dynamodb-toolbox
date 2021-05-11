@@ -83,7 +83,6 @@ const TestEntity3 = new Entity({
   table: TestTable3
 } as const)
 
-// @ts-expect-error 💥 TODO: Support GSIs
 const TestEntityGSI = new Entity({
   name: 'TestEntityGSI',
   autoExecute: false,

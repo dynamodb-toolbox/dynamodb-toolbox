@@ -117,7 +117,6 @@ describe('entities', () => {
   })
 
   it('Maps a secondary index', () => {
-    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -133,7 +132,6 @@ describe('entities', () => {
   })
 
   it('fails when mapping an invalid secondary index', () => {
-    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -149,7 +147,6 @@ describe('entities', () => {
   })
 
   it('fails when mapping an invalid key for a secondary index', () => {
-    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -166,7 +163,6 @@ describe('entities', () => {
   })
 
   it('fails when secondary index mapping conflicts with an entity attribute', () => {
-    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -183,7 +179,6 @@ describe('entities', () => {
   })
 
   it('fails when secondary index mapping is missing either the partition or sort key', () => {
-    // @ts-expect-error 💥 TODO: Support GSIs
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
