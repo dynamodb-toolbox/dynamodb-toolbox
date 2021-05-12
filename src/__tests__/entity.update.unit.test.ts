@@ -131,7 +131,7 @@ describe('update', () => {
 
   it('creates update with GSI', () => {
     let { UpdateExpression } = TestEntityGSI.updateParams({
-      pk: 'test-pk',
+      email: 'test-pk',
       sk: 'test-sk',
       GSI1pk: 'test'
     })
@@ -387,8 +387,8 @@ describe('update', () => {
   
   it('ignores fields with no value', () => {
     let { ExpressionAttributeValues } = TestEntity.updateParams({
-      pk: 'test-pk',
-      sk: 'test-pk',
+      email: 'test-pk',
+      sort: 'test-pk',
       test_string: undefined,
       test_number: undefined,
       test_number_set: undefined,
