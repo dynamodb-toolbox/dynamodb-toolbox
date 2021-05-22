@@ -71,9 +71,11 @@ export interface TableIndexes {
 
 export type QueryOptions<
   Attributes extends A.Key = A.Key,
-  FiltersAttributes extends A.Key = Attributes
+  FiltersAttributes extends A.Key = Attributes,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
 > = O.Partial<
-  ReadOptions<Attributes> & {
+  ReadOptions<Attributes, Execute, Parse> & {
     index: string
     limit: number
     reverse: boolean
@@ -455,9 +457,15 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   // Table actions
   // ----------------------------------------------------------------//
 
-  async query<Item extends unknown = unknown>(
+  async query<
+    Item extends unknown = unknown,
+    Attributes extends A.Key = A.Key,
+    FilteredAttributes extends A.Key = Attributes,
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
+  >(
     pk: any,
-    options: QueryOptions = {},
+    options: QueryOptions<Attributes, FilteredAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.QueryInput> = {}
   ): Promise<
     A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>> & {
@@ -465,12 +473,12 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     }
   > {
     // Generate query parameters with projection data
-    const { payload, EntityProjections, TableProjections } = this.queryParams(
-      pk,
-      options,
-      params,
-      true
-    )
+    const { payload, EntityProjections, TableProjections } = this.queryParams<
+      Attributes,
+      FilteredAttributes,
+      Execute,
+      Parse
+    >(pk, options, params, true)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -536,9 +544,14 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   }
 
   // Query the table
-  queryParams(
+  queryParams<
+    Attributes extends A.Key = A.Key,
+    FilteredAttributes extends A.Key = Attributes,
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
+  >(
     pk: any,
-    options: QueryOptions = {},
+    options: QueryOptions<Attributes, FilteredAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.QueryInput> = {},
     projections = false
     // 🔨 TOIMPROVE: Type queryParams return
