@@ -6,7 +6,9 @@
 
 import {
   PartitionKeyDefinition,
+  GSIPartitionKeyDefinition,
   SortKeyDefinition,
+  GSISortKeyDefinition,
   PureAttributeDefinition
 } from '../classes/Entity'
 import { TrackingInfo } from './parseEntity'
@@ -15,7 +17,12 @@ import { error } from './utils'
 // Parse and validate mapping config
 export default (
   field: string,
-  config: PartitionKeyDefinition | SortKeyDefinition | PureAttributeDefinition,
+  config:
+    | PartitionKeyDefinition
+    | GSIPartitionKeyDefinition
+    | SortKeyDefinition
+    | GSISortKeyDefinition
+    | PureAttributeDefinition,
   track: TrackingInfo
 ) => {
   // Validate props

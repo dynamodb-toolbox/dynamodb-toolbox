@@ -128,7 +128,6 @@ describe('parseMapping', () => {
   })
 
   it('parses partitionKey as string', async () => {
-    // @ts-expect-error 💥 TODO: Support GSIs
     expect(parseMapping('attr', { type: 'string', partitionKey: 'GSI' }, track)).toEqual({
       attr: { type: 'string', partitionKey: 'GSI', coerce: true }
     })
@@ -178,7 +177,6 @@ describe('parseMapping', () => {
     expect(() => {
       parseMapping(
         'attr',
-        // @ts-expect-error 💥 TODO: Support GSIs
         { type: 'string', partitionKey: 'GSI' },
         Object.assign({}, track, { keys: { GSI: { partitionKey: 'GSIpk' } } })
       )
@@ -200,7 +198,6 @@ describe('parseMapping', () => {
     expect(() => {
       parseMapping(
         'attr',
-        // @ts-expect-error 💥 TODO: Support GSIs
         { type: 'string', sortKey: 'GSI' },
         Object.assign({}, track, { keys: { GSI: { partitionKey: 'attr' } } })
       )
