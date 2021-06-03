@@ -6,11 +6,11 @@
 
 import validateTypes from './validateTypes'
 import { error, transformAttr } from './utils'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import Table from 'classes/Table'
 
 // Normalize Data
-export default (DocumentClient: DocumentClient) => (schema:any,linked:any,data:any,filter=false) => {
+export default (DocumentClient: DynamoDBDocumentClient) => (schema:any,linked:any,data:any,filter=false) => {
 
   // Intialize validate type
   const validateType = validateTypes(DocumentClient)

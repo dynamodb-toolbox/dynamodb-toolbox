@@ -4,11 +4,11 @@
  * @license MIT
  */
 
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { toBool, hasValue, error } from './utils'
 
 // Performs type validation/coercian
-export default (DocumentClient: DocumentClient) => (mapping: any, field: any, value: any) => {
+export default (DocumentClient: DynamoDBDocumentClient) => (mapping: any, field: any, value: any) => {
 
   // Evaluate function expressions
   // TODO: should this happen here?
@@ -38,19 +38,19 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
       return typeof value === 'object' && !Array.isArray(value) ? value
         : error(`'${field}' must be a map (object)`)
     case 'set':
-      if (Array.isArray(value)) {
-        if (!DocumentClient) error('DocumentClient required for this operation')
-        let set = DocumentClient.createSet(value, { validate: true })
-        return !mapping.setType || mapping.setType === set.type.toLowerCase() ? set
-          : error(`'${field}' must be a valid set (array) containing only ${mapping.setType} types`)
-      } else if (mapping.coerce) {
-        if (!DocumentClient) error('DocumentClient required for this operation')
-        let set = DocumentClient.createSet(String(value).split(',').map(x => x.trim()))
-        return !mapping.setType || mapping.setType === set.type.toLowerCase() ? set
-          : error(`'${field}' must be a valid set (array) of type ${mapping.setType}`)
-      } else {
-        return error(`'${field}' must be a valid set (array)`)
-      }
+      // if (Array.isArray(value)) {
+      //   if (!DocumentClient) error('DocumentClient required for this operation')
+      //   let set = DocumentClient.createSet(value, { validate: true })
+      //   return !mapping.setType || mapping.setType === set.type.toLowerCase() ? set
+      //     : error(`'${field}' must be a valid set (array) containing only ${mapping.setType} types`)
+      // } else if (mapping.coerce) {
+      //   if (!DocumentClient) error('DocumentClient required for this operation')
+      //   let set = DocumentClient.createSet(String(value).split(',').map(x => x.trim()))
+      //   return !mapping.setType || mapping.setType === set.type.toLowerCase() ? set
+      //     : error(`'${field}' must be a valid set (array) of type ${mapping.setType}`)
+      // } else {
+      //   return error(`'${field}' must be a valid set (array)`)
+      // }
     default:
       // TODO: Binary validation
       return value

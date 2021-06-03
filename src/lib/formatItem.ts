@@ -5,12 +5,12 @@
  */
 
 import validateTypes from './validateTypes'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { EntityAttributeConfig } from 'classes/Entity'
 import { Linked } from './parseEntity'
 
 // Format item based on attribute defnition
-export default (DocumentClient: DocumentClient) => (attributes: { [key:string] : EntityAttributeConfig }, linked: Linked, item: any, include: string[] = []) => {
+export default (DocumentClient: DynamoDBDocumentClient) => (attributes: { [key:string] : EntityAttributeConfig }, linked: Linked, item: any, include: string[] = []) => {
   
   // TODO: Support nested maps?
   // TODO: include alias support?
