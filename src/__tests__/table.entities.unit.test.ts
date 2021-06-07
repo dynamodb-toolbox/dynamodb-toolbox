@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from'./bootstrap-tests'
+import { ddbDocClient as DocumentClient } from'./bootstrap-tests'
 
 let TestTable: any
 let TestEntity: any

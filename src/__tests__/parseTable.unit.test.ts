@@ -1,7 +1,7 @@
 import parseTable from '../lib/parseTable'
 
 // Bootstrap testing
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 // Require Table and Entity classes
 import Table, { TableConstructor } from '../classes/Table'

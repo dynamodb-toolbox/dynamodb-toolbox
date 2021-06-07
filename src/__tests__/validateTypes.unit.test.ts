@@ -1,6 +1,6 @@
 import validateTypes from '../lib/validateTypes'
 
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 describe('validateTypes', () => {
 
@@ -61,25 +61,12 @@ describe('validateTypes', () => {
 
   it('validates set', async () => {
     let result = validateTypes(DocumentClient)({ type: 'set', setType: 'number' },'attr',[1,2,3])
-    expect(result).toEqual(DocumentClient.createSet([1,2,3]))
+    expect(result).toEqual(new Set([1,2,3]))
   })
 
   it('fails with invalid set', async () => {
     expect(() => { validateTypes(DocumentClient)({ type: 'set', setType: 'string' },'attr',false) })
       .toThrow(`'attr' must be a valid set (array)`)
   })
-
-  it('fails with parsing set if DocumentClient is missing', async () => {
-    // @ts-expect-error
-    expect(() => { validateTypes()({ type: 'set', setType: 'string' },'attr',[]) })
-      .toThrow(`DocumentClient required for this operation`)
-  })
-
-  it('fails with parsing set if DocumentClient is missing', async () => {
-    // @ts-expect-error
-    expect(() => { validateTypes()({ type: 'set', setType: 'string', coerce: true },'attr','test') })
-      .toThrow(`DocumentClient required for this operation`)
-  })
-
 
 })

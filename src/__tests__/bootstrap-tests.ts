@@ -12,34 +12,37 @@ export const dynaliteServer = dynalite({
 })
 
 // Load AWS SDK
-import AWS from 'aws-sdk'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 // Create DynamoDB connection to dynalite
-export const DynamoDB = new AWS.DynamoDB({
+export const ddbClient = new DynamoDBClient({
   endpoint: 'http://localhost:4567',
   region: 'us-east-1',
-  credentials: new AWS.Credentials({
+  credentials: {
     accessKeyId: 'test',
     secretAccessKey: 'test',
-  }),
+  },
 })
 
-// Create our document client
-export const DocumentClient = new AWS.DynamoDB.DocumentClient({
-  endpoint: 'http://localhost:4567',
-  region: 'us-east-1',
-  credentials: new AWS.Credentials({
-    accessKeyId: 'test',
-    secretAccessKey: 'test',
-  }),
-  // convertEmptyValues: true
-})
+const marshallOptions = {
+  // Whether to automatically convert empty strings, blobs, and sets to `null`.
+  convertEmptyValues: false, // false, by default.
+  // Whether to remove undefined values while marshalling.
+  removeUndefinedValues: false, // false, by default.
+  // Whether to convert typeof object to map attribute.
+  convertClassInstanceToMap: false, // false, by default.
+}
+
+const unmarshallOptions = {
+  // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
+  wrapNumbers: false, // false, by default.
+}
+
+const translateConfig = { marshallOptions, unmarshallOptions }
+
+// Create the DynamoDB Document client.
+export const ddbDocClient = DynamoDBDocumentClient.from(ddbClient, translateConfig)
 
 // Delay helper
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
-
-export const DocumentClient2 = new AWS.DynamoDB.DocumentClient({
-  region: 'us-east-1',
-  credentials: new AWS.SharedIniFileCredentials({ profile: '' }),
-  // convertEmptyValues: false
-})

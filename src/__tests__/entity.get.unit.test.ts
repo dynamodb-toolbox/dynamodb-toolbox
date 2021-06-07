@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -144,7 +144,7 @@ describe('get',()=>{
 
   it('fails on invalid capacity option', () => {
     // ts-expect-error
-    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
+    expect(() => TestEntity.getParams({ pk: 'x', sk: 'y' }, { capacity: 'test' } as any))
       .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
@@ -162,7 +162,7 @@ describe('get',()=>{
   it('sets consistent and capacity options', () => {
     let { TableName, Key, ConsistentRead, ReturnConsumedCapacity } = TestEntity.getParams(
       { pk: 'x', sk: 'y' },
-      { consistent: true, capacity: 'none' }
+      { consistent: true, capacity: 'none' } as any
     )
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'x', sk: 'y' })

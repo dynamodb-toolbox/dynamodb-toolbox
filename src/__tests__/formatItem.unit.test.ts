@@ -1,6 +1,5 @@
 import formatItem from '../lib/formatItem'
-
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 // Require Table and Entity classes
 import Table from '../classes/Table'
@@ -59,13 +58,13 @@ describe('formatItem', () => {
   })
 
   it('formats item with set (alias)', () => {
-    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ set: DocumentClient.createSet([1,2,3]) })
-    expect(result).toEqual({ set_alias: [1,2,3] })
+    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ set: new Set([1,2,3]) })
+    expect(result).toEqual({ set_alias: new Set([1,2,3]) })
   })
 
   it('formats item with set (map)', () => {
-    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ set2: DocumentClient.createSet([1,2,3]) })
-    expect(result).toEqual({ set_alias2: [1,2,3] })
+    let result = formatItem(DocumentClient)(DefaultTable.User.schema.attributes,DefaultTable.User.linked,{ set2: new Set([1,2,3]) })
+    expect(result).toEqual({ set_alias2: new Set([1,2,3]) })
   })
 
   it('formats item with linked fields', () => {
