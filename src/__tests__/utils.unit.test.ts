@@ -1,4 +1,4 @@
-import { toBool, hasValue, error } from '../lib/utils'
+import { toBool, hasValue, error, typeOf, hasSameTypes } from '../lib/utils'
 
 describe('utility functions',()=>{
 
@@ -26,5 +26,45 @@ describe('utility functions',()=>{
 
   test('error', () => {
     expect(() => { error('test error') }).toThrow('test error')
+  })
+
+  describe('typeOf', () => {
+    it('detects null type', () => {
+      expect(typeOf(null)).toBe('null')
+    })
+
+    it('detects binary type', () => {
+      expect(typeOf(new Int32Array())).toBe('Binary')
+    })
+
+    it('detects string type', () => {
+      expect(typeOf('str')).toBe('String')
+    })
+
+    it('detects object type', () => {
+      expect(typeOf(Object.create(null))).toBe('Object')
+    })
+
+    it('detects undefined type', () => {
+      expect(typeOf()).toBe('undefined')
+    })
+  })
+
+  describe('hasSameType', () => {
+    it('should have same types for empty array', () => {
+      expect(hasSameTypes([])).toBeTruthy()
+    })
+
+    it('should have same types for one element array', () => {
+      expect(hasSameTypes([''])).toBeTruthy()
+    })
+
+    it('should have same types for all numbers array', () => {
+      expect(hasSameTypes([1, 2])).toBeTruthy()
+    })
+
+    it('should have different types for string/numbers array', () => {
+      expect(hasSameTypes([1, '2'])).toBeFalsy()
+    })
   })
 })
