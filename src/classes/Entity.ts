@@ -50,7 +50,6 @@ import parseProjections, {
 
 // Import error handlers
 import { error, transformAttr, isEmpty } from '../lib/utils'
-import { Document } from 'aws-sdk/clients/textract'
 
 export type SchemaType =
   | string
