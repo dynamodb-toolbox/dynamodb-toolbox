@@ -63,7 +63,7 @@ export default (DocumentClient: DynamoDBDocumentClient) => (
           hasSameTypes(value)
           ? new Set(value)
           : error(
-              `'${field}' must be a valid set (array) containing only ${mapping.setType} types`
+              `'${field}' must be a valid set (array) containing only ${mapping.setType ?? typeOf(value[0]).toLowerCase()} types`
             )
       } else if (mapping.coerce) {
         const arrayVal = String(value)

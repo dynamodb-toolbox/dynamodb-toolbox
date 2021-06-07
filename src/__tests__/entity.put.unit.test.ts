@@ -253,7 +253,7 @@ describe('put',()=>{
     })).toThrow(`'test_map' must be a map (object)`)
   })
 
-  it.skip('fails when set contains different types', () => {
+  it('fails when set contains different types', () => {
     expect(() => TestEntity.putParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
@@ -261,15 +261,15 @@ describe('put',()=>{
     })).toThrow(`'test_string_set_type' must be a valid set (array) containing only string types`)
   })
 
-  it.skip('fails when set contains multiple types', () => {
+  it('fails when set contains multiple types', () => {
     expect(() => TestEntity.putParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set': ['test',1]
-    })).toThrow(`String Set contains Number value`)
+    })).toThrow(`'test_string_set' must be a valid set (array) containing only string types`)
   })
 
-  it.skip('fails when set coerces array and doesn\'t match type', () => {
+  it('fails when set coerces array and doesn\'t match type', () => {
     expect(() => TestEntity.putParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
@@ -277,17 +277,17 @@ describe('put',()=>{
     })).toThrow(`'test_number_set_type_coerce' must be a valid set (array) of type number`)
   })
 
-  it.skip('coerces array into set', () => {
+  it('coerces array into set', () => {
     let { Item } = TestEntity.putParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set_type_coerce': "1,2,3"
     })
     // @ts-ignore    
-    expect(Item['test_string_set_type_coerce'].values).toEqual(['1','2','3'])
+    expect(Item['test_string_set_type_coerce']).toEqual(new Set(['1','2','3']))
   })
 
-  it.skip('fails when set doesn\'t contain array with no coercion', () => {
+  it('fails when set doesn\'t contain array with no coercion', () => {
     expect(() => TestEntity.putParams({
       'pk': 'test-pk',
       'sk': 'test-sk',
