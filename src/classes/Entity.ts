@@ -22,11 +22,12 @@ import { DynamoDBKeyTypes, DynamoDBTypes, QueryOptions, ScanOptions, TableType }
 export interface EntityConstructor<
   EntityTable extends TableType | undefined = undefined,
   Name extends string = string,
+  AutoExecute extends boolean = true,
+  AutoParse extends boolean = true,
+  Timestamps extends boolean = true,
   CreatedAlias extends string = 'created',
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
-  AutoExecute extends boolean = true,
-  AutoParse extends boolean = true,
   ReadonlyAttributeDefinitions extends PreventKeys<
     AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
     CreatedAlias | ModifiedAlias | TypeAlias
@@ -34,7 +35,7 @@ export interface EntityConstructor<
 > {
   table?: EntityTable
   name: Name
-  timestamps?: boolean
+  timestamps?: Timestamps
   created?: string
   modified?: string
   createdAlias?: CreatedAlias
@@ -128,10 +129,8 @@ type InferKeyAttribute<
   KeyType extends 'partitionKey' | 'sortKey'
 > = O.SelectKeys<Definitions, Record<KeyType, true>>
 
-type InferMappedAttributes<
-  Definitions extends AttributeDefinitions,
-  AttributeName extends A.Key
-> = O.SelectKeys<Definitions, [AttributeName, any, any?]>
+type InferMappedAttributes<Definitions extends AttributeDefinitions, AttributeName extends A.Key> =
+  O.SelectKeys<Definitions, [AttributeName, any, any?]>
 
 interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   aliases: Attributes
@@ -149,10 +148,13 @@ interface ParsedAttributes<Attributes extends A.Key = A.Key> {
 
 type ParseAttributes<
   Definitions extends AttributeDefinitions,
+  Timestamps extends boolean,
   CreatedAlias extends string,
   ModifiedAlias extends string,
   TypeAlias extends string,
-  Aliases extends string = CreatedAlias | ModifiedAlias | TypeAlias,
+  Aliases extends string =
+    | (Timestamps extends true ? CreatedAlias | ModifiedAlias : never)
+    | TypeAlias,
   Default extends A.Key =
     | O.SelectKeys<Definitions, { default: any } | [any, any, { default: any }]>
     | Aliases,
@@ -163,12 +165,12 @@ type ParseAttributes<
   KeyAttributes extends A.Key = PK | PKMappedAttribute | SK | SKMappedAttribute,
   AlwaysAttributes extends A.Key = Exclude<
     | O.SelectKeys<Definitions, { required: 'always' } | [any, any, { required: 'always' }]>
-    | ModifiedAlias,
+    | (Timestamps extends true ? ModifiedAlias : never),
     KeyAttributes
   >,
   RequiredAttributes extends A.Key = Exclude<
     | O.SelectKeys<Definitions, { required: true } | [any, any, { required: true }]>
-    | CreatedAlias
+    | (Timestamps extends true ? CreatedAlias : never)
     | TypeAlias,
     KeyAttributes
   >,
@@ -248,19 +250,17 @@ type InferItemAttributeValue<
   ? 'composite'
   : never]
 
-type InferItem<
-  Definitions extends AttributeDefinitions,
-  Attributes extends ParsedAttributes
-> = O.Optional<
-  {
-    [K in Attributes['all']]: K extends keyof Definitions
-      ? InferItemAttributeValue<Definitions, K>
-      : K extends Attributes['aliases']
-      ? string
-      : never
-  },
-  Attributes['optional']
->
+type InferItem<Definitions extends AttributeDefinitions, Attributes extends ParsedAttributes> =
+  O.Optional<
+    {
+      [K in Attributes['all']]: K extends keyof Definitions
+        ? InferItemAttributeValue<Definitions, K>
+        : K extends Attributes['aliases']
+        ? string
+        : never
+    },
+    Attributes['optional']
+  >
 
 type CompositePrimaryKeyPart<
   Item extends Record<A.Key, any>,
@@ -474,11 +474,12 @@ class Entity<
   EntityCompositeKeyOverlay extends Overlay = EntityItemOverlay,
   EntityTable extends TableType | undefined = undefined,
   Name extends string = string,
+  AutoExecute extends boolean = true,
+  AutoParse extends boolean = true,
+  Timestamps extends boolean = true,
   CreatedAlias extends string = 'created',
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
-  AutoExecute extends boolean = true,
-  AutoParse extends boolean = true,
   ReadonlyAttributeDefinitions extends PreventKeys<
     AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
     CreatedAlias | ModifiedAlias | TypeAlias
@@ -490,7 +491,13 @@ class Entity<
   Attributes extends ParsedAttributes = If<
     A.Equals<EntityItemOverlay, undefined>,
     // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
-    ParseAttributes<WritableAttributeDefinitions, CreatedAlias, ModifiedAlias, TypeAlias>,
+    ParseAttributes<
+      WritableAttributeDefinitions,
+      Timestamps,
+      CreatedAlias,
+      ModifiedAlias,
+      TypeAlias
+    >,
     ParsedAttributes<keyof EntityItemOverlay>
   >,
   Item extends Record<A.Key, any> = If<
@@ -520,11 +527,12 @@ class Entity<
     entity: EntityConstructor<
       EntityTable,
       Name,
+      AutoExecute,
+      AutoParse,
+      Timestamps,
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
-      AutoExecute,
-      AutoParse,
       ReadonlyAttributeDefinitions
     >
   ) {
@@ -777,11 +785,12 @@ class Entity<
       EntityCompositeKeyOverlay,
       EntityTable,
       Name,
+      AutoExecute,
+      AutoParse,
+      Timestamps,
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
-      AutoExecute,
-      AutoParse,
       ReadonlyAttributeDefinitions,
       WritableAttributeDefinitions,
       Attributes,

@@ -183,6 +183,17 @@ describe('Entity', () => {
       table: tableWithoutSK
     } as const)
 
+    const entNoTimestamps = new Entity({
+      name: entityName,
+      timestamps: false,
+      attributes: {
+        pk: { type: 'string', partitionKey: true, hidden: true },
+        pkMap1: ['pk', 0],
+        pkMap2: ['pk', 1]
+      },
+      table: tableWithoutSK
+    } as const)
+
     type ExpectedItem = {
       created: string
       modified: string
@@ -254,6 +265,18 @@ describe('Entity', () => {
         type TestGetRawResponse = A.Equals<GetRawResponse, DocumentClientType.GetItemOutput>
         const testGetRawResponse: TestGetRawResponse = 1
         testGetRawResponse
+      })
+
+      it('contains no timestamp', () => {
+        const item = { pk }
+        const getPromise = () => entNoTimestamps.get(item)
+        type GetResponse = C.PromiseOf<F.Return<typeof getPromise>>['Item']
+        type TestGetResponse = A.Equals<
+          GetResponse,
+          Omit<ExpectedItem, 'created' | 'modified'> | undefined
+        >
+        const testGetResponse: TestGetResponse = 1
+        testGetResponse
       })
 
       it('throws when primary key is incomplete', () => {
@@ -355,6 +378,18 @@ describe('Entity', () => {
         testDeleteRawResponse
       })
 
+      it('contains no timestamp', () => {
+        const item = { pk }
+        const deletePromise = () => entNoTimestamps.delete(item, { returnValues: 'ALL_OLD' })
+        type DeleteResponse = C.PromiseOf<F.Return<typeof deletePromise>>['Attributes']
+        type TestDeleteResponse = A.Equals<
+          DeleteResponse,
+          Omit<ExpectedItem, 'created' | 'modified'> | undefined
+        >
+        const testDeleteResponse: TestDeleteResponse = 1
+        testDeleteResponse
+      })
+
       it('throws when primary key is incomplete', () => {
         // @ts-expect-error
         expect(() => ent.deleteParams({})).toThrow()
@@ -451,6 +486,18 @@ describe('Entity', () => {
         type TestPutRawResponse = A.Equals<PutRawResponse, DocumentClientType.PutItemOutput>
         const testPutRawResponse: TestPutRawResponse = 1
         testPutRawResponse
+      })
+
+      it('contains no timestamp', () => {
+        const item = { pk }
+        const putPromise = () => entNoTimestamps.put(item, { returnValues: 'ALL_OLD' })
+        type PutResponse = C.PromiseOf<F.Return<typeof putPromise>>['Attributes']
+        type TestPutResponse = A.Equals<
+          PutResponse,
+          Omit<ExpectedItem, 'created' | 'modified'> | undefined
+        >
+        const testPutResponse: TestPutResponse = 1
+        testPutResponse
       })
 
       it('throws when primary key is incomplete', () => {
@@ -554,6 +601,18 @@ describe('Entity', () => {
         >
         const testUpdateRawResponse: TestUpdateRawResponse = 1
         testUpdateRawResponse
+      })
+
+      it('contains no timestamp', () => {
+        const item = { pk }
+        const updatePromise = () => entNoTimestamps.update(item, { returnValues: 'ALL_NEW' })
+        type UpdateItem = C.PromiseOf<F.Return<typeof updatePromise>>['Attributes']
+        type TestUpdateItem = A.Equals<
+          UpdateItem,
+          Omit<ExpectedItem, 'created' | 'modified'> | undefined
+        >
+        const testUpdateItem: TestUpdateItem = 1
+        testUpdateItem
       })
 
       it('throws when primary key is incomplete', () => {
