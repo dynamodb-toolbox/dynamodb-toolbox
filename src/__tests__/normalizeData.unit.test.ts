@@ -19,7 +19,7 @@ let DefaultTable = new Table({
 DefaultTable.entities = new Entity({
   name: 'User',
   attributes: {
-    pk: { type: 'string', partitionKey: true },
+    id: { type: 'string', partitionKey: true },
     sk: { type: 'string', sortKey: true },
     set: { type: 'set', setType: 'string', alias: 'set_alias' },
     set_alias2: { type: 'set', setType: 'string', map: 'set2' },
@@ -41,7 +41,7 @@ describe('normalizeData', () => {
 
   it('converts entity input to table attributes', async () => {
     let result = normalizeData(DocumentClient)(attributes,linked,{
-      pk: 'test',
+      id: 'test',
       set_alias: ['1','2','3'],
       number: 1,
       test: { test: true },
@@ -64,7 +64,7 @@ describe('normalizeData', () => {
 
   it('filter out non-mapped fields', async () => {
     let result = normalizeData(DocumentClient)(attributes,linked,{
-      pk: 'test',
+      id: 'test',
       $remove: 'testx',
       notAField: 'test123'
     },true)
@@ -77,7 +77,7 @@ describe('normalizeData', () => {
   it('fails on non-mapped fields', async () => {
     expect(() => {
       normalizeData(DocumentClient)(attributes,linked,{
-        pk: 'test',
+        id: 'test',
         $remove: 'testx',
         notAField: 'test123'
       })
