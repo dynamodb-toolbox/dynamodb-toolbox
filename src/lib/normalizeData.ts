@@ -87,7 +87,7 @@ export default (DocumentClient: DocumentClient) => (schema:any,linked:any,data:a
     const field = (schema[attr] && schema[attr].map) || attr
 
     if (_data[field] !== undefined) return acc // if value exists, let override
-    let values = linked[attr].map((f:any) => {
+    let values = linked[attr].map((unmappedF: any) =>  schema[unmappedF].map ?? unmappedF).map((f:any) => {
       if (_data[f] === undefined) { return null }
       return transformAttr(schema[f],validateType(schema[f],f,_data[f]),_data)
     }).filter((x:any) => x !== null)    

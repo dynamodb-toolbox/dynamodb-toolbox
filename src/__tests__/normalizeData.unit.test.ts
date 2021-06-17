@@ -12,6 +12,9 @@ let DefaultTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
+  indexes: {
+    gs1: {partitionKey: 'gs1pk', sortKey: 'gs1sk'}
+  },
   DocumentClient
 })
 
@@ -19,7 +22,7 @@ let DefaultTable = new Table({
 DefaultTable.entities = new Entity({
   name: 'User',
   attributes: {
-    id: { type: 'string', partitionKey: true },
+    id: ['gs1sk', 0, { type: 'string', partitionKey: true }],
     sk: { type: 'string', sortKey: true },
     set: { type: 'set', setType: 'string', alias: 'set_alias' },
     set_alias2: { type: 'set', setType: 'string', map: 'set2' },
@@ -28,7 +31,10 @@ DefaultTable.entities = new Entity({
     list_alias2: { type: 'list', map: 'list2' },
     test: 'map',
     linked1: ['sk',0, { save:true }],
-    linked2: ['sk',1]
+    linked2: ['sk',1],
+    gs1pk: { type: 'string', partitionKey: 'gs1'},
+    gs1sk: {type: 'string', sortKey: 'gs1'},
+    gs1sk2ndPart: ['gs1sk', 1, 'string']
   }
 })
 
@@ -40,11 +46,11 @@ const linked = DefaultTable.User.linked
 describe('normalizeData', () => {
 
   it('converts entity input to table attributes', async () => {
-    let result = normalizeData(DocumentClient)(attributes,linked,{
+    let result = normalizeData(DocumentClient)(attributes, linked, {
       id: 'test',
       set_alias: ['1','2','3'],
       number: 1,
-      test: { test: true },
+      test: {test: true},
       linked1: 'test1',
       linked2: 'test2',
       $remove: 'testx'
@@ -76,7 +82,7 @@ describe('normalizeData', () => {
 
   it('fails on non-mapped fields', async () => {
     expect(() => {
-      normalizeData(DocumentClient)(attributes,linked,{
+      normalizeData(DocumentClient)(attributes, linked, {
         id: 'test',
         $remove: 'testx',
         notAField: 'test123'
@@ -84,5 +90,34 @@ describe('normalizeData', () => {
     }).toThrow(`Field 'notAField' does not have a mapping or alias`)
 
   })
+
+  it('converts entity input to table attributes when primary key is also a part of a sort key of a global index', async () => {
+    let result = normalizeData(DocumentClient)(attributes, linked, {
+      id: 'test',
+      gs1pk: "test-gs1-pk",
+      set_alias: ['1', '2', '3'],
+      number: 1,
+      test: {test: true},
+      linked1: 'test1',
+      linked2: 'test2',
+      gs1sk2ndPart: "part",
+      $remove: 'testx'
+    })
+
+    expect(result).toEqual({
+      sk: 'test1#test2',
+      gs1pk: "test-gs1-pk",
+      gs1sk: "test#part",
+      gs1sk2ndPart: "part",
+      pk: 'test',
+      set: ['1', '2', '3'],
+      number: 1,
+      test: {test: true},
+      linked1: 'test1',
+      linked2: 'test2',
+      $remove: 'testx'
+    })
+  })
+
 
 })
