@@ -47,7 +47,7 @@ export interface EntityAttributeConfig {
   type?: DynamoDBTypes
   default?: any | ((data: object) => any)
   dependsOn?: string | string[]
-  transform?: (value: any, data: {}) => { resp: any }
+  transform?: (value: any, data: {}) => any
   coerce?: boolean
   save?: boolean
   onUpdate?: boolean
