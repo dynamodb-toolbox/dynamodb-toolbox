@@ -8,7 +8,7 @@
 import { A, O } from 'ts-toolbelt'
 
 import parseEntityAttributes from './parseEntityAttributes'
-import { TableType } from '../classes/Table'
+import { TableDef } from '../classes/Table'
 import { AttributeDefinitions, EntityConstructor } from '../classes/Entity'
 import { error, PreventKeys } from './utils'
 
@@ -33,7 +33,7 @@ export type ParsedEntity = ReturnType<typeof parseEntity>
 
 // Parse entity
 export function parseEntity<
-  EntityTable extends TableType | undefined,
+  EntityTable extends TableDef | undefined,
   Name extends string,
   AutoExecute extends boolean,
   AutoParse extends boolean,

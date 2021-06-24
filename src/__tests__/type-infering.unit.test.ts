@@ -3,6 +3,15 @@ import { DocumentClient as DocumentClientType } from 'aws-sdk/clients/dynamodb'
 import MockDate from 'mockdate'
 import { A, C, F, O } from 'ts-toolbelt'
 
+import {
+  GetOptions,
+  QueryOptions,
+  PutOptions,
+  DeleteOptions,
+  UpdateOptions,
+  ConditionsOrFilters
+} from 'classes/Entity'
+
 import { Table, Entity } from '../index'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
@@ -17,6 +26,48 @@ const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
 }
 
 const DocumentClient = new DynamoDB.DocumentClient()
+
+type ExpectedReadOpts<Attributes extends A.Key = A.Key> = Partial<{
+  capacity: string
+  execute: boolean
+  parse: boolean
+  attributes: Attributes[]
+  consistent: boolean
+}>
+
+type ExpectedGetOpts<Attributes extends A.Key = A.Key> = Partial<
+  ExpectedReadOpts<Attributes> & { include: string[] }
+>
+
+type ExpectedQueryOpts<Attributes extends A.Key = A.Key> = Partial<
+  ExpectedReadOpts<Attributes> & {
+    index: string
+    limit: number
+    reverse: boolean
+    entity: string
+    select: DocumentClientType.Select
+    filters: ConditionsOrFilters<Attributes>
+    eq: string | number
+    lt: string | number
+    lte: string | number
+    gt: string | number
+    gte: string | number
+    between: [string, string] | [number, number]
+    beginsWith: string
+    startKey: {}
+  }
+>
+
+type ExpectedWriteOpts<Attributes extends A.Key = A.Key, ReturnValues extends string = string> =
+  Partial<{
+    capacity: string
+    execute: boolean
+    parse: boolean
+    conditions: ConditionsOrFilters<Attributes>
+    metrics: string
+    include: string[]
+    returnValues: ReturnValues
+  }>
 
 describe('Entity', () => {
   const mockedDate = '2020-11-22T23:00:00.000Z'
@@ -211,6 +262,11 @@ describe('Entity', () => {
         type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
         const testGetItem: TestGetItem = 1
         testGetItem
+
+        type GetItemOptions = GetOptions<typeof ent>
+        type TestGetItemOptions = A.Equals<GetItemOptions, ExpectedGetOpts<keyof ExpectedItem>>
+        const testGetItemOptions: TestGetItemOptions = 1
+        testGetItemOptions
       })
 
       it('no auto-execution', () => {
@@ -314,6 +370,14 @@ describe('Entity', () => {
         type TestDeleteItem2 = A.Equals<DeleteItem2, ExpectedItem | undefined>
         const testDeleteItem2: TestDeleteItem2 = 1
         testDeleteItem2
+
+        type DeleteItemOptions = DeleteOptions<typeof ent>
+        type TestDeleteItemOptions = A.Equals<
+          DeleteItemOptions,
+          ExpectedWriteOpts<keyof ExpectedItem, 'NONE' | 'ALL_OLD'>
+        >
+        const testDeleteItemOptions: TestDeleteItemOptions = 1
+        testDeleteItemOptions
       })
 
       it('no auto-execution', () => {
@@ -432,6 +496,14 @@ describe('Entity', () => {
         type TestPutItem2 = A.Equals<PutItem2, ExpectedItem | undefined>
         const testPutItem2: TestPutItem2 = 1
         testPutItem2
+
+        type PutItemOptions = PutOptions<typeof ent>
+        type TestPutItemOptions = A.Equals<
+          PutItemOptions,
+          ExpectedWriteOpts<keyof ExpectedItem, 'NONE' | 'ALL_OLD'>
+        >
+        const testPutItemOptions: TestPutItemOptions = 1
+        testPutItemOptions
       })
 
       it('no auto-execution', () => {
@@ -539,6 +611,17 @@ describe('Entity', () => {
         type TestUpdateItem2 = A.Equals<UpdateItem2, ExpectedItem | undefined>
         const testUpdateItem2: TestUpdateItem2 = 1
         testUpdateItem2
+
+        type UpdateItemOptions = UpdateOptions<typeof ent>
+        type TestUpdateItemOptions = A.Equals<
+          UpdateItemOptions,
+          ExpectedWriteOpts<
+            keyof ExpectedItem,
+            'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
+          >
+        >
+        const testUpdateItemOptions: TestUpdateItemOptions = 1
+        testUpdateItemOptions
       })
 
       it('no auto-execution', () => {
@@ -635,6 +718,24 @@ describe('Entity', () => {
       ).toThrow()
       // @ts-expect-error
       ;() => ent.update({ pk }, { conditions: { attr: 'sk', exists: true } })
+    })
+
+    describe('query method', () => {
+      it('nominal case', () => {
+        const queryPromise = () => ent.query('pk')
+        type QueryItems = C.PromiseOf<F.Return<typeof queryPromise>>['Items']
+        type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
+        const testQueryItems: TestQueryItems = 1
+        testQueryItems
+
+        type QueryItemsOptions = QueryOptions<typeof ent>
+        type TestQueryItemsOptions = A.Equals<
+          QueryItemsOptions,
+          ExpectedQueryOpts<keyof ExpectedItem>
+        >
+        const testQueryItemsOptions: TestQueryItemsOptions = 1
+        testQueryItemsOptions
+      })
     })
   })
 
@@ -747,6 +848,11 @@ describe('Entity', () => {
         type TestGetItem4 = A.Equals<GetItem4, ExpectedItem | undefined>
         const testGetItem4: TestGetItem4 = 1
         testGetItem4
+
+        type GetItemOptions = GetOptions<typeof ent>
+        type TestGetItemOptions = A.Equals<GetItemOptions, ExpectedGetOpts<keyof ExpectedItem>>
+        const testGetItemOptions: TestGetItemOptions = 1
+        testGetItemOptions
       })
 
       it('filtered attributes', () => {
@@ -837,6 +943,14 @@ describe('Entity', () => {
         type TestDeleteItem4 = A.Equals<DeleteItem4, ExpectedItem | undefined>
         const testDeleteItem4: TestDeleteItem4 = 1
         testDeleteItem4
+
+        type DeleteItemOptions = DeleteOptions<typeof ent>
+        type TestDeleteItemOptions = A.Equals<
+          DeleteItemOptions,
+          ExpectedWriteOpts<keyof ExpectedItem, 'NONE' | 'ALL_OLD'>
+        >
+        const testDeleteItemOptions: TestDeleteItemOptions = 1
+        testDeleteItemOptions
       })
 
       it('throws when primary key is incomplete', () => {
@@ -935,6 +1049,14 @@ describe('Entity', () => {
         type TestPutItem6 = A.Equals<PutItem6, ExpectedItem | undefined>
         const testPutItem6: TestPutItem6 = 1
         testPutItem6
+
+        type PutItemOptions = PutOptions<typeof ent>
+        type TestPutItemOptions = A.Equals<
+          PutItemOptions,
+          ExpectedWriteOpts<keyof ExpectedItem, 'NONE' | 'ALL_OLD'>
+        >
+        const testPutItemOptions: TestPutItemOptions = 1
+        testPutItemOptions
       })
 
       it('throws when primary key is incomplete', () => {
@@ -1070,6 +1192,17 @@ describe('Entity', () => {
         type TestUpdateItem6 = A.Equals<UpdateItem6, ExpectedItem | undefined>
         const testUpdateItem6: TestUpdateItem6 = 1
         testUpdateItem6
+
+        type UpdateItemOptions = UpdateOptions<typeof ent>
+        type TestUpdateItemOptions = A.Equals<
+          UpdateItemOptions,
+          ExpectedWriteOpts<
+            keyof ExpectedItem,
+            'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
+          >
+        >
+        const testUpdateItemOptions: TestUpdateItemOptions = 1
+        testUpdateItemOptions
       })
 
       it('attribute deletion nominal case', () => {
@@ -1223,6 +1356,24 @@ describe('Entity', () => {
             // @ts-expect-error
             { conditions: { attr: 'incorrectAttr', exists: true } }
           )
+      })
+    })
+
+    describe('query method', () => {
+      it('nominal case', () => {
+        const queryPromise = () => ent.query('pk')
+        type QueryItems = C.PromiseOf<F.Return<typeof queryPromise>>['Items']
+        type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
+        const testQueryItems: TestQueryItems = 1
+        testQueryItems
+
+        type QueryItemsOptions = QueryOptions<typeof ent>
+        type TestQueryItemsOptions = A.Equals<
+          QueryItemsOptions,
+          ExpectedQueryOpts<keyof ExpectedItem>
+        >
+        const testQueryItemsOptions: TestQueryItemsOptions = 1
+        testQueryItemsOptions
       })
     })
   })
@@ -1612,6 +1763,14 @@ describe('Entity', () => {
           // @ts-expect-error
           ;() => ent.get(ck0, { attributes: ['pk'] })
           ;() => ent.get(ck0, { attributes: ['pk0'] })
+
+          type GetItemOptions = GetOptions<typeof ent>
+          type TestGetItemOptions = A.Equals<
+            GetItemOptions,
+            ExpectedGetOpts<keyof EntityItemOverlay>
+          >
+          const testGetItemOptions: TestGetItemOptions = 1
+          testGetItemOptions
         })
 
         it('returned Item should match EntityItemOverlay, even filtered', () => {
@@ -1708,6 +1867,14 @@ describe('Entity', () => {
           // @ts-expect-error
           ;() => ent.delete(ck0, { conditions: { attr: 'pk', exists: true } })
           ;() => ent.delete(ck0, { conditions: { attr: 'pk0', exists: true } })
+
+          type DeleteItemOptions = DeleteOptions<typeof ent>
+          type TestDeleteItemOptions = A.Equals<
+            DeleteItemOptions,
+            ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD'>
+          >
+          const testDeleteItemOptions: TestDeleteItemOptions = 1
+          testDeleteItemOptions
         })
 
         it('Attributes misses from return type if no or none returnValue option is provided', () => {
@@ -1827,6 +1994,14 @@ describe('Entity', () => {
               { conditions: { attr: 'pk', exists: true } }
             )
           ;() => ent.put({ ...ck0, num0 }, { conditions: { attr: 'pk0', exists: true } })
+
+          type PutItemOptions = PutOptions<typeof ent>
+          type TestPutItemOptions = A.Equals<
+            PutItemOptions,
+            ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD'>
+          >
+          const testPutItemOptions: TestPutItemOptions = 1
+          testPutItemOptions
         })
 
         it('Attributes misses from return type if no or none returnValue option is provided', () => {
@@ -1912,6 +2087,17 @@ describe('Entity', () => {
               { conditions: { attr: 'pk', exists: true } }
             )
           ;() => ent.update({ ...ck0, num0 }, { conditions: { attr: 'pk0', exists: true } })
+
+          type UpdateItemOptions = UpdateOptions<typeof ent>
+          type TestUpdateItemOptions = A.Equals<
+            UpdateItemOptions,
+            ExpectedWriteOpts<
+              keyof EntityItemOverlay,
+              'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
+            >
+          >
+          const testUpdateItemOptions: TestUpdateItemOptions = 1
+          testUpdateItemOptions
         })
 
         it('Attributes misses from return type if no or none returnValue option is provided', () => {
@@ -2038,6 +2224,14 @@ describe('Entity', () => {
           type TestQueryItem = A.Equals<QueryItem, EntityItemOverlay[] | undefined>
           const testQueryItem: TestQueryItem = 1
           testQueryItem
+
+          type QueryItemsOptions = QueryOptions<typeof ent>
+          type TestQueryItemsOptions = A.Equals<
+            QueryItemsOptions,
+            ExpectedQueryOpts<keyof EntityItemOverlay>
+          >
+          const testQueryItemsOptions: TestQueryItemsOptions = 1
+          testQueryItemsOptions
 
           const filteredQueryPromise = () => ent.query('pk', { attributes: ['pk0', 'sk0', 'str0'] })
           type FilteredQueryItem = C.PromiseOf<F.Return<typeof filteredQueryPromise>>['Items']

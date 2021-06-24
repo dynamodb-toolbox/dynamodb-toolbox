@@ -10,7 +10,7 @@
 import DynamoDb, { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { A, O } from 'ts-toolbelt'
 
-import Entity, { ReadOptions, ConditionsOrFilters } from './Entity'
+import Entity, { AttributesReadOptions, ConditionsOrFilters } from './Entity'
 import { parseTable, ParsedTable } from '../lib/parseTable'
 import parseFilters from '../lib/expressionBuilder'
 import validateTypes from '../lib/validateTypes'
@@ -69,13 +69,13 @@ export interface TableIndexes {
   [index: string]: { partitionKey?: string; sortKey?: string }
 }
 
-export type QueryOptions<
+export type AttributesQueryOptions<
   Attributes extends A.Key = A.Key,
   FiltersAttributes extends A.Key = Attributes,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = O.Partial<
-  ReadOptions<Attributes, Execute, Parse> & {
+  AttributesReadOptions<Attributes, Execute, Parse> & {
     index: string
     limit: number
     reverse: boolean
@@ -121,7 +121,7 @@ interface batchGetOptions {
 
 interface batchGetParamsMeta {
   payload: any
-  Tables: { [key: string]: TableType }
+  Tables: { [key: string]: TableDef }
   EntityProjections: { [key: string]: any }
   TableProjections: { [key: string]: string[] }
 }
@@ -412,8 +412,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                 mappings: {
                   [entity.name]: Object.assign(
                     {
-                      [entity.schema.attributes[attr].alias || attr]: entity.schema.attributes[attr]
-                        .type
+                      [entity.schema.attributes[attr].alias || attr]:
+                        entity.schema.attributes[attr].type
                     },
                     // Add setType if type 'set'
                     entity.schema.attributes[attr].type === 'set'
@@ -465,7 +465,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     Parse extends boolean | undefined = undefined
   >(
     pk: any,
-    options: QueryOptions<Attributes, FilteredAttributes, Execute, Parse> = {},
+    options: AttributesQueryOptions<Attributes, FilteredAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.QueryInput> = {}
   ): Promise<
     A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>> & {
@@ -551,7 +551,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     Parse extends boolean | undefined = undefined
   >(
     pk: any,
-    options: QueryOptions<Attributes, FilteredAttributes, Execute, Parse> = {},
+    options: AttributesQueryOptions<Attributes, FilteredAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.QueryInput> = {},
     projections = false
     // 🔨 TOIMPROVE: Type queryParams return
@@ -1051,7 +1051,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
               return Object.assign(acc, {
                 // Map over the items
                 [(Tables[table] && Tables[table].alias) || table]: result.Responses[table].map(
-                  (item: TableType) => {
+                  (item: TableDef) => {
                     // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
                     if (
                       Tables[table] &&
@@ -1617,4 +1617,4 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 // Export the Table class
 export default Table
 
-export type TableType = Table<string, A.Key, A.Key | null>
+export type TableDef = Table<string, A.Key, A.Key | null>
