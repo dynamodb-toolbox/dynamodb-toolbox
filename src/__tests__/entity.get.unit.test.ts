@@ -45,7 +45,6 @@ describe('get', () => {
   })
 
   it('gets the key from inputs (async)', async () => {
-    // @ts-expect-error 💥 TODO: Correct interface ?
     const { TableName, Key } = await TestEntity.get({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
@@ -63,7 +62,6 @@ describe('get', () => {
   })
 
   it('filters out extra data (async)', async () => {
-    // @ts-expect-error 💥 TODO: Correct interface ?
     let { TableName, Key } = await TestEntity.get({
       email: 'test-pk',
       sort: 'test-sk',
@@ -82,7 +80,7 @@ describe('get', () => {
   })
 
   it('coerces key values to correct types (async)', async () => {
-    // @ts-expect-error 💥 TODO: Correct interface ? + Support coerce keyword
+    // @ts-expect-error 💥 TODO: Support coerce keyword
     let { TableName, Key } = await TestEntity.get({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })

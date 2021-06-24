@@ -38,6 +38,8 @@ export function parseEntity<
   CreatedAlias extends string,
   ModifiedAlias extends string,
   TypeAlias extends string,
+  AutoExecute extends boolean,
+  AutoParse extends boolean,
   ReadonlyAttributeDefinitions extends PreventKeys<
     AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
     CreatedAlias | ModifiedAlias | TypeAlias
@@ -49,6 +51,8 @@ export function parseEntity<
     CreatedAlias,
     ModifiedAlias,
     TypeAlias,
+    AutoExecute,
+    AutoParse,
     ReadonlyAttributeDefinitions
   >
 ) {

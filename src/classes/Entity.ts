@@ -25,6 +25,8 @@ export interface EntityConstructor<
   CreatedAlias extends string = 'created',
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
+  AutoExecute extends boolean = true,
+  AutoParse extends boolean = true,
   ReadonlyAttributeDefinitions extends PreventKeys<
     AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
     CreatedAlias | ModifiedAlias | TypeAlias
@@ -39,8 +41,8 @@ export interface EntityConstructor<
   modifiedAlias?: ModifiedAlias
   typeAlias?: TypeAlias
   attributes: ReadonlyAttributeDefinitions
-  autoExecute?: boolean
-  autoParse?: boolean
+  autoExecute?: AutoExecute
+  autoParse?: AutoParse
 }
 
 type KeyAttributeDefinition = {
@@ -218,7 +220,12 @@ type InferItemAttributeValue<
   Definition = Definitions[AttributeName]
 > = {
   dynamoDbType: Definition extends DynamoDBTypes ? FromDynamoData<Definition> : never
-  pure: Definition extends PartitionKeyDefinition | GSIPartitionKeyDefinition | SortKeyDefinition | GSISortKeyDefinition | PureAttributeDefinition
+  pure: Definition extends
+    | PartitionKeyDefinition
+    | GSIPartitionKeyDefinition
+    | SortKeyDefinition
+    | GSISortKeyDefinition
+    | PureAttributeDefinition
     ? Definition['type'] extends DynamoDBTypes
       ? FromDynamoData<A.Cast<Definition['type'], DynamoDBTypes>>
       : any
@@ -230,7 +237,12 @@ type InferItemAttributeValue<
     : never
 }[Definition extends DynamoDBTypes
   ? 'dynamoDbType'
-  : Definition extends PartitionKeyDefinition | GSIPartitionKeyDefinition | SortKeyDefinition | GSISortKeyDefinition | PureAttributeDefinition
+  : Definition extends
+      | PartitionKeyDefinition
+      | GSIPartitionKeyDefinition
+      | SortKeyDefinition
+      | GSISortKeyDefinition
+      | PureAttributeDefinition
   ? 'pure'
   : Definition extends CompositeAttributeDefinition
   ? 'composite'
@@ -305,24 +317,37 @@ export type ConditionsOrFilters<Attributes extends A.Key = A.Key> =
   | ConditionOrFilter<Attributes>
   | ConditionsOrFilters<Attributes>[]
 
-type BaseOptions = {
+type BaseOptions<
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = {
   capacity: DocumentClient.ReturnConsumedCapacity
-  execute: boolean
-  parse: boolean
+  execute: Execute
+  parse: Parse
 }
 
-export type ReadOptions<Attributes extends A.Key = A.Key> = BaseOptions & {
-  // 💥 TODO: Support simplate Attribute & Projection Attributes
+export type ReadOptions<
+  Attributes extends A.Key = A.Key,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = BaseOptions<Execute, Parse> & {
+  // 💥 TODO: Support simple Attribute & Projection Attributes
   // previously: attributes: string | ProjectionAttributeType | (string | ProjectionAttributeType)[]
   attributes: Attributes[]
   consistent: boolean
 }
 
-type GetOptions<Attributes extends A.Key = A.Key> = O.Partial<
-  ReadOptions<Attributes> & { include: string[] }
->
+type GetOptions<
+  Attributes extends A.Key = A.Key,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = O.Partial<ReadOptions<Attributes, Execute, Parse> & { include: string[] }>
 
-type WriteOptions<Attributes extends A.Key = A.Key> = BaseOptions & {
+type WriteOptions<
+  Attributes extends A.Key = A.Key,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = BaseOptions<Execute, Parse> & {
   conditions: ConditionsOrFilters<Attributes>
   metrics: DocumentClient.ReturnItemCollectionMetrics
   include: string[]
@@ -332,8 +357,10 @@ type PutOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
 type PutOptions<
   Attributes extends A.Key = A.Key,
-  ReturnValues extends PutOptionsReturnValues = PutOptionsReturnValues
-> = O.Partial<WriteOptions<Attributes> & { returnValues: ReturnValues }>
+  ReturnValues extends PutOptionsReturnValues = PutOptionsReturnValues,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = O.Partial<WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 type PutItem<
   MethodItemOverlay extends Overlay,
@@ -364,8 +391,10 @@ type UpdateOptionsReturnValues = 'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_O
 
 type UpdateOptions<
   Attributes extends A.Key = A.Key,
-  ReturnValues extends UpdateOptionsReturnValues = UpdateOptionsReturnValues
-> = O.Partial<WriteOptions<Attributes> & { returnValues: ReturnValues }>
+  ReturnValues extends UpdateOptionsReturnValues = UpdateOptionsReturnValues,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = O.Partial<WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 interface UpdateCustomParameters {
   SET: string[]
@@ -409,8 +438,10 @@ type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
 type DeleteOptions<
   Attributes extends A.Key = A.Key,
-  ReturnValues extends DeleteOptionsReturnValues = DeleteOptionsReturnValues
-> = O.Partial<WriteOptions<Attributes> & { returnValues: ReturnValues }>
+  ReturnValues extends DeleteOptionsReturnValues = DeleteOptionsReturnValues,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = O.Partial<WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
@@ -418,6 +449,24 @@ interface TransactionOptions<Attributes extends A.Key = A.Key> {
   conditions?: ConditionsOrFilters<Attributes>
   returnValues?: TransactionOptionsReturnValues
 }
+
+// Utils
+
+type ShouldExecute<Execute extends boolean | undefined, AutoExecute extends boolean> = B.Or<
+  A.Equals<Execute, true>,
+  B.And<A.Equals<Execute, undefined>, A.Equals<AutoExecute, true>>
+>
+
+export const shouldExecute = (execute: boolean | undefined, autoExecute: boolean): boolean =>
+  execute === true || (execute === undefined && autoExecute)
+
+type ShouldParse<Parse extends boolean | undefined, AutoParse extends boolean> = B.Or<
+  A.Equals<Parse, true>,
+  B.And<A.Equals<Parse, undefined>, A.Equals<AutoParse, true>>
+>
+
+export const shouldParse = (parse: boolean | undefined, autoParse: boolean): boolean =>
+  parse === true || (parse === undefined && autoParse)
 
 // Declare Entity class
 class Entity<
@@ -428,6 +477,8 @@ class Entity<
   CreatedAlias extends string = 'created',
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
+  AutoExecute extends boolean = true,
+  AutoParse extends boolean = true,
   ReadonlyAttributeDefinitions extends PreventKeys<
     AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
     CreatedAlias | ModifiedAlias | TypeAlias
@@ -472,6 +523,8 @@ class Entity<
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
+      AutoExecute,
+      AutoParse,
       ReadonlyAttributeDefinitions
     >
   ) {
@@ -631,51 +684,59 @@ class Entity<
       Attributes['all'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: GetOptions<ResponseAttributes> = {},
+    options: GetOptions<ResponseAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.GetItemInput> = {}
   ): Promise<
-    A.Compute<
-      O.Update<
+    If<
+      B.Not<ShouldExecute<Execute, AutoExecute>>,
+      DocumentClient.GetItemInput,
+      If<
+        B.Not<ShouldParse<Parse, AutoParse>>,
         DocumentClient.GetItemOutput,
-        'Item',
-        FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>
+        A.Compute<
+          O.Update<
+            DocumentClient.GetItemOutput,
+            'Item',
+            FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>
+          >
+        >
       >
     >
   > {
-    // Generate the payload
-    const payload = this.getParams<
+    const getParams = this.getParams<
       MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ItemAttributes,
-      ResponseAttributes
+      ResponseAttributes,
+      Execute,
+      Parse
     >(item, options, params)
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.get(payload).promise()
+    if (!shouldExecute(options.execute, this.autoExecute)) {
+      return getParams as any
+    }
 
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        return Object.assign(
-          result,
-          result.Item
-            ? {
-                Item: this.parse(result.Item, Array.isArray(options.include) ? options.include : [])
-              }
-            : null
-        ) as any
-      } else {
-        // @ts-ignore 💥 TODO: Support parse option
-        return result
-      }
-    } else {
-      // @ts-ignore 💥 TODO: Support execute option
-      return payload
-    } // end if-else
-  } // end get
+    const output = await this.DocumentClient.get(getParams).promise()
+
+    if (!shouldParse(options.parse, this.autoParse)) {
+      return output as any
+    }
+
+    const { Item, ...restOutput } = output
+
+    if (!Item) {
+      return restOutput as any
+    }
+
+    const parsedItem = this.parse(Item, options.include)
+
+    return { Item: parsedItem, ...restOutput } as any
+  }
 
   /**
    * Generate parameters for GET batch operation
@@ -719,6 +780,8 @@ class Entity<
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
+      AutoExecute,
+      AutoParse,
       ReadonlyAttributeDefinitions,
       WritableAttributeDefinitions,
       Attributes,
@@ -765,10 +828,12 @@ class Entity<
       Attributes['all'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: GetOptions<ResponseAttributes> = {},
+    options: GetOptions<ResponseAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.GetItemInput> = {}
   ): DocumentClient.GetItemInput {
     // Extract schema and merge defaults
@@ -856,55 +921,63 @@ class Entity<
       keyof MethodItemOverlay
     >,
     ResponseAttributes extends ItemAttributes = ItemAttributes,
-    ReturnValues extends DeleteOptionsReturnValues = 'NONE'
+    ReturnValues extends DeleteOptionsReturnValues = 'NONE',
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: DeleteOptions<ResponseAttributes, ReturnValues> = {},
+    options: DeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.DeleteItemInput> = {}
   ): Promise<
     If<
-      // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-      B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-      O.Omit<DocumentClient.PutItemOutput, 'Attributes'>,
-      O.Update<
-        DocumentClient.PutItemOutput,
-        'Attributes',
-        FirstDefined<[MethodItemOverlay, EntityItemOverlay, Item]>
+      B.Not<ShouldExecute<Execute, AutoExecute>>,
+      DocumentClient.DeleteItemInput,
+      If<
+        B.Not<ShouldParse<Parse, AutoParse>>,
+        DocumentClient.DeleteItemOutput,
+        If<
+          // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
+          B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
+          O.Omit<DocumentClient.DeleteItemOutput, 'Attributes'>,
+          O.Update<
+            DocumentClient.DeleteItemOutput,
+            'Attributes',
+            FirstDefined<[MethodItemOverlay, EntityItemOverlay, Item]>
+          >
+        >
       >
     >
   > {
-    const payload = this.deleteParams<
+    const deleteParams = this.deleteParams<
       MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ItemAttributes,
-      ResponseAttributes
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse
     >(item, options, params)
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.delete(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        return Object.assign(
-          result,
-          result.Attributes
-            ? {
-                Attributes: this.parse(
-                  result.Attributes,
-                  Array.isArray(options.include) ? options.include : []
-                )
-              }
-            : null
-        ) as any
-      } else {
-        // @ts-expect-error 💥 TODO: Support parse option
-        return result
-      }
-    } else {
-      // @ts-expect-error 💥 TODO: Support execute option
-      return payload
-    } // end if-else
-  } // end delete
+    if (!shouldExecute(options.execute, this.autoExecute)) {
+      return deleteParams as any
+    }
+
+    const output = await this.DocumentClient.delete(deleteParams).promise()
+
+    if (!shouldParse(options.parse, this.autoParse)) {
+      return output as any
+    }
+
+    const { Attributes, ...restOutput } = output
+
+    if (!Attributes) {
+      return restOutput as any
+    }
+
+    const parsedAttributes = this.parse(Attributes, options.include)
+
+    return { Attributes: parsedAttributes, ...restOutput } as any
+  }
 
   /**
    * Generate parameters for DELETE batch operation
@@ -955,7 +1028,8 @@ class Entity<
       MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ItemAttributes,
-      ResponseAttributes
+      ResponseAttributes,
+      TransactionOptionsReturnValues
     >(item, options)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
@@ -982,10 +1056,13 @@ class Entity<
       Attributes['all'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ReturnValues extends DeleteOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: DeleteOptions<ResponseAttributes> = {},
+    options: DeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.DeleteItemInput> = {}
   ): DocumentClient.DeleteItemInput {
     // Extract schema and merge defaults
@@ -1089,57 +1166,65 @@ class Entity<
       keyof MethodItemOverlay
     >,
     ResponseAttributes extends ItemAttributes = ItemAttributes,
-    ReturnValues extends UpdateOptionsReturnValues = 'NONE'
+    ReturnValues extends UpdateOptionsReturnValues = 'NONE',
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: UpdateOptions<ResponseAttributes, ReturnValues> = {},
+    options: UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.UpdateItemInput> = {}
   ): Promise<
     A.Compute<
       If<
-        // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-        B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-        O.Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-        O.Update<
+        B.Not<ShouldExecute<Execute, AutoExecute>>,
+        DocumentClient.UpdateItemInput,
+        If<
+          B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
-          'Attributes',
-          FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>
+          If<
+            // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
+            B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
+            O.Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
+            O.Update<
+              DocumentClient.UpdateItemOutput,
+              'Attributes',
+              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>
+            >
+          >
         >
       >
     >
   > {
     // Generate the payload
-    const payload = this.updateParams<MethodItemOverlay, ItemAttributes, ResponseAttributes>(
-      item,
-      options,
-      params
-    )
+    const updateParams = this.updateParams<
+      MethodItemOverlay,
+      ItemAttributes,
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse
+    >(item, options, params)
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.update(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        return Object.assign(
-          result,
-          result.Attributes
-            ? {
-                Attributes: this.parse(
-                  result.Attributes,
-                  Array.isArray(options.include) ? options.include : []
-                )
-              }
-            : null
-        ) as any
-      } else {
-        // @ts-expect-error 💥 TODO: Support parse option
-        return result
-      }
-    } else {
-      // @ts-expect-error 💥 TODO: Support execute option
-      return payload
-    } // end if-else
-  } // end delete
+    if (!shouldExecute(options.execute, this.autoExecute)) {
+      return updateParams as any
+    }
+
+    const output = await this.DocumentClient.update(updateParams).promise()
+
+    if (!shouldParse(options.parse, this.autoParse)) {
+      return output as any
+    }
+
+    const { Attributes, ...restOutput } = output
+
+    if (!Attributes) {
+      return restOutput as any
+    }
+
+    const parsedAttributes = this.parse(Attributes, options.include)
+
+    return { Attributes: parsedAttributes, ...restOutput } as any
+  }
 
   /**
    * Generate parameters for UPDATE transaction operation
@@ -1172,10 +1257,12 @@ class Entity<
       error(`Invalid update transaction options: ${Object.keys(args).join(', ')}`)
 
     // Generate the update parameters
-    let payload = this.updateParams<MethodItemOverlay, ItemAttributes, ResponseAttributes>(
-      item,
-      options
-    )
+    let payload = this.updateParams<
+      MethodItemOverlay,
+      ItemAttributes,
+      ResponseAttributes,
+      TransactionOptionsReturnValues
+    >(item, options)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -1195,10 +1282,13 @@ class Entity<
       Attributes['all'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ReturnValues extends UpdateOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: UpdateOptions<ResponseAttributes> = {},
+    options: UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     {
       SET = [],
       REMOVE = [],
@@ -1529,55 +1619,62 @@ class Entity<
       keyof MethodItemOverlay
     >,
     ResponseAttributes extends ItemAttributes = ItemAttributes,
-    ReturnValues extends PutOptionsReturnValues = 'NONE'
+    ReturnValues extends PutOptionsReturnValues = 'NONE',
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: PutOptions<ResponseAttributes, ReturnValues> = {},
+    options: PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
     If<
-      // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-      B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-      O.Omit<DocumentClient.PutItemOutput, 'Attributes'>,
-      O.Update<
+      B.Not<ShouldExecute<Execute, AutoExecute>>,
+      DocumentClient.PutItemInput,
+      If<
+        B.Not<ShouldParse<Parse, AutoParse>>,
         DocumentClient.PutItemOutput,
-        'Attributes',
-        FirstDefined<[MethodItemOverlay, EntityItemOverlay, Item]>
+        // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
+        If<
+          B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
+          O.Omit<DocumentClient.PutItemOutput, 'Attributes'>,
+          O.Update<
+            DocumentClient.PutItemOutput,
+            'Attributes',
+            FirstDefined<[MethodItemOverlay, EntityItemOverlay, Item]>
+          >
+        >
       >
     >
   > {
-    // Generate the payload
-    const payload = this.putParams<MethodItemOverlay, ItemAttributes, ResponseAttributes>(
-      item,
-      options,
-      params
-    )
+    const putParams = this.putParams<
+      MethodItemOverlay,
+      ItemAttributes,
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse
+    >(item, options, params)
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.put(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        return Object.assign(
-          result,
-          result.Attributes
-            ? {
-                Attributes: this.parse(
-                  result.Attributes,
-                  Array.isArray(options.include) ? options.include : []
-                )
-              }
-            : null
-        ) as any
-      } else {
-        // @ts-expect-error 💥 TODO: Support parse option
-        return result
-      }
-    } else {
-      // @ts-expect-error 💥 TODO: Support execute option
-      return payload
-    } // end-if
-  } // end put
+    if (!shouldExecute(options.execute, this.autoExecute)) {
+      return putParams as any
+    }
+
+    const output = await this.DocumentClient.put(putParams).promise()
+
+    if (!shouldParse(options.parse, this.autoParse)) {
+      return output as any
+    }
+
+    const { Attributes, ...restOutput } = output
+
+    if (!Attributes) {
+      return output as any
+    }
+
+    const parsedAttributes = this.parse(Attributes, options.include)
+
+    return { Attributes: parsedAttributes, ...restOutput } as any
+  }
 
   /**
    * Generate parameters for PUT batch operation
@@ -1623,10 +1720,12 @@ class Entity<
       error(`Invalid put transaction options: ${Object.keys(args).join(', ')}`)
 
     // Generate the put parameters
-    let payload = this.putParams<MethodItemOverlay, ItemAttributes, ResponseAttributes>(
-      item,
-      options
-    )
+    let payload = this.putParams<
+      MethodItemOverlay,
+      ItemAttributes,
+      ResponseAttributes,
+      TransactionOptionsReturnValues
+    >(item, options)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -1646,10 +1745,13 @@ class Entity<
       Attributes['all'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ReturnValues extends PutOptionsReturnValues = 'NONE',
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: PutOptions<ResponseAttributes> = {},
+    options: PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): DocumentClient.PutItemInput {
     // Extract schema and defaults
@@ -1812,7 +1914,8 @@ class Entity<
       MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ItemAttributes,
-      ResponseAttributes
+      ResponseAttributes,
+      TransactionOptionsReturnValues
     >(item, options)
 
     // Error on missing conditions

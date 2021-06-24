@@ -45,7 +45,6 @@ describe('delete', () => {
   })
 
   it('deletes the key from inputs (async)', async () => {
-    // @ts-expect-error 💥 TODO: Fix return type
     const { TableName, Key } = await TestEntity.delete({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
@@ -63,7 +62,6 @@ describe('delete', () => {
   })
 
   it('filters out extra data (async)', async () => {
-    // @ts-expect-error 💥 TODO: Fix return type
     let { TableName, Key } = await TestEntity.delete({
       email: 'test-pk',
       sort: 'test-sk',
@@ -82,7 +80,7 @@ describe('delete', () => {
   })
 
   it('coerces key values to correct types (async)', async () => {
-    // @ts-expect-error 💥 TODO: Fix return type + Support coerce keyword
+    // @ts-expect-error 💥 TODO: Support coerce keyword
     let { TableName, Key } = await TestEntity.delete({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })

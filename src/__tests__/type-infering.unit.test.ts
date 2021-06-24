@@ -1,4 +1,5 @@
 import { DynamoDB } from 'aws-sdk'
+import { DocumentClient as DocumentClientType } from 'aws-sdk/clients/dynamodb'
 import MockDate from 'mockdate'
 import { A, C, F, O } from 'ts-toolbelt'
 
@@ -160,6 +161,28 @@ describe('Entity', () => {
       table: tableWithoutSK
     } as const)
 
+    const entNoExecute = new Entity({
+      name: entityName,
+      autoExecute: false,
+      attributes: {
+        pk: { type: 'string', partitionKey: true, hidden: true },
+        pkMap1: ['pk', 0],
+        pkMap2: ['pk', 1]
+      },
+      table: tableWithoutSK
+    } as const)
+
+    const entNoParse = new Entity({
+      name: entityName,
+      autoParse: false,
+      attributes: {
+        pk: { type: 'string', partitionKey: true, hidden: true },
+        pkMap1: ['pk', 0],
+        pkMap2: ['pk', 1]
+      },
+      table: tableWithoutSK
+    } as const)
+
     type ExpectedItem = {
       created: string
       modified: string
@@ -177,6 +200,60 @@ describe('Entity', () => {
         type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
         const testGetItem: TestGetItem = 1
         testGetItem
+      })
+
+      it('no auto-execution', () => {
+        const item = { pk }
+        const getPromise = () => entNoExecute.get(item)
+        type GetParams = C.PromiseOf<F.Return<typeof getPromise>>
+        type TestGetParams = A.Equals<GetParams, DocumentClientType.GetItemInput>
+        const testGetParams: TestGetParams = 1
+        testGetParams
+      })
+
+      it('force execution', () => {
+        const item = { pk }
+        const getPromise = () => entNoExecute.get(item, { execute: true })
+        type GetItem = C.PromiseOf<F.Return<typeof getPromise>>['Item']
+        type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
+        const testGetItem: TestGetItem = 1
+        testGetItem
+      })
+
+      it('force no execution', () => {
+        const item = { pk }
+        const getPromise = () => ent.get(item, { execute: false })
+        type GetParams = C.PromiseOf<F.Return<typeof getPromise>>
+        type TestGetParams = A.Equals<GetParams, DocumentClientType.GetItemInput>
+        const testGetParams: TestGetParams = 1
+        testGetParams
+      })
+
+      it('no auto-parsing', () => {
+        const item = { pk }
+        const getPromise = () => entNoParse.get(item)
+        type GetRawResponse = C.PromiseOf<F.Return<typeof getPromise>>
+        type TestGetRawResponse = A.Equals<GetRawResponse, DocumentClientType.GetItemOutput>
+        const testGetRawResponse: TestGetRawResponse = 1
+        testGetRawResponse
+      })
+
+      it('force parsing', () => {
+        const item = { pk }
+        const getPromise = () => entNoParse.get(item, { parse: true })
+        type GetItem = C.PromiseOf<F.Return<typeof getPromise>>['Item']
+        type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
+        const testGetItem: TestGetItem = 1
+        testGetItem
+      })
+
+      it('force no parsing', () => {
+        const item = { pk }
+        const getPromise = () => ent.get(item, { parse: false })
+        type GetRawResponse = C.PromiseOf<F.Return<typeof getPromise>>
+        type TestGetRawResponse = A.Equals<GetRawResponse, DocumentClientType.GetItemOutput>
+        const testGetRawResponse: TestGetRawResponse = 1
+        testGetRawResponse
       })
 
       it('throws when primary key is incomplete', () => {
@@ -214,6 +291,68 @@ describe('Entity', () => {
         type TestDeleteItem2 = A.Equals<DeleteItem2, ExpectedItem | undefined>
         const testDeleteItem2: TestDeleteItem2 = 1
         testDeleteItem2
+      })
+
+      it('no auto-execution', () => {
+        const item = { pk }
+        const deletePromise = () => entNoExecute.delete(item)
+        type DeleteParams = C.PromiseOf<F.Return<typeof deletePromise>>
+        type TestDeleteParams = A.Equals<DeleteParams, DocumentClientType.DeleteItemInput>
+        const testDeleteParams: TestDeleteParams = 1
+        testDeleteParams
+      })
+
+      it('force execution', () => {
+        const item = { pk }
+        const deletePromise = () =>
+          entNoExecute.delete(item, { execute: true, returnValues: 'ALL_OLD' })
+        type DeleteItem = C.PromiseOf<F.Return<typeof deletePromise>>['Attributes']
+        type TestDeleteItem = A.Equals<DeleteItem, ExpectedItem | undefined>
+        const testDeleteItem: TestDeleteItem = 1
+        testDeleteItem
+      })
+
+      it('force no execution', () => {
+        const item = { pk }
+        const deletePromise = () => ent.delete(item, { execute: false })
+        type DeleteParams = C.PromiseOf<F.Return<typeof deletePromise>>
+        type TestDeleteParams = A.Equals<DeleteParams, DocumentClientType.DeleteItemInput>
+        const testDeleteParams: TestDeleteParams = 1
+        testDeleteParams
+      })
+
+      it('no auto-parsing', () => {
+        const item = { pk }
+        const deletePromise = () => entNoParse.delete(item)
+        type DeleteRawResponse = C.PromiseOf<F.Return<typeof deletePromise>>
+        type TestDeleteRawResponse = A.Equals<
+          DeleteRawResponse,
+          DocumentClientType.DeleteItemOutput
+        >
+        const testDeleteRawResponse: TestDeleteRawResponse = 1
+        testDeleteRawResponse
+      })
+
+      it('force parsing', () => {
+        const item = { pk }
+        const deletePromise = () =>
+          entNoParse.delete(item, { parse: true, returnValues: 'ALL_OLD' })
+        type DeleteItem = C.PromiseOf<F.Return<typeof deletePromise>>['Attributes']
+        type TestDeleteItem = A.Equals<DeleteItem, ExpectedItem | undefined>
+        const testDeleteItem: TestDeleteItem = 1
+        testDeleteItem
+      })
+
+      it('force no parsing', () => {
+        const item = { pk }
+        const deletePromise = () => ent.update(item, { parse: false })
+        type DeleteRawResponse = C.PromiseOf<F.Return<typeof deletePromise>>
+        type TestDeleteRawResponse = A.Equals<
+          DeleteRawResponse,
+          DocumentClientType.DeleteItemOutput
+        >
+        const testDeleteRawResponse: TestDeleteRawResponse = 1
+        testDeleteRawResponse
       })
 
       it('throws when primary key is incomplete', () => {
@@ -260,6 +399,60 @@ describe('Entity', () => {
         testPutItem2
       })
 
+      it('no auto-execution', () => {
+        const item = { pk }
+        const putPromise = () => entNoExecute.put(item)
+        type PutParams = C.PromiseOf<F.Return<typeof putPromise>>
+        type TestPutParams = A.Equals<PutParams, DocumentClientType.PutItemInput>
+        const testPutParams: TestPutParams = 1
+        testPutParams
+      })
+
+      it('force execution', () => {
+        const item = { pk }
+        const putPromise = () => entNoExecute.put(item, { execute: true, returnValues: 'ALL_OLD' })
+        type PutItem = C.PromiseOf<F.Return<typeof putPromise>>['Attributes']
+        type TestPutItem = A.Equals<PutItem, ExpectedItem | undefined>
+        const testPutItem: TestPutItem = 1
+        testPutItem
+      })
+
+      it('force no execution', () => {
+        const item = { pk }
+        const putPromise = () => ent.put(item, { execute: false, returnValues: 'ALL_OLD' })
+        type PutParams = C.PromiseOf<F.Return<typeof putPromise>>
+        type TestPutParams = A.Equals<PutParams, DocumentClientType.PutItemInput>
+        const testPutParams: TestPutParams = 1
+        testPutParams
+      })
+
+      it('no auto-parsing', () => {
+        const item = { pk }
+        const putPromise = () => entNoParse.put(item)
+        type PutRawResponse = C.PromiseOf<F.Return<typeof putPromise>>
+        type TestPutRawResponse = A.Equals<PutRawResponse, DocumentClientType.PutItemOutput>
+        const testPutRawResponse: TestPutRawResponse = 1
+        testPutRawResponse
+      })
+
+      it('force parsing', () => {
+        const item = { pk }
+        const putPromise = () => entNoParse.put(item, { parse: true, returnValues: 'ALL_OLD' })
+        type PutItem = C.PromiseOf<F.Return<typeof putPromise>>['Attributes']
+        type TestPutItem = A.Equals<PutItem, ExpectedItem | undefined>
+        const testPutItem: TestPutItem = 1
+        testPutItem
+      })
+
+      it('force no parsing', () => {
+        const item = { pk }
+        const putPromise = () => ent.put(item, { parse: false })
+        type PutRawResponse = C.PromiseOf<F.Return<typeof putPromise>>
+        type TestPutRawResponse = A.Equals<PutRawResponse, DocumentClientType.PutItemOutput>
+        const testPutRawResponse: TestPutRawResponse = 1
+        testPutRawResponse
+      })
+
       it('throws when primary key is incomplete', () => {
         // @ts-expect-error
         expect(() => ent.putParams({})).toThrow()
@@ -299,6 +492,68 @@ describe('Entity', () => {
         type TestUpdateItem2 = A.Equals<UpdateItem2, ExpectedItem | undefined>
         const testUpdateItem2: TestUpdateItem2 = 1
         testUpdateItem2
+      })
+
+      it('no auto-execution', () => {
+        const item = { pk }
+        const updatePromise = () => entNoExecute.update(item)
+        type UpdateParams = C.PromiseOf<F.Return<typeof updatePromise>>
+        type TestUpdateParams = A.Equals<UpdateParams, DocumentClientType.UpdateItemInput>
+        const testUpdateParams: TestUpdateParams = 1
+        testUpdateParams
+      })
+
+      it('force execution', () => {
+        const item = { pk }
+        const updatePromise = () =>
+          entNoExecute.update(item, { execute: true, returnValues: 'ALL_NEW' })
+        type UpdateItem = C.PromiseOf<F.Return<typeof updatePromise>>['Attributes']
+        type TestUpdateItem = A.Equals<UpdateItem, ExpectedItem | undefined>
+        const testUpdateItem: TestUpdateItem = 1
+        testUpdateItem
+      })
+
+      it('force no execution', () => {
+        const item = { pk }
+        const updatePromise = () => ent.update(item, { execute: false })
+        type UpdateParams = C.PromiseOf<F.Return<typeof updatePromise>>
+        type TestUpdateParams = A.Equals<UpdateParams, DocumentClientType.UpdateItemInput>
+        const testUpdateParams: TestUpdateParams = 1
+        testUpdateParams
+      })
+
+      it('no auto-parsing', () => {
+        const item = { pk }
+        const updatePromise = () => entNoParse.update(item)
+        type UpdateRawResponse = C.PromiseOf<F.Return<typeof updatePromise>>
+        type TestUpdateRawResponse = A.Equals<
+          UpdateRawResponse,
+          DocumentClientType.UpdateItemOutput
+        >
+        const testUpdateRawResponse: TestUpdateRawResponse = 1
+        testUpdateRawResponse
+      })
+
+      it('force parsing', () => {
+        const item = { pk }
+        const updatePromise = () =>
+          entNoParse.update(item, { parse: true, returnValues: 'ALL_NEW' })
+        type UpdateItem = C.PromiseOf<F.Return<typeof updatePromise>>['Attributes']
+        type TestUpdateItem = A.Equals<UpdateItem, ExpectedItem | undefined>
+        const testUpdateItem: TestUpdateItem = 1
+        testUpdateItem
+      })
+
+      it('force no parsing', () => {
+        const item = { pk }
+        const updatePromise = () => ent.update(item, { parse: false })
+        type UpdateRawResponse = C.PromiseOf<F.Return<typeof updatePromise>>
+        type TestUpdateRawResponse = A.Equals<
+          UpdateRawResponse,
+          DocumentClientType.UpdateItemOutput
+        >
+        const testUpdateRawResponse: TestUpdateRawResponse = 1
+        testUpdateRawResponse
       })
 
       it('throws when primary key is incomplete', () => {
