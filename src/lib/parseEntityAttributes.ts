@@ -29,7 +29,7 @@ const parseEntityAttributes = <
 
     // If a string value
     if (typeof attributeDefinition === 'string') {
-      if (isDynamoDbType(attributeDefinition as string)) {
+      if (isDynamoDbType(attributeDefinition)) {
         // Merge and return mapping
         return Object.assign(acc, parseMapping(field, { type: attributeDefinition }, track))
       } else {

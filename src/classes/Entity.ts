@@ -16,17 +16,24 @@ import getKey from '../lib/getKey'
 import parseConditions from '../lib/expressionBuilder'
 import parseProjections from '../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../lib/utils'
-import { DynamoDBKeyTypes, DynamoDBTypes, QueryOptions, ScanOptions, TableType } from './Table'
+import {
+  DynamoDBKeyTypes,
+  DynamoDBTypes,
+  AttributesQueryOptions,
+  ScanOptions,
+  TableDef
+} from './Table'
 
 // Definitions
 export interface EntityConstructor<
-  EntityTable extends TableType | undefined = undefined,
+  EntityTable extends TableDef | undefined = undefined,
   Name extends string = string,
+  AutoExecute extends boolean = true,
+  AutoParse extends boolean = true,
+  Timestamps extends boolean = true,
   CreatedAlias extends string = 'created',
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
-  AutoExecute extends boolean = true,
-  AutoParse extends boolean = true,
   ReadonlyAttributeDefinitions extends PreventKeys<
     AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
     CreatedAlias | ModifiedAlias | TypeAlias
@@ -34,7 +41,7 @@ export interface EntityConstructor<
 > {
   table?: EntityTable
   name: Name
-  timestamps?: boolean
+  timestamps?: Timestamps
   created?: string
   modified?: string
   createdAlias?: CreatedAlias
@@ -128,10 +135,8 @@ type InferKeyAttribute<
   KeyType extends 'partitionKey' | 'sortKey'
 > = O.SelectKeys<Definitions, Record<KeyType, true>>
 
-type InferMappedAttributes<
-  Definitions extends AttributeDefinitions,
-  AttributeName extends A.Key
-> = O.SelectKeys<Definitions, [AttributeName, any, any?]>
+type InferMappedAttributes<Definitions extends AttributeDefinitions, AttributeName extends A.Key> =
+  O.SelectKeys<Definitions, [AttributeName, any, any?]>
 
 interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   aliases: Attributes
@@ -149,10 +154,13 @@ interface ParsedAttributes<Attributes extends A.Key = A.Key> {
 
 type ParseAttributes<
   Definitions extends AttributeDefinitions,
+  Timestamps extends boolean,
   CreatedAlias extends string,
   ModifiedAlias extends string,
   TypeAlias extends string,
-  Aliases extends string = CreatedAlias | ModifiedAlias | TypeAlias,
+  Aliases extends string =
+    | (Timestamps extends true ? CreatedAlias | ModifiedAlias : never)
+    | TypeAlias,
   Default extends A.Key =
     | O.SelectKeys<Definitions, { default: any } | [any, any, { default: any }]>
     | Aliases,
@@ -163,12 +171,12 @@ type ParseAttributes<
   KeyAttributes extends A.Key = PK | PKMappedAttribute | SK | SKMappedAttribute,
   AlwaysAttributes extends A.Key = Exclude<
     | O.SelectKeys<Definitions, { required: 'always' } | [any, any, { required: 'always' }]>
-    | ModifiedAlias,
+    | (Timestamps extends true ? ModifiedAlias : never),
     KeyAttributes
   >,
   RequiredAttributes extends A.Key = Exclude<
     | O.SelectKeys<Definitions, { required: true } | [any, any, { required: true }]>
-    | CreatedAlias
+    | (Timestamps extends true ? CreatedAlias : never)
     | TypeAlias,
     KeyAttributes
   >,
@@ -248,19 +256,17 @@ type InferItemAttributeValue<
   ? 'composite'
   : never]
 
-type InferItem<
-  Definitions extends AttributeDefinitions,
-  Attributes extends ParsedAttributes
-> = O.Optional<
-  {
-    [K in Attributes['all']]: K extends keyof Definitions
-      ? InferItemAttributeValue<Definitions, K>
-      : K extends Attributes['aliases']
-      ? string
-      : never
-  },
-  Attributes['optional']
->
+type InferItem<Definitions extends AttributeDefinitions, Attributes extends ParsedAttributes> =
+  O.Optional<
+    {
+      [K in Attributes['all']]: K extends keyof Definitions
+        ? InferItemAttributeValue<Definitions, K>
+        : K extends Attributes['aliases']
+        ? string
+        : never
+    },
+    Attributes['optional']
+  >
 
 type CompositePrimaryKeyPart<
   Item extends Record<A.Key, any>,
@@ -326,7 +332,7 @@ type BaseOptions<
   parse: Parse
 }
 
-export type ReadOptions<
+export type AttributesReadOptions<
   Attributes extends A.Key = A.Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
@@ -337,13 +343,13 @@ export type ReadOptions<
   consistent: boolean
 }
 
-type GetOptions<
+type AttributesGetOptions<
   Attributes extends A.Key = A.Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<ReadOptions<Attributes, Execute, Parse> & { include: string[] }>
+> = O.Partial<AttributesReadOptions<Attributes, Execute, Parse> & { include: string[] }>
 
-type WriteOptions<
+type AttributesWriteOptions<
   Attributes extends A.Key = A.Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
@@ -355,12 +361,12 @@ type WriteOptions<
 
 type PutOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
-type PutOptions<
+type AttributesPutOptions<
   Attributes extends A.Key = A.Key,
   ReturnValues extends PutOptionsReturnValues = PutOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+> = O.Partial<AttributesWriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 type PutItem<
   MethodItemOverlay extends Overlay,
@@ -389,12 +395,12 @@ type PutItem<
 
 type UpdateOptionsReturnValues = 'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
 
-type UpdateOptions<
+type AttributesUpdateOptions<
   Attributes extends A.Key = A.Key,
   ReturnValues extends UpdateOptionsReturnValues = UpdateOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+> = O.Partial<AttributesWriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 interface UpdateCustomParameters {
   SET: string[]
@@ -436,12 +442,12 @@ type UpdateItem<
 
 type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
-type DeleteOptions<
+type RawDeleteOptions<
   Attributes extends A.Key = A.Key,
   ReturnValues extends DeleteOptionsReturnValues = DeleteOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+> = O.Partial<AttributesWriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
@@ -472,13 +478,14 @@ export const shouldParse = (parse: boolean | undefined, autoParse: boolean): boo
 class Entity<
   EntityItemOverlay extends Overlay = undefined,
   EntityCompositeKeyOverlay extends Overlay = EntityItemOverlay,
-  EntityTable extends TableType | undefined = undefined,
+  EntityTable extends TableDef | undefined = undefined,
   Name extends string = string,
+  AutoExecute extends boolean = true,
+  AutoParse extends boolean = true,
+  Timestamps extends boolean = true,
   CreatedAlias extends string = 'created',
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
-  AutoExecute extends boolean = true,
-  AutoParse extends boolean = true,
   ReadonlyAttributeDefinitions extends PreventKeys<
     AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
     CreatedAlias | ModifiedAlias | TypeAlias
@@ -490,7 +497,13 @@ class Entity<
   Attributes extends ParsedAttributes = If<
     A.Equals<EntityItemOverlay, undefined>,
     // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
-    ParseAttributes<WritableAttributeDefinitions, CreatedAlias, ModifiedAlias, TypeAlias>,
+    ParseAttributes<
+      WritableAttributeDefinitions,
+      Timestamps,
+      CreatedAlias,
+      ModifiedAlias,
+      TypeAlias
+    >,
     ParsedAttributes<keyof EntityItemOverlay>
   >,
   Item extends Record<A.Key, any> = If<
@@ -514,17 +527,25 @@ class Entity<
   public defaults: any
   public linked: any
   public required: any
+  // @ts-ignore
+  public _typesOnly: { _entityItemOverlay: EntityItemOverlay }
+  public attributes: ReadonlyAttributeDefinitions
+  public timestamps: Timestamps
+  public createdAlias: CreatedAlias
+  public modifiedAlias: ModifiedAlias
+  public typeAlias: TypeAlias
 
   // Declare constructor (entity config)
   constructor(
     entity: EntityConstructor<
       EntityTable,
       Name,
+      AutoExecute,
+      AutoParse,
+      Timestamps,
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
-      AutoExecute,
-      AutoParse,
       ReadonlyAttributeDefinitions
     >
   ) {
@@ -532,6 +553,18 @@ class Entity<
     if (typeof entity !== 'object' || Array.isArray(entity))
       error('Please provide a valid entity definition')
 
+    const {
+      attributes,
+      timestamps = true,
+      createdAlias = 'created',
+      modifiedAlias = 'modified',
+      typeAlias = 'entity'
+    } = entity
+    this.attributes = attributes
+    this.timestamps = timestamps as Timestamps
+    this.createdAlias = createdAlias as CreatedAlias
+    this.modifiedAlias = modifiedAlias as ModifiedAlias
+    this.typeAlias = typeAlias as TypeAlias
     // Parse the entity and merge into this
     Object.assign(this, parseEntity(entity))
   } // end construcor
@@ -689,7 +722,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: GetOptions<ResponseAttributes, Execute, Parse> = {},
+    options: AttributesGetOptions<ResponseAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.GetItemInput> = {}
   ): Promise<
     If<
@@ -777,11 +810,12 @@ class Entity<
       EntityCompositeKeyOverlay,
       EntityTable,
       Name,
+      AutoExecute,
+      AutoParse,
+      Timestamps,
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
-      AutoExecute,
-      AutoParse,
       ReadonlyAttributeDefinitions,
       WritableAttributeDefinitions,
       Attributes,
@@ -833,7 +867,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: GetOptions<ResponseAttributes, Execute, Parse> = {},
+    options: AttributesGetOptions<ResponseAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.GetItemInput> = {}
   ): DocumentClient.GetItemInput {
     // Extract schema and merge defaults
@@ -926,7 +960,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: DeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.DeleteItemInput> = {}
   ): Promise<
     If<
@@ -1062,7 +1096,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: DeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.DeleteItemInput> = {}
   ): DocumentClient.DeleteItemInput {
     // Extract schema and merge defaults
@@ -1171,7 +1205,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: AttributesUpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.UpdateItemInput> = {}
   ): Promise<
     A.Compute<
@@ -1288,7 +1322,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: AttributesUpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     {
       SET = [],
       REMOVE = [],
@@ -1624,7 +1658,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: AttributesPutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
     If<
@@ -1751,7 +1785,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: AttributesPutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): DocumentClient.PutItemInput {
     // Extract schema and defaults
@@ -1943,7 +1977,7 @@ class Entity<
     FiltersAttributes extends ItemAttributes = ResponseAttributes
   >(
     pk: any,
-    options: QueryOptions<ResponseAttributes, FiltersAttributes> = {},
+    options: AttributesQueryOptions<ResponseAttributes, FiltersAttributes> = {},
     params: Partial<DocumentClient.QueryInput> = {}
   ) {
     if (!this.table) {
@@ -1971,3 +2005,40 @@ class Entity<
 
 // Export the Entity class
 export default Entity
+
+type EntityDef = {
+  _typesOnly: { _entityItemOverlay: Overlay }
+  timestamps: boolean
+  createdAlias: string
+  modifiedAlias: string
+  typeAlias: string
+  attributes: AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>
+}
+
+type ExtractAttributes<E extends EntityDef> = E['_typesOnly']['_entityItemOverlay'] extends Record<
+  A.Key,
+  any
+>
+  ? keyof E['_typesOnly']['_entityItemOverlay']
+  : ParseAttributes<
+      A.Cast<O.Writable<E['attributes'], A.Key, 'deep'>, AttributeDefinitions>,
+      E['timestamps'],
+      E['createdAlias'],
+      E['modifiedAlias'],
+      E['typeAlias']
+    >['all']
+
+export type GetOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
+  AttributesGetOptions<A, boolean | undefined, boolean | undefined>
+
+export type QueryOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
+  AttributesQueryOptions<A, A, boolean | undefined, boolean | undefined>
+
+export type PutOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
+  AttributesPutOptions<A, PutOptionsReturnValues, boolean | undefined, boolean | undefined>
+
+export type DeleteOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
+  RawDeleteOptions<A, DeleteOptionsReturnValues, boolean | undefined, boolean | undefined>
+
+export type UpdateOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
+  AttributesUpdateOptions<A, UpdateOptionsReturnValues, boolean | undefined, boolean | undefined>

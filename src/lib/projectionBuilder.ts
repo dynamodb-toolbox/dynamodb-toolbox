@@ -9,7 +9,7 @@
 import { A } from 'ts-toolbelt'
 
 // Import standard error handler
-import { TableType } from '../classes/Table'
+import { TableDef } from '../classes/Table'
 import { error } from './utils'
 import checkAttribute from './checkAttribute'
 
@@ -25,7 +25,7 @@ export type ProjectionAttributes =
   | (A.Key | ProjectionAttributeType)[]
 export type ProjectionAttributeType = { [key: string]: string | string[] }
 
-const projectionBuilder = <EntityTable extends TableType | undefined>(
+const projectionBuilder = <EntityTable extends TableDef | undefined>(
   attributes: ProjectionAttributes,
   table: EntityTable,
   entity: string | null,

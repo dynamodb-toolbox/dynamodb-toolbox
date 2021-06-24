@@ -12,7 +12,7 @@ import { A } from 'ts-toolbelt'
 
 import checkAttribute from './checkAttribute'
 import { error } from './utils'
-import { TableType } from '../classes/Table'
+import { TableDef } from '../classes/Table'
 
 interface FilterExpression<Attr extends A.Key = A.Key> {
   attr?: Attr
@@ -41,7 +41,7 @@ export type FilterExpressions<Attr extends A.Key = A.Key> =
 
 const buildExpression = <
   Attr extends A.Key = A.Key,
-  EntityTable extends TableType | undefined = undefined
+  EntityTable extends TableDef | undefined = undefined
 >(
   exp: FilterExpressions<Attr>,
   table: EntityTable,
@@ -115,7 +115,7 @@ const conditionError = (op?: string) =>
   error(`You can only supply one filter condition per query. Already using '${op}'`)
 
 // Parses expression clause and returns structured clause object
-const parseClause = <EntityTable extends TableType | undefined = undefined>(
+const parseClause = <EntityTable extends TableDef | undefined = undefined>(
   _clause: FilterExpression,
   grp: number,
   table: EntityTable
