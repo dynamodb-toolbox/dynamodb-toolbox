@@ -628,12 +628,14 @@ class Entity<
    * Generate parameters for UPDATE transaction operation
    * @param {object} item - The item you wish to update.
    * @param {object} [options] - Additional update options
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the update request.
    * 
    * Creates an Update object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Update.html
    */
   updateTransaction(
     item: Partial<Schema> = {},
-    options: transactionOptions = {}
+    options: transactionOptions = {},
+    params: Partial<updateCustomParams> = {}
   ): { 'Update': DocumentClient.Update } {
   
     // Destructure options to check for extraneous arguments
@@ -648,7 +650,7 @@ class Entity<
     error(`Invalid update transaction options: ${Object.keys(args).join(', ')}`)
     
     // Generate the update parameters
-    let payload = this.updateParams(item, options)
+    let payload = this.updateParams(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
