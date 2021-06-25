@@ -600,7 +600,7 @@ class Entity<
   async update(
     item: Partial<Schema> = {},
     options: updateOptions = {},
-    params: Partial<DocumentClient.UpdateItemInput> = {}
+    params: Partial<updateCustomParams> = {}
   ) {
 
     // Generate the payload
