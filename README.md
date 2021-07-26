@@ -897,7 +897,7 @@ let key = {
 let result = await MyEntity.delete(
   key,
   {
-    condition: { attr: 'date_modified' lt: '2020-01-01' },
+    conditions: { attr: 'date_modified' lt: '2020-01-01' },
     returnValues: 'all_old'
   }
 )
