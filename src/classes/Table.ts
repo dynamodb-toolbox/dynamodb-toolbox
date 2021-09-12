@@ -498,7 +498,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   return item
                 }
 
-                const entityField = String(this.table.entityField)
+                const entityField = String(this.Table.entityField)
                 if (!hasProperty(item, entityField)) {
                   return item
                 }
