@@ -412,8 +412,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                 mappings: {
                   [entity.name]: Object.assign(
                     {
-                      [entity.schema.attributes[attr].alias || attr]:
-                        entity.schema.attributes[attr].type
+                      [entity.schema.attributes[attr].alias || attr]: entity.schema.attributes[attr]
+                        .type
                     },
                     // Add setType if type 'set'
                     entity.schema.attributes[attr].type === 'set'
@@ -1374,8 +1374,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    */
   async transactGet(
     items: ({ Entity?: any } & DocumentClient.TransactGetItem)[] = [],
-    options: transactGetOptions = {},
-    params: Partial<DocumentClient.TransactGetItemsInput> = {}
+    options: transactGetOptions = {}
+    // params: Partial<DocumentClient.TransactGetItemsInput> = {}
   ) {
     // Generate the payload with meta information
     const { payload, Entities } = this.transactGetParams(
@@ -1488,8 +1488,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    */
   async transactWrite(
     items: DocumentClient.TransactWriteItemList,
-    options: transactWriteOptions = {},
-    params: Partial<DocumentClient.TransactWriteItemsInput> = {}
+    options: transactWriteOptions = {}
+    // params: Partial<DocumentClient.TransactWriteItemsInput> = {}
   ) {
     // Generate the payload with meta information
     const payload = this.transactWriteParams(items, options)
