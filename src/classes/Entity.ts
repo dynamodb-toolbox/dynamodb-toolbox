@@ -135,8 +135,10 @@ type InferKeyAttribute<
   KeyType extends 'partitionKey' | 'sortKey'
 > = O.SelectKeys<Definitions, Record<KeyType, true>>
 
-type InferMappedAttributes<Definitions extends AttributeDefinitions, AttributeName extends A.Key> =
-  O.SelectKeys<Definitions, [AttributeName, any, any?]>
+type InferMappedAttributes<
+  Definitions extends AttributeDefinitions,
+  AttributeName extends A.Key
+> = O.SelectKeys<Definitions, [AttributeName, any, any?]>
 
 interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   aliases: Attributes
@@ -256,24 +258,26 @@ type InferItemAttributeValue<
   ? 'composite'
   : never]
 
-type InferItem<Definitions extends AttributeDefinitions, Attributes extends ParsedAttributes> =
-  O.Optional<
-    {
-      [K in Attributes['all']]: K extends keyof Definitions
-        ? InferItemAttributeValue<Definitions, K>
-        : K extends Attributes['aliases']
-        ? string
-        : never
-    },
-    Attributes['optional']
-  >
+type InferItem<
+  Definitions extends AttributeDefinitions,
+  Attributes extends ParsedAttributes
+> = O.Optional<
+  {
+    [K in Attributes['all']]: K extends keyof Definitions
+      ? InferItemAttributeValue<Definitions, K>
+      : K extends Attributes['aliases']
+      ? string
+      : never
+  },
+  Attributes['optional']
+>
 
 type CompositePrimaryKeyPart<
-  Item extends Record<A.Key, any>,
-  Attributes extends ParsedAttributes<keyof Item>,
+  Item extends O.Object,
+  Attributes extends ParsedAttributes,
   KeyType extends 'partitionKey' | 'sortKey',
-  KeyPureAttribute extends keyof Item = Attributes['key'][KeyType]['pure'],
-  KeyCompositeAttributes extends keyof Item = Attributes['key'][KeyType]['mapped']
+  KeyPureAttribute extends A.Key = Attributes['key'][KeyType]['pure'],
+  KeyCompositeAttributes extends A.Key = Attributes['key'][KeyType]['mapped']
 > = If<
   A.Equals<KeyPureAttribute, never>,
   Record<never, unknown>,
@@ -285,8 +289,8 @@ type CompositePrimaryKeyPart<
 >
 
 type InferCompositePrimaryKey<
-  Item extends Record<A.Key, any>,
-  Attributes extends ParsedAttributes<keyof Item>
+  Item extends O.Object,
+  Attributes extends ParsedAttributes
 > = A.Compute<
   CompositePrimaryKeyPart<Item, Attributes, 'partitionKey'> &
     CompositePrimaryKeyPart<Item, Attributes, 'sortKey'>
@@ -294,7 +298,7 @@ type InferCompositePrimaryKey<
 
 // Options
 
-export type Overlay = undefined | Record<A.Key, any>
+export type Overlay = undefined | O.Object
 
 type ConditionOrFilter<Attributes extends A.Key = A.Key> = (
   | { attr: Attributes }
@@ -371,9 +375,9 @@ type AttributesPutOptions<
 type PutItem<
   MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
-  CompositePrimaryKey extends Record<A.Key, any>,
-  Item extends Record<A.Key, any>,
-  Attributes extends ParsedAttributes<keyof Item>
+  CompositePrimaryKey extends O.Object,
+  Item extends O.Object,
+  Attributes extends ParsedAttributes
 > = FirstDefined<
   [
     MethodItemOverlay,
@@ -414,9 +418,9 @@ type UpdateCustomParams = O.Partial<UpdateCustomParameters & DocumentClient.Upda
 type UpdateItem<
   MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
-  CompositePrimaryKey extends Record<A.Key, any>,
-  Item extends Record<A.Key, any>,
-  Attributes extends ParsedAttributes<keyof Item>
+  CompositePrimaryKey extends O.Object,
+  Item extends O.Object,
+  Attributes extends ParsedAttributes
 > = FirstDefined<
   [
     MethodItemOverlay,
@@ -425,16 +429,19 @@ type UpdateItem<
       CompositePrimaryKey &
         {
           [inputAttr in Attributes['always']['input']]:
-            | Item[inputAttr]
+            | Item[A.Cast<inputAttr, keyof Item>]
             | { $delete?: string[]; $add?: any }
         } &
         {
           [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
-            | Item[optAttr]
+            | Item[A.Cast<optAttr, keyof Item>]
             | { $delete?: string[]; $add?: any }
         } &
         {
-          [attr in Attributes['optional']]?: null | Item[attr] | { $delete?: string[]; $add?: any }
+          [attr in Attributes['optional']]?:
+            | null
+            | Item[A.Cast<attr, keyof Item>]
+            | { $delete?: string[]; $add?: any }
         } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
     >
   ]
@@ -506,16 +513,18 @@ class Entity<
     >,
     ParsedAttributes<keyof EntityItemOverlay>
   >,
-  Item extends Record<A.Key, any> = If<
+  $Item extends any = If<
     A.Equals<EntityItemOverlay, undefined>,
     // 🔨 TOIMPROVE: Use EntityTable in item infering
     InferItem<WritableAttributeDefinitions, Attributes>,
-    A.Cast<EntityItemOverlay, Record<A.Key, any>>
+    EntityItemOverlay
   >,
-  CompositePrimaryKey extends Record<A.Key, any> = If<
+  // Necessary to cast in a second step to prevent infinite loop during type check
+  Item extends O.Object = A.Cast<$Item, O.Object>,
+  CompositePrimaryKey extends O.Object = If<
     A.Equals<EntityItemOverlay, undefined>,
     InferCompositePrimaryKey<Item, Attributes>,
-    Record<A.Key, any>
+    O.Object
   >
 > {
   private _table?: EntityTable
@@ -2028,17 +2037,27 @@ type ExtractAttributes<E extends EntityDef> = E['_typesOnly']['_entityItemOverla
       E['typeAlias']
     >['all']
 
-export type GetOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
-  AttributesGetOptions<A, boolean | undefined, boolean | undefined>
+export type GetOptions<
+  E extends EntityDef,
+  A extends A.Key = ExtractAttributes<E>
+> = AttributesGetOptions<A, boolean | undefined, boolean | undefined>
 
-export type QueryOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
-  AttributesQueryOptions<A, A, boolean | undefined, boolean | undefined>
+export type QueryOptions<
+  E extends EntityDef,
+  A extends A.Key = ExtractAttributes<E>
+> = AttributesQueryOptions<A, A, boolean | undefined, boolean | undefined>
 
-export type PutOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
-  AttributesPutOptions<A, PutOptionsReturnValues, boolean | undefined, boolean | undefined>
+export type PutOptions<
+  E extends EntityDef,
+  A extends A.Key = ExtractAttributes<E>
+> = AttributesPutOptions<A, PutOptionsReturnValues, boolean | undefined, boolean | undefined>
 
-export type DeleteOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
-  RawDeleteOptions<A, DeleteOptionsReturnValues, boolean | undefined, boolean | undefined>
+export type DeleteOptions<
+  E extends EntityDef,
+  A extends A.Key = ExtractAttributes<E>
+> = RawDeleteOptions<A, DeleteOptionsReturnValues, boolean | undefined, boolean | undefined>
 
-export type UpdateOptions<E extends EntityDef, A extends A.Key = ExtractAttributes<E>> =
-  AttributesUpdateOptions<A, UpdateOptionsReturnValues, boolean | undefined, boolean | undefined>
+export type UpdateOptions<
+  E extends EntityDef,
+  A extends A.Key = ExtractAttributes<E>
+> = AttributesUpdateOptions<A, UpdateOptionsReturnValues, boolean | undefined, boolean | undefined>
