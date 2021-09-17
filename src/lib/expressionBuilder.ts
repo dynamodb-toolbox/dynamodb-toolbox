@@ -59,7 +59,7 @@ const buildExpression = <
   // group logic tracker - need to mark the first clause
 
   // Loop through the clauses
-  clauses.forEach((x, id) => {
+  clauses.forEach((_, id) => {
     // If clause is nested in an array
     if (Array.isArray(clauses[id])) {
       // Build the sub clause
