@@ -152,6 +152,7 @@ interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   always: { all: Attributes; default: Attributes; input: Attributes }
   required: { all: Attributes; default: Attributes; input: Attributes }
   optional: Attributes
+  shown: Attributes
 }
 
 type ParseAttributes<
@@ -183,7 +184,8 @@ type ParseAttributes<
     KeyAttributes
   >,
   // 🔨 TOIMPROVE: Use EntityTable to infer extra attributes
-  Attribute extends A.Key = keyof Definitions | Aliases
+  Attribute extends A.Key = keyof Definitions | Aliases,
+  Hidden extends A.Key = O.SelectKeys<Definitions, { hidden: true } | [any, any, { hidden: true }]>
 > = {
   aliases: Aliases
   all: Attribute
@@ -212,6 +214,7 @@ type ParseAttributes<
     input: Exclude<RequiredAttributes, Default>
   }
   optional: Exclude<Attribute, KeyAttributes | AlwaysAttributes | RequiredAttributes>
+  shown: Exclude<Attribute, Hidden>
 }
 
 type FromDynamoData<T extends DynamoDBTypes> = {
@@ -721,12 +724,12 @@ class Entity<
   async get<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
   >(
@@ -744,7 +747,7 @@ class Entity<
           O.Update<
             DocumentClient.GetItemOutput,
             'Item',
-            FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>
+            FirstDefined<[MethodItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]>
           >
         >
       >
@@ -753,7 +756,7 @@ class Entity<
     const getParams = this.getParams<
       MethodItemOverlay,
       MethodCompositeKeyOverlay,
-      ItemAttributes,
+      ShownItemAttributes,
       ResponseAttributes,
       Execute,
       Parse
@@ -803,12 +806,12 @@ class Entity<
   getTransaction<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     // 💥 TODO: Support Projection Attributes
@@ -846,7 +849,7 @@ class Entity<
     let payload = this.getParams<
       MethodItemOverlay,
       MethodCompositeKeyOverlay,
-      ItemAttributes,
+      ShownItemAttributes,
       ResponseAttributes
     >(item, options)
 
@@ -866,12 +869,12 @@ class Entity<
   getParams<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
   >(
@@ -958,12 +961,12 @@ class Entity<
   async delete<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends DeleteOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
@@ -985,7 +988,9 @@ class Entity<
           O.Update<
             DocumentClient.DeleteItemOutput,
             'Attributes',
-            FirstDefined<[MethodItemOverlay, EntityItemOverlay, Item]>
+            FirstDefined<
+              [MethodItemOverlay, EntityItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]
+            >
           >
         >
       >
@@ -994,7 +999,7 @@ class Entity<
     const deleteParams = this.deleteParams<
       MethodItemOverlay,
       MethodCompositeKeyOverlay,
-      ItemAttributes,
+      ShownItemAttributes,
       ResponseAttributes,
       ReturnValues,
       Execute,
@@ -1094,12 +1099,12 @@ class Entity<
   deleteParams<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends DeleteOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
@@ -1203,12 +1208,12 @@ class Entity<
    */
   async update<
     MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends UpdateOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
@@ -1241,7 +1246,7 @@ class Entity<
     // Generate the payload
     const updateParams = this.updateParams<
       MethodItemOverlay,
-      ItemAttributes,
+      ShownItemAttributes,
       ResponseAttributes,
       ReturnValues,
       Execute,
@@ -1320,12 +1325,12 @@ class Entity<
   // Generate UPDATE Parameters
   updateParams<
     MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends UpdateOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
@@ -1656,12 +1661,12 @@ class Entity<
   // PUT - put item
   async put<
     MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
@@ -1683,7 +1688,9 @@ class Entity<
           O.Update<
             DocumentClient.PutItemOutput,
             'Attributes',
-            FirstDefined<[MethodItemOverlay, EntityItemOverlay, Item]>
+            FirstDefined<
+              [MethodItemOverlay, EntityItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]
+            >
           >
         >
       >
@@ -1691,7 +1698,7 @@ class Entity<
   > {
     const putParams = this.putParams<
       MethodItemOverlay,
-      ItemAttributes,
+      ShownItemAttributes,
       ResponseAttributes,
       ReturnValues,
       Execute,
@@ -1783,12 +1790,12 @@ class Entity<
   // Generate PUT Parameters
   putParams<
     MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ShownItemAttributes extends A.Key = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
+      Attributes['shown'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
@@ -1977,13 +1984,13 @@ class Entity<
   // Query pass-through (default entity)
   query<
     MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ItemAttributes extends { all: A.Key; shown: A.Key } = If<
       A.Equals<MethodItemOverlay, undefined>,
-      Attributes['all'],
-      keyof MethodItemOverlay
+      { all: Attributes['all']; shown: Attributes['shown'] },
+      { all: keyof MethodItemOverlay; shown: keyof MethodItemOverlay }
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes,
-    FiltersAttributes extends ItemAttributes = ResponseAttributes
+    ResponseAttributes extends ItemAttributes['shown'] = ItemAttributes['shown'],
+    FiltersAttributes extends ItemAttributes['all'] = ItemAttributes['all']
   >(
     pk: any,
     options: AttributesQueryOptions<ResponseAttributes, FiltersAttributes> = {},
@@ -2028,36 +2035,41 @@ type ExtractAttributes<E extends EntityDef> = E['_typesOnly']['_entityItemOverla
   A.Key,
   any
 >
-  ? keyof E['_typesOnly']['_entityItemOverlay']
+  ? ParsedAttributes<keyof E['_typesOnly']['_entityItemOverlay']>
   : ParseAttributes<
       A.Cast<O.Writable<E['attributes'], A.Key, 'deep'>, AttributeDefinitions>,
       E['timestamps'],
       E['createdAlias'],
       E['modifiedAlias'],
       E['typeAlias']
-    >['all']
+    >
 
 export type GetOptions<
   E extends EntityDef,
-  A extends A.Key = ExtractAttributes<E>
-> = AttributesGetOptions<A, boolean | undefined, boolean | undefined>
+  A extends ParsedAttributes = ExtractAttributes<E>
+> = AttributesGetOptions<A['shown'], boolean | undefined, boolean | undefined>
 
 export type QueryOptions<
   E extends EntityDef,
-  A extends A.Key = ExtractAttributes<E>
-> = AttributesQueryOptions<A, A, boolean | undefined, boolean | undefined>
+  A extends ParsedAttributes = ExtractAttributes<E>
+> = AttributesQueryOptions<A['shown'], A['all'], boolean | undefined, boolean | undefined>
 
 export type PutOptions<
   E extends EntityDef,
-  A extends A.Key = ExtractAttributes<E>
-> = AttributesPutOptions<A, PutOptionsReturnValues, boolean | undefined, boolean | undefined>
+  A extends ParsedAttributes = ExtractAttributes<E>
+> = AttributesPutOptions<A['all'], PutOptionsReturnValues, boolean | undefined, boolean | undefined>
 
 export type DeleteOptions<
   E extends EntityDef,
-  A extends A.Key = ExtractAttributes<E>
-> = RawDeleteOptions<A, DeleteOptionsReturnValues, boolean | undefined, boolean | undefined>
+  A extends ParsedAttributes = ExtractAttributes<E>
+> = RawDeleteOptions<A['all'], DeleteOptionsReturnValues, boolean | undefined, boolean | undefined>
 
 export type UpdateOptions<
   E extends EntityDef,
-  A extends A.Key = ExtractAttributes<E>
-> = AttributesUpdateOptions<A, UpdateOptionsReturnValues, boolean | undefined, boolean | undefined>
+  A extends ParsedAttributes = ExtractAttributes<E>
+> = AttributesUpdateOptions<
+  A['all'],
+  UpdateOptionsReturnValues,
+  boolean | undefined,
+  boolean | undefined
+>

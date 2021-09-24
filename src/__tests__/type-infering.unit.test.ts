@@ -39,14 +39,17 @@ type ExpectedGetOpts<Attributes extends A.Key = A.Key> = Partial<
   ExpectedReadOpts<Attributes> & { include: string[] }
 >
 
-type ExpectedQueryOpts<Attributes extends A.Key = A.Key> = Partial<
-  ExpectedReadOpts<Attributes> & {
+type ExpectedQueryOpts<
+  ResponseAttributes extends A.Key = A.Key,
+  FilteredAttributes extends A.Key = A.Key
+> = Partial<
+  ExpectedReadOpts<ResponseAttributes> & {
     index: string
     limit: number
     reverse: boolean
     entity: string
     select: DocumentClientType.Select
-    filters: ConditionsOrFilters<Attributes>
+    filters: ConditionsOrFilters<FilteredAttributes>
     eq: string | number
     lt: string | number
     lte: string | number
@@ -58,16 +61,18 @@ type ExpectedQueryOpts<Attributes extends A.Key = A.Key> = Partial<
   }
 >
 
-type ExpectedWriteOpts<Attributes extends A.Key = A.Key, ReturnValues extends string = string> =
-  Partial<{
-    capacity: string
-    execute: boolean
-    parse: boolean
-    conditions: ConditionsOrFilters<Attributes>
-    metrics: string
-    include: string[]
-    returnValues: ReturnValues
-  }>
+type ExpectedWriteOpts<
+  Attributes extends A.Key = A.Key,
+  ReturnValues extends string = string
+> = Partial<{
+  capacity: string
+  execute: boolean
+  parse: boolean
+  conditions: ConditionsOrFilters<Attributes>
+  metrics: string
+  include: string[]
+  returnValues: ReturnValues
+}>
 
 describe('Entity', () => {
   const mockedDate = '2020-11-22T23:00:00.000Z'
@@ -205,9 +210,10 @@ describe('Entity', () => {
     const ent = new Entity({
       name: entityName,
       attributes: {
-        pk: { type: 'string', partitionKey: true, hidden: true },
+        pk: { type: 'string', partitionKey: true },
         pkMap1: ['pk', 0],
-        pkMap2: ['pk', 1]
+        pkMap2: ['pk', 1],
+        hidden: { type: 'string', hidden: true }
       },
       table: tableWithoutSK
     } as const)
@@ -216,7 +222,7 @@ describe('Entity', () => {
       name: entityName,
       autoExecute: false,
       attributes: {
-        pk: { type: 'string', partitionKey: true, hidden: true },
+        pk: { type: 'string', partitionKey: true },
         pkMap1: ['pk', 0],
         pkMap2: ['pk', 1]
       },
@@ -227,7 +233,7 @@ describe('Entity', () => {
       name: entityName,
       autoParse: false,
       attributes: {
-        pk: { type: 'string', partitionKey: true, hidden: true },
+        pk: { type: 'string', partitionKey: true },
         pkMap1: ['pk', 0],
         pkMap2: ['pk', 1]
       },
@@ -238,7 +244,7 @@ describe('Entity', () => {
       name: entityName,
       timestamps: false,
       attributes: {
-        pk: { type: 'string', partitionKey: true, hidden: true },
+        pk: { type: 'string', partitionKey: true },
         pkMap1: ['pk', 0],
         pkMap2: ['pk', 1]
       },
@@ -264,7 +270,10 @@ describe('Entity', () => {
         testGetItem
 
         type GetItemOptions = GetOptions<typeof ent>
-        type TestGetItemOptions = A.Equals<GetItemOptions, ExpectedGetOpts<keyof ExpectedItem>>
+        type TestGetItemOptions = A.Equals<
+          GetItemOptions,
+          ExpectedGetOpts<Exclude<keyof ExpectedItem, 'hidden'>>
+        >
         const testGetItemOptions: TestGetItemOptions = 1
         testGetItemOptions
       })
@@ -374,7 +383,7 @@ describe('Entity', () => {
         type DeleteItemOptions = DeleteOptions<typeof ent>
         type TestDeleteItemOptions = A.Equals<
           DeleteItemOptions,
-          ExpectedWriteOpts<keyof ExpectedItem, 'NONE' | 'ALL_OLD'>
+          ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>
         >
         const testDeleteItemOptions: TestDeleteItemOptions = 1
         testDeleteItemOptions
@@ -481,7 +490,7 @@ describe('Entity', () => {
 
     describe('put method', () => {
       it('nominal case', () => {
-        const item1 = { pk }
+        const item1 = { pk, hidden: 'test' }
         ent.putParams(item1, { returnValues: 'ALL_OLD' })
         const putPromise1 = () => ent.put({ pk }, { returnValues: 'ALL_OLD' })
         type PutItem1 = C.PromiseOf<F.Return<typeof putPromise1>>['Attributes']
@@ -500,7 +509,7 @@ describe('Entity', () => {
         type PutItemOptions = PutOptions<typeof ent>
         type TestPutItemOptions = A.Equals<
           PutItemOptions,
-          ExpectedWriteOpts<keyof ExpectedItem, 'NONE' | 'ALL_OLD'>
+          ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>
         >
         const testPutItemOptions: TestPutItemOptions = 1
         testPutItemOptions
@@ -596,7 +605,7 @@ describe('Entity', () => {
 
     describe('update method', () => {
       it('nominal case', () => {
-        const item1 = { pk }
+        const item1 = { pk, hidden: 'test' }
         ent.updateParams(item1)
         const updatePromise1 = () => ent.update(item1, { returnValues: 'ALL_OLD' })
         type UpdateItem1 = C.PromiseOf<F.Return<typeof updatePromise1>>['Attributes']
@@ -616,7 +625,7 @@ describe('Entity', () => {
         type TestUpdateItemOptions = A.Equals<
           UpdateItemOptions,
           ExpectedWriteOpts<
-            keyof ExpectedItem,
+            keyof ExpectedItem | 'hidden',
             'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
           >
         >
@@ -731,7 +740,7 @@ describe('Entity', () => {
         type QueryItemsOptions = QueryOptions<typeof ent>
         type TestQueryItemsOptions = A.Equals<
           QueryItemsOptions,
-          ExpectedQueryOpts<keyof ExpectedItem>
+          ExpectedQueryOpts<keyof ExpectedItem, keyof ExpectedItem | 'hidden'>
         >
         const testQueryItemsOptions: TestQueryItemsOptions = 1
         testQueryItemsOptions
@@ -773,10 +782,10 @@ describe('Entity', () => {
       modifiedAlias: mod,
       typeAlias: en,
       attributes: {
-        pk: { type: 'string', partitionKey: true, hidden: true },
+        pk: { type: 'string', partitionKey: true },
         pkMap1: ['pk', 0],
         pkMap2: ['pk', 1],
-        sk: { type: 'string', sortKey: true, hidden: true },
+        sk: { type: 'string', sortKey: true },
         skMap1: ['sk', 0],
         skMap2: ['sk', 1],
         alwAttr: { type: 'string', required: 'always' },
@@ -788,7 +797,8 @@ describe('Entity', () => {
         map2: ['mapped', 1, { required: true, default: '2' }],
         map3: ['mapped', 2, { required: 'always' }],
         map4: ['mapped', 3, { required: 'always', default: '4' }],
-        mapped: { type: 'string' }
+        mapped: { type: 'string' },
+        hidden: { type: 'string', hidden: true }
       },
       table
     } as const)
@@ -947,7 +957,7 @@ describe('Entity', () => {
         type DeleteItemOptions = DeleteOptions<typeof ent>
         type TestDeleteItemOptions = A.Equals<
           DeleteItemOptions,
-          ExpectedWriteOpts<keyof ExpectedItem, 'NONE' | 'ALL_OLD'>
+          ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>
         >
         const testDeleteItemOptions: TestDeleteItemOptions = 1
         testDeleteItemOptions
@@ -1053,7 +1063,7 @@ describe('Entity', () => {
         type PutItemOptions = PutOptions<typeof ent>
         type TestPutItemOptions = A.Equals<
           PutItemOptions,
-          ExpectedWriteOpts<keyof ExpectedItem, 'NONE' | 'ALL_OLD'>
+          ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>
         >
         const testPutItemOptions: TestPutItemOptions = 1
         testPutItemOptions
@@ -1197,7 +1207,7 @@ describe('Entity', () => {
         type TestUpdateItemOptions = A.Equals<
           UpdateItemOptions,
           ExpectedWriteOpts<
-            keyof ExpectedItem,
+            keyof ExpectedItem | 'hidden',
             'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
           >
         >
@@ -1370,7 +1380,7 @@ describe('Entity', () => {
         type QueryItemsOptions = QueryOptions<typeof ent>
         type TestQueryItemsOptions = A.Equals<
           QueryItemsOptions,
-          ExpectedQueryOpts<keyof ExpectedItem>
+          ExpectedQueryOpts<keyof ExpectedItem, keyof ExpectedItem | 'hidden'>
         >
         const testQueryItemsOptions: TestQueryItemsOptions = 1
         testQueryItemsOptions
@@ -1388,8 +1398,8 @@ describe('Entity', () => {
     const ent = new Entity({
       name: entityName,
       attributes: {
-        pk: { type: 'string', partitionKey: true, hidden: true, default: pk },
-        sk: { type: 'string', sortKey: true, hidden: true }
+        pk: { type: 'string', partitionKey: true, default: pk },
+        sk: { type: 'string', sortKey: true }
       },
       table
     } as const)
@@ -1445,8 +1455,8 @@ describe('Entity', () => {
     const ent = new Entity({
       name: entityName,
       attributes: {
-        pk: { type: 'string', partitionKey: true, hidden: true },
-        sk: { type: 'string', sortKey: true, hidden: true, default: sk }
+        pk: { type: 'string', partitionKey: true },
+        sk: { type: 'string', sortKey: true, default: sk }
       },
       table
     } as const)
@@ -1737,8 +1747,8 @@ describe('Entity', () => {
     const ent = new Entity<EntityItemOverlay, EntityCompositeKeyOverlay, typeof table>({
       name: 'TestEntity',
       attributes: {
-        pk: { type: 'string', partitionKey: true, hidden: true },
-        sk: { type: 'string', sortKey: true, hidden: true, default: sk }
+        pk: { type: 'string', partitionKey: true },
+        sk: { type: 'string', sortKey: true, default: sk }
       },
       table
     } as const)
@@ -2228,7 +2238,7 @@ describe('Entity', () => {
           type QueryItemsOptions = QueryOptions<typeof ent>
           type TestQueryItemsOptions = A.Equals<
             QueryItemsOptions,
-            ExpectedQueryOpts<keyof EntityItemOverlay>
+            ExpectedQueryOpts<keyof EntityItemOverlay, keyof EntityItemOverlay>
           >
           const testQueryItemsOptions: TestQueryItemsOptions = 1
           testQueryItemsOptions
