@@ -16,13 +16,7 @@ import getKey from '../lib/getKey'
 import parseConditions from '../lib/expressionBuilder'
 import parseProjections from '../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../lib/utils'
-import {
-  DynamoDBKeyTypes,
-  DynamoDBTypes,
-  AttributesQueryOptions,
-  ScanOptions,
-  TableDef
-} from './Table'
+import { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, ScanOptions, TableDef } from './Table'
 
 // Definitions
 export interface EntityConstructor<
@@ -339,24 +333,32 @@ type BaseOptions<
   parse: Parse
 }
 
-export type AttributesReadOptions<
-  Attributes extends A.Key = A.Key,
+export type $ReadOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = BaseOptions<Execute, Parse> & {
-  // 💥 TODO: Support simple Attribute & Projection Attributes
-  // previously: attributes: string | ProjectionAttributeType | (string | ProjectionAttributeType)[]
-  attributes: Attributes[]
   consistent: boolean
 }
 
-type AttributesGetOptions<
+type $GetOptions<
   Attributes extends A.Key = A.Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<AttributesReadOptions<Attributes, Execute, Parse> & { include: string[] }>
+> = O.Partial<$ReadOptions<Execute, Parse> & { attributes: Attributes[]; include: string[] }>
 
-type AttributesWriteOptions<
+type EntityQueryOptions<
+  Attributes extends A.Key = A.Key,
+  FiltersAttributes extends A.Key = Attributes,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = O.Partial<
+  $QueryOptions<Execute, Parse> & {
+    attributes: Attributes[]
+    filters: ConditionsOrFilters<FiltersAttributes>
+  }
+>
+
+type $WriteOptions<
   Attributes extends A.Key = A.Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
@@ -368,12 +370,12 @@ type AttributesWriteOptions<
 
 type PutOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
-type AttributesPutOptions<
+type $PutOptions<
   Attributes extends A.Key = A.Key,
   ReturnValues extends PutOptionsReturnValues = PutOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<AttributesWriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 type PutItem<
   MethodItemOverlay extends Overlay,
@@ -402,12 +404,12 @@ type PutItem<
 
 type UpdateOptionsReturnValues = 'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
 
-type AttributesUpdateOptions<
+type $UpdateOptions<
   Attributes extends A.Key = A.Key,
   ReturnValues extends UpdateOptionsReturnValues = UpdateOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<AttributesWriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 interface UpdateCustomParameters {
   SET: string[]
@@ -457,7 +459,7 @@ type RawDeleteOptions<
   ReturnValues extends DeleteOptionsReturnValues = DeleteOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<AttributesWriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
@@ -734,7 +736,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: AttributesGetOptions<ResponseAttributes, Execute, Parse> = {},
+    options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.GetItemInput> = {}
   ): Promise<
     If<
@@ -814,7 +816,6 @@ class Entity<
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    // 💥 TODO: Support Projection Attributes
     options: { attributes?: ResponseAttributes[] } = {}
   ): {
     Entity: Entity<
@@ -879,7 +880,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: AttributesGetOptions<ResponseAttributes, Execute, Parse> = {},
+    options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.GetItemInput> = {}
   ): DocumentClient.GetItemInput {
     // Extract schema and merge defaults
@@ -921,7 +922,6 @@ class Entity<
 
     // If projections
     if (attributes) {
-      // 💥 TODO: Support projection attributes
       const { names, projections } = parseProjections(attributes, this.table, this.name)
 
       if (Object.keys(names).length > 0) {
@@ -1219,7 +1219,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: AttributesUpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.UpdateItemInput> = {}
   ): Promise<
     A.Compute<
@@ -1336,7 +1336,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: AttributesUpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     {
       SET = [],
       REMOVE = [],
@@ -1672,7 +1672,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: AttributesPutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
     If<
@@ -1801,7 +1801,7 @@ class Entity<
     Parse extends boolean | undefined = undefined
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: AttributesPutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): DocumentClient.PutItemInput {
     // Extract schema and defaults
@@ -1993,7 +1993,7 @@ class Entity<
     FiltersAttributes extends ItemAttributes['all'] = ItemAttributes['all']
   >(
     pk: any,
-    options: AttributesQueryOptions<ResponseAttributes, FiltersAttributes> = {},
+    options: EntityQueryOptions<ResponseAttributes, FiltersAttributes> = {},
     params: Partial<DocumentClient.QueryInput> = {}
   ) {
     if (!this.table) {
@@ -2047,17 +2047,17 @@ type ExtractAttributes<E extends EntityDef> = E['_typesOnly']['_entityItemOverla
 export type GetOptions<
   E extends EntityDef,
   A extends ParsedAttributes = ExtractAttributes<E>
-> = AttributesGetOptions<A['shown'], boolean | undefined, boolean | undefined>
+> = $GetOptions<A['shown'], boolean | undefined, boolean | undefined>
 
 export type QueryOptions<
   E extends EntityDef,
   A extends ParsedAttributes = ExtractAttributes<E>
-> = AttributesQueryOptions<A['shown'], A['all'], boolean | undefined, boolean | undefined>
+> = EntityQueryOptions<A['shown'], A['all'], boolean | undefined, boolean | undefined>
 
 export type PutOptions<
   E extends EntityDef,
   A extends ParsedAttributes = ExtractAttributes<E>
-> = AttributesPutOptions<A['all'], PutOptionsReturnValues, boolean | undefined, boolean | undefined>
+> = $PutOptions<A['all'], PutOptionsReturnValues, boolean | undefined, boolean | undefined>
 
 export type DeleteOptions<
   E extends EntityDef,
@@ -2067,9 +2067,4 @@ export type DeleteOptions<
 export type UpdateOptions<
   E extends EntityDef,
   A extends ParsedAttributes = ExtractAttributes<E>
-> = AttributesUpdateOptions<
-  A['all'],
-  UpdateOptionsReturnValues,
-  boolean | undefined,
-  boolean | undefined
->
+> = $UpdateOptions<A['all'], UpdateOptionsReturnValues, boolean | undefined, boolean | undefined>

@@ -10,7 +10,7 @@
 import DynamoDb, { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { A, O } from 'ts-toolbelt'
 
-import Entity, { AttributesReadOptions, ConditionsOrFilters } from './Entity'
+import Entity, { $ReadOptions, ConditionsOrFilters } from './Entity'
 import { parseTable, ParsedTable } from '../lib/parseTable'
 import parseFilters from '../lib/expressionBuilder'
 import validateTypes from '../lib/validateTypes'
@@ -69,28 +69,33 @@ export interface TableIndexes {
   [index: string]: { partitionKey?: string; sortKey?: string }
 }
 
-export type AttributesQueryOptions<
-  Attributes extends A.Key = A.Key,
-  FiltersAttributes extends A.Key = Attributes,
+export type $QueryOptions<
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = $ReadOptions<Execute, Parse> & {
+  index: string
+  limit: number
+  reverse: boolean
+  entity: string
+  select: DocumentClient.Select
+  // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
+  eq: string | number
+  lt: string | number
+  lte: string | number
+  gt: string | number
+  gte: string | number
+  between: [string, string] | [number, number]
+  beginsWith: string
+  startKey: {}
+}
+
+export type TableQueryOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = O.Partial<
-  AttributesReadOptions<Attributes, Execute, Parse> & {
-    index: string
-    limit: number
-    reverse: boolean
-    entity: string
-    select: DocumentClient.Select
-    filters: ConditionsOrFilters<FiltersAttributes>
-    // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
-    eq: string | number
-    lt: string | number
-    lte: string | number
-    gt: string | number
-    gte: string | number
-    between: [string, string] | [number, number]
-    beginsWith: string
-    startKey: {}
+  $QueryOptions<Execute, Parse> & {
+    attributes: ProjectionAttributes
+    filters: ConditionsOrFilters<A.Key>
   }
 >
 
@@ -459,13 +464,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   async query<
     Item extends unknown = unknown,
-    Attributes extends A.Key = A.Key,
-    FilteredAttributes extends A.Key = Attributes,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
   >(
     pk: any,
-    options: AttributesQueryOptions<Attributes, FilteredAttributes, Execute, Parse> = {},
+    options: TableQueryOptions<Execute, Parse> = {},
     params: Partial<DocumentClient.QueryInput> = {}
   ): Promise<
     A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>> & {
@@ -473,12 +476,12 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     }
   > {
     // Generate query parameters with projection data
-    const { payload, EntityProjections, TableProjections } = this.queryParams<
-      Attributes,
-      FilteredAttributes,
-      Execute,
-      Parse
-    >(pk, options, params, true)
+    const { payload, EntityProjections, TableProjections } = this.queryParams<Execute, Parse>(
+      pk,
+      options,
+      params,
+      true
+    )
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -545,13 +548,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   // Query the table
   queryParams<
-    Attributes extends A.Key = A.Key,
-    FilteredAttributes extends A.Key = Attributes,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
   >(
     pk: any,
-    options: AttributesQueryOptions<Attributes, FilteredAttributes, Execute, Parse> = {},
+    options: TableQueryOptions<Execute, Parse> = {},
     params: Partial<DocumentClient.QueryInput> = {},
     projections = false
     // 🔨 TOIMPROVE: Type queryParams return
