@@ -715,18 +715,18 @@ describe('Entity', () => {
         // @ts-expect-error
         expect(() => ent.updateParams({ pkMap2 })).toThrow()
       })
-    })
 
-    it('with conditions', () => {
-      ent.updateParams({ pk }, { conditions: { attr: 'pk', exists: true } })
-      ;() => ent.update({ pk }, { conditions: { attr: 'pk', exists: true } })
+      it('with conditions', () => {
+        ent.updateParams({ pk }, { conditions: { attr: 'pk', exists: true } })
+        ;() => ent.update({ pk }, { conditions: { attr: 'pk', exists: true } })
 
-      expect(() =>
+        expect(() =>
+          // @ts-expect-error
+          ent.updateParams({ pk }, { conditions: { attr: 'sk', exists: true } })
+        ).toThrow()
         // @ts-expect-error
-        ent.updateParams({ pk }, { conditions: { attr: 'sk', exists: true } })
-      ).toThrow()
-      // @ts-expect-error
-      ;() => ent.update({ pk }, { conditions: { attr: 'sk', exists: true } })
+        ;() => ent.update({ pk }, { conditions: { attr: 'sk', exists: true } })
+      })
     })
 
     describe('query method', () => {
@@ -737,6 +737,13 @@ describe('Entity', () => {
         const testQueryItems: TestQueryItems = 1
         testQueryItems
 
+        type QueryNextItems = C.PromiseOf<
+          F.Return<Exclude<C.PromiseOf<F.Return<typeof queryPromise>>['next'], undefined>>
+        >['Items']
+        type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
+        const testQueryNextItems: TestQueryNextItems = 1
+        testQueryNextItems
+
         type QueryItemsOptions = QueryOptions<typeof ent>
         type TestQueryItemsOptions = A.Equals<
           QueryItemsOptions,
@@ -744,6 +751,157 @@ describe('Entity', () => {
         >
         const testQueryItemsOptions: TestQueryItemsOptions = 1
         testQueryItemsOptions
+      })
+
+      it('force execution', () => {
+        const queryPromise = () => ent.query('pk', { execute: true })
+        type QueryItems = C.PromiseOf<F.Return<typeof queryPromise>>['Items']
+        type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
+        const testQueryItems: TestQueryItems = 1
+        testQueryItems
+
+        type QueryNextItems = C.PromiseOf<
+          F.Return<Exclude<C.PromiseOf<F.Return<typeof queryPromise>>['next'], undefined>>
+        >['Items']
+        type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
+        const testQueryNextItems: TestQueryNextItems = 1
+        testQueryNextItems
+      })
+
+      it('force no execution', () => {
+        const queryPromise = () => ent.query('pk', { execute: false, parse: true })
+        type QueryInput = C.PromiseOf<F.Return<typeof queryPromise>>
+        type TestQueryInput = A.Equals<QueryInput, DocumentClientType.QueryInput>
+        const testQueryInput: TestQueryInput = 1
+        testQueryInput
+      })
+
+      it('force parsing', () => {
+        const queryPromise = () => ent.query('pk', { parse: true })
+        type QueryItems = C.PromiseOf<F.Return<typeof queryPromise>>['Items']
+        type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
+        const testQueryItems: TestQueryItems = 1
+        testQueryItems
+
+        type QueryNextItems = C.PromiseOf<
+          F.Return<Exclude<C.PromiseOf<F.Return<typeof queryPromise>>['next'], undefined>>
+        >['Items']
+        type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
+        const testQueryNextItems: TestQueryNextItems = 1
+        testQueryNextItems
+      })
+
+      it('force no parsing', () => {
+        const queryPromise = () => ent.query('pk', { parse: false })
+        type QueryItems = C.PromiseOf<F.Return<typeof queryPromise>>['Items']
+        type TestQueryItems = A.Equals<QueryItems, DocumentClientType.AttributeMap[] | undefined>
+        const testQueryItems: TestQueryItems = 1
+        testQueryItems
+
+        type QueryNextItems = C.PromiseOf<
+          F.Return<Exclude<C.PromiseOf<F.Return<typeof queryPromise>>['next'], undefined>>
+        >['Items']
+        type TestQueryNextItems = A.Equals<
+          QueryNextItems,
+          DocumentClientType.AttributeMap[] | undefined
+        >
+        const testQueryNextItems: TestQueryNextItems = 1
+        testQueryNextItems
+      })
+
+      it('contains no timestamp', () => {
+        const queryPromise = () => entNoTimestamps.query('pk')
+        type QueryItems = C.PromiseOf<F.Return<typeof queryPromise>>['Items']
+        type TestQueryItems = A.Equals<
+          QueryItems,
+          Omit<ExpectedItem, 'created' | 'modified'>[] | undefined
+        >
+        const testQueryItems: TestQueryItems = 1
+        testQueryItems
+      })
+    })
+
+    describe('scan method', () => {
+      it('nominal case', () => {
+        const scanPromise = () => ent.scan()
+        type ScanItems = C.PromiseOf<F.Return<typeof scanPromise>>['Items']
+        // TODO: Improve this by parsing table attributes ?
+        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        const testScanItems: TestScanItems = 1
+        testScanItems
+
+        type ScanNextItems = C.PromiseOf<
+          F.Return<Exclude<C.PromiseOf<F.Return<typeof scanPromise>>['next'], undefined>>
+        >['Items']
+        type TestScanNextItems = A.Equals<
+          ScanNextItems,
+          DocumentClientType.AttributeMap[] | undefined
+        >
+        const testScanNextItems: TestScanNextItems = 1
+        testScanNextItems
+      })
+
+      it('force execution', () => {
+        const scanPromise = () => ent.scan({ execute: true })
+        type ScanItems = C.PromiseOf<F.Return<typeof scanPromise>>['Items']
+        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        const testScanItems: TestScanItems = 1
+        testScanItems
+
+        type ScanNextItems = C.PromiseOf<
+          F.Return<Exclude<C.PromiseOf<F.Return<typeof scanPromise>>['next'], undefined>>
+        >['Items']
+        type TestScanNextItems = A.Equals<
+          ScanNextItems,
+          DocumentClientType.AttributeMap[] | undefined
+        >
+        const testScanNextItems: TestScanNextItems = 1
+        testScanNextItems
+      })
+
+      it('force no execution', () => {
+        const scanPromise = () => ent.scan({ execute: false, parse: true })
+        type ScanInput = C.PromiseOf<F.Return<typeof scanPromise>>
+        type TestScanInput = A.Equals<ScanInput, DocumentClientType.ScanInput>
+        const testScanInput: TestScanInput = 1
+        testScanInput
+      })
+
+      it('force parsing', () => {
+        const scanPromise = () => ent.scan({ parse: true })
+        type ScanItems = C.PromiseOf<F.Return<typeof scanPromise>>['Items']
+        // TODO: Improve this by parsing table attributes ?
+        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        const testScanItems: TestScanItems = 1
+        testScanItems
+
+        type ScanNextItems = C.PromiseOf<
+          F.Return<Exclude<C.PromiseOf<F.Return<typeof scanPromise>>['next'], undefined>>
+        >['Items']
+        type TestScanNextItems = A.Equals<
+          ScanNextItems,
+          DocumentClientType.AttributeMap[] | undefined
+        >
+        const testScanNextItems: TestScanNextItems = 1
+        testScanNextItems
+      })
+
+      it('force no parsing', () => {
+        const scanPromise = () => ent.scan({ parse: false })
+        type ScanItems = C.PromiseOf<F.Return<typeof scanPromise>>['Items']
+        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        const testScanItems: TestScanItems = 1
+        testScanItems
+
+        type ScanNextItems = C.PromiseOf<
+          F.Return<Exclude<C.PromiseOf<F.Return<typeof scanPromise>>['next'], undefined>>
+        >['Items']
+        type TestScanNextItems = A.Equals<
+          ScanNextItems,
+          DocumentClientType.AttributeMap[] | undefined
+        >
+        const testScanNextItems: TestScanNextItems = 1
+        testScanNextItems
       })
     })
   })
@@ -1386,6 +1544,16 @@ describe('Entity', () => {
         testQueryItemsOptions
       })
     })
+
+    describe('scan method', () => {
+      it('nominal case', () => {
+        const scanPromise = () => ent.scan()
+        type ScanItems = C.PromiseOf<F.Return<typeof scanPromise>>['Items']
+        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        const testScanItems: TestScanItems = 1
+        testScanItems
+      })
+    })
   })
 
   describe('PK (default) + SK Entity', () => {
@@ -1717,6 +1885,16 @@ describe('Entity', () => {
         type TestQueryItem = A.Equals<QueryItem, MethodItemOverlay[] | undefined>
         const testQueryItem: TestQueryItem = 1
         testQueryItem
+      })
+    })
+
+    describe('scan method', () => {
+      it('returned Items should match MethodItemOverlay', () => {
+        const scanPromise = () => ent.scan<MethodItemOverlay>()
+        type ScanItems = C.PromiseOf<F.Return<typeof scanPromise>>['Items']
+        type TestScanItems = A.Equals<ScanItems, MethodItemOverlay[] | undefined>
+        const testScanItems: TestScanItems = 1
+        testScanItems
       })
     })
   })
@@ -2269,6 +2447,36 @@ describe('Entity', () => {
           type TestQueryItem = A.Equals<QueryItem, MethodItemOverlay[] | undefined>
           const testQueryItem: TestQueryItem = 1
           testQueryItem
+        })
+      })
+    })
+
+    describe('scan method', () => {
+      describe('EntityOverlay only', () => {
+        it('condition attributes should not necessarily match EntityItemOverlay', () => {
+          ;() => ent.scan({ attributes: ['pk'] })
+        })
+
+        it('returned Items should not necessarily match EntityItemOverlay', () => {
+          const scanPromise = () => ent.scan()
+          type ScanItems = C.PromiseOf<F.Return<typeof scanPromise>>['Items']
+          type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+          const testScanItems: TestScanItems = 1
+          testScanItems
+        })
+      })
+
+      describe('MethodOverlay', () => {
+        it('condition attributes should not necessarily match MethodItemOverlay', () => {
+          ;() => ent.scan<MethodItemOverlay>({ attributes: ['pk'] })
+        })
+
+        it('returned Items should match MethodItemOverlay', () => {
+          const scanPromise = () => ent.scan<MethodItemOverlay>()
+          type ScanItems = C.PromiseOf<F.Return<typeof scanPromise>>['Items']
+          type TestScanItems = A.Equals<ScanItems, MethodItemOverlay[] | undefined>
+          const testScanItems: TestScanItems = 1
+          testScanItems
         })
       })
     })

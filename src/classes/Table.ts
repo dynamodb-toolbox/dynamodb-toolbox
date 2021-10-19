@@ -22,7 +22,7 @@ import parseProjections, {
 import { ParsedEntity } from '../lib/parseEntity'
 
 // Import standard error handler
-import { error, conditonError, hasProperty } from '../lib/utils'
+import { error, conditonError, hasProperty, If } from '../lib/utils'
 
 // Declare Table types
 export interface TableConstructor<
@@ -69,25 +69,25 @@ export interface TableIndexes {
   [index: string]: { partitionKey?: string; sortKey?: string }
 }
 
+type TableReadOptions = { index: string; limit: number; entity: string }
+
 export type $QueryOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = $ReadOptions<Execute, Parse> & {
-  index: string
-  limit: number
-  reverse: boolean
-  entity: string
-  select: DocumentClient.Select
-  // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
-  eq: string | number
-  lt: string | number
-  lte: string | number
-  gt: string | number
-  gte: string | number
-  between: [string, string] | [number, number]
-  beginsWith: string
-  startKey: {}
-}
+> = $ReadOptions<Execute, Parse> &
+  TableReadOptions & {
+    reverse: boolean
+    select: DocumentClient.Select
+    // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
+    eq: string | number
+    lt: string | number
+    lte: string | number
+    gt: string | number
+    gte: string | number
+    between: [string, string] | [number, number]
+    beginsWith: string
+    startKey: {}
+  }
 
 export type TableQueryOptions<
   Execute extends boolean | undefined = undefined,
@@ -99,24 +99,24 @@ export type TableQueryOptions<
   }
 >
 
-export interface ScanOptions {
-  index?: string
-  limit?: number
-  consistent?: boolean
-  capacity?: DocumentClient.ReturnConsumedCapacity
-  select?: DocumentClient.Select
-  filters?: FilterExpressions
-  attributes?: ProjectionAttributes
-  startKey?: {}
-  segments?: number
-  segment?: number
-  entity?: string
-  execute?: boolean
-  parse?: boolean
-}
+export type ScanOptions<
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
+> = O.Partial<
+  $ReadOptions<Execute, Parse> &
+    TableReadOptions & {
+      attributes?: ProjectionAttributes
+      filters?: FilterExpressions
+      startKey?: {}
+      segments?: number
+      segment?: number
+      capacity?: DocumentClient.ReturnConsumedCapacity
+      select?: DocumentClient.Select
+    }
+>
 
-interface batchGetOptions {
-  consistent?: boolean
+interface BatchGetOptions {
+  consistent?: boolean | { [tableName: string]: boolean }
   capacity?: DocumentClient.ReturnConsumedCapacity
   attributes?: ProjectionAttributes
   include?: string[]
@@ -463,7 +463,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   // ----------------------------------------------------------------//
 
   async query<
-    Item extends unknown = unknown,
+    Item extends unknown = DocumentClient.AttributeMap,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
   >(
@@ -471,9 +471,23 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     options: TableQueryOptions<Execute, Parse> = {},
     params: Partial<DocumentClient.QueryInput> = {}
   ): Promise<
-    A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>> & {
-      next?: () => Promise<A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>>>
-    }
+    If<
+      A.Equals<Execute, false>,
+      DocumentClient.QueryInput,
+      If<
+        A.Equals<Parse, false>,
+        A.Compute<
+          DocumentClient.QueryOutput & {
+            next?: () => Promise<DocumentClient.QueryOutput>
+          }
+        >,
+        A.Compute<
+          O.Update<DocumentClient.QueryOutput, 'Items', Item[]> & {
+            next?: () => Promise<A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>>>
+          }
+        >
+      >
+    >
   > {
     // Generate query parameters with projection data
     const { payload, EntityProjections, TableProjections } = this.queryParams<Execute, Parse>(
@@ -485,9 +499,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = (await this.DocumentClient!.query(payload).promise()) as A.Compute<
-        O.Update<DocumentClient.QueryOutput, 'Items', Item[]>
-      >
+      const result = (await this.DocumentClient!.query(payload).promise()) as any
 
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -537,7 +549,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                 }
               }
             : null
-        ) as A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>>
+        ) as any
       } else {
         return result
       }
@@ -786,13 +798,38 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   } // end query
 
   // SCAN the table
-  async scan(
-    options: ScanOptions = {},
+  async scan<
+    Item extends unknown = DocumentClient.AttributeMap,
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
+  >(
+    options: ScanOptions<Execute, Parse> = {},
     params: Partial<DocumentClient.ScanInput> = {}
-    // 🔨 TOIMPROVE: Type scan return
-  ): Promise<any> {
+  ): Promise<
+    If<
+      A.Equals<Execute, false>,
+      DocumentClient.ScanInput,
+      If<
+        A.Equals<Parse, false>,
+        A.Compute<
+          DocumentClient.ScanOutput & {
+            next?: () => Promise<DocumentClient.ScanOutput>
+          }
+        >,
+        A.Compute<
+          O.Update<DocumentClient.ScanOutput, 'Items', Item[]> & {
+            next?: () => Promise<A.Compute<O.Update<DocumentClient.ScanOutput, 'Items', Item[]>>>
+          }
+        >
+      >
+    >
+  > {
     // Generate query parameters with meta data
-    const { payload, EntityProjections, TableProjections } = this.scanParams(options, params, true)
+    const { payload, EntityProjections, TableProjections } = this.scanParams<Execute, Parse>(
+      options,
+      params,
+      true
+    )
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -831,9 +868,9 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                 }
               }
             : null
-        )
+        ) as any
       } else {
-        return result
+        return result as any
       }
     } else {
       return payload
@@ -841,8 +878,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   }
 
   // Generate SCAN Parameters
-  scanParams(
-    options: ScanOptions = {},
+  scanParams<
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
+  >(
+    options: ScanOptions<Execute, Parse> = {},
     params: Partial<DocumentClient.ScanInput> = {},
     meta = false
     // 🔨 TOIMPROVE: Type scanParams return
@@ -999,7 +1039,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   // BatchGet Items
   async batchGet(
     items: any,
-    options: batchGetOptions = {},
+    options: BatchGetOptions = {},
     params: Partial<DocumentClient.BatchGetItemInput> = {}
   ) {
     // Generate the payload with meta information
@@ -1039,7 +1079,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     Tables: any,
     EntityProjections: { [key: string]: any },
     TableProjections: { [key: string]: string[] },
-    options: batchGetOptions = {}
+    options: BatchGetOptions = {}
   ) {
     return Object.assign(
       result,
@@ -1106,7 +1146,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   // Generate BatchGet Params
   batchGetParams(
     _items: any,
-    options: batchGetOptions = {},
+    options: BatchGetOptions = {},
     params: Partial<DocumentClient.BatchGetItemInput> = {},
     meta = false
   ) {
