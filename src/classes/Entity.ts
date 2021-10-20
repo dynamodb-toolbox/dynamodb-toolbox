@@ -693,7 +693,7 @@ class Entity<
   } // end attribute
 
   // Parses the item
-  parse(input: any, include: string[] = []) {
+  parse(input: any, include: string[] = []): Item | Item[] {
     // TODO: 'include' needs to handle nested maps?
 
     // Convert include to roots and de-alias
@@ -711,9 +711,9 @@ class Entity<
     if (Array.isArray(data)) {
       return data.map(item =>
         formatItem(this.DocumentClient)(schema.attributes, linked, item, include)
-      )
+      ) as any
     } else {
-      return formatItem(this.DocumentClient)(schema.attributes, linked, data, include)
+      return formatItem(this.DocumentClient)(schema.attributes, linked, data, include) as any
     }
   } // end parse
 
@@ -832,6 +832,7 @@ class Entity<
       ReadonlyAttributeDefinitions,
       WritableAttributeDefinitions,
       Attributes,
+      $Item,
       Item,
       CompositePrimaryKey
     >
@@ -1990,10 +1991,12 @@ class Entity<
       { all: keyof MethodItemOverlay; shown: keyof MethodItemOverlay }
     >,
     ResponseAttributes extends ItemAttributes['shown'] = ItemAttributes['shown'],
-    FiltersAttributes extends ItemAttributes['all'] = ItemAttributes['all']
+    FiltersAttributes extends ItemAttributes['all'] = ItemAttributes['all'],
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
   >(
     pk: any,
-    options: EntityQueryOptions<ResponseAttributes, FiltersAttributes> = {},
+    options: EntityQueryOptions<ResponseAttributes, FiltersAttributes, Execute, Parse> = {},
     params: Partial<DocumentClient.QueryInput> = {}
   ) {
     if (!this.table) {
@@ -2001,21 +2004,29 @@ class Entity<
     }
 
     options.entity = this.name
-    return this.table.query<FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>>(
-      pk,
-      options,
-      params
-    )
+    return this.table.query<
+      FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>,
+      Execute,
+      Parse
+    >(pk, options, params)
   }
 
   // Scan pass-through (default entity)
-  scan(options: ScanOptions = {}, params: Partial<DocumentClient.ScanInput> = {}) {
+  scan<
+    MethodItemOverlay extends Overlay = undefined,
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined
+  >(options: ScanOptions<Execute, Parse> = {}, params: Partial<DocumentClient.ScanInput> = {}) {
     if (!this.table) {
       throw new Error('Entity table is not defined')
     }
 
     options.entity = this.name
-    return this.table.scan(options, params)
+    return this.table.scan<
+      FirstDefined<[MethodItemOverlay, DocumentClient.AttributeMap]>,
+      Execute,
+      Parse
+    >(options, params)
   }
 } // end Entity
 

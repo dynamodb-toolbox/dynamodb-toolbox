@@ -94,7 +94,6 @@ describe('batchGet', () => {
         TestEntity.getBatch({ email: 'test', sort: 'testsk' }),
         TestEntity2.getBatch({ email: 'test', sort: 'testsk' })
       ],
-      // @ts-expect-error: FIXME: this isn't right
       { consistent: { testTable: true, 'test-table2': false } }
     )
 
