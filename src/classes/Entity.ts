@@ -54,16 +54,16 @@ type KeyAttributeDefinition = {
   delimiter: string
   prefix: string
   suffix: string
+  onUpdate: boolean
+  dependsOn: string | string[]
+  transform: (value: any, data: any) => any
+  coerce: boolean
   // 💥 TODO: Are following options forbidden in KeyAttributeDefinitions ?
   save: never
-  onUpdate: never
   required: never
   alias: never
   map: never
   setType: never
-  dependsOn: never
-  transform: never
-  coerce: never
 }
 
 export type PartitionKeyDefinition = O.Partial<KeyAttributeDefinition> & {
@@ -94,7 +94,7 @@ export type PureAttributeDefinition = O.Partial<{
   default: any | ((data: object) => any)
   dependsOn: string | string[]
   // 🔨 TOIMPROVE: Probably typable
-  transform: (value: any, data: {}) => { resp: any }
+  transform: (value: any, data: {}) => any
   coerce: boolean
   save: boolean
   onUpdate: boolean
