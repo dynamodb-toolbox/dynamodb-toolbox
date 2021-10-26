@@ -4,6 +4,7 @@ import MockDate from 'mockdate'
 import { A, C, F, O } from 'ts-toolbelt'
 
 import {
+  EntityItem,
   GetOptions,
   QueryOptions,
   PutOptions,
@@ -276,6 +277,11 @@ describe('Entity', () => {
         >
         const testGetItemOptions: TestGetItemOptions = 1
         testGetItemOptions
+
+        type Item = EntityItem<typeof ent>
+        type TestItem = A.Equals<Item, ExpectedItem>
+        const testItem: TestItem = 1
+        testItem
       })
 
       it('no auto-execution', () => {
@@ -1021,6 +1027,11 @@ describe('Entity', () => {
         type TestGetItemOptions = A.Equals<GetItemOptions, ExpectedGetOpts<keyof ExpectedItem>>
         const testGetItemOptions: TestGetItemOptions = 1
         testGetItemOptions
+
+        type Item = EntityItem<typeof ent>
+        type TestItem = A.Equals<Item, ExpectedItem>
+        const testItem: TestItem = 1
+        testItem
       })
 
       it('filtered attributes', () => {
@@ -1595,6 +1606,11 @@ describe('Entity', () => {
       type TestGetItem2 = A.Equals<GetItem2, ExpectedItem | undefined>
       const testGetItem2: TestGetItem2 = 1
       testGetItem2
+
+      type Item = EntityItem<typeof ent>
+      type TestItem = A.Equals<Item, ExpectedItem>
+      const testItem: TestItem = 1
+      testItem
     })
 
     it('delete method', () => {
@@ -1976,6 +1992,11 @@ describe('Entity', () => {
           >
           const testFilteredGetItem: TestFilteredGetItem = 1
           testFilteredGetItem
+
+          type Item = EntityItem<typeof ent>
+          type TestItem = A.Equals<Item, EntityItemOverlay>
+          const testItem: TestItem = 1
+          testItem
         })
       })
 

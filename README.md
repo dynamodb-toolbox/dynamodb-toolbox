@@ -265,6 +265,8 @@ If you like working with ORMs, that's great, and you should definitely give thes
   - [Type Inference](#type-inference)
     - [Overlaying](#overlaying)
     - [Utility Types](#utility-types)
+      - [EntityItem](#entityitem)
+      - [Options Types](#options)
   - [Additional References](#additional-references)
   - [Sponsors](#sponsors)
   - [Contributions and Feedback](#contributions-and-feedback)
@@ -1388,7 +1390,22 @@ const { Item } = await MyEntity.get({ pk, sk }, { attributes: ['name'] }) // ✅
 
 ### Utility Types
 
-Sometimes it can be useful to dynamically set an entity operation options. For instance:
+#### EntityItem
+
+The inferred or overlayed entity items type can be obtained through the `EntityItem` utility type:
+
+```typescript
+import type { EntityItem } from 'dynamodb-toolbox'
+
+const listUsers = async (): Promise<EntityItem<typeof UserEntity>[]> => {
+  const { Items } = await UserEntity.query(...)
+  return Items
+}
+```
+
+#### Options
+
+Sometimes, it can be useful to dynamically set an entity operation options. For instance:
 
 ```typescript
 const queryOptions = {}

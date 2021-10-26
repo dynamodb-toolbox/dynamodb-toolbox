@@ -2042,6 +2042,29 @@ type EntityDef = {
   attributes: AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>
 }
 
+type InferEntityItem<
+  E extends EntityDef,
+  WritableAttributeDefinitions extends AttributeDefinitions = A.Cast<
+    O.Writable<E['attributes'], A.Key, 'deep'>,
+    AttributeDefinitions
+  >,
+  Attributes extends ParsedAttributes = ParseAttributes<
+    WritableAttributeDefinitions,
+    E['timestamps'],
+    E['createdAlias'],
+    E['modifiedAlias'],
+    E['typeAlias']
+  >,
+  Item = InferItem<WritableAttributeDefinitions, Attributes>
+> = Pick<Item, Extract<Attributes['shown'], keyof Item>>
+
+export type EntityItem<E extends EntityDef> = E['_typesOnly']['_entityItemOverlay'] extends Record<
+  A.Key,
+  any
+>
+  ? E['_typesOnly']['_entityItemOverlay']
+  : InferEntityItem<E>
+
 type ExtractAttributes<E extends EntityDef> = E['_typesOnly']['_entityItemOverlay'] extends Record<
   A.Key,
   any
