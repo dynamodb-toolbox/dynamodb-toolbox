@@ -18,7 +18,17 @@ import type {
   QueryOptions,
   PutOptions,
   DeleteOptions,
-  UpdateOptions
+  UpdateOptions,
+  EntityItem
 } from './classes/Entity'
 
-export { Table, Entity, GetOptions, QueryOptions, PutOptions, DeleteOptions, UpdateOptions }
+export {
+  Table,
+  Entity,
+  GetOptions,
+  QueryOptions,
+  PutOptions,
+  DeleteOptions,
+  UpdateOptions,
+  EntityItem
+}
