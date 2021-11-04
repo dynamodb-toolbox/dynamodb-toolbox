@@ -214,8 +214,8 @@ class Table {
     for (let i in entities) {
       let entity = entities[i]
 
-      // If an instance of Entity, add it
-      if (entity instanceof Entity) {
+      // If an Entity, add it
+      if (entity.schema && entity.schema.keys) {
         
         // Check for existing entity name
         if (this._entities && this._entities.includes(entity.name)) {
