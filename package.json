@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-toolbox",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "dist/index.js",
@@ -45,9 +45,9 @@
     "aws-sdk": "^2.818.0",
     "coveralls": "^3.1.0",
     "dynalite": "^3.2.1",
-    "eslint": "^6.8.0",
-    "jest": "^26.6.3",
-    "ts-jest": "^26.4.4",
+    "eslint": "^8.2.0",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
     "typescript": "^4.1.3"
   },
   "files": [
