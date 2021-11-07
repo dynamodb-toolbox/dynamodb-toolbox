@@ -14,6 +14,7 @@ The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amaz
 ## Installation and Basic Usage
 
 Install the DynamoDB Toolbox with npm:
+
 ```
 npm i dynamodb-toolbox
 ```
@@ -21,51 +22,51 @@ npm i dynamodb-toolbox
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 
 ```javascript
-const { Table, Entity } = require('dynamodb-toolbox')
+const { Table, Entity } = require("dynamodb-toolbox");
 ```
 
 Create a Table (with the DocumentClient):
 
 ```javascript
 // Require AWS SDK and instantiate DocumentClient
-const DynamoDB = require('aws-sdk/clients/dynamodb')
-const DocumentClient = new DynamoDB.DocumentClient()
+const DynamoDB = require("aws-sdk/clients/dynamodb");
+const DocumentClient = new DynamoDB.DocumentClient();
 
 // Instantiate a table
 const MyTable = new Table({
   // Specify table name (used by DynamoDB)
-  name: 'my-table',
+  name: "my-table",
 
   // Define partition and sort keys
-  partitionKey: 'pk',
-  sortKey: 'sk',
+  partitionKey: "pk",
+  sortKey: "sk",
 
   // Add the DocumentClient
-  DocumentClient
-})
+  DocumentClient,
+});
 ```
 
 Create an Entity:
- 
+
 ```javascript
 const Customer = new Entity({
   // Specify entity name
-  name: 'Customer',
+  name: "Customer",
 
   // Define attributes
   attributes: {
     id: { partitionKey: true }, // flag as partitionKey
     sk: { hidden: true, sortKey: true }, // flag as sortKey and mark hidden
-    name: { map: 'data' }, // map 'name' to table attribute 'data'
-    co: { alias: 'company' }, // alias table attribute 'co' to 'company'
-    age: { type: 'number' }, // set the attribute type
-    status: ['sk',0], // composite key mapping
-    date_added: ['sk',1] // composite key mapping
+    name: { map: "data" }, // map 'name' to table attribute 'data'
+    co: { alias: "company" }, // alias table attribute 'co' to 'company'
+    age: { type: "number" }, // set the attribute type
+    status: ["sk", 0], // composite key mapping
+    date_added: ["sk", 1], // composite key mapping
   },
 
   // Assign it to our table
-  table: MyTable
-})
+  table: MyTable,
+});
 ```
 
 Put an item:
@@ -74,15 +75,15 @@ Put an item:
 // Create my item (using table attribute names or aliases)
 let item = {
   id: 123,
-  name: 'Jane Smith',
-  company: 'ACME',
+  name: "Jane Smith",
+  company: "ACME",
   age: 35,
-  status: 'active',
-  date_added: '2020-04-24'
-}
+  status: "active",
+  date_added: "2020-04-24",
+};
 
 // Use the 'put' method of Customer
-let result = await Customer.put(item)
+let result = await Customer.put(item);
 ```
 
 The item will be saved to DynamoDB like this:
@@ -103,12 +104,12 @@ You can then get the data:
 // Specify my item
 let item = {
   id: 123,
-  status: 'active',
-  date_added: '2020-04-24'
-}
+  status: "active",
+  date_added: "2020-04-24",
+};
 
 // Use the 'get' method of Customer
-let response = await Customer.get(item)
+let response = await Customer.get(item);
 ```
 
 This will return the object mapped to your aliases and composite key mappings:
@@ -126,16 +127,18 @@ This will return the object mapped to your aliases and composite key mappings:
 }
 ```
 
-### This is *NOT* an ORM (at least it's not trying to be)
+### This is _NOT_ an ORM (at least it's not trying to be)
+
 There are several really good Object-Relational Mapping tools (ORMs) out there for DynamoDB. There's the [Amazon DynamoDB DataMapper For JavaScript](https://github.com/awslabs/dynamodb-data-mapper-js), [@Awspilot's DynamoDB](https://awspilot.dev/) project, [@baseprime's dynamodb](https://github.com/baseprime/dynamodb) package, and many more.
 
 If you like working with ORMs, that's great, and you should definitely give these projects a look. But personally, I really dislike ORMs (especially ones for relational databases). I typically find them cumbersome and likely to generate terribly inefficient queries (you know who you are). So this project is not an ORM, or at least it's not trying to be. This library helps you generate the necessary parameters needed to interact with the DynamoDB API by giving you a **consistent interface** and **handling all the heavy lifting** when working with the DynamoDB API. For convenience, this library will call the DynamoDB API for you and automatically parse the results, but you're welcome to just let it generate all (or just some) of the parameters for you. Hopefully this library will make the vast majority of your DynamoDB interactions super simple, and maybe even a little bit fun! 😎
 
 ## Features
+
 - **Table Schemas and DynamoDB Typings:** Define your Table and Entity data models using a simple JavaScript object structure, assign DynamoDB data types, and optionally set defaults.
 - **Magic UpdateExpressions:** Writing complex `UpdateExpression` strings is a major pain, especially if the input data changes the underlying clauses or requires dynamic (or nested) attributes. This library handles everything from simple `SET` clauses, to complex `list` and `set` manipulations, to defaulting values with smartly applied `if_not_exists()` to avoid overwriting data.
 - **Bidirectional Mapping and Aliasing:** When building a single table design, you can define multiple entities that map to the same table. Each entity can reuse fields (like `pk` and`sk`) and map them to different aliases depending on the item type. Your data is automatically mapped correctly when reading and writing data.
-- **Composite Key Generation and Field Mapping:** Doing some fancy data modeling with composite keys? Like setting your `sortKey` to `[country]#[region]#[state]#[county]#[city]#[neighborhood]` model hierarchies? DynamoDB Toolbox lets you map data to these composite keys which will both autogenerate the value *and* parse them into fields for you.
+- **Composite Key Generation and Field Mapping:** Doing some fancy data modeling with composite keys? Like setting your `sortKey` to `[country]#[region]#[state]#[county]#[city]#[neighborhood]` model hierarchies? DynamoDB Toolbox lets you map data to these composite keys which will both autogenerate the value _and_ parse them into fields for you.
 - **Type Coercion and Validation:** Automatically coerce values to strings, numbers and booleans to ensure consistent data types in your DynamoDB tables. Validate `list`, `map`, and `set` types against your data. Oh yeah, and `set`s are automatically handled for you. 😉
 - **Powerful Query Builder:** Specify a `partitionKey`, and then easily configure your sortKey conditions, filters, and attribute projections to query your primary or secondary indexes. This library can even handle pagination with a simple `.next()` method.
 - **Simple Table Scans:** Scan through your table or secondary indexes and add filters, projections, parallel scans and more. And don't forget the pagination support with `.next()`.
@@ -152,7 +155,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - [DynamoDB Toolbox](#dynamodb-toolbox)
   - [Single Table Designs have never been this easy!](#single-table-designs-have-never-been-this-easy)
   - [Installation and Basic Usage](#installation-and-basic-usage)
-    - [This is *NOT* an ORM (at least it's not trying to be)](#this-is-not-an-orm-at-least-its-not-trying-to-be)
+    - [This is _NOT_ an ORM (at least it's not trying to be)](#this-is-not-an-orm-at-least-its-not-trying-to-be)
   - [Features](#features)
   - [Table of Contents](#table-of-contents)
   - [Conventions, Motivations, and Migrations from v0.1](#conventions-motivations-and-migrations-from-v01)
@@ -236,7 +239,7 @@ One of the most important goals of this library is to be as **unopinionated** as
 - **Option names have been shortened using camelCase.** Nothing against long and descriptive names, but typing `ReturnConsumedCapacity` over and over again just seems like extra work. For simplification purposes, all API request parameters have been shortened to things like `capacity`, `consistent` and `metrics`. The documentation shows which parameter they map to, but they should be intuitive enough to guess.
 - **All configurations and options are plain JavaScript `objects`.** There are lots of JS libraries that use function chaining (like `table.query('some pk value').condition('some condition').limit(50)`). I really like this style for lots of use cases, but it **just feels wrong** to me when using DynamoDB. DynamoDB is the OG of cloud native databases. It's configured using IaC and its API is HTTP-based and uses structured JSON, so writing queries and other interactions using its native format just seems like the right thing to do. IMO, this makes your code more explicit and easier to reason about. Your `options` could actually be stored as JSON and (unless you're using functions to define defaults on Entity attributes) your Table and Entity configurations could be too.
 - **API responses match the DynamoDB API responses.** Something else I felt strongly about was the response signature returned by the library's methods. The DynamoDB Toolbox is a tool to help you interact with the DynamoDB API, **NOT a replacement for it**. ORMs typically trade ease of use with a tremendous amount of lock-in. But at the end of the day, it's just generating queries (and probably bad ones at that). DynamoDB Toolbox provides a number of helpful features to make constructing your API calls easier and more consistent, but the exact payload is always available to you. You can rip out this library whenever you want and just use the raw payloads if you really wanted to. This brings us to the responses. Other than aliasing the `Items` and `Attributes` returned from DynamoDB, the structure and format of the responses is the **exact same** (including any other meta data returned). This not only makes the library (kind of) future proof, but also allows you to reuse or repurpose any code or tools you've already written to deal with API responses.
-- **Attributes with NULL values are removed (by default).** This was a hard one. I actually ran a [Twitter poll](https://twitter.com/jeremy_daly/status/1256259584819449856) to see how people felt about this, and although the reactions were mixed, *"Remove the attributes"* came out on top. I can understand the use cases for `NULL`s, but since NoSQL database attribute names are part of the storage considerations, it seems more logical to simply check for the absence of an attribute, rather than a `NULL` value. You may disagree with me, and that's cool. I've provided a `removeNullAttributes` table setting that allows you to disable this and save `NULL` attributes to your heart's content. I wouldn't, but the choice is yours. 
+- **Attributes with NULL values are removed (by default).** This was a hard one. I actually ran a [Twitter poll](https://twitter.com/jeremy_daly/status/1256259584819449856) to see how people felt about this, and although the reactions were mixed, _"Remove the attributes"_ came out on top. I can understand the use cases for `NULL`s, but since NoSQL database attribute names are part of the storage considerations, it seems more logical to simply check for the absence of an attribute, rather than a `NULL` value. You may disagree with me, and that's cool. I've provided a `removeNullAttributes` table setting that allows you to disable this and save `NULL` attributes to your heart's content. I wouldn't, but the choice is yours.
 
 Hopefully these all make sense and will make working with the library easier.
 
@@ -247,7 +250,7 @@ Hopefully these all make sense and will make working with the library easier.
 To define a new table, import it into your script:
 
 ```javascript
-const { Table } = require('dynamodb-toolbox')
+const { Table } = require("dynamodb-toolbox");
 ```
 
 Then create a new `Table` instance by passing in a valid `Table` definition.
@@ -262,25 +265,25 @@ const MyTable = new Table({
 
 `Table` takes a single parameter of type `object` that accepts the following properties:
 
-| Property | Type | Required | Description |
-| -------- | :--: | :--: | ----------- |
-| name | `string` | yes | The name of your DynamoDB table (this will be used as the `TableName` property) |
-| alias | `string` | no | An optional alias to reference your table when using "batch" features |
-| partitionKey | `string` | yes | The attribute name of your table's partitionKey |
-| sortKey | `string` | no | The attribute name of your table's sortKey |
-| entityField | `boolean` or `string` | no | Disables or overrides entity tracking field name (default: `_et`) |
-| attributes | `object` | no | Complex type that optionally specifies the name and type of each attributes (see below) |
-| indexes | `object` | no | Complex type that optionally specifies the name keys of your secondary indexes (see below) |
-| autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: `true`) |
-| autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`) |
-| removeNullAttributes | `boolean` | no | Removes null attributes instead of setting them to `null` (default: `true`) |
-| DocumentClient | `DocumentClient` | * | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
+| Property             |         Type          | Required | Description                                                                                                                        |
+| -------------------- | :-------------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------- |
+| name                 |       `string`        |   yes    | The name of your DynamoDB table (this will be used as the `TableName` property)                                                    |
+| alias                |       `string`        |    no    | An optional alias to reference your table when using "batch" features                                                              |
+| partitionKey         |       `string`        |   yes    | The attribute name of your table's partitionKey                                                                                    |
+| sortKey              |       `string`        |    no    | The attribute name of your table's sortKey                                                                                         |
+| entityField          | `boolean` or `string` |    no    | Disables or overrides entity tracking field name (default: `_et`)                                                                  |
+| attributes           |       `object`        |    no    | Complex type that optionally specifies the name and type of each attributes (see below)                                            |
+| indexes              |       `object`        |    no    | Complex type that optionally specifies the name keys of your secondary indexes (see below)                                         |
+| autoExecute          |       `boolean`       |    no    | Enables automatic execution of the DocumentClient method (default: `true`)                                                         |
+| autoParse            |       `boolean`       |    no    | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`)                                          |
+| removeNullAttributes |       `boolean`       |    no    | Removes null attributes instead of setting them to `null` (default: `true`)                                                        |
+| DocumentClient       |   `DocumentClient`    |    \*    | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
 
-\* *A Table can be instantiated without a DocumentClient, but most methods require it before execution*
+\* _A Table can be instantiated without a DocumentClient, but most methods require it before execution_
 
 ### Table Attributes
 
-The Table `attributes` property is an `object` that specifies the *names* and *types* of attributes associated with your DynamoDB table. This is an optional input that allows you to control attribute types. If an `Entity` object contains an attribute with the same name, but a different type, an error will be thrown. Each key in the object represents the **attribute name** and the value represents its DynamoDB **type**.
+The Table `attributes` property is an `object` that specifies the _names_ and _types_ of attributes associated with your DynamoDB table. This is an optional input that allows you to control attribute types. If an `Entity` object contains an attribute with the same name, but a different type, an error will be thrown. Each key in the object represents the **attribute name** and the value represents its DynamoDB **type**.
 
 ```javascript
 attributes: {
@@ -297,7 +300,7 @@ Valid DynamoDB types are: `string`, `boolean`, `number`, `list`, `map`, `binary`
 
 ### Table Indexes
 
-The `indexes` property is an `object` that specifies the *names* and *keys* of the secondary indexes on your DynamoDB table. Each key represents the **index name** and its value must contain an object with a `partitionKey` AND/OR a `sortKey`. `partitionKey`s and `sortKey`s require a value of type `string` that references an table attribute. If you use the same `partitionKey` as the table's `partitionKey`, or you only specify a `sortKey`, the library will recognize them as Local Secondary Indexes (LSIs). Otherwise, they will be Global Secondary Indexes (GSIs).
+The `indexes` property is an `object` that specifies the _names_ and _keys_ of the secondary indexes on your DynamoDB table. Each key represents the **index name** and its value must contain an object with a `partitionKey` AND/OR a `sortKey`. `partitionKey`s and `sortKey`s require a value of type `string` that references an table attribute. If you use the same `partitionKey` as the table's `partitionKey`, or you only specify a `sortKey`, the library will recognize them as Local Secondary Indexes (LSIs). Otherwise, they will be Global Secondary Indexes (GSIs).
 
 ```javascript
 indexes: {
@@ -312,14 +315,14 @@ indexes: {
 
 ## Entities
 
-An **Entity** represent a well-defined schema for a DynamoDB item. An Entity can represent things like a *User*, an *Order*, an *Invoice Line Item*, a *Configuration Object*, or whatever else you want. Each `Entity` defined with the DynamoDB Toolbox must be attached to a `Table`. An `Entity` defines its own attributes, but can share these attributes with other entities on the same table (either explicitly or coincidentally). Entities must flag an attribute as a `partitionKey` and if enabled on the table, a `sortKey` as well. 
+An **Entity** represent a well-defined schema for a DynamoDB item. An Entity can represent things like a _User_, an _Order_, an _Invoice Line Item_, a _Configuration Object_, or whatever else you want. Each `Entity` defined with the DynamoDB Toolbox must be attached to a `Table`. An `Entity` defines its own attributes, but can share these attributes with other entities on the same table (either explicitly or coincidentally). Entities must flag an attribute as a `partitionKey` and if enabled on the table, a `sortKey` as well.
 
 Note that a `Table` can have multiple Entities, but an `Entity` can only have one `Table`.
 
 To define a new entity, import it into your script:
 
 ```javascript
-const { Entity } = require('dynamodb-toolbox')
+const { Entity } = require("dynamodb-toolbox");
 ```
 
 Then create a new `Entity` instance by passing in a valid `Entity` definition.
@@ -334,21 +337,21 @@ const MyEntity = new Entity({
 
 `Entity` takes a single parameter of type `object` that accepts the following properties:
 
-| Property | Type | Required | Description |
-| -------- | :--: | :--: | ----------- |
-| name | `string` | yes | The name of your entity (must be unique to its associated `Table`)
-| timestamps | `boolean` | no | Automatically add and manage *created* and *modified* attributes  |
-| created | `string` | no | Override default *created* attribute name (default: `_ct`) |
-| modified | `string` | no | Override default *modified* attribute name (default: `_md`) |
-| createdAlias | `string` | no | Override default *created* alias name (default: `created`) |
-| modifiedAlias | `string` | no | Override default *modified* alias name (default: `modified`) |
-| typeAlias | `string` | no | Override default *entity type* alias name (default: `entity`) |
-| attributes | `object` | yes | Complex type that specifies the schema for the entity (see below) |
-| autoExecute | `boolean` | no | Enables automatic execution of the DocumentClient method (default: *inherited from Table*) |
-| autoParse | `boolean` | no | Enables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Table*) |
-| table | `Table` | * | A valid `Table` instance |
+| Property      |   Type    | Required | Description                                                                                                         |
+| ------------- | :-------: | :------: | ------------------------------------------------------------------------------------------------------------------- |
+| name          | `string`  |   yes    | The name of your entity (must be unique to its associated `Table`)                                                  |
+| timestamps    | `boolean` |    no    | Automatically add and manage _created_ and _modified_ attributes                                                    |
+| created       | `string`  |    no    | Override default _created_ attribute name (default: `_ct`)                                                          |
+| modified      | `string`  |    no    | Override default _modified_ attribute name (default: `_md`)                                                         |
+| createdAlias  | `string`  |    no    | Override default _created_ alias name (default: `created`)                                                          |
+| modifiedAlias | `string`  |    no    | Override default _modified_ alias name (default: `modified`)                                                        |
+| typeAlias     | `string`  |    no    | Override default _entity type_ alias name (default: `entity`)                                                       |
+| attributes    | `object`  |   yes    | Complex type that specifies the schema for the entity (see below)                                                   |
+| autoExecute   | `boolean` |    no    | Enables automatic execution of the DocumentClient method (default: _inherited from Table_)                          |
+| autoParse     | `boolean` |    no    | Enables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Table_) |
+| table         |  `Table`  |    \*    | A valid `Table` instance                                                                                            |
 
-\* *An Entity can be instantiated without a `table`, but most methods require one before execution*
+\* _An Entity can be instantiated without a `table`, but most methods require one before execution_
 
 ### Entity Attributes
 
@@ -374,27 +377,27 @@ Valid types are: `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set
 
 For more control over an attribute's behavior, you can specify an object as the attribute's value. Some options are specific to certain types. The following properties and options are available, all of which are optional:
 
-| Property | Type | For Types | Description |
-| -------- | :--: | :--: | ----------- |
-| type  | `String` | all | The DynamoDB type for this attribute. Valid values are `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`. Defaults to `string`. |
-| coerce  | `boolean` | `string`, `boolean`, `number`, `list` | Coerce values to the specified type. Enabled by default on `string`, `boolean`, and `number`. If enabled on `list` types, the interpreter will try to split a string by commas. |
-| default  | *same as* `type` or `function` | all | Specifies a default value (if none provided) when using `put` or `update`. This also supports functions for creating custom default. See more below.  |
-| dependsOn  | `string` or `array` of `string`s | all | Creates a dependency graph for default values. For example, if the attribute uses a default value that requires another attribute's default value, this will ensure dependent attributes' default values are calcuated first.  |
-| onUpdate  | `boolean` | all | Forces `default` values to be passed on every `update`. |
-| save  | `boolean` | all | Specifies whether this attribute should be saved to the table. Defaults to `true`. |
-| hidden  | `boolean` | all | Hides attribute from returned JavaScript object when auto-parsing is enabled or when using the `parse` method. |
-| required  | `boolean` or "always" | all | Specifies whether an attribute is required. A value of `true` requires the attribute for all `put` operations. A `string` value of "always" requires the attribute for `put` *and* `update` operations. |
-| alias  | `string` | all | Adds a bidirectional alias to the attribute. All input methods can use either the attribute name or the alias when passing in data. Auto-parsing and the `parse` method will map attributes to their alias. |
-| map  | `string` | all | The inverse of the `alias` option, allowing you to specify your alias as the key and map it to an attribute name. |
-| setType  | `string` | `set` | Specifies the type for `set` attributes. Allowed values are `string`,`number`,`binary` |
-| delimiter  | `string` | *composite keys* | Specifies the delimiter to use if this attribute stores a composite key (see [Using an `array` for composite keys](#using-an-array-for-composite-keys)) |
-| prefix  | `string` | `string` | A prefix to be added to an attribute when saved to DynamoDB. This prefix will be removed when parsing the data. |
-| suffix  | `string` | `string` | A suffix to be added to an attribute when saved to DynamoDB. This suffix will be removed when parsing the data. |
-| transform  | `function` | all | A function that transforms the input before sending to DynamoDB. This accepts two arguments, the value passed and an object containing the data from other attributes. |
-| partitionKey  | `boolean` or `string` | all | Flags an attribute as the 'partitionKey' for this Entity. If set to `true`, it will be mapped to the Table's `partitionKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `partitionKey` |
-| sortKey  | `boolean` or `string` | all | Flags an attribute as the 'sortKey' for this Entity. If set to `true`, it will be mapped to the Table's `sortKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `sortKey` |
+| Property     |               Type               |               For Types               | Description                                                                                                                                                                                                                                     |
+| ------------ | :------------------------------: | :-----------------------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type         |             `String`             |                  all                  | The DynamoDB type for this attribute. Valid values are `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`. Defaults to `string`.                                                                                                  |
+| coerce       |            `boolean`             | `string`, `boolean`, `number`, `list` | Coerce values to the specified type. Enabled by default on `string`, `boolean`, and `number`. If enabled on `list` types, the interpreter will try to split a string by commas.                                                                 |
+| default      |  _same as_ `type` or `function`  |                  all                  | Specifies a default value (if none provided) when using `put` or `update`. This also supports functions for creating custom default. See more below.                                                                                            |
+| dependsOn    | `string` or `array` of `string`s |                  all                  | Creates a dependency graph for default values. For example, if the attribute uses a default value that requires another attribute's default value, this will ensure dependent attributes' default values are calcuated first.                   |
+| onUpdate     |            `boolean`             |                  all                  | Forces `default` values to be passed on every `update`.                                                                                                                                                                                         |
+| save         |            `boolean`             |                  all                  | Specifies whether this attribute should be saved to the table. Defaults to `true`.                                                                                                                                                              |
+| hidden       |            `boolean`             |                  all                  | Hides attribute from returned JavaScript object when auto-parsing is enabled or when using the `parse` method.                                                                                                                                  |
+| required     |      `boolean` or "always"       |                  all                  | Specifies whether an attribute is required. A value of `true` requires the attribute for all `put` operations. A `string` value of "always" requires the attribute for `put` _and_ `update` operations.                                         |
+| alias        |             `string`             |                  all                  | Adds a bidirectional alias to the attribute. All input methods can use either the attribute name or the alias when passing in data. Auto-parsing and the `parse` method will map attributes to their alias.                                     |
+| map          |             `string`             |                  all                  | The inverse of the `alias` option, allowing you to specify your alias as the key and map it to an attribute name.                                                                                                                               |
+| setType      |             `string`             |                 `set`                 | Specifies the type for `set` attributes. Allowed values are `string`,`number`,`binary`                                                                                                                                                          |
+| delimiter    |             `string`             |           _composite keys_            | Specifies the delimiter to use if this attribute stores a composite key (see [Using an `array` for composite keys](#using-an-array-for-composite-keys))                                                                                         |
+| prefix       |             `string`             |               `string`                | A prefix to be added to an attribute when saved to DynamoDB. This prefix will be removed when parsing the data.                                                                                                                                 |
+| suffix       |             `string`             |               `string`                | A suffix to be added to an attribute when saved to DynamoDB. This suffix will be removed when parsing the data.                                                                                                                                 |
+| transform    |            `function`            |                  all                  | A function that transforms the input before sending to DynamoDB. This accepts two arguments, the value passed and an object containing the data from other attributes.                                                                          |
+| partitionKey |      `boolean` or `string`       |                  all                  | Flags an attribute as the 'partitionKey' for this Entity. If set to `true`, it will be mapped to the Table's `partitionKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `partitionKey` |
+| sortKey      |      `boolean` or `string`       |                  all                  | Flags an attribute as the 'sortKey' for this Entity. If set to `true`, it will be mapped to the Table's `sortKey`. If set to the name of an **index** defined on the Table, it will be mapped to the secondary index's `sortKey`                |
 
-**NOTE:** One attribute *must* be set as the `partitionKey`. If the table defines a `sortKey`, one attribute *must* be set as the `sortKey`. Assignment of secondary indexes is optional. If an attribute is used across multiple indexes, an `array` can be used to specify multiple values.
+**NOTE:** One attribute _must_ be set as the `partitionKey`. If the table defines a `sortKey`, one attribute _must_ be set as the `sortKey`. Assignment of secondary indexes is optional. If an attribute is used across multiple indexes, an `array` can be used to specify multiple values.
 
 Example:
 
@@ -412,7 +415,7 @@ attributes: {
 
 **NOTE:** The interface for composite keys may be changing in v0.2 to make it easier to customize.
 
-Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In some cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data *and* parse the output into separate attributes.
+Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In some cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data _and_ parse the output into separate attributes.
 
 The basic syntax is to specify an `array` with the mapped attribute name as the first element, and the index in the composite key as the second element. For example:
 
@@ -472,7 +475,7 @@ attributes: {
 ```javascript
 attributes: {
   user_id: { partitionKey: true  },
-  sk: { 
+  sk: {
     sortKey: true,
     default: (data) => {
       if (data.status && data.date_added) {
@@ -508,7 +511,6 @@ This property will retrieve a `boolean` indicating the current `autoExecute` set
 
 This property will retrieve a `boolean` indicating the current `autoParse` setting on the table. You can change this setting by supplying a `boolean` value.
 
-
 ## Table Methods
 
 ### query(partitionKey [,options] [,parameters])
@@ -521,45 +523,46 @@ The `query()` method accepts three arguments. The first argument is used to spec
 
 The second argument is an `options` object that specifies the details of your query. The following options are all optional (corresponding Query API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| index | `string` | Name of secondary index to query. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName) |
-| limit | `number` | The maximum number of items to retrieve per query. (Limit) |
-| reverse | `boolean` | Reverse the order or returned items. (ScanIndexForward) |
-| consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| select | `string` | The attributes to be returned in the result. One of either `string` | `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
-| eq | same as `sortKey` | Specifies `sortKey` condition to be *equal* to supplied value. (KeyConditionExpression) |
-| lt | same as `sortKey` | Specifies `sortKey` condition to be *less than* supplied value. (KeyConditionExpression) |
-| lte | same as `sortKey` | Specifies `sortKey` condition to be *less than or equal to* supplied value. (KeyConditionExpression) |
-| gt | same as `sortKey` | Specifies `sortKey` condition to be *greater than* supplied value. (KeyConditionExpression) |
-| gte | same as `sortKey` | Specifies `sortKey` condition to be *greater than or equal to* supplied value. (KeyConditionExpression) |
-| between | `array` | Specifies `sortKey` condition to be *between* the supplied values. Array should have two values matching the `sortKey` type. (KeyConditionExpression) |
-| beginsWith | same as `sortKey` | Specifies `sortKey` condition to *begin with* the supplied values. (KeyConditionExpression) |
-| filters | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression) |
-| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
-| startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate (if you're querying a secondary index, the keys for the primary index will also need to be included in the object - see `LastEvaluatedKey` result for details). (ExclusiveStartKey) |
-| entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| Option     |        Type         | Description                                                                                                                                                                                                                                                                                      |
+| ---------- | :-----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| index      |      `string`       | Name of secondary index to query. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName)                                                                                      |
+| limit      |      `number`       | The maximum number of items to retrieve per query. (Limit)                                                                                                                                                                                                                                       |
+| reverse    |      `boolean`      | Reverse the order or returned items. (ScanIndexForward)                                                                                                                                                                                                                                          |
+| consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                                                                                                                                           |
+| capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                                                                     |
+| select     |      `string`       | The attributes to be returned in the result. One of either `string`                                                                                                                                                                                                                              | `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
+| eq         |  same as `sortKey`  | Specifies `sortKey` condition to be _equal_ to supplied value. (KeyConditionExpression)                                                                                                                                                                                                          |
+| lt         |  same as `sortKey`  | Specifies `sortKey` condition to be _less than_ supplied value. (KeyConditionExpression)                                                                                                                                                                                                         |
+| lte        |  same as `sortKey`  | Specifies `sortKey` condition to be _less than or equal to_ supplied value. (KeyConditionExpression)                                                                                                                                                                                             |
+| gt         |  same as `sortKey`  | Specifies `sortKey` condition to be _greater than_ supplied value. (KeyConditionExpression)                                                                                                                                                                                                      |
+| gte        |  same as `sortKey`  | Specifies `sortKey` condition to be _greater than or equal to_ supplied value. (KeyConditionExpression)                                                                                                                                                                                          |
+| between    |       `array`       | Specifies `sortKey` condition to be _between_ the supplied values. Array should have two values matching the `sortKey` type. (KeyConditionExpression)                                                                                                                                            |
+| beginsWith |  same as `sortKey`  | Specifies `sortKey` condition to _begin with_ the supplied values. (KeyConditionExpression)                                                                                                                                                                                                      |
+| filters    | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression)                                                                                                                                  |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression)                                                                                                                      |
+| startKey   |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate (if you're querying a secondary index, the keys for the primary index will also need to be included in the object - see `LastEvaluatedKey` result for details). (ExclusiveStartKey) |
+| entity     |      `string`       | The name of a table Entity to evaluate `filters` and `attributes` against.                                                                                                                                                                                                                       |
+| execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                                                             |
+| parse      |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                                                                    |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 ```javascript
 let result = await MyTable.query(
-  'user#12345', // partition key
+  "user#12345", // partition key
   {
     limit: 50, // limit to 50 items
-    beginsWith: 'order#', // select items where sort key begins with value
+    beginsWith: "order#", // select items where sort key begins with value
     reverse: true, // return items in descending order (newest first)
-    capacity: 'indexes', // return the total capacity consumed by the indexes
-    filters: { attr: 'total', gt: 100 }, // only show orders above $100
-    index: 'GSI1' // query the GSI1 secondary index
+    capacity: "indexes", // return the total capacity consumed by the indexes
+    filters: { attr: "total", gt: 100 }, // only show orders above $100
+    index: "GSI1", // query the GSI1 secondary index
   }
-)
+);
 ```
 
 #### Return Data
+
 The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `query` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
 
 ### scan([options] [,parameters])
@@ -570,36 +573,35 @@ The `scan` method is a wrapper for the [DynamoDB Scan API](https://docs.aws.amaz
 
 The `scan()` method accepts two arguments. The first argument is an `options` object that specifies the details of your scan. The following options are all optional (corresponding Scan API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| index | `string` | Name of secondary index to scan. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName) |
-| limit | `number` | The maximum number of items to retrieve per scan. (Limit) |
-| consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| select | `string` | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
-| filters | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression) |
-| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
-| startKey | `object` | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey) |
-| segments | `number` | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments) |
-| segment | `number` | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment) |
-| entity | `string` | The name of a table Entity to evaluate `filters` and `attributes` against. |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| Option     |        Type         | Description                                                                                                                                                                                                |
+| ---------- | :-----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| index      |      `string`       | Name of secondary index to scan. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName) |
+| limit      |      `number`       | The maximum number of items to retrieve per scan. (Limit)                                                                                                                                                  |
+| consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                                                     |
+| capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                               |
+| select     |      `string`       | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select)                                                        |
+| filters    | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression)                                             |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression)                                |
+| startKey   |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey)                                                                          |
+| segments   |      `number`       | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments)                                                         |
+| segment    |      `number`       | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment)                                                                                |
+| entity     |      `string`       | The name of a table Entity to evaluate `filters` and `attributes` against.                                                                                                                                 |
+| execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                       |
+| parse      |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                              |
 
 If you prefer to specify your own parameters, the optional second argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 ```javascript
-let result = await MyTable.scan(
-  {
-    limit: 100, // limit to 50 items
-    capacity: 'indexes', // return the total capacity consumed by the indexes
-    filters: { attr: 'total', between: [100,500] }, // only return orders between $100 and $500
-    index: 'GSI1' // scan the GSI1 secondary index
-  }
-)
+let result = await MyTable.scan({
+  limit: 100, // limit to 50 items
+  capacity: "indexes", // return the total capacity consumed by the indexes
+  filters: { attr: "total", between: [100, 500] }, // only return orders between $100 and $500
+  index: "GSI1", // scan the GSI1 secondary index
+});
 ```
 
 #### Return Data
+
 The data is returned with the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `scan` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
 
 ### batchGet(items [,options] [,parameters])
@@ -612,15 +614,16 @@ The `batchGet` method accepts three arguments. The first is an `array` of item k
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding BatchGetItem API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead) |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| attributes | `array` or `object` (see below) | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| Option     |               Type                | Description                                                                                                                                                                 |
+| ---------- | :-------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead)                                                                                                                      |
+| capacity   |             `string`              | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                |
+| attributes |  `array` or `object` (see below)  | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
+| execute    |             `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                        |
+| parse      |             `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                               |
 
 #### Specifying options for multiple tables
+
 The library is built for making working with single table designs easier, but it is possible that you may need to retrieve data from multiple tables within the same batch get. If your `items` contain references to multiple tables, the `consistent` option will accept objects that use either the table `name` or `alias` as the key, and the setting as the value. For example, to specify different `consistent` settings on two tables, you would use something like following:
 
 ```javascript
@@ -629,8 +632,8 @@ consistent: {
   'my-other-table-name': false
 }
 ```
-Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use the same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](#projection-expression) formatting.
 
+Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use the same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](#projection-expression) formatting.
 
 ```javascript
 const results = await MyTable.batchGet(
@@ -638,10 +641,10 @@ const results = await MyTable.batchGet(
     MyTable.User.getBatch({ family: 'Brady', name: 'Mike' }),
     MyTable.User.getBatch({ family: 'Brady', name: 'Carol' }),
     MyTable.Pet.getBatch({ family: 'Brady', name: 'Tiger' })
-  ], 
-  { 
+  ],
+  {
     capacity: 'total',
-    attributes: [ 
+    attributes: [
         'name', 'family',
         { User: ['dob', 'age'] },
         { Pet: ['petType','lastVetCheck'] }
@@ -654,6 +657,7 @@ const results = await MyTable.batchGet(
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 #### Return Data
+
 The data is returned with the same response syntax as the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `batchGet` method again using the same options and passing any `UnprocessedKeys` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
 
 ### batchWrite(items [,options] [,parameters])
@@ -666,40 +670,48 @@ The `batchWrite` method accepts three arguments. The first is an `array` of item
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding BatchWriteItem API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| capacity | `string` or `object` (see below) | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| Option   |               Type               | Description                                                                                                                                                                                                                                           |
+| -------- | :------------------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| capacity | `string` or `object` (see below) | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
+| metrics  |             `string`             | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| execute  |            `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
+| parse    |            `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
-**NOTE:** The `BatchWriteItem` does not support conditions or return deleted items. *"BatchWriteItem does not behave in the same way as individual PutItem and DeleteItem calls would. For example, you cannot specify conditions on individual put and delete requests, and BatchWriteItem does not return deleted items in the response."* ~ [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html)
+**NOTE:** The `BatchWriteItem` does not support conditions or return deleted items. _"BatchWriteItem does not behave in the same way as individual PutItem and DeleteItem calls would. For example, you cannot specify conditions on individual put and delete requests, and BatchWriteItem does not return deleted items in the response."_ ~ [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html)
 
 ```javascript
 const result = await Default.batchWrite(
   [
-    MyTable.User.putBatch({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother','wife'] }),
-    MyTable.User.putBatch({ family: 'Brady', name: 'Mike', age: 42, roles: ['father','husband'] }),
-    MyTable.Pet.deleteBatch({ family: 'Brady', name: 'Tiger' })
-  ],{ 
-    capacity: 'total',
-    metrics: 'size',
+    MyTable.User.putBatch({
+      family: "Brady",
+      name: "Carol",
+      age: 40,
+      roles: ["mother", "wife"],
+    }),
+    MyTable.User.putBatch({
+      family: "Brady",
+      name: "Mike",
+      age: 42,
+      roles: ["father", "husband"],
+    }),
+    MyTable.Pet.deleteBatch({ family: "Brady", name: "Tiger" }),
+  ],
+  {
+    capacity: "total",
+    metrics: "size",
   }
-)
+);
 ```
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 #### Return Data
+
 The data is returned with the same response syntax as the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html). If `autoExecute` and `autoParse` are enabled, a `.next()` method will be available on the returned object. Calling this function will call the `batchWrite` method again using the same options and passing any `UnprocessedItems` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
-
-
-
-
 
 ### transactGet(items [,options] [,parameters])
 
-> TransactGetItems is a synchronous operation that atomically retrieves multiple items from one or more tables (but not from indexes) in a single account and Region. 
+> TransactGetItems is a synchronous operation that atomically retrieves multiple items from one or more tables (but not from indexes) in a single account and Region.
 
 The `transactGet` method is a wrapper for the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). The DynamoDB Toolbox `transactGet` method supports all **TransactGetItem** API operations. The `transactGet` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `transactGetParams` can be used, but will only retrieve the generated parameters.
 
@@ -707,29 +719,31 @@ The `transacthGet` method accepts three arguments. The first is an `array` of it
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding TransactGetItems API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Table*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Table*) |
+| Option   |   Type    | Description                                                                                                                  |
+| -------- | :-------: | ---------------------------------------------------------------------------------------------------------------------------- |
+| capacity | `string`  | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                 |
+| execute  | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Table_)                          |
+| parse    | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Table_) |
 
 #### Accessing items from multiple tables
+
 Transaction items are atomic, so each `Get` contains the table name and key necessary to retrieve the item. The library will automatically handle adding the necessary information and will parse each entity automatically for you.
 
 ```javascript
 const results = await MyTable.transactGet(
   [
-    User.getTransaction({ family: 'Brady', name: 'Mike' }),
-    User.getTransaction({ family: 'Brady', name: 'Carol' }),
-    Pet.getTransaction({ family: 'Brady', name: 'Tiger' })
-  ], 
-  { capacity: 'total' }
-)
+    User.getTransaction({ family: "Brady", name: "Mike" }),
+    User.getTransaction({ family: "Brady", name: "Carol" }),
+    Pet.getTransaction({ family: "Brady", name: "Tiger" }),
+  ],
+  { capacity: "total" }
+);
 ```
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 #### Return Data
+
 The data is returned with the same response syntax as the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data.
 
 ### transactWrite(items [,options] [,parameters])
@@ -742,13 +756,13 @@ The `transactWrite` method accepts three arguments. The first is an `array` of i
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding TransactWriteItems API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| token | `string` | Optional token to make the call idempotent, meaning that multiple identical calls have the same effect as one single call. (ClientRequestToken) |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| Option   |   Type    | Description                                                                                                                                                                                                                                           |
+| -------- | :-------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| capacity | `string`  | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
+| metrics  | `string`  | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| token    | `string`  | Optional token to make the call idempotent, meaning that multiple identical calls have the same effect as one single call. (ClientRequestToken)                                                                                                       |
+| execute  | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
+| parse    | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
 ```javascript
 const result = await Default.transactWrite(
@@ -757,7 +771,7 @@ const result = await Default.transactWrite(
     Pet.deleteTransaction({ family: 'Brady', name: 'Tiger' }),
     User.putTransaction({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother','wife'] }),
     User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, roles: ['father','husband'] })
-  ],{ 
+  ],{
     capacity: 'total',
     metrics: 'size',
   }
@@ -767,6 +781,7 @@ const result = await Default.transactWrite(
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 #### Return Data
+
 The data is returned with the same response syntax as the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
 
 ### parse(entity, input [,include])
@@ -789,10 +804,10 @@ Executes the `put` method of the supplied `entity`. The `entity` must be a `stri
 
 Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](#updatekey-options-parameters) for additional parameters and behavior.
 
-
 ## Entity Properties
 
 ### get/set `table`
+
 Retrieves a reference to the Table instance that the Entity is attached to. You can use this property to add the Entity to a Table by assigning it a valid Table instance. Note that you cannot change a table once it has been assigned.
 
 ### get `DocumentClient`
@@ -812,8 +827,8 @@ This property will retrieve a `boolean` indicating the current `autoParse` setti
 Returns the Entity's assigned `partitionKey`.
 
 ### get `sortKey`
-Returns the Entity's assigned `sortKey`.
 
+Returns the Entity's assigned `sortKey`.
 
 ## Entity Methods
 
@@ -839,13 +854,13 @@ The `get` method accepts three arguments. The first argument accepts an `object`
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding GetItem API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| consistent | `boolean` | Enable a consistent read of the items (ConsistentRead) |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
+| Option     |        Type         | Description                                                                                                                                                                 |
+| ---------- | :-----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                      |
+| capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                |
 | attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                        |
+| parse      |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                               |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -853,15 +868,12 @@ If you prefer to specify your own parameters, the optional third argument allows
 // Specify my key
 let key = {
   id: 123,
-  status: 'active',
-  date_added: '2020-04-24'
-}
+  status: "active",
+  date_added: "2020-04-24",
+};
 
 // Use the 'get' method of MyEntity to retrieve the item from DynamoDB
-let result = await MyEntity.get(
-  key,
-  { consistent: true }
-)
+let result = await MyEntity.get(key, { consistent: true });
 ```
 
 ### delete(key [,options] [,parameters])
@@ -874,14 +886,14 @@ The `delete` method accepts three arguments. The first argument accepts an `obje
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding DeleteItem API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| conditions | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression) |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues | `string` | Determins whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues) |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| Option       |        Type         | Description                                                                                                                                                                                                                                           |
+| ------------ | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                              |
+| capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
+| metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| returnValues |      `string`       | Determins whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues)                                                                                                              |
+| execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
+| parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -913,14 +925,14 @@ The `put` method accepts three arguments. The first argument accepts an `object`
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding PutItem API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| conditions | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression) |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues | `string` | Determins whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues) |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| Option       |        Type         | Description                                                                                                                                                                                                                                           |
+| ------------ | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                                 |
+| capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
+| metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| returnValues |      `string`       | Determins whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                           |
+| execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
+| parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -928,15 +940,15 @@ If you prefer to specify your own parameters, the optional third argument allows
 // Create my item (using table attribute names or aliases)
 let item = {
   id: 123,
-  name: 'Jane Smith',
-  company: 'ACME',
+  name: "Jane Smith",
+  company: "ACME",
   age: 35,
-  status: 'active',
-  date_added: '2020-04-24'
-}
+  status: "active",
+  date_added: "2020-04-24",
+};
 
 // Use the 'put' method of your entity instance
-let result = await MyEntity.put(item)
+let result = await MyEntity.put(item);
 ```
 
 ### update(key [,options] [,parameters])
@@ -949,14 +961,14 @@ The `update` method accepts three arguments. The first argument accepts an `obje
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding UpdateItem API references in parentheses):
 
-| Option | Type | Description |
-| -------- | :--: | ----------- |
-| conditions | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression) |
-| capacity | `string` | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity) |
-| metrics | `string` | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues | `string` | Determins whether to return item attributes as they appeared before or after the item was updated. One of either `none`, `all_old`, `updated_old`, `all_new`, `updated_new`. (ReturnValues) |
-| execute | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: *inherited from Entity*) |
-| parse | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: *inherited from Entity*) |
+| Option       |        Type         | Description                                                                                                                                                                                                                                           |
+| ------------ | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                              |
+| capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
+| metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
+| returnValues |      `string`       | Determins whether to return item attributes as they appeared before or after the item was updated. One of either `none`, `all_old`, `updated_old`, `all_new`, `updated_new`. (ReturnValues)                                                           |
+| execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
+| parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters and clauses. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -968,11 +980,11 @@ To update an attribute, include the key and any fields that you want to update.
 
 ```javascript
 let item = {
-   id: 123,
-   sk: 'abc',
-   status: 'inactive',
-}
-await MyEntity.update(item)
+  id: 123,
+  sk: "abc",
+  status: "inactive",
+};
+await MyEntity.update(item);
 ```
 
 #### Removing an attribute
@@ -982,11 +994,11 @@ To remove attributes, add a `$remove` key to your item and provide an array of a
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
-  $remove: ['roles','age']
-}
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
+  $remove: ["roles", "age"],
+};
 ```
 
 #### Adding a number to a `number` attribute
@@ -996,11 +1008,11 @@ DynamoDB lets us add (or subtract) numeric values from an attribute in the table
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
-  level: { $add: 2 } // add 2 to level
-}
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
+  level: { $add: 2 }, // add 2 to level
+};
 ```
 
 #### Adding values to a `set`
@@ -1010,11 +1022,11 @@ Sets are similar to lists, but they enforce unique values of the same type. To a
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
-  roles: { $add: ['author','support'] }
-}
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
+  roles: { $add: ["author", "support"] },
+};
 ```
 
 #### Deleting values from a `set`
@@ -1024,11 +1036,11 @@ To delete values from a `set`, use an `object` with a `$delete` key and an array
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
-  roles: { $delete: ['admin'] }
-}
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
+  roles: { $delete: ["admin"] },
+};
 ```
 
 #### Appending (or prepending) values to a `list`
@@ -1038,11 +1050,11 @@ To append values to a `list`, use an `object` with an `$append` key and an array
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
-  sessions: { $append: [ { date: '2020-04-24', duration: 101 } ] }
-}
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
+  sessions: { $append: [{ date: "2020-04-24", duration: 101 }] },
+};
 ```
 
 Alternatively, you can use the `$prepend` key and it will add the values to the beginning of the list.
@@ -1054,11 +1066,11 @@ To remove values from a `list`, use an `object` with a `$remove` key and an arra
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
-  sessions: { $remove: [1,4,5] }
-}
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
+  sessions: { $remove: [1, 4, 5] },
+};
 ```
 
 #### Update items in a `list`
@@ -1068,14 +1080,14 @@ To update values in a `list`, specify an `object` with array indexes as the keys
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
   sessions: {
-    1: 'some new value for the second item',
-    3: 'new value for the fourth value'
-  }
-}
+    1: "some new value for the second item",
+    3: "new value for the fourth value",
+  },
+};
 ```
 
 #### Update nested data in a `map`
@@ -1085,17 +1097,17 @@ Maps can be complex, deeply nested JavaScript objects with a variety of data typ
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
   metadata: {
     $set: {
-      'title': 'Developer', // update metadata.title
-      'contact.name': 'Jane Smith', // update metadata.contact.name
-      'contact.addresses[0]': '123 Main Street' // update the first array item in metadata.contact.addresses
-    }
-  }
-}
+      title: "Developer", // update metadata.title
+      "contact.name": "Jane Smith", // update metadata.contact.name
+      "contact.addresses[0]": "123 Main Street", // update the first array item in metadata.contact.addresses
+    },
+  },
+};
 ```
 
 We can also use our handy `$add`, `$append`, `$prepend`, and `$remove` properties to manipulate nested values.
@@ -1103,17 +1115,17 @@ We can also use our handy `$add`, `$append`, `$prepend`, and `$remove` propertie
 ```javascript
 let item = {
   id: 123,
-  name: 'Test Name',
-  status: 'active',
-  date_added: '2020-04-24',
+  name: "Test Name",
+  status: "active",
+  date_added: "2020-04-24",
   metadata: {
     $set: {
-      'vacation_days': { $add: -2 },
-      'contact.addresses': { $append: ['99 South Street'] },
-      'contact.phone': { $remove: [1,3] }
-    }
-  }
-}
+      vacation_days: { $add: -2 },
+      "contact.addresses": { $append: ["99 South Street"] },
+      "contact.phone": { $remove: [1, 3] },
+    },
+  },
+};
 ```
 
 ### query(partitionKey [,options] [,parameters])
@@ -1121,33 +1133,34 @@ let item = {
 Executes the `query` method on the parent Table. This method accepts the same parameters as the [Table `query` method](#querypartitionkey-options-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB queries, this method **does not** guarantee that only items of the current entity type will be returned.
 
 ### scan([options] [,parameters])
+
 Executes the `scan` method on the parent Table. This method accepts the same parameters as the [Table `scan` method](#scanoptions-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB scans, this method **does not** guarantee that only items of the current entity type will be returned.
 
 ## Filters and Conditions
 
 DynamoDB supports [**Filter**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.FilterExpression) and [**Condition**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html) expressions. **Filter Expressions** are used to limit data returned by `query` and `scan` operations. **Condition Expressions** are used for data manipulation operations (`put`, `update`, `delete` and `batchWrite`), allowing you to specify a condition to determine which items should be modified.
 
-The DynamoDB Toolbox provides an **Expression Builder** that allows you to generate complex filters and conditions based on your Entity definitions. Any method that requires `filters` or `conditions` accepts an `array` of *conditions*, or a single *condition*. *Condition* objects support the following properties:
+The DynamoDB Toolbox provides an **Expression Builder** that allows you to generate complex filters and conditions based on your Entity definitions. Any method that requires `filters` or `conditions` accepts an `array` of _conditions_, or a single _condition_. _Condition_ objects support the following properties:
 
-| Properties | Type | Description |
-| -------- | :--: | ----------- |
-| attr | `string` | Specifies the attribute to filter on. If an `entity` property is provided (or inherited from the calling operation), aliases can be used. Either `attr` or `size` must be provided. |
-| size | `string` | Specifies which attribute's calculated size to filter on (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information). If an `entity` property is provided (or inherited from the calling operation), aliases can be used. Either `attr` or `size` must be provided. |
-| eq | * | Specifies value to *equal* attribute or size of attribute. |
-| ne | * | Specifies value to *not equal* attribute or size of attribute. |
-| lt | * | Specifies value for attribute or size to be *less than*. |
-| lte | * | Specifies value for attribute or size to be *less than or equal to*. |
-| gt | * | Specifies value for attribute or size to be *greater than*. |
-| gte | * | Specifies value for attribute or size to be *greater than or equal to*. |
-| between | `array` | Specifies values for attribute or size to be *between*. E.g. `[18,49]`. |
-| beginsWith | * | Specifies value for the attribute to *begin with* |
-| in | `array` | Specifies and `array` of values that the attribute or size must match one value. |
-| contains | `string` | Specifies value that must be contained within a string or Set. (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information) |
-| exists | `boolean` | Checks whether or not the attribute exists for an item. A value of `true` uses the `attribute_exists()` function and a value of `false` uses the `attribute_not_exists()` function (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information) |
-| type | `string` | A value that compares the attribute's type. Value must be one of `S`,`SS`, `N`, `NS`, `B`, `BS`, `BOOL`, `NULL`, `L`, or `M` (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information) |
-| or | `boolean` | Changes the logical evaluation to `OR` (by default it's `AND`) |
-| negate | `boolean` | Adds `NOT` to the condition. |
-| entity | `string` | The entity this attribute applies to. If supplied (or inherited from the calling operation), `attr` and `size` properties can use the entity's aliases to reference attributes. |
+| Properties |   Type    | Description                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ---------- | :-------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| attr       | `string`  | Specifies the attribute to filter on. If an `entity` property is provided (or inherited from the calling operation), aliases can be used. Either `attr` or `size` must be provided.                                                                                                                                                                                                                               |
+| size       | `string`  | Specifies which attribute's calculated size to filter on (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information). If an `entity` property is provided (or inherited from the calling operation), aliases can be used. Either `attr` or `size` must be provided. |
+| eq         |    \*     | Specifies value to _equal_ attribute or size of attribute.                                                                                                                                                                                                                                                                                                                                                        |
+| ne         |    \*     | Specifies value to _not equal_ attribute or size of attribute.                                                                                                                                                                                                                                                                                                                                                    |
+| lt         |    \*     | Specifies value for attribute or size to be _less than_.                                                                                                                                                                                                                                                                                                                                                          |
+| lte        |    \*     | Specifies value for attribute or size to be _less than or equal to_.                                                                                                                                                                                                                                                                                                                                              |
+| gt         |    \*     | Specifies value for attribute or size to be _greater than_.                                                                                                                                                                                                                                                                                                                                                       |
+| gte        |    \*     | Specifies value for attribute or size to be _greater than or equal to_.                                                                                                                                                                                                                                                                                                                                           |
+| between    |  `array`  | Specifies values for attribute or size to be _between_. E.g. `[18,49]`.                                                                                                                                                                                                                                                                                                                                           |
+| beginsWith |    \*     | Specifies value for the attribute to _begin with_                                                                                                                                                                                                                                                                                                                                                                 |
+| in         |  `array`  | Specifies and `array` of values that the attribute or size must match one value.                                                                                                                                                                                                                                                                                                                                  |
+| contains   | `string`  | Specifies value that must be contained within a string or Set. (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information)                                                                                                                                          |
+| exists     | `boolean` | Checks whether or not the attribute exists for an item. A value of `true` uses the `attribute_exists()` function and a value of `false` uses the `attribute_not_exists()` function (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information)                      |
+| type       | `string`  | A value that compares the attribute's type. Value must be one of `S`,`SS`, `N`, `NS`, `B`, `BS`, `BOOL`, `NULL`, `L`, or `M` (see [Operators and Functions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html#Expressions.OperatorsAndFunctions.Functions) for more information)                                                                            |
+| or         | `boolean` | Changes the logical evaluation to `OR` (by default it's `AND`)                                                                                                                                                                                                                                                                                                                                                    |
+| negate     | `boolean` | Adds `NOT` to the condition.                                                                                                                                                                                                                                                                                                                                                                                      |
+| entity     | `string`  | The entity this attribute applies to. If supplied (or inherited from the calling operation), `attr` and `size` properties can use the entity's aliases to reference attributes.                                                                                                                                                                                                                                   |
 
 \* Comparison values should equal the type of the attribute you are comparing against. If you are using the `size` property, the value should be a `number`.
 
@@ -1156,26 +1169,29 @@ The DynamoDB Toolbox provides an **Expression Builder** that allows you to gener
 In order to create complex filters and conditions, the DynamoDB Toolbox allows you to nest and combine filters by using nested `array`s. Array brackets (`[` and `]`) act as parentheses when constructing your condition. Using `or` in the first condition within an array will change the logical evaluation for group of conditions.
 
 Condition where `age` is between 18 and 54 **AND** `region` equals "US":
-```javascript 
+
+```javascript
 filters: [
-  { attr: 'age', between: [18,54]},
-  { attr: 'region', eq: 'US' }
-]
+  { attr: "age", between: [18, 54] },
+  { attr: "region", eq: "US" },
+];
 ```
 
 Condition where `age` is between 18 and 54 **AND** `region` equals "US" **OR** "EU":
-```javascript 
+
+```javascript
 filters: [
-  { attr: 'age', between: [18,54]},
+  { attr: "age", between: [18, 54] },
   [
-    { attr: 'region', eq: 'US' },
-    { or: true, attr: 'region', eq: 'EU' }
-  ]
-]
+    { attr: "region", eq: "US" },
+    { or: true, attr: "region", eq: "EU" },
+  ],
+];
 ```
 
-Condition where `age` is greater than 21  **OR** ((`region` equals "US" **AND** `interests` size is greater than 10) **AND** `interests` contain `nodejs`, `dynamodb`, or `serverless`):
-```javascript 
+Condition where `age` is greater than 21 **OR** ((`region` equals "US" **AND** `interests` size is greater than 10) **AND** `interests` contain `nodejs`, `dynamodb`, or `serverless`):
+
+```javascript
 filters: [
   { attr: 'age', gt: 21},
   [
@@ -1194,7 +1210,7 @@ filters: [
 
 ## Projection Expressions
 
-DynamoDB supports [Projection Expressions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html) that allow you to selectively return attributes when using the `get`, `query` or `scan` operations.  
+DynamoDB supports [Projection Expressions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html) that allow you to selectively return attributes when using the `get`, `query` or `scan` operations.
 
 The DynamoDB Toolbox provides a **Projection Builder** that allows you to generate `ProjectionExpression`s that automatically generates `ExpressionAttributeNames` as placeholders to avoid reservered word collisions. The library allows you to work with both table attribute names and Entity aliases to specify projections.
 
@@ -1203,23 +1219,25 @@ Read operations that provide an `attributes` property accept an `array` of attri
 Retrieve the `pk`,`sk`,`name` and `created` attributes for all items:
 
 ```javascript
-attributes: [ 'pk', 'sk', 'name', 'created' ]
+attributes: ["pk", "sk", "name", "created"];
 ```
 
 Retrieve the `user_id`,`status`, and `created` attributes for the `User` entity:
 
 ```javascript
-attributes: [{ User: [ 'user_id', 'status', 'created' ] }]
+attributes: [{ User: ["user_id", "status", "created"] }];
 ```
 
 Retrieve the `pk`, `sk`, and `type` attributes for all items, the `user_id` for the `User` entity, and the `status` and `created` attributes for the the `Order` entity:
 
 ```javascript
 attributes: [
-  'pk', 'sk', 'type',
-  { User: [ 'user_id' ] },
-  { Order: [ 'status', 'created' ] }
-]
+  "pk",
+  "sk",
+  "type",
+  { User: ["user_id"] },
+  { Order: ["status", "created"] },
+];
 ```
 
 When using the `get` method of an entity, the "entity" is assumed for the attributes. This lets you specify attributes and aliases without needing to use the object reference.
@@ -1244,11 +1262,15 @@ let result = await MyEntity.update(
 For the `update` method, you can add additional statements to the clauses by specifying arrays as the `SET`, `ADD`, `REMOVE` and `DELETE` properties. You can also specify additional `ExpressionAttributeNames` and `ExpressionAttributeValues` with object values and the system will merge them in with the generated ones.
 
 ```javascript
-let results = await MyEntity.update(item, {}, {
-  SET: ['#somefield = :somevalue'],
-  ExpressionAttributeNames: { '#somefield': 'somefield' },
-  ExpressionAttributeValues: { ':somevalue': 123 }  
-})
+let results = await MyEntity.update(
+  item,
+  {},
+  {
+    SET: ["#somefield = :somevalue"],
+    ExpressionAttributeNames: { "#somefield": "somefield" },
+    ExpressionAttributeValues: { ":somevalue": 123 },
+  }
+);
 ```
 
 ## Additional References
@@ -1258,10 +1280,10 @@ let results = await MyEntity.update(item, {}, {
 - [DynamoDB, explained.](https://www.dynamodbguide.com/)
 - [The DynamoDB Book](https://www.dynamodbbook.com/)
 
-## Sponsors
-
-[![New Relic](https://user-images.githubusercontent.com/2053544/96728664-55238700-1382-11eb-93cb-82fe7cb5e043.png)](https://ad.doubleclick.net/ddm/trackclk/N1116303.3950900PODSEARCH.COM/B24770737.285235234;dc_trk_aid=479074825;dc_trk_cid=139488579;dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua=;gdpr=${GDPR};gdpr_consent=${GDPR_CONSENT_755})
-<IMG SRC="https://ad.doubleclick.net/ddm/trackimp/N1116303.3950900PODSEARCH.COM/B24770737.285235234;dc_trk_aid=479074825;dc_trk_cid=139488579;ord=[timestamp];dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua=;gdpr=${GDPR};gdpr_consent=${GDPR_CONSENT_755}?" BORDER="0" HEIGHT="1" WIDTH="1" ALT="Advertisement">
-
 ## Contributions and Feedback
+
 Contributions, ideas and bug reports are welcome and greatly appreciated. Please add [issues](https://github.com/jeremydaly/dynamodb-toolbox/issues) for suggestions and bug reports or create a pull request. You can also contact me on Twitter: [@jeremy_daly](https://twitter.com/jeremy_daly).
+
+## Version 0.4 Alpha
+
+If you'd like to try v0.4 with Type Inferencing, please check out the [v0.4 branch](https://github.com/jeremydaly/dynamodb-toolbox/tree/v0.4).
