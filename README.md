@@ -1,4 +1,4 @@
-# DynamoDB Toolbox
+# DynamoDB Toolbox <!-- omit in toc -->
 
 [![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=master)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
@@ -7,20 +7,20 @@
 
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
-## Single Table Designs have never been this easy!
+## Single Table Designs have never been this easy! <!-- omit in toc -->
 
 The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It's designed with **Single Tables** in mind, but works just as well with multiple tables. It lets you define your Entities (with typings and aliases) and map them to your DynamoDB tables. You can then **generate the API parameters** to `put`, `get`, `delete`, `update`, `query`, `scan`, `batchGet`, and `batchWrite` data by passing in JavaScript objects. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
 
 ## Installation and Basic Usage
 
-Install the DynamoDB Toolbox:
+Install DynamoDB Toolbox v0.4 alpha:
 
 ```bash
 # npm
-npm i dynamodb-toolbox
+npm i dynamodb-toolbox@alpha
 
 # yarn
-yarn add dynamodb-toolbox
+yarn add dynamodb-toolbox@alpha
 ```
 
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
@@ -165,7 +165,7 @@ type ExpectedCustomer =
 
 See [Type Inference](#type-inference) for more details.
 
-### This is _NOT_ an ORM (at least it's not trying to be)
+### This is _NOT_ an ORM (at least it's not trying to be) <!-- omit in toc -->
 
 There are several really good Object-Relational Mapping tools (ORMs) out there for DynamoDB. There's the [Amazon DynamoDB DataMapper For JavaScript](https://github.com/awslabs/dynamodb-data-mapper-js), [@Awspilot's DynamoDB](https://awspilot.dev/) project, [@baseprime's dynamodb](https://github.com/baseprime/dynamodb) package, and many more.
 
@@ -188,88 +188,83 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - **Default Value Dependency Graphs:** Create dynamic attribute defaults by chaining other dynamic attribute defaults together.
 - **TypeScript Support:** v0.4 of this library provides strong typing support AND type inference 😍. Inferred type can still overriden with [Overlays](#overlays). Some [Utility Types](#utility-types) are also exposed. Additional work is still required to support schema validation & typings.
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
-- [DynamoDB Toolbox](#dynamodb-toolbox)
-  - [Single Table Designs have never been this easy!](#single-table-designs-have-never-been-this-easy)
-  - [Installation and Basic Usage](#installation-and-basic-usage)
-    - [This is _NOT_ an ORM (at least it's not trying to be)](#this-is-not-an-orm-at-least-its-not-trying-to-be)
-  - [Features](#features)
-  - [Table of Contents](#table-of-contents)
-  - [Conventions, Motivations, and Migrations from v0.1](#conventions-motivations-and-migrations-from-v01)
-  - [Tables](#tables)
-    - [Specifying Table Definitions](#specifying-table-definitions)
-    - [Table Attributes](#table-attributes)
-    - [Table Indexes](#table-indexes)
-  - [Entities](#entities)
-    - [Specifying Entity Definitions](#specifying-entity-definitions)
-    - [Entity Attributes](#entity-attributes)
-      - [Using a `string`](#using-a-string)
-      - [Using an `object`](#using-an-object)
-      - [Using an `array` for composite keys](#using-an-array-for-composite-keys)
-      - [Customize defaults with a `function`](#customize-defaults-with-a-function)
-  - [Table Properties](#table-properties)
-    - [get/set `DocumentClient`](#getset-documentclient)
-    - [get/set `entities`](#getset-entities)
-    - [get/set `autoExecute`](#getset-autoexecute)
-    - [get/set `autoParse`](#getset-autoparse)
-  - [Table Methods](#table-methods)
-    - [query(partitionKey [,options] [,parameters])](#querypartitionkey-options-parameters)
-      - [Return Data](#return-data)
-    - [scan([options] [,parameters])](#scanoptions-parameters)
-      - [Return Data](#return-data-1)
-    - [batchGet(items [,options] [,parameters])](#batchgetitems-options-parameters)
-      - [Specifying options for multiple tables](#specifying-options-for-multiple-tables)
-      - [Return Data](#return-data-2)
-    - [batchWrite(items [,options] [,parameters])](#batchwriteitems-options-parameters)
-      - [Return Data](#return-data-3)
-    - [transactGet(items [,options] [,parameters])](#transactgetitems-options-parameters)
-      - [Accessing items from multiple tables](#accessing-items-from-multiple-tables)
-      - [Return Data](#return-data-4)
-    - [transactWrite(items [,options] [,parameters])](#transactwriteitems-options-parameters)
-      - [Return Data](#return-data-5)
-    - [parse(entity, input [,include])](#parseentity-input-include)
-    - [get(entity, key [,options] [,parameters])](#getentity-key-options-parameters)
-    - [delete(entity, key [,options] [,parameters])](#deleteentity-key-options-parameters)
-    - [put(entity, item [,options] [,parameters])](#putentity-item-options-parameters)
-    - [update(entity, key [,options] [,parameters])](#updateentity-key-options-parameters)
-  - [Entity Properties](#entity-properties)
-    - [get/set `table`](#getset-table)
-    - [get `DocumentClient`](#get-documentclient)
-    - [get/set `autoExecute`](#getset-autoexecute-1)
-    - [get/set `autoParse`](#getset-autoparse-1)
-    - [get `partitionKey`](#get-partitionkey)
-    - [get `sortKey`](#get-sortkey)
-  - [Entity Methods](#entity-methods)
-    - [attribute(attribute)](#attributeattribute)
-    - [parse(input [,include])](#parseinput-include)
-    - [get(key [,options] [,parameters])](#getkey-options-parameters)
-    - [delete(key [,options] [,parameters])](#deletekey-options-parameters)
-    - [put(item [,options] [,parameters])](#putitem-options-parameters)
-    - [update(key [,options] [,parameters])](#updatekey-options-parameters)
-      - [Updating an attribute](#updating-an-attribute)
-      - [Removing an attribute](#removing-an-attribute)
-      - [Adding a number to a `number` attribute](#adding-a-number-to-a-number-attribute)
-      - [Adding values to a `set`](#adding-values-to-a-set)
-      - [Deleting values from a `set`](#deleting-values-from-a-set)
-      - [Appending (or prepending) values to a `list`](#appending-or-prepending-values-to-a-list)
-      - [Remove items from a `list`](#remove-items-from-a-list)
-      - [Update items in a `list`](#update-items-in-a-list)
-      - [Update nested data in a `map`](#update-nested-data-in-a-map)
-    - [query(partitionKey [,options] [,parameters])](#querypartitionkey-options-parameters-1)
-    - [scan([options] [,parameters])](#scanoptions-parameters-1)
-  - [Filters and Conditions](#filters-and-conditions)
-    - [Complex Filters and Conditions](#complex-filters-and-conditions)
-  - [Projection Expressions](#projection-expressions)
-  - [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
-  - [Type Inference](#type-inference)
-    - [Overlaying](#overlaying)
-    - [Utility Types](#utility-types)
-      - [EntityItem](#entityitem)
-      - [Options Types](#options)
-  - [Additional References](#additional-references)
-  - [Sponsors](#sponsors)
-  - [Contributions and Feedback](#contributions-and-feedback)
+- [Installation and Basic Usage](#installation-and-basic-usage)
+- [Features](#features)
+- [Conventions, Motivations, and Migrations from v0.1](#conventions-motivations-and-migrations-from-v01)
+- [Tables](#tables)
+  - [Specifying Table Definitions](#specifying-table-definitions)
+  - [Table Attributes](#table-attributes)
+  - [Table Indexes](#table-indexes)
+- [Entities](#entities)
+  - [Specifying Entity Definitions](#specifying-entity-definitions)
+  - [Entity Attributes](#entity-attributes)
+    - [Using a `string`](#using-a-string)
+    - [Using an `object`](#using-an-object)
+    - [Using an `array` for composite keys](#using-an-array-for-composite-keys)
+    - [Customize defaults with a `function`](#customize-defaults-with-a-function)
+- [Table Properties](#table-properties)
+  - [get/set `DocumentClient`](#getset-documentclient)
+  - [get/set `entities`](#getset-entities)
+  - [get/set `autoExecute`](#getset-autoexecute)
+  - [get/set `autoParse`](#getset-autoparse)
+- [Table Methods](#table-methods)
+  - [query(partitionKey [,options] [,parameters])](#querypartitionkey-options-parameters)
+    - [Return Data](#return-data)
+  - [scan([options] [,parameters])](#scanoptions-parameters)
+    - [Return Data](#return-data-1)
+  - [batchGet(items [,options] [,parameters])](#batchgetitems-options-parameters)
+    - [Specifying options for multiple tables](#specifying-options-for-multiple-tables)
+    - [Return Data](#return-data-2)
+  - [batchWrite(items [,options] [,parameters])](#batchwriteitems-options-parameters)
+    - [Return Data](#return-data-3)
+  - [transactGet(items [,options] [,parameters])](#transactgetitems-options-parameters)
+    - [Accessing items from multiple tables](#accessing-items-from-multiple-tables)
+    - [Return Data](#return-data-4)
+  - [transactWrite(items [,options] [,parameters])](#transactwriteitems-options-parameters)
+    - [Return Data](#return-data-5)
+  - [parse(entity, input [,include])](#parseentity-input-include)
+  - [get(entity, key [,options] [,parameters])](#getentity-key-options-parameters)
+  - [delete(entity, key [,options] [,parameters])](#deleteentity-key-options-parameters)
+  - [put(entity, item [,options] [,parameters])](#putentity-item-options-parameters)
+  - [update(entity, key [,options] [,parameters])](#updateentity-key-options-parameters)
+- [Entity Properties](#entity-properties)
+  - [get/set `table`](#getset-table)
+  - [get `DocumentClient`](#get-documentclient)
+  - [get/set `autoExecute`](#getset-autoexecute-1)
+  - [get/set `autoParse`](#getset-autoparse-1)
+  - [get `partitionKey`](#get-partitionkey)
+  - [get `sortKey`](#get-sortkey)
+- [Entity Methods](#entity-methods)
+  - [attribute(attribute)](#attributeattribute)
+  - [parse(input [,include])](#parseinput-include)
+  - [get(key [,options] [,parameters])](#getkey-options-parameters)
+  - [delete(key [,options] [,parameters])](#deletekey-options-parameters)
+  - [put(item [,options] [,parameters])](#putitem-options-parameters)
+  - [update(key [,options] [,parameters])](#updatekey-options-parameters)
+    - [Updating an attribute](#updating-an-attribute)
+    - [Removing an attribute](#removing-an-attribute)
+    - [Adding a number to a `number` attribute](#adding-a-number-to-a-number-attribute)
+    - [Adding values to a `set`](#adding-values-to-a-set)
+    - [Deleting values from a `set`](#deleting-values-from-a-set)
+    - [Appending (or prepending) values to a `list`](#appending-or-prepending-values-to-a-list)
+    - [Remove items from a `list`](#remove-items-from-a-list)
+    - [Update items in a `list`](#update-items-in-a-list)
+    - [Update nested data in a `map`](#update-nested-data-in-a-map)
+  - [query(partitionKey [,options] [,parameters])](#querypartitionkey-options-parameters-1)
+  - [scan([options] [,parameters])](#scanoptions-parameters-1)
+- [Filters and Conditions](#filters-and-conditions)
+  - [Complex Filters and Conditions](#complex-filters-and-conditions)
+- [Projection Expressions](#projection-expressions)
+- [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
+- [Type Inference](#type-inference)
+  - [Overlays](#overlays)
+  - [Utility Types](#utility-types)
+    - [EntityItem](#entityitem)
+    - [Options](#options)
+- [Additional References](#additional-references)
+- [Contributions and Feedback](#contributions-and-feedback)
 
 ## Conventions, Motivations, and Migrations from v0.1
 
@@ -1439,11 +1434,6 @@ const { Item } = await MyEntity.query(pk, { attributes: ['name', 'age'], ...quer
 - [Best Practices for DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
 - [DynamoDB, explained.](https://www.dynamodbguide.com/)
 - [The DynamoDB Book](https://www.dynamodbbook.com/)
-
-## Sponsors
-
-[![New Relic](https://user-images.githubusercontent.com/2053544/96728664-55238700-1382-11eb-93cb-82fe7cb5e043.png)](https://ad.doubleclick.net/ddm/trackclk/N1116303.3950900PODSEARCH.COM/B24770737.285235234;dc_trk_aid=479074825;dc_trk_cid=139488579;dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua=;gdpr=${GDPR};gdpr_consent=${GDPR_CONSENT_755})
-<IMG SRC="https://ad.doubleclick.net/ddm/trackimp/N1116303.3950900PODSEARCH.COM/B24770737.285235234;dc_trk_aid=479074825;dc_trk_cid=139488579;ord=[timestamp];dc_lat=;dc_rdid=;tag_for_child_directed_treatment=;tfua=;gdpr=${GDPR};gdpr_consent=${GDPR_CONSENT_755}?" BORDER="0" HEIGHT="1" WIDTH="1" ALT="Advertisement">
 
 ## Contributions and Feedback
 
