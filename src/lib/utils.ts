@@ -67,7 +67,7 @@ export const keyTypeError = (field: string) => {
 }
 
 // Condition error
-export const conditonError = (op: string) =>
+export const conditionError = (op: string) =>
   error(`You can only supply one sortKey condition per query. Already using '${op}'`)
 
 // Transform attribute values

@@ -5,7 +5,24 @@ const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
-  indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
+  attributes: {
+    PK: 'string',
+    SK: 'string',
+    GSI1pk: 'string',
+    GSIsk1: 'string',
+    GSINpk: 'string',
+    GSINsk: 'number'
+  },
+  indexes: {
+    GSI1: {
+      partitionKey: 'GSI1pk',
+      sortKey: 'GSIsk1'
+    },
+    GSINumber: {
+      partitionKey: 'GSINpk',
+      sortKey: 'GSINsk'
+    }
+  },
   DocumentClient
 })
 
@@ -23,6 +40,7 @@ const TestEntity = new Entity({
 describe('query', () => {
   it('queries a table with no options', async () => {
     let result = await TestTable.query('test', { execute: false })
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk',
@@ -33,6 +51,7 @@ describe('query', () => {
 
   it('queries a table with no options using numeric pk', () => {
     let result = TestTable.queryParams(1)
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk',
@@ -43,6 +62,7 @@ describe('query', () => {
 
   it('queries a table with projections', () => {
     let result = TestTable.queryParams('test', { attributes: ['pk'] }, {}, true)
+
     expect(result).toEqual({
       payload: {
         TableName: 'test-table',
@@ -59,6 +79,7 @@ describe('query', () => {
   it('queries a table and ignores bad parameters', () => {
     // @ts-expect-error
     let result = TestTable.queryParams('test', {}, 'test')
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk',
@@ -83,6 +104,7 @@ describe('query', () => {
       execute: true,
       parse: true
     })
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk = :sk',
@@ -106,7 +128,6 @@ describe('query', () => {
       Select: 'ALL_ATTRIBUTES',
       ExclusiveStartKey: { pk: 'test', sk: 'skVal2' }
     })
-    // console.log(result);
   })
 
   it('fails on an invalid option', () => {
@@ -188,7 +209,7 @@ describe('query', () => {
 
   it('queries a table with lt', () => {
     let result = TestTable.queryParams('test', { lt: 'val' })
-    // console.log(result)
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk < :sk',
@@ -197,9 +218,21 @@ describe('query', () => {
     })
   })
 
+  it('queries a table with lt, even falsy (0)', () => {
+    let result = TestTable.queryParams('test', { index: 'GSINumber', lt: 0 })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and #sk < :sk',
+      ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
+      IndexName: 'GSINumber'
+    })
+  })
+
   it('queries a table with lte', () => {
     let result = TestTable.queryParams('test', { lte: 'val' })
-    // console.log(result)
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk <= :sk',
@@ -208,9 +241,21 @@ describe('query', () => {
     })
   })
 
+  fit('queries a table with lte, even falsy (0)', () => {
+    let result = TestTable.queryParams('test', { index: 'GSINumber', lte: 0 })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and #sk <= :sk',
+      ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
+      IndexName: 'GSINumber'
+    })
+  })
+
   it('queries a table with gt', () => {
     let result = TestTable.queryParams('test', { gt: 'val' })
-    // console.log(result)
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk > :sk',
@@ -219,9 +264,21 @@ describe('query', () => {
     })
   })
 
+  fit('queries a table with gt, even falsy (0)', () => {
+    let result = TestTable.queryParams('test', { index: 'GSINumber', gt: 0 })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and #sk > :sk',
+      ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
+      IndexName: 'GSINumber'
+    })
+  })
+
   it('queries a table with gte', () => {
     let result = TestTable.queryParams('test', { gte: 'val' })
-    // console.log(result)
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk >= :sk',
@@ -230,9 +287,21 @@ describe('query', () => {
     })
   })
 
+  fit('queries a table with gte, even falsy (0)', () => {
+    let result = TestTable.queryParams('test', { index: 'GSINumber', gte: 0 })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and #sk >= :sk',
+      ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
+      IndexName: 'GSINumber'
+    })
+  })
+
   it('queries a table with beginsWith', () => {
     let result = TestTable.queryParams('test', { beginsWith: 'val' })
-    // console.log(result)
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and begins_with(#sk,:sk)',
@@ -241,14 +310,37 @@ describe('query', () => {
     })
   })
 
+  fit('queries a table with beginsWith, even falsy ("")', () => {
+    let result = TestTable.queryParams('test', { beginsWith: '' })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and begins_with(#sk,:sk)',
+      ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': '' }
+    })
+  })
+
   it('queries a table with between', () => {
     let result = TestTable.queryParams('test', { between: ['val', 'val1'] })
-    // console.log(result)
+
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk between :sk0 and :sk1',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
       ExpressionAttributeValues: { ':pk': 'test', ':sk0': 'val', ':sk1': 'val1' }
+    })
+  })
+
+  fit('queries a table with between, even falsy (0)', () => {
+    let result = TestTable.queryParams('test', { index: 'GSINumber', between: [0, 0] })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and #sk between :sk0 and :sk1',
+      ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk0': 0, ':sk1': 0 },
+      IndexName: 'GSINumber'
     })
   })
 
