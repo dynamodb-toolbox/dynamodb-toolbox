@@ -122,7 +122,7 @@ type AttributeDefinition =
   | PureAttributeDefinition
   | CompositeAttributeDefinition
 
-export type AttributeDefinitions = Record<string, AttributeDefinition> & { link?: string }
+export type AttributeDefinitions = Record<A.Key, AttributeDefinition> & { link?: string }
 
 type InferKeyAttribute<
   Definitions extends AttributeDefinitions,
@@ -139,8 +139,8 @@ interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   all: Attributes
   default: Attributes
   key: {
-    partitionKey: { pure: Attributes; mapped: Attributes; all: Attributes }
-    sortKey: { pure: Attributes; mapped: Attributes; all: Attributes }
+    partitionKey: { pure: Attributes; dependsOn: Attributes; mapped: Attributes; all: Attributes }
+    sortKey: { pure: Attributes; dependsOn: Attributes; mapped: Attributes; all: Attributes }
     all: Attributes
   }
   always: { all: Attributes; default: Attributes; input: Attributes }
@@ -148,6 +148,12 @@ interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   optional: Attributes
   shown: Attributes
 }
+
+type GetDependsOnAttributes<A extends AttributeDefinition> = A extends { dependsOn: A.Key }
+  ? A['dependsOn']
+  : A extends { dependsOn: A.Key[] }
+  ? A['dependsOn'][number]
+  : never
 
 type ParseAttributes<
   Definitions extends AttributeDefinitions,
@@ -162,8 +168,10 @@ type ParseAttributes<
     | O.SelectKeys<Definitions, { default: any } | [any, any, { default: any }]>
     | Aliases,
   PK extends A.Key = InferKeyAttribute<Definitions, 'partitionKey'>,
+  PKDependsOn extends A.Key = GetDependsOnAttributes<Definitions[PK]>,
   PKMappedAttribute extends A.Key = InferMappedAttributes<Definitions, PK>,
   SK extends A.Key = InferKeyAttribute<Definitions, 'sortKey'>,
+  SKDependsOn extends A.Key = GetDependsOnAttributes<Definitions[SK]>,
   SKMappedAttribute extends A.Key = InferMappedAttributes<Definitions, SK>,
   KeyAttributes extends A.Key = PK | PKMappedAttribute | SK | SKMappedAttribute,
   AlwaysAttributes extends A.Key = Exclude<
@@ -188,12 +196,14 @@ type ParseAttributes<
     partitionKey: {
       pure: PK
       mapped: PKMappedAttribute
-      all: PK | PKMappedAttribute
+      dependsOn: PKDependsOn
+      all: PK | PKDependsOn | PKMappedAttribute
     }
     sortKey: {
       pure: SK
       mapped: SKMappedAttribute
-      all: SK | SKMappedAttribute
+      dependsOn: SKDependsOn
+      all: SK | SKDependsOn | SKMappedAttribute
     }
     all: KeyAttributes
   }
@@ -274,14 +284,24 @@ type CompositePrimaryKeyPart<
   Attributes extends ParsedAttributes,
   KeyType extends 'partitionKey' | 'sortKey',
   KeyPureAttribute extends A.Key = Attributes['key'][KeyType]['pure'],
+  KeyDependsOnAttributes extends A.Key = Attributes['key'][KeyType]['dependsOn'],
   KeyCompositeAttributes extends A.Key = Attributes['key'][KeyType]['mapped']
 > = If<
   A.Equals<KeyPureAttribute, never>,
   Record<never, unknown>,
   O.Optional<
     | O.Pick<Item, KeyPureAttribute>
+    | If<A.Equals<KeyDependsOnAttributes, never>, never, O.Pick<Item, KeyDependsOnAttributes>>
     | If<A.Equals<KeyCompositeAttributes, never>, never, O.Pick<Item, KeyCompositeAttributes>>,
-    Attributes['default']
+    If<
+      A.Equals<KeyDependsOnAttributes, never>,
+      // If primary key part doesn't have "dependsOn" attribute, either it has "default" attribute and is optional, either it doesn't and is required
+      Attributes['default'],
+      // If primary key part has "dependsOn" attribute, "default" should be a function using other attributes. We want either:
+      // - O.Pick<Item, KeyDependsOnAttributes> which should not contain KeyPureAttribute
+      // - O.Pick<Item, KeyPureAttribute> with KeyPureAttribute NOT optional this time
+      Exclude<Attributes['default'], KeyPureAttribute>
+    >
   >
 >
 
@@ -487,6 +507,7 @@ export const shouldParse = (parse: boolean | undefined, autoParse: boolean): boo
   parse === true || (parse === undefined && autoParse)
 
 // Declare Entity class
+// @ts-ignore TS4 produces type representation complexity error, which is not a blocking issue
 class Entity<
   EntityItemOverlay extends Overlay = undefined,
   EntityCompositeKeyOverlay extends Overlay = EntityItemOverlay,

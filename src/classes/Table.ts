@@ -22,7 +22,7 @@ import parseProjections, {
 import { ParsedEntity } from '../lib/parseEntity'
 
 // Import standard error handler
-import { error, conditonError, hasProperty, If } from '../lib/utils'
+import { error, conditionError, hasProperty, If } from '../lib/utils'
 
 // Declare Table types
 export interface TableConstructor<
@@ -666,38 +666,38 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     let operator,
       value: any,
       f: string = ''
-    if (eq) {
+    if (eq !== undefined) {
       value = eq
       f = 'eq'
       operator = '='
     }
-    if (lt) {
-      value = value ? conditonError(f) : lt
+    if (lt !== undefined) {
+      value = value ? conditionError(f) : lt
       f = 'lt'
       operator = '<'
     }
-    if (lte) {
-      value = value ? conditonError(f) : lte
+    if (lte !== undefined) {
+      value = value ? conditionError(f) : lte
       f = 'lte'
       operator = '<='
     }
-    if (gt) {
-      value = value ? conditonError(f) : gt
+    if (gt !== undefined) {
+      value = value ? conditionError(f) : gt
       f = 'gt'
       operator = '>'
     }
-    if (gte) {
-      value = value ? conditonError(f) : gte
+    if (gte !== undefined) {
+      value = value ? conditionError(f) : gte
       f = 'gte'
       operator = '>='
     }
-    if (beginsWith) {
-      value = value ? conditonError(f) : beginsWith
+    if (beginsWith !== undefined) {
+      value = value ? conditionError(f) : beginsWith
       f = 'beginsWith'
       operator = 'BEGINS_WITH'
     }
-    if (between) {
-      value = value ? conditonError(f) : between
+    if (between !== undefined) {
+      value = value ? conditionError(f) : between
       f = 'between'
       operator = 'BETWEEN'
     }
