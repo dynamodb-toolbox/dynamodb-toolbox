@@ -1567,6 +1567,182 @@ describe('Entity', () => {
     })
   })
 
+  describe('PK (dependsOn) + SK (dependsOn) Entity', () => {
+    const entityName = 'TestEntity'
+    const pk = 'pk'
+    const pkMap1 = 'p1'
+    const pkMap2 = 'p2'
+    const sk = 'sk'
+    const skMap1 = 's1'
+    const skMap2 = 's2'
+    const ck = { pk, sk }
+
+    const ent = new Entity({
+      name: entityName,
+      attributes: {
+        pk: {
+          type: 'string',
+          partitionKey: true,
+          default: ({ pkMap1, pkMap2 }: any) => [pkMap1, pkMap2].join('#'),
+          dependsOn: ['pkMap1', 'pkMap2']
+        },
+        pkMap1: { type: 'string', required: true },
+        pkMap2: { type: 'string', required: true, default: pkMap2 },
+        sk: {
+          type: 'string',
+          sortKey: true,
+          default: ({ skMap1, skMap2 }: any) => [skMap1, skMap2].join('#'),
+          dependsOn: ['skMap1', 'skMap2']
+        },
+        skMap1: { type: 'string', required: false },
+        skMap2: { type: 'string', required: true, default: skMap2 }
+      },
+      table
+    } as const)
+
+    type ExpectedItem = {
+      created: string
+      modified: string
+      entity: string
+      pk: string
+      pkMap1: string
+      pkMap2: string
+      sk: string
+      skMap1?: string
+      skMap2: string
+    }
+
+    describe('get method', () => {
+      it('nominal case', () => {
+        const ck1 = ck
+        // Regular PK
+        ent.getParams(ck1)
+        const getPromise1 = () => ent.get(ck1)
+        type GetItem1 = C.PromiseOf<F.Return<typeof getPromise1>>['Item']
+        type TestGetItem1 = A.Equals<GetItem1, ExpectedItem | undefined>
+        const testGetItem1: TestGetItem1 = 1
+        testGetItem1
+
+        // Using PK "dependsOn": pkMap2 is not required as it has default
+        const ck2 = { pkMap1, sk }
+        ent.getParams(ck2)
+        const getPromise2 = () => ent.get(ck2)
+        type GetItem2 = C.PromiseOf<F.Return<typeof getPromise2>>['Item']
+        type TestGetItem2 = A.Equals<GetItem2, ExpectedItem | undefined>
+        const testGetItem2: TestGetItem2 = 1
+        testGetItem2
+
+        // Using SK "dependsOn": skMap2 is not required as it has default
+        const ck3 = { pk, skMap1 }
+        ent.getParams(ck3)
+        const getPromise3 = () => ent.get(ck3)
+        type GetItem3 = C.PromiseOf<F.Return<typeof getPromise3>>['Item']
+        type TestGetItem3 = A.Equals<GetItem3, ExpectedItem | undefined>
+        const testGetItem3: TestGetItem3 = 1
+        testGetItem3
+
+        // Using SK "dependsOn": skMap1 is not required as well
+        const ck4 = { pkMap1 }
+        ent.getParams(ck4)
+        const getPromise4 = () => ent.get(ck4)
+        type GetItem4 = C.PromiseOf<F.Return<typeof getPromise4>>['Item']
+        type TestGetItem4 = A.Equals<GetItem4, ExpectedItem | undefined>
+        const testGetItem4: TestGetItem4 = 1
+        testGetItem4
+      })
+
+      it('throws when primary key is incomplete', () => {
+        // 🔨 TOIMPROVE: Not sure this is expected behavior: Missing partition key doesn't throw
+        // @ts-expect-error
+        ent.getParams({ sk })
+
+        // 🔨 TOIMPROVE: Not sure this is expected behavior: Partition key dependsOn incomplete
+        // @ts-expect-error
+        ent.getParams({ pkMap2, sk })
+      })
+    })
+
+    describe('delete method', () => {
+      it('nominal case', () => {
+        const ck1 = ck
+        ent.deleteParams(ck1)
+        const deletePromise1 = () => ent.delete(ck1)
+        deletePromise1
+
+        const ck2 = { pkMap1, sk }
+        ent.deleteParams(ck2)
+        const deletePromise2 = () => ent.delete(ck2)
+        deletePromise2
+
+        const ck3 = { pk, skMap1 }
+        ent.deleteParams(ck3)
+        const deletePromise3 = () => ent.delete(ck3)
+        deletePromise3
+
+        const ck4 = { pkMap1 }
+        ent.deleteParams(ck4)
+        const deletePromise4 = () => ent.delete(ck4)
+        deletePromise4
+      })
+
+      it('throws when primary key is incomplete', () => {
+        // 🔨 TOIMPROVE: Not sure this is expected behavior: Missing partition key doesn't throw
+        // @ts-expect-error
+        ent.deleteParams({ sk })
+
+        // 🔨 TOIMPROVE: Not sure this is expected behavior: Partition key dependsOn incomplete
+        // @ts-expect-error: Partition key dependsOn incomplete
+        ent.deleteParams({ pkMap2, sk })
+      })
+    })
+
+    describe('put method', () => {
+      it('nominal case', () => {
+        const item1 = { pkMap1, pkMap2, skMap2 }
+        ent.putParams(item1)
+        const putPromise1 = () => ent.put(item1)
+        putPromise1
+
+        const item2 = { pkMap1 }
+        ent.putParams(item2)
+        const putPromise2 = () => ent.put(item2)
+        putPromise2
+      })
+
+      it('throws when primary key is incomplete', () => {
+        // @ts-expect-error: Missing sort key
+        expect(() => ent.putParams({ sk })).toThrow()
+
+        // @ts-expect-error: Partition key dependsOn incomplete
+        expect(() => ent.putParams({ pkMap2, sk })).toThrow()
+      })
+    })
+
+    describe('update method', () => {
+      it('nominal case', () => {
+        const item1 = { pkMap1, pkMap2, skMap2 }
+        ent.updateParams(item1)
+        const updatePromise1 = () => ent.update(item1)
+        updatePromise1
+
+        const item2 = { pkMap1 }
+        ent.updateParams(item2)
+        const updatePromise2 = () => ent.update(item2)
+        updatePromise2
+      })
+
+      it('throws when primary key is incomplete', () => {
+        // 🔨 TOIMPROVE: Not sure this is expected behavior: Missing partition key doesn't throw
+        // @ts-expect-error
+        ent.updateParams({ sk })
+
+        // 🔨 TOIMPROVE: Not sure this is expected behavior: Partition key dependsOn incomplete
+        // @ts-expect-error
+        ent.updateParams({ pkMap2, sk })
+      })
+    })
+  })
+
   describe('PK (default) + SK Entity', () => {
     const entityName = 'TestEntity'
     const pk = 'pk'
