@@ -359,7 +359,7 @@ describe('expressionBuilder',() => {
 
   it("doesn't mutate input expression", () => {
     let exp = { attr: 'a', eq: 'b' }
-    expressionBuilder(exp ,TestTable,'TestEntity')
+    expressionBuilder(exp,TestTable,'TestEntity')
     expect(exp).toEqual({ attr: 'a', eq: 'b' })
   })
 })
