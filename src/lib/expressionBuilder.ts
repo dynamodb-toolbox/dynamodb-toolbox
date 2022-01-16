@@ -44,7 +44,7 @@ const buildExpression = (
   ): any => {
   
   // Coerce to array if not already
-  const clauses = Array.isArray(exp) ? exp : [exp]
+  const clauses = Array.isArray(exp) ? [...exp] : [{...exp}]
   let expression = ''
   let names = {}
   let values = {}
