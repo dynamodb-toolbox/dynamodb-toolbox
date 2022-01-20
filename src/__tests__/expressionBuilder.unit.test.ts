@@ -358,8 +358,11 @@ describe('expressionBuilder',() => {
   })
 
   it("doesn't mutate input expression", () => {
-    let exp = { attr: 'a', eq: 'b' }
-    expressionBuilder(exp,TestTable,'TestEntity')
-    expect(exp).toEqual({ attr: 'a', eq: 'b' })
+    let expObj = { attr: 'a', eq: 'b' }
+    let expArr = [{ attr: 'a', eq: 'b' }]
+    expressionBuilder(expObj,TestTable,'TestEntity')
+    expressionBuilder(expArr,TestTable,'TestEntity')
+    expect(expObj).toEqual({ attr: 'a', eq: 'b' })
+    expect(expArr).toEqual([{ attr: 'a', eq: 'b' }])
   })
 })

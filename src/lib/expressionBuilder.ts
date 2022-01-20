@@ -44,7 +44,7 @@ const buildExpression = (
   ): any => {
   
   // Coerce to array if not already
-  const clauses = Array.isArray(exp) ? [...exp] : [{...exp}]
+  const clauses = Array.isArray(exp) ? exp : [exp]
   let expression = ''
   let names = {}
   let values = {}
@@ -73,8 +73,8 @@ const buildExpression = (
     // Else process the clause
     } else {
 
-      // Make sure TS knows this is a FilterExpression
-      const exp = clauses[id] as FilterExpression
+      // Make sure TS knows this is a FilterExpression; copy to avoid mutation
+      const exp = {...clauses[id]} as FilterExpression
 
       // Increment group counter for each clause
       group++ // guarantees uniqueness
