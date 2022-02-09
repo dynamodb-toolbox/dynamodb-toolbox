@@ -65,7 +65,7 @@ export interface EntityAttributeConfig {
 
 export type EntityCompositeAttributes = [(string),number,(string|EntityAttributeConfig)?]
 
-export interface EntityAttributes { 
+export interface EntityAttributes {
   [attr: string]: DynamoDBTypes | EntityAttributeConfig | EntityCompositeAttributes
 }
 
@@ -122,7 +122,7 @@ interface updateCustomParameters {
   DELETE?: string[]
 }
 
-type updateCustomParams = updateCustomParameters 
+type updateCustomParams = updateCustomParameters
   & Partial<DocumentClient.UpdateItemInput>
 
 // Declare Entity class
@@ -146,30 +146,30 @@ class Entity<
     // Sanity check the entity object
     if (typeof entity !== 'object' || Array.isArray(entity))
       error('Please provide a valid entity definition')
- 
+
     // Parse the entity and merge into this
     Object.assign(this,parseEntity(entity))
-    
+
   } // end construcor
 
 
   // Set the Entity's Table
   set table(table: Table) {
-    
+
     // If a Table
     if (table.Table && table.Table.attributes) {
-      
+
       // If this Entity already has a Table, throw an error
       if (this._table) {
         error(`This entity is already assigned a Table (${this._table.name})`)
       // Else if the Entity doesn't exist in the Table, add it
       } else if (!table.entities.includes(this.name)) {
         table.addEntity(this)
-      } 
+      }
 
       // Set the Entity's table
       this._table = table
-      
+
       // If an entity tracking field is enabled, add the attributes, alias and the default
       if (table.Table.entityField) {
         this.schema.attributes[table.Table.entityField] = { type: 'string', alias: this._etAlias, default: this.name } as EntityAttributeConfig
@@ -177,7 +177,7 @@ class Entity<
         this.schema.attributes[this._etAlias] = { type: 'string', map: table.Table.entityField, default: this.name } as EntityAttributeConfig
         this.defaults[this._etAlias] = this.name
       } // end if entity tracking
-    
+
     // Throw an error if not a valid Table
     } else {
       error('Invalid Table')
@@ -210,7 +210,7 @@ class Entity<
   set autoExecute(val) { this._execute = typeof val === 'boolean' ? val : undefined }
 
   // Gets the current auto execute mode
-  get autoExecute() { 
+  get autoExecute() {
     return typeof this._execute === 'boolean' ? this._execute
       : typeof this.table.autoExecute === 'boolean' ? this.table.autoExecute
       : true
@@ -227,20 +227,20 @@ class Entity<
   }
 
   // Primary key getters
-  get partitionKey() {   
-    return this.schema.keys.partitionKey ? 
-      this.attribute(this.schema.keys.partitionKey) 
+  get partitionKey() {
+    return this.schema.keys.partitionKey ?
+      this.attribute(this.schema.keys.partitionKey)
       : error(`No partitionKey defined`)
   }
-  get sortKey() { 
-    return this.schema.keys.sortKey ? 
-      this.attribute(this.schema.keys.sortKey) 
+  get sortKey() {
+    return this.schema.keys.sortKey ?
+      this.attribute(this.schema.keys.sortKey)
       : null
   }
 
   // Get mapped attribute name
   attribute(attr: string) {
-    return this.schema.attributes[attr] && this.schema.attributes[attr].map ? 
+    return this.schema.attributes[attr] && this.schema.attributes[attr].map ?
       this.schema.attributes[attr].map
       : this.schema.attributes[attr] ? attr
       : error(`'${attr}' does not exist or is an invalid alias`)
@@ -260,7 +260,7 @@ class Entity<
 
     // Load the schema
     const { schema, linked } = this
-    
+
     // Assume standard response from DynamoDB
     const data = input.Item || input.Items || input
 
@@ -283,14 +283,14 @@ class Entity<
     options: getOptions = {},
     params: Partial<DocumentClient.GetItemInput> = {}
   ) {
-    
+
     // Generate the payload
     const payload = this.getParams(item,options,params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient.get(payload).promise()    
-        
+      const result = await this.DocumentClient.get(payload).promise()
+
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
         return Object.assign(
@@ -311,8 +311,8 @@ class Entity<
    * @param {object} item - The keys from item you wish to get.
    */
   getBatch(item: Partial<Schema> = {}) {
-    return { 
-      Table: this.table, 
+    return {
+      Table: this.table,
       Key: this.getParams(item).Key
     }
   }
@@ -321,14 +321,14 @@ class Entity<
    * Generate parameters for GET transaction operation
    * @param {object} item - The keys from item you wish to get.
    * @param {object} [options] - Additional get options
-   * 
+   *
    * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Get.html
    */
   getTransaction(
-    item: Partial<Schema> = {}, 
+    item: Partial<Schema> = {},
     options: { attributes?: ProjectionAttributes } = {}
   ): { Entity: Entity<Schema> } & DocumentClient.TransactGetItem {
-  
+
     // Destructure options to check for extraneous arguments
     const {
       attributes, // ProjectionExpression
@@ -338,12 +338,12 @@ class Entity<
     // Error on extraneous arguments
     if (Object.keys(args).length > 0)
     error(`Invalid get transaction options: ${Object.keys(args).join(', ')}`)
-    
+
     // Generate the get parameters
-    let payload = this.getParams(item, options)    
+    let payload = this.getParams(item, options)
 
     // Return in transaction format
-    return { 
+    return {
       Entity: this,
       Get: payload
     }
@@ -387,7 +387,7 @@ class Entity<
     if (capacity !== undefined
       && (typeof capacity !== 'string' || !['NONE','TOTAL','INDEXES'].includes(capacity.toUpperCase())))
       error(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
-    
+
     let ExpressionAttributeNames // init ExpressionAttributeNames
     let ProjectionExpression // init ProjectionExpression
 
@@ -414,7 +414,7 @@ class Entity<
       consistent ? { ConsistentRead: consistent } : null,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       typeof params === 'object' ? params : {}
-    )  
+    )
 
     return payload
   } // end getParams
@@ -433,7 +433,7 @@ class Entity<
   ) {
 
     const payload = this.deleteParams(item,options,params)
-    
+
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
       const result = await this.DocumentClient.delete(payload).promise()
@@ -454,7 +454,7 @@ class Entity<
   /**
    * Generate parameters for DELETE batch operation
    * @param {object} item - The keys from item you wish to delete.
-   * 
+   *
    * Only Key is supported (e.g. no conditions) https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
    */
   deleteBatch(item: Partial<Schema> = {}): { [key: string]: DocumentClient.WriteRequest } {
@@ -462,19 +462,19 @@ class Entity<
     return { [payload.TableName] : { DeleteRequest: { Key: payload.Key } } }
   }
 
-  
+
   /**
    * Generate parameters for DELETE transaction operation
    * @param {object} item - The keys from item you wish to delete.
    * @param {object} [options] - Additional delete options
-   * 
+   *
    * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Delete.html
    */
   deleteTransaction(
     item: Partial<Schema> = {},
     options: transactionOptions = {}
   ): { 'Delete': DocumentClient.Delete } {
-  
+
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -485,7 +485,7 @@ class Entity<
     // Error on extraneous arguments
     if (Object.keys(args).length > 0)
     error(`Invalid delete transaction options: ${Object.keys(args).join(', ')}`)
-    
+
     // Generate the delete parameters
     let payload = this.deleteParams(item, options)
 
@@ -530,7 +530,7 @@ class Entity<
     // Error on extraneous arguments
     if (args.length > 0)
       error(`Invalid delete options: ${args.join(', ')}`)
-    
+
     // Verify metrics
     if (metrics !== undefined
       && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
@@ -543,17 +543,17 @@ class Entity<
 
     // Verify returnValues
     if (returnValues !== undefined
-      && (typeof returnValues !== 'string' 
+      && (typeof returnValues !== 'string'
       || !['NONE', 'ALL_OLD'].includes(returnValues.toUpperCase())))
       error(`'returnValues' must be one of 'NONE' OR 'ALL_OLD'`)
-    
+
     let ExpressionAttributeNames // init ExpressionAttributeNames
     let ExpressionAttributeValues // init ExpressionAttributeValues
     let ConditionExpression // init ConditionExpression
 
     // If conditions
     if (conditions) {
-      
+
       // Parse the conditions
       const {
         expression,
@@ -563,13 +563,13 @@ class Entity<
 
       if (Object.keys(names).length > 0) {
 
-        // TODO: alias attribute field names        
+        // TODO: alias attribute field names
         // Merge names and values and add condition expression
         ExpressionAttributeNames = names
         ExpressionAttributeValues = values
         ConditionExpression = expression
       } // end if names
-      
+
     } // end if filters
 
     // Generate the payload
@@ -600,7 +600,7 @@ class Entity<
   async update(
     item: Partial<Schema> = {},
     options: updateOptions = {},
-    params: Partial<DocumentClient.UpdateItemInput> = {}
+    params: Partial<updateCustomParams> = {}
   ) {
 
     // Generate the payload
@@ -617,7 +617,7 @@ class Entity<
         )
       } else {
         return result
-      }      
+      }
     } else {
       return payload
     } // end if-else
@@ -628,14 +628,16 @@ class Entity<
    * Generate parameters for UPDATE transaction operation
    * @param {object} item - The item you wish to update.
    * @param {object} [options] - Additional update options
-   * 
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the update request
+   *
    * Creates an Update object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Update.html
    */
   updateTransaction(
     item: Partial<Schema> = {},
-    options: transactionOptions = {}
+    options: transactionOptions = {},
+    params: Partial<updateCustomParams> = {}
   ): { 'Update': DocumentClient.Update } {
-  
+
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -646,9 +648,9 @@ class Entity<
     // Error on extraneous arguments
     if (Object.keys(args).length > 0)
     error(`Invalid update transaction options: ${Object.keys(args).join(', ')}`)
-    
+
     // Generate the update parameters
-    let payload = this.updateParams(item, options)
+    let payload = this.updateParams(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -693,13 +695,13 @@ class Entity<
     //     error(`ConditionExpression must be a string`)
 
     // Extract schema and defaults
-    const { schema, defaults, required, linked, _table } = this  
+    const { schema, defaults, required, linked, _table } = this
 
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
     // Merge defaults
-    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))    
+    const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
 
     // Extract valid options
     const {
@@ -716,7 +718,7 @@ class Entity<
     // Error on extraneous arguments
     if (args.length > 0)
       error(`Invalid update options: ${args.join(', ')}`)
-    
+
     // Verify metrics
     if (metrics !== undefined
       && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
@@ -729,15 +731,15 @@ class Entity<
 
     // Verify returnValues
     if (returnValues !== undefined
-      && (typeof returnValues !== 'string' 
+      && (typeof returnValues !== 'string'
       || !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(returnValues.toUpperCase())))
       error(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', OR 'UPDATED_NEW'`)
-    
+
     let ConditionExpression // init ConditionExpression
 
     // If conditions
     if (conditions) {
-      
+
       // Parse the conditions
       const {
         expression,
@@ -747,13 +749,13 @@ class Entity<
 
       if (Object.keys(names).length > 0) {
 
-        // TODO: alias attribute field names        
+        // TODO: alias attribute field names
         // Add names, values and condition expression
         ExpressionAttributeNames = Object.assign(ExpressionAttributeNames,names)
         ExpressionAttributeValues = Object.assign(ExpressionAttributeValues,values)
         ConditionExpression = expression
       } // end if names
-      
+
     } // end if conditions
 
 
@@ -762,7 +764,7 @@ class Entity<
       required[field] && (data[field] === undefined || data[field] === null)
         && error(`'${field}${this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''}' is a required field`)
     ) // end required field check
-    
+
     // Get partition and sort keys
     const Key = getKey(this.DocumentClient)(data,schema.attributes,schema.keys.partitionKey,schema.keys.sortKey)
 
@@ -785,7 +787,7 @@ class Entity<
           if (schema.attributes[attrs[i]].partitionKey === true || schema.attributes[attrs[i]].sortKey === true)
             error(`'${attrs[i]}' is the ${schema.attributes[attrs[i]].partitionKey === true ? 'partitionKey' : 'sortKey' } and cannot be removed`)
           // Grab the attribute name and add to REMOVE and names
-          const attr = schema.attributes[attrs[i]].map || attrs[i]        
+          const attr = schema.attributes[attrs[i]].map || attrs[i]
           REMOVE.push(`#${attr}`)
           names[`#${attr}`] = attr
         } // end for
@@ -944,7 +946,7 @@ class Entity<
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
       returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
     ) // end assign
-    
+
     return payload
 
     // TODO: Check why primary/secondary GSIs are using if_not_exists
@@ -973,7 +975,7 @@ class Entity<
         )
       } else {
         return result
-      }       
+      }
     } else {
       return payload
     } // end-if
@@ -983,7 +985,7 @@ class Entity<
   /**
    * Generate parameters for PUT batch operation
    * @param {object} item - The item you wish to put.
-   * 
+   *
    * Only Item is supported (e.g. no conditions) https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
    */
   putBatch(item: Partial<Schema> = {}): { [key: string]: DocumentClient.WriteRequest } {
@@ -996,14 +998,14 @@ class Entity<
    * Generate parameters for PUT transaction operation
    * @param {object} item - The item you wish to put.
    * @param {object} [options] - Additional put options
-   * 
+   *
    * Creates a Put object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Put.html
    */
   putTransaction(
     item: Partial<Schema> = {},
     options: transactionOptions = {}
   ): { 'Put': DocumentClient.Put } {
-  
+
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -1014,7 +1016,7 @@ class Entity<
     // Error on extraneous arguments
     if (Object.keys(args).length > 0)
     error(`Invalid put transaction options: ${Object.keys(args).join(', ')}`)
-    
+
     // Generate the put parameters
     let payload = this.putParams(item, options)
 
@@ -1039,7 +1041,7 @@ class Entity<
 
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
-    
+
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
@@ -1047,7 +1049,7 @@ class Entity<
     const data = normalizeData(this.DocumentClient)(schema.attributes,linked,Object.assign({},defaults,item))
 
     // console.log(data);
-    
+
 
     // Extract valid options
     const {
@@ -1064,7 +1066,7 @@ class Entity<
     // Error on extraneous arguments
     if (args.length > 0)
       error(`Invalid put options: ${args.join(', ')}`)
-    
+
     // Verify metrics
     if (metrics !== undefined
       && (typeof metrics !== 'string' || !['NONE','SIZE'].includes(metrics.toUpperCase())))
@@ -1078,17 +1080,17 @@ class Entity<
     // Verify returnValues
     // TODO: Check this, conflicts with dynalite
     if (returnValues !== undefined
-      && (typeof returnValues !== 'string' 
+      && (typeof returnValues !== 'string'
       || !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(returnValues.toUpperCase())))
       error(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`)
-    
+
     let ExpressionAttributeNames // init ExpressionAttributeNames
     let ExpressionAttributeValues // init ExpressionAttributeValues
     let ConditionExpression // init ConditionExpression
 
     // If conditions
     if (conditions) {
-      
+
       // Parse the conditions
       const {
         expression,
@@ -1098,13 +1100,13 @@ class Entity<
 
       if (Object.keys(names).length > 0) {
 
-        // TODO: alias attribute field names        
+        // TODO: alias attribute field names
         // Add names, values and condition expression
         ExpressionAttributeNames = names
         ExpressionAttributeValues = values
         ConditionExpression = expression
       } // end if names
-      
+
     } // end if filters
 
 
@@ -1151,14 +1153,14 @@ class Entity<
    * Generate parameters for ConditionCheck transaction operation
    * @param {object} item - The keys from item you wish to check.
    * @param {object} [options] - Additional condition check options
-   * 
+   *
    * Creates a ConditionCheck object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_ConditionCheck.html
    */
   conditionCheck(
-    item: Partial<Schema> = {}, 
+    item: Partial<Schema> = {},
     options: transactionOptions = {}
   ): { 'ConditionCheck': DocumentClient.ConditionCheck } {
-  
+
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -1176,7 +1178,7 @@ class Entity<
     // Error on missing conditions
     if (!('ConditionExpression' in payload))
       error(`'conditions' are required in a conditionCheck`)
-    
+
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -1196,7 +1198,7 @@ class Entity<
     pk: any,
     options: queryOptions = {},
     params: Partial<DocumentClient.QueryInput> = {}
-  ) {    
+  ) {
     options.entity = this.name
     return this.table.query(pk,options,params)
   }
@@ -1205,7 +1207,7 @@ class Entity<
   scan(
     options: scanOptions = {},
     params: Partial<DocumentClient.ScanInput> = {}
-  ) {    
+  ) {
     options.entity = this.name
     return this.table.scan(options,params)
   }
