@@ -618,8 +618,6 @@ class Entity<
       } else {
         return result
       }
-    } else {
-      return payload
     } // end if-else
   } // end delete
 
