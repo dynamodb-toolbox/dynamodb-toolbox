@@ -11,7 +11,7 @@
 
 The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It's designed with **Single Tables** in mind, but works just as well with multiple tables. It lets you define your Entities (with typings and aliases) and map them to your DynamoDB tables. You can then **generate the API parameters** to `put`, `get`, `delete`, `update`, `query`, `scan`, `batchGet`, and `batchWrite` data by passing in JavaScript objects. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
 
-## Version 0.4 Alpha 🙌
+## Version 0.4 Alpha 🙌 <!-- omit in toc -->
 
 v0.4 is almost ready to be released and supports "Type Inferencing" 😎. Please check out the [v0.4 branch](https://github.com/jeremydaly/dynamodb-toolbox/tree/v0.4) for more information, or you can install the latest alpha version using:
 
@@ -162,7 +162,6 @@ If you like working with ORMs, that's great, and you should definitely give thes
 
 ## Table of Contents <!-- omit in toc -->
 
-- [Version 0.4 Alpha 🙌](#version-04-alpha-)
 - [Installation and Basic Usage](#installation-and-basic-usage)
 - [Features](#features)
 - [Conventions, Motivations, and Migrations from v0.1](#conventions-motivations-and-migrations-from-v01)
@@ -233,7 +232,6 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
 - [Additional References](#additional-references)
 - [Contributions and Feedback](#contributions-and-feedback)
-- [Version 0.4 Alpha](#version-04-alpha)
 
 ## Conventions, Motivations, and Migrations from v0.1
 
@@ -1290,7 +1288,3 @@ let results = await MyEntity.update(
 ## Contributions and Feedback
 
 Contributions, ideas and bug reports are welcome and greatly appreciated. Please add [issues](https://github.com/jeremydaly/dynamodb-toolbox/issues) for suggestions and bug reports or create a pull request. You can also contact me on Twitter: [@jeremy_daly](https://twitter.com/jeremy_daly).
-
-## Version 0.4 Alpha
-
-If you'd like to try v0.4 with Type Inferencing, please check out the [v0.4 branch](https://github.com/jeremydaly/dynamodb-toolbox/tree/v0.4).
