@@ -122,7 +122,7 @@ type AttributeDefinition =
   | PureAttributeDefinition
   | CompositeAttributeDefinition
 
-export type AttributeDefinitions = Record<A.Key, AttributeDefinition> & { link?: string }
+export type AttributeDefinitions = Record<A.Key, AttributeDefinition>
 
 type InferKeyAttribute<
   Definitions extends AttributeDefinitions,
@@ -506,8 +506,10 @@ type ShouldParse<Parse extends boolean | undefined, AutoParse extends boolean> =
 export const shouldParse = (parse: boolean | undefined, autoParse: boolean): boolean =>
   parse === true || (parse === undefined && autoParse)
 
+type Readonly<T> = T extends O.Object ? { readonly [P in keyof T]: Readonly<T[P]> } : T
+type Writable<T> = { -readonly [P in keyof T]: Writable<T[P]> }
+
 // Declare Entity class
-// @ts-ignore TS4 produces type representation complexity error, which is not a blocking issue
 class Entity<
   EntityItemOverlay extends Overlay = undefined,
   EntityCompositeKeyOverlay extends Overlay = EntityItemOverlay,
@@ -520,13 +522,10 @@ class Entity<
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
   ReadonlyAttributeDefinitions extends PreventKeys<
-    AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
+    AttributeDefinitions | Readonly<AttributeDefinitions>,
     CreatedAlias | ModifiedAlias | TypeAlias
   > = PreventKeys<AttributeDefinitions, CreatedAlias | ModifiedAlias | TypeAlias>,
-  WritableAttributeDefinitions extends AttributeDefinitions = A.Cast<
-    O.Writable<ReadonlyAttributeDefinitions, A.Key, 'deep'>,
-    AttributeDefinitions
-  >,
+  WritableAttributeDefinitions extends AttributeDefinitions = Writable<ReadonlyAttributeDefinitions>,
   Attributes extends ParsedAttributes = If<
     A.Equals<EntityItemOverlay, undefined>,
     // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
