@@ -34,15 +34,6 @@
     "url": "https://github.com/jeremydaly/dynamodb-toolbox/issues"
   },
   "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
-  "jest": {
-    "testPathIgnorePatterns": [
-      "/__tests__/entities/*",
-      "/__tests__/tables/*"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/__tests__/*"
-    ]
-  },
   "devDependencies": {
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
