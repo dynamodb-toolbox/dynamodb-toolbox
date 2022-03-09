@@ -1,15 +1,25 @@
 # DynamoDB Toolbox <!-- omit in toc -->
 
-[![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=master)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
+[![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=main)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/l/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
-[![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=master)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=main)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=master)
 
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
 ## Single Table Designs have never been this easy! <!-- omit in toc -->
 
 The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It's designed with **Single Tables** in mind, but works just as well with multiple tables. It lets you define your Entities (with typings and aliases) and map them to your DynamoDB tables. You can then **generate the API parameters** to `put`, `get`, `delete`, `update`, `query`, `scan`, `batchGet`, and `batchWrite` data by passing in JavaScript objects. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
+
+## Version 0.4 Alpha 🙌
+
+v0.4 is almost ready to be released and supports "Type Inferencing" 😎. Please check out the [v0.4 branch](https://github.com/jeremydaly/dynamodb-toolbox/tree/v0.4) for more information, or you can install the latest alpha version using:
+
+```
+npm i dynamodb-toolbox@0.4.0-alpha.2
+```
+
+Feedback is welcome and much appreciated! (Huge thanks to @ThomasAribart for all his work on this 🙌)
 
 ## Installation and Basic Usage
 
@@ -152,6 +162,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
 
 ## Table of Contents <!-- omit in toc -->
 
+- [Version 0.4 Alpha 🙌](#version-04-alpha-)
 - [Installation and Basic Usage](#installation-and-basic-usage)
 - [Features](#features)
 - [Conventions, Motivations, and Migrations from v0.1](#conventions-motivations-and-migrations-from-v01)
