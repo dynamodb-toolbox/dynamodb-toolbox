@@ -134,7 +134,7 @@ type InferMappedAttributes<
   AttributeName extends A.Key
 > = O.SelectKeys<Definitions, [AttributeName, any, any?]>
 
-interface ParsedAttributes<Attributes extends A.Key = A.Key> {
+export interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   aliases: Attributes
   all: Attributes
   default: Attributes
