@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=main)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/l/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
-[![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=main)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=main)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=main)
 
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
