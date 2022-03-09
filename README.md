@@ -490,7 +490,7 @@ const MyEntity = new Entity({
 
 #### Customize defaults with a `function`
 
-In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputed data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency. However, the `dependsOn` keyword may be used for type inference in the future.
+In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputed data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency.
 
 This opens up a number of really powerful use cases:
 
@@ -1331,13 +1331,13 @@ The following options are implemented:
 - ☝️ `conditions`: In `put`, `update` and `delete` operations, the `conditions` attributes are correctly typed.
 - 📨 `returnValues`: In `put`, `update` and `delete` operation, the `returnValues` option is interpreted to format the responses.
 - 🙈 `hidden`: Hidden attributes are omitted from the parsed responses types.
+- 🔗 `dependsOn` option: If the `default` property of a key attribute is a function, you can use the `dependsOn` attribute to enable typing the primary key through the depended-on attributes (i.e. those used in the function).
 
 The following options are not yet implemented:
 
 - `alias` attribute option
 - Table attributes!
 - Secondary indexes names
-- `dependsOn` option
 - `coerce` option
 - Improved `list` and `set` support
   ... And probably more! Feel free to open an issue if needed 🤗
