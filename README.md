@@ -99,7 +99,7 @@ await Customer.put(customer)
 
 The item will be saved to DynamoDB like this:
 
-```json
+```typescript
 {
   "pk": 123,
   "sk": "active#2020-04-24",
@@ -580,13 +580,13 @@ The `query()` method accepts three arguments. The first argument is used to spec
 The second argument is an `options` object that specifies the details of your query. The following options are all optional (corresponding Query API references in parentheses):
 
 | Option     |        Type         | Description                                                                                                                                                                                                                                                                                      |
-| ---------- | :-----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | 
+| ---------- | :-----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | index      |      `string`       | Name of secondary index to query. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName)                                                                                      |
 | limit      |      `number`       | The maximum number of items to retrieve per query. (Limit)                                                                                                                                                                                                                                       |
 | reverse    |      `boolean`      | Reverse the order or returned items. (ScanIndexForward)                                                                                                                                                                                                                                          |
 | consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                                                                                                                                           |
 | capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                                                                     |
-| select     |      `string`       | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select) |
+| select     |      `string`       | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select)                                                                                                                                              |
 | eq         |  same as `sortKey`  | Specifies `sortKey` condition to be _equal_ to supplied value. (KeyConditionExpression)                                                                                                                                                                                                          |
 | lt         |  same as `sortKey`  | Specifies `sortKey` condition to be _less than_ supplied value. (KeyConditionExpression)                                                                                                                                                                                                         |
 | lte        |  same as `sortKey`  | Specifies `sortKey` condition to be _less than or equal to_ supplied value. (KeyConditionExpression)                                                                                                                                                                                             |
