@@ -1,4 +1,4 @@
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 // Import Table and Entity classes
 import Table from '../classes/Table'

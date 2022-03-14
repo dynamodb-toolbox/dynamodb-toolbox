@@ -1,5 +1,5 @@
 // Bootstrap testing
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 // Require Table and Entity classes
 import Table from '../classes/Table'
@@ -137,7 +137,7 @@ describe('Table creation', ()=> {
     })
 
     expect(TestTable instanceof Table).toBe(true)
-    expect(TestTable.DocumentClient!.constructor.name).toBe('DocumentClient')
+    expect(TestTable.DocumentClient!.constructor.name).toBe('DynamoDBDocumentClient')
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()
@@ -160,7 +160,7 @@ describe('Table creation', ()=> {
     TestTable.DocumentClient = DocumentClient
 
     expect(TestTable instanceof Table).toBe(true)
-    expect(TestTable.DocumentClient.constructor.name).toBe('DocumentClient')
+    expect(TestTable.DocumentClient.constructor.name).toBe('DynamoDBDocumentClient')
     expect(TestTable.name).toBe('test-table')
     expect(TestTable.Table.partitionKey).toBe('pk')
     expect(TestTable.Table.sortKey).toBeNull()

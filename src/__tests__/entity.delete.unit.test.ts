@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -137,24 +137,24 @@ describe('delete',()=>{
   })
 
   it('fails on invalid capacity option', () => {
-    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
+    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { capacity: 'test' } as any))
       .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
   it('fails on invalid metrics option', () => {
-    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { metrics: 'test' }))
+    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { metrics: 'test' } as any))
       .toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   })
 
   it('fails on invalid returnValues option', () => {
-    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' }))
+    expect(() => TestEntity.deleteParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' } as any))
       .toThrow(`'returnValues' must be one of 'NONE' OR 'ALL_OLD'`)
   })
 
   it('sets capacity options', () => {
     let { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
       { pk: 'x', sk: 'y' },
-      { capacity: 'none' }
+      { capacity: 'none' } as any
     )
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'x', sk: 'y' })
@@ -164,7 +164,7 @@ describe('delete',()=>{
   it('sets metrics options', () => {
     let { TableName, Key, ReturnItemCollectionMetrics } = TestEntity.deleteParams(
       { pk: 'x', sk: 'y' },
-      { metrics: 'size' }
+      { metrics: 'size' } as any
     )
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'x', sk: 'y' })

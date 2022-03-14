@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -53,6 +53,7 @@ describe('batchGet',()=>{
   it('fails when providing an invalid capactiy setting', () => {
     expect(() => { TestTable.batchGetParams(
       TestEntity.getBatch({ pk: 'test', sk: 'testsk'}),
+      // @ts-expect-error
       { capacity: 'test' }
     ) })
       .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)

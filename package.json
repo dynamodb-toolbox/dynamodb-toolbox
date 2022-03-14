@@ -40,9 +40,9 @@
     ]
   },
   "devDependencies": {
+    "@aws-sdk/lib-dynamodb": "^3.17.0",
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
-    "aws-sdk": "^2.818.0",
     "coveralls": "^3.1.0",
     "dynalite": "^3.2.1",
     "eslint": "^8.2.0",

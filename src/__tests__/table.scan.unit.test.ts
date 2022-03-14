@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -55,8 +55,8 @@ describe('scan',()=>{
       index: 'GSI1',
       limit: 10,
       consistent: true,
-      capacity: 'total',
-      select: 'all_attributes',
+      capacity: 'TOTAL',
+      select: 'ALL_ATTRIBUTES',
       filters: { attr: 'test', eq: 'testFilter' },
       attributes: ['pk','sk','test'],
       startKey: { pk: 'test', sk: 'skVal2' },
@@ -120,12 +120,14 @@ describe('scan',()=>{
 
   it('fails on invalid select setting', () => {
     expect(() => TestTable.scanParams(
+      // @ts-expect-error
       { select: 'test' }
     )).toThrow(`'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`)
   })
 
   it('fails on invalid capacity setting', () => {
     expect(() => TestTable.scanParams(
+      // @ts-expect-error
       { capacity: 'test' }
     )).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })

@@ -1,6 +1,5 @@
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { Table, Entity } from '../index'
-import { DocumentClient as docClient } from './bootstrap-tests'
+import { ddbDocClient as docClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -42,9 +41,9 @@ describe('transactWrite',()=>{
       TestEntity.deleteTransaction({ pk: 'test', sk: 'testsk3', test: 'test'})
     ])
 
-    expect(result.TransactItems[0].Put!.Item.sk).toBe('testsk1')
-    expect(result.TransactItems[1].Update!.UpdateExpression).toBe('SET #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test = :test')
-    expect(result.TransactItems[2].Delete!.Key.sk).toBe('testsk3')
+    expect(result.TransactItems![0].Put!.Item!.sk).toBe('testsk1')
+    expect(result.TransactItems![1].Update!.UpdateExpression).toBe('SET #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test = :test')
+    expect(result.TransactItems![2].Delete!.Key!.sk).toBe('testsk3')
   })
 
   it('fails when extra options', () => {
@@ -59,6 +58,7 @@ describe('transactWrite',()=>{
   it('fails when providing an invalid capacity setting', () => {
     expect(() => { TestTable.transactWriteParams(
       [TestEntity.putTransaction({ pk: 'test', sk: 'testsk'})],
+      // @ts-expect-error
       { capacity: 'test' }
     ) })
       .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
@@ -67,6 +67,7 @@ describe('transactWrite',()=>{
   it('fails when providing an invalid metrics setting', () => {
     expect(() => { TestTable.transactWriteParams(
       [TestEntity.putTransaction({ pk: 'test', sk: 'testsk'})],
+      // @ts-expect-error
       { metrics: 'test' }
     ) })
       .toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)

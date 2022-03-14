@@ -2,7 +2,7 @@
 import Table from '../classes/Table'
 import Entity, { EntityConstructor} from '../classes/Entity'
 
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 describe('Entity creation', ()=> {
 

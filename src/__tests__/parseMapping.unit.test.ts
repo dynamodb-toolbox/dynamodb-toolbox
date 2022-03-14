@@ -1,5 +1,5 @@
 import parseMapping from '../lib/parseMapping'
-import { TrackingInfo } from 'lib/parseEntity'
+import { TrackingInfo } from '../lib/parseEntity'
 
 let track: TrackingInfo = {
   fields: [],

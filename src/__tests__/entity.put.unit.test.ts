@@ -1,6 +1,6 @@
 // @ts-nocheckx
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { ddbDocClient as DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -266,7 +266,7 @@ describe('put',()=>{
       'pk': 'test-pk',
       'sk': 'test-sk',
       'test_string_set': ['test',1]
-    })).toThrow(`String Set contains Number value`)
+    })).toThrow(`'test_string_set' must be a valid set (array) containing only string types`)
   })
 
   it('fails when set coerces array and doesn\'t match type', () => {
@@ -284,7 +284,7 @@ describe('put',()=>{
       'test_string_set_type_coerce': "1,2,3"
     })
     // @ts-ignore    
-    expect(Item['test_string_set_type_coerce'].values).toEqual(['1','2','3'])
+    expect(Item['test_string_set_type_coerce']).toEqual(new Set(['1','2','3']))
   })
 
   it('fails when set doesn\'t contain array with no coercion', () => {
@@ -340,7 +340,7 @@ describe('put',()=>{
   it('sets capacity options', () => {
     let { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
       { pk: 'x', sk: 'y' },
-      { capacity: 'none' }
+      { capacity: 'none' } as any
     )
     expect(TableName).toBe('test-table')
     expect(ReturnConsumedCapacity).toBe('NONE')
@@ -349,7 +349,7 @@ describe('put',()=>{
   it('sets metrics options', () => {
     let { TableName, ReturnItemCollectionMetrics } = TestEntity.putParams(
       { pk: 'x', sk: 'y' },
-      { metrics: 'size' }
+      { metrics: 'size' } as any
     )
     expect(TableName).toBe('test-table')
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
@@ -365,17 +365,17 @@ describe('put',()=>{
   })
 
   it('fails on invalid capacity option', () => {
-    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { capacity: 'test' }))
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { capacity: 'test' } as any))
       .toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
   it('fails on invalid metrics option', () => {
-    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { metrics: 'test' }))
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { metrics: 'test' } as any))
       .toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   })
 
   it('fails on invalid returnValues option', () => {
-    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' }))
+    expect(() => TestEntity.putParams({ pk: 'x', sk: 'y' }, { returnValues: 'test' } as any))
       .toThrow(`'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`)
   })
 

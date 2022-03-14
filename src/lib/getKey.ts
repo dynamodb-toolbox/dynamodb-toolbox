@@ -6,10 +6,10 @@
 
 import validateTypes from './validateTypes'
 import { error, transformAttr } from './utils'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 // Get partitionKey/sortKey
-export default (DocumentClient: DocumentClient) => (data: any, schema: any, partitionKey: any, sortKey: any) => {
+export default (DocumentClient: DynamoDBDocumentClient) => (data: any, schema: any, partitionKey: any, sortKey: any) => {
 
   // TODO: Think about a better way to reference pk/sk - can it work with secondary indexes?
   partitionKey = schema[partitionKey].map || partitionKey

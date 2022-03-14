@@ -1,4 +1,4 @@
-import { EntityConstructor } from 'classes/Entity'
+import { EntityConstructor } from '../classes/Entity'
 import parseEntity from '../lib/parseEntity'
 
 type Schema = any
