@@ -40,7 +40,9 @@
     ]
   },
   "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.54.0",
     "@aws-sdk/lib-dynamodb": "^3.17.0",
+    "@aws-sdk/types": "^3.54.0",
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
     "coveralls": "^3.1.0",
