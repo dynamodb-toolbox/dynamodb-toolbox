@@ -36,6 +36,7 @@ export function parseEntity(entity: EntityConstructor) {
   let {
     name,
     timestamps,
+    timestampsFormat,
     created,
     createdAlias,
     modified,
@@ -61,6 +62,10 @@ export function parseEntity(entity: EntityConstructor) {
 
   // Enable created/modified timestamps on items
   timestamps = typeof timestamps === 'boolean' ? timestamps : true
+
+  // Define timestamp formatter
+  timestampsFormat = typeof timestampsFormat === 'function'
+    ? timestampsFormat : (d) => d.toISOString() // default to ISO
 
   // Define 'created' attribute name
   created = typeof created === 'string'
@@ -92,9 +97,10 @@ export function parseEntity(entity: EntityConstructor) {
     attributes : error(`Please provide a valid 'attributes' object`)
 
   // Add timestamps
-  if (timestamps) {
-    attributes[created] = { type: 'string', alias: createdAlias, default: ()=> new Date().toISOString() }
-    attributes[modified] = { type: 'string', alias: modifiedAlias, default: ()=> new Date().toISOString(), onUpdate: true }
+  if (timestamps && timestampsFormat) {
+    const formatter = timestampsFormat // for eslint
+    attributes[created] = { type: 'string', alias: createdAlias, default: ()=> formatter(new Date()) }
+    attributes[modified] = { type: 'string', alias: modifiedAlias, default: ()=> formatter(new Date()), onUpdate: true }
   }
 
   // Tracking info

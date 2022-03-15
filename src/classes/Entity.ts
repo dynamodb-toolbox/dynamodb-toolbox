@@ -62,6 +62,7 @@ export type SchemaType =
 export interface EntityConstructor {
   name: string
   timestamps?: boolean
+  timestampsFormat?: (d: Date) => any
   created?: string
   modified?: string
   createdAlias?: string
