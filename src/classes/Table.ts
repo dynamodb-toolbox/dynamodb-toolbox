@@ -532,11 +532,9 @@ class Table {
                   return this[item[String(this.Table.entityField)]].parse(
                     item,
                     // Array.isArray(options.omit) ? options.omit : [],
-                    EntityProjections[item[String(this.Table.entityField)]]
-                      ? EntityProjections[item[String(this.Table.entityField)]]
-                      : TableProjections
-                      ? TableProjections
-                      : []
+                    EntityProjections[item[String(this.Table.entityField)] || options.entity]
+                      || TableProjections
+                      || []
                   )
                 } else {
                   return item
