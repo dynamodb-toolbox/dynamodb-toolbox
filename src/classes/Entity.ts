@@ -451,23 +451,20 @@ type UpdateItem<
     MethodItemOverlay,
     EntityItemOverlay,
     A.Compute<
-      CompositePrimaryKey &
-        {
-          [inputAttr in Attributes['always']['input']]:
-            | Item[A.Cast<inputAttr, keyof Item>]
-            | { $delete?: string[]; $add?: any }
-        } &
-        {
-          [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
-            | Item[A.Cast<optAttr, keyof Item>]
-            | { $delete?: string[]; $add?: any }
-        } &
-        {
-          [attr in Attributes['optional']]?:
-            | null
-            | Item[A.Cast<attr, keyof Item>]
-            | { $delete?: string[]; $add?: any }
-        } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
+      CompositePrimaryKey & {
+        [inputAttr in Attributes['always']['input']]:
+          | Item[A.Cast<inputAttr, keyof Item>]
+          | { $delete?: string[]; $add?: any }
+      } & {
+        [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
+          | Item[A.Cast<optAttr, keyof Item>]
+          | { $delete?: string[]; $add?: any }
+      } & {
+        [attr in Attributes['optional']]?:
+          | null
+          | Item[A.Cast<attr, keyof Item>]
+          | { $delete?: string[]; $add?: any }
+      } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
     >
   ]
 >
@@ -507,7 +504,7 @@ export const shouldParse = (parse: boolean | undefined, autoParse: boolean): boo
   parse === true || (parse === undefined && autoParse)
 
 type Readonly<T> = T extends O.Object ? { readonly [P in keyof T]: Readonly<T[P]> } : T
-type Writable<T> = { -readonly [P in keyof T]: Writable<T[P]> }
+export type Writable<T> = { -readonly [P in keyof T]: Writable<T[P]> }
 
 // Declare Entity class
 class Entity<
