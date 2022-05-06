@@ -270,19 +270,20 @@ const MyTable = new Table({
 
 `Table` takes a single parameter of type `object` that accepts the following properties:
 
-| Property             |         Type          | Required | Description                                                                                                                        |
-| -------------------- | :-------------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------- |
-| name                 |       `string`        |   yes    | The name of your DynamoDB table (this will be used as the `TableName` property)                                                    |
-| alias                |       `string`        |    no    | An optional alias to reference your table when using "batch" features                                                              |
-| partitionKey         |       `string`        |   yes    | The attribute name of your table's partitionKey                                                                                    |
-| sortKey              |       `string`        |    no    | The attribute name of your table's sortKey                                                                                         |
-| entityField          | `boolean` or `string` |    no    | Disables or overrides entity tracking field name (default: `_et`)                                                                  |
-| attributes           |       `object`        |    no    | Complex type that optionally specifies the name and type of each attributes (see below)                                            |
-| indexes              |       `object`        |    no    | Complex type that optionally specifies the name keys of your secondary indexes (see below)                                         |
-| autoExecute          |       `boolean`       |    no    | Enables automatic execution of the DocumentClient method (default: `true`)                                                         |
-| autoParse            |       `boolean`       |    no    | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`)                                          |
-| removeNullAttributes |       `boolean`       |    no    | Removes null attributes instead of setting them to `null` (default: `true`)                                                        |
-| DocumentClient       |   `DocumentClient`    |    \*    | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
+| Property              |         Type          | Required | Description                                                                                                                        |
+| --------------------- | :-------------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------- |
+| name                  |       `string`        |   yes    | The name of your DynamoDB table (this will be used as the `TableName` property)                                                    |
+| alias                 |       `string`        |    no    | An optional alias to reference your table when using "batch" features                                                              |
+| partitionKey          |       `string`        |   yes    | The attribute name of your table's partitionKey                                                                                    |
+| sortKey               |       `string`        |    no    | The attribute name of your table's sortKey                                                                                         |
+| entityField           | `boolean` or `string` |    no    | Disables or overrides entity tracking field name (default: `_et`)                                                                  |
+| attributes            |       `object`        |    no    | Complex type that optionally specifies the name and type of each attributes (see below)                                            |
+| indexes               |       `object`        |    no    | Complex type that optionally specifies the name keys of your secondary indexes (see below)                                         |
+| autoExecute           |       `boolean`       |    no    | Enables automatic execution of the DocumentClient method (default: `true`)                                                         |
+| autoParse             |       `boolean`       |    no    | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`)                                          |
+| removeNullAttributes  |       `boolean`       |    no    | Removes null attributes instead of setting them to `null` (default: `true`)                                                        |
+| treatWhitespaceAsNull |       `boolean`       |    no    | Treats whitespace-only values as null (e.g. `' '`) when removing null attributes (default: `true`)                                 |
+| DocumentClient        |   `DocumentClient`    |    \*    | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
 
 \* _A Table can be instantiated without a DocumentClient, but most methods require it before execution_
 

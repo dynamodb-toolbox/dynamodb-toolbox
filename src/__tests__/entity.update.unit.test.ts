@@ -67,6 +67,7 @@ const TestTable3 = new Table({
   name: 'test-table3',
   partitionKey: 'pk',
   entityField: false,
+  treatWhitespaceAsNull: false,
   DocumentClient
 })
 
@@ -183,6 +184,14 @@ describe('update',()=>{
     expect(ExpressionAttributeNames).toEqual({ '#test_composite': 'test_composite' })
     expect(Key).toEqual({ pk: 'test-pk' })
     expect(TableName).toBe('test-table2')
+  })
+
+  it('Removes whitespace-only fields by default', () => {
+    let { UpdateExpression } = TestEntity2.updateParams({
+      pk: 'test-pk',
+      test_composite: ' '
+    })
+    expect(UpdateExpression).toBe('REMOVE #test_composite')
   })
 
   it('fails removing an invalid attribute', () => {
@@ -525,6 +534,15 @@ describe('update',()=>{
       test3: 0
     })
     expect(ExpressionAttributeValues![':test3']).toBe(0)
+  })
+
+  it('does not convert whitespace to null', () => {
+    let { ExpressionAttributeValues } = TestEntity3.updateParams({
+      pk: 'test-pk',
+      test2: ' ',
+      test3: 0
+    })
+    expect(ExpressionAttributeValues![':test2']).toBe(' ')
   })
 
   it('fails with undefined input', () => {

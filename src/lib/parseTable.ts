@@ -25,6 +25,7 @@ export const parseTable = (table: TableConstructor) => {
     autoExecute,
     autoParse,
     removeNullAttributes,
+    treatWhitespaceAsNull,
     entities,
     DocumentClient,
     ...args // extraneous config
@@ -91,6 +92,7 @@ export const parseTable = (table: TableConstructor) => {
     autoExecute,
     autoParse,
     removeNullAttributes,
+    treatWhitespaceAsNull,
     _entities: [] // init Entity tracker
   },
   DocumentClient ? { DocumentClient } : {}, // end DocumentClient

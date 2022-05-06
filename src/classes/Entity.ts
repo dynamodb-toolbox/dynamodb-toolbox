@@ -789,7 +789,13 @@ class Entity<
           REMOVE.push(`#${attr}`)
           names[`#${attr}`] = attr
         } // end for
-      } else if (this._table!._removeNulls === true && (data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
+      } else if (
+        this._table!._removeNulls === true && 
+        (data[field] === null || (
+          this._table!._trimWhitespaceOnly && String(data[field]).trim() === ''
+        )) && 
+        (!mapping.link || mapping.save)
+      ) {
         REMOVE.push(`#${field}`)
         names[`#${field}`] = field
       } else if (

@@ -35,6 +35,7 @@ export interface TableConstructor {
   DocumentClient?: DynamoDb.DocumentClient
   entities?: {} // improve - not documented
   removeNullAttributes?: boolean
+  treatWhitespaceAsNull?: boolean
 }
 
 export type DynamoDBTypes = 'string' | 'boolean' | 'number' | 'list' | 'map' | 'binary' | 'set'
@@ -148,6 +149,7 @@ class Table {
   private _execute: boolean = true
   private _parse: boolean = true
   public _removeNulls: boolean = true
+  public _trimWhitespaceOnly: boolean = true
   private _docClient?: DocumentClient
   private _entities: string[] = []
   public Table!: ParsedTable['Table']
@@ -176,14 +178,20 @@ class Table {
   // Sets the auto parse mode (default to true)
   set autoParse(val) { this._parse = typeof val === 'boolean' ? val : true }
 
-  // Gets the current auto execute mode
+  // Gets the current auto parse mode
   get autoParse() { return this._parse }
 
-  // Sets the auto execute mode (default to true)
+  // Sets the remove nulls mode (default to true)
   set removeNullAttributes(val) { this._removeNulls = typeof val === 'boolean' ? val : true }
 
-  // Gets the current auto execute mode
+  // Gets the current remove nulls mode
   get removeNullAttributes() { return this._removeNulls }
+
+  // Sets the mode for treating whitespace as null (default to true)
+  set treatWhitespaceAsNull(val) { this._trimWhitespaceOnly = typeof val === 'boolean' ? val : true }
+
+  // Gets the current mode for treating whitespace as null
+  get treatWhitespaceAsNull() { return this._trimWhitespaceOnly }
 
   // Retrieves the document client
   get DocumentClient() { return this._docClient }
