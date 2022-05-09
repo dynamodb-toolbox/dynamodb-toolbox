@@ -545,6 +545,22 @@ describe('update',()=>{
     })).toThrow(`'test2' is a required field`)
   })
 
+  it('fails when removing a required field', () => {
+    expect(() => TestEntity3.updateParams({
+      'pk': 'test-pk',
+      'test2': 'test-value',
+      '$remove': 'test'
+    })).toThrow(`'test' is required and cannot be removed`)
+  })
+
+  it('fails when setting a required field to a value that coerces to null', () => {
+    expect(() => TestEntity3.updateParams({
+      'pk': 'test-pk',
+      'test': '',
+      'test2': 'test-value',
+    })).toThrow(`'test' is required and cannot be removed`)
+  })
+
   it('fails when using non-numeric fields for indexed list updates', () => {
     expect(() => TestEntity.updateParams({
       'pk': 'test-pk',

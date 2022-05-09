@@ -784,12 +784,17 @@ class Entity<
           // Verify attribute is not a pk/sk
           if (schema.attributes[attrs[i]].partitionKey === true || schema.attributes[attrs[i]].sortKey === true)
             error(`'${attrs[i]}' is the ${schema.attributes[attrs[i]].partitionKey === true ? 'partitionKey' : 'sortKey' } and cannot be removed`)
+          // Verify attribute is not required
+          if (schema.attributes[attrs[i]].required)
+            error(`'${attrs[i]}' is required and cannot be removed`);
           // Grab the attribute name and add to REMOVE and names
           const attr = schema.attributes[attrs[i]].map || attrs[i]        
           REMOVE.push(`#${attr}`)
           names[`#${attr}`] = attr
         } // end for
       } else if (this._table!._removeNulls === true && (data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
+        if (schema.attributes[field].required)
+          error(`'${field}' is required and cannot be removed`);
         REMOVE.push(`#${field}`)
         names[`#${field}`] = field
       } else if (
