@@ -793,6 +793,7 @@ class Entity<
           names[`#${attr}`] = attr
         } // end for
       } else if (this._table!._removeNulls === true && (data[field] === null || String(data[field]).trim() === '') && (!mapping.link || mapping.save)) {
+        // Verify attribute is not required
         if (schema.attributes[field].required)
           error(`'${field}' is required and cannot be removed`);
         REMOVE.push(`#${field}`)
