@@ -451,23 +451,20 @@ type UpdateItem<
     MethodItemOverlay,
     EntityItemOverlay,
     A.Compute<
-      CompositePrimaryKey &
-        {
-          [inputAttr in Attributes['always']['input']]:
-            | Item[A.Cast<inputAttr, keyof Item>]
-            | { $delete?: string[]; $add?: any }
-        } &
-        {
-          [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
-            | Item[A.Cast<optAttr, keyof Item>]
-            | { $delete?: string[]; $add?: any }
-        } &
-        {
-          [attr in Attributes['optional']]?:
-            | null
-            | Item[A.Cast<attr, keyof Item>]
-            | { $delete?: string[]; $add?: any }
-        } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
+      CompositePrimaryKey & {
+        [inputAttr in Attributes['always']['input']]:
+          | Item[A.Cast<inputAttr, keyof Item>]
+          | { $delete?: string[]; $add?: any }
+      } & {
+        [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
+          | Item[A.Cast<optAttr, keyof Item>]
+          | { $delete?: string[]; $add?: any }
+      } & {
+        [attr in Attributes['optional']]?:
+          | null
+          | Item[A.Cast<attr, keyof Item>]
+          | { $delete?: string[]; $add?: any }
+      } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
     >
   ]
 >
@@ -1585,7 +1582,8 @@ class Entity<
                 let path = `${acc.join('.')}.#${id}`
                 let value = `${id.replace(/\[(\d+)\]/, '_$1')}`
 
-                if (input === undefined) {
+                console.log(input, typeof input)
+                if (input === undefined || input === null) {
                   REMOVE.push(`${path}`)
                 } else if (input.$add) {
                   ADD.push(`${path} :${value}`)
@@ -1608,7 +1606,7 @@ class Entity<
                   values[`:${value}`] = input
                 }
 
-                if (input.$set) {
+                if (input && input.$set) {
                   Object.keys(input.$set).forEach(i => {
                     if (String(parseInt(i)) !== i)
                       error(
