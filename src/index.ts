@@ -11,7 +11,7 @@
 // TODO: 'Remove null fields' option
 // TODO: prevent reserved field names?
 
-import Table from './classes/Table/Table'
+import Table from './classes/Table'
 import Entity from './classes/Entity'
 import type {
   GetOptions,
