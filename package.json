@@ -14,7 +14,8 @@
     "build": "rm -rf dist && tsc",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
-    "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
+    "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline",
+    "check-types": "tsc --noEmit"
   },
   "license": "MIT",
   "dependencies": {
