@@ -6,7 +6,7 @@
 import { A, B, L, O } from 'ts-toolbelt'
 
 import { PureAttributeDefinition } from '../classes/Entity'
-import { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table/Table'
+import { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table'
 
 export const validTypes: DynamoDBTypes[] = [
   'string',

@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-import { TableAttributes, TableAttributeConfig, ParsedTableAttribute } from '../classes/Table/Table'
+import { TableAttributes, TableAttributeConfig, ParsedTableAttribute } from '../classes/Table'
 import { error, typeError, keyTypeError, isDynamoDbType, isDynamoDbKeyType } from './utils'
 
 // Parse the attributes and verify valid types

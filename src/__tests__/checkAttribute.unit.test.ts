@@ -1,7 +1,7 @@
 import checkAttribute from '../lib/checkAttribute'
 
 // Require Table and Entity classes
-import Table from '../classes/Table/Table'
+import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
 // Create basic table

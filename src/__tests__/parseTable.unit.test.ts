@@ -1,7 +1,7 @@
 import parseTable from '../lib/parseTable'
 
 // Require Table and Entity classes
-import { TableConstructor } from '../classes/Table/Table'
+import { TableConstructor } from '../classes/Table'
 
 let table: TableConstructor<'test-table', 'pk', 'sk'> = {
   name: 'test-table',
