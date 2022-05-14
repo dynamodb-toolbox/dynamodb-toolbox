@@ -16,7 +16,7 @@ import getKey from '../lib/getKey'
 import parseConditions from '../lib/expressionBuilder'
 import parseProjections from '../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../lib/utils'
-import { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, ScanOptions, TableDef } from './Table'
+import { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, ScanOptions, TableDef } from './Table/Table'
 
 // Definitions
 export interface EntityConstructor<

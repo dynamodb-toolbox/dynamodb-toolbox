@@ -9,7 +9,7 @@
 import { A } from 'ts-toolbelt'
 
 // Import standard error handler
-import { TableDef } from '../classes/Table'
+import { TableDef } from '../classes/Table/Table'
 import { error } from './utils'
 import checkAttribute from './checkAttribute'
 

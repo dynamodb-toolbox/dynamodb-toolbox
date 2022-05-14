@@ -1,4 +1,4 @@
-import { TableAttributes } from '../classes/Table'
+import { TableAttributes } from '../classes/Table/Table'
 import parseTableAttributes from '../lib/parseTableAttributes'
 
 let attrs: TableAttributes = {

@@ -3,7 +3,7 @@ import normalizeData from '../lib/normalizeData'
 import { DocumentClient } from './bootstrap-tests'
 
 // Import Table and Entity classes
-import Table from '../classes/Table'
+import Table from '../classes/Table/Table'
 import Entity from '../classes/Entity'
 
 // Create basic table

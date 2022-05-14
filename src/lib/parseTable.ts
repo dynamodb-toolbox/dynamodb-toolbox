@@ -9,7 +9,7 @@ import { A } from 'ts-toolbelt'
 
 import parseAttributes from './parseTableAttributes'
 import { error, hasValue } from './utils'
-import { TableConstructor, TableIndexes } from '../classes/Table'
+import { TableConstructor, TableIndexes } from '../classes/Table/Table'
 
 export type ParsedTable = ReturnType<typeof parseTable>
 

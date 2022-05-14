@@ -3,7 +3,7 @@ import formatItem from '../lib/formatItem'
 import { DocumentClient } from './bootstrap-tests'
 
 // Require Table and Entity classes
-import Table from '../classes/Table'
+import Table from '../classes/Table/Table'
 import Entity from '../classes/Entity'
 
 // Create basic table

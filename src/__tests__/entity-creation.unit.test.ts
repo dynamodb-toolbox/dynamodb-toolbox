@@ -1,5 +1,5 @@
 // Require Table and Entity classes
-import '../classes/Table'
+import '../classes/Table/Table'
 import Entity from '../classes/Entity'
 import './bootstrap-tests'
 

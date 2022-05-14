@@ -12,7 +12,7 @@ import { A } from 'ts-toolbelt'
 
 import checkAttribute from './checkAttribute'
 import { error } from './utils'
-import { TableDef } from '../classes/Table'
+import { TableDef } from '../classes/Table/Table'
 
 interface FilterExpression<Attr extends A.Key = A.Key> {
   attr?: Attr
