@@ -314,7 +314,7 @@ describe('Entity creation', ()=> {
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
-  it("creates an attribute with a inverseTransformation function", async () => {
+  it("creates an attribute with an inverseTransformation function", async () => {
     // Create basic table
     const TestTable = new Table({
       name: "test-table",
