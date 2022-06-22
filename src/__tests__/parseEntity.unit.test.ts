@@ -1,49 +1,49 @@
-import { EntityConstructor } from 'classes/Entity'
-import parseEntity from '../lib/parseEntity'
+import { EntityConstructor } from "../classes/Entity";
+import parseEntity from "../lib/parseEntity";
 
-type Schema = any
-type HiddenKeys = any
+type Schema = any;
+type HiddenKeys = any;
 
 // Simulate Entity config
 const entity: EntityConstructor = {
-  name: 'TestEntity',
+  name: "TestEntity",
   timestamps: true,
-  created: '_created',
-  createdAlias: 'createdAlias',
-  modified: '_modified',
-  modifiedAlias: 'modifiedAlias',
-  typeAlias: 'typeAlias',
+  created: "_created",
+  createdAlias: "createdAlias",
+  modified: "_modified",
+  modifiedAlias: "modifiedAlias",
+  typeAlias: "typeAlias",
+  typeHidden: true,
   attributes: {
     pk: { partitionKey: true },
     sk: { sortKey: true },
-    attr1: 'number',
-    attr2: { type: 'list', required: true }
+    attr1: "number",
+    attr2: { type: "list", required: true },
   },
   autoExecute: true,
-  autoParse: true
-}
+  autoParse: true,
+};
 
-describe('parseEntity', () => {
+describe("parseEntity", () => {
+  it("parses entity definition with all available options", async () => {
+    let ent = parseEntity(entity);
+    expect(ent.name).toBe("TestEntity");
+    expect(ent.schema.keys).toEqual({ partitionKey: "pk", sortKey: "sk" });
+    expect(ent.schema.attributes).toHaveProperty("_created");
+    expect(ent.schema.attributes).toHaveProperty("_modified");
+    expect(ent.schema.attributes).toHaveProperty("createdAlias");
+    expect(ent.schema.attributes).toHaveProperty("modifiedAlias");
+    expect(ent.required).toEqual({ attr2: false });
+    expect(ent.linked).toEqual({});
+    expect(ent.autoExecute).toBe(true);
+    expect(ent.autoParse).toBe(true);
+    expect(ent._etAlias).toBe("typeAlias");
+    expect(ent.typeHidden).toBe(true);
+  });
 
-  it('parses entity definition with all available options', async () => {
-    let ent = parseEntity(entity)
-    expect(ent.name).toBe('TestEntity')
-    expect(ent.schema.keys).toEqual({ partitionKey: 'pk', sortKey: 'sk' })
-    expect(ent.schema.attributes).toHaveProperty('_created')
-    expect(ent.schema.attributes).toHaveProperty('_modified')
-    expect(ent.schema.attributes).toHaveProperty('createdAlias')
-    expect(ent.schema.attributes).toHaveProperty('modifiedAlias')
-    expect(ent.required).toEqual({attr2: false})
-    expect(ent.linked).toEqual({})
-    expect(ent.autoExecute).toBe(true)
-    expect(ent.autoParse).toBe(true)
-    expect(ent._etAlias).toBe('typeAlias')
-  }) 
-
-  it('fails on extra config option', async () => {
+  it("fails on extra config option", async () => {
     expect(() => {
-      parseEntity(Object.assign({},entity,{ invalidConfig: true }))
-    }).toThrow(`Invalid Entity configuration options: invalidConfig`)
-  })
-
-})
+      parseEntity(Object.assign({}, entity, { invalidConfig: true }));
+    }).toThrow(`Invalid Entity configuration options: invalidConfig`);
+  });
+});
