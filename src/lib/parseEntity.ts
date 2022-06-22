@@ -41,6 +41,7 @@ export function parseEntity(entity: EntityConstructor) {
     modified,
     modifiedAlias,
     typeAlias,
+    typeHidden,
     attributes,
     autoExecute,
     autoParse,
@@ -87,6 +88,9 @@ export function parseEntity(entity: EntityConstructor) {
     && typeAlias.trim().length > 0 ? typeAlias.trim()
     : 'entity'
 
+  // Define 'typeHidden'
+  typeHidden = typeof typeHidden === "boolean" ? typeHidden : false;
+
   // Sanity check the attributes
   attributes = typeof attributes === 'object' && !Array.isArray(attributes) ?
     attributes : error(`Please provide a valid 'attributes' object`)
@@ -115,6 +119,7 @@ export function parseEntity(entity: EntityConstructor) {
     linked: track.linked,
     autoExecute,
     autoParse,
+    typeHidden,
     _etAlias: typeAlias 
   },
   table ? { table } : {}

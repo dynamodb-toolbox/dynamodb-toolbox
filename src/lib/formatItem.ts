@@ -37,15 +37,32 @@ export default (DocumentClient: DocumentClient) => (attributes: { [key:string] :
 
     if ((attributes[field] && attributes[field].hidden) || (include.length > 0 && !include.includes(field))) return acc
     // Extract values from sets
-    if (attributes[field] && attributes[field].type === 'set' && Array.isArray(item[field].values)) { item[field] = item[field].values } 
-    return Object.assign(acc,{
-      [(attributes[field] && attributes[field].alias) || field]: (
-        attributes[field] && (attributes[field].prefix || attributes[field].suffix)
+    if (attributes[field] && attributes[field].type === 'set' && Array.isArray(item[field].values)) { item[field] = item[field].values }
+
+    const fieldValue =
+        attributes[field] &&
+        (attributes[field].prefix || attributes[field].suffix)
           ? item[field]
-            .replace(new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`),'')
-            .replace(new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`),'')
-          : item[field]
-      )
+              .replace(
+                new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`),
+                ""
+              )
+              .replace(
+                new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`),
+                ""
+              )
+          : item[field];
+          
+    const transformedValue =
+        attributes[field] && attributes[field].inverseTransform
+          ? (
+              attributes[field] as Required<EntityAttributeConfig>
+            ).inverseTransform(fieldValue, item)
+          : fieldValue
+
+    return Object.assign(acc, {
+      [(attributes[field] && attributes[field].alias) || field]:
+        transformedValue,
     })
   },{})
 }

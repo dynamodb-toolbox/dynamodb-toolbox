@@ -22,11 +22,12 @@ const TestTable = new Table({
 describe('parse',()=>{
 
   it('parses single item', ()=>{
-    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' })
+    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', inverse_transformed_simple_string: "transformed", _et: 'TestEntity' })
     expect(item).toEqual({
       email: 'test@test.com',
       test_type: 'email',
       test_string: 'test',
+      inverse_transformed_simple_string: "TRANSFORMED",
       entity: 'TestEntity'
     })
   })
@@ -41,19 +42,21 @@ describe('parse',()=>{
 
   it('parses multiple items', ()=>{
     let items = TestEntity.parse([
-      { pk: 'test@test.com', sk: 'email', test_string: 'test' },
-      { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
+      { pk: 'test@test.com', sk: 'email', test_string: 'test', inverse_transformed_simple_string: "transformed",  },
+      { pk: 'test2@test.com', sk: 'email2', test_string: 'test2', inverse_transformed_simple_string: "transformed",  }
     ])
     expect(items).toEqual([
       {
         email: 'test@test.com',
         test_type: 'email',
-        test_string: 'test'
+        test_string: 'test',
+        inverse_transformed_simple_string: "TRANSFORMED",
       },
       {
         email: 'test2@test.com',
         test_type: 'email2',
-        test_string: 'test2'
+        test_string: 'test2',
+        inverse_transformed_simple_string: "TRANSFORMED",
       }
     ])
   })
@@ -76,11 +79,11 @@ describe('parse',()=>{
   })
 
   it('parses composite field', ()=>{
-    let item = SimpleEntity.parse({ pk: 'test@test.com', sk: 'active#email', test_composite: 'test' })
+    let item = SimpleEntity.parse({ pk: 'test@test.com', sk: 'active#email', test_composite: 'test'  })
     expect(item).toEqual({
       pk: 'test@test.com',
       test_composite: 'test',
-      test_composite2: 'email'
+      test_composite2: 'email',
     })
   })
 

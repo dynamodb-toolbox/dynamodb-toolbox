@@ -13,6 +13,7 @@ const entity: EntityConstructor = {
   modified: '_modified',
   modifiedAlias: 'modifiedAlias',
   typeAlias: 'typeAlias',
+  typeHidden: true,
   attributes: {
     pk: { partitionKey: true },
     sk: { sortKey: true },
@@ -38,6 +39,7 @@ describe('parseEntity', () => {
     expect(ent.autoExecute).toBe(true)
     expect(ent.autoParse).toBe(true)
     expect(ent._etAlias).toBe('typeAlias')
+    expect(ent.typeHidden).toBe(true)
   }) 
 
   it('fails on extra config option', async () => {

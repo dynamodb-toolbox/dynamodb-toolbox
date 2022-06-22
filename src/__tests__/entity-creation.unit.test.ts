@@ -314,6 +314,49 @@ describe('Entity creation', ()=> {
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
+  it("creates an attribute with a inverseTransformation function", async () => {
+    // Create basic table
+    const TestTable = new Table({
+      name: "test-table",
+      partitionKey: "pk",
+      sortKey: "sk",
+      DocumentClient,
+    });
+
+    // Create basic entity
+    const TestEntity = new Entity({
+      name: "TestEnt",
+      attributes: {
+        pk: {
+          partitionKey: true,
+          inverseTransform: (val) => val.toUpperCase(),
+          default: "pkDef",
+        },
+        test: {
+          inverseTransform: (val, data) => {
+            return val.toUpperCase();
+          },
+          default: () => "defaultVal",
+        },
+        sk: { type: "string", sortKey: true },
+        testx: ["sk", 0],
+        testy: [
+          "sk",
+          1,
+          {
+            default: () => "testDefaultX",
+            inverseTransform: (val) => {
+              return "__" + val.toUpperCase();
+            },
+          },
+        ],
+      },
+      table: TestTable,
+      timestamps: false,
+    })
+  })
+
+
 
   // it('creates entity w/ table', async () => {
   

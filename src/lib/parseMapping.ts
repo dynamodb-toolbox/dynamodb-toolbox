@@ -25,6 +25,10 @@ export default (field: string, config: EntityAttributeConfig, track: TrackingInf
       case 'transform':
         if (typeof config[prop] !== 'function') error(`'${prop}' must be a function`)
         break
+      case "inverseTransform":
+        if (typeof config[prop] !== "function")
+          error(`'${prop}' must be a function`);
+        break;
       case 'coerce':
       case 'onUpdate':
       case 'hidden':
