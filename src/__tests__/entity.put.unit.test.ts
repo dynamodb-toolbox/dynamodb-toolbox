@@ -39,7 +39,7 @@ const TestEntity = new Entity({
     test_composite2: ['sort', 1, { save: false }]
   },
   table: TestTable
-} as const)
+})
 
 const TestTable2 = new Table({
   name: 'test-table',
@@ -57,7 +57,7 @@ const TestEntity2 = new Entity({
     test_composite2: ['sort', 1, { save: false }]
   },
   table: TestTable2
-} as const)
+})
 
 const TestEntity3 = new Entity({
   name: 'TestEntity3',
@@ -249,7 +249,6 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // @ts-expect-error
         test_number: 'x'
       })
     ).toThrow(`'test_number' must be of type number`)
@@ -271,7 +270,6 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // @ts-expect-error
         test_list: 'x'
       })
     ).toThrow(`'test_list' must be a list (array)`)
@@ -315,7 +313,6 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // @ts-expect-error
         test_number_set_type_coerce: '1,2,3'
       })
     ).toThrow(`'test_number_set_type_coerce' must be a valid set (array) of type number`)
@@ -325,7 +322,6 @@ describe('put', () => {
     let { Item } = TestEntity.putParams({
       email: 'test-pk',
       sort: 'test-sk',
-      // @ts-expect-error
       test_string_set_type_coerce: '1,2,3'
     })
     expect(Item['test_string_set_type_coerce'].values).toEqual(['1', '2', '3'])
@@ -336,7 +332,6 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // @ts-expect-error
         test_string_set: 'test'
       })
     ).toThrow(`'test_string_set' must be a valid set (array)`)
