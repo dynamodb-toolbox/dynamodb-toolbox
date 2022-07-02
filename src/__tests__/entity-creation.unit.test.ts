@@ -1,6 +1,6 @@
 // Require Table and Entity classes
 import '../classes/Table'
-import Entity from '../classes/Entity/Entity'
+import Entity from '../classes/Entity'
 import './bootstrap-tests'
 
 describe('Entity creation', () => {

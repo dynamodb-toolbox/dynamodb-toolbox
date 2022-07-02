@@ -2,7 +2,7 @@ import checkAttribute from '../lib/checkAttribute'
 
 // Require Table and Entity classes
 import Table from '../classes/Table'
-import Entity from '../classes/Entity/Entity'
+import Entity from '../classes/Entity'
 
 // Create basic table
 let DefaultTable = new Table({

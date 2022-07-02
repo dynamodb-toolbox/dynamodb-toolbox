@@ -1,6 +1,6 @@
 // Require Table and Entity classes
 import Table from '../classes/Table'
-import Entity from '../classes/Entity/Entity'
+import Entity from '../classes/Entity'
 
 describe('Entity properties', () => {
   it('fails if trying to add a table when one already exists', async () => {
