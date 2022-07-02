@@ -8,7 +8,7 @@ export const createTableParams = require('./tables/create-table.json')
 export const dynaliteServer = dynalite({
   createTableMs: 0,
   updateTableMs: 0,
-  deleteTableMs: 0,
+  deleteTableMs: 0
 })
 
 // Load AWS SDK
@@ -20,8 +20,8 @@ export const DynamoDB = new AWS.DynamoDB({
   region: 'us-east-1',
   credentials: new AWS.Credentials({
     accessKeyId: 'test',
-    secretAccessKey: 'test',
-  }),
+    secretAccessKey: 'test'
+  })
 })
 
 // Create our document client
@@ -30,16 +30,16 @@ export const DocumentClient = new AWS.DynamoDB.DocumentClient({
   region: 'us-east-1',
   credentials: new AWS.Credentials({
     accessKeyId: 'test',
-    secretAccessKey: 'test',
-  }),
+    secretAccessKey: 'test'
+  })
   // convertEmptyValues: true
 })
 
 // Delay helper
-export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
+export const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
 export const DocumentClient2 = new AWS.DynamoDB.DocumentClient({
   region: 'us-east-1',
-  credentials: new AWS.SharedIniFileCredentials({ profile: '' }),
+  credentials: new AWS.SharedIniFileCredentials({ profile: '' })
   // convertEmptyValues: false
 })
