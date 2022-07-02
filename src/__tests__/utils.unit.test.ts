@@ -1,8 +1,7 @@
 import { toBool, hasValue, error } from '../lib/utils'
 
-describe('utility functions',()=>{
-
-  test('toBool', ()=>{
+describe('utility functions', () => {
+  test('toBool', () => {
     expect(toBool('true')).toBe(true)
     expect(toBool(1)).toBe(true)
     expect(toBool(true)).toBe(true)
@@ -13,7 +12,7 @@ describe('utility functions',()=>{
     expect(toBool('no')).toBe(false)
   })
 
-  test('hasValue', ()=>{
+  test('hasValue', () => {
     expect(hasValue('string')).toBe(true)
     expect(hasValue(1)).toBe(true)
     expect(hasValue(true)).toBe(true)
@@ -25,6 +24,8 @@ describe('utility functions',()=>{
   })
 
   test('error', () => {
-    expect(() => { error('test error') }).toThrow('test error')
+    expect(() => {
+      error('test error')
+    }).toThrow('test error')
   })
 })

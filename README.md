@@ -1,9 +1,9 @@
 # DynamoDB Toolbox <!-- omit in toc -->
 
-[![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=master)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
+[![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=main)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/l/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
-[![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=master)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=main)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=main)
 
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
@@ -11,121 +11,165 @@
 
 The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It's designed with **Single Tables** in mind, but works just as well with multiple tables. It lets you define your Entities (with typings and aliases) and map them to your DynamoDB tables. You can then **generate the API parameters** to `put`, `get`, `delete`, `update`, `query`, `scan`, `batchGet`, and `batchWrite` data by passing in JavaScript objects. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
 
+## Version 0.4 🙌 <!-- omit in toc -->
+
+v0.4 is here and now supports "Type Inferencing" 😎. This is a new feature that infers types from your Entity definitions. There should be NO regressions from v0.3.5, but please submit an issue if you find one!
+
+Feedback is welcome and much appreciated! (Huge thanks to @ThomasAribart for all his work on this 🙌)
+
 ## Installation and Basic Usage
 
-Install the DynamoDB Toolbox with npm:
+Install DynamoDB Toolbox v0.4 alpha:
 
-```
-npm i dynamodb-toolbox
+```bash
+# npm
+npm i dynamodb-toolbox@alpha
+
+# yarn
+yarn add dynamodb-toolbox@alpha
 ```
 
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 
-```javascript
-const { Table, Entity } = require("dynamodb-toolbox");
+```typescript
+import { Table, Entity } from 'dynamodb-toolbox'
 ```
 
 Create a Table (with the DocumentClient):
 
-```javascript
-// Require AWS SDK and instantiate DocumentClient
-const DynamoDB = require("aws-sdk/clients/dynamodb");
-const DocumentClient = new DynamoDB.DocumentClient();
+```typescript
+import DynamoDB from 'aws-sdk/clients/dynamodb'
+
+const DocumentClient = new DynamoDB.DocumentClient({
+  // Specify your client options as usual
+  convertEmptyValue: false
+})
 
 // Instantiate a table
 const MyTable = new Table({
   // Specify table name (used by DynamoDB)
-  name: "my-table",
+  name: 'my-table',
 
   // Define partition and sort keys
-  partitionKey: "pk",
-  sortKey: "sk",
+  partitionKey: 'pk',
+  sortKey: 'sk',
 
   // Add the DocumentClient
-  DocumentClient,
-});
+  DocumentClient
+})
 ```
 
 Create an Entity:
 
-```javascript
+```typescript
 const Customer = new Entity({
   // Specify entity name
-  name: "Customer",
+  name: 'Customer',
 
   // Define attributes
   attributes: {
     id: { partitionKey: true }, // flag as partitionKey
     sk: { hidden: true, sortKey: true }, // flag as sortKey and mark hidden
-    name: { map: "data" }, // map 'name' to table attribute 'data'
-    co: { alias: "company" }, // alias table attribute 'co' to 'company'
-    age: { type: "number" }, // set the attribute type
-    status: ["sk", 0], // composite key mapping
-    date_added: ["sk", 1], // composite key mapping
+    age: { type: 'number' }, // set the attribute type
+    name: { type: 'string', map: 'data' }, // map 'name' to table attribute 'data'
+    emailVerified: { type: 'boolean', required: true }, // specify attribute as required
+    co: { alias: 'company' }, // alias table attribute 'co' to 'company'
+    status: ['sk', 0], // composite key mapping
+    date_added: ['sk', 1] // composite key mapping
   },
 
   // Assign it to our table
-  table: MyTable,
-});
+  table: MyTable
+
+  // In Typescript, the "as const" statement is needed for type inference
+} as const)
 ```
 
 Put an item:
 
-```javascript
-// Create my item (using table attribute names or aliases)
-let item = {
+```typescript
+// Create an item (using table attribute names or aliases)
+const customer = {
   id: 123,
-  name: "Jane Smith",
-  company: "ACME",
   age: 35,
-  status: "active",
-  date_added: "2020-04-24",
-};
+  name: 'Jane Smith',
+  emailVerified: true,
+  company: 'ACME',
+  status: 'active',
+  date_added: '2020-04-24'
+}
 
-// Use the 'put' method of Customer
-let result = await Customer.put(item);
+// Use the 'put' method of Customer:
+await Customer.put(customer)
 ```
 
 The item will be saved to DynamoDB like this:
 
-```javascript
+```typescript
 {
   "pk": 123,
   "sk": "active#2020-04-24",
+  "age": 35,
   "data": "Jane Smith",
+  "emailVerified": true,
   "co": "ACME",
-  "age": 35
+  // Attributes auto-generated by DynamoDB-Toolbox
+  "_et": "customer", // Entity name (required for parsing)
+  "_ct": "2021-01-01T00:00:00.000Z", // Item creation date (optional)
+  "_md": "2021-01-01T00:00:00.000Z" // Item last modification date (optional)
 }
 ```
 
 You can then get the data:
 
-```javascript
-// Specify my item
-let item = {
+```typescript
+// Specify primary key
+const primaryKey = {
   id: 123,
-  status: "active",
-  date_added: "2020-04-24",
-};
+  status: 'active',
+  date_added: '2020-04-24'
+}
 
 // Use the 'get' method of Customer
-let response = await Customer.get(item);
+const response = await Customer.get(primaryKey)
 ```
 
-This will return the object mapped to your aliases and composite key mappings:
+Since v0.4, the method inputs, options and response types are inferred from the Entity definition:
 
-```javascript
-{
-  Item: {
-    id: 123,
-    name: 'Jane Smith',
-    company: 'ACME',
-    age: 35,
-    status: 'active',
-    date_added: '2020-04-24'
-  }
-}
+```typescript
+await Customer.put({
+  id: 123,
+  // ❌ Sort key is required ("sk" or both "status" and "date_added")
+  age: 35,
+  name: ['Jane', 'Smith'], // ❌ name should be a string
+  emailVerified: undefined, // ❌ attribute is marked as required
+  company: 'ACME'
+})
+
+const { Item: customer } = await Customer.get({
+  id: 123,
+  status: 'active',
+  date_added: '2020-04-24' // ✅ Valid primary key
+})
+type Customer = typeof customer
+// 🙌 Type is equal to:
+type ExpectedCustomer =
+  | {
+      id: any
+      age?: number | undefined
+      name?: string | undefined
+      emailVerified: boolean
+      company?: any
+      status: any
+      date_added: any
+      entity: string
+      created: string
+      modified: string
+    }
+  | undefined
 ```
+
+See [Type Inference](#type-inference) for more details.
 
 ### This is _NOT_ an ORM (at least it's not trying to be) <!-- omit in toc -->
 
@@ -148,7 +192,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - **Batch Operations:** Full support for batch operations with a simpler interface to work with multiple entities and tables.
 - **Transactions:** Full support for transaction with a simpler interface to work with multiple entities and tables.
 - **Default Value Dependency Graphs:** Create dynamic attribute defaults by chaining other dynamic attribute defaults together.
-- **TypeScript Support:** v0.3 of this library was rewritten in TypeScript to provide strong typing support. Additional work is still required to support schema typing.
+- **TypeScript Support:** v0.4 of this library provides strong typing support AND type inference 😍. Inferred type can still overriden with [Overlays](#overlays). Some [Utility Types](#utility-types) are also exposed. Additional work is still required to support schema validation & typings.
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -220,9 +264,16 @@ If you like working with ORMs, that's great, and you should definitely give thes
 	- [Complex Filters and Conditions](#complex-filters-and-conditions)
 - [Projection Expressions](#projection-expressions)
 - [Adding Custom Parameters and Clauses](#adding-custom-parameters-and-clauses)
+- [Type Inference](#type-inference)
+	- [Overlays](#overlays)
+	- [Utility Types](#utility-types)
+		- [EntityItem](#entityitem)
+		- [Options](#options)
 - [Additional References](#additional-references)
 - [Contributions and Feedback](#contributions-and-feedback)
-- [Version 0.4 Alpha](#version-04-alpha)
+
+- [Additional References](#additional-references)
+- [Contributions and Feedback](#contributions-and-feedback)
 
 ## Conventions, Motivations, and Migrations from v0.1
 
@@ -245,15 +296,11 @@ Hopefully these all make sense and will make working with the library easier.
 
 To define a new table, import it into your script:
 
-```javascript
-const { Table } = require("dynamodb-toolbox");
-```
+```typescript
+import { Table } from 'dynamodb-toolbox'
 
-Then create a new `Table` instance by passing in a valid `Table` definition.
-
-```javascript
 const MyTable = new Table({
-  ... table definition...
+  ... // Table definition
 })
 ```
 
@@ -281,15 +328,17 @@ const MyTable = new Table({
 
 The Table `attributes` property is an `object` that specifies the _names_ and _types_ of attributes associated with your DynamoDB table. This is an optional input that allows you to control attribute types. If an `Entity` object contains an attribute with the same name, but a different type, an error will be thrown. Each key in the object represents the **attribute name** and the value represents its DynamoDB **type**.
 
-```javascript
-attributes: {
-  pk: 'string',
-  sk: 'number',
-  attr1: 'list',
-  attr2: 'map',
-  attr3: 'boolean',
-  ...
-}
+```typescript
+const MyTable = new Table({
+  attributes: {
+    pk: 'string',
+    sk: 'number',
+    attr1: 'list',
+    attr2: 'map',
+    attr3: 'boolean'
+    // ...
+  }
+})
 ```
 
 Valid DynamoDB types are: `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`.
@@ -298,13 +347,16 @@ Valid DynamoDB types are: `string`, `boolean`, `number`, `list`, `map`, `binary`
 
 The `indexes` property is an `object` that specifies the _names_ and _keys_ of the secondary indexes on your DynamoDB table. Each key represents the **index name** and its value must contain an object with a `partitionKey` AND/OR a `sortKey`. `partitionKey`s and `sortKey`s require a value of type `string` that references an table attribute. If you use the same `partitionKey` as the table's `partitionKey`, or you only specify a `sortKey`, the library will recognize them as Local Secondary Indexes (LSIs). Otherwise, they will be Global Secondary Indexes (GSIs).
 
-```javascript
-indexes: {
-  GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSI1sk' },
-  GSI2: { partitionKey: 'test' },
-  LSI1: { partitionKey: 'pk', sortKey: 'other_sk' },
-  LSI2: { sortKey: 'data' }
-}
+```typescript
+const MyTable = new Table({
+  indexes: {
+    GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSI1sk' },
+    GSI2: { partitionKey: 'test' },
+    LSI1: { partitionKey: 'pk', sortKey: 'other_sk' },
+    LSI2: { sortKey: 'data' }
+    // ...
+  }
+})
 ```
 
 **NOTE:** The **index name** must match the index name on your table as it will be used in queries and other operations. The index must include the table's `entityField` attribute for automatic parsing of returned data.
@@ -317,16 +369,13 @@ Note that a `Table` can have multiple Entities, but an `Entity` can only have on
 
 To define a new entity, import it into your script:
 
-```javascript
-const { Entity } = require("dynamodb-toolbox");
-```
+```typescript
+import { Entity } from 'dynamodb-toolbox'
 
-Then create a new `Entity` instance by passing in a valid `Entity` definition.
-
-```javascript
 const MyEntity = new Entity({
-  ... entity definition...
-})
+  ...entityDefinition
+  // In Typescript, the "as const" statement is needed for type inference
+} as const)
 ```
 
 ### Specifying Entity Definitions
@@ -357,14 +406,16 @@ The `attributes` property is an `object` that represents the attribute names, ty
 
 Attributes can be defined using only a `string` value that corresponds to a DynamoDB type.
 
-```javascript
-schema: {
-  attr1: 'string',
-  attr2: 'number',
-  attr3: 'list',
-  attr4: 'map',
-  ...
-}
+```typescript
+const MyEntity = new Entity({
+  attributes: {
+    attr1: 'string',
+    attr2: 'number',
+    attr3: 'list',
+    attr4: 'map'
+    // ...
+  }
+} as const)
 ```
 
 Valid types are: `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`.
@@ -377,11 +428,11 @@ For more control over an attribute's behavior, you can specify an object as the 
 | ------------ | :------------------------------: | :-----------------------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | type         |             `String`             |                  all                  | The DynamoDB type for this attribute. Valid values are `string`, `boolean`, `number`, `list`, `map`, `binary`, or `set`. Defaults to `string`.                                                                                                  |
 | coerce       |            `boolean`             | `string`, `boolean`, `number`, `list` | Coerce values to the specified type. Enabled by default on `string`, `boolean`, and `number`. If enabled on `list` types, the interpreter will try to split a string by commas.                                                                 |
-| default      |  _same as_ `type` or `function`  |                  all                  | Specifies a default value (if none provided) when using `put` or `update`. This also supports functions for creating custom default. See more below.                                                                                            |
-| dependsOn    | `string` or `array` of `string`s |                  all                  | Creates a dependency graph for default values. For example, if the attribute uses a default value that requires another attribute's default value, this will ensure dependent attributes' default values are calcuated first.                   |
+| default      |  _same as_ `type` or `function`  |                  all                  | Specifies a default value (if none provided) when using `get`, `put`, `update` or `delete` methods. This also supports functions for creating custom default. See more below.                                                                   |
+| dependsOn    | `string` or `array` of `string`s |                  all                  | Creates a dependency graph for default values. For example, if the attribute uses a default value that requires another attribute's default value, this will ensure dependent attributes' default values are calculated first.                  |
 | onUpdate     |            `boolean`             |                  all                  | Forces `default` values to be passed on every `update`.                                                                                                                                                                                         |
 | save         |            `boolean`             |                  all                  | Specifies whether this attribute should be saved to the table. Defaults to `true`.                                                                                                                                                              |
-| hidden       |            `boolean`             |                  all                  | Hides attribute from returned JavaScript object when auto-parsing is enabled or when using the `parse` method.                                                                                                                                  |
+| hidden       |            `boolean`             |                  all                  | Hides attribute from returned JS object when auto-parsing is enabled or when using the `parse` method.                                                                                                                                          |
 | required     |      `boolean` or "always"       |                  all                  | Specifies whether an attribute is required. A value of `true` requires the attribute for all `put` operations. A `string` value of "always" requires the attribute for `put` _and_ `update` operations.                                         |
 | alias        |             `string`             |                  all                  | Adds a bidirectional alias to the attribute. All input methods can use either the attribute name or the alias when passing in data. Auto-parsing and the `parse` method will map attributes to their alias.                                     |
 | map          |             `string`             |                  all                  | The inverse of the `alias` option, allowing you to specify your alias as the key and map it to an attribute name.                                                                                                                               |
@@ -397,32 +448,36 @@ For more control over an attribute's behavior, you can specify an object as the 
 
 Example:
 
-```javascript
-attributes: {
-  user_id: { partitionKey: true },
-  sk: { type: 'number', hidden: true, sortKey: true },
-  data: { coerce: false, required: true, alias: 'name' },
-  departments: { type: 'set', setType: 'string', map: 'dept' },
-  ...
-}
+```typescript
+const MyEntity = new Entity({
+  attributes: {
+    user_id: { partitionKey: true },
+    sk: { type: 'number', hidden: true, sortKey: true },
+    data: { coerce: false, required: true, alias: 'name' },
+    departments: { type: 'set', setType: 'string', map: 'dept' }
+    // ...
+  }
+} as const)
 ```
 
 #### Using an `array` for composite keys
 
-**NOTE:** The interface for composite keys may be changing in v0.2 to make it easier to customize.
+**NOTE:** The interface for composite keys may be changing in v0.5 to make it easier to customize and infer types.
 
 Composite keys in DynamoDB are incredibly useful for creating hierarchies, one-to-many relationships, and other powerful querying capabilities (see [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-sort-keys.html)). The DynamoDB Toolbox lets you easily work with composite keys in a number of ways. In some cases, there is no need to store the data in the same record twice if you are already combining it into a single attribute. By using composite key mappings, you can store data together in a single field, but still be able to structure input data _and_ parse the output into separate attributes.
 
 The basic syntax is to specify an `array` with the mapped attribute name as the first element, and the index in the composite key as the second element. For example:
 
-```javascript
-attributes: {
-  user_id: { partitionKey: true  },
-  sk: { hidden: true, sortKey: true },
-  status: ['sk',0],
-  date: ['sk',1],
-  ...
-}
+```typescript
+const MyEntity = new Entity({
+  attributes: {
+    user_id: { partitionKey: true },
+    sk: { hidden: true, sortKey: true },
+    status: ['sk', 0],
+    date: ['sk', 1]
+    // ...
+  }
+} as const)
 ```
 
 This maps the `status` and `date` attributes to the `sk` attribute. If a `status` and `date` are supplied, they will be combined into the `sk` attribute as `[status]#[date]`. When the data is retrieved, the `parse` method will automatically split the `sk` attribute and return the values with `status` and `date` keys. By default, the values of composite keys are stored as separate attributes, but that can be changed by adding in an option configuration as the third array element.
@@ -430,61 +485,75 @@ This maps the `status` and `date` attributes to the `sk` attribute. If a `status
 **Passing in a configuration**
 Composite key mappings are `string`s by default, but can be overridden by specifying either `string`,`number`, or `boolean` as the third element in the array. Composite keys are automatically coerced into `string`s, so only the aforementioned types are allowed. You can also pass in a configuration `object` as the third element. This uses the same configuration properties as above. In addition to these properties, you can also specify a `boolean` property of `save`. This will write the value to the mapped composite key, but also add a separate attribute that stores the value.
 
-```javascript
-attributes: {
-  user_id: { partitionKey: true  },
-  sk: { hidden: true, sortKey: true },
-  status: ['sk',0, { type: 'boolean', save: false, default: true }],
-  date: ['sk',1, { required: true }],
-  ...
-}
+```typescript
+const MyEntity = new Entity({
+  attributes: {
+    user_id: { partitionKey: true },
+    sk: { hidden: true, sortKey: true },
+    status: ['sk', 0, { type: 'boolean', save: false, default: true }],
+    date: ['sk', 1, { required: true }]
+    // ...
+  }
+} as const)
 ```
 
 #### Customize defaults with a `function`
 
-In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputed data (including aliases). This opens up a number of really powerful use cases:
+In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputed data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency.
+
+This opens up a number of really powerful use cases:
 
 **Generate the current date and time:**
 
-```javascript
-attributes: {
-  user_id: { partitionKey: true },
-  created: { default: () => new Date().toISOString() },
-  ...
-}
+```typescript
+const MyEntity = new Entity({
+  attributes: {
+    user_id: { partitionKey: true },
+    created: { default: () => new Date().toISOString() }
+    // ...
+  }
+} as const)
 ```
 
 **Generate a custom composite key:**
 
-```javascript
-attributes: {
-  user_id: { partitionKey: true  },
-  sk: { sortKey: true, default: (data) => `sort-${data.status}|${data.date_added}` },
-  status: 'boolean',
-  date_added: 'string'
-  ...
-}
+```typescript
+const MyEntity = new Entity({
+  attributes: {
+    user_id: { partitionKey: true },
+    sk: {
+      sortKey: true,
+      default: (data: { status: boolean; date_added: string }) =>
+        `sort-${data.status}|${data.date_added}`
+    },
+    status: 'boolean',
+    date_added: 'string'
+    // ...
+  }
+} as const)
 ```
 
 **Create conditional defaults:**
 
-```javascript
-attributes: {
-  user_id: { partitionKey: true  },
-  sk: {
-    sortKey: true,
-    default: (data) => {
-      if (data.status && data.date_added) {
-        return data.date_added
-      } else {
-        return null // field will not be defaulted
+```typescript
+const MyEntity = new Entity({
+  attributes: {
+    user_id: { partitionKey: true },
+    sk: {
+      sortKey: true,
+      default: (data: { status: boolean; date_added: string }) => {
+        if (data.status && data.date_added) {
+          return data.date_added
+        } else {
+          return null // field will not be defaulted
+        }
       }
-    }
-  },
-  status: 'boolean',
-  date_added: 'string'
-  ...
-}
+    },
+    status: 'boolean',
+    date_added: 'string'
+    // ...
+  }
+} as const)
 ```
 
 ## Table Properties
@@ -535,7 +604,7 @@ The second argument is an `options` object that specifies the details of your qu
 | between    |       `array`       | Specifies `sortKey` condition to be _between_ the supplied values. Array should have two values matching the `sortKey` type. (KeyConditionExpression)                                                                                                                                            |
 | beginsWith |  same as `sortKey`  | Specifies `sortKey` condition to _begin with_ the supplied values. (KeyConditionExpression)                                                                                                                                                                                                      |
 | filters    | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression)                                                                                                                                  |
-| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression)                                                                                                                      |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression)                                                                                                                      |
 | startKey   |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate (if you're querying a secondary index, the keys for the primary index will also need to be included in the object - see `LastEvaluatedKey` result for details). (ExclusiveStartKey) |
 | entity     |      `string`       | The name of a table Entity to evaluate `filters` and `attributes` against.                                                                                                                                                                                                                       |
 | execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                                                             |
@@ -543,23 +612,23 @@ The second argument is an `options` object that specifies the details of your qu
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
-```javascript
-let result = await MyTable.query(
-  "user#12345", // partition key
+```typescript
+const result = await MyTable.query(
+  'user#12345', // partition key
   {
     limit: 50, // limit to 50 items
-    beginsWith: "order#", // select items where sort key begins with value
+    beginsWith: 'order#', // select items where sort key begins with value
     reverse: true, // return items in descending order (newest first)
-    capacity: "indexes", // return the total capacity consumed by the indexes
-    filters: { attr: "total", gt: 100 }, // only show orders above $100
-    index: "GSI1", // query the GSI1 secondary index
+    capacity: 'indexes', // return the total capacity consumed by the indexes
+    filters: { attr: 'total', gt: 100 }, // only show orders above $100
+    index: 'GSI1' // query the GSI1 secondary index
   }
-);
+)
 ```
 
 #### Return Data
 
-The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `query` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
+The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `query` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
 
 ### scan([options] [,parameters])
 
@@ -577,7 +646,7 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 | capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                               |
 | select     |      `string`       | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select)                                                        |
 | filters    | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression)                                             |
-| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression)                                |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression)                                |
 | startKey   |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey)                                                                          |
 | segments   |      `number`       | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments)                                                         |
 | segment    |      `number`       | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment)                                                                                |
@@ -587,18 +656,18 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 
 If you prefer to specify your own parameters, the optional second argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
-```javascript
-let result = await MyTable.scan({
+```typescript
+const result = await MyTable.scan({
   limit: 100, // limit to 50 items
-  capacity: "indexes", // return the total capacity consumed by the indexes
-  filters: { attr: "total", between: [100, 500] }, // only return orders between $100 and $500
-  index: "GSI1", // scan the GSI1 secondary index
-});
+  capacity: 'indexes', // return the total capacity consumed by the indexes
+  filters: { attr: 'total', between: [100, 500] }, // only return orders between $100 and $500
+  index: 'GSI1' // scan the GSI1 secondary index
+})
 ```
 
 #### Return Data
 
-The data is returned with the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `scan` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
+The data is returned with the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `scan` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
 
 ### batchGet(items [,options] [,parameters])
 
@@ -614,7 +683,7 @@ The optional second argument accepts an `options` object. The following options 
 | ---------- | :-------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead)                                                                                                                      |
 | capacity   |             `string`              | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                |
-| attributes |  `array` or `object` (see below)  | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
+| attributes |  `array` or `object` (see below)  | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression) |
 | execute    |             `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                        |
 | parse      |             `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                               |
 
@@ -622,16 +691,22 @@ The optional second argument accepts an `options` object. The following options 
 
 The library is built for making working with single table designs easier, but it is possible that you may need to retrieve data from multiple tables within the same batch get. If your `items` contain references to multiple tables, the `consistent` option will accept objects that use either the table `name` or `alias` as the key, and the setting as the value. For example, to specify different `consistent` settings on two tables, you would use something like following:
 
-```javascript
-consistent: {
-  'my-table-name': true,
-  'my-other-table-name': false
-}
+```typescript
+const results = await MyTable.batchGet(
+  // ... ,
+  {
+    consistent: {
+      'my-table-name': true,
+      'my-other-table-name': false
+    }
+    // ...
+  }
+)
 ```
 
 Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use the same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](#projection-expression) formatting.
 
-```javascript
+```typescript
 const results = await MyTable.batchGet(
   [
     MyTable.User.getBatch({ family: 'Brady', name: 'Mike' }),
@@ -654,7 +729,7 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 #### Return Data
 
-The data is returned with the same response syntax as the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `batchGet` method again using the same options and passing any `UnprocessedKeys` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
+The data is returned with the same response syntax as the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `batchGet` method again using the same options and passing any `UnprocessedKeys` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
 
 ### batchWrite(items [,options] [,parameters])
 
@@ -675,28 +750,18 @@ The optional second argument accepts an `options` object. The following options 
 
 **NOTE:** The `BatchWriteItem` does not support conditions or return deleted items. _"BatchWriteItem does not behave in the same way as individual PutItem and DeleteItem calls would. For example, you cannot specify conditions on individual put and delete requests, and BatchWriteItem does not return deleted items in the response."_ ~ [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html)
 
-```javascript
+```typescript
 const result = await Default.batchWrite(
   [
-    MyTable.User.putBatch({
-      family: "Brady",
-      name: "Carol",
-      age: 40,
-      roles: ["mother", "wife"],
-    }),
-    MyTable.User.putBatch({
-      family: "Brady",
-      name: "Mike",
-      age: 42,
-      roles: ["father", "husband"],
-    }),
-    MyTable.Pet.deleteBatch({ family: "Brady", name: "Tiger" }),
+    MyTable.User.putBatch({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother', 'wife'] }),
+    MyTable.User.putBatch({ family: 'Brady', name: 'Mike', age: 42, roles: ['father', 'husband'] }),
+    MyTable.Pet.deleteBatch({ family: 'Brady', name: 'Tiger' })
   ],
   {
-    capacity: "total",
-    metrics: "size",
+    capacity: 'total',
+    metrics: 'size'
   }
-);
+)
 ```
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
@@ -725,22 +790,22 @@ The optional second argument accepts an `options` object. The following options 
 
 Transaction items are atomic, so each `Get` contains the table name and key necessary to retrieve the item. The library will automatically handle adding the necessary information and will parse each entity automatically for you.
 
-```javascript
+```typescript
 const results = await MyTable.transactGet(
   [
-    User.getTransaction({ family: "Brady", name: "Mike" }),
-    User.getTransaction({ family: "Brady", name: "Carol" }),
-    Pet.getTransaction({ family: "Brady", name: "Tiger" }),
+    User.getTransaction({ family: 'Brady', name: 'Mike' }),
+    User.getTransaction({ family: 'Brady', name: 'Carol' }),
+    Pet.getTransaction({ family: 'Brady', name: 'Tiger' })
   ],
-  { capacity: "total" }
-);
+  { capacity: 'total' }
+)
 ```
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
 #### Return Data
 
-The data is returned with the same response syntax as the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data.
+The data is returned with the same response syntax as the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data.
 
 ### transactWrite(items [,options] [,parameters])
 
@@ -760,7 +825,7 @@ The optional second argument accepts an `options` object. The following options 
 | execute  | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse    | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
-```javascript
+```typescript
 const result = await Default.transactWrite(
   [
     Pet.conditionCheck({ family: 'Brady', name: 'Tiger' }, { conditions: { attr: 'alive', eq: false } },
@@ -782,11 +847,11 @@ The data is returned with the same response syntax as the [DynamoDB TransactWrit
 
 ### parse(entity, input [,include])
 
-Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](#parseinput-include) for additional parameters and behavior.
+Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](#parseinput-include) for additional parameters and behavior. In TS, type inference is not applied.
 
 ### get(entity, key [,options] [,parameters])
 
-Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#getkey-options-parameters) for additional parameters and behavior.
+Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](#getkey-options-parameters) for additional parameters and behavior. In TS, type inference is not applied.
 
 ### delete(entity, key [,options] [,parameters])
 
@@ -838,7 +903,9 @@ Parses attributes returned from a DynamoDB action and unmarshalls them into enti
 
 You can also pass in an `array` of strings as the second argument. The unmarshalling will only return the attributes (or aliases) specified in this `include` array.
 
-If auto execute and auto parsing are enable, data returned from a DynamoDB action will automatically be parsed.
+If auto execute and auto parsing are enabled, data returned from a DynamoDB action will automatically be parsed.
+
+<!-- TODO: Add code example -->
 
 ### get(key [,options] [,parameters])
 
@@ -854,23 +921,20 @@ The optional second argument accepts an `options` object. The following options 
 | ---------- | :-----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                      |
 | capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                |
-| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expression) below (ProjectionExpression) |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression) |
 | execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                        |
 | parse      |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                               |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
-```javascript
-// Specify my key
-let key = {
-  id: 123,
-  status: "active",
-  date_added: "2020-04-24",
-};
-
-// Use the 'get' method of MyEntity to retrieve the item from DynamoDB
-let result = await MyEntity.get(key, { consistent: true });
+```typescript
+const { Item } = await MyEntity.get({
+  pk: 123,
+  sk: 'sort-key'
+})
 ```
+
+In TS, the primary key, `attributes` option and response types are dynamically inferred. See [Type Inference](#type-inference) for more details.
 
 ### delete(key [,options] [,parameters])
 
@@ -893,23 +957,17 @@ The optional second argument accepts an `options` object. The following options 
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
-```javascript
-// Specify my key
-let key = {
-  id: 123,
-  status: 'active',
-  date_added: '2020-04-24'
-}
-
-// Use the 'delete' method of MyEntity to delete the item from DynamoDB
-let result = await MyEntity.delete(
-  key,
+```typescript
+await MyEntity.delete(
+  { pk: 123, sk: 'sort-key' },
   {
     condition: { attr: 'date_modified' lt: '2020-01-01' },
     returnValues: 'all_old'
   }
 )
 ```
+
+In TS, the primary key, `conditions` option and response types are dynamically inferred. See [Type Inference](#type-inference) for more details.
 
 ### put(item [,options] [,parameters])
 
@@ -932,20 +990,18 @@ The optional second argument accepts an `options` object. The following options 
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
-```javascript
-// Create my item (using table attribute names or aliases)
-let item = {
+```typescript
+await MyEntity.put({
   id: 123,
-  name: "Jane Smith",
-  company: "ACME",
+  name: 'Jane Smith',
+  company: 'ACME',
   age: 35,
-  status: "active",
-  date_added: "2020-04-24",
-};
-
-// Use the 'put' method of your entity instance
-let result = await MyEntity.put(item);
+  status: 'active',
+  date_added: '2020-04-24'
+})
 ```
+
+In TS, the input item, `conditions` option and response types are dynamically inferred. See [Type Inference](#type-inference) for more details.
 
 ### update(key [,options] [,parameters])
 
@@ -974,83 +1030,69 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 To update an attribute, include the key and any fields that you want to update.
 
-```javascript
-let item = {
-  id: 123,
-  sk: "abc",
-  status: "inactive",
-};
-await MyEntity.update(item);
+```typescript
+await MyEntity.update({
+  pk: 123,
+  sk: 'abc',
+  status: 'inactive'
+})
 ```
+
+In TS, the input item, `conditions` option and response types are dynamically inferred. See [Type Inference](#type-inference) for more details.
 
 #### Removing an attribute
 
 To remove attributes, add a `$remove` key to your item and provide an array of attributes or aliases to remove.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
-  $remove: ["roles", "age"],
-};
+```typescript
+await MyEntity.update({
+  //  ...
+  $remove: ['roles', 'age']
+})
 ```
 
 #### Adding a number to a `number` attribute
 
 DynamoDB lets us add (or subtract) numeric values from an attribute in the table. If no value exists, it simply puts the value. Adding with the DynamoDB Toolbox is just a matter of supplying an `object` with an `$add` key on the number fields you want to update.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
-  level: { $add: 2 }, // add 2 to level
-};
+```typescript
+await MyEntity.update({
+  //  ...
+  level: { $add: 2 } // add 2 to level
+})
 ```
 
 #### Adding values to a `set`
 
 Sets are similar to lists, but they enforce unique values of the same type. To add new values to a set, use an `object` with an `$add` key and an array of values.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
-  roles: { $add: ["author", "support"] },
-};
+```typescript
+await MyEntity.update({
+  //  ...
+  roles: { $add: ['author', 'support'] }
+})
 ```
 
 #### Deleting values from a `set`
 
 To delete values from a `set`, use an `object` with a `$delete` key and an array of values to delete.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
-  roles: { $delete: ["admin"] },
-};
+```typescript
+await MyEntity.update({
+  //  ...
+  roles: { $delete: ['admin'] }
+})
 ```
 
 #### Appending (or prepending) values to a `list`
 
 To append values to a `list`, use an `object` with an `$append` key and an array of values to append.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
-  sessions: { $append: [{ date: "2020-04-24", duration: 101 }] },
-};
+```typescript
+await MyEntity.update({
+  //  ...
+  sessions: { $append: [{ date: '2020-04-24', duration: 101 }] }
+})
 ```
 
 Alternatively, you can use the `$prepend` key and it will add the values to the beginning of the list.
@@ -1059,78 +1101,70 @@ Alternatively, you can use the `$prepend` key and it will add the values to the 
 
 To remove values from a `list`, use an `object` with a `$remove` key and an array of **indexes** to remove. Lists are indexed starting at `0`, so the update below would remove the second, fifth, and sixth item in the array.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
-  sessions: { $remove: [1, 4, 5] },
-};
+```typescript
+await MyEntity.update({
+  //  ...
+  sessions: { $remove: [1, 4, 5] }
+})
 ```
 
 #### Update items in a `list`
 
 To update values in a `list`, specify an `object` with array indexes as the keys and the update data as the values. Lists are indexed starting at `0`, so the update below would update the second and fourth items in the array.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
+```typescript
+await MyEntity.update({
+  //  ...
   sessions: {
-    1: "some new value for the second item",
-    3: "new value for the fourth value",
-  },
-};
+    1: 'some new value for the second item',
+    3: 'new value for the fourth value'
+  }
+})
 ```
 
 #### Update nested data in a `map`
 
 Maps can be complex, deeply nested JavaScript objects with a variety of data types. The DynamoDB Toolbox doesn't support schemas for `map`s (yet), but you can still manipulate them by wrapping your updates in a `$set` parameter and using dot notation and array index notation to target fields.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
+```typescript
+await MyEntity.update({
+  //  ...
   metadata: {
     $set: {
-      title: "Developer", // update metadata.title
-      "contact.name": "Jane Smith", // update metadata.contact.name
-      "contact.addresses[0]": "123 Main Street", // update the first array item in metadata.contact.addresses
-    },
-  },
-};
+      title: 'Developer', // update metadata.title
+      'contact.name': 'Jane Smith', // update metadata.contact.name
+      'contact.addresses[0]': '123 Main Street' // update the first array item in metadata.contact.addresses
+    }
+  }
+})
 ```
 
 We can also use our handy `$add`, `$append`, `$prepend`, and `$remove` properties to manipulate nested values.
 
-```javascript
-let item = {
-  id: 123,
-  name: "Test Name",
-  status: "active",
-  date_added: "2020-04-24",
+```typescript
+await MyEntity.update({
+  //  ...
   metadata: {
     $set: {
       vacation_days: { $add: -2 },
-      "contact.addresses": { $append: ["99 South Street"] },
-      "contact.phone": { $remove: [1, 3] },
-    },
-  },
-};
+      'contact.addresses': { $append: ['99 South Street'] },
+      'contact.phone': { $remove: [1, 3] }
+    }
+  }
+})
 ```
 
 ### query(partitionKey [,options] [,parameters])
 
 Executes the `query` method on the parent Table. This method accepts the same parameters as the [Table `query` method](#querypartitionkey-options-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB queries, this method **does not** guarantee that only items of the current entity type will be returned.
 
+In TS, the `attributes` option and response types are dynamically inferred. See [Type Inference](#type-inference) for more details.
+
 ### scan([options] [,parameters])
 
 Executes the `scan` method on the parent Table. This method accepts the same parameters as the [Table `scan` method](#scanoptions-parameters) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB scans, this method **does not** guarantee that only items of the current entity type will be returned.
+
+In TS, the `attributes` option and response types are dynamically inferred. See [Type Inference](#type-inference) for more details.
 
 ## Filters and Conditions
 
@@ -1166,42 +1200,57 @@ In order to create complex filters and conditions, the DynamoDB Toolbox allows y
 
 Condition where `age` is between 18 and 54 **AND** `region` equals "US":
 
-```javascript
-filters: [
-  { attr: "age", between: [18, 54] },
-  { attr: "region", eq: "US" },
-];
+```typescript
+MyTable.query(
+  // ...,
+  {
+    filters: [
+      { attr: 'age', between: [18, 54] },
+      { attr: 'region', eq: 'US' }
+    ]
+  }
+)
 ```
 
 Condition where `age` is between 18 and 54 **AND** `region` equals "US" **OR** "EU":
 
-```javascript
-filters: [
-  { attr: "age", between: [18, 54] },
-  [
-    { attr: "region", eq: "US" },
-    { or: true, attr: "region", eq: "EU" },
-  ],
-];
+```typescript
+MyTable.query(
+  // ...,
+  {
+    filters: [
+      { attr: 'age', between: [18, 54] },
+      [
+        { attr: 'region', eq: 'US' },
+        { or: true, attr: 'region', eq: 'EU' }
+      ]
+    ]
+  }
+)
 ```
 
 Condition where `age` is greater than 21 **OR** ((`region` equals "US" **AND** `interests` size is greater than 10) **AND** `interests` contain `nodejs`, `dynamodb`, or `serverless`):
 
-```javascript
-filters: [
-  { attr: 'age', gt: 21},
-  [
-    [
-      { or: true, attr: 'region', eq: 'US' },
-      { size: 'interests', gt: 10 }
-    ],
-    [
-      { attr: 'interests', contains: 'nodejs' }
-      { or: true, attr: 'interests', contains: 'dynamodb' }
-      { or: true, attr: 'interests', contains: 'serverless' }
+```typescript
+MyTable.query(
+  // ...,
+  {
+    filters: [
+      { attr: 'age', gt: 21 },
+      [
+        [
+          { or: true, attr: 'region', eq: 'US' },
+          { size: 'interests', gt: 10 }
+        ],
+        [
+          { attr: 'interests', contains: 'nodejs' },
+          { or: true, attr: 'interests', contains: 'dynamodb' },
+          { or: true, attr: 'interests', contains: 'serverless' }
+        ]
+      ]
     ]
-  ]
-]
+  }
+)
 ```
 
 ## Projection Expressions
@@ -1214,26 +1263,31 @@ Read operations that provide an `attributes` property accept an `array` of attri
 
 Retrieve the `pk`,`sk`,`name` and `created` attributes for all items:
 
-```javascript
-attributes: ["pk", "sk", "name", "created"];
+```typescript
+MyTable.query(
+  // ...,
+  { attributes: ['pk', 'sk', 'name', 'created'] }
+)
 ```
 
 Retrieve the `user_id`,`status`, and `created` attributes for the `User` entity:
 
-```javascript
-attributes: [{ User: ["user_id", "status", "created"] }];
+```typescript
+MyTable.query(
+  // ...,
+  { attributes: [{ User: ['user_id', 'status', 'created'] }] }
+)
 ```
 
 Retrieve the `pk`, `sk`, and `type` attributes for all items, the `user_id` for the `User` entity, and the `status` and `created` attributes for the the `Order` entity:
 
-```javascript
-attributes: [
-  "pk",
-  "sk",
-  "type",
-  { User: ["user_id"] },
-  { Order: ["status", "created"] },
-];
+```typescript
+MyTable.query(
+  // ...
+  {
+    attributes: ['pk', 'sk', 'type', { User: ['user_id'] }, { Order: ['status', 'created'] }]
+  }
+)
 ```
 
 When using the `get` method of an entity, the "entity" is assumed for the attributes. This lets you specify attributes and aliases without needing to use the object reference.
@@ -1244,8 +1298,8 @@ When using the `get` method of an entity, the "entity" is assumed for the attrib
 
 This libary supports all API options for the available API methods, so it is unnecessary for you to provide additional parameters. However, if you would like to pass custom parameters, simply pass them in an object as the last parameter to any appropriate method.
 
-```javascript
-let result = await MyEntity.update(
+```typescript
+const result = await MyEntity.update(
   item, // the item to update
   { ..options... }, // method options
   { // your custom parameters
@@ -1257,16 +1311,130 @@ let result = await MyEntity.update(
 
 For the `update` method, you can add additional statements to the clauses by specifying arrays as the `SET`, `ADD`, `REMOVE` and `DELETE` properties. You can also specify additional `ExpressionAttributeNames` and `ExpressionAttributeValues` with object values and the system will merge them in with the generated ones.
 
-```javascript
-let results = await MyEntity.update(
+```typescript
+const results = await MyEntity.update(
   item,
   {},
   {
-    SET: ["#somefield = :somevalue"],
-    ExpressionAttributeNames: { "#somefield": "somefield" },
-    ExpressionAttributeValues: { ":somevalue": 123 },
+    SET: ['#somefield = :somevalue'],
+    ExpressionAttributeNames: { '#somefield': 'somefield' },
+    ExpressionAttributeValues: { ':somevalue': 123 }
   }
-);
+)
+```
+
+## Type Inference
+
+Since the v0.4, most Entity methods types are inferred from Entity definition.
+
+The following options are implemented:
+
+- 🔑 `partitionKey`, `sortKey`: They are used, along with array-based mapped attributes to infer the primary key type.
+- ⚡️ `autoExecute`, `execute`: If the `execute` option is set to `false` (either in the Entity definition or the method options), the method responses are typed as `DocumentClient.<METHOD>ItemInput`.
+- 🧐 `autoParse`, `parse`: If the `parse` option is set to `false` (either in the Entity definition or the method options), the method responses are typed as `DocumentClient.<METHOD>ItemOutput`.
+- ✍️ `typeAlias`, `createdAlias`, `modifiedAlias`: Aliases are used to compute the parsed responses types. They are also prevented from attribute definitions to avoid conflicts.
+- ⏰ `timestamps`: If the `timestamps` option is set to false, `createdAlias` and `modifiedAlias` are omitted from the parsed responses types.
+- 👮 `required`: Attributes flagged as `required` are required as needed in `put` and `update` operations. They appear as always defined in parsed responses. Attempting to remove them, either with the `$delete` shorthand or by setting them to `null` causes an error.
+- 👍 `default`: Required attributes are not required in `put` and `update` operations if they have a `default` value. They appear as always defined in parsed responses.
+- ✂️ `attributes`: In `get` and `queries` operations, the `attributes` option filter the attributes of the parsed responses types.
+- ☝️ `conditions`: In `put`, `update` and `delete` operations, the `conditions` attributes are correctly typed.
+- 📨 `returnValues`: In `put`, `update` and `delete` operation, the `returnValues` option is interpreted to format the responses.
+- 🙈 `hidden`: Hidden attributes are omitted from the parsed responses types.
+- 🔗 `dependsOn` option: If the `default` property of a key attribute is a function, you can use the `dependsOn` attribute to enable typing the primary key through the depended-on attributes (i.e. those used in the function).
+
+The following options are not yet implemented:
+
+- `alias` attribute option
+- Table attributes!
+- Secondary indexes names
+- `coerce` option
+- Improved `list` and `set` support
+  ... And probably more! Feel free to open an issue if needed 🤗
+
+### Overlays
+
+When type infering doesn't cut it, every method supports the possibility of enforcing a custom `Item` type, and a custom `CompositeKey` type where needed.
+
+```typescript
+type CustomItem = {
+  pk: string
+  sk: string
+  name: string
+}
+
+type CustomCompositeKey = {
+  pk: string
+  sk: string
+}
+
+const { Item } = await MyEntity.get<CustomItem, CustomCompositeKey>({
+  pk: 'pk',
+  sk: 'sk' // ✅ CustomCompositeKey expected
+}) // ✅ Item is of type: undefined | CustomItem
+```
+
+Overlaying at the Entity level is also possible. The overlay is passed down to every method, and type inference is fully deactivated:
+
+```typescript
+const MyEntity =  new Entity<CustomItem, CustomCompositeKey, typeof table>({
+  ...,
+  table,
+} as const)
+
+await MyEntity.update({ pk, sk, name }) // ✅ Overlay CustomItem is used
+await MyEntity.delete<CustomItem, { foo: "bar" }>({ foo: "bar" }) // ✅ Entity overlays can still be overridden
+```
+
+Write operations `condition` and read operations `attributes` options are also typed as the applied overlay keys and filter the response properties:
+
+```typescript
+const { Item } = await MyEntity.get({ pk, sk }, { attributes: ['incorrect'] }) // ❌ Errors
+const { Item } = await MyEntity.get({ pk, sk }, { attributes: ['name'] }) // ✅ Item is of type { name: string }
+```
+
+### Utility Types
+
+#### EntityItem
+
+The inferred or overlayed entity items type can be obtained through the `EntityItem` utility type:
+
+```typescript
+import type { EntityItem } from 'dynamodb-toolbox'
+
+const listUsers = async (): Promise<EntityItem<typeof UserEntity>[]> => {
+  const { Items } = await UserEntity.query(...)
+  return Items
+}
+```
+
+#### Options
+
+Sometimes, it can be useful to dynamically set an entity operation options. For instance:
+
+```typescript
+const queryOptions = {}
+
+if (!isSuperadmin(user)) {
+  queryOptions.beginsWith = 'USER'
+}
+
+const { Item } = await MyEntity.query(pk, { attributes: ['name', 'age'], ...queryOptions })
+```
+
+Sadly, in TS this throws an error, as `getOptions` is typed as `{}`. Using a non-generic `GetOptions` type also throws an error as the entity attribute names are hardly typed, and `string` is not assignable to the `attributes` or `conditions` options.
+
+For this purpose, DynamoDB-Toolbox exposes `GetOptions`, `PutOptions`, `DeleteOptions`, `UpdateOptions` & `QueryOptions` utility types:
+
+```typescript
+import type { QueryOptions } from 'dynamodb-toolbox'
+
+const queryOptions: QueryOptions<typeof MyEntity> = {}
+
+if (!isSuperadmin(user)) {
+  queryOptions.beginsWith = 'USER'
+}
+
+const { Item } = await MyEntity.query(pk, { attributes: ['name', 'age'], ...queryOptions })
 ```
 
 ## Additional References
@@ -1279,7 +1447,3 @@ let results = await MyEntity.update(
 ## Contributions and Feedback
 
 Contributions, ideas and bug reports are welcome and greatly appreciated. Please add [issues](https://github.com/jeremydaly/dynamodb-toolbox/issues) for suggestions and bug reports or create a pull request. You can also contact me on Twitter: [@jeremy_daly](https://twitter.com/jeremy_daly).
-
-## Version 0.4 Alpha
-
-If you'd like to try v0.4 with Type Inferencing, please check out the [v0.4 branch](https://github.com/jeremydaly/dynamodb-toolbox/tree/v0.4).
