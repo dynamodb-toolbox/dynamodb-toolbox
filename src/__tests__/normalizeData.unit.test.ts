@@ -4,7 +4,7 @@ import { DocumentClient } from './bootstrap-tests'
 
 // Import Table and Entity classes
 import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Entity from '../classes/Entity/Entity'
 
 // Create basic table
 let DefaultTable = new Table({

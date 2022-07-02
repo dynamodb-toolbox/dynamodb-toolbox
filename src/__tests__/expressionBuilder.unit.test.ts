@@ -3,7 +3,7 @@ import expressionBuilder from '../lib/expressionBuilder'
 
 // Require Table and Entity classes
 import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Entity from '../classes/Entity/Entity'
 
 // Create basic table
 const TestTable = new Table({

@@ -1,4 +1,4 @@
-import { SortKeyDefinition } from '../classes/Entity'
+import { SortKeyDefinition } from '../classes/Entity/Entity'
 import { TrackingInfo } from '../lib/parseEntity'
 import parseCompositeKey from '../lib/parseCompositeKey'
 

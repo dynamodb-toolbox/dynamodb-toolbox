@@ -24,7 +24,7 @@ const { DocumentClient } = require('./bootstrap-tests')
 
 // // Require Table and Entity classes
 import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Entity from '../classes/Entity/Entity'
 
 describe('Misc Tests (development only)', () => {
   it('uses a numeric pk value', async () => {

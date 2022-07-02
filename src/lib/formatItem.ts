@@ -5,7 +5,7 @@
  */
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
-import { PureAttributeDefinition } from '../classes/Entity'
+import { PureAttributeDefinition } from '../classes/Entity/Entity'
 import validateTypes from './validateTypes'
 import { Linked } from './parseEntity'
 

@@ -9,7 +9,7 @@ import {
   AttributeDefinitions,
   PureAttributeDefinition,
   CompositeAttributeDefinition
-} from '../classes/Entity'
+} from '../classes/Entity/Entity'
 import { TrackingInfo } from './parseEntity'
 import parseMapping from './parseMapping'
 import parseCompositeKey from './parseCompositeKey'

@@ -12,7 +12,7 @@
 // TODO: prevent reserved field names?
 
 import Table from './classes/Table'
-import Entity from './classes/Entity'
+import Entity from './classes/Entity/Entity'
 import type {
   GetOptions,
   QueryOptions,
@@ -20,7 +20,7 @@ import type {
   DeleteOptions,
   UpdateOptions,
   EntityItem
-} from './classes/Entity'
+} from './classes/Entity/Entity'
 
 export {
   Table,

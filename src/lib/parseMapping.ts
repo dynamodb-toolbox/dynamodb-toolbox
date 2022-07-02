@@ -10,7 +10,7 @@ import {
   SortKeyDefinition,
   GSISortKeyDefinition,
   PureAttributeDefinition
-} from '../classes/Entity'
+} from '../classes/Entity/Entity'
 import { TrackingInfo } from './parseEntity'
 import { error } from './utils'
 

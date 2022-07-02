@@ -9,7 +9,7 @@ import { A, O } from 'ts-toolbelt'
 
 import parseEntityAttributes from './parseEntityAttributes'
 import { TableDef } from '../classes/Table'
-import { AttributeDefinitions, EntityConstructor } from '../classes/Entity'
+import { AttributeDefinitions, EntityConstructor } from '../classes/Entity/Entity'
 import { error, PreventKeys } from './utils'
 
 export interface TrackingInfo {

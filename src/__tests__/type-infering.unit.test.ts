@@ -11,7 +11,7 @@ import {
   DeleteOptions,
   UpdateOptions,
   ConditionsOrFilters
-} from 'classes/Entity'
+} from 'classes/Entity/Entity'
 
 import { Table, Entity } from '../index'
 
