@@ -1468,39 +1468,42 @@ describe('Entity', () => {
       })
 
       it('throws when trying to delete req/always attr', () => {
-        // 🔨 TOIMPROVE: Not sure this should not throw
-        // @ts-expect-error
-        ent.updateParams({ ...testedParams, reqAttr: null })
+        expect(() =>
+          // @ts-expect-error
+          ent.updateParams({ ...testedParams, reqAttr: null })
+        ).toThrow()
 
-        // 🔨 TOIMPROVE: Not sure this should not throw
-        // @ts-expect-error
-        ent.updateParams({ ...testedParams, $remove: ['reqAttr'] })
+        expect(() => ent.updateParams({ ...testedParams, reqAttr: '' })).toThrow()
 
-        // 🔨 TOIMPROVE: Not sure this should not throw
-        // @ts-expect-error
-        ent.updateParams({ ...testedParams, reqAttrDef: null })
+        expect(() =>
+          // @ts-expect-error
+          ent.updateParams({ ...testedParams, $remove: ['reqAttr'] })
+        ).toThrow()
 
-        // 🔨 TOIMPROVE: Not sure this should not throw
-        // @ts-expect-error
-        ent.updateParams({ ...testedParams, reqAttrDef: null })
+        expect(() =>
+          // @ts-expect-error
+          ent.updateParams({ ...testedParams, reqAttrDef: null })
+        ).toThrow
 
         expect(() =>
           // @ts-expect-error
           ent.updateParams({ ...testedParams, alwAttr: null })
         ).toThrow()
 
-        // 🔨 TOIMPROVE: Not sure this is expected behavior (alwAttr is both set AND removed)
-        // @ts-expect-error
-        ent.updateParams({ ...testedParams, $remove: ['alwAttr'] })
+        expect(() =>
+          // @ts-expect-error
+          ent.updateParams({ ...testedParams, $remove: ['alwAttr'] })
+        ).toThrow()
 
         expect(() =>
           // @ts-expect-error
           ent.updateParams({ ...testedParams, alwAttrDef: null })
         ).toThrow()
 
-        // 🔨 TOIMPROVE: Not sure this is expected behavior (alwAttrDef is both set AND removed)
-        // @ts-expect-error
-        ent.updateParams({ ...testedParams, $remove: ['alwAttrDef'] })
+        expect(() =>
+          // @ts-expect-error
+          ent.updateParams({ ...testedParams, $remove: ['alwAttrDef'] })
+        ).toThrow()
       })
 
       it('throws with bad returnValues parameter', () => {
