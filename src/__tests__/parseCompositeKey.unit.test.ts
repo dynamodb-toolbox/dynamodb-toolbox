@@ -34,12 +34,14 @@ describe('parseCompositeKey', () => {
 
   it('fails on non-numeric position', async () => {
     expect(() => {
+      // @ts-expect-error
       parseCompositeKey('linked', ['sk', '1'], track, attributes)
     }).toThrow(`'linked' position value must be numeric`)
   })
 
   it('fails on invalid configuration', async () => {
     expect(() => {
+      // @ts-expect-error
       parseCompositeKey('linked', ['sk', 0, []], track, attributes)
     }).toThrow(`'linked' type must be 'string', 'number', 'boolean' or a configuration object`)
   })
