@@ -9,7 +9,7 @@
     "test": "jest unit",
     "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "type": "tsc --noEmit",
+    "check-types": "tsc --noEmit",
     "lint": "eslint .",
     "build": "rm -rf dist && tsc",
     "prepare": "npm run build",
