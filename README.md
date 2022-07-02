@@ -961,7 +961,7 @@ If you prefer to specify your own parameters, the optional third argument allows
 await MyEntity.delete(
   { pk: 123, sk: 'sort-key' },
   {
-    condition: { attr: 'date_modified' lt: '2020-01-01' },
+    conditions: { attr: 'date_modified' lt: '2020-01-01' },
     returnValues: 'all_old'
   }
 )
