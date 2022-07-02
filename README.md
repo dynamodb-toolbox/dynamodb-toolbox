@@ -11,7 +11,18 @@
 
 The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It's designed with **Single Tables** in mind, but works just as well with multiple tables. It lets you define your Entities (with typings and aliases) and map them to your DynamoDB tables. You can then **generate the API parameters** to `put`, `get`, `delete`, `update`, `query`, `scan`, `batchGet`, and `batchWrite` data by passing in JavaScript objects. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
 
+## Version 0.4 Alpha 🙌 <!-- omit in toc -->
+
+v0.4 is almost ready to be released and supports "Type Inferencing" 😎. Please check out the [v0.4 branch](https://github.com/jeremydaly/dynamodb-toolbox/tree/v0.4) for more information, or you can install the latest alpha version using:
+
+```
+npm i dynamodb-toolbox@0.4.0-alpha.2
+```
+
+Feedback is welcome and much appreciated! (Huge thanks to @ThomasAribart for all his work on this 🙌)
+
 ## Installation and Basic Usage
+
 
 Install DynamoDB Toolbox v0.4 alpha:
 
@@ -25,11 +36,14 @@ yarn add dynamodb-toolbox@alpha
 
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 
+
 ```typescript
 import { Table, Entity } from 'dynamodb-toolbox'
+
 ```
 
 Create a Table (with the DocumentClient):
+
 
 ```typescript
 import DynamoDB from 'aws-sdk/clients/dynamodb'
@@ -42,23 +56,24 @@ const DocumentClient = new DynamoDB.DocumentClient({
 // Instantiate a table
 const MyTable = new Table({
   // Specify table name (used by DynamoDB)
-  name: 'my-table',
+  name: "my-table",
 
   // Define partition and sort keys
-  partitionKey: 'pk',
-  sortKey: 'sk',
+  partitionKey: "pk",
+  sortKey: "sk",
 
   // Add the DocumentClient
-  DocumentClient
-})
+  DocumentClient,
+});
 ```
 
 Create an Entity:
 
 ```typescript
+
 const Customer = new Entity({
   // Specify entity name
-  name: 'Customer',
+  name: "Customer",
 
   // Define attributes
   attributes: {
@@ -120,9 +135,9 @@ You can then get the data:
 // Specify primary key
 const primaryKey = {
   id: 123,
-  status: 'active',
-  date_added: '2020-04-24'
-}
+  status: "active",
+  date_added: "2020-04-24",
+};
 
 // Use the 'get' method of Customer
 const response = await Customer.get(primaryKey)
@@ -263,6 +278,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
 	- [Utility Types](#utility-types)
 		- [EntityItem](#entityitem)
 		- [Options](#options)
+
 - [Additional References](#additional-references)
 - [Contributions and Feedback](#contributions-and-feedback)
 
@@ -359,6 +375,7 @@ An **Entity** represent a well-defined schema for a DynamoDB item. An Entity can
 Note that a `Table` can have multiple Entities, but an `Entity` can only have one `Table`.
 
 To define a new entity, import it into your script:
+
 
 ```typescript
 import { Entity } from 'dynamodb-toolbox'
@@ -608,13 +625,13 @@ const result = await MyTable.query(
   'user#12345', // partition key
   {
     limit: 50, // limit to 50 items
-    beginsWith: 'order#', // select items where sort key begins with value
+    beginsWith: "order#", // select items where sort key begins with value
     reverse: true, // return items in descending order (newest first)
-    capacity: 'indexes', // return the total capacity consumed by the indexes
-    filters: { attr: 'total', gt: 100 }, // only show orders above $100
-    index: 'GSI1' // query the GSI1 secondary index
+    capacity: "indexes", // return the total capacity consumed by the indexes
+    filters: { attr: "total", gt: 100 }, // only show orders above $100
+    index: "GSI1", // query the GSI1 secondary index
   }
-)
+);
 ```
 
 #### Return Data
@@ -752,7 +769,7 @@ const result = await Default.batchWrite(
     capacity: 'total',
     metrics: 'size'
   }
-)
+);
 ```
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
@@ -984,8 +1001,8 @@ If you prefer to specify your own parameters, the optional third argument allows
 ```typescript
 await MyEntity.put({
   id: 123,
-  name: 'Jane Smith',
-  company: 'ACME',
+  name: "Jane Smith",
+  company: "ACME",
   age: 35,
   status: 'active',
   date_added: '2020-04-24'
