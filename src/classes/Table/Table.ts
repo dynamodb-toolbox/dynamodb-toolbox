@@ -7,155 +7,37 @@
 // TODO: Check duplicate entity names code
 
 // Import libraries, types, and classes
-import DynamoDb, { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { A, O } from 'ts-toolbelt'
+import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import type { A, O } from 'ts-toolbelt'
 
-import Entity, { $ReadOptions, ConditionsOrFilters } from './Entity'
-import { parseTable, ParsedTable } from '../lib/parseTable'
-import parseFilters from '../lib/expressionBuilder'
-import validateTypes from '../lib/validateTypes'
-import { FilterExpressions } from '../lib/expressionBuilder'
-import parseProjections, {
+import Entity from '../Entity'
+import { parseTable, ParsedTable } from '../../lib/parseTable'
+import parseFilters from '../../lib/expressionBuilder'
+import validateTypes from '../../lib/validateTypes'
+import {
+  default as parseProjections,
   ProjectionAttributes,
   ProjectionAttributesTable
-} from '../lib/projectionBuilder'
-import { ParsedEntity } from '../lib/parseEntity'
+} from '../../lib/projectionBuilder'
+import type { ParsedEntity } from '../../lib/parseEntity'
+import type {
+  BatchGetOptions,
+  BatchGetParamsMeta,
+  batchWriteOptions,
+  ScanOptions,
+  TableConstructor,
+  TableDef,
+  TableQueryOptions,
+  transactGetOptions,
+  TransactGetParamsMeta,
+  transactGetParamsOptions,
+  TransactWriteOptions,
+  transactWriteParamsOptions,
+} from './types';
 
 // Import standard error handler
-import { error, conditionError, hasProperty, If } from '../lib/utils'
+import { error, conditionError, hasProperty, If } from '../../lib/utils'
 
-// Declare Table types
-export interface TableConstructor<
-  Name extends string,
-  PartitionKey extends A.Key,
-  SortKey extends A.Key | null
-> {
-  name: Name
-  alias?: string | null
-  partitionKey: PartitionKey
-  sortKey?: SortKey
-  entityField?: boolean | string
-  attributes?: TableAttributes
-  indexes?: TableIndexes
-  autoExecute?: boolean
-  autoParse?: boolean
-  DocumentClient?: DynamoDb.DocumentClient
-  entities?: {} // improve - not documented
-  removeNullAttributes?: boolean
-}
-
-export type DynamoDBTypes = 'string' | 'boolean' | 'number' | 'list' | 'map' | 'binary' | 'set'
-export type DynamoDBKeyTypes = 'string' | 'number' | 'binary'
-
-export interface executeParse {
-  execute?: boolean
-  parse?: boolean
-}
-
-export interface TableAttributeConfig {
-  type: DynamoDBTypes
-  setType?: DynamoDBKeyTypes
-}
-
-export interface TableAttributes {
-  [attr: string]: DynamoDBTypes | TableAttributeConfig
-}
-
-export interface ParsedTableAttribute {
-  [attr: string]: TableAttributeConfig & { mappings: {} }
-}
-
-export interface TableIndexes {
-  [index: string]: { partitionKey?: string; sortKey?: string }
-}
-
-type TableReadOptions = { index: string; limit: number; entity: string }
-
-export type $QueryOptions<
-  Execute extends boolean | undefined = undefined,
-  Parse extends boolean | undefined = undefined
-> = $ReadOptions<Execute, Parse> &
-  TableReadOptions & {
-    reverse: boolean
-    select: DocumentClient.Select
-    // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
-    eq: string | number
-    lt: string | number
-    lte: string | number
-    gt: string | number
-    gte: string | number
-    between: [string, string] | [number, number]
-    beginsWith: string
-    startKey: {}
-  }
-
-export type TableQueryOptions<
-  Execute extends boolean | undefined = undefined,
-  Parse extends boolean | undefined = undefined
-> = O.Partial<
-  $QueryOptions<Execute, Parse> & {
-    attributes: ProjectionAttributes
-    filters: ConditionsOrFilters<A.Key>
-  }
->
-
-export type ScanOptions<
-  Execute extends boolean | undefined = undefined,
-  Parse extends boolean | undefined = undefined
-> = O.Partial<
-  $ReadOptions<Execute, Parse> &
-    TableReadOptions & {
-      attributes?: ProjectionAttributes
-      filters?: FilterExpressions
-      startKey?: {}
-      segments?: number
-      segment?: number
-      capacity?: DocumentClient.ReturnConsumedCapacity
-      select?: DocumentClient.Select
-    }
->
-
-interface BatchGetOptions {
-  consistent?: boolean | { [tableName: string]: boolean }
-  capacity?: DocumentClient.ReturnConsumedCapacity
-  attributes?: ProjectionAttributes
-  include?: string[]
-  execute?: boolean
-  parse?: boolean
-}
-
-interface batchGetParamsMeta {
-  payload: any
-  Tables: { [key: string]: TableDef }
-  EntityProjections: { [key: string]: any }
-  TableProjections: { [key: string]: string[] }
-}
-
-interface batchWriteOptions {
-  capacity?: DocumentClient.ReturnConsumedCapacity
-  metrics?: DocumentClient.ReturnItemCollectionMetrics
-  execute?: boolean
-  parse?: boolean
-}
-
-interface transactGetParamsOptions {
-  capacity?: DocumentClient.ReturnConsumedCapacity
-}
-
-type transactGetOptions = transactGetParamsOptions & executeParse
-
-interface transactWriteParamsOptions {
-  capacity?: DocumentClient.ReturnConsumedCapacity
-  metrics?: DocumentClient.ReturnItemCollectionMetrics
-  token?: string
-}
-
-type transactWriteOptions = transactWriteParamsOptions & executeParse
-
-interface transactGetParamsMeta {
-  Entities: (any | undefined)[]
-  payload: DocumentClient.TransactGetItemsInput
-}
 
 // Declare Table class
 class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
@@ -1048,7 +930,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       Tables, // table reference
       EntityProjections,
       TableProjections
-    } = this.batchGetParams(items, options, params, true) as batchGetParamsMeta
+    } = this.batchGetParams(items, options, params, true) as BatchGetParamsMeta
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -1423,7 +1305,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       items,
       options,
       true
-    ) as transactGetParamsMeta
+    ) as TransactGetParamsMeta
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -1469,12 +1351,12 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
     options: transactGetParamsOptions,
     meta: true
-  ): transactGetParamsMeta
+  ): TransactGetParamsMeta
   transactGetParams(
     _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
     options: transactGetParamsOptions = {},
     meta: boolean = false
-  ): DocumentClient.TransactGetItemsInput | transactGetParamsMeta {
+  ): DocumentClient.TransactGetItemsInput | TransactGetParamsMeta {
     let items = Array.isArray(_items) ? _items : _items ? [_items] : []
 
     // Error on no items
@@ -1529,7 +1411,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    */
   async transactWrite(
     items: DocumentClient.TransactWriteItemList,
-    options: transactWriteOptions = {}
+    options: TransactWriteOptions = {}
     // params: Partial<DocumentClient.TransactWriteItemsInput> = {}
   ) {
     // Generate the payload with meta information
@@ -1657,5 +1539,3 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
 // Export the Table class
 export default Table
-
-export type TableDef = Table<string, A.Key, A.Key | null>
