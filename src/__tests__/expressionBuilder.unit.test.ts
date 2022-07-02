@@ -375,4 +375,13 @@ describe('expressionBuilder', () => {
       `A condition is required`
     )
   })
+
+  it("doesn't mutate input expression", () => {
+    let expObj = { attr: 'a', eq: 'b' }
+    let expArr = [{ attr: 'a', eq: 'b' }]
+    expressionBuilder(expObj,TestTable,'TestEntity')
+    expressionBuilder(expArr,TestTable,'TestEntity')
+    expect(expObj).toEqual({ attr: 'a', eq: 'b' })
+    expect(expArr).toEqual([{ attr: 'a', eq: 'b' }])
+  })
 })
