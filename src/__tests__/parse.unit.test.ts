@@ -2,7 +2,7 @@ import { DocumentClient } from './bootstrap-tests'
 
 // Import Table and Entity classes
 import Table from '../classes/Table'
-import Entity from '../classes/Entity/Entity'
+import Entity from '../classes/Entity'
 
 // Create basic entity
 const TestEntity = new Entity(require('./entities/test-entity.ts'))

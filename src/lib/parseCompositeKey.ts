@@ -11,7 +11,7 @@ import {
   CompositeAttributeDefinition,
   PureAttributeDefinition,
   AttributeDefinitions
-} from '../classes/Entity/Entity'
+} from '../classes/Entity'
 import { TrackingInfo } from './parseEntity'
 
 const parseCompositeKey = <
