@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: Run tests
         run: npm run test
 
@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: '16'
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: Check types
         run: npm run check-types
 
@@ -54,6 +54,6 @@ jobs:
         with:
           node-version: '16'
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: Run ESLint
         run: npm run lint

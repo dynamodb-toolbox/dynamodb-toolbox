@@ -10,10 +10,10 @@
 import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, O } from 'ts-toolbelt'
 
-import Entity from '../Entity'
 import { parseTable, ParsedTable } from '../../lib/parseTable'
 import parseFilters from '../../lib/expressionBuilder'
 import validateTypes from '../../lib/validateTypes'
+import Entity from '../Entity'
 import {
   default as parseProjections,
   ProjectionAttributes,
