@@ -1040,6 +1040,7 @@ class Entity<
     // Loop through valid fields and add appropriate action
     Object.keys(data).forEach(field => {
       const mapping = schema.attributes[field]
+      const fieldIsNullOrEmpty = data[field] == null || (typeof data[field] === 'string' || Array.isArray(data[field])) && !data[field].length
 
       // Remove attributes
       if (field === '$remove') {
@@ -1077,7 +1078,7 @@ class Entity<
         } // end for
       } else if (
         this._table!._removeNulls === true &&
-        (data[field] === null || String(data[field]).trim() === '') &&
+        fieldIsNullOrEmpty &&
         (!mapping.link || mapping.save)
       ) {
         // Verify attribute is not required
