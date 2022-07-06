@@ -499,7 +499,7 @@ const MyEntity = new Entity({
 
 #### Customize defaults with a `function`
 
-In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputed data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency.
+In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputted data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency.
 
 This opens up a number of really powerful use cases:
 
@@ -776,7 +776,7 @@ The data is returned with the same response syntax as the [DynamoDB BatchWriteIt
 
 The `transactGet` method is a wrapper for the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). The DynamoDB Toolbox `transactGet` method supports all **TransactGetItem** API operations. The `transactGet` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `transactGetParams` can be used, but will only retrieve the generated parameters.
 
-The `transacthGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `getTransaction` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
+The `transactGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `getTransaction` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding TransactGetItems API references in parentheses):
 
@@ -895,7 +895,7 @@ Returns the Entity's assigned `sortKey`.
 
 ### attribute(attribute)
 
-Returns the Table's attribute name for the suppled `attribute`. The `attribute` must be a `string` and can be either a valid attribute name or alias.
+Returns the Table's attribute name for the supplied `attribute`. The `attribute` must be a `string` and can be either a valid attribute name or alias.
 
 ### parse(input [,include])
 
@@ -951,7 +951,7 @@ The optional second argument accepts an `options` object. The following options 
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                              |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determins whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues)                                                                                                              |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues)                                                                                                              |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
@@ -984,7 +984,7 @@ The optional second argument accepts an `options` object. The following options 
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                                 |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determins whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                           |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                           |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
@@ -1018,7 +1018,7 @@ The optional second argument accepts an `options` object. The following options 
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                              |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determins whether to return item attributes as they appeared before or after the item was updated. One of either `NONE`, `ALL_OLD`, `UPDATED_OLD`, `ALL_NEW`, `UPDATED_NEW`. (ReturnValues)                                                           |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before or after the item was updated. One of either `NONE`, `ALL_OLD`, `UPDATED_OLD`, `ALL_NEW`, `UPDATED_NEW`. (ReturnValues)                                                           |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
@@ -1296,7 +1296,7 @@ When using the `get` method of an entity, the "entity" is assumed for the attrib
 
 ## Adding Custom Parameters and Clauses
 
-This libary supports all API options for the available API methods, so it is unnecessary for you to provide additional parameters. However, if you would like to pass custom parameters, simply pass them in an object as the last parameter to any appropriate method.
+This library supports all API options for the available API methods, so it is unnecessary for you to provide additional parameters. However, if you would like to pass custom parameters, simply pass them in an object as the last parameter to any appropriate method.
 
 ```typescript
 const result = await MyEntity.update(
