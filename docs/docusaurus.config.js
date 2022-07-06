@@ -9,7 +9,7 @@ const config = {
   title: 'DynamoDB Toolbox',
   tagline: 'Single Table Designs have never been this easy!',
   url: 'https://jeremydaly.github.io',
-  baseUrl: '/dynamodb-toolbox/',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
