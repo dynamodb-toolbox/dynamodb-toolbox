@@ -845,8 +845,7 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 The data is returned with the same response syntax as the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
 
-### parse(entity, ted
-[,include])
+### parse(entity, input [,include])
 
 Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](#parseinput-include) for additional parameters and behavior. In TS, type inference is not applied.
 
