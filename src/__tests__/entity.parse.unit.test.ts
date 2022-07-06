@@ -14,15 +14,18 @@ const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
-  entities: [TestEntity,SimpleEntity],
+  entities: [TestEntity, SimpleEntity],
   DocumentClient
 })
 
-
-describe('parse',()=>{
-
-  it('parses single item', ()=>{
-    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' })
+describe('parse', () => {
+  it('parses single item', () => {
+    let item = TestEntity.parse({
+      pk: 'test@test.com',
+      sk: 'email',
+      test_string: 'test',
+      _et: 'TestEntity'
+    })
     expect(item).toEqual({
       email: 'test@test.com',
       test_type: 'email',
@@ -31,15 +34,18 @@ describe('parse',()=>{
     })
   })
 
-  it('parses single item and includes certain fields', ()=>{
-    let item = TestEntity.parse({ pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' }, ['email','sk'])
+  it('parses single item and includes certain fields', () => {
+    let item = TestEntity.parse(
+      { pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' },
+      ['email', 'sk']
+    )
     expect(item).toEqual({
       email: 'test@test.com',
       test_type: 'email'
     })
   })
 
-  it('parses multiple items', ()=>{
+  it('parses multiple items', () => {
     let items = TestEntity.parse([
       { pk: 'test@test.com', sk: 'email', test_string: 'test' },
       { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
@@ -58,11 +64,14 @@ describe('parse',()=>{
     ])
   })
 
-  it('parses multiple items and incudes certain field', ()=>{
-    let items = TestEntity.parse([
-      { pk: 'test@test.com', sk: 'email', test_string: 'test' },
-      { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
-    ],['pk','test_string'])
+  it('parses multiple items and incudes certain field', () => {
+    let items = TestEntity.parse(
+      [
+        { pk: 'test@test.com', sk: 'email', test_string: 'test' },
+        { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
+      ],
+      ['pk', 'test_string']
+    )
     expect(items).toEqual([
       {
         email: 'test@test.com',
@@ -75,14 +84,16 @@ describe('parse',()=>{
     ])
   })
 
-  it('parses composite field', ()=>{
-    let item = SimpleEntity.parse({ pk: 'test@test.com', sk: 'active#email', test_composite: 'test' })
+  it('parses composite field', () => {
+    let item = SimpleEntity.parse({
+      pk: 'test@test.com',
+      sk: 'active#email',
+      test_composite: 'test'
+    })
     expect(item).toEqual({
       pk: 'test@test.com',
       test_composite: 'test',
       test_composite2: 'email'
     })
   })
-
-
 }) // end parse

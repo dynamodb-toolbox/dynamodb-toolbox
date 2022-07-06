@@ -10,3 +10,6 @@ coverage
 
 # dist
 dist
+
+# dev env settings
+.vscode

@@ -499,7 +499,7 @@ const MyEntity = new Entity({
 
 #### Customize defaults with a `function`
 
-In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputted data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency.
+In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputed data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency.
 
 This opens up a number of really powerful use cases:
 
@@ -845,7 +845,8 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 The data is returned with the same response syntax as the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
 
-### parse(entity, input [,include])
+### parse(entity, ted
+[,include])
 
 Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](#parseinput-include) for additional parameters and behavior. In TS, type inference is not applied.
 
@@ -947,11 +948,11 @@ The `delete` method accepts three arguments. The first argument accepts an `obje
 The optional second argument accepts an `options` object. The following options are all optional (corresponding DeleteItem API references in parentheses):
 
 | Option       |        Type         | Description                                                                                                                                                                                                                                           |
-| ------------ | :-----------------: |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------ | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                              |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determines whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues)                                                                                                             |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues)                                                                                                              |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
@@ -980,11 +981,11 @@ The `put` method accepts three arguments. The first argument accepts an `object`
 The optional second argument accepts an `options` object. The following options are all optional (corresponding PutItem API references in parentheses):
 
 | Option       |        Type         | Description                                                                                                                                                                                                                                           |
-| ------------ | :-----------------: |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------ | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                                 |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determines whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                          |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                           |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
@@ -1014,11 +1015,11 @@ The `update` method accepts three arguments. The first argument accepts an `obje
 The optional second argument accepts an `options` object. The following options are all optional (corresponding UpdateItem API references in parentheses):
 
 | Option       |        Type         | Description                                                                                                                                                                                                                                           |
-| ------------ | :-----------------: |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------ | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                              |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determines whether to return item attributes as they appeared before or after the item was updated. One of either `NONE`, `ALL_OLD`, `UPDATED_OLD`, `ALL_NEW`, `UPDATED_NEW`. (ReturnValues)                                                          |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before or after the item was updated. One of either `NONE`, `ALL_OLD`, `UPDATED_OLD`, `ALL_NEW`, `UPDATED_NEW`. (ReturnValues)                                                           |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
