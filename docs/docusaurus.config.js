@@ -119,7 +119,7 @@ const config = {
             ]
           }
         ],
-        copyright: `Copyright © ${new Date().getFullYear()}`
+        copyright: `Copyright © ${new Date().getFullYear()} - Jeremy Daly`
       },
       prism: {
         theme: lightCodeTheme,
