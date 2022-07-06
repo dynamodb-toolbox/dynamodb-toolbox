@@ -13,7 +13,7 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">
-          <img src="/img/dynamodb-toolbox-white.svg" />
+          <img src="img/dynamodb-toolbox-white.svg" alt="DynamoDB Toolbox" />
           {/* {siteConfig.title} */}
         </h1>
 
