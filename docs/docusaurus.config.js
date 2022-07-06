@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula')
 const config = {
   title: 'DynamoDB Toolbox',
   tagline: 'Single Table Designs have never been this easy!',
-  url: 'https://jeremydaly.github.io',
+  url: 'https://www.dynamodbtoolbox.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
