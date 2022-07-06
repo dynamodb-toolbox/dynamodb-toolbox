@@ -499,7 +499,7 @@ const MyEntity = new Entity({
 
 #### Customize defaults with a `function`
 
-In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputed data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency.
+In simple situations, defaults can be static values. However, for advanced use cases, you can specify an anonymous function to dynamically calculate the value. The function takes a single argument that contains an object of the inputted data (including aliases). Sadly, in TS, type inference cannot be used here as this would create a circular dependency.
 
 This opens up a number of really powerful use cases:
 
