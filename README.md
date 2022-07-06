@@ -19,14 +19,14 @@ Feedback is welcome and much appreciated! (Huge thanks to @ThomasAribart for all
 
 ## Installation and Basic Usage
 
-Install DynamoDB Toolbox v0.4 alpha:
+Install DynamoDB Toolbox:
 
 ```bash
 # npm
-npm i dynamodb-toolbox@alpha
+npm i dynamodb-toolbox
 
 # yarn
-yarn add dynamodb-toolbox@alpha
+yarn add dynamodb-toolbox
 ```
 
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
@@ -604,7 +604,7 @@ The second argument is an `options` object that specifies the details of your qu
 | between    |       `array`       | Specifies `sortKey` condition to be _between_ the supplied values. Array should have two values matching the `sortKey` type. (KeyConditionExpression)                                                                                                                                            |
 | beginsWith |  same as `sortKey`  | Specifies `sortKey` condition to _begin with_ the supplied values. (KeyConditionExpression)                                                                                                                                                                                                      |
 | filters    | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression)                                                                                                                                  |
-| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression)                                                                                                                      |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression)                                                                                                                     |
 | startKey   |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate (if you're querying a secondary index, the keys for the primary index will also need to be included in the object - see `LastEvaluatedKey` result for details). (ExclusiveStartKey) |
 | entity     |      `string`       | The name of a table Entity to evaluate `filters` and `attributes` against.                                                                                                                                                                                                                       |
 | execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                                                             |
@@ -646,7 +646,7 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 | capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                               |
 | select     |      `string`       | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select)                                                        |
 | filters    | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](#filters-and-conditions). (FilterExpression)                                             |
-| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression)                                |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression)                               |
 | startKey   |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey)                                                                          |
 | segments   |      `number`       | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments)                                                         |
 | segment    |      `number`       | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment)                                                                                |
@@ -679,13 +679,13 @@ The `batchGet` method accepts three arguments. The first is an `array` of item k
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding BatchGetItem API references in parentheses):
 
-| Option     |               Type                | Description                                                                                                                                                                 |
-| ---------- | :-------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead)                                                                                                                      |
-| capacity   |             `string`              | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                |
+| Option     |               Type                | Description                                                                                                                                                                  |
+| ---------- | :-------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead)                                                                                                                       |
+| capacity   |             `string`              | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                 |
 | attributes |  `array` or `object` (see below)  | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression) |
-| execute    |             `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                        |
-| parse      |             `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                               |
+| execute    |             `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                         |
+| parse      |             `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                |
 
 #### Specifying options for multiple tables
 
@@ -917,13 +917,13 @@ The `get` method accepts three arguments. The first argument accepts an `object`
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding GetItem API references in parentheses):
 
-| Option     |        Type         | Description                                                                                                                                                                 |
-| ---------- | :-----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                      |
-| capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                |
+| Option     |        Type         | Description                                                                                                                                                                  |
+| ---------- | :-----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                       |
+| capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                 |
 | attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](#projection-expressions) below (ProjectionExpression) |
-| execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                        |
-| parse      |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                               |
+| execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                         |
+| parse      |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                |
 
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](#adding-custom-parameters-and-clauses) for more information.
 
@@ -984,7 +984,7 @@ The optional second argument accepts an `options` object. The following options 
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                                 |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determines whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                             |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                          |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
@@ -1018,7 +1018,7 @@ The optional second argument accepts an `options` object. The following options 
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](#filters-and-conditions). (ConditionExpression)                                                              |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determines whether to return item attributes as they appeared before or after the item was updated. One of either `none`, `all_old`, `updated_old`, `all_new`, `updated_new`. (ReturnValues)                                                             |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before or after the item was updated. One of either `NONE`, `ALL_OLD`, `UPDATED_OLD`, `ALL_NEW`, `UPDATED_NEW`. (ReturnValues)                                                          |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
