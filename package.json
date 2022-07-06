@@ -48,6 +48,8 @@
     "typescript": "^4.1.3"
   },
   "files": [
-    "dist/"
+    "dist/index.*",
+    "dist/classes/",
+    "dist/lib/"
   ]
 }
