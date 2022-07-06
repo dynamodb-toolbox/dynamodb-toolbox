@@ -59,7 +59,7 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'introduction/what-is-dynamodb-toolbox',
             position: 'right',
             label: 'Documentation'
           },
@@ -78,26 +78,26 @@ const config = {
             title: 'Documentation',
             items: [
               {
-                label: 'Getting Started',
-                to: '/docs/intro'
+                label: 'What is DynamoDB Toolbox?',
+                to: '/docs'
               },
               {
-                label: 'Installation',
-                to: '/docs/intro'
+                label: 'Quick Start',
+                to: '/docs/introduction/quick-start'
               },
               {
-                label: 'Tutorials',
-                to: '/docs/intro'
+                label: 'Contributing',
+                to: '/docs/contributing/'
               }
             ]
           },
           {
             title: 'Community',
             items: [
-              // {
-              //   label: 'Discord',
-              //   href: 'https://discordapp.com/invite/docusaurus'
-              // },
+              {
+                label: 'GitHub Discussions',
+                href: 'https://github.com/jeremydaly/dynamodb-toolbox/discussions'
+              },
               {
                 label: 'Twitter',
                 href: 'https://twitter.com/jeremy_daly'
@@ -123,6 +123,12 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme
+      },
+      docs: {
+        sidebar: {
+          hideable: true,
+          autoCollapseCategories: false
+        }
       }
     })
 }

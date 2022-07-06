@@ -21,3 +21,8 @@
   align-items: center;
   justify-content: center;
 }
+
+.content {
+  margin: 2em auto;
+  max-width: 996px;
+}
