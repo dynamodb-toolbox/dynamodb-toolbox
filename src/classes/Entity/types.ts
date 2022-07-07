@@ -378,12 +378,12 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
     {
       [inputAttr in Attributes['always']['input']]:
       | Item[A.Cast<inputAttr, keyof Item>]
-      | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[];}
+      | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[]; }
     } &
     {
       [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
       | Item[A.Cast<optAttr, keyof Item>]
-      | { $delete?: string[]; $add?: any }
+      | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[]; }
     } &
     {
       [attr in Attributes['optional']]?:
