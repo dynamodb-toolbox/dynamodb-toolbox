@@ -392,8 +392,8 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
       | { $delete?: string[]; $add?: any }
     } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
       & {
-       $append: unknown[];
-       $prepend: unknown[];
+       $append?: unknown[];
+       $prepend?: unknown[];
   }>
 ]>
 
