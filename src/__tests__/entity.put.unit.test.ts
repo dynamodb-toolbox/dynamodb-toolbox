@@ -180,6 +180,25 @@ describe('put', () => {
     expect(Item).not.toHaveProperty('test_composite')
   })
 
+  it('accepts null values for optional attributes', () => {
+    let { Item } = TestEntity3.putParams({
+      email: 'test-pk',
+      test: 'hello',
+      test2: null,
+    })
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.test).toBe('hello')
+    //Attributes with NULL values are removed (by default)
+    expect(Item).not.toHaveProperty('test2')
+  })
+
+  it('fails with null values for non-optional attributes', () => {
+    expect(()=>TestEntity3.putParams({
+      email: 'test-pk',
+      test: null,
+    })).toThrow(`'test' is a required field`)
+  })
+
   it('creates item that overrides composite key', () => {
     let { Item } = TestEntity2.putParams({
       email: 'test-pk',
