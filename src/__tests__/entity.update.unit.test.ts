@@ -168,7 +168,7 @@ describe('update', () => {
     expect(()=>TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })).toThrow(`'test_string' has a default value and cannot be removed`);
   })
 
-  it.skip('creates update that just removes a field', () => {
+  it('creates update that just removes a field', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
       email: 'test-pk',
       test: null
@@ -179,7 +179,7 @@ describe('update', () => {
     expect(TableName).toBe('test-table2')
   })
 
-  it.skip('creates update that just removes a composite field', () => {
+  it('creates update that just removes a composite field', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
       email: 'test-pk',
       test_composite: null
