@@ -389,12 +389,9 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
       [attr in Attributes['optional']]?:
       | null
       | Item[A.Cast<attr, keyof Item>]
-      | { $delete?: string[]; $add?: any }
+      | { $delete?: string[]; $add?: any; $append?: any[]; $prepend?: any[] }
     } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
-      & {
-       $append?: unknown[];
-       $prepend?: unknown[];
-  }>
+  >
 ]>
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
