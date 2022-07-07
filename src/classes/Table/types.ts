@@ -6,8 +6,6 @@ import type { FilterExpressions } from '../../lib/expressionBuilder'
 import type { $ReadOptions, ConditionsOrFilters } from '../Entity'
 import type Table  from './Table';
 
-
-
 export interface TableConstructor<
   Name extends string,
   PartitionKey extends A.Key,
