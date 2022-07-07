@@ -1,6 +1,5 @@
 # DynamoDB Toolbox <!-- omit in toc -->
 
-[![Build Status](https://travis-ci.org/jeremydaly/dynamodb-toolbox.svg?branch=main)](https://travis-ci.org/jeremydaly/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
 [![npm](https://img.shields.io/npm/l/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)
 [![Coverage Status](https://coveralls.io/repos/github/jeremydaly/dynamodb-toolbox/badge.svg?branch=main)](https://coveralls.io/github/jeremydaly/dynamodb-toolbox?branch=main)
@@ -16,11 +15,11 @@ The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amaz
 
 v0.4 is here and now supports "Type Inferencing" 😎. This is a new feature that infers types from your Entity definitions. There should be NO regressions from v0.3.5, but please submit an issue if you find one!
 
-Feedback is welcome and much appreciated! (Huge thanks to @ThomasAribart for all his work on this 🙌)
+Feedback is welcome and much appreciated! (Huge thanks to [@ThomasAribart](https://github.com/ThomasAribart) for all his work on this 🙌)
 
 ## Docs & Community
 
-- [Full Documentation](https://www.dynamodbtoolbox.com)
+- [Full Documentation](https://www.dynamodbtoolbox.com/docs)
 - [GitHub Discussions](https://github.com/jeremydaly/dynamodb-toolbox/discussions)
 
 ## Quick Start

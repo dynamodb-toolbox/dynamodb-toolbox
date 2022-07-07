@@ -42,6 +42,11 @@ const config = {
         blog: false,
         theme: {
           customCss: require.resolve('./src/css/custom.css')
+        },
+
+        gtag: {
+          trackingID: 'G-08NETQF4FS',
+          anonymizeIP: true
         }
       })
     ]
@@ -66,10 +71,12 @@ const config = {
             label: 'Documentation'
           },
           // { to: '/blog', label: 'Blog', position: 'left' },
+
           {
             href: 'https://github.com/jeremydaly/dynamodb-toolbox',
-            label: 'GitHub',
-            position: 'right'
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository'
           }
         ]
       },
