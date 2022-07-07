@@ -189,7 +189,7 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
   })
 
-  it.skip('creates update that just removes a field', () => {
+  it('creates update that just removes a field', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
       email: 'test-pk',
       test: null
@@ -200,7 +200,7 @@ describe('update', () => {
     expect(TableName).toBe('test-table2')
   })
 
-  it.skip('creates update that just removes a composite field', () => {
+  it('creates update that just removes a composite field', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
       email: 'test-pk',
       test_composite: null
