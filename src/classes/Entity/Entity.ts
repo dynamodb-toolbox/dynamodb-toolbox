@@ -247,6 +247,10 @@ class Entity<
   } // end attribute
 
   // Parses the item
+  parse(input: {Item: unknown}, include?: string[]): Item
+  parse(input:  {Items: unknown[]} , include?: string[]): Item[]
+  parse(input: unknown[], include?: string[] ): Item[]
+  parse(input: unknown, include?: string[]): Item
   parse(input: any, include: string[] = []): Item | Item[] {
     // TODO: 'include' needs to handle nested maps?
 
