@@ -50,6 +50,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: 'img/dynamodb-toolbox-card.png',
       navbar: {
         // title: 'DynamoDB Toolbox',
         logo: {
