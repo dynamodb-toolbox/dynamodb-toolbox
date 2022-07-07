@@ -1,6 +1,6 @@
 # Adding Custom Parameters and Clauses
 
-This libary supports all API options for the available API methods, so it is unnecessary for you to provide additional parameters. However, if you would like to pass custom parameters, simply pass them in an object as the last parameter to any appropriate method.
+This library supports all API options for the available API methods, so it is unnecessary for you to provide additional parameters. However, if you would like to pass custom parameters, simply pass them in an object as the last parameter to any appropriate method.
 
 ```typescript
 const result = await MyEntity.update(

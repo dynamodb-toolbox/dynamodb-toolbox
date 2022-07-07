@@ -208,7 +208,7 @@ The data is returned with the same response syntax as the [DynamoDB BatchWriteIt
 
 The `transactGet` method is a wrapper for the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). The DynamoDB Toolbox `transactGet` method supports all **TransactGetItem** API operations. The `transactGet` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `transactGetParams` can be used, but will only retrieve the generated parameters.
 
-The `transacthGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `getTransaction` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
+The `transactGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `getTransaction` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding TransactGetItems API references in parentheses):
 

@@ -4,7 +4,7 @@
 
 #### attribute(attribute)
 
-Returns the Table's attribute name for the suppled `attribute`. The `attribute` must be a `string` and can be either a valid attribute name or alias.
+Returns the Table's attribute name for the supplied `attribute`. The `attribute` must be a `string` and can be either a valid attribute name or alias.
 
 ## parse
 
@@ -66,7 +66,7 @@ The optional second argument accepts an `options` object. The following options 
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](/docs/filters-and-conditions). (ConditionExpression)                                                         |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determins whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues)                                                                                                              |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues)                                                                                                             |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
@@ -101,7 +101,7 @@ The optional second argument accepts an `options` object. The following options 
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](/docs/filters-and-conditions). (ConditionExpression)                                                            |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determins whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                           |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                          |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
@@ -137,7 +137,7 @@ The optional second argument accepts an `options` object. The following options 
 | conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](/docs/filters-and-conditions). (ConditionExpression)                                                         |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| returnValues |      `string`       | Determins whether to return item attributes as they appeared before or after the item was updated. One of either `none`, `all_old`, `updated_old`, `all_new`, `updated_new`. (ReturnValues)                                                           |
+| returnValues |      `string`       | Determines whether to return item attributes as they appeared before or after the item was updated. One of either `none`, `all_old`, `updated_old`, `all_new`, `updated_new`. (ReturnValues)                                                          |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
