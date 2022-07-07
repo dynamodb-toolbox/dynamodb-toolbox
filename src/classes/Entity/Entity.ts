@@ -1059,7 +1059,7 @@ class Entity<
 
           const attributeHasDefaultValue = schema.attributes[attrs[i]].default !== undefined
           if(attributeHasDefaultValue) {
-            error(`'${attrs[i]}' is required due to having a default value and cannot be removed`)
+error(`'${attrs[i]}' has a default value and cannot be removed`)
           }
 
           // Grab the attribute name and add to REMOVE and names
