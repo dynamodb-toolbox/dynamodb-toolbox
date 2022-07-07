@@ -165,7 +165,7 @@ describe('update', () => {
   })
 
   // TODO: Fix removes with default values
-  it.skip('creates update that removes fields', () => {
+  it('creates update that removes fields', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })
 
