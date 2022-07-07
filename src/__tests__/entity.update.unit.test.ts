@@ -165,7 +165,7 @@ describe('update', () => {
   })
 
   it('throws when removing fields with default values', () => {
-    expect(TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })).toThrow();
+    expect(TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })).rejects.toThrow();
   })
 
   it.skip('creates update that just removes a field', () => {
