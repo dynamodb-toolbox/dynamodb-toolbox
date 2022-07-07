@@ -18,10 +18,20 @@ function HomepageHeader() {
         </h1>
 
         <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
+        <div className={styles.indexCtas}>
           <Link className="button button--secondary button--lg" to="/docs/">
             View the Documentation
           </Link>
+
+          <span className={styles.indexCtasGitHubButtonWrapper}>
+            <iframe
+              className={styles.indexCtasGitHubButton}
+              src="https://ghbtns.com/github-btn.html?user=jeremydaly&amp;repo=dynamodb-toolbox&amp;type=star&amp;count=true&amp;size=large"
+              width={160}
+              height={30}
+              title="GitHub Stars"
+            />
+          </span>
         </div>
       </div>
     </header>
