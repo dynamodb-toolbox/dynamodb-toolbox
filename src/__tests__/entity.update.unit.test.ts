@@ -164,7 +164,7 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
   })
 
-  it('throws when removing fields with default values', () => {
+  it('fails when removing fields with default values', () => {
     expect(TestEntity.updateParams.bind({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })).toThrow();
   })
 
