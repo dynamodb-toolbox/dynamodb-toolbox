@@ -378,19 +378,20 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
     {
       [inputAttr in Attributes['always']['input']]:
       | Item[A.Cast<inputAttr, keyof Item>]
-      | { $delete?: string[]; $add?: any }
+      | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[]; }
     } &
     {
       [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
       | Item[A.Cast<optAttr, keyof Item>]
-      | { $delete?: string[]; $add?: any }
+      | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[]; }
     } &
     {
       [attr in Attributes['optional']]?:
       | null
       | Item[A.Cast<attr, keyof Item>]
-      | { $delete?: string[]; $add?: any }
-    } & { $remove?: Attributes['optional'] | Attributes['optional'][] }>
+      | { $delete?: string[]; $add?: any; $append?: any[]; $prepend?: any[] }
+    } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
+  >
 ]>
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
