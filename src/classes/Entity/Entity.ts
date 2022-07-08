@@ -911,7 +911,9 @@ class Entity<
       ADD = [],
       DELETE = [],
       ExpressionAttributeNames = {},
-      ExpressionAttributeValues = {},
+      ExpressionAttributeValues = {
+        ddb_toolbox_empty_array: []
+      },
       ...params
     }: UpdateCustomParams = {}
   ): DocumentClient.UpdateItemInput {
@@ -1059,7 +1061,7 @@ class Entity<
 
           const attributeHasDefaultValue = schema.attributes[attrs[i]].default !== undefined
           if(attributeHasDefaultValue) {
-error(`'${attrs[i]}' has a default value and cannot be removed`)
+            error(`'${attrs[i]}' has a default value and cannot be removed`)
           }
 
           // Grab the attribute name and add to REMOVE and names
@@ -1113,12 +1115,13 @@ error(`'${attrs[i]}' has a default value and cannot be removed`)
           // if list and appending or prepending
         } else if (mapping.type === 'list' && (data[field]?.$append || data[field]?.$prepend)) {
           if (data[field].$append) {
-            SET.push(`#${field} = list_append(#${field},:${field})`)
+            SET.push(`#${field} = list_append(if_not_exists(#${field}, :ddb_toolbox_empty_array),:${field})`)
             values[`:${field}`] = validateType(mapping, field, data[field].$append)
           } else {
-            SET.push(`#${field} = list_append(:${field},#${field})`)
+            SET.push(`#${field} = list_append(:${field},if_not_exists(#${field}, :ddb_toolbox_empty_array))`)
             values[`:${field}`] = validateType(mapping, field, data[field].$prepend)
           }
+
           // Add field to names
           names[`#${field}`] = field
           // if a list and updating by index
