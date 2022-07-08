@@ -15,6 +15,7 @@ import getKey from '../../lib/getKey'
 import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../../lib/utils'
+import { UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS } from '../../constants';
 import type { ScanOptions, TableDef } from '../Table'
 import type {
   $GetOptions,
@@ -42,7 +43,6 @@ import type {
   Writable,
   Readonly
 } from './types'
-import { UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS } from '../../constants';
 
 class Entity<
   EntityItemOverlay extends Overlay = undefined,

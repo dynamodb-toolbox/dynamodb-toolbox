@@ -1,6 +1,6 @@
+import { UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS } from '../constants';
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap-tests'
-import { UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS } from '../constants';
 
 const TestTable = new Table({
   name: 'test-table',
@@ -218,7 +218,7 @@ describe('update', () => {
 
     expect(UpdateExpression).toBe('SET #test_composite = :test_composite')
     expect(ExpressionAttributeNames).toEqual({ '#test_composite': 'test_composite' })
-    expect(ExpressionAttributeValues).toEqual({ ':test_composite': 'test', ...UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS})
+    expect(ExpressionAttributeValues).toEqual({ ':test_composite': 'test', ...UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS })
     expect(Key).toEqual({ pk: 'test-pk' })
     expect(TableName).toBe('test-table2')
   })
