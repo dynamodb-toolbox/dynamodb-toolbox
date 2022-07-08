@@ -912,7 +912,7 @@ class Entity<
       DELETE = [],
       ExpressionAttributeNames = {},
       ExpressionAttributeValues = {
-        ddb_toolbox_empty_array: []
+        ddb_toolbox_default_list_value: []
       },
       ...params
     }: UpdateCustomParams = {}
@@ -1115,10 +1115,10 @@ class Entity<
           // if list and appending or prepending
         } else if (mapping.type === 'list' && (data[field]?.$append || data[field]?.$prepend)) {
           if (data[field].$append) {
-            SET.push(`#${field} = list_append(if_not_exists(#${field}, :ddb_toolbox_empty_array),:${field})`)
+            SET.push(`#${field} = list_append(if_not_exists(#${field}, :ddb_toolbox_default_list_value) ,:${field})`)
             values[`:${field}`] = validateType(mapping, field, data[field].$append)
           } else {
-            SET.push(`#${field} = list_append(:${field},if_not_exists(#${field}, :ddb_toolbox_empty_array))`)
+            SET.push(`#${field} = list_append(:${field}, if_not_exists(#${field}, :ddb_toolbox_default_list_value))`)
             values[`:${field}`] = validateType(mapping, field, data[field].$prepend)
           }
 

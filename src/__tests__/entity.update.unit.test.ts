@@ -217,7 +217,7 @@ describe('update', () => {
 
     expect(UpdateExpression).toBe('SET #test_composite = :test_composite')
     expect(ExpressionAttributeNames).toEqual({ '#test_composite': 'test_composite' })
-    expect(ExpressionAttributeValues).toEqual({ ':test_composite': 'test' })
+    expect(ExpressionAttributeValues).toEqual({ ':test_composite': 'test',  "ddb_toolbox_default_list_value": [] })
     expect(Key).toEqual({ pk: 'test-pk' })
     expect(TableName).toBe('test-table2')
   })
@@ -464,7 +464,7 @@ describe('update', () => {
         test_list_coerce: { $prepend: [1, 2, 3] }
       })
     expect(UpdateExpression).toBe(
-      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(#test_list,:test_list), #test_list_coerce = list_append(:test_list_coerce,#test_list_coerce)'
+      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :ddb_toolbox_default_list_value) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :ddb_toolbox_default_list_value))'
     )
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
@@ -730,7 +730,9 @@ describe('update', () => {
 
     expect(params.UpdateExpression).toBe('REMOVE #test')
     expect(params.ExpressionAttributeNames).toEqual({ '#test': 'test' })
-    expect(params).not.toHaveProperty('ExpressionAttributeValues')
+    expect(params.ExpressionAttributeValues).toEqual({
+      "ddb_toolbox_default_list_value": []
+    })
     expect(params).not.toHaveProperty('ConditionExpression')
   })
 
