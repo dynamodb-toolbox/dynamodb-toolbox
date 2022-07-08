@@ -1,5 +1,6 @@
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap-tests'
+import { UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS } from '../constants';
 
 const TestTable = new Table({
   name: 'test-table',
@@ -217,7 +218,7 @@ describe('update', () => {
 
     expect(UpdateExpression).toBe('SET #test_composite = :test_composite')
     expect(ExpressionAttributeNames).toEqual({ '#test_composite': 'test_composite' })
-    expect(ExpressionAttributeValues).toEqual({ ':test_composite': 'test',  "ddb_toolbox_default_list_value": [] })
+    expect(ExpressionAttributeValues).toEqual({ ':test_composite': 'test', ...UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS})
     expect(Key).toEqual({ pk: 'test-pk' })
     expect(TableName).toBe('test-table2')
   })
@@ -718,7 +719,7 @@ describe('update', () => {
       'SET #field = :field, #test = :test REMOVE #field_remove = :field_remove ADD #field_add :field_add DELETE #field_delete'
     )
     expect(ExpressionAttributeNames).toEqual({ '#test': 'test', '#field': 'field' })
-    expect(ExpressionAttributeValues).toEqual({ ':test': 'test---test', ':field': 'my value' })
+    expect(ExpressionAttributeValues).toEqual({ ':test': 'test---test', ':field': 'my value', ...UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS })
     expect(ConditionExpression).toBe('#field > 0')
   })
 
@@ -730,9 +731,7 @@ describe('update', () => {
 
     expect(params.UpdateExpression).toBe('REMOVE #test')
     expect(params.ExpressionAttributeNames).toEqual({ '#test': 'test' })
-    expect(params.ExpressionAttributeValues).toEqual({
-      "ddb_toolbox_default_list_value": []
-    })
+    expect(params.ExpressionAttributeValues).toEqual(UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS)
     expect(params).not.toHaveProperty('ConditionExpression')
   })
 

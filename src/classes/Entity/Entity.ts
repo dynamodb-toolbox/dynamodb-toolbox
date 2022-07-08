@@ -42,6 +42,7 @@ import type {
   Writable,
   Readonly
 } from './types'
+import { UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS } from '../../constants';
 
 class Entity<
   EntityItemOverlay extends Overlay = undefined,
@@ -911,9 +912,7 @@ class Entity<
       ADD = [],
       DELETE = [],
       ExpressionAttributeNames = {},
-      ExpressionAttributeValues = {
-        ddb_toolbox_default_list_value: []
-      },
+      ExpressionAttributeValues = {},
       ...params
     }: UpdateCustomParams = {}
   ): DocumentClient.UpdateItemInput {
@@ -1229,7 +1228,7 @@ class Entity<
     ).trim()
 
     // Merge attribute values
-    ExpressionAttributeValues = Object.assign(values, ExpressionAttributeValues)
+    ExpressionAttributeValues = Object.assign(values, ExpressionAttributeValues, UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS)
 
     // Generate the payload
     const payload = Object.assign(
