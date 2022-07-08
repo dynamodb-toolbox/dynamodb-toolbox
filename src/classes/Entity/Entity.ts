@@ -787,7 +787,7 @@ class Entity<
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
     options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
-    params: Partial<DocumentClient.UpdateItemInput> = {}
+    params: UpdateCustomParams = {}
   ): Promise<
     A.Compute<
       If<

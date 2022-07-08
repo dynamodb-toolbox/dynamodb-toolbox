@@ -460,9 +460,7 @@ describe('update', () => {
       TestEntity.updateParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // @ts-expect-error 💥 TODO: Improve list support
-        test_list: { $append: [1, 2, 3] },
-        // @ts-expect-error 💥 TODO: Improve list support
+        test_list: { $append: [1,2,3] },
         test_list_coerce: { $prepend: [1, 2, 3] }
       })
     expect(UpdateExpression).toBe(
