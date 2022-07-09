@@ -16,8 +16,9 @@ import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../../lib/utils'
 import {
-  UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY,
-  UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_VALUE,
+  ATTRIBUTE_VALUES_KEY_PREFIX,
+  ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
+  ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE,
 } from '../../constants';
 import type { ScanOptions, TableDef } from '../Table'
 import type {
@@ -1117,17 +1118,17 @@ class Entity<
           // if list and appending or prepending
         } else if (mapping.type === 'list' && (data[field]?.$append || data[field]?.$prepend)) {
           if (data[field].$append) {
-            SET.push(`#${field} = list_append(if_not_exists(#${field}, :${UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY}) ,:${field})`)
+            SET.push(`#${field} = list_append(if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:${field})`)
             values[`:${field}`] = validateType(mapping, field, data[field].$append)
           } else {
-            SET.push(`#${field} = list_append(:${field}, if_not_exists(#${field}, :${UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY}))`)
+            SET.push(`#${field} = list_append(:${field}, if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`)
             values[`:${field}`] = validateType(mapping, field, data[field].$prepend)
           }
 
           // Add field to names
           names[`#${field}`] = field
 
-          values[UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY] = UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_VALUE
+          values[`${ATTRIBUTE_VALUES_KEY_PREFIX}${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
 
           // if a list and updating by index
         } else if (

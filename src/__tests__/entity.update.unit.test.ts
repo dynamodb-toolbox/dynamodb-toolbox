@@ -1,6 +1,10 @@
 import { Table, Entity } from '../index';
 import { DocumentClient } from './bootstrap-tests';
-import { UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY, UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_VALUE } from '../constants';
+import {
+  ATTRIBUTE_VALUES_KEY_PREFIX,
+  ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
+  ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE,
+} from '../constants';
 
 const TestTable = new Table({
   name: 'test-table',
@@ -466,7 +470,7 @@ describe('update', () => {
         test_list_coerce: { $prepend: [1, 2, 3] },
       });
     expect(UpdateExpression).toBe(
-      `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY}))`,
+      `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`,
     );
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
@@ -501,8 +505,8 @@ describe('update', () => {
 
     expect(TableName).toBe('test-table');
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' });
-    expect(ExpressionAttributeValues![UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY])
-      .toBe(UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_VALUE);
+    expect(ExpressionAttributeValues![`${ATTRIBUTE_VALUES_KEY_PREFIX}${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`])
+      .toBe(ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE);
   });
 
   it('doesn\'t provide a default list value when not appending/prepending a value to a list', () => {
@@ -513,7 +517,7 @@ describe('update', () => {
 
     expect(TableName).toBe('test-table');
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' });
-    expect(ExpressionAttributeValues).not.toHaveProperty(UPDATE_EXPRESSION_VALUES_LIST_DEFAULT_KEY);
+    expect(ExpressionAttributeValues).not.toHaveProperty(ATTRIBUTE_VALUES_LIST_DEFAULT_KEY);
   });
 
   it('updates nested data in a map', () => {
