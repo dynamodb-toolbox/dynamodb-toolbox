@@ -1170,9 +1170,11 @@ class Entity<
                 } else if (input.$append) {
                   SET.push(`${path} = list_append(${path}, if_not_exists(:${value}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`)
                   values[`:${value}`] = input.$append
+                  values[`${ATTRIBUTE_VALUES_KEY_PREFIX}${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(`${path} = list_append(if_not_exists(:${value} , :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), ${path})`)
                   values[`:${value}`] = input.$prepend
+                  values[`${ATTRIBUTE_VALUES_KEY_PREFIX}${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {
