@@ -1168,10 +1168,10 @@ class Entity<
                   ADD.push(`${path} :${value}`)
                   values[`:${value}`] = input.$add
                 } else if (input.$append) {
-                  SET.push(`${path} = list_append(${path},:${value})`)
+                  SET.push(`${path} = list_append(${path}, if_not_exists(:${value}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`)
                   values[`:${value}`] = input.$append
                 } else if (input.$prepend) {
-                  SET.push(`${path} = list_append(:${value},${path})`)
+                  SET.push(`${path} = list_append(if_not_exists(:${value} , :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), ${path})`)
                   values[`:${value}`] = input.$prepend
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
