@@ -1228,7 +1228,7 @@ class Entity<
     ).trim()
 
     // Merge attribute values
-    ExpressionAttributeValues = Object.assign(values, ExpressionAttributeValues, UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS)
+    ExpressionAttributeValues = Object.assign(UPDATE_EXPRESSION_ATTRIBUTE_VALUES_DEFAULTS, values, ExpressionAttributeValues)
 
     // Generate the payload
     const payload = Object.assign(
