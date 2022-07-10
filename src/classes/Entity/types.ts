@@ -28,7 +28,7 @@ export interface EntityConstructor<EntityTable extends TableDef | undefined = un
   autoParse?: AutoParse;
 }
 
-type KeyAttributeDefinition = {
+export type KeyAttributeDefinition = {
   type: 'string' | 'number' | 'binary'
   // 🔨 TOIMPROVE: Probably typable
   default: any
@@ -95,7 +95,7 @@ export type CompositeAttributeDefinition =
   | [string, number, DynamoDBTypes]
   | [string, number, PureAttributeDefinition]
 
-type AttributeDefinition =
+export type AttributeDefinition =
   | DynamoDBTypes
   | PartitionKeyDefinition
   | SortKeyDefinition
@@ -106,10 +106,10 @@ type AttributeDefinition =
 
 export type AttributeDefinitions = Record<A.Key, AttributeDefinition>
 
-type InferKeyAttribute<Definitions extends AttributeDefinitions,
+export type InferKeyAttribute<Definitions extends AttributeDefinitions,
   KeyType extends 'partitionKey' | 'sortKey'> = O.SelectKeys<Definitions, Record<KeyType, true>>
 
-type InferMappedAttributes<Definitions extends AttributeDefinitions,
+export type InferMappedAttributes<Definitions extends AttributeDefinitions,
   AttributeName extends A.Key> = O.SelectKeys<Definitions, [AttributeName, any, any?]>
 
 export interface ParsedAttributes<Attributes extends A.Key = A.Key> {
@@ -127,7 +127,7 @@ export interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   shown: Attributes;
 }
 
-type GetDependsOnAttributes<A extends AttributeDefinition> = A extends { dependsOn: A.Key }
+export type GetDependsOnAttributes<A extends AttributeDefinition> = A extends { dependsOn: A.Key }
   ? A['dependsOn']
   : A extends { dependsOn: A.Key[] }
     ? A['dependsOn'][number]
@@ -193,7 +193,7 @@ export type ParseAttributes<Definitions extends AttributeDefinitions,
   shown: Exclude<Attribute, Hidden>
 }
 
-type FromDynamoData<T extends DynamoDBTypes> = {
+export type FromDynamoData<T extends DynamoDBTypes> = {
   string: string
   boolean: boolean
   number: number
@@ -203,7 +203,7 @@ type FromDynamoData<T extends DynamoDBTypes> = {
   set: any[]
 }[T]
 
-type InferItemAttributeValue<Definitions extends AttributeDefinitions,
+export type InferItemAttributeValue<Definitions extends AttributeDefinitions,
   AttributeName extends keyof Definitions,
   Definition = Definitions[AttributeName]> = {
   dynamoDbType: Definition extends DynamoDBTypes ? FromDynamoData<Definition> : never
@@ -243,7 +243,7 @@ export type InferItem<Definitions extends AttributeDefinitions,
 },
   Attributes['optional']>
 
-type CompositePrimaryKeyPart<Item extends O.Object,
+export type CompositePrimaryKeyPart<Item extends O.Object,
   Attributes extends ParsedAttributes,
   KeyType extends 'partitionKey' | 'sortKey',
   KeyPureAttribute extends A.Key = Attributes['key'][KeyType]['pure'],
@@ -270,7 +270,7 @@ export type InferCompositePrimaryKey<Item extends O.Object,
 
 export type Overlay = undefined | O.Object
 
-type ConditionOrFilter<Attributes extends A.Key = A.Key> = (
+export type ConditionOrFilter<Attributes extends A.Key = A.Key> = (
   | { attr: Attributes }
   | { size: string }
   ) &
@@ -297,7 +297,7 @@ export type ConditionsOrFilters<Attributes extends A.Key = A.Key> =
   | ConditionOrFilter<Attributes>
   | ConditionsOrFilters<Attributes>[]
 
-type BaseOptions<Execute extends boolean | undefined = undefined,
+export type BaseOptions<Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined> = {
   capacity: DocumentClient.ReturnConsumedCapacity
   execute: Execute
@@ -321,7 +321,7 @@ export type EntityQueryOptions<Attributes extends A.Key = A.Key,
   filters: ConditionsOrFilters<FiltersAttributes>
 }>
 
-type $WriteOptions<Attributes extends A.Key = A.Key,
+export type $WriteOptions<Attributes extends A.Key = A.Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined> = BaseOptions<Execute, Parse> & {
   conditions: ConditionsOrFilters<Attributes>
@@ -358,7 +358,7 @@ export type $UpdateOptions<Attributes extends A.Key = A.Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
-interface UpdateCustomParameters {
+export interface UpdateCustomParameters {
   SET: string[];
   REMOVE: string[];
   ADD: string[];
@@ -417,7 +417,7 @@ export type ShouldParse<Parse extends boolean | undefined, AutoParse extends boo
 export type Readonly<T> = T extends O.Object ? { readonly [P in keyof T]: Readonly<T[P]> } : T
 export type Writable<T> = { -readonly [P in keyof T]: Writable<T[P]> }
 
-type EntityDef = {
+export type EntityDef = {
   _typesOnly: { _entityItemOverlay: Overlay }
   timestamps: boolean
   createdAlias: string
@@ -426,7 +426,7 @@ type EntityDef = {
   attributes: AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>
 }
 
-type InferEntityItem<E extends EntityDef,
+export type InferEntityItem<E extends EntityDef,
   WritableAttributeDefinitions extends AttributeDefinitions = A.Cast<O.Writable<E['attributes'], A.Key, 'deep'>,
     AttributeDefinitions>,
   Attributes extends ParsedAttributes = ParseAttributes<WritableAttributeDefinitions,
@@ -441,7 +441,7 @@ export type EntityItem<E extends EntityDef> = E['_typesOnly']['_entityItemOverla
   ? E['_typesOnly']['_entityItemOverlay']
   : InferEntityItem<E>
 
-type ExtractAttributes<E extends EntityDef> = E['_typesOnly']['_entityItemOverlay'] extends Record<A.Key,
+export type ExtractAttributes<E extends EntityDef> = E['_typesOnly']['_entityItemOverlay'] extends Record<A.Key,
     any>
   ? ParsedAttributes<keyof E['_typesOnly']['_entityItemOverlay']>
   : ParseAttributes<A.Cast<O.Writable<E['attributes'], A.Key, 'deep'>, AttributeDefinitions>,
