@@ -514,6 +514,37 @@ describe('update', () => {
     expect(ExpressionAttributeValues).not.toHaveProperty(ATTRIBUTE_VALUES_LIST_DEFAULT_KEY);
   });
 
+  it('doesn\'t provide a default list value when not appending/prepending a value to a nested list within a map.', () => {
+      let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.updateParams({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_map: {
+          $set: {
+            prop1: 'some-value'
+          }
+        }
+      })
+
+
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
+    expect(TableName).toBe('test-table')
+
+    expect(UpdateExpression).toBe(
+      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(#test_map.#test_map_prop1, if_not_exists(:test_map_prop1, :_ld)), #test_map.#test_map_prop2 = list_append(if_not_exists(:test_map_prop2 , :_ld), #test_map.#test_map_prop2), #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(#test_map.#test_map_prop3.#test_map_prop3_prop4, if_not_exists(:test_map_prop3_prop4, :_ld))'
+    )
+
+    expect(ExpressionAttributeNames).toEqual(expect.objectContaining({
+      '#test_map': 'test_map',
+      '#test_map_prop1': 'prop1',
+    }))
+
+    expect(ExpressionAttributeValues).toEqual(expect.objectContaining({
+      ':test_map_prop1': 'some-value',
+    }))
+    expect(ExpressionAttributeValues).not.toHaveProperty(`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`)
+  })
+
   it('updates nested data in a map', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestEntity.updateParams({
