@@ -1173,7 +1173,7 @@ class Entity<
                   values[`:${value}`] = input.$append
                   values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
-                  SET.push(`${path} = list_append(if_not_exists(:${value} , :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), ${path})`)
+                  SET.push(`${path} = list_append(if_not_exists(:${value}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), ${path})`)
 
                   values[`:${value}`] = input.$prepend
                   values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
