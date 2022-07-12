@@ -16,7 +16,6 @@ import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../../lib/utils'
 import {
-  ATTRIBUTE_VALUES_KEY_PREFIX,
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE,
 } from '../../constants';
@@ -1128,7 +1127,7 @@ class Entity<
           // Add field to names
           names[`#${field}`] = field
 
-          values[`${ATTRIBUTE_VALUES_KEY_PREFIX}${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+          values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
 
           // if a list and updating by index
         } else if (
@@ -1170,11 +1169,11 @@ class Entity<
                 } else if (input.$append) {
                   SET.push(`${path} = list_append(${path}, if_not_exists(:${value}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`)
                   values[`:${value}`] = input.$append
-                  values[`${ATTRIBUTE_VALUES_KEY_PREFIX}${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(`${path} = list_append(if_not_exists(:${value} , :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), ${path})`)
                   values[`:${value}`] = input.$prepend
-                  values[`${ATTRIBUTE_VALUES_KEY_PREFIX}${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {

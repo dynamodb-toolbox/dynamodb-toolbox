@@ -1,4 +1,4 @@
-import { ATTRIBUTE_VALUES_KEY_PREFIX, ATTRIBUTE_VALUES_LIST_DEFAULT_KEY, ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE } from '../constants';
+import { ATTRIBUTE_VALUES_LIST_DEFAULT_KEY, ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE } from '../constants';
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap-tests'
 
@@ -499,7 +499,7 @@ describe('update', () => {
 
     expect(TableName).toBe('test-table');
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' });
-    expect(ExpressionAttributeValues![`${ATTRIBUTE_VALUES_KEY_PREFIX}${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`])
+    expect(ExpressionAttributeValues![`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`])
       .toBe(ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE);
   });
 
