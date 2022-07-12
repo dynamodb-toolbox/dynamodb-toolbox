@@ -499,6 +499,7 @@ describe('update', () => {
 
     expect(TableName).toBe('test-table');
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' });
+
     expect(ExpressionAttributeValues![`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`])
       .toBe(ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE);
   });
@@ -511,6 +512,7 @@ describe('update', () => {
 
     expect(TableName).toBe('test-table');
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' });
+
     expect(ExpressionAttributeValues).not.toHaveProperty(ATTRIBUTE_VALUES_LIST_DEFAULT_KEY);
   });
 
@@ -623,7 +625,6 @@ describe('update', () => {
       '#test_map_prop3': 'prop3',
       '#test_map_prop3_prop4': 'prop4',
     }))
-
     expect(ExpressionAttributeValues).toEqual(expect.objectContaining({
       ':test_map_prop1': [1, 2, 3],
       ':test_map_prop2': [1, 2, 3],
