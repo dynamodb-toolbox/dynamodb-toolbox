@@ -558,6 +558,51 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
   })
 
+  it('supports appending/prepending nested lists in a map.', () => {
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.updateParams({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_map: {
+          $set: {
+            prop1: {
+              $append: [1, 2, 3]
+            },
+            prop2: {
+              $prepend: [1, 2, 3]
+            },
+            'prop3.prop4': {
+              $append: [1, 2, 3]
+            },
+          }
+        }
+      })
+
+
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
+    expect(TableName).toBe('test-table')
+
+    expect(UpdateExpression).toBe(
+      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(#test_map.#test_map_prop1, if_not_exists(:test_map_prop1, :_ld)), #test_map.#test_map_prop2 = list_append(if_not_exists(:test_map_prop2 , :_ld), #test_map.#test_map_prop2), #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(#test_map.#test_map_prop3.#test_map_prop3_prop4, if_not_exists(:test_map_prop3_prop4, :_ld))'
+    )
+
+    expect(ExpressionAttributeNames).toEqual(expect.objectContaining({
+      '#test_map': 'test_map',
+      '#test_map_prop1': 'prop1',
+      '#test_map_prop2': 'prop2',
+      '#test_map_prop3': 'prop3',
+      '#test_map_prop3_prop4': 'prop4',
+    }))
+
+    expect(ExpressionAttributeValues).toEqual(expect.objectContaining({
+      ':test_map_prop1': [1, 2, 3],
+      ':test_map_prop2': [1, 2, 3],
+      ':test_map_prop3_prop4': [1, 2, 3],
+      [`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`]: []
+    }))
+  })
+
+
   it('uses an alias', async () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestEntity.updateParams({

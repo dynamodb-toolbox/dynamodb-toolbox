@@ -1165,13 +1165,16 @@ class Entity<
                   REMOVE.push(`${path}`)
                 } else if (input.$add) {
                   ADD.push(`${path} :${value}`)
+
                   values[`:${value}`] = input.$add
                 } else if (input.$append) {
                   SET.push(`${path} = list_append(${path}, if_not_exists(:${value}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`)
+
                   values[`:${value}`] = input.$append
                   values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(`${path} = list_append(if_not_exists(:${value} , :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), ${path})`)
+
                   values[`:${value}`] = input.$prepend
                   values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
@@ -1184,6 +1187,7 @@ class Entity<
                   })
                 } else {
                   SET.push(`${path} = :${value}`)
+
                   values[`:${value}`] = input
                 }
 
@@ -1195,6 +1199,7 @@ class Entity<
                       )
                     }
                     SET.push(`${path}[${i}] = :${value}_${i}`)
+
                     values[`:${value}_${i}`] = input.$set[i]
                   })
                 }
