@@ -164,32 +164,11 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
   })
 
-  // TODO: Fix removes with default values
-  it.skip('creates update that removes fields', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })
-
-    expect(UpdateExpression).toBe(
-      'SET #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_string'
-    )
-    expect(ExpressionAttributeNames).toEqual({
-      '#_md': '_md',
-      '#_ct': '_ct',
-      '#test_string': 'test_string',
-      '#_et': '_et'
-    })
-    expect(ExpressionAttributeValues).toHaveProperty(':_md')
-    expect(ExpressionAttributeValues).toHaveProperty(':_ct')
-    expect(ExpressionAttributeValues).not.toHaveProperty(':pk')
-    expect(ExpressionAttributeValues).not.toHaveProperty(':sk')
-    expect(ExpressionAttributeValues).not.toHaveProperty(':test_string')
-    expect(ExpressionAttributeValues).toHaveProperty(':_et')
-    expect(ExpressionAttributeValues![':_et']).toBe('TestEntity')
-    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
-    expect(TableName).toBe('test-table')
+  it('fails when removing fields with default values', () => {
+    expect(()=>TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })).toThrow(`'test_string' has a default value and cannot be removed`);
   })
 
-  it.skip('creates update that just removes a field', () => {
+  it('creates update that just removes a field', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
       email: 'test-pk',
       test: null
@@ -200,7 +179,7 @@ describe('update', () => {
     expect(TableName).toBe('test-table2')
   })
 
-  it.skip('creates update that just removes a composite field', () => {
+  it('creates update that just removes a composite field', () => {
     let { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
       email: 'test-pk',
       test_composite: null
@@ -481,9 +460,7 @@ describe('update', () => {
       TestEntity.updateParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // @ts-expect-error 💥 TODO: Improve list support
-        test_list: { $append: [1, 2, 3] },
-        // @ts-expect-error 💥 TODO: Improve list support
+        test_list: { $append: [1,2,3] },
         test_list_coerce: { $prepend: [1, 2, 3] }
       })
     expect(UpdateExpression).toBe(

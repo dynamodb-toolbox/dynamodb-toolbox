@@ -241,7 +241,7 @@ describe('query', () => {
     })
   })
 
-  fit('queries a table with lte, even falsy (0)', () => {
+  it('queries a table with lte, even falsy (0)', () => {
     let result = TestTable.queryParams('test', { index: 'GSINumber', lte: 0 })
 
     expect(result).toEqual({
@@ -264,7 +264,7 @@ describe('query', () => {
     })
   })
 
-  fit('queries a table with gt, even falsy (0)', () => {
+  it('queries a table with gt, even falsy (0)', () => {
     let result = TestTable.queryParams('test', { index: 'GSINumber', gt: 0 })
 
     expect(result).toEqual({
@@ -287,7 +287,7 @@ describe('query', () => {
     })
   })
 
-  fit('queries a table with gte, even falsy (0)', () => {
+  it('queries a table with gte, even falsy (0)', () => {
     let result = TestTable.queryParams('test', { index: 'GSINumber', gte: 0 })
 
     expect(result).toEqual({
@@ -310,7 +310,7 @@ describe('query', () => {
     })
   })
 
-  fit('queries a table with beginsWith, even falsy ("")', () => {
+  it('queries a table with beginsWith, even falsy ("")', () => {
     let result = TestTable.queryParams('test', { beginsWith: '' })
 
     expect(result).toEqual({
@@ -332,7 +332,7 @@ describe('query', () => {
     })
   })
 
-  fit('queries a table with between, even falsy (0)', () => {
+  it('queries a table with between, even falsy (0)', () => {
     let result = TestTable.queryParams('test', { index: 'GSINumber', between: [0, 0] })
 
     expect(result).toEqual({
