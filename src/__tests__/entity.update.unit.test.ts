@@ -1,4 +1,7 @@
-import { ATTRIBUTE_VALUES_LIST_DEFAULT_KEY, ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE } from '../constants';
+import {
+  ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
+  ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+} from '../constants'
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap-tests'
 
@@ -100,8 +103,13 @@ const TestEntityGSI = new Entity({
 
 describe('update', () => {
   it('creates default update', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk' })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk' })
 
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
@@ -135,12 +143,17 @@ describe('update', () => {
   })
 
   it('creates update with multiple fields (default types)', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_string: 'test string'
-      })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_string: 'test string'
+    })
     expect(UpdateExpression).toBe(
       'SET #test_string = :test_string, #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
     )
@@ -166,7 +179,9 @@ describe('update', () => {
   })
 
   it('fails when removing fields with default values', () => {
-    expect(()=>TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })).toThrow(`'test_string' has a default value and cannot be removed`);
+    expect(() =>
+      TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })
+    ).toThrow(`'test_string' has a default value and cannot be removed`)
   })
 
   it('creates update that just removes a field', () => {
@@ -213,8 +228,13 @@ describe('update', () => {
   })
 
   it('creates update that just saves a composite field', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity2.updateParams({ email: 'test-pk', test_composite: 'test' })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity2.updateParams({ email: 'test-pk', test_composite: 'test' })
 
     expect(UpdateExpression).toBe('SET #test_composite = :test_composite')
     expect(ExpressionAttributeNames).toEqual({ '#test_composite': 'test_composite' })
@@ -308,13 +328,18 @@ describe('update', () => {
   })
 
   it('performs an add operation', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_number: { $add: 10 },
-        test_number_set_type: { $add: [1, 2, 3] }
-      })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_number: { $add: 10 },
+      test_number_set_type: { $add: [1, 2, 3] }
+    })
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
     )
@@ -361,14 +386,19 @@ describe('update', () => {
   })
 
   it('performs a delete operation', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        pk: 'test-pk',
-        sk: 'test-sk',
-        test_string_set_type: { $delete: ['1', '2', '3'] },
-        // @ts-expect-error 💥 TODO: Improve list support
-        test_number_set_type: { $delete: [1, 2, 3] }
-      })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      pk: 'test-pk',
+      sk: 'test-sk',
+      test_string_set_type: { $delete: ['1', '2', '3'] },
+      // @ts-expect-error 💥 TODO: Improve list support
+      test_number_set_type: { $delete: [1, 2, 3] }
+    })
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) DELETE #test_string_set_type :test_string_set_type, #test_number_set_type :test_number_set_type'
     )
@@ -395,13 +425,18 @@ describe('update', () => {
   })
 
   it('removes items from a list', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error 💥 TODO: Improve list support
-        test_list: { $remove: [2, 3, 8] }
-      })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      // @ts-expect-error 💥 TODO: Improve list support
+      test_list: { $remove: [2, 3, 8] }
+    })
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_list[2], #test_list[3], #test_list[8]'
     )
@@ -425,13 +460,18 @@ describe('update', () => {
   })
 
   it('updates specific items in a list', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error 💥 TODO: Improve list support
-        test_list: { 2: 'Test2', 5: 'Test5' }
-      })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      // @ts-expect-error 💥 TODO: Improve list support
+      test_list: { 2: 'Test2', 5: 'Test5' }
+    })
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list[2] = :test_list_2, #test_list[5] = :test_list_5'
     )
@@ -457,15 +497,20 @@ describe('update', () => {
   })
 
   it('appends and prepends data to a list', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: { $append: [1,2,3] },
-        test_list_coerce: { $prepend: [1, 2, 3] }
-      })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_list: { $append: [1, 2, 3] },
+      test_list_coerce: { $prepend: [1, 2, 3] }
+    })
     expect(UpdateExpression).toBe(
-      `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`,
+      `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
     )
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
@@ -494,40 +539,45 @@ describe('update', () => {
       email: 'test-pk',
       sort: 'test-sk',
       test_list: { $append: [1, 2, 3] },
-      test_list_coerce: { $prepend: [1, 2, 3] },
-    });
+      test_list_coerce: { $prepend: [1, 2, 3] }
+    })
 
-    expect(TableName).toBe('test-table');
-    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' });
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
 
-    expect(ExpressionAttributeValues![`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`])
-      .toBe(ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE);
-  });
+    expect(ExpressionAttributeValues![`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`]).toBe(
+      ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+    )
+  })
 
-  it('doesn\'t provide a default list value when not appending/prepending a value to a list', () => {
+  it("doesn't provide a default list value when not appending/prepending a value to a list", () => {
     let { TableName, Key, ExpressionAttributeValues } = TestEntity.updateParams({
       email: 'test-pk',
+      sort: 'test-sk'
+    })
+
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
+
+    expect(ExpressionAttributeValues).not.toHaveProperty(ATTRIBUTE_VALUES_LIST_DEFAULT_KEY)
+  })
+
+  it("doesn't provide a default list value when not appending/prepending a value to a nested list within a map.", () => {
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
       sort: 'test-sk',
-    });
-
-    expect(TableName).toBe('test-table');
-    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' });
-
-    expect(ExpressionAttributeValues).not.toHaveProperty(ATTRIBUTE_VALUES_LIST_DEFAULT_KEY);
-  });
-
-  it('doesn\'t provide a default list value when not appending/prepending a value to a nested list within a map.', () => {
-      let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: {
-          $set: {
-            prop1: 'some-value'
-          }
+      test_map: {
+        $set: {
+          prop1: 'some-value'
         }
-      })
-
+      }
+    })
 
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
@@ -536,31 +586,40 @@ describe('update', () => {
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1'
     )
 
-    expect(ExpressionAttributeNames).toEqual(expect.objectContaining({
-      '#test_map': 'test_map',
-      '#test_map_prop1': 'prop1',
-    }))
-    expect(ExpressionAttributeValues).toEqual(expect.objectContaining({
-      ':test_map_prop1': 'some-value',
-    }))
+    expect(ExpressionAttributeNames).toEqual(
+      expect.objectContaining({
+        '#test_map': 'test_map',
+        '#test_map_prop1': 'prop1'
+      })
+    )
+    expect(ExpressionAttributeValues).toEqual(
+      expect.objectContaining({
+        ':test_map_prop1': 'some-value'
+      })
+    )
     expect(ExpressionAttributeValues).not.toHaveProperty(`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`)
   })
 
   it('updates nested data in a map', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: {
-          $set: {
-            prop1: 'some value',
-            'prop2[1]': 'list value',
-            'prop2[4]': 'list value4',
-            'prop3.prop4': 'nested',
-            prop5: [1, 2, 3]
-          }
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_map: {
+        $set: {
+          prop1: 'some value',
+          'prop2[1]': 'list value',
+          'prop2[4]': 'list value4',
+          'prop3.prop4': 'nested',
+          prop5: [1, 2, 3]
         }
-      })
+      }
+    })
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1, #test_map.#test_map_prop2[1] = :test_map_prop2_1, #test_map.#test_map_prop2[4] = :test_map_prop2_4, #test_map.#test_map_prop3.#test_map_prop3_prop4 = :test_map_prop3_prop4, #test_map.#test_map_prop5 = :test_map_prop5'
     )
@@ -591,58 +650,70 @@ describe('update', () => {
   })
 
   it('supports appending/prepending nested lists in a map.', () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: {
-          $set: {
-            prop1: {
-              $append: [1, 2, 3]
-            },
-            prop2: {
-              $prepend: [1, 2, 3]
-            },
-            'prop3.prop4': {
-              $append: [1, 2, 3]
-            },
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_map: {
+        $set: {
+          prop1: {
+            $append: [1, 2, 3]
+          },
+          prop2: {
+            $prepend: [1, 2, 3]
+          },
+          'prop3.prop4': {
+            $append: [1, 2, 3]
           }
         }
-      })
-
+      }
+    })
 
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
 
     expect(UpdateExpression).toBe(
-      `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(#test_map.#test_map_prop1, if_not_exists(:test_map_prop1, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY})), #test_map.#test_map_prop2 = list_append(if_not_exists(:test_map_prop2, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), #test_map.#test_map_prop2), #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(#test_map.#test_map_prop3.#test_map_prop3_prop4, if_not_exists(:test_map_prop3_prop4, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+      `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(if_not_exists(#test_map.#test_map_prop1, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY})), :test_map_prop1), #test_map.#test_map_prop2 = list_append(:test_map_prop2, if_not_exists(#test_map.#test_map_prop2, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), , #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(if_not_exists(#test_map.#test_map_prop3.#test_map_prop3_prop4, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop3_prop4)`
     )
 
-    expect(ExpressionAttributeNames).toEqual(expect.objectContaining({
-      '#test_map': 'test_map',
-      '#test_map_prop1': 'prop1',
-      '#test_map_prop2': 'prop2',
-      '#test_map_prop3': 'prop3',
-      '#test_map_prop3_prop4': 'prop4',
-    }))
-    expect(ExpressionAttributeValues).toEqual(expect.objectContaining({
-      ':test_map_prop1': [1, 2, 3],
-      ':test_map_prop2': [1, 2, 3],
-      ':test_map_prop3_prop4': [1, 2, 3],
-      [`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`]: []
-    }))
+    expect(ExpressionAttributeNames).toEqual(
+      expect.objectContaining({
+        '#test_map': 'test_map',
+        '#test_map_prop1': 'prop1',
+        '#test_map_prop2': 'prop2',
+        '#test_map_prop3': 'prop3',
+        '#test_map_prop3_prop4': 'prop4'
+      })
+    )
+    expect(ExpressionAttributeValues).toEqual(
+      expect.objectContaining({
+        ':test_map_prop1': [1, 2, 3],
+        ':test_map_prop2': [1, 2, 3],
+        ':test_map_prop3_prop4': [1, 2, 3],
+        [`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`]: []
+      })
+    )
   })
 
-
   it('uses an alias', async () => {
-    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test@test.com',
-        sort: 'test-sk',
-        // @ts-expect-error 💥 TODO: Handle aliases
-        count: { $add: 10 },
-        contents: { a: 1, b: 2 }
-      })
+    let {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test@test.com',
+      sort: 'test-sk',
+      // @ts-expect-error 💥 TODO: Handle aliases
+      count: { $add: 10 },
+      contents: { a: 1, b: 2 }
+    })
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map = :test_map ADD #test_number :test_number'
     )
@@ -895,11 +966,15 @@ describe('update', () => {
   })
 
   it('sets conditions', () => {
-    let { TableName, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
-      TestEntity.updateParams(
-        { email: 'x', sort: 'y' },
-        { conditions: { attr: 'email', gt: 'test' } }
-      )
+    let {
+      TableName,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    } = TestEntity.updateParams(
+      { email: 'x', sort: 'y' },
+      { conditions: { attr: 'email', gt: 'test' } }
+    )
     expect(TableName).toBe('test-table')
     expect(ExpressionAttributeNames).toEqual({
       '#test_string': 'test_string',
