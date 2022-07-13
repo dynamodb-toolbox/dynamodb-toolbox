@@ -17,8 +17,8 @@ import parseProjections from '../../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../../lib/utils'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
-  ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE,
-} from '../../constants';
+  ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+} from '../../constants'
 import type { ScanOptions, TableDef } from '../Table'
 import type {
   $GetOptions,
@@ -251,9 +251,9 @@ class Entity<
   } // end attribute
 
   // Parses the item
-  parse(input: {Item: unknown}, include?: string[]): Item
-  parse(input:  {Items: unknown[]} , include?: string[]): Item[]
-  parse(input: unknown[], include?: string[] ): Item[]
+  parse(input: { Item: unknown }, include?: string[]): Item
+  parse(input: { Items: unknown[] }, include?: string[]): Item[]
+  parse(input: unknown[], include?: string[]): Item[]
   parse(input: unknown, include?: string[]): Item
   parse(input: any, include: string[] = []): Item | Item[] {
     // TODO: 'include' needs to handle nested maps?
@@ -1062,7 +1062,7 @@ class Entity<
           }
 
           const attributeHasDefaultValue = schema.attributes[attrs[i]].default !== undefined
-          if(attributeHasDefaultValue) {
+          if (attributeHasDefaultValue) {
             error(`'${attrs[i]}' has a default value and cannot be removed`)
           }
 
@@ -1117,10 +1117,14 @@ class Entity<
           // if list and appending or prepending
         } else if (mapping.type === 'list' && (data[field]?.$append || data[field]?.$prepend)) {
           if (data[field].$append) {
-            SET.push(`#${field} = list_append(if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:${field})`)
+            SET.push(
+              `#${field} = list_append(if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:${field})`
+            )
             values[`:${field}`] = validateType(mapping, field, data[field].$append)
           } else {
-            SET.push(`#${field} = list_append(:${field}, if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`)
+            SET.push(
+              `#${field} = list_append(:${field}, if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+            )
             values[`:${field}`] = validateType(mapping, field, data[field].$prepend)
           }
 
@@ -1168,15 +1172,25 @@ class Entity<
 
                   values[`:${value}`] = input.$add
                 } else if (input.$append) {
-                  SET.push(`${path} = list_append(${path}, if_not_exists(:${value}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`)
+                  SET.push(
+                    `${path} = list_append(if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :${value})`
+                  )
 
                   values[`:${value}`] = input.$append
-                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  // add default list value
+                  values[
+                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
+                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
-                  SET.push(`${path} = list_append(if_not_exists(:${value}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), ${path})`)
+                  SET.push(
+                    `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+                  )
 
                   values[`:${value}`] = input.$prepend
-                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  // add default list value
+                  values[
+                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
+                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {
