@@ -678,7 +678,7 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
 
     expect(UpdateExpression).toBe(
-      `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(if_not_exists(#test_map.#test_map_prop1, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY})), :test_map_prop1), #test_map.#test_map_prop2 = list_append(:test_map_prop2, if_not_exists(#test_map.#test_map_prop2, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), , #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(if_not_exists(#test_map.#test_map_prop3.#test_map_prop3_prop4, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop3_prop4)`
+      `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(if_not_exists(#test_map.#test_map_prop1, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop1), #test_map.#test_map_prop2 = list_append(:test_map_prop2, if_not_exists(#test_map.#test_map_prop2, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY})), #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(if_not_exists(#test_map.#test_map_prop3.#test_map_prop3_prop4, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop3_prop4)`
     )
 
     expect(ExpressionAttributeNames).toEqual(
