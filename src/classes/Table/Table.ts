@@ -1298,8 +1298,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    */
   async transactGet(
     items: ({ Entity?: any } & DocumentClient.TransactGetItem)[] = [],
-    options: transactGetOptions = {}
-    // params: Partial<DocumentClient.TransactGetItemsInput> = {}
+    options: transactGetOptions = {},
+    params: Partial<DocumentClient.TransactGetItemsInput> = {}
   ) {
     // Generate the payload with meta information
     const { payload, Entities } = this.transactGetParams(

@@ -79,14 +79,16 @@ describe('transactWrite', () => {
   })
 
   it('allows users to provide custom params', () => {
-    expect(() => {
-        TestTable.transactWriteParams(
-          [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
-          {},
-          {
-            ClientRequestToken: 'some-token',
-          }
-        );
-    }).not.toThrow();
+    const result = TestTable.transactWriteParams(
+    [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
+    {
+      token: 'some-token'
+    },
+    {
+      ClientRequestToken: 'some-custom-token',
+    }
+  );
+
+    expect(result.ClientRequestToken).toBe('some-custom-token')
 })
 })
