@@ -15,6 +15,10 @@ import getKey from '../../lib/getKey'
 import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../../lib/utils'
+import {
+  ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
+  ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+} from '../../constants'
 import type { ScanOptions, TableDef } from '../Table'
 import type {
   $GetOptions,
@@ -247,9 +251,9 @@ class Entity<
   } // end attribute
 
   // Parses the item
-  parse(input: {Item: unknown}, include?: string[]): Item
-  parse(input:  {Items: unknown[]} , include?: string[]): Item[]
-  parse(input: unknown[], include?: string[] ): Item[]
+  parse(input: { Item: unknown }, include?: string[]): Item
+  parse(input: { Items: unknown[] }, include?: string[]): Item[]
+  parse(input: unknown[], include?: string[]): Item[]
   parse(input: unknown, include?: string[]): Item
   parse(input: any, include: string[] = []): Item | Item[] {
     // TODO: 'include' needs to handle nested maps?
@@ -1058,8 +1062,8 @@ class Entity<
           }
 
           const attributeHasDefaultValue = schema.attributes[attrs[i]].default !== undefined
-          if(attributeHasDefaultValue) {
-error(`'${attrs[i]}' has a default value and cannot be removed`)
+          if (attributeHasDefaultValue) {
+            error(`'${attrs[i]}' has a default value and cannot be removed`)
           }
 
           // Grab the attribute name and add to REMOVE and names
@@ -1113,14 +1117,22 @@ error(`'${attrs[i]}' has a default value and cannot be removed`)
           // if list and appending or prepending
         } else if (mapping.type === 'list' && (data[field]?.$append || data[field]?.$prepend)) {
           if (data[field].$append) {
-            SET.push(`#${field} = list_append(#${field},:${field})`)
+            SET.push(
+              `#${field} = list_append(if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:${field})`
+            )
             values[`:${field}`] = validateType(mapping, field, data[field].$append)
           } else {
-            SET.push(`#${field} = list_append(:${field},#${field})`)
+            SET.push(
+              `#${field} = list_append(:${field}, if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+            )
             values[`:${field}`] = validateType(mapping, field, data[field].$prepend)
           }
+
           // Add field to names
           names[`#${field}`] = field
+
+          values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+
           // if a list and updating by index
         } else if (
           mapping.type === 'list' &&
@@ -1157,13 +1169,28 @@ error(`'${attrs[i]}' has a default value and cannot be removed`)
                   REMOVE.push(`${path}`)
                 } else if (input.$add) {
                   ADD.push(`${path} :${value}`)
+
                   values[`:${value}`] = input.$add
                 } else if (input.$append) {
-                  SET.push(`${path} = list_append(${path},:${value})`)
+                  SET.push(
+                    `${path} = list_append(if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :${value})`
+                  )
+
                   values[`:${value}`] = input.$append
+                  // add default list value
+                  values[
+                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
+                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
-                  SET.push(`${path} = list_append(:${value},${path})`)
+                  SET.push(
+                    `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+                  )
+
                   values[`:${value}`] = input.$prepend
+                  // add default list value
+                  values[
+                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
+                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {
@@ -1174,6 +1201,7 @@ error(`'${attrs[i]}' has a default value and cannot be removed`)
                   })
                 } else {
                   SET.push(`${path} = :${value}`)
+
                   values[`:${value}`] = input
                 }
 
@@ -1185,6 +1213,7 @@ error(`'${attrs[i]}' has a default value and cannot be removed`)
                       )
                     }
                     SET.push(`${path}[${i}] = :${value}_${i}`)
+
                     values[`:${value}_${i}`] = input.$set[i]
                   })
                 }
