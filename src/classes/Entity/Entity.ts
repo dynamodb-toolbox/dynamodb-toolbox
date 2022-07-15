@@ -611,6 +611,7 @@ class Entity<
    * Generate parameters for DELETE transaction operation
    * @param {object} item - The keys from item you wish to delete.
    * @param {object} [options] - Additional delete options
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the delete request.
    *
    * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Delete.html
    */
@@ -625,7 +626,8 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: TransactionOptions<ResponseAttributes> = {}
+    options: TransactionOptions<ResponseAttributes> = {},
+    params?: Partial<DocumentClient.DeleteItemInput>
   ): { Delete: DocumentClient.Delete } {
     // Destructure options to check for extraneous arguments
     const {
@@ -646,7 +648,7 @@ class Entity<
       ItemAttributes,
       ResponseAttributes,
       TransactionOptionsReturnValues
-    >(item, options)
+    >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
