@@ -22,13 +22,114 @@ const TestEntity = new Entity({
   table: TestTable,
 } as const);
 
-const putParams = jest.spyOn(Entity.prototype, 'putParams').mockReturnThis();
 const deleteParams = jest.spyOn(Entity.prototype, 'deleteParams').mockReturnThis();
+const putParams = jest.spyOn(Entity.prototype, 'putParams').mockReturnThis();
+const updateParams = jest.spyOn(Entity.prototype, 'updateParams').mockReturnThis();
 
 describe('Entity transactional operations', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+
+    describe('deleteTransaction', () => {
+    it('throws an error when given options that are not conditions or returnValues.', async () => {
+      expect(() => {
+        // @ts-expect-error
+        TestEntity.deleteTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true });
+      }).toThrow(`Invalid delete transaction options: invalidOption`);
+    });
+
+    it('allows to provide conditions or returnValues as options.', async () => {
+      expect(() => {
+        TestEntity.deleteTransaction({ pk: 'some-pk', sk: 'some-sk' }, {
+          returnValues: 'ALL_OLD',
+          conditions: {
+            attr: 'testString',
+            exists: true,
+          },
+        });
+      }).not.toThrow();
+    });
+
+    it('passes the correct parameters to deleteParams.', async () => {
+      TestEntity.deleteTransaction(
+        { pk: 'some-pk', sk: 'some-sk' },
+        {
+          returnValues: 'ALL_OLD',
+        },
+        {
+          ExpressionAttributeValues: {
+            ':pk': 'better-pk-to-delete',
+          },
+        },
+      );
+
+      expect(deleteParams).toHaveBeenCalledWith(
+        {
+          pk: 'some-pk',
+          sk: 'some-sk',
+        },
+        { returnValues: 'ALL_OLD' },
+        {
+          ExpressionAttributeValues: {
+            ':pk': 'better-pk-to-delete',
+          },
+        },
+      );
+    });
+
+    it('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
+      deleteParams.mockReturnValueOnce(
+        {
+          TableName: TestTable.name,
+          Key: {
+            pk: 'some-pk',
+            sk: 'some-sk',
+          },
+          ReturnValues: 'ALL_OLD',
+        },
+      );
+
+      const result = TestEntity.deleteTransaction(
+        { pk: 'some-pk', sk: 'some-sk' },
+        {
+          returnValues: 'ALL_OLD',
+        },
+      );
+
+      // @ts-expect-error
+      expect(result.ReturnValues).toBeUndefined();
+      expect(result).toEqual({
+        Delete: expect.objectContaining({
+          ReturnValuesOnConditionCheckFailure: 'ALL_OLD',
+        }),
+      });
+    });
+
+    it('returns the item in transaction format.', async () => {
+      deleteParams.mockReturnValueOnce({
+        TableName: 'test-table',
+        Key: ({
+          pk: 'some-pk',
+          sk: 'some-sk',
+        }),
+      });
+
+      const result = TestEntity.deleteTransaction(
+        { pk: 'some-pk', sk: 'some-sk' });
+
+      expect(result).toEqual({
+        Delete: {
+          TableName: 'test-table',
+          Key: {
+            pk: 'some-pk',
+            sk: 'some-sk',
+          },
+        },
+      });
+    });
+  });
+
 
   describe('putTransaction', () => {
     it('throws an error when given options that are not conditions or returnValues.', async () => {
@@ -133,17 +234,17 @@ describe('Entity transactional operations', () => {
     });
   });
 
-    describe('deleteTransaction', () => {
+  describe('updateTransaction', () => {
     it('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
         // @ts-expect-error
-        TestEntity.deleteTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true });
-      }).toThrow(`Invalid delete transaction options: invalidOption`);
+        TestEntity.updateTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true });
+      }).toThrow(`Invalid update transaction options: invalidOption`);
     });
 
     it('allows to provide conditions or returnValues as options.', async () => {
       expect(() => {
-        TestEntity.deleteTransaction({ pk: 'some-pk', sk: 'some-sk' }, {
+        TestEntity.updateTransaction({ pk: 'some-pk', sk: 'some-sk' }, {
           returnValues: 'ALL_OLD',
           conditions: {
             attr: 'testString',
@@ -153,47 +254,49 @@ describe('Entity transactional operations', () => {
       }).not.toThrow();
     });
 
-    it('passes the correct parameters to deleteParams.', async () => {
-      TestEntity.deleteTransaction(
-        { pk: 'some-pk', sk: 'some-sk' },
+    it('passes the correct parameters to updateParams.', async () => {
+      TestEntity.updateTransaction(
+        { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string' },
         {
           returnValues: 'ALL_OLD',
         },
         {
           ExpressionAttributeValues: {
-            ':pk': 'better-pk-to-delete',
+            ':testString': 'best-test-string',
           },
         },
       );
 
-      expect(deleteParams).toHaveBeenCalledWith(
+      expect(updateParams).toHaveBeenCalledWith(
         {
           pk: 'some-pk',
           sk: 'some-sk',
+          testString: 'some-test-string',
         },
         { returnValues: 'ALL_OLD' },
         {
           ExpressionAttributeValues: {
-            ':pk': 'better-pk-to-delete',
+            ':testString': 'best-test-string',
           },
         },
       );
     });
 
     it('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
-      deleteParams.mockReturnValueOnce(
+      updateParams.mockReturnValueOnce(
         {
           TableName: TestTable.name,
           Key: {
             pk: 'some-pk',
             sk: 'some-sk',
           },
+          UpdateExpression: 'some-update-expression',
           ReturnValues: 'ALL_OLD',
         },
       );
 
-      const result = TestEntity.deleteTransaction(
-        { pk: 'some-pk', sk: 'some-sk' },
+      const result = TestEntity.updateTransaction(
+        { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string-with-change' },
         {
           returnValues: 'ALL_OLD',
         },
@@ -202,33 +305,36 @@ describe('Entity transactional operations', () => {
       // @ts-expect-error
       expect(result.ReturnValues).toBeUndefined();
       expect(result).toEqual({
-        Delete: expect.objectContaining({
+        Update: expect.objectContaining({
           ReturnValuesOnConditionCheckFailure: 'ALL_OLD',
         }),
       });
     });
 
     it('returns the item in transaction format.', async () => {
-      deleteParams.mockReturnValueOnce({
+      updateParams.mockReturnValueOnce({
         TableName: 'test-table',
-        Key: ({
+        Key: {
           pk: 'some-pk',
           sk: 'some-sk',
-        }),
+        },
+        UpdateExpression: 'some-update-expression',
       });
 
-      const result = TestEntity.deleteTransaction(
-        { pk: 'some-pk', sk: 'some-sk' });
+      const result = TestEntity.updateTransaction(
+        { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string-with-change' });
 
       expect(result).toEqual({
-        Delete: {
+        Update: {
           TableName: 'test-table',
           Key: {
             pk: 'some-pk',
             sk: 'some-sk',
           },
+          UpdateExpression: 'some-update-expression'
         },
       });
     });
   });
+
 });
