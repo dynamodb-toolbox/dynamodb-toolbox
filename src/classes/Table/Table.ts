@@ -10,7 +10,6 @@
 import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, O } from 'ts-toolbelt'
 
-import { isObject } from '../../lib/assertion.utils';
 import { parseTable, ParsedTable } from '../../lib/parseTable'
 import parseFilters from '../../lib/expressionBuilder'
 import validateTypes from '../../lib/validateTypes'
@@ -1508,7 +1507,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
       token ? { ClientRequestToken: token.trim() } : null,
-      isObject(params) ? params : {}
+      typeof params === 'object' ? params : {}
     )
 
     return payload
