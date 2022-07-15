@@ -1379,7 +1379,8 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: TransactionOptions<ResponseAttributes> = {}
+    options: TransactionOptions<ResponseAttributes> = {},
+    params?: Partial<DocumentClient.PutItemInput>
   ): { Put: DocumentClient.Put } {
     // Destructure options to check for extraneous arguments
     const {
@@ -1399,7 +1400,7 @@ class Entity<
       ItemAttributes,
       ResponseAttributes,
       TransactionOptionsReturnValues
-    >(item, options)
+    >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
