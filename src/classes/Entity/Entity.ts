@@ -1366,6 +1366,7 @@ class Entity<
    * Generate parameters for PUT transaction operation
    * @param {object} item - The item you wish to put.
    * @param {object} [options] - Additional put options
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the put request.
    *
    * Creates a Put object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Put.html
    */
