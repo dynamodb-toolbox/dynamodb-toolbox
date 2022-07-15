@@ -78,7 +78,7 @@ describe('transactWrite', () => {
     }).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   })
 
-  it('allows users to provide custom params', () => {
+  it('allows to provide custom params', () => {
     const result = TestTable.transactWriteParams(
         [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
         {
