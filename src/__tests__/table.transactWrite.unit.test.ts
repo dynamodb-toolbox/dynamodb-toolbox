@@ -77,4 +77,16 @@ describe('transactWrite', () => {
       )
     }).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   })
+
+  it('allows users to provide custom params', () => {
+    expect(() => {
+        TestTable.transactWriteParams(
+          [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
+          {},
+          {
+            ClientRequestToken: 'some-token',
+          }
+        );
+    }).not.toThrow();
+})
 })

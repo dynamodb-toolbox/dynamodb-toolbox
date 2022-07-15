@@ -10,6 +10,7 @@
 import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, O } from 'ts-toolbelt'
 
+import { isObject } from '../../lib/assertion.utils';
 import { parseTable, ParsedTable } from '../../lib/parseTable'
 import parseFilters from '../../lib/expressionBuilder'
 import validateTypes from '../../lib/validateTypes'
@@ -37,7 +38,6 @@ import type {
 
 // Import standard error handler
 import { error, conditionError, hasProperty, If } from '../../lib/utils'
-import { isObject } from '../../lib/assertion.utils';
 
 
 // Declare Table class
