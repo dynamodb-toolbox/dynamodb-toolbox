@@ -848,7 +848,8 @@ class Entity<
   /**
    * Generate parameters for UPDATE transaction operation
    * @param {object} item - The item you wish to update.
-   * @param {object} [options] - Additional update options
+   * @param {object} [options] - Additional update options.
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the update request.
    *
    * Creates an Update object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Update.html
    */
@@ -862,7 +863,8 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: TransactionOptions<ResponseAttributes> = {}
+    options: TransactionOptions<ResponseAttributes> = {},
+    params?: UpdateCustomParams
   ): { Update: DocumentClient.Update } {
     // Destructure options to check for extraneous arguments
     const {
@@ -882,7 +884,7 @@ class Entity<
       ItemAttributes,
       ResponseAttributes,
       TransactionOptionsReturnValues
-    >(item, options)
+    >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
