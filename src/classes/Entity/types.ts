@@ -346,9 +346,9 @@ export type PutItem<MethodItemOverlay extends Overlay,
   A.Compute<CompositePrimaryKey &
     O.Pick<Item, Attributes['always']['input'] | Attributes['required']['input']> &
     O.Partial<O.Pick<Item,
-      | Attributes['always']['default']
-      | Attributes['required']['default']
-      | Attributes['optional']>>>
+    | Attributes['always']['default']
+    | Attributes['required']['default']> & 
+     O.Update<Item,  Attributes['optional'], A.x | null>>>
 ]>
 
 export type UpdateOptionsReturnValues = 'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
