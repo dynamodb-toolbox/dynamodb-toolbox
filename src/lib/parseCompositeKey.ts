@@ -30,6 +30,7 @@ const parseCompositeKey = <
       parseInt(config[1].toString()) === config[1]
         ? config[1]
         : error(`'${field}' position value must be numeric`)
+
     // 🔨 TOIMPROVE: Prevent casting if possible
     let sub_config = (!config[2]
       ? { type: 'string' }

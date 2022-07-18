@@ -44,10 +44,5 @@ describe('parseCompositeKey', () => {
       // @ts-expect-error
       parseCompositeKey('linked', ['sk', 0, []], track, attributes)
     }).toThrow(`'linked' type must be 'string', 'number', 'boolean' or a configuration object`)
-
-    expect(() => {
-      // @ts-expect-error
-      parseCompositeKey('linked', ['sk', 0, null], track, attributes)
-    }).toThrow(`'linked' type must be 'string', 'number', 'boolean' or a configuration object`)
   })
 })
