@@ -1,8 +1,5 @@
 import parseEntity from '../lib/parseEntity'
 
-type Schema = any
-type HiddenKeys = any
-
 // Simulate Entity config
 const entity = {
   name: 'TestEntity',
@@ -36,6 +33,21 @@ describe('parseEntity', () => {
     expect(ent.autoExecute).toBe(true)
     expect(ent.autoParse).toBe(true)
     expect(ent._etAlias).toBe('typeAlias')
+  })
+
+  const nonObjectValues = [null, 'string', true, 1, [], () => {}]
+  nonObjectValues.forEach(value => {
+    it(`fails on non-object value: ${value}`, async () => {
+      const input: typeof entity = {
+        ...entity,
+        // @ts-expect-error
+        attributes: value
+      }
+
+      expect(() => {
+        parseEntity(input)
+      }).toThrow("Please provide a valid 'attributes' object")
+    })
   })
 
   it('fails on extra config option', async () => {
