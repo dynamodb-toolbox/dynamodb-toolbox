@@ -121,7 +121,7 @@ class Entity<
     >
   ) {
     // Sanity check the entity object
-    if (typeof entity !== 'object' || Array.isArray(entity)) {
+    if (entity?.constructor !== Object) {
       error('Please provide a valid entity definition')
     }
 
@@ -926,10 +926,10 @@ class Entity<
     if (!Array.isArray(DELETE)) error('DELETE must be an array')
 
     // Validate attribute names and values
-    if (typeof ExpressionAttributeNames !== 'object' || Array.isArray(ExpressionAttributeNames)) {
+    if (ExpressionAttributeNames?.constructor !== Object) {
       error('ExpressionAttributeNames must be an object')
     }
-    if (typeof ExpressionAttributeValues !== 'object' || Array.isArray(ExpressionAttributeValues)) {
+    if (ExpressionAttributeValues?.constructor !== Object) {
       error('ExpressionAttributeValues must be an object')
     }
     // if (ConditionExpression && typeof ConditionExpression !== 'string')
@@ -1136,8 +1136,7 @@ class Entity<
           // if a list and updating by index
         } else if (
           mapping.type === 'list' &&
-          !Array.isArray(data[field]) &&
-          typeof data[field] === 'object'
+          data[field]?.constructor === Object
         ) {
           Object.keys(data[field]).forEach(i => {
             if (String(parseInt(i)) !== i) {
