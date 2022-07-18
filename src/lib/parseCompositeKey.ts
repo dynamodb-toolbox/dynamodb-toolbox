@@ -35,7 +35,7 @@ const parseCompositeKey = <
       ? { type: 'string' }
       : ['string', 'number', 'boolean'].includes(config[2].toString())
       ? { type: config[2] }
-      : typeof config[2] === 'object' && !Array.isArray(config[2])
+      : config[2]?.constructor === Object
       ? config[2]
       : error(
           `'${field}' type must be 'string', 'number', 'boolean' or a configuration object`

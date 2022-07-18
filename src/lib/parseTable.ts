@@ -79,7 +79,7 @@ export const parseTable = <
 
   // Parse table attributes
   attributes =
-    hasValue(attributes) && typeof attributes === 'object' && !Array.isArray(attributes)
+    hasValue(attributes) && attributes?.constructor === Object
       ? attributes
       : attributes
       ? error(`Please provide a valid 'attributes' object`)
@@ -90,7 +90,7 @@ export const parseTable = <
 
   // Parse indexes (optional)
   indexes =
-    hasValue(indexes) && typeof indexes === 'object' && !Array.isArray(indexes)
+    hasValue(indexes) && indexes?.constructor === Object
       ? // 🔨 TOIMPROVE: Allow numbers & symbols in parseIndexes ?
         parseIndexes(indexes, partitionKey as string)
       : indexes

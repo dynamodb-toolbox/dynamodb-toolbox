@@ -121,7 +121,7 @@ class Entity<
     >
   ) {
     // Sanity check the entity object
-    if (typeof entity !== 'object' || Array.isArray(entity)) {
+    if (entity?.constructor !== Object) {
       error('Please provide a valid entity definition')
     }
 
@@ -611,6 +611,7 @@ class Entity<
    * Generate parameters for DELETE transaction operation
    * @param {object} item - The keys from item you wish to delete.
    * @param {object} [options] - Additional delete options
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the delete request.
    *
    * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Delete.html
    */
@@ -625,7 +626,8 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes
   >(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: TransactionOptions<ResponseAttributes> = {}
+    options: TransactionOptions<ResponseAttributes> = {},
+    params?: Partial<DocumentClient.DeleteItemInput>
   ): { Delete: DocumentClient.Delete } {
     // Destructure options to check for extraneous arguments
     const {
@@ -646,7 +648,7 @@ class Entity<
       ItemAttributes,
       ResponseAttributes,
       TransactionOptionsReturnValues
-    >(item, options)
+    >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -848,7 +850,8 @@ class Entity<
   /**
    * Generate parameters for UPDATE transaction operation
    * @param {object} item - The item you wish to update.
-   * @param {object} [options] - Additional update options
+   * @param {object} [options] - Additional update options.
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the update request.
    *
    * Creates an Update object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Update.html
    */
@@ -862,7 +865,8 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: TransactionOptions<ResponseAttributes> = {}
+    options: TransactionOptions<ResponseAttributes> = {},
+    params?: UpdateCustomParams
   ): { Update: DocumentClient.Update } {
     // Destructure options to check for extraneous arguments
     const {
@@ -882,7 +886,7 @@ class Entity<
       ItemAttributes,
       ResponseAttributes,
       TransactionOptionsReturnValues
-    >(item, options)
+    >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -926,10 +930,10 @@ class Entity<
     if (!Array.isArray(DELETE)) error('DELETE must be an array')
 
     // Validate attribute names and values
-    if (typeof ExpressionAttributeNames !== 'object' || Array.isArray(ExpressionAttributeNames)) {
+    if (ExpressionAttributeNames?.constructor !== Object) {
       error('ExpressionAttributeNames must be an object')
     }
-    if (typeof ExpressionAttributeValues !== 'object' || Array.isArray(ExpressionAttributeValues)) {
+    if (ExpressionAttributeValues?.constructor !== Object) {
       error('ExpressionAttributeValues must be an object')
     }
     // if (ConditionExpression && typeof ConditionExpression !== 'string')
@@ -1136,8 +1140,7 @@ class Entity<
           // if a list and updating by index
         } else if (
           mapping.type === 'list' &&
-          !Array.isArray(data[field]) &&
-          typeof data[field] === 'object'
+          data[field]?.constructor === Object
         ) {
           Object.keys(data[field]).forEach(i => {
             if (String(parseInt(i)) !== i) {
@@ -1364,6 +1367,7 @@ class Entity<
    * Generate parameters for PUT transaction operation
    * @param {object} item - The item you wish to put.
    * @param {object} [options] - Additional put options
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the put request.
    *
    * Creates a Put object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Put.html
    */
@@ -1377,7 +1381,8 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: TransactionOptions<ResponseAttributes> = {}
+    options: TransactionOptions<ResponseAttributes> = {},
+    params?: Partial<DocumentClient.PutItemInput>
   ): { Put: DocumentClient.Put } {
     // Destructure options to check for extraneous arguments
     const {
@@ -1397,7 +1402,7 @@ class Entity<
       ItemAttributes,
       ResponseAttributes,
       TransactionOptionsReturnValues
-    >(item, options)
+    >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {

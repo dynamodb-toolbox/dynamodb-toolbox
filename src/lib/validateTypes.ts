@@ -42,7 +42,7 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
             .map(x => x.trim())
         : error(`'${field}' must be a list (array)`)
     case 'map':
-      return typeof value === 'object' && !Array.isArray(value)
+      return value?.constructor === Object
         ? value
         : error(`'${field}' must be a map (object)`)
     case 'set':
