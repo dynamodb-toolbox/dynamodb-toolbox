@@ -76,9 +76,9 @@ const buildExpression = <
 
       // Else process the clause
     } else {
-     // Make sure TS knows this is a FilterExpression; copy to avoid mutation
-      const exp = {...clauses[id]} as FilterExpression
-      
+      // Make sure TS knows this is a FilterExpression; copy to avoid mutation
+      const exp = { ...clauses[id] } as FilterExpression
+
       // Increment group counter for each clause
       group++ // guarantees uniqueness
 
@@ -165,13 +165,18 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
   )
     error(`'entity' value of '${entity}' must be a string and a valid table Entity name`)
 
-  // Add filter attribute to names
-  names[`#attr${grp}`] =
-    typeof attr === 'string'
-      ? checkAttribute(attr, entity ? table[entity].schema.attributes : table.Table.attributes)
-      : typeof size === 'string'
-      ? checkAttribute(size, entity ? table[entity].schema.attributes : table.Table.attributes)
-      : error(`A string for 'attr' or 'size' is required for condition expressions`)
+  if (typeof attr === 'string' && attr.includes('.')) {
+    checkAttribute(attr, entity ? table[entity].schema.attributes : table.Table.attributes)
+    attr.split('.').forEach((part, i) => (names[`#attr${grp}_${i}`] = part))
+  } else {
+    // Add filter attribute to names
+    names[`#attr${grp}`] =
+      typeof attr === 'string'
+        ? checkAttribute(attr, entity ? table[entity].schema.attributes : table.Table.attributes)
+        : typeof size === 'string'
+        ? checkAttribute(size, entity ? table[entity].schema.attributes : table.Table.attributes)
+        : error(`A string for 'attr' or 'size' is required for condition expressions`)
+  }
 
   // Parse clause operator and value
   let operator, value, f
@@ -267,7 +272,14 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       }
     } else if (operator === 'EXISTS') {
       if (!attr) error(`'exists' conditions require an 'attr'.`)
-      clause = value ? `attribute_exists(#attr${grp})` : `attribute_not_exists(#attr${grp})`
+      const path =
+        typeof attr === 'string' && attr.includes('.')
+          ? attr
+              .split('.')
+              .map((_, i) => `#attr${grp}_${i}`)
+              .join('.')
+          : `#attr${grp}`
+      clause = value ? `attribute_exists(${path})` : `attribute_not_exists(${path})`
     } else {
       // Add value
       values[`:attr${grp}`] = value
