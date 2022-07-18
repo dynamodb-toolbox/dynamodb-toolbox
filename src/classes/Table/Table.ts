@@ -1410,11 +1410,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    */
   async transactWrite(
     items: DocumentClient.TransactWriteItemList,
-    options: TransactWriteOptions = {}
-    // params: Partial<DocumentClient.TransactWriteItemsInput> = {}
+    options: TransactWriteOptions = {},
+    params?: Partial<DocumentClient.TransactWriteItemsInput>
   ) {
     // Generate the payload with meta information
-    const payload = this.transactWriteParams(items, options)
+    const payload = this.transactWriteParams(items, options, params)
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
@@ -1434,12 +1434,14 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    * Generates parameters for a transactWrite operation
    * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
    * @param {object} [options] - Additional options
+   * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the transactWrite request.
    *
    * Creates a TransactWriteItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
    */
   transactWriteParams(
     _items: DocumentClient.TransactWriteItemList,
-    options: transactWriteParamsOptions = {}
+    options: transactWriteParamsOptions = {},
+    params: Partial<DocumentClient.TransactWriteItemsInput> = {}
   ): DocumentClient.TransactWriteItemsInput {
     let items = Array.isArray(_items) ? _items : _items ? [_items] : []
 
@@ -1503,7 +1505,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       },
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
-      token ? { ClientRequestToken: token.trim() } : null
+      token ? { ClientRequestToken: token.trim() } : null,
+      typeof params === 'object' ? params : {}
     )
 
     return payload

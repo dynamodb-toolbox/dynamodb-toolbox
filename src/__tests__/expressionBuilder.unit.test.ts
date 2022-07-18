@@ -284,10 +284,22 @@ describe('expressionBuilder', () => {
     expect(result.names).toEqual({ '#attr1': 'a' })
   })
 
+  it(`generates an 'exists' clause for a nested attribute`, () => {
+    let result = expressionBuilder({ attr: 'a.b.c', exists: true }, TestTable, 'TestEntity')
+    expect(result.expression).toBe('attribute_exists(#attr1_0.#attr1_1.#attr1_2)')
+    expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
+  })
+
   it(`generates a 'not exists' clause`, () => {
     let result = expressionBuilder({ attr: 'a', exists: false }, TestTable, 'TestEntity')
     expect(result.expression).toBe('attribute_not_exists(#attr1)')
     expect(result.names).toEqual({ '#attr1': 'a' })
+  })
+
+  it(`generates an 'not exists' clause for a nested attribute`, () => {
+    let result = expressionBuilder({ attr: 'a.b.c', exists: false }, TestTable, 'TestEntity')
+    expect(result.expression).toBe('attribute_not_exists(#attr1_0.#attr1_1.#attr1_2)')
+    expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
   })
 
   it(`generates a 'contains' clause`, () => {
@@ -379,8 +391,8 @@ describe('expressionBuilder', () => {
   it("doesn't mutate input expression", () => {
     let expObj = { attr: 'a', eq: 'b' }
     let expArr = [{ attr: 'a', eq: 'b' }]
-    expressionBuilder(expObj,TestTable,'TestEntity')
-    expressionBuilder(expArr,TestTable,'TestEntity')
+    expressionBuilder(expObj, TestTable, 'TestEntity')
+    expressionBuilder(expArr, TestTable, 'TestEntity')
     expect(expObj).toEqual({ attr: 'a', eq: 'b' })
     expect(expArr).toEqual([{ attr: 'a', eq: 'b' }])
   })
