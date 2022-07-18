@@ -115,7 +115,7 @@ export function parseEntity<
 
   // Sanity check the attributes
   attributes =
-    typeof attributes === 'object' && !Array.isArray(attributes)
+    attributes?.constructor === Object
       ? attributes
       : error(`Please provide a valid 'attributes' object`)
 

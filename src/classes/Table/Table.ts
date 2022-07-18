@@ -1070,8 +1070,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         item.Table &&
         item.Table.Table &&
         item.Key &&
-        typeof item.Key === 'object' &&
-        !Array.isArray(item.Key)
+        item.Key?.constructor === Object
       ) {
         // Set the table
         const table = item.Table.name
@@ -1097,7 +1096,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       // If true, add to all table mappings
       if (consistent === true) {
         for (const tbl in RequestItems) RequestItems[tbl].ConsistentRead = true
-      } else if (typeof consistent === 'object' && !Array.isArray(consistent)) {
+      } else if (consistent?.constructor === Object) {
         for (const tbl in consistent as Object) {
           const tbl_name = TableAliases[tbl] || tbl
           if (RequestItems[tbl_name]) {
