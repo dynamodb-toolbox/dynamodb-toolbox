@@ -254,9 +254,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
         // Add values and special key condition
         values[`:attr${grp}_0`] = value[0]
         values[`:attr${grp}_1`] = value[1]
-        clause = `${
-          size ? `size(${operand})` : `${operand}`
-        } between :attr${grp}_0 and :attr${grp}_1`
+        clause = `${size ? `size(${operand})` : operand} between :attr${grp}_0 and :attr${grp}_1`
       } else {
         error(`'between' conditions require an array with two values.`)
       }
@@ -292,7 +290,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
         // TODO: validate/convert types
         clause = `attribute_type(${operand},:attr${grp})`
       } else {
-        clause = `${size ? `size(${operand})` : `${operand}`} ${operator} :attr${grp}`
+        clause = `${size ? `size(${operand})` : operand} ${operator} :attr${grp}`
       }
     } // end if-else
 
