@@ -165,18 +165,22 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
   )
     error(`'entity' value of '${entity}' must be a string and a valid table Entity name`)
 
-  if (typeof attr === 'string' && attr.includes('.')) {
-    checkAttribute(attr, entity ? table[entity].schema.attributes : table.Table.attributes)
-    attr.split('.').forEach((part, i) => (names[`#attr${grp}_${i}`] = part))
+  const path =
+    typeof attr === 'string'
+      ? checkAttribute(attr, entity ? table[entity].schema.attributes : table.Table.attributes)
+      : typeof size === 'string'
+      ? checkAttribute(size, entity ? table[entity].schema.attributes : table.Table.attributes)
+      : error(`A string for 'attr' or 'size' is required for condition expressions`)
+
+  const pathParts = path.split('.')
+
+  if (pathParts.length === 1) {
+    names[`#attr${grp}`] = pathParts[0]
   } else {
-    // Add filter attribute to names
-    names[`#attr${grp}`] =
-      typeof attr === 'string'
-        ? checkAttribute(attr, entity ? table[entity].schema.attributes : table.Table.attributes)
-        : typeof size === 'string'
-        ? checkAttribute(size, entity ? table[entity].schema.attributes : table.Table.attributes)
-        : error(`A string for 'attr' or 'size' is required for condition expressions`)
+    pathParts.forEach((part, i) => (names[`#attr${grp}_${i}`] = part))
   }
+
+  const operand = Object.keys(names).join('.')
 
   // Parse clause operator and value
   let operator, value, f
@@ -251,7 +255,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
         values[`:attr${grp}_0`] = value[0]
         values[`:attr${grp}_1`] = value[1]
         clause = `${
-          size ? `size(#attr${grp})` : `#attr${grp}`
+          size ? `size(${operand})` : `${operand}`
         } between :attr${grp}_0 and :attr${grp}_1`
       } else {
         error(`'between' conditions require an array with two values.`)
@@ -261,7 +265,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       // Verify array input
       if (Array.isArray(value)) {
         // Add values and special key condition
-        clause = `#attr${grp} IN (${value
+        clause = `${operand} IN (${value
           .map((x, i) => {
             values[`:attr${grp}_${i}`] = x
             return `:attr${grp}_${i}`
@@ -272,30 +276,23 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       }
     } else if (operator === 'EXISTS') {
       if (!attr) error(`'exists' conditions require an 'attr'.`)
-      const path =
-        typeof attr === 'string' && attr.includes('.')
-          ? attr
-              .split('.')
-              .map((_, i) => `#attr${grp}_${i}`)
-              .join('.')
-          : `#attr${grp}`
-      clause = value ? `attribute_exists(${path})` : `attribute_not_exists(${path})`
+      clause = value ? `attribute_exists(${operand})` : `attribute_not_exists(${operand})`
     } else {
       // Add value
       values[`:attr${grp}`] = value
       // If begins_with, add special key condition
       if (operator === 'BEGINS_WITH') {
         if (!attr) error(`'beginsWith' conditions require an 'attr'.`)
-        clause = `begins_with(#attr${grp},:attr${grp})`
+        clause = `begins_with(${operand},:attr${grp})`
       } else if (operator === 'CONTAINS') {
         if (!attr) error(`'contains' conditions require an 'attr'.`)
-        clause = `contains(#attr${grp},:attr${grp})`
+        clause = `contains(${operand},:attr${grp})`
       } else if (operator === 'ATTRIBUTE_TYPE') {
         if (!attr) error(`'type' conditions require an 'attr'.`)
         // TODO: validate/convert types
-        clause = `attribute_type(#attr${grp},:attr${grp})`
+        clause = `attribute_type(${operand},:attr${grp})`
       } else {
-        clause = `${size ? `size(#attr${grp})` : `#attr${grp}`} ${operator} :attr${grp}`
+        clause = `${size ? `size(${operand})` : `${operand}`} ${operator} :attr${grp}`
       }
     } // end if-else
 
