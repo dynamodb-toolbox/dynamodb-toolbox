@@ -130,6 +130,50 @@ describe('query', () => {
     })
   })
 
+  it('queries a table with options including a nested attribute filter', () => {
+    let result = TestTable.queryParams('test', {
+      index: 'GSI1',
+      limit: 10,
+      reverse: true,
+      consistent: true,
+      capacity: 'total',
+      select: 'all_attributes',
+      eq: 'skVal',
+      filters: { attr: 'test.a.b', eq: 'testFilter' },
+      attributes: ['pk', 'sk', 'test'],
+      startKey: { pk: 'test', sk: 'skVal2' },
+      entity: TestEntity.name,
+      execute: true,
+      parse: true
+    })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and #sk = :sk',
+      ExpressionAttributeNames: {
+        '#pk': 'GSI1pk',
+        '#sk': 'GSIsk1',
+        '#attr1_0': 'test',
+        '#attr1_1': 'a',
+        '#attr1_2': 'b',
+        '#proj1': 'pk',
+        '#proj2': 'sk',
+        '#proj3': 'test',
+        '#proj4': '_et'
+      },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'skVal', ':attr1': 'testFilter' },
+      FilterExpression: '#attr1_0.#attr1_1.#attr1_2 = :attr1',
+      ProjectionExpression: '#proj1,#proj2,#proj3,#proj4',
+      IndexName: 'GSI1',
+      Limit: '10',
+      ScanIndexForward: false,
+      ConsistentRead: true,
+      ReturnConsumedCapacity: 'TOTAL',
+      Select: 'ALL_ATTRIBUTES',
+      ExclusiveStartKey: { pk: 'test', sk: 'skVal2' }
+    })
+  })
+
   it('fails on an invalid option', () => {
     expect(() =>
       TestTable.queryParams(
