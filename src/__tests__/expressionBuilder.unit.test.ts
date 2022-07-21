@@ -406,11 +406,11 @@ describe('expressionBuilder', () => {
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
-  
+
   it(`references a secondary attribute in an 'eq' clause`, () => {
     let result = expressionBuilder({ attr: 'a', eq: { attr: 'b' } }, TestTable, 'TestEntity')
-    expect(result.expression).toBe('#attr1 = #attr1_0')
-    expect(result.names).toEqual({ '#attr1': 'a', '#attr1_0': 'b' })
+    expect(result.expression).toBe('#attr1 = #attr1_ref')
+    expect(result.names).toEqual({ '#attr1': 'a', '#attr1_ref': 'b' })
   })
 
   it(`generates a 'type' clause for a nested attribute`, () => {
