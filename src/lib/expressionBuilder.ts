@@ -15,15 +15,12 @@ import { error } from './utils'
 import { TableDef } from '../classes/Table'
 
 
-import checkAttribute from './checkAttribute'
-import Table from '../classes/Table'
-
 interface AttrRef {
   attr: string
 }
 
-interface FilterExpression {
-  attr?: string
+interface FilterExpression<Attr extends A.Key = A.Key> {
+  attr?: Attr
   size?: string
   eq?: string | number | boolean | null | AttrRef
   ne?: string | number | boolean | null | AttrRef
