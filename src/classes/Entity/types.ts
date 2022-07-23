@@ -326,7 +326,8 @@ export type $WriteOptions<Attributes extends A.Key = A.Key,
   Parse extends boolean | undefined = undefined> = BaseOptions<Execute, Parse> & {
   conditions: ConditionsOrFilters<Attributes>
   metrics: DocumentClient.ReturnItemCollectionMetrics
-  include: string[]
+  include: string[],
+  strictSchemaCheck: boolean
 }
 
 export type PutOptionsReturnValues = 'NONE' | 'ALL_OLD'
@@ -347,7 +348,7 @@ export type PutItem<MethodItemOverlay extends Overlay,
     O.Pick<Item, Attributes['always']['input'] | Attributes['required']['input']> &
     O.Partial<O.Pick<Item,
     | Attributes['always']['default']
-    | Attributes['required']['default']> & 
+    | Attributes['required']['default']> &
      O.Update<Item,  Attributes['optional'], A.x | null>>>
 ]>
 

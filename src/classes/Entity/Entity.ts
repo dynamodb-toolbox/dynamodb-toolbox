@@ -1425,7 +1425,8 @@ class Entity<
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
+    Parse extends boolean | undefined = undefined,
+    StrictSchemaCheck extends boolean | undefined = undefined
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
@@ -1437,11 +1438,14 @@ class Entity<
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
+    const shouldFilterUnmappedFields = options.strictSchemaCheck === false
+
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(
       schema.attributes,
       linked,
-      Object.assign({}, defaults, item)
+      Object.assign({}, defaults, item),
+      shouldFilterUnmappedFields
     )
 
     // Extract valid options
@@ -1450,6 +1454,7 @@ class Entity<
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
       metrics, // ReturnItemCollectionMetrics: (size or none)
       returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
+      strictSchemaCheck, // Strict Schema Check (true or false)
       ..._args
     } = options
 
