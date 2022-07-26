@@ -1008,4 +1008,21 @@ describe('update', () => {
     )
     expect(TableName).toBe('test-table')
   })
+
+  it('fails when given an unmapped attribute and strictSchemaCheck is true.', () => {
+    expect(() =>
+      TestEntity.updateParams(
+        // @ts-expect-error
+        { email: 'x', sort: 'y', unknown: '?' },
+        { strictSchemaCheck: true }
+      )
+    ).toThrow("Field 'unknown' does not have a mapping or alias")
+  })
+
+  it('allows unmapped attributes when strictSchemaCheck is false.', () => {
+    expect(() => TestEntity.updateParams(
+      { email: 'x', sort: 'y', unknown: '?' },
+      { strictSchemaCheck: false }
+    )).not.toThrow();
+  })
 }) // end describe

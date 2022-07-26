@@ -359,7 +359,8 @@ export type UpdateOptionsReturnValues = 'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' |
 export type $UpdateOptions<Attributes extends A.Key = A.Key,
   ReturnValues extends UpdateOptionsReturnValues = UpdateOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
-  Parse extends boolean | undefined = undefined> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+  Parse extends boolean | undefined = undefined,
+  StrictSchemaCheck extends boolean = true> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck: StrictSchemaCheck }>
 
 export interface UpdateCustomParameters {
   SET: string[];
@@ -374,7 +375,8 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
   CompositePrimaryKey extends O.Object,
   Item extends O.Object,
-  Attributes extends ParsedAttributes> = FirstDefined<[
+  Attributes extends ParsedAttributes,
+  StrictSchemaCheck extends boolean = true> = FirstDefined<[
   MethodItemOverlay,
   EntityItemOverlay,
   A.Compute<CompositePrimaryKey &
@@ -395,7 +397,7 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
       | { $delete?: string[]; $add?: any; $append?: any[]; $prepend?: any[] }
     } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
   >
-]>
+] | If<A.Equals<StrictSchemaCheck, true>, never, any>>
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
