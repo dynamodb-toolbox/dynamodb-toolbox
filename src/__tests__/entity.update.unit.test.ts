@@ -1024,5 +1024,10 @@ describe('update', () => {
       { email: 'x', sort: 'y', unknown: '?' },
       { strictSchemaCheck: false }
     )).not.toThrow();
+
+    throw new Error(JSON.stringify(TestEntity.updateParams(
+      { email: 'x', sort: 'y', unknown: '?' },
+      { strictSchemaCheck: false }
+    )))
   })
 }) // end describe
