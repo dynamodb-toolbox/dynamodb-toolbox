@@ -260,7 +260,6 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // @ts-expect-error
         unknown: '?'
       }, {
         strictSchemaCheck: false

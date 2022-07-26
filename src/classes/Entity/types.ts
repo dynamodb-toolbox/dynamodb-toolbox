@@ -335,13 +335,15 @@ export type PutOptionsReturnValues = 'NONE' | 'ALL_OLD'
 export type $PutOptions<Attributes extends A.Key = A.Key,
   ReturnValues extends PutOptionsReturnValues = PutOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
-  Parse extends boolean | undefined = undefined> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+  Parse extends boolean | undefined = undefined,
+  StrictSchemaCheck extends boolean = true> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck: StrictSchemaCheck }>
 
 export type PutItem<MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
   CompositePrimaryKey extends O.Object,
   Item extends O.Object,
-  Attributes extends ParsedAttributes> = FirstDefined<[
+  Attributes extends ParsedAttributes,
+  StrictSchemaCheck extends boolean = true> = FirstDefined<[
   MethodItemOverlay,
   EntityItemOverlay,
   A.Compute<CompositePrimaryKey &
@@ -350,7 +352,7 @@ export type PutItem<MethodItemOverlay extends Overlay,
     | Attributes['always']['default']
     | Attributes['required']['default']> &
      O.Update<Item,  Attributes['optional'], A.x | null>>>
-]>
+] | If<A.Equals<StrictSchemaCheck, true>, never, any>>
 
 export type UpdateOptionsReturnValues = 'NONE' | 'UPDATED_OLD' | 'UPDATED_NEW' | 'ALL_OLD' | 'ALL_NEW'
 
@@ -404,9 +406,11 @@ export type RawDeleteOptions<Attributes extends A.Key = A.Key,
 
 export type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
-export interface TransactionOptions<Attributes extends A.Key = A.Key> {
+export interface TransactionOptions<Attributes extends A.Key = A.Key,
+  StrictSchemaCheck extends boolean | undefined = undefined> {
   conditions?: ConditionsOrFilters<Attributes>;
   returnValues?: TransactionOptionsReturnValues;
+  strictSchemaCheck?: StrictSchemaCheck;
 }
 
 export type ShouldExecute<Execute extends boolean | undefined, AutoExecute extends boolean> = B.Or<A.Equals<Execute, true>,

@@ -1292,10 +1292,11 @@ class Entity<
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
+    Parse extends boolean | undefined = undefined,
+    StrictSchemaCheck extends boolean = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
     If<
@@ -1325,7 +1326,8 @@ class Entity<
       ResponseAttributes,
       ReturnValues,
       Execute,
-      Parse
+      Parse,
+      StrictSchemaCheck
     >(item, options, params)
 
     if (!shouldExecute(options.execute, this.autoExecute)) {
@@ -1378,10 +1380,13 @@ class Entity<
       Attributes['all'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined,
+    StrictSchemaCheck extends boolean = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: TransactionOptions<ResponseAttributes> = {},
+    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: Partial<DocumentClient.PutItemInput>
   ): { Put: DocumentClient.Put } {
     // Destructure options to check for extraneous arguments
@@ -1401,7 +1406,10 @@ class Entity<
       MethodItemOverlay,
       ItemAttributes,
       ResponseAttributes,
-      TransactionOptionsReturnValues
+      TransactionOptionsReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck
     >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
@@ -1426,10 +1434,10 @@ class Entity<
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined = undefined
+    StrictSchemaCheck extends boolean = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): DocumentClient.PutItemInput {
     // Extract schema and defaults
