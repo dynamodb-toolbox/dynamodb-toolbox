@@ -31,7 +31,7 @@ describe('Entity transactional operations', () => {
     jest.clearAllMocks();
   });
 
-    describe('deleteTransaction', () => {
+  describe('deleteTransaction', () => {
     it('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
         // @ts-expect-error
@@ -130,7 +130,6 @@ describe('Entity transactional operations', () => {
     });
   });
 
-
   describe('putTransaction', () => {
     it('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
@@ -150,6 +149,28 @@ describe('Entity transactional operations', () => {
         });
       }).not.toThrow();
     });
+
+    it('allows adding non mapped fields when strictSchemaCheck is false.', () => {
+      expect(TestEntity.putTransaction({
+        pk: 'test',
+        sk: 'testsk',
+        unknown: '?',
+      }, {
+        strictSchemaCheck: false,
+      })).not.toThrow();
+    });
+
+    it('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
+      expect(TestEntity.putTransaction({
+        pk: 'test',
+        sk: 'testsk',
+        // @ts-expect-error
+        test: 'test',
+      }, {
+        strictSchemaCheck: true,
+      })).toThrow();
+    });
+
 
     it('passes the correct parameters to putParams.', async () => {
       TestEntity.putTransaction(
@@ -331,7 +352,7 @@ describe('Entity transactional operations', () => {
             pk: 'some-pk',
             sk: 'some-sk',
           },
-          UpdateExpression: 'some-update-expression'
+          UpdateExpression: 'some-update-expression',
         },
       });
     });
