@@ -326,7 +326,8 @@ export type $WriteOptions<Attributes extends A.Key = A.Key,
   Parse extends boolean | undefined = undefined> = BaseOptions<Execute, Parse> & {
   conditions: ConditionsOrFilters<Attributes>
   metrics: DocumentClient.ReturnItemCollectionMetrics
-  include: string[]
+  include: string[],
+  strictSchemaCheck: boolean
 }
 
 export type PutOptionsReturnValues = 'NONE' | 'ALL_OLD'

@@ -76,6 +76,7 @@ type ExpectedWriteOpts<
   metrics: string
   include: string[]
   returnValues: ReturnValues
+  strictSchemaCheck: StrictSchemaCheck
 }>
 
 describe('Entity', () => {
