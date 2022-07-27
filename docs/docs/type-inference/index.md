@@ -51,7 +51,8 @@ const { Item } = await MyEntity.get<CustomItem, CustomCompositeKey>({
 Overlaying at the Entity level is also possible. The overlay is passed down to every method, and type inference is fully deactivated:
 
 ```typescript
-const MyEntity =  new Entity<CustomItem, CustomCompositeKey, typeof table>({
+const MyEntity =  new Entity<"MyEntityName", CustomItem, CustomCompositeKey, typeof table>({
+  name: "MyEntityName",
   ...,
   table,
 } as const)

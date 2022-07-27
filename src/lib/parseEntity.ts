@@ -5,12 +5,10 @@
  */
 
 // Import libraries & types
-import { A, O } from 'ts-toolbelt'
-
 import parseEntityAttributes from './parseEntityAttributes'
 import { TableDef } from '../classes/Table'
-import { AttributeDefinitions, EntityConstructor } from '../classes/Entity'
-import { error, PreventKeys } from './utils'
+import { AttributeDefinitions, EntityConstructor, Readonly } from '../classes/Entity'
+import { error } from './utils'
 
 export interface TrackingInfo {
   fields: string[]
@@ -41,10 +39,7 @@ export function parseEntity<
   CreatedAlias extends string,
   ModifiedAlias extends string,
   TypeAlias extends string,
-  ReadonlyAttributeDefinitions extends PreventKeys<
-    AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
-    CreatedAlias | ModifiedAlias | TypeAlias
-  >
+  ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>
 >(
   entity: EntityConstructor<
     EntityTable,

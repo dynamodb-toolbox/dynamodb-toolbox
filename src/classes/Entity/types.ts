@@ -1,8 +1,9 @@
 import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import type { A, B, O } from 'ts-toolbelt'
+import type { A, B, O, F } from 'ts-toolbelt'
 
-import type { FirstDefined, If, PreventKeys } from '../../lib/utils'
+import type { FirstDefined, If } from '../../lib/utils'
 import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table'
+import Entity from './Entity'
 
 export interface EntityConstructor<
   EntityTable extends TableDef | undefined = undefined,
@@ -13,10 +14,7 @@ export interface EntityConstructor<
   CreatedAlias extends string = 'created',
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
-  ReadonlyAttributeDefinitions extends PreventKeys<
-    AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
-    CreatedAlias | ModifiedAlias | TypeAlias
-  > = PreventKeys<AttributeDefinitions, CreatedAlias | ModifiedAlias | TypeAlias>
+  ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>
 > {
   table?: EntityTable
   name: Name
@@ -485,20 +483,20 @@ export type ShouldParse<Parse extends boolean | undefined, AutoParse extends boo
   B.And<A.Equals<Parse, undefined>, A.Equals<AutoParse, true>>
 >
 
-export type Readonly<T> = T extends O.Object ? { readonly [P in keyof T]: Readonly<T[P]> } : T
-export type Writable<T> = { -readonly [P in keyof T]: Writable<T[P]> }
+export type Readonly<T> = T extends F.Function | undefined
+  ? T
+  : T extends O.Object
+  ? { readonly [P in keyof T]: Readonly<T[P]> }
+  : T
 
-export type EntityDef = {
-  _typesOnly: { _entityItemOverlay: Overlay }
-  timestamps: boolean
-  createdAlias: string
-  modifiedAlias: string
-  typeAlias: string
-  attributes: AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>
-}
+export type Writable<T> = T extends F.Function | undefined
+  ? T
+  : T extends O.Object
+  ? { -readonly [P in keyof T]: Writable<T[P]> }
+  : T
 
 export type InferEntityItem<
-  E extends EntityDef,
+  E extends Entity,
   WritableAttributeDefinitions extends AttributeDefinitions = A.Cast<
     O.Writable<E['attributes'], A.Key, 'deep'>,
     AttributeDefinitions
@@ -513,7 +511,7 @@ export type InferEntityItem<
   Item = InferItem<WritableAttributeDefinitions, Attributes>
 > = Pick<Item, Extract<Attributes['shown'], keyof Item>>
 
-export type EntityItem<E extends EntityDef> = E['_typesOnly']['_entityItemOverlay'] extends Record<
+export type EntityItem<E extends Entity> = E['_typesOnly']['_entityItemOverlay'] extends Record<
   A.Key,
   any
 >
@@ -521,7 +519,7 @@ export type EntityItem<E extends EntityDef> = E['_typesOnly']['_entityItemOverla
   : InferEntityItem<E>
 
 export type ExtractAttributes<
-  E extends EntityDef
+  E extends Entity
 > = E['_typesOnly']['_entityItemOverlay'] extends Record<A.Key, any>
   ? ParsedAttributes<keyof E['_typesOnly']['_entityItemOverlay']>
   : ParseAttributes<
@@ -533,26 +531,26 @@ export type ExtractAttributes<
     >
 
 export type GetOptions<
-  E extends EntityDef,
+  E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
 > = $GetOptions<A['shown'], boolean | undefined, boolean | undefined>
 
 export type QueryOptions<
-  E extends EntityDef,
+  E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
 > = EntityQueryOptions<A['shown'], A['all'], boolean | undefined, boolean | undefined>
 
 export type PutOptions<
-  E extends EntityDef,
+  E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
 > = $PutOptions<A['all'], PutOptionsReturnValues, boolean | undefined, boolean | undefined>
 
 export type DeleteOptions<
-  E extends EntityDef,
+  E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
 > = RawDeleteOptions<A['all'], DeleteOptionsReturnValues, boolean | undefined, boolean | undefined>
 
 export type UpdateOptions<
-  E extends EntityDef,
+  E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
 > = $UpdateOptions<A['all'], UpdateOptionsReturnValues, boolean | undefined, boolean | undefined>
