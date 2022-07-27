@@ -64,7 +64,10 @@ type ExpectedQueryOpts<
 
 type ExpectedWriteOpts<
   Attributes extends A.Key = A.Key,
-  ReturnValues extends string = string
+  ReturnValues extends string = string,
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined,
+  StrictSchemaCheck extends boolean = true
 > = Partial<{
   capacity: string
   execute: boolean
