@@ -160,17 +160,25 @@ describe('Entity transactional operations', () => {
       })).not.toThrow();
     });
 
+    it('omits unmapped attributes when strictSchemaCheck is false.', () => {
+    let { Put: { Item } } = TestEntity.putTransaction(
+      { email: 'x', sort: 'y', unknown: '?' },
+      { strictSchemaCheck: false }
+    )
+
+    expect(Item.unknown).toBeUndefined()
+  });
+
     it('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
-      expect(TestEntity.putTransaction({
+      expect(() => TestEntity.putTransaction({
         pk: 'test',
         sk: 'testsk',
         // @ts-expect-error
-        test: 'test',
+        unknown: 'unknown',
       }, {
         strictSchemaCheck: true,
       })).toThrow();
     });
-
 
     it('passes the correct parameters to putParams.', async () => {
       TestEntity.putTransaction(

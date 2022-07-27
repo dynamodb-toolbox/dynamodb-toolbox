@@ -1025,4 +1025,17 @@ describe('update', () => {
       { strictSchemaCheck: false }
     )).not.toThrow();
   })
+
+  it('omits unmapped attributes when strictSchemaCheck is false.', () => {
+    let { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams(
+      { email: 'x', sort: 'y', test_string: 'some-string-value', unknown: '?' },
+      { strictSchemaCheck: false }
+    )
+
+    expect(UpdateExpression).not.toContain('#unknown')
+    expect(ExpressionAttributeNames).toHaveProperty('#test_string')
+    expect(ExpressionAttributeValues).toHaveProperty(':test_string')
+    expect(ExpressionAttributeNames).not.toHaveProperty('#unknown')
+    expect(ExpressionAttributeValues).not.toHaveProperty(':unknown')
+  });
 }) // end describe

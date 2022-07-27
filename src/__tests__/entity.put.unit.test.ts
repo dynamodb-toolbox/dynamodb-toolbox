@@ -267,6 +267,15 @@ describe('put', () => {
     ).not.toThrow()
   })
 
+  it('omits unmapped attributes when strictSchemaCheck is false.', () => {
+    let { Item } = TestEntity.putParams(
+      { email: 'x', sort: 'y', unknown: '?' },
+      { strictSchemaCheck: false }
+    )
+
+    expect(Item.unknown).toBeUndefined()
+  });
+
   it('fails when invalid string provided with no coercion', () => {
     expect(() =>
       TestEntity.putParams({
