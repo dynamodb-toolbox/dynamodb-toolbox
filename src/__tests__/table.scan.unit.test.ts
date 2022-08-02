@@ -174,15 +174,15 @@ describe('scan', () => {
     );
   });
 
-  it('returns an array when an item contains a set.', async () => {
-    DocumentClient.scan = jest.fn().mockReturnValue({
-      promise: jest.fn().mockResolvedValue({
+  it('transforms a set into an array when parse is true', async () => {
+    DocumentClient.scan = jest.fn().mockReturnValueOnce({
+      promise: jest.fn().mockResolvedValueOnce({
         Items: [
           {
             pk: 'test',
             sk: 'skVal2',
             testSet: new Set(['test1', 'test2']),
-            _et: 'TestEntity'
+            _et: 'TestEntity',
           },
         ],
         LastEvaluatedKey: null,
@@ -190,7 +190,7 @@ describe('scan', () => {
     });
 
     let result = await TestEntity.scan({
-      parse: true
+      parse: true,
     });
     expect(result).toEqual({
       Items: [
@@ -198,10 +198,42 @@ describe('scan', () => {
           email: 'test',
           sort: 'skVal2',
           testSet: ['test1', 'test2'],
-          entity: 'TestEntity'
+          entity: 'TestEntity',
         },
       ],
       LastEvaluatedKey: null,
     });
   });
+
+  it('returns a set as is when parse is false', async () => {
+    DocumentClient.scan = jest.fn().mockReturnValueOnce({
+      promise: jest.fn().mockResolvedValueOnce({
+        Items: [
+          {
+            pk: 'test',
+            sk: 'skVal2',
+            testSet: new Set(['test1', 'test2']),
+            _et: 'TestEntity',
+          },
+        ],
+        LastEvaluatedKey: null,
+      }),
+    });
+
+    let result = await TestEntity.scan({
+      parse: false,
+    });
+    expect(result).toEqual({
+      Items: [
+        {
+          pk: 'test',
+          sk: 'skVal2',
+          testSet: new Set(['test1', 'test2']),
+          _et: 'TestEntity',
+        },
+      ],
+      LastEvaluatedKey: null,
+    });
+  });
+
 });
