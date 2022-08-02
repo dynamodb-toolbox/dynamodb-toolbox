@@ -277,6 +277,7 @@ class Entity<
 
     // Assume standard response from DynamoDB
     const data = input.Item || input.Items || input
+
     if (Array.isArray(data)) {
       return data.map(item =>
         formatItem(this.DocumentClient)(schema.attributes, linked, item, include)
