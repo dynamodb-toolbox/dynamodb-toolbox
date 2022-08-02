@@ -441,7 +441,7 @@ describe('query', () => {
         Items: [
           {
             pk: 'test-pk',
-            sk: 'skVal2',
+            sk: 'test-sk',
             testSet: new Set(['test1', 'test2']),
             _et: 'TestEntity',
           },
@@ -455,7 +455,7 @@ describe('query', () => {
       Items: [
         {
           email: 'test-pk',
-          sort: 'skVal2',
+          sort: 'test-sk',
           testSet: ['test1', 'test2'],
           entity: 'TestEntity',
         },
@@ -470,7 +470,7 @@ describe('query', () => {
         Items: [
           {
             pk: 'test-pk',
-            sk: 'skVal2',
+            sk: 'test-sk',
             testSet: new Set(['test1', 'test2']),
             _et: 'TestEntity',
           },
@@ -485,8 +485,8 @@ describe('query', () => {
     expect(result).toEqual({
       Items: [
         {
-          pk: 'test',
-          sk: 'skVal2',
+          pk: 'test-pk',
+          sk: 'test-sk',
           testSet: new Set(['test1', 'test2']),
           _et: 'TestEntity',
         },

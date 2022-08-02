@@ -179,8 +179,8 @@ describe('scan', () => {
       promise: jest.fn().mockResolvedValueOnce({
         Items: [
           {
-            pk: 'test',
-            sk: 'skVal2',
+            pk: 'test-pk',
+            sk: 'test-sk',
             testSet: new Set(['test1', 'test2']),
             _et: 'TestEntity',
           },
@@ -195,8 +195,8 @@ describe('scan', () => {
     expect(result).toEqual({
       Items: [
         {
-          email: 'test',
-          sort: 'skVal2',
+          email: 'test-pk',
+          sort: 'test-sk',
           testSet: ['test1', 'test2'],
           entity: 'TestEntity',
         },
@@ -210,8 +210,8 @@ describe('scan', () => {
       promise: jest.fn().mockResolvedValueOnce({
         Items: [
           {
-            pk: 'test',
-            sk: 'skVal2',
+            pk: 'test-pk',
+            sk: 'test-sk',
             testSet: new Set(['test1', 'test2']),
             _et: 'TestEntity',
           },
@@ -226,8 +226,8 @@ describe('scan', () => {
     expect(result).toEqual({
       Items: [
         {
-          pk: 'test',
-          sk: 'skVal2',
+          pk: 'test-pk',
+          sk: 'test-sk',
           testSet: new Set(['test1', 'test2']),
           _et: 'TestEntity',
         },
