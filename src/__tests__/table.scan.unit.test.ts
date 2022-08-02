@@ -235,5 +235,4 @@ describe('scan', () => {
       LastEvaluatedKey: null,
     });
   });
-
 });
