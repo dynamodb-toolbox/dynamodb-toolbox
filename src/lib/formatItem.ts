@@ -56,13 +56,15 @@ export default (DocumentClient: DocumentClient) => (
       (include.length > 0 && !include.includes(field))
     )
       return acc
-    // Extract values from sets
-    if (
-      attributes[field]?.type === 'set' &&
-      item[field] instanceof Set
-    ) {
-      item[field] = Array.from(item[field]);
+
+    if (attributes[field]?.type === 'set') {
+      if (Array.isArray(item[field].values)) {
+        item[field] = item[field].values
+      } else {
+        item[field] = Array.from(item[field])
+      }
     }
+
     return Object.assign(acc, {
       [(attributes[field] && attributes[field].alias) || field]:
         attributes[field] && (attributes[field].prefix || attributes[field].suffix)
