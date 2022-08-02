@@ -14,7 +14,7 @@ import formatItem from '../../lib/formatItem'
 import getKey from '../../lib/getKey'
 import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
-import { error, transformAttr, isEmpty, If, PreventKeys, FirstDefined } from '../../lib/utils'
+import { error, transformAttr, isEmpty, If, FirstDefined } from '../../lib/utils'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
@@ -48,47 +48,60 @@ import type {
 } from './types'
 
 class Entity<
-  EntityItemOverlay extends Overlay = undefined,
-  EntityCompositeKeyOverlay extends Overlay = EntityItemOverlay,
-  EntityTable extends TableDef | undefined = undefined,
   Name extends string = string,
-  AutoExecute extends boolean = true,
-  AutoParse extends boolean = true,
-  Timestamps extends boolean = true,
-  CreatedAlias extends string = 'created',
-  ModifiedAlias extends string = 'modified',
-  TypeAlias extends string = 'entity',
-  ReadonlyAttributeDefinitions extends PreventKeys<
-    AttributeDefinitions | Readonly<AttributeDefinitions>,
-    CreatedAlias | ModifiedAlias | TypeAlias
-  > = PreventKeys<AttributeDefinitions, CreatedAlias | ModifiedAlias | TypeAlias>,
+  // Name is used to detect Entity instances (new Entity(...)) vs Entity type (const e: Entity = ...)
+  // "string extends Name" means that Name is not defined, which only happens when using the Entity type
+  // In this case, broader types should be applied
+  EntityItemOverlay extends Overlay = string extends Name ? Overlay : undefined,
+  EntityCompositeKeyOverlay extends Overlay = string extends Name ? Overlay : EntityItemOverlay,
+  EntityTable extends TableDef | undefined = string extends Name ? TableDef | undefined : undefined,
+  AutoExecute extends boolean = string extends Name ? boolean : true,
+  AutoParse extends boolean = string extends Name ? boolean : true,
+  Timestamps extends boolean = string extends Name ? boolean : true,
+  CreatedAlias extends string = string extends Name ? string : 'created',
+  ModifiedAlias extends string = string extends Name ? string : 'modified',
+  TypeAlias extends string = string extends Name ? string : 'entity',
+  ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>,
   WritableAttributeDefinitions extends AttributeDefinitions = Writable<ReadonlyAttributeDefinitions>,
-  Attributes extends ParsedAttributes = If<
-    A.Equals<EntityItemOverlay, undefined>,
-    // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
-    ParseAttributes<
-      WritableAttributeDefinitions,
-      Timestamps,
-      CreatedAlias,
-      ModifiedAlias,
-      TypeAlias
-    >,
-    ParsedAttributes<keyof EntityItemOverlay>
-  >,
-  $Item extends any = If<
-    A.Equals<EntityItemOverlay, undefined>,
-    // 🔨 TOIMPROVE: Use EntityTable in item infering
-    InferItem<WritableAttributeDefinitions, Attributes>,
-    EntityItemOverlay
-  >,
+  Attributes extends ParsedAttributes = string extends Name
+    ? ParsedAttributes
+    : If<
+        A.Equals<EntityItemOverlay, undefined>,
+        // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
+        ParseAttributes<
+          WritableAttributeDefinitions,
+          Timestamps,
+          CreatedAlias,
+          ModifiedAlias,
+          TypeAlias
+        >,
+        ParsedAttributes<keyof EntityItemOverlay>
+      >,
+  $Item extends any = string extends Name
+    ? any
+    : If<
+        A.Equals<EntityItemOverlay, undefined>,
+        // 🔨 TOIMPROVE: Use EntityTable in item infering
+        InferItem<WritableAttributeDefinitions, Attributes>,
+        EntityItemOverlay
+      >,
   // Necessary to cast in a second step to prevent infinite loop during type check
-  Item extends O.Object = A.Cast<$Item, O.Object>,
-  CompositePrimaryKey extends O.Object = If<
-    A.Equals<EntityItemOverlay, undefined>,
-    InferCompositePrimaryKey<Item, Attributes>,
-    O.Object
-  >
+  Item extends O.Object = string extends Name ? O.Object : A.Cast<$Item, O.Object>,
+  CompositePrimaryKey extends O.Object = string extends Name
+    ? O.Object
+    : If<
+        A.Equals<EntityItemOverlay, undefined>,
+        InferCompositePrimaryKey<Item, Attributes>,
+        O.Object
+      >
 > {
+  // @ts-ignore
+  public _typesOnly: {
+    _entityItemOverlay: EntityItemOverlay
+    _attributes: Attributes
+    _compositePrimaryKey: CompositePrimaryKey
+    _item: Item
+  }
   private _table?: EntityTable
   private _execute?: boolean
   private _parse?: boolean
@@ -98,8 +111,6 @@ class Entity<
   public defaults: any
   public linked: any
   public required: any
-  // @ts-ignore
-  public _typesOnly: { _entityItemOverlay: EntityItemOverlay }
   public attributes: ReadonlyAttributeDefinitions
   public timestamps: Timestamps
   public createdAlias: CreatedAlias
@@ -233,11 +244,8 @@ class Entity<
       : error(`No partitionKey defined`)
   }
 
-  get sortKey(): If<
-    A.Equals<Attributes['key']['sortKey']['pure'], never>,
-    null,
-    Attributes['key']['sortKey']['pure']
-  > {
+  // 🔨 TOIMPROVE: We could hardly type sortKey here
+  get sortKey(): string | null {
     return this.schema.keys.sortKey ? this.attribute(this.schema.keys.sortKey) : null
   }
 
@@ -381,10 +389,10 @@ class Entity<
     options: { attributes?: ResponseAttributes[] } = {}
   ): {
     Entity: Entity<
+      Name,
       EntityItemOverlay,
       EntityCompositeKeyOverlay,
       EntityTable,
-      Name,
       AutoExecute,
       AutoParse,
       Timestamps,
@@ -1138,10 +1146,7 @@ class Entity<
           values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
 
           // if a list and updating by index
-        } else if (
-          mapping.type === 'list' &&
-          data[field]?.constructor === Object
-        ) {
+        } else if (mapping.type === 'list' && data[field]?.constructor === Object) {
           Object.keys(data[field]).forEach(i => {
             if (String(parseInt(i)) !== i) {
               error(`Properties must be numeric to update specific list items in '${field}'`)
