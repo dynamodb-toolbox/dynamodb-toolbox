@@ -1,13 +1,13 @@
-import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { Table, Entity } from '../index';
+import { DocumentClient } from './bootstrap-tests';
 
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
   indexes: { GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSIsk1' } },
-  DocumentClient
-})
+  DocumentClient,
+});
 
 const TestEntity = new Entity({
   name: 'TestEntity',
@@ -15,39 +15,40 @@ const TestEntity = new Entity({
   attributes: {
     email: { type: 'string', partitionKey: true },
     sort: { type: 'string', sortKey: true },
-    test: 'string'
+    test: 'string',
+    testSet: { type: 'set' },
   },
-  table: TestTable
-} as const)
+  table: TestTable,
+} as const);
 
 describe('scan', () => {
   it('scans a table with no options', () => {
-    let result = TestTable.scanParams()
+    let result = TestTable.scanParams();
     expect(result).toEqual({
-      TableName: 'test-table'
-    })
-  })
+      TableName: 'test-table',
+    });
+  });
 
   it('scans a table with meta data', () => {
-    let result = TestTable.scanParams({ attributes: ['pk'] }, {}, true)
+    let result = TestTable.scanParams({ attributes: ['pk'] }, {}, true);
     expect(result).toEqual({
       payload: {
         TableName: 'test-table',
         ExpressionAttributeNames: { '#proj1': 'pk', '#proj2': '_et' },
-        ProjectionExpression: '#proj1,#proj2'
+        ProjectionExpression: '#proj1,#proj2',
       },
       EntityProjections: {},
-      TableProjections: ['pk', '_et']
-    })
-  })
+      TableProjections: ['pk', '_et'],
+    });
+  });
 
   it('scans a table and ignores bad parameters', () => {
     // @ts-expect-error
-    let result = TestTable.scanParams({}, 'test')
+    let result = TestTable.scanParams({}, 'test');
     expect(result).toEqual({
-      TableName: 'test-table'
-    })
-  })
+      TableName: 'test-table',
+    });
+  });
 
   it('scans a table with options', () => {
     let result = TestTable.scanParams({
@@ -63,8 +64,8 @@ describe('scan', () => {
       segment: 0,
       entity: TestEntity.name,
       execute: true,
-      parse: true
-    })
+      parse: true,
+    });
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -73,7 +74,7 @@ describe('scan', () => {
         '#proj1': 'pk',
         '#proj2': 'sk',
         '#proj3': 'test',
-        '#proj4': '_et'
+        '#proj4': '_et',
       },
       ExpressionAttributeValues: { ':attr1': 'testFilter' },
       FilterExpression: '#attr1 = :attr1',
@@ -85,91 +86,122 @@ describe('scan', () => {
       ConsistentRead: true,
       ReturnConsumedCapacity: 'TOTAL',
       Select: 'ALL_ATTRIBUTES',
-      ExclusiveStartKey: { pk: 'test', sk: 'skVal2' }
-    })
+      ExclusiveStartKey: { pk: 'test', sk: 'skVal2' },
+    });
     // console.log(result);
-  })
+  });
 
   it('fails on an invalid option', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
-        { invalidParam: true }
-      )
-    ).toThrow('Invalid scan options: invalidParam')
-  })
+        { invalidParam: true },
+      ),
+    ).toThrow('Invalid scan options: invalidParam');
+  });
 
   it('fails on an invalid index', () => {
     expect(() => TestTable.scanParams({ index: 'test' })).toThrow(
-      `'test' is not a valid index name`
-    )
-  })
+      `'test' is not a valid index name`,
+    );
+  });
 
   it('fails on an invalid limit', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
-        { limit: 'test' }
-      )
-    ).toThrow(`'limit' must be a positive integer`)
-  })
+        { limit: 'test' },
+      ),
+    ).toThrow(`'limit' must be a positive integer`);
+  });
 
   it('fails on invalid consistent setting', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
-        { consistent: 'test' }
-      )
-    ).toThrow(`'consistent' requires a boolean`)
-  })
+        { consistent: 'test' },
+      ),
+    ).toThrow(`'consistent' requires a boolean`);
+  });
 
   it('fails on invalid select setting', () => {
     expect(() => TestTable.scanParams({ select: 'test' })).toThrow(
-      `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
-    )
-  })
+      `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`,
+    );
+  });
 
   it('fails on invalid capacity setting', () => {
     expect(() => TestTable.scanParams({ capacity: 'test' })).toThrow(
-      `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
-    )
-  })
+      `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`,
+    );
+  });
 
   it('fails on invalid entity', () => {
     expect(() => TestTable.scanParams({ entity: 'test' })).toThrow(
-      `'entity' must be a string and a valid table Entity name`
-    )
-  })
+      `'entity' must be a string and a valid table Entity name`,
+    );
+  });
 
   it('fails on invalid startKey', () => {
     expect(() => TestTable.scanParams({ startKey: 'test' })).toThrow(
-      `'startKey' requires a valid object`
-    )
-  })
+      `'startKey' requires a valid object`,
+    );
+  });
 
   it('fails on invalid segments', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
-        { segments: 'test' }
-      )
-    ).toThrow(`'segments' must be an integer greater than 1`)
-  })
+        { segments: 'test' },
+      ),
+    ).toThrow(`'segments' must be an integer greater than 1`);
+  });
 
   it('fails on invalid segment', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
-        { segment: 'test' }
-      )
+        { segment: 'test' },
+      ),
     ).toThrow(
-      `segment' must be an integer greater than or equal to 0 and less than the total number of segments`
-    )
-  })
+      `segment' must be an integer greater than or equal to 0 and less than the total number of segments`,
+    );
+  });
 
   it('fails if both segments and segment are not included', () => {
     expect(() => TestTable.scanParams({ segments: 10 })).toThrow(
-      `Both 'segments' and 'segment' must be provided`
-    )
-  })
-})
+      `Both 'segments' and 'segment' must be provided`,
+    );
+  });
+
+  it('returns an array when an item contains a set.', async () => {
+    DocumentClient.scan = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({
+        Items: [
+          {
+            pk: 'test',
+            sk: 'skVal2',
+            testSet: new Set(['test1', 'test2']),
+            _et: 'TestEntity'
+          },
+        ],
+        LastEvaluatedKey: null,
+      }),
+    });
+
+    let result = await TestEntity.scan({
+      parse: true
+    });
+    expect(result).toEqual({
+      Items: [
+        {
+          email: 'test',
+          sort: 'skVal2',
+          testSet: ['test1', 'test2'],
+          entity: 'TestEntity'
+        },
+      ],
+      LastEvaluatedKey: null,
+    });
+  });
+});

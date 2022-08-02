@@ -58,11 +58,10 @@ export default (DocumentClient: DocumentClient) => (
       return acc
     // Extract values from sets
     if (
-      attributes[field] &&
-      attributes[field].type === 'set' &&
-      Array.isArray(item[field].values)
+      attributes[field]?.type === 'set' &&
+      item[field] instanceof Set
     ) {
-      item[field] = item[field].values
+      item[field] = Array.from(item[field]);
     }
     return Object.assign(acc, {
       [(attributes[field] && attributes[field].alias) || field]:
