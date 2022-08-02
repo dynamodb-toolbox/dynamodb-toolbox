@@ -435,14 +435,14 @@ describe('query', () => {
     ).toThrow(`'between' conditions requires an array with two values.`);
   });
 
-  it('transforms a set into an array when parse is true', async () => {
+  it('returns a set property as an array when parse is true', async () => {
     DocumentClient.query = jest.fn().mockReturnValue({
       promise: jest.fn().mockResolvedValue({
         Items: [
           {
             pk: 'test-pk',
             sk: 'test-sk',
-            testSet: new Set(['test1', 'test2']),
+            testSet: DocumentClient.createSet(['test1', 'test2']),
             _et: 'TestEntity',
           },
         ],
@@ -464,14 +464,14 @@ describe('query', () => {
     });
   });
 
-  it('returns a set as is when parse is false', async () => {
+  it('returns a set property as a DynamoDB set when when parse is false', async () => {
     DocumentClient.query = jest.fn().mockReturnValue({
       promise: jest.fn().mockResolvedValue({
         Items: [
           {
             pk: 'test-pk',
             sk: 'test-sk',
-            testSet: new Set(['test1', 'test2']),
+            testSet: DocumentClient.createSet(['test1', 'test2']),
             _et: 'TestEntity',
           },
         ],
@@ -487,7 +487,7 @@ describe('query', () => {
         {
           pk: 'test-pk',
           sk: 'test-sk',
-          testSet: new Set(['test1', 'test2']),
+          testSet: DocumentClient.createSet(['test1', 'test2']),
           _et: 'TestEntity',
         },
       ],
