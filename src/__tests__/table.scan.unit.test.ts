@@ -181,7 +181,7 @@ describe('scan', () => {
           {
             pk: 'test-pk',
             sk: 'test-sk',
-            testSet: new Set(['test1', 'test2']),
+            testSet: DocumentClient.createSet(['test1', 'test2']),
             _et: 'TestEntity',
           },
         ],
@@ -212,7 +212,7 @@ describe('scan', () => {
           {
             pk: 'test-pk',
             sk: 'test-sk',
-            testSet: new Set(['test1', 'test2']),
+            testSet: DocumentClient.createSet(['test1', 'test2']),
             _et: 'TestEntity',
           },
         ],
@@ -228,7 +228,7 @@ describe('scan', () => {
         {
           pk: 'test-pk',
           sk: 'test-sk',
-          testSet: new Set(['test1', 'test2']),
+          testSet: DocumentClient.createSet(['test1', 'test2']),
           _et: 'TestEntity',
         },
       ],
