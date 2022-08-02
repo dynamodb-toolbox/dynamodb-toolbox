@@ -479,7 +479,9 @@ describe('query', () => {
       }),
     });
 
-    let result = await TestEntity.query('test-pk');
+    let result = await TestEntity.query('test-pk', {
+      parse: false
+    });
     expect(result).toEqual({
       Items: [
         {
