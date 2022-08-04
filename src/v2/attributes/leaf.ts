@@ -1,4 +1,5 @@
 import { O } from 'ts-toolbelt'
+import { ComputedDefault } from './utility'
 
 type LeafType = 'string' | 'boolean' | 'number' | 'binary'
 
@@ -14,6 +15,7 @@ export type ResolveLeafType<T extends LeafType> = T extends 'string'
 
 type LeafDefaultValue<T extends LeafType> =
   | undefined
+  | ComputedDefault
   | ResolveLeafType<T>
   | (() => ResolveLeafType<T>)
 

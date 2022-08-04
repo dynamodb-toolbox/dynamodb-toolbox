@@ -2,6 +2,7 @@ import { A } from 'ts-toolbelt'
 
 import { string } from './leaf'
 import { map } from './map'
+import { ComputedDefault } from './utility'
 
 describe('map', () => {
   const str = string({ required: true })
@@ -191,6 +192,56 @@ describe('map', () => {
       },
       _required: false,
       _hidden: false
+    })
+  })
+
+  describe('ComputedDefault', () => {
+    it('accepts ComputedDefault as default value (option)', () => {
+      const mapped = map({ str }, { default: ComputedDefault })
+
+      const assertMapped: A.Contains<
+        typeof mapped,
+        {
+          _type: 'map'
+          _resolved?: unknown
+          _required: false
+          _hidden: false
+          _default: ComputedDefault
+        }
+      > = 1
+      assertMapped
+
+      expect(mapped).toMatchObject({
+        _type: 'map',
+        _properties: { str },
+        _required: false,
+        _hidden: false,
+        _default: ComputedDefault
+      })
+    })
+
+    it('accepts ComputedDefault as default value (option)', () => {
+      const mapped = map({ str }).default(ComputedDefault)
+
+      const assertMapped: A.Contains<
+        typeof mapped,
+        {
+          _type: 'map'
+          _resolved?: unknown
+          _required: false
+          _hidden: false
+          _default: ComputedDefault
+        }
+      > = 1
+      assertMapped
+
+      expect(mapped).toMatchObject({
+        _type: 'map',
+        _properties: { str },
+        _required: false,
+        _hidden: false,
+        _default: ComputedDefault
+      })
     })
   })
 })

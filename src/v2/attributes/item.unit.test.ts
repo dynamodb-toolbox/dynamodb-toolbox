@@ -4,6 +4,7 @@ import { item } from './item'
 import { string, number, boolean, binary } from './leaf'
 import { map, Mapped } from './map'
 import { list, List } from './list'
+import { ComputedDefault } from './utility'
 
 describe('item', () => {
   it('leafs', () => {
@@ -81,7 +82,7 @@ describe('item', () => {
     })
   })
 
-  it('mapp', () => {
+  it('maps', () => {
     const str = string().required()
 
     const itm = item({
@@ -206,6 +207,72 @@ describe('item', () => {
           _hidden: true
         }
       }
+    })
+  })
+
+  it('computedDefaults', () => {
+    const allTypesOfProps = {
+      optProp: string(),
+      optPropWithInitDef: string().default('foo'),
+      optPropWithCompDef: string().default(ComputedDefault),
+      reqProp: string().required(),
+      reqPropWithInitDef: string().required().default('baz'),
+      reqPropWithCompDef: string().required().default(ComputedDefault)
+    }
+
+    type ExpectedPreCompProps = {
+      optProp?: string | undefined
+      optPropWithInitDef: string
+      optPropWithCompDef?: string | undefined
+      reqProp: string
+      reqPropWithInitDef: string
+      reqPropWithCompDef?: string
+    }
+
+    type ExpectedPostCompProps = {
+      optProps?: string | undefined
+      optPropWithInitDef: string
+      optPropWithCompDef: string
+      reqProp: string
+      reqPropWithInitDef: string
+      reqPropWithCompDef: string
+    }
+
+    const itm = item({
+      ...allTypesOfProps,
+      map: map(allTypesOfProps).required(),
+      list: list(map(allTypesOfProps).required()).required()
+    })
+
+    itm.computeDefaults(preCompProps => {
+      const assertLeafProps: A.Equals<
+        Omit<typeof preCompProps, 'list' | 'map'>,
+        ExpectedPreCompProps
+      > = 1
+      assertLeafProps
+
+      const assertMapProps: A.Equals<typeof preCompProps.map, ExpectedPreCompProps> = 1
+      assertMapProps
+
+      const assertListProps: A.Equals<typeof preCompProps.list[number], ExpectedPreCompProps> = 1
+      assertListProps
+
+      const fillGaps = (preComp: ExpectedPreCompProps): ExpectedPostCompProps => ({
+        ...preComp,
+        optPropWithCompDef: preComp.optPropWithCompDef ?? 'baz',
+        reqPropWithCompDef: preComp.reqPropWithCompDef ?? 'foo'
+      })
+
+      const postCompProps: ExpectedPostCompProps & {
+        map: ExpectedPostCompProps
+        list: ExpectedPostCompProps[]
+      } = {
+        ...fillGaps(preCompProps),
+        map: fillGaps(preCompProps.map),
+        list: preCompProps.list.map(fillGaps)
+      }
+
+      return postCompProps
     })
   })
 })

@@ -1,6 +1,7 @@
 import { A } from 'ts-toolbelt'
 
 import { string, number, boolean, binary } from './leaf'
+import { ComputedDefault } from './utility'
 
 describe('leaf', () => {
   describe('string', () => {
@@ -289,6 +290,54 @@ describe('leaf', () => {
         _required: false,
         _hidden: false,
         _default: undefined
+      })
+    })
+  })
+
+  describe('ComputedDefault', () => {
+    it('accepts ComputedDefault as default value (option)', () => {
+      const str = string({ default: ComputedDefault })
+
+      const assertStr: A.Contains<
+        typeof str,
+        {
+          _type: 'string'
+          _resolved?: unknown
+          _required: false
+          _hidden: false
+          _default: ComputedDefault
+        }
+      > = 1
+      assertStr
+
+      expect(str).toMatchObject({
+        _type: 'string',
+        _required: false,
+        _hidden: false,
+        _default: ComputedDefault
+      })
+    })
+
+    it('accepts ComputedDefault as default value (option)', () => {
+      const str = string().default(ComputedDefault)
+
+      const assertStr: A.Contains<
+        typeof str,
+        {
+          _type: 'string'
+          _resolved?: unknown
+          _required: false
+          _hidden: false
+          _default: ComputedDefault
+        }
+      > = 1
+      assertStr
+
+      expect(str).toMatchObject({
+        _type: 'string',
+        _required: false,
+        _hidden: false,
+        _default: ComputedDefault
       })
     })
   })

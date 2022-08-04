@@ -1,38 +1,48 @@
 import { O } from 'ts-toolbelt'
 
 import { Property } from './property'
+import { ComputedDefault } from './utility'
 
 type RequiredDisplayedProperty = Property & {
   _required: true
   _hidden: false
 }
 
-interface _ListOptions<R extends boolean = boolean, H extends boolean = boolean> {
+interface _ListOptions<
+  R extends boolean = boolean,
+  H extends boolean = boolean,
+  D extends ComputedDefault | undefined = ComputedDefault | undefined
+> {
   _required: R
   _hidden: H
-  // May be handled later
-  _default: undefined
+  _default: D
 }
 
 export interface List<
   E extends RequiredDisplayedProperty = RequiredDisplayedProperty,
   R extends boolean = boolean,
-  H extends boolean = boolean
-> extends _ListOptions<R, H> {
+  H extends boolean = boolean,
+  D extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends _ListOptions<R, H, D> {
   _type: 'list'
   _elements: E
-  required: () => List<E, true, H>
-  hidden: () => List<E, R, true>
+  _default: D
+  required: () => List<E, true, H, D>
+  hidden: () => List<E, R, true, D>
+  default: <$D extends ComputedDefault | undefined>(nextDefaultValue: $D) => List<E, R, H, $D>
 }
 
-interface ListOptions<R extends boolean = boolean, H extends boolean = boolean> {
+interface ListOptions<
+  R extends boolean = boolean,
+  H extends boolean = boolean,
+  D extends ComputedDefault | undefined = ComputedDefault | undefined
+> {
   required: R
   hidden: H
-  // May be handled later
-  default: undefined
+  default: D
 }
 
-const listDefaultOptions: ListOptions<false, false> = {
+const listDefaultOptions: ListOptions<false, false, undefined> = {
   required: false,
   hidden: false,
   default: undefined
@@ -41,20 +51,22 @@ const listDefaultOptions: ListOptions<false, false> = {
 type ListTyper = <
   E extends RequiredDisplayedProperty,
   R extends boolean = false,
-  H extends boolean = false
+  H extends boolean = false,
+  D extends ComputedDefault | undefined = undefined
 >(
   _elements: E,
-  options?: O.Partial<ListOptions<R, H>>
-) => List<E, R, H>
+  options?: O.Partial<ListOptions<R, H, D>>
+) => List<E, R, H, D>
 
 export const list: ListTyper = <
   E extends RequiredDisplayedProperty,
   R extends boolean = false,
-  H extends boolean = false
+  H extends boolean = false,
+  D extends ComputedDefault | undefined = undefined
 >(
   _elements: E,
-  options?: O.Partial<ListOptions<R, H>>
-): List<E, R, H> => {
+  options?: O.Partial<ListOptions<R, H, D>>
+): List<E, R, H, D> => {
   const { _required: _elRequired, _hidden: _elHidden } = _elements
 
   if (_elRequired !== true) {
@@ -68,14 +80,16 @@ export const list: ListTyper = <
   }
 
   const appliedOptions = { ...listDefaultOptions, ...options }
-  const { required: _required, hidden: _hidden } = appliedOptions
+  const { required: _required, hidden: _hidden, default: _default } = appliedOptions
 
   return {
     _type: 'list',
     _elements,
     _required,
     _hidden,
+    _default,
     required: () => list(_elements, { ...appliedOptions, required: true }),
-    hidden: () => list(_elements, { ...appliedOptions, hidden: true })
-  } as List<E, R, H>
+    hidden: () => list(_elements, { ...appliedOptions, hidden: true }),
+    default: nextDefault => list(_elements, { ...appliedOptions, default: nextDefault })
+  } as List<E, R, H, D>
 }
