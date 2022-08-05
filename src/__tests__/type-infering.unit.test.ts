@@ -400,7 +400,7 @@ describe('Entity', () => {
         type DeleteItemOptions = DeleteOptions<typeof ent>
         type TestDeleteItemOptions = A.Equals<
           DeleteItemOptions,
-          Omit<ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>, 'strictSchemaCheck'>
+          ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>
         >
         const testDeleteItemOptions: TestDeleteItemOptions = 1
         testDeleteItemOptions
@@ -1141,7 +1141,7 @@ describe('Entity', () => {
         type DeleteItemOptions = DeleteOptions<typeof ent>
         type TestDeleteItemOptions = A.Equals<
           DeleteItemOptions,
-          Omit<ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>, 'strictSchemaCheck'>
+          ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>
         >
         const testDeleteItemOptions: TestDeleteItemOptions = 1
         testDeleteItemOptions
@@ -2299,7 +2299,7 @@ describe('Entity', () => {
           type DeleteItemOptions = DeleteOptions<typeof ent>
           type TestDeleteItemOptions = A.Equals<
             DeleteItemOptions,
-            Omit<ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD'>, 'strictSchemaCheck'>
+            ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD'>
           >
           const testDeleteItemOptions: TestDeleteItemOptions = 1
           testDeleteItemOptions
