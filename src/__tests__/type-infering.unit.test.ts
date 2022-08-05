@@ -142,7 +142,8 @@ describe('Entity', () => {
       } as const
 
       expect(() => {
-        // @ts-expect-error
+        // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
+        // @ts-NOT-expect-error
         new Entity({
           name: entityName,
           attributes: { ...ck, created: 'string' },
@@ -151,7 +152,8 @@ describe('Entity', () => {
       }).toThrow()
 
       expect(() => {
-        // @ts-expect-error
+        // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
+        // @ts-NOT-expect-error
         new Entity({
           name: entityName,
           createdAlias: 'cr',
@@ -161,7 +163,8 @@ describe('Entity', () => {
       }).toThrow()
 
       expect(() => {
-        // @ts-expect-error
+        // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
+        // @ts-NOT-expect-error
         new Entity({
           name: entityName,
           attributes: { ...ck, modified: 'string' },
@@ -170,7 +173,8 @@ describe('Entity', () => {
       }).toThrow()
 
       expect(() => {
-        // @ts-expect-error
+        // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
+        // @ts-NOT-expect-error
         new Entity({
           name: entityName,
           modifiedAlias: 'mod',
@@ -180,7 +184,8 @@ describe('Entity', () => {
       }).toThrow()
 
       // 🔨 TOIMPROVE: Not sure this is expected behavior: overriding typeAlias doesn't throw
-      // @ts-expect-error
+      // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
+      // @ts-NOT-expect-error
       new Entity({
         name: entityName,
         typeAlias: 'en',
@@ -189,7 +194,8 @@ describe('Entity', () => {
       } as const)
 
       // 🔨 TOIMPROVE: Not sure this is expected behavior: overriding typeAlias doesn't throw
-      // @ts-expect-error
+      // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
+      // @ts-NOT-expect-error
       new Entity({
         name: entityName,
         typeAlias: 'en',
@@ -222,6 +228,10 @@ describe('Entity', () => {
       },
       table: tableWithoutSK
     } as const)
+
+    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    const testExtends: TestExtends = 1
+    testExtends
 
     const entNoExecute = new Entity({
       name: entityName,
@@ -971,6 +981,10 @@ describe('Entity', () => {
       table
     } as const)
 
+    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    const testExtends: TestExtends = 1
+    testExtends
+
     type ExpectedItem = {
       cr: string
       mod: string
@@ -1607,6 +1621,10 @@ describe('Entity', () => {
       table
     } as const)
 
+    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    const testExtends: TestExtends = 1
+    testExtends
+
     type ExpectedItem = {
       created: string
       modified: string
@@ -1766,6 +1784,10 @@ describe('Entity', () => {
       table
     } as const)
 
+    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    const testExtends: TestExtends = 1
+    testExtends
+
     type ExpectedItem = {
       created: string
       modified: string
@@ -1828,6 +1850,10 @@ describe('Entity', () => {
       table
     } as const)
 
+    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    const testExtends: TestExtends = 1
+    testExtends
+
     it('get method', () => {
       ent.getParams({ pk })
       ent.getParams(ck2)
@@ -1875,6 +1901,10 @@ describe('Entity', () => {
       },
       table
     } as const)
+
+    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    const testExtends: TestExtends = 1
+    testExtends
 
     describe('get method', () => {
       describe('MethodItemOverlay', () => {
@@ -2121,7 +2151,12 @@ describe('Entity', () => {
     }
     type EntityCompositeKeyOverlay = { pk0: string; sk0: string }
 
-    const ent = new Entity<EntityItemOverlay, EntityCompositeKeyOverlay, typeof table>({
+    const ent = new Entity<
+      'TestEntity',
+      EntityItemOverlay,
+      EntityCompositeKeyOverlay,
+      typeof table
+    >({
       name: 'TestEntity',
       attributes: {
         pk: { type: 'string', partitionKey: true },
@@ -2129,6 +2164,10 @@ describe('Entity', () => {
       },
       table
     } as const)
+
+    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    const testExtends: TestExtends = 1
+    testExtends
 
     type MethodItemOverlay = {
       pk1: string
