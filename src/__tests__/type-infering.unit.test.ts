@@ -72,7 +72,8 @@ type ExpectedWriteOpts<
   conditions: ConditionsOrFilters<Attributes>
   metrics: string
   include: string[]
-  returnValues: ReturnValues
+  returnValues: ReturnValues,
+  strictSchemaCheck: boolean
 }>
 
 describe('Entity', () => {

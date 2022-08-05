@@ -379,8 +379,8 @@ export type $PutOptions<
   ReturnValues extends PutOptionsReturnValues = PutOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
-  StrictSchemaCheck extends boolean = true
-> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck: StrictSchemaCheck }>
+  StrictSchemaCheck extends boolean | undefined = true
+> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck?: StrictSchemaCheck }>
 
 export type PutItem<
   MethodItemOverlay extends Overlay,
@@ -388,7 +388,7 @@ export type PutItem<
   CompositePrimaryKey extends O.Object,
   Item extends O.Object,
   Attributes extends ParsedAttributes,
-  StrictSchemaCheck extends boolean = true
+  StrictSchemaCheck extends boolean | undefined = true
 > = FirstDefined<
   [
     MethodItemOverlay,
@@ -416,8 +416,8 @@ export type $UpdateOptions<
   ReturnValues extends UpdateOptionsReturnValues = UpdateOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
-  StrictSchemaCheck extends boolean = true
-> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck: StrictSchemaCheck }>
+  StrictSchemaCheck extends boolean | undefined = true
+> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck?: StrictSchemaCheck }>
 
 export interface UpdateCustomParameters {
   SET: string[]
@@ -551,7 +551,7 @@ export type QueryOptions<
 export type PutOptions<
   E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
-> = $PutOptions<A['all'], PutOptionsReturnValues, boolean | undefined, boolean | undefined>
+> = $PutOptions<A['all'], PutOptionsReturnValues, boolean | undefined, boolean | undefined, boolean | undefined>
 
 export type DeleteOptions<
   E extends Entity,
