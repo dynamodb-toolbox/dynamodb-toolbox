@@ -378,15 +378,17 @@ export type $PutOptions<
   Attributes extends A.Key = A.Key,
   ReturnValues extends PutOptionsReturnValues = PutOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
-  Parse extends boolean | undefined = undefined
-> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+  Parse extends boolean | undefined = undefined,
+  StrictSchemaCheck extends boolean = true
+> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck: StrictSchemaCheck }>
 
 export type PutItem<
   MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
   CompositePrimaryKey extends O.Object,
   Item extends O.Object,
-  Attributes extends ParsedAttributes
+  Attributes extends ParsedAttributes,
+  StrictSchemaCheck extends boolean = true
 > = FirstDefined<
   [
     MethodItemOverlay,
@@ -399,7 +401,7 @@ export type PutItem<
             O.Update<Item, Attributes['optional'], A.x | null>
         >
     >
-  ]
+  ] | If<A.Equals<StrictSchemaCheck, true>, never, any>
 >
 
 export type UpdateOptionsReturnValues =
@@ -413,8 +415,9 @@ export type $UpdateOptions<
   Attributes extends A.Key = A.Key,
   ReturnValues extends UpdateOptionsReturnValues = UpdateOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
-  Parse extends boolean | undefined = undefined
-> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+  Parse extends boolean | undefined = undefined,
+  StrictSchemaCheck extends boolean = true
+> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck: StrictSchemaCheck }>
 
 export interface UpdateCustomParameters {
   SET: string[]
@@ -430,7 +433,8 @@ export type UpdateItem<
   EntityItemOverlay extends Overlay,
   CompositePrimaryKey extends O.Object,
   Item extends O.Object,
-  Attributes extends ParsedAttributes
+  Attributes extends ParsedAttributes,
+  StrictSchemaCheck extends boolean = true
 > = FirstDefined<
   [
     MethodItemOverlay,
@@ -455,6 +459,7 @@ export type UpdateItem<
         } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
     >
   ]
+  | If<A.Equals<StrictSchemaCheck, true>, never, any>
 >
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
@@ -468,9 +473,12 @@ export type RawDeleteOptions<
 
 export type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
-export interface TransactionOptions<Attributes extends A.Key = A.Key> {
+export interface TransactionOptions<Attributes extends A.Key = A.Key,
+  StrictSchemaCheck extends boolean = true
+  > {
   conditions?: ConditionsOrFilters<Attributes>
-  returnValues?: TransactionOptionsReturnValues
+  returnValues?: TransactionOptionsReturnValues,
+  strictSchemaCheck?: StrictSchemaCheck
 }
 
 export type ShouldExecute<Execute extends boolean | undefined, AutoExecute extends boolean> = B.Or<

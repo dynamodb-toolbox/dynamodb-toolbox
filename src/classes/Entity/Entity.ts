@@ -797,10 +797,11 @@ class Entity<
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends UpdateOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
+    Parse extends boolean | undefined = undefined,
+    StrictSchemaCheck extends boolean = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: UpdateCustomParams = {}
   ): Promise<
     A.Compute<
@@ -831,7 +832,8 @@ class Entity<
       ResponseAttributes,
       ReturnValues,
       Execute,
-      Parse
+      Parse,
+      StrictSchemaCheck
     >(item, options, params)
 
     if (!shouldExecute(options.execute, this.autoExecute)) {
@@ -917,10 +919,11 @@ class Entity<
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends UpdateOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
+    Parse extends boolean | undefined = undefined,
+    StrictSchemaCheck extends boolean = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     {
       SET = [],
       REMOVE = [],
@@ -953,11 +956,14 @@ class Entity<
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
+     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
+
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(
       schema.attributes,
       linked,
-      Object.assign({}, defaults, item)
+      Object.assign({}, defaults, item),
+      shouldFilterUnmappedFields
     )
 
     // Extract valid options
@@ -966,6 +972,7 @@ class Entity<
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
       metrics, // ReturnItemCollectionMetrics: (size or none)
       returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
+      strictSchemaCheck, // Strict Schema Check (true or false)
       ..._args
     } = options
 
@@ -1297,10 +1304,11 @@ class Entity<
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
+    Parse extends boolean | undefined = undefined,
+    StrictSchemaCheck extends boolean = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
     If<
@@ -1330,7 +1338,8 @@ class Entity<
       ResponseAttributes,
       ReturnValues,
       Execute,
-      Parse
+      Parse,
+      StrictSchemaCheck
     >(item, options, params)
 
     if (!shouldExecute(options.execute, this.autoExecute)) {
@@ -1383,10 +1392,11 @@ class Entity<
       Attributes['all'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    StrictSchemaCheck extends boolean = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: TransactionOptions<ResponseAttributes> = {},
+    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: Partial<DocumentClient.PutItemInput>
   ): { Put: DocumentClient.Put } {
     // Destructure options to check for extraneous arguments
@@ -1406,7 +1416,10 @@ class Entity<
       MethodItemOverlay,
       ItemAttributes,
       ResponseAttributes,
-      TransactionOptionsReturnValues
+      TransactionOptionsReturnValues,
+      undefined,
+      undefined,
+      StrictSchemaCheck
     >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
@@ -1430,10 +1443,11 @@ class Entity<
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
+    Parse extends boolean | undefined = undefined,
+    StrictSchemaCheck extends boolean = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): DocumentClient.PutItemInput {
     // Extract schema and defaults
@@ -1442,11 +1456,14 @@ class Entity<
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
+    const shouldFilterUnmappedFields = options.strictSchemaCheck === false
+
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(
       schema.attributes,
       linked,
-      Object.assign({}, defaults, item)
+      Object.assign({}, defaults, item),
+      shouldFilterUnmappedFields
     )
 
     // Extract valid options
@@ -1455,6 +1472,7 @@ class Entity<
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
       metrics, // ReturnItemCollectionMetrics: (size or none)
       returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
+      strictSchemaCheck, // Strict Schema Check (true or false)
       ..._args
     } = options
 

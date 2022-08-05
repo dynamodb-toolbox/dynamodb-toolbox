@@ -39,7 +39,7 @@ const TestEntity = new Entity({
     test_composite2: ['sort', 1, { save: false }]
   },
   table: TestTable
-} as const)
+})
 
 const TestTable2 = new Table({
   name: 'test-table',
@@ -230,7 +230,7 @@ describe('put', () => {
     expect(() => TestEntity.putParams()).toThrow(`'pk' or 'email' is required`)
   })
 
-  it('fails when using an undefined schema field', () => {
+  it('fails when using an undefined schema field and strictSchemaCheck is not provide', () => {
     expect(() =>
       TestEntity.putParams({
         email: 'test-pk',
@@ -240,6 +240,41 @@ describe('put', () => {
       })
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
+
+    it('fails when using an undefined schema field and strictSchemaCheck is true', () => {
+    expect(() =>
+      TestEntity.putParams({
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        unknown: '?'
+      }, {
+        strictSchemaCheck: true
+      })
+    ).toThrow(`Field 'unknown' does not have a mapping or alias`)
+  })
+
+
+  it('creates an item when using an undefined schema field and strictSchemaCheck is false', () => {
+    expect(() =>
+      TestEntity.putParams({
+        email: 'test-pk',
+        sort: 'test-sk',
+        unknown: '?'
+      }, {
+        strictSchemaCheck: false
+      })
+    ).not.toThrow()
+  })
+
+  it('omits unmapped attributes when strictSchemaCheck is false.', () => {
+    let { Item } = TestEntity.putParams(
+      { email: 'x', sort: 'y', unknown: '?' },
+      { strictSchemaCheck: false }
+    )
+
+    expect(Item.unknown).toBeUndefined()
+  });
 
   it('fails when invalid string provided with no coercion', () => {
     expect(() =>
