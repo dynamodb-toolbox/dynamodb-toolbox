@@ -1423,6 +1423,7 @@ class Entity<
       StrictSchemaCheck
     >(item, options, params)
 
+
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
       let { ReturnValues, ..._payload } = payload

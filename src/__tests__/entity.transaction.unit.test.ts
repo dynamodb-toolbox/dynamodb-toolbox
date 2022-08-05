@@ -1,5 +1,5 @@
-import { Table, Entity } from '../index';
-import { DocumentClient } from './bootstrap-tests';
+import { Table, Entity } from '../index'
+import { DocumentClient } from './bootstrap-tests'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -9,7 +9,7 @@ const TestTable = new Table({
   indexes: {
     GSI1: { partitionKey: 'GSI1pk' },
   },
-});
+})
 
 const TestEntity = new Entity({
   name: 'TestEntity',
@@ -20,24 +20,24 @@ const TestEntity = new Entity({
     testString: 'string',
   },
   table: TestTable,
-} as const);
+})
 
-const deleteParams = jest.spyOn(Entity.prototype, 'deleteParams').mockReturnThis();
-const putParams = jest.spyOn(Entity.prototype, 'putParams').mockReturnThis();
-const updateParams = jest.spyOn(Entity.prototype, 'updateParams').mockReturnThis();
+const deleteParams = jest.spyOn(Entity.prototype, 'deleteParams')
+const putParams = jest.spyOn(Entity.prototype, 'putParams')
+const updateParams = jest.spyOn(Entity.prototype, 'updateParams')
 
 describe('Entity transactional operations', () => {
   afterEach(() => {
-    jest.clearAllMocks();
-  });
+    jest.clearAllMocks()
+  })
 
-    describe('deleteTransaction', () => {
+  describe('deleteTransaction', () => {
     it('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
         // @ts-expect-error
-        TestEntity.deleteTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true });
-      }).toThrow(`Invalid delete transaction options: invalidOption`);
-    });
+        TestEntity.deleteTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true })
+      }).toThrow(`Invalid delete transaction options: invalidOption`)
+    })
 
     it('allows to provide conditions or returnValues as options.', async () => {
       expect(() => {
@@ -47,9 +47,9 @@ describe('Entity transactional operations', () => {
             attr: 'testString',
             exists: true,
           },
-        });
-      }).not.toThrow();
-    });
+        })
+      }).not.toThrow()
+    })
 
     it('passes the correct parameters to deleteParams.', async () => {
       TestEntity.deleteTransaction(
@@ -62,7 +62,7 @@ describe('Entity transactional operations', () => {
             ':pk': 'better-pk-to-delete',
           },
         },
-      );
+      )
 
       expect(deleteParams).toHaveBeenCalledWith(
         {
@@ -75,8 +75,8 @@ describe('Entity transactional operations', () => {
             ':pk': 'better-pk-to-delete',
           },
         },
-      );
-    });
+      )
+    })
 
     it('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
       deleteParams.mockReturnValueOnce(
@@ -88,23 +88,23 @@ describe('Entity transactional operations', () => {
           },
           ReturnValues: 'ALL_OLD',
         },
-      );
+      )
 
       const result = TestEntity.deleteTransaction(
         { pk: 'some-pk', sk: 'some-sk' },
         {
           returnValues: 'ALL_OLD',
         },
-      );
+      )
 
       // @ts-expect-error
-      expect(result.ReturnValues).toBeUndefined();
+      expect(result.ReturnValues).toBeUndefined()
       expect(result).toEqual({
         Delete: expect.objectContaining({
           ReturnValuesOnConditionCheckFailure: 'ALL_OLD',
         }),
-      });
-    });
+      })
+    })
 
     it('returns the item in transaction format.', async () => {
       deleteParams.mockReturnValueOnce({
@@ -113,10 +113,10 @@ describe('Entity transactional operations', () => {
           pk: 'some-pk',
           sk: 'some-sk',
         }),
-      });
+      })
 
       const result = TestEntity.deleteTransaction(
-        { pk: 'some-pk', sk: 'some-sk' });
+        { pk: 'some-pk', sk: 'some-sk' })
 
       expect(result).toEqual({
         Delete: {
@@ -126,18 +126,18 @@ describe('Entity transactional operations', () => {
             sk: 'some-sk',
           },
         },
-      });
-    });
-  });
+      })
+    })
+  })
 
 
   describe('putTransaction', () => {
     it('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
         // @ts-expect-error
-        TestEntity.putTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true });
-      }).toThrow(`Invalid put transaction options: invalidOption`);
-    });
+        TestEntity.putTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true })
+      }).toThrow(`Invalid put transaction options: invalidOption`)
+    })
 
     it('allows to provide conditions or returnValues as options.', async () => {
       expect(() => {
@@ -147,30 +147,30 @@ describe('Entity transactional operations', () => {
             attr: 'testString',
             exists: true,
           },
-        });
-      }).not.toThrow();
-    });
+        })
+      }).not.toThrow()
+    })
 
-      it('allows adding non mapped fields when strictSchemaCheck is false.', () => {
-      expect(TestEntity.putTransaction({
+    it('allows adding non mapped fields when strictSchemaCheck is false.', () => {
+      expect(() => TestEntity.putTransaction({
         pk: 'test',
         sk: 'testsk',
         unknown: '?',
       }, {
         strictSchemaCheck: false,
-      })).not.toThrow();
-    });
+      })).not.toThrow()
+    })
 
     it('omits unmapped attributes when strictSchemaCheck is false.', () => {
-    let { Put: { Item } } = TestEntity.putTransaction(
-      { email: 'x', sort: 'y', unknown: '?' },
-      { strictSchemaCheck: false }
-    )
+      let { Put: { Item } } = TestEntity.putTransaction(
+        { pk: 'x', sk: 'y', unknown: '?' },
+        { strictSchemaCheck: false }
+      )
 
-    expect(Item.unknown).toBeUndefined()
-  });
+      expect(Item.unknown).toBeUndefined()
+    })
 
-  it('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
+    it('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
       expect(() => TestEntity.putTransaction({
         pk: 'test',
         sk: 'testsk',
@@ -178,8 +178,8 @@ describe('Entity transactional operations', () => {
         unknown: 'unknown',
       }, {
         strictSchemaCheck: true,
-      })).toThrow();
-    });
+      })).toThrow(`Field 'unknown' does not have a mapping or alias`)
+    })
 
     it('passes the correct parameters to putParams.', async () => {
       TestEntity.putTransaction(
@@ -192,7 +192,7 @@ describe('Entity transactional operations', () => {
             ':testString': 'best-test-string',
           },
         },
-      );
+      )
 
       expect(putParams).toHaveBeenCalledWith(
         {
@@ -206,8 +206,8 @@ describe('Entity transactional operations', () => {
             ':testString': 'best-test-string',
           },
         },
-      );
-    });
+      )
+    })
 
     it('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
       putParams.mockReturnValueOnce(
@@ -220,23 +220,23 @@ describe('Entity transactional operations', () => {
           },
           ReturnValues: 'ALL_OLD',
         },
-      );
+      )
 
       const result = TestEntity.putTransaction(
         { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string-with-change' },
         {
           returnValues: 'ALL_OLD',
         },
-      );
+      )
 
       // @ts-expect-error
-      expect(result.ReturnValues).toBeUndefined();
+      expect(result.ReturnValues).toBeUndefined()
       expect(result).toEqual({
         Put: expect.objectContaining({
           ReturnValuesOnConditionCheckFailure: 'ALL_OLD',
         }),
-      });
-    });
+      })
+    })
 
     it('returns the item in transaction format.', async () => {
       putParams.mockReturnValueOnce({
@@ -246,10 +246,10 @@ describe('Entity transactional operations', () => {
           sk: 'some-sk',
           testString: 'some-test-string-with-change',
         }),
-      });
+      })
 
       const result = TestEntity.putTransaction(
-        { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string-with-change' });
+        { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string-with-change' })
 
       expect(result).toEqual({
         Put: {
@@ -260,17 +260,17 @@ describe('Entity transactional operations', () => {
             testString: 'some-test-string-with-change',
           },
         },
-      });
-    });
-  });
+      })
+    })
+  })
 
   describe('updateTransaction', () => {
     it('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
         // @ts-expect-error
-        TestEntity.updateTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true });
-      }).toThrow(`Invalid update transaction options: invalidOption`);
-    });
+        TestEntity.updateTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true })
+      }).toThrow(`Invalid update transaction options: invalidOption`)
+    })
 
     it('allows to provide conditions or returnValues as options.', async () => {
       expect(() => {
@@ -280,9 +280,9 @@ describe('Entity transactional operations', () => {
             attr: 'testString',
             exists: true,
           },
-        });
-      }).not.toThrow();
-    });
+        })
+      }).not.toThrow()
+    })
 
     it('passes the correct parameters to updateParams.', async () => {
       TestEntity.updateTransaction(
@@ -295,7 +295,7 @@ describe('Entity transactional operations', () => {
             ':testString': 'best-test-string',
           },
         },
-      );
+      )
 
       expect(updateParams).toHaveBeenCalledWith(
         {
@@ -309,8 +309,8 @@ describe('Entity transactional operations', () => {
             ':testString': 'best-test-string',
           },
         },
-      );
-    });
+      )
+    })
 
     it('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
       updateParams.mockReturnValueOnce(
@@ -323,23 +323,23 @@ describe('Entity transactional operations', () => {
           UpdateExpression: 'some-update-expression',
           ReturnValues: 'ALL_OLD',
         },
-      );
+      )
 
       const result = TestEntity.updateTransaction(
         { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string-with-change' },
         {
           returnValues: 'ALL_OLD',
         },
-      );
+      )
 
       // @ts-expect-error
-      expect(result.ReturnValues).toBeUndefined();
+      expect(result.ReturnValues).toBeUndefined()
       expect(result).toEqual({
         Update: expect.objectContaining({
           ReturnValuesOnConditionCheckFailure: 'ALL_OLD',
         }),
-      });
-    });
+      })
+    })
 
     it('returns the item in transaction format.', async () => {
       updateParams.mockReturnValueOnce({
@@ -349,10 +349,10 @@ describe('Entity transactional operations', () => {
           sk: 'some-sk',
         },
         UpdateExpression: 'some-update-expression',
-      });
+      })
 
       const result = TestEntity.updateTransaction(
-        { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string-with-change' });
+        { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string-with-change' })
 
       expect(result).toEqual({
         Update: {
@@ -363,8 +363,8 @@ describe('Entity transactional operations', () => {
           },
           UpdateExpression: 'some-update-expression'
         },
-      });
-    });
-  });
+      })
+    })
+  })
 
-});
+})
