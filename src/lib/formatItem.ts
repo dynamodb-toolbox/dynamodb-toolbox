@@ -3,30 +3,30 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
-import { PureAttributeDefinition } from '../classes/Entity'
-import validateTypes from './validateTypes'
-import { Linked } from './parseEntity'
+import { PureAttributeDefinition } from '../classes/Entity';
+import validateTypes from './validateTypes';
+import { Linked } from './parseEntity';
 
 // Format item based on attribute defnition
 export default (DocumentClient: DocumentClient) => (
   attributes: { [key: string]: PureAttributeDefinition },
   linked: Linked,
   item: any,
-  include: string[] = []
+  include: string[] = [],
 ) => {
   // TODO: Support nested maps?
   // TODO: include alias support?
   // TODO: Test existence of RegExp inputs
 
   // Intialize validate type
-  const validateType = validateTypes(DocumentClient)
+  const validateType = validateTypes(DocumentClient);
 
   return Object.keys(item).reduce((acc, field) => {
     const link =
       linked[field] ||
-      (attributes[field] && attributes[field].alias && linked[attributes[field].alias!])
+      (attributes[field] && attributes[field].alias && linked[attributes[field].alias!]);
     if (link) {
       Object.assign(
         acc,
@@ -35,8 +35,9 @@ export default (DocumentClient: DocumentClient) => (
             attributes[f].save ||
             attributes[f].hidden ||
             (include.length > 0 && !include.includes(f))
-          )
-            return acc
+          ) {
+            return acc;
+          }
           return Object.assign(acc, {
             [attributes[f].alias || f]: validateType(
               attributes[f],
@@ -44,36 +45,35 @@ export default (DocumentClient: DocumentClient) => (
               item[field]
                 .replace(new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`), '')
                 .replace(new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`), '')
-                .split(attributes[field].delimiter || '#')[i]
-            )
-          })
-        }, {})
-      )
+                .split(attributes[field].delimiter || '#')[i],
+            ),
+          });
+        }, {}),
+      );
     }
 
     if (
       (attributes[field] && attributes[field].hidden) ||
       (include.length > 0 && !include.includes(field))
-    )
-      return acc
+    ) {
+      return acc;
+    }
 
-    if (attributes[field]?.type === 'set') {
-      if (Array.isArray(item[field].values)) {
-        item[field] = item[field].values
-      } else {
-        item[field] = Array.from(item[field])
-      }
+    // Extract values from sets
+    if (attributes[field]?.type === 'set'
+      && Array.isArray(item[field].values)) {
+      item[field] = item[field].values;
     }
 
     return Object.assign(acc, {
       [(attributes[field] && attributes[field].alias) || field]:
         attributes[field] && (attributes[field].prefix || attributes[field].suffix)
           ? item[field]
-              .replace(new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`), '')
-              .replace(new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`), '')
-          : item[field]
-    })
-  }, {})
+            .replace(new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`), '')
+            .replace(new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`), '')
+          : item[field],
+    });
+  }, {});
 }
 
 function escapeRegExp(text: string) {
