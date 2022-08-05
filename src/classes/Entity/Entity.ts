@@ -44,8 +44,8 @@ import type {
   UpdateItem,
   UpdateOptionsReturnValues,
   Writable,
-  Readonly
-} from './types'
+  Readonly, $PutBatchOptions,
+} from './types';
 
 class Entity<
   Name extends string = string,
@@ -1366,14 +1366,27 @@ class Entity<
   /**
    * Generate parameters for PUT batch operation
    * @param {object} item - The item you wish to put.
+   * @param {object} options - Options for the operation.
    *
    * Only Item is supported (e.g. no conditions)
    *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
    */
-  putBatch<MethodItemOverlay extends Overlay = undefined>(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>
+  putBatch<
+    MethodItemOverlay extends Overlay = undefined,
+    ShownItemAttributes extends A.Key = If<
+      A.Equals<MethodItemOverlay, undefined>,
+      Attributes['shown'],
+      keyof MethodItemOverlay
+    >,
+    Execute extends boolean | undefined = undefined,
+    Parse extends boolean | undefined = undefined,
+    StrictSchemaCheck extends boolean | undefined = true
+    >(
+    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {}
   ): { [key: string]: DocumentClient.WriteRequest } {
-    const payload = this.putParams<MethodItemOverlay>(item)
+    // @ts-ignore
+    const payload = this.putParams<MethodItemOverlay, any, any, 'NONE', Execute, Parse, StrictSchemaCheck>(item, options)
     return { [payload.TableName]: { PutRequest: { Item: payload.Item } } }
   }
 

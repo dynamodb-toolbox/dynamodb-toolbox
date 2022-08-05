@@ -230,7 +230,7 @@ describe('put', () => {
     expect(() => TestEntity.putParams()).toThrow(`'pk' or 'email' is required`)
   })
 
-  it('fails when using an undefined schema field and strictSchemaCheck is not provide', () => {
+  it('fails when using an undefined schema field and strictSchemaCheck is not provided', () => {
     expect(() =>
       TestEntity.putParams({
         email: 'test-pk',
@@ -241,7 +241,7 @@ describe('put', () => {
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
-    it('fails when using an undefined schema field and strictSchemaCheck is true', () => {
+  it('fails when using an undefined schema field and strictSchemaCheck is true', () => {
     expect(() =>
       TestEntity.putParams({
         email: 'test-pk',
@@ -253,7 +253,6 @@ describe('put', () => {
       })
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
-
 
   it('creates an item when using an undefined schema field and strictSchemaCheck is false', () => {
     expect(() =>

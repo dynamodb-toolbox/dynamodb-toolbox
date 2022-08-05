@@ -382,6 +382,15 @@ export type $PutOptions<
   StrictSchemaCheck extends boolean | undefined = true
 > = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck?: StrictSchemaCheck }>
 
+export type $PutBatchOptions<
+  Execute extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined,
+  StrictSchemaCheck extends boolean | undefined = true
+> = O.Partial<
+  Pick<BaseOptions<Execute, Parse>, 'execute' |'parse'>
+  & { strictSchemaCheck?: StrictSchemaCheck }
+>
+
 export type PutItem<
   MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
