@@ -1378,6 +1378,7 @@ class Entity<
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
@@ -1385,8 +1386,7 @@ class Entity<
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
     options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {}
   ): { [key: string]: DocumentClient.WriteRequest } {
-    // @ts-ignore
-    const payload = this.putParams<MethodItemOverlay, any, any, 'NONE', Execute, Parse, StrictSchemaCheck>(item, options)
+    const payload = this.putParams<MethodItemOverlay, ShownItemAttributes, ResponseAttributes, 'NONE', Execute, Parse, StrictSchemaCheck>(item, options)
     return { [payload.TableName]: { PutRequest: { Item: payload.Item } } }
   }
 
