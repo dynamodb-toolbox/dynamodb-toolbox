@@ -561,4 +561,4 @@ export type DeleteOptions<
 export type UpdateOptions<
   E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
-> = $UpdateOptions<A['all'], UpdateOptionsReturnValues, boolean | undefined, boolean | undefined>
+> = $UpdateOptions<A['all'], UpdateOptionsReturnValues, boolean | undefined, boolean | undefined, boolean | undefined>
