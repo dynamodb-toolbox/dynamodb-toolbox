@@ -57,7 +57,7 @@ describe('putBatch', () => {
   })
 
   it('returns the result in the correct format', async () => {
-    const result = await TestEntity.putBatch({
+    const result = TestEntity.putBatch({
       email: 'test-pk',
       sort: 'test-sk',
       test_string: 'test string',
