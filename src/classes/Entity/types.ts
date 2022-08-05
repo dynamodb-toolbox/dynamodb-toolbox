@@ -434,7 +434,7 @@ export type UpdateItem<
   CompositePrimaryKey extends O.Object,
   Item extends O.Object,
   Attributes extends ParsedAttributes,
-  StrictSchemaCheck extends boolean = true
+  StrictSchemaCheck extends boolean | undefined = true
 > = FirstDefined<
   [
     MethodItemOverlay,
