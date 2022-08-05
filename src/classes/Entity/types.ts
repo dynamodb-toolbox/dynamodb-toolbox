@@ -469,7 +469,6 @@ export type RawDeleteOptions<
   ReturnValues extends DeleteOptionsReturnValues = DeleteOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
-  StrictSchemaCheck extends boolean | undefined = false
 > = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 export type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'

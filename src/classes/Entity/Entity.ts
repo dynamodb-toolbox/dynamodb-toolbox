@@ -1403,6 +1403,7 @@ class Entity<
     const {
       conditions, // ConditionExpression
       returnValues, // ReturnValuesOnConditionCheckFailure (none, all_old)
+      strictSchemaCheck, // StrictSchemaCheck
       ...args
     } = options
 
