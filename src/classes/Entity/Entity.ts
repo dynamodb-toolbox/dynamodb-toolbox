@@ -872,16 +872,18 @@ class Entity<
       Attributes['all'],
       keyof MethodItemOverlay
     >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
+    ResponseAttributes extends ItemAttributes = ItemAttributes,
+    StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes>,
-    options: TransactionOptions<ResponseAttributes> = {},
+    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: UpdateCustomParams
   ): { Update: DocumentClient.Update } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
       returnValues, // ReturnValuesOnConditionCheckFailure (none, all_old)
+      strictSchemaCheck, // StrictSchemaCheck
       ...args
     } = options
 
@@ -895,7 +897,10 @@ class Entity<
       MethodItemOverlay,
       ItemAttributes,
       ResponseAttributes,
-      TransactionOptionsReturnValues
+      TransactionOptionsReturnValues,
+      undefined,
+      undefined,
+      StrictSchemaCheck
     >(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure

@@ -284,6 +284,42 @@ describe('Entity transactional operations', () => {
       }).not.toThrow()
     })
 
+    it('allows adding non mapped fields when strictSchemaCheck is false.', () => {
+      expect(() => TestEntity.updateTransaction({
+        pk: 'test',
+        sk: 'testsk',
+        unknown: '?',
+      }, {
+        strictSchemaCheck: false,
+      })).not.toThrow()
+    })
+
+    it('omits unmapped attributes when strictSchemaCheck is false.', () => {
+      let { Update:
+        { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
+      } = TestEntity.updateTransaction(
+        { pk: 'x', sk: 'y', testString: 'some-updated-test-string', unknown: '?' },
+        { strictSchemaCheck: false }
+      )
+
+      expect(UpdateExpression).not.toContain('#unknown')
+      expect(ExpressionAttributeNames).not.toHaveProperty('#unknown')
+      expect(ExpressionAttributeValues).not.toHaveProperty(':unknown')
+      expect(ExpressionAttributeNames).toHaveProperty('#testString')
+      expect(ExpressionAttributeValues).toHaveProperty(':testString')
+    })
+
+    it('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
+      expect(() => TestEntity.updateTransaction({
+        pk: 'test',
+        sk: 'testsk',
+        // @ts-expect-error
+        unknown: 'unknown',
+      }, {
+        strictSchemaCheck: true,
+      })).toThrow(`Field 'unknown' does not have a mapping or alias`)
+    })
+
     it('passes the correct parameters to updateParams.', async () => {
       TestEntity.updateTransaction(
         { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string' },

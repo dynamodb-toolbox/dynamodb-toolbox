@@ -1008,7 +1008,7 @@ describe('update', () => {
     )
     expect(TableName).toBe('test-table')
   })
-  
+
    it('fails when given an unmapped attribute and strictSchemaCheck is true.', () => {
     expect(() =>
       TestEntity.updateParams(
@@ -1033,9 +1033,9 @@ describe('update', () => {
     )
 
     expect(UpdateExpression).not.toContain('#unknown')
-    expect(ExpressionAttributeNames).toHaveProperty('#test_string')
-    expect(ExpressionAttributeValues).toHaveProperty(':test_string')
     expect(ExpressionAttributeNames).not.toHaveProperty('#unknown')
     expect(ExpressionAttributeValues).not.toHaveProperty(':unknown')
+    expect(ExpressionAttributeNames).toHaveProperty('#test_string')
+    expect(ExpressionAttributeValues).toHaveProperty(':test_string')
   });
 }) // end describe

@@ -482,7 +482,8 @@ export type RawDeleteOptions<
 
 export type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
-export interface TransactionOptions<Attributes extends A.Key = A.Key,
+export interface TransactionOptions<
+  Attributes extends A.Key = A.Key,
   StrictSchemaCheck extends boolean | undefined = true
   > {
   conditions?: ConditionsOrFilters<Attributes>
