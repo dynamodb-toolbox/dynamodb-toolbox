@@ -798,7 +798,7 @@ class Entity<
     ReturnValues extends UpdateOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean = true
+    StrictSchemaCheck extends boolean | undefined= true
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
     options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
@@ -920,7 +920,7 @@ class Entity<
     ReturnValues extends UpdateOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean = true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
     item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
     options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
@@ -1305,7 +1305,7 @@ class Entity<
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean = true
+    StrictSchemaCheck extends boolean | undefined= true
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
@@ -1393,7 +1393,7 @@ class Entity<
       keyof MethodItemOverlay
     >,
     ResponseAttributes extends ItemAttributes = ItemAttributes,
-    StrictSchemaCheck extends boolean = true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
@@ -1444,7 +1444,7 @@ class Entity<
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean = true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
     item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
