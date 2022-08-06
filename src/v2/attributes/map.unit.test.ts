@@ -19,6 +19,7 @@ describe('map', () => {
         }
         _required: false
         _hidden: false
+        _savedAs: undefined
         _default: undefined
       }
     > = 1
@@ -28,6 +29,7 @@ describe('map', () => {
       _type: 'map',
       _properties: { str },
       _required: false,
+      _savedAs: undefined,
       _hidden: false
     })
   })
@@ -35,100 +37,74 @@ describe('map', () => {
   it('returns required map (option)', () => {
     const mapped = map({ str }, { required: true })
 
-    const assertMapped: A.Contains<
-      typeof mapped,
-      {
-        _type: 'map'
-        _properties: {
-          str: typeof str
-        }
-        _required: true
-        _hidden: false
-        _default: undefined
-      }
-    > = 1
+    const assertMapped: A.Contains<typeof mapped, { _required: true }> = 1
     assertMapped
 
-    expect(mapped).toMatchObject({
-      _type: 'map',
-      _properties: { str },
-      _required: true,
-      _hidden: false
-    })
+    expect(mapped).toMatchObject({ _required: true })
   })
 
   it('returns required map (method)', () => {
     const mapped = map({ str }).required()
 
-    const assertMapped: A.Contains<
-      typeof mapped,
-      {
-        _type: 'map'
-        _properties: {
-          str: typeof str
-        }
-        _required: true
-        _hidden: false
-        _default: undefined
-      }
-    > = 1
+    const assertMapped: A.Contains<typeof mapped, { _required: true }> = 1
     assertMapped
 
-    expect(mapped).toMatchObject({
-      _type: 'map',
-      _properties: { str },
-      _required: true,
-      _hidden: false
-    })
+    expect(mapped).toMatchObject({ _required: true })
   })
 
   it('returns hidden map (option)', () => {
     const mapped = map({ str }, { hidden: true })
 
-    const assertMapped: A.Contains<
-      typeof mapped,
-      {
-        _type: 'map'
-        _properties: {
-          str: typeof str
-        }
-        _required: false
-        _hidden: true
-        _default: undefined
-      }
-    > = 1
+    const assertMapped: A.Contains<typeof mapped, { _hidden: true }> = 1
     assertMapped
 
-    expect(mapped).toMatchObject({
-      _type: 'map',
-      _properties: { str },
-      _required: false,
-      _hidden: true
-    })
+    expect(mapped).toMatchObject({ _hidden: true })
   })
 
   it('returns hidden map (method)', () => {
     const mapped = map({ str }).hidden()
 
-    const assertMapped: A.Contains<
-      typeof mapped,
-      {
-        _type: 'map'
-        _properties: {
-          str: typeof str
-        }
-        _required: false
-        _hidden: true
-        _default: undefined
-      }
-    > = 1
+    const assertMapped: A.Contains<typeof mapped, { _hidden: true }> = 1
     assertMapped
 
-    expect(mapped).toMatchObject({
-      _type: 'map',
-      _properties: { str },
-      _required: false,
-      _hidden: true
+    expect(mapped).toMatchObject({ _hidden: true })
+  })
+
+  it('returns savedAs map (option)', () => {
+    const mapped = map({ str }, { savedAs: 'foo' })
+
+    const assertMapped: A.Contains<typeof mapped, { _savedAs: 'foo' }> = 1
+    assertMapped
+
+    expect(mapped).toMatchObject({ _savedAs: 'foo' })
+  })
+
+  it('returns savedAs map (method)', () => {
+    const mapped = map({ str }).savedAs('foo')
+
+    const assertMapped: A.Contains<typeof mapped, { _savedAs: 'foo' }> = 1
+    assertMapped
+
+    expect(mapped).toMatchObject({ _savedAs: 'foo' })
+  })
+
+  describe('default', () => {
+    it('accepts ComputedDefault as default value (option)', () => {
+      const mapped = map({ str }, { default: ComputedDefault })
+
+      const assertMapped: A.Contains<typeof mapped, { _default: ComputedDefault }> = 1
+      assertMapped
+
+      expect(mapped).toMatchObject({ _default: ComputedDefault })
+    })
+
+    it('accepts ComputedDefault as default value (option)', () => {
+      const mapped = map({ str }).default(ComputedDefault)
+
+      const assertMapped: A.Contains<typeof mapped, { _default: ComputedDefault }> = 1
+      assertMapped
+
+      expect(mapped).toMatchObject({ _default: ComputedDefault })
     })
   })
 
@@ -156,16 +132,19 @@ describe('map', () => {
                 }
                 _required: false
                 _hidden: true
+                _savedAs: undefined
                 _default: undefined
               }
             }
             _required: true
             _hidden: false
+            _savedAs: undefined
             _default: undefined
           }
         }
         _required: false
         _hidden: false
+        _savedAs: undefined
         _default: undefined
       }
     > = 1
@@ -183,65 +162,21 @@ describe('map', () => {
                 str
               },
               _required: false,
-              _hidden: true
+              _hidden: true,
+              _savedAs: undefined,
+              _default: undefined
             }
           },
           _required: true,
-          _hidden: false
+          _hidden: false,
+          _savedAs: undefined,
+          _default: undefined
         }
       },
       _required: false,
-      _hidden: false
-    })
-  })
-
-  describe('ComputedDefault', () => {
-    it('accepts ComputedDefault as default value (option)', () => {
-      const mapped = map({ str }, { default: ComputedDefault })
-
-      const assertMapped: A.Contains<
-        typeof mapped,
-        {
-          _type: 'map'
-          _resolved?: unknown
-          _required: false
-          _hidden: false
-          _default: ComputedDefault
-        }
-      > = 1
-      assertMapped
-
-      expect(mapped).toMatchObject({
-        _type: 'map',
-        _properties: { str },
-        _required: false,
-        _hidden: false,
-        _default: ComputedDefault
-      })
-    })
-
-    it('accepts ComputedDefault as default value (option)', () => {
-      const mapped = map({ str }).default(ComputedDefault)
-
-      const assertMapped: A.Contains<
-        typeof mapped,
-        {
-          _type: 'map'
-          _resolved?: unknown
-          _required: false
-          _hidden: false
-          _default: ComputedDefault
-        }
-      > = 1
-      assertMapped
-
-      expect(mapped).toMatchObject({
-        _type: 'map',
-        _properties: { str },
-        _required: false,
-        _hidden: false,
-        _default: ComputedDefault
-      })
+      _hidden: false,
+      _savedAs: undefined,
+      _default: undefined
     })
   })
 })

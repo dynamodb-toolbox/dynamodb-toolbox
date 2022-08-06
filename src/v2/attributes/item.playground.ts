@@ -10,7 +10,8 @@ import {
   Output,
   ComputedDefault,
   PreComputedDefaults,
-  PostComputedDefaults
+  PostComputedDefaults,
+  SavedAs
 } from '.'
 
 const playgroundItem1 = item({
@@ -75,3 +76,14 @@ const playgroundItem2 = item({
 
 type PlaygroundItem2Input = Input<typeof playgroundItem2>
 type PlaygroundItem2Output = Output<typeof playgroundItem2>
+
+const playgroundItem3 = item({
+  lol: string().savedAs('foo'),
+  coucou: map({
+    renamed: string().required().savedAs('bar')
+  })
+    .required()
+    .savedAs('baz')
+})
+
+type PlaygroundItem3SavedAs = SavedAs<typeof playgroundItem3>

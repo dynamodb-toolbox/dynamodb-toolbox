@@ -17,6 +17,25 @@ describe('list', () => {
     expect(() => list(string().required().hidden())).toThrowError('List elements cannot be hidden')
   })
 
+  it('rejects elements with savedAs values', () => {
+    // @ts-expect-error
+    expect(() => list(string().required().savedAs('foo'))).toThrowError(
+      'List elements cannot be renamed (have savedAs option)'
+    )
+  })
+
+  it('rejects elements with default values', () => {
+    // @ts-expect-error
+    expect(() => list(string().required().default('foo'))).toThrowError(
+      'List elements cannot have default values'
+    )
+
+    // @ts-expect-error
+    expect(() => list(string().required().default(ComputedDefault))).toThrowError(
+      'List elements cannot have default values'
+    )
+  })
+
   it('returns default list', () => {
     const lst = list(str)
 
@@ -27,6 +46,7 @@ describe('list', () => {
         _elements: typeof str
         _required: false
         _hidden: false
+        _savedAs: undefined
         _default: undefined
       }
     > = 1
@@ -36,6 +56,7 @@ describe('list', () => {
       _type: 'list',
       _elements: str,
       _required: false,
+      _savedAs: undefined,
       _hidden: false
     })
   })
@@ -43,93 +64,73 @@ describe('list', () => {
   it('returns required list (option)', () => {
     const lst = list(str, { required: true })
 
-    const assertList: A.Contains<
-      typeof lst,
-      {
-        _type: 'list'
-        _elements: typeof str
-        _required: true
-        _hidden: false
-        _default: undefined
-      }
-    > = 1
+    const assertList: A.Contains<typeof lst, { _required: true }> = 1
     assertList
 
-    expect(lst).toMatchObject({
-      _type: 'list',
-      _elements: str,
-      _required: true,
-      _hidden: false
-    })
+    expect(lst).toMatchObject({ _required: true })
   })
 
   it('returns required list (method)', () => {
     const lst = list(str).required()
 
-    const assertList: A.Contains<
-      typeof lst,
-      {
-        _type: 'list'
-        _elements: typeof str
-        _required: true
-        _hidden: false
-        _default: undefined
-      }
-    > = 1
+    const assertList: A.Contains<typeof lst, { _required: true }> = 1
     assertList
 
-    expect(lst).toMatchObject({
-      _type: 'list',
-      _elements: str,
-      _required: true,
-      _hidden: false
-    })
+    expect(lst).toMatchObject({ _required: true })
   })
 
   it('returns hidden list (option)', () => {
     const lst = list(str, { hidden: true })
 
-    const assertList: A.Contains<
-      typeof lst,
-      {
-        _type: 'list'
-        _elements: typeof str
-        _required: false
-        _hidden: true
-        _default: undefined
-      }
-    > = 1
+    const assertList: A.Contains<typeof lst, { _hidden: true }> = 1
     assertList
 
-    expect(lst).toMatchObject({
-      _type: 'list',
-      _elements: str,
-      _required: false,
-      _hidden: true
-    })
+    expect(lst).toMatchObject({ _hidden: true })
   })
 
   it('returns hidden list (method)', () => {
     const lst = list(str).hidden()
 
-    const assertList: A.Contains<
-      typeof lst,
-      {
-        _type: 'list'
-        _elements: typeof str
-        _required: false
-        _hidden: true
-        _default: undefined
-      }
-    > = 1
+    const assertList: A.Contains<typeof lst, { _hidden: true }> = 1
     assertList
 
-    expect(lst).toMatchObject({
-      _type: 'list',
-      _elements: str,
-      _required: false,
-      _hidden: true
-    })
+    expect(lst).toMatchObject({ _hidden: true })
+  })
+
+  it('returns savedAs list (option)', () => {
+    const lst = list(str, { savedAs: 'foo' })
+
+    const assertList: A.Contains<typeof lst, { _savedAs: 'foo' }> = 1
+    assertList
+
+    expect(lst).toMatchObject({ _savedAs: 'foo' })
+  })
+
+  it('returns savedAs list (method)', () => {
+    const lst = list(str).savedAs('foo')
+
+    const assertList: A.Contains<typeof lst, { _savedAs: 'foo' }> = 1
+    assertList
+
+    expect(lst).toMatchObject({ _savedAs: 'foo' })
+  })
+
+  it('accepts ComputedDefault as default value (option)', () => {
+    const lst = list(str, { default: ComputedDefault })
+
+    const assertList: A.Contains<typeof lst, { _default: ComputedDefault }> = 1
+    assertList
+
+    expect(lst).toMatchObject({ _default: ComputedDefault })
+  })
+
+  it('accepts ComputedDefault as default value (option)', () => {
+    const lst = list(str).default(ComputedDefault)
+
+    const assertList: A.Contains<typeof lst, { _default: ComputedDefault }> = 1
+    assertList
+
+    expect(lst).toMatchObject({ _default: ComputedDefault })
   })
 
   it('list of lists', () => {
@@ -144,9 +145,13 @@ describe('list', () => {
           _elements: typeof str
           _required: true
           _hidden: false
+          _savedAs: undefined
+          _default: undefined
         }
         _required: false
         _hidden: false
+        _savedAs: undefined
+        _default: undefined
       }
     > = 1
     assertList
@@ -157,60 +162,14 @@ describe('list', () => {
         _type: 'list',
         _elements: str,
         _required: true,
-        _hidden: false
+        _hidden: false,
+        _savedAs: undefined,
+        _default: undefined
       },
       _required: false,
-      _hidden: false
-    })
-  })
-
-  describe('ComputedDefault', () => {
-    it('accepts ComputedDefault as default value (option)', () => {
-      const lst = list(str, { default: ComputedDefault })
-
-      const assertList: A.Contains<
-        typeof lst,
-        {
-          _type: 'list'
-          _elements: typeof str
-          _required: false
-          _hidden: false
-          _default: ComputedDefault
-        }
-      > = 1
-      assertList
-
-      expect(lst).toMatchObject({
-        _type: 'list',
-        _elements: str,
-        _required: false,
-        _hidden: false,
-        _default: ComputedDefault
-      })
-    })
-
-    it('accepts ComputedDefault as default value (option)', () => {
-      const lst = list(str).default(ComputedDefault)
-
-      const assertList: A.Contains<
-        typeof lst,
-        {
-          _type: 'list'
-          _elements: typeof str
-          _required: false
-          _hidden: false
-          _default: ComputedDefault
-        }
-      > = 1
-      assertList
-
-      expect(lst).toMatchObject({
-        _type: 'list',
-        _elements: str,
-        _required: false,
-        _hidden: false,
-        _default: ComputedDefault
-      })
+      _hidden: false,
+      _savedAs: undefined,
+      _default: undefined
     })
   })
 })

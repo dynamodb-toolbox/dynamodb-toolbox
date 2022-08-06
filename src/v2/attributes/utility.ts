@@ -1,4 +1,4 @@
-import { O } from 'ts-toolbelt'
+import { A, O, U } from 'ts-toolbelt'
 
 import { MappedProperties, Property } from './property'
 import { Item } from './item'
@@ -77,4 +77,35 @@ export type Output<P extends Item | Property> = P extends Leaf
       // props that have defined default (initial or computed) will necessarily be present
       | O.FilterKeys<P['_properties'], { _default: undefined }>
     >
+  : never
+
+type SwapWithSavedAs<O extends MappedProperties> = A.Compute<
+  U.IntersectOf<
+    {
+      [K in keyof O]: O[K] extends { _savedAs: string }
+        ? Record<O[K]['_savedAs'], O[K]>
+        : Record<K, O[K]>
+    }[keyof O]
+  >
+>
+
+type RecSavedAs<
+  P extends Mapped | Item,
+  S extends MappedProperties = SwapWithSavedAs<P['_properties']>
+> = O.Required<
+  O.Partial<{
+    [key in keyof S]: SavedAs<S[key]>
+  }>,
+  // required props will necessarily be present
+  | O.SelectKeys<S, { _required: true }>
+  // props that have defined default (initial or computed) will necessarily be present
+  | O.FilterKeys<S, { _default: undefined }>
+>
+
+export type SavedAs<P extends Item | Property> = P extends Leaf
+  ? Exclude<P['_resolved'], undefined>
+  : P extends List
+  ? SavedAs<P['_elements']>[]
+  : P extends Mapped | Item
+  ? RecSavedAs<P>
   : never

@@ -15,6 +15,7 @@ describe('leaf', () => {
           _resolved?: string
           _required: false
           _hidden: false
+          _savedAs: undefined
           _default: undefined
         }
       > = 1
@@ -24,6 +25,7 @@ describe('leaf', () => {
         _type: 'string',
         _required: false,
         _hidden: false,
+        _savedAs: undefined,
         _default: undefined
       })
     })
@@ -31,93 +33,55 @@ describe('leaf', () => {
     it('returns required string (option)', () => {
       const str = string({ required: true })
 
-      const assertStr: A.Contains<
-        typeof str,
-        {
-          _type: 'string'
-          _resolved?: string
-          _required: true
-          _hidden: false
-          _default: undefined
-        }
-      > = 1
+      const assertStr: A.Contains<typeof str, { _required: true }> = 1
       assertStr
 
-      expect(str).toMatchObject({
-        _type: 'string',
-        _required: true,
-        _hidden: false,
-        _default: undefined
-      })
+      expect(str).toMatchObject({ _required: true })
     })
 
     it('returns required string (method)', () => {
       const str = string().required()
 
-      const assertStr: A.Contains<
-        typeof str,
-        {
-          _type: 'string'
-          _resolved?: string
-          _required: true
-          _hidden: false
-          _default: undefined
-        }
-      > = 1
+      const assertStr: A.Contains<typeof str, { _required: true }> = 1
       assertStr
 
-      expect(str).toMatchObject({
-        _type: 'string',
-        _required: true,
-        _hidden: false,
-        _default: undefined
-      })
+      expect(str).toMatchObject({ _required: true })
     })
 
     it('returns hidden string (option)', () => {
       const str = string({ hidden: true })
 
-      const assertStr: A.Contains<
-        typeof str,
-        {
-          _type: 'string'
-          _resolved?: string
-          _required: false
-          _hidden: true
-          _default: undefined
-        }
-      > = 1
+      const assertStr: A.Contains<typeof str, { _hidden: true }> = 1
       assertStr
 
-      expect(str).toMatchObject({
-        _type: 'string',
-        _required: false,
-        _hidden: true,
-        _default: undefined
-      })
+      expect(str).toMatchObject({ _hidden: true })
     })
 
     it('returns hidden string (method)', () => {
       const str = string().hidden()
 
-      const assertStr: A.Contains<
-        typeof str,
-        {
-          _type: 'string'
-          _resolved?: string
-          _required: false
-          _hidden: true
-          _default: undefined
-        }
-      > = 1
+      const assertStr: A.Contains<typeof str, { _hidden: true }> = 1
       assertStr
 
-      expect(str).toMatchObject({
-        _type: 'string',
-        _required: false,
-        _hidden: true,
-        _default: undefined
-      })
+      expect(str).toMatchObject({ _hidden: true })
+    })
+
+    it('returns savedAs string (option)', () => {
+      const str = string({ savedAs: 'foo' })
+
+      const assertStr: A.Contains<typeof str, { _savedAs: 'foo' }> = 1
+      assertStr
+
+      expect(str).toMatchObject({ _savedAs: 'foo' })
+    })
+
+    it('returns savedAs string (method)', () => {
+      const str = string().savedAs('foo')
+
+      const assertStr: A.Contains<typeof str, { _savedAs: 'foo' }> = 1
+      assertStr
+
+      expect(str).toMatchObject({ _savedAs: 'foo' })
     })
 
     it('returns string with default value (option)', () => {
@@ -130,43 +94,15 @@ describe('leaf', () => {
       const sayHello = () => 'hello'
       const strB = string({ default: sayHello })
 
-      const assertStrA: A.Contains<
-        typeof strA,
-        {
-          _type: 'string'
-          _resolved?: string
-          _required: false
-          _hidden: false
-          _default: 'hello'
-        }
-      > = 1
+      const assertStrA: A.Contains<typeof strA, { _default: 'hello' }> = 1
       assertStrA
 
-      expect(strA).toMatchObject({
-        _type: 'string',
-        _required: false,
-        _hidden: false,
-        _default: 'hello'
-      })
+      expect(strA).toMatchObject({ _default: 'hello' })
 
-      const assertStrB: A.Contains<
-        typeof strB,
-        {
-          _type: 'string'
-          _resolved?: string
-          _required: false
-          _hidden: false
-          _default: () => string
-        }
-      > = 1
+      const assertStrB: A.Contains<typeof strB, { _default: () => string }> = 1
       assertStrB
 
-      expect(strB).toMatchObject({
-        _type: 'string',
-        _required: false,
-        _hidden: false,
-        _default: sayHello
-      })
+      expect(strB).toMatchObject({ _default: sayHello })
     })
 
     it('returns string with default value (method)', () => {
@@ -179,43 +115,15 @@ describe('leaf', () => {
       const sayHello = () => 'hello'
       const strB = string().default(sayHello)
 
-      const assertStrA: A.Contains<
-        typeof strA,
-        {
-          _type: 'string'
-          _resolved?: string
-          _required: false
-          _hidden: false
-          _default: 'hello'
-        }
-      > = 1
+      const assertStrA: A.Contains<typeof strA, { _default: 'hello' }> = 1
       assertStrA
 
-      expect(strA).toMatchObject({
-        _type: 'string',
-        _required: false,
-        _hidden: false,
-        _default: 'hello'
-      })
+      expect(strA).toMatchObject({ _default: 'hello' })
 
-      const assertStrB: A.Contains<
-        typeof strB,
-        {
-          _type: 'string'
-          _resolved?: string
-          _required: false
-          _hidden: false
-          _default: () => string
-        }
-      > = 1
+      const assertStrB: A.Contains<typeof strB, { _default: () => string }> = 1
       assertStrB
 
-      expect(strB).toMatchObject({
-        _type: 'string',
-        _required: false,
-        _hidden: false,
-        _default: sayHello
-      })
+      expect(strB).toMatchObject({ _default: sayHello })
     })
   })
 

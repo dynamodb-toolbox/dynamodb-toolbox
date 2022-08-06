@@ -12,7 +12,7 @@ describe('item', () => {
       reqStr: string().required(),
       hidBool: boolean().hidden(),
       defNum: number().default(42),
-      bin: binary()
+      savedAsBin: binary().savedAs('_b')
     })
 
     const assertItm: A.Contains<
@@ -24,6 +24,7 @@ describe('item', () => {
             _resolved?: string
             _required: true
             _hidden: false
+            _savedAs: undefined
             _default: undefined
           }
           hidBool: {
@@ -31,6 +32,7 @@ describe('item', () => {
             _resolved?: boolean
             _required: false
             _hidden: true
+            _savedAs: undefined
             _default: undefined
           }
           defNum: {
@@ -38,13 +40,15 @@ describe('item', () => {
             _resolved?: number
             _required: false
             _hidden: false
+            _savedAs: undefined
             _default: 42
           }
-          bin: {
+          savedAsBin: {
             _type: 'binary'
             _resolved?: unknown
             _required: false
             _hidden: false
+            _savedAs: '_b'
             _default: undefined
           }
         }
@@ -58,24 +62,28 @@ describe('item', () => {
           _type: 'string',
           _required: true,
           _hidden: false,
+          _savedAs: undefined,
           _default: undefined
         },
         hidBool: {
           _type: 'boolean',
           _required: false,
           _hidden: true,
+          _savedAs: undefined,
           _default: undefined
         },
         defNum: {
           _type: 'number',
           _required: false,
           _hidden: false,
+          _savedAs: undefined,
           _default: 42
         },
-        bin: {
+        savedAsBin: {
           _type: 'binary',
           _required: false,
           _hidden: false,
+          _savedAs: '_b',
           _default: undefined
         }
       }
@@ -166,10 +174,10 @@ describe('item', () => {
       typeof itm,
       {
         _properties: {
-          list: List<typeof str, false, false>
-          nestedList: List<List<typeof str, true, false>, false, false>
-          reqList: List<typeof str, true, false>
-          hiddenList: List<typeof str, false, true>
+          list: List<typeof str, false, false, undefined, undefined>
+          nestedList: List<List<typeof str, true, false, undefined, undefined>, false, false>
+          reqList: List<typeof str, true, false, undefined, undefined>
+          hiddenList: List<typeof str, false, true, undefined, undefined>
         }
       }
     > = 1
