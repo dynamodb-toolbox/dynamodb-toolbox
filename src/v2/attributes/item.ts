@@ -5,8 +5,8 @@ import { MappedProperties } from './property'
 import { Narrow, PreComputedDefaults, PostComputedDefaults } from './utility'
 
 type DefaultsComputer<P extends MappedProperties = MappedProperties> = (
-  preDefaults: PreComputedDefaults<Mapped<P, false, false, undefined>>
-) => PostComputedDefaults<Mapped<P, false, false, undefined>>
+  preDefaults: PreComputedDefaults<Mapped<P>>
+) => PostComputedDefaults<Mapped<P>>
 
 interface _ItemOptions<
   P extends MappedProperties = MappedProperties,

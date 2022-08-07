@@ -11,7 +11,8 @@ import {
   ComputedDefault,
   PreComputedDefaults,
   PostComputedDefaults,
-  SavedAs
+  SavedAs,
+  KeyInputs
 } from '.'
 
 const playgroundItem1 = item({
@@ -78,12 +79,15 @@ type PlaygroundItem2Input = Input<typeof playgroundItem2>
 type PlaygroundItem2Output = Output<typeof playgroundItem2>
 
 const playgroundItem3 = item({
-  lol: string().savedAs('foo'),
+  keyEl: string().key().required(),
+  nonKeyEl: string(),
   coucou: map({
-    renamed: string().required().savedAs('bar')
+    renamed: string().required().savedAs('bar').key()
   })
     .required()
     .savedAs('baz')
+    .key()
 })
 
 type PlaygroundItem3SavedAs = SavedAs<typeof playgroundItem3>
+type PlaygroundItem3KeyInputs = KeyInputs<typeof playgroundItem3>

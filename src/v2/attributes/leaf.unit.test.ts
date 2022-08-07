@@ -16,6 +16,7 @@ describe('leaf', () => {
           _required: false
           _hidden: false
           _savedAs: undefined
+          _key: false
           _default: undefined
         }
       > = 1
@@ -26,6 +27,7 @@ describe('leaf', () => {
         _required: false,
         _hidden: false,
         _savedAs: undefined,
+        _key: false,
         _default: undefined
       })
     })
@@ -64,6 +66,24 @@ describe('leaf', () => {
       assertStr
 
       expect(str).toMatchObject({ _hidden: true })
+    })
+
+    it('returns key string (option)', () => {
+      const str = string({ key: true })
+
+      const assertStr: A.Contains<typeof str, { _key: true }> = 1
+      assertStr
+
+      expect(str).toMatchObject({ _key: true })
+    })
+
+    it('returns key string (method)', () => {
+      const str = string().key()
+
+      const assertStr: A.Contains<typeof str, { _key: true }> = 1
+      assertStr
+
+      expect(str).toMatchObject({ _key: true })
     })
 
     it('returns savedAs string (option)', () => {
@@ -131,24 +151,10 @@ describe('leaf', () => {
     it('returns default number', () => {
       const num = number()
 
-      const assertNum: A.Contains<
-        typeof num,
-        {
-          _type: 'number'
-          _resolved?: number
-          _required: false
-          _hidden: false
-          _default: undefined
-        }
-      > = 1
+      const assertNum: A.Contains<typeof num, { _type: 'number' }> = 1
       assertNum
 
-      expect(num).toMatchObject({
-        _type: 'number',
-        _required: false,
-        _hidden: false,
-        _default: undefined
-      })
+      expect(num).toMatchObject({ _type: 'number' })
     })
   })
 
@@ -156,24 +162,10 @@ describe('leaf', () => {
     it('returns default boolean', () => {
       const bool = boolean()
 
-      const assertBool: A.Contains<
-        typeof bool,
-        {
-          _type: 'boolean'
-          _resolved?: boolean
-          _required: false
-          _hidden: false
-          _default: undefined
-        }
-      > = 1
+      const assertBool: A.Contains<typeof bool, { _type: 'boolean' }> = 1
       assertBool
 
-      expect(bool).toMatchObject({
-        _type: 'boolean',
-        _required: false,
-        _hidden: false,
-        _default: undefined
-      })
+      expect(bool).toMatchObject({ _type: 'boolean' })
     })
   })
 
@@ -181,24 +173,10 @@ describe('leaf', () => {
     it('returns default binary', () => {
       const bin = binary()
 
-      const assertBin: A.Contains<
-        typeof bin,
-        {
-          _type: 'binary'
-          _resolved?: unknown
-          _required: false
-          _hidden: false
-          _default: undefined
-        }
-      > = 1
+      const assertBin: A.Contains<typeof bin, { _type: 'binary' }> = 1
       assertBin
 
-      expect(bin).toMatchObject({
-        _type: 'binary',
-        _required: false,
-        _hidden: false,
-        _default: undefined
-      })
+      expect(bin).toMatchObject({ _type: 'binary' })
     })
   })
 
@@ -206,47 +184,19 @@ describe('leaf', () => {
     it('accepts ComputedDefault as default value (option)', () => {
       const str = string({ default: ComputedDefault })
 
-      const assertStr: A.Contains<
-        typeof str,
-        {
-          _type: 'string'
-          _resolved?: unknown
-          _required: false
-          _hidden: false
-          _default: ComputedDefault
-        }
-      > = 1
+      const assertStr: A.Contains<typeof str, { _default: ComputedDefault }> = 1
       assertStr
 
-      expect(str).toMatchObject({
-        _type: 'string',
-        _required: false,
-        _hidden: false,
-        _default: ComputedDefault
-      })
+      expect(str).toMatchObject({ _default: ComputedDefault })
     })
 
     it('accepts ComputedDefault as default value (option)', () => {
       const str = string().default(ComputedDefault)
 
-      const assertStr: A.Contains<
-        typeof str,
-        {
-          _type: 'string'
-          _resolved?: unknown
-          _required: false
-          _hidden: false
-          _default: ComputedDefault
-        }
-      > = 1
+      const assertStr: A.Contains<typeof str, { _default: ComputedDefault }> = 1
       assertStr
 
-      expect(str).toMatchObject({
-        _type: 'string',
-        _required: false,
-        _hidden: false,
-        _default: ComputedDefault
-      })
+      expect(str).toMatchObject({ _default: ComputedDefault })
     })
   })
 })

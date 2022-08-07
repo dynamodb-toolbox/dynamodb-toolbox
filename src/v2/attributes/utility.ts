@@ -42,12 +42,15 @@ export type PostComputedDefaults<P extends Item | Property> = P extends Leaf
       // This is the final item, all required props should be here
       | O.SelectKeys<P['_properties'], { _required: true }>
       // Besides, all props that have defined default (initial or computed) should be here as well
+      // (...but not so sure about that anymore, props can have computed default but be not required)
       | O.FilterKeys<P['_properties'], { _default: undefined }>
     >
   : never
 
 export type Input<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
+  : P extends List
+  ? Input<P['_elements']>[]
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
@@ -58,8 +61,6 @@ export type Input<P extends Item | Property> = P extends Leaf
         O.FilterKeys<P['_properties'], { _default: undefined }>
       >
     >
-  : P extends List
-  ? Input<P['_elements']>[]
   : never
 
 export type Output<P extends Item | Property> = P extends Leaf
@@ -75,6 +76,7 @@ export type Output<P extends Item | Property> = P extends Leaf
       // required props will necessarily be present
       | O.SelectKeys<P['_properties'], { _required: true }>
       // props that have defined default (initial or computed) will necessarily be present
+      // (...but not so sure about that anymore, props can have computed default but be not required)
       | O.FilterKeys<P['_properties'], { _default: undefined }>
     >
   : never
@@ -108,4 +110,22 @@ export type SavedAs<P extends Item | Property> = P extends Leaf
   ? SavedAs<P['_elements']>[]
   : P extends Mapped | Item
   ? RecSavedAs<P>
+  : never
+
+export type KeyInputs<P extends Item | Property> = Item extends P
+  ? any
+  : P extends Leaf
+  ? Exclude<P['_resolved'], undefined>
+  : P extends List
+  ? KeyInputs<P['_elements']>[]
+  : P extends Mapped | Item
+  ? O.Required<
+      O.Partial<{
+        [key in O.SelectKeys<P['_properties'], { _key: true }>]: KeyInputs<P['_properties'][key]>
+      }>,
+      Exclude<
+        O.SelectKeys<P['_properties'], { _required: true }>,
+        O.FilterKeys<P['_properties'], { _default: undefined }>
+      >
+    >
   : never

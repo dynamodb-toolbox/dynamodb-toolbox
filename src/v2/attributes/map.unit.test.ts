@@ -19,6 +19,7 @@ describe('map', () => {
         }
         _required: false
         _hidden: false
+        _key: false
         _savedAs: undefined
         _default: undefined
       }
@@ -29,6 +30,7 @@ describe('map', () => {
       _type: 'map',
       _properties: { str },
       _required: false,
+      _key: false,
       _savedAs: undefined,
       _hidden: false
     })
@@ -68,6 +70,24 @@ describe('map', () => {
     assertMapped
 
     expect(mapped).toMatchObject({ _hidden: true })
+  })
+
+  it('returns key map (option)', () => {
+    const mapped = map({ str }, { key: true })
+
+    const assertMapped: A.Contains<typeof mapped, { _key: true }> = 1
+    assertMapped
+
+    expect(mapped).toMatchObject({ _key: true })
+  })
+
+  it('returns key map (method)', () => {
+    const mapped = map({ str }).key()
+
+    const assertMapped: A.Contains<typeof mapped, { _key: true }> = 1
+    assertMapped
+
+    expect(mapped).toMatchObject({ _key: true })
   })
 
   it('returns savedAs map (option)', () => {
@@ -132,18 +152,21 @@ describe('map', () => {
                 }
                 _required: false
                 _hidden: true
+                _key: false
                 _savedAs: undefined
                 _default: undefined
               }
             }
             _required: true
             _hidden: false
+            _key: false
             _savedAs: undefined
             _default: undefined
           }
         }
         _required: false
         _hidden: false
+        _key: false
         _savedAs: undefined
         _default: undefined
       }
@@ -163,18 +186,21 @@ describe('map', () => {
               },
               _required: false,
               _hidden: true,
+              _key: false,
               _savedAs: undefined,
               _default: undefined
             }
           },
           _required: true,
           _hidden: false,
+          _key: false,
           _savedAs: undefined,
           _default: undefined
         }
       },
       _required: false,
       _hidden: false,
+      _key: false,
       _savedAs: undefined,
       _default: undefined
     })

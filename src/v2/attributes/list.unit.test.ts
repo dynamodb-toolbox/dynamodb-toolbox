@@ -17,6 +17,13 @@ describe('list', () => {
     expect(() => list(string().required().hidden())).toThrowError('List elements cannot be hidden')
   })
 
+  it('rejects key elements', () => {
+    // @ts-expect-error
+    expect(() => list(string().required().key())).toThrowError(
+      'List elements cannot be part of key'
+    )
+  })
+
   it('rejects elements with savedAs values', () => {
     // @ts-expect-error
     expect(() => list(string().required().savedAs('foo'))).toThrowError(
@@ -46,6 +53,7 @@ describe('list', () => {
         _elements: typeof str
         _required: false
         _hidden: false
+        _key: false
         _savedAs: undefined
         _default: undefined
       }
@@ -56,6 +64,7 @@ describe('list', () => {
       _type: 'list',
       _elements: str,
       _required: false,
+      _key: false,
       _savedAs: undefined,
       _hidden: false
     })
@@ -95,6 +104,24 @@ describe('list', () => {
     assertList
 
     expect(lst).toMatchObject({ _hidden: true })
+  })
+
+  it('returns key list (option)', () => {
+    const lst = list(str, { key: true })
+
+    const assertList: A.Contains<typeof lst, { _key: true }> = 1
+    assertList
+
+    expect(lst).toMatchObject({ _key: true })
+  })
+
+  it('returns key list (method)', () => {
+    const lst = list(str).key()
+
+    const assertList: A.Contains<typeof lst, { _key: true }> = 1
+    assertList
+
+    expect(lst).toMatchObject({ _key: true })
   })
 
   it('returns savedAs list (option)', () => {
@@ -145,11 +172,13 @@ describe('list', () => {
           _elements: typeof str
           _required: true
           _hidden: false
+          _key: false
           _savedAs: undefined
           _default: undefined
         }
         _required: false
         _hidden: false
+        _key: false
         _savedAs: undefined
         _default: undefined
       }
@@ -163,11 +192,13 @@ describe('list', () => {
         _elements: str,
         _required: true,
         _hidden: false,
+        _key: false,
         _savedAs: undefined,
         _default: undefined
       },
       _required: false,
       _hidden: false,
+      _key: false,
       _savedAs: undefined,
       _default: undefined
     })
