@@ -13,18 +13,20 @@ describe('item', () => {
       hidBool: boolean().hidden(),
       defNum: number().default(42),
       savedAsBin: binary().savedAs('_b'),
-      keyStr: string().key()
+      keyStr: string().key(),
+      enumStr: string().enum('foo', 'bar')
     })
 
     const assertItm: A.Contains<
       typeof itm,
       {
         _properties: {
-          reqStr: Leaf<'string', true, false, false, undefined, undefined>
-          hidBool: Leaf<'boolean', false, true, false, undefined, undefined>
-          defNum: Leaf<'number', false, false, false, undefined, 42>
-          savedAsBin: Leaf<'binary', false, false, false, '_b', undefined>
-          keyStr: Leaf<'string', false, false, true, undefined, undefined>
+          reqStr: Leaf<'string', true, false, false, undefined, undefined, undefined>
+          hidBool: Leaf<'boolean', false, true, false, undefined, undefined, undefined>
+          defNum: Leaf<'number', false, false, false, undefined, undefined, 42>
+          savedAsBin: Leaf<'binary', false, false, false, '_b', undefined, undefined>
+          keyStr: Leaf<'string', false, false, true, undefined, undefined, undefined>
+          enumStr: Leaf<'string', false, false, false, undefined, ['foo', 'bar'], undefined>
         }
       }
     > = 1
@@ -38,38 +40,52 @@ describe('item', () => {
           _hidden: false,
           _savedAs: undefined,
           _key: false,
+          _enum: undefined,
           _default: undefined
         },
         hidBool: {
           _type: 'boolean',
           _required: false,
           _hidden: true,
-          _savedAs: undefined,
           _key: false,
+          _savedAs: undefined,
+          _enum: undefined,
           _default: undefined
         },
         defNum: {
           _type: 'number',
           _required: false,
           _hidden: false,
-          _savedAs: undefined,
           _key: false,
+          _savedAs: undefined,
+          _enum: undefined,
           _default: 42
         },
         savedAsBin: {
           _type: 'binary',
           _required: false,
           _hidden: false,
-          _savedAs: '_b',
           _key: false,
+          _savedAs: '_b',
+          _enum: undefined,
           _default: undefined
         },
         keyStr: {
           _type: 'string',
           _required: false,
           _hidden: false,
-          _savedAs: undefined,
           _key: true,
+          _savedAs: undefined,
+          _enum: undefined,
+          _default: undefined
+        },
+        enumStr: {
+          _type: 'string',
+          _required: false,
+          _hidden: false,
+          _key: false,
+          _savedAs: undefined,
+          _enum: ['foo', 'bar'],
           _default: undefined
         }
       }

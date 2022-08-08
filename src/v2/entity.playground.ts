@@ -7,7 +7,7 @@ const UserEntity = new Entity({
   table: MyTable,
   item: item({
     userId: string().required().key(),
-    age: number().required().default(42).key(),
+    age: number().required().enum(41, 42).default(42).key(),
     firstName: string().required().savedAs('fn'),
     lastName: string().required().savedAs('ln'),
     parents: map({

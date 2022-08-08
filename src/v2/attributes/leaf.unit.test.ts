@@ -104,9 +104,24 @@ describe('leaf', () => {
       expect(str).toMatchObject({ _savedAs: 'foo' })
     })
 
+    it('returns string with enum values (method)', () => {
+      // @ts-expect-error
+      expect(() => string().enum(42, 'foo', 'bar')).toThrow('Invalid enum value type')
+
+      const str = string().enum('foo', 'bar')
+
+      const assertStr: A.Contains<
+        typeof str,
+        { _resolved?: 'foo' | 'bar' | undefined; _enum: ['foo', 'bar'] }
+      > = 1
+      assertStr
+
+      expect(str).toMatchObject({ _enum: ['foo', 'bar'] })
+    })
+
     it('returns string with default value (option)', () => {
       // @ts-expect-error
-      string({ default: 42 })
+      expect(() => string({ default: 42 })).toThrow('Invalid default type')
       // @ts-expect-error
       string({ default: () => 42 })
 
@@ -127,7 +142,7 @@ describe('leaf', () => {
 
     it('returns string with default value (method)', () => {
       // @ts-expect-error
-      string().default(42)
+      expect(() => string().default(42)).toThrow('Invalid default type')
       // @ts-expect-error
       string().default(() => 42)
 
@@ -144,6 +159,30 @@ describe('leaf', () => {
       assertStrB
 
       expect(strB).toMatchObject({ _default: sayHello })
+    })
+
+    it('default with enum values', () => {
+      // @ts-expect-error
+      expect(() => string().enum('foo', 'bar').default('baz')).toThrow(
+        'Default outside of enum range'
+      )
+
+      const strA = string().enum('foo', 'bar').default('foo')
+      const sayFoo = (): 'foo' => 'foo'
+      const strB = string().enum('foo', 'bar').default(sayFoo)
+
+      const assertStrA: A.Contains<typeof strA, { _default: 'foo'; _enum: ['foo', 'bar'] }> = 1
+      assertStrA
+
+      expect(strA).toMatchObject({ _default: 'foo' })
+
+      const assertStrB: A.Contains<
+        typeof strB,
+        { _default: () => 'foo'; _enum: ['foo', 'bar'] }
+      > = 1
+      assertStrB
+
+      expect(strB).toMatchObject({ _default: sayFoo, _enum: ['foo', 'bar'] })
     })
   })
 
