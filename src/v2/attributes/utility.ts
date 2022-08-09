@@ -2,9 +2,9 @@ import { A, O, U } from 'ts-toolbelt'
 
 import { MappedProperties, Property } from './property'
 import { Item } from './item'
-import { Leaf } from './leaf'
-import { Mapped } from './map'
-import { List } from './list'
+import { Leaf, validateLeaf } from './leaf'
+import { Mapped, validateMap } from './map'
+import { List, validateList } from './list'
 
 export const ComputedDefault = Symbol('Tag for properties with computed default values')
 
@@ -129,3 +129,20 @@ export type KeyInputs<P extends Item | Property> = Item extends P
       >
     >
   : never
+
+export const errorMessagePathSuffix = (path?: string): string =>
+  path !== undefined ? ` at path ${path}` : ''
+
+export const validateProperty = (property: Property, path?: string): boolean => {
+  switch (property._type) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+    case 'binary':
+      return validateLeaf(property, path)
+    case 'list':
+      return validateList(property, path)
+    case 'map':
+      return validateMap(property, path)
+  }
+}

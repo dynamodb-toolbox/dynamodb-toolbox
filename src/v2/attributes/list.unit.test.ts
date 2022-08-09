@@ -1,7 +1,15 @@
 import { A } from 'ts-toolbelt'
 
 import { string } from './leaf'
-import { list } from './list'
+import {
+  DefaultedListElementsError,
+  HiddenListElementsError,
+  KeyListElementsError,
+  list,
+  OptionalListElementsError,
+  SavedAsListElementsError,
+  validateList
+} from './list'
 import { ComputedDefault } from './utility'
 
 describe('list', () => {
@@ -9,37 +17,60 @@ describe('list', () => {
 
   it('rejects non-required elements', () => {
     // @ts-expect-error
-    expect(() => list(string())).toThrowError('List elements must be required')
+    list(string())
+
+    // @ts-expect-error
+    expect(() => validateList(list(string()))).toThrow(
+      // forces line break
+      new OptionalListElementsError({})
+    )
   })
 
   it('rejects hidden elements', () => {
     // @ts-expect-error
-    expect(() => list(string().required().hidden())).toThrowError('List elements cannot be hidden')
+    list(string().required().hidden())
+
+    // @ts-expect-error
+    expect(() => validateList(list(string().required().hidden()))).toThrow(
+      new HiddenListElementsError({})
+    )
   })
 
   it('rejects key elements', () => {
     // @ts-expect-error
-    expect(() => list(string().required().key())).toThrowError(
-      'List elements cannot be part of key'
+    list(string().required().key())
+
+    // @ts-expect-error
+    expect(() => validateList(list(string().required().key()))).toThrow(
+      new KeyListElementsError({})
     )
   })
 
   it('rejects elements with savedAs values', () => {
     // @ts-expect-error
-    expect(() => list(string().required().savedAs('foo'))).toThrowError(
-      'List elements cannot be renamed (have savedAs option)'
+    list(string().required().savedAs('foo'))
+
+    // @ts-expect-error
+    expect(() => validateList(list(string().required().savedAs('foo')))).toThrow(
+      new SavedAsListElementsError({})
     )
   })
 
   it('rejects elements with default values', () => {
     // @ts-expect-error
-    expect(() => list(string().required().default('foo'))).toThrowError(
-      'List elements cannot have default values'
+    list(string().required().default('foo'))
+
+    // @ts-expect-error
+    expect(() => validateList(list(string().required().default('foo')))).toThrow(
+      new DefaultedListElementsError({})
     )
 
     // @ts-expect-error
-    expect(() => list(string().required().default(ComputedDefault))).toThrowError(
-      'List elements cannot have default values'
+    list(string().required().default(ComputedDefault))
+
+    // @ts-expect-error
+    expect(() => validateList(list(string().required().default(ComputedDefault)))).toThrow(
+      new DefaultedListElementsError({})
     )
   })
 

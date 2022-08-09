@@ -1,6 +1,15 @@
 import { A } from 'ts-toolbelt'
 
-import { string, number, boolean, binary } from './leaf'
+import {
+  string,
+  number,
+  boolean,
+  binary,
+  validateLeaf,
+  InvalidEnumValueTypeError,
+  InvalidDefaultValueTypeError,
+  InvalidDefaultValueRangeError
+} from './leaf'
 import { ComputedDefault } from './utility'
 
 describe('leaf', () => {
@@ -106,7 +115,12 @@ describe('leaf', () => {
 
     it('returns string with enum values (method)', () => {
       // @ts-expect-error
-      expect(() => string().enum(42, 'foo', 'bar')).toThrow('Invalid enum value type')
+      string().enum(42, 'foo', 'bar')
+
+      // @ts-expect-error
+      expect(() => validateLeaf(string().enum(42, 'foo', 'bar'))).toThrow(
+        new InvalidEnumValueTypeError({ expectedType: 'string', enumValue: 42 })
+      )
 
       const str = string().enum('foo', 'bar')
 
@@ -121,8 +135,14 @@ describe('leaf', () => {
 
     it('returns string with default value (option)', () => {
       // @ts-expect-error
-      expect(() => string({ default: 42 })).toThrow('Invalid default type')
+      string({ default: 42 })
+
       // @ts-expect-error
+      expect(() => validateLeaf(string({ default: 42 }))).toThrow(
+        new InvalidDefaultValueTypeError({ expectedType: 'string', defaultValue: 42 })
+      )
+
+      // @ts-expect-error Unable to throw here (it would require executing the fn)
       string({ default: () => 42 })
 
       const strA = string({ default: 'hello' })
@@ -142,8 +162,14 @@ describe('leaf', () => {
 
     it('returns string with default value (method)', () => {
       // @ts-expect-error
-      expect(() => string().default(42)).toThrow('Invalid default type')
+      string().default(42)
+
       // @ts-expect-error
+      expect(() => validateLeaf(string().default(42))).toThrow(
+        new InvalidDefaultValueTypeError({ expectedType: 'string', defaultValue: 42 })
+      )
+
+      // @ts-expect-error Unable to throw here (it would require executing the fn)
       string().default(() => 42)
 
       const strA = string().default('hello')
@@ -163,8 +189,11 @@ describe('leaf', () => {
 
     it('default with enum values', () => {
       // @ts-expect-error
-      expect(() => string().enum('foo', 'bar').default('baz')).toThrow(
-        'Default outside of enum range'
+      string().enum('foo', 'bar').default('baz')
+
+      // @ts-expect-error
+      expect(() => validateLeaf(string().enum('foo', 'bar').default('baz'))).toThrow(
+        new InvalidDefaultValueRangeError({ enumValues: ['foo', 'bar'], defaultValue: 'baz' })
       )
 
       const strA = string().enum('foo', 'bar').default('foo')

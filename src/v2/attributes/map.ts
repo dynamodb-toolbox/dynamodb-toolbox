@@ -1,7 +1,7 @@
 import { O } from 'ts-toolbelt'
 
 import { MappedProperties } from './property'
-import { ComputedDefault, Narrow } from './utility'
+import { ComputedDefault, Narrow, validateProperty } from './utility'
 
 interface _MappedOptions<
   R extends boolean = boolean,
@@ -104,4 +104,12 @@ export const map: MappedTyper = <
     savedAs: nextSavedAs => map(_properties, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => map(_properties, { ...appliedOptions, default: nextDefault })
   } as Mapped<P, R, H, K, S, D>
+}
+
+export const validateMap = <M extends Mapped>(mapped: M, path?: string): boolean => {
+  const { _properties: properties } = mapped
+
+  return Object.entries(properties).every(([propertyName, property]) =>
+    validateProperty(property, [path, propertyName].filter(Boolean).join('.'))
+  )
 }

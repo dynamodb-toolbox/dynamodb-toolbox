@@ -2,7 +2,7 @@ import { O } from 'ts-toolbelt'
 
 import { Mapped } from './map'
 import { MappedProperties } from './property'
-import { Narrow, PreComputedDefaults, PostComputedDefaults } from './utility'
+import { Narrow, PreComputedDefaults, PostComputedDefaults, validateProperty } from './utility'
 
 type DefaultsComputer<P extends MappedProperties = MappedProperties> = (
   preDefaults: PreComputedDefaults<Mapped<P>>
@@ -12,6 +12,7 @@ interface _ItemOptions<
   P extends MappedProperties = MappedProperties,
   D extends DefaultsComputer<P> | undefined = DefaultsComputer<P> | undefined
 > {
+  _validate: boolean
   _computeDefaults: D
 }
 
@@ -30,10 +31,12 @@ interface ItemOptions<
   P extends MappedProperties = MappedProperties,
   D extends DefaultsComputer<P> | undefined = DefaultsComputer<P> | undefined
 > {
+  _validate: boolean
   computeDefaults: D
 }
 
 const itemDefaultOptions: ItemOptions<{}, undefined> = {
+  _validate: true,
   computeDefaults: undefined
 }
 
@@ -53,13 +56,23 @@ export const item: ItemTyper = <
   options?: O.Partial<ItemOptions<P, D>>
 ): Item<P, D> => {
   const appliedOptions = { ...itemDefaultOptions, ...options }
-  const { computeDefaults: _computeDefaults } = appliedOptions
+  const { _validate: validate, computeDefaults: _computeDefaults } = appliedOptions
+
+  if (validate) {
+    Object.entries(_properties).forEach(([propertyName, property]) => {
+      validateProperty(property, propertyName)
+    })
+  }
 
   return {
     _type: 'item',
     _properties,
     _computeDefaults,
     computeDefaults: nextComputeDefaults =>
-      item(_properties, { ...appliedOptions, computeDefaults: nextComputeDefaults })
+      item(_properties, {
+        ...appliedOptions,
+        _validate: false,
+        computeDefaults: nextComputeDefaults
+      })
   } as Item<P, D>
 }

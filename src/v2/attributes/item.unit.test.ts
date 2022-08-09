@@ -318,4 +318,25 @@ describe('item', () => {
       return postCompProps
     })
   })
+
+  it('applies validation by default', () => {
+    expect(() =>
+      item({
+        // @ts-ignore
+        invalidStr: string().enum('foo', 'bar').default('baz')
+      })
+    ).toThrow()
+  })
+
+  it('does not apply validation if told to', () => {
+    expect(() =>
+      item(
+        {
+          // @ts-ignore
+          invalidStr: string().enum('foo', 'bar').default('baz')
+        },
+        { _validate: false }
+      )
+    ).not.toThrow()
+  })
 })

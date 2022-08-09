@@ -1,5 +1,6 @@
 import { O } from 'ts-toolbelt'
-import { ComputedDefault } from './utility'
+
+import { ComputedDefault, errorMessagePathSuffix } from './utility'
 
 type LeafType = 'string' | 'boolean' | 'number' | 'binary'
 
@@ -28,7 +29,7 @@ interface _LeafOptions<
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
   E extends EnumValues<T> = EnumValues<T>,
-  D extends LeafDefaultValue<T> | E = LeafDefaultValue<T> | E
+  D extends LeafDefaultValue<T> = LeafDefaultValue<T>
 > {
   _required: R
   _hidden: H
@@ -37,6 +38,7 @@ interface _LeafOptions<
   _enum: E
   _default: D
 }
+
 export type Leaf<
   T extends LeafType = LeafType,
   R extends boolean = boolean,
@@ -44,7 +46,7 @@ export type Leaf<
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
   E extends EnumValues<T> = EnumValues<T>,
-  D extends LeafDefaultValue<T> | E = LeafDefaultValue<T> | E
+  D extends LeafDefaultValue<T> = LeafDefaultValue<T>
 > = {
   _type: T
   _resolved?: E extends ResolveLeafType<T>[] ? E[number] : ResolveLeafType<T>
@@ -116,22 +118,6 @@ const leaf = <
     _enum
   } = options
 
-  _enum?.forEach(enumValue => {
-    if (typeof enumValue !== _type) {
-      throw new Error('Invalid enum value type')
-    }
-  })
-
-  if (_default !== undefined && _default !== ComputedDefault && typeof _default !== 'function') {
-    if (typeof _default !== _type) {
-      throw new Error('Invalid default type')
-    }
-
-    if (_enum !== undefined && !_enum.some(enumValue => enumValue === _default)) {
-      throw new Error('Default outside of enum range')
-    }
-  }
-
   return {
     _type,
     _required,
@@ -176,3 +162,84 @@ export const string = getLeafTyper('string')
 export const number = getLeafTyper('number')
 export const binary = getLeafTyper('binary')
 export const boolean = getLeafTyper('boolean')
+
+export class InvalidEnumValueTypeError extends Error {
+  constructor({
+    expectedType,
+    enumValue,
+    path
+  }: {
+    expectedType: LeafType
+    enumValue: NonNullable<EnumValues<LeafType>>[number]
+    path?: string
+  }) {
+    super(
+      `Invalid enum value type${errorMessagePathSuffix(
+        path
+      )}. Expected: ${expectedType}. Received: ${String(enumValue)}.`
+    )
+  }
+}
+
+export class InvalidDefaultValueTypeError extends Error {
+  constructor({
+    expectedType,
+    defaultValue,
+    path
+  }: {
+    expectedType: LeafType
+    defaultValue: NonNullable<LeafDefaultValue<LeafType>>
+    path?: string
+  }) {
+    super(
+      `Invalid default value type${errorMessagePathSuffix(
+        path
+      )}: Expected: ${expectedType}. Received: ${String(defaultValue)}.`
+    )
+  }
+}
+
+export class InvalidDefaultValueRangeError extends Error {
+  constructor({
+    enumValues,
+    defaultValue,
+    path
+  }: {
+    enumValues: NonNullable<EnumValues<LeafType>>
+    defaultValue: NonNullable<LeafDefaultValue<LeafType>>
+    path?: string
+  }) {
+    super(
+      `Invalid default value${errorMessagePathSuffix(path)}: Expected one of: ${enumValues.join(
+        ', '
+      )}. Received: ${String(defaultValue)}.`
+    )
+  }
+}
+
+export const validateLeaf = <L extends Leaf>(
+  { _type: expectedType, _enum: enumValues, _default: defaultValue }: L,
+  path?: string
+): boolean => {
+  enumValues?.forEach(enumValue => {
+    if (typeof enumValue !== expectedType) {
+      throw new InvalidEnumValueTypeError({ expectedType, enumValue, path })
+    }
+  })
+
+  if (
+    defaultValue !== undefined &&
+    defaultValue !== ComputedDefault &&
+    typeof defaultValue !== 'function'
+  ) {
+    if (typeof defaultValue !== expectedType) {
+      throw new InvalidDefaultValueTypeError({ expectedType, defaultValue, path })
+    }
+
+    if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
+      throw new InvalidDefaultValueRangeError({ enumValues, defaultValue, path })
+    }
+  }
+
+  return true
+}

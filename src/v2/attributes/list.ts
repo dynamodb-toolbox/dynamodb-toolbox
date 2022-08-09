@@ -1,7 +1,7 @@
 import { O } from 'ts-toolbelt'
 
 import { Property } from './property'
-import { ComputedDefault } from './utility'
+import { ComputedDefault, errorMessagePathSuffix, validateProperty } from './utility'
 
 type ListProperty = Property & {
   _required: true
@@ -87,39 +87,6 @@ export const list: ListTyper = <
   _elements: E,
   options?: O.Partial<ListOptions<R, H, K, S, D>>
 ): List<E, R, H, K, S, D> => {
-  const {
-    _required: _elRequired,
-    _hidden: _elHidden,
-    _key: _elKey,
-    _savedAs: _elSavedAs,
-    _default: _elDefault
-  } = _elements
-
-  if (_elRequired !== true) {
-    // TODO: display path in error OR override _elRequired to true
-    throw new Error('List elements must be required')
-  }
-
-  if (_elHidden !== false) {
-    // TODO: display path in error OR override _elHidden to false
-    throw new Error('List elements cannot be hidden')
-  }
-
-  if (_elKey !== false) {
-    // TODO: display path in error OR override _elHidden to false
-    throw new Error('List elements cannot be part of key')
-  }
-
-  if (_elSavedAs !== undefined) {
-    // TODO: display path in error OR override _elHidden to false
-    throw new Error('List elements cannot be renamed (have savedAs option)')
-  }
-
-  if (_elDefault !== undefined) {
-    // TODO: display path in error OR override _elHidden to false
-    throw new Error('List elements cannot have default values')
-  }
-
   const appliedOptions = { ...listDefaultOptions, ...options }
   const {
     required: _required,
@@ -143,4 +110,79 @@ export const list: ListTyper = <
     savedAs: nextSavedAs => list(_elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(_elements, { ...appliedOptions, default: nextDefault })
   } as List<E, R, H, K, S, D>
+}
+
+export class OptionalListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(`Invalid list elements${errorMessagePathSuffix(path)}: List elements must be required`)
+  }
+}
+
+export class HiddenListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(`Invalid list elements${errorMessagePathSuffix(path)}: List elements cannot be hidden`)
+  }
+}
+
+export class KeyListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(
+      `Invalid list elements${errorMessagePathSuffix(path)}: List elements cannot be part of key`
+    )
+  }
+}
+
+export class SavedAsListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(
+      `Invalid list elements${errorMessagePathSuffix(
+        path
+      )}: List elements cannot be renamed (have savedAs option)`
+    )
+  }
+}
+
+export class DefaultedListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(
+      `Invalid list elements${errorMessagePathSuffix(
+        path
+      )}: List elements cannot have default values`
+    )
+  }
+}
+
+export const validateList = <L extends List>(
+  { _elements: elements }: L,
+  path?: string
+): boolean => {
+  const {
+    _required: elementsRequired,
+    _hidden: elementsHidden,
+    _key: elementsKey,
+    _savedAs: elementsSavedAs,
+    _default: elementsDefault
+  } = elements
+
+  if (elementsRequired !== true) {
+    throw new OptionalListElementsError({ path })
+  }
+
+  if (elementsHidden !== false) {
+    throw new HiddenListElementsError({ path })
+  }
+
+  if (elementsKey !== false) {
+    throw new KeyListElementsError({ path })
+  }
+
+  if (elementsSavedAs !== undefined) {
+    throw new SavedAsListElementsError({ path })
+  }
+
+  if (elementsDefault !== undefined) {
+    throw new DefaultedListElementsError({ path })
+  }
+
+  return validateProperty(elements, `${path ?? ''}[n]`)
 }
