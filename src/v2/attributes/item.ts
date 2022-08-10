@@ -2,11 +2,11 @@ import { O } from 'ts-toolbelt'
 
 import { Mapped } from './map'
 import { MappedProperties } from './property'
-import { Narrow, PreComputedDefaults, PostComputedDefaults, validateProperty } from './utility'
+import { Narrow, PreComputeDefaults, PostComputeDefaults, validateProperty } from './utility'
 
 type DefaultsComputer<P extends MappedProperties = MappedProperties> = (
-  preDefaults: PreComputedDefaults<Mapped<P>>
-) => PostComputedDefaults<Mapped<P>>
+  preDefaults: PreComputeDefaults<Mapped<P>>
+) => PostComputeDefaults<Mapped<P>>
 
 interface _ItemOptions<
   P extends MappedProperties = MappedProperties,

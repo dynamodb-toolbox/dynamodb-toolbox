@@ -6,13 +6,13 @@ import {
   string,
   map,
   list,
-  Input,
-  Output,
+  ItemInput,
+  ItemOutput,
   ComputedDefault,
-  PreComputedDefaults,
-  PostComputedDefaults,
-  SavedAs,
-  KeyInputs
+  PreComputeDefaults,
+  PostComputeDefaults,
+  ItemSavedAs,
+  ItemKeyInput
 } from '.'
 
 const playgroundItem1 = item({
@@ -41,8 +41,8 @@ const playgroundItem1 = item({
   hiddenList: list(string().required()).hidden()
 })
 
-type PlaygroundItem1Input = Input<typeof playgroundItem1>
-type PlaygroundItem1Output = Output<typeof playgroundItem1>
+type PlaygroundItem1Input = ItemInput<typeof playgroundItem1>
+type PlaygroundItem1Output = ItemOutput<typeof playgroundItem1>
 
 const allCasesOfProps = {
   optProp: string(),
@@ -59,8 +59,8 @@ const playgroundItem2 = item({
   list: list(map(allCasesOfProps).required()).required()
 }).computeDefaults(preComp => {
   const equivalentMap = map(allCasesOfProps)
-  type PreCompProps = PreComputedDefaults<typeof equivalentMap>
-  type PostCompProps = PostComputedDefaults<typeof equivalentMap>
+  type PreCompProps = PreComputeDefaults<typeof equivalentMap>
+  type PostCompProps = PostComputeDefaults<typeof equivalentMap>
 
   const fillGaps = (preComp: PreCompProps): PostCompProps => ({
     ...preComp,
@@ -75,8 +75,8 @@ const playgroundItem2 = item({
   }
 })
 
-type PlaygroundItem2Input = Input<typeof playgroundItem2>
-type PlaygroundItem2Output = Output<typeof playgroundItem2>
+type PlaygroundItem2Input = ItemInput<typeof playgroundItem2>
+type PlaygroundItem2Output = ItemOutput<typeof playgroundItem2>
 
 const playgroundItem3 = item({
   keyEl: string().key().required(),
@@ -89,5 +89,5 @@ const playgroundItem3 = item({
     .key()
 })
 
-type PlaygroundItem3SavedAs = SavedAs<typeof playgroundItem3>
-type PlaygroundItem3KeyInputs = KeyInputs<typeof playgroundItem3>
+type PlaygroundItem3SavedAs = ItemSavedAs<typeof playgroundItem3>
+type PlaygroundItem3KeyInputs = ItemKeyInput<typeof playgroundItem3>

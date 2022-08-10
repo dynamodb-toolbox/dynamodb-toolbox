@@ -14,14 +14,14 @@ export type Narrow<M extends MappedProperties | Property> = {
   [K in keyof M]: M[K] extends MappedProperties | Property ? Narrow<M[K]> : M[K]
 }
 
-export type PreComputedDefaults<P extends Item | Property> = P extends Leaf
+export type PreComputeDefaults<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
-  ? PreComputedDefaults<P['_elements']>[]
+  ? PreComputeDefaults<P['_elements']>[]
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
-        [key in keyof P['_properties']]: PreComputedDefaults<P['_properties'][key]>
+        [key in keyof P['_properties']]: PreComputeDefaults<P['_properties'][key]>
       }>,
       // Required props without default will be provided
       | O.SelectKeys<P['_properties'], { _required: true; _default: undefined }>
@@ -30,14 +30,14 @@ export type PreComputedDefaults<P extends Item | Property> = P extends Leaf
     >
   : never
 
-export type PostComputedDefaults<P extends Item | Property> = P extends Leaf
+export type PostComputeDefaults<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
-  ? PostComputedDefaults<P['_elements']>[]
+  ? PostComputeDefaults<P['_elements']>[]
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
-        [key in keyof P['_properties']]: PostComputedDefaults<P['_properties'][key]>
+        [key in keyof P['_properties']]: PostComputeDefaults<P['_properties'][key]>
       }>,
       // This is the final item, all required props should be here
       | O.SelectKeys<P['_properties'], { _required: true }>
@@ -47,14 +47,14 @@ export type PostComputedDefaults<P extends Item | Property> = P extends Leaf
     >
   : never
 
-export type Input<P extends Item | Property> = P extends Leaf
+export type ItemInput<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
-  ? Input<P['_elements']>[]
+  ? ItemInput<P['_elements']>[]
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
-        [key in keyof P['_properties']]: Input<P['_properties'][key]>
+        [key in keyof P['_properties']]: ItemInput<P['_properties'][key]>
       }>,
       Exclude<
         O.SelectKeys<P['_properties'], { _required: true }>,
@@ -63,15 +63,17 @@ export type Input<P extends Item | Property> = P extends Leaf
     >
   : never
 
-export type Output<P extends Item | Property> = P extends Leaf
+export type ItemOutput<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
-  ? Output<P['_elements']>[]
+  ? ItemOutput<P['_elements']>[]
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
         // hidden props are omitted
-        [key in O.SelectKeys<P['_properties'], { _hidden: false }>]: Output<P['_properties'][key]>
+        [key in O.SelectKeys<P['_properties'], { _hidden: false }>]: ItemOutput<
+          P['_properties'][key]
+        >
       }>,
       // required props will necessarily be present
       | O.SelectKeys<P['_properties'], { _required: true }>
@@ -91,12 +93,12 @@ type SwapWithSavedAs<O extends MappedProperties> = A.Compute<
   >
 >
 
-type RecSavedAs<
+type ItemRecSavedAs<
   P extends Mapped | Item,
   S extends MappedProperties = SwapWithSavedAs<P['_properties']>
 > = O.Required<
   O.Partial<{
-    [key in keyof S]: SavedAs<S[key]>
+    [key in keyof S]: ItemSavedAs<S[key]>
   }>,
   // required props will necessarily be present
   | O.SelectKeys<S, { _required: true }>
@@ -104,30 +106,54 @@ type RecSavedAs<
   | O.FilterKeys<S, { _default: undefined }>
 >
 
-export type SavedAs<P extends Item | Property> = P extends Leaf
+export type ItemSavedAs<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
-  ? SavedAs<P['_elements']>[]
+  ? ItemSavedAs<P['_elements']>[]
   : P extends Mapped | Item
-  ? RecSavedAs<P>
+  ? ItemRecSavedAs<P>
   : never
 
-export type KeyInputs<P extends Item | Property> = Item extends P
-  ? any
+export type ItemKeyInput<P extends Item | Property> = Item extends P
+  ? Record<string, any>
   : P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
-  ? KeyInputs<P['_elements']>[]
+  ? ItemKeyInput<P['_elements']>[]
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
-        [key in O.SelectKeys<P['_properties'], { _key: true }>]: KeyInputs<P['_properties'][key]>
+        [key in O.SelectKeys<P['_properties'], { _key: true }>]: ItemKeyInput<P['_properties'][key]>
       }>,
       Exclude<
         O.SelectKeys<P['_properties'], { _required: true }>,
         O.FilterKeys<P['_properties'], { _default: undefined }>
       >
     >
+  : never
+
+type RecItemPreComputeKey<
+  P extends Mapped | Item,
+  S extends MappedProperties = SwapWithSavedAs<P['_properties']>
+> = O.Required<
+  O.Partial<{
+    [key in O.SelectKeys<S, { _key: true }>]: ItemPreComputeKey<S[key]>
+  }>,
+  // required props will necessarily be present
+  | O.SelectKeys<S, { _required: true }>
+  // props that have defined default (initial or computed) will necessarily be present
+  // (...but not so sure about that anymore, props can have computed default but be not required)
+  | O.FilterKeys<S, { _default: undefined }>
+>
+
+export type ItemPreComputeKey<P extends Item | Property> = Item extends P
+  ? Record<string, any>
+  : P extends Leaf
+  ? Exclude<P['_resolved'], undefined>
+  : P extends List
+  ? ItemOutput<P['_elements']>[]
+  : P extends Mapped | Item
+  ? RecItemPreComputeKey<P>
   : never
 
 export const errorMessagePathSuffix = (path?: string): string =>

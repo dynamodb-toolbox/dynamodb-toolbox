@@ -3,7 +3,7 @@ import { Table } from './table'
 export const MyTable = new Table({
   name: 'MySuperTable',
   partitionKey: {
-    name: 'pk',
+    name: 'userId',
     type: 'string'
   },
   sortKey: {
