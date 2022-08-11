@@ -1,9 +1,8 @@
 import { item, map, number, string } from './attributes'
-import { Entity, SavedAs, Input, Output, KeyInputs, KeyOutputs } from './entity'
-import { PrimaryKey } from './table'
+import { EntityV2, SavedAs, Input, Output, KeyInputs, KeyOutputs } from './entity'
 import { MyTable } from './table.playground'
 
-const UserEntity = new Entity({
+export const UserEntity = new EntityV2({
   name: 'User',
   table: MyTable,
   item: item({
@@ -16,7 +15,7 @@ const UserEntity = new Entity({
       mother: string().required()
     })
   })
-  // computeKey: ({ userId, userIndex }) => ({ userId, sk: userIndex })
+  // computeKey: ({ userId, age }) => ({ userId, sk: age })
 })
 
 type UserInput = Input<typeof UserEntity>
@@ -24,4 +23,3 @@ type SavedUser = SavedAs<typeof UserEntity>
 type UserOutput = Output<typeof UserEntity>
 type UserInputKeys = KeyInputs<typeof UserEntity>
 type UserOutputKeys = KeyOutputs<typeof UserEntity>
-type PK = PrimaryKey<typeof UserEntity['table']>

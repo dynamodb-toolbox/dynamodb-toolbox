@@ -114,9 +114,7 @@ export type ItemSavedAs<P extends Item | Property> = P extends Leaf
   ? ItemRecSavedAs<P>
   : never
 
-export type ItemKeyInput<P extends Item | Property> = Item extends P
-  ? Record<string, any>
-  : P extends Leaf
+export type ItemKeyInput<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? ItemKeyInput<P['_elements']>[]
@@ -146,9 +144,7 @@ type RecItemPreComputeKey<
   | O.FilterKeys<S, { _default: undefined }>
 >
 
-export type ItemPreComputeKey<P extends Item | Property> = Item extends P
-  ? Record<string, any>
-  : P extends Leaf
+export type ItemPreComputeKey<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? ItemOutput<P['_elements']>[]

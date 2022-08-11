@@ -1,5 +1,3 @@
-import { O } from 'ts-toolbelt'
-
 import {
   Item,
   ItemSavedAs,
@@ -8,22 +6,20 @@ import {
   ItemKeyInput,
   ItemPreComputeKey
 } from './attributes'
-import { Table, PrimaryKey, IndexableKeyType, ResolveIndexableKeyType } from './table'
+import { Table, PrimaryKey } from './table'
 
-type KeyComputer = (
-  keyOutputs: Record<string, any>
-) => Record<string, ResolveIndexableKeyType<IndexableKeyType>>
-
-export class Entity<
+export class EntityV2<
   T extends Table = Table,
   N extends string = string,
   I extends Item = Item,
-  K extends Record<string, any> = ItemPreComputeKey<I>
+  // any is needed for contravariance
+  K = Item extends I ? any : ItemPreComputeKey<I>,
+  PK = PrimaryKey<T>
 > {
   public name: N
   public item: I
   public table: T
-  computeKey: KeyComputer
+  computeKey: (preComputeKey: K) => PK
 
   constructor({
     name,
@@ -34,17 +30,17 @@ export class Entity<
     name: N
     item: I
     table: T
-  } & (K extends PrimaryKey<T>
-    ? { computeKey?: (preComputeKey: K) => PrimaryKey<T> }
-    : { computeKey: (preComputeKey: K) => PrimaryKey<T> })) {
+  } & (K extends PK
+    ? { computeKey?: (preComputeKey: K) => PK }
+    : { computeKey: (preComputeKey: K) => PK })) {
     this.name = name
     this.item = item
     this.table = table
 
     if (computeKey) {
-      this.computeKey = computeKey as KeyComputer
+      this.computeKey = computeKey
     } else {
-      this.computeKey = (preComputeKey: Record<string, any>) => {
+      this.computeKey = ((preComputeKey: Record<string, any>) => {
         const partitionKeyValue = preComputeKey[this.table.partitionKey.name]
 
         if (!this.table.sortKey?.name) {
@@ -57,17 +53,84 @@ export class Entity<
           [this.table.partitionKey.name]: partitionKeyValue,
           [this.table.sortKey.name]: sortKeyValue
         }
-      }
+      }) as (preComputeKey: K) => PK
     }
   }
 }
 
-export type SavedAs<E extends Entity> = O.Merge<ItemSavedAs<E['item']>, PrimaryKey<E['table']>>
+export type SavedAs<E extends EntityV2> = ItemSavedAs<E['item']> & PrimaryKey<E['table']>
 
-export type Input<E extends Entity> = ItemInput<E['item']>
+export type KeyInputs<E extends EntityV2> = ItemKeyInput<E['item']>
+export type KeyOutputs<E extends EntityV2> = ItemPreComputeKey<E['item']>
 
-export type Output<E extends Entity> = ItemOutput<E['item']>
+export type Input<E extends EntityV2> = ItemInput<E['item']>
+export type Output<E extends EntityV2> = ItemOutput<E['item']>
 
-export type KeyInputs<E extends Entity> = ItemKeyInput<E['item']>
+export type Parser = <
+  E extends EntityV2,
+  S extends Record<string, any> = SavedAs<E>,
+  O extends Record<string, any> = Output<E>
+>(
+  entity: E,
+  savedAs: S
+) => O
 
-export type KeyOutputs<E extends Entity> = ItemPreComputeKey<E['item']>
+export const parse: Parser = (entity, savedAs) => {
+  entity
+  // TODO
+  return savedAs as any
+}
+
+export type KeyInputsValidator = <E extends EntityV2, K extends Record<string, any> = KeyInputs<E>>(
+  entity: E,
+  keyInputs: Record<string, any>
+) => keyInputs is K
+
+export const validateKeyInputs: KeyInputsValidator = <
+  E extends EntityV2,
+  K extends Record<string, any> = KeyInputs<E>
+>(
+  entity: E,
+  keyInputs: Record<string, any>
+): keyInputs is K => {
+  entity
+  keyInputs
+  // TODO
+  return true
+}
+
+export type SavedAsValidator = <E extends EntityV2, S extends Record<string, any> = SavedAs<E>>(
+  entity: E,
+  savedItem: Record<string, any>
+) => savedItem is S
+
+export const validateSavedAs: SavedAsValidator = <
+  E extends EntityV2,
+  S extends Record<string, any> = SavedAs<E>
+>(
+  entity: E,
+  savedItem: Record<string, any>
+): savedItem is S => {
+  entity
+  savedItem
+  // TODO
+  return true
+}
+
+export type InputValidator = <E extends EntityV2, I extends Record<string, any> = Input<E>>(
+  entity: E,
+  input: Record<string, any>
+) => input is I
+
+export const validateInput: InputValidator = <
+  E extends EntityV2,
+  I extends Record<string, any> = Input<E>
+>(
+  entity: E,
+  input: Record<string, any>
+): input is I => {
+  entity
+  input
+  // TODO
+  return true
+}

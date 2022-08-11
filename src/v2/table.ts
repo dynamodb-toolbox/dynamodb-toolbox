@@ -1,3 +1,5 @@
+import type { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+
 export type IndexableKeyType = 'string' | 'binary' | 'number'
 
 export interface Key<N extends string = string, T extends IndexableKeyType = IndexableKeyType> {
@@ -10,22 +12,27 @@ export type NarrowKey<I extends Key> = {
 }
 
 export class Table<PK extends Key = Key, SK extends Key = Key> {
+  public dynamoDbClient: DynamoDBClient
   public name: string
   public partitionKey: PK
   public sortKey?: SK
 
   constructor({
+    dynamoDbClient,
     name,
     partitionKey,
     sortKey
   }: {
+    dynamoDbClient: DynamoDBClient
     name: string
     partitionKey: NarrowKey<PK>
     sortKey?: NarrowKey<SK>
   }) {
-    this.name = name
-    this.partitionKey = partitionKey
+    this.dynamoDbClient = dynamoDbClient
 
+    this.name = name
+
+    this.partitionKey = partitionKey
     if (sortKey) {
       this.sortKey = sortKey
     }

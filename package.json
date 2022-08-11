@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
   "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.145.0",
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
     "aws-sdk": "^2.818.0",
