@@ -4,7 +4,10 @@ import {
   ItemInput,
   ItemOutput,
   ItemKeyInput,
-  ItemPreComputeKey
+  ItemPreComputeKey,
+  HasComputedDefault,
+  PreComputeDefaults,
+  PostComputeDefaults
 } from './attributes'
 import { Table, PrimaryKey } from './table'
 
@@ -20,19 +23,25 @@ export class EntityV2<
   public item: I
   public table: T
   computeKey: (preComputeKey: K) => PK
+  computeDefaults: (
+    // any is needed for contravariance
+    preComputeDefaults: Item extends I ? any : PreComputeDefaults<I>
+  ) => PostComputeDefaults<I>
 
   constructor({
     name,
     item,
     table,
-    computeKey
+    computeKey,
+    computeDefaults
   }: {
     name: N
     item: I
     table: T
-  } & (K extends PK
-    ? { computeKey?: (preComputeKey: K) => PK }
-    : { computeKey: (preComputeKey: K) => PK })) {
+  } & (K extends PK ? { computeKey?: never } : { computeKey: (preComputeKey: K) => PK }) &
+    (HasComputedDefault<I> extends false
+      ? { computeDefaults?: never }
+      : { computeDefaults: (input: PreComputeDefaults<I>) => PostComputeDefaults<I> })) {
     this.name = name
     this.item = item
     this.table = table
@@ -54,6 +63,13 @@ export class EntityV2<
           [this.table.sortKey.name]: sortKeyValue
         }
       }) as (preComputeKey: K) => PK
+    }
+
+    if (computeDefaults) {
+      this.computeDefaults = computeDefaults
+    } else {
+      this.computeDefaults = (preComputeDefaults: PreComputeDefaults<I>) =>
+        preComputeDefaults as unknown as PostComputeDefaults<I>
     }
   }
 }

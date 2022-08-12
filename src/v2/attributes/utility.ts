@@ -152,6 +152,18 @@ export type ItemPreComputeKey<P extends Item | Property> = P extends Leaf
   ? RecItemPreComputeKey<P>
   : never
 
+export type HasComputedDefault<P extends Item | Property> = P extends { _default: ComputedDefault }
+  ? true
+  : P extends List
+  ? HasComputedDefault<P['_elements']>
+  : P extends Mapped | Item
+  ? true extends {
+      [K in keyof P['_properties']]: HasComputedDefault<P['_properties'][K]>
+    }[keyof P['_properties']]
+    ? true
+    : false
+  : never
+
 export const errorMessagePathSuffix = (path?: string): string =>
   path !== undefined ? ` at path ${path}` : ''
 

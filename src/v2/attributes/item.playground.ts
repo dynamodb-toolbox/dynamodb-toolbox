@@ -12,7 +12,8 @@ import {
   PreComputeDefaults,
   PostComputeDefaults,
   ItemSavedAs,
-  ItemKeyInput
+  ItemKeyInput,
+  HasComputedDefault
 } from '.'
 
 const playgroundItem1 = item({
@@ -57,26 +58,13 @@ const playgroundItem2 = item({
   ...allCasesOfProps,
   map: map(allCasesOfProps).required(),
   list: list(map(allCasesOfProps).required()).required()
-}).computeDefaults(preComp => {
-  const equivalentMap = map(allCasesOfProps)
-  type PreCompProps = PreComputeDefaults<typeof equivalentMap>
-  type PostCompProps = PostComputeDefaults<typeof equivalentMap>
-
-  const fillGaps = (preComp: PreCompProps): PostCompProps => ({
-    ...preComp,
-    optPropWithCompDef: preComp.optPropWithCompDef ?? 'baz',
-    reqPropWithCompDef: preComp.reqPropWithCompDef ?? 'foo'
-  })
-
-  return {
-    ...fillGaps(preComp),
-    map: fillGaps(preComp.map),
-    list: preComp.list.map(fillGaps)
-  }
 })
 
 type PlaygroundItem2Input = ItemInput<typeof playgroundItem2>
 type PlaygroundItem2Output = ItemOutput<typeof playgroundItem2>
+type PlaygroundItem2HasComputedDefault = HasComputedDefault<typeof playgroundItem2>
+type PlaygroundItem2PreComputeDefaults = PreComputeDefaults<typeof playgroundItem2>
+type PlaygroundItem2PostComputeDefaults = PostComputeDefaults<typeof playgroundItem2>
 
 const playgroundItem3 = item({
   keyEl: string().key().required(),
@@ -91,3 +79,4 @@ const playgroundItem3 = item({
 
 type PlaygroundItem3SavedAs = ItemSavedAs<typeof playgroundItem3>
 type PlaygroundItem3KeyInputs = ItemKeyInput<typeof playgroundItem3>
+type PlaygroundItem3HasComputedDefault = HasComputedDefault<typeof playgroundItem3>

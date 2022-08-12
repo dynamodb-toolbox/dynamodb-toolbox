@@ -6,6 +6,7 @@ import {
 } from '@aws-sdk/client-dynamodb'
 
 import { EntityV2, Input, Output, parse, validateInput, validateSavedAs } from 'v2/entity'
+import { PreComputeDefaults } from 'v2/attributes'
 
 const hasNoAttributes = (
   commandOutput: UpdateItemCommandOutput
@@ -52,7 +53,8 @@ export const updateItemParams = <E extends EntityV2>(
     throw new Error()
   }
 
-  const Item = entity.item?._computeDefaults ? entity.item._computeDefaults(input) : input
+  // TODO: Recursively add initial defaults
+  const Item = entity.computeDefaults(input as any)
   const Key = entity.computeKey(input)
 
   return {
