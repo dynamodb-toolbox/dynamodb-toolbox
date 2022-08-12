@@ -2,6 +2,14 @@ import type { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 
 export type IndexableKeyType = 'string' | 'binary' | 'number'
 
+export type ResolveIndexableKeyType<T extends IndexableKeyType> = T extends 'string'
+  ? string
+  : T extends 'number'
+  ? number
+  : T extends 'binary'
+  ? Buffer
+  : never
+
 export interface Key<N extends string = string, T extends IndexableKeyType = IndexableKeyType> {
   name: N
   type: T
@@ -39,21 +47,11 @@ export class Table<PK extends Key = Key, SK extends Key = Key> {
   }
 }
 
-export type ResolveIndexableKeyType<T extends IndexableKeyType> = T extends 'string'
-  ? string
-  : T extends 'number'
-  ? number
-  : T extends 'binary'
-  ? Buffer
-  : never
+export type HasSK<T extends Table = Table> = Key extends T['sortKey'] ? false : true
 
 export type PrimaryKey<T extends Table = Table> = Table extends T
   ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>
-  : Key extends T['sortKey']
-  ? {
-      [K in T['partitionKey']['name']]: ResolveIndexableKeyType<T['partitionKey']['type']>
-    }
-  : NonNullable<T['sortKey']> extends Key
+  : HasSK<T> extends true
   ? {
       [K in
         | T['partitionKey']['name']
@@ -63,4 +61,6 @@ export type PrimaryKey<T extends Table = Table> = Table extends T
         ? ResolveIndexableKeyType<NonNullable<T['sortKey']>['type']>
         : never
     }
-  : never
+  : {
+      [K in T['partitionKey']['name']]: ResolveIndexableKeyType<T['partitionKey']['type']>
+    }

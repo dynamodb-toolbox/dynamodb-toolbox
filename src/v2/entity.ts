@@ -1,3 +1,5 @@
+import { O } from 'ts-toolbelt'
+
 import {
   Item,
   ItemSavedAs,
@@ -5,24 +7,47 @@ import {
   ItemOutput,
   ItemKeyInput,
   ItemPreComputeKey,
-  HasComputedDefault,
+  HasComputedDefaults,
   PreComputeDefaults,
   PostComputeDefaults
 } from './attributes'
-import { Table, PrimaryKey } from './table'
+import { Table, PrimaryKey, IndexableKeyType, HasSK } from './table'
 
-export class EntityV2<
-  T extends Table = Table,
-  N extends string = string,
-  I extends Item = Item,
-  // any is needed for contravariance
-  K = Item extends I ? any : ItemPreComputeKey<I>,
-  PK = PrimaryKey<T>
-> {
+type Or<A extends boolean, B extends boolean> = A extends true
+  ? true
+  : B extends true
+  ? true
+  : false
+
+type NeedsKeyPartCompute<
+  I extends Item,
+  N extends string,
+  T extends IndexableKeyType
+> = I['_properties'] extends Record<
+  N,
+  { _type: T; _required: true; _key: true; _savedAs: undefined }
+>
+  ? false
+  : O.SelectKeys<
+      I['_properties'],
+      { _type: T; _required: true; _key: true; _savedAs: N }
+    > extends never
+  ? true
+  : false
+
+type NeedsKeyCompute<I extends Item, T extends Table> = HasSK<T> extends true
+  ? Or<
+      NeedsKeyPartCompute<I, T['partitionKey']['name'], T['partitionKey']['type']>,
+      NeedsKeyPartCompute<I, NonNullable<T['sortKey']>['name'], NonNullable<T['sortKey']>['type']>
+    >
+  : NeedsKeyPartCompute<I, T['partitionKey']['name'], T['partitionKey']['type']>
+
+export class EntityV2<N extends string = string, T extends Table = Table, I extends Item = Item> {
   public name: N
-  public item: I
   public table: T
-  computeKey: (preComputeKey: K) => PK
+  public item: I
+  // any is needed for contravariance
+  computeKey: (preComputeKey: Item extends I ? any : ItemPreComputeKey<I>) => PrimaryKey<T>
   computeDefaults: (
     // any is needed for contravariance
     preComputeDefaults: Item extends I ? any : PreComputeDefaults<I>
@@ -30,21 +55,25 @@ export class EntityV2<
 
   constructor({
     name,
-    item,
     table,
+    item,
     computeKey,
     computeDefaults
   }: {
     name: N
-    item: I
     table: T
-  } & (K extends PK ? { computeKey?: never } : { computeKey: (preComputeKey: K) => PK }) &
-    (HasComputedDefault<I> extends false
-      ? { computeDefaults?: never }
-      : { computeDefaults: (input: PreComputeDefaults<I>) => PostComputeDefaults<I> })) {
+    item: I
+  } & (NeedsKeyCompute<I, T> extends true
+    ? { computeKey: (preComputeKey: ItemPreComputeKey<I>) => PrimaryKey<T> }
+    : { computeKey?: undefined }) &
+    (HasComputedDefaults<I> extends true
+      ? { computeDefaults: (input: PreComputeDefaults<I>) => PostComputeDefaults<I> }
+      : { computeDefaults?: undefined })) {
     this.name = name
-    this.item = item
     this.table = table
+
+    // TODO: validate that item respects table key design
+    this.item = item
 
     if (computeKey) {
       this.computeKey = computeKey
@@ -62,14 +91,14 @@ export class EntityV2<
           [this.table.partitionKey.name]: partitionKeyValue,
           [this.table.sortKey.name]: sortKeyValue
         }
-      }) as (preComputeKey: K) => PK
+      }) as any
     }
 
     if (computeDefaults) {
       this.computeDefaults = computeDefaults
     } else {
-      this.computeDefaults = (preComputeDefaults: PreComputeDefaults<I>) =>
-        preComputeDefaults as unknown as PostComputeDefaults<I>
+      this.computeDefaults = ((preComputeDefaults: PreComputeDefaults<I>) =>
+        preComputeDefaults) as any
     }
   }
 }

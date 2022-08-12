@@ -130,35 +130,32 @@ export type ItemKeyInput<P extends Item | Property> = P extends Leaf
     >
   : never
 
-type RecItemPreComputeKey<
-  P extends Mapped | Item,
-  S extends MappedProperties = SwapWithSavedAs<P['_properties']>
-> = O.Required<
-  O.Partial<{
-    [key in O.SelectKeys<S, { _key: true }>]: ItemPreComputeKey<S[key]>
-  }>,
-  // required props will necessarily be present
-  | O.SelectKeys<S, { _required: true }>
-  // props that have defined default (initial or computed) will necessarily be present
-  // (...but not so sure about that anymore, props can have computed default but be not required)
-  | O.FilterKeys<S, { _default: undefined }>
->
-
 export type ItemPreComputeKey<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
-  ? ItemOutput<P['_elements']>[]
+  ? ItemPreComputeKey<P['_elements']>[]
   : P extends Mapped | Item
-  ? RecItemPreComputeKey<P>
+  ? O.Required<
+      O.Partial<{
+        [key in O.SelectKeys<P['_properties'], { _key: true }>]: ItemPreComputeKey<
+          P['_properties'][key]
+        >
+      }>,
+      // required props will necessarily be present
+      | O.SelectKeys<P['_properties'], { _required: true }>
+      // props that have defined default (initial or computed) will necessarily be present
+      // (...but not so sure about that anymore, props can have computed default but be not required)
+      | O.FilterKeys<P['_properties'], { _default: undefined }>
+    >
   : never
 
-export type HasComputedDefault<P extends Item | Property> = P extends { _default: ComputedDefault }
+export type HasComputedDefaults<P extends Item | Property> = P extends { _default: ComputedDefault }
   ? true
   : P extends List
-  ? HasComputedDefault<P['_elements']>
+  ? HasComputedDefaults<P['_elements']>
   : P extends Mapped | Item
   ? true extends {
-      [K in keyof P['_properties']]: HasComputedDefault<P['_properties'][K]>
+      [K in keyof P['_properties']]: HasComputedDefaults<P['_properties'][K]>
     }[keyof P['_properties']]
     ? true
     : false

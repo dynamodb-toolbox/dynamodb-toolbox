@@ -7,17 +7,16 @@ export const UserEntity = new EntityV2({
   table: MyTable,
   item: item({
     userId: string().required().key(),
-    age: number().enum(41, 42).default(42).key(),
+    age: number().required().key().enum(41, 42).default(42).savedAs('sk'),
     firstName: string().required().savedAs('fn'),
     lastName: string().required().savedAs('ln'),
     parents: map({
       father: string().required(),
       mother: string().required()
     }),
-    computedDefault: string().required().default(ComputedDefault)
+    somethingComputed: string().required().default(ComputedDefault)
   }),
-  computeDefaults: item => ({ ...item, computedDefault: 'something' }),
-  computeKey: ({ userId, age }) => ({ userId, sk: age })
+  computeDefaults: item => ({ ...item, somethingComputed: 'something' })
 })
 
 type UserInput = Input<typeof UserEntity>

@@ -13,7 +13,7 @@ import {
   PostComputeDefaults,
   ItemSavedAs,
   ItemKeyInput,
-  HasComputedDefault
+  HasComputedDefaults
 } from '.'
 
 const playgroundItem1 = item({
@@ -62,7 +62,7 @@ const playgroundItem2 = item({
 
 type PlaygroundItem2Input = ItemInput<typeof playgroundItem2>
 type PlaygroundItem2Output = ItemOutput<typeof playgroundItem2>
-type PlaygroundItem2HasComputedDefault = HasComputedDefault<typeof playgroundItem2>
+type PlaygroundItem2HasComputedDefault = HasComputedDefaults<typeof playgroundItem2>
 type PlaygroundItem2PreComputeDefaults = PreComputeDefaults<typeof playgroundItem2>
 type PlaygroundItem2PostComputeDefaults = PostComputeDefaults<typeof playgroundItem2>
 
@@ -79,4 +79,4 @@ const playgroundItem3 = item({
 
 type PlaygroundItem3SavedAs = ItemSavedAs<typeof playgroundItem3>
 type PlaygroundItem3KeyInputs = ItemKeyInput<typeof playgroundItem3>
-type PlaygroundItem3HasComputedDefault = HasComputedDefault<typeof playgroundItem3>
+type PlaygroundItem3HasComputedDefault = HasComputedDefaults<typeof playgroundItem3>
