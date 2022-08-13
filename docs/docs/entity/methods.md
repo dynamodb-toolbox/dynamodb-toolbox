@@ -104,7 +104,7 @@ The optional second argument accepts an `options` object. The following options 
 | returnValues |      `string`       | Determines whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                          |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
-| strictSchemaCheck |  `boolean`       | Determines whether to throw or filter when unmapped fields are provided in the request                                                                                                                                                                |
+| strictSchemaCheck |  `boolean`       | Determines whether to throw an error or filter returned attributes when unmapped fields are provided in the request                                                                                                                                                                |
 If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
 
 ```typescript
