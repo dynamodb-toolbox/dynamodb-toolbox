@@ -6,6 +6,7 @@ import {
   string,
   map,
   list,
+  any,
   ItemInput,
   ItemOutput,
   ComputedDefault,
@@ -75,7 +76,8 @@ const playgroundItem3 = item({
     .required()
     .savedAs('baz')
     .key()
-    .open()
+    .open(),
+  anyvalue: any().required()
 })
 
 type PlaygroundItem3SavedAs = ItemSavedAs<typeof playgroundItem3>

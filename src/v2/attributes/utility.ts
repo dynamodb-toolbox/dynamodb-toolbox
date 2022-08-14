@@ -6,6 +6,7 @@ import { Item } from './item'
 import { Leaf, validateLeaf } from './leaf'
 import { Mapped, validateMap } from './map'
 import { List, validateList } from './list'
+import { Any, validateAny } from './any'
 
 export const ComputedDefault = Symbol('Tag for properties with computed default values')
 export type ComputedDefault = typeof ComputedDefault
@@ -14,7 +15,9 @@ export type Narrow<M extends MappedProperties | Property> = {
   [K in keyof M]: M[K] extends MappedProperties | Property ? Narrow<M[K]> : M[K]
 }
 
-export type PreComputeDefaults<P extends Item | Property> = P extends Leaf
+export type PreComputeDefaults<P extends Item | Property> = P extends Any
+  ? ResolvedProperty
+  : P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? PreComputeDefaults<P['_elements']>[]
@@ -37,7 +40,9 @@ export type PreComputeDefaults<P extends Item | Property> = P extends Leaf
       (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
-export type PostComputeDefaults<P extends Item | Property> = P extends Leaf
+export type PostComputeDefaults<P extends Item | Property> = P extends Any
+  ? ResolvedProperty
+  : P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? PostComputeDefaults<P['_elements']>[]
@@ -55,7 +60,9 @@ export type PostComputeDefaults<P extends Item | Property> = P extends Leaf
       (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
-export type ItemInput<P extends Item | Property> = P extends Leaf
+export type ItemInput<P extends Item | Property> = P extends Any
+  ? ResolvedProperty
+  : P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? ItemInput<P['_elements']>[]
@@ -72,7 +79,9 @@ export type ItemInput<P extends Item | Property> = P extends Leaf
       (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
-export type ItemOutput<P extends Item | Property> = P extends Leaf
+export type ItemOutput<P extends Item | Property> = P extends Any
+  ? ResolvedProperty
+  : P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? ItemOutput<P['_elements']>[]
@@ -117,7 +126,9 @@ type ItemRecSavedAs<
 > &
   (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
 
-export type ItemSavedAs<P extends Item | Property> = P extends Leaf
+export type ItemSavedAs<P extends Item | Property> = P extends Any
+  ? ResolvedProperty
+  : P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? ItemSavedAs<P['_elements']>[]
@@ -125,7 +136,9 @@ export type ItemSavedAs<P extends Item | Property> = P extends Leaf
   ? ItemRecSavedAs<P>
   : never
 
-export type ItemKeyInput<P extends Item | Property> = P extends Leaf
+export type ItemKeyInput<P extends Item | Property> = P extends Any
+  ? ResolvedProperty
+  : P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? ItemKeyInput<P['_elements']>[]
@@ -142,7 +155,9 @@ export type ItemKeyInput<P extends Item | Property> = P extends Leaf
       (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
-export type ItemPreComputeKey<P extends Item | Property> = P extends Leaf
+export type ItemPreComputeKey<P extends Item | Property> = P extends Any
+  ? ResolvedProperty
+  : P extends Leaf
   ? Exclude<P['_resolved'], undefined>
   : P extends List
   ? ItemPreComputeKey<P['_elements']>[]
@@ -188,5 +203,7 @@ export const validateProperty = (property: Property, path?: string): boolean => 
       return validateList(property, path)
     case 'map':
       return validateMap(property, path)
+    case 'any':
+      return validateAny(property, path)
   }
 }

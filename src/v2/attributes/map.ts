@@ -4,7 +4,6 @@ import { RequiredOption, Never, AtLeastOnce } from './requiredOptions'
 import { MappedProperties } from './property'
 import { ComputedDefault, Narrow, validateProperty } from './utility'
 
-// TODO: create any property
 // TODO: Add false saveAs option
 interface _MappedOptions<
   R extends RequiredOption = RequiredOption,
