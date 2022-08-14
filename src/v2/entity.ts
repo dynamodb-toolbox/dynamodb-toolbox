@@ -1,5 +1,6 @@
 import { O } from 'ts-toolbelt'
 
+import { Always } from './attributes/requiredOptions'
 import {
   Item,
   ItemSavedAs,
@@ -25,12 +26,12 @@ type NeedsKeyPartCompute<
   T extends IndexableKeyType
 > = I['_properties'] extends Record<
   N,
-  { _type: T; _required: true; _key: true; _savedAs: undefined }
+  { _type: T; _required: Always; _key: true; _savedAs: undefined }
 >
   ? false
   : O.SelectKeys<
       I['_properties'],
-      { _type: T; _required: true; _key: true; _savedAs: N }
+      { _type: T; _required: Always; _key: true; _savedAs: N }
     > extends never
   ? true
   : false
@@ -48,6 +49,7 @@ export class EntityV2<N extends string = string, T extends Table = Table, I exte
   public item: I
   // any is needed for contravariance
   computeKey: (preComputeKey: Item extends I ? any : ItemPreComputeKey<I>) => PrimaryKey<T>
+  // TODO: Split in putComputeDefaults & updateComputeDefaults
   computeDefaults: (
     // any is needed for contravariance
     preComputeDefaults: Item extends I ? any : PreComputeDefaults<I>

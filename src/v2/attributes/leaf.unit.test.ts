@@ -1,5 +1,6 @@
 import { A } from 'ts-toolbelt'
 
+import { Never, AtLeastOnce, OnlyOnce, Always } from './requiredOptions'
 import {
   string,
   number,
@@ -22,7 +23,7 @@ describe('leaf', () => {
         {
           _type: 'string'
           _resolved?: string
-          _required: false
+          _required: Never
           _hidden: false
           _savedAs: undefined
           _key: false
@@ -33,7 +34,7 @@ describe('leaf', () => {
 
       expect(str).toMatchObject({
         _type: 'string',
-        _required: false,
+        _required: Never,
         _hidden: false,
         _savedAs: undefined,
         _key: false,
@@ -42,21 +43,45 @@ describe('leaf', () => {
     })
 
     it('returns required string (option)', () => {
-      const str = string({ required: true })
+      const strAtLeastOnce = string({ required: AtLeastOnce })
+      const strOnlyOnce = string({ required: OnlyOnce })
+      const strAlways = string({ required: Always })
+      const strNever = string({ required: Never })
 
-      const assertStr: A.Contains<typeof str, { _required: true }> = 1
-      assertStr
+      const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { _required: AtLeastOnce }> = 1
+      assertAtLeastOnce
+      const assertOnlyOnce: A.Contains<typeof strOnlyOnce, { _required: OnlyOnce }> = 1
+      assertOnlyOnce
+      const assertAlways: A.Contains<typeof strAlways, { _required: Always }> = 1
+      assertAlways
+      const assertNever: A.Contains<typeof strNever, { _required: Never }> = 1
+      assertNever
 
-      expect(str).toMatchObject({ _required: true })
+      expect(strAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
+      expect(strOnlyOnce).toMatchObject({ _required: OnlyOnce })
+      expect(strAlways).toMatchObject({ _required: Always })
+      expect(strNever).toMatchObject({ _required: Never })
     })
 
     it('returns required string (method)', () => {
-      const str = string().required()
+      const strAtLeastOnce = string().required()
+      const strOnlyOnce = string().required(OnlyOnce)
+      const strAlways = string().required(Always)
+      const strNever = string().required(Never)
 
-      const assertStr: A.Contains<typeof str, { _required: true }> = 1
-      assertStr
+      const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { _required: AtLeastOnce }> = 1
+      assertAtLeastOnce
+      const assertOnlyOnce: A.Contains<typeof strOnlyOnce, { _required: OnlyOnce }> = 1
+      assertOnlyOnce
+      const assertAlways: A.Contains<typeof strAlways, { _required: Always }> = 1
+      assertAlways
+      const assertNever: A.Contains<typeof strNever, { _required: Never }> = 1
+      assertNever
 
-      expect(str).toMatchObject({ _required: true })
+      expect(strAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
+      expect(strOnlyOnce).toMatchObject({ _required: OnlyOnce })
+      expect(strAlways).toMatchObject({ _required: Always })
+      expect(strNever).toMatchObject({ _required: Never })
     })
 
     it('returns hidden string (option)', () => {

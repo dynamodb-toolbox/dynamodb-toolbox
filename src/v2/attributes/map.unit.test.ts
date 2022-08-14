@@ -1,13 +1,14 @@
 import { A } from 'ts-toolbelt'
 
+import { Never, AtLeastOnce, OnlyOnce, Always } from './requiredOptions'
 import { string } from './leaf'
 import { map } from './map'
 import { ComputedDefault } from './utility'
 
 describe('map', () => {
-  const str = string({ required: true })
+  const str = string().required()
 
-  it('returns default map', () => {
+  fit('returns default map', () => {
     const mapped = map({ str })
 
     const assertMapped: A.Contains<
@@ -17,7 +18,7 @@ describe('map', () => {
         _properties: {
           str: typeof str
         }
-        _required: false
+        _required: Never
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -29,7 +30,7 @@ describe('map', () => {
     expect(mapped).toMatchObject({
       _type: 'map',
       _properties: { str },
-      _required: false,
+      _required: Never,
       _key: false,
       _savedAs: undefined,
       _hidden: false
@@ -37,21 +38,51 @@ describe('map', () => {
   })
 
   it('returns required map (option)', () => {
-    const mapped = map({ str }, { required: true })
+    const mappedAtLeastOnce = map({ str }, { required: AtLeastOnce })
+    const mappedOnlyOnce = map({ str }, { required: OnlyOnce })
+    const mappedAlways = map({ str }, { required: Always })
+    const mappedNever = map({ str }, { required: Never })
 
-    const assertMapped: A.Contains<typeof mapped, { _required: true }> = 1
-    assertMapped
+    const assertMappedAtLeastOnce: A.Contains<
+      typeof mappedAtLeastOnce,
+      { _required: AtLeastOnce }
+    > = 1
+    assertMappedAtLeastOnce
+    const assertMappedOnlyOnce: A.Contains<typeof mappedOnlyOnce, { _required: OnlyOnce }> = 1
+    assertMappedOnlyOnce
+    const assertMappedAlways: A.Contains<typeof mappedAlways, { _required: Always }> = 1
+    assertMappedAlways
+    const assertMappedNever: A.Contains<typeof mappedNever, { _required: Never }> = 1
+    assertMappedNever
 
-    expect(mapped).toMatchObject({ _required: true })
+    expect(mappedAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
+    expect(mappedOnlyOnce).toMatchObject({ _required: OnlyOnce })
+    expect(mappedAlways).toMatchObject({ _required: Always })
+    expect(mappedNever).toMatchObject({ _required: Never })
   })
 
   it('returns required map (method)', () => {
-    const mapped = map({ str }).required()
+    const mappedAtLeastOnce = map({ str }).required()
+    const mappedOnlyOnce = map({ str }).required(OnlyOnce)
+    const mappedAlways = map({ str }).required(Always)
+    const mappedNever = map({ str }).required(Never)
 
-    const assertMapped: A.Contains<typeof mapped, { _required: true }> = 1
-    assertMapped
+    const assertMappedAtLeastOnce: A.Contains<
+      typeof mappedAtLeastOnce,
+      { _required: AtLeastOnce }
+    > = 1
+    assertMappedAtLeastOnce
+    const assertMappedOnlyOnce: A.Contains<typeof mappedOnlyOnce, { _required: OnlyOnce }> = 1
+    assertMappedOnlyOnce
+    const assertMappedAlways: A.Contains<typeof mappedAlways, { _required: Always }> = 1
+    assertMappedAlways
+    const assertMappedNever: A.Contains<typeof mappedNever, { _required: Never }> = 1
+    assertMappedNever
 
-    expect(mapped).toMatchObject({ _required: true })
+    expect(mappedAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
+    expect(mappedOnlyOnce).toMatchObject({ _required: OnlyOnce })
+    expect(mappedAlways).toMatchObject({ _required: Always })
+    expect(mappedNever).toMatchObject({ _required: Never })
   })
 
   it('returns hidden map (option)', () => {
@@ -168,21 +199,21 @@ describe('map', () => {
                 _properties: {
                   str: typeof str
                 }
-                _required: false
+                _required: Never
                 _hidden: true
                 _key: false
                 _savedAs: undefined
                 _default: undefined
               }
             }
-            _required: true
+            _required: AtLeastOnce
             _hidden: false
             _key: false
             _savedAs: undefined
             _default: undefined
           }
         }
-        _required: false
+        _required: Never
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -202,21 +233,21 @@ describe('map', () => {
               _properties: {
                 str
               },
-              _required: false,
+              _required: Never,
               _hidden: true,
               _key: false,
               _savedAs: undefined,
               _default: undefined
             }
           },
-          _required: true,
+          _required: AtLeastOnce,
           _hidden: false,
           _key: false,
           _savedAs: undefined,
           _default: undefined
         }
       },
-      _required: false,
+      _required: Never,
       _hidden: false,
       _key: false,
       _savedAs: undefined,

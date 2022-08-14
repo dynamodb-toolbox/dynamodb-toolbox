@@ -1,5 +1,6 @@
 import { A } from 'ts-toolbelt'
 
+import { Never, AtLeastOnce, OnlyOnce, Always } from './requiredOptions'
 import { string } from './leaf'
 import {
   DefaultedListElementsError,
@@ -82,7 +83,7 @@ describe('list', () => {
       {
         _type: 'list'
         _elements: typeof str
-        _required: false
+        _required: Never
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -94,7 +95,7 @@ describe('list', () => {
     expect(lst).toMatchObject({
       _type: 'list',
       _elements: str,
-      _required: false,
+      _required: Never,
       _key: false,
       _savedAs: undefined,
       _hidden: false
@@ -102,21 +103,45 @@ describe('list', () => {
   })
 
   it('returns required list (option)', () => {
-    const lst = list(str, { required: true })
+    const lstAtLeastOnce = list(str, { required: AtLeastOnce })
+    const lstOnlyOnce = list(str, { required: OnlyOnce })
+    const lstAlways = list(str, { required: Always })
+    const lstNever = list(str, { required: Never })
 
-    const assertList: A.Contains<typeof lst, { _required: true }> = 1
-    assertList
+    const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
+    assertAtLeastOnce
+    const assertOnlyOnce: A.Contains<typeof lstOnlyOnce, { _required: OnlyOnce }> = 1
+    assertOnlyOnce
+    const assertAlways: A.Contains<typeof lstAlways, { _required: Always }> = 1
+    assertAlways
+    const assertNever: A.Contains<typeof lstNever, { _required: Never }> = 1
+    assertNever
 
-    expect(lst).toMatchObject({ _required: true })
+    expect(lstAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
+    expect(lstOnlyOnce).toMatchObject({ _required: OnlyOnce })
+    expect(lstAlways).toMatchObject({ _required: Always })
+    expect(lstNever).toMatchObject({ _required: Never })
   })
 
   it('returns required list (method)', () => {
-    const lst = list(str).required()
+    const lstAtLeastOnce = list(str).required()
+    const lstOnlyOnce = list(str).required(OnlyOnce)
+    const lstAlways = list(str).required(Always)
+    const lstNever = list(str).required(Never)
 
-    const assertList: A.Contains<typeof lst, { _required: true }> = 1
-    assertList
+    const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
+    assertAtLeastOnce
+    const assertOnlyOnce: A.Contains<typeof lstOnlyOnce, { _required: OnlyOnce }> = 1
+    assertOnlyOnce
+    const assertAlways: A.Contains<typeof lstAlways, { _required: Always }> = 1
+    assertAlways
+    const assertNever: A.Contains<typeof lstNever, { _required: Never }> = 1
+    assertNever
 
-    expect(lst).toMatchObject({ _required: true })
+    expect(lstAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
+    expect(lstOnlyOnce).toMatchObject({ _required: OnlyOnce })
+    expect(lstAlways).toMatchObject({ _required: Always })
+    expect(lstNever).toMatchObject({ _required: Never })
   })
 
   it('returns hidden list (option)', () => {
@@ -201,13 +226,13 @@ describe('list', () => {
         _elements: {
           _type: 'list'
           _elements: typeof str
-          _required: true
+          _required: AtLeastOnce
           _hidden: false
           _key: false
           _savedAs: undefined
           _default: undefined
         }
-        _required: false
+        _required: Never
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -221,13 +246,13 @@ describe('list', () => {
       _elements: {
         _type: 'list',
         _elements: str,
-        _required: true,
+        _required: AtLeastOnce,
         _hidden: false,
         _key: false,
         _savedAs: undefined,
         _default: undefined
       },
-      _required: false,
+      _required: Never,
       _hidden: false,
       _key: false,
       _savedAs: undefined,

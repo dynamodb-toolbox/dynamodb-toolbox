@@ -1,13 +1,13 @@
 import { O } from 'ts-toolbelt'
 
+import { RequiredOption, Never, AtLeastOnce } from './requiredOptions'
 import { MappedProperties } from './property'
 import { ComputedDefault, Narrow, validateProperty } from './utility'
 
 // TODO: create any property
 // TODO: Add false saveAs option
-// TODO: Add Once & Always options to required
 interface _MappedOptions<
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   O extends boolean = boolean,
@@ -24,7 +24,7 @@ interface _MappedOptions<
 
 export interface Mapped<
   P extends MappedProperties = MappedProperties,
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   O extends boolean = boolean,
@@ -33,7 +33,9 @@ export interface Mapped<
 > extends _MappedOptions<R, H, K, O, S, D> {
   _type: 'map'
   _properties: P
-  required: () => Mapped<P, true, H, K, O, S, D>
+  required: <$R extends RequiredOption = AtLeastOnce>(
+    nextRequired?: $R
+  ) => Mapped<P, $R, H, K, O, S, D>
   hidden: () => Mapped<P, R, true, K, O, S, D>
   key: () => Mapped<P, R, H, true, O, S, D>
   open: () => Mapped<P, R, H, K, true, S, D>
@@ -44,7 +46,7 @@ export interface Mapped<
 }
 
 interface MappedOptions<
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   O extends boolean = boolean,
@@ -59,8 +61,8 @@ interface MappedOptions<
   default: D
 }
 
-const mappedDefaultOptions: MappedOptions<false, false, false, false, undefined, undefined> = {
-  required: false,
+const mappedDefaultOptions: MappedOptions<Never, false, false, false, undefined, undefined> = {
+  required: Never,
   hidden: false,
   key: false,
   open: false,
@@ -70,7 +72,7 @@ const mappedDefaultOptions: MappedOptions<false, false, false, false, undefined,
 
 type MappedTyper = <
   P extends MappedProperties = {},
-  R extends boolean = false,
+  R extends RequiredOption = Never,
   H extends boolean = false,
   K extends boolean = false,
   O extends boolean = false,
@@ -83,7 +85,7 @@ type MappedTyper = <
 
 export const map: MappedTyper = <
   P extends MappedProperties = {},
-  R extends boolean = false,
+  R extends RequiredOption = Never,
   H extends boolean = false,
   K extends boolean = false,
   O extends boolean = false,
@@ -112,7 +114,9 @@ export const map: MappedTyper = <
     _open,
     _savedAs,
     _default,
-    required: () => map(_properties, { ...appliedOptions, required: true }),
+    required: <$R extends RequiredOption = AtLeastOnce>(
+      nextRequired: $R = AtLeastOnce as unknown as $R
+    ) => map(_properties, { ...appliedOptions, required: nextRequired }),
     hidden: () => map(_properties, { ...appliedOptions, hidden: true }),
     key: () => map(_properties, { ...appliedOptions, key: true }),
     open: () => map(_properties, { ...appliedOptions, open: true }),
@@ -122,6 +126,8 @@ export const map: MappedTyper = <
 }
 
 export const validateMap = <M extends Mapped>(mapped: M, path?: string): boolean => {
+  // TODO: Validate common attributes (_required, _key etc...)
+
   const { _properties: properties } = mapped
 
   return Object.entries(properties).every(([propertyName, property]) =>

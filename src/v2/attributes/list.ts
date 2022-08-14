@@ -1,10 +1,11 @@
 import { O } from 'ts-toolbelt'
 
 import { Property } from './property'
+import { RequiredOption, Never, AtLeastOnce } from './requiredOptions'
 import { ComputedDefault, errorMessagePathSuffix, validateProperty } from './utility'
 
 type ListProperty = Property & {
-  _required: true
+  _required: AtLeastOnce
   _hidden: false
   _key: false
   _savedAs: undefined
@@ -12,7 +13,7 @@ type ListProperty = Property & {
 }
 
 interface _ListOptions<
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
@@ -27,7 +28,7 @@ interface _ListOptions<
 
 export interface List<
   E extends ListProperty = ListProperty,
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
@@ -35,7 +36,7 @@ export interface List<
 > extends _ListOptions<R, H, K, S, D> {
   _type: 'list'
   _elements: E
-  required: () => List<E, true, H, K, S, D>
+  required: <$R extends RequiredOption = AtLeastOnce>(nextRequired?: $R) => List<E, $R, H, K, S, D>
   hidden: () => List<E, R, true, K, S, D>
   savedAs: <$S extends string | undefined>(nextSavedAs: $S) => List<E, R, H, K, $S, D>
   key: () => List<E, R, H, true, S, D>
@@ -43,7 +44,7 @@ export interface List<
 }
 
 interface ListOptions<
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
@@ -56,8 +57,8 @@ interface ListOptions<
   default: D
 }
 
-const listDefaultOptions: ListOptions<false, false, false, undefined, undefined> = {
-  required: false,
+const listDefaultOptions: ListOptions<Never, false, false, undefined, undefined> = {
+  required: Never,
   hidden: false,
   key: false,
   savedAs: undefined,
@@ -66,7 +67,7 @@ const listDefaultOptions: ListOptions<false, false, false, undefined, undefined>
 
 type ListTyper = <
   E extends ListProperty,
-  R extends boolean = false,
+  R extends RequiredOption = Never,
   H extends boolean = false,
   K extends boolean = false,
   S extends string | undefined = undefined,
@@ -78,7 +79,7 @@ type ListTyper = <
 
 export const list: ListTyper = <
   E extends ListProperty,
-  R extends boolean = false,
+  R extends RequiredOption = Never,
   H extends boolean = false,
   K extends boolean = false,
   S extends string | undefined = undefined,
@@ -104,7 +105,8 @@ export const list: ListTyper = <
     _key,
     _savedAs,
     _default,
-    required: () => list(_elements, { ...appliedOptions, required: true }),
+    required: <$R extends RequiredOption = AtLeastOnce>(nextRequired: $R = AtLeastOnce as $R) =>
+      list(_elements, { ...appliedOptions, required: nextRequired }),
     hidden: () => list(_elements, { ...appliedOptions, hidden: true }),
     key: () => list(_elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => list(_elements, { ...appliedOptions, savedAs: nextSavedAs }),
@@ -156,6 +158,8 @@ export const validateList = <L extends List>(
   { _elements: elements }: L,
   path?: string
 ): boolean => {
+  // TODO: Validate common attributes (_required, _key etc...)
+
   const {
     _required: elementsRequired,
     _hidden: elementsHidden,
@@ -164,7 +168,7 @@ export const validateList = <L extends List>(
     _default: elementsDefault
   } = elements
 
-  if (elementsRequired !== true) {
+  if (elementsRequired !== AtLeastOnce) {
     throw new OptionalListElementsError({ path })
   }
 

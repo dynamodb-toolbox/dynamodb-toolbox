@@ -1,7 +1,9 @@
 import { O } from 'ts-toolbelt'
 
+import { RequiredOption, Never, AtLeastOnce } from './requiredOptions'
 import { ComputedDefault, errorMessagePathSuffix } from './utility'
 
+// TODO: Define reqKey / optKey shorthands
 type LeafType = 'string' | 'boolean' | 'number' | 'binary'
 
 export type ResolveLeafType<T extends LeafType> = T extends 'string'
@@ -26,7 +28,7 @@ type LeafDefaultValue<T extends LeafType> =
 
 interface _LeafOptions<
   T extends LeafType = LeafType,
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
@@ -43,7 +45,7 @@ interface _LeafOptions<
 
 export type Leaf<
   T extends LeafType = LeafType,
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
@@ -52,7 +54,9 @@ export type Leaf<
 > = {
   _type: T
   _resolved?: E extends ResolveLeafType<T>[] ? E[number] : ResolveLeafType<T>
-  required: () => Leaf<T, true, H, K, S, E, D>
+  required: <$R extends RequiredOption = AtLeastOnce>(
+    nextRequired?: $R
+  ) => Leaf<T, $R, H, K, S, E, D>
   hidden: () => Leaf<T, R, true, K, S, E, D>
   key: () => Leaf<T, R, H, true, S, E, D>
   savedAs: <$S extends string | undefined>(nextSavedAs: $S) => Leaf<T, R, H, K, $S, E, D>
@@ -67,7 +71,7 @@ export type Leaf<
 
 interface LeafOptions<
   T extends LeafType = LeafType,
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
@@ -84,14 +88,14 @@ interface LeafOptions<
 
 const leafDefaultOptions: LeafOptions<
   LeafType,
-  false,
+  Never,
   false,
   false,
   undefined,
   undefined,
   undefined
 > = {
-  required: false,
+  required: Never,
   hidden: false,
   key: false,
   savedAs: undefined,
@@ -101,7 +105,7 @@ const leafDefaultOptions: LeafOptions<
 
 const leaf = <
   T extends LeafType = LeafType,
-  R extends boolean = boolean,
+  R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
@@ -128,7 +132,8 @@ const leaf = <
     _savedAs,
     _default,
     _enum,
-    required: () => leaf({ ...options, required: true }),
+    required: <$R extends RequiredOption = AtLeastOnce>(nextRequired = AtLeastOnce as $R) =>
+      leaf({ ...options, required: nextRequired }),
     hidden: () => leaf({ ...options, hidden: true }),
     key: () => leaf({ ...options, key: true }),
     savedAs: nextSavedAs => leaf({ ...options, savedAs: nextSavedAs }),
@@ -138,7 +143,7 @@ const leaf = <
 }
 
 type LeafTyper<T extends LeafType> = <
-  R extends boolean = false,
+  R extends RequiredOption = Never,
   H extends boolean = false,
   K extends boolean = false,
   S extends string | undefined = undefined,
@@ -150,7 +155,7 @@ type LeafTyper<T extends LeafType> = <
 
 const getLeafTyper = <T extends LeafType>(type: T) =>
   (<
-    R extends boolean = false,
+    R extends RequiredOption = Never,
     H extends boolean = false,
     K extends boolean = false,
     S extends string | undefined = undefined,
@@ -223,6 +228,8 @@ export const validateLeaf = <L extends Leaf>(
   { _type: expectedType, _enum: enumValues, _default: defaultValue }: L,
   path?: string
 ): boolean => {
+  // TODO: Validate common attributes (_required, _key etc...)
+
   enumValues?.forEach(enumValue => {
     if (typeof enumValue !== expectedType) {
       throw new InvalidEnumValueTypeError({ expectedType, enumValue, path })
