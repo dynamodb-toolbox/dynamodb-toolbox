@@ -75,6 +75,7 @@ const playgroundItem3 = item({
     .required()
     .savedAs('baz')
     .key()
+    .open()
 })
 
 type PlaygroundItem3SavedAs = ItemSavedAs<typeof playgroundItem3>

@@ -14,6 +14,8 @@ export type ResolveLeafType<T extends LeafType> = T extends 'string'
   ? Buffer
   : never
 
+export type ResolvedLeafType = ResolveLeafType<LeafType>
+
 type EnumValues<T extends LeafType> = ResolveLeafType<T>[] | undefined
 
 type LeafDefaultValue<T extends LeafType> =

@@ -1,6 +1,6 @@
 import { A, O, U } from 'ts-toolbelt'
 
-import { MappedProperties, Property } from './property'
+import { MappedProperties, Property, ResolvedProperty } from './property'
 import { Item } from './item'
 import { Leaf, validateLeaf } from './leaf'
 import { Mapped, validateMap } from './map'
@@ -27,7 +27,8 @@ export type PreComputeDefaults<P extends Item | Property> = P extends Leaf
       | O.SelectKeys<P['_properties'], { _required: true; _default: undefined }>
       // Props with initial default will be provided
       | O.FilterKeys<P['_properties'], { _default: undefined | ComputedDefault }>
-    >
+    > &
+      (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
 export type PostComputeDefaults<P extends Item | Property> = P extends Leaf
@@ -44,7 +45,8 @@ export type PostComputeDefaults<P extends Item | Property> = P extends Leaf
       // Besides, all props that have defined default (initial or computed) should be here as well
       // (...but not so sure about that anymore, props can have computed default but be not required)
       | O.FilterKeys<P['_properties'], { _default: undefined }>
-    >
+    > &
+      (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
 export type ItemInput<P extends Item | Property> = P extends Leaf
@@ -60,7 +62,8 @@ export type ItemInput<P extends Item | Property> = P extends Leaf
         O.SelectKeys<P['_properties'], { _required: true }>,
         O.FilterKeys<P['_properties'], { _default: undefined }>
       >
-    >
+    > &
+      (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
 export type ItemOutput<P extends Item | Property> = P extends Leaf
@@ -80,7 +83,8 @@ export type ItemOutput<P extends Item | Property> = P extends Leaf
       // props that have defined default (initial or computed) will necessarily be present
       // (...but not so sure about that anymore, props can have computed default but be not required)
       | O.FilterKeys<P['_properties'], { _default: undefined }>
-    >
+    > &
+      (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
 type SwapWithSavedAs<O extends MappedProperties> = A.Compute<
@@ -104,7 +108,8 @@ type ItemRecSavedAs<
   | O.SelectKeys<S, { _required: true }>
   // props that have defined default (initial or computed) will necessarily be present
   | O.FilterKeys<S, { _default: undefined }>
->
+> &
+  (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
 
 export type ItemSavedAs<P extends Item | Property> = P extends Leaf
   ? Exclude<P['_resolved'], undefined>
@@ -127,7 +132,8 @@ export type ItemKeyInput<P extends Item | Property> = P extends Leaf
         O.SelectKeys<P['_properties'], { _required: true }>,
         O.FilterKeys<P['_properties'], { _default: undefined }>
       >
-    >
+    > &
+      (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
 export type ItemPreComputeKey<P extends Item | Property> = P extends Leaf
@@ -146,7 +152,8 @@ export type ItemPreComputeKey<P extends Item | Property> = P extends Leaf
       // props that have defined default (initial or computed) will necessarily be present
       // (...but not so sure about that anymore, props can have computed default but be not required)
       | O.FilterKeys<P['_properties'], { _default: undefined }>
-    >
+    > &
+      (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
 
 export type HasComputedDefaults<P extends Item | Property> = P extends { _default: ComputedDefault }

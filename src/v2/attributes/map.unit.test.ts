@@ -90,6 +90,24 @@ describe('map', () => {
     expect(mapped).toMatchObject({ _key: true })
   })
 
+  it('returns open map (option)', () => {
+    const mapped = map({ str }, { open: true })
+
+    const assertMapped: A.Contains<typeof mapped, { _open: true }> = 1
+    assertMapped
+
+    expect(mapped).toMatchObject({ _open: true })
+  })
+
+  it('returns open map (method)', () => {
+    const mapped = map({ str }).open()
+
+    const assertMapped: A.Contains<typeof mapped, { _open: true }> = 1
+    assertMapped
+
+    expect(mapped).toMatchObject({ _open: true })
+  })
+
   it('returns savedAs map (option)', () => {
     const mapped = map({ str }, { savedAs: 'foo' })
 
