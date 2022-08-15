@@ -262,6 +262,19 @@ describe('query', () => {
     })
   })
 
+  it('queries a table with eq, even with 0', () => {
+    let result = TestTable.queryParams('test', { index: 'GSINumber', eq: 0 })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and #sk = :sk',
+      ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
+      IndexName: 'GSINumber'
+    })
+  })
+
+
   it('queries a table with lt, even falsy (0)', () => {
     let result = TestTable.queryParams('test', { index: 'GSINumber', lt: 0 })
 
