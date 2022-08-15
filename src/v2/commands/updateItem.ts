@@ -1,12 +1,11 @@
-import { O } from 'ts-toolbelt'
+import type { O } from 'ts-toolbelt'
 import {
   UpdateItemCommand,
   UpdateItemCommandInput,
   UpdateItemCommandOutput
 } from '@aws-sdk/client-dynamodb'
 
-import { EntityV2, Input, Output, parse, validateInput, validateSavedAs } from 'v2/entity'
-import { PreComputeDefaults } from 'v2/attributes'
+import { EntityV2, Input, Output, parse, validateInput, validateSavedAs } from 'v2'
 
 const hasNoAttributes = (
   commandOutput: UpdateItemCommandOutput

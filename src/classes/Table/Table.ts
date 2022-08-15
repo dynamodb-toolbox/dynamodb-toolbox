@@ -32,12 +32,11 @@ import type {
   TransactGetParamsMeta,
   transactGetParamsOptions,
   TransactWriteOptions,
-  transactWriteParamsOptions,
-} from './types';
+  transactWriteParamsOptions
+} from './types'
 
 // Import standard error handler
 import { error, conditionError, hasProperty, If } from '../../lib/utils'
-
 
 // Declare Table class
 class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
@@ -183,7 +182,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
               break
 
             // For secondary indexes
-            default:
+            default: // end for
               // Verify that the table has this index
               if (!this.Table.indexes[key]) error(`'${key}' is not a valid secondary index name`)
 
@@ -241,7 +240,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                     } // end if
                   } // end if-else
                 } // end if
-              } // end for
+              }
 
               // Check that composite keys define both keys
               // TODO: This only checks for the attribute, not the explicit assignment
@@ -299,8 +298,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                 mappings: {
                   [entity.name]: Object.assign(
                     {
-                      [entity.schema.attributes[attr].alias || attr]: entity.schema.attributes[attr]
-                        .type
+                      [entity.schema.attributes[attr].alias || attr]:
+                        entity.schema.attributes[attr].type
                     },
                     // Add setType if type 'set'
                     entity.schema.attributes[attr].type === 'set'
@@ -1065,13 +1064,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       const item = items[i]
 
       // Check item for Table reference and key
-      if (
-        item &&
-        item.Table &&
-        item.Table.Table &&
-        item.Key &&
-        item.Key?.constructor === Object
-      ) {
+      if (item && item.Table && item.Table.Table && item.Key && item.Key?.constructor === Object) {
         // Set the table
         const table = item.Table.name
 
