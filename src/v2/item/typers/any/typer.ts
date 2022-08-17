@@ -16,6 +16,11 @@ type AnyTyper = <
   options?: O.Partial<AnyOptions<R, H, K, S, D>>
 ) => Any<R, H, K, S, D>
 
+/**
+ * Define a new property of any type
+ *
+ * @param options _(optional)_ Boolean Options
+ */
 export const any: AnyTyper = <
   R extends RequiredOption = Never,
   H extends boolean = false,

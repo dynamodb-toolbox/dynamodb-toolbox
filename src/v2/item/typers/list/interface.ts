@@ -16,6 +16,9 @@ interface ListState<
   _default: D
 }
 
+/**
+ * List property interface
+ */
 export interface List<
   E extends ListProperty = ListProperty,
   R extends RequiredOption = RequiredOption,
@@ -26,9 +29,32 @@ export interface List<
 > extends ListState<R, H, K, S, D> {
   _type: 'list'
   _elements: E
+  /**
+   * Tag a property as required. Possible values are:
+   * - `AtLeastOnce` _(default)_: Required in PUTs, optional in UPDATEs
+   * - `Never`: Optional in PUTs and UPDATEs
+   * - `Always`: Required in PUTs and UPDATEs
+   * - `OnlyOnce` (default): Required in PUTs, denied in UPDATEs
+   *
+   * @param nextRequired RequiredOption
+   */
   required: <$R extends RequiredOption = AtLeastOnce>(nextRequired?: $R) => List<E, $R, H, K, S, D>
+  /**
+   * Hide property after fetch commands and formatting
+   */
   hidden: () => List<E, R, true, K, S, D>
-  savedAs: <$S extends string | undefined>(nextSavedAs: $S) => List<E, R, H, K, $S, D>
+  /**
+   * Tag property as needed for Primary Key computing
+   */
   key: () => List<E, R, H, true, S, D>
+  /**
+   * Rename property before save commands
+   */
+  savedAs: <$S extends string | undefined>(nextSavedAs: $S) => List<E, R, H, K, $S, D>
+  /**
+   * Tag property as having a computed default value
+   *
+   * @param nextDefaultValue `ComputedDefault`
+   */
   default: <$D extends ComputedDefault | undefined>(nextDefaultValue: $D) => List<E, R, H, K, S, $D>
 }

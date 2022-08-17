@@ -14,6 +14,13 @@ const hasNoAttributes = (
   { Attributes?: undefined }
 > => commandOutput?.Attributes === undefined
 
+/**
+ * Run an UPDATE Item command for a given Entity
+ *
+ * @param entity Entity
+ * @param input Input
+ * @return UpdateItemCommandOutput
+ */
 export const updateItem = async <E extends EntityV2>(
   entity: E,
   input: Input<E>
@@ -28,6 +35,7 @@ export const updateItem = async <E extends EntityV2>(
     return commandOutput
   }
 
+  // CommandOutput necessarily has Attributes
   const { Attributes: attributes, ...restCommandOutput } = commandOutput as O.Required<
     UpdateItemCommandOutput,
     'Attributes'
@@ -42,6 +50,13 @@ export const updateItem = async <E extends EntityV2>(
   return { Attributes: parsedItem, ...restCommandOutput }
 }
 
+/**
+ * Builds an UPDATE Item command input for a given Entity
+ *
+ * @param entity Entity
+ * @param input Input
+ * @return UpdateItemCommandInput
+ */
 export const updateItemParams = <E extends EntityV2>(
   entity: E,
   input: Input<E>

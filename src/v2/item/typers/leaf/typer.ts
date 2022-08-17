@@ -6,6 +6,11 @@ import type { Leaf } from './interface'
 import { LeafOptions, leafDefaultOptions } from './options'
 import type { LeafType, EnumValues, LeafDefaultValue } from './types'
 
+/**
+ * Define a new "leaf" property, i.e. string, number, binary or boolean
+ *
+ * @param options _(optional)_ Leaf Options
+ */
 const leaf = <
   T extends LeafType = LeafType,
   R extends RequiredOption = RequiredOption,
@@ -68,7 +73,30 @@ const getLeafTyper = <T extends LeafType>(type: T) =>
     leafOptions?: O.Partial<LeafOptions<T, R, H, K, S, E, D>>
   ) => leaf({ ...leafDefaultOptions, ...leafOptions, type })) as LeafTyper<T>
 
+/**
+ * Define a new string property
+ *
+ * @param options _(optional)_ String Options
+ */
 export const string = getLeafTyper('string')
+
+/**
+ * Define a new number property
+ *
+ * @param options _(optional)_ Number Options
+ */
 export const number = getLeafTyper('number')
+
+/**
+ * Define a new binary property
+ *
+ * @param options _(optional)_ Binary Options
+ */
 export const binary = getLeafTyper('binary')
+
+/**
+ * Define a new boolean property
+ *
+ * @param options _(optional)_ Boolean Options
+ */
 export const boolean = getLeafTyper('boolean')

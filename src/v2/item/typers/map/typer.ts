@@ -19,6 +19,12 @@ type MappedTyper = <
   options?: O.Partial<MappedOptions<R, H, K, O, S, D>>
 ) => Mapped<P, R, H, K, O, S, D>
 
+/**
+ * Define a new map property
+ *
+ * @param properties Dictionary of properties
+ * @param options _(optional)_ Map Options
+ */
 export const map: MappedTyper = <
   P extends MappedProperties = {},
   R extends RequiredOption = Never,
@@ -28,7 +34,7 @@ export const map: MappedTyper = <
   S extends string | undefined = undefined,
   D extends ComputedDefault | undefined = undefined
 >(
-  _properties: Narrow<P>,
+  properties: Narrow<P>,
   options?: O.Partial<MappedOptions<R, H, K, O, S, D>>
 ): Mapped<P, R, H, K, O, S, D> => {
   const appliedOptions = { ...mappedDefaultOptions, ...options }
@@ -43,7 +49,7 @@ export const map: MappedTyper = <
 
   return {
     _type: 'map',
-    _properties,
+    _properties: properties,
     _required,
     _hidden,
     _key,
@@ -52,11 +58,11 @@ export const map: MappedTyper = <
     _default,
     required: <$R extends RequiredOption = AtLeastOnce>(
       nextRequired: $R = AtLeastOnce as unknown as $R
-    ) => map(_properties, { ...appliedOptions, required: nextRequired }),
-    hidden: () => map(_properties, { ...appliedOptions, hidden: true }),
-    key: () => map(_properties, { ...appliedOptions, key: true }),
-    open: () => map(_properties, { ...appliedOptions, open: true }),
-    savedAs: nextSavedAs => map(_properties, { ...appliedOptions, savedAs: nextSavedAs }),
-    default: nextDefault => map(_properties, { ...appliedOptions, default: nextDefault })
+    ) => map(properties, { ...appliedOptions, required: nextRequired }),
+    hidden: () => map(properties, { ...appliedOptions, hidden: true }),
+    key: () => map(properties, { ...appliedOptions, key: true }),
+    open: () => map(properties, { ...appliedOptions, open: true }),
+    savedAs: nextSavedAs => map(properties, { ...appliedOptions, savedAs: nextSavedAs }),
+    default: nextDefault => map(properties, { ...appliedOptions, default: nextDefault })
   } as Mapped<P, R, H, K, O, S, D>
 }

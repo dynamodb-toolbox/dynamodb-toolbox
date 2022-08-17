@@ -6,6 +6,13 @@ type InputValidator = <E extends EntityV2, I extends Record<string, any> = Input
   input: Record<string, any>
 ) => input is I
 
+/**
+ * Validate the input of a PUT command for a given Entity
+ *
+ * @param entity Entity
+ * @param input Input
+ * @return Boolean
+ */
 export const validateInput: InputValidator = <
   E extends EntityV2,
   I extends Record<string, any> = Input<E>

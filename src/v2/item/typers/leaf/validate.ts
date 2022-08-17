@@ -58,6 +58,13 @@ export class InvalidDefaultValueRangeError extends Error {
   }
 }
 
+/**
+ * Validates a leaf instance
+ *
+ * @param leafInstance Leaf
+ * @param path _(optional)_ Path of the instance in the related item (string)
+ * @return Boolean
+ */
 export const validateLeaf = <L extends Leaf>(
   { _type: expectedType, _enum: enumValues, _default: defaultValue }: L,
   path?: string

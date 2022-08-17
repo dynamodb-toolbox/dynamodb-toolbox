@@ -25,6 +25,13 @@ type NeedsKeyPartCompute<
   ? true
   : false
 
+/**
+ * Wether the provided item matches the primary key of a given table
+ *
+ * @param I Item
+ * @param T Table
+ * @return Boolean
+ */
 export type NeedsKeyCompute<I extends Item, T extends TableV2> = HasSK<T> extends true
   ? Or<
       NeedsKeyPartCompute<I, T['partitionKey']['name'], T['partitionKey']['type']>,

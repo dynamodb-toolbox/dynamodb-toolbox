@@ -14,6 +14,12 @@ import type {
   Always
 } from '../typers'
 
+/**
+ * Expected computeDefaults argument for a given Item or Property (recursive)
+ *
+ * @param I Item / Property
+ * @return Object
+ */
 export type PreComputeDefaults<P extends Item | Property> = P extends Any
   ? ResolvedProperty
   : P extends Leaf
@@ -23,9 +29,10 @@ export type PreComputeDefaults<P extends Item | Property> = P extends Any
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
+        // Keep all properties
         [key in keyof P['_properties']]: PreComputeDefaults<P['_properties'][key]>
       }>,
-      // Required props without default will be provided
+      // Required properties without default will be provided by user
       | O.SelectKeys<
           P['_properties'],
           {
@@ -33,8 +40,8 @@ export type PreComputeDefaults<P extends Item | Property> = P extends Any
             _default: undefined
           }
         >
-      // Props with initial default will be provided
+      // Properties with initial (non-computed) default will be provided by the library
       | O.FilterKeys<P['_properties'], { _default: undefined | ComputedDefault }>
-    > &
+    > & // Add Record<string, ResolvedProperty> if map is open
       (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never

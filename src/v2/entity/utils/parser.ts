@@ -10,6 +10,13 @@ type Parser = <
   savedAs: S
 ) => O
 
+/**
+ * Parse saved item in DynamoDB to desired output for a given Entity
+ *
+ * @param entity Entity
+ * @param savedAs Saved item
+ * @return Object
+ */
 export const parse: Parser = (entity, savedAs) => {
   entity
   // TODO

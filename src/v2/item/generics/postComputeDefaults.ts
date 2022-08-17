@@ -13,6 +13,13 @@ import type {
   Always
 } from '../typers'
 
+/**
+ * Expected computeDefaults output for a given Item or Property (recursive)
+ * Very similar to Output but displays hidden properties
+ *
+ * @param I Item / Property
+ * @return Object
+ */
 export type PostComputeDefaults<P extends Item | Property> = P extends Any
   ? ResolvedProperty
   : P extends Leaf
@@ -22,13 +29,14 @@ export type PostComputeDefaults<P extends Item | Property> = P extends Any
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
+        // Keep all properties
         [key in keyof P['_properties']]: PostComputeDefaults<P['_properties'][key]>
       }>,
-      // This is the final item, all required props should be here
+      // Enforce Required properties
       | O.SelectKeys<P['_properties'], { _required: AtLeastOnce | OnlyOnce | Always }>
-      // Besides, all props that have defined default (initial or computed) should be here as well
-      // (...but not so sure about that anymore, props can have computed default but be not required)
+      // Enforce properties that have defined default (initial or computed)
+      // (...but not so sure about that anymore, props can have computed default but still be optional)
       | O.FilterKeys<P['_properties'], { _default: undefined }>
-    > &
+    > & // Add Record<string, ResolvedProperty> if map is open
       (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never

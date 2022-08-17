@@ -6,6 +6,13 @@ type SavedAsValidator = <E extends EntityV2, S extends Record<string, any> = Sav
   savedItem: Record<string, any>
 ) => savedItem is S
 
+/**
+ * Validates the saved item in DynamoDB for a given Entity
+ *
+ * @param entity Entity
+ * @param savedItem Saved Item
+ * @return Boolean
+ */
 export const validateSavedAs: SavedAsValidator = <
   E extends EntityV2,
   S extends Record<string, any> = SavedAs<E>

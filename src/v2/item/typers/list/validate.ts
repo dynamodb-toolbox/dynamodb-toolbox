@@ -43,6 +43,13 @@ export class DefaultedListElementsError extends Error {
   }
 }
 
+/**
+ * Validates a list instance
+ *
+ * @param listInstance List
+ * @param path _(optional)_ Path of the instance in the related item (string)
+ * @return Boolean
+ */
 export const validateList = <L extends List>(
   { _elements: elements }: L,
   path?: string

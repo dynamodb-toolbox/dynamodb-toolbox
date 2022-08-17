@@ -7,6 +7,13 @@ import type { Property } from './types/property'
 export const errorMessagePathSuffix = (path?: string): string =>
   path !== undefined ? ` at path ${path}` : ''
 
+/**
+ * Validates a property definition
+ *
+ * @param property Property
+ * @param path _(optional)_ Path of the property in the related item (string)
+ * @return Boolean
+ */
 export const validateProperty = (property: Property, path?: string): boolean => {
   switch (property._type) {
     case 'string':

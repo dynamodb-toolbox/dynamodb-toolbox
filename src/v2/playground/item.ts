@@ -84,5 +84,5 @@ const playgroundItem3 = item({
 })
 
 type PlaygroundItem3SavedAs = ItemSavedAs<typeof playgroundItem3>
-type PlaygroundItem3KeyInputs = ItemKeyInput<typeof playgroundItem3>
+type PlaygroundItem3KeyInput = ItemKeyInput<typeof playgroundItem3>
 type PlaygroundItem3HasComputedDefault = HasComputedDefaults<typeof playgroundItem3>

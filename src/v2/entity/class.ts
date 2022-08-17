@@ -25,6 +25,16 @@ export class EntityV2<
     preComputeDefaults: Item extends I ? any : PreComputeDefaults<I>
   ) => PostComputeDefaults<I>
 
+  /**
+   * Define an Entity for a given table
+   * (TODO: Use more @param for constructor arguments, see https://jsdoc.app/tags-param.html)
+   *
+   * @param name string
+   * @param table Table
+   * @param item Item
+   * @param computeKey _(optional)_ Transforms key input to primary key
+   * @param computeDefaults _(optional)_ Computes computed defaults
+   */
   constructor({
     name,
     table,

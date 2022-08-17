@@ -13,6 +13,12 @@ import type {
   Always
 } from '../typers'
 
+/**
+ * Returned item of a fetch command (GET, QUERY ...) for a given Entity
+ *
+ * @param E Entity
+ * @return Object
+ */
 export type ItemOutput<P extends Item | Property> = P extends Any
   ? ResolvedProperty
   : P extends Leaf
@@ -22,16 +28,16 @@ export type ItemOutput<P extends Item | Property> = P extends Any
   : P extends Mapped | Item
   ? O.Required<
       O.Partial<{
-        // hidden props are omitted
+        // Keep only non-hidden properties
         [key in O.SelectKeys<P['_properties'], { _hidden: false }>]: ItemOutput<
           P['_properties'][key]
         >
       }>,
-      // required props will necessarily be present
+      // Enforce Required properties
       | O.SelectKeys<P['_properties'], { _required: AtLeastOnce | OnlyOnce | Always }>
-      // props that have defined default (initial or computed) will necessarily be present
-      // (...but not so sure about that anymore, props can have computed default but be not required)
+      // Enforce properties that have defined default (initial or computed)
+      // (...but not so sure about that anymore, props can have computed default but still be optional)
       | O.FilterKeys<P['_properties'], { _default: undefined }>
-    > &
+    > & // Add Record<string, ResolvedProperty> if map is open
       (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
   : never
