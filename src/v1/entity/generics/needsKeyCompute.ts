@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Item, Always } from 'v2/item'
-import type { TableV2, IndexableKeyType, HasSK } from 'v2/table'
+import type { Item, Always } from 'v1/item'
+import type { TableV2, IndexableKeyType, HasSK } from 'v1/table'
 
 type Or<A extends boolean, B extends boolean> = A extends true
   ? true

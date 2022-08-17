@@ -1,4 +1,4 @@
-import { putItem } from 'v2/commands'
+import { putItem } from 'v1/commands'
 
 import { UserEntity } from '../entity'
 

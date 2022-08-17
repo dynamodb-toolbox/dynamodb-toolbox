@@ -1,6 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 
-import { HasSK, PrimaryKey, TableV2 } from 'v2/table'
+import { HasSK, PrimaryKey, TableV2 } from 'v1/table'
 
 const dynamoDbClient = new DynamoDBClient({})
 

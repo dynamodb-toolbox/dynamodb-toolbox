@@ -18,7 +18,7 @@ import {
   ItemSavedAs,
   ItemKeyInput,
   HasComputedDefaults
-} from 'v2/item'
+} from 'v1/item'
 
 const playgroundItem1 = item({
   reqStr: string().required(),

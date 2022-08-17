@@ -1,4 +1,4 @@
-import type { ItemInput } from 'v2/item'
+import type { ItemInput } from 'v1/item'
 
 import type { EntityV2 } from '../class'
 

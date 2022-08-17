@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 import { PutItemCommand, PutItemCommandInput, PutItemCommandOutput } from '@aws-sdk/client-dynamodb'
 
-import { EntityV2, Input, Output, parse, validateInput, validateSavedAs } from 'v2'
+import { EntityV2, Input, Output, parse, validateInput, validateSavedAs } from 'v1'
 
 const hasNoAttributes = (
   commandOutput: PutItemCommandOutput

@@ -1,5 +1,5 @@
-import type { ItemSavedAs } from 'v2/item'
-import type { PrimaryKey } from 'v2/table'
+import type { ItemSavedAs } from 'v1/item'
+import type { PrimaryKey } from 'v1/table'
 
 import type { EntityV2 } from '../class'
 

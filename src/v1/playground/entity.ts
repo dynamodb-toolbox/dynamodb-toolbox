@@ -1,5 +1,5 @@
-import { Always, ComputedDefault, map, number, string, item, PostComputeDefaults } from 'v2/item'
-import { EntityV2, SavedAs, Input, Output, KeyInput } from 'v2/entity'
+import { Always, ComputedDefault, map, number, string, item, PostComputeDefaults } from 'v1/item'
+import { EntityV2, SavedAs, Input, Output, KeyInput } from 'v1/entity'
 
 import { MyTable } from './table'
 

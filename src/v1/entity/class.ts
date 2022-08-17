@@ -4,8 +4,8 @@ import {
   HasComputedDefaults,
   PreComputeDefaults,
   PostComputeDefaults
-} from 'v2/item'
-import { TableV2, PrimaryKey } from 'v2/table'
+} from 'v1/item'
+import { TableV2, PrimaryKey } from 'v1/table'
 
 import type { NeedsKeyCompute } from './generics'
 
