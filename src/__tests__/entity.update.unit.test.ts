@@ -178,6 +178,22 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
   })
 
+  it('allows overriding default field values', () => {
+    const {UpdateExpression,ExpressionAttributeNames,ExpressionAttributeValues} = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_boolean_default: true
+    })
+
+    expect(ExpressionAttributeNames!['#test_boolean_default']).toBe('test_boolean_default')
+    expect(ExpressionAttributeValues![':test_boolean_default']).toBe(true)
+
+
+    expect(UpdateExpression).toBe(
+      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
+    )
+  })
+
   it('fails when removing fields with default values', () => {
     expect(() =>
       TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })
@@ -1008,4 +1024,34 @@ describe('update', () => {
     )
     expect(TableName).toBe('test-table')
   })
+
+   it('fails when given an unmapped attribute and strictSchemaCheck is true.', () => {
+    expect(() =>
+      TestEntity.updateParams(
+        // @ts-expect-error
+        { email: 'x', sort: 'y', unknown: '?' },
+        { strictSchemaCheck: true }
+      )
+    ).toThrow("Field 'unknown' does not have a mapping or alias")
+  })
+
+  it('allows unmapped attributes when strictSchemaCheck is false.', () => {
+    expect(() => TestEntity.updateParams(
+      { email: 'x', sort: 'y', unknown: '?' },
+      { strictSchemaCheck: false }
+    )).not.toThrow();
+  })
+
+  it('omits unmapped attributes when strictSchemaCheck is false.', () => {
+    let { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams(
+      { email: 'x', sort: 'y', test_string: 'some-string-value', unknown: '?' },
+      { strictSchemaCheck: false }
+    )
+
+    expect(UpdateExpression).not.toContain('#unknown')
+    expect(ExpressionAttributeNames).not.toHaveProperty('#unknown')
+    expect(ExpressionAttributeValues).not.toHaveProperty(':unknown')
+    expect(ExpressionAttributeNames).toHaveProperty('#test_string')
+    expect(ExpressionAttributeValues).toHaveProperty(':test_string')
+  });
 }) // end describe
