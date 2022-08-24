@@ -102,6 +102,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     docClient: (DocumentClient & { options?: { convertEmptyValues: boolean } }) | undefined
   ) {
     // If a valid document client
+    // @ts-ignore
     if (docClient && docClient.get && docClient.put && docClient.delete && docClient.update) {
       // Automatically set convertEmptyValues to true, unless false
       if (docClient.options!.convertEmptyValues !== false)

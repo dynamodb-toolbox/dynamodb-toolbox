@@ -178,6 +178,22 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
   })
 
+  it('allows overriding default field values', () => {
+    const {UpdateExpression,ExpressionAttributeNames,ExpressionAttributeValues} = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_boolean_default: true
+    })
+
+    expect(ExpressionAttributeNames!['#test_boolean_default']).toBe('test_boolean_default')
+    expect(ExpressionAttributeValues![':test_boolean_default']).toBe(true)
+
+
+    expect(UpdateExpression).toBe(
+      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
+    )
+  })
+
   it('fails when removing fields with default values', () => {
     expect(() =>
       TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })
