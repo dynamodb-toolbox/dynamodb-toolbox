@@ -723,13 +723,15 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items:
-              result.Items &&
-              result.Items.map(item => {
-                if (this[item[String(this.Table.entityField)]]) {
-                  return this[item[String(this.Table.entityField)]].parse(
+              result.Items?.map(item => {
+                const itemEntityName = item[String(this.Table.entityField)]
+                const itemEntityInstance = this[itemEntityName];
+
+                if (itemEntityInstance != null) {
+                  return itemEntityInstance.parse(
                     item,
-                    EntityProjections[item[String(this.Table.entityField)]]
-                      ? EntityProjections[item[String(this.Table.entityField)]]
+                    EntityProjections[itemEntityName]
+                      ? EntityProjections[itemEntityName]
                       : TableProjections
                       ? TableProjections
                       : []
