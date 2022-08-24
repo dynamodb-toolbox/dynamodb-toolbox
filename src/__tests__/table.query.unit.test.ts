@@ -1,5 +1,5 @@
-import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { Table, Entity } from '../index';
+import { DocumentClient } from './bootstrap-tests';
 
 const TestTable = new Table({
   name: 'test-table',
@@ -11,20 +11,20 @@ const TestTable = new Table({
     GSI1pk: 'string',
     GSIsk1: 'string',
     GSINpk: 'string',
-    GSINsk: 'number'
+    GSINsk: 'number',
   },
   indexes: {
     GSI1: {
       partitionKey: 'GSI1pk',
-      sortKey: 'GSIsk1'
+      sortKey: 'GSIsk1',
     },
     GSINumber: {
       partitionKey: 'GSINpk',
-      sortKey: 'GSINsk'
-    }
+      sortKey: 'GSINsk',
+    },
   },
-  DocumentClient
-})
+  DocumentClient,
+});
 
 const TestEntity = new Entity({
   name: 'TestEntity',
@@ -32,36 +32,37 @@ const TestEntity = new Entity({
   attributes: {
     email: { type: 'string', partitionKey: true },
     sort: { type: 'string', sortKey: true },
-    test: 'string'
+    test: 'string',
+    testSet: 'set',
   },
-  table: TestTable
-} as const)
+  table: TestTable,
+} as const);
 
 describe('query', () => {
   it('queries a table with no options', async () => {
-    let result = await TestTable.query('test', { execute: false })
+    let result = await TestTable.query('test', { execute: false });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk',
       ExpressionAttributeNames: { '#pk': 'pk' },
-      ExpressionAttributeValues: { ':pk': 'test' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test' },
+    });
+  });
 
   it('queries a table with no options using numeric pk', () => {
-    let result = TestTable.queryParams(1)
+    let result = TestTable.queryParams(1);
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk',
       ExpressionAttributeNames: { '#pk': 'pk' },
-      ExpressionAttributeValues: { ':pk': 1 }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 1 },
+    });
+  });
 
   it('queries a table with projections', () => {
-    let result = TestTable.queryParams('test', { attributes: ['pk'] }, {}, true)
+    let result = TestTable.queryParams('test', { attributes: ['pk'] }, {}, true);
 
     expect(result).toEqual({
       payload: {
@@ -69,24 +70,24 @@ describe('query', () => {
         KeyConditionExpression: '#pk = :pk',
         ExpressionAttributeNames: { '#pk': 'pk', '#proj1': 'pk', '#proj2': '_et' },
         ExpressionAttributeValues: { ':pk': 'test' },
-        ProjectionExpression: '#proj1,#proj2'
+        ProjectionExpression: '#proj1,#proj2',
       },
       EntityProjections: {},
-      TableProjections: ['pk', '_et']
-    })
-  })
+      TableProjections: ['pk', '_et'],
+    });
+  });
 
   it('queries a table and ignores bad parameters', () => {
     // @ts-expect-error
-    let result = TestTable.queryParams('test', {}, 'test')
+    let result = TestTable.queryParams('test', {}, 'test');
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk',
       ExpressionAttributeNames: { '#pk': 'pk' },
-      ExpressionAttributeValues: { ':pk': 'test' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test' },
+    });
+  });
 
   it('queries a table with options', () => {
     let result = TestTable.queryParams('test', {
@@ -102,8 +103,8 @@ describe('query', () => {
       startKey: { pk: 'test', sk: 'skVal2' },
       entity: TestEntity.name,
       execute: true,
-      parse: true
-    })
+      parse: true,
+    });
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -115,7 +116,7 @@ describe('query', () => {
         '#proj1': 'pk',
         '#proj2': 'sk',
         '#proj3': 'test',
-        '#proj4': '_et'
+        '#proj4': '_et',
       },
       ExpressionAttributeValues: { ':pk': 'test', ':sk': 'skVal', ':attr1': 'testFilter' },
       FilterExpression: '#attr1 = :attr1',
@@ -126,9 +127,9 @@ describe('query', () => {
       ConsistentRead: true,
       ReturnConsumedCapacity: 'TOTAL',
       Select: 'ALL_ATTRIBUTES',
-      ExclusiveStartKey: { pk: 'test', sk: 'skVal2' }
-    })
-  })
+      ExclusiveStartKey: { pk: 'test', sk: 'skVal2' },
+    });
+  });
 
   it('queries a table with options including a nested attribute filter', () => {
     let result = TestTable.queryParams('test', {
@@ -144,8 +145,8 @@ describe('query', () => {
       startKey: { pk: 'test', sk: 'skVal2' },
       entity: TestEntity.name,
       execute: true,
-      parse: true
-    })
+      parse: true,
+    });
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -159,7 +160,7 @@ describe('query', () => {
         '#proj1': 'pk',
         '#proj2': 'sk',
         '#proj3': 'test',
-        '#proj4': '_et'
+        '#proj4': '_et',
       },
       ExpressionAttributeValues: { ':pk': 'test', ':sk': 'skVal', ':attr1': 'testFilter' },
       FilterExpression: '#attr1_0.#attr1_1.#attr1_2 = :attr1',
@@ -170,97 +171,97 @@ describe('query', () => {
       ConsistentRead: true,
       ReturnConsumedCapacity: 'TOTAL',
       Select: 'ALL_ATTRIBUTES',
-      ExclusiveStartKey: { pk: 'test', sk: 'skVal2' }
-    })
-  })
+      ExclusiveStartKey: { pk: 'test', sk: 'skVal2' },
+    });
+  });
 
   it('fails on an invalid option', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
         // @ts-expect-error
-        { invalidParam: true }
-      )
-    ).toThrow('Invalid query options: invalidParam')
-  })
+        { invalidParam: true },
+      ),
+    ).toThrow('Invalid query options: invalidParam');
+  });
 
   it('fails on an invalid partionKey', () => {
     // @ts-expect-error
     expect(() => TestTable.queryParams()).toThrow(
-      `Query requires a string, number or binary 'partitionKey' as its first parameter`
-    )
-  })
+      `Query requires a string, number or binary 'partitionKey' as its first parameter`,
+    );
+  });
 
   it('fails on an invalid index', () => {
     expect(() => TestTable.queryParams('test', { index: 'test' })).toThrow(
-      `'test' is not a valid index name`
-    )
-  })
+      `'test' is not a valid index name`,
+    );
+  });
 
   it('fails on an invalid limit', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
         // @ts-expect-error
-        { limit: 'test' }
-      )
-    ).toThrow(`'limit' must be a positive integer`)
-  })
+        { limit: 'test' },
+      ),
+    ).toThrow(`'limit' must be a positive integer`);
+  });
 
   it('fails on invalid reverse setting', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
         // @ts-expect-error
-        { reverse: 'test' }
-      )
-    ).toThrow(`'reverse' requires a boolean`)
-  })
+        { reverse: 'test' },
+      ),
+    ).toThrow(`'reverse' requires a boolean`);
+  });
 
   it('fails on invalid consistent setting', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
         // @ts-expect-error
-        { consistent: 'test' }
-      )
-    ).toThrow(`'consistent' requires a boolean`)
-  })
+        { consistent: 'test' },
+      ),
+    ).toThrow(`'consistent' requires a boolean`);
+  });
 
   it('fails on invalid select setting', () => {
     expect(() => TestTable.queryParams('test', { select: 'test' })).toThrow(
-      `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
-    )
-  })
+      `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`,
+    );
+  });
 
   it('fails on invalid capacity setting', () => {
     expect(() => TestTable.queryParams('test', { capacity: 'test' })).toThrow(
-      `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
-    )
-  })
+      `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`,
+    );
+  });
 
   it('fails on invalid entity', () => {
     expect(() => TestTable.queryParams('test', { entity: 'test' })).toThrow(
-      `'entity' must be a string and a valid table Entity name`
-    )
-  })
+      `'entity' must be a string and a valid table Entity name`,
+    );
+  });
 
   it('fails on invalid startKey', () => {
     expect(() => TestTable.queryParams('test', { startKey: 'test' })).toThrow(
-      `'startKey' requires a valid object`
-    )
-  })
+      `'startKey' requires a valid object`,
+    );
+  });
 
   it('queries a table with lt', () => {
-    let result = TestTable.queryParams('test', { lt: 'val' })
+    let result = TestTable.queryParams('test', { lt: 'val' });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk < :sk',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
-      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' },
+    });
+  });
 
   it('queries a table with eq, even with 0', () => {
     let result = TestTable.queryParams('test', { index: 'GSINumber', eq: 0 })
@@ -276,174 +277,234 @@ describe('query', () => {
 
 
   it('queries a table with lt, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', lt: 0 })
+    let result = TestTable.queryParams('test', { index: 'GSINumber', lt: 0 });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk < :sk',
       ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
       ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
-      IndexName: 'GSINumber'
-    })
-  })
+      IndexName: 'GSINumber',
+    });
+  });
 
   it('queries a table with lte', () => {
-    let result = TestTable.queryParams('test', { lte: 'val' })
+    let result = TestTable.queryParams('test', { lte: 'val' });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk <= :sk',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
-      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' },
+    });
+  });
 
   it('queries a table with lte, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', lte: 0 })
+    let result = TestTable.queryParams('test', { index: 'GSINumber', lte: 0 });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk <= :sk',
       ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
       ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
-      IndexName: 'GSINumber'
-    })
-  })
+      IndexName: 'GSINumber',
+    });
+  });
 
   it('queries a table with gt', () => {
-    let result = TestTable.queryParams('test', { gt: 'val' })
+    let result = TestTable.queryParams('test', { gt: 'val' });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk > :sk',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
-      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' },
+    });
+  });
 
   it('queries a table with gt, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', gt: 0 })
+    let result = TestTable.queryParams('test', { index: 'GSINumber', gt: 0 });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk > :sk',
       ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
       ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
-      IndexName: 'GSINumber'
-    })
-  })
+      IndexName: 'GSINumber',
+    });
+  });
 
   it('queries a table with gte', () => {
-    let result = TestTable.queryParams('test', { gte: 'val' })
+    let result = TestTable.queryParams('test', { gte: 'val' });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk >= :sk',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
-      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' },
+    });
+  });
 
   it('queries a table with gte, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', gte: 0 })
+    let result = TestTable.queryParams('test', { index: 'GSINumber', gte: 0 });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk >= :sk',
       ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
       ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
-      IndexName: 'GSINumber'
-    })
-  })
+      IndexName: 'GSINumber',
+    });
+  });
 
   it('queries a table with beginsWith', () => {
-    let result = TestTable.queryParams('test', { beginsWith: 'val' })
+    let result = TestTable.queryParams('test', { beginsWith: 'val' });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and begins_with(#sk,:sk)',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
-      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' },
+    });
+  });
 
   it('queries a table with beginsWith, even falsy ("")', () => {
-    let result = TestTable.queryParams('test', { beginsWith: '' })
+    let result = TestTable.queryParams('test', { beginsWith: '' });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and begins_with(#sk,:sk)',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
-      ExpressionAttributeValues: { ':pk': 'test', ':sk': '' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': '' },
+    });
+  });
 
   it('queries a table with between', () => {
-    let result = TestTable.queryParams('test', { between: ['val', 'val1'] })
+    let result = TestTable.queryParams('test', { between: ['val', 'val1'] });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk between :sk0 and :sk1',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
-      ExpressionAttributeValues: { ':pk': 'test', ':sk0': 'val', ':sk1': 'val1' }
-    })
-  })
+      ExpressionAttributeValues: { ':pk': 'test', ':sk0': 'val', ':sk1': 'val1' },
+    });
+  });
 
   it('queries a table with between, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', between: [0, 0] })
+    let result = TestTable.queryParams('test', { index: 'GSINumber', between: [0, 0] });
 
     expect(result).toEqual({
       TableName: 'test-table',
       KeyConditionExpression: '#pk = :pk and #sk between :sk0 and :sk1',
       ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
       ExpressionAttributeValues: { ':pk': 'test', ':sk0': 0, ':sk1': 0 },
-      IndexName: 'GSINumber'
-    })
-  })
+      IndexName: 'GSINumber',
+    });
+  });
 
   it('fails on multiple conditions (lt)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', lt: 'val1' })).toThrow(
-      `You can only supply one sortKey condition per query. Already using 'eq'`
-    )
-  })
+      `You can only supply one sortKey condition per query. Already using 'eq'`,
+    );
+  });
 
   it('fails on multiple conditions (lte)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', lte: 'val1' })).toThrow(
-      `You can only supply one sortKey condition per query. Already using 'eq'`
-    )
-  })
+      `You can only supply one sortKey condition per query. Already using 'eq'`,
+    );
+  });
 
   it('fails on multiple conditions (gt)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', gt: 'val1' })).toThrow(
-      `You can only supply one sortKey condition per query. Already using 'eq'`
-    )
-  })
+      `You can only supply one sortKey condition per query. Already using 'eq'`,
+    );
+  });
 
   it('fails on multiple conditions (gte)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', gte: 'val1' })).toThrow(
-      `You can only supply one sortKey condition per query. Already using 'eq'`
-    )
-  })
+      `You can only supply one sortKey condition per query. Already using 'eq'`,
+    );
+  });
 
   it('fails on multiple conditions (beginsWith)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', beginsWith: 'val1' })).toThrow(
-      `You can only supply one sortKey condition per query. Already using 'eq'`
-    )
-  })
+      `You can only supply one sortKey condition per query. Already using 'eq'`,
+    );
+  });
 
   it('fails on multiple conditions (between)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', between: ['val1', 'val2'] })).toThrow(
-      `You can only supply one sortKey condition per query. Already using 'eq'`
-    )
-  })
+      `You can only supply one sortKey condition per query. Already using 'eq'`,
+    );
+  });
 
   it('fails on in valid between condition', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
         // @ts-expect-error
-        { between: ['val1'] }
-      )
-    ).toThrow(`'between' conditions requires an array with two values.`)
-  })
-})
+        { between: ['val1'] },
+      ),
+    ).toThrow(`'between' conditions requires an array with two values.`);
+  });
+
+  it('returns a set property as an array when parse is true', async () => {
+    DocumentClient.query = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({
+        Items: [
+          {
+            pk: 'test-pk',
+            sk: 'test-sk',
+            testSet: DocumentClient.createSet(['test1', 'test2']),
+            _et: 'TestEntity',
+          },
+        ],
+        LastEvaluatedKey: null,
+      }),
+    });
+
+    let result = await TestEntity.query('test-pk');
+    expect(result).toEqual({
+      Items: [
+        {
+          email: 'test-pk',
+          sort: 'test-sk',
+          testSet: ['test1', 'test2'],
+          entity: 'TestEntity',
+        },
+      ],
+      LastEvaluatedKey: null,
+    });
+  });
+
+  it('returns a set property as a DynamoDB set when when parse is false', async () => {
+    DocumentClient.query = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({
+        Items: [
+          {
+            pk: 'test-pk',
+            sk: 'test-sk',
+            testSet: DocumentClient.createSet(['test1', 'test2']),
+            _et: 'TestEntity',
+          },
+        ],
+        LastEvaluatedKey: null,
+      }),
+    });
+
+    let result = await TestEntity.query('test-pk', {
+      parse: false
+    });
+    expect(result).toEqual({
+      Items: [
+        {
+          pk: 'test-pk',
+          sk: 'test-sk',
+          testSet: DocumentClient.createSet(['test1', 'test2']),
+          _et: 'TestEntity',
+        },
+      ],
+      LastEvaluatedKey: null,
+    });
+  });
+});
