@@ -30,8 +30,8 @@ const TestEntity = new Entity({
   name: 'TestEntity',
   autoExecute: false,
   attributes: {
-    email: { type: 'string', partitionKey: true },
-    sort: { type: 'string', sortKey: true },
+    email: { type: 'string', partitionKey: true, hidden: true },
+    sort: { type: 'string', sortKey: true, hidden: true },
     test: 'string',
     testSet: 'set',
   },
@@ -466,12 +466,10 @@ describe('query', () => {
     let result = await TestEntity.query('test-pk');
     expect(result).toEqual({
       Items: [
-        {
-          email: 'test-pk',
-          sort: 'test-sk',
+        expect.objectContaining({
           testSet: ['test1', 'test2'],
           entity: 'TestEntity',
-        },
+        }),
       ],
       LastEvaluatedKey: null,
     });
@@ -502,6 +500,33 @@ describe('query', () => {
           sk: 'test-sk',
           testSet: DocumentClient.createSet(['test1', 'test2']),
           _et: 'TestEntity',
+        },
+      ],
+      LastEvaluatedKey: null,
+    });
+  });
+
+  it('should not return hidden properties', async () => {
+    DocumentClient.query = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({
+        Items: [
+          {
+            pk: 'test-pk',
+            sk: 'test-sk',
+            test: 'some-string',
+            _et: 'TestEntity',
+          },
+        ],
+        LastEvaluatedKey: null,
+      }),
+    });
+
+    let result = await TestEntity.query('test-pk');
+    expect(result).toEqual({
+      Items: [
+        {
+          test: 'some-string',
+          entity: 'TestEntity',
         },
       ],
       LastEvaluatedKey: null,
