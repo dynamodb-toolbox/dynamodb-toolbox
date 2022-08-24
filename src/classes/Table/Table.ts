@@ -32,12 +32,11 @@ import type {
   TransactGetParamsMeta,
   transactGetParamsOptions,
   TransactWriteOptions,
-  transactWriteParamsOptions,
-} from './types';
+  transactWriteParamsOptions
+} from './types'
 
 // Import standard error handler
 import { error, conditionError, hasProperty, If } from '../../lib/utils'
-
 
 // Declare Table class
 class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
@@ -102,6 +101,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     docClient: (DocumentClient & { options?: { convertEmptyValues: boolean } }) | undefined
   ) {
     // If a valid document client
+    // @ts-ignore
     if (docClient && docClient.get && docClient.put && docClient.delete && docClient.update) {
       // Automatically set convertEmptyValues to true, unless false
       if (docClient.options!.convertEmptyValues !== false)
@@ -1065,13 +1065,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       const item = items[i]
 
       // Check item for Table reference and key
-      if (
-        item &&
-        item.Table &&
-        item.Table.Table &&
-        item.Key &&
-        item.Key?.constructor === Object
-      ) {
+      if (item && item.Table && item.Table.Table && item.Key && item.Key?.constructor === Object) {
         // Set the table
         const table = item.Table.name
 
