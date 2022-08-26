@@ -1,6 +1,6 @@
-export type { NeedsKeyCompute } from './$NeedsKeyCompute'
+export type { NeedsKeyCompute } from './NeedsKeyCompute'
 
-export type { KeyInput } from './$KeyInput'
+export type { KeyInput } from './KeyInput'
 
 export type { PutItem } from './PutItem'
 export type { PutItemInput } from './PutItemInput'
