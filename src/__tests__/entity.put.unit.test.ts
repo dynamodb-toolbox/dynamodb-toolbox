@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -184,7 +184,7 @@ describe('put', () => {
     let { Item } = TestEntity3.putParams({
       email: 'test-pk',
       test: 'hello',
-      test2: null,
+      test2: null
     })
     expect(Item.pk).toBe('test-pk')
     expect(Item.test).toBe('hello')
@@ -193,10 +193,12 @@ describe('put', () => {
   })
 
   it('fails with null values for non-optional attributes', () => {
-    expect(()=>TestEntity3.putParams({
-      email: 'test-pk',
-      test: null,
-    })).toThrow(`'test' is a required field`)
+    expect(() =>
+      TestEntity3.putParams({
+        email: 'test-pk',
+        test: null
+      })
+    ).toThrow(`'test' is a required field`)
   })
 
   it('creates item that overrides composite key', () => {
@@ -243,26 +245,32 @@ describe('put', () => {
 
   it('fails when using an undefined schema field and strictSchemaCheck is true', () => {
     expect(() =>
-      TestEntity.putParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error
-        unknown: '?'
-      }, {
-        strictSchemaCheck: true
-      })
+      TestEntity.putParams(
+        {
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          unknown: '?'
+        },
+        {
+          strictSchemaCheck: true
+        }
+      )
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
   it('creates an item when using an undefined schema field and strictSchemaCheck is false', () => {
     expect(() =>
-      TestEntity.putParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        unknown: '?'
-      }, {
-        strictSchemaCheck: false
-      })
+      TestEntity.putParams(
+        {
+          email: 'test-pk',
+          sort: 'test-sk',
+          unknown: '?'
+        },
+        {
+          strictSchemaCheck: false
+        }
+      )
     ).not.toThrow()
   })
 
@@ -273,7 +281,7 @@ describe('put', () => {
     )
 
     expect(Item.unknown).toBeUndefined()
-  });
+  })
 
   it('fails when invalid string provided with no coercion', () => {
     expect(() =>
