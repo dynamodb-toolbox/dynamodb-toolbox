@@ -5,30 +5,38 @@ import {
   UpdateItemCommandOutput
 } from '@aws-sdk/client-dynamodb'
 
-import { EntityV2, Input, Output, parse, validateInput, validateSavedAs } from 'v1'
+import {
+  EntityV2,
+  UpdateItemInput,
+  validateUpdateItemInput,
+  FormattedItem,
+  format,
+  validateSavedItem
+} from 'v1'
 
 const hasNoAttributes = (
   commandOutput: UpdateItemCommandOutput
-): commandOutput is O.Merge<
-  Omit<UpdateItemCommandOutput, 'Attributes'>,
-  { Attributes?: undefined }
-> => commandOutput?.Attributes === undefined
+): commandOutput is Omit<UpdateItemCommandOutput, 'Attributes'> & { Attributes?: undefined } =>
+  commandOutput?.Attributes === undefined
 
 /**
  * Run an UPDATE Item command for a given Entity
  *
  * @param entity Entity
- * @param input Input
+ * @param updateItemInput Input
  * @return UpdateItemCommandOutput
  */
 export const updateItem = async <E extends EntityV2>(
   entity: E,
-  input: Input<E>
+  updateItemInput: UpdateItemInput<E>
 ): Promise<
-  O.Merge<Omit<UpdateItemCommandOutput, 'Attributes'>, { Attributes?: Output<E> | undefined }>
+  O.Merge<
+    Omit<UpdateItemCommandOutput, 'Attributes'>,
+    { Attributes?: FormattedItem<E> | undefined }
+  >
 > => {
   const commandOutput = await entity.table.dynamoDbClient.send(
-    new UpdateItemCommand(updateItemParams(entity, input))
+    new UpdateItemCommand(updateItemParams(entity, updateItemInput))
   )
 
   if (hasNoAttributes(commandOutput)) {
@@ -41,35 +49,35 @@ export const updateItem = async <E extends EntityV2>(
     'Attributes'
   >
 
-  if (!validateSavedAs(entity, attributes)) {
+  if (!validateSavedItem(entity, attributes)) {
     throw new Error()
   }
 
-  const parsedItem = parse(entity, attributes)
+  const formattedItem = format(entity, attributes)
 
-  return { Attributes: parsedItem, ...restCommandOutput }
+  return { Attributes: formattedItem, ...restCommandOutput }
 }
 
 /**
  * Builds an UPDATE Item command input for a given Entity
  *
  * @param entity Entity
- * @param input Input
+ * @param updateItemInput Input
  * @return UpdateItemCommandInput
  */
 export const updateItemParams = <E extends EntityV2>(
   entity: E,
-  input: Input<E>
+  updateItemInput: UpdateItemInput<E>
 ): UpdateItemCommandInput => {
   const { name: tableName } = entity.table
 
-  if (!validateInput(entity, input)) {
+  if (!validateUpdateItemInput(entity, updateItemInput)) {
     throw new Error()
   }
 
   // TODO: Recursively add initial defaults
-  const Item = entity.computeDefaults(input as any)
-  const Key = entity.computeKey(input)
+  const Item = entity.computeDefaults(updateItemInput as any)
+  const Key = entity.computeKey(updateItemInput)
 
   return {
     TableName: tableName,

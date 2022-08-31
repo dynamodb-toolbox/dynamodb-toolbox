@@ -1,13 +1,7 @@
-import {
-  Item,
-  ItemPreComputeKey,
-  HasComputedDefaults,
-  PreComputeDefaults,
-  PostComputeDefaults
-} from 'v1/item'
+import { Item, HasComputedDefaults } from 'v1/item'
 import { TableV2, PrimaryKey } from 'v1/table'
 
-import type { NeedsKeyCompute } from './generics'
+import type { NeedsKeyCompute, PutItem, PutItemInput, KeyInput } from './generics'
 
 export class EntityV2<
   N extends string = string,
@@ -18,12 +12,10 @@ export class EntityV2<
   public table: T
   public item: I
   // any is needed for contravariance
-  computeKey: (preComputeKey: Item extends I ? any : ItemPreComputeKey<I>) => PrimaryKey<T>
+  computeKey: (keyInput: Item extends I ? any : KeyInput<I>) => PrimaryKey<T>
   // TODO: Split in putComputeDefaults & updateComputeDefaults
-  computeDefaults: (
-    // any is needed for contravariance
-    preComputeDefaults: Item extends I ? any : PreComputeDefaults<I>
-  ) => PostComputeDefaults<I>
+  // any is needed for contravariance
+  computeDefaults: (putItemInput: Item extends I ? any : PutItemInput<I, true>) => PutItem<I>
 
   /**
    * Define an Entity for a given table
@@ -46,10 +38,10 @@ export class EntityV2<
     table: T
     item: I
   } & (NeedsKeyCompute<I, T> extends true
-    ? { computeKey: (preComputeKey: ItemPreComputeKey<I>) => PrimaryKey<T> }
+    ? { computeKey: (keyInput: KeyInput<I>) => PrimaryKey<T> }
     : { computeKey?: undefined }) &
     (HasComputedDefaults<I> extends true
-      ? { computeDefaults: (input: PreComputeDefaults<I>) => PostComputeDefaults<I> }
+      ? { computeDefaults: (input: PutItemInput<I, true>) => PutItem<I> }
       : { computeDefaults?: undefined })) {
     this.name = name
     this.table = table
@@ -60,14 +52,14 @@ export class EntityV2<
     if (computeKey) {
       this.computeKey = computeKey
     } else {
-      this.computeKey = ((preComputeKey: Record<string, any>) => {
-        const partitionKeyValue = preComputeKey[this.table.partitionKey.name]
+      this.computeKey = ((keyInput: Record<string, any>) => {
+        const partitionKeyValue = keyInput[this.table.partitionKey.name]
 
         if (!this.table.sortKey?.name) {
           return { [this.table.partitionKey.name]: partitionKeyValue }
         }
 
-        const sortKeyValue = preComputeKey[this.table.sortKey.name]
+        const sortKeyValue = keyInput[this.table.sortKey.name]
 
         return {
           [this.table.partitionKey.name]: partitionKeyValue,
@@ -79,8 +71,7 @@ export class EntityV2<
     if (computeDefaults) {
       this.computeDefaults = computeDefaults
     } else {
-      this.computeDefaults = ((preComputeDefaults: PreComputeDefaults<I>) =>
-        preComputeDefaults) as any
+      this.computeDefaults = ((putItemInput: PutItemInput<I, true>) => putItemInput) as any
     }
   }
 }
