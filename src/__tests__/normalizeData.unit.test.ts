@@ -1,6 +1,6 @@
 import normalizeData from '../lib/normalizeData'
 
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 // Import Table and Entity classes
 import Table from '../classes/Table'

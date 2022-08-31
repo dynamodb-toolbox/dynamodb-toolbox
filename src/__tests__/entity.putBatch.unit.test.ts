@@ -1,11 +1,11 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
-  DocumentClient,
+  DocumentClient
 })
 
 const TestEntity = new Entity({
@@ -14,9 +14,9 @@ const TestEntity = new Entity({
   attributes: {
     email: { type: 'string', partitionKey: true },
     sort: { type: 'string', sortKey: true },
-    test_string: { type: 'string' },
+    test_string: { type: 'string' }
   },
-  table: TestTable,
+  table: TestTable
 })
 
 describe('putBatch', () => {
@@ -26,33 +26,39 @@ describe('putBatch', () => {
         email: 'test-pk',
         sort: 'test-sk',
         // @ts-expect-error
-        unknown: '?',
-      }),
+        unknown: '?'
+      })
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
   it('fails when using an undefined schema field and strictSchemaCheck is true', () => {
     expect(() =>
-      TestEntity.putBatch({
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error
-        unknown: '?',
-      }, {
-        strictSchemaCheck: true,
-      }),
+      TestEntity.putBatch(
+        {
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          unknown: '?'
+        },
+        {
+          strictSchemaCheck: true
+        }
+      )
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
   it('creates an item when using an undefined schema field and strictSchemaCheck is false', () => {
     expect(() =>
-      TestEntity.putBatch({
-        email: 'test-pk',
-        sort: 'test-sk',
-        unknown: '?',
-      }, {
-        strictSchemaCheck: false,
-      }),
+      TestEntity.putBatch(
+        {
+          email: 'test-pk',
+          sort: 'test-sk',
+          unknown: '?'
+        },
+        {
+          strictSchemaCheck: false
+        }
+      )
     ).not.toThrow()
   })
 
@@ -60,7 +66,7 @@ describe('putBatch', () => {
     const result = TestEntity.putBatch({
       email: 'test-pk',
       sort: 'test-sk',
-      test_string: 'test string',
+      test_string: 'test string'
     })
 
     expect(result).toEqual({
@@ -69,7 +75,7 @@ describe('putBatch', () => {
           Item: expect.objectContaining({
             pk: 'test-pk',
             sk: 'test-sk',
-            test_string: 'test string',
+            test_string: 'test string'
           })
         }
       }

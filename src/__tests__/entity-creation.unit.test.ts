@@ -1,7 +1,7 @@
 // Require Table and Entity classes
 import '../classes/Table'
 import Entity from '../classes/Entity'
-import './bootstrap-tests'
+import './bootstrap.test'
 
 describe('Entity creation', () => {
   it('creates basic entity w/ defaults', async () => {
