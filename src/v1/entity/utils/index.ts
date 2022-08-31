@@ -1,4 +1,7 @@
-export { parse } from './parser'
 export { validateKeyInput } from './validateKeyInput'
-export { validateSavedAs } from './validateSavedAs'
-export { validateInput } from './validateInput'
+
+export { validatePutItemInput } from './validatePutItemInput'
+export { validateUpdateItemInput } from './validateUpdateItemInput'
+
+export { validateSavedItem } from './validateSavedItem'
+export { format } from './formatter'

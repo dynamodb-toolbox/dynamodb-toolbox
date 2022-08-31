@@ -1,11 +1,11 @@
 import type { O } from 'ts-toolbelt'
 import { GetItemCommand, GetItemCommandInput, GetItemCommandOutput } from '@aws-sdk/client-dynamodb'
 
-import { EntityV2, KeyInput, Output, parse, validateKeyInput, validateSavedAs } from 'v1'
+import { EntityV2, KeyInput, FormattedItem, format, validateKeyInput, validateSavedItem } from 'v1'
 
 const hasNoItem = (
   commandOutput: GetItemCommandOutput
-): commandOutput is O.Merge<Omit<GetItemCommandOutput, 'Item'>, { Item?: undefined }> =>
+): commandOutput is Omit<GetItemCommandOutput, 'Item'> & { Item?: undefined } =>
   commandOutput?.Item === undefined
 
 /**
@@ -18,7 +18,9 @@ const hasNoItem = (
 export const getItem = async <E extends EntityV2>(
   entity: E,
   keyInput: KeyInput<E>
-): Promise<O.Merge<Omit<GetItemCommandOutput, 'Item'>, { Item?: Output<E> | undefined }>> => {
+): Promise<
+  O.Merge<Omit<GetItemCommandOutput, 'Item'>, { Item?: FormattedItem<E> | undefined }>
+> => {
   const commandOutput = await entity.table.dynamoDbClient.send(
     new GetItemCommand(getItemParams(entity, keyInput))
   )
@@ -33,13 +35,13 @@ export const getItem = async <E extends EntityV2>(
     'Item'
   >
 
-  if (!validateSavedAs(entity, item)) {
+  if (!validateSavedItem(entity, item)) {
     throw new Error()
   }
 
-  const parsedItem = parse(entity, item)
+  const formattedItem = format(entity, item)
 
-  return { Item: parsedItem, ...restCommandOutput }
+  return { Item: formattedItem, ...restCommandOutput }
 }
 
 /**
