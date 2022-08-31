@@ -1,7 +1,7 @@
 import type { EntityV2 } from '../class'
-import type { SavedAs } from '../generics'
+import type { SavedItem } from '../generics'
 
-type SavedAsValidator = <E extends EntityV2, S extends Record<string, any> = SavedAs<E>>(
+type SavedItemValidator = <E extends EntityV2, S extends Record<string, any> = SavedItem<E>>(
   entity: E,
   savedItem: Record<string, any>
 ) => savedItem is S
@@ -13,9 +13,9 @@ type SavedAsValidator = <E extends EntityV2, S extends Record<string, any> = Sav
  * @param savedItem Saved Item
  * @return Boolean
  */
-export const validateSavedAs: SavedAsValidator = <
+export const validateSavedItem: SavedItemValidator = <
   E extends EntityV2,
-  S extends Record<string, any> = SavedAs<E>
+  S extends Record<string, any> = SavedItem<E>
 >(
   entity: E,
   savedItem: Record<string, any>
