@@ -961,13 +961,13 @@ class Entity<
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
-     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
+    const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
-    // Merge defaults
+    // Merge defaults if not partial update
     const data = normalizeData(this.DocumentClient)(
       schema.attributes,
       linked,
-      Object.assign({}, defaults, item),
+      Object.assign({}, options.isPartialUpdate  ? {} : defaults, item),
       shouldFilterUnmappedFields
     )
 
@@ -977,7 +977,8 @@ class Entity<
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
       metrics, // ReturnItemCollectionMetrics: (size or none)
       returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
-      strictSchemaCheck, // Strict Schema Check (true or false)
+      strictSchemaCheck, // Strict Schema Check (true or false),
+      isPartialUpdate, // Partial Update (true, false)
       ..._args
     } = options
 

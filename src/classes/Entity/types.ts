@@ -426,7 +426,7 @@ export type $UpdateOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
   StrictSchemaCheck extends boolean | undefined = true
-> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck?: StrictSchemaCheck }>
+> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck?: StrictSchemaCheck; isPartialUpdate?: boolean }>
 
 export interface UpdateCustomParameters {
   SET: string[]
