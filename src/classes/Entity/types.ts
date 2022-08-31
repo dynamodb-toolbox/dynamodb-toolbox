@@ -466,6 +466,13 @@ export type UpdateItem<
             | Item[A.Cast<attr, keyof Item>]
             | { $delete?: string[]; $add?: any; $append?: any[]; $prepend?: any[] }
         } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
+      & {
+        [a in Attributes['shown']]?:
+        | null
+        | If<A.Equals<Item[A.Cast<a, keyof Item>], 'set'>, {
+          $add: FromDynamoData<a['setType']>[],
+    }, null>
+    }
     >
   ]
   | If<A.Equals<StrictSchemaCheck, true>, never, any>
