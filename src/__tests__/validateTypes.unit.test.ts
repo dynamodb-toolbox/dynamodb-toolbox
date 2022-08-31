@@ -1,6 +1,6 @@
 import validateTypes from '../lib/validateTypes'
 
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 describe('validateTypes', () => {
   it('validates string', async () => {
