@@ -1,6 +1,6 @@
 import type { A, O, U } from 'ts-toolbelt'
 
-import type { Item } from '../interface'
+import type { Item } from 'v1/item/interface'
 import type {
   MappedProperties,
   Property,
@@ -12,7 +12,10 @@ import type {
   AtLeastOnce,
   OnlyOnce,
   Always
-} from '../typers'
+} from 'v1/item/typers'
+import type { PrimaryKey } from 'v1/table'
+
+import type { EntityV2 } from '../class'
 
 /**
  * Swaps the key of a properties dictionnary for their "savedAs" values if they exist
@@ -34,14 +37,16 @@ type SwapWithSavedAs<O extends MappedProperties> = A.Compute<
   >
 >
 
-type ItemRecSavedAs<
+type RecSavedItem<
   P extends Mapped | Item,
   S extends MappedProperties = SwapWithSavedAs<P['_properties']>
 > = O.Required<
-  O.Partial<{
-    // Keep all properties
-    [key in keyof S]: ItemSavedAs<S[key]>
-  }>,
+  O.Partial<
+    {
+      // Keep all properties
+      [key in keyof S]: SavedItem<S[key]>
+    }
+  >,
   // Enforce Required properties
   | O.SelectKeys<S, { _required: AtLeastOnce | OnlyOnce | Always }>
   // Enforce properties that have defined default (initial or computed)
@@ -51,17 +56,19 @@ type ItemRecSavedAs<
   (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
 
 /**
- * Shape of saved value in DynamoDB for a given Item or Property (recursive)
+ * Shape of saved item in DynamoDB for a given Entity, Item or Property
  *
- * @param I Item / Property
- * @return Type
+ * @param E Entity | Item | Property
+ * @return Object
  */
-export type ItemSavedAs<P extends Item | Property> = P extends Any
+export type SavedItem<E extends EntityV2 | Item | Property> = E extends Any
   ? ResolvedProperty
-  : P extends Leaf
-  ? Exclude<P['_resolved'], undefined>
-  : P extends List
-  ? ItemSavedAs<P['_elements']>[]
-  : P extends Mapped | Item
-  ? ItemRecSavedAs<P>
+  : E extends Leaf
+  ? NonNullable<E['_resolved']>
+  : E extends List
+  ? SavedItem<E['_elements']>[]
+  : E extends Mapped | Item
+  ? RecSavedItem<E>
+  : E extends EntityV2
+  ? SavedItem<E['item']> & PrimaryKey<E['table']>
   : never
