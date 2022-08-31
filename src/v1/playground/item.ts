@@ -11,14 +11,13 @@ import {
   // constants
   ComputedDefault,
   // generics
-  ItemInput,
-  ItemOutput,
-  PreComputeDefaults,
-  PostComputeDefaults,
-  ItemSavedAs,
-  ItemKeyInput,
+  PutItemInput,
+  PutItem,
+  FormattedItem,
+  SavedItem,
+  KeyInput,
   HasComputedDefaults
-} from 'v1/item'
+} from 'v1'
 
 const playgroundItem1 = item({
   reqStr: string().required(),
@@ -46,8 +45,8 @@ const playgroundItem1 = item({
   hiddenList: list(string().required()).hidden()
 })
 
-type PlaygroundItem1Input = ItemInput<typeof playgroundItem1>
-type PlaygroundItem1Output = ItemOutput<typeof playgroundItem1>
+type PlaygroundItem1PutItemInput = PutItemInput<typeof playgroundItem1>
+type PlaygroundItem1FormattedItem = FormattedItem<typeof playgroundItem1>
 
 const allCasesOfProps = {
   optProp: string(),
@@ -64,11 +63,11 @@ const playgroundItem2 = item({
   list: list(map(allCasesOfProps).required()).required()
 })
 
-type PlaygroundItem2Input = ItemInput<typeof playgroundItem2>
-type PlaygroundItem2Output = ItemOutput<typeof playgroundItem2>
+type PlaygroundItem2FormattedItem = FormattedItem<typeof playgroundItem2>
 type PlaygroundItem2HasComputedDefault = HasComputedDefaults<typeof playgroundItem2>
-type PlaygroundItem2PreComputeDefaults = PreComputeDefaults<typeof playgroundItem2>
-type PlaygroundItem2PostComputeDefaults = PostComputeDefaults<typeof playgroundItem2>
+type PlaygroundItem2PutItem = PutItem<typeof playgroundItem2>
+type PlaygroundItem2PutItemInput = PutItemInput<typeof playgroundItem2>
+type PlaygroundItem2PutItemInputWithDefaults = PutItemInput<typeof playgroundItem2, true>
 
 const playgroundItem3 = item({
   keyEl: string().key().required(),
@@ -83,6 +82,6 @@ const playgroundItem3 = item({
   anyvalue: any().required()
 })
 
-type PlaygroundItem3SavedAs = ItemSavedAs<typeof playgroundItem3>
-type PlaygroundItem3KeyInput = ItemKeyInput<typeof playgroundItem3>
+type PlaygroundItem3SavedItem = SavedItem<typeof playgroundItem3>
+type PlaygroundItem3KeyInput = KeyInput<typeof playgroundItem3>
 type PlaygroundItem3HasComputedDefault = HasComputedDefaults<typeof playgroundItem3>
