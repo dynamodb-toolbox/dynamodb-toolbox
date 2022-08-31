@@ -1,5 +1,5 @@
-import { Always, ComputedDefault, map, number, string, item, PostComputeDefaults } from 'v1/item'
-import { EntityV2, SavedAs, Input, Output, KeyInput } from 'v1/entity'
+import { Always, ComputedDefault, map, number, string, item } from 'v1/item'
+import { EntityV2, PutItemInput, SavedItem, FormattedItem, KeyInput, PutItem } from 'v1/entity'
 
 import { MyTable } from './table'
 
@@ -20,8 +20,8 @@ export const UserEntity = new EntityV2({
   computeDefaults: item => ({ ...item, somethingComputed: 'something' })
 })
 
-type UserInput = Input<typeof UserEntity>
-type SavedUser = SavedAs<typeof UserEntity>
-type UserOutput = Output<typeof UserEntity>
+type UserPutItemInput = PutItemInput<typeof UserEntity>
+type SavedUser = SavedItem<typeof UserEntity>
+type UserOutput = FormattedItem<typeof UserEntity>
 type UserInputKeys = KeyInput<typeof UserEntity>
-type UserPostComputeDefault = PostComputeDefaults<typeof UserEntity['item']>
+type UserPutItem = PutItem<typeof UserEntity['item']>
