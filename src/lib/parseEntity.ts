@@ -7,7 +7,12 @@
 // Import libraries & types
 import parseEntityAttributes from './parseEntityAttributes'
 import { TableDef } from '../classes/Table'
-import { AttributeDefinitions, EntityConstructor, Readonly } from '../classes/Entity'
+import {
+  AttributeDefinitions,
+  EntityConstructor,
+  PureAttributeDefinition,
+  Readonly,
+} from "../classes/Entity";
 import { error } from './utils'
 
 export interface TrackingInfo {
@@ -27,7 +32,26 @@ export interface TrackingInfoKeys {
   sortKey?: string
 }
 
-export type ParsedEntity = ReturnType<typeof parseEntity>
+export type ParsedEntity<
+  EntityTable extends TableDef | undefined = TableDef | undefined,
+  Name extends string = string,
+  AutoExecute extends boolean = boolean,
+  AutoParse extends boolean = boolean,
+  TypeAlias extends string = string
+> = {
+  name: Name;
+  schema: {
+    keys: any;
+    attributes: Record<string, PureAttributeDefinition>;
+  };
+  _etAlias: TypeAlias;
+  autoParse: AutoParse | undefined;
+  autoExecute: AutoExecute | undefined;
+  linked: Linked;
+  defaults: any;
+  required: any;
+  table?: EntityTable | undefined;
+};
 
 // Parse entity
 export function parseEntity<
@@ -52,7 +76,7 @@ export function parseEntity<
     TypeAlias,
     ReadonlyAttributeDefinitions
   >
-) {
+): ParsedEntity<EntityTable, Name, AutoExecute, AutoParse, TypeAlias> {
   let {
     name,
     timestamps,
