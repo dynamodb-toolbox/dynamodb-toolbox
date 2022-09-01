@@ -40,6 +40,8 @@ jobs:
         run: npm ci --legacy-peer-deps
       - name: Check types
         run: npm run check-types
+      - name: Test types
+        run: npm run test-types
 
   lint:
     name: 'ESLint'
