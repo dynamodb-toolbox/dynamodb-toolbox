@@ -1,4 +1,3 @@
-import { AtLeastOnce } from '../constants/requiredOptions'
 import { errorMessagePathSuffix, validateProperty } from '../validate'
 
 import type { List } from './interface'
@@ -64,7 +63,7 @@ export const validateList = <L extends List>(
     _default: elementsDefault
   } = elements
 
-  if (elementsRequired !== AtLeastOnce) {
+  if (elementsRequired !== 'atLeastOnce') {
     throw new OptionalListElementsError({ path })
   }
 
