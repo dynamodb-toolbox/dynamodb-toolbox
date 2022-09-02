@@ -1,5 +1,6 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
+import type { CommonState } from '../common/interface'
 import type { AnyDefaultValue } from './types'
 
 interface AnyState<
@@ -8,11 +9,7 @@ interface AnyState<
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
   D extends AnyDefaultValue = AnyDefaultValue
-> {
-  _required: R
-  _hidden: H
-  _key: K
-  _savedAs: S
+> extends CommonState<R, H, K, S> {
   _default: D
 }
 
