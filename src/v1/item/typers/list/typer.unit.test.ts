@@ -95,7 +95,7 @@ describe('list', () => {
     expect(lst).toMatchObject({
       _type: 'list',
       _elements: str,
-      _required: Never,
+      _required: 'never',
       _key: false,
       _savedAs: undefined,
       _hidden: false
@@ -103,10 +103,10 @@ describe('list', () => {
   })
 
   it('returns required list (option)', () => {
-    const lstAtLeastOnce = list(str, { required: AtLeastOnce })
-    const lstOnlyOnce = list(str, { required: OnlyOnce })
-    const lstAlways = list(str, { required: Always })
-    const lstNever = list(str, { required: Never })
+    const lstAtLeastOnce = list(str, { required: 'atLeastOnce' })
+    const lstOnlyOnce = list(str, { required: 'onlyOnce' })
+    const lstAlways = list(str, { required: 'always' })
+    const lstNever = list(str, { required: 'never' })
 
     const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -117,17 +117,17 @@ describe('list', () => {
     const assertNever: A.Contains<typeof lstNever, { _required: Never }> = 1
     assertNever
 
-    expect(lstAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
-    expect(lstOnlyOnce).toMatchObject({ _required: OnlyOnce })
-    expect(lstAlways).toMatchObject({ _required: Always })
-    expect(lstNever).toMatchObject({ _required: Never })
+    expect(lstAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
+    expect(lstOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
+    expect(lstAlways).toMatchObject({ _required: 'always' })
+    expect(lstNever).toMatchObject({ _required: 'never' })
   })
 
   it('returns required list (method)', () => {
     const lstAtLeastOnce = list(str).required()
-    const lstOnlyOnce = list(str).required(OnlyOnce)
-    const lstAlways = list(str).required(Always)
-    const lstNever = list(str).required(Never)
+    const lstOnlyOnce = list(str).required('onlyOnce')
+    const lstAlways = list(str).required('always')
+    const lstNever = list(str).required('never')
 
     const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -138,10 +138,10 @@ describe('list', () => {
     const assertNever: A.Contains<typeof lstNever, { _required: Never }> = 1
     assertNever
 
-    expect(lstAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
-    expect(lstOnlyOnce).toMatchObject({ _required: OnlyOnce })
-    expect(lstAlways).toMatchObject({ _required: Always })
-    expect(lstNever).toMatchObject({ _required: Never })
+    expect(lstAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
+    expect(lstOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
+    expect(lstAlways).toMatchObject({ _required: 'always' })
+    expect(lstNever).toMatchObject({ _required: 'never' })
   })
 
   it('returns hidden list (option)', () => {
@@ -246,13 +246,13 @@ describe('list', () => {
       _elements: {
         _type: 'list',
         _elements: str,
-        _required: AtLeastOnce,
+        _required: 'atLeastOnce',
         _hidden: false,
         _key: false,
         _savedAs: undefined,
         _default: undefined
       },
-      _required: Never,
+      _required: 'never',
       _hidden: false,
       _key: false,
       _savedAs: undefined,

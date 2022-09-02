@@ -13,10 +13,10 @@ export interface MappedOptions<
 > {
   /**
    * Tag a property as required. Possible values are:
-   * - `AtLeastOnce` _(default)_: Required in PUTs, optional in UPDATEs
-   * - `Never`: Optional in PUTs and UPDATEs
-   * - `Always`: Required in PUTs and UPDATEs
-   * - `OnlyOnce` (default): Required in PUTs, denied in UPDATEs
+   * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
+   * - `"never"`: Optional in PUTs and UPDATEs
+   * - `"always"`: Required in PUTs and UPDATEs
+   * - `"onlyOnce"`: Required in PUTs, denied in UPDATEs
    */
   required: R
   /**
@@ -41,12 +41,18 @@ export interface MappedOptions<
   default: D
 }
 
-export const mappedDefaultOptions: MappedOptions<Never, false, false, false, undefined, undefined> =
-  {
-    required: Never,
-    hidden: false,
-    key: false,
-    open: false,
-    savedAs: undefined,
-    default: undefined
-  }
+export const mappedDefaultOptions: MappedOptions<
+  Never,
+  false,
+  false,
+  false,
+  undefined,
+  undefined
+> = {
+  required: 'never',
+  hidden: false,
+  key: false,
+  open: false,
+  savedAs: undefined,
+  default: undefined
+}

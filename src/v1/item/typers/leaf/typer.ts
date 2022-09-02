@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
+import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
 
 import type { Leaf } from './interface'
 import { LeafOptions, leafDefaultOptions } from './options'
@@ -40,7 +40,7 @@ const leaf = <
     _savedAs,
     _default,
     _enum,
-    required: <$R extends RequiredOption = AtLeastOnce>(nextRequired = AtLeastOnce as $R) =>
+    required: <$R extends RequiredOption = AtLeastOnce>(nextRequired = 'atLeastOnce' as $R) =>
       leaf({ ...options, required: nextRequired }),
     hidden: () => leaf({ ...options, hidden: true }),
     key: () => leaf({ ...options, key: true }),
