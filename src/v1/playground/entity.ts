@@ -1,4 +1,4 @@
-import { Always, ComputedDefault, map, number, string, item } from 'v1/item'
+import { ComputedDefault, map, number, string, item } from 'v1/item'
 import { EntityV2, PutItemInput, SavedItem, FormattedItem, KeyInput, PutItem } from 'v1/entity'
 
 import { MyTable } from './table'
@@ -7,8 +7,8 @@ export const UserEntity = new EntityV2({
   name: 'User',
   table: MyTable,
   item: item({
-    userId: string().key().required(Always),
-    age: number().key().required(Always).enum(41, 42).default(42).savedAs('sk'),
+    userId: string().key().required('always'),
+    age: number().key().required('always').enum(41, 42).default(42).savedAs('sk'),
     firstName: string().required().savedAs('fn'),
     lastName: string().required().savedAs('ln'),
     parents: map({

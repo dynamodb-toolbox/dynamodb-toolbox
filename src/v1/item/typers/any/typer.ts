@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
+import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
 
 import type { AnyDefaultValue } from './types'
 import type { Any } from './interface'
@@ -47,7 +47,7 @@ export const any: AnyTyper = <
     _savedAs,
     _default,
     required: <$R extends RequiredOption = AtLeastOnce>(
-      nextRequired: $R = AtLeastOnce as unknown as $R
+      nextRequired: $R = ('atLeastOnce' as unknown) as $R
     ) => any({ ...appliedOptions, required: nextRequired }),
     hidden: () => any({ ...appliedOptions, hidden: true }),
     key: () => any({ ...appliedOptions, key: true }),
