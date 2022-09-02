@@ -23,7 +23,7 @@ describe('any', () => {
 
     expect(anyInstance).toMatchObject({
       _type: 'any',
-      _required: Never,
+      _required: 'never',
       _hidden: false,
       _savedAs: undefined,
       _key: false,
@@ -32,10 +32,10 @@ describe('any', () => {
   })
 
   it('returns required any (option)', () => {
-    const anyAtLeastOnce = any({ required: AtLeastOnce })
-    const anyOnlyOnce = any({ required: OnlyOnce })
-    const anyAlways = any({ required: Always })
-    const anyNever = any({ required: Never })
+    const anyAtLeastOnce = any({ required: 'atLeastOnce' })
+    const anyOnlyOnce = any({ required: 'onlyOnce' })
+    const anyAlways = any({ required: 'always' })
+    const anyNever = any({ required: 'never' })
 
     const assertAtLeastOnce: A.Contains<typeof anyAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -46,17 +46,17 @@ describe('any', () => {
     const assertNever: A.Contains<typeof anyNever, { _required: Never }> = 1
     assertNever
 
-    expect(anyAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
-    expect(anyOnlyOnce).toMatchObject({ _required: OnlyOnce })
-    expect(anyAlways).toMatchObject({ _required: Always })
-    expect(anyNever).toMatchObject({ _required: Never })
+    expect(anyAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
+    expect(anyOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
+    expect(anyAlways).toMatchObject({ _required: 'always' })
+    expect(anyNever).toMatchObject({ _required: 'never' })
   })
 
   it('returns required any (method)', () => {
     const anyAtLeastOnce = any().required()
-    const anyOnlyOnce = any().required(OnlyOnce)
-    const anyAlways = any().required(Always)
-    const anyNever = any().required(Never)
+    const anyOnlyOnce = any().required('onlyOnce')
+    const anyAlways = any().required('always')
+    const anyNever = any().required('never')
 
     const assertAtLeastOnce: A.Contains<typeof anyAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -67,10 +67,10 @@ describe('any', () => {
     const assertNever: A.Contains<typeof anyNever, { _required: Never }> = 1
     assertNever
 
-    expect(anyAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
-    expect(anyOnlyOnce).toMatchObject({ _required: OnlyOnce })
-    expect(anyAlways).toMatchObject({ _required: Always })
-    expect(anyNever).toMatchObject({ _required: Never })
+    expect(anyAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
+    expect(anyOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
+    expect(anyAlways).toMatchObject({ _required: 'always' })
+    expect(anyNever).toMatchObject({ _required: 'never' })
   })
 
   it('returns hidden any (option)', () => {
