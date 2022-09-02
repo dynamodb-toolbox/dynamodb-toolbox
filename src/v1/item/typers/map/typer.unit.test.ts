@@ -30,7 +30,7 @@ describe('map', () => {
     expect(mapped).toMatchObject({
       _type: 'map',
       _properties: { str },
-      _required: Never,
+      _required: 'never',
       _key: false,
       _savedAs: undefined,
       _hidden: false
@@ -38,10 +38,10 @@ describe('map', () => {
   })
 
   it('returns required map (option)', () => {
-    const mappedAtLeastOnce = map({ str }, { required: AtLeastOnce })
-    const mappedOnlyOnce = map({ str }, { required: OnlyOnce })
-    const mappedAlways = map({ str }, { required: Always })
-    const mappedNever = map({ str }, { required: Never })
+    const mappedAtLeastOnce = map({ str }, { required: 'atLeastOnce' })
+    const mappedOnlyOnce = map({ str }, { required: 'onlyOnce' })
+    const mappedAlways = map({ str }, { required: 'always' })
+    const mappedNever = map({ str }, { required: 'never' })
 
     const assertMappedAtLeastOnce: A.Contains<
       typeof mappedAtLeastOnce,
@@ -55,17 +55,17 @@ describe('map', () => {
     const assertMappedNever: A.Contains<typeof mappedNever, { _required: Never }> = 1
     assertMappedNever
 
-    expect(mappedAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
-    expect(mappedOnlyOnce).toMatchObject({ _required: OnlyOnce })
-    expect(mappedAlways).toMatchObject({ _required: Always })
-    expect(mappedNever).toMatchObject({ _required: Never })
+    expect(mappedAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
+    expect(mappedOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
+    expect(mappedAlways).toMatchObject({ _required: 'always' })
+    expect(mappedNever).toMatchObject({ _required: 'never' })
   })
 
   it('returns required map (method)', () => {
     const mappedAtLeastOnce = map({ str }).required()
-    const mappedOnlyOnce = map({ str }).required(OnlyOnce)
-    const mappedAlways = map({ str }).required(Always)
-    const mappedNever = map({ str }).required(Never)
+    const mappedOnlyOnce = map({ str }).required('onlyOnce')
+    const mappedAlways = map({ str }).required('always')
+    const mappedNever = map({ str }).required('never')
 
     const assertMappedAtLeastOnce: A.Contains<
       typeof mappedAtLeastOnce,
@@ -79,10 +79,10 @@ describe('map', () => {
     const assertMappedNever: A.Contains<typeof mappedNever, { _required: Never }> = 1
     assertMappedNever
 
-    expect(mappedAtLeastOnce).toMatchObject({ _required: AtLeastOnce })
-    expect(mappedOnlyOnce).toMatchObject({ _required: OnlyOnce })
-    expect(mappedAlways).toMatchObject({ _required: Always })
-    expect(mappedNever).toMatchObject({ _required: Never })
+    expect(mappedAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
+    expect(mappedOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
+    expect(mappedAlways).toMatchObject({ _required: 'always' })
+    expect(mappedNever).toMatchObject({ _required: 'never' })
   })
 
   it('returns hidden map (option)', () => {
@@ -233,21 +233,21 @@ describe('map', () => {
               _properties: {
                 str
               },
-              _required: Never,
+              _required: 'never',
               _hidden: true,
               _key: false,
               _savedAs: undefined,
               _default: undefined
             }
           },
-          _required: AtLeastOnce,
+          _required: 'atLeastOnce',
           _hidden: false,
           _key: false,
           _savedAs: undefined,
           _default: undefined
         }
       },
-      _required: Never,
+      _required: 'never',
       _hidden: false,
       _key: false,
       _savedAs: undefined,
