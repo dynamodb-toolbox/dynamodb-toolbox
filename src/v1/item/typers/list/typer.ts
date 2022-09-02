@@ -58,7 +58,7 @@ export const list: ListTyper = <
     _key,
     _savedAs,
     _default,
-    required: <$R extends RequiredOption = AtLeastOnce>(nextRequired: $R = AtLeastOnce as $R) =>
+    required: <$R extends RequiredOption = AtLeastOnce>(nextRequired: $R = 'atLeastOnce' as $R) =>
       list(elements, { ...appliedOptions, required: nextRequired }),
     hidden: () => list(elements, { ...appliedOptions, hidden: true }),
     key: () => list(elements, { ...appliedOptions, key: true }),

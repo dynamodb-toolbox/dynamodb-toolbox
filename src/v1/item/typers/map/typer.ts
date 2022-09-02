@@ -57,7 +57,7 @@ export const map: MappedTyper = <
     _savedAs,
     _default,
     required: <$R extends RequiredOption = AtLeastOnce>(
-      nextRequired: $R = AtLeastOnce as unknown as $R
+      nextRequired: $R = ('atLeastOnce' as unknown) as $R
     ) => map(properties, { ...appliedOptions, required: nextRequired }),
     hidden: () => map(properties, { ...appliedOptions, hidden: true }),
     key: () => map(properties, { ...appliedOptions, key: true }),
