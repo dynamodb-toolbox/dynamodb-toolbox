@@ -1,5 +1,6 @@
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
+import type { CommonState } from '../common/interface'
 import type { ListProperty } from './types'
 
 interface ListState<
@@ -8,11 +9,7 @@ interface ListState<
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
   D extends ComputedDefault | undefined = ComputedDefault | undefined
-> {
-  _required: R
-  _hidden: H
-  _key: K
-  _savedAs: S
+> extends CommonState<R, H, K, S> {
   _default: D
 }
 
