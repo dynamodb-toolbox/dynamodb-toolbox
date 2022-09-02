@@ -1,5 +1,6 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
+import type { CommonState } from '../common/interface'
 import type { LeafType, ResolveLeafType, EnumValues, LeafDefaultValue } from './types'
 
 interface LeafState<
@@ -10,11 +11,7 @@ interface LeafState<
   S extends string | undefined = string | undefined,
   E extends EnumValues<T> = EnumValues<T>,
   D extends LeafDefaultValue<T> = LeafDefaultValue<T>
-> {
-  _required: R
-  _hidden: H
-  _key: K
-  _savedAs: S
+> extends CommonState<R, H, K, S> {
   _enum: E
   _default: D
 }
