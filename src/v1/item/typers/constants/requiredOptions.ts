@@ -1,38 +1,22 @@
 /**
  * Tag for optional properties
  */
-export const Never = Symbol('Tag for optional properties')
-/**
- * Tag for optional properties
- */
-export type Never = typeof Never
+export type Never = 'never'
 
 /**
  * Tag for required at least once properties
  */
-export const AtLeastOnce = Symbol('Tag for required at least once properties')
-/**
- * Tag for required at least once properties
- */
-export type AtLeastOnce = typeof AtLeastOnce
+export type AtLeastOnce = 'atLeastOnce'
 
 /**
  * Tag for required only once properties
  */
-export const OnlyOnce = Symbol('Tag for required only once properties')
-/**
- * Tag for required only once properties
- */
-export type OnlyOnce = typeof OnlyOnce
+export type OnlyOnce = 'onlyOnce'
 
 /**
  * Tag for always required properties
  */
-export const Always = Symbol('Tag for always required properties')
-/**
- * Tag for always required properties
- */
-export type Always = typeof Always
+export type Always = 'always'
 
 /**
  * Available options for properties required option
