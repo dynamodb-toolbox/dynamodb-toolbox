@@ -1,4 +1,4 @@
-import { RequiredOption, Never } from '../constants/requiredOptions'
+import type { RequiredOption, Never } from '../constants/requiredOptions'
 
 import type { LeafType, EnumValues, LeafDefaultValue } from './types'
 
@@ -16,10 +16,10 @@ export interface LeafOptions<
 > {
   /**
    * Tag a property as required. Possible values are:
-   * - `AtLeastOnce` _(default)_: Required in PUTs, optional in UPDATEs
-   * - `Never`: Optional in PUTs and UPDATEs
-   * - `Always`: Required in PUTs and UPDATEs
-   * - `OnlyOnce` (default): Required in PUTs, denied in UPDATEs
+   * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
+   * - `"never"`: Optional in PUTs and UPDATEs
+   * - `"always"`: Required in PUTs and UPDATEs
+   * - `"onlyOnce"`: Required in PUTs, denied in UPDATEs
    */
   required: R
   /**
@@ -50,7 +50,7 @@ export const leafDefaultOptions: LeafOptions<
   undefined,
   undefined
 > = {
-  required: Never,
+  required: 'never',
   hidden: false,
   key: false,
   savedAs: undefined,

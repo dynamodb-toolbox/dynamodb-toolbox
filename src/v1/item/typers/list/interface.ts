@@ -31,10 +31,10 @@ export interface List<
   _elements: E
   /**
    * Tag a property as required. Possible values are:
-   * - `AtLeastOnce` _(default)_: Required in PUTs, optional in UPDATEs
-   * - `Never`: Optional in PUTs and UPDATEs
-   * - `Always`: Required in PUTs and UPDATEs
-   * - `OnlyOnce` (default): Required in PUTs, denied in UPDATEs
+   * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
+   * - `"never"`: Optional in PUTs and UPDATEs
+   * - `"always"`: Required in PUTs and UPDATEs
+   * - `"onlyOnce"`: Required in PUTs, denied in UPDATEs
    *
    * @param nextRequired RequiredOption
    */
