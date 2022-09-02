@@ -1,5 +1,6 @@
-import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import type { CommonState } from '../common/interface'
 import type { MappedProperties } from '../types/property'
+import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
 interface MappedState<
   R extends RequiredOption = RequiredOption,
@@ -8,12 +9,8 @@ interface MappedState<
   O extends boolean = boolean,
   S extends string | undefined = string | undefined,
   D extends ComputedDefault | undefined = ComputedDefault | undefined
-> {
-  _required: R
-  _hidden: H
-  _key: K
+> extends CommonState<R, H, K, S> {
   _open: O
-  _savedAs: S
   _default: D
 }
 
