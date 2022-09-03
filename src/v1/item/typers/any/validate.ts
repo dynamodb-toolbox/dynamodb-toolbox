@@ -1,3 +1,5 @@
+import { validatePropertyState } from '../property/validate'
+
 import type { Any } from './interface'
 
 /**
@@ -5,12 +7,10 @@ import type { Any } from './interface'
  *
  * @param anyInstance Any
  * @param path _(optional)_ Path of the instance in the related item (string)
- * @return Boolean
+ * @return void
  */
-export const validateAny = <A extends Any>(anyInstance: A, path?: string): boolean => {
-  // TODO: Validate common attributes (_required, _key etc...)
-  anyInstance
-  path
+export const validateAny = <A extends Any>(anyInstance: A, path?: string): void => {
+  validatePropertyState(anyInstance, path)
 
-  return true
+  // TODO: validate that _default is valid ?
 }
