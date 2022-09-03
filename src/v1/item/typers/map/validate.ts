@@ -1,3 +1,4 @@
+import { validatePropertyState } from '../property/validate'
 import { validateProperty } from '../validate'
 
 import type { Mapped } from './interface'
@@ -7,14 +8,15 @@ import type { Mapped } from './interface'
  *
  * @param mapInstance Mapped
  * @param path _(optional)_ Path of the instance in the related item (string)
- * @return Boolean
+ * @return void
  */
-export const validateMap = <M extends Mapped>(mapInstance: M, path?: string): boolean => {
-  // TODO: Validate common attributes (_required, _key etc...)
+export const validateMap = <M extends Mapped>(
+  { _properties: properties, ...mapInstance }: M,
+  path?: string
+): void => {
+  validatePropertyState(mapInstance, path)
 
-  const { _properties: properties } = mapInstance
-
-  return Object.entries(properties).every(([propertyName, property]) =>
+  Object.entries(properties).forEach(([propertyName, property]) =>
     validateProperty(property, [path, propertyName].filter(Boolean).join('.'))
   )
 }

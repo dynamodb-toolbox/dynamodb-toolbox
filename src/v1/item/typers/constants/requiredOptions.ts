@@ -22,3 +22,13 @@ export type Always = 'always'
  * Available options for properties required option
  */
 export type RequiredOption = Never | AtLeastOnce | OnlyOnce | Always
+
+/**
+ * Available options for properties required options as Set
+ */
+export const requiredOptionsSet = new Set<RequiredOption>([
+  'never',
+  'atLeastOnce',
+  'onlyOnce',
+  'always'
+])

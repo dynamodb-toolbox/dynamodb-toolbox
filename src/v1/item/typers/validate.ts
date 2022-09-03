@@ -12,9 +12,9 @@ export const errorMessagePathSuffix = (path?: string): string =>
  *
  * @param property Property
  * @param path _(optional)_ Path of the property in the related item (string)
- * @return Boolean
+ * @return void
  */
-export const validateProperty = (property: Property, path?: string): boolean => {
+export const validateProperty = (property: Property, path?: string): void => {
   switch (property._type) {
     case 'string':
     case 'number':

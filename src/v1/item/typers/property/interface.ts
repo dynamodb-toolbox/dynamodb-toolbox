@@ -1,6 +1,6 @@
 import { RequiredOption } from '../constants/requiredOptions'
 
-export interface CommonState<
+export interface PropertyState<
   R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,
