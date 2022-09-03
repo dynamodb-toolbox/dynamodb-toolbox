@@ -1,4 +1,4 @@
-import type { CommonOptions } from '../common/options'
+import type { PropertyOptions } from '../property/options'
 import { ComputedDefault, RequiredOption, Never } from '../constants'
 
 /**
@@ -11,7 +11,7 @@ export interface MappedOptions<
   O extends boolean = boolean,
   S extends string | undefined = string | undefined,
   D extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends CommonOptions<R, H, K, S> {
+> extends PropertyOptions<R, H, K, S> {
   /**
    * Accept additional properties of any type
    */
