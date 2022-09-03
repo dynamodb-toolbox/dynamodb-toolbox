@@ -1,4 +1,4 @@
-import type { CommonOptions } from '../common/options'
+import type { PropertyOptions } from '../property/options'
 import type { RequiredOption, Never } from '../constants/requiredOptions'
 
 import type { AnyDefaultValue } from './types'
@@ -12,7 +12,7 @@ export interface AnyOptions<
   K extends boolean = boolean,
   S extends string | undefined = string | undefined,
   D extends AnyDefaultValue = AnyDefaultValue
-> extends CommonOptions<R, H, K, S> {
+> extends PropertyOptions<R, H, K, S> {
   /**
    * Provide a default value for property, or tag property as having a computed default value
    */
