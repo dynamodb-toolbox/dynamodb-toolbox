@@ -1,4 +1,4 @@
-import type { CommonState } from '../common/interface'
+import type { PropertyState } from '../property/interface'
 import type { MappedProperties } from '../types/property'
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
@@ -9,7 +9,7 @@ interface MappedState<
   O extends boolean = boolean,
   S extends string | undefined = string | undefined,
   D extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends CommonState<R, H, K, S> {
+> extends PropertyState<R, H, K, S> {
   _open: O
   _default: D
 }
