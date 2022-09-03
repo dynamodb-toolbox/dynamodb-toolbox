@@ -3,7 +3,7 @@ import { RequiredOption } from '../constants/requiredOptions'
 /**
  * Common input options of all Properties
  */
-export interface CommonOptions<
+export interface PropertyOptions<
   R extends RequiredOption = RequiredOption,
   H extends boolean = boolean,
   K extends boolean = boolean,

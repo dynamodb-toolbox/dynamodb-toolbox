@@ -1,5 +1,6 @@
 import { ComputedDefault } from '../constants/computedDefault'
 import { errorMessagePathSuffix } from '../validate'
+import { validatePropertyState } from '../property/validate'
 
 import type { Leaf } from './interface'
 import type { LeafType, EnumValues, LeafDefaultValue } from './types'
@@ -63,13 +64,13 @@ export class InvalidDefaultValueRangeError extends Error {
  *
  * @param leafInstance Leaf
  * @param path _(optional)_ Path of the instance in the related item (string)
- * @return Boolean
+ * @return void
  */
 export const validateLeaf = <L extends Leaf>(
-  { _type: expectedType, _enum: enumValues, _default: defaultValue }: L,
+  { _type: expectedType, _enum: enumValues, _default: defaultValue, ...leafInstance }: L,
   path?: string
-): boolean => {
-  // TODO: Validate common attributes (_required, _key etc...)
+): void => {
+  validatePropertyState(leafInstance, path)
 
   enumValues?.forEach(enumValue => {
     if (typeof enumValue !== expectedType) {
@@ -90,6 +91,4 @@ export const validateLeaf = <L extends Leaf>(
       throw new InvalidDefaultValueRangeError({ enumValues, defaultValue, path })
     }
   }
-
-  return true
 }

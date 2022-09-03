@@ -1,3 +1,4 @@
+import { validatePropertyState } from '../property/validate'
 import { errorMessagePathSuffix, validateProperty } from '../validate'
 
 import type { List } from './interface'
@@ -47,13 +48,13 @@ export class DefaultedListElementsError extends Error {
  *
  * @param listInstance List
  * @param path _(optional)_ Path of the instance in the related item (string)
- * @return Boolean
+ * @return void
  */
 export const validateList = <L extends List>(
-  { _elements: elements }: L,
+  { _elements: elements, ...listInstance }: L,
   path?: string
-): boolean => {
-  // TODO: Validate common attributes (_required, _key etc...)
+): void => {
+  validatePropertyState(listInstance, path)
 
   const {
     _required: elementsRequired,
@@ -83,5 +84,5 @@ export const validateList = <L extends List>(
     throw new DefaultedListElementsError({ path })
   }
 
-  return validateProperty(elements, `${path ?? ''}[n]`)
+  validateProperty(elements, `${path ?? ''}[n]`)
 }
