@@ -967,7 +967,7 @@ class Entity<
     const data = normalizeData(this.DocumentClient)(
       schema.attributes,
       linked,
-      Object.assign({}, options.isPartialUpdate  ? {} : defaults, item),
+      Object.assign({}, options.partial  ? {} : defaults, item),
       shouldFilterUnmappedFields
     )
 
@@ -978,7 +978,7 @@ class Entity<
       metrics, // ReturnItemCollectionMetrics: (size or none)
       returnValues, // Return Values (none, all_old, updated_old, all_new, updated_new)
       strictSchemaCheck, // Strict Schema Check (true or false),
-      isPartialUpdate, // Partial Update (true, false)
+      partial, // Partial Update (true, false)
       ..._args
     } = options
 

@@ -1060,7 +1060,7 @@ describe('update', () => {
   it('should use the non-provided fields\'s default value if isPartialUpdate option is falsy', async () => {
     let { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams(
       { email: 'x', sort: 'y', test_string: 'some-string-value' },
-      { isPartialUpdate: false },
+      { partial: false },
     );
 
     expect(UpdateExpression)
@@ -1087,7 +1087,7 @@ describe('update', () => {
   it('should not use the non-provided fields\'s default value if isPartialUpdate option is truthy', async () => {
     let { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams(
       { email: 'x', sort: 'y', test_string: 'some-string-value' },
-      { isPartialUpdate: true },
+      { partial: true },
     );
 
     expect(UpdateExpression).toBe('SET #test_string = :test_string');
