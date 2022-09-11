@@ -2,7 +2,7 @@ import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, B, O, F } from 'ts-toolbelt'
 
 import type { FirstDefined, If } from '../../lib/utils'
-import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table'
+import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef, DynamoDBSetTypes } from '../Table';
 import Entity from './Entity'
 
 export interface EntityConstructor<
@@ -227,7 +227,9 @@ export type InferItemAttributeValue<
     | GSISortKeyDefinition
     | PureAttributeDefinition
     ? Definition['type'] extends DynamoDBTypes
-      ? FromDynamoData<A.Cast<Definition['type'], DynamoDBTypes>>
+      ? Definition['setType'] extends DynamoDBKeyTypes
+        // @ts-ignore
+       ? FromDynamoData<Definition['setType']>[] : FromDynamoData<A.Cast<Definition['type'], DynamoDBTypes>>
       : any
     : never
   composite: Definition extends CompositeAttributeDefinition
