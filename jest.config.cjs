@@ -6,13 +6,14 @@ module.exports = {
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^v1/(.*)$': '<rootDir>/src/v1/$1'
   },
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',
       {
-        useESM: true,
-      },
-    ],
-  },
+        useESM: true
+      }
+    ]
+  }
 }
