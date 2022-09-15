@@ -17,12 +17,6 @@ export class HiddenListElementsError extends Error {
   }
 }
 
-export class KeyListElementsError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${getPathMessage(path)}: List elements cannot be part of key`)
-  }
-}
-
 export class SavedAsListElementsError extends Error {
   constructor({ path }: { path?: string }) {
     super(
@@ -66,10 +60,6 @@ export const validateList = <L extends List>(
 
   if (elementsHidden !== false) {
     throw new HiddenListElementsError({ path })
-  }
-
-  if (elementsKey !== false) {
-    throw new KeyListElementsError({ path })
   }
 
   if (elementsSavedAs !== undefined) {
