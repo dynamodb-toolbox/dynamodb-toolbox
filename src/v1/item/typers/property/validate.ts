@@ -1,4 +1,5 @@
 import { getPathMessage } from 'v1/errors/getPathMessage'
+import { isBoolean, isString } from 'v1/utils/validation'
 
 import type { PropertyState } from './interface'
 import { requiredOptionsSet } from '../constants/requiredOptions'
@@ -43,7 +44,7 @@ export const validatePropertyState = (
     })
   }
 
-  if (typeof _hidden !== 'boolean') {
+  if (!isBoolean(_hidden)) {
     throw new InvalidPropertyStateError({
       optionName: 'hidden',
       expectedType: 'boolean',
@@ -52,7 +53,7 @@ export const validatePropertyState = (
     })
   }
 
-  if (typeof _key !== 'boolean') {
+  if (!isBoolean(_key)) {
     throw new InvalidPropertyStateError({
       optionName: 'key',
       expectedType: 'boolean',
@@ -61,7 +62,7 @@ export const validatePropertyState = (
     })
   }
 
-  if (_savedAs !== undefined && typeof _savedAs !== 'string') {
+  if (_savedAs !== undefined && !isString(_savedAs)) {
     throw new InvalidPropertyStateError({
       optionName: 'savedAs',
       expectedType: 'string',
