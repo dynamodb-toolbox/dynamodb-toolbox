@@ -1,4 +1,4 @@
-import { errorMessagePathSuffix } from '../validate'
+import { getPathMessage } from 'v1/errors/getPathMessage'
 
 import type { PropertyState } from './interface'
 import { requiredOptionsSet } from '../constants/requiredOptions'
@@ -16,7 +16,7 @@ export class InvalidPropertyStateError extends Error {
     path?: string
   }) {
     super(
-      `Invalid option value type${errorMessagePathSuffix(
+      `Invalid option value type${getPathMessage(
         path
       )}. Option: ${optionName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
     )
