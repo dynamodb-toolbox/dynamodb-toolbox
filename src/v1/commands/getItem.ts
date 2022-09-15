@@ -57,9 +57,7 @@ export const getItemParams = <E extends EntityV2>(
 ): GetItemCommandInput => {
   const { name: tableName } = entity.table
 
-  if (!validateKeyInput(entity, keyInput)) {
-    throw new Error()
-  }
+  validateKeyInput(entity, keyInput)
 
   const Key = entity.computeKey(keyInput)
 
