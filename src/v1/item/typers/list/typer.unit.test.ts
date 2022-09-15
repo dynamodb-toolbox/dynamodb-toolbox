@@ -7,7 +7,6 @@ import { list } from './typer'
 import {
   DefaultedListElementsError,
   HiddenListElementsError,
-  KeyListElementsError,
   OptionalListElementsError,
   SavedAsListElementsError,
   validateList
@@ -34,16 +33,6 @@ describe('list', () => {
     // @ts-expect-error
     expect(() => validateList(list(string().required().hidden()))).toThrow(
       new HiddenListElementsError({})
-    )
-  })
-
-  it('rejects key elements', () => {
-    // @ts-expect-error
-    list(string().required().key())
-
-    // @ts-expect-error
-    expect(() => validateList(list(string().required().key()))).toThrow(
-      new KeyListElementsError({})
     )
   })
 
