@@ -1,32 +1,32 @@
+import { getPathMessage } from 'v1/errors/getPathMessage'
+
 import { validatePropertyState } from '../property/validate'
-import { errorMessagePathSuffix, validateProperty } from '../validate'
+import { validateProperty } from '../validate'
 
 import type { List } from './interface'
 
 export class OptionalListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${errorMessagePathSuffix(path)}: List elements must be required`)
+    super(`Invalid list elements${getPathMessage(path)}: List elements must be required`)
   }
 }
 
 export class HiddenListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${errorMessagePathSuffix(path)}: List elements cannot be hidden`)
+    super(`Invalid list elements${getPathMessage(path)}: List elements cannot be hidden`)
   }
 }
 
 export class KeyListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(
-      `Invalid list elements${errorMessagePathSuffix(path)}: List elements cannot be part of key`
-    )
+    super(`Invalid list elements${getPathMessage(path)}: List elements cannot be part of key`)
   }
 }
 
 export class SavedAsListElementsError extends Error {
   constructor({ path }: { path?: string }) {
     super(
-      `Invalid list elements${errorMessagePathSuffix(
+      `Invalid list elements${getPathMessage(
         path
       )}: List elements cannot be renamed (have savedAs option)`
     )
@@ -35,11 +35,7 @@ export class SavedAsListElementsError extends Error {
 
 export class DefaultedListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(
-      `Invalid list elements${errorMessagePathSuffix(
-        path
-      )}: List elements cannot have default values`
-    )
+    super(`Invalid list elements${getPathMessage(path)}: List elements cannot have default values`)
   }
 }
 

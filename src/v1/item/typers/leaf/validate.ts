@@ -1,5 +1,6 @@
+import { getPathMessage } from 'v1/errors/getPathMessage'
+
 import { ComputedDefault } from '../constants/computedDefault'
-import { errorMessagePathSuffix } from '../validate'
 import { validatePropertyState } from '../property/validate'
 
 import type { Leaf } from './interface'
@@ -16,7 +17,7 @@ export class InvalidEnumValueTypeError extends Error {
     path?: string
   }) {
     super(
-      `Invalid enum value type${errorMessagePathSuffix(
+      `Invalid enum value type${getPathMessage(
         path
       )}. Expected: ${expectedType}. Received: ${String(enumValue)}.`
     )
@@ -34,7 +35,7 @@ export class InvalidDefaultValueTypeError extends Error {
     path?: string
   }) {
     super(
-      `Invalid default value type${errorMessagePathSuffix(
+      `Invalid default value type${getPathMessage(
         path
       )}: Expected: ${expectedType}. Received: ${String(defaultValue)}.`
     )
@@ -52,7 +53,7 @@ export class InvalidDefaultValueRangeError extends Error {
     path?: string
   }) {
     super(
-      `Invalid default value${errorMessagePathSuffix(path)}: Expected one of: ${enumValues.join(
+      `Invalid default value${getPathMessage(path)}: Expected one of: ${enumValues.join(
         ', '
       )}. Received: ${String(defaultValue)}.`
     )
