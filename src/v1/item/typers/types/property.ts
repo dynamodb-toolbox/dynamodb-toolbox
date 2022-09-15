@@ -20,5 +20,5 @@ export interface MappedProperties {
  */
 export type ResolvedProperty =
   | ResolvedLeafType
-  | ResolvedLeafType[]
+  | ResolvedProperty[]
   | { [key: string]: ResolvedProperty }
