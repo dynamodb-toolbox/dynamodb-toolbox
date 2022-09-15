@@ -2,12 +2,15 @@ import { Item, HasComputedDefaults } from 'v1/item'
 import { TableV2, PrimaryKey } from 'v1/table'
 
 import type { NeedsKeyCompute, PutItem, PutItemInput, KeyInput } from './generics'
+import { defaultComputeDefaults } from './utils/defaultComputeDefaults'
+import { getDefaultComputeKey } from './utils/defaultComputeKey'
 
 export class EntityV2<
   N extends string = string,
   T extends TableV2 = TableV2,
   I extends Item = Item
 > {
+  public _type: 'entity'
   public name: N
   public table: T
   public item: I
@@ -43,35 +46,14 @@ export class EntityV2<
     (HasComputedDefaults<I> extends true
       ? { computeDefaults: (input: PutItemInput<I, true>) => PutItem<I> }
       : { computeDefaults?: undefined })) {
+    this._type = 'entity'
     this.name = name
     this.table = table
 
     // TODO: validate that item respects table key design
     this.item = item
 
-    if (computeKey) {
-      this.computeKey = computeKey
-    } else {
-      this.computeKey = ((keyInput: Record<string, any>) => {
-        const partitionKeyValue = keyInput[this.table.partitionKey.name]
-
-        if (!this.table.sortKey?.name) {
-          return { [this.table.partitionKey.name]: partitionKeyValue }
-        }
-
-        const sortKeyValue = keyInput[this.table.sortKey.name]
-
-        return {
-          [this.table.partitionKey.name]: partitionKeyValue,
-          [this.table.sortKey.name]: sortKeyValue
-        }
-      }) as any
-    }
-
-    if (computeDefaults) {
-      this.computeDefaults = computeDefaults
-    } else {
-      this.computeDefaults = ((putItemInput: PutItemInput<I, true>) => putItemInput) as any
-    }
+    this.computeKey = computeKey ?? (getDefaultComputeKey(this.table) as any)
+    this.computeDefaults = computeDefaults ?? (defaultComputeDefaults as any)
   }
 }
