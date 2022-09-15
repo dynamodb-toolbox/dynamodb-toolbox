@@ -4,9 +4,6 @@ import { validateList } from './list'
 import { validateAny } from './any'
 import type { Property } from './types/property'
 
-export const errorMessagePathSuffix = (path?: string): string =>
-  path !== undefined ? ` at path ${path}` : ''
-
 /**
  * Validates a property definition
  *
