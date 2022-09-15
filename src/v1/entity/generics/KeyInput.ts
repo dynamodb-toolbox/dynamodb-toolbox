@@ -8,7 +8,7 @@ import { EntityV2 } from '../class'
 /**
  * Key input of a single item command (GET, DELETE ...) for an Entity, Item or Property
  *
- * @param E Entity
+ * @param E Entity | Item | Property
  * @return Object
  */
 export type KeyInput<E extends EntityV2 | Item | Property> = E extends Any
