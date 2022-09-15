@@ -1,4 +1,5 @@
 import { getPathMessage } from 'v1/errors/getPathMessage'
+import { isFunction, validatorsByLeafType } from 'v1/utils/validation'
 
 import { ComputedDefault } from '../constants/computedDefault'
 import { validatePropertyState } from '../property/validate'
@@ -73,18 +74,16 @@ export const validateLeaf = <L extends Leaf>(
 ): void => {
   validatePropertyState(leafInstance, path)
 
+  const typeValidator = validatorsByLeafType[expectedType]
+
   enumValues?.forEach(enumValue => {
-    if (typeof enumValue !== expectedType) {
+    if (!typeValidator(enumValue)) {
       throw new InvalidEnumValueTypeError({ expectedType, enumValue, path })
     }
   })
 
-  if (
-    defaultValue !== undefined &&
-    defaultValue !== ComputedDefault &&
-    typeof defaultValue !== 'function'
-  ) {
-    if (typeof defaultValue !== expectedType) {
+  if (defaultValue !== undefined && defaultValue !== ComputedDefault && !isFunction(defaultValue)) {
+    if (!typeValidator(defaultValue)) {
       throw new InvalidDefaultValueTypeError({ expectedType, defaultValue, path })
     }
 
