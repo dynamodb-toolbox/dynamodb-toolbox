@@ -439,50 +439,44 @@ export interface UpdateCustomParameters {
 
 export type UpdateCustomParams = O.Partial<UpdateCustomParameters & DocumentClient.UpdateItemInput>
 
-export type UpdateItem<
-  MethodItemOverlay extends Overlay,
+export type UpdateItem<MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
   CompositePrimaryKey extends O.Object,
   Item extends O.Object,
   Attributes extends ParsedAttributes,
-  StrictSchemaCheck extends boolean | undefined = true
-> = FirstDefined<
-  [
+  StrictSchemaCheck extends boolean | undefined = true> = FirstDefined<[
     MethodItemOverlay,
     EntityItemOverlay,
-    A.Compute<
-      CompositePrimaryKey &
-        {
-          [inputAttr in Attributes['always']['input']]:
-            | Item[A.Cast<inputAttr, keyof Item>]
-            | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], FromDynamoData<'list' | 'set'>|undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[A.Cast<inputAttr, keyof Item>]; $append?: Item[A.Cast<inputAttr, keyof Item>]; $remove?: number[] }| Item[A.Cast<inputAttr, keyof Item>], Item[A.Cast<inputAttr, keyof Item>]>
-            | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], number[]|undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[A.Cast<inputAttr, keyof Item>]; $append?: number[];}| string[]>
-            | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], string[]|undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[A.Cast<inputAttr, keyof Item>]; $append?: string[]; }| number[]>
-            | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], boolean[]|undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[A.Cast<inputAttr, keyof Item>]; $append?: boolean[]; }| boolean[]>
-            | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], FromDynamoData<'number'>|undefined>, {$add?: number}>
-        } &
-        {
-          [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
-            | Item[A.Cast<optAttr, keyof Item>]
-            | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], FromDynamoData<'list' | 'set'>|undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[A.Cast<optAttr, keyof Item>]; $append?: Item[A.Cast<optAttr, keyof Item>]; $remove?: number[] }| Item[A.Cast<optAttr, keyof Item>], Item[A.Cast<optAttr, keyof Item>]>
-            | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], number[]|undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[A.Cast<optAttr, keyof Item>]; $append?: number[];}| string[]>
-            | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], string[]|undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[A.Cast<optAttr, keyof Item>]; $append?: string[]; }| number[]>
-            | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], boolean[]|undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[A.Cast<optAttr, keyof Item>]; $append?: boolean[]; }| boolean[]>
-            | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], FromDynamoData<'number'>|undefined>, {$add?: number}>
-        } &
-        {
-          [attr in Attributes['optional']]?:
-            | If<A.Equals<Item[A.Cast<attr, keyof Item>], FromDynamoData<'list' | 'set'>|undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[A.Cast<attr, keyof Item>]; $append?: Item[A.Cast<attr, keyof Item>]; $remove?: number[] }| Item[A.Cast<attr, keyof Item>], Item[A.Cast<attr, keyof Item>]>
-            | If<A.Equals<Item[A.Cast<attr, keyof Item>], number[]|undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[A.Cast<attr, keyof Item>]; $append?: number[];}| string[]>
-            | If<A.Equals<Item[A.Cast<attr, keyof Item>], string[]|undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[A.Cast<attr, keyof Item>]; $append?: string[]; }| number[]>
-            | If<A.Equals<Item[A.Cast<attr, keyof Item>], boolean[]|undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[A.Cast<attr, keyof Item>]; $append?: boolean[]; }| boolean[]>
-            | If<A.Equals<Item[A.Cast<attr, keyof Item>], FromDynamoData<'number'>|undefined>, {$add?: number}>
-            | null
-        } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
-    >
+    A.Compute<CompositePrimaryKey &
+      {
+        [inputAttr in Attributes['always']['input']]:
+        | Item[A.Cast<inputAttr, keyof Item>]
+        | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[A.Cast<inputAttr, keyof Item>]; $append?: Item[A.Cast<inputAttr, keyof Item>]; $remove?: number[] } | Item[A.Cast<inputAttr, keyof Item>], Item[A.Cast<inputAttr, keyof Item>]>
+        | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[A.Cast<inputAttr, keyof Item>]; $append?: number[]; } | string[]>
+        | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[A.Cast<inputAttr, keyof Item>]; $append?: string[]; } | number[]>
+        | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[A.Cast<inputAttr, keyof Item>]; $append?: boolean[]; } | boolean[]>
+        | If<A.Equals<Item[A.Cast<inputAttr, keyof Item>], FromDynamoData<'number'> | undefined>, { $add?: number }>
+      } &
+      {
+        [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
+        | Item[A.Cast<optAttr, keyof Item>]
+        | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[A.Cast<optAttr, keyof Item>]; $append?: Item[A.Cast<optAttr, keyof Item>]; $remove?: number[] } | Item[A.Cast<optAttr, keyof Item>], Item[A.Cast<optAttr, keyof Item>]>
+        | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[A.Cast<optAttr, keyof Item>]; $append?: number[]; } | string[]>
+        | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[A.Cast<optAttr, keyof Item>]; $append?: string[]; } | number[]>
+        | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[A.Cast<optAttr, keyof Item>]; $append?: boolean[]; } | boolean[]>
+        | If<A.Equals<Item[A.Cast<optAttr, keyof Item>], FromDynamoData<'number'> | undefined>, { $add?: number }>
+      } &
+      {
+        [attr in Attributes['optional']]?:
+        | If<A.Equals<Item[A.Cast<attr, keyof Item>], FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[A.Cast<attr, keyof Item>]; $append?: Item[A.Cast<attr, keyof Item>]; $remove?: number[] } | Item[A.Cast<attr, keyof Item>], Item[A.Cast<attr, keyof Item>]>
+        | If<A.Equals<Item[A.Cast<attr, keyof Item>], number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[A.Cast<attr, keyof Item>]; $append?: number[]; } | string[]>
+        | If<A.Equals<Item[A.Cast<attr, keyof Item>], string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[A.Cast<attr, keyof Item>]; $append?: string[]; } | number[]>
+        | If<A.Equals<Item[A.Cast<attr, keyof Item>], boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[A.Cast<attr, keyof Item>]; $append?: boolean[]; } | boolean[]>
+        | If<A.Equals<Item[A.Cast<attr, keyof Item>], FromDynamoData<'number'> | undefined>, { $add?: number }>
+        | null
+      } & { $remove?: Attributes['optional'] | Attributes['optional'][] }>
   ]
-  | If<A.Equals<StrictSchemaCheck, true>, never, any>
->
+  | If<A.Equals<StrictSchemaCheck, true>, never, any>>
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
