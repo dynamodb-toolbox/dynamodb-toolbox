@@ -412,7 +412,6 @@ describe('update', () => {
       pk: 'test-pk',
       sk: 'test-sk',
       test_string_set_type: { $delete: ['1', '2', '3'] },
-      // @ts-expect-error 💥 TODO: Improve list support
       test_number_set_type: { $delete: [1, 2, 3] }
     })
     expect(UpdateExpression).toBe(
