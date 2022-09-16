@@ -450,7 +450,6 @@ describe('update', () => {
     } = TestEntity.updateParams({
       email: 'test-pk',
       sort: 'test-sk',
-      // @ts-expect-error 💥 TODO: Improve list support
       test_list: { $remove: [2, 3, 8] }
     })
     expect(UpdateExpression).toBe(
