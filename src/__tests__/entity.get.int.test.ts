@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',

@@ -1,6 +1,6 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { Table, Entity } from '../index'
-import { DocumentClient as docClient } from './bootstrap-tests'
+import { DocumentClient as docClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',

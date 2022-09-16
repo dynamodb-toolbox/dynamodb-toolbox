@@ -3,7 +3,7 @@ import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
 } from '../constants'
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -1023,7 +1023,7 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
   })
 
-   it('fails when given an unmapped attribute and strictSchemaCheck is true.', () => {
+  it('fails when given an unmapped attribute and strictSchemaCheck is true.', () => {
     expect(() =>
       TestEntity.updateParams(
         // @ts-expect-error
@@ -1034,14 +1034,17 @@ describe('update', () => {
   })
 
   it('allows unmapped attributes when strictSchemaCheck is false.', () => {
-    expect(() => TestEntity.updateParams(
-      { email: 'x', sort: 'y', unknown: '?' },
-      { strictSchemaCheck: false }
-    )).not.toThrow();
+    expect(() =>
+      TestEntity.updateParams({ email: 'x', sort: 'y', unknown: '?' }, { strictSchemaCheck: false })
+    ).not.toThrow()
   })
 
   it('omits unmapped attributes when strictSchemaCheck is false.', () => {
-    let { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity.updateParams(
+    let {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams(
       { email: 'x', sort: 'y', test_string: 'some-string-value', unknown: '?' },
       { strictSchemaCheck: false }
     )
@@ -1051,5 +1054,5 @@ describe('update', () => {
     expect(ExpressionAttributeValues).not.toHaveProperty(':unknown')
     expect(ExpressionAttributeNames).toHaveProperty('#test_string')
     expect(ExpressionAttributeValues).toHaveProperty(':test_string')
-  });
+  })
 }) // end describe
