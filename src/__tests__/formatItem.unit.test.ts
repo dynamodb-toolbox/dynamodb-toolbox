@@ -1,6 +1,6 @@
 import formatItem from '../lib/formatItem'
 
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 // Require Table and Entity classes
 import Table from '../classes/Table'
