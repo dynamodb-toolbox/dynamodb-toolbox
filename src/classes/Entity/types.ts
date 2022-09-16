@@ -460,6 +460,7 @@ export type UpdateItem<
         {
           [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
             | Item[A.Cast<optAttr, keyof Item>]
+            | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[] }
         } &
         {
           [attr in Attributes['optional']]?:
