@@ -1,6 +1,6 @@
-import { getPathMessage } from 'v1/errors/getPathMessage'
+import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import type { Item, Mapped, Property, ResolvedProperty } from 'v1/item'
-import { isClosed, isKey } from 'v1/item/utils'
+import { isClosed, isKeyProperty } from 'v1/item/utils'
 import { isArray, isObject, validatorsByLeafType } from 'v1/utils/validation'
 
 import type { EntityV2 } from '../class'
@@ -17,7 +17,7 @@ export class InvalidKeyInputValueTypeError extends Error {
     path?: string
   }) {
     super(
-      `Invalid key input value type${getPathMessage(
+      `Invalid key input value type${getInfoTextForItemPath(
         path
       )}. Expected: ${expectedType}. Received: ${String(keyInput)}.`
     )
@@ -27,20 +27,22 @@ export class InvalidKeyInputValueTypeError extends Error {
 export class UnrecognizedKeyInputPropertyError extends Error {
   constructor({ path }: { path?: string }) {
     super(
-      `Unrecognized key input property${getPathMessage(path)}. Property is not tagged as key input.`
+      `Unrecognized key input property${getInfoTextForItemPath(
+        path
+      )}. Property is not tagged as key input.`
     )
   }
 }
 
 export class MissingRequiredPropertyError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Missing always required key input property${getPathMessage(path)}.`)
+    super(`Missing always required key input property${getInfoTextForItemPath(path)}.`)
   }
 }
 
 export class UnexpectedPropertyError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Unexpected key input property${getPathMessage(path)}.`)
+    super(`Unexpected key input property${getInfoTextForItemPath(path)}.`)
   }
 }
 
@@ -76,7 +78,7 @@ const validateProperties = (
 
   // Check that all key & always required properties are present in keyInput
   Object.entries(itemOrMapped._properties)
-    .filter(([, property]) => isKey(property) && property._required === 'always')
+    .filter(([, property]) => isKeyProperty(property) && property._required === 'always')
     .forEach(([propertyName, property]) => {
       const propertyKeyInput = keyInput[propertyName]
       // TODO, create joinPath util
@@ -111,7 +113,7 @@ export const validateKeyInput: KeyInputValidator = <E extends EntityV2 | Item | 
     return validateProperties(entry, keyInput, path)
   }
 
-  if (!isKey(entry)) throw new UnrecognizedKeyInputPropertyError({ path })
+  if (!isKeyProperty(entry)) throw new UnrecognizedKeyInputPropertyError({ path })
 
   switch (entry._type) {
     case 'any':
