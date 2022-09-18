@@ -1,4 +1,4 @@
-import { getPathMessage } from 'v1/errors/getPathMessage'
+import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 
 import { validatePropertyState } from '../property/validate'
 import { validateProperty } from '../validate'
@@ -7,20 +7,20 @@ import type { List } from './interface'
 
 export class OptionalListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${getPathMessage(path)}: List elements must be required`)
+    super(`Invalid list elements${getInfoTextForItemPath(path)}: List elements must be required`)
   }
 }
 
 export class HiddenListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${getPathMessage(path)}: List elements cannot be hidden`)
+    super(`Invalid list elements${getInfoTextForItemPath(path)}: List elements cannot be hidden`)
   }
 }
 
 export class SavedAsListElementsError extends Error {
   constructor({ path }: { path?: string }) {
     super(
-      `Invalid list elements${getPathMessage(
+      `Invalid list elements${getInfoTextForItemPath(
         path
       )}: List elements cannot be renamed (have savedAs option)`
     )
@@ -29,7 +29,11 @@ export class SavedAsListElementsError extends Error {
 
 export class DefaultedListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${getPathMessage(path)}: List elements cannot have default values`)
+    super(
+      `Invalid list elements${getInfoTextForItemPath(
+        path
+      )}: List elements cannot have default values`
+    )
   }
 }
 

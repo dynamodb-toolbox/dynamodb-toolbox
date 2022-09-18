@@ -1,7 +1,8 @@
-import { getPathMessage } from 'v1/errors/getPathMessage'
-import { isFunction, validatorsByLeafType } from 'v1/utils/validation'
+import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
+import { isComputedDefault } from 'v1/item/utils/isComputedDefault'
+import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
+import { validatorsByLeafType } from 'v1/utils/validation'
 
-import { ComputedDefault } from '../constants/computedDefault'
 import { validatePropertyState } from '../property/validate'
 
 import type { Leaf } from './interface'
@@ -18,7 +19,7 @@ export class InvalidEnumValueTypeError extends Error {
     path?: string
   }) {
     super(
-      `Invalid enum value type${getPathMessage(
+      `Invalid enum value type${getInfoTextForItemPath(
         path
       )}. Expected: ${expectedType}. Received: ${String(enumValue)}.`
     )
@@ -36,7 +37,7 @@ export class InvalidDefaultValueTypeError extends Error {
     path?: string
   }) {
     super(
-      `Invalid default value type${getPathMessage(
+      `Invalid default value type${getInfoTextForItemPath(
         path
       )}: Expected: ${expectedType}. Received: ${String(defaultValue)}.`
     )
@@ -54,7 +55,7 @@ export class InvalidDefaultValueRangeError extends Error {
     path?: string
   }) {
     super(
-      `Invalid default value${getPathMessage(path)}: Expected one of: ${enumValues.join(
+      `Invalid default value${getInfoTextForItemPath(path)}: Expected one of: ${enumValues.join(
         ', '
       )}. Received: ${String(defaultValue)}.`
     )
@@ -69,22 +70,27 @@ export class InvalidDefaultValueRangeError extends Error {
  * @return void
  */
 export const validateLeaf = <L extends Leaf>(
-  { _type: expectedType, _enum: enumValues, _default: defaultValue, ...leafInstance }: L,
+  { _type: leafType, _enum: enumValues, _default: defaultValue, ...leafInstance }: L,
   path?: string
 ): void => {
   validatePropertyState(leafInstance, path)
 
-  const typeValidator = validatorsByLeafType[expectedType]
+  const typeValidator = validatorsByLeafType[leafType]
 
   enumValues?.forEach(enumValue => {
-    if (!typeValidator(enumValue)) {
-      throw new InvalidEnumValueTypeError({ expectedType, enumValue, path })
+    const isValidEnumValue = typeValidator(enumValue)
+    if (!isValidEnumValue) {
+      throw new InvalidEnumValueTypeError({ expectedType: leafType, enumValue, path })
     }
   })
 
-  if (defaultValue !== undefined && defaultValue !== ComputedDefault && !isFunction(defaultValue)) {
+  if (
+    defaultValue !== undefined &&
+    !isComputedDefault(defaultValue) &&
+    isStaticDefault(defaultValue)
+  ) {
     if (!typeValidator(defaultValue)) {
-      throw new InvalidDefaultValueTypeError({ expectedType, defaultValue, path })
+      throw new InvalidDefaultValueTypeError({ expectedType: leafType, defaultValue, path })
     }
 
     if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {

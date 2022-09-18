@@ -9,146 +9,193 @@ import {
 describe('validateKeyInput', () => {
   const path = 'some.path'
 
-  it('always validates key any', () => {
+  describe('any', () => {
     const input = ['any', { value: 'that you want' }]
 
-    expect(() => validateKeyInput(any(), input, path)).toThrow(
-      new UnrecognizedKeyInputPropertyError({ path })
-    )
+    it('passes if attribute is key', () => {
+      expect(() => validateKeyInput(any().key(), input, path)).not.toThrow()
+    })
 
-    expect(() => validateKeyInput(any().key(), input, path)).not.toThrow()
+    it('throws if attribute is not key', () => {
+      expect(() => validateKeyInput(any(), input, path)).toThrow(
+        new UnrecognizedKeyInputPropertyError({ path })
+      )
+    })
   })
 
-  it('validates valid key binaries', () => {
-    const validInput = Buffer.from('toto')
-
-    expect(() => validateKeyInput(binary(), validInput, path)).toThrow(
-      new UnrecognizedKeyInputPropertyError({ path })
-    )
-
+  describe('binary', () => {
     const keyBin = binary().key()
-    expect(() => validateKeyInput(keyBin, validInput, path)).not.toThrow()
-
+    const validInput = Buffer.from('toto')
     const invalidInput = 'some string'
-    // @ts-expect-error
-    expect(() => validateKeyInput(keyBin, invalidInput, path)).toThrow(
-      new InvalidKeyInputValueTypeError({ expectedType: 'binary', keyInput: invalidInput, path })
-    )
+
+    it('passes if attribute is key and input is valid', () => {
+      expect(() => validateKeyInput(keyBin, validInput, path)).not.toThrow()
+    })
+
+    it('throws if attribute is not key', () => {
+      expect(() => validateKeyInput(binary(), validInput, path)).toThrow(
+        new UnrecognizedKeyInputPropertyError({ path })
+      )
+    })
+
+    it('throws if input is invalid', () => {
+      // @ts-expect-error
+      expect(() => validateKeyInput(keyBin, invalidInput, path)).toThrow(
+        new InvalidKeyInputValueTypeError({
+          expectedType: 'binary',
+          keyInput: invalidInput,
+          path
+        })
+      )
+    })
   })
 
-  it('validates valid key booleans', () => {
-    const validInput = true
-
-    expect(() => validateKeyInput(boolean(), validInput, path)).toThrow(
-      new UnrecognizedKeyInputPropertyError({ path })
-    )
-
+  describe('boolean', () => {
     const keyBool = boolean().key()
-    expect(() => validateKeyInput(keyBool, validInput, path)).not.toThrow()
-
+    const validInput = true
     const invalidInput = 'some string'
-    // @ts-expect-error
-    expect(() => validateKeyInput(keyBool, invalidInput, path)).toThrow(
-      new InvalidKeyInputValueTypeError({ expectedType: 'boolean', keyInput: invalidInput, path })
-    )
+
+    it('passes if attribute is key and input is valid', () => {
+      expect(() => validateKeyInput(keyBool, validInput, path)).not.toThrow()
+    })
+
+    it('throws if attribute is not key', () => {
+      expect(() => validateKeyInput(boolean(), validInput, path)).toThrow(
+        new UnrecognizedKeyInputPropertyError({ path })
+      )
+    })
+
+    it('throws if input is invalid', () => {
+      // @ts-expect-error
+      expect(() => validateKeyInput(keyBool, invalidInput, path)).toThrow(
+        new InvalidKeyInputValueTypeError({
+          expectedType: 'boolean',
+          keyInput: invalidInput,
+          path
+        })
+      )
+    })
   })
 
-  it('validates valid key numbers', () => {
-    const validInput = 42
-
-    expect(() => validateKeyInput(number(), validInput, path)).toThrow(
-      new UnrecognizedKeyInputPropertyError({ path })
-    )
-
+  describe('numbers', () => {
     const keyNum = number().key()
-    expect(() => validateKeyInput(keyNum, validInput, path)).not.toThrow()
-
+    const validInput = 42
     const invalidInput = 'some string'
-    // @ts-expect-error
-    expect(() => validateKeyInput(keyNum, invalidInput, path)).toThrow(
-      new InvalidKeyInputValueTypeError({ expectedType: 'number', keyInput: invalidInput, path })
-    )
+
+    it('passes if attribute is key and input is valid', () => {
+      expect(() => validateKeyInput(keyNum, validInput, path)).not.toThrow()
+    })
+
+    it('throws if attribute is not key', () => {
+      expect(() => validateKeyInput(number(), validInput, path)).toThrow(
+        new UnrecognizedKeyInputPropertyError({ path })
+      )
+    })
+
+    it('throws if input is invalid', () => {
+      // @ts-expect-error
+      expect(() => validateKeyInput(keyNum, invalidInput, path)).toThrow(
+        new InvalidKeyInputValueTypeError({ expectedType: 'number', keyInput: invalidInput, path })
+      )
+    })
   })
 
-  it('validates valid key strings', () => {
-    const validInput = 'foo'
-
-    expect(() => validateKeyInput(string(), validInput, path)).toThrow(
-      new UnrecognizedKeyInputPropertyError({ path })
-    )
-
+  describe('strings', () => {
     const keyStr = string().key()
-    expect(() => validateKeyInput(keyStr, validInput, path)).not.toThrow()
-
+    const validInput = 'foo'
     const invalidInput = 42
-    // @ts-expect-error
-    expect(() => validateKeyInput(keyStr, invalidInput, path)).toThrow(
-      new InvalidKeyInputValueTypeError({ expectedType: 'string', keyInput: invalidInput, path })
-    )
+
+    it('passes if attribute is key and input is valid', () => {
+      expect(() => validateKeyInput(keyStr, validInput, path)).not.toThrow()
+    })
+
+    it('throws if attribute is not key', () => {
+      expect(() => validateKeyInput(string(), validInput, path)).toThrow(
+        new UnrecognizedKeyInputPropertyError({ path })
+      )
+    })
+
+    it('throws if input is invalid', () => {
+      // @ts-expect-error
+      expect(() => validateKeyInput(keyStr, invalidInput, path)).toThrow(
+        new InvalidKeyInputValueTypeError({ expectedType: 'string', keyInput: invalidInput, path })
+      )
+    })
   })
 
-  it('validates valid key lists', () => {
-    const validInput = ['foo']
-
-    expect(() => validateKeyInput(list(string().required()), validInput, path)).toThrow(
-      new UnrecognizedKeyInputPropertyError({ path })
-    )
-
+  describe('lists', () => {
     const stringList = list(string().required().key()).key()
-    expect(() => validateKeyInput(stringList, validInput, path)).not.toThrow()
-
-    // throw if element is invalid
+    const validInput = ['foo']
     const invalidInput = ['foo', 42]
-    // @ts-expect-error
-    expect(() => validateKeyInput(stringList, invalidInput, path)).toThrow(
-      new InvalidKeyInputValueTypeError({
-        expectedType: 'string',
-        keyInput: invalidInput[1],
-        path: `${path}[1]`
-      })
-    )
+
+    it('passes if attribute is key and input is valid', () => {
+      expect(() => validateKeyInput(stringList, validInput, path)).not.toThrow()
+    })
+
+    it('throws if attribute is not key', () => {
+      expect(() => validateKeyInput(list(string().required()), validInput, path)).toThrow(
+        new UnrecognizedKeyInputPropertyError({ path })
+      )
+    })
+
+    it('throws if input is invalid', () => {
+      // @ts-expect-error
+      expect(() => validateKeyInput(stringList, invalidInput, path)).toThrow(
+        new InvalidKeyInputValueTypeError({
+          expectedType: 'string',
+          keyInput: invalidInput[1],
+          path: `${path}[1]`
+        })
+      )
+    })
   })
 
-  it('validates valid key maps', () => {
-    const invalidInput = { keyStr: 42 }
-    const validInput1 = { keyStr: 'foo' }
-    const validInput2 = { keyStr: 'foo', optStr: 'bar' }
-
-    expect(() => validateKeyInput(map({ keyStr: string() }), validInput1, path)).toThrow(
-      new UnrecognizedKeyInputPropertyError({ path })
-    )
-
+  describe('maps', () => {
     const keyMap = map({
       keyStr: string().required('always').key(),
       optStr: string().key(),
       nonKeyStr: string().required('always')
     }).key()
+    const invalidInput = { keyStr: 42 }
+    const validInput1 = { keyStr: 'foo' }
+    const validInput2 = { keyStr: 'foo', optStr: 'bar' }
 
-    // Without optional properties
-    expect(() => validateKeyInput(keyMap, validInput1, path)).not.toThrow()
+    it('passes if attribute is key and input is valid (without optional attribute)', () => {
+      expect(() => validateKeyInput(keyMap, validInput1, path)).not.toThrow()
+    })
 
-    // With optional properties
-    expect(() => validateKeyInput(keyMap, validInput2, path)).not.toThrow()
+    it('passes if attribute is key and input is valid (with optional attribute)', () => {
+      expect(() => validateKeyInput(keyMap, validInput2, path)).not.toThrow()
+    })
 
-    // Rejects other properties
-    // @ts-expect-error
-    expect(() => validateKeyInput(keyMap, { ...validInput2, nonKeyStr: 'baz' }, path)).toThrow(
-      new UnrecognizedKeyInputPropertyError({ path: `${path}.nonKeyStr` })
-    )
+    it('throws if attribute is not key', () => {
+      expect(() => validateKeyInput(map({ keyStr: string() }), validInput1, path)).toThrow(
+        new UnrecognizedKeyInputPropertyError({ path })
+      )
+    })
 
-    // Fail if property is invalid
-    // @ts-expect-error
-    expect(() => validateKeyInput(keyMap, invalidInput, path)).toThrow(
-      new InvalidKeyInputValueTypeError({
-        expectedType: 'string',
-        keyInput: invalidInput.keyStr,
-        path: `${path}.keyStr`
-      })
-    )
+    it('throws if input is invalid', () => {
+      // @ts-expect-error
+      expect(() => validateKeyInput(keyMap, invalidInput, path)).toThrow(
+        new InvalidKeyInputValueTypeError({
+          expectedType: 'string',
+          keyInput: invalidInput.keyStr,
+          path: `${path}.keyStr`
+        })
+      )
+    })
 
-    // ...except if map is open
-    expect(() =>
-      validateKeyInput(keyMap.open(), { ...validInput2, anyProp: 'baz' }, path)
-    ).not.toThrow()
+    it('rejects additional attributes if closed', () => {
+      // @ts-expect-error
+      expect(() => validateKeyInput(keyMap, { ...validInput2, nonKeyStr: 'baz' }, path)).toThrow(
+        new UnrecognizedKeyInputPropertyError({ path: `${path}.nonKeyStr` })
+      )
+    })
+
+    it('accepts additional attributes if open', () => {
+      expect(() =>
+        validateKeyInput(keyMap.open(), { ...validInput2, anyProp: 'baz' }, path)
+      ).not.toThrow()
+    })
   })
 })
