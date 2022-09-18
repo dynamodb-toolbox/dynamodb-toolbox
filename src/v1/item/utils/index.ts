@@ -1,2 +1,2 @@
-export * from './isKey'
+export * from './isKeyProperty'
 export * from './isOpen'

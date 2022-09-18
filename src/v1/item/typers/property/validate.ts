@@ -1,4 +1,4 @@
-import { getPathMessage } from 'v1/errors/getPathMessage'
+import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import { isBoolean, isString } from 'v1/utils/validation'
 
 import type { PropertyState } from './interface'
@@ -17,7 +17,7 @@ export class InvalidPropertyStateError extends Error {
     path?: string
   }) {
     super(
-      `Invalid option value type${getPathMessage(
+      `Invalid option value type${getInfoTextForItemPath(
         path
       )}. Option: ${optionName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
     )
