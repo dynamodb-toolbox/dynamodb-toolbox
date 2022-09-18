@@ -1,32 +1,26 @@
+import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
+
 import { validatePropertyState } from '../property/validate'
-import { errorMessagePathSuffix, validateProperty } from '../validate'
+import { validateProperty } from '../validate'
 
 import type { List } from './interface'
 
 export class OptionalListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${errorMessagePathSuffix(path)}: List elements must be required`)
+    super(`Invalid list elements${getInfoTextForItemPath(path)}: List elements must be required`)
   }
 }
 
 export class HiddenListElementsError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${errorMessagePathSuffix(path)}: List elements cannot be hidden`)
-  }
-}
-
-export class KeyListElementsError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(
-      `Invalid list elements${errorMessagePathSuffix(path)}: List elements cannot be part of key`
-    )
+    super(`Invalid list elements${getInfoTextForItemPath(path)}: List elements cannot be hidden`)
   }
 }
 
 export class SavedAsListElementsError extends Error {
   constructor({ path }: { path?: string }) {
     super(
-      `Invalid list elements${errorMessagePathSuffix(
+      `Invalid list elements${getInfoTextForItemPath(
         path
       )}: List elements cannot be renamed (have savedAs option)`
     )
@@ -36,7 +30,7 @@ export class SavedAsListElementsError extends Error {
 export class DefaultedListElementsError extends Error {
   constructor({ path }: { path?: string }) {
     super(
-      `Invalid list elements${errorMessagePathSuffix(
+      `Invalid list elements${getInfoTextForItemPath(
         path
       )}: List elements cannot have default values`
     )
@@ -70,10 +64,6 @@ export const validateList = <L extends List>(
 
   if (elementsHidden !== false) {
     throw new HiddenListElementsError({ path })
-  }
-
-  if (elementsKey !== false) {
-    throw new KeyListElementsError({ path })
   }
 
   if (elementsSavedAs !== undefined) {

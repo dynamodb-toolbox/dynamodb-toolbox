@@ -5,6 +5,7 @@ import type { Item } from './interface'
 
 type ItemTyper = <P extends MappedProperties = {}>(_properties: Narrow<P>) => Item<P>
 
+// TODO: Enable item opening
 /**
  * Defines an Entity items shape
  *
@@ -22,6 +23,7 @@ export const item: ItemTyper = <P extends MappedProperties = {}>(
 
   return {
     _type: 'item',
+    _open: false,
     _properties: properties
   } as Item<P>
 }
