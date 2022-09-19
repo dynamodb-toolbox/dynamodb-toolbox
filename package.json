@@ -1,10 +1,6 @@
 {
   "name": "dynamodb-toolbox",
-<<<<<<< HEAD
-  "version": "1.1.0",
-=======
   "version": "0.5.0-beta.0",
->>>>>>> parent of ccb6d68 (0.5.0)
   "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "dist/index.js",
