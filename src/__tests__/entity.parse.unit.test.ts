@@ -1,13 +1,13 @@
 // @ts-nocheck
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 // Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
 // Create basic entity
-const TestEntity = new Entity(require('./entities/test-entity.ts'))
-const SimpleEntity = new Entity(require('./entities/simple-entity.ts'))
+const TestEntity = new Entity(require('./entities/entity.test.ts'))
+const SimpleEntity = new Entity(require('./entities/simple-entity.test.ts'))
 
 // Create basic table
 const TestTable = new Table({

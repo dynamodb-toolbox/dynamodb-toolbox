@@ -1,6 +1,6 @@
 // import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { Table, Entity } from '../index'
-import { DocumentClient as docClient } from './bootstrap-tests'
+import { DocumentClient as docClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -80,14 +80,14 @@ describe('transactWrite', () => {
 
   it('allows to provide custom params', () => {
     const result = TestTable.transactWriteParams(
-        [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
-        {
-          token: 'some-token'
-        },
-        {
-          ClientRequestToken: 'some-custom-token',
-        }
-    );
+      [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
+      {
+        token: 'some-token'
+      },
+      {
+        ClientRequestToken: 'some-custom-token'
+      }
+    )
 
     expect(result.ClientRequestToken).toBe('some-custom-token')
   })

@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -273,7 +273,6 @@ describe('query', () => {
       IndexName: 'GSINumber'
     })
   })
-
 
   it('queries a table with lt, even falsy (0)', () => {
     let result = TestTable.queryParams('test', { index: 'GSINumber', lt: 0 })
