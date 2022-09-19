@@ -29,8 +29,6 @@ jobs:
         with:
           version-type:  ${{ github.event.inputs.release-type }}
           tag-prefix:  'v'
-      - name: Install dependencies and build 🔧
-        run: npm ci --legacy-peer-deps && npm run build
       - name: Publish package on NPM 📦
         run: npm publish
         env:
