@@ -1,4 +1,4 @@
-name: CI
+name: NPM Publish
 
 on:
   workflow_dispatch:
