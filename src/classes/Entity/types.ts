@@ -39,7 +39,8 @@ export type KeyAttributeDefinition = {
   suffix: string
   onUpdate: boolean
   dependsOn: string | string[]
-  transform: (value: any, data: any) => any
+  transform: (value: any, data: any) => any,
+  format: (value: any, data: any) => any,
   coerce: boolean
   // 💥 TODO: Are following options forbidden in KeyAttributeDefinitions ?
   save: never
@@ -78,6 +79,7 @@ export type PureAttributeDefinition = O.Partial<{
   dependsOn: string | string[]
   // 🔨 TOIMPROVE: Probably typable
   transform: (value: any, data: {}) => any
+  format: (value: any, data: {}) => any
   coerce: boolean
   save: boolean
   onUpdate: boolean
