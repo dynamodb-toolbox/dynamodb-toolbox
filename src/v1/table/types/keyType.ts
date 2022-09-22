@@ -6,13 +6,13 @@ export type IndexableKeyType = 'string' | 'binary' | 'number'
 /**
  * Returns the corresponding TS type of a Key or Index attribute type
  *
- * @param T Attribute Type
+ * @param KeyType Attribute Type
  * @return Type
  */
-export type ResolveIndexableKeyType<T extends IndexableKeyType> = T extends 'string'
+export type ResolveIndexableKeyType<KeyType extends IndexableKeyType> = KeyType extends 'string'
   ? string
-  : T extends 'number'
+  : KeyType extends 'number'
   ? number
-  : T extends 'binary'
+  : KeyType extends 'binary'
   ? Buffer
   : never

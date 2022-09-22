@@ -69,8 +69,8 @@ export class InvalidDefaultValueRangeError extends Error {
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const validateLeaf = <L extends Leaf>(
-  { _type: leafType, _enum: enumValues, _default: defaultValue, ...leafInstance }: L,
+export const validateLeaf = <LeafInput extends Leaf>(
+  { _type: leafType, _enum: enumValues, _default: defaultValue, ...leafInstance }: LeafInput,
   path?: string
 ): void => {
   validatePropertyState(leafInstance, path)
@@ -78,8 +78,8 @@ export const validateLeaf = <L extends Leaf>(
   const typeValidator = validatorsByLeafType[leafType]
 
   enumValues?.forEach(enumValue => {
-    const isValidEnumValue = typeValidator(enumValue)
-    if (!isValidEnumValue) {
+    const isEnumValueValid = typeValidator(enumValue)
+    if (!isEnumValueValid) {
       throw new InvalidEnumValueTypeError({ expectedType: leafType, enumValue, path })
     }
   })

@@ -15,11 +15,11 @@ const hasNoItem = (
  * @param keyInput Key input
  * @return GetItemCommandOutput
  */
-export const getItem = async <E extends EntityV2>(
-  entity: E,
-  keyInput: KeyInput<E>
+export const getItem = async <EntityInput extends EntityV2>(
+  entity: EntityInput,
+  keyInput: KeyInput<EntityInput>
 ): Promise<
-  O.Merge<Omit<GetItemCommandOutput, 'Item'>, { Item?: FormattedItem<E> | undefined }>
+  O.Merge<Omit<GetItemCommandOutput, 'Item'>, { Item?: FormattedItem<EntityInput> | undefined }>
 > => {
   const commandOutput = await entity.table.dynamoDbClient.send(
     new GetItemCommand(getItemParams(entity, keyInput))
@@ -51,9 +51,9 @@ export const getItem = async <E extends EntityV2>(
  * @param keyInput Key input
  * @return GetItemCommandInput
  */
-export const getItemParams = <E extends EntityV2>(
-  entity: E,
-  keyInput: KeyInput<E>
+export const getItemParams = <EntityInput extends EntityV2>(
+  entity: EntityInput,
+  keyInput: KeyInput<EntityInput>
 ): GetItemCommandInput => {
   const { name: tableName } = entity.table
 
