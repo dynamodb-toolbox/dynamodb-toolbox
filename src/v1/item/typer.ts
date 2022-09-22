@@ -3,7 +3,9 @@ import { validateProperty } from './typers/validate'
 
 import type { Item } from './interface'
 
-type ItemTyper = <P extends MappedProperties = {}>(_properties: Narrow<P>) => Item<P>
+type ItemTyper = <MappedPropertiesInput extends MappedProperties = {}>(
+  _properties: Narrow<MappedPropertiesInput>
+) => Item<MappedPropertiesInput>
 
 // TODO: Enable item opening
 /**
@@ -12,9 +14,9 @@ type ItemTyper = <P extends MappedProperties = {}>(_properties: Narrow<P>) => It
  * @param properties Object of properties
  * @return Item
  */
-export const item: ItemTyper = <P extends MappedProperties = {}>(
-  properties: Narrow<P>
-): Item<P> => {
+export const item: ItemTyper = <MappedPropertiesInput extends MappedProperties = {}>(
+  properties: Narrow<MappedPropertiesInput>
+): Item<MappedPropertiesInput> => {
   // Validation is run at item definition only
   // This avoids unnecessary compute and bugs (validating incomplete items)
   Object.entries(properties).forEach(([propertyName, property]) => {
@@ -25,5 +27,5 @@ export const item: ItemTyper = <P extends MappedProperties = {}>(
     _type: 'item',
     _open: false,
     _properties: properties
-  } as Item<P>
+  } as Item<MappedPropertiesInput>
 }
