@@ -4,7 +4,9 @@ import { Key } from '../types'
 /**
  * Returns wether a Table has a Sort Key or not
  *
- * @param T Table
+ * @param TableInput Table
  * @return Boolean
  */
-export type HasSK<T extends TableV2 = TableV2> = Key extends T['sortKey'] ? false : true
+export type HasSK<TableInput extends TableV2 = TableV2> = Key extends TableInput['sortKey']
+  ? false
+  : true

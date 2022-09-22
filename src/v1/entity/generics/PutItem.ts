@@ -19,29 +19,29 @@ import type { EntityV2 } from '../class'
 /**
  * Formatted input of a PUT command for a given Entity, Item or Property
  *
- * @param I Entity | Item | Property
+ * @param Input Entity | Item | Property
  * @return Object
  */
-export type PutItem<E extends EntityV2 | Item | Property> = E extends Any
+export type PutItem<Input extends EntityV2 | Item | Property> = Input extends Any
   ? ResolvedProperty
-  : E extends Leaf
-  ? NonNullable<E['_resolved']>
-  : E extends List
-  ? PutItem<E['_elements']>[]
-  : E extends Mapped | Item
+  : Input extends Leaf
+  ? NonNullable<Input['_resolved']>
+  : Input extends List
+  ? PutItem<Input['_elements']>[]
+  : Input extends Mapped | Item
   ? O.Required<
       O.Partial<
         {
           // Keep all properties
-          [key in keyof E['_properties']]: PutItem<E['_properties'][key]>
+          [key in keyof Input['_properties']]: PutItem<Input['_properties'][key]>
         }
       >,
       // Enforce Required properties
-      | O.SelectKeys<E['_properties'], { _required: AtLeastOnce | OnlyOnce | Always }>
+      | O.SelectKeys<Input['_properties'], { _required: AtLeastOnce | OnlyOnce | Always }>
       // Enforce properties that have initial default
-      | O.FilterKeys<E['_properties'], { _default: undefined | ComputedDefault }>
+      | O.FilterKeys<Input['_properties'], { _default: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedProperty> if map is open
-      (E extends { _open: true } ? Record<string, ResolvedProperty> : {})
-  : E extends EntityV2
-  ? PutItem<E['item']>
+      (Input extends { _open: true } ? Record<string, ResolvedProperty> : {})
+  : Input extends EntityV2
+  ? PutItem<Input['item']>
   : never

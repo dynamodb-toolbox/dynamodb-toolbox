@@ -26,13 +26,13 @@ const hasNoAttributes = (
  * @param updateItemInput Input
  * @return UpdateItemCommandOutput
  */
-export const updateItem = async <E extends EntityV2>(
-  entity: E,
-  updateItemInput: UpdateItemInput<E>
+export const updateItem = async <EntityInput extends EntityV2>(
+  entity: EntityInput,
+  updateItemInput: UpdateItemInput<EntityInput>
 ): Promise<
   O.Merge<
     Omit<UpdateItemCommandOutput, 'Attributes'>,
-    { Attributes?: FormattedItem<E> | undefined }
+    { Attributes?: FormattedItem<EntityInput> | undefined }
   >
 > => {
   const commandOutput = await entity.table.dynamoDbClient.send(
@@ -65,9 +65,9 @@ export const updateItem = async <E extends EntityV2>(
  * @param updateItemInput Input
  * @return UpdateItemCommandInput
  */
-export const updateItemParams = <E extends EntityV2>(
-  entity: E,
-  updateItemInput: UpdateItemInput<E>
+export const updateItemParams = <EntityInput extends EntityV2>(
+  entity: EntityInput,
+  updateItemInput: UpdateItemInput<EntityInput>
 ): UpdateItemCommandInput => {
   const { name: tableName } = entity.table
 
