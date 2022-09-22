@@ -6,21 +6,23 @@ import { HasSK } from './hasSk'
 /**
  * Returns the TS type of a Table Primary Key
  *
- * @param T Table
+ * @param TableInput Table
  * @return Object
  */
-export type PrimaryKey<T extends TableV2 = TableV2> = TableV2 extends T
+export type PrimaryKey<TableInput extends TableV2 = TableV2> = TableV2 extends TableInput
   ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>
-  : HasSK<T> extends true
+  : HasSK<TableInput> extends true
   ? {
       [K in
-        | T['partitionKey']['name']
-        | NonNullable<T['sortKey']>['name']]: K extends T['partitionKey']['name']
-        ? ResolveIndexableKeyType<T['partitionKey']['type']>
-        : K extends NonNullable<T['sortKey']>['name']
-        ? ResolveIndexableKeyType<NonNullable<T['sortKey']>['type']>
+        | TableInput['partitionKey']['name']
+        | NonNullable<TableInput['sortKey']>['name']]: K extends TableInput['partitionKey']['name']
+        ? ResolveIndexableKeyType<TableInput['partitionKey']['type']>
+        : K extends NonNullable<TableInput['sortKey']>['name']
+        ? ResolveIndexableKeyType<NonNullable<TableInput['sortKey']>['type']>
         : never
     }
   : {
-      [K in T['partitionKey']['name']]: ResolveIndexableKeyType<T['partitionKey']['type']>
+      [K in TableInput['partitionKey']['name']]: ResolveIndexableKeyType<
+        TableInput['partitionKey']['type']
+      >
     }

@@ -11,7 +11,10 @@ import type { Property } from './types/property'
  * @param path _(optional)_ Path of the property in the related item (string)
  * @return void
  */
-export const validateProperty = (property: Property, path?: string): void => {
+export const validateProperty = <PropertyInput extends Property>(
+  property: PropertyInput,
+  path?: string
+): void => {
   switch (property._type) {
     case 'string':
     case 'number':
