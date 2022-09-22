@@ -3,15 +3,15 @@ import type { MappedProperties } from '../types/property'
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
 interface MappedState<
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  O extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  D extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyState<R, H, K, S> {
-  _open: O
-  _default: D
+  Required extends RequiredOption = RequiredOption,
+  Hidden extends boolean = boolean,
+  Key extends boolean = boolean,
+  Open extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends PropertyState<Required, Hidden, Key, SavedAs> {
+  _open: Open
+  _default: Default
 }
 
 // TODO: Add false saveAs option
@@ -20,16 +20,16 @@ interface MappedState<
  * (Called Mapped to differ from native TS Map class)
  */
 export interface Mapped<
-  P extends MappedProperties = MappedProperties,
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  O extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  D extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends MappedState<R, H, K, O, S, D> {
+  Properties extends MappedProperties = MappedProperties,
+  Required extends RequiredOption = RequiredOption,
+  Hidden extends boolean = boolean,
+  Key extends boolean = boolean,
+  Open extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends MappedState<Required, Hidden, Key, Open, SavedAs, Default> {
   _type: 'map'
-  _properties: P
+  _properties: Properties
   /**
    * Tag a property as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -39,31 +39,33 @@ export interface Mapped<
    *
    * @param nextRequired RequiredOption
    */
-  required: <$R extends RequiredOption = AtLeastOnce>(
-    nextRequired?: $R
-  ) => Mapped<P, $R, H, K, O, S, D>
+  required: <NextRequired extends RequiredOption = AtLeastOnce>(
+    nextRequired?: NextRequired
+  ) => Mapped<Properties, NextRequired, Hidden, Key, Open, SavedAs, Default>
   /**
    * Hide property after fetch commands and formatting
    */
-  hidden: () => Mapped<P, R, true, K, O, S, D>
+  hidden: () => Mapped<Properties, Required, true, Key, Open, SavedAs, Default>
   /**
    * Tag property as needed for Primary Key computing
    */
-  key: () => Mapped<P, R, H, true, O, S, D>
+  key: () => Mapped<Properties, Required, Hidden, true, Open, SavedAs, Default>
   /**
    * Accept additional properties of any type
    */
-  open: () => Mapped<P, R, H, K, true, S, D>
+  open: () => Mapped<Properties, Required, Hidden, Key, true, SavedAs, Default>
   /**
    * Rename property before save commands
    */
-  savedAs: <$S extends string | undefined>(nextSavedAs: $S) => Mapped<P, R, H, K, O, $S, D>
+  savedAs: <NextSavedAs extends string | undefined>(
+    nextSavedAs: NextSavedAs
+  ) => Mapped<Properties, Required, Hidden, Key, Open, NextSavedAs, Default>
   /**
    * Tag property as having a computed default value
    *
    * @param nextDefaultValue `ComputedDefault`
    */
-  default: <$D extends ComputedDefault | undefined>(
-    nextDefaultValue: $D
-  ) => Mapped<P, R, H, K, O, S, $D>
+  default: <NextComputeDefault extends ComputedDefault | undefined>(
+    nextDefaultValue: NextComputeDefault
+  ) => Mapped<Properties, Required, Hidden, Key, Open, SavedAs, NextComputeDefault>
 }

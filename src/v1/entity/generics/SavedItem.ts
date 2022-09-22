@@ -21,25 +21,25 @@ import type { EntityV2 } from '../class'
  * Swaps the key of a properties dictionnary for their "savedAs" values if they exist
  * Leave the property as is otherwise
  *
- * @param O Mapped Properties
+ * @param MappedPropertiesInput Mapped Properties
  * @return Mapped Properties
  * @example
  * SwapWithSavedAs<{ keyA: { ...property, _savedAs: "keyB" }}>
  * => { keyB: { ...property, _savedAs: "keyB"  }}
  */
-type SwapWithSavedAs<O extends MappedProperties> = A.Compute<
+type SwapWithSavedAs<MappedPropertiesInput extends MappedProperties> = A.Compute<
   U.IntersectOf<
     {
-      [K in keyof O]: O[K] extends { _savedAs: string }
-        ? Record<O[K]['_savedAs'], O[K]>
-        : Record<K, O[K]>
-    }[keyof O]
+      [K in keyof MappedPropertiesInput]: MappedPropertiesInput[K] extends { _savedAs: string }
+        ? Record<MappedPropertiesInput[K]['_savedAs'], MappedPropertiesInput[K]>
+        : Record<K, MappedPropertiesInput[K]>
+    }[keyof MappedPropertiesInput]
   >
 >
 
 type RecSavedItem<
-  P extends Mapped | Item,
-  S extends MappedProperties = SwapWithSavedAs<P['_properties']>
+  Input extends Mapped | Item,
+  S extends MappedProperties = SwapWithSavedAs<Input['_properties']>
 > = O.Required<
   O.Partial<
     {
@@ -53,22 +53,22 @@ type RecSavedItem<
   // (...but not so sure about that anymore, props can have computed default but still be optional)
   | O.FilterKeys<S, { _default: undefined }>
 > & // Add Record<string, ResolvedProperty> if map is open
-  (P extends { _open: true } ? Record<string, ResolvedProperty> : {})
+  (Input extends { _open: true } ? Record<string, ResolvedProperty> : {})
 
 /**
  * Shape of saved item in DynamoDB for a given Entity, Item or Property
  *
- * @param E Entity | Item | Property
+ * @param Input Entity | Item | Property
  * @return Object
  */
-export type SavedItem<E extends EntityV2 | Item | Property> = E extends Any
+export type SavedItem<Input extends EntityV2 | Item | Property> = Input extends Any
   ? ResolvedProperty
-  : E extends Leaf
-  ? NonNullable<E['_resolved']>
-  : E extends List
-  ? SavedItem<E['_elements']>[]
-  : E extends Mapped | Item
-  ? RecSavedItem<E>
-  : E extends EntityV2
-  ? SavedItem<E['item']> & PrimaryKey<E['table']>
+  : Input extends Leaf
+  ? NonNullable<Input['_resolved']>
+  : Input extends List
+  ? SavedItem<Input['_elements']>[]
+  : Input extends Mapped | Item
+  ? RecSavedItem<Input>
+  : Input extends EntityV2
+  ? SavedItem<Input['item']> & PrimaryKey<Input['table']>
   : never

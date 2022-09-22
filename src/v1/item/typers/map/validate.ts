@@ -10,8 +10,8 @@ import type { Mapped } from './interface'
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const validateMap = <M extends Mapped>(
-  { _properties: properties, ...mapInstance }: M,
+export const validateMap = <MappedInput extends Mapped>(
+  { _properties: properties, ...mapInstance }: MappedInput,
   path?: string
 ): void => {
   validatePropertyState(mapInstance, path)
