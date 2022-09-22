@@ -6,19 +6,23 @@ import { defaultComputeDefaults } from './utils/defaultComputeDefaults'
 import { getDefaultComputeKey } from './utils/defaultComputeKey'
 
 export class EntityV2<
-  N extends string = string,
-  T extends TableV2 = TableV2,
-  I extends Item = Item
+  EntityName extends string = string,
+  EntityTable extends TableV2 = TableV2,
+  EntityItem extends Item = Item
 > {
   public _type: 'entity'
-  public name: N
-  public table: T
-  public item: I
+  public name: EntityName
+  public table: EntityTable
+  public item: EntityItem
   // any is needed for contravariance
-  computeKey: (keyInput: Item extends I ? any : KeyInput<I>) => PrimaryKey<T>
+  computeKey: (
+    keyInput: Item extends EntityItem ? any : KeyInput<EntityItem>
+  ) => PrimaryKey<EntityTable>
   // TODO: Split in putComputeDefaults & updateComputeDefaults
   // any is needed for contravariance
-  computeDefaults: (putItemInput: Item extends I ? any : PutItemInput<I, true>) => PutItem<I>
+  computeDefaults: (
+    putItemInput: Item extends EntityItem ? any : PutItemInput<EntityItem, true>
+  ) => PutItem<EntityItem>
 
   /**
    * Define an Entity for a given table
@@ -37,14 +41,14 @@ export class EntityV2<
     computeKey,
     computeDefaults
   }: {
-    name: N
-    table: T
-    item: I
-  } & (NeedsKeyCompute<I, T> extends true
-    ? { computeKey: (keyInput: KeyInput<I>) => PrimaryKey<T> }
+    name: EntityName
+    table: EntityTable
+    item: EntityItem
+  } & (NeedsKeyCompute<EntityItem, EntityTable> extends true
+    ? { computeKey: (keyInput: KeyInput<EntityItem>) => PrimaryKey<EntityTable> }
     : { computeKey?: undefined }) &
-    (HasComputedDefaults<I> extends true
-      ? { computeDefaults: (input: PutItemInput<I, true>) => PutItem<I> }
+    (HasComputedDefaults<EntityItem> extends true
+      ? { computeDefaults: (input: PutItemInput<EntityItem, true>) => PutItem<EntityItem> }
       : { computeDefaults?: undefined })) {
     this._type = 'entity'
     this.name = name
