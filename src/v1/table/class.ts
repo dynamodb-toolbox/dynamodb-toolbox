@@ -2,11 +2,11 @@ import type { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 
 import { Key, NarrowKey } from './types'
 
-export class TableV2<PK extends Key = Key, SK extends Key = Key> {
+export class TableV2<PartitionKey extends Key = Key, SortKey extends Key = Key> {
   public dynamoDbClient: DynamoDBClient
   public name: string
-  public partitionKey: PK
-  public sortKey?: SK
+  public partitionKey: PartitionKey
+  public sortKey?: SortKey
 
   /**
    * Define a Table
@@ -25,8 +25,8 @@ export class TableV2<PK extends Key = Key, SK extends Key = Key> {
   }: {
     dynamoDbClient: DynamoDBClient
     name: string
-    partitionKey: NarrowKey<PK>
-    sortKey?: NarrowKey<SK>
+    partitionKey: NarrowKey<PartitionKey>
+    sortKey?: NarrowKey<SortKey>
   }) {
     this.dynamoDbClient = dynamoDbClient
     this.name = name
