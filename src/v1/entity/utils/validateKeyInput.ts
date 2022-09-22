@@ -46,9 +46,9 @@ export class UnexpectedPropertyError extends Error {
   }
 }
 
-type KeyInputValidator = <E extends EntityV2 | Item | Property>(
-  entity: E,
-  keyInput: KeyInput<E>,
+type KeyInputValidator = <Input extends EntityV2 | Item | Property>(
+  entity: Input,
+  keyInput: KeyInput<Input>,
   path?: string
 ) => void
 
@@ -100,9 +100,9 @@ const validateProperties = (
  * @param path _(optional)_ Path of the property in the related item (string)
  * @return void
  */
-export const validateKeyInput: KeyInputValidator = <E extends EntityV2 | Item | Property>(
-  entry: E,
-  keyInput: KeyInput<E>,
+export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Item | Property>(
+  entry: Input,
+  keyInput: KeyInput<Input>,
   path?: string
 ): void => {
   if (entry._type === 'entity') {

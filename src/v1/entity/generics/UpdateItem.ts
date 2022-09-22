@@ -18,31 +18,31 @@ import type { EntityV2 } from '../class'
 /**
  * Formatted input of an UPDATE command for a given Entity, Item or Property
  *
- * @param I Entity | Item | Property
+ * @param Input Entity | Item | Property
  * @return Object
  */
-export type UpdateItem<E extends EntityV2 | Item | Property> = E extends Any
+export type UpdateItem<Input extends EntityV2 | Item | Property> = Input extends Any
   ? ResolvedProperty
-  : E extends Leaf
-  ? NonNullable<E['_resolved']>
-  : E extends List
-  ? UpdateItem<E['_elements']>[]
-  : E extends Mapped | Item
+  : Input extends Leaf
+  ? NonNullable<Input['_resolved']>
+  : Input extends List
+  ? UpdateItem<Input['_elements']>[]
+  : Input extends Mapped | Item
   ? O.Required<
       O.Partial<
         {
           // Filter Required OnlyOnce properties
-          [key in O.FilterKeys<E['_properties'], { _required: OnlyOnce }>]: UpdateItem<
-            E['_properties'][key]
+          [key in O.FilterKeys<Input['_properties'], { _required: OnlyOnce }>]: UpdateItem<
+            Input['_properties'][key]
           >
         }
       >,
       // Enforce Always Required properties
-      | O.SelectKeys<E['_properties'], { _required: Always }>
+      | O.SelectKeys<Input['_properties'], { _required: Always }>
       // Enforce properties that have initial default
-      | O.FilterKeys<E['_properties'], { _default: undefined | ComputedDefault }>
+      | O.FilterKeys<Input['_properties'], { _default: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedProperty> if map is open
-      (E extends { _open: true } ? Record<string, ResolvedProperty> : {})
-  : E extends EntityV2
-  ? UpdateItem<E['item']>
+      (Input extends { _open: true } ? Record<string, ResolvedProperty> : {})
+  : Input extends EntityV2
+  ? UpdateItem<Input['item']>
   : never

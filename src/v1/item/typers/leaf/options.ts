@@ -7,19 +7,19 @@ import type { LeafType, EnumValues, LeafDefaultValue } from './types'
  * Input options of Leaf Property
  */
 export interface LeafOptions<
-  T extends LeafType = LeafType,
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  E extends EnumValues<T> = EnumValues<T>,
-  D extends LeafDefaultValue<T> = LeafDefaultValue<T>
-> extends PropertyOptions<R, H, K, S> {
-  _enum: E
+  Type extends LeafType = LeafType,
+  Required extends RequiredOption = RequiredOption,
+  Hidden extends boolean = boolean,
+  Key extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Enum extends EnumValues<Type> = EnumValues<Type>,
+  Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
+> extends PropertyOptions<Required, Hidden, Key, SavedAs> {
+  _enum: Enum
   /**
    * Provide a default value for property, or tag property as having a computed default value
    */
-  default: D
+  default: Default
 }
 
 export const leafDefaultOptions: LeafOptions<

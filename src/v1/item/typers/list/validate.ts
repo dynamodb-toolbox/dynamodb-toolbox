@@ -44,8 +44,8 @@ export class DefaultedListElementsError extends Error {
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const validateList = <L extends List>(
-  { _elements: elements, ...listInstance }: L,
+export const validateList = <ListInput extends List>(
+  { _elements: elements, ...listInstance }: ListInput,
   path?: string
 ): void => {
   validatePropertyState(listInstance, path)
@@ -53,7 +53,6 @@ export const validateList = <L extends List>(
   const {
     _required: elementsRequired,
     _hidden: elementsHidden,
-    _key: elementsKey,
     _savedAs: elementsSavedAs,
     _default: elementsDefault
   } = elements
