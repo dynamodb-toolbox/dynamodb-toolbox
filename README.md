@@ -12,7 +12,7 @@
 The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It's designed with **Single Tables** in mind, but works just as well with multiple tables. It lets you define your Entities (with typings and aliases) and map them to your DynamoDB tables. You can then **generate the API parameters** to `put`, `get`, `delete`, `update`, `query`, `scan`, `batchGet`, and `batchWrite` data by passing in JavaScript objects. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
 
 ## Why single table design?
-Learn more about single table design in (Alex Debrie's blog)[https://www.alexdebrie.com/posts/dynamodb-single-table].
+Learn more about single table design in [Alex Debrie's blog](https://www.alexdebrie.com/posts/dynamodb-single-table).
 
 ## Version 0.4 🙌 <!-- omit in toc -->
 
