@@ -7,14 +7,14 @@ import type { Any } from './interface'
 import { AnyOptions, anyDefaultOptions } from './options'
 
 type AnyTyper = <
-  Required extends RequiredOption = Never,
-  Hidden extends boolean = false,
-  Key extends boolean = false,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
   SavedAs extends string | undefined = undefined,
   Default extends AnyDefaultValue = undefined
 >(
-  options?: O.Partial<AnyOptions<Required, Hidden, Key, SavedAs, Default>>
-) => Any<Required, Hidden, Key, SavedAs, Default>
+  options?: O.Partial<AnyOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+) => Any<IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
  * Define a new property of any type
@@ -22,14 +22,14 @@ type AnyTyper = <
  * @param options _(optional)_ Boolean Options
  */
 export const any: AnyTyper = <
-  Required extends RequiredOption = Never,
-  Hidden extends boolean = false,
-  Key extends boolean = false,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
   SavedAs extends string | undefined = undefined,
   Default extends AnyDefaultValue = undefined
 >(
-  options?: O.Partial<AnyOptions<Required, Hidden, Key, SavedAs, Default>>
-): Any<Required, Hidden, Key, SavedAs, Default> => {
+  options?: O.Partial<AnyOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+): Any<IsRequired, IsHidden, IsKey, SavedAs, Default> => {
   const appliedOptions = { ...anyDefaultOptions, ...options }
   const {
     required: _required,
@@ -53,5 +53,5 @@ export const any: AnyTyper = <
     key: () => any({ ...appliedOptions, key: true }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => any({ ...appliedOptions, default: nextDefault })
-  } as Any<Required, Hidden, Key, SavedAs, Default>
+  } as Any<IsRequired, IsHidden, IsKey, SavedAs, Default>
 }

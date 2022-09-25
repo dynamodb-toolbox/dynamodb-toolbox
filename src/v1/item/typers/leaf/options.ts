@@ -8,13 +8,13 @@ import type { LeafType, EnumValues, LeafDefaultValue } from './types'
  */
 export interface LeafOptions<
   Type extends LeafType = LeafType,
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Enum extends EnumValues<Type> = EnumValues<Type>,
   Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
-> extends PropertyOptions<Required, Hidden, Key, SavedAs> {
+> extends PropertyOptions<IsRequired, IsHidden, IsKey, SavedAs> {
   _enum: Enum
   /**
    * Provide a default value for property, or tag property as having a computed default value
