@@ -1,15 +1,15 @@
-import { MappedProperties, Property } from './property'
+import { MappedAttributes, Attribute } from './attribute'
 
 /**
- * Utility type to narrow the inferred properties of a map or item
+ * Utility type to narrow the inferred attributes of a map or item
  *
- * @param PropertyInput MappedProperties | Property
- * @return MappedProperties | Property
+ * @param AttributeInput MappedAttributes | Attribute
+ * @return MappedAttributes | Attribute
  */
-export type Narrow<PropertyInput extends MappedProperties | Property> = {
-  [PropertyProperty in keyof PropertyInput]: PropertyInput[PropertyProperty] extends
-    | MappedProperties
-    | Property
-    ? Narrow<PropertyInput[PropertyProperty]>
-    : PropertyInput[PropertyProperty]
+export type Narrow<AttributeInput extends MappedAttributes | Attribute> = {
+  [AttributeProperty in keyof AttributeInput]: AttributeInput[AttributeProperty] extends
+    | MappedAttributes
+    | Attribute
+    ? Narrow<AttributeInput[AttributeProperty]>
+    : AttributeInput[AttributeProperty]
 }

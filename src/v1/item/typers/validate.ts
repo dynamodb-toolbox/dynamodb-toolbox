@@ -2,30 +2,30 @@ import { validateLeaf } from './leaf'
 import { validateMap } from './map'
 import { validateList } from './list'
 import { validateAny } from './any'
-import type { Property } from './types/property'
+import type { Attribute } from './types/attribute'
 
 /**
- * Validates a property definition
+ * Validates an attribute definition
  *
- * @param property Property
- * @param path _(optional)_ Path of the property in the related item (string)
+ * @param attribute Attribute
+ * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return void
  */
-export const validateProperty = <PropertyInput extends Property>(
-  property: PropertyInput,
+export const validateAttribute = <AttributeInput extends Attribute>(
+  attribute: AttributeInput,
   path?: string
 ): void => {
-  switch (property._type) {
+  switch (attribute._type) {
     case 'string':
     case 'number':
     case 'boolean':
     case 'binary':
-      return validateLeaf(property, path)
+      return validateLeaf(attribute, path)
     case 'list':
-      return validateList(property, path)
+      return validateList(attribute, path)
     case 'map':
-      return validateMap(property, path)
+      return validateMap(attribute, path)
     case 'any':
-      return validateAny(property, path)
+      return validateAny(attribute, path)
   }
 }

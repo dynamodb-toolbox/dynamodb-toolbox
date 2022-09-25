@@ -1,7 +1,7 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 
-import { validatePropertyState } from '../property/validate'
-import { validateProperty } from '../validate'
+import { validateAttributeState } from '../attribute/validate'
+import { validateAttribute } from '../validate'
 
 import type { List } from './interface'
 
@@ -48,7 +48,7 @@ export const validateList = <ListInput extends List>(
   { _elements: elements, ...listInstance }: ListInput,
   path?: string
 ): void => {
-  validatePropertyState(listInstance, path)
+  validateAttributeState(listInstance, path)
 
   const {
     _required: elementsRequired,
@@ -73,5 +73,5 @@ export const validateList = <ListInput extends List>(
     throw new DefaultedListElementsError({ path })
   }
 
-  validateProperty(elements, `${path ?? ''}[n]`)
+  validateAttribute(elements, `${path ?? ''}[n]`)
 }
