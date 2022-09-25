@@ -13,13 +13,13 @@ type NeedsKeyPartCompute<
   ItemInput extends Item,
   KeyName extends string,
   KeyType extends IndexableKeyType
-> = ItemInput['_properties'] extends Record<
+> = ItemInput['_attributes'] extends Record<
   KeyName,
   { _type: KeyType; _required: Always; _key: true; _savedAs: undefined }
 >
   ? false
   : O.SelectKeys<
-      ItemInput['_properties'],
+      ItemInput['_attributes'],
       { _type: KeyType; _required: Always; _key: true; _savedAs: KeyName }
     > extends never
   ? true

@@ -5,4 +5,4 @@ export * from './map'
 
 export * from './constants'
 export * from './types'
-export { validateProperty } from './validate'
+export { validateAttribute } from './validate'

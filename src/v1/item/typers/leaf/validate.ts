@@ -3,7 +3,7 @@ import { isComputedDefault } from 'v1/item/utils/isComputedDefault'
 import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
 import { validatorsByLeafType } from 'v1/utils/validation'
 
-import { validatePropertyState } from '../property/validate'
+import { validateAttributeState } from '../attribute/validate'
 
 import type { Leaf } from './interface'
 import type { LeafType, EnumValues, LeafDefaultValue } from './types'
@@ -73,7 +73,7 @@ export const validateLeaf = <LeafInput extends Leaf>(
   { _type: leafType, _enum: enumValues, _default: defaultValue, ...leafInstance }: LeafInput,
   path?: string
 ): void => {
-  validatePropertyState(leafInstance, path)
+  validateAttributeState(leafInstance, path)
 
   const typeValidator = validatorsByLeafType[leafType]
 

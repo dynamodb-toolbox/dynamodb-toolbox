@@ -1,12 +1,12 @@
 import { requiredOptionsSet, Never } from '../constants/requiredOptions'
 
-import { PropertyState } from './interface'
-import { validatePropertyState, InvalidPropertyStateError } from './validate'
+import { AttributeState } from './interface'
+import { validateAttributeState, InvalidAttributeStateError } from './validate'
 
 describe('base state validation', () => {
   const path = 'some/path'
 
-  const validState: PropertyState<Never, false, false, undefined> = {
+  const validState: AttributeState<Never, false, false, undefined> = {
     _required: 'never',
     _hidden: false,
     _key: false,
@@ -17,7 +17,7 @@ describe('base state validation', () => {
     const invalidRequiredOption = 'invalid'
 
     expect(() =>
-      validatePropertyState(
+      validateAttributeState(
         {
           ...validState,
           // @ts-expect-error
@@ -26,7 +26,7 @@ describe('base state validation', () => {
         path
       )
     ).toThrow(
-      new InvalidPropertyStateError({
+      new InvalidAttributeStateError({
         optionName: 'required',
         expectedType: [...requiredOptionsSet].join(', '),
         receivedValue: invalidRequiredOption,
@@ -34,17 +34,17 @@ describe('base state validation', () => {
       })
     )
 
-    expect(() => validatePropertyState(validState)).not.toThrow()
-    expect(() => validatePropertyState({ ...validState, _required: 'atLeastOnce' })).not.toThrow()
-    expect(() => validatePropertyState({ ...validState, _required: 'onlyOnce' })).not.toThrow()
-    expect(() => validatePropertyState({ ...validState, _required: 'always' })).not.toThrow()
+    expect(() => validateAttributeState(validState)).not.toThrow()
+    expect(() => validateAttributeState({ ...validState, _required: 'atLeastOnce' })).not.toThrow()
+    expect(() => validateAttributeState({ ...validState, _required: 'onlyOnce' })).not.toThrow()
+    expect(() => validateAttributeState({ ...validState, _required: 'always' })).not.toThrow()
   })
 
   it('throws if hidden option is invalid', () => {
     const invalidKeyOption = 'invalid'
 
     expect(() =>
-      validatePropertyState(
+      validateAttributeState(
         {
           ...validState,
           // @ts-expect-error
@@ -53,7 +53,7 @@ describe('base state validation', () => {
         path
       )
     ).toThrow(
-      new InvalidPropertyStateError({
+      new InvalidAttributeStateError({
         optionName: 'hidden',
         expectedType: 'boolean',
         receivedValue: invalidKeyOption,
@@ -61,15 +61,15 @@ describe('base state validation', () => {
       })
     )
 
-    expect(() => validatePropertyState(validState)).not.toThrow()
-    expect(() => validatePropertyState({ ...validState, _hidden: true })).not.toThrow()
+    expect(() => validateAttributeState(validState)).not.toThrow()
+    expect(() => validateAttributeState({ ...validState, _hidden: true })).not.toThrow()
   })
 
   it('throws if key option is invalid', () => {
     const invalidKeyOption = 'invalid'
 
     expect(() =>
-      validatePropertyState(
+      validateAttributeState(
         {
           ...validState,
           // @ts-expect-error
@@ -78,7 +78,7 @@ describe('base state validation', () => {
         path
       )
     ).toThrow(
-      new InvalidPropertyStateError({
+      new InvalidAttributeStateError({
         optionName: 'key',
         expectedType: 'boolean',
         receivedValue: invalidKeyOption,
@@ -86,15 +86,15 @@ describe('base state validation', () => {
       })
     )
 
-    expect(() => validatePropertyState(validState)).not.toThrow()
-    expect(() => validatePropertyState({ ...validState, _key: true })).not.toThrow()
+    expect(() => validateAttributeState(validState)).not.toThrow()
+    expect(() => validateAttributeState({ ...validState, _key: true })).not.toThrow()
   })
 
   it('throws if savedAs option is invalid', () => {
     const invalidSavedAsOption = 42
 
     expect(() =>
-      validatePropertyState(
+      validateAttributeState(
         {
           ...validState,
           // @ts-expect-error
@@ -103,7 +103,7 @@ describe('base state validation', () => {
         path
       )
     ).toThrow(
-      new InvalidPropertyStateError({
+      new InvalidAttributeStateError({
         optionName: 'savedAs',
         expectedType: 'string',
         receivedValue: invalidSavedAsOption,
@@ -111,7 +111,7 @@ describe('base state validation', () => {
       })
     )
 
-    expect(() => validatePropertyState(validState)).not.toThrow()
-    expect(() => validatePropertyState({ ...validState, _savedAs: 'foo' })).not.toThrow()
+    expect(() => validateAttributeState(validState)).not.toThrow()
+    expect(() => validateAttributeState({ ...validState, _savedAs: 'foo' })).not.toThrow()
   })
 })
