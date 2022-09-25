@@ -93,6 +93,3 @@ export type FirstDefined<List extends L.List> = {
   If<A.Equals<List, []>, 'stopNone', If<A.Equals<L.Head<List>, undefined>, 'continue', 'stopOne'>>,
   'stopNone' | 'stopOne' | 'continue'
 >]
-
-export type PreventKeys<O extends Record<A.Key, any>, K extends A.Key> = O &
-  O.Partial<Record<K, never> & O.Readonly<Record<K, never>>>

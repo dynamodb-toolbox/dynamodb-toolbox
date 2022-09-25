@@ -19,7 +19,8 @@ import type {
   PutOptions,
   DeleteOptions,
   UpdateOptions,
-  EntityItem
+  EntityItem,
+  InferEntityItem
 } from './classes/Entity'
 
 export {
@@ -30,5 +31,6 @@ export {
   PutOptions,
   DeleteOptions,
   UpdateOptions,
-  EntityItem
+  EntityItem,
+  InferEntityItem
 }

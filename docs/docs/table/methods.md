@@ -265,7 +265,8 @@ const result = await Default.transactWrite(
     Pet.conditionCheck({ family: 'Brady', name: 'Tiger' }, { conditions: { attr: 'alive', eq: false } },
     Pet.deleteTransaction({ family: 'Brady', name: 'Tiger' }),
     User.putTransaction({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother','wife'] }),
-    User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, roles: ['father','husband'] })
+    User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, roles: ['father','husband'] }),
+    User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, unmappedField: 'unmappedValue' }, { strictSchemaCheck: false})
   ],{
     capacity: 'total',
     metrics: 'size',

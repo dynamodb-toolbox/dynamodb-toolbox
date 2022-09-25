@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -259,6 +259,18 @@ describe('query', () => {
       KeyConditionExpression: '#pk = :pk and #sk < :sk',
       ExpressionAttributeNames: { '#pk': 'pk', '#sk': 'sk' },
       ExpressionAttributeValues: { ':pk': 'test', ':sk': 'val' }
+    })
+  })
+
+  it('queries a table with eq, even with 0', () => {
+    let result = TestTable.queryParams('test', { index: 'GSINumber', eq: 0 })
+
+    expect(result).toEqual({
+      TableName: 'test-table',
+      KeyConditionExpression: '#pk = :pk and #sk = :sk',
+      ExpressionAttributeNames: { '#pk': 'GSINpk', '#sk': 'GSINsk' },
+      ExpressionAttributeValues: { ':pk': 'test', ':sk': 0 },
+      IndexName: 'GSINumber'
     })
   })
 

@@ -5,12 +5,15 @@
  */
 
 // Import libraries & types
-import { A, O } from 'ts-toolbelt'
-
 import parseEntityAttributes from './parseEntityAttributes'
 import { TableDef } from '../classes/Table'
-import { AttributeDefinitions, EntityConstructor } from '../classes/Entity'
-import { error, PreventKeys } from './utils'
+import {
+  AttributeDefinitions,
+  EntityConstructor,
+  PureAttributeDefinition,
+  Readonly,
+} from "../classes/Entity";
+import { error } from './utils'
 
 export interface TrackingInfo {
   fields: string[]
@@ -29,7 +32,26 @@ export interface TrackingInfoKeys {
   sortKey?: string
 }
 
-export type ParsedEntity = ReturnType<typeof parseEntity>
+export type ParsedEntity<
+  EntityTable extends TableDef | undefined = TableDef | undefined,
+  Name extends string = string,
+  AutoExecute extends boolean = boolean,
+  AutoParse extends boolean = boolean,
+  TypeAlias extends string = string
+> = {
+  name: Name;
+  schema: {
+    keys: any;
+    attributes: Record<string, PureAttributeDefinition>;
+  };
+  _etAlias: TypeAlias;
+  autoParse: AutoParse | undefined;
+  autoExecute: AutoExecute | undefined;
+  linked: Linked;
+  defaults: any;
+  required: any;
+  table?: EntityTable | undefined;
+};
 
 // Parse entity
 export function parseEntity<
@@ -41,10 +63,7 @@ export function parseEntity<
   CreatedAlias extends string,
   ModifiedAlias extends string,
   TypeAlias extends string,
-  ReadonlyAttributeDefinitions extends PreventKeys<
-    AttributeDefinitions | O.Readonly<AttributeDefinitions, A.Key, 'deep'>,
-    CreatedAlias | ModifiedAlias | TypeAlias
-  >
+  ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>
 >(
   entity: EntityConstructor<
     EntityTable,
@@ -57,7 +76,7 @@ export function parseEntity<
     TypeAlias,
     ReadonlyAttributeDefinitions
   >
-) {
+): ParsedEntity<EntityTable, Name, AutoExecute, AutoParse, TypeAlias> {
   let {
     name,
     timestamps,

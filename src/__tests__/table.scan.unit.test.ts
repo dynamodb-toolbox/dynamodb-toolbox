@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap-tests'
+import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -13,9 +13,10 @@ const TestEntity = new Entity({
   name: 'TestEntity',
   autoExecute: false,
   attributes: {
-    email: { type: 'string', partitionKey: true },
-    sort: { type: 'string', sortKey: true },
-    test: 'string'
+    email: { type: 'string', partitionKey: true, hidden: true },
+    sort: { type: 'string', sortKey: true, hidden: true },
+    test: 'string',
+    testSet: { type: 'set' }
   },
   table: TestTable
 } as const)
@@ -171,5 +172,90 @@ describe('scan', () => {
     expect(() => TestTable.scanParams({ segments: 10 })).toThrow(
       `Both 'segments' and 'segment' must be provided`
     )
+  })
+
+  it('transforms a set into an array when parse is true', async () => {
+    DocumentClient.scan = jest.fn().mockReturnValueOnce({
+      promise: jest.fn().mockResolvedValueOnce({
+        Items: [
+          {
+            pk: 'test-pk',
+            sk: 'test-sk',
+            testSet: DocumentClient.createSet(['test1', 'test2']),
+            _et: 'TestEntity'
+          }
+        ],
+        LastEvaluatedKey: null
+      })
+    })
+
+    let result = await TestEntity.scan({
+      parse: true
+    })
+    expect(result).toEqual({
+      Items: [
+        expect.objectContaining({
+          testSet: ['test1', 'test2'],
+          entity: 'TestEntity'
+        })
+      ],
+      LastEvaluatedKey: null
+    })
+  })
+
+  it('returns a set as is when parse is false', async () => {
+    DocumentClient.scan = jest.fn().mockReturnValueOnce({
+      promise: jest.fn().mockResolvedValueOnce({
+        Items: [
+          {
+            pk: 'test-pk',
+            sk: 'test-sk',
+            testSet: DocumentClient.createSet(['test1', 'test2']),
+            _et: 'TestEntity'
+          }
+        ],
+        LastEvaluatedKey: null
+      })
+    })
+
+    let result = await TestEntity.scan({
+      parse: false
+    })
+    expect(result).toEqual({
+      Items: [
+        expect.objectContaining({
+          testSet: DocumentClient.createSet(['test1', 'test2']),
+          _et: 'TestEntity'
+        })
+      ],
+      LastEvaluatedKey: null
+    })
+  })
+
+  it('should not return hidden properties', async () => {
+    DocumentClient.scan = jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({
+        Items: [
+          {
+            pk: 'test-pk',
+            sk: 'test-sk',
+            test: 'some-string',
+            _et: 'TestEntity'
+          }
+        ],
+        LastEvaluatedKey: null
+      })
+    })
+
+    let result = await TestEntity.scan()
+    expect(result).toEqual({
+      Items: [
+        {
+          test: 'some-string',
+          entity: 'TestEntity'
+        }
+      ],
+      LastEvaluatedKey: null
+    })
   })
 })
