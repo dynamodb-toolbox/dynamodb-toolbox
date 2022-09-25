@@ -1,2 +1,2 @@
 export { Narrow } from './narrow'
-export { Property, MappedProperties, ResolvedProperty } from './property'
+export { Attribute, MappedAttributes, ResolvedAttribute } from './attribute'

@@ -1,6 +1,6 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
-import type { Item, Mapped, Property, ResolvedProperty } from 'v1/item'
-import { isClosed, isKeyProperty } from 'v1/item/utils'
+import type { Item, Mapped, Attribute, ResolvedAttribute } from 'v1/item'
+import { isClosed, isKeyAttribute } from 'v1/item/utils'
 import { isArray, isObject, validatorsByLeafType } from 'v1/utils/validation'
 
 import type { EntityV2 } from '../class'
@@ -12,7 +12,7 @@ export class InvalidKeyInputValueTypeError extends Error {
     keyInput,
     path
   }: {
-    expectedType: Property['_type']
+    expectedType: Attribute['_type']
     keyInput: unknown
     path?: string
   }) {
@@ -24,70 +24,70 @@ export class InvalidKeyInputValueTypeError extends Error {
   }
 }
 
-export class UnrecognizedKeyInputPropertyError extends Error {
+export class UnrecognizedKeyInputAttributeError extends Error {
   constructor({ path }: { path?: string }) {
     super(
-      `Unrecognized key input property${getInfoTextForItemPath(
+      `Unrecognized key input attribute${getInfoTextForItemPath(
         path
-      )}. Property is not tagged as key input.`
+      )}. Attribute is not tagged as key input.`
     )
   }
 }
 
-export class MissingRequiredPropertyError extends Error {
+export class MissingRequiredAttributeError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Missing always required key input property${getInfoTextForItemPath(path)}.`)
+    super(`Missing always required key input attribute${getInfoTextForItemPath(path)}.`)
   }
 }
 
-export class UnexpectedPropertyError extends Error {
+export class UnexpectedAttributeError extends Error {
   constructor({ path }: { path?: string }) {
-    super(`Unexpected key input property${getInfoTextForItemPath(path)}.`)
+    super(`Unexpected key input attribute${getInfoTextForItemPath(path)}.`)
   }
 }
 
-type KeyInputValidator = <Input extends EntityV2 | Item | Property>(
+type KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
   entity: Input,
   keyInput: KeyInput<Input>,
   path?: string
 ) => void
 
-const validateProperties = (
+const validateAttributes = (
   itemOrMapped: Item | Mapped,
-  keyInput: ResolvedProperty,
+  keyInput: ResolvedAttribute,
   path?: string
 ): void => {
   if (!isObject(keyInput))
     throw new InvalidKeyInputValueTypeError({ expectedType: 'map', keyInput, path })
 
   // Check that keyInput values match item or mapped
-  Object.entries(keyInput).forEach(([propertyName, propertyInput]) => {
-    const property = itemOrMapped._properties[propertyName]
+  Object.entries(keyInput).forEach(([attributeName, attributeInput]) => {
+    const attribute = itemOrMapped._attributes[attributeName]
     // TODO, create joinPath util
-    const propertyPath = [path, propertyName].filter(Boolean).join('.')
+    const attributePath = [path, attributeName].filter(Boolean).join('.')
 
-    if (property !== undefined) {
-      validateKeyInput(property, propertyInput, propertyPath)
+    if (attribute !== undefined) {
+      validateKeyInput(attribute, attributeInput, attributePath)
     } else {
       if (isClosed(itemOrMapped)) {
-        throw new UnexpectedPropertyError({ path: propertyPath })
+        throw new UnexpectedAttributeError({ path: attributePath })
       }
       // TODO: create validateAny ?
     }
   })
 
-  // Check that all key & always required properties are present in keyInput
-  Object.entries(itemOrMapped._properties)
-    .filter(([, property]) => isKeyProperty(property) && property._required === 'always')
-    .forEach(([propertyName, property]) => {
-      const propertyKeyInput = keyInput[propertyName]
+  // Check that all key & always required attributes are present in keyInput
+  Object.entries(itemOrMapped._attributes)
+    .filter(([, attribute]) => isKeyAttribute(attribute) && attribute._required === 'always')
+    .forEach(([attributeName, attribute]) => {
+      const attributeKeyInput = keyInput[attributeName]
       // TODO, create joinPath util
-      const propertyPath = [path, propertyName].filter(Boolean).join('.')
+      const attributePath = [path, attributeName].filter(Boolean).join('.')
 
-      if (propertyKeyInput !== undefined) {
-        validateKeyInput(property, propertyKeyInput, propertyPath)
+      if (attributeKeyInput !== undefined) {
+        validateKeyInput(attribute, attributeKeyInput, attributePath)
       } else {
-        throw new MissingRequiredPropertyError({ path: propertyPath })
+        throw new MissingRequiredAttributeError({ path: attributePath })
       }
     })
 }
@@ -95,12 +95,12 @@ const validateProperties = (
 /**
  * Validates the primary key input of a single item command (GET, DELETE ...) for a given Entity
  *
- * @param entry Entity | Item | Property
+ * @param entry Entity | Item | Attribute
  * @param keyInput Key input
- * @param path _(optional)_ Path of the property in the related item (string)
+ * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return void
  */
-export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Item | Property>(
+export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
   entry: Input,
   keyInput: KeyInput<Input>,
   path?: string
@@ -110,10 +110,10 @@ export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Ite
   }
 
   if (entry._type === 'item') {
-    return validateProperties(entry, keyInput, path)
+    return validateAttributes(entry, keyInput, path)
   }
 
-  if (!isKeyProperty(entry)) throw new UnrecognizedKeyInputPropertyError({ path })
+  if (!isKeyAttribute(entry)) throw new UnrecognizedKeyInputAttributeError({ path })
 
   switch (entry._type) {
     case 'any':
@@ -134,7 +134,7 @@ export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Ite
       )
       break
     case 'map':
-      validateProperties(entry, keyInput, path)
+      validateAttributes(entry, keyInput, path)
       break
   }
 }
