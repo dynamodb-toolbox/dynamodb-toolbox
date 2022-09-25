@@ -1,5 +1,5 @@
-import type { PropertyState } from '../property/interface'
-import type { MappedProperties } from '../types/property'
+import type { AttributeState } from '../attribute/interface'
+import type { MappedAttributes } from '../types/attribute'
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
 interface MappedState<
@@ -9,18 +9,18 @@ interface MappedState<
   IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyState<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeState<IsRequired, IsHidden, IsKey, SavedAs> {
   _open: IsOpen
   _default: Default
 }
 
 // TODO: Add false saveAs option
 /**
- * Mapped property interface
+ * Mapped attribute interface
  * (Called Mapped to differ from native TS Map class)
  */
 export interface Mapped<
-  Properties extends MappedProperties = MappedProperties,
+  Attributes extends MappedAttributes = MappedAttributes,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
@@ -29,9 +29,9 @@ export interface Mapped<
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
 > extends MappedState<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> {
   _type: 'map'
-  _properties: Properties
+  _attributes: Attributes
   /**
-   * Tag a property as required. Possible values are:
+   * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
    * - `"never"`: Optional in PUTs and UPDATEs
    * - `"always"`: Required in PUTs and UPDATEs
@@ -41,31 +41,31 @@ export interface Mapped<
    */
   required: <NextRequired extends RequiredOption = AtLeastOnce>(
     nextRequired?: NextRequired
-  ) => Mapped<Properties, NextRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
+  ) => Mapped<Attributes, NextRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
   /**
-   * Hide property after fetch commands and formatting
+   * Hide attribute after fetch commands and formatting
    */
-  hidden: () => Mapped<Properties, IsRequired, true, IsKey, IsOpen, SavedAs, Default>
+  hidden: () => Mapped<Attributes, IsRequired, true, IsKey, IsOpen, SavedAs, Default>
   /**
-   * Tag property as needed for Primary Key computing
+   * Tag attribute as needed for Primary Key computing
    */
-  key: () => Mapped<Properties, IsRequired, IsHidden, true, IsOpen, SavedAs, Default>
+  key: () => Mapped<Attributes, IsRequired, IsHidden, true, IsOpen, SavedAs, Default>
   /**
-   * Accept additional properties of any type
+   * Accept additional attributes of any type
    */
-  open: () => Mapped<Properties, IsRequired, IsHidden, IsKey, true, SavedAs, Default>
+  open: () => Mapped<Attributes, IsRequired, IsHidden, IsKey, true, SavedAs, Default>
   /**
-   * Rename property before save commands
+   * Rename attribute before save commands
    */
   savedAs: <NextSavedAs extends string | undefined>(
     nextSavedAs: NextSavedAs
-  ) => Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, NextSavedAs, Default>
+  ) => Mapped<Attributes, IsRequired, IsHidden, IsKey, IsOpen, NextSavedAs, Default>
   /**
-   * Tag property as having a computed default value
+   * Tag attribute as having a computed default value
    *
    * @param nextDefaultValue `ComputedDefault`
    */
   default: <NextComputeDefault extends ComputedDefault | undefined>(
     nextDefaultValue: NextComputeDefault
-  ) => Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, NextComputeDefault>
+  ) => Mapped<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, NextComputeDefault>
 }

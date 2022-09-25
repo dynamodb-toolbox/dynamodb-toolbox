@@ -1,5 +1,5 @@
-import { validatePropertyState } from '../property/validate'
-import { validateProperty } from '../validate'
+import { validateAttributeState } from '../attribute/validate'
+import { validateAttribute } from '../validate'
 
 import type { Mapped } from './interface'
 
@@ -11,12 +11,12 @@ import type { Mapped } from './interface'
  * @return void
  */
 export const validateMap = <MappedInput extends Mapped>(
-  { _properties: properties, ...mapInstance }: MappedInput,
+  { _attributes: attributes, ...mapInstance }: MappedInput,
   path?: string
 ): void => {
-  validatePropertyState(mapInstance, path)
+  validateAttributeState(mapInstance, path)
 
-  Object.entries(properties).forEach(([propertyName, property]) =>
-    validateProperty(property, [path, propertyName].filter(Boolean).join('.'))
+  Object.entries(attributes).forEach(([attributeName, attribute]) =>
+    validateAttribute(attribute, [path, attributeName].filter(Boolean).join('.'))
   )
 }

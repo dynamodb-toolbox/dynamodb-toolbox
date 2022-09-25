@@ -1,10 +1,10 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import { isBoolean, isString } from 'v1/utils/validation'
 
-import type { PropertyState } from './interface'
+import type { AttributeState } from './interface'
 import { requiredOptionsSet } from '../constants/requiredOptions'
 
-export class InvalidPropertyStateError extends Error {
+export class InvalidAttributeStateError extends Error {
   constructor({
     optionName,
     expectedType,
@@ -25,18 +25,18 @@ export class InvalidPropertyStateError extends Error {
 }
 
 /**
- * Validates a property base state
+ * Validates an attribute base state
  *
- * @param property Property
+ * @param attribute Attribute
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const validatePropertyState = (
-  { _required, _hidden, _key, _savedAs }: PropertyState,
+export const validateAttributeState = (
+  { _required, _hidden, _key, _savedAs }: AttributeState,
   path?: string
 ): void => {
   if (!requiredOptionsSet.has(_required)) {
-    throw new InvalidPropertyStateError({
+    throw new InvalidAttributeStateError({
       optionName: 'required',
       expectedType: [...requiredOptionsSet].join(', '),
       receivedValue: _required,
@@ -45,7 +45,7 @@ export const validatePropertyState = (
   }
 
   if (!isBoolean(_hidden)) {
-    throw new InvalidPropertyStateError({
+    throw new InvalidAttributeStateError({
       optionName: 'hidden',
       expectedType: 'boolean',
       receivedValue: _hidden,
@@ -54,7 +54,7 @@ export const validatePropertyState = (
   }
 
   if (!isBoolean(_key)) {
-    throw new InvalidPropertyStateError({
+    throw new InvalidAttributeStateError({
       optionName: 'key',
       expectedType: 'boolean',
       receivedValue: _key,
@@ -63,7 +63,7 @@ export const validatePropertyState = (
   }
 
   if (_savedAs !== undefined && !isString(_savedAs)) {
-    throw new InvalidPropertyStateError({
+    throw new InvalidAttributeStateError({
       optionName: 'savedAs',
       expectedType: 'string',
       receivedValue: _savedAs,

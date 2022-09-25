@@ -1,6 +1,6 @@
 import { RequiredOption } from '../constants/requiredOptions'
 
-export interface PropertyState<
+export interface AttributeState<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,

@@ -2,7 +2,7 @@ import { any, binary, boolean, list, map, number, string } from 'v1/item'
 
 import {
   validateKeyInput,
-  UnrecognizedKeyInputPropertyError,
+  UnrecognizedKeyInputAttributeError,
   InvalidKeyInputValueTypeError
 } from './validateKeyInput'
 
@@ -18,7 +18,7 @@ describe('validateKeyInput', () => {
 
     it('throws if attribute is not key', () => {
       expect(() => validateKeyInput(any(), input, path)).toThrow(
-        new UnrecognizedKeyInputPropertyError({ path })
+        new UnrecognizedKeyInputAttributeError({ path })
       )
     })
   })
@@ -34,7 +34,7 @@ describe('validateKeyInput', () => {
 
     it('throws if attribute is not key', () => {
       expect(() => validateKeyInput(binary(), validInput, path)).toThrow(
-        new UnrecognizedKeyInputPropertyError({ path })
+        new UnrecognizedKeyInputAttributeError({ path })
       )
     })
 
@@ -61,7 +61,7 @@ describe('validateKeyInput', () => {
 
     it('throws if attribute is not key', () => {
       expect(() => validateKeyInput(boolean(), validInput, path)).toThrow(
-        new UnrecognizedKeyInputPropertyError({ path })
+        new UnrecognizedKeyInputAttributeError({ path })
       )
     })
 
@@ -88,7 +88,7 @@ describe('validateKeyInput', () => {
 
     it('throws if attribute is not key', () => {
       expect(() => validateKeyInput(number(), validInput, path)).toThrow(
-        new UnrecognizedKeyInputPropertyError({ path })
+        new UnrecognizedKeyInputAttributeError({ path })
       )
     })
 
@@ -111,7 +111,7 @@ describe('validateKeyInput', () => {
 
     it('throws if attribute is not key', () => {
       expect(() => validateKeyInput(string(), validInput, path)).toThrow(
-        new UnrecognizedKeyInputPropertyError({ path })
+        new UnrecognizedKeyInputAttributeError({ path })
       )
     })
 
@@ -134,7 +134,7 @@ describe('validateKeyInput', () => {
 
     it('throws if attribute is not key', () => {
       expect(() => validateKeyInput(list(string().required()), validInput, path)).toThrow(
-        new UnrecognizedKeyInputPropertyError({ path })
+        new UnrecognizedKeyInputAttributeError({ path })
       )
     })
 
@@ -170,7 +170,7 @@ describe('validateKeyInput', () => {
 
     it('throws if attribute is not key', () => {
       expect(() => validateKeyInput(map({ keyStr: string() }), validInput1, path)).toThrow(
-        new UnrecognizedKeyInputPropertyError({ path })
+        new UnrecognizedKeyInputAttributeError({ path })
       )
     })
 
@@ -188,7 +188,7 @@ describe('validateKeyInput', () => {
     it('rejects additional attributes if closed', () => {
       // @ts-expect-error
       expect(() => validateKeyInput(keyMap, { ...validInput2, nonKeyStr: 'baz' }, path)).toThrow(
-        new UnrecognizedKeyInputPropertyError({ path: `${path}.nonKeyStr` })
+        new UnrecognizedKeyInputAttributeError({ path: `${path}.nonKeyStr` })
       )
     })
 
