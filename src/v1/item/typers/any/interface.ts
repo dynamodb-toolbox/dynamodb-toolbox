@@ -4,12 +4,12 @@ import type { PropertyState } from '../property/interface'
 import type { AnyDefaultValue } from './types'
 
 interface AnyState<
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends AnyDefaultValue = AnyDefaultValue
-> extends PropertyState<Required, Hidden, Key, SavedAs> {
+> extends PropertyState<IsRequired, IsHidden, IsKey, SavedAs> {
   _default: Default
 }
 
@@ -17,12 +17,12 @@ interface AnyState<
  * Any property interface
  */
 export interface Any<
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends AnyDefaultValue = AnyDefaultValue
-> extends AnyState<Required, Hidden, Key, SavedAs, Default> {
+> extends AnyState<IsRequired, IsHidden, IsKey, SavedAs, Default> {
   _type: 'any'
   /**
    * Tag a property as required. Possible values are:
@@ -33,23 +33,23 @@ export interface Any<
    *
    * @param nextRequired RequiredOption
    */
-  required: <NextRequired extends RequiredOption = AtLeastOnce>(
-    nextRequired?: NextRequired
-  ) => Any<NextRequired, Hidden, Key, SavedAs, Default>
+  required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
+    nextRequired?: NextIsRequired
+  ) => Any<NextIsRequired, IsHidden, IsKey, SavedAs, Default>
   /**
    * Hide property after fetch commands and formatting
    */
-  hidden: () => Any<Required, true, Key, SavedAs, Default>
+  hidden: () => Any<IsRequired, true, IsKey, SavedAs, Default>
   /**
    * Tag property as needed for Primary Key computing
    */
-  key: () => Any<Required, Hidden, true, SavedAs, Default>
+  key: () => Any<IsRequired, IsHidden, true, SavedAs, Default>
   /**
    * Rename property before save commands
    */
   savedAs: <NextSavedAs extends string | undefined>(
     nextSavedAs: NextSavedAs
-  ) => Any<Required, Hidden, Key, NextSavedAs, Default>
+  ) => Any<IsRequired, IsHidden, IsKey, NextSavedAs, Default>
   /**
    * Provide a default value for property, or tag property as having a computed default value
    *
@@ -57,5 +57,5 @@ export interface Any<
    */
   default: <NextDefaultValue extends AnyDefaultValue>(
     nextDefaultValue: NextDefaultValue
-  ) => Any<Required, Hidden, Key, SavedAs, NextDefaultValue>
+  ) => Any<IsRequired, IsHidden, IsKey, SavedAs, NextDefaultValue>
 }

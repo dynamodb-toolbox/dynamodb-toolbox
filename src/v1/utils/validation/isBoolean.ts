@@ -1,1 +1,2 @@
-export const isBoolean = (input: unknown): input is boolean => typeof input === 'boolean'
+export const isBoolean = (candidate: unknown): candidate is boolean =>
+  typeof candidate === 'boolean'

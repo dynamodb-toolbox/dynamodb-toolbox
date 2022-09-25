@@ -13,15 +13,15 @@ import type { LeafType, EnumValues, LeafDefaultValue } from './types'
  */
 const leaf = <
   Type extends LeafType = LeafType,
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Enum extends EnumValues<Type> = EnumValues<Type>,
   Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
 >(
-  options: { type: Type } & LeafOptions<Type, Required, Hidden, Key, SavedAs, Enum, Default>
-): Leaf<Type, Required, Hidden, Key, SavedAs, Enum, Default> => {
+  options: { type: Type } & LeafOptions<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+): Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> => {
   const {
     type: _type,
     required: _required,
@@ -48,19 +48,19 @@ const leaf = <
     savedAs: nextSavedAs => leaf({ ...options, savedAs: nextSavedAs }),
     default: nextDefault => leaf({ ...options, default: nextDefault }),
     enum: (...nextEnum) => leaf({ ...options, _enum: nextEnum })
-  } as Leaf<Type, Required, Hidden, Key, SavedAs, Enum, Default>
+  } as Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
 }
 
 type LeafTyper<Type extends LeafType> = <
-  Required extends RequiredOption = Never,
-  Hidden extends boolean = false,
-  Key extends boolean = false,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
   SavedAs extends string | undefined = undefined,
   Enum extends EnumValues<Type> = undefined,
   Default extends LeafDefaultValue<Type> = undefined
 >(
-  options?: O.Partial<LeafOptions<Type, Required, Hidden, Key, SavedAs, Enum, Default>>
-) => Leaf<Type, Required, Hidden, Key, SavedAs, Enum, Default>
+  options?: O.Partial<LeafOptions<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>>
+) => Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
 
 const getLeafTyper = <Type extends LeafType>(type: Type) =>
   (<
