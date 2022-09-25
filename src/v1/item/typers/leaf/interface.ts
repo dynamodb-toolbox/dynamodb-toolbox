@@ -1,9 +1,9 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
-import type { AttributeState } from '../attribute/interface'
+import type { AttributeProperties } from '../attribute/interface'
 import type { LeafType, ResolveLeafType, EnumValues, LeafDefaultValue } from './types'
 
-interface LeafState<
+interface LeafProperties<
   Type extends LeafType = LeafType,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
@@ -11,7 +11,7 @@ interface LeafState<
   SavedAs extends string | undefined = string | undefined,
   Enum extends EnumValues<Type> = EnumValues<Type>,
   Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
-> extends AttributeState<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _enum: Enum
   _default: Default
 }
@@ -28,7 +28,7 @@ export type Leaf<
   SavedAs extends string | undefined = string | undefined,
   Enum extends EnumValues<Type> = EnumValues<Type>,
   Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
-> = LeafState<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> & {
+> = LeafProperties<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> & {
   _type: Type
   _resolved?: Enum extends ResolveLeafType<Type>[] ? Enum[number] : ResolveLeafType<Type>
   /**

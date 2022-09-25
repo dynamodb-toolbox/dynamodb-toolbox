@@ -1,15 +1,15 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
-import type { AttributeState } from '../attribute/interface'
+import type { AttributeProperties } from '../attribute/interface'
 import type { AnyDefaultValue } from './types'
 
-interface AnyState<
+interface AnyProperties<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends AnyDefaultValue = AnyDefaultValue
-> extends AttributeState<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _default: Default
 }
 
@@ -22,7 +22,7 @@ export interface Any<
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends AnyDefaultValue = AnyDefaultValue
-> extends AnyState<IsRequired, IsHidden, IsKey, SavedAs, Default> {
+> extends AnyProperties<IsRequired, IsHidden, IsKey, SavedAs, Default> {
   _type: 'any'
   /**
    * Tag attribute as required. Possible values are:
