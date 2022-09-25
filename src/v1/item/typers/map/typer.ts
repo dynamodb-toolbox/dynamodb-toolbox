@@ -8,16 +8,16 @@ import { MappedOptions, mappedDefaultOptions } from './options'
 
 type MappedTyper = <
   Properties extends MappedProperties = {},
-  Required extends RequiredOption = Never,
-  Hidden extends boolean = false,
-  Key extends boolean = false,
-  Open extends boolean = false,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
+  IsOpen extends boolean = false,
   SavedAs extends string | undefined = undefined,
   Default extends ComputedDefault | undefined = undefined
 >(
   _properties: Narrow<Properties>,
-  options?: O.Partial<MappedOptions<Required, Hidden, Key, Open, SavedAs, Default>>
-) => Mapped<Properties, Required, Hidden, Key, Open, SavedAs, Default>
+  options?: O.Partial<MappedOptions<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>>
+) => Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
 
 /**
  * Define a new map property
@@ -27,16 +27,16 @@ type MappedTyper = <
  */
 export const map: MappedTyper = <
   Properties extends MappedProperties = {},
-  Required extends RequiredOption = Never,
-  Hidden extends boolean = false,
-  Key extends boolean = false,
-  Open extends boolean = false,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
+  IsOpen extends boolean = false,
   SavedAs extends string | undefined = undefined,
   Default extends ComputedDefault | undefined = undefined
 >(
   properties: Narrow<Properties>,
-  options?: O.Partial<MappedOptions<Required, Hidden, Key, Open, SavedAs, Default>>
-): Mapped<Properties, Required, Hidden, Key, Open, SavedAs, Default> => {
+  options?: O.Partial<MappedOptions<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>>
+): Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> => {
   const appliedOptions = { ...mappedDefaultOptions, ...options }
   const {
     required: _required,
@@ -56,13 +56,13 @@ export const map: MappedTyper = <
     _open,
     _savedAs,
     _default,
-    required: <NextRequired extends RequiredOption = AtLeastOnce>(
-      nextRequired: NextRequired = ('atLeastOnce' as unknown) as NextRequired
+    required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
+      nextRequired: NextIsRequired = ('atLeastOnce' as unknown) as NextIsRequired
     ) => map(properties, { ...appliedOptions, required: nextRequired }),
     hidden: () => map(properties, { ...appliedOptions, hidden: true }),
     key: () => map(properties, { ...appliedOptions, key: true }),
     open: () => map(properties, { ...appliedOptions, open: true }),
     savedAs: nextSavedAs => map(properties, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => map(properties, { ...appliedOptions, default: nextDefault })
-  } as Mapped<Properties, Required, Hidden, Key, Open, SavedAs, Default>
+  } as Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
 }
