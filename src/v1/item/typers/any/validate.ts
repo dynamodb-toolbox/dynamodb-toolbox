@@ -1,4 +1,4 @@
-import { validateAttributeState } from '../attribute/validate'
+import { validateAttributeProperties } from '../attribute/validate'
 
 import type { Any } from './interface'
 
@@ -10,7 +10,7 @@ import type { Any } from './interface'
  * @return void
  */
 export const validateAny = <AnyInput extends Any>(anyInstance: AnyInput, path?: string): void => {
-  validateAttributeState(anyInstance, path)
+  validateAttributeProperties(anyInstance, path)
 
   // TODO: validate that _default is valid ?
 }
