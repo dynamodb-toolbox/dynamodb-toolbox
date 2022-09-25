@@ -1,13 +1,13 @@
 import { RequiredOption } from '../constants/requiredOptions'
 
 export interface PropertyState<
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined
 > {
-  _required: Required
-  _hidden: Hidden
-  _key: Key
+  _required: IsRequired
+  _hidden: IsHidden
+  _key: IsKey
   _savedAs: SavedAs
 }

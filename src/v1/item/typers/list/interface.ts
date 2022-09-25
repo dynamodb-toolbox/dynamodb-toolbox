@@ -4,12 +4,12 @@ import type { PropertyState } from '../property/interface'
 import type { ListProperty } from './types'
 
 interface ListState<
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyState<Required, Hidden, Key, SavedAs> {
+> extends PropertyState<IsRequired, IsHidden, IsKey, SavedAs> {
   _default: Default
 }
 
@@ -18,12 +18,12 @@ interface ListState<
  */
 export interface List<
   Elements extends ListProperty = ListProperty,
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends ListState<Required, Hidden, Key, SavedAs, Default> {
+> extends ListState<IsRequired, IsHidden, IsKey, SavedAs, Default> {
   _type: 'list'
   _elements: Elements
   /**
@@ -37,21 +37,21 @@ export interface List<
    */
   required: <$R extends RequiredOption = AtLeastOnce>(
     nextRequired?: $R
-  ) => List<Elements, $R, Hidden, Key, SavedAs, Default>
+  ) => List<Elements, $R, IsHidden, IsKey, SavedAs, Default>
   /**
    * Hide property after fetch commands and formatting
    */
-  hidden: () => List<Elements, Required, true, Key, SavedAs, Default>
+  hidden: () => List<Elements, IsRequired, true, IsKey, SavedAs, Default>
   /**
    * Tag property as needed for Primary Key computing
    */
-  key: () => List<Elements, Required, Hidden, true, SavedAs, Default>
+  key: () => List<Elements, IsRequired, IsHidden, true, SavedAs, Default>
   /**
    * Rename property before save commands
    */
   savedAs: <$S extends string | undefined>(
     nextSavedAs: $S
-  ) => List<Elements, Required, Hidden, Key, $S, Default>
+  ) => List<Elements, IsRequired, IsHidden, IsKey, $S, Default>
   /**
    * Tag property as having a computed default value
    *
@@ -59,5 +59,5 @@ export interface List<
    */
   default: <$D extends ComputedDefault | undefined>(
     nextDefaultValue: $D
-  ) => List<Elements, Required, Hidden, Key, SavedAs, $D>
+  ) => List<Elements, IsRequired, IsHidden, IsKey, SavedAs, $D>
 }

@@ -8,15 +8,15 @@ import { ListOptions, listDefaultOptions } from './options'
 
 type ListTyper = <
   Elements extends ListProperty,
-  Required extends RequiredOption = Never,
-  Hidden extends boolean = false,
-  Key extends boolean = false,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
   SavedAs extends string | undefined = undefined,
   Default extends ComputedDefault | undefined = undefined
 >(
   _elements: Elements,
-  options?: O.Partial<ListOptions<Required, Hidden, Key, SavedAs, Default>>
-) => List<Elements, Required, Hidden, Key, SavedAs, Default>
+  options?: O.Partial<ListOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+) => List<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
  * Define a new list property
@@ -32,15 +32,15 @@ type ListTyper = <
  */
 export const list: ListTyper = <
   Elements extends ListProperty,
-  Required extends RequiredOption = Never,
-  Hidden extends boolean = false,
-  Key extends boolean = false,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
   SavedAs extends string | undefined = undefined,
   Default extends ComputedDefault | undefined = undefined
 >(
   elements: Elements,
-  options?: O.Partial<ListOptions<Required, Hidden, Key, SavedAs, Default>>
-): List<Elements, Required, Hidden, Key, SavedAs, Default> => {
+  options?: O.Partial<ListOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+): List<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
   const appliedOptions = { ...listDefaultOptions, ...options }
   const {
     required: _required,
@@ -58,12 +58,12 @@ export const list: ListTyper = <
     _key,
     _savedAs,
     _default,
-    required: <NextRequired extends RequiredOption = AtLeastOnce>(
-      nextRequired: NextRequired = 'atLeastOnce' as NextRequired
+    required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
+      nextRequired: NextIsRequired = 'atLeastOnce' as NextIsRequired
     ) => list(elements, { ...appliedOptions, required: nextRequired }),
     hidden: () => list(elements, { ...appliedOptions, hidden: true }),
     key: () => list(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(elements, { ...appliedOptions, default: nextDefault })
-  } as List<Elements, Required, Hidden, Key, SavedAs, Default>
+  } as List<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 }
