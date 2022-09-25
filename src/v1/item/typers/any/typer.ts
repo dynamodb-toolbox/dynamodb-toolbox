@@ -17,7 +17,7 @@ type AnyTyper = <
 ) => Any<IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
- * Define a new property of any type
+ * Define a new attribute of any type
  *
  * @param options _(optional)_ Boolean Options
  */

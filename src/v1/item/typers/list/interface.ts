@@ -1,7 +1,7 @@
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
-import type { PropertyState } from '../property/interface'
-import type { ListProperty } from './types'
+import type { AttributeState } from '../attribute/interface'
+import type { ListElements } from './types'
 
 interface ListState<
   IsRequired extends RequiredOption = RequiredOption,
@@ -9,15 +9,15 @@ interface ListState<
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyState<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeState<IsRequired, IsHidden, IsKey, SavedAs> {
   _default: Default
 }
 
 /**
- * List property interface
+ * List attribute interface
  */
 export interface List<
-  Elements extends ListProperty = ListProperty,
+  Elements extends ListElements = ListElements,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
@@ -27,7 +27,7 @@ export interface List<
   _type: 'list'
   _elements: Elements
   /**
-   * Tag a property as required. Possible values are:
+   * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
    * - `"never"`: Optional in PUTs and UPDATEs
    * - `"always"`: Required in PUTs and UPDATEs
@@ -39,21 +39,21 @@ export interface List<
     nextRequired?: $R
   ) => List<Elements, $R, IsHidden, IsKey, SavedAs, Default>
   /**
-   * Hide property after fetch commands and formatting
+   * Hide attribute after fetch commands and formatting
    */
   hidden: () => List<Elements, IsRequired, true, IsKey, SavedAs, Default>
   /**
-   * Tag property as needed for Primary Key computing
+   * Tag attribute as needed for Primary Key computing
    */
   key: () => List<Elements, IsRequired, IsHidden, true, SavedAs, Default>
   /**
-   * Rename property before save commands
+   * Rename attribute before save commands
    */
   savedAs: <$S extends string | undefined>(
     nextSavedAs: $S
   ) => List<Elements, IsRequired, IsHidden, IsKey, $S, Default>
   /**
-   * Tag property as having a computed default value
+   * Tag attribute as having a computed default value
    *
    * @param nextDefaultValue `ComputedDefault`
    */

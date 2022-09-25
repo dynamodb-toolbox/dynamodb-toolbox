@@ -1,8 +1,8 @@
-import type { PropertyOptions } from '../property/options'
+import type { AttributeOptions } from '../attribute/options'
 import { ComputedDefault, RequiredOption, Never } from '../constants'
 
 /**
- * Input options of Mapped Property
+ * Input options of Mapped Attribute
  */
 export interface MappedOptions<
   IsRequired extends RequiredOption = RequiredOption,
@@ -11,13 +11,13 @@ export interface MappedOptions<
   IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyOptions<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeOptions<IsRequired, IsHidden, IsKey, SavedAs> {
   /**
-   * Accept additional properties of any type
+   * Accept additional attributes of any type
    */
   open: IsOpen
   /**
-   * Tag property as having a computed default value
+   * Tag attribute as having a computed default value
    */
   default: Default
 }

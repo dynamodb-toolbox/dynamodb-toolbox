@@ -1,13 +1,13 @@
 import type { O } from 'ts-toolbelt'
 
 import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constants'
-import type { MappedProperties, Narrow } from '../types'
+import type { MappedAttributes, Narrow } from '../types'
 
 import type { Mapped } from './interface'
 import { MappedOptions, mappedDefaultOptions } from './options'
 
 type MappedTyper = <
-  Properties extends MappedProperties = {},
+  Attributes extends MappedAttributes = {},
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,
@@ -15,18 +15,18 @@ type MappedTyper = <
   SavedAs extends string | undefined = undefined,
   Default extends ComputedDefault | undefined = undefined
 >(
-  _properties: Narrow<Properties>,
+  _attributes: Narrow<Attributes>,
   options?: O.Partial<MappedOptions<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>>
-) => Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
+) => Mapped<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
 
 /**
- * Define a new map property
+ * Define a new map attribute
  *
- * @param properties Dictionary of properties
+ * @param attributes Dictionary of attributes
  * @param options _(optional)_ Map Options
  */
 export const map: MappedTyper = <
-  Properties extends MappedProperties = {},
+  Attributes extends MappedAttributes = {},
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,
@@ -34,9 +34,9 @@ export const map: MappedTyper = <
   SavedAs extends string | undefined = undefined,
   Default extends ComputedDefault | undefined = undefined
 >(
-  properties: Narrow<Properties>,
+  attributes: Narrow<Attributes>,
   options?: O.Partial<MappedOptions<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>>
-): Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> => {
+): Mapped<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> => {
   const appliedOptions = { ...mappedDefaultOptions, ...options }
   const {
     required: _required,
@@ -49,7 +49,7 @@ export const map: MappedTyper = <
 
   return {
     _type: 'map',
-    _properties: properties,
+    _attributes: attributes,
     _required,
     _hidden,
     _key,
@@ -58,11 +58,11 @@ export const map: MappedTyper = <
     _default,
     required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
       nextRequired: NextIsRequired = ('atLeastOnce' as unknown) as NextIsRequired
-    ) => map(properties, { ...appliedOptions, required: nextRequired }),
-    hidden: () => map(properties, { ...appliedOptions, hidden: true }),
-    key: () => map(properties, { ...appliedOptions, key: true }),
-    open: () => map(properties, { ...appliedOptions, open: true }),
-    savedAs: nextSavedAs => map(properties, { ...appliedOptions, savedAs: nextSavedAs }),
-    default: nextDefault => map(properties, { ...appliedOptions, default: nextDefault })
-  } as Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
+    ) => map(attributes, { ...appliedOptions, required: nextRequired }),
+    hidden: () => map(attributes, { ...appliedOptions, hidden: true }),
+    key: () => map(attributes, { ...appliedOptions, key: true }),
+    open: () => map(attributes, { ...appliedOptions, open: true }),
+    savedAs: nextSavedAs => map(attributes, { ...appliedOptions, savedAs: nextSavedAs }),
+    default: nextDefault => map(attributes, { ...appliedOptions, default: nextDefault })
+  } as Mapped<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
 }
