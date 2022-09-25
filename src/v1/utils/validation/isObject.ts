@@ -1,2 +1,2 @@
-export const isObject = (input: unknown): input is Record<string, unknown> =>
-  typeof input === 'object' && input !== null && !Array.isArray(input)
+export const isObject = (candidate: unknown): candidate is Record<string, unknown> =>
+  typeof candidate === 'object' && candidate !== null && !Array.isArray(candidate)
