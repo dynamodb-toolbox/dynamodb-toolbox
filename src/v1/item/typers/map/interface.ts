@@ -1,15 +1,15 @@
-import type { AttributeState } from '../attribute/interface'
+import type { AttributeProperties } from '../attribute/interface'
 import type { MappedAttributes } from '../types/attribute'
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
-interface MappedState<
+interface MappedProperties<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeState<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _open: IsOpen
   _default: Default
 }
@@ -27,7 +27,7 @@ export interface Mapped<
   IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends MappedState<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> {
+> extends MappedProperties<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> {
   _type: 'map'
   _attributes: Attributes
   /**
