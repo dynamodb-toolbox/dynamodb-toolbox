@@ -5,12 +5,12 @@ import { ComputedDefault, RequiredOption, Never } from '../constants'
  * Input options of List Property
  */
 export interface ListOptions<
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyOptions<Required, Hidden, Key, SavedAs> {
+> extends PropertyOptions<IsRequired, IsHidden, IsKey, SavedAs> {
   /**
    * Tag property as having a computed default value
    */

@@ -3,14 +3,14 @@ import type { MappedProperties } from '../types/property'
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
 interface MappedState<
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
-  Open extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyState<Required, Hidden, Key, SavedAs> {
-  _open: Open
+> extends PropertyState<IsRequired, IsHidden, IsKey, SavedAs> {
+  _open: IsOpen
   _default: Default
 }
 
@@ -21,13 +21,13 @@ interface MappedState<
  */
 export interface Mapped<
   Properties extends MappedProperties = MappedProperties,
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
-  Open extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends MappedState<Required, Hidden, Key, Open, SavedAs, Default> {
+> extends MappedState<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> {
   _type: 'map'
   _properties: Properties
   /**
@@ -41,25 +41,25 @@ export interface Mapped<
    */
   required: <NextRequired extends RequiredOption = AtLeastOnce>(
     nextRequired?: NextRequired
-  ) => Mapped<Properties, NextRequired, Hidden, Key, Open, SavedAs, Default>
+  ) => Mapped<Properties, NextRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
   /**
    * Hide property after fetch commands and formatting
    */
-  hidden: () => Mapped<Properties, Required, true, Key, Open, SavedAs, Default>
+  hidden: () => Mapped<Properties, IsRequired, true, IsKey, IsOpen, SavedAs, Default>
   /**
    * Tag property as needed for Primary Key computing
    */
-  key: () => Mapped<Properties, Required, Hidden, true, Open, SavedAs, Default>
+  key: () => Mapped<Properties, IsRequired, IsHidden, true, IsOpen, SavedAs, Default>
   /**
    * Accept additional properties of any type
    */
-  open: () => Mapped<Properties, Required, Hidden, Key, true, SavedAs, Default>
+  open: () => Mapped<Properties, IsRequired, IsHidden, IsKey, true, SavedAs, Default>
   /**
    * Rename property before save commands
    */
   savedAs: <NextSavedAs extends string | undefined>(
     nextSavedAs: NextSavedAs
-  ) => Mapped<Properties, Required, Hidden, Key, Open, NextSavedAs, Default>
+  ) => Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, NextSavedAs, Default>
   /**
    * Tag property as having a computed default value
    *
@@ -67,5 +67,5 @@ export interface Mapped<
    */
   default: <NextComputeDefault extends ComputedDefault | undefined>(
     nextDefaultValue: NextComputeDefault
-  ) => Mapped<Properties, Required, Hidden, Key, Open, SavedAs, NextComputeDefault>
+  ) => Mapped<Properties, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, NextComputeDefault>
 }
