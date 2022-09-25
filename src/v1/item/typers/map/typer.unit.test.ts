@@ -15,7 +15,7 @@ describe('map', () => {
       typeof mapped,
       {
         _type: 'map'
-        _properties: {
+        _attributes: {
           str: typeof str
         }
         _required: Never
@@ -29,7 +29,7 @@ describe('map', () => {
 
     expect(mapped).toMatchObject({
       _type: 'map',
-      _properties: { str },
+      _attributes: { str },
       _required: 'never',
       _key: false,
       _savedAs: undefined,
@@ -190,13 +190,13 @@ describe('map', () => {
       typeof mapped,
       {
         _type: 'map'
-        _properties: {
+        _attributes: {
           nested: {
             _type: 'map'
-            _properties: {
+            _attributes: {
               nestedAgain: {
                 _type: 'map'
-                _properties: {
+                _attributes: {
                   str: typeof str
                 }
                 _required: Never
@@ -224,13 +224,13 @@ describe('map', () => {
 
     expect(mapped).toMatchObject({
       _type: 'map',
-      _properties: {
+      _attributes: {
         nested: {
           _type: 'map',
-          _properties: {
+          _attributes: {
             nestedAgain: {
               _type: 'map',
-              _properties: {
+              _attributes: {
                 str
               },
               _required: 'never',

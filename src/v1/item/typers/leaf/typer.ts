@@ -7,7 +7,7 @@ import { LeafOptions, leafDefaultOptions } from './options'
 import type { LeafType, EnumValues, LeafDefaultValue } from './types'
 
 /**
- * Define a new "leaf" property, i.e. string, number, binary or boolean
+ * Define a new "leaf" attribute, i.e. string, number, binary or boolean
  *
  * @param options _(optional)_ Leaf Options
  */
@@ -75,28 +75,28 @@ const getLeafTyper = <Type extends LeafType>(type: Type) =>
   ) => leaf({ ...leafDefaultOptions, ...leafOptions, type })) as LeafTyper<Type>
 
 /**
- * Define a new string property
+ * Define a new string attribute
  *
  * @param options _(optional)_ String Options
  */
 export const string = getLeafTyper('string')
 
 /**
- * Define a new number property
+ * Define a new number attribute
  *
  * @param options _(optional)_ Number Options
  */
 export const number = getLeafTyper('number')
 
 /**
- * Define a new binary property
+ * Define a new binary attribute
  *
  * @param options _(optional)_ Binary Options
  */
 export const binary = getLeafTyper('binary')
 
 /**
- * Define a new boolean property
+ * Define a new boolean attribute
  *
  * @param options _(optional)_ Boolean Options
  */

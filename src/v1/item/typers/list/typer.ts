@@ -2,12 +2,12 @@ import type { O } from 'ts-toolbelt'
 
 import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constants'
 
-import type { ListProperty } from './types'
+import type { ListElements } from './types'
 import type { List } from './interface'
 import { ListOptions, listDefaultOptions } from './options'
 
 type ListTyper = <
-  Elements extends ListProperty,
+  Elements extends ListElements,
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,
@@ -19,7 +19,7 @@ type ListTyper = <
 ) => List<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
- * Define a new list property
+ * Define a new list attribute
  * Not that list elements have constraints. They must be:
  * - Required (required: AtLeastOnce)
  * - Displayed (hidden: false)
@@ -27,11 +27,11 @@ type ListTyper = <
  * - Not renamed (savedAs: undefined)
  * - Non default (default: undefined)
  *
- * @param elements Property (With constraints)
+ * @param elements Attribute (With constraints)
  * @param options _(optional)_ List Options
  */
 export const list: ListTyper = <
-  Elements extends ListProperty,
+  Elements extends ListElements,
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,

@@ -24,7 +24,7 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        _properties: {
+        _attributes: {
           reqStr: typeof reqStr
           hidBool: typeof hidBool
           defNum: typeof defNum
@@ -37,7 +37,7 @@ describe('item', () => {
     assertItm
 
     expect(itm).toMatchObject({
-      _properties: {
+      _attributes: {
         reqStr,
         hidBool,
         defNum,
@@ -62,7 +62,7 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        _properties: {
+        _attributes: {
           flatMap: typeof flatMap
           nestedMap: typeof nestedMap
           reqMap: typeof reqMap
@@ -73,7 +73,7 @@ describe('item', () => {
     assertItm
 
     expect(itm).toMatchObject({
-      _properties: {
+      _attributes: {
         flatMap,
         nestedMap,
         reqMap,
@@ -99,7 +99,7 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        _properties: {
+        _attributes: {
           optList: typeof optList
           nestedList: typeof nestedList
           reqList: typeof reqList
@@ -110,7 +110,7 @@ describe('item', () => {
     assertItm
 
     expect(itm).toMatchObject({
-      _properties: {
+      _attributes: {
         optList,
         nestedList,
         reqList,
