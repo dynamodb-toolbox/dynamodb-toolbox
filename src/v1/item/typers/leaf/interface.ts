@@ -1,6 +1,6 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
-import type { PropertyState } from '../property/interface'
+import type { AttributeState } from '../attribute/interface'
 import type { LeafType, ResolveLeafType, EnumValues, LeafDefaultValue } from './types'
 
 interface LeafState<
@@ -11,14 +11,14 @@ interface LeafState<
   SavedAs extends string | undefined = string | undefined,
   Enum extends EnumValues<Type> = EnumValues<Type>,
   Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
-> extends PropertyState<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeState<IsRequired, IsHidden, IsKey, SavedAs> {
   _enum: Enum
   _default: Default
 }
 
 // TODO: Define reqKey / optKey or partitionKey / sortKey shorthands ?
 /**
- * Leaf property interface
+ * Leaf attribute interface
  */
 export type Leaf<
   Type extends LeafType = LeafType,
@@ -32,7 +32,7 @@ export type Leaf<
   _type: Type
   _resolved?: Enum extends ResolveLeafType<Type>[] ? Enum[number] : ResolveLeafType<Type>
   /**
-   * Tag a property as required. Possible values are:
+   * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
    * - `"never"`: Optional in PUTs and UPDATEs
    * - `"always"`: Required in PUTs and UPDATEs
@@ -44,22 +44,22 @@ export type Leaf<
     nextRequired?: NextIsRequired
   ) => Leaf<Type, NextIsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
   /**
-   * Hide property after fetch commands and formatting
+   * Hide attribute after fetch commands and formatting
    */
   hidden: () => Leaf<Type, IsRequired, true, IsKey, SavedAs, Enum, Default>
   /**
-   * Tag property as needed for Primary Key computing
+   * Tag attribute as needed for Primary Key computing
    */
   key: () => Leaf<Type, IsRequired, IsHidden, true, SavedAs, Enum, Default>
   /**
-   * Rename property before save commands
+   * Rename attribute before save commands
    */
   savedAs: <NextSavedAs extends string | undefined>(
     nextSavedAs: NextSavedAs
   ) => Leaf<Type, IsRequired, IsHidden, IsKey, NextSavedAs, Enum, Default>
   /**
-   * Provide a finite list of possible values for property
-   * (For typing reasons, enums are only available as property methods, not as input options)
+   * Provide a finite list of possible values for attribute
+   * (For typing reasons, enums are only available as attribute methods, not as input options)
    *
    * @param {Object[]} enum Possible values
    * @example
@@ -69,9 +69,9 @@ export type Leaf<
     ...nextEnum: NextEnum
   ) => Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, NextEnum, Default & NextEnum>
   /**
-   * Provide a default value for property, or tag property as having a computed default value
+   * Provide a default value for attribute, or tag attribute as having a computed default value
    *
-   * @param nextDefaultValue `Property type`, `() => Property type`, `ComputedDefault`
+   * @param nextDefaultValue `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
   default: <
     NextDefault extends LeafDefaultValue<Type> &
