@@ -7,16 +7,16 @@ import type { AnyDefaultValue } from './types'
  * Input options of Any Property
  */
 export interface AnyOptions<
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  D extends AnyDefaultValue = AnyDefaultValue
-> extends PropertyOptions<R, H, K, S> {
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends AnyDefaultValue = AnyDefaultValue
+> extends PropertyOptions<IsRequired, IsHidden, IsKey, SavedAs> {
   /**
    * Provide a default value for property, or tag property as having a computed default value
    */
-  default: D
+  default: Default
 }
 
 export const anyDefaultOptions: AnyOptions<Never, false, false, undefined, undefined> = {

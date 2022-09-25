@@ -4,16 +4,16 @@ import type { PropertyState } from '../property/interface'
 import type { LeafType, ResolveLeafType, EnumValues, LeafDefaultValue } from './types'
 
 interface LeafState<
-  T extends LeafType = LeafType,
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  E extends EnumValues<T> = EnumValues<T>,
-  D extends LeafDefaultValue<T> = LeafDefaultValue<T>
-> extends PropertyState<R, H, K, S> {
-  _enum: E
-  _default: D
+  Type extends LeafType = LeafType,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Enum extends EnumValues<Type> = EnumValues<Type>,
+  Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
+> extends PropertyState<IsRequired, IsHidden, IsKey, SavedAs> {
+  _enum: Enum
+  _default: Default
 }
 
 // TODO: Define reqKey / optKey or partitionKey / sortKey shorthands ?
@@ -21,16 +21,16 @@ interface LeafState<
  * Leaf property interface
  */
 export type Leaf<
-  T extends LeafType = LeafType,
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  E extends EnumValues<T> = EnumValues<T>,
-  D extends LeafDefaultValue<T> = LeafDefaultValue<T>
-> = LeafState<T, R, H, K, S, E, D> & {
-  _type: T
-  _resolved?: E extends ResolveLeafType<T>[] ? E[number] : ResolveLeafType<T>
+  Type extends LeafType = LeafType,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Enum extends EnumValues<Type> = EnumValues<Type>,
+  Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
+> = LeafState<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> & {
+  _type: Type
+  _resolved?: Enum extends ResolveLeafType<Type>[] ? Enum[number] : ResolveLeafType<Type>
   /**
    * Tag a property as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -40,21 +40,23 @@ export type Leaf<
    *
    * @param nextRequired RequiredOption
    */
-  required: <$R extends RequiredOption = AtLeastOnce>(
-    nextRequired?: $R
-  ) => Leaf<T, $R, H, K, S, E, D>
+  required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
+    nextRequired?: NextIsRequired
+  ) => Leaf<Type, NextIsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
   /**
    * Hide property after fetch commands and formatting
    */
-  hidden: () => Leaf<T, R, true, K, S, E, D>
+  hidden: () => Leaf<Type, IsRequired, true, IsKey, SavedAs, Enum, Default>
   /**
    * Tag property as needed for Primary Key computing
    */
-  key: () => Leaf<T, R, H, true, S, E, D>
+  key: () => Leaf<Type, IsRequired, IsHidden, true, SavedAs, Enum, Default>
   /**
    * Rename property before save commands
    */
-  savedAs: <$S extends string | undefined>(nextSavedAs: $S) => Leaf<T, R, H, K, $S, E, D>
+  savedAs: <NextSavedAs extends string | undefined>(
+    nextSavedAs: NextSavedAs
+  ) => Leaf<Type, IsRequired, IsHidden, IsKey, NextSavedAs, Enum, Default>
   /**
    * Provide a finite list of possible values for property
    * (For typing reasons, enums are only available as property methods, not as input options)
@@ -63,16 +65,18 @@ export type Leaf<
    * @example
    * string().enum('foo', 'bar')
    */
-  enum: <$E extends ResolveLeafType<T>[]>(...nextEnum: $E) => Leaf<T, R, H, K, S, $E, D & $E>
+  enum: <NextEnum extends ResolveLeafType<Type>[]>(
+    ...nextEnum: NextEnum
+  ) => Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, NextEnum, Default & NextEnum>
   /**
    * Provide a default value for property, or tag property as having a computed default value
    *
    * @param nextDefaultValue `Property type`, `() => Property type`, `ComputedDefault`
    */
   default: <
-    $D extends LeafDefaultValue<T> &
-      (E extends ResolveLeafType<T>[] ? E[number] | (() => E[number]) : unknown)
+    NextDefault extends LeafDefaultValue<Type> &
+      (Enum extends ResolveLeafType<Type>[] ? Enum[number] | (() => Enum[number]) : unknown)
   >(
-    nextDefaultValue: $D
-  ) => Leaf<T, R, H, K, S, E, $D>
+    nextDefaultValue: NextDefault
+  ) => Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, NextDefault>
 }

@@ -3,21 +3,24 @@ import { IndexableKeyType } from './keyType'
 /**
  * Define a partition or sort key of a Table
  *
- * @param N Key attribute name
- * @param T Key value type
+ * @param KeyName Key attribute name
+ * @param KeyType Key value type
  * @return Key
  */
-export interface Key<N extends string = string, T extends IndexableKeyType = IndexableKeyType> {
-  name: N
-  type: T
+export interface Key<
+  KeyName extends string = string,
+  KeyType extends IndexableKeyType = IndexableKeyType
+> {
+  name: KeyName
+  type: KeyType
 }
 
 /**
  * Utility type to narrow the inferred keys types of a table
  *
- * @param K Key
+ * @param KeyInput Key
  * @return Key
  */
-export type NarrowKey<K extends Key> = {
-  [P in keyof K]: K[P]
+export type NarrowKey<KeyInput extends Key> = {
+  [Property in keyof KeyInput]: KeyInput[Property]
 }

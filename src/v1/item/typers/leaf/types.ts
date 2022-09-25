@@ -10,13 +10,13 @@ export type LeafType = 'string' | 'boolean' | 'number' | 'binary'
  *
  * @param T Leaf Type
  */
-export type ResolveLeafType<T extends LeafType> = T extends 'string'
+export type ResolveLeafType<Type extends LeafType> = Type extends 'string'
   ? string
-  : T extends 'number'
+  : Type extends 'number'
   ? number
-  : T extends 'boolean'
+  : Type extends 'boolean'
   ? boolean
-  : T extends 'binary'
+  : Type extends 'binary'
   ? Buffer
   : never
 
@@ -28,13 +28,13 @@ export type ResolvedLeafType = ResolveLeafType<LeafType>
 /**
  * Leaf Enum values constraint
  */
-export type EnumValues<T extends LeafType> = ResolveLeafType<T>[] | undefined
+export type EnumValues<Type extends LeafType> = ResolveLeafType<Type>[] | undefined
 
 /**
  * Leaf Default values constraint
  */
-export type LeafDefaultValue<T extends LeafType> =
+export type LeafDefaultValue<Type extends LeafType> =
   | undefined
   | ComputedDefault
-  | ResolveLeafType<T>
-  | (() => ResolveLeafType<T>)
+  | ResolveLeafType<Type>
+  | (() => ResolveLeafType<Type>)

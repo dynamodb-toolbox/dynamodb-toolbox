@@ -5,16 +5,16 @@ import { ComputedDefault, RequiredOption, Never } from '../constants'
  * Input options of List Property
  */
 export interface ListOptions<
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  D extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyOptions<R, H, K, S> {
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends PropertyOptions<IsRequired, IsHidden, IsKey, SavedAs> {
   /**
    * Tag property as having a computed default value
    */
-  default: D
+  default: Default
 }
 
 export const listDefaultOptions: ListOptions<Never, false, false, undefined, undefined> = {

@@ -1,10 +1,13 @@
 import type { EntityV2 } from '../class'
 import type { PutItemInput } from '../generics'
 
-type PutItemInputValidator = <E extends EntityV2, I extends Record<string, any> = PutItemInput<E>>(
-  entity: E,
+type PutItemInputValidator = <
+  EntityInput extends EntityV2,
+  EntityPutItemInput extends Record<string, any> = PutItemInput<EntityInput>
+>(
+  entity: EntityInput,
   putItemInput: Record<string, any>
-) => putItemInput is I
+) => putItemInput is EntityPutItemInput
 
 /**
  * Validate the input of a PUT command for a given Entity
@@ -14,12 +17,12 @@ type PutItemInputValidator = <E extends EntityV2, I extends Record<string, any> 
  * @return Boolean
  */
 export const validatePutItemInput: PutItemInputValidator = <
-  E extends EntityV2,
-  I extends Record<string, any> = PutItemInput<E>
+  EntityInput extends EntityV2,
+  EntityPutItemInput extends Record<string, any> = PutItemInput<EntityInput>
 >(
-  entity: E,
+  entity: EntityInput,
   putItemInput: Record<string, any>
-): putItemInput is I => {
+): putItemInput is EntityPutItemInput => {
   entity
   putItemInput
   // TODO

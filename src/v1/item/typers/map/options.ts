@@ -5,21 +5,21 @@ import { ComputedDefault, RequiredOption, Never } from '../constants'
  * Input options of Mapped Property
  */
 export interface MappedOptions<
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  O extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  D extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends PropertyOptions<R, H, K, S> {
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  IsOpen extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends PropertyOptions<IsRequired, IsHidden, IsKey, SavedAs> {
   /**
    * Accept additional properties of any type
    */
-  open: O
+  open: IsOpen
   /**
    * Tag property as having a computed default value
    */
-  default: D
+  default: Default
 }
 
 export const mappedDefaultOptions: MappedOptions<

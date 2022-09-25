@@ -7,16 +7,16 @@ import type { List } from './interface'
 import { ListOptions, listDefaultOptions } from './options'
 
 type ListTyper = <
-  E extends ListProperty,
-  R extends RequiredOption = Never,
-  H extends boolean = false,
-  K extends boolean = false,
-  S extends string | undefined = undefined,
-  D extends ComputedDefault | undefined = undefined
+  Elements extends ListProperty,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
+  SavedAs extends string | undefined = undefined,
+  Default extends ComputedDefault | undefined = undefined
 >(
-  _elements: E,
-  options?: O.Partial<ListOptions<R, H, K, S, D>>
-) => List<E, R, H, K, S, D>
+  _elements: Elements,
+  options?: O.Partial<ListOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+) => List<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
  * Define a new list property
@@ -31,16 +31,16 @@ type ListTyper = <
  * @param options _(optional)_ List Options
  */
 export const list: ListTyper = <
-  E extends ListProperty,
-  R extends RequiredOption = Never,
-  H extends boolean = false,
-  K extends boolean = false,
-  S extends string | undefined = undefined,
-  D extends ComputedDefault | undefined = undefined
+  Elements extends ListProperty,
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
+  SavedAs extends string | undefined = undefined,
+  Default extends ComputedDefault | undefined = undefined
 >(
-  elements: E,
-  options?: O.Partial<ListOptions<R, H, K, S, D>>
-): List<E, R, H, K, S, D> => {
+  elements: Elements,
+  options?: O.Partial<ListOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+): List<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
   const appliedOptions = { ...listDefaultOptions, ...options }
   const {
     required: _required,
@@ -58,11 +58,12 @@ export const list: ListTyper = <
     _key,
     _savedAs,
     _default,
-    required: <$R extends RequiredOption = AtLeastOnce>(nextRequired: $R = 'atLeastOnce' as $R) =>
-      list(elements, { ...appliedOptions, required: nextRequired }),
+    required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
+      nextRequired: NextIsRequired = 'atLeastOnce' as NextIsRequired
+    ) => list(elements, { ...appliedOptions, required: nextRequired }),
     hidden: () => list(elements, { ...appliedOptions, hidden: true }),
     key: () => list(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(elements, { ...appliedOptions, default: nextDefault })
-  } as List<E, R, H, K, S, D>
+  } as List<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 }

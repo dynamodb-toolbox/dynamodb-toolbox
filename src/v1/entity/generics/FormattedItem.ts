@@ -18,32 +18,32 @@ import { EntityV2 } from '../class'
 /**
  * Returned item of a fetch command (GET, QUERY ...) for a given Entity, Item or Property
  *
- * @param E Entity | Item | Property
+ * @param Input Entity | Item | Property
  * @return Object
  */
-export type FormattedItem<E extends EntityV2 | Item | Property> = E extends Any
+export type FormattedItem<Input extends EntityV2 | Item | Property> = Input extends Any
   ? ResolvedProperty
-  : E extends Leaf
-  ? NonNullable<E['_resolved']>
-  : E extends List
-  ? FormattedItem<E['_elements']>[]
-  : E extends Mapped | Item
+  : Input extends Leaf
+  ? NonNullable<Input['_resolved']>
+  : Input extends List
+  ? FormattedItem<Input['_elements']>[]
+  : Input extends Mapped | Item
   ? O.Required<
       O.Partial<
         {
           // Keep only non-hidden properties
-          [key in O.SelectKeys<E['_properties'], { _hidden: false }>]: FormattedItem<
-            E['_properties'][key]
+          [key in O.SelectKeys<Input['_properties'], { _hidden: false }>]: FormattedItem<
+            Input['_properties'][key]
           >
         }
       >,
       // Enforce Required properties
-      | O.SelectKeys<E['_properties'], { _required: AtLeastOnce | OnlyOnce | Always }>
+      | O.SelectKeys<Input['_properties'], { _required: AtLeastOnce | OnlyOnce | Always }>
       // Enforce properties that have defined default (initial or computed)
       // (...but not so sure about that anymore, props can have computed default but still be optional)
-      | O.FilterKeys<E['_properties'], { _default: undefined }>
+      | O.FilterKeys<Input['_properties'], { _default: undefined }>
     > & // Add Record<string, ResolvedProperty> if map is open
-      (E extends { _open: true } ? Record<string, ResolvedProperty> : {})
-  : E extends EntityV2
-  ? FormattedItem<E['item']>
+      (Input extends { _open: true } ? Record<string, ResolvedProperty> : {})
+  : Input extends EntityV2
+  ? FormattedItem<Input['item']>
   : never

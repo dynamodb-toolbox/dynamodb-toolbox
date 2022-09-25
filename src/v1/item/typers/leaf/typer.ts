@@ -12,16 +12,16 @@ import type { LeafType, EnumValues, LeafDefaultValue } from './types'
  * @param options _(optional)_ Leaf Options
  */
 const leaf = <
-  T extends LeafType = LeafType,
-  R extends RequiredOption = RequiredOption,
-  H extends boolean = boolean,
-  K extends boolean = boolean,
-  S extends string | undefined = string | undefined,
-  E extends EnumValues<T> = EnumValues<T>,
-  D extends LeafDefaultValue<T> = LeafDefaultValue<T>
+  Type extends LeafType = LeafType,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Enum extends EnumValues<Type> = EnumValues<Type>,
+  Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
 >(
-  options: { type: T } & LeafOptions<T, R, H, K, S, E, D>
-): Leaf<T, R, H, K, S, E, D> => {
+  options: { type: Type } & LeafOptions<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+): Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> => {
   const {
     type: _type,
     required: _required,
@@ -40,38 +40,39 @@ const leaf = <
     _savedAs,
     _default,
     _enum,
-    required: <$R extends RequiredOption = AtLeastOnce>(nextRequired = 'atLeastOnce' as $R) =>
-      leaf({ ...options, required: nextRequired }),
+    required: <NextRequired extends RequiredOption = AtLeastOnce>(
+      nextRequired = 'atLeastOnce' as NextRequired
+    ) => leaf({ ...options, required: nextRequired }),
     hidden: () => leaf({ ...options, hidden: true }),
     key: () => leaf({ ...options, key: true }),
     savedAs: nextSavedAs => leaf({ ...options, savedAs: nextSavedAs }),
     default: nextDefault => leaf({ ...options, default: nextDefault }),
     enum: (...nextEnum) => leaf({ ...options, _enum: nextEnum })
-  } as Leaf<T, R, H, K, S, E, D>
+  } as Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
 }
 
-type LeafTyper<T extends LeafType> = <
-  R extends RequiredOption = Never,
-  H extends boolean = false,
-  K extends boolean = false,
-  S extends string | undefined = undefined,
-  E extends EnumValues<T> = undefined,
-  D extends LeafDefaultValue<T> = undefined
+type LeafTyper<Type extends LeafType> = <
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
+  SavedAs extends string | undefined = undefined,
+  Enum extends EnumValues<Type> = undefined,
+  Default extends LeafDefaultValue<Type> = undefined
 >(
-  options?: O.Partial<LeafOptions<T, R, H, K, S, E, D>>
-) => Leaf<T, R, H, K, S, E, D>
+  options?: O.Partial<LeafOptions<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>>
+) => Leaf<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
 
-const getLeafTyper = <T extends LeafType>(type: T) =>
+const getLeafTyper = <Type extends LeafType>(type: Type) =>
   (<
-    R extends RequiredOption = Never,
-    H extends boolean = false,
-    K extends boolean = false,
-    S extends string | undefined = undefined,
-    D extends LeafDefaultValue<T> = undefined,
-    E extends EnumValues<T> = undefined
+    Required extends RequiredOption = Never,
+    Hidden extends boolean = false,
+    Key extends boolean = false,
+    SavedAs extends string | undefined = undefined,
+    Default extends LeafDefaultValue<Type> = undefined,
+    Enum extends EnumValues<Type> = undefined
   >(
-    leafOptions?: O.Partial<LeafOptions<T, R, H, K, S, E, D>>
-  ) => leaf({ ...leafDefaultOptions, ...leafOptions, type })) as LeafTyper<T>
+    leafOptions?: O.Partial<LeafOptions<Type, Required, Hidden, Key, SavedAs, Enum, Default>>
+  ) => leaf({ ...leafDefaultOptions, ...leafOptions, type })) as LeafTyper<Type>
 
 /**
  * Define a new string property

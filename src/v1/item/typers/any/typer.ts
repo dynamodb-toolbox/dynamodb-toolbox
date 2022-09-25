@@ -7,14 +7,14 @@ import type { Any } from './interface'
 import { AnyOptions, anyDefaultOptions } from './options'
 
 type AnyTyper = <
-  R extends RequiredOption = Never,
-  H extends boolean = false,
-  K extends boolean = false,
-  S extends string | undefined = undefined,
-  D extends AnyDefaultValue = undefined
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
+  SavedAs extends string | undefined = undefined,
+  Default extends AnyDefaultValue = undefined
 >(
-  options?: O.Partial<AnyOptions<R, H, K, S, D>>
-) => Any<R, H, K, S, D>
+  options?: O.Partial<AnyOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+) => Any<IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
  * Define a new property of any type
@@ -22,14 +22,14 @@ type AnyTyper = <
  * @param options _(optional)_ Boolean Options
  */
 export const any: AnyTyper = <
-  R extends RequiredOption = Never,
-  H extends boolean = false,
-  K extends boolean = false,
-  S extends string | undefined = undefined,
-  D extends AnyDefaultValue = undefined
+  IsRequired extends RequiredOption = Never,
+  IsHidden extends boolean = false,
+  IsKey extends boolean = false,
+  SavedAs extends string | undefined = undefined,
+  Default extends AnyDefaultValue = undefined
 >(
-  options?: O.Partial<AnyOptions<R, H, K, S, D>>
-): Any<R, H, K, S, D> => {
+  options?: O.Partial<AnyOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+): Any<IsRequired, IsHidden, IsKey, SavedAs, Default> => {
   const appliedOptions = { ...anyDefaultOptions, ...options }
   const {
     required: _required,
@@ -46,12 +46,12 @@ export const any: AnyTyper = <
     _key,
     _savedAs,
     _default,
-    required: <$R extends RequiredOption = AtLeastOnce>(
-      nextRequired: $R = ('atLeastOnce' as unknown) as $R
+    required: <NextRequired extends RequiredOption = AtLeastOnce>(
+      nextRequired: NextRequired = ('atLeastOnce' as unknown) as NextRequired
     ) => any({ ...appliedOptions, required: nextRequired }),
     hidden: () => any({ ...appliedOptions, hidden: true }),
     key: () => any({ ...appliedOptions, key: true }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => any({ ...appliedOptions, default: nextDefault })
-  } as Any<R, H, K, S, D>
+  } as Any<IsRequired, IsHidden, IsKey, SavedAs, Default>
 }
