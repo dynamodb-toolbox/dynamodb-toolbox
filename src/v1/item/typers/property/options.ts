@@ -4,9 +4,9 @@ import { RequiredOption } from '../constants/requiredOptions'
  * Common input options of all Properties
  */
 export interface PropertyOptions<
-  Required extends RequiredOption = RequiredOption,
-  Hidden extends boolean = boolean,
-  Key extends boolean = boolean,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined
 > {
   /**
@@ -16,15 +16,15 @@ export interface PropertyOptions<
    * - `"always"`: Required in PUTs and UPDATEs
    * - `"onlyOnce"`: Required in PUTs, denied in UPDATEs
    */
-  required: Required
+  required: IsRequired
   /**
    * Hide property after fetch commands and formatting
    */
-  hidden: Hidden
+  hidden: IsHidden
   /**
    * Tag property as needed for Primary Key computing
    */
-  key: Key
+  key: IsKey
   /**
    * Rename property before save commands
    */
