@@ -2,8 +2,8 @@ import type { O } from 'ts-toolbelt'
 
 import type { Item } from 'v1/item/interface'
 import type {
-  Property,
-  ResolvedProperty,
+  Attribute,
+  ResolvedAttribute,
   Leaf,
   Mapped,
   List,
@@ -17,13 +17,13 @@ import type {
 import type { EntityV2 } from '../class'
 
 /**
- * Formatted input of a PUT command for a given Entity, Item or Property
+ * Formatted input of a PUT command for a given Entity, Item or Attribute
  *
- * @param Input Entity | Item | Property
+ * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type PutItem<Input extends EntityV2 | Item | Property> = Input extends Any
-  ? ResolvedProperty
+export type PutItem<Input extends EntityV2 | Item | Attribute> = Input extends Any
+  ? ResolvedAttribute
   : Input extends Leaf
   ? NonNullable<Input['_resolved']>
   : Input extends List
@@ -32,16 +32,16 @@ export type PutItem<Input extends EntityV2 | Item | Property> = Input extends An
   ? O.Required<
       O.Partial<
         {
-          // Keep all properties
-          [key in keyof Input['_properties']]: PutItem<Input['_properties'][key]>
+          // Keep all attributes
+          [key in keyof Input['_attributes']]: PutItem<Input['_attributes'][key]>
         }
       >,
-      // Enforce Required properties
-      | O.SelectKeys<Input['_properties'], { _required: AtLeastOnce | OnlyOnce | Always }>
-      // Enforce properties that have initial default
-      | O.FilterKeys<Input['_properties'], { _default: undefined | ComputedDefault }>
-    > & // Add Record<string, ResolvedProperty> if map is open
-      (Input extends { _open: true } ? Record<string, ResolvedProperty> : {})
+      // Enforce Required attributes
+      | O.SelectKeys<Input['_attributes'], { _required: AtLeastOnce | OnlyOnce | Always }>
+      // Enforce attributes that have initial default
+      | O.FilterKeys<Input['_attributes'], { _default: undefined | ComputedDefault }>
+    > & // Add Record<string, ResolvedAttribute> if map is open
+      (Input extends { _open: true } ? Record<string, ResolvedAttribute> : {})
   : Input extends EntityV2
   ? PutItem<Input['item']>
   : never

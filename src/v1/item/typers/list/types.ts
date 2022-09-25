@@ -1,7 +1,7 @@
 import type { AtLeastOnce } from '../constants'
-import type { Property } from '../types/property'
+import type { Attribute } from '../types/attribute'
 
-export type ListProperty = Property & {
+export type ListElements = Attribute & {
   _required: AtLeastOnce
   _hidden: false
   _savedAs: undefined

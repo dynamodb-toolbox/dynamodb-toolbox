@@ -1,10 +1,10 @@
-import type { PropertyOptions } from '../property/options'
+import type { AttributeOptions } from '../attribute/options'
 import type { RequiredOption, Never } from '../constants/requiredOptions'
 
 import type { LeafType, EnumValues, LeafDefaultValue } from './types'
 
 /**
- * Input options of Leaf Property
+ * Input options of Leaf Attribute
  */
 export interface LeafOptions<
   Type extends LeafType = LeafType,
@@ -14,10 +14,10 @@ export interface LeafOptions<
   SavedAs extends string | undefined = string | undefined,
   Enum extends EnumValues<Type> = EnumValues<Type>,
   Default extends LeafDefaultValue<Type> = LeafDefaultValue<Type>
-> extends PropertyOptions<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeOptions<IsRequired, IsHidden, IsKey, SavedAs> {
   _enum: Enum
   /**
-   * Provide a default value for property, or tag property as having a computed default value
+   * Provide a default value for attribute, or tag attribute as having a computed default value
    */
   default: Default
 }

@@ -1,13 +1,13 @@
-import { MappedProperties } from './typers'
+import { MappedAttributes } from './typers'
 
 /**
  * Entity items shape
  *
- * @param MappedPropertiesInput Object of properties
+ * @param MappedAttributesInput Object of attributes
  * @return Item
  */
-export interface Item<MappedPropertiesInput extends MappedProperties = MappedProperties> {
+export interface Item<MappedAttributesInput extends MappedAttributes = MappedAttributes> {
   _type: 'item'
   _open: boolean
-  _properties: MappedPropertiesInput
+  _attributes: MappedAttributesInput
 }
