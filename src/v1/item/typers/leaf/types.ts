@@ -1,12 +1,12 @@
 import type { ComputedDefault } from '../constants/computedDefault'
 
 /**
- * Possible Leaf Property type
+ * Possible Leaf Attribute type
  */
 export type LeafType = 'string' | 'boolean' | 'number' | 'binary'
 
 /**
- * Returns the corresponding TS type of a Leaf Property type
+ * Returns the corresponding TS type of a Leaf Attribute type
  *
  * @param T Leaf Type
  */
@@ -21,7 +21,7 @@ export type ResolveLeafType<Type extends LeafType> = Type extends 'string'
   : never
 
 /**
- * TS type of any Leaf Property
+ * TS type of any Leaf Attribute
  */
 export type ResolvedLeafType = ResolveLeafType<LeafType>
 

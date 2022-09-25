@@ -1,10 +1,10 @@
-import type { PropertyOptions } from '../property/options'
+import type { AttributeOptions } from '../attribute/options'
 import type { RequiredOption, Never } from '../constants/requiredOptions'
 
 import type { AnyDefaultValue } from './types'
 
 /**
- * Input options of Any Property
+ * Input options of Any Attribute
  */
 export interface AnyOptions<
   IsRequired extends RequiredOption = RequiredOption,
@@ -12,9 +12,9 @@ export interface AnyOptions<
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends AnyDefaultValue = AnyDefaultValue
-> extends PropertyOptions<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeOptions<IsRequired, IsHidden, IsKey, SavedAs> {
   /**
-   * Provide a default value for property, or tag property as having a computed default value
+   * Provide a default value for attribute, or tag attribute as having a computed default value
    */
   default: Default
 }
