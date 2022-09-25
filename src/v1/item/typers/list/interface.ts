@@ -1,15 +1,15 @@
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
-import type { AttributeState } from '../attribute/interface'
+import type { AttributeProperties } from '../attribute/interface'
 import type { ListElements } from './types'
 
-interface ListState<
+interface ListProperties<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeState<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _default: Default
 }
 
@@ -23,7 +23,7 @@ export interface List<
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends ListState<IsRequired, IsHidden, IsKey, SavedAs, Default> {
+> extends ListProperties<IsRequired, IsHidden, IsKey, SavedAs, Default> {
   _type: 'list'
   _elements: Elements
   /**
