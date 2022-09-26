@@ -1,8 +1,8 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import { isBoolean, isString } from 'v1/utils/validation'
 
-import type { AttributeProperties } from './interface'
 import { requiredOptionsSet } from '../constants/requiredOptions'
+import type { AttributeProperties } from './interface'
 
 export class InvalidAttributePropertyError extends Error {
   constructor({
