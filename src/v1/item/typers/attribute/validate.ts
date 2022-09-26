@@ -4,26 +4,6 @@ import { isBoolean, isString } from 'v1/utils/validation'
 import { requiredOptionsSet } from '../constants/requiredOptions'
 import type { AttributeProperties } from './interface'
 
-export class InvalidAttributePropertyError extends Error {
-  constructor({
-    propertyName,
-    expectedType,
-    receivedValue,
-    path
-  }: {
-    propertyName: string
-    expectedType: string
-    receivedValue: unknown
-    path?: string
-  }) {
-    super(
-      `Invalid option value type${getInfoTextForItemPath(
-        path
-      )}. Property: ${propertyName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
-    )
-  }
-}
-
 /**
  * Validates an attribute shared properties
  *
@@ -69,5 +49,25 @@ export const validateAttributeProperties = (
       receivedValue: _savedAs,
       path
     })
+  }
+}
+
+export class InvalidAttributePropertyError extends Error {
+  constructor({
+    propertyName,
+    expectedType,
+    receivedValue,
+    path
+  }: {
+    propertyName: string
+    expectedType: string
+    receivedValue: unknown
+    path?: string
+  }) {
+    super(
+      `Invalid option value type${getInfoTextForItemPath(
+        path
+      )}. Property: ${propertyName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
+    )
   }
 }
