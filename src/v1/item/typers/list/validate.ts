@@ -5,38 +5,6 @@ import { validateAttribute } from '../validate'
 
 import type { List } from './interface'
 
-export class OptionalListElementsError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${getInfoTextForItemPath(path)}: List elements must be required`)
-  }
-}
-
-export class HiddenListElementsError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(`Invalid list elements${getInfoTextForItemPath(path)}: List elements cannot be hidden`)
-  }
-}
-
-export class SavedAsListElementsError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(
-      `Invalid list elements${getInfoTextForItemPath(
-        path
-      )}: List elements cannot be renamed (have savedAs option)`
-    )
-  }
-}
-
-export class DefaultedListElementsError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(
-      `Invalid list elements${getInfoTextForItemPath(
-        path
-      )}: List elements cannot have default values`
-    )
-  }
-}
-
 /**
  * Validates a list instance
  *
@@ -74,4 +42,36 @@ export const validateList = <ListInput extends List>(
   }
 
   validateAttribute(elements, `${path ?? ''}[n]`)
+}
+
+export class OptionalListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(`Invalid list elements${getInfoTextForItemPath(path)}: List elements must be required`)
+  }
+}
+
+export class HiddenListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(`Invalid list elements${getInfoTextForItemPath(path)}: List elements cannot be hidden`)
+  }
+}
+
+export class SavedAsListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(
+      `Invalid list elements${getInfoTextForItemPath(
+        path
+      )}: List elements cannot be renamed (have savedAs option)`
+    )
+  }
+}
+
+export class DefaultedListElementsError extends Error {
+  constructor({ path }: { path?: string }) {
+    super(
+      `Invalid list elements${getInfoTextForItemPath(
+        path
+      )}: List elements cannot have default values`
+    )
+  }
 }
