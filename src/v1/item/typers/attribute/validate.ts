@@ -1,17 +1,17 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import { isBoolean, isString } from 'v1/utils/validation'
 
-import type { AttributeState } from './interface'
+import type { AttributeProperties } from './interface'
 import { requiredOptionsSet } from '../constants/requiredOptions'
 
-export class InvalidAttributeStateError extends Error {
+export class InvalidAttributePropertyError extends Error {
   constructor({
-    optionName,
+    propertyName,
     expectedType,
     receivedValue,
     path
   }: {
-    optionName: string
+    propertyName: string
     expectedType: string
     receivedValue: unknown
     path?: string
@@ -19,25 +19,25 @@ export class InvalidAttributeStateError extends Error {
     super(
       `Invalid option value type${getInfoTextForItemPath(
         path
-      )}. Option: ${optionName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
+      )}. Property: ${propertyName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
     )
   }
 }
 
 /**
- * Validates an attribute base state
+ * Validates an attribute shared properties
  *
  * @param attribute Attribute
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const validateAttributeState = (
-  { _required, _hidden, _key, _savedAs }: AttributeState,
+export const validateAttributeProperties = (
+  { _required, _hidden, _key, _savedAs }: AttributeProperties,
   path?: string
 ): void => {
   if (!requiredOptionsSet.has(_required)) {
-    throw new InvalidAttributeStateError({
-      optionName: 'required',
+    throw new InvalidAttributePropertyError({
+      propertyName: 'required',
       expectedType: [...requiredOptionsSet].join(', '),
       receivedValue: _required,
       path
@@ -45,8 +45,8 @@ export const validateAttributeState = (
   }
 
   if (!isBoolean(_hidden)) {
-    throw new InvalidAttributeStateError({
-      optionName: 'hidden',
+    throw new InvalidAttributePropertyError({
+      propertyName: 'hidden',
       expectedType: 'boolean',
       receivedValue: _hidden,
       path
@@ -54,8 +54,8 @@ export const validateAttributeState = (
   }
 
   if (!isBoolean(_key)) {
-    throw new InvalidAttributeStateError({
-      optionName: 'key',
+    throw new InvalidAttributePropertyError({
+      propertyName: 'key',
       expectedType: 'boolean',
       receivedValue: _key,
       path
@@ -63,8 +63,8 @@ export const validateAttributeState = (
   }
 
   if (_savedAs !== undefined && !isString(_savedAs)) {
-    throw new InvalidAttributeStateError({
-      optionName: 'savedAs',
+    throw new InvalidAttributePropertyError({
+      propertyName: 'savedAs',
       expectedType: 'string',
       receivedValue: _savedAs,
       path
