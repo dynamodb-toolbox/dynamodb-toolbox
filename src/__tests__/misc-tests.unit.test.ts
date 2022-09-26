@@ -1,5 +1,5 @@
 // // Bootstrap testing
-const { DocumentClient } = require('./bootstrap-tests')
+const { DocumentClient } = require('./bootstrap.test')
 
 // // console.log(DocumentClient);
 // // console.log(DocumentClient.constructor.name);
