@@ -19,7 +19,7 @@ export class InvalidAttributePropertyError extends Error {
     super(
       `Invalid option value type${getInfoTextForItemPath(
         path
-      )}. Option: ${propertyName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
+      )}. Property: ${propertyName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
     )
   }
 }
