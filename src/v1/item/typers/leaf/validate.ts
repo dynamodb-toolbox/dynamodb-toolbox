@@ -8,6 +8,43 @@ import { validateAttributeProperties } from '../attribute/validate'
 import type { Leaf } from './interface'
 import type { LeafType, EnumValues, LeafDefaultValue } from './types'
 
+/**
+ * Validates a leaf instance
+ *
+ * @param leafInstance Leaf
+ * @param path _(optional)_ Path of the instance in the related item (string)
+ * @return void
+ */
+export const validateLeaf = <LeafInput extends Leaf>(
+  { _type: leafType, _enum: enumValues, _default: defaultValue, ...leafInstance }: LeafInput,
+  path?: string
+): void => {
+  validateAttributeProperties(leafInstance, path)
+
+  const typeValidator = validatorsByLeafType[leafType]
+
+  enumValues?.forEach(enumValue => {
+    const isEnumValueValid = typeValidator(enumValue)
+    if (!isEnumValueValid) {
+      throw new InvalidEnumValueTypeError({ expectedType: leafType, enumValue, path })
+    }
+  })
+
+  if (
+    defaultValue !== undefined &&
+    !isComputedDefault(defaultValue) &&
+    isStaticDefault(defaultValue)
+  ) {
+    if (!typeValidator(defaultValue)) {
+      throw new InvalidDefaultValueTypeError({ expectedType: leafType, defaultValue, path })
+    }
+
+    if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
+      throw new InvalidDefaultValueRangeError({ enumValues, defaultValue, path })
+    }
+  }
+}
+
 export class InvalidEnumValueTypeError extends Error {
   constructor({
     expectedType,
@@ -59,42 +96,5 @@ export class InvalidDefaultValueRangeError extends Error {
         ', '
       )}. Received: ${String(defaultValue)}.`
     )
-  }
-}
-
-/**
- * Validates a leaf instance
- *
- * @param leafInstance Leaf
- * @param path _(optional)_ Path of the instance in the related item (string)
- * @return void
- */
-export const validateLeaf = <LeafInput extends Leaf>(
-  { _type: leafType, _enum: enumValues, _default: defaultValue, ...leafInstance }: LeafInput,
-  path?: string
-): void => {
-  validateAttributeProperties(leafInstance, path)
-
-  const typeValidator = validatorsByLeafType[leafType]
-
-  enumValues?.forEach(enumValue => {
-    const isEnumValueValid = typeValidator(enumValue)
-    if (!isEnumValueValid) {
-      throw new InvalidEnumValueTypeError({ expectedType: leafType, enumValue, path })
-    }
-  })
-
-  if (
-    defaultValue !== undefined &&
-    !isComputedDefault(defaultValue) &&
-    isStaticDefault(defaultValue)
-  ) {
-    if (!typeValidator(defaultValue)) {
-      throw new InvalidDefaultValueTypeError({ expectedType: leafType, defaultValue, path })
-    }
-
-    if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
-      throw new InvalidDefaultValueRangeError({ enumValues, defaultValue, path })
-    }
   }
 }
