@@ -106,7 +106,11 @@ export interface BatchGetOptions {
 }
 
 export interface BatchGetParamsMeta {
-  payload: any
+  payload: {
+    RequestItems: DocumentClient.BatchGetRequestMap;
+} & {
+    ReturnConsumedCapacity: string;
+} & Partial<DocumentClient.BatchGetItemInput>
   Tables: { [key: string]: TableDef }
   EntityProjections: { [key: string]: any }
   TableProjections: { [key: string]: string[] }

@@ -7,7 +7,9 @@
 // TODO: Check duplicate entity names code
 
 // Import libraries, types, and classes
-import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import type { BatchWriteItemOutput, DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { PromiseResult } from 'aws-sdk/lib/request'
+import { AWSError } from 'aws-sdk'
 import type { A, O } from 'ts-toolbelt'
 
 import { parseTable, ParsedTable } from '../../lib/parseTable'
@@ -957,16 +959,15 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   } // end batchGet
 
   parseBatchGetResponse(
-    result: any,
-    // 💥 Retype as Record<string, Table> with inferred type
-    Tables: any,
+    result: PromiseResult<DocumentClient.BatchGetItemOutput, AWSError>,
+    Tables: { [key: string]: TableDef },
     EntityProjections: { [key: string]: any },
     TableProjections: { [key: string]: string[] },
     options: BatchGetOptions = {}
   ) {
     return Object.assign(
       result,
-      // If reponses exist
+      // If responses exist
       result.Responses
         ? {
             // Loop through the tables
@@ -974,8 +975,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
               // Merge in tables
               return Object.assign(acc, {
                 // Map over the items
-                [(Tables[table] && Tables[table].alias) || table]: result.Responses[table].map(
-                  (item: TableDef) => {
+                [(Tables[table] && Tables[table].alias) || table]: result.Responses![table].map(
+                  (item) => {
                     // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
                     if (
                       Tables[table] &&
@@ -1007,7 +1008,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
             next: async (): Promise<any> => {
               const nextResult = await this.DocumentClient!.batchGet(
                 Object.assign(
-                  { RequestItems: result.UnprocessedKeys },
+                  { RequestItems: result.UnprocessedKeys! },
                   options.capacity
                     ? { ReturnConsumedCapacity: options.capacity.toUpperCase() }
                     : null
@@ -1162,7 +1163,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     items: any,
     options: batchWriteOptions = {},
     params: Partial<DocumentClient.BatchWriteItemInput> = {}
-  ) {
+  ): Promise<DocumentClient.BatchWriteItemInput | PromiseResult<DocumentClient.BatchWriteItemOutput, AWSError> & { next?: Function }> {
     // Generate the payload with meta information
     const payload = this.batchWriteParams(
       items,
@@ -1187,16 +1188,16 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     } // end-if
   } // end put
 
-  private parseBatchWriteResponse(result: any, options: batchWriteOptions = {}): any {
+  private parseBatchWriteResponse(result: PromiseResult<BatchWriteItemOutput, AWSError>, options: batchWriteOptions = {}) {
     return Object.assign(
       result,
       // If UnprocessedItems, return a next function
       result.UnprocessedItems && Object.keys(result.UnprocessedItems).length > 0
         ? {
-            next: async () => {
+            next: async (): Promise<any> => {
               const nextResult = await this.DocumentClient!.batchWrite(
                 Object.assign(
-                  { RequestItems: result.UnprocessedItems },
+                  { RequestItems: result.UnprocessedItems! },
                   options.capacity
                     ? { ReturnConsumedCapacity: options.capacity.toUpperCase() }
                     : null,
