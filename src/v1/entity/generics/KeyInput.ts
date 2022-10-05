@@ -1,7 +1,16 @@
 import type { O } from 'ts-toolbelt'
 
 import type { Item } from 'v1/item/interface'
-import type { Attribute, ResolvedAttribute, Leaf, Mapped, List, Any, Always } from 'v1/item/typers'
+import type {
+  Attribute,
+  ResolvedAttribute,
+  Any,
+  Leaf,
+  SetAttribute,
+  List,
+  Mapped,
+  Always
+} from 'v1/item/typers'
 
 import { EntityV2 } from '../class'
 
@@ -15,6 +24,8 @@ export type KeyInput<Input extends EntityV2 | Item | Attribute> = Input extends 
   ? ResolvedAttribute
   : Input extends Leaf
   ? NonNullable<Input['_resolved']>
+  : Input extends SetAttribute
+  ? Set<KeyInput<Input['_elements']>>
   : Input extends List
   ? KeyInput<Input['_elements']>[]
   : Input extends Mapped | Item

@@ -68,8 +68,8 @@ const getLeafTyper = <Type extends LeafType>(type: Type) =>
     Hidden extends boolean = false,
     Key extends boolean = false,
     SavedAs extends string | undefined = undefined,
-    Default extends LeafDefaultValue<Type> = undefined,
-    Enum extends EnumValues<Type> = undefined
+    Enum extends EnumValues<Type> = undefined,
+    Default extends LeafDefaultValue<Type> = undefined
   >(
     leafOptions?: O.Partial<LeafOptions<Type, Required, Hidden, Key, SavedAs, Enum, Default>>
   ) => leaf({ ...leafDefaultOptions, ...leafOptions, type })) as LeafTyper<Type>

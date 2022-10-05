@@ -28,38 +28,42 @@ describe('list', () => {
 
   it('rejects hidden elements', () => {
     // @ts-expect-error
-    list(string().required().hidden())
+    list(str.hidden())
 
     // @ts-expect-error
-    expect(() => validateList(list(string().required().hidden()))).toThrow(
+    expect(() => validateList(list(str.hidden()))).toThrow(
+      // forces line break
       new HiddenListElementsError({})
     )
   })
 
   it('rejects elements with savedAs values', () => {
     // @ts-expect-error
-    list(string().required().savedAs('foo'))
+    list(str.savedAs('foo'))
 
     // @ts-expect-error
-    expect(() => validateList(list(string().required().savedAs('foo')))).toThrow(
+    expect(() => validateList(list(str.savedAs('foo')))).toThrow(
+      // forces line break
       new SavedAsListElementsError({})
     )
   })
 
   it('rejects elements with default values', () => {
     // @ts-expect-error
-    list(string().required().default('foo'))
+    list(str.default('foo'))
 
     // @ts-expect-error
-    expect(() => validateList(list(string().required().default('foo')))).toThrow(
+    expect(() => validateList(list(str.default('foo')))).toThrow(
+      // forces line break
       new DefaultedListElementsError({})
     )
 
     // @ts-expect-error
-    list(string().required().default(ComputedDefault))
+    list(str.default(ComputedDefault))
 
     // @ts-expect-error
-    expect(() => validateList(list(string().required().default(ComputedDefault)))).toThrow(
+    expect(() => validateList(list(str.default(ComputedDefault)))).toThrow(
+      // forces line break
       new DefaultedListElementsError({})
     )
   })
