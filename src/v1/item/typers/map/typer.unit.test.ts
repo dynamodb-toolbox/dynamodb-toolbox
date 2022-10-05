@@ -167,7 +167,7 @@ describe('map', () => {
       expect(mapped).toMatchObject({ _default: ComputedDefault })
     })
 
-    it('accepts ComputedDefault as default value (option)', () => {
+    it('accepts ComputedDefault as default value (method)', () => {
       const mapped = map({ str }).default(ComputedDefault)
 
       const assertMapped: A.Contains<typeof mapped, { _default: ComputedDefault }> = 1
