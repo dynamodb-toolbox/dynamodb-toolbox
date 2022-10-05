@@ -23,9 +23,8 @@ type ListTyper = <
  * Not that list elements have constraints. They must be:
  * - Required (required: AtLeastOnce)
  * - Displayed (hidden: false)
- * - Non-key (key: false)
  * - Not renamed (savedAs: undefined)
- * - Non default (default: undefined)
+ * - Not defaulted (default: undefined)
  *
  * @param elements Attribute (With constraints)
  * @param options _(optional)_ List Options

@@ -4,10 +4,11 @@ import type { Item } from 'v1/item/interface'
 import type {
   Attribute,
   ResolvedAttribute,
-  Leaf,
-  Mapped,
-  List,
   Any,
+  Leaf,
+  SetAttribute,
+  List,
+  Mapped,
   AtLeastOnce,
   OnlyOnce,
   Always
@@ -25,6 +26,8 @@ export type FormattedItem<Input extends EntityV2 | Item | Attribute> = Input ext
   ? ResolvedAttribute
   : Input extends Leaf
   ? NonNullable<Input['_resolved']>
+  : Input extends SetAttribute
+  ? Set<FormattedItem<Input['_elements']>>
   : Input extends List
   ? FormattedItem<Input['_elements']>[]
   : Input extends Mapped | Item
