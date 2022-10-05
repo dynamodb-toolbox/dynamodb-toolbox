@@ -1,7 +1,8 @@
-import { validateLeaf } from './leaf'
-import { validateMap } from './map'
-import { validateList } from './list'
 import { validateAny } from './any'
+import { validateLeaf } from './leaf'
+import { validateSet } from './set'
+import { validateList } from './list'
+import { validateMap } from './map'
 import type { Attribute } from './types/attribute'
 
 /**
@@ -16,11 +17,13 @@ export const validateAttribute = <AttributeInput extends Attribute>(
   path?: string
 ): void => {
   switch (attribute._type) {
-    case 'string':
-    case 'number':
     case 'boolean':
     case 'binary':
+    case 'number':
+    case 'string':
       return validateLeaf(attribute, path)
+    case 'set':
+      return validateSet(attribute, path)
     case 'list':
       return validateList(attribute, path)
     case 'map':
