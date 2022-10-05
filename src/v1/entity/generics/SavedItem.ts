@@ -2,13 +2,14 @@ import type { A, O, U } from 'ts-toolbelt'
 
 import type { Item } from 'v1/item/interface'
 import type {
-  MappedAttributes,
   Attribute,
   ResolvedAttribute,
-  Leaf,
-  Mapped,
-  List,
   Any,
+  Leaf,
+  SetAttribute,
+  List,
+  Mapped,
+  MappedAttributes,
   AtLeastOnce,
   OnlyOnce,
   Always
@@ -65,6 +66,8 @@ export type SavedItem<Input extends EntityV2 | Item | Attribute> = Input extends
   ? ResolvedAttribute
   : Input extends Leaf
   ? NonNullable<Input['_resolved']>
+  : Input extends SetAttribute
+  ? Set<SavedItem<Input['_elements']>>
   : Input extends List
   ? SavedItem<Input['_elements']>[]
   : Input extends Mapped | Item

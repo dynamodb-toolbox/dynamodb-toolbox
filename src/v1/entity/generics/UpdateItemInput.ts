@@ -4,10 +4,11 @@ import type { Item } from 'v1/item/interface'
 import type {
   Attribute,
   ResolvedAttribute,
-  Leaf,
-  Mapped,
-  List,
   Any,
+  Leaf,
+  SetAttribute,
+  List,
+  Mapped,
   OnlyOnce,
   Always
 } from 'v1/item/typers'
@@ -24,6 +25,8 @@ export type UpdateItemInput<Input extends EntityV2 | Item | Attribute> = Input e
   ? ResolvedAttribute
   : Input extends Leaf
   ? NonNullable<Input['_resolved']>
+  : Input extends SetAttribute
+  ? Set<UpdateItemInput<Input['_elements']>>
   : Input extends List
   ? UpdateItemInput<Input['_elements']>[]
   : Input extends Mapped | Item
