@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { item } from './typer'
-import { string, number, boolean, binary, map, list } from './typers'
+import { boolean, binary, number, string, set, list, map } from './typers'
 
 describe('item', () => {
   it('leafs', () => {
@@ -115,6 +115,39 @@ describe('item', () => {
         nestedList,
         reqList,
         hiddenList
+      }
+    })
+  })
+
+  it('sets', () => {
+    const str = string().required()
+    const optSet = set(str)
+    const reqSet = set(str).required()
+    const hiddenSet = set(str).hidden()
+
+    const itm = item({
+      optSet,
+      reqSet,
+      hiddenSet
+    })
+
+    const assertItm: A.Contains<
+      typeof itm,
+      {
+        _attributes: {
+          optSet: typeof optSet
+          reqSet: typeof reqSet
+          hiddenSet: typeof hiddenSet
+        }
+      }
+    > = 1
+    assertItm
+
+    expect(itm).toMatchObject({
+      _attributes: {
+        optSet,
+        reqSet,
+        hiddenSet
       }
     })
   })

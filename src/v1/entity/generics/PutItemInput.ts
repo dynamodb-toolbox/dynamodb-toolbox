@@ -4,10 +4,11 @@ import type { Item } from 'v1/item/interface'
 import type {
   Attribute,
   ResolvedAttribute,
-  Leaf,
-  Mapped,
-  List,
   Any,
+  Leaf,
+  SetAttribute,
+  List,
+  Mapped,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -30,6 +31,8 @@ export type PutItemInput<
   ? ResolvedAttribute
   : Input extends Leaf
   ? NonNullable<Input['_resolved']>
+  : Input extends SetAttribute
+  ? Set<PutItemInput<Input['_elements'], RequireInitialDefaults>>
   : Input extends List
   ? PutItemInput<Input['_elements'], RequireInitialDefaults>[]
   : Input extends Mapped | Item

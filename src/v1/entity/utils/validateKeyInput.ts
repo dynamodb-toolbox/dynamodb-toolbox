@@ -1,7 +1,7 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
-import type { Item, Mapped, Attribute, ResolvedAttribute } from 'v1/item'
+import type { Attribute, ResolvedAttribute, SetAttribute, List, Mapped, Item } from 'v1/item'
 import { isClosed, isKeyAttribute } from 'v1/item/utils'
-import { isArray, isObject, validatorsByLeafType } from 'v1/utils/validation'
+import { validatorsByLeafType, isArray, isSet, isObject } from 'v1/utils/validation'
 
 import type { EntityV2 } from '../class'
 import type { KeyInput } from '../generics'
@@ -38,25 +38,38 @@ export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Ite
   switch (entry._type) {
     case 'any':
       break
-    case 'binary':
     case 'boolean':
+    case 'binary':
     case 'number':
     case 'string':
       const validator = validatorsByLeafType[entry._type]
       if (!validator(keyInput))
         throw new InvalidKeyInputValueTypeError({ expectedType: entry._type, keyInput, path })
       break
+    case 'set':
+      if (!isSet(keyInput))
+        throw new InvalidKeyInputValueTypeError({ expectedType: 'set', keyInput, path })
+      validateElements(entry, keyInput, path)
+      break
     case 'list':
       if (!isArray(keyInput))
         throw new InvalidKeyInputValueTypeError({ expectedType: 'list', keyInput, path })
-      keyInput.forEach((keyInputElement, index) =>
-        validateKeyInput(entry._elements, keyInputElement, `${path ?? ''}[${index}]`)
-      )
+      validateElements(entry, keyInput, path)
       break
     case 'map':
       validateAttributes(entry, keyInput, path)
       break
   }
+}
+
+const validateElements = (
+  listOrSet: List | SetAttribute,
+  keyInput: Set<ResolvedAttribute> | ResolvedAttribute[],
+  path?: string
+): void => {
+  keyInput.forEach((keyInputElement, index) =>
+    validateKeyInput(listOrSet._elements, keyInputElement, `${path ?? ''}[${index}]`)
+  )
 }
 
 const validateAttributes = (

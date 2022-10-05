@@ -1,5 +1,5 @@
 import type { Item } from '../interface'
-import type { Attribute, Mapped, List, ComputedDefault } from '../typers'
+import type { Attribute, SetAttribute, List, Mapped, ComputedDefault } from '../typers'
 
 /**
  * Wether an Item or Attribute has a default value that needs to be computed (recursive)
@@ -11,7 +11,7 @@ export type HasComputedDefaults<Input extends Item | Attribute> = Input extends 
   _default: ComputedDefault
 }
   ? true
-  : Input extends List
+  : Input extends SetAttribute | List
   ? HasComputedDefaults<Input['_elements']>
   : Input extends Mapped | Item
   ? true extends {
