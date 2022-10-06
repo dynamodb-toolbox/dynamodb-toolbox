@@ -228,7 +228,7 @@ export type InferItemAttributeValue<
     | PureAttributeDefinition
     ? Definition['type'] extends DynamoDBTypes
       ? Definition['setType'] extends DynamoDBKeyTypes
-       ? FromDynamoData<Exclude<Definition['setType'], undefined>>[] : FromDynamoData<A.Cast<Definition['type'], DynamoDBTypes>>
+       ? FromDynamoData<NonNullable<Definition['setType']>>[] : FromDynamoData<A.Cast<Definition['type'], DynamoDBTypes>>
       : any
     : never
   composite: Definition extends CompositeAttributeDefinition
