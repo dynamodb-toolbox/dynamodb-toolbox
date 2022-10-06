@@ -22,7 +22,7 @@ export const getItem = async <EntityInput extends EntityV2>(
   O.Merge<Omit<GetItemCommandOutput, 'Item'>, { Item?: FormattedItem<EntityInput> | undefined }>
 > => {
   const commandOutput = await entity.table.dynamoDbClient.send(
-    new GetItemCommand(getItemParams(entity, keyInput))
+    new GetItemCommand(getItemParams<EntityInput>(entity, keyInput))
   )
 
   if (hasNoItem(commandOutput)) {

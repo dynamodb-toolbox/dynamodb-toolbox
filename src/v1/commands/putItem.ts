@@ -32,7 +32,7 @@ export const putItem = async <EntityInput extends EntityV2>(
   >
 > => {
   const commandOutput = await entity.table.dynamoDbClient.send(
-    new PutItemCommand(putItemParams(entity, putItemInput))
+    new PutItemCommand(putItemParams<EntityInput>(entity, putItemInput))
   )
 
   if (hasNoAttributes(commandOutput)) {

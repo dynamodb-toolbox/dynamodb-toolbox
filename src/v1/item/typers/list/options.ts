@@ -17,7 +17,7 @@ export interface ListOptions<
   default: Default
 }
 
-export const listDefaultOptions: ListOptions<Never, false, false, undefined, undefined> = {
+export const LIST_DEFAULT_OPTIONS: ListOptions<Never, false, false, undefined, undefined> = {
   required: 'never',
   hidden: false,
   key: false,
