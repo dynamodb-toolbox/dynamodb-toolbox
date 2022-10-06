@@ -22,7 +22,7 @@ export interface LeafOptions<
   default: Default
 }
 
-export const leafDefaultOptions: LeafOptions<
+export const LEAF_DEFAULT_OPTIONS: LeafOptions<
   LeafType,
   Never,
   false,

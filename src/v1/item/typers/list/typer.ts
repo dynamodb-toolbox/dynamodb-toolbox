@@ -4,7 +4,7 @@ import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constant
 
 import type { ListElements } from './types'
 import type { List } from './interface'
-import { ListOptions, listDefaultOptions } from './options'
+import { ListOptions, LIST_DEFAULT_OPTIONS } from './options'
 
 type ListTyper = <
   Elements extends ListElements,
@@ -24,7 +24,7 @@ type ListTyper = <
  * - Required (required: AtLeastOnce)
  * - Displayed (hidden: false)
  * - Not renamed (savedAs: undefined)
- * - Not defaulted (default: undefined)
+ * - Doesn't have a default value (default: undefined)
  *
  * @param elements Attribute (With constraints)
  * @param options _(optional)_ List Options
@@ -40,7 +40,7 @@ export const list: ListTyper = <
   elements: Elements,
   options?: O.Partial<ListOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
 ): List<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
-  const appliedOptions = { ...listDefaultOptions, ...options }
+  const appliedOptions = { ...LIST_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
     hidden: _hidden,

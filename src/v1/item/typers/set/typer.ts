@@ -4,11 +4,11 @@ import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOp
 import { ComputedDefault } from '../constants'
 
 import type { SetAttribute } from './interface'
-import { SetOptions, setDefaultOptions } from './options'
-import type { SetElements } from './types'
+import { SetAttributeOptions, SET_ATTRIBUTE_DEFAULT_OPTIONS } from './options'
+import type { SetAttributeElements } from './types'
 
 type SetTyper = <
-  Elements extends SetElements,
+  Elements extends SetAttributeElements,
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,
@@ -16,7 +16,7 @@ type SetTyper = <
   Default extends ComputedDefault | undefined = undefined
 >(
   _elements: Elements,
-  options?: O.Partial<SetOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+  options?: O.Partial<SetAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
 ) => SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
@@ -25,13 +25,13 @@ type SetTyper = <
  * - Required (required: AtLeastOnce)
  * - Displayed (hidden: false)
  * - Not renamed (savedAs: undefined)
- * - Not defaulted (default: undefined)
+ * - Doesn't have a default value (default: undefined)
  *
  * @param elements Attribute (With constraints)
  * @param options _(optional)_ List Options
  */
 export const set: SetTyper = <
-  Elements extends SetElements,
+  Elements extends SetAttributeElements,
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,
@@ -39,9 +39,9 @@ export const set: SetTyper = <
   Default extends ComputedDefault | undefined = undefined
 >(
   elements: Elements,
-  options?: O.Partial<SetOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
+  options?: O.Partial<SetAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
 ): SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
-  const appliedOptions = { ...setDefaultOptions, ...options }
+  const appliedOptions = { ...SET_ATTRIBUTE_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
     hidden: _hidden,
