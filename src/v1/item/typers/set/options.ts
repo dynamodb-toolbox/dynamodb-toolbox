@@ -5,7 +5,7 @@ import { ComputedDefault } from '../constants/computedDefault'
 /**
  * Input options of Set Attribute
  */
-export interface SetOptions<
+export interface SetAttributeOptions<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
@@ -18,7 +18,13 @@ export interface SetOptions<
   default: Default
 }
 
-export const setDefaultOptions: SetOptions<Never, false, false, undefined, undefined> = {
+export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeOptions<
+  Never,
+  false,
+  false,
+  undefined,
+  undefined
+> = {
   required: 'never',
   hidden: false,
   key: false,
