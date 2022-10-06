@@ -364,7 +364,6 @@ describe('Entity creation', () => {
         ],
       },
       table: TestTable,
-      timestamps: false,
     })
   })
 
