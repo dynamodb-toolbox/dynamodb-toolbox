@@ -22,7 +22,7 @@ export interface MappedOptions<
   default: Default
 }
 
-export const mappedDefaultOptions: MappedOptions<
+export const MAPPED_DEFAULT_OPTIONS: MappedOptions<
   Never,
   false,
   false,

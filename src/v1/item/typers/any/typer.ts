@@ -4,7 +4,7 @@ import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOp
 
 import type { AnyDefaultValue } from './types'
 import type { Any } from './interface'
-import { AnyOptions, anyDefaultOptions } from './options'
+import { AnyOptions, ANY_DEFAULT_OPTIONS } from './options'
 
 type AnyTyper = <
   IsRequired extends RequiredOption = Never,
@@ -30,7 +30,7 @@ export const any: AnyTyper = <
 >(
   options?: O.Partial<AnyOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
 ): Any<IsRequired, IsHidden, IsKey, SavedAs, Default> => {
-  const appliedOptions = { ...anyDefaultOptions, ...options }
+  const appliedOptions = { ...ANY_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
     hidden: _hidden,
