@@ -13,7 +13,7 @@ import {
 } from './validate'
 
 describe('list', () => {
-  const str = string().required()
+  const strElement = string().required()
 
   it('rejects non-required elements', () => {
     // @ts-expect-error
@@ -21,61 +21,61 @@ describe('list', () => {
 
     // @ts-expect-error
     expect(() => validateList(list(string()))).toThrow(
-      // forces line break
+      // @prettier-ignore - force a line break
       new OptionalListElementsError({})
     )
   })
 
   it('rejects hidden elements', () => {
     // @ts-expect-error
-    list(str.hidden())
+    list(strElement.hidden())
 
     // @ts-expect-error
-    expect(() => validateList(list(str.hidden()))).toThrow(
-      // forces line break
+    expect(() => validateList(list(strElement.hidden()))).toThrow(
+      // @prettier-ignore - force a line break
       new HiddenListElementsError({})
     )
   })
 
   it('rejects elements with savedAs values', () => {
     // @ts-expect-error
-    list(str.savedAs('foo'))
+    list(strElement.savedAs('foo'))
 
     // @ts-expect-error
-    expect(() => validateList(list(str.savedAs('foo')))).toThrow(
-      // forces line break
+    expect(() => validateList(list(strElement.savedAs('foo')))).toThrow(
+      // @prettier-ignore - force a line break
       new SavedAsListElementsError({})
     )
   })
 
   it('rejects elements with default values', () => {
     // @ts-expect-error
-    list(str.default('foo'))
+    list(strElement.default('foo'))
 
     // @ts-expect-error
-    expect(() => validateList(list(str.default('foo')))).toThrow(
-      // forces line break
+    expect(() => validateList(list(strElement.default('foo')))).toThrow(
+      // @prettier-ignore - force a line break
       new DefaultedListElementsError({})
     )
 
     // @ts-expect-error
-    list(str.default(ComputedDefault))
+    list(strElement.default(ComputedDefault))
 
     // @ts-expect-error
-    expect(() => validateList(list(str.default(ComputedDefault)))).toThrow(
-      // forces line break
+    expect(() => validateList(list(strElement.default(ComputedDefault)))).toThrow(
+      // @prettier-ignore - force a line break
       new DefaultedListElementsError({})
     )
   })
 
   it('returns default list', () => {
-    const lst = list(str)
+    const lst = list(strElement)
 
     const assertList: A.Contains<
       typeof lst,
       {
         _type: 'list'
-        _elements: typeof str
+        _elements: typeof strElement
         _required: Never
         _hidden: false
         _key: false
@@ -87,7 +87,7 @@ describe('list', () => {
 
     expect(lst).toMatchObject({
       _type: 'list',
-      _elements: str,
+      _elements: strElement,
       _required: 'never',
       _key: false,
       _savedAs: undefined,
@@ -96,10 +96,10 @@ describe('list', () => {
   })
 
   it('returns required list (option)', () => {
-    const lstAtLeastOnce = list(str, { required: 'atLeastOnce' })
-    const lstOnlyOnce = list(str, { required: 'onlyOnce' })
-    const lstAlways = list(str, { required: 'always' })
-    const lstNever = list(str, { required: 'never' })
+    const lstAtLeastOnce = list(strElement, { required: 'atLeastOnce' })
+    const lstOnlyOnce = list(strElement, { required: 'onlyOnce' })
+    const lstAlways = list(strElement, { required: 'always' })
+    const lstNever = list(strElement, { required: 'never' })
 
     const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -117,10 +117,10 @@ describe('list', () => {
   })
 
   it('returns required list (method)', () => {
-    const lstAtLeastOnce = list(str).required()
-    const lstOnlyOnce = list(str).required('onlyOnce')
-    const lstAlways = list(str).required('always')
-    const lstNever = list(str).required('never')
+    const lstAtLeastOnce = list(strElement).required()
+    const lstOnlyOnce = list(strElement).required('onlyOnce')
+    const lstAlways = list(strElement).required('always')
+    const lstNever = list(strElement).required('never')
 
     const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -138,7 +138,7 @@ describe('list', () => {
   })
 
   it('returns hidden list (option)', () => {
-    const lst = list(str, { hidden: true })
+    const lst = list(strElement, { hidden: true })
 
     const assertList: A.Contains<typeof lst, { _hidden: true }> = 1
     assertList
@@ -147,7 +147,7 @@ describe('list', () => {
   })
 
   it('returns hidden list (method)', () => {
-    const lst = list(str).hidden()
+    const lst = list(strElement).hidden()
 
     const assertList: A.Contains<typeof lst, { _hidden: true }> = 1
     assertList
@@ -156,7 +156,7 @@ describe('list', () => {
   })
 
   it('returns key list (option)', () => {
-    const lst = list(str, { key: true })
+    const lst = list(strElement, { key: true })
 
     const assertList: A.Contains<typeof lst, { _key: true }> = 1
     assertList
@@ -165,7 +165,7 @@ describe('list', () => {
   })
 
   it('returns key list (method)', () => {
-    const lst = list(str).key()
+    const lst = list(strElement).key()
 
     const assertList: A.Contains<typeof lst, { _key: true }> = 1
     assertList
@@ -174,7 +174,7 @@ describe('list', () => {
   })
 
   it('returns savedAs list (option)', () => {
-    const lst = list(str, { savedAs: 'foo' })
+    const lst = list(strElement, { savedAs: 'foo' })
 
     const assertList: A.Contains<typeof lst, { _savedAs: 'foo' }> = 1
     assertList
@@ -183,7 +183,7 @@ describe('list', () => {
   })
 
   it('returns savedAs list (method)', () => {
-    const lst = list(str).savedAs('foo')
+    const lst = list(strElement).savedAs('foo')
 
     const assertList: A.Contains<typeof lst, { _savedAs: 'foo' }> = 1
     assertList
@@ -192,7 +192,7 @@ describe('list', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const lst = list(str, { default: ComputedDefault })
+    const lst = list(strElement, { default: ComputedDefault })
 
     const assertList: A.Contains<typeof lst, { _default: ComputedDefault }> = 1
     assertList
@@ -201,7 +201,7 @@ describe('list', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const lst = list(str).default(ComputedDefault)
+    const lst = list(strElement).default(ComputedDefault)
 
     const assertList: A.Contains<typeof lst, { _default: ComputedDefault }> = 1
     assertList
@@ -210,7 +210,7 @@ describe('list', () => {
   })
 
   it('list of lists', () => {
-    const lst = list(list(str).required())
+    const lst = list(list(strElement).required())
 
     const assertList: A.Contains<
       typeof lst,
@@ -218,7 +218,7 @@ describe('list', () => {
         _type: 'list'
         _elements: {
           _type: 'list'
-          _elements: typeof str
+          _elements: typeof strElement
           _required: AtLeastOnce
           _hidden: false
           _key: false
@@ -238,7 +238,7 @@ describe('list', () => {
       _type: 'list',
       _elements: {
         _type: 'list',
-        _elements: str,
+        _elements: strElement,
         _required: 'atLeastOnce',
         _hidden: false,
         _key: false,

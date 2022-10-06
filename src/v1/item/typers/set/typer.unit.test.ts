@@ -13,7 +13,7 @@ import {
 } from './validate'
 
 describe('set', () => {
-  const str = string().required()
+  const strElement = string().required()
 
   it('rejects non-required elements', () => {
     // @ts-expect-error
@@ -21,61 +21,61 @@ describe('set', () => {
 
     // @ts-expect-error
     expect(() => validateSet(set(string()))).toThrow(
-      // forces line break
+      // @prettier-ignore - force a line break
       new OptionalSetElementsError({})
     )
   })
 
   it('rejects hidden elements', () => {
     // @ts-expect-error
-    set(str.hidden())
+    set(strElement.hidden())
 
     // @ts-expect-error
-    expect(() => validateSet(set(str.hidden()))).toThrow(
-      // forces line break
+    expect(() => validateSet(set(strElement.hidden()))).toThrow(
+      // @prettier-ignore - force a line break
       new HiddenSetElementsError({})
     )
   })
 
   it('rejects elements with savedAs values', () => {
     // @ts-expect-error
-    set(str.savedAs('foo'))
+    set(strElement.savedAs('foo'))
 
     // @ts-expect-error
-    expect(() => validateSet(set(str.savedAs('foo')))).toThrow(
-      // forces line break
+    expect(() => validateSet(set(strElement.savedAs('foo')))).toThrow(
+      // @prettier-ignore - force a line break
       new SavedAsSetElementsError({})
     )
   })
 
   it('rejects elements with default values', () => {
     // @ts-expect-error
-    set(str.default('foo'))
+    set(strElement.default('foo'))
 
     // @ts-expect-error
-    expect(() => validateSet(set(str.default('foo')))).toThrow(
-      // forces line break
+    expect(() => validateSet(set(strElement.default('foo')))).toThrow(
+      // @prettier-ignore - force a line break
       new DefaultedSetElementsError({})
     )
 
     // @ts-expect-error
-    set(str.default(ComputedDefault))
+    set(strElement.default(ComputedDefault))
 
     // @ts-expect-error
-    expect(() => validateSet(set(str.default(ComputedDefault)))).toThrow(
-      // forces line break
+    expect(() => validateSet(set(strElement.default(ComputedDefault)))).toThrow(
+      // @prettier-ignore - force a line break
       new DefaultedSetElementsError({})
     )
   })
 
   it('returns default set', () => {
-    const st = set(str)
+    const st = set(strElement)
 
     const assertSet: A.Contains<
       typeof st,
       {
         _type: 'set'
-        _elements: typeof str
+        _elements: typeof strElement
         _required: Never
         _hidden: false
         _key: false
@@ -87,7 +87,7 @@ describe('set', () => {
 
     expect(st).toMatchObject({
       _type: 'set',
-      _elements: str,
+      _elements: strElement,
       _required: 'never',
       _key: false,
       _savedAs: undefined,
@@ -96,10 +96,10 @@ describe('set', () => {
   })
 
   it('returns required set (option)', () => {
-    const stAtLeastOnce = set(str, { required: 'atLeastOnce' })
-    const stOnlyOnce = set(str, { required: 'onlyOnce' })
-    const stAlways = set(str, { required: 'always' })
-    const stNever = set(str, { required: 'never' })
+    const stAtLeastOnce = set(strElement, { required: 'atLeastOnce' })
+    const stOnlyOnce = set(strElement, { required: 'onlyOnce' })
+    const stAlways = set(strElement, { required: 'always' })
+    const stNever = set(strElement, { required: 'never' })
 
     const assertAtLeastOnce: A.Contains<typeof stAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -117,10 +117,10 @@ describe('set', () => {
   })
 
   it('returns required set (method)', () => {
-    const stAtLeastOnce = set(str).required()
-    const stOnlyOnce = set(str).required('onlyOnce')
-    const stAlways = set(str).required('always')
-    const stNever = set(str).required('never')
+    const stAtLeastOnce = set(strElement).required()
+    const stOnlyOnce = set(strElement).required('onlyOnce')
+    const stAlways = set(strElement).required('always')
+    const stNever = set(strElement).required('never')
 
     const assertAtLeastOnce: A.Contains<typeof stAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -138,7 +138,7 @@ describe('set', () => {
   })
 
   it('returns hidden set (option)', () => {
-    const st = set(str, { hidden: true })
+    const st = set(strElement, { hidden: true })
 
     const assertSet: A.Contains<typeof st, { _hidden: true }> = 1
     assertSet
@@ -147,7 +147,7 @@ describe('set', () => {
   })
 
   it('returns hidden set (method)', () => {
-    const st = set(str).hidden()
+    const st = set(strElement).hidden()
 
     const assertSet: A.Contains<typeof st, { _hidden: true }> = 1
     assertSet
@@ -156,7 +156,7 @@ describe('set', () => {
   })
 
   it('returns key set (option)', () => {
-    const st = set(str, { key: true })
+    const st = set(strElement, { key: true })
 
     const assertSet: A.Contains<typeof st, { _key: true }> = 1
     assertSet
@@ -165,7 +165,7 @@ describe('set', () => {
   })
 
   it('returns key set (method)', () => {
-    const st = set(str).key()
+    const st = set(strElement).key()
 
     const assertSet: A.Contains<typeof st, { _key: true }> = 1
     assertSet
@@ -174,7 +174,7 @@ describe('set', () => {
   })
 
   it('returns savedAs set (option)', () => {
-    const st = set(str, { savedAs: 'foo' })
+    const st = set(strElement, { savedAs: 'foo' })
 
     const assertSet: A.Contains<typeof st, { _savedAs: 'foo' }> = 1
     assertSet
@@ -183,7 +183,7 @@ describe('set', () => {
   })
 
   it('returns savedAs set (method)', () => {
-    const st = set(str).savedAs('foo')
+    const st = set(strElement).savedAs('foo')
 
     const assertSet: A.Contains<typeof st, { _savedAs: 'foo' }> = 1
     assertSet
@@ -192,7 +192,7 @@ describe('set', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const st = set(str, { default: ComputedDefault })
+    const st = set(strElement, { default: ComputedDefault })
 
     const assertSet: A.Contains<typeof st, { _default: ComputedDefault }> = 1
     assertSet
@@ -201,7 +201,7 @@ describe('set', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const st = set(str).default(ComputedDefault)
+    const st = set(strElement).default(ComputedDefault)
 
     const assertSet: A.Contains<typeof st, { _default: ComputedDefault }> = 1
     assertSet

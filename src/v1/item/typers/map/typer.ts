@@ -4,7 +4,7 @@ import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constant
 import type { MappedAttributes, Narrow } from '../types'
 
 import type { Mapped } from './interface'
-import { MappedOptions, mappedDefaultOptions } from './options'
+import { MappedOptions, MAPPED_DEFAULT_OPTIONS } from './options'
 
 type MappedTyper = <
   Attributes extends MappedAttributes = {},
@@ -37,7 +37,7 @@ export const map: MappedTyper = <
   attributes: Narrow<Attributes>,
   options?: O.Partial<MappedOptions<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>>
 ): Mapped<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> => {
-  const appliedOptions = { ...mappedDefaultOptions, ...options }
+  const appliedOptions = { ...MAPPED_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
     hidden: _hidden,
