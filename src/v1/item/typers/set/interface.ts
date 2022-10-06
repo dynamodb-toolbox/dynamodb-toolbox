@@ -2,9 +2,9 @@ import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import { ComputedDefault } from '../constants'
 
 import type { AttributeProperties } from '../attribute/interface'
-import type { SetElements } from './types'
+import type { SetAttributeElements } from './types'
 
-interface SetProperties<
+interface SetAttributeProperties<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
@@ -18,13 +18,13 @@ interface SetProperties<
  * Set attribute interface
  */
 export type SetAttribute<
-  Elements extends SetElements = SetElements,
+  Elements extends SetAttributeElements = SetAttributeElements,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> = SetProperties<IsRequired, IsHidden, IsKey, SavedAs, Default> & {
+> = SetAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs, Default> & {
   _type: 'set'
   _elements: Elements
   /**

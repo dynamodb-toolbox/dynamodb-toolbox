@@ -36,7 +36,7 @@ export const updateItem = async <EntityInput extends EntityV2>(
   >
 > => {
   const commandOutput = await entity.table.dynamoDbClient.send(
-    new UpdateItemCommand(updateItemParams(entity, updateItemInput))
+    new UpdateItemCommand(updateItemParams<EntityInput>(entity, updateItemInput))
   )
 
   if (hasNoAttributes(commandOutput)) {

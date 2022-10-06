@@ -19,7 +19,7 @@ export interface AnyOptions<
   default: Default
 }
 
-export const anyDefaultOptions: AnyOptions<Never, false, false, undefined, undefined> = {
+export const ANY_DEFAULT_OPTIONS: AnyOptions<Never, false, false, undefined, undefined> = {
   required: 'never',
   hidden: false,
   key: false,

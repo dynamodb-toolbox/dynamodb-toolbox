@@ -3,7 +3,7 @@ import type { O } from 'ts-toolbelt'
 import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
 
 import type { Leaf } from './interface'
-import { LeafOptions, leafDefaultOptions } from './options'
+import { LeafOptions, LEAF_DEFAULT_OPTIONS } from './options'
 import type { LeafType, EnumValues, LeafDefaultValue } from './types'
 
 /**
@@ -72,7 +72,7 @@ const getLeafTyper = <Type extends LeafType>(type: Type) =>
     Default extends LeafDefaultValue<Type> = undefined
   >(
     leafOptions?: O.Partial<LeafOptions<Type, Required, Hidden, Key, SavedAs, Enum, Default>>
-  ) => leaf({ ...leafDefaultOptions, ...leafOptions, type })) as LeafTyper<Type>
+  ) => leaf({ ...LEAF_DEFAULT_OPTIONS, ...leafOptions, type })) as LeafTyper<Type>
 
 /**
  * Define a new string attribute
