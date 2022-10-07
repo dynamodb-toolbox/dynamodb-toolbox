@@ -448,32 +448,25 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
     EntityItemOverlay,
     A.Compute<CompositePrimaryKey &
       {
-        [inputAttr in Attributes['always']['input'] & keyof Item]:
-        | If<A.Equals<Item[inputAttr], FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[inputAttr]; $append?: Item[inputAttr]; $remove?: number[] } | Item[inputAttr], Item[inputAttr]>
-        | If<A.Equals<Item[inputAttr], number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[inputAttr]; $append?: number[]; } | string[]>
-        | If<A.Equals<Item[inputAttr], string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[inputAttr]; $append?: string[]; } | number[]>
-        | If<A.Equals<Item[inputAttr], boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[inputAttr]; $append?: boolean[]; } | boolean[]>
-        | If<A.Equals<Item[inputAttr], FromDynamoData<'number'> | undefined>, { $add?: number }>
+        [inputAttr in Attributes['always']['input'] & keyof Item]: SetOrListAttributeUpdateInput<Item[inputAttr]>
       } &
       {
-        [inputRequiredOrWithDefaultAttribute in (Attributes['required']['all'] | Attributes['always']['default']) & keyof Item]?:
-        | If<A.Equals<Item[inputRequiredOrWithDefaultAttribute], FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[inputRequiredOrWithDefaultAttribute]; $append?: Item[inputRequiredOrWithDefaultAttribute]; $remove?: number[] } | Item[inputRequiredOrWithDefaultAttribute], Item[inputRequiredOrWithDefaultAttribute]>
-        | If<A.Equals<Item[inputRequiredOrWithDefaultAttribute], number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[inputRequiredOrWithDefaultAttribute]; $append?: number[]; } | string[]>
-        | If<A.Equals<Item[inputRequiredOrWithDefaultAttribute], string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[inputRequiredOrWithDefaultAttribute]; $append?: string[]; } | number[]>
-        | If<A.Equals<Item[inputRequiredOrWithDefaultAttribute], boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[inputRequiredOrWithDefaultAttribute]; $append?: boolean[]; } | boolean[]>
-        | If<A.Equals<Item[inputRequiredOrWithDefaultAttribute], FromDynamoData<'number'> | undefined>, { $add?: number }>
+        [inputRequiredOrWithDefaultAttribute in (Attributes['required']['all'] | Attributes['always']['default']) & keyof Item]?: SetOrListAttributeUpdateInput<Item[inputRequiredOrWithDefaultAttribute]>
       } &
       {
         [inputOptionalAttribute in Attributes['optional'] & keyof Item]?:
-        | If<A.Equals<Item[inputOptionalAttribute], FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: Item[inputOptionalAttribute]; $append?: Item[inputOptionalAttribute]; $remove?: number[] } | Item[inputOptionalAttribute], Item[inputOptionalAttribute]>
-        | If<A.Equals<Item[inputOptionalAttribute], number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: Item[inputOptionalAttribute]; $append?: number[]; } | string[]>
-        | If<A.Equals<Item[inputOptionalAttribute], string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: Item[inputOptionalAttribute]; $append?: string[]; } | number[]>
-        | If<A.Equals<Item[inputOptionalAttribute], boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: Item[inputOptionalAttribute]; $append?: boolean[]; } | boolean[]>
-        | If<A.Equals<Item[inputOptionalAttribute], FromDynamoData<'number'> | undefined>, { $add?: number }>
+        | SetOrListAttributeUpdateInput<Item[inputOptionalAttribute]>
         | null
       } & { $remove?: Attributes['optional'] | Attributes['optional'][] }>
   ]
   | If<A.Equals<StrictSchemaCheck, true>, never, any>>
+
+export type SetOrListAttributeUpdateInput<AttributeValueType> =
+  | AttributeValueType extends FromDynamoData<'number'> ? { $add?: number } | AttributeValueType
+  : AttributeValueType extends number[] | string[] | boolean[] ? { $delete?: AttributeValueType; $add?: AttributeValueType; $prepend?: AttributeValueType; $append?: AttributeValueType; } | AttributeValueType
+  : AttributeValueType extends FromDynamoData<'list' | 'set'> ? { $delete?: string[]; $add?: any; $prepend?: AttributeValueType; $append?: AttributeValueType; $remove?: number[] } | AttributeValueType
+  : AttributeValueType
+
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
