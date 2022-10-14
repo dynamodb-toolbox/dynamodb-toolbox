@@ -4,16 +4,16 @@ import type { Item } from 'v1/item/interface'
 import type {
   Attribute,
   ResolvedAttribute,
-  Any,
-  Leaf,
+  AnyAttribute,
+  LeafAttribute,
   SetAttribute,
-  List,
-  Mapped,
+  ListAttribute,
+  MapAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
   ComputedDefault
-} from 'v1/item/typers'
+} from 'v1/item'
 
 import type { EntityV2 } from '../class'
 
@@ -27,25 +27,23 @@ import type { EntityV2 } from '../class'
 export type PutItemInput<
   Input extends EntityV2 | Item | Attribute,
   RequireInitialDefaults extends boolean = false
-> = Input extends Any
+> = Input extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends Leaf
+  : Input extends LeafAttribute
   ? NonNullable<Input['_resolved']>
   : Input extends SetAttribute
   ? Set<PutItemInput<Input['_elements'], RequireInitialDefaults>>
-  : Input extends List
+  : Input extends ListAttribute
   ? PutItemInput<Input['_elements'], RequireInitialDefaults>[]
-  : Input extends Mapped | Item
+  : Input extends MapAttribute | Item
   ? O.Required<
-      O.Partial<
-        {
-          // Keep all attributes
-          [key in keyof Input['_attributes']]: PutItemInput<
-            Input['_attributes'][key],
-            RequireInitialDefaults
-          >
-        }
-      >,
+      O.Partial<{
+        // Keep all attributes
+        [key in keyof Input['_attributes']]: PutItemInput<
+          Input['_attributes'][key],
+          RequireInitialDefaults
+        >
+      }>,
       // Enforce Required attributes except those that have default (will be provided by the lib)
       | O.SelectKeys<
           Input['_attributes'],
