@@ -1,4 +1,4 @@
-import { Item, Mapped } from 'v1/item'
+import { Item, MapAttribute } from 'v1/item'
 
-export const isOpen = ({ _open }: Item | Mapped): boolean => _open
-export const isClosed = (entry: Item | Mapped): boolean => !isOpen(entry)
+export const isOpen = ({ _open }: Item | MapAttribute): boolean => _open
+export const isClosed = (entry: Item | MapAttribute): boolean => !isOpen(entry)

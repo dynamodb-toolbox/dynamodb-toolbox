@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { item } from './typer'
-import { boolean, binary, number, string, set, list, map } from './typers'
+import { boolean, binary, number, string, set, list, map } from './attributes'
 
 describe('item', () => {
   it('leafs', () => {
