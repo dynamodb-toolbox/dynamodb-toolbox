@@ -1,5 +1,5 @@
-import { ComputedDefault, ResolvedLeafType } from '../typers'
+import { ComputedDefault, ResolvedLeafAttributeType } from '../attributes'
 
 export const isComputedDefault = (
-  defaultValue: ResolvedLeafType | (() => ResolvedLeafType) | ComputedDefault
+  defaultValue: ResolvedLeafAttributeType | (() => ResolvedLeafAttributeType) | ComputedDefault
 ): defaultValue is ComputedDefault => defaultValue === ComputedDefault
