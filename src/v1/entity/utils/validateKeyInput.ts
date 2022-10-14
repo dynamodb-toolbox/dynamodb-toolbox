@@ -1,5 +1,12 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
-import type { Attribute, ResolvedAttribute, SetAttribute, List, Mapped, Item } from 'v1/item'
+import type {
+  Attribute,
+  ResolvedAttribute,
+  SetAttribute,
+  ListAttribute,
+  MapAttribute,
+  Item
+} from 'v1/item'
 import { isClosed, isKeyAttribute } from 'v1/item/utils'
 import { validatorsByLeafType, isArray, isSet, isObject } from 'v1/utils/validation'
 
@@ -49,12 +56,12 @@ export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Ite
     case 'set':
       if (!isSet(keyInput))
         throw new InvalidKeyInputValueTypeError({ expectedType: 'set', keyInput, path })
-      validateElements(entry, keyInput, path)
+      validateElements(entry, keyInput as Set<ResolvedAttribute>, path)
       break
     case 'list':
       if (!isArray(keyInput))
         throw new InvalidKeyInputValueTypeError({ expectedType: 'list', keyInput, path })
-      validateElements(entry, keyInput, path)
+      validateElements(entry, keyInput as ResolvedAttribute[], path)
       break
     case 'map':
       validateAttributes(entry, keyInput, path)
@@ -63,7 +70,7 @@ export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Ite
 }
 
 const validateElements = (
-  listOrSet: List | SetAttribute,
+  listOrSet: ListAttribute | SetAttribute,
   keyInput: Set<ResolvedAttribute> | ResolvedAttribute[],
   path?: string
 ): void => {
@@ -73,7 +80,7 @@ const validateElements = (
 }
 
 const validateAttributes = (
-  itemOrMapped: Item | Mapped,
+  itemOrMapAttribute: Item | MapAttribute,
   keyInput: ResolvedAttribute,
   path?: string
 ): void => {
@@ -82,14 +89,14 @@ const validateAttributes = (
 
   // Check that keyInput values match item or mapped
   Object.entries(keyInput).forEach(([attributeName, attributeInput]) => {
-    const attribute = itemOrMapped._attributes[attributeName]
+    const attribute = itemOrMapAttribute._attributes[attributeName]
     // TODO, create joinPath util
     const attributePath = [path, attributeName].filter(Boolean).join('.')
 
     if (attribute !== undefined) {
       validateKeyInput(attribute, attributeInput, attributePath)
     } else {
-      if (isClosed(itemOrMapped)) {
+      if (isClosed(itemOrMapAttribute)) {
         throw new UnexpectedAttributeError({ path: attributePath })
       }
       // TODO: create validateAny ?
@@ -97,7 +104,7 @@ const validateAttributes = (
   })
 
   // Check that all key & always required attributes are present in keyInput
-  Object.entries(itemOrMapped._attributes)
+  Object.entries(itemOrMapAttribute._attributes)
     .filter(([, attribute]) => isKeyAttribute(attribute) && attribute._required === 'always')
     .forEach(([attributeName, attribute]) => {
       const attributeKeyInput = keyInput[attributeName]

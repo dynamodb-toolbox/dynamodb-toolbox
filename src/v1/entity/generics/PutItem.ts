@@ -4,16 +4,16 @@ import type { Item } from 'v1/item/interface'
 import type {
   Attribute,
   ResolvedAttribute,
-  Any,
-  Leaf,
+  AnyAttribute,
+  LeafAttribute,
   SetAttribute,
-  List,
-  Mapped,
+  ListAttribute,
+  MapAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
   ComputedDefault
-} from 'v1/item/typers'
+} from 'v1/item'
 
 import type { EntityV2 } from '../class'
 
@@ -23,22 +23,20 @@ import type { EntityV2 } from '../class'
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type PutItem<Input extends EntityV2 | Item | Attribute> = Input extends Any
+export type PutItem<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends Leaf
+  : Input extends LeafAttribute
   ? NonNullable<Input['_resolved']>
   : Input extends SetAttribute
   ? Set<PutItem<Input['_elements']>>
-  : Input extends List
+  : Input extends ListAttribute
   ? PutItem<Input['_elements']>[]
-  : Input extends Mapped | Item
+  : Input extends MapAttribute | Item
   ? O.Required<
-      O.Partial<
-        {
-          // Keep all attributes
-          [key in keyof Input['_attributes']]: PutItem<Input['_attributes'][key]>
-        }
-      >,
+      O.Partial<{
+        // Keep all attributes
+        [key in keyof Input['_attributes']]: PutItem<Input['_attributes'][key]>
+      }>,
       // Enforce Required attributes
       | O.SelectKeys<Input['_attributes'], { _required: AtLeastOnce | OnlyOnce | Always }>
       // Enforce attributes that have initial default
