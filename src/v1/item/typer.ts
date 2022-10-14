@@ -1,11 +1,11 @@
-import type { MappedAttributes, Narrow } from './typers/types'
-import { validateAttribute } from './typers/validate'
+import type { MapAttributeAttributes, Narrow } from './attributes/types'
+import { validateAttribute } from './attributes/validate'
 
 import type { Item } from './interface'
 
-type ItemTyper = <MappedAttributesInput extends MappedAttributes = {}>(
-  _attributes: Narrow<MappedAttributesInput>
-) => Item<MappedAttributesInput>
+type ItemTyper = <MapAttributeAttributesInput extends MapAttributeAttributes = {}>(
+  _attributes: Narrow<MapAttributeAttributesInput>
+) => Item<MapAttributeAttributesInput>
 
 // TODO: Enable item opening
 /**
@@ -14,9 +14,9 @@ type ItemTyper = <MappedAttributesInput extends MappedAttributes = {}>(
  * @param attributes Object of attributes
  * @return Item
  */
-export const item: ItemTyper = <MappedAttributesInput extends MappedAttributes = {}>(
-  attributes: Narrow<MappedAttributesInput>
-): Item<MappedAttributesInput> => {
+export const item: ItemTyper = <MapAttributeAttributesInput extends MapAttributeAttributes = {}>(
+  attributes: Narrow<MapAttributeAttributesInput>
+): Item<MapAttributeAttributesInput> => {
   // Validation is run at item definition only
   // This avoids unnecessary compute and bugs (validating incomplete items)
   Object.entries(attributes).forEach(([attributeName, attribute]) => {
@@ -27,5 +27,5 @@ export const item: ItemTyper = <MappedAttributesInput extends MappedAttributes =
     _type: 'item',
     _open: false,
     _attributes: attributes
-  } as Item<MappedAttributesInput>
+  } as Item<MapAttributeAttributesInput>
 }

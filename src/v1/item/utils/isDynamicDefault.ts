@@ -1,6 +1,7 @@
 import { isFunction } from 'v1/utils/validation'
-import { ComputedDefault, ResolvedLeafType } from '../typers'
+
+import { ComputedDefault, ResolvedLeafAttributeType } from '../attributes'
 
 export const isDynamicDefault = (
-  defaultValue: ResolvedLeafType | (() => ResolvedLeafType) | ComputedDefault
-): defaultValue is () => ResolvedLeafType => isFunction(defaultValue)
+  defaultValue: ResolvedLeafAttributeType | (() => ResolvedLeafAttributeType) | ComputedDefault
+): defaultValue is () => ResolvedLeafAttributeType => isFunction(defaultValue)
