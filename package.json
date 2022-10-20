@@ -19,7 +19,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "ts-toolbelt": "^6.15.5"
+    "ts-toolbelt": "^9.6.0"
   },
   "repository": {
     "type": "git",

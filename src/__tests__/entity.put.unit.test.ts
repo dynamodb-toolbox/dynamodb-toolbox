@@ -503,15 +503,8 @@ describe('put', () => {
   })
 
   it('sets conditions', () => {
-    let {
-      TableName,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = TestEntity.putParams(
-      { email: 'x', sort: 'y' },
-      { conditions: { attr: 'email', gt: 'test' } }
-    )
+    let { TableName, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
+      TestEntity.putParams({ email: 'x', sort: 'y' }, { conditions: { attr: 'email', gt: 'test' } })
     expect(TableName).toBe('test-table')
     expect(ExpressionAttributeNames).toEqual({ '#attr1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':attr1': 'test' })
