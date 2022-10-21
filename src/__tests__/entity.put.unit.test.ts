@@ -354,7 +354,7 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // 💥 TODO: Improve set support
+        // @ts-expect-error
         test_string_set_type: [1, 2, 3]
       })
     ).toThrow(`'test_string_set_type' must be a valid set (array) containing only string types`)
