@@ -1,4 +1,5 @@
-import { MapAttributeAttributes } from './attributes'
+import { MapAttributeAttributes, FrozenMapAttributeAttributes, RequiredOption } from './attributes'
+import { FreezeAttribute } from './attributes/freeze'
 
 /**
  * Entity items shape
@@ -13,3 +14,20 @@ export interface Item<
   _open: boolean
   _attributes: MapAttributeAttributesInput
 }
+
+export interface FrozenItem<
+  MapAttributeAttributesInput extends FrozenMapAttributeAttributes = FrozenMapAttributeAttributes
+> {
+  type: 'item'
+  open: boolean
+  requiredAttributesNames: Record<RequiredOption, Set<string>>
+  attributes: MapAttributeAttributesInput
+}
+
+export type FreezeItem<ItemInput extends Item> = Item extends ItemInput
+  ? FrozenItem
+  : FrozenItem<
+      {
+        [key in keyof ItemInput['_attributes']]: FreezeAttribute<ItemInput['_attributes'][key]>
+      }
+    >
