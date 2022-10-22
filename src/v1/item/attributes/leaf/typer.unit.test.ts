@@ -4,13 +4,15 @@ import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../consta
 
 import { string, number, boolean, binary } from './typer'
 import {
-  validateLeafAttribute,
+  freezeLeafAttribute,
   InvalidEnumValueTypeError,
   InvalidDefaultValueTypeError,
   InvalidDefaultValueRangeError
-} from './validate'
+} from './freeze'
 
 describe('leafAttribute', () => {
+  const path = 'some.path'
+
   describe('string', () => {
     it('returns default string', () => {
       const str = string()
@@ -136,13 +138,24 @@ describe('leafAttribute', () => {
     })
 
     it('returns string with enum values (method)', () => {
-      // @ts-expect-error
-      string().enum(42, 'foo', 'bar')
-
-      // @ts-expect-error
-      expect(() => validateLeafAttribute(string().enum(42, 'foo', 'bar'))).toThrow(
-        new InvalidEnumValueTypeError({ expectedType: 'string', enumValue: 42 })
+      string().enum(
+        // @ts-expect-error
+        42,
+        'foo',
+        'bar'
       )
+
+      expect(() =>
+        freezeLeafAttribute(
+          string().enum(
+            // @ts-expect-error
+            42,
+            'foo',
+            'bar'
+          ),
+          path
+        )
+      ).toThrow(new InvalidEnumValueTypeError({ expectedType: 'string', enumValue: 42, path }))
 
       const str = string().enum('foo', 'bar')
 
@@ -156,16 +169,27 @@ describe('leafAttribute', () => {
     })
 
     it('returns string with default value (option)', () => {
-      // @ts-expect-error
-      string({ default: 42 })
+      string({
+        // @ts-expect-error
+        default: 42
+      })
 
-      // @ts-expect-error
-      expect(() => validateLeafAttribute(string({ default: 42 }))).toThrow(
-        new InvalidDefaultValueTypeError({ expectedType: 'string', defaultValue: 42 })
+      expect(() =>
+        freezeLeafAttribute(
+          string({
+            // @ts-expect-error
+            default: 42
+          }),
+          path
+        )
+      ).toThrow(
+        new InvalidDefaultValueTypeError({ expectedType: 'string', defaultValue: 42, path })
       )
 
-      // @ts-expect-error Unable to throw here (it would require executing the fn)
-      string({ default: () => 42 })
+      string({
+        // @ts-expect-error Unable to throw here (it would require executing the fn)
+        default: () => 42
+      })
 
       const strA = string({ default: 'hello' })
       const sayHello = () => 'hello'
@@ -183,16 +207,27 @@ describe('leafAttribute', () => {
     })
 
     it('returns string with default value (method)', () => {
-      // @ts-expect-error
-      string().default(42)
-
-      // @ts-expect-error
-      expect(() => validateLeafAttribute(string().default(42))).toThrow(
-        new InvalidDefaultValueTypeError({ expectedType: 'string', defaultValue: 42 })
+      string().default(
+        // @ts-expect-error
+        42
       )
 
-      // @ts-expect-error Unable to throw here (it would require executing the fn)
-      string().default(() => 42)
+      expect(() =>
+        freezeLeafAttribute(
+          string().default(
+            // @ts-expect-error
+            42
+          ),
+          path
+        )
+      ).toThrow(
+        new InvalidDefaultValueTypeError({ expectedType: 'string', defaultValue: 42, path })
+      )
+
+      string().default(
+        // @ts-expect-error Unable to throw here (it would require executing the fn)
+        () => 42
+      )
 
       const strA = string().default('hello')
       const sayHello = () => 'hello'
@@ -210,12 +245,21 @@ describe('leafAttribute', () => {
     })
 
     it('default with enum values', () => {
-      // @ts-expect-error
-      string().enum('foo', 'bar').default('baz')
+      string().enum('foo', 'bar').default(
+        // @ts-expect-error
+        'baz'
+      )
 
-      // @ts-expect-error
-      expect(() => validateLeafAttribute(string().enum('foo', 'bar').default('baz'))).toThrow(
-        new InvalidDefaultValueRangeError({ enumValues: ['foo', 'bar'], defaultValue: 'baz' })
+      expect(() =>
+        freezeLeafAttribute(
+          string().enum('foo', 'bar').default(
+            // @ts-expect-error
+            'baz'
+          ),
+          path
+        )
+      ).toThrow(
+        new InvalidDefaultValueRangeError({ enumValues: ['foo', 'bar'], defaultValue: 'baz', path })
       )
 
       const strA = string().enum('foo', 'bar').default('foo')
