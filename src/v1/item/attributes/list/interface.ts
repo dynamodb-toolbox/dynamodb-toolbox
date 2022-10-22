@@ -1,17 +1,8 @@
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import type { FreezeAttribute } from '../freeze'
+import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
 
-import type { AttributeProperties } from '../shared/interface'
-import type { ListAttributeElements } from './types'
-
-interface ListAttributeProperties<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
-  _default: Default
-}
+import type { ListAttributeElements, FrozenListAttributeElements } from './types'
 
 /**
  * List attribute interface
@@ -23,9 +14,10 @@ export interface ListAttribute<
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends ListAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs, Default> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _type: 'list'
   _elements: Elements
+  _default: Default
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -61,3 +53,26 @@ export interface ListAttribute<
     nextDefaultValue: NextDefault
   ) => ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, NextDefault>
 }
+
+export interface FrozenListAttribute<
+  Elements extends FrozenListAttributeElements = FrozenListAttributeElements,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+  type: 'list'
+  elements: Elements
+  default: Default
+  path: string
+}
+
+export type FreezeListAttribute<Attribute extends ListAttribute> = FrozenListAttribute<
+  FreezeAttribute<Attribute['_elements']>,
+  Attribute['_required'],
+  Attribute['_hidden'],
+  Attribute['_key'],
+  Attribute['_savedAs'],
+  Attribute['_default']
+>

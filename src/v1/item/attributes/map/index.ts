@@ -1,3 +1,3 @@
-export type { MapAttribute as MapAttribute } from './interface'
+export type { MapAttribute, FrozenMapAttribute, FreezeMapAttribute } from './interface'
 export { map } from './typer'
-export { validateMapAttribute } from './validate'
+export { freezeMapAttribute } from './freeze'

@@ -1,25 +1,11 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-
-import type { AttributeProperties } from '../shared/interface'
+import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
 import type {
   LeafAttributeType,
   ResolveLeafAttributeType,
   LeafAttributeEnumValues,
   LeafAttributeDefaultValue
 } from './types'
-
-interface LeafAttributeProperties<
-  Type extends LeafAttributeType = LeafAttributeType,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
-  Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
-  _enum: Enum
-  _default: Default
-}
 
 // TODO: Define reqKey / optKey or partitionKey / sortKey shorthands ?
 /**
@@ -33,11 +19,13 @@ export type LeafAttribute<
   SavedAs extends string | undefined = string | undefined,
   Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
   Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
-> = LeafAttributeProperties<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> & {
+> = AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
   _type: Type
   _resolved?: Enum extends ResolveLeafAttributeType<Type>[]
     ? Enum[number]
     : ResolveLeafAttributeType<Type>
+  _enum: Enum
+  _default: Default
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -89,3 +77,31 @@ export type LeafAttribute<
     nextDefaultValue: NextDefault
   ) => LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, NextDefault>
 }
+
+export type FrozenLeafAttribute<
+  Type extends LeafAttributeType = LeafAttributeType,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
+  Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
+> = FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+  path: string
+  type: Type
+  resolved?: Enum extends ResolveLeafAttributeType<Type>[]
+    ? Enum[number]
+    : ResolveLeafAttributeType<Type>
+  enum: Enum
+  default: Default
+}
+
+export type FreezeLeafAttribute<Attribute extends LeafAttribute> = FrozenLeafAttribute<
+  Attribute['_type'],
+  Attribute['_required'],
+  Attribute['_hidden'],
+  Attribute['_key'],
+  Attribute['_savedAs'],
+  Extract<Attribute['_enum'], LeafAttributeEnumValues<Attribute['_type']>>,
+  Extract<Attribute['_default'], LeafAttributeDefaultValue<Attribute['_type']>>
+>
