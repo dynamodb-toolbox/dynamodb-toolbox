@@ -151,13 +151,4 @@ describe('item', () => {
       }
     })
   })
-
-  it('applies validation', () => {
-    expect(() =>
-      item({
-        // @ts-ignore
-        invalidStr: string().enum('foo', 'bar').default('baz')
-      })
-    ).toThrow()
-  })
 })

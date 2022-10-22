@@ -1,9 +1,9 @@
 export { set } from './typer'
-export type { SetAttribute } from './interface'
+export type { SetAttribute, FrozenSetAttribute, FreezeSetAttribute } from './interface'
 export {
   HiddenSetElementsError,
   SavedAsSetElementsError,
   OptionalSetElementsError,
   DefaultedSetElementsError,
-  validateSetAttribute
-} from './validate'
+  freezeSetAttribute
+} from './freeze'

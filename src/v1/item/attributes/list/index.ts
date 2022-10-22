@@ -1,9 +1,9 @@
 export { list } from './typer'
-export type { ListAttribute } from './interface'
+export type { ListAttribute, FrozenListAttribute, FreezeListAttribute } from './interface'
 export {
   HiddenListAttributeElementsError,
   SavedAsListAttributeElementsError,
   OptionalListAttributeElementsError,
   DefaultedListAttributeElementsError,
-  validateListAttribute
-} from './validate'
+  freezeListAttribute
+} from './freeze'

@@ -1,17 +1,7 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
+import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
 
-import type { AttributeProperties } from '../shared/interface'
 import type { AnyAttributeDefaultValue } from './types'
-
-interface AnyAttributeProperties<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends AnyAttributeDefaultValue = AnyAttributeDefaultValue
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
-  _default: Default
-}
 
 /**
  * Any attribute interface
@@ -22,8 +12,9 @@ export interface AnyAttribute<
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends AnyAttributeDefaultValue = AnyAttributeDefaultValue
-> extends AnyAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs, Default> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _type: 'any'
+  _default: Default
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -59,3 +50,23 @@ export interface AnyAttribute<
     nextDefaultValue: NextDefaultValue
   ) => AnyAttribute<IsRequired, IsHidden, IsKey, SavedAs, NextDefaultValue>
 }
+
+export interface FrozenAnyAttribute<
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends AnyAttributeDefaultValue = AnyAttributeDefaultValue
+> extends FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+  type: 'any'
+  default: Default
+  path: string
+}
+
+export type FreezeAnyAttribute<Attribute extends AnyAttribute> = FrozenAnyAttribute<
+  Attribute['_required'],
+  Attribute['_hidden'],
+  Attribute['_key'],
+  Attribute['_savedAs'],
+  Attribute['_default']
+>
