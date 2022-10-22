@@ -1,18 +1,7 @@
-import type { AttributeProperties } from '../shared/interface'
-import type { MapAttributeAttributes } from '../types/attribute'
+import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
+import type { MapAttributeAttributes, FrozenMapAttributeAttributes } from '../types/attribute'
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
-
-interface MapAttributeProperties<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  IsOpen extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
-  _open: IsOpen
-  _default: Default
-}
+import type { FreezeAttribute } from '../freeze'
 
 // TODO: Add false saveAs option
 /**
@@ -27,9 +16,11 @@ export interface MapAttribute<
   IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends MapAttributeProperties<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _type: 'map'
   _attributes: Attributes
+  _open: IsOpen
+  _default: Default
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -69,3 +60,34 @@ export interface MapAttribute<
     nextDefaultValue: NextComputeDefault
   ) => MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, NextComputeDefault>
 }
+
+export interface FrozenMapAttribute<
+  Attributes extends FrozenMapAttributeAttributes = FrozenMapAttributeAttributes,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  IsOpen extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+  type: 'map'
+  attributes: Attributes
+  open: IsOpen
+  default: Default
+  path: string
+  requiredAttributesNames: Record<RequiredOption, Set<string>>
+}
+
+export type FreezeMapAttribute<Attribute extends MapAttribute> = FrozenMapAttribute<
+  MapAttribute extends Attribute
+    ? FrozenMapAttributeAttributes
+    : {
+        [key in keyof Attribute['_attributes']]: FreezeAttribute<Attribute['_attributes'][key]>
+      },
+  Attribute['_required'],
+  Attribute['_hidden'],
+  Attribute['_key'],
+  Attribute['_open'],
+  Attribute['_savedAs'],
+  Attribute['_default']
+>

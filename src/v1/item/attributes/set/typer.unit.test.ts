@@ -9,63 +9,100 @@ import {
   HiddenSetElementsError,
   OptionalSetElementsError,
   SavedAsSetElementsError,
-  validateSetAttribute
-} from './validate'
+  freezeSetAttribute
+} from './freeze'
 
 describe('set', () => {
+  const path = 'some.path'
   const strElement = string().required()
 
   it('rejects non-required elements', () => {
-    // @ts-expect-error
-    set(string())
-
-    // @ts-expect-error
-    expect(() => validateSetAttribute(set(string()))).toThrow(
-      // @prettier-ignore - force a line break
-      new OptionalSetElementsError({})
+    set(
+      // @ts-expect-error
+      string()
     )
+
+    expect(() =>
+      freezeSetAttribute(
+        set(
+          // @ts-expect-error
+          string()
+        ),
+        path
+      )
+    ).toThrow(new OptionalSetElementsError({ path }))
   })
 
   it('rejects hidden elements', () => {
-    // @ts-expect-error
-    set(strElement.hidden())
+    set(
+      // @ts-expect-error
+      strElement.hidden()
+    )
 
-    // @ts-expect-error
-    expect(() => validateSetAttribute(set(strElement.hidden()))).toThrow(
+    expect(() =>
+      freezeSetAttribute(
+        set(
+          // @ts-expect-error
+          strElement.hidden()
+        ),
+        path
+      )
+    ).toThrow(
       // @prettier-ignore - force a line break
-      new HiddenSetElementsError({})
+      new HiddenSetElementsError({ path })
     )
   })
 
   it('rejects elements with savedAs values', () => {
-    // @ts-expect-error
-    set(strElement.savedAs('foo'))
+    set(
+      // @ts-expect-error
+      strElement.savedAs('foo')
+    )
 
-    // @ts-expect-error
-    expect(() => validateSetAttribute(set(strElement.savedAs('foo')))).toThrow(
+    expect(() =>
+      freezeSetAttribute(
+        set(
+          // @ts-expect-error
+          strElement.savedAs('foo')
+        ),
+        path
+      )
+    ).toThrow(
       // @prettier-ignore - force a line break
-      new SavedAsSetElementsError({})
+      new SavedAsSetElementsError({ path })
     )
   })
 
   it('rejects elements with default values', () => {
-    // @ts-expect-error
-    set(strElement.default('foo'))
-
-    // @ts-expect-error
-    expect(() => validateSetAttribute(set(strElement.default('foo')))).toThrow(
-      // @prettier-ignore - force a line break
-      new DefaultedSetElementsError({})
+    set(
+      // @ts-expect-error
+      strElement.default('foo')
     )
 
-    // @ts-expect-error
-    set(strElement.default(ComputedDefault))
+    expect(() =>
+      freezeSetAttribute(
+        set(
+          // @ts-expect-error
+          strElement.default('foo')
+        ),
+        path
+      )
+    ).toThrow(new DefaultedSetElementsError({ path }))
 
-    // @ts-expect-error
-    expect(() => validateSetAttribute(set(strElement.default(ComputedDefault)))).toThrow(
-      // @prettier-ignore - force a line break
-      new DefaultedSetElementsError({})
+    set(
+      // @ts-expect-error
+      strElement.default(ComputedDefault)
     )
+
+    expect(() =>
+      freezeSetAttribute(
+        set(
+          // @ts-expect-error
+          strElement.default(ComputedDefault)
+        ),
+        path
+      )
+    ).toThrow(new DefaultedSetElementsError({ path }))
   })
 
   it('returns default set', () => {

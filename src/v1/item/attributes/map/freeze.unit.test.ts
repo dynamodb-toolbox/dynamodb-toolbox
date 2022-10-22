@@ -1,8 +1,8 @@
 import { string } from '../leaf'
 import { validateAttributeProperties } from '../shared/validate'
-import * as validateAttributeModule from '../validate'
+import * as freezeAttributeModule from '../freeze'
 
-import { DuplicateSavedAsAttributesError, validateMapAttribute } from './validate'
+import { DuplicateSavedAsAttributesError, freezeMapAttribute } from './freeze'
 import { map } from './typer'
 
 jest.mock('../shared/validate', () => ({
@@ -14,13 +14,14 @@ const validateAttributePropertiesMock = validateAttributeProperties as jest.Mock
   typeof validateAttributeProperties
 >
 
-// We have to do a module mock here: requireActual doesn't work due to circular dependency with validateMap
-const validateAttributeMock = jest
-  .spyOn(validateAttributeModule, 'validateAttribute')
+// We have to do a module mock here: requireActual doesn't work due to circular dependency with freezeMap
+// @ts-ignore
+const freezeAttributeMock = jest
+  .spyOn(freezeAttributeModule, 'freezeAttribute')
   .mockImplementation()
 
-describe('map properties validation', () => {
-  const pathMock = 'some/path'
+describe('map properties freeze', () => {
+  const pathMock = 'some.path'
 
   const stringAttr = string()
   const string1Name = 'string1'
@@ -29,26 +30,26 @@ describe('map properties validation', () => {
 
   beforeEach(() => {
     validateAttributePropertiesMock.mockClear()
-    validateAttributeMock.mockClear()
+    freezeAttributeMock.mockClear()
   })
 
   it('applies validateAttributeProperties on mapInstance', () => {
-    validateMapAttribute(mapInstance, pathMock)
+    freezeMapAttribute(mapInstance, pathMock)
 
     expect(validateAttributePropertiesMock).toHaveBeenCalledTimes(1)
     expect(validateAttributePropertiesMock).toHaveBeenCalledWith(mapInstance, pathMock)
   })
 
-  it('applies validateAttribute on properties', () => {
-    validateMapAttribute(mapInstance, pathMock)
+  it('applies freezeAttribute on attributes', () => {
+    freezeMapAttribute(mapInstance, pathMock)
 
-    expect(validateAttributeMock).toHaveBeenCalledTimes(2)
-    expect(validateAttributeMock).toHaveBeenCalledWith(
+    expect(freezeAttributeMock).toHaveBeenCalledTimes(2)
+    expect(freezeAttributeMock).toHaveBeenCalledWith(
       stringAttr,
       // TODO Mock and use joinPaths util
       [pathMock, string1Name].join('.')
     )
-    expect(validateAttributeMock).toHaveBeenCalledWith(
+    expect(freezeAttributeMock).toHaveBeenCalledWith(
       stringAttr,
       // TODO Mock and use joinPaths util
       [pathMock, string2Name].join('.')
@@ -57,14 +58,11 @@ describe('map properties validation', () => {
 
   it('throws if map attribute has duplicate savedAs', () => {
     expect(() =>
-      validateMapAttribute(map({ a: stringAttr, b: stringAttr.savedAs('a') }), pathMock)
+      freezeMapAttribute(map({ a: stringAttr, b: stringAttr.savedAs('a') }), pathMock)
     ).toThrow(new DuplicateSavedAsAttributesError({ duplicatedSavedAs: 'a', path: pathMock }))
 
     expect(() =>
-      validateMapAttribute(
-        map({ a: stringAttr.savedAs('c'), b: stringAttr.savedAs('c') }),
-        pathMock
-      )
+      freezeMapAttribute(map({ a: stringAttr.savedAs('c'), b: stringAttr.savedAs('c') }), pathMock)
     ).toThrow(new DuplicateSavedAsAttributesError({ duplicatedSavedAs: 'c', path: pathMock }))
   })
 })
