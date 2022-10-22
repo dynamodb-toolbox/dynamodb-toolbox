@@ -1,18 +1,8 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import { ComputedDefault } from '../constants'
-
-import type { AttributeProperties } from '../shared/interface'
-import type { SetAttributeElements } from './types'
-
-interface SetAttributeProperties<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
-  _default: Default
-}
+import type { ComputedDefault } from '../constants/computedDefault'
+import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
+import type { FreezeAttribute } from '../freeze'
+import type { SetAttributeElements, FrozenSetAttributeElements } from './types'
 
 /**
  * Set attribute interface
@@ -24,9 +14,10 @@ export type SetAttribute<
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> = SetAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs, Default> & {
+> = AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
   _type: 'set'
   _elements: Elements
+  _default: Default
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -62,3 +53,26 @@ export type SetAttribute<
     nextDefaultValue: NextDefault
   ) => SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, NextDefault>
 }
+
+export type FrozenSetAttribute<
+  Elements extends FrozenSetAttributeElements = FrozenSetAttributeElements,
+  IsRequired extends RequiredOption = RequiredOption,
+  IsHidden extends boolean = boolean,
+  IsKey extends boolean = boolean,
+  SavedAs extends string | undefined = string | undefined,
+  Default extends ComputedDefault | undefined = ComputedDefault | undefined
+> = FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+  type: 'set'
+  path: string
+  elements: Elements
+  default: Default
+}
+
+export type FreezeSetAttribute<Attribute extends SetAttribute> = FrozenSetAttribute<
+  FreezeAttribute<Attribute['_elements']>,
+  Attribute['_required'],
+  Attribute['_hidden'],
+  Attribute['_key'],
+  Attribute['_savedAs'],
+  Attribute['_default']
+>

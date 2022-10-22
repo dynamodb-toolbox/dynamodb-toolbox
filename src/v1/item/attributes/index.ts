@@ -6,4 +6,4 @@ export * from './map'
 
 export * from './constants'
 export * from './types'
-export { validateAttribute } from './validate'
+export { freezeAttribute } from './freeze'

@@ -1,2 +1,8 @@
-export { Narrow } from './narrow'
-export { Attribute, MapAttributeAttributes, ResolvedAttribute } from './attribute'
+export type { Narrow } from './narrow'
+export type {
+  Attribute,
+  FrozenAttribute,
+  MapAttributeAttributes,
+  FrozenMapAttributeAttributes,
+  ResolvedAttribute
+} from './attribute'
