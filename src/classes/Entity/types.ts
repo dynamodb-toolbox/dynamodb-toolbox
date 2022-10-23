@@ -456,7 +456,7 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
   StrictSchemaCheck extends boolean | undefined = true> = FirstDefined<[
     MethodItemOverlay,
     EntityItemOverlay,
-    A.Compute<CompositePrimaryKey &
+    Compute<CompositePrimaryKey &
       {
         [inputAttr in Attributes['always']['input'] & keyof Item]: AttributeUpdateInput<Item[inputAttr]>
       } &
