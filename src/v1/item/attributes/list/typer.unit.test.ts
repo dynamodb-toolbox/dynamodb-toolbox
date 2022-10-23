@@ -9,63 +9,94 @@ import {
   HiddenListAttributeElementsError,
   OptionalListAttributeElementsError,
   SavedAsListAttributeElementsError,
-  validateListAttribute
-} from './validate'
+  freezeListAttribute
+} from './freeze'
 
 describe('list', () => {
+  const path = 'some.path'
   const strElement = string().required()
 
   it('rejects non-required elements', () => {
-    // @ts-expect-error
-    list(string())
-
-    // @ts-expect-error
-    expect(() => validateListAttribute(list(string()))).toThrow(
-      // @prettier-ignore - force a line break
-      new OptionalListAttributeElementsError({})
+    list(
+      // @ts-expect-error
+      string()
     )
+
+    expect(() =>
+      freezeListAttribute(
+        list(
+          // @ts-expect-error
+          string()
+        ),
+        path
+      )
+    ).toThrow(new OptionalListAttributeElementsError({ path }))
   })
 
   it('rejects hidden elements', () => {
-    // @ts-expect-error
-    list(strElement.hidden())
-
-    // @ts-expect-error
-    expect(() => validateListAttribute(list(strElement.hidden()))).toThrow(
-      // @prettier-ignore - force a line break
-      new HiddenListAttributeElementsError({})
+    list(
+      // @ts-expect-error
+      strElement.hidden()
     )
+
+    expect(() =>
+      freezeListAttribute(
+        list(
+          // @ts-expect-error
+          strElement.hidden()
+        ),
+        path
+      )
+    ).toThrow(new HiddenListAttributeElementsError({ path }))
   })
 
   it('rejects elements with savedAs values', () => {
-    // @ts-expect-error
-    list(strElement.savedAs('foo'))
-
-    // @ts-expect-error
-    expect(() => validateListAttribute(list(strElement.savedAs('foo')))).toThrow(
-      // @prettier-ignore - force a line break
-      new SavedAsListAttributeElementsError({})
+    list(
+      // @ts-expect-error
+      strElement.savedAs('foo')
     )
+
+    expect(() =>
+      freezeListAttribute(
+        list(
+          // @ts-expect-error
+          strElement.savedAs('foo')
+        ),
+        path
+      )
+    ).toThrow(new SavedAsListAttributeElementsError({ path }))
   })
 
   it('rejects elements with default values', () => {
-    // @ts-expect-error
-    list(strElement.default('foo'))
-
-    // @ts-expect-error
-    expect(() => validateListAttribute(list(strElement.default('foo')))).toThrow(
-      // @prettier-ignore - force a line break
-      new DefaultedListAttributeElementsError({})
+    list(
+      // @ts-expect-error
+      strElement.default('foo')
     )
 
-    // @ts-expect-error
-    list(strElement.default(ComputedDefault))
+    expect(() =>
+      freezeListAttribute(
+        list(
+          // @ts-expect-error
+          strElement.default('foo')
+        ),
+        path
+      )
+    ).toThrow(new DefaultedListAttributeElementsError({ path }))
 
-    // @ts-expect-error
-    expect(() => validateListAttribute(list(strElement.default(ComputedDefault)))).toThrow(
-      // @prettier-ignore - force a line break
-      new DefaultedListAttributeElementsError({})
+    list(
+      // @ts-expect-error
+      strElement.default(ComputedDefault)
     )
+
+    expect(() =>
+      freezeListAttribute(
+        list(
+          // @ts-expect-error
+          strElement.default(ComputedDefault)
+        ),
+        path
+      )
+    ).toThrow(new DefaultedListAttributeElementsError({ path }))
   })
 
   it('returns default list', () => {

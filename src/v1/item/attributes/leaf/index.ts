@@ -1,13 +1,13 @@
 export { string, boolean, binary, number } from './typer'
 export type {
-  LeafAttributeType as LeafType,
+  LeafAttributeType,
   ResolveLeafAttributeType,
-  ResolvedLeafAttributeType as ResolvedLeafAttributeType
+  ResolvedLeafAttributeType
 } from './types'
-export type { LeafAttribute } from './interface'
+export type { LeafAttribute, FrozenLeafAttribute, FreezeLeafAttribute } from './interface'
 export {
-  validateLeafAttribute,
+  freezeLeafAttribute,
   InvalidEnumValueTypeError,
   InvalidDefaultValueTypeError,
   InvalidDefaultValueRangeError
-} from './validate'
+} from './freeze'

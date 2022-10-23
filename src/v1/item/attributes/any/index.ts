@@ -1,3 +1,3 @@
 export { any } from './typer'
-export type { AnyAttribute } from './interface'
-export { validateAnyAttribute } from './validate'
+export type { AnyAttribute, FrozenAnyAttribute, FreezeAnyAttribute } from './interface'
+export { freezeAnyAttribute } from './freeze'
