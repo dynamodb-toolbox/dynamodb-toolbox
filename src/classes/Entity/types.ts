@@ -1,7 +1,7 @@
 import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, B, O, F } from 'ts-toolbelt'
 
-import type { FirstDefined, If } from '../../lib/utils'
+import type { Compute, FirstDefined, If } from '../../lib/utils'
 import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table';
 import Entity from './Entity'
 
