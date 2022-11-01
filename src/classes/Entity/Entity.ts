@@ -815,10 +815,10 @@ class Entity<
             DocumentClient.UpdateItemOutput,
             'Attributes',
               If<
-                A.Equals<ReturnValues, 'ALL_OLD' | 'ALL_NEW'>,
+                B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
                 FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
                 If<
-                  A.Equals<ReturnValues, 'UPDATED_OLD' | 'UPDATED_NEW'>,
+                  B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>, A.Equals<ReturnValues, 'UPDATED_NEW'>>,
                   FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
                   >
                 >
