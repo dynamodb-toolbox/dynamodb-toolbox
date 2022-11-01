@@ -808,22 +808,27 @@ class Entity<
       If<
         B.Not<ShouldExecute<Execute, AutoExecute>>,
         DocumentClient.UpdateItemInput,
-        If<
+         If<
           B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
-          If<
-            // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-            B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-            O.Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-            O.Update<
-              DocumentClient.UpdateItemOutput,
-              'Attributes',
-              FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>
-            >
-          >
+             O.Update<
+            DocumentClient.UpdateItemOutput,
+            'Attributes',
+              If<
+                A.Equals<ReturnValues, 'ALL_OLD' | 'ALL_NEW'>,
+                FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+                If<
+                  A.Equals<ReturnValues, 'UPDATED_OLD' | 'UPDATED_NEW'>,
+                  FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
+                  >
+                >
+                >
+
+
+
         >
-      >
-    >
+        >
+        >
   > {
     // Generate the payload
     const updateParams = this.updateParams<
