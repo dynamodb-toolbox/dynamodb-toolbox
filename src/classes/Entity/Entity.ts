@@ -811,6 +811,8 @@ class Entity<
          If<
           B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
+           If<A.Equals<ReturnValues, 'NONE'>,
+             Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
           O.Update<
             DocumentClient.UpdateItemOutput,
             'Attributes',
@@ -825,6 +827,7 @@ class Entity<
               >
             >
           >
+        >
         >
   > {
     // Generate the payload
