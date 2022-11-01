@@ -826,8 +826,8 @@ class Entity<
           B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
            If<A.Equals<ReturnValues, 'NONE'>,
-             Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-          O.Update<
+           Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
+            O.Update<
             DocumentClient.UpdateItemOutput,
             'Attributes',
               If<
