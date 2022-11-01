@@ -36,7 +36,7 @@ import type {
 } from './types'
 
 // Import standard error handler
-import { error, conditionError, hasProperty, If } from '../../lib/utils'
+import { error, conditionError, hasProperty, If, Compute } from '../../lib/utils'
 
 // Declare Table class
 class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
@@ -183,7 +183,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
               break
 
             // For secondary indexes
-            default:
+            default: // end for
               // Verify that the table has this index
               if (!this.Table.indexes[key]) error(`'${key}' is not a valid secondary index name`)
 
@@ -241,7 +241,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                     } // end if
                   } // end if-else
                 } // end if
-              } // end for
+              }
 
               // Check that composite keys define both keys
               // TODO: This only checks for the attribute, not the explicit assignment
@@ -299,8 +299,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                 mappings: {
                   [entity.name]: Object.assign(
                     {
-                      [entity.schema.attributes[attr].alias || attr]: entity.schema.attributes[attr]
-                        .type
+                      [entity.schema.attributes[attr].alias || attr]:
+                        entity.schema.attributes[attr].type
                     },
                     // Add setType if type 'set'
                     entity.schema.attributes[attr].type === 'set'
@@ -358,14 +358,14 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       DocumentClient.QueryInput,
       If<
         A.Equals<Parse, false>,
-        A.Compute<
+        Compute<
           DocumentClient.QueryOutput & {
             next?: () => Promise<DocumentClient.QueryOutput>
           }
         >,
-        A.Compute<
+        Compute<
           O.Update<DocumentClient.QueryOutput, 'Items', Item[]> & {
-            next?: () => Promise<A.Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>>>
+            next?: () => Promise<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>>
           }
         >
       >
@@ -693,14 +693,14 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       DocumentClient.ScanInput,
       If<
         A.Equals<Parse, false>,
-        A.Compute<
+        Compute<
           DocumentClient.ScanOutput & {
             next?: () => Promise<DocumentClient.ScanOutput>
           }
         >,
-        A.Compute<
+        Compute<
           O.Update<DocumentClient.ScanOutput, 'Items', Item[]> & {
-            next?: () => Promise<A.Compute<O.Update<DocumentClient.ScanOutput, 'Items', Item[]>>>
+            next?: () => Promise<O.Update<DocumentClient.ScanOutput, 'Items', Item[]>>
           }
         >
       >
