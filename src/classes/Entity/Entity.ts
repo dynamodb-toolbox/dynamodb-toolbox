@@ -818,7 +818,7 @@ class Entity<
             O.Update<
               DocumentClient.UpdateItemOutput,
               'Attributes',
-              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>
+              FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>
             >
           >
         >
