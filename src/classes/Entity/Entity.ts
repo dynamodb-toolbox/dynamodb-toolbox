@@ -811,7 +811,7 @@ class Entity<
          If<
           B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
-             O.Update<
+          O.Update<
             DocumentClient.UpdateItemOutput,
             'Attributes',
               If<
@@ -822,12 +822,9 @@ class Entity<
                   FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
                   >
                 >
-                >
-
-
-
-        >
-        >
+              >
+            >
+          >
         >
   > {
     // Generate the payload
