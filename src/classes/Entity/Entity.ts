@@ -827,7 +827,7 @@ class Entity<
           DocumentClient.UpdateItemOutput,
            If<A.Equals<ReturnValues, 'NONE'>,
            Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-            O.Update<
+           O.Update<
             DocumentClient.UpdateItemOutput,
             'Attributes',
               If<
