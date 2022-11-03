@@ -62,6 +62,7 @@ class Entity<
   CreatedAlias extends string = string extends Name ? string : 'created',
   ModifiedAlias extends string = string extends Name ? string : 'modified',
   TypeAlias extends string = string extends Name ? string : 'entity',
+  TypeHidden extends boolean = string extends Name ? boolean : false,
   ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>,
   WritableAttributeDefinitions extends AttributeDefinitions = Writable<ReadonlyAttributeDefinitions>,
   Attributes extends ParsedAttributes = string extends Name
@@ -74,7 +75,8 @@ class Entity<
           Timestamps,
           CreatedAlias,
           ModifiedAlias,
-          TypeAlias
+          TypeAlias,
+          TypeHidden
         >,
         ParsedAttributes<keyof EntityItemOverlay>
       >,
@@ -117,6 +119,7 @@ class Entity<
   public createdAlias: CreatedAlias
   public modifiedAlias: ModifiedAlias
   public typeAlias: TypeAlias
+  public typeHidden: TypeHidden
 
   // Declare constructor (entity config)
   constructor(
@@ -129,6 +132,7 @@ class Entity<
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
+      TypeHidden,
       ReadonlyAttributeDefinitions
     >
   ) {
@@ -142,13 +146,15 @@ class Entity<
       timestamps = true,
       createdAlias = 'created',
       modifiedAlias = 'modified',
-      typeAlias = 'entity'
+      typeAlias = 'entity',
+      typeHidden = false
     } = entity
     this.attributes = attributes
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
     this.modifiedAlias = modifiedAlias as ModifiedAlias
     this.typeAlias = typeAlias as TypeAlias
+    this.typeHidden = typeHidden as TypeHidden
     // Parse the entity and merge into this
     Object.assign(this, parseEntity(entity))
   } // end construcor
@@ -172,6 +178,7 @@ class Entity<
       if (table.Table.entityField) {
         this.schema.attributes[table.Table.entityField] = {
           type: 'string',
+          hidden: this.typeHidden,
           alias: this._etAlias,
           default: this.name
         }
@@ -400,6 +407,7 @@ class Entity<
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
+      TypeHidden,
       ReadonlyAttributeDefinitions,
       WritableAttributeDefinitions,
       Attributes,

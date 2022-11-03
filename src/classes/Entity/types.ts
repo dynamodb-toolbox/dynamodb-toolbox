@@ -14,6 +14,7 @@ export interface EntityConstructor<
   CreatedAlias extends string = 'created',
   ModifiedAlias extends string = 'modified',
   TypeAlias extends string = 'entity',
+  TypeHidden extends boolean = false,
   ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>
 > {
   table?: EntityTable
@@ -24,6 +25,7 @@ export interface EntityConstructor<
   createdAlias?: CreatedAlias
   modifiedAlias?: ModifiedAlias
   typeAlias?: TypeAlias
+  typeHidden?: TypeHidden
   attributes: ReadonlyAttributeDefinitions
   autoExecute?: AutoExecute
   autoParse?: AutoParse
@@ -146,6 +148,7 @@ export type ParseAttributes<
   CreatedAlias extends string,
   ModifiedAlias extends string,
   TypeAlias extends string,
+  TypeHidden extends boolean,
   Aliases extends string =
     | (Timestamps extends true ? CreatedAlias | ModifiedAlias : never)
     | TypeAlias,
@@ -532,7 +535,8 @@ export type InferEntityItem<
     E['timestamps'],
     E['createdAlias'],
     E['modifiedAlias'],
-    E['typeAlias']
+    E['typeAlias'],
+    E['typeHidden']
   >,
   Item = InferItem<WritableAttributeDefinitions, Attributes>
 > = Pick<Item, Extract<Attributes['shown'], keyof Item>>
@@ -552,7 +556,8 @@ export type ExtractAttributes<E extends Entity> =
         E['timestamps'],
         E['createdAlias'],
         E['modifiedAlias'],
-        E['typeAlias']
+        E['typeAlias'],
+        E['typeHidden']
       >
 
 export type GetOptions<

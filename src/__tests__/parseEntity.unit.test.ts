@@ -1,3 +1,4 @@
+import { endianness } from 'os'
 import parseEntity from '../lib/parseEntity'
 
 // Simulate Entity config
@@ -9,6 +10,7 @@ const entity = {
   modified: '_modified',
   modifiedAlias: 'modifiedAlias',
   typeAlias: 'typeAlias',
+  typeHidden: true,
   attributes: {
     pk: { partitionKey: true },
     sk: { sortKey: true },
@@ -33,6 +35,7 @@ describe('parseEntity', () => {
     expect(ent.autoExecute).toBe(true)
     expect(ent.autoParse).toBe(true)
     expect(ent._etAlias).toBe('typeAlias')
+    expect(ent.typeHidden).toBe(true)
   })
 
   const nonObjectValues = [null, 'string', true, 1, [], () => {}]
