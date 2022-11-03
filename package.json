@@ -51,6 +51,7 @@
   },
   "files": [
     "dist/index.*",
+    "dist/constants.*",
     "dist/classes/",
     "dist/lib/"
   ]
