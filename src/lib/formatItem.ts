@@ -5,7 +5,7 @@
  */
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
-import { PureAttributeDefinition } from '../classes/Entity'
+import { KeyAttributeDefinition, PureAttributeDefinition } from '../classes/Entity'
 import validateTypes from './validateTypes'
 import { Linked } from './parseEntity'
 
@@ -64,13 +64,31 @@ export default (DocumentClient: DocumentClient) => (
     ) {
       item[field] = item[field].values
     }
+
+    const fieldValue =
+        attributes[field] &&
+        (attributes[field].prefix || attributes[field].suffix)
+          ? item[field]
+              .replace(
+                new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`),
+                ""
+              )
+              .replace(
+                new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`),
+                ""
+              )
+          : item[field];
+
+    const transformedValue =
+        attributes[field] && attributes[field].format
+          ? (
+              attributes[field] as Required<PureAttributeDefinition>
+            ).format(fieldValue, item)
+          : fieldValue
+
     return Object.assign(acc, {
       [(attributes[field] && attributes[field].alias) || field]:
-        attributes[field] && (attributes[field].prefix || attributes[field].suffix)
-          ? item[field]
-              .replace(new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`), '')
-              .replace(new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`), '')
-          : item[field]
+        transformedValue,
     })
   }, {})
 }

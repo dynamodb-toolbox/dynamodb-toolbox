@@ -27,6 +27,10 @@ export = {
     test_string_set_type_coerce: { type: 'set', setType: 'string', coerce: true },
     test_number_set_type_coerce: { type: 'set', setType: 'number', coerce: true },
     test_binary: { type: 'binary' },
-    simple_string: 'string'
+    simple_string: 'string',
+    format_simple_string: {
+      type: "string",
+      format: (input: string) => input.toUpperCase(),
+    }
   }
 }
