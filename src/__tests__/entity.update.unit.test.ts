@@ -222,6 +222,24 @@ describe('update', () => {
     expect(TableName).toBe('test-table2')
   })
 
+  it('creates update that removes a field within map that is set to null', () => {
+    let { UpdateExpression, ExpressionAttributeNames } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_map: {
+        $set: {
+          string_prop: null
+        }
+      }
+    })
+
+    expect(UpdateExpression).toMatch(/REMOVE #test_map\.#test_map_string_prop/)
+    expect(ExpressionAttributeNames).toEqual(expect.objectContaining({
+      '#test_map': 'test_map',
+      '#test_map_string_prop': 'string_prop'
+    }))
+  })
+
   it('fails removing an invalid attribute', () => {
     // @ts-expect-error
     expect(() => TestEntity.updateParams({ email: 'x', sort: 'y', $remove: 'missing' })).toThrow(
