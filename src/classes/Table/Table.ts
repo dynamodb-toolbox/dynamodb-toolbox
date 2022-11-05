@@ -396,6 +396,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
                 const isEntityFieldEnabledOnTable = this.Table.entityField !== false;
                 const itemEntityName = item[isEntityFieldEnabledOnTable ? this.table.entityField : undefined] || options.entity;
+                console.log('itemEntityName', itemEntityName);
                 if (typeof itemEntityName !== 'string') {
                   return item
                 }
