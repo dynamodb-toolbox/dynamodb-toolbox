@@ -716,7 +716,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         return Object.assign(
           result,
           {
-            Items: result.Items?.map((item) => {
+            Items: result.Items?.map(item => {
               const itemEntityName = item[this.Table.entityField !== false ? this.Table.entityField : undefined as never] || options.entity;
               const itemEntityInstance = this[itemEntityName]
 
