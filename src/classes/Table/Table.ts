@@ -396,16 +396,16 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                 }
 
                 const isEntityFieldEnabledOnTable = this.Table.entityField !== false;
-                const entityName = isEntityFieldEnabledOnTable ? (item as Record<string, any>)[this.Table.entityField as string] : options.entity
-                if (typeof entityName !== 'string') {
+                const itemEntityName = (item as Record<string, any>)[isEntityFieldEnabledOnTable ? this.table.entityField : undefined] || options.entity;
+                if (typeof itemEntityName !== 'string') {
                   return item
                 }
 
-                if (this[entityName]) {
-                  return this[entityName].parse(
+                if (this[itemEntityName]) {
+                  return this[itemEntityName].parse(
                     item,
-                    EntityProjections[entityName]
-                      ? EntityProjections[entityName]
+                    EntityProjections[itemEntityName]
+                      ? EntityProjections[itemEntityName]
                       : TableProjections
                       ? TableProjections
                       : []
@@ -718,8 +718,9 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         return Object.assign(
           result,
           {
-            Items: result.Items?.map(item => {
-              const itemEntityName = item[String(this.Table.entityField)] || options.entity
+            Items: result.Items?.map((item) => {
+              const isEntityFieldEnabledOnTable = this.Table.entityField !== false;
+              const itemEntityName = item[isEntityFieldEnabledOnTable ? this.table.entityField : undefined] || options.entity;
               const itemEntityInstance = this[itemEntityName]
 
               if (itemEntityInstance != null) {
