@@ -759,7 +759,7 @@ describe('update', () => {
     expect(ExpressionAttributeValues![':test3']).toBe(0)
   })
 
-  it('removes unused expression values/names when attempting to set a map field as an empty object', () => {
+  it('removes unused expression values/names when using $set for a map field with an empty object', () => {
     let {
       ExpressionAttributeValues,
       ExpressionAttributeNames,
