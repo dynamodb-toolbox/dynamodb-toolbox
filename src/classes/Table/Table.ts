@@ -1429,8 +1429,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    * @param {object} [options] - Additional options
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the transactWrite request.
    *
-   * Creates a TransactWriteItems object:
-   *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
+   * Creates a TransactWriteItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
    */
   transactWriteParams(
     _items: DocumentClient.TransactWriteItemList,
