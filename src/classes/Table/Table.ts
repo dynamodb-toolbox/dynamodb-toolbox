@@ -1330,8 +1330,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    * @param {object} items - An array of objects generated from getTransaction entity calls.
    * @param {object} [options] - Additional transactGet options
    *
-   * Creates a TransactGetItems object:
-   *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
+   * Creates a TransactGetItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
    */
   transactGetParams(
     _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
