@@ -400,7 +400,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   return item
                 }
 
-                const entityName = item[entityField]
+                const entityName = item[entityField] || options.entity
                 if (typeof entityName !== 'string') {
                   return item
                 }
