@@ -1395,8 +1395,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   /**
    * Performs a transactWrite operation
-   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
-   *   entity calls.
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
    * @param {object} [options] - Additional transactWrite options
    *
    */
@@ -1424,8 +1423,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   /**
    * Generates parameters for a transactWrite operation
-   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
-   *   entity calls.
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
    * @param {object} [options] - Additional options
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the transactWrite request.
    *
