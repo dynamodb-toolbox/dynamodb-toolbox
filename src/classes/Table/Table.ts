@@ -394,7 +394,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   return item
                 }
 
-                const itemEntityName = (item as Record<string, any>)[this.entityField !== false ? this.entityField : undefined] || options.entity;
+                const itemEntityName = (item as Record<string, any>)[this.Table.entityField !== false ? this.Table.entityField : undefined as never] || options.entity;
                 if (typeof itemEntityName !== 'string') {
                   return item
                 }
@@ -717,7 +717,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items: result.Items?.map((item) => {
-              const itemEntityName = item[this.entityField !== false ? this.entityField : undefined] || options.entity;
+              const isEntityFieldEnabledOnTable = this.Table.entityField !== false;
+              const itemEntityName = item[isEntityFieldEnabledOnTable ? this.table.entityField : undefined] || options.entity;
               const itemEntityInstance = this[itemEntityName]
 
               if (itemEntityInstance != null) {
