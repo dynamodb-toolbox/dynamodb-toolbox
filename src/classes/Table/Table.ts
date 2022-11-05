@@ -381,7 +381,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient!.query(payload).promise()
+      const result = (await this.DocumentClient!.query(payload).promise()) as any
 
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -389,12 +389,12 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items:
-              result.Items?.map(item => {
+              result.Items?.map((item: unknown) => {
                 if (typeof item !== 'object' || item === null) {
                   return item
                 }
 
-                const itemEntityName = item[this.Table.entityField !== false ? this.table.entityField : undefined] || options.entity;
+                const itemEntityName = (item as Record<string, any>)[this.Table.entityField !== false ? this.table.entityField : undefined] || options.entity;
                 if (typeof itemEntityName !== 'string') {
                   return item
                 }
@@ -1329,7 +1329,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    * @param {object} items - An array of objects generated from getTransaction entity calls.
    * @param {object} [options] - Additional transactGet options
    *
-   * Creates a TransactGetItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
+   * Creates a TransactGetItems object:
+   *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
    */
   transactGetParams(
     _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
@@ -1394,7 +1395,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   /**
    * Performs a transactWrite operation
-   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
+   *   entity calls.
    * @param {object} [options] - Additional transactWrite options
    *
    */
@@ -1422,11 +1424,13 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   /**
    * Generates parameters for a transactWrite operation
-   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
+   *   entity calls.
    * @param {object} [options] - Additional options
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the transactWrite request.
    *
-   * Creates a TransactWriteItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
+   * Creates a TransactWriteItems object:
+   *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
    */
   transactWriteParams(
     _items: DocumentClient.TransactWriteItemList,
