@@ -381,7 +381,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = (await this.DocumentClient!.query(payload).promise()) as any
+      const result = await this.DocumentClient!.query(payload).promise()
 
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -389,14 +389,13 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items:
-              result.Items &&
-              result.Items.map((item: unknown) => {
+              result.Items?.map(item => {
                 if (typeof item !== 'object' || item === null) {
                   return item
                 }
 
                 const isEntityFieldEnabledOnTable = this.Table.entityField !== false;
-                const itemEntityName = (item as Record<string, any>)[isEntityFieldEnabledOnTable ? this.table.entityField : undefined] || options.entity;
+                const itemEntityName = item[isEntityFieldEnabledOnTable ? this.table.entityField : undefined] || options.entity;
                 if (typeof itemEntityName !== 'string') {
                   return item
                 }
