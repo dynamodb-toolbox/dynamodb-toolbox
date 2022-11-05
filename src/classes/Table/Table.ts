@@ -395,12 +395,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   return item
                 }
 
-                const entityField = String(this.Table.entityField)
-                if (!hasProperty(item, entityField)) {
-                  return item
-                }
-
-                const entityName = item[entityField] || options.entity
+                const isEntityFieldEnabledOnTable = this.Table.entityField !== false;
+                const entityName = isEntityFieldEnabledOnTable ? (item as Record<string, any>)[this.Table.entityField as string] : options.entity
                 if (typeof entityName !== 'string') {
                   return item
                 }
@@ -1334,7 +1330,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    * @param {object} items - An array of objects generated from getTransaction entity calls.
    * @param {object} [options] - Additional transactGet options
    *
-   * Creates a TransactGetItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
+   * Creates a TransactGetItems object:
+   *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
    */
   transactGetParams(
     _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
@@ -1399,7 +1396,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   /**
    * Performs a transactWrite operation
-   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
+   *   entity calls.
    * @param {object} [options] - Additional transactWrite options
    *
    */
@@ -1427,11 +1425,13 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   /**
    * Generates parameters for a transactWrite operation
-   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction entity calls.
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
+   *   entity calls.
    * @param {object} [options] - Additional options
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the transactWrite request.
    *
-   * Creates a TransactWriteItems object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
+   * Creates a TransactWriteItems object:
+   *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
    */
   transactWriteParams(
     _items: DocumentClient.TransactWriteItemList,

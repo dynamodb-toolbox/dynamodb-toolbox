@@ -18,6 +18,7 @@ let DefaultTable = new Table({
 DefaultTable.addEntity(
   new Entity({
     name: 'User',
+    typeAlias: '',
     attributes: {
       pk: { type: 'string', partitionKey: true },
       sk: { type: 'string', sortKey: true },
