@@ -723,7 +723,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items: result.Items?.map(item => {
-              const itemEntityName = item[String(this.Table.entityField)]
+              const itemEntityName = item[String(this.Table.entityField)] || options.entity
               const itemEntityInstance = this[itemEntityName]
 
               if (itemEntityInstance != null) {
