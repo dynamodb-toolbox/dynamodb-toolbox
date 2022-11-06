@@ -138,7 +138,12 @@ class Entity<
       error('Please provide a valid entity definition')
     }
 
-    entity = cloneDeep(entity)
+    // we want to prevent mutation of the original entity but still be able
+    // to add the entity to the original table instance
+    entity = {
+      ...cloneDeep(entity),
+      ...(entity.table ? { table: entity.table } : {}),
+    };
 
     const {
       attributes,
