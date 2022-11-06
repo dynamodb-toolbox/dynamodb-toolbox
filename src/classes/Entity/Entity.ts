@@ -138,6 +138,8 @@ class Entity<
       error('Please provide a valid entity definition')
     }
 
+    entity = cloneDeep(entity)
+
     const {
       attributes,
       timestamps = true,
@@ -145,14 +147,14 @@ class Entity<
       modifiedAlias = 'modified',
       typeAlias = 'entity'
     } = entity
-    this.attributes = JSON.parse(JSON.stringify(attributes))
+    this.attributes = (attributes)
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
     this.modifiedAlias = modifiedAlias as ModifiedAlias
     this.typeAlias = typeAlias as TypeAlias
     // Parse the entity and merge into this
     Object.assign(this, parseEntity(entity))
-  }
+  } // end construcor
 
   // Set the Entity's Table
   set table(table: EntityTable) {
