@@ -144,8 +144,8 @@ class Entity<
       createdAlias = 'created',
       modifiedAlias = 'modified',
       typeAlias = 'entity'
-    } = cloneDeep(entity)
-    this.attributes = attributes
+    } = entity
+    this.attributes = cloneDeep(attributes)
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
     this.modifiedAlias = modifiedAlias as ModifiedAlias
