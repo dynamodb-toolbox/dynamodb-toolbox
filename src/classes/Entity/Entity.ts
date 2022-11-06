@@ -147,7 +147,7 @@ class Entity<
       modifiedAlias = 'modified',
       typeAlias = 'entity'
     } = entity
-    this.attributes = (attributes)
+    this.attributes = attributes
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
     this.modifiedAlias = modifiedAlias as ModifiedAlias
