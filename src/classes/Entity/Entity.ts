@@ -145,7 +145,7 @@ class Entity<
       modifiedAlias = 'modified',
       typeAlias = 'entity'
     } = entity
-    this.attributes = cloneDeep(attributes)
+    this.attributes = JSON.parse(JSON.stringify(attributes))
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
     this.modifiedAlias = modifiedAlias as ModifiedAlias
