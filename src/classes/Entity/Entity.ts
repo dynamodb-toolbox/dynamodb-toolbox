@@ -143,7 +143,7 @@ class Entity<
       createdAlias = 'created',
       modifiedAlias = 'modified',
       typeAlias = 'entity'
-    } = entity
+    } = Object.freeze(entity)
     this.attributes = attributes
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
@@ -151,7 +151,7 @@ class Entity<
     this.typeAlias = typeAlias as TypeAlias
     // Parse the entity and merge into this
     Object.assign(this, parseEntity(entity))
-  } // end construcor
+  }
 
   // Set the Entity's Table
   set table(table: EntityTable) {
