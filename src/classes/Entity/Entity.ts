@@ -5,6 +5,7 @@
  */
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import cloneDeep from 'lodash.clonedeep'
 import type { A, B, O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity'
@@ -143,7 +144,7 @@ class Entity<
       createdAlias = 'created',
       modifiedAlias = 'modified',
       typeAlias = 'entity'
-    } = Object.freeze(entity)
+    } = cloneDeep(entity)
     this.attributes = attributes
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
