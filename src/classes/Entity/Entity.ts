@@ -5,7 +5,7 @@
  */
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import cloneDeep from 'lodash.clonedeep'
+import deepCopy from 'deep-copy'
 import type { A, B, O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity'
@@ -141,8 +141,7 @@ class Entity<
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
-      // TODO: use structuredClone when fully supported
-      ...cloneDeep(entity),
+      ...deepCopy(entity),
       ...(entity.table ? { table: entity.table } : {}),
     };
 
