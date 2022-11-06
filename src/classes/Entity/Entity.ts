@@ -5,7 +5,7 @@
  */
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import deepCopy from 'deep-copy'
+import deepCopy from 'deepcopy'
 import type { A, B, O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity'

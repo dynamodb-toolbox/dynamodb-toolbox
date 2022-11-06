@@ -19,7 +19,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "deep-copy": "^1.4.2",
+    "deepcopy": "^2.1.0",
     "ts-toolbelt": "^9.6.0"
   },
   "repository": {
