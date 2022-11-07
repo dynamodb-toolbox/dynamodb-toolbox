@@ -822,22 +822,27 @@ class Entity<
       If<
         B.Not<ShouldExecute<Execute, AutoExecute>>,
         DocumentClient.UpdateItemInput,
-        If<
+         If<
           B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
-          If<
-            // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-            B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-            O.Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-            O.Update<
-              DocumentClient.UpdateItemOutput,
-              'Attributes',
-              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>
+           If<A.Equals<ReturnValues, 'NONE'>,
+           Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
+           O.Update<
+            DocumentClient.UpdateItemOutput,
+            'Attributes',
+              If<
+                B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
+                FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+                If<
+                  B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>, A.Equals<ReturnValues, 'UPDATED_NEW'>>,
+                  FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
+                  >
+                >
+              >
             >
           >
         >
-      >
-    >
+        >
   > {
     // Generate the payload
     const updateParams = this.updateParams<
@@ -1274,8 +1279,11 @@ class Entity<
               }
             })
           })
-          // Add field to names
-          names[`#${field}`] = field
+
+          const shouldAppendFieldToExpressionNames = Object.keys(data[field].$set).length > 0
+          if (shouldAppendFieldToExpressionNames) {
+            names[`#${field}`] = field
+          }
           // else add to SET
         } else {
           let value = transformAttr(mapping, validateType(mapping, field, data[field]), data)
