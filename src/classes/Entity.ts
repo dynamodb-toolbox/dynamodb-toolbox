@@ -1571,8 +1571,6 @@ class Entity<
           // if a map and updating by nested attribute/index
         } else if (mapping.type === 'map' && data[field]?.$set) {
           Object.keys(data[field].$set).forEach(f => {
-            // TODO: handle null values to remove
-
             let props = f.split('.')
             let acc = [`#${field}`]
             props.forEach((prop, i) => {
@@ -1585,7 +1583,7 @@ class Entity<
                 let path = `${acc.join('.')}.#${id}`
                 let value = `${id.replace(/\[(\d+)\]/, '_$1')}`
 
-                if (input === undefined) {
+                if (input === undefined || input === null) {
                   REMOVE.push(`${path}`)
                 } else if (input.$add) {
                   ADD.push(`${path} :${value}`)
@@ -1608,7 +1606,7 @@ class Entity<
                   values[`:${value}`] = input
                 }
 
-                if (input.$set) {
+                if (input?.$set) {
                   Object.keys(input.$set).forEach(i => {
                     if (String(parseInt(i)) !== i)
                       error(
