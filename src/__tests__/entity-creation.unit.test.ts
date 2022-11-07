@@ -1,7 +1,7 @@
 // Require Table and Entity classes
-import '../classes/Table'
+import Table from '../classes/Table'
 import Entity from '../classes/Entity'
-import './bootstrap.test'
+import {DocumentClient} from './bootstrap.test'
 
 describe('Entity creation', () => {
   it('creates basic entity w/ defaults', async () => {
@@ -326,6 +326,45 @@ describe('Entity creation', () => {
     // @ts-expect-error
     let result = () => new Entity([])
     expect(result).toThrow(`Please provide a valid entity definition`)
+  })
+
+  it("creates an attribute with an inverseTransformation function", async () => {
+    const TestTable = new Table({
+      name: "test-table",
+      partitionKey: "pk",
+      sortKey: "sk",
+      DocumentClient,
+    });
+
+    const TestEntity = new Entity({
+      name: "TestEnt",
+      attributes: {
+        pk: {
+          partitionKey: true,
+          format: (val) => val.toUpperCase(),
+          default: "pkDef",
+        },
+        test: {
+          format: (val: string, data: any) => {
+            return val.toUpperCase();
+          },
+          default: () => "defaultVal",
+        },
+        sk: { type: "string", sortKey: true },
+        testx: ["sk", 0],
+        testy: [
+          "sk",
+          1,
+          {
+            default: () => "testDefaultY",
+            format: (val) => {
+              return "__" + val.toUpperCase();
+            },
+          },
+        ],
+      },
+      table: TestTable,
+    })
   })
 
   // it('creates entity w/ table', async () => {

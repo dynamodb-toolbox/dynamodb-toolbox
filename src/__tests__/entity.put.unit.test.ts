@@ -354,7 +354,7 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // 💥 TODO: Improve set support
+        // @ts-expect-error
         test_string_set_type: [1, 2, 3]
       })
     ).toThrow(`'test_string_set_type' must be a valid set (array) containing only string types`)
@@ -503,15 +503,8 @@ describe('put', () => {
   })
 
   it('sets conditions', () => {
-    let {
-      TableName,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = TestEntity.putParams(
-      { email: 'x', sort: 'y' },
-      { conditions: { attr: 'email', gt: 'test' } }
-    )
+    let { TableName, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
+      TestEntity.putParams({ email: 'x', sort: 'y' }, { conditions: { attr: 'email', gt: 'test' } })
     expect(TableName).toBe('test-table')
     expect(ExpressionAttributeNames).toEqual({ '#attr1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':attr1': 'test' })

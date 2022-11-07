@@ -409,10 +409,9 @@ describe('update', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues
     } = TestEntity.updateParams({
-      pk: 'test-pk',
-      sk: 'test-sk',
+      email: 'test-pk',
+      sort: 'test-sk',
       test_string_set_type: { $delete: ['1', '2', '3'] },
-      // @ts-expect-error 💥 TODO: Improve list support
       test_number_set_type: { $delete: [1, 2, 3] }
     })
     expect(UpdateExpression).toBe(
@@ -450,7 +449,6 @@ describe('update', () => {
     } = TestEntity.updateParams({
       email: 'test-pk',
       sort: 'test-sk',
-      // @ts-expect-error 💥 TODO: Improve list support
       test_list: { $remove: [2, 3, 8] }
     })
     expect(UpdateExpression).toBe(
@@ -798,8 +796,8 @@ describe('update', () => {
   it('fails when using non-numeric values for indexed list removals', () => {
     expect(() =>
       TestEntity.updateParams({
-        pk: 'test-pk',
-        sk: 'test-sk',
+        email: 'test-pk',
+        sort: 'test-sk',
         // @ts-expect-error
         test_list: { $remove: [1, 2, 'test'] }
       })

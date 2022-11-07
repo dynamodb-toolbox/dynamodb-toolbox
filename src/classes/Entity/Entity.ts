@@ -14,7 +14,7 @@ import formatItem from '../../lib/formatItem'
 import getKey from '../../lib/getKey'
 import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
-import { error, transformAttr, isEmpty, If, FirstDefined } from '../../lib/utils'
+import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
@@ -44,8 +44,9 @@ import type {
   UpdateItem,
   UpdateOptionsReturnValues,
   Writable,
-  Readonly, $PutBatchOptions,
-} from './types';
+  Readonly,
+  $PutBatchOptions
+} from './types'
 
 class Entity<
   Name extends string = string,
@@ -315,11 +316,11 @@ class Entity<
       If<
         B.Not<ShouldParse<Parse, AutoParse>>,
         DocumentClient.GetItemOutput,
-        A.Compute<
+        Compute<
           O.Update<
             DocumentClient.GetItemOutput,
             'Item',
-            FirstDefined<[MethodItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]>
+            FirstDefined<[MethodItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>
           >
         >
       >
@@ -563,7 +564,7 @@ class Entity<
             DocumentClient.DeleteItemOutput,
             'Attributes',
             FirstDefined<
-              [MethodItemOverlay, EntityItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]
+              [MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]
             >
           >
         >
@@ -798,13 +799,26 @@ class Entity<
     ReturnValues extends UpdateOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined= true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
-    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
+    options: $UpdateOptions<
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    > = {},
     params: UpdateCustomParams = {}
   ): Promise<
-    A.Compute<
+    Compute<
       If<
         B.Not<ShouldExecute<Execute, AutoExecute>>,
         DocumentClient.UpdateItemInput,
@@ -875,7 +889,14 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: UpdateCustomParams
   ): { Update: DocumentClient.Update } {
@@ -927,8 +948,21 @@ class Entity<
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
-    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
+    options: $UpdateOptions<
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    > = {},
     {
       SET = [],
       REMOVE = [],
@@ -961,7 +995,7 @@ class Entity<
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
-     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
+    const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(
@@ -1198,9 +1232,8 @@ class Entity<
 
                   values[`:${value}`] = input.$append
                   // add default list value
-                  values[
-                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
-                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] =
+                    ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(
                     `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
@@ -1208,9 +1241,8 @@ class Entity<
 
                   values[`:${value}`] = input.$prepend
                   // add default list value
-                  values[
-                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
-                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] =
+                    ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {
@@ -1310,9 +1342,16 @@ class Entity<
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined= true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
@@ -1330,7 +1369,7 @@ class Entity<
             DocumentClient.PutItemOutput,
             'Attributes',
             FirstDefined<
-              [MethodItemOverlay, EntityItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]
+              [MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]
             >
           >
         >
@@ -1387,11 +1426,26 @@ class Entity<
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
-    >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+  >(
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {}
   ): { [key: string]: DocumentClient.WriteRequest } {
-    const payload = this.putParams<MethodItemOverlay, ShownItemAttributes, ResponseAttributes, 'NONE', Execute, Parse, StrictSchemaCheck>(item, options)
+    const payload = this.putParams<
+      MethodItemOverlay,
+      ShownItemAttributes,
+      ResponseAttributes,
+      'NONE',
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    >(item, options)
     return { [payload.TableName]: { PutRequest: { Item: payload.Item } } }
   }
 
@@ -1413,7 +1467,14 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: Partial<DocumentClient.PutItemInput>
   ): { Put: DocumentClient.Put } {
@@ -1441,7 +1502,6 @@ class Entity<
       StrictSchemaCheck
     >(item, options, params)
 
-
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
       let { ReturnValues, ..._payload } = payload
@@ -1466,7 +1526,14 @@ class Entity<
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): DocumentClient.PutItemInput {
