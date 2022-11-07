@@ -663,6 +663,44 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
   })
 
+  it('removes nested data in a map when set to null or undefined', () => {
+    let { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.updateParams({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_map: {
+          $set: {
+            prop1: null,
+            prop2: undefined
+          }
+        }
+      })
+
+    expect(ExpressionAttributeNames).toEqual({
+      '#_et': '_et',
+      '#_ct': '_ct',
+      '#_md': '_md',
+      '#test_boolean_default': 'test_boolean_default',
+      '#test_string': 'test_string',
+      '#test_map': 'test_map',
+      '#test_map_prop1': 'prop1',
+      '#test_map_prop2': 'prop2',
+      '#test_number_coerce': 'test_number_coerce'
+    })
+    expect(ExpressionAttributeValues).toHaveProperty(':_et')
+    expect(ExpressionAttributeValues![':_et']).toBe('TestEntity')
+    expect(ExpressionAttributeValues![':test_string']).toBe('default string')
+    expect(ExpressionAttributeValues!).not.toHaveProperty(':test_map_prop1')
+    expect(ExpressionAttributeValues!).not.toHaveProperty(':test_map_prop2')
+
+    expect(UpdateExpression).toBe(
+      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
+    )
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
+    expect(TableName).toBe('test-table')
+  })
+
+  it('uses an alias', async () => {
   it('supports appending/prepending nested lists in a map.', () => {
     let {
       TableName,
