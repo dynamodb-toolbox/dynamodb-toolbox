@@ -1279,8 +1279,11 @@ class Entity<
               }
             })
           })
-          // Add field to names
-          names[`#${field}`] = field
+
+          const shouldAppendFieldToExpressionNames = Object.keys(data[field].$set).length > 0
+          if (shouldAppendFieldToExpressionNames) {
+            names[`#${field}`] = field
+          }
           // else add to SET
         } else {
           let value = transformAttr(mapping, validateType(mapping, field, data[field]), data)
