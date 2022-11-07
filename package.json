@@ -35,6 +35,9 @@
     "url": "https://github.com/jeremydaly/dynamodb-toolbox/issues"
   },
   "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.16",
