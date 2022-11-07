@@ -759,6 +759,26 @@ describe('update', () => {
     expect(ExpressionAttributeValues![':test3']).toBe(0)
   })
 
+  it('removes unused expression values/names when using $set for a map field with an empty object', () => {
+    let {
+      ExpressionAttributeValues,
+      ExpressionAttributeNames,
+      UpdateExpression
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_map: {
+        $set: {}
+      }
+    })
+
+    expect(ExpressionAttributeValues).not.toHaveProperty(':test_map')
+    expect(ExpressionAttributeNames).not.toHaveProperty('#test_map')
+    expect(UpdateExpression).toBe(
+      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
+    )
+  })
+
   it('fails with undefined input', () => {
     // @ts-expect-error
     expect(() => TestEntity.updateParams()).toThrow(`'pk' or 'email' is required`)

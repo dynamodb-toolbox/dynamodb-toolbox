@@ -14,9 +14,7 @@ The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amaz
 ## Why single table design?
 Learn more about single table design in [Alex Debrie's blog](https://www.alexdebrie.com/posts/dynamodb-single-table).
 
-## Version 0.4 🙌 <!-- omit in toc -->
-
-v0.4 is here and now supports "Type Inferencing" 😎. This is a new feature that infers types from your Entity definitions. There should be NO regressions from v0.3.5, but please submit an issue if you find one!
+## Version 0.5 🙌 <!-- omit in toc -->
 
 Feedback is welcome and much appreciated! (Huge thanks to [@ThomasAribart](https://github.com/ThomasAribart) for all his work on this 🙌)
 
