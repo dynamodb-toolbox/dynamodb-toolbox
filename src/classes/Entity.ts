@@ -1571,8 +1571,6 @@ class Entity<
           // if a map and updating by nested attribute/index
         } else if (mapping.type === 'map' && data[field]?.$set) {
           Object.keys(data[field].$set).forEach(f => {
-            // TODO: handle null values to remove
-
             let props = f.split('.')
             let acc = [`#${field}`]
             props.forEach((prop, i) => {
