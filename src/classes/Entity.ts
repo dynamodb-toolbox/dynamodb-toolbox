@@ -1606,7 +1606,7 @@ class Entity<
                   values[`:${value}`] = input
                 }
 
-                if (input && input.$set) {
+                if (input?.$set) {
                   Object.keys(input.$set).forEach(i => {
                     if (String(parseInt(i)) !== i)
                       error(
