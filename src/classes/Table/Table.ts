@@ -933,28 +933,26 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       TableProjections
     } = this.batchGetParams(items, options, params, true) as BatchGetParamsMeta
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient!.batchGet(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        // TODO: Left in for testing. Needs to be removed
-        // result.UnprocessedKeys = testUnprocessedKeys
+    const shouldExecute = options.execute || (this.autoExecute && options.execute !== false)
+    if (!shouldExecute) {
+      return payload;
+    }
 
-        return this.parseBatchGetResponse(
-          result,
-          Tables,
-          EntityProjections,
-          TableProjections,
-          options
-        )
-      } else {
-        return result
-      }
-    } else {
-      return payload
-    } // end-if
-  } // end batchGet
+    const result = await this.DocumentClient!.batchGet(payload).promise()
+
+    const shouldParse = options.parse || (this.autoParse && options.parse !== false)
+    if (!shouldParse) {
+      return result
+    }
+
+    return this.parseBatchGetResponse(
+      result,
+      Tables,
+      EntityProjections,
+      TableProjections,
+      options
+    )
+  }
 
   parseBatchGetResponse(
     result: any,
