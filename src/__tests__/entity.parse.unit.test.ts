@@ -18,6 +18,27 @@ const TestTable = new Table({
   DocumentClient
 })
 
+const TestEntityHiddenType = new Entity({
+  name: 'TestEntityHiddenType',
+  attributes: {
+    pk: { type: 'string', partitionKey: true },
+    sk: { type: 'string', sortKey: true },
+  },
+  typeHidden: true,
+  table: TestTable
+})
+
+const TestEntityHiddenTypeWithAlias = new Entity({
+  name: 'TestEntityHiddenType',
+  attributes: {
+    pk: { type: 'string', partitionKey: true },
+    sk: { type: 'string', sortKey: true },
+  },
+  typeHidden: true,
+  typeAlias: 'TestEntityHiddenTypeAlias',
+  table: TestTable
+})
+
 describe('parse', () => {
   it('parses single item', () => {
     let item = TestEntity.parse({
@@ -44,6 +65,32 @@ describe('parse', () => {
       test_type: 'email'
     })
   })
+
+  it('parses single item and hide the entity type', () => {
+    let item = TestEntityHiddenType.parse({
+      pk: 'test@test.com',
+      sk: 'email',
+      _et: 'TestEntity',
+    })
+
+    expect(item).toEqual({
+      pk: 'test@test.com',
+      sk: 'email'
+    })
+  })  
+
+  it('parses single item with alias and hide the entity type', () => {
+    let item = TestEntityHiddenTypeWithAlias.parse({
+      pk: 'test@test.com',
+      sk: 'email',
+      _et: 'TestEntity',
+    })
+
+    expect(item).toEqual({
+      pk: 'test@test.com',
+      sk: 'email'
+    })
+  })  
 
   it('parses multiple items', () => {
     let items = TestEntity.parse([
@@ -83,6 +130,24 @@ describe('parse', () => {
       }
     ])
   })
+
+  it('parses multiple items and hide the entity type', () => {
+    let items = TestEntityHiddenType.parse([
+      { pk: 'test@test.com', sk: 'email', _et: 'TestEntity' },
+      { pk: 'test2@test.com', sk: 'email2', _et: 'TestEntity' }
+    ])
+
+    expect(items).toEqual([
+      {
+        pk: 'test@test.com',
+        sk: 'email'
+      },
+      {
+        pk: 'test2@test.com',
+        sk: 'email2'
+      }
+    ])
+  })  
 
   it('parses composite field', () => {
     let item = SimpleEntity.parse({

@@ -62,6 +62,7 @@ class Entity<
   CreatedAlias extends string = string extends Name ? string : 'created',
   ModifiedAlias extends string = string extends Name ? string : 'modified',
   TypeAlias extends string = string extends Name ? string : 'entity',
+  TypeHidden extends boolean = string extends Name ? boolean : false,
   ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>,
   WritableAttributeDefinitions extends AttributeDefinitions = Writable<ReadonlyAttributeDefinitions>,
   Attributes extends ParsedAttributes = string extends Name
@@ -74,7 +75,8 @@ class Entity<
           Timestamps,
           CreatedAlias,
           ModifiedAlias,
-          TypeAlias
+          TypeAlias,
+          TypeHidden
         >,
         ParsedAttributes<keyof EntityItemOverlay>
       >,
@@ -117,6 +119,7 @@ class Entity<
   public createdAlias: CreatedAlias
   public modifiedAlias: ModifiedAlias
   public typeAlias: TypeAlias
+  public typeHidden: TypeHidden
 
   // Declare constructor (entity config)
   constructor(
@@ -129,6 +132,7 @@ class Entity<
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
+      TypeHidden,
       ReadonlyAttributeDefinitions
     >
   ) {
@@ -142,13 +146,15 @@ class Entity<
       timestamps = true,
       createdAlias = 'created',
       modifiedAlias = 'modified',
-      typeAlias = 'entity'
+      typeAlias = 'entity',
+      typeHidden = false
     } = entity
     this.attributes = attributes
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
     this.modifiedAlias = modifiedAlias as ModifiedAlias
     this.typeAlias = typeAlias as TypeAlias
+    this.typeHidden = typeHidden as TypeHidden
     // Parse the entity and merge into this
     Object.assign(this, parseEntity(entity))
   } // end construcor
@@ -172,6 +178,7 @@ class Entity<
       if (table.Table.entityField) {
         this.schema.attributes[table.Table.entityField] = {
           type: 'string',
+          hidden: this.typeHidden,
           alias: this._etAlias,
           default: this.name
         }
@@ -400,6 +407,7 @@ class Entity<
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
+      TypeHidden,
       ReadonlyAttributeDefinitions,
       WritableAttributeDefinitions,
       Attributes,
@@ -822,22 +830,27 @@ class Entity<
       If<
         B.Not<ShouldExecute<Execute, AutoExecute>>,
         DocumentClient.UpdateItemInput,
-        If<
+         If<
           B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
-          If<
-            // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-            B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-            O.Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-            O.Update<
-              DocumentClient.UpdateItemOutput,
-              'Attributes',
-              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>
+           If<A.Equals<ReturnValues, 'NONE'>,
+           Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
+           O.Update<
+            DocumentClient.UpdateItemOutput,
+            'Attributes',
+              If<
+                B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
+                FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+                If<
+                  B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>, A.Equals<ReturnValues, 'UPDATED_NEW'>>,
+                  FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
+                  >
+                >
+              >
             >
           >
         >
-      >
-    >
+        >
   > {
     // Generate the payload
     const updateParams = this.updateParams<
@@ -1205,8 +1218,6 @@ class Entity<
           // if a map and updating by nested attribute/index
         } else if (mapping.type === 'map' && data[field]?.$set) {
           Object.keys(data[field].$set).forEach(f => {
-            // TODO: handle null values to remove
-
             let props = f.split('.')
             let acc = [`#${field}`]
             props.forEach((prop, i) => {
@@ -1219,7 +1230,7 @@ class Entity<
                 let path = `${acc.join('.')}.#${id}`
                 let value = `${id.replace(/\[(\d+)\]/, '_$1')}`
 
-                if (input === undefined) {
+                if (input === undefined || input === null) {
                   REMOVE.push(`${path}`)
                 } else if (input.$add) {
                   ADD.push(`${path} :${value}`)
@@ -1257,7 +1268,7 @@ class Entity<
                   values[`:${value}`] = input
                 }
 
-                if (input.$set) {
+                if (input?.$set) {
                   Object.keys(input.$set).forEach(i => {
                     if (String(parseInt(i)) !== i) {
                       error(
@@ -1274,8 +1285,11 @@ class Entity<
               }
             })
           })
-          // Add field to names
-          names[`#${field}`] = field
+
+          const shouldAppendFieldToExpressionNames = Object.keys(data[field].$set).length > 0
+          if (shouldAppendFieldToExpressionNames) {
+            names[`#${field}`] = field
+          }
           // else add to SET
         } else {
           let value = transformAttr(mapping, validateType(mapping, field, data[field]), data)
