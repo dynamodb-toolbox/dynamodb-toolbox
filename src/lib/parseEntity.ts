@@ -137,7 +137,6 @@ export function parseEntity<
     ? typeAlias.trim()
     : 'entity') as TypeAlias
 
-  // 🔨 TOIMPROVE: Use default option & simply throw if type is incorrect
   typeHidden = (typeof typeHidden === 'boolean' ? typeHidden : false) as TypeHidden
 
   // Sanity check the attributes
