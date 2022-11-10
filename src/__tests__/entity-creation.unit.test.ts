@@ -29,6 +29,7 @@ describe('Entity creation', () => {
     expect(TestEntity.defaults).toHaveProperty('_ct')
     expect(TestEntity.defaults).toHaveProperty('_md')
     expect(TestEntity._etAlias).toBe('entity')
+    expect(TestEntity.typeHidden).toBe(false)
   })
 
   it('creates basic entity w/o timestamps', () => {
@@ -71,6 +72,18 @@ describe('Entity creation', () => {
     expect(TestEntity.schema.attributes.modifiedAt).toHaveProperty('default')
     expect(TestEntity.defaults).toHaveProperty('createdAt')
     expect(TestEntity.defaults).toHaveProperty('modifiedAt')
+  })
+
+  it('creates basic entity with typeHidden set to true', () => {
+    let TestEntity = new Entity({
+      name: 'TestEntity',
+      typeHidden: true,
+      attributes: {
+        pk: { partitionKey: true },
+      }
+    } as const)
+    
+    expect(TestEntity.typeHidden).toBe(true)
   })
 
   it('creates basic entity w/ required fields', () => {
