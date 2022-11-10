@@ -28,6 +28,17 @@ const TestEntityHiddenType = new Entity({
   table: TestTable
 })
 
+const TestEntityHiddenTypeWithAlias = new Entity({
+  name: 'TestEntityHiddenType',
+  attributes: {
+    pk: { type: 'string', partitionKey: true },
+    sk: { type: 'string', sortKey: true },
+  },
+  typeHidden: true,
+  typeAlias: 'TestEntityHiddenTypeAlias',
+  table: TestTable
+})
+
 describe('parse', () => {
   it('parses single item', () => {
     let item = TestEntity.parse({
@@ -57,6 +68,19 @@ describe('parse', () => {
 
   it('parses single item and hide the entity type', () => {
     let item = TestEntityHiddenType.parse({
+      pk: 'test@test.com',
+      sk: 'email',
+      _et: 'TestEntity',
+    })
+
+    expect(item).toEqual({
+      pk: 'test@test.com',
+      sk: 'email'
+    })
+  })  
+
+  it('parses single item with alias and hide the entity type', () => {
+    let item = TestEntityHiddenTypeWithAlias.parse({
       pk: 'test@test.com',
       sk: 'email',
       _et: 'TestEntity',

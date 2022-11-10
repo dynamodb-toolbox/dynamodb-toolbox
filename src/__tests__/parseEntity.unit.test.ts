@@ -1,4 +1,3 @@
-import { endianness } from 'os'
 import parseEntity from '../lib/parseEntity'
 
 // Simulate Entity config
