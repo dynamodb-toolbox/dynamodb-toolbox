@@ -1751,7 +1751,7 @@ describe('Entity', () => {
         const updatePromise1 = () => ent.update(item1)
         updatePromise1
 
-        const item2 = { pkMap1 }
+        const item2 = { pk, sk, pkMap1 }
         ent.updateParams(item2)
         const updatePromise2 = () => ent.update(item2)
         updatePromise2
