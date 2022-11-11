@@ -759,7 +759,7 @@ describe('Entity', () => {
         testQueryItems
 
         type QueryNextItems = Awaited<
-          F.Return<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
+          ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
         type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
         const testQueryNextItems: TestQueryNextItems = 1
@@ -782,7 +782,7 @@ describe('Entity', () => {
         testQueryItems
 
         type QueryNextItems = Awaited<
-          F.Return<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
+          ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
         type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
         const testQueryNextItems: TestQueryNextItems = 1
@@ -805,7 +805,7 @@ describe('Entity', () => {
         testQueryItems
 
         type QueryNextItems = Awaited<
-          F.Return<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
+          ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
         type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
         const testQueryNextItems: TestQueryNextItems = 1
@@ -820,7 +820,7 @@ describe('Entity', () => {
         testQueryItems
 
         type QueryNextItems = Awaited<
-          F.Return<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
+          ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
         type TestQueryNextItems = A.Equals<
           QueryNextItems,
@@ -852,7 +852,7 @@ describe('Entity', () => {
         testScanItems
 
         type ScanNextItems = Awaited<
-          F.Return<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
+          ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
         type TestScanNextItems = A.Equals<
           ScanNextItems,
@@ -870,7 +870,7 @@ describe('Entity', () => {
         testScanItems
 
         type ScanNextItems = Awaited<
-          F.Return<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
+          ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
         type TestScanNextItems = A.Equals<
           ScanNextItems,
@@ -897,7 +897,7 @@ describe('Entity', () => {
         testScanItems
 
         type ScanNextItems = Awaited<
-          F.Return<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
+          ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
         type TestScanNextItems = A.Equals<
           ScanNextItems,
@@ -915,7 +915,7 @@ describe('Entity', () => {
         testScanItems
 
         type ScanNextItems = Awaited<
-          F.Return<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
+          ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
         type TestScanNextItems = A.Equals<
           ScanNextItems,
@@ -1108,7 +1108,7 @@ describe('Entity', () => {
         ent.deleteParams(ck1)
         const deletePromise1 = () => ent.delete(ck1)
         type DeleteItem1 = Awaited<
-          F.Return<typeof deletePromise1>
+          ReturnType<typeof deletePromise1>
           // @ts-expect-error
         >['Attributes']
         let deleteItem1: DeleteItem1
@@ -1118,7 +1118,7 @@ describe('Entity', () => {
         ent.deleteParams(ck2)
         const deletePromise2 = () => ent.delete(ck2)
         type DeleteItem2 = Awaited<
-          F.Return<typeof deletePromise2>
+          ReturnType<typeof deletePromise2>
           // @ts-expect-error
         >['Attributes']
         let deleteItem2: DeleteItem2
@@ -1128,7 +1128,7 @@ describe('Entity', () => {
         ent.deleteParams(ck3)
         const deletePromise3 = () => ent.delete(ck3, { returnValues: 'NONE' })
         type DeleteItem3 = Awaited<
-          F.Return<typeof deletePromise3>
+          ReturnType<typeof deletePromise3>
           // @ts-expect-error
         >['Attributes']
         let deleteItem3: DeleteItem3
@@ -2318,7 +2318,7 @@ describe('Entity', () => {
         it('Attributes misses from return type if no or none returnValue option is provided', () => {
           const deletePromiseNone1 = () => ent.delete(ck0)
           type DeleteItemNone1 = Awaited<
-            F.Return<typeof deletePromiseNone1>
+            ReturnType<typeof deletePromiseNone1>
             // @ts-expect-error
           >['Attributes']
           let deleteItemNone1: DeleteItemNone1
@@ -2326,7 +2326,7 @@ describe('Entity', () => {
 
           const deletePromiseNone2 = () => ent.delete(ck0, { returnValues: 'NONE' })
           type DeleteItemNone2 = Awaited<
-            F.Return<typeof deletePromiseNone2>
+            ReturnType<typeof deletePromiseNone2>
             // @ts-expect-error
           >['Attributes']
           let deleteItemNone2: DeleteItemNone2
@@ -2445,7 +2445,7 @@ describe('Entity', () => {
         it('Attributes misses from return type if no or none returnValue option is provided', () => {
           const putPromiseNone1 = () => ent.put({ ...ck0, num0 })
           type PutItemNone1 = Awaited<
-            F.Return<typeof putPromiseNone1>
+            ReturnType<typeof putPromiseNone1>
             // @ts-expect-error
           >['Attributes']
           let putItemNone1: PutItemNone1
@@ -2453,7 +2453,7 @@ describe('Entity', () => {
 
           const putPromiseNone2 = () => ent.put({ ...ck0, num0 }, { returnValues: 'NONE' })
           type PutItemNone2 = Awaited<
-            F.Return<typeof putPromiseNone2>
+            ReturnType<typeof putPromiseNone2>
             // @ts-expect-error
           >['Attributes']
           let putItemNone2: PutItemNone2
@@ -2541,7 +2541,7 @@ describe('Entity', () => {
         it('Attributes misses from return type if no or none returnValue option is provided', () => {
           const none1UpdatePromise = () => ent.update({ ...ck0, num0 })
           type None1UpdateAttributes = Awaited<
-            F.Return<typeof none1UpdatePromise>
+            ReturnType<typeof none1UpdatePromise>
             // @ts-expect-error
           >['Attributes']
           let none1UpdateAttributes: None1UpdateAttributes
@@ -2549,7 +2549,7 @@ describe('Entity', () => {
 
           const none2UpdatePromise = () => ent.update({ ...ck0, num0 }, { returnValues: 'NONE' })
           type None2UpdateAttributes = Awaited<
-            F.Return<typeof none2UpdatePromise>
+            ReturnType<typeof none2UpdatePromise>
             // @ts-expect-error
           >['Attributes']
           let none2UpdateAttributes: None2UpdateAttributes
@@ -2560,7 +2560,7 @@ describe('Entity', () => {
           const updatedOldUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'UPDATED_OLD' })
           type UpdatedOldUpdateAttributes = Awaited<
-            F.Return<typeof updatedOldUpdatePromise>
+            ReturnType<typeof updatedOldUpdatePromise>
           >['Attributes']
           type AssertUpdatedOldUpdateAttributes = A.Equals<
             UpdatedOldUpdateAttributes,
@@ -2572,7 +2572,7 @@ describe('Entity', () => {
           const updatedNewUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'UPDATED_NEW' })
           type UpdatedNewUpdateAttributes = Awaited<
-            F.Return<typeof updatedNewUpdatePromise>
+            ReturnType<typeof updatedNewUpdatePromise>
           >['Attributes']
           type AssertUpdatedNewUpdateAttributes = A.Equals<
             UpdatedNewUpdateAttributes,
