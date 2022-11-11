@@ -82,10 +82,10 @@ export const transformAttr = (mapping: PureAttributeDefinition, value: any, data
 // Type now exists in ts-toolbelt but requires upgrading ts: See https://github.com/millsp/ts-toolbelt/issues/169
 export type If<C extends 0 | 1, T, E = never> = C extends 1 ? (1 extends C ? T : E) : E
 
-export type FirstDefined<Elements extends List> = {
+export type FirstDefined<ListElements extends List> = {
   stopNone: undefined
-  stopOne: ListHead<Elements>
-  continue: FirstDefined<ListTail<Elements>>
+  stopOne: ListHead<ListElements>
+  continue: FirstDefined<ListTail<ListElements>>
 }[A.Cast<
   If<A.Equals<List, []>, 'stopNone', If<A.Equals<ListHead<List>, undefined>, 'continue', 'stopOne'>>,
   'stopNone' | 'stopOne' | 'continue'
