@@ -285,7 +285,7 @@ describe('delete', () => {
 
     const key = { id: 'xyz' }
     // @ts-expect-error 💥 TODO: Because default can be a func, composite keys in deletes and gets should accept extra data
-    let result = Foos.deleteParams(key) // Fails with v0.2.0-beta. Fine with v0.2.0-alpha
-    expect(result).toEqual({ TableName: 'test-table', Key: { pk: 'FOO#xyz', sk: 'FOO#xyz' } })
+    expect(() => Foos.deleteParams(key)).toThrow(`'pk' is required`)
+
   })
 })
