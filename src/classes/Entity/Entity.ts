@@ -1,11 +1,5 @@
-/**
- * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
- * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @license MIT
- */
-
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import type { A, B, O } from 'ts-toolbelt'
+import type { B, O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity'
 import validateTypes from '../../lib/validateTypes'
@@ -19,6 +13,7 @@ import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
 } from '../../constants'
+import type { Cast, Equals, Key, Not, Or } from '../../lib/ts-utils';
 import type { ScanOptions, TableDef } from '../Table'
 import type {
   $GetOptions,
@@ -47,7 +42,6 @@ import type {
   Readonly,
   $PutBatchOptions
 } from './types'
-import { Key } from '../../lib/ts-utils';
 
 class Entity<
   Name extends string = string,
@@ -69,7 +63,7 @@ class Entity<
   Attributes extends ParsedAttributes = string extends Name
     ? ParsedAttributes
     : If<
-        A.Equals<EntityItemOverlay, undefined>,
+        Equals<EntityItemOverlay, undefined>,
         // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
         ParseAttributes<
           WritableAttributeDefinitions,
@@ -84,17 +78,17 @@ class Entity<
   $Item extends any = string extends Name
     ? any
     : If<
-        A.Equals<EntityItemOverlay, undefined>,
+        Equals<EntityItemOverlay, undefined>,
         // 🔨 TOIMPROVE: Use EntityTable in item infering
         InferItem<WritableAttributeDefinitions, Attributes>,
         EntityItemOverlay
       >,
   // Necessary to cast in a second step to prevent infinite loop during type check
-  Item extends O.Object = string extends Name ? O.Object : A.Cast<$Item, O.Object>,
+  Item extends O.Object = string extends Name ? O.Object : Cast<$Item, O.Object>,
   CompositePrimaryKey extends O.Object = string extends Name
     ? O.Object
     : If<
-        A.Equals<EntityItemOverlay, undefined>,
+        Equals<EntityItemOverlay, undefined>,
         InferCompositePrimaryKey<Item, Attributes>,
         O.Object
       >
@@ -306,7 +300,7 @@ class Entity<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -319,16 +313,16 @@ class Entity<
     params: Partial<DocumentClient.GetItemInput> = {}
   ): Promise<
     If<
-      B.Not<ShouldExecute<Execute, AutoExecute>>,
+      Not<ShouldExecute<Execute, AutoExecute>>,
       DocumentClient.GetItemInput,
       If<
-        B.Not<ShouldParse<Parse, AutoParse>>,
+        Not<ShouldParse<Parse, AutoParse>>,
         DocumentClient.GetItemOutput,
         Compute<
           O.Update<
             DocumentClient.GetItemOutput,
             'Item',
-            FirstDefined<[MethodItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>
+            FirstDefined<[MethodItemOverlay, Compute<Pick<Item, ResponseAttributes>>]>
           >
         >
       >
@@ -388,7 +382,7 @@ class Entity<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -453,7 +447,7 @@ class Entity<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -546,7 +540,7 @@ class Entity<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -560,20 +554,20 @@ class Entity<
     params: Partial<DocumentClient.DeleteItemInput> = {}
   ): Promise<
     If<
-      B.Not<ShouldExecute<Execute, AutoExecute>>,
+      Not<ShouldExecute<Execute, AutoExecute>>,
       DocumentClient.DeleteItemInput,
       If<
-        B.Not<ShouldParse<Parse, AutoParse>>,
+        Not<ShouldParse<Parse, AutoParse>>,
         DocumentClient.DeleteItemOutput,
         If<
           // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-          B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-          O.Omit<DocumentClient.DeleteItemOutput, 'Attributes'>,
+          B.And<Equals<ReturnValues, 'NONE'>, Equals<MethodItemOverlay, undefined>>,
+          Omit<DocumentClient.DeleteItemOutput, 'Attributes'>,
           O.Update<
             DocumentClient.DeleteItemOutput,
             'Attributes',
             FirstDefined<
-              [MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]
+              [MethodItemOverlay, EntityItemOverlay, Compute<Pick<Item, ResponseAttributes>>]
             >
           >
         >
@@ -637,7 +631,7 @@ class Entity<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
     ItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
       keyof MethodItemOverlay
     >,
@@ -688,7 +682,7 @@ class Entity<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -800,7 +794,7 @@ class Entity<
   async update<
     MethodItemOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -829,22 +823,22 @@ class Entity<
   ): Promise<
     Compute<
       If<
-        B.Not<ShouldExecute<Execute, AutoExecute>>,
+        Not<ShouldExecute<Execute, AutoExecute>>,
         DocumentClient.UpdateItemInput,
          If<
-          B.Not<ShouldParse<Parse, AutoParse>>,
+          Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
-           If<A.Equals<ReturnValues, 'NONE'>,
+           If<Equals<ReturnValues, 'NONE'>,
            Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
            O.Update<
             DocumentClient.UpdateItemOutput,
             'Attributes',
               If<
-                B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
-                FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+                Or<Equals<ReturnValues, 'ALL_OLD'>, Equals<ReturnValues, 'ALL_NEW'>>,
+                FirstDefined<[Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
                 If<
-                  B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>, A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-                  FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
+                  Or<Equals<ReturnValues, 'UPDATED_OLD'>, Equals<ReturnValues, 'UPDATED_NEW'>>,
+                  FirstDefined<[MethodItemOverlay, Pick<Item, ResponseAttributes>, EntityItemOverlay]>
                   >
                 >
               >
@@ -896,7 +890,7 @@ class Entity<
   updateTransaction<
     MethodItemOverlay extends Overlay = undefined,
     ItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
       keyof MethodItemOverlay
     >,
@@ -952,7 +946,7 @@ class Entity<
   updateParams<
     MethodItemOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -1349,7 +1343,7 @@ class Entity<
   async put<
     MethodItemOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -1371,20 +1365,20 @@ class Entity<
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
     If<
-      B.Not<ShouldExecute<Execute, AutoExecute>>,
+      Not<ShouldExecute<Execute, AutoExecute>>,
       DocumentClient.PutItemInput,
       If<
-        B.Not<ShouldParse<Parse, AutoParse>>,
+        Not<ShouldParse<Parse, AutoParse>>,
         DocumentClient.PutItemOutput,
         // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
         If<
-          B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-          O.Omit<DocumentClient.PutItemOutput, 'Attributes'>,
+          B.And<Equals<ReturnValues, 'NONE'>, Equals<MethodItemOverlay, undefined>>,
+          Omit<DocumentClient.PutItemOutput, 'Attributes'>,
           O.Update<
             DocumentClient.PutItemOutput,
             'Attributes',
             FirstDefined<
-              [MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]
+              [MethodItemOverlay, EntityItemOverlay, Compute<Pick<Item, ResponseAttributes>>]
             >
           >
         >
@@ -1433,7 +1427,7 @@ class Entity<
   putBatch<
     MethodItemOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -1475,7 +1469,7 @@ class Entity<
   putTransaction<
     MethodItemOverlay extends Overlay = undefined,
     ItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
       keyof MethodItemOverlay
     >,
@@ -1531,7 +1525,7 @@ class Entity<
   putParams<
     MethodItemOverlay extends Overlay = undefined,
     ShownItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
     >,
@@ -1695,7 +1689,7 @@ class Entity<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
     ItemAttributes extends Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
       keyof MethodItemOverlay
     >,
@@ -1742,7 +1736,7 @@ class Entity<
   query<
     MethodItemOverlay extends Overlay = undefined,
     ItemAttributes extends { all: Key; shown: Key } = If<
-      A.Equals<MethodItemOverlay, undefined>,
+      Equals<MethodItemOverlay, undefined>,
       { all: Attributes['all']; shown: Attributes['shown'] },
       { all: keyof MethodItemOverlay; shown: keyof MethodItemOverlay }
     >,
@@ -1761,7 +1755,7 @@ class Entity<
 
     options.entity = this.name
     return this.table.query<
-      FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>,
+      FirstDefined<[MethodItemOverlay, Pick<Item, ResponseAttributes>]>,
       Execute,
       Parse
     >(pk, options, params)
