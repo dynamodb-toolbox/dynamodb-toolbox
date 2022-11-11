@@ -1,5 +1,5 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import type { B, O } from 'ts-toolbelt'
+import type { O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity'
 import validateTypes from '../../lib/validateTypes'
@@ -13,7 +13,7 @@ import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
 } from '../../constants'
-import type { Cast, Equals, Key, Not, Or } from '../../lib/ts-utils';
+import type { And, Cast, Equals, Key, Not, Or } from '../../lib/ts-utils';
 import type { ScanOptions, TableDef } from '../Table'
 import type {
   $GetOptions,
@@ -561,7 +561,7 @@ class Entity<
         DocumentClient.DeleteItemOutput,
         If<
           // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-          B.And<Equals<ReturnValues, 'NONE'>, Equals<MethodItemOverlay, undefined>>,
+          And<Equals<ReturnValues, 'NONE'>, Equals<MethodItemOverlay, undefined>>,
           Omit<DocumentClient.DeleteItemOutput, 'Attributes'>,
           O.Update<
             DocumentClient.DeleteItemOutput,
@@ -1372,7 +1372,7 @@ class Entity<
         DocumentClient.PutItemOutput,
         // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
         If<
-          B.And<Equals<ReturnValues, 'NONE'>, Equals<MethodItemOverlay, undefined>>,
+          And<Equals<ReturnValues, 'NONE'>, Equals<MethodItemOverlay, undefined>>,
           Omit<DocumentClient.PutItemOutput, 'Attributes'>,
           O.Update<
             DocumentClient.PutItemOutput,
