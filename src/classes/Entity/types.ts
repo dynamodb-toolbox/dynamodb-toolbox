@@ -2,8 +2,9 @@ import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, B, O, F } from 'ts-toolbelt'
 
 import type { Compute, FirstDefined, If } from '../../lib/utils'
+import type { Key } from '../../lib/ts-utils';
 import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table';
-import Entity from './Entity'
+import type Entity from './Entity'
 
 export interface EntityConstructor<
   EntityTable extends TableDef | undefined = undefined,
@@ -109,7 +110,7 @@ export type AttributeDefinition =
   | PureAttributeDefinition
   | CompositeAttributeDefinition
 
-export type AttributeDefinitions = Record<A.Key, AttributeDefinition>
+export type AttributeDefinitions = Record<Key, AttributeDefinition>
 
 export type InferKeyAttribute<
   Definitions extends AttributeDefinitions,
@@ -118,10 +119,10 @@ export type InferKeyAttribute<
 
 export type InferMappedAttributes<
   Definitions extends AttributeDefinitions,
-  AttributeName extends A.Key
+  AttributeName extends Key
 > = O.SelectKeys<Definitions, [AttributeName, any, any?]>
 
-export interface ParsedAttributes<Attributes extends A.Key = A.Key> {
+export interface ParsedAttributes<Attributes extends Key = Key> {
   aliases: Attributes
   all: Attributes
   default: Attributes
@@ -136,9 +137,9 @@ export interface ParsedAttributes<Attributes extends A.Key = A.Key> {
   shown: Attributes
 }
 
-export type GetDependsOnAttributes<A extends AttributeDefinition> = A extends { dependsOn: A.Key }
+export type GetDependsOnAttributes<A extends AttributeDefinition> = A extends { dependsOn: Key }
   ? A['dependsOn']
-  : A extends { dependsOn: A.Key[] }
+  : A extends { dependsOn: Key[] }
   ? A['dependsOn'][number]
   : never
 
@@ -152,30 +153,30 @@ export type ParseAttributes<
   Aliases extends string =
     | (Timestamps extends true ? CreatedAlias | ModifiedAlias : never)
     | TypeAlias,
-  Default extends A.Key =
+  Default extends Key =
     | O.SelectKeys<Definitions, { default: any } | [any, any, { default: any }]>
     | Aliases,
-  PK extends A.Key = InferKeyAttribute<Definitions, 'partitionKey'>,
-  PKDependsOn extends A.Key = GetDependsOnAttributes<Definitions[PK]>,
-  PKMappedAttribute extends A.Key = InferMappedAttributes<Definitions, PK>,
-  SK extends A.Key = InferKeyAttribute<Definitions, 'sortKey'>,
-  SKDependsOn extends A.Key = GetDependsOnAttributes<Definitions[SK]>,
-  SKMappedAttribute extends A.Key = InferMappedAttributes<Definitions, SK>,
-  KeyAttributes extends A.Key = PK | PKMappedAttribute | SK | SKMappedAttribute,
-  AlwaysAttributes extends A.Key = Exclude<
+  PK extends Key = InferKeyAttribute<Definitions, 'partitionKey'>,
+  PKDependsOn extends Key = GetDependsOnAttributes<Definitions[PK]>,
+  PKMappedAttribute extends Key = InferMappedAttributes<Definitions, PK>,
+  SK extends Key = InferKeyAttribute<Definitions, 'sortKey'>,
+  SKDependsOn extends Key = GetDependsOnAttributes<Definitions[SK]>,
+  SKMappedAttribute extends Key = InferMappedAttributes<Definitions, SK>,
+  KeyAttributes extends Key = PK | PKMappedAttribute | SK | SKMappedAttribute,
+  AlwaysAttributes extends Key = Exclude<
     | O.SelectKeys<Definitions, { required: 'always' } | [any, any, { required: 'always' }]>
     | (Timestamps extends true ? ModifiedAlias : never),
     KeyAttributes
   >,
-  RequiredAttributes extends A.Key = Exclude<
+  RequiredAttributes extends Key = Exclude<
     | O.SelectKeys<Definitions, { required: true } | [any, any, { required: true }]>
     | (Timestamps extends true ? CreatedAlias : never)
     | TypeAlias,
     KeyAttributes
   >,
   // 🔨 TOIMPROVE: Use EntityTable to infer extra attributes
-  Attribute extends A.Key = keyof Definitions | Aliases,
-  Hidden extends A.Key = O.SelectKeys<Definitions, { hidden: true } | [any, any, { hidden: true }]>
+  Attribute extends Key = keyof Definitions | Aliases,
+  Hidden extends Key = O.SelectKeys<Definitions, { hidden: true } | [any, any, { hidden: true }]>
 > = {
   aliases: Aliases
   all: Attribute
@@ -272,9 +273,9 @@ export type CompositePrimaryKeyPart<
   Item extends O.Object,
   Attributes extends ParsedAttributes,
   KeyType extends 'partitionKey' | 'sortKey',
-  KeyPureAttribute extends A.Key = Attributes['key'][KeyType]['pure'],
-  KeyDependsOnAttributes extends A.Key = Attributes['key'][KeyType]['dependsOn'],
-  KeyCompositeAttributes extends A.Key = Attributes['key'][KeyType]['mapped']
+  KeyPureAttribute extends Key = Attributes['key'][KeyType]['pure'],
+  KeyDependsOnAttributes extends Key = Attributes['key'][KeyType]['dependsOn'],
+  KeyCompositeAttributes extends Key = Attributes['key'][KeyType]['mapped']
 > = If<
   A.Equals<KeyPureAttribute, never>,
   Record<never, unknown>,
@@ -307,7 +308,7 @@ export type InferCompositePrimaryKey<
 
 export type Overlay = undefined | O.Object
 
-export type ConditionOrFilter<Attributes extends A.Key = A.Key> = (
+export type ConditionOrFilter<Attributes extends Key = Key> = (
   | { attr: Attributes }
   | { size: string }
 ) &
@@ -330,7 +331,7 @@ export type ConditionOrFilter<Attributes extends A.Key = A.Key> = (
     in: any[]
   }>
 
-export type ConditionsOrFilters<Attributes extends A.Key = A.Key> =
+export type ConditionsOrFilters<Attributes extends Key = Key> =
   | ConditionOrFilter<Attributes>
   | ConditionsOrFilters<Attributes>[]
 
@@ -351,14 +352,14 @@ export type $ReadOptions<
 }
 
 export type $GetOptions<
-  Attributes extends A.Key = A.Key,
+  Attributes extends Key = Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = O.Partial<$ReadOptions<Execute, Parse> & { attributes: Attributes[]; include: string[] }>
 
 export type EntityQueryOptions<
-  Attributes extends A.Key = A.Key,
-  FiltersAttributes extends A.Key = Attributes,
+  Attributes extends Key = Key,
+  FiltersAttributes extends Key = Attributes,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = O.Partial<
@@ -369,7 +370,7 @@ export type EntityQueryOptions<
 >
 
 export type $WriteOptions<
-  Attributes extends A.Key = A.Key,
+  Attributes extends Key = Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = BaseOptions<Execute, Parse> & {
@@ -381,7 +382,7 @@ export type $WriteOptions<
 export type PutOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
 export type $PutOptions<
-  Attributes extends A.Key = A.Key,
+  Attributes extends Key = Key,
   ReturnValues extends PutOptionsReturnValues = PutOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
@@ -432,7 +433,7 @@ export type UpdateOptionsReturnValues =
   | 'ALL_NEW'
 
 export type $UpdateOptions<
-  Attributes extends A.Key = A.Key,
+  Attributes extends Key = Key,
   ReturnValues extends UpdateOptionsReturnValues = UpdateOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
@@ -485,7 +486,7 @@ export type AttributeUpdateInput<AttributeType> =
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
 export type RawDeleteOptions<
-  Attributes extends A.Key = A.Key,
+  Attributes extends Key = Key,
   ReturnValues extends DeleteOptionsReturnValues = DeleteOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
@@ -494,7 +495,7 @@ export type RawDeleteOptions<
 export type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
 export interface TransactionOptions<
-  Attributes extends A.Key = A.Key,
+  Attributes extends Key = Key,
   StrictSchemaCheck extends boolean | undefined = true
 > {
   conditions?: ConditionsOrFilters<Attributes>
@@ -527,7 +528,7 @@ export type Writable<T> = T extends F.Function | undefined
 export type InferEntityItem<
   E extends Entity,
   WritableAttributeDefinitions extends AttributeDefinitions = A.Cast<
-    O.Writable<E['attributes'], A.Key, 'deep'>,
+    O.Writable<E['attributes'], Key, 'deep'>,
     AttributeDefinitions
   >,
   Attributes extends ParsedAttributes = ParseAttributes<
@@ -542,17 +543,17 @@ export type InferEntityItem<
 > = Pick<Item, Extract<Attributes['shown'], keyof Item>>
 
 export type EntityItem<E extends Entity> = E['_typesOnly']['_entityItemOverlay'] extends Record<
-  A.Key,
+  Key,
   any
 >
   ? E['_typesOnly']['_entityItemOverlay']
   : InferEntityItem<E>
 
 export type ExtractAttributes<E extends Entity> =
-  E['_typesOnly']['_entityItemOverlay'] extends Record<A.Key, any>
+  E['_typesOnly']['_entityItemOverlay'] extends Record<Key, any>
     ? ParsedAttributes<keyof E['_typesOnly']['_entityItemOverlay']>
     : ParseAttributes<
-        A.Cast<O.Writable<E['attributes'], A.Key, 'deep'>, AttributeDefinitions>,
+        A.Cast<O.Writable<E['attributes'], Key, 'deep'>, AttributeDefinitions>,
         E['timestamps'],
         E['createdAlias'],
         E['modifiedAlias'],

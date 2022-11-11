@@ -1,15 +1,16 @@
 import type { default as DynamoDb, DocumentClient} from 'aws-sdk/clients/dynamodb'
-import type { A, O } from 'ts-toolbelt';
+import type { O } from 'ts-toolbelt';
 
 import type { ProjectionAttributes } from '../../lib/projectionBuilder';
 import type { FilterExpressions } from '../../lib/expressionBuilder'
+import type { Key } from '../../lib/ts-utils';
 import type { $ReadOptions, ConditionsOrFilters } from '../Entity'
 import type Table  from './Table';
 
 export interface TableConstructor<
   Name extends string,
-  PartitionKey extends A.Key,
-  SortKey extends A.Key | null
+  PartitionKey extends Key,
+  SortKey extends Key | null
 > {
   name: Name
   alias?: string | null
@@ -76,7 +77,7 @@ export type TableQueryOptions<
 > = O.Partial<
   $QueryOptions<Execute, Parse> & {
     attributes: ProjectionAttributes
-    filters: ConditionsOrFilters<A.Key>
+    filters: ConditionsOrFilters<Key>
   }
 >
 
@@ -138,4 +139,4 @@ export interface TransactGetParamsMeta {
   payload: DocumentClient.TransactGetItemsInput
 }
 
-export type TableDef = Table<string, A.Key, A.Key | null>
+export type TableDef = Table<string, Key, Key | null>
