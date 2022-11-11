@@ -1,9 +1,9 @@
 import { DynamoDB } from 'aws-sdk'
 import { DocumentClient as DocumentClientType } from 'aws-sdk/clients/dynamodb'
 import MockDate from 'mockdate'
-import { A, C, F, O } from 'ts-toolbelt'
+import { A, O } from 'ts-toolbelt'
 
-import {
+import type {
   EntityItem,
   GetOptions,
   QueryOptions,
@@ -11,9 +11,9 @@ import {
   DeleteOptions,
   UpdateOptions,
   ConditionsOrFilters
-} from 'classes/Entity'
-
-import { Table, Entity } from '../index'
+} from '../classes/Entity'
+import type { Key } from '../lib/ts-utils';
+import type { Table, Entity } from '../index'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
   obj: O,
@@ -28,7 +28,7 @@ const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
 
 const DocumentClient = new DynamoDB.DocumentClient()
 
-type ExpectedReadOpts<Attributes extends A.Key = A.Key> = Partial<{
+type ExpectedReadOpts<Attributes extends Key = Key> = Partial<{
   capacity: string
   execute: boolean
   parse: boolean
@@ -36,13 +36,13 @@ type ExpectedReadOpts<Attributes extends A.Key = A.Key> = Partial<{
   consistent: boolean
 }>
 
-type ExpectedGetOpts<Attributes extends A.Key = A.Key> = Partial<
+type ExpectedGetOpts<Attributes extends Key = Key> = Partial<
   ExpectedReadOpts<Attributes> & { include: string[] }
 >
 
 type ExpectedQueryOpts<
-  ResponseAttributes extends A.Key = A.Key,
-  FilteredAttributes extends A.Key = A.Key
+  ResponseAttributes extends Key = Key,
+  FilteredAttributes extends Key = Key
 > = Partial<
   ExpectedReadOpts<ResponseAttributes> & {
     index: string
@@ -64,7 +64,7 @@ type ExpectedQueryOpts<
 >
 
 type ExpectedWriteOpts<
-  Attributes extends A.Key = A.Key,
+  Attributes extends Key = Key,
   ReturnValues extends string = string
 > = Partial<{
   capacity: string

@@ -36,10 +36,11 @@ import type {
 } from './types'
 
 // Import standard error handler
-import { error, conditionError, hasProperty, If, Compute } from '../../lib/utils'
+import { error, conditionError, If, Compute } from '../../lib/utils'
+import type { Key } from '../../lib/ts-utils';
 
 // Declare Table class
-class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
+class Table<Name extends string, PartitionKey extends Key, SortKey extends Key | null> {
   private _execute: boolean = true
   private _parse: boolean = true
   public _removeNulls: boolean = true

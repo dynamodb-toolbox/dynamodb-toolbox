@@ -47,6 +47,7 @@ import type {
   Readonly,
   $PutBatchOptions
 } from './types'
+import { Key } from '../../lib/ts-utils';
 
 class Entity<
   Name extends string = string,
@@ -304,7 +305,7 @@ class Entity<
   async get<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -386,7 +387,7 @@ class Entity<
   getTransaction<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -451,7 +452,7 @@ class Entity<
   getParams<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -544,7 +545,7 @@ class Entity<
   async delete<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -635,7 +636,7 @@ class Entity<
   deleteTransaction<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
       keyof MethodItemOverlay
@@ -686,7 +687,7 @@ class Entity<
   deleteParams<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -798,7 +799,7 @@ class Entity<
    */
   async update<
     MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -894,7 +895,7 @@ class Entity<
    */
   updateTransaction<
     MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
       keyof MethodItemOverlay
@@ -950,7 +951,7 @@ class Entity<
   // Generate UPDATE Parameters
   updateParams<
     MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -1347,7 +1348,7 @@ class Entity<
   // PUT - put item
   async put<
     MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -1431,7 +1432,7 @@ class Entity<
    */
   putBatch<
     MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -1473,7 +1474,7 @@ class Entity<
    */
   putTransaction<
     MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
       keyof MethodItemOverlay
@@ -1529,7 +1530,7 @@ class Entity<
   // Generate PUT Parameters
   putParams<
     MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
+    ShownItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
       keyof MethodItemOverlay
@@ -1693,7 +1694,7 @@ class Entity<
   conditionCheck<
     MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
+    ItemAttributes extends Key = If<
       A.Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
       keyof MethodItemOverlay
@@ -1740,7 +1741,7 @@ class Entity<
   // Query pass-through (default entity)
   query<
     MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends { all: A.Key; shown: A.Key } = If<
+    ItemAttributes extends { all: Key; shown: Key } = If<
       A.Equals<MethodItemOverlay, undefined>,
       { all: Attributes['all']; shown: Attributes['shown'] },
       { all: keyof MethodItemOverlay; shown: keyof MethodItemOverlay }
