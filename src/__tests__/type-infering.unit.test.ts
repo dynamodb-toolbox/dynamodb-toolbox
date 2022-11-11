@@ -48,7 +48,8 @@ type ExpectedQueryOpts<
     index: string
     limit: number
     reverse: boolean
-    entity: string
+    entity: string,
+    parseAsEntity: string,
     select: DocumentClientType.Select
     filters: ConditionsOrFilters<FilteredAttributes>
     eq: string | number
