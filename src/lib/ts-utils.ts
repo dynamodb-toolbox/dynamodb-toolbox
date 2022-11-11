@@ -1,3 +1,5 @@
+// Taken from ts-toolbelt@9.6.0
+
 export type Key = string | number | symbol;
 
 export type Object = Record<Key, any>;
@@ -10,10 +12,12 @@ export type Equals<A1 extends any, A2 extends any> = (<A>() => A extends A2 ? 1 
 export type Dictionary = Record<Key, any>;
 
 export type Boolean = 0 | 1;
+
 export type Not<B extends Boolean> = {
     0: 1;
     1: 0;
 }[B];
+
 export type And<B1 extends Boolean, B2 extends Boolean> = {
     0: {
         0: 0;
