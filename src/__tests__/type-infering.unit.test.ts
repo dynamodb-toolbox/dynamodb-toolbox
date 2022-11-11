@@ -275,8 +275,8 @@ describe('Entity', () => {
 
     describe('get method', () => {
       it('nominal case', () => {
-        ent.getParams({ pk })
-        const getPromise = () => ent.get({ pk })
+        ent.getParams({ pk, sk })
+        const getPromise = () => ent.get({ pk, sk })
         type GetItem = A.Await<F.Return<typeof getPromise>>['Item']
         type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
         const testGetItem: TestGetItem = 1
@@ -386,7 +386,7 @@ describe('Entity', () => {
 
     describe('delete method', () => {
       it('nominal case', () => {
-        const deletePromise1 = () => ent.delete({ pk }, { returnValues: 'ALL_OLD' })
+        const deletePromise1 = () => ent.delete({ pk, sk }, { returnValues: 'ALL_OLD' })
         type DeleteItem1 = A.Await<F.Return<typeof deletePromise1>>['Attributes']
         type TestDeleteItem1 = A.Equals<DeleteItem1, ExpectedItem | undefined>
         const testDeleteItem1: TestDeleteItem1 = 1
@@ -511,7 +511,7 @@ describe('Entity', () => {
 
     describe('put method', () => {
       it('nominal case', () => {
-        const item1 = { pk, hidden: 'test' }
+        const item1 = { pk, sk, hidden: 'test' }
         ent.putParams(item1, { returnValues: 'ALL_OLD' })
         const putPromise1 = () => ent.put({ pk }, { returnValues: 'ALL_OLD' })
         type PutItem1 = A.Await<F.Return<typeof putPromise1>>['Attributes']
@@ -626,7 +626,7 @@ describe('Entity', () => {
 
     describe('update method', () => {
       it('nominal case', () => {
-        const item1 = { pk, hidden: 'test' }
+        const item1 = { pk, sk, hidden: 'test' }
         ent.updateParams(item1)
         const updatePromise1 = () => ent.update(item1, { returnValues: 'ALL_OLD' })
         type UpdateItem1 = A.Await<F.Return<typeof updatePromise1>>['Attributes']
@@ -1681,13 +1681,12 @@ describe('Entity', () => {
       })
 
       it('throws when primary key is incomplete', () => {
-        // 🔨 TOIMPROVE: Not sure this is expected behavior: Missing partition key doesn't throw
         // @ts-expect-error
-        ent.getParams({ sk })
+        expect(() => ent.getParams({ sk })).toThrow(`'pk' is required`)
 
-        // 🔨 TOIMPROVE: Not sure this is expected behavior: Partition key dependsOn incomplete
+
         // @ts-expect-error
-        ent.getParams({ pkMap2, sk })
+        expect(() => ent.getParams({ pkMap2, sk })).toThrow(`'pk' is required`)
       })
     })
 
@@ -1715,13 +1714,11 @@ describe('Entity', () => {
       })
 
       it('throws when primary key is incomplete', () => {
-        // 🔨 TOIMPROVE: Not sure this is expected behavior: Missing partition key doesn't throw
         // @ts-expect-error
-        ent.deleteParams({ sk })
+        expect(() => ent.deleteParams({ sk })).toThrow(`'pk' is required`)
 
-        // 🔨 TOIMPROVE: Not sure this is expected behavior: Partition key dependsOn incomplete
         // @ts-expect-error: Partition key dependsOn incomplete
-        ent.deleteParams({ pkMap2, sk })
+        expect(() => ent.deleteParams({ pkMap2, sk })).toThrow(`'pk' is required`)
       })
     })
 
@@ -1749,7 +1746,7 @@ describe('Entity', () => {
 
     describe('update method', () => {
       it('nominal case', () => {
-        const item1 = { pkMap1, pkMap2, skMap2 }
+        const item1 = { pk, sk, pkMap1, pkMap2, skMap2 }
         ent.updateParams(item1)
         const updatePromise1 = () => ent.update(item1)
         updatePromise1
@@ -1761,13 +1758,11 @@ describe('Entity', () => {
       })
 
       it('throws when primary key is incomplete', () => {
-        // 🔨 TOIMPROVE: Not sure this is expected behavior: Missing partition key doesn't throw
         // @ts-expect-error
-        ent.updateParams({ sk })
+        expect(() => ent.updateParams({ sk })).toThrow()
 
-        // 🔨 TOIMPROVE: Not sure this is expected behavior: Partition key dependsOn incomplete
         // @ts-expect-error
-        ent.updateParams({ pkMap2, sk })
+        expect(() => ent.updateParams({ pkMap2, sk })).toThrow()
       })
     })
   })
