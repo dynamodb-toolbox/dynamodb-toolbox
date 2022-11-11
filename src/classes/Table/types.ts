@@ -1,5 +1,4 @@
 import type { default as DynamoDb, DocumentClient} from 'aws-sdk/clients/dynamodb'
-import type { O } from 'ts-toolbelt';
 
 import type { ProjectionAttributes } from '../../lib/projectionBuilder';
 import type { FilterExpressions } from '../../lib/expressionBuilder'
@@ -74,17 +73,17 @@ export type $QueryOptions<
 export type TableQueryOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<
+> = Partial<
   $QueryOptions<Execute, Parse> & {
     attributes: ProjectionAttributes
-    filters: ConditionsOrFilters<Key>
+    filters: ConditionsOrFilters
   }
 >
 
 export type ScanOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<
+> = Partial<
   $ReadOptions<Execute, Parse> &
     TableReadOptions & {
       attributes?: ProjectionAttributes
