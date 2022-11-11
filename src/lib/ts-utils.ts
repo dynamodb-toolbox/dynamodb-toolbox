@@ -1,4 +1,4 @@
-// Taken from ts-toolbelt@9.6.0
+// Taken from ts-toolbelt (https://www.npmjs.com/package/ts-toolbelt)
 
 export type Key = string | number | symbol;
 
