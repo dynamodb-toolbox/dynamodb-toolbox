@@ -275,8 +275,8 @@ describe('Entity', () => {
 
     describe('get method', () => {
       it('nominal case', () => {
-        ent.getParams({ pk, sk })
-        const getPromise = () => ent.get({ pk, sk })
+        ent.getParams({ pk })
+        const getPromise = () => ent.get({ pk })
         type GetItem = A.Await<F.Return<typeof getPromise>>['Item']
         type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
         const testGetItem: TestGetItem = 1
@@ -386,7 +386,7 @@ describe('Entity', () => {
 
     describe('delete method', () => {
       it('nominal case', () => {
-        const deletePromise1 = () => ent.delete({ pk, sk }, { returnValues: 'ALL_OLD' })
+        const deletePromise1 = () => ent.delete({ pk }, { returnValues: 'ALL_OLD' })
         type DeleteItem1 = A.Await<F.Return<typeof deletePromise1>>['Attributes']
         type TestDeleteItem1 = A.Equals<DeleteItem1, ExpectedItem | undefined>
         const testDeleteItem1: TestDeleteItem1 = 1
@@ -511,7 +511,7 @@ describe('Entity', () => {
 
     describe('put method', () => {
       it('nominal case', () => {
-        const item1 = { pk, sk, hidden: 'test' }
+        const item1 = { pk, hidden: 'test' }
         ent.putParams(item1, { returnValues: 'ALL_OLD' })
         const putPromise1 = () => ent.put({ pk }, { returnValues: 'ALL_OLD' })
         type PutItem1 = A.Await<F.Return<typeof putPromise1>>['Attributes']
@@ -626,7 +626,7 @@ describe('Entity', () => {
 
     describe('update method', () => {
       it('nominal case', () => {
-        const item1 = { pk, sk, hidden: 'test' }
+        const item1 = { pk, hidden: 'test' }
         ent.updateParams(item1)
         const updatePromise1 = () => ent.update(item1, { returnValues: 'ALL_OLD' })
         type UpdateItem1 = A.Await<F.Return<typeof updatePromise1>>['Attributes']
