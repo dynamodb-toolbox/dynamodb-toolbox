@@ -13,7 +13,7 @@ import type {
   ConditionsOrFilters
 } from '../classes/Entity'
 import type { Key } from '../lib/ts-utils';
-import type { Table, Entity } from '../index'
+import { Table, Entity } from '../index'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
   obj: O,
