@@ -3,10 +3,11 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
-import { A, L } from 'ts-toolbelt'
+import { A } from 'ts-toolbelt'
 
-import { PureAttributeDefinition } from '../classes/Entity'
-import { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table'
+import type { PureAttributeDefinition } from '../classes/Entity'
+import type { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table'
+import type { List, ListHead, ListTail } from './ts-utils';
 
 export const validTypes: DynamoDBTypes[] = [
   'string',
@@ -81,12 +82,12 @@ export const transformAttr = (mapping: PureAttributeDefinition, value: any, data
 // Type now exists in ts-toolbelt but requires upgrading ts: See https://github.com/millsp/ts-toolbelt/issues/169
 export type If<C extends 0 | 1, T, E = never> = C extends 1 ? (1 extends C ? T : E) : E
 
-export type FirstDefined<List extends L.List> = {
+export type FirstDefined<Elements extends List> = {
   stopNone: undefined
-  stopOne: L.Head<List>
-  continue: FirstDefined<L.Tail<List>>
+  stopOne: ListHead<Elements>
+  continue: FirstDefined<ListTail<Elements>>
 }[A.Cast<
-  If<A.Equals<List, []>, 'stopNone', If<A.Equals<L.Head<List>, undefined>, 'continue', 'stopOne'>>,
+  If<A.Equals<List, []>, 'stopNone', If<A.Equals<ListHead<List>, undefined>, 'continue', 'stopOne'>>,
   'stopNone' | 'stopOne' | 'continue'
 >]
 
