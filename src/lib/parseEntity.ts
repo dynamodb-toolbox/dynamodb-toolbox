@@ -37,7 +37,8 @@ export type ParsedEntity<
   Name extends string = string,
   AutoExecute extends boolean = boolean,
   AutoParse extends boolean = boolean,
-  TypeAlias extends string = string
+  TypeAlias extends string = string,
+  TypeHidden extends boolean = boolean,
 > = {
   name: Name;
   schema: {
@@ -45,6 +46,7 @@ export type ParsedEntity<
     attributes: Record<string, PureAttributeDefinition>;
   };
   _etAlias: TypeAlias;
+  typeHidden: TypeHidden;
   autoParse: AutoParse | undefined;
   autoExecute: AutoExecute | undefined;
   linked: Linked;
@@ -63,6 +65,7 @@ export function parseEntity<
   CreatedAlias extends string,
   ModifiedAlias extends string,
   TypeAlias extends string,
+  TypeHidden extends boolean,
   ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>
 >(
   entity: EntityConstructor<
@@ -74,6 +77,7 @@ export function parseEntity<
     CreatedAlias,
     ModifiedAlias,
     TypeAlias,
+    TypeHidden,
     ReadonlyAttributeDefinitions
   >
 ): ParsedEntity<EntityTable, Name, AutoExecute, AutoParse, TypeAlias> {
@@ -85,6 +89,7 @@ export function parseEntity<
     modified,
     modifiedAlias,
     typeAlias,
+    typeHidden,
     attributes,
     autoExecute,
     autoParse,
@@ -132,6 +137,8 @@ export function parseEntity<
     ? typeAlias.trim()
     : 'entity') as TypeAlias
 
+  typeHidden = (typeof typeHidden === 'boolean' ? typeHidden : false) as TypeHidden
+
   // Sanity check the attributes
   attributes =
     attributes?.constructor === Object
@@ -172,6 +179,7 @@ export function parseEntity<
       linked: track.linked,
       autoExecute,
       autoParse,
+      typeHidden,
       _etAlias: typeAlias
     },
     table ? { table } : {}

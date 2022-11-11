@@ -389,27 +389,21 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items:
-              result.Items &&
-              result.Items.map((item: unknown) => {
+              result.Items?.map((item: unknown) => {
                 if (typeof item !== 'object' || item === null) {
                   return item
                 }
 
-                const entityField = String(this.Table.entityField)
-                if (!hasProperty(item, entityField)) {
+                const itemEntityName = options.parseAsEntity || (item as Record<string, any>)[this.Table.entityField !== false ? this.Table.entityField : undefined as never];
+                if (typeof itemEntityName !== 'string') {
                   return item
                 }
 
-                const entityName = item[entityField]
-                if (typeof entityName !== 'string') {
-                  return item
-                }
-
-                if (this[entityName]) {
-                  return this[entityName].parse(
+                if (this[itemEntityName]) {
+                  return this[itemEntityName].parse(
                     item,
-                    EntityProjections[entityName]
-                      ? EntityProjections[entityName]
+                    EntityProjections[itemEntityName]
+                      ? EntityProjections[itemEntityName]
                       : TableProjections
                       ? TableProjections
                       : []
@@ -472,6 +466,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       attributes, // Projections
       startKey,
       entity, // optional entity name to filter aliases
+      parseAsEntity, // optional entity name to parse the result as
       ..._args // capture extra arguments
     } = options
 
@@ -723,7 +718,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items: result.Items?.map(item => {
-              const itemEntityName = item[String(this.Table.entityField)]
+              const itemEntityName = options.parseAsEntity || item[this.Table.entityField !== false ? this.Table.entityField : undefined as never];
               const itemEntityInstance = this[itemEntityName]
 
               if (itemEntityInstance != null) {
@@ -785,6 +780,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       segment, // Segment
       startKey,
       entity, // optional entity name to filter aliases
+      parseAsEntity, // optional entity name to parse the result as
       ..._args // capture extra arguments
     } = options
 
@@ -933,28 +929,26 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       TableProjections
     } = this.batchGetParams(items, options, params, true) as BatchGetParamsMeta
 
-    // If auto execute enabled
-    if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient!.batchGet(payload).promise()
-      // If auto parse enable
-      if (options.parse || (this.autoParse && options.parse !== false)) {
-        // TODO: Left in for testing. Needs to be removed
-        // result.UnprocessedKeys = testUnprocessedKeys
+    const shouldExecute = options.execute || (this.autoExecute && options.execute !== false)
+    if (!shouldExecute) {
+      return payload;
+    }
 
-        return this.parseBatchGetResponse(
-          result,
-          Tables,
-          EntityProjections,
-          TableProjections,
-          options
-        )
-      } else {
-        return result
-      }
-    } else {
-      return payload
-    } // end-if
-  } // end batchGet
+    const result = await this.DocumentClient!.batchGet(payload).promise()
+
+    const shouldParse = options.parse || (this.autoParse && options.parse !== false)
+    if (!shouldParse) {
+      return result
+    }
+
+    return this.parseBatchGetResponse(
+      result,
+      Tables,
+      EntityProjections,
+      TableProjections,
+      options
+    )
+  }
 
   parseBatchGetResponse(
     result: any,
