@@ -63,6 +63,6 @@ describe('checkAttribute', () => {
   it('returns error on invalid attribute', () => {
     expect(() => {
       checkAttribute('missing-attribute', DefaultTable.User.schema.attributes)
-    }).toThrow(`'missing-attribute' is not a valid attribute.`)
+    }).toThrow(`'missing-attribute' is not a valid attribute within the given entity/table.`)
   })
 })
