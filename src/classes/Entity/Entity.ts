@@ -141,11 +141,16 @@ class Entity<
       error('Please provide a valid entity definition')
     }
 
+    const {
+      table,
+      ...entitySchemaWithoutTable
+    } = entity;
+
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
-      ...cloneDeep(entity),
-      ...(entity.table ? { table: entity.table } : {}),
+      ...cloneDeep(entitySchemaWithoutTable),
+      ...(table ? { table } : {}),
     };
 
     const {
