@@ -14,7 +14,7 @@ import formatItem from '../../lib/formatItem'
 import getKey from '../../lib/getKey'
 import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
-import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
+import { cloneDeep, error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
@@ -140,7 +140,7 @@ class Entity<
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
-      ...JSON.parse(JSON.stringify(entity, null, 2)),
+      ...cloneDeep(entity),
       ...(entity.table ? { table: entity.table } : {}),
     };
 
