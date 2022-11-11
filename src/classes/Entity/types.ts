@@ -2,7 +2,7 @@ import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, B, O, F } from 'ts-toolbelt'
 
 import type { Compute, FirstDefined, If } from '../../lib/utils'
-import type { Key } from '../../lib/ts-utils';
+import type { And, Equals, Key, Or } from '../../lib/ts-utils';
 import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table';
 import type Entity from './Entity'
 
@@ -277,14 +277,14 @@ export type CompositePrimaryKeyPart<
   KeyDependsOnAttributes extends Key = Attributes['key'][KeyType]['dependsOn'],
   KeyCompositeAttributes extends Key = Attributes['key'][KeyType]['mapped']
 > = If<
-  A.Equals<KeyPureAttribute, never>,
+  Equals<KeyPureAttribute, never>,
   Record<never, unknown>,
   O.Optional<
     | O.Pick<Item, KeyPureAttribute>
-    | If<A.Equals<KeyDependsOnAttributes, never>, never, O.Pick<Item, KeyDependsOnAttributes>>
-    | If<A.Equals<KeyCompositeAttributes, never>, never, O.Pick<Item, KeyCompositeAttributes>>,
+    | If<Equals<KeyDependsOnAttributes, never>, never, O.Pick<Item, KeyDependsOnAttributes>>
+    | If<Equals<KeyCompositeAttributes, never>, never, O.Pick<Item, KeyCompositeAttributes>>,
     If<
-      A.Equals<KeyDependsOnAttributes, never>,
+      Equals<KeyDependsOnAttributes, never>,
       // If primary key part doesn't have "dependsOn" attribute, either it has "default" attribute and is optional,
       // either it doesn't and is required
       Attributes['default'],
@@ -422,7 +422,7 @@ export type PutItem<
           >
       >
     ]
-  | If<A.Equals<StrictSchemaCheck, true>, never, any>
+  | If<Equals<StrictSchemaCheck, true>, never, any>
 >
 
 export type UpdateOptionsReturnValues =
@@ -473,14 +473,14 @@ export type UpdateItem<MethodItemOverlay extends Overlay,
         [inputOptionalAttribute in Attributes['optional'] & keyof Item]?: AttributeUpdateInput<Item[inputOptionalAttribute]> | null
       } & { $remove?: Attributes['optional'] | Attributes['optional'][] }>
   ]
-  | If<A.Equals<StrictSchemaCheck, true>, never, any>>
+  | If<Equals<StrictSchemaCheck, true>, never, any>>
 
 export type AttributeUpdateInput<AttributeType> =
-    | If<A.Equals<AttributeType, FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: AttributeType; $append?: AttributeType; $remove?: number[] } | AttributeType, AttributeType>
-    | If<A.Equals<AttributeType, number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: AttributeType; $append?: number[]; } | string[]>
-    | If<A.Equals<AttributeType, string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: AttributeType; $append?: string[]; } | number[]>
-    | If<A.Equals<AttributeType, boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: AttributeType; $append?: boolean[]; } | boolean[]>
-    | If<A.Equals<AttributeType, FromDynamoData<'number'> | undefined>, { $add?: number }>
+    | If<Equals<AttributeType, FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: AttributeType; $append?: AttributeType; $remove?: number[] } | AttributeType, AttributeType>
+    | If<Equals<AttributeType, number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: AttributeType; $append?: number[]; } | string[]>
+    | If<Equals<AttributeType, string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: AttributeType; $append?: string[]; } | number[]>
+    | If<Equals<AttributeType, boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: AttributeType; $append?: boolean[]; } | boolean[]>
+    | If<Equals<AttributeType, FromDynamoData<'number'> | undefined>, { $add?: number }>
 
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
@@ -503,14 +503,14 @@ export interface TransactionOptions<
   strictSchemaCheck?: StrictSchemaCheck
 }
 
-export type ShouldExecute<Execute extends boolean | undefined, AutoExecute extends boolean> = B.Or<
-  A.Equals<Execute, true>,
-  B.And<A.Equals<Execute, undefined>, A.Equals<AutoExecute, true>>
+export type ShouldExecute<Execute extends boolean | undefined, AutoExecute extends boolean> = Or<
+  Equals<Execute, true>,
+  And<Equals<Execute, undefined>, Equals<AutoExecute, true>>
 >
 
 export type ShouldParse<Parse extends boolean | undefined, AutoParse extends boolean> = B.Or<
-  A.Equals<Parse, true>,
-  B.And<A.Equals<Parse, undefined>, A.Equals<AutoParse, true>>
+  Equals<Parse, true>,
+  And<Equals<Parse, undefined>, Equals<AutoParse, true>>
 >
 
 export type Readonly<T> = T extends F.Function | undefined
