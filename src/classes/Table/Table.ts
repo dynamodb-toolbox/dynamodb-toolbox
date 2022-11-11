@@ -8,7 +8,7 @@
 
 // Import libraries, types, and classes
 import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import type { A, O } from 'ts-toolbelt'
+import type { O } from 'ts-toolbelt'
 
 import { parseTable, ParsedTable } from '../../lib/parseTable'
 import parseFilters from '../../lib/expressionBuilder'
@@ -37,7 +37,7 @@ import type {
 
 // Import standard error handler
 import { error, conditionError, If, Compute } from '../../lib/utils'
-import type { Key } from '../../lib/ts-utils';
+import type { Equals, Key } from '../../lib/ts-utils';
 
 // Declare Table class
 class Table<Name extends string, PartitionKey extends Key, SortKey extends Key | null> {
@@ -355,10 +355,10 @@ class Table<Name extends string, PartitionKey extends Key, SortKey extends Key |
     params: Partial<DocumentClient.QueryInput> = {}
   ): Promise<
     If<
-      A.Equals<Execute, false>,
+      Equals<Execute, false>,
       DocumentClient.QueryInput,
       If<
-        A.Equals<Parse, false>,
+        Equals<Parse, false>,
         Compute<
           DocumentClient.QueryOutput & {
             next?: () => Promise<DocumentClient.QueryOutput>
@@ -685,10 +685,10 @@ class Table<Name extends string, PartitionKey extends Key, SortKey extends Key |
     params: Partial<DocumentClient.ScanInput> = {}
   ): Promise<
     If<
-      A.Equals<Execute, false>,
+      Equals<Execute, false>,
       DocumentClient.ScanInput,
       If<
-        A.Equals<Parse, false>,
+        Equals<Parse, false>,
         Compute<
           DocumentClient.ScanOutput & {
             next?: () => Promise<DocumentClient.ScanOutput>
