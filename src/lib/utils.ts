@@ -1,13 +1,6 @@
-/**
- * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
- * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @license MIT
- */
-import { A } from 'ts-toolbelt'
-
 import type { PureAttributeDefinition } from '../classes/Entity'
 import type { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table'
-import type { List, ListHead, ListTail } from './ts-utils';
+import type { Cast, Equals, List, ListHead, ListTail } from './ts-utils';
 
 export const validTypes: DynamoDBTypes[] = [
   'string',
@@ -86,8 +79,8 @@ export type FirstDefined<ListElements extends List> = {
   stopNone: undefined
   stopOne: ListHead<ListElements>
   continue: FirstDefined<ListTail<ListElements>>
-}[A.Cast<
-  If<A.Equals<List, []>, 'stopNone', If<A.Equals<ListHead<List>, undefined>, 'continue', 'stopOne'>>,
+}[Cast<
+  If<Equals<List, []>, 'stopNone', If<Equals<ListHead<List>, undefined>, 'continue', 'stopOne'>>,
   'stopNone' | 'stopOne' | 'continue'
 >]
 
