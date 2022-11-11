@@ -70,7 +70,6 @@ export const transformAttr = (mapping: PureAttributeDefinition, value: any, data
     : value
 }
 
-// Type now exists in ts-toolbelt but requires upgrading ts: See https://github.com/millsp/ts-toolbelt/issues/169
 export type If<C extends 0 | 1, T, E = never> = C extends 1 ? (1 extends C ? T : E) : E
 
 export type FirstDefined<ListElements extends List> = {
@@ -82,7 +81,6 @@ export type FirstDefined<ListElements extends List> = {
   'stopNone' | 'stopOne' | 'continue'
 >]
 
-// ts-toolbelt A.Compute has issues: A.Compute<any[]> returns { [key:string]: any } and A.Compute<unknown> returns {}
 export type Compute<A> = A extends Promise<infer T>
   ? Promise<Compute<T>>
   : A extends (...args: infer P) => infer R
