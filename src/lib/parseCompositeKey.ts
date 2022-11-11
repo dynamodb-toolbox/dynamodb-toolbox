@@ -3,21 +3,22 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
-import { A, O } from 'ts-toolbelt'
+import type { O } from 'ts-toolbelt'
 
-import { error } from './utils'
-import parseMapping from './parseMapping'
-import {
+import type {
   CompositeAttributeDefinition,
   PureAttributeDefinition,
   AttributeDefinitions
 } from '../classes/Entity'
-import { TrackingInfo } from './parseEntity'
+import { error } from './utils'
+import type { TrackingInfo } from './parseEntity'
+import parseMapping from './parseMapping'
+import type { Key } from './ts-utils';
 
 const parseCompositeKey = <
   ReadonlyAttributeDefinitions extends
     | AttributeDefinitions
-    | O.Readonly<AttributeDefinitions, A.Key, 'deep'>
+    | O.Readonly<AttributeDefinitions, Key, 'deep'>
 >(
   field: string,
   config: CompositeAttributeDefinition,
