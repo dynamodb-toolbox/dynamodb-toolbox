@@ -4,20 +4,18 @@
  * @license MIT
  */
 
-// Import libraries, types, and classes
-import { A } from 'ts-toolbelt'
-
 import parseAttributes from './parseTableAttributes'
 import { error, hasValue } from './utils'
-import { TableConstructor, TableIndexes } from '../classes/Table'
+import type { TableConstructor, TableIndexes } from '../classes/Table'
+import type { Key } from './ts-utils';
 
 export type ParsedTable = ReturnType<typeof parseTable>
 
 // Parse table
 export const parseTable = <
   Name extends string,
-  PartitionKey extends A.Key,
-  SortKey extends A.Key | null
+  PartitionKey extends Key,
+  SortKey extends Key | null
 >(
   table: TableConstructor<Name, PartitionKey, SortKey>
 ) => {

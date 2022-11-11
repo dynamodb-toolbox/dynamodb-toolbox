@@ -3,7 +3,7 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
-import { A, O } from 'ts-toolbelt'
+import { O } from 'ts-toolbelt'
 
 import {
   AttributeDefinitions,

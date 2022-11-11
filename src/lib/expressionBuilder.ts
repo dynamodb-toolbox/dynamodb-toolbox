@@ -7,14 +7,12 @@
 // TODO: allow for nesting (use arrays) and boolean settings
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html
 
-// Import standard error handler
-import { A } from 'ts-toolbelt'
-
+import type { TableDef } from '../classes/Table'
 import checkAttribute from './checkAttribute'
 import { error } from './utils'
-import { TableDef } from '../classes/Table'
+import type { Key } from './ts-utils';
 
-interface FilterExpression<Attr extends A.Key = A.Key> {
+interface FilterExpression<Attr extends Key = Key> {
   attr?: Attr
   size?: string
   eq?: string | number | boolean | null
@@ -34,13 +32,13 @@ interface FilterExpression<Attr extends A.Key = A.Key> {
   entity?: string
 }
 
-export type FilterExpressions<Attr extends A.Key = A.Key> =
+export type FilterExpressions<Attr extends Key = Key> =
   | FilterExpression<Attr>
   | FilterExpression<Attr>[]
   | FilterExpressions<Attr>[]
 
 const buildExpression = <
-  Attr extends A.Key = A.Key,
+  Attr extends Key = Key,
   EntityTable extends TableDef | undefined = undefined
 >(
   exp: FilterExpressions<Attr>,
