@@ -394,7 +394,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   return item
                 }
 
-                const itemEntityName = (item as Record<string, any>)[this.Table.entityField !== false ? this.Table.entityField : undefined as never] || options.entity;
+                const itemEntityName = (item as Record<string, any>)[this.Table.entityField !== false ? this.Table.entityField : undefined as never] || options.parseAsEntity;
                 if (typeof itemEntityName !== 'string') {
                   return item
                 }
@@ -466,6 +466,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       attributes, // Projections
       startKey,
       entity, // optional entity name to filter aliases
+      parseAsEntity, // optional entity name to parse the result as
       ..._args // capture extra arguments
     } = options
 
@@ -717,7 +718,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items: result.Items?.map(item => {
-              const itemEntityName = item[this.Table.entityField !== false ? this.Table.entityField : undefined as never] || options.entity;
+              const itemEntityName = item[this.Table.entityField !== false ? this.Table.entityField : undefined as never] || options.parseAsEntity;
               const itemEntityInstance = this[itemEntityName]
 
               if (itemEntityInstance != null) {
@@ -779,6 +780,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       segment, // Segment
       startKey,
       entity, // optional entity name to filter aliases
+      parseAsEntity, // optional entity name to parse the result as
       ..._args // capture extra arguments
     } = options
 
