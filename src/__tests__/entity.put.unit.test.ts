@@ -534,10 +534,12 @@ describe('put', () => {
   it('correctly aliases pks', () => {
     let { Item } = TestEntity4.putParams({
       id: 3,
+      sk: 'test',
       // @ts-expect-error 💥 TODO: Handle aliases
       xyz: '123'
     })
-    expect(Item.sk).toBe('3')
-    // expect(TableName).toBe('test-table')
+    expect(Item.pk).toBe('3')
+    expect(Item.sk).toBe('test')
+    expect(TableName).toBe('test-table')
   })
 })
