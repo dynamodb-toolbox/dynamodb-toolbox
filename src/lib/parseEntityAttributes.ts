@@ -10,15 +10,16 @@ import {
   PureAttributeDefinition,
   CompositeAttributeDefinition
 } from '../classes/Entity'
-import { TrackingInfo } from './parseEntity'
+import type { TrackingInfo } from './parseEntity'
 import parseMapping from './parseMapping'
 import parseCompositeKey from './parseCompositeKey'
 import { error, typeError, validTypes, isDynamoDbType } from './utils'
+import type { Key } from './ts-utils';
 
 const parseEntityAttributes = <
   ReadonlyAttributeDefinitions extends
     | AttributeDefinitions
-    | O.Readonly<AttributeDefinitions, A.Key, 'deep'>
+    | O.Readonly<AttributeDefinitions, Key, 'deep'>
 >(
   attributes: ReadonlyAttributeDefinitions,
   track: TrackingInfo
