@@ -1653,7 +1653,7 @@ describe('Entity', () => {
         testGetItem1
 
         // Using PK "dependsOn": pkMap2 is not required as it has default
-        const ck2 = { pkMap1, sk }
+        const ck2 = { pkMap1, pk, sk }
         ent.getParams(ck2)
         const getPromise2 = () => ent.get(ck2)
         type GetItem2 = A.Await<F.Return<typeof getPromise2>>['Item']
@@ -1662,7 +1662,7 @@ describe('Entity', () => {
         testGetItem2
 
         // Using SK "dependsOn": skMap2 is not required as it has default
-        const ck3 = { pk, skMap1 }
+        const ck3 = { pk, sk, skMap1 }
         ent.getParams(ck3)
         const getPromise3 = () => ent.get(ck3)
         type GetItem3 = A.Await<F.Return<typeof getPromise3>>['Item']
@@ -1671,7 +1671,7 @@ describe('Entity', () => {
         testGetItem3
 
         // Using SK "dependsOn": skMap1 is not required as well
-        const ck4 = { pkMap1 }
+        const ck4 = { pk, sk, pkMap1 }
         ent.getParams(ck4)
         const getPromise4 = () => ent.get(ck4)
         type GetItem4 = A.Await<F.Return<typeof getPromise4>>['Item']
@@ -1697,17 +1697,17 @@ describe('Entity', () => {
         const deletePromise1 = () => ent.delete(ck1)
         deletePromise1
 
-        const ck2 = { pkMap1, sk }
+        const ck2 = { pkMap1, pk, sk }
         ent.deleteParams(ck2)
         const deletePromise2 = () => ent.delete(ck2)
         deletePromise2
 
-        const ck3 = { pk, skMap1 }
+        const ck3 = { pk, sk, skMap1 }
         ent.deleteParams(ck3)
         const deletePromise3 = () => ent.delete(ck3)
         deletePromise3
 
-        const ck4 = { pkMap1 }
+        const ck4 = { pk, sk, pkMap1 }
         ent.deleteParams(ck4)
         const deletePromise4 = () => ent.delete(ck4)
         deletePromise4
