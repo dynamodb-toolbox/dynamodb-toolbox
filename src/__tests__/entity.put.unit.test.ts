@@ -540,6 +540,5 @@ describe('put', () => {
     })
     expect(Item.pk).toBe('3')
     expect(Item.sk).toBe('test')
-    expect(TableName).toBe('test-table')
   })
 })
