@@ -1724,12 +1724,12 @@ describe('Entity', () => {
 
     describe('put method', () => {
       it('nominal case', () => {
-        const item1 = { pkMap1, pkMap2, skMap2 }
+        const item1 = { pk, sk, pkMap1, pkMap2, skMap2 }
         ent.putParams(item1)
         const putPromise1 = () => ent.put(item1)
         putPromise1
 
-        const item2 = { pkMap1 }
+        const item2 = { pk, sk, pkMap1 }
         ent.putParams(item2)
         const putPromise2 = () => ent.put(item2)
         putPromise2
