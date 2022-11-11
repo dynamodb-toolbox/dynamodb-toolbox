@@ -23,7 +23,6 @@ export const isDynamoDbKeyType = (value: string): value is DynamoDBKeyTypes =>
 export const hasProperty = <P extends string>(obj: object, prop: P): obj is Record<P, unknown> =>
   obj.hasOwnProperty(prop)
 
-// Boolean conversion
 export const toBool = (val: any) =>
   typeof val === 'boolean'
     ? val
@@ -31,7 +30,6 @@ export const toBool = (val: any) =>
     ? false
     : Boolean(val)
 
-// has value shortcut
 export const hasValue = (val: any) => val !== undefined && val !== null
 
 // isEmpty object shortcut
