@@ -141,7 +141,7 @@ class Entity<
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
-      ...cloneDeep(entity),
+      ...JSON.parse(JSON.stringify(entity, null, 2)),
       ...(entity.table ? { table: entity.table } : {}),
     };
 
