@@ -519,7 +519,6 @@ describe('Entity', () => {
         testPutItem1
 
         const item2 = pkMaps
-        ent.putParams(item2, { returnValues: 'ALL_OLD' })
         const putPromise2 = () => ent.put(item2, { returnValues: 'ALL_OLD' })
         type PutItem2 = Awaited<ReturnType<typeof putPromise2>>['Attributes']
         type TestPutItem2 = Equals<PutItem2, ExpectedItem | undefined>

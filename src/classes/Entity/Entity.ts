@@ -13,7 +13,7 @@ import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
 } from '../../constants'
-import type { And, Cast, Equals, Key, Not, Or } from '../../lib/ts-utils';
+import type { And, Cast, Dictionary, Equals, Key, Not, Or } from '../../lib/ts-utils';
 import type { ScanOptions, TableDef } from '../Table'
 import type {
   $GetOptions,
@@ -84,13 +84,13 @@ class Entity<
         EntityItemOverlay
       >,
   // Necessary to cast in a second step to prevent infinite loop during type check
-  Item extends O.Object = string extends Name ? O.Object : Cast<$Item, O.Object>,
-  CompositePrimaryKey extends O.Object = string extends Name
-    ? O.Object
+  Item extends Dictionary = string extends Name ? Dictionary : Cast<$Item, Dictionary>,
+  CompositePrimaryKey extends Dictionary = string extends Name
+    ? Dictionary
     : If<
         Equals<EntityItemOverlay, undefined>,
         InferCompositePrimaryKey<Item, Attributes>,
-        O.Object
+        Dictionary
       >
 > {
   // @ts-ignore

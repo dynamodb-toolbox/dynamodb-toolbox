@@ -2,7 +2,7 @@ import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, O, F } from 'ts-toolbelt'
 
 import type { Compute, FirstDefined, If } from '../../lib/utils'
-import type { And, Cast, Equals, Key, Or } from '../../lib/ts-utils';
+import type { And, Cast, Dictionary, Equals, Key, Or } from '../../lib/ts-utils';
 import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table';
 import type Entity from './Entity'
 
@@ -270,7 +270,7 @@ export type InferItem<
 >
 
 export type CompositePrimaryKeyPart<
-  Item extends O.Object,
+  Item extends Dictionary,
   Attributes extends ParsedAttributes,
   KeyType extends 'partitionKey' | 'sortKey',
   KeyPureAttribute extends Key = Attributes['key'][KeyType]['pure'],
@@ -297,7 +297,7 @@ export type CompositePrimaryKeyPart<
 >
 
 export type InferCompositePrimaryKey<
-  Item extends O.Object,
+  Item extends Dictionary,
   Attributes extends ParsedAttributes
 > = Compute<
   CompositePrimaryKeyPart<Item, Attributes, 'partitionKey'> &
@@ -306,7 +306,7 @@ export type InferCompositePrimaryKey<
 
 // Options
 
-export type Overlay = undefined | O.Object
+export type Overlay = undefined | Dictionary
 
 export type ConditionOrFilter<Attributes extends Key = Key> = (
   | { attr: Attributes }
@@ -405,8 +405,8 @@ export type $PutBatchOptions<
 export type PutItem<
   MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
-  CompositePrimaryKey extends O.Object,
-  Item extends O.Object,
+  CompositePrimaryKey extends Dictionary,
+  Item extends Dictionary,
   Attributes extends ParsedAttributes,
   StrictSchemaCheck extends boolean | undefined = true
 > = FirstDefined<
@@ -456,8 +456,8 @@ export type UpdateCustomParams = Partial<UpdateCustomParameters & DocumentClient
 
 export type UpdateItem<MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
-  CompositePrimaryKey extends O.Object,
-  Item extends O.Object,
+  CompositePrimaryKey extends Dictionary,
+  Item extends Dictionary,
   Attributes extends ParsedAttributes,
   StrictSchemaCheck extends boolean | undefined = true> = FirstDefined<[
     MethodItemOverlay,
@@ -515,13 +515,13 @@ export type ShouldParse<Parse extends boolean | undefined, AutoParse extends boo
 
 export type Readonly<T> = T extends F.Function | undefined
   ? T
-  : T extends O.Object
+  : T extends Dictionary
   ? { readonly [P in keyof T]: Readonly<T[P]> }
   : T
 
 export type Writable<T> = T extends F.Function | undefined
   ? T
-  : T extends O.Object
+  : T extends Dictionary
   ? { -readonly [P in keyof T]: Writable<T[P]> }
   : T
 
