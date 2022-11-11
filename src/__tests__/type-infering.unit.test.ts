@@ -1,7 +1,6 @@
 import { DynamoDB } from 'aws-sdk'
 import { DocumentClient as DocumentClientType } from 'aws-sdk/clients/dynamodb'
 import MockDate from 'mockdate'
-import { A, O } from 'ts-toolbelt'
 
 import type {
   EntityItem,
@@ -12,7 +11,7 @@ import type {
   UpdateOptions,
   ConditionsOrFilters
 } from '../classes/Entity'
-import type { Key } from '../lib/ts-utils';
+import type { Equals, Key } from '../lib/ts-utils';
 import { Table, Entity } from '../index'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
@@ -227,7 +226,7 @@ describe('Entity', () => {
       table: tableWithoutSK
     } as const)
 
-    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    type TestExtends = Equals<typeof ent extends Entity ? true : false, true>
     const testExtends: TestExtends = 1
     testExtends
 
@@ -278,12 +277,12 @@ describe('Entity', () => {
         ent.getParams({ pk })
         const getPromise = () => ent.get({ pk })
         type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
-        type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
+        type TestGetItem = Equals<GetItem, ExpectedItem | undefined>
         const testGetItem: TestGetItem = 1
         testGetItem
 
         type GetItemOptions = GetOptions<typeof ent>
-        type TestGetItemOptions = A.Equals<
+        type TestGetItemOptions = Equals<
           GetItemOptions,
           ExpectedGetOpts<Exclude<keyof ExpectedItem, 'hidden'>>
         >
@@ -291,7 +290,7 @@ describe('Entity', () => {
         testGetItemOptions
 
         type Item = EntityItem<typeof ent>
-        type TestItem = A.Equals<Item, ExpectedItem>
+        type TestItem = Equals<Item, ExpectedItem>
         const testItem: TestItem = 1
         testItem
       })
@@ -300,7 +299,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => entNoExecute.get(item)
         type GetParams = Awaited<ReturnType<typeof getPromise>>
-        type TestGetParams = A.Equals<GetParams, DocumentClientType.GetItemInput>
+        type TestGetParams = Equals<GetParams, DocumentClientType.GetItemInput>
         const testGetParams: TestGetParams = 1
         testGetParams
       })
@@ -309,7 +308,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => entNoExecute.get(item, { execute: true })
         type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
-        type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
+        type TestGetItem = Equals<GetItem, ExpectedItem | undefined>
         const testGetItem: TestGetItem = 1
         testGetItem
       })
@@ -318,7 +317,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => ent.get(item, { execute: false })
         type GetParams = Awaited<ReturnType<typeof getPromise>>
-        type TestGetParams = A.Equals<GetParams, DocumentClientType.GetItemInput>
+        type TestGetParams = Equals<GetParams, DocumentClientType.GetItemInput>
         const testGetParams: TestGetParams = 1
         testGetParams
       })
@@ -327,7 +326,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => entNoParse.get(item)
         type GetRawResponse = Awaited<ReturnType<typeof getPromise>>
-        type TestGetRawResponse = A.Equals<GetRawResponse, DocumentClientType.GetItemOutput>
+        type TestGetRawResponse = Equals<GetRawResponse, DocumentClientType.GetItemOutput>
         const testGetRawResponse: TestGetRawResponse = 1
         testGetRawResponse
       })
@@ -336,7 +335,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => entNoParse.get(item, { parse: true })
         type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
-        type TestGetItem = A.Equals<GetItem, ExpectedItem | undefined>
+        type TestGetItem = Equals<GetItem, ExpectedItem | undefined>
         const testGetItem: TestGetItem = 1
         testGetItem
       })
@@ -345,7 +344,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => ent.get(item, { parse: false })
         type GetRawResponse = Awaited<ReturnType<typeof getPromise>>
-        type TestGetRawResponse = A.Equals<GetRawResponse, DocumentClientType.GetItemOutput>
+        type TestGetRawResponse = Equals<GetRawResponse, DocumentClientType.GetItemOutput>
         const testGetRawResponse: TestGetRawResponse = 1
         testGetRawResponse
       })
@@ -354,7 +353,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => entNoTimestamps.get(item)
         type GetResponse = Awaited<ReturnType<typeof getPromise>>['Item']
-        type TestGetResponse = A.Equals<
+        type TestGetResponse = Equals<
           GetResponse,
           Omit<ExpectedItem, 'created' | 'modified'> | undefined
         >
@@ -375,7 +374,7 @@ describe('Entity', () => {
         ent.getParams({ pk }, { attributes: ['pk'] })
         const filteredGetPromise = () => ent.get({ pk }, { attributes: ['pk'] })
         type FilteredGetItem = Awaited<ReturnType<typeof filteredGetPromise>>['Item']
-        type TestFilteredGetItem = A.Equals<FilteredGetItem, Pick<ExpectedItem, 'pk'> | undefined>
+        type TestFilteredGetItem = Equals<FilteredGetItem, Pick<ExpectedItem, 'pk'> | undefined>
         const testFilteredGetItem: TestFilteredGetItem = 1
         testFilteredGetItem
 
@@ -388,18 +387,18 @@ describe('Entity', () => {
       it('nominal case', () => {
         const deletePromise1 = () => ent.delete({ pk }, { returnValues: 'ALL_OLD' })
         type DeleteItem1 = Awaited<ReturnType<typeof deletePromise1>>['Attributes']
-        type TestDeleteItem1 = A.Equals<DeleteItem1, ExpectedItem | undefined>
+        type TestDeleteItem1 = Equals<DeleteItem1, ExpectedItem | undefined>
         const testDeleteItem1: TestDeleteItem1 = 1
         testDeleteItem1
 
         const deletePromise2 = () => ent.delete(pkMaps, { returnValues: 'ALL_OLD' })
         type DeleteItem2 = Awaited<ReturnType<typeof deletePromise2>>['Attributes']
-        type TestDeleteItem2 = A.Equals<DeleteItem2, ExpectedItem | undefined>
+        type TestDeleteItem2 = Equals<DeleteItem2, ExpectedItem | undefined>
         const testDeleteItem2: TestDeleteItem2 = 1
         testDeleteItem2
 
         type DeleteItemOptions = DeleteOptions<typeof ent>
-        type TestDeleteItemOptions = A.Equals<
+        type TestDeleteItemOptions = Equals<
           DeleteItemOptions,
           Omit<
             ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>,
@@ -414,7 +413,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => entNoExecute.delete(item)
         type DeleteParams = Awaited<ReturnType<typeof deletePromise>>
-        type TestDeleteParams = A.Equals<DeleteParams, DocumentClientType.DeleteItemInput>
+        type TestDeleteParams = Equals<DeleteParams, DocumentClientType.DeleteItemInput>
         const testDeleteParams: TestDeleteParams = 1
         testDeleteParams
       })
@@ -424,7 +423,7 @@ describe('Entity', () => {
         const deletePromise = () =>
           entNoExecute.delete(item, { execute: true, returnValues: 'ALL_OLD' })
         type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
-        type TestDeleteItem = A.Equals<DeleteItem, ExpectedItem | undefined>
+        type TestDeleteItem = Equals<DeleteItem, ExpectedItem | undefined>
         const testDeleteItem: TestDeleteItem = 1
         testDeleteItem
       })
@@ -433,7 +432,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => ent.delete(item, { execute: false })
         type DeleteParams = Awaited<ReturnType<typeof deletePromise>>
-        type TestDeleteParams = A.Equals<DeleteParams, DocumentClientType.DeleteItemInput>
+        type TestDeleteParams = Equals<DeleteParams, DocumentClientType.DeleteItemInput>
         const testDeleteParams: TestDeleteParams = 1
         testDeleteParams
       })
@@ -442,7 +441,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => entNoParse.delete(item)
         type DeleteRawResponse = Awaited<ReturnType<typeof deletePromise>>
-        type TestDeleteRawResponse = A.Equals<
+        type TestDeleteRawResponse = Equals<
           DeleteRawResponse,
           DocumentClientType.DeleteItemOutput
         >
@@ -455,7 +454,7 @@ describe('Entity', () => {
         const deletePromise = () =>
           entNoParse.delete(item, { parse: true, returnValues: 'ALL_OLD' })
         type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
-        type TestDeleteItem = A.Equals<DeleteItem, ExpectedItem | undefined>
+        type TestDeleteItem = Equals<DeleteItem, ExpectedItem | undefined>
         const testDeleteItem: TestDeleteItem = 1
         testDeleteItem
       })
@@ -464,7 +463,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => ent.update(item, { parse: false })
         type DeleteRawResponse = Awaited<ReturnType<typeof deletePromise>>
-        type TestDeleteRawResponse = A.Equals<
+        type TestDeleteRawResponse = Equals<
           DeleteRawResponse,
           DocumentClientType.DeleteItemOutput
         >
@@ -476,7 +475,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => entNoTimestamps.delete(item, { returnValues: 'ALL_OLD' })
         type DeleteResponse = Awaited<ReturnType<typeof deletePromise>>['Attributes']
-        type TestDeleteResponse = A.Equals<
+        type TestDeleteResponse = Equals<
           DeleteResponse,
           Omit<ExpectedItem, 'created' | 'modified'> | undefined
         >
@@ -515,7 +514,7 @@ describe('Entity', () => {
         ent.putParams(item1, { returnValues: 'ALL_OLD' })
         const putPromise1 = () => ent.put({ pk }, { returnValues: 'ALL_OLD' })
         type PutItem1 = Awaited<ReturnType<typeof putPromise1>>['Attributes']
-        type TestPutItem1 = A.Equals<PutItem1, ExpectedItem | undefined>
+        type TestPutItem1 = Equals<PutItem1, ExpectedItem | undefined>
         const testPutItem1: TestPutItem1 = 1
         testPutItem1
 
@@ -523,12 +522,12 @@ describe('Entity', () => {
         ent.putParams(item2, { returnValues: 'ALL_OLD' })
         const putPromise2 = () => ent.put(item2, { returnValues: 'ALL_OLD' })
         type PutItem2 = Awaited<ReturnType<typeof putPromise2>>['Attributes']
-        type TestPutItem2 = A.Equals<PutItem2, ExpectedItem | undefined>
+        type TestPutItem2 = Equals<PutItem2, ExpectedItem | undefined>
         const testPutItem2: TestPutItem2 = 1
         testPutItem2
 
         type PutItemOptions = PutOptions<typeof ent>
-        type TestPutItemOptions = A.Equals<
+        type TestPutItemOptions = Equals<
           PutItemOptions,
           ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>
         >
@@ -540,7 +539,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => entNoExecute.put(item)
         type PutParams = Awaited<ReturnType<typeof putPromise>>
-        type TestPutParams = A.Equals<PutParams, DocumentClientType.PutItemInput>
+        type TestPutParams = Equals<PutParams, DocumentClientType.PutItemInput>
         const testPutParams: TestPutParams = 1
         testPutParams
       })
@@ -549,7 +548,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => entNoExecute.put(item, { execute: true, returnValues: 'ALL_OLD' })
         type PutItem = Awaited<ReturnType<typeof putPromise>>['Attributes']
-        type TestPutItem = A.Equals<PutItem, ExpectedItem | undefined>
+        type TestPutItem = Equals<PutItem, ExpectedItem | undefined>
         const testPutItem: TestPutItem = 1
         testPutItem
       })
@@ -558,7 +557,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => ent.put(item, { execute: false, returnValues: 'ALL_OLD' })
         type PutParams = Awaited<ReturnType<typeof putPromise>>
-        type TestPutParams = A.Equals<PutParams, DocumentClientType.PutItemInput>
+        type TestPutParams = Equals<PutParams, DocumentClientType.PutItemInput>
         const testPutParams: TestPutParams = 1
         testPutParams
       })
@@ -567,7 +566,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => entNoParse.put(item)
         type PutRawResponse = Awaited<ReturnType<typeof putPromise>>
-        type TestPutRawResponse = A.Equals<PutRawResponse, DocumentClientType.PutItemOutput>
+        type TestPutRawResponse = Equals<PutRawResponse, DocumentClientType.PutItemOutput>
         const testPutRawResponse: TestPutRawResponse = 1
         testPutRawResponse
       })
@@ -576,7 +575,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => entNoParse.put(item, { parse: true, returnValues: 'ALL_OLD' })
         type PutItem = Awaited<ReturnType<typeof putPromise>>['Attributes']
-        type TestPutItem = A.Equals<PutItem, ExpectedItem | undefined>
+        type TestPutItem = Equals<PutItem, ExpectedItem | undefined>
         const testPutItem: TestPutItem = 1
         testPutItem
       })
@@ -585,7 +584,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => ent.put(item, { parse: false })
         type PutRawResponse = Awaited<ReturnType<typeof putPromise>>
-        type TestPutRawResponse = A.Equals<PutRawResponse, DocumentClientType.PutItemOutput>
+        type TestPutRawResponse = Equals<PutRawResponse, DocumentClientType.PutItemOutput>
         const testPutRawResponse: TestPutRawResponse = 1
         testPutRawResponse
       })
@@ -594,7 +593,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => entNoTimestamps.put(item, { returnValues: 'ALL_OLD' })
         type PutResponse = Awaited<ReturnType<typeof putPromise>>['Attributes']
-        type TestPutResponse = A.Equals<
+        type TestPutResponse = Equals<
           PutResponse,
           Omit<ExpectedItem, 'created' | 'modified'> | undefined
         >
@@ -630,7 +629,7 @@ describe('Entity', () => {
         ent.updateParams(item1)
         const updatePromise1 = () => ent.update(item1, { returnValues: 'ALL_OLD' })
         type UpdateItem1 = Awaited<ReturnType<typeof updatePromise1>>['Attributes']
-        type TestUpdateItem1 = A.Equals<UpdateItem1, ExpectedItem | undefined>
+        type TestUpdateItem1 = Equals<UpdateItem1, ExpectedItem | undefined>
         const testUpdateItem1: TestUpdateItem1 = 1
         testUpdateItem1
 
@@ -638,12 +637,12 @@ describe('Entity', () => {
         ent.updateParams(item2)
         const updatePromise2 = () => ent.update(item2, { returnValues: 'ALL_NEW' })
         type UpdateItem2 = Awaited<ReturnType<typeof updatePromise2>>['Attributes']
-        type TestUpdateItem2 = A.Equals<UpdateItem2, ExpectedItem | undefined>
+        type TestUpdateItem2 = Equals<UpdateItem2, ExpectedItem | undefined>
         const testUpdateItem2: TestUpdateItem2 = 1
         testUpdateItem2
 
         type UpdateItemOptions = UpdateOptions<typeof ent>
-        type TestUpdateItemOptions = A.Equals<
+        type TestUpdateItemOptions = Equals<
           UpdateItemOptions,
           ExpectedWriteOpts<
             keyof ExpectedItem | 'hidden',
@@ -658,7 +657,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => entNoExecute.update(item)
         type UpdateParams = Awaited<ReturnType<typeof updatePromise>>
-        type TestUpdateParams = A.Equals<UpdateParams, DocumentClientType.UpdateItemInput>
+        type TestUpdateParams = Equals<UpdateParams, DocumentClientType.UpdateItemInput>
         const testUpdateParams: TestUpdateParams = 1
         testUpdateParams
       })
@@ -668,7 +667,7 @@ describe('Entity', () => {
         const updatePromise = () =>
           entNoExecute.update(item, { execute: true, returnValues: 'ALL_NEW' })
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
-        type TestUpdateItem = A.Equals<UpdateItem, ExpectedItem | undefined>
+        type TestUpdateItem = Equals<UpdateItem, ExpectedItem | undefined>
         const testUpdateItem: TestUpdateItem = 1
         testUpdateItem
       })
@@ -677,7 +676,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => ent.update(item, { execute: false })
         type UpdateParams = Awaited<ReturnType<typeof updatePromise>>
-        type TestUpdateParams = A.Equals<UpdateParams, DocumentClientType.UpdateItemInput>
+        type TestUpdateParams = Equals<UpdateParams, DocumentClientType.UpdateItemInput>
         const testUpdateParams: TestUpdateParams = 1
         testUpdateParams
       })
@@ -686,7 +685,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => entNoParse.update(item)
         type UpdateRawResponse = Awaited<ReturnType<typeof updatePromise>>
-        type TestUpdateRawResponse = A.Equals<
+        type TestUpdateRawResponse = Equals<
           UpdateRawResponse,
           DocumentClientType.UpdateItemOutput
         >
@@ -699,7 +698,7 @@ describe('Entity', () => {
         const updatePromise = () =>
           entNoParse.update(item, { parse: true, returnValues: 'ALL_NEW' })
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
-        type TestUpdateItem = A.Equals<UpdateItem, ExpectedItem | undefined>
+        type TestUpdateItem = Equals<UpdateItem, ExpectedItem | undefined>
         const testUpdateItem: TestUpdateItem = 1
         testUpdateItem
       })
@@ -708,7 +707,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => ent.update(item, { parse: false })
         type UpdateRawResponse = Awaited<ReturnType<typeof updatePromise>>
-        type TestUpdateRawResponse = A.Equals<
+        type TestUpdateRawResponse = Equals<
           UpdateRawResponse,
           DocumentClientType.UpdateItemOutput
         >
@@ -720,7 +719,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => entNoTimestamps.update(item, { returnValues: 'ALL_NEW' })
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
-        type TestUpdateItem = A.Equals<
+        type TestUpdateItem = Equals<
           UpdateItem,
           Omit<ExpectedItem, 'created' | 'modified'> | undefined
         >
@@ -754,19 +753,19 @@ describe('Entity', () => {
       it('nominal case', () => {
         const queryPromise = () => ent.query('pk')
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
-        type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
+        type TestQueryItems = Equals<QueryItems, ExpectedItem[] | undefined>
         const testQueryItems: TestQueryItems = 1
         testQueryItems
 
         type QueryNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
-        type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
+        type TestQueryNextItems = Equals<QueryNextItems, ExpectedItem[] | undefined>
         const testQueryNextItems: TestQueryNextItems = 1
         testQueryNextItems
 
         type QueryItemsOptions = QueryOptions<typeof ent>
-        type TestQueryItemsOptions = A.Equals<
+        type TestQueryItemsOptions = Equals<
           QueryItemsOptions,
           ExpectedQueryOpts<keyof ExpectedItem, keyof ExpectedItem | 'hidden'>
         >
@@ -777,14 +776,14 @@ describe('Entity', () => {
       it('force execution', () => {
         const queryPromise = () => ent.query('pk', { execute: true })
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
-        type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
+        type TestQueryItems = Equals<QueryItems, ExpectedItem[] | undefined>
         const testQueryItems: TestQueryItems = 1
         testQueryItems
 
         type QueryNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
-        type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
+        type TestQueryNextItems = Equals<QueryNextItems, ExpectedItem[] | undefined>
         const testQueryNextItems: TestQueryNextItems = 1
         testQueryNextItems
       })
@@ -792,7 +791,7 @@ describe('Entity', () => {
       it('force no execution', () => {
         const queryPromise = () => ent.query('pk', { execute: false, parse: true })
         type QueryInput = Awaited<ReturnType<typeof queryPromise>>
-        type TestQueryInput = A.Equals<QueryInput, DocumentClientType.QueryInput>
+        type TestQueryInput = Equals<QueryInput, DocumentClientType.QueryInput>
         const testQueryInput: TestQueryInput = 1
         testQueryInput
       })
@@ -800,14 +799,14 @@ describe('Entity', () => {
       it('force parsing', () => {
         const queryPromise = () => ent.query('pk', { parse: true })
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
-        type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
+        type TestQueryItems = Equals<QueryItems, ExpectedItem[] | undefined>
         const testQueryItems: TestQueryItems = 1
         testQueryItems
 
         type QueryNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
-        type TestQueryNextItems = A.Equals<QueryNextItems, ExpectedItem[] | undefined>
+        type TestQueryNextItems = Equals<QueryNextItems, ExpectedItem[] | undefined>
         const testQueryNextItems: TestQueryNextItems = 1
         testQueryNextItems
       })
@@ -815,14 +814,14 @@ describe('Entity', () => {
       it('force no parsing', () => {
         const queryPromise = () => ent.query('pk', { parse: false })
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
-        type TestQueryItems = A.Equals<QueryItems, DocumentClientType.AttributeMap[] | undefined>
+        type TestQueryItems = Equals<QueryItems, DocumentClientType.AttributeMap[] | undefined>
         const testQueryItems: TestQueryItems = 1
         testQueryItems
 
         type QueryNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
-        type TestQueryNextItems = A.Equals<
+        type TestQueryNextItems = Equals<
           QueryNextItems,
           DocumentClientType.AttributeMap[] | undefined
         >
@@ -833,7 +832,7 @@ describe('Entity', () => {
       it('contains no timestamp', () => {
         const queryPromise = () => entNoTimestamps.query('pk')
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
-        type TestQueryItems = A.Equals<
+        type TestQueryItems = Equals<
           QueryItems,
           Omit<ExpectedItem, 'created' | 'modified'>[] | undefined
         >
@@ -847,14 +846,14 @@ describe('Entity', () => {
         const scanPromise = () => ent.scan()
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
         // TODO: Improve this by parsing table attributes ?
-        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        type TestScanItems = Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
         const testScanItems: TestScanItems = 1
         testScanItems
 
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
+        type TestScanNextItems = Equals<
           ScanNextItems,
           DocumentClientType.AttributeMap[] | undefined
         >
@@ -865,14 +864,14 @@ describe('Entity', () => {
       it('force execution', () => {
         const scanPromise = () => ent.scan({ execute: true })
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
-        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        type TestScanItems = Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
         const testScanItems: TestScanItems = 1
         testScanItems
 
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
+        type TestScanNextItems = Equals<
           ScanNextItems,
           DocumentClientType.AttributeMap[] | undefined
         >
@@ -883,7 +882,7 @@ describe('Entity', () => {
       it('force no execution', () => {
         const scanPromise = () => ent.scan({ execute: false, parse: true })
         type ScanInput = Awaited<ReturnType<typeof scanPromise>>
-        type TestScanInput = A.Equals<ScanInput, DocumentClientType.ScanInput>
+        type TestScanInput = Equals<ScanInput, DocumentClientType.ScanInput>
         const testScanInput: TestScanInput = 1
         testScanInput
       })
@@ -892,14 +891,14 @@ describe('Entity', () => {
         const scanPromise = () => ent.scan({ parse: true })
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
         // TODO: Improve this by parsing table attributes ?
-        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        type TestScanItems = Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
         const testScanItems: TestScanItems = 1
         testScanItems
 
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
+        type TestScanNextItems = Equals<
           ScanNextItems,
           DocumentClientType.AttributeMap[] | undefined
         >
@@ -910,14 +909,14 @@ describe('Entity', () => {
       it('force no parsing', () => {
         const scanPromise = () => ent.scan({ parse: false })
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
-        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        type TestScanItems = Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
         const testScanItems: TestScanItems = 1
         testScanItems
 
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
+        type TestScanNextItems = Equals<
           ScanNextItems,
           DocumentClientType.AttributeMap[] | undefined
         >
@@ -982,7 +981,7 @@ describe('Entity', () => {
       table
     } as const)
 
-    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    type TestExtends = Equals<typeof ent extends Entity ? true : false, true>
     const testExtends: TestExtends = 1
     testExtends
 
@@ -1014,7 +1013,7 @@ describe('Entity', () => {
         ent.getParams(ck1)
         const getPromise1 = () => ent.get(ck1)
         type GetItem1 = Awaited<ReturnType<typeof getPromise1>>['Item']
-        type TestGetItem1 = A.Equals<GetItem1, ExpectedItem | undefined>
+        type TestGetItem1 = Equals<GetItem1, ExpectedItem | undefined>
         const testGetItem1: TestGetItem1 = 1
         testGetItem1
 
@@ -1022,7 +1021,7 @@ describe('Entity', () => {
         ent.getParams(ck2)
         const getPromise2 = () => ent.get(ck2)
         type GetItem2 = Awaited<ReturnType<typeof getPromise2>>['Item']
-        type TestGetItem2 = A.Equals<GetItem2, ExpectedItem | undefined>
+        type TestGetItem2 = Equals<GetItem2, ExpectedItem | undefined>
         const testGetItem2: TestGetItem2 = 1
         testGetItem2
 
@@ -1030,7 +1029,7 @@ describe('Entity', () => {
         ent.getParams(ck3)
         const getPromise3 = () => ent.get(ck3)
         type GetItem3 = Awaited<ReturnType<typeof getPromise3>>['Item']
-        type TestGetItem3 = A.Equals<GetItem3, ExpectedItem | undefined>
+        type TestGetItem3 = Equals<GetItem3, ExpectedItem | undefined>
         const testGetItem3: TestGetItem3 = 1
         testGetItem3
 
@@ -1038,17 +1037,17 @@ describe('Entity', () => {
         ent.getParams(ck4)
         const getPromise4 = () => ent.get(ck4)
         type GetItem4 = Awaited<ReturnType<typeof getPromise4>>['Item']
-        type TestGetItem4 = A.Equals<GetItem4, ExpectedItem | undefined>
+        type TestGetItem4 = Equals<GetItem4, ExpectedItem | undefined>
         const testGetItem4: TestGetItem4 = 1
         testGetItem4
 
         type GetItemOptions = GetOptions<typeof ent>
-        type TestGetItemOptions = A.Equals<GetItemOptions, ExpectedGetOpts<keyof ExpectedItem>>
+        type TestGetItemOptions = Equals<GetItemOptions, ExpectedGetOpts<keyof ExpectedItem>>
         const testGetItemOptions: TestGetItemOptions = 1
         testGetItemOptions
 
         type Item = EntityItem<typeof ent>
-        type TestItem = A.Equals<Item, ExpectedItem>
+        type TestItem = Equals<Item, ExpectedItem>
         const testItem: TestItem = 1
         testItem
       })
@@ -1062,7 +1061,7 @@ describe('Entity', () => {
             attributes: ['pkMap1', 'skMap1', 'reqAttr', 'optAttr']
           })
         type GetItemFilt = Awaited<ReturnType<typeof getPromiseFiltFn>>['Item']
-        type TestGetItemFilt = A.Equals<
+        type TestGetItemFilt = Equals<
           GetItemFilt,
           Pick<ExpectedItem, 'pkMap1' | 'skMap1' | 'reqAttr' | 'optAttr'> | undefined
         >
@@ -1138,12 +1137,12 @@ describe('Entity', () => {
         ent.deleteParams(ck4)
         const deletePromise4 = () => ent.delete(ck4, { returnValues: 'ALL_OLD' })
         type DeleteItem4 = Awaited<ReturnType<typeof deletePromise4>>['Attributes']
-        type TestDeleteItem4 = A.Equals<DeleteItem4, ExpectedItem | undefined>
+        type TestDeleteItem4 = Equals<DeleteItem4, ExpectedItem | undefined>
         const testDeleteItem4: TestDeleteItem4 = 1
         testDeleteItem4
 
         type DeleteItemOptions = DeleteOptions<typeof ent>
-        type TestDeleteItemOptions = A.Equals<
+        type TestDeleteItemOptions = Equals<
           DeleteItemOptions,
           Omit<
             ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>,
@@ -1247,12 +1246,12 @@ describe('Entity', () => {
         ent.putParams(item6)
         const putPromise6 = () => ent.put(item6, { returnValues: 'ALL_OLD' })
         type PutItem6 = Awaited<ReturnType<typeof putPromise6>>['Attributes']
-        type TestPutItem6 = A.Equals<PutItem6, ExpectedItem | undefined>
+        type TestPutItem6 = Equals<PutItem6, ExpectedItem | undefined>
         const testPutItem6: TestPutItem6 = 1
         testPutItem6
 
         type PutItemOptions = PutOptions<typeof ent>
-        type TestPutItemOptions = A.Equals<
+        type TestPutItemOptions = Equals<
           PutItemOptions,
           ExpectedWriteOpts<keyof ExpectedItem | 'hidden', 'NONE' | 'ALL_OLD'>
         >
@@ -1362,7 +1361,7 @@ describe('Entity', () => {
         ent.updateParams(item3)
         const updatePromise3 = () => ent.update(item3, { returnValues: 'ALL_OLD' })
         type UpdateItem3 = Awaited<ReturnType<typeof updatePromise3>>['Attributes']
-        type TestUpdateItem3 = A.Equals<UpdateItem3, ExpectedItem | undefined>
+        type TestUpdateItem3 = Equals<UpdateItem3, ExpectedItem | undefined>
         const testUpdateItem3: TestUpdateItem3 = 1
         testUpdateItem3
 
@@ -1370,7 +1369,7 @@ describe('Entity', () => {
         ent.updateParams(item4)
         const updatePromise4 = () => ent.update(item4, { returnValues: 'ALL_NEW' })
         type UpdateItem4 = Awaited<ReturnType<typeof updatePromise4>>['Attributes']
-        type TestUpdateItem4 = A.Equals<UpdateItem4, ExpectedItem | undefined>
+        type TestUpdateItem4 = Equals<UpdateItem4, ExpectedItem | undefined>
         const testUpdateItem4: TestUpdateItem4 = 1
         testUpdateItem4
 
@@ -1382,7 +1381,7 @@ describe('Entity', () => {
         ent.updateParams(item5)
         const updatePromise5 = () => ent.update(item5, { returnValues: 'UPDATED_OLD' })
         type UpdateItem5 = Awaited<ReturnType<typeof updatePromise5>>['Attributes']
-        type TestUpdateItem5 = A.Equals<UpdateItem5, ExpectedItem | undefined>
+        type TestUpdateItem5 = Equals<UpdateItem5, ExpectedItem | undefined>
         const testUpdateItem5: TestUpdateItem5 = 1
         testUpdateItem5
 
@@ -1390,12 +1389,12 @@ describe('Entity', () => {
         ent.updateParams(item6)
         const updatePromise6 = () => ent.update(item6, { returnValues: 'UPDATED_NEW' })
         type UpdateItem6 = Awaited<ReturnType<typeof updatePromise6>>['Attributes']
-        type TestUpdateItem6 = A.Equals<UpdateItem6, ExpectedItem | undefined>
+        type TestUpdateItem6 = Equals<UpdateItem6, ExpectedItem | undefined>
         const testUpdateItem6: TestUpdateItem6 = 1
         testUpdateItem6
 
         type UpdateItemOptions = UpdateOptions<typeof ent>
-        type TestUpdateItemOptions = A.Equals<
+        type TestUpdateItemOptions = Equals<
           UpdateItemOptions,
           ExpectedWriteOpts<
             keyof ExpectedItem | 'hidden',
@@ -1567,12 +1566,12 @@ describe('Entity', () => {
       it('nominal case', () => {
         const queryPromise = () => ent.query('pk')
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
-        type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
+        type TestQueryItems = Equals<QueryItems, ExpectedItem[] | undefined>
         const testQueryItems: TestQueryItems = 1
         testQueryItems
 
         type QueryItemsOptions = QueryOptions<typeof ent>
-        type TestQueryItemsOptions = A.Equals<
+        type TestQueryItemsOptions = Equals<
           QueryItemsOptions,
           ExpectedQueryOpts<keyof ExpectedItem, keyof ExpectedItem | 'hidden'>
         >
@@ -1585,7 +1584,7 @@ describe('Entity', () => {
       it('nominal case', () => {
         const scanPromise = () => ent.scan()
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
-        type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+        type TestScanItems = Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
         const testScanItems: TestScanItems = 1
         testScanItems
       })
@@ -1625,7 +1624,7 @@ describe('Entity', () => {
       table
     } as const)
 
-    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    type TestExtends = Equals<typeof ent extends Entity ? true : false, true>
     const testExtends: TestExtends = 1
     testExtends
 
@@ -1648,7 +1647,7 @@ describe('Entity', () => {
         ent.getParams(ck1)
         const getPromise1 = () => ent.get(ck1)
         type GetItem1 = Awaited<ReturnType<typeof getPromise1>>['Item']
-        type TestGetItem1 = A.Equals<GetItem1, ExpectedItem | undefined>
+        type TestGetItem1 = Equals<GetItem1, ExpectedItem | undefined>
         const testGetItem1: TestGetItem1 = 1
         testGetItem1
 
@@ -1657,7 +1656,7 @@ describe('Entity', () => {
         ent.getParams(ck2)
         const getPromise2 = () => ent.get(ck2)
         type GetItem2 = Awaited<ReturnType<typeof getPromise2>>['Item']
-        type TestGetItem2 = A.Equals<GetItem2, ExpectedItem | undefined>
+        type TestGetItem2 = Equals<GetItem2, ExpectedItem | undefined>
         const testGetItem2: TestGetItem2 = 1
         testGetItem2
 
@@ -1666,7 +1665,7 @@ describe('Entity', () => {
         ent.getParams(ck3)
         const getPromise3 = () => ent.get(ck3)
         type GetItem3 = Awaited<ReturnType<typeof getPromise3>>['Item']
-        type TestGetItem3 = A.Equals<GetItem3, ExpectedItem | undefined>
+        type TestGetItem3 = Equals<GetItem3, ExpectedItem | undefined>
         const testGetItem3: TestGetItem3 = 1
         testGetItem3
 
@@ -1675,7 +1674,7 @@ describe('Entity', () => {
         ent.getParams(ck4)
         const getPromise4 = () => ent.get(ck4)
         type GetItem4 = Awaited<ReturnType<typeof getPromise4>>['Item']
-        type TestGetItem4 = A.Equals<GetItem4, ExpectedItem | undefined>
+        type TestGetItem4 = Equals<GetItem4, ExpectedItem | undefined>
         const testGetItem4: TestGetItem4 = 1
         testGetItem4
       })
@@ -1788,7 +1787,7 @@ describe('Entity', () => {
       table
     } as const)
 
-    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    type TestExtends = Equals<typeof ent extends Entity ? true : false, true>
     const testExtends: TestExtends = 1
     testExtends
 
@@ -1805,19 +1804,19 @@ describe('Entity', () => {
       ent.getParams(ck1)
       const getPromise1 = () => ent.get(ck1)
       type GetItem1 = Awaited<ReturnType<typeof getPromise1>>['Item']
-      type TestGetItem1 = A.Equals<GetItem1, ExpectedItem | undefined>
+      type TestGetItem1 = Equals<GetItem1, ExpectedItem | undefined>
       const testGetItem1: TestGetItem1 = 1
       testGetItem1
 
       ent.getParams(ck2)
       const getPromise2 = () => ent.get(ck2)
       type GetItem2 = Awaited<ReturnType<typeof getPromise2>>['Item']
-      type TestGetItem2 = A.Equals<GetItem2, ExpectedItem | undefined>
+      type TestGetItem2 = Equals<GetItem2, ExpectedItem | undefined>
       const testGetItem2: TestGetItem2 = 1
       testGetItem2
 
       type Item = EntityItem<typeof ent>
-      type TestItem = A.Equals<Item, ExpectedItem>
+      type TestItem = Equals<Item, ExpectedItem>
       const testItem: TestItem = 1
       testItem
     })
@@ -1854,7 +1853,7 @@ describe('Entity', () => {
       table
     } as const)
 
-    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    type TestExtends = Equals<typeof ent extends Entity ? true : false, true>
     const testExtends: TestExtends = 1
     testExtends
 
@@ -1906,7 +1905,7 @@ describe('Entity', () => {
       table
     } as const)
 
-    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    type TestExtends = Equals<typeof ent extends Entity ? true : false, true>
     const testExtends: TestExtends = 1
     testExtends
 
@@ -1927,7 +1926,7 @@ describe('Entity', () => {
         it('returned Item should match MethodItemOverlay, even filtered', () => {
           const getPromise = () => ent.get<MethodItemOverlay>(ck)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
-          type TestGetItem = A.Equals<GetItem, MethodItemOverlay | undefined>
+          type TestGetItem = Equals<GetItem, MethodItemOverlay | undefined>
           const testGetItem: TestGetItem = 1
           testGetItem
 
@@ -1936,7 +1935,7 @@ describe('Entity', () => {
               attributes: ['pk0', 'sk0', 'str0']
             })
           type FilteredGetItem = Awaited<ReturnType<typeof filteredGetPromise>>['Item']
-          type TestFilteredGetItem = A.Equals<
+          type TestFilteredGetItem = Equals<
             FilteredGetItem,
             Pick<MethodItemOverlay, 'pk0' | 'sk0' | 'str0'> | undefined
           >
@@ -1967,7 +1966,7 @@ describe('Entity', () => {
         it('returned Item should match MethodItemOverlay, even filtered', () => {
           const getPromise = () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
-          type TestGetItem = A.Equals<GetItem, MethodItemOverlay | undefined>
+          type TestGetItem = Equals<GetItem, MethodItemOverlay | undefined>
           const testGetItem: TestGetItem = 1
           testGetItem
 
@@ -1977,7 +1976,7 @@ describe('Entity', () => {
               { attributes: ['pk0', 'sk0', 'str0'] }
             )
           type FilteredGetItem = Awaited<ReturnType<typeof filteredGetPromise>>['Item']
-          type TestFilteredGetItem = A.Equals<
+          type TestFilteredGetItem = Equals<
             FilteredGetItem,
             Pick<MethodItemOverlay, 'pk0' | 'sk0' | 'str0'> | undefined
           >
@@ -2010,7 +2009,7 @@ describe('Entity', () => {
         it('Attributes match MethodItemOverlay', () => {
           const deletePromise = () => ent.delete<MethodItemOverlay>(ck)
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
-          type TestDeleteItem = A.Equals<DeleteItem, MethodItemOverlay | undefined>
+          type TestDeleteItem = Equals<DeleteItem, MethodItemOverlay | undefined>
           const testDeleteItem: TestDeleteItem = 1
           testDeleteItem
         })
@@ -2038,7 +2037,7 @@ describe('Entity', () => {
         it('returned Attributes should match MethodItemOverlay', () => {
           const deletePromise = () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
-          type TestDeleteItem = A.Equals<DeleteItem, MethodItemOverlay | undefined>
+          type TestDeleteItem = Equals<DeleteItem, MethodItemOverlay | undefined>
           const testDeleteItem: TestDeleteItem = 1
           testDeleteItem
         })
@@ -2069,7 +2068,7 @@ describe('Entity', () => {
       it('Attributes match MethodItemOverlay', () => {
         const putPromise = () => ent.put<MethodItemOverlay>({ ...ck0, num0 })
         type PutItem = Awaited<ReturnType<typeof putPromise>>['Attributes']
-        type TestPutItem = A.Equals<PutItem, MethodItemOverlay | undefined>
+        type TestPutItem = Equals<PutItem, MethodItemOverlay | undefined>
         const testPutItem: TestPutItem = 1
         testPutItem
       })
@@ -2099,7 +2098,7 @@ describe('Entity', () => {
       it('Attributes match MethodItemOverlay, when returnValues is not NONE', () => {
         const updatePromise = () => ent.update<MethodItemOverlay, any, any , 'UPDATED_NEW'>({ ...ck0, num0 }, { returnValues: 'UPDATED_NEW' })
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
-        type TestUpdateItem = A.Equals<UpdateItem, MethodItemOverlay | undefined>
+        type TestUpdateItem = Equals<UpdateItem, MethodItemOverlay | undefined>
         const testUpdateItem: TestUpdateItem = 1
         testUpdateItem
       })
@@ -2115,7 +2114,7 @@ describe('Entity', () => {
       it('returned Items should match MethodItemOverlay', () => {
         const queryPromise = () => ent.query<MethodItemOverlay>('pk')
         type QueryItem = Awaited<ReturnType<typeof queryPromise>>['Items']
-        type TestQueryItem = A.Equals<QueryItem, MethodItemOverlay[] | undefined>
+        type TestQueryItem = Equals<QueryItem, MethodItemOverlay[] | undefined>
         const testQueryItem: TestQueryItem = 1
         testQueryItem
       })
@@ -2125,7 +2124,7 @@ describe('Entity', () => {
       it('returned Items should match MethodItemOverlay', () => {
         const scanPromise = () => ent.scan<MethodItemOverlay>()
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
-        type TestScanItems = A.Equals<ScanItems, MethodItemOverlay[] | undefined>
+        type TestScanItems = Equals<ScanItems, MethodItemOverlay[] | undefined>
         const testScanItems: TestScanItems = 1
         testScanItems
       })
@@ -2169,7 +2168,7 @@ describe('Entity', () => {
       table
     } as const)
 
-    type TestExtends = A.Equals<typeof ent extends Entity ? true : false, true>
+    type TestExtends = Equals<typeof ent extends Entity ? true : false, true>
     const testExtends: TestExtends = 1
     testExtends
 
@@ -2195,7 +2194,7 @@ describe('Entity', () => {
           ;() => ent.get(ck0, { attributes: ['pk0'] })
 
           type GetItemOptions = GetOptions<typeof ent>
-          type TestGetItemOptions = A.Equals<
+          type TestGetItemOptions = Equals<
             GetItemOptions,
             ExpectedGetOpts<keyof EntityItemOverlay>
           >
@@ -2206,21 +2205,21 @@ describe('Entity', () => {
         it('returned Item should match EntityItemOverlay, even filtered', () => {
           const getPromise = () => ent.get(ck0)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
-          type TestGetItem = A.Equals<GetItem, EntityItemOverlay | undefined>
+          type TestGetItem = Equals<GetItem, EntityItemOverlay | undefined>
           const testGetItem: TestGetItem = 1
           testGetItem
 
           const filteredGetPromise = () => ent.get(ck0, { attributes: ['pk0', 'sk0', 'str0'] })
           type FilteredGetItem = Awaited<ReturnType<typeof filteredGetPromise>>['Item']
-          type TestFilteredGetItem = A.Equals<
+          type TestFilteredGetItem = Equals<
             FilteredGetItem,
-            O.Pick<EntityItemOverlay, 'pk0' | 'sk0' | 'str0'> | undefined
+            Pick<EntityItemOverlay, 'pk0' | 'sk0' | 'str0'> | undefined
           >
           const testFilteredGetItem: TestFilteredGetItem = 1
           testFilteredGetItem
 
           type Item = EntityItem<typeof ent>
-          type TestItem = A.Equals<Item, EntityItemOverlay>
+          type TestItem = Equals<Item, EntityItemOverlay>
           const testItem: TestItem = 1
           testItem
         })
@@ -2246,7 +2245,7 @@ describe('Entity', () => {
         it('returned Item should match MethodItemOverlay', () => {
           const getPromise = () => ent.get<MethodItemOverlay>(ck0)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
-          type TestGetItem = A.Equals<GetItem, MethodItemOverlay | undefined>
+          type TestGetItem = Equals<GetItem, MethodItemOverlay | undefined>
           const testGetItem: TestGetItem = 1
           testGetItem
         })
@@ -2281,7 +2280,7 @@ describe('Entity', () => {
         it('returned Item should match MethodItemOverlay', () => {
           const getPromise = () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
-          type TestGetItem = A.Equals<GetItem, MethodItemOverlay | undefined>
+          type TestGetItem = Equals<GetItem, MethodItemOverlay | undefined>
           const testGetItem: TestGetItem = 1
           testGetItem
         })
@@ -2304,7 +2303,7 @@ describe('Entity', () => {
           ;() => ent.delete(ck0, { conditions: { attr: 'pk0', exists: true } })
 
           type DeleteItemOptions = DeleteOptions<typeof ent>
-          type TestDeleteItemOptions = A.Equals<
+          type TestDeleteItemOptions = Equals<
             DeleteItemOptions,
             Omit<
               ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD'>,
@@ -2336,7 +2335,7 @@ describe('Entity', () => {
         it('Attributes match EntityItemOverlay if ALL_OLD option is provided', () => {
           const deletePromise = () => ent.delete(ck0, { returnValues: 'ALL_OLD' })
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
-          type TestDeleteItem = A.Equals<DeleteItem, EntityItemOverlay | undefined>
+          type TestDeleteItem = Equals<DeleteItem, EntityItemOverlay | undefined>
           const testDeleteItem: TestDeleteItem = 1
           testDeleteItem
         })
@@ -2371,7 +2370,7 @@ describe('Entity', () => {
         it('Returned Attributes should match MethodItemOverlay', () => {
           const deletePromise = () => ent.delete<MethodItemOverlay>(ck0)
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
-          type TestDeleteItem = A.Equals<DeleteItem, MethodItemOverlay | undefined>
+          type TestDeleteItem = Equals<DeleteItem, MethodItemOverlay | undefined>
           const testDeleteItem: TestDeleteItem = 1
           testDeleteItem
         })
@@ -2406,7 +2405,7 @@ describe('Entity', () => {
         it('Returned Attributes should match MethodItemOverlay', () => {
           const deletePromise = () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
-          type TestDeleteItem = A.Equals<DeleteItem, MethodItemOverlay | undefined>
+          type TestDeleteItem = Equals<DeleteItem, MethodItemOverlay | undefined>
           const testDeleteItem: TestDeleteItem = 1
           testDeleteItem
         })
@@ -2434,7 +2433,7 @@ describe('Entity', () => {
           ;() => ent.put({ ...ck0, num0 }, { conditions: { attr: 'pk0', exists: true } })
 
           type PutItemOptions = PutOptions<typeof ent>
-          type TestPutItemOptions = A.Equals<
+          type TestPutItemOptions = Equals<
             PutItemOptions,
             ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD'>
           >
@@ -2463,7 +2462,7 @@ describe('Entity', () => {
         it('Attributes match EntityItemOverlay if ALL_OLD option is provided', () => {
           const putPromise = () => ent.put({ ...ck0, num0 }, { returnValues: 'ALL_OLD' })
           type PutItem = Awaited<ReturnType<typeof putPromise>>['Attributes']
-          type TestPutItem = A.Equals<PutItem, EntityItemOverlay | undefined>
+          type TestPutItem = Equals<PutItem, EntityItemOverlay | undefined>
           const testPutItem: TestPutItem = 1
           testPutItem
         })
@@ -2502,7 +2501,7 @@ describe('Entity', () => {
         it('Attributes match MethodItemOverlay', () => {
           const putOPromise = () => ent.put<MethodItemOverlay>({ ...ck1, num1 })
           type PutOItem = Awaited<ReturnType<typeof putOPromise>>['Attributes']
-          type TestPutOItem = A.Equals<PutOItem, MethodItemOverlay | undefined>
+          type TestPutOItem = Equals<PutOItem, MethodItemOverlay | undefined>
           const testPutOItem: TestPutOItem = 1
           testPutOItem
         })
@@ -2527,7 +2526,7 @@ describe('Entity', () => {
           ;() => ent.update({ ...ck0, num0 }, { conditions: { attr: 'pk0', exists: true } })
 
           type UpdateItemOptions = UpdateOptions<typeof ent>
-          type TestUpdateItemOptions = A.Equals<
+          type TestUpdateItemOptions = Equals<
             UpdateItemOptions,
             ExpectedWriteOpts<
               keyof EntityItemOverlay,
@@ -2562,7 +2561,7 @@ describe('Entity', () => {
           type UpdatedOldUpdateAttributes = Awaited<
             ReturnType<typeof updatedOldUpdatePromise>
           >['Attributes']
-          type AssertUpdatedOldUpdateAttributes = A.Equals<
+          type AssertUpdatedOldUpdateAttributes = Equals<
             UpdatedOldUpdateAttributes,
             EntityItemOverlay | undefined
           >
@@ -2574,7 +2573,7 @@ describe('Entity', () => {
           type UpdatedNewUpdateAttributes = Awaited<
             ReturnType<typeof updatedNewUpdatePromise>
           >['Attributes']
-          type AssertUpdatedNewUpdateAttributes = A.Equals<
+          type AssertUpdatedNewUpdateAttributes = Equals<
             UpdatedNewUpdateAttributes,
             EntityItemOverlay | undefined
           >
@@ -2584,7 +2583,7 @@ describe('Entity', () => {
           const allOldUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'ALL_OLD' })
           type AllOldUpdateAttributes = Awaited<ReturnType<typeof allOldUpdatePromise>>['Attributes']
-          type AssertAllOldUpdateAttributes = A.Equals<
+          type AssertAllOldUpdateAttributes = Equals<
             AllOldUpdateAttributes,
             EntityItemOverlay | undefined
           >
@@ -2594,7 +2593,7 @@ describe('Entity', () => {
           const allNewUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'ALL_NEW' })
           type AllNewUpdateAttributes = Awaited<ReturnType<typeof allNewUpdatePromise>>['Attributes']
-          type AssertAllNewUpdateAttributes = A.Equals<
+          type AssertAllNewUpdateAttributes = Equals<
             AllNewUpdateAttributes,
             EntityItemOverlay | undefined
           >
@@ -2637,7 +2636,7 @@ describe('Entity', () => {
         it('Attributes match MethodItemOverlay, whatever the returnValues option is', () => {
           const updateO1Promise = () => ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>({ ...ck1, num1 }, { returnValues: 'UPDATED_NEW'})
           type UpdateO1Item = Awaited<ReturnType<typeof updateO1Promise>>['Attributes']
-          type TestUpdateO1Item = A.Equals<UpdateO1Item, MethodItemOverlay | undefined>
+          type TestUpdateO1Item = Equals<UpdateO1Item, MethodItemOverlay | undefined>
           const testUpdateO1Item: TestUpdateO1Item = 1
           testUpdateO1Item
         })
@@ -2655,12 +2654,12 @@ describe('Entity', () => {
         it('returned Items should match EntityItemOverlay, even filtered', () => {
           const queryPromise = () => ent.query('pk')
           type QueryItem = Awaited<ReturnType<typeof queryPromise>>['Items']
-          type TestQueryItem = A.Equals<QueryItem, EntityItemOverlay[] | undefined>
+          type TestQueryItem = Equals<QueryItem, EntityItemOverlay[] | undefined>
           const testQueryItem: TestQueryItem = 1
           testQueryItem
 
           type QueryItemsOptions = QueryOptions<typeof ent>
-          type TestQueryItemsOptions = A.Equals<
+          type TestQueryItemsOptions = Equals<
             QueryItemsOptions,
             ExpectedQueryOpts<keyof EntityItemOverlay, keyof EntityItemOverlay>
           >
@@ -2669,7 +2668,7 @@ describe('Entity', () => {
 
           const filteredQueryPromise = () => ent.query('pk', { attributes: ['pk0', 'sk0', 'str0'] })
           type FilteredQueryItem = Awaited<ReturnType<typeof filteredQueryPromise>>['Items']
-          type TestFilteredQueryItem = A.Equals<
+          type TestFilteredQueryItem = Equals<
             FilteredQueryItem,
             Pick<EntityItemOverlay, 'pk0' | 'sk0' | 'str0'>[] | undefined
           >
@@ -2690,7 +2689,7 @@ describe('Entity', () => {
         it('returned Items should match MethodItemOverlay', () => {
           const queryPromise = () => ent.query<MethodItemOverlay>('pk')
           type QueryItem = Awaited<ReturnType<typeof queryPromise>>['Items']
-          type TestQueryItem = A.Equals<QueryItem, MethodItemOverlay[] | undefined>
+          type TestQueryItem = Equals<QueryItem, MethodItemOverlay[] | undefined>
           const testQueryItem: TestQueryItem = 1
           testQueryItem
         })
@@ -2706,7 +2705,7 @@ describe('Entity', () => {
         it('returned Items should not necessarily match EntityItemOverlay', () => {
           const scanPromise = () => ent.scan()
           type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
-          type TestScanItems = A.Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
+          type TestScanItems = Equals<ScanItems, DocumentClientType.AttributeMap[] | undefined>
           const testScanItems: TestScanItems = 1
           testScanItems
         })
@@ -2720,7 +2719,7 @@ describe('Entity', () => {
         it('returned Items should match MethodItemOverlay', () => {
           const scanPromise = () => ent.scan<MethodItemOverlay>()
           type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
-          type TestScanItems = A.Equals<ScanItems, MethodItemOverlay[] | undefined>
+          type TestScanItems = Equals<ScanItems, MethodItemOverlay[] | undefined>
           const testScanItems: TestScanItems = 1
           testScanItems
         })
