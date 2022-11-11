@@ -6,12 +6,11 @@
 
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html
 
-import { A } from 'ts-toolbelt'
-
 // Import standard error handler
-import { TableDef } from '../classes/Table'
-import { error } from './utils'
+import type { TableDef } from '../classes/Table'
 import checkAttribute from './checkAttribute'
+import { error } from './utils'
+import type { Key } from './ts-utils';
 
 // This should be able to parse an array with values,
 // or an object that uses the name of the entity plus an array of values
@@ -20,9 +19,9 @@ import checkAttribute from './checkAttribute'
 // e.g. [ 'attr1', 'attr2', { MyEntity: ['attr3','attr4'] }]
 export type ProjectionAttributesTable = { [key: string]: ProjectionAttributes }
 export type ProjectionAttributes =
-  | A.Key
+  | Key
   | ProjectionAttributeType
-  | (A.Key | ProjectionAttributeType)[]
+  | (Key | ProjectionAttributeType)[]
 export type ProjectionAttributeType = { [key: string]: string | string[] }
 
 const projectionBuilder = <EntityTable extends TableDef | undefined>(
