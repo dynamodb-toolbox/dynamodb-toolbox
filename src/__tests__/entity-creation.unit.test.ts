@@ -127,6 +127,29 @@ describe('Entity creation', () => {
     expect(TestEntity.schema.attributes.test2.map).toBe('test')
   })
 
+  it('creates entity from shared config constant without modifying it', () => {
+    const config = {
+      name: 'TestEntity',
+      attributes: {
+        pk: { partitionKey: true },
+        sk: { sortKey: true, default: 'some-default-sk-value' },
+      },
+      timestamps: true
+    } as const
+
+    new Entity({
+      ...config,
+      timestamps: false
+    })
+
+    expect(config.name).toBe('TestEntity')
+    expect(config.attributes).toEqual({
+      pk: { partitionKey: true },
+      sk: { sortKey: true, default: 'some-default-sk-value' },
+    });
+    expect(config.timestamps).toBe(true)
+  });
+
   it('fails when creating a entity without a partitionKey', () => {
     let result = () =>
       new Entity({

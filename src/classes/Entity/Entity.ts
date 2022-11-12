@@ -5,6 +5,7 @@
  */
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import cloneDeep from 'deep-copy'
 import type { A, B, O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity'
@@ -140,6 +141,18 @@ class Entity<
     if (entity?.constructor !== Object) {
       error('Please provide a valid entity definition')
     }
+
+    const {
+      table,
+      ...entitySchemaWithoutTable
+    } = entity;
+
+    // we want to prevent mutation of the original entity configuration input but still be able
+    // to mutate the original table instance
+    entity = {
+      ...cloneDeep(entitySchemaWithoutTable),
+      ...(table ? { table } : {}),
+    };
 
     const {
       attributes,
