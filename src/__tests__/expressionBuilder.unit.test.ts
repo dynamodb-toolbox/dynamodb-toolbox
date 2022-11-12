@@ -1,20 +1,16 @@
-// @ts-nocheckx
-import expressionBuilder from '../lib/expressionBuilder'
-
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
-import { SUPPORTED_ATTR_REF_OPERATORS } from '../constants'
+import { default as expressionBuilder, SUPPORTED_ATTR_REF_OPERATORS} from '../lib/expressionBuilder'
 
 // Create basic table
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk'
 })
-
 // Create basic entity
 const TestEntity = new Entity({
   name: 'TestEntity',
+
   attributes: {
     pk: { partitionKey: true },
     a: 'string',
