@@ -538,6 +538,6 @@ describe('put', () => {
       xyz: '123'
     })
     expect(Item.sk).toBe('3')
-    // expect(TableName).toBe('test-table')    expect(Item.sk).toBe('test')
+    // expect(TableName).toBe('test-table')
   })
 })
