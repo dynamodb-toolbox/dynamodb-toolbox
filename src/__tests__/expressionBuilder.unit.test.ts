@@ -4,6 +4,7 @@ import expressionBuilder from '../lib/expressionBuilder'
 // Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
+import { SUPPORTED_ATTR_REF_OPERATORS } from '../constants'
 
 // Create basic table
 const TestTable = new Table({
@@ -472,6 +473,12 @@ describe('expressionBuilder', () => {
   it(`fails when 'value' type AttrRef is used with a non-existing property name`, () => {
     expect(() => expressionBuilder({ attr: 'a', eq: { attr: 'nonexistent' } }, TestTable, 'TestEntity'))
       .toThrow(`'nonexistent' is not a valid attribute.`);
+  })
+
+  it(`fails when 'value' type AttrRef is used with an invalid operator`, () => {
+    // @ts-expect-error
+    expect(() => expressionBuilder({ attr: 'a', beginsWith: { attr: 'some-attr' } }, TestTable, 'TestEntity'))
+      .toThrow(`AttrRef is only supported for the following operators: ${SUPPORTED_ATTR_REF_OPERATORS.join(', ')}`);
   })
 
   it(`fails when no condition is provided`, () => {
