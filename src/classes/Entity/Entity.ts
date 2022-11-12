@@ -5,6 +5,7 @@
  */
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import cloneDeep from 'deep-copy'
 import type { A, B, O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity'
@@ -14,7 +15,7 @@ import formatItem from '../../lib/formatItem'
 import getKey from '../../lib/getKey'
 import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
-import { cloneDeep, error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
+import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE

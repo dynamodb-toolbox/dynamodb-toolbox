@@ -78,8 +78,6 @@ export const transformAttr = (mapping: PureAttributeDefinition, value: any, data
     : value
 }
 
-export const cloneDeep = <Object extends Record<string, any>>(obj: Object): Object & Record<string, any> => JSON.parse(JSON.stringify(obj, null, 2))
-
 // Type now exists in ts-toolbelt but requires upgrading ts: See https://github.com/millsp/ts-toolbelt/issues/169
 export type If<C extends 0 | 1, T, E = never> = C extends 1 ? (1 extends C ? T : E) : E
 
