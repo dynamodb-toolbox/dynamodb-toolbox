@@ -50,7 +50,7 @@ export interface TableIndexes {
   [index: string]: { partitionKey?: string; sortKey?: string }
 }
 
-export type TableReadOptions = { index: string; limit: number; entity: string }
+export type TableReadOptions = { index: string; limit: number; entity: string; parseAsEntity: string }
 
 export type $QueryOptions<
   Execute extends boolean | undefined = undefined,

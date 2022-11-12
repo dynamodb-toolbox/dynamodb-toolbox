@@ -5,6 +5,7 @@
  */
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import cloneDeep from 'deep-copy'
 import type { A, B, O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity'
@@ -14,7 +15,7 @@ import formatItem from '../../lib/formatItem'
 import getKey from '../../lib/getKey'
 import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
-import { error, transformAttr, isEmpty, If, FirstDefined } from '../../lib/utils'
+import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
@@ -44,8 +45,9 @@ import type {
   UpdateItem,
   UpdateOptionsReturnValues,
   Writable,
-  Readonly, $PutBatchOptions,
-} from './types';
+  Readonly,
+  $PutBatchOptions
+} from './types'
 
 class Entity<
   Name extends string = string,
@@ -61,6 +63,7 @@ class Entity<
   CreatedAlias extends string = string extends Name ? string : 'created',
   ModifiedAlias extends string = string extends Name ? string : 'modified',
   TypeAlias extends string = string extends Name ? string : 'entity',
+  TypeHidden extends boolean = string extends Name ? boolean : false,
   ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>,
   WritableAttributeDefinitions extends AttributeDefinitions = Writable<ReadonlyAttributeDefinitions>,
   Attributes extends ParsedAttributes = string extends Name
@@ -73,7 +76,8 @@ class Entity<
           Timestamps,
           CreatedAlias,
           ModifiedAlias,
-          TypeAlias
+          TypeAlias,
+          TypeHidden
         >,
         ParsedAttributes<keyof EntityItemOverlay>
       >,
@@ -116,6 +120,7 @@ class Entity<
   public createdAlias: CreatedAlias
   public modifiedAlias: ModifiedAlias
   public typeAlias: TypeAlias
+  public typeHidden: TypeHidden
 
   // Declare constructor (entity config)
   constructor(
@@ -128,6 +133,7 @@ class Entity<
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
+      TypeHidden,
       ReadonlyAttributeDefinitions
     >
   ) {
@@ -137,17 +143,31 @@ class Entity<
     }
 
     const {
+      table,
+      ...entitySchemaWithoutTable
+    } = entity;
+
+    // we want to prevent mutation of the original entity configuration input but still be able
+    // to mutate the original table instance
+    entity = {
+      ...cloneDeep(entitySchemaWithoutTable),
+      ...(table ? { table } : {}),
+    };
+
+    const {
       attributes,
       timestamps = true,
       createdAlias = 'created',
       modifiedAlias = 'modified',
-      typeAlias = 'entity'
+      typeAlias = 'entity',
+      typeHidden = false
     } = entity
     this.attributes = attributes
     this.timestamps = timestamps as Timestamps
     this.createdAlias = createdAlias as CreatedAlias
     this.modifiedAlias = modifiedAlias as ModifiedAlias
     this.typeAlias = typeAlias as TypeAlias
+    this.typeHidden = typeHidden as TypeHidden
     // Parse the entity and merge into this
     Object.assign(this, parseEntity(entity))
   } // end construcor
@@ -171,6 +191,7 @@ class Entity<
       if (table.Table.entityField) {
         this.schema.attributes[table.Table.entityField] = {
           type: 'string',
+          hidden: this.typeHidden,
           alias: this._etAlias,
           default: this.name
         }
@@ -315,11 +336,11 @@ class Entity<
       If<
         B.Not<ShouldParse<Parse, AutoParse>>,
         DocumentClient.GetItemOutput,
-        A.Compute<
+        Compute<
           O.Update<
             DocumentClient.GetItemOutput,
             'Item',
-            FirstDefined<[MethodItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]>
+            FirstDefined<[MethodItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>
           >
         >
       >
@@ -399,6 +420,7 @@ class Entity<
       CreatedAlias,
       ModifiedAlias,
       TypeAlias,
+      TypeHidden,
       ReadonlyAttributeDefinitions,
       WritableAttributeDefinitions,
       Attributes,
@@ -563,7 +585,7 @@ class Entity<
             DocumentClient.DeleteItemOutput,
             'Attributes',
             FirstDefined<
-              [MethodItemOverlay, EntityItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]
+              [MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]
             >
           >
         >
@@ -798,32 +820,50 @@ class Entity<
     ReturnValues extends UpdateOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined= true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
-    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
+    options: $UpdateOptions<
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    > = {},
     params: UpdateCustomParams = {}
   ): Promise<
-    A.Compute<
+    Compute<
       If<
         B.Not<ShouldExecute<Execute, AutoExecute>>,
         DocumentClient.UpdateItemInput,
-        If<
+         If<
           B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
-          If<
-            // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-            B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-            O.Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-            O.Update<
-              DocumentClient.UpdateItemOutput,
-              'Attributes',
-              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>
+           If<A.Equals<ReturnValues, 'NONE'>,
+           Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
+           O.Update<
+            DocumentClient.UpdateItemOutput,
+            'Attributes',
+              If<
+                B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
+                FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+                If<
+                  B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>, A.Equals<ReturnValues, 'UPDATED_NEW'>>,
+                  FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
+                  >
+                >
+              >
             >
           >
         >
-      >
-    >
+        >
   > {
     // Generate the payload
     const updateParams = this.updateParams<
@@ -875,7 +915,14 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: UpdateCustomParams
   ): { Update: DocumentClient.Update } {
@@ -927,8 +974,21 @@ class Entity<
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
-    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
+    options: $UpdateOptions<
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    > = {},
     {
       SET = [],
       REMOVE = [],
@@ -961,7 +1021,7 @@ class Entity<
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
-     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
+    const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(
@@ -1171,8 +1231,6 @@ class Entity<
           // if a map and updating by nested attribute/index
         } else if (mapping.type === 'map' && data[field]?.$set) {
           Object.keys(data[field].$set).forEach(f => {
-            // TODO: handle null values to remove
-
             let props = f.split('.')
             let acc = [`#${field}`]
             props.forEach((prop, i) => {
@@ -1185,7 +1243,7 @@ class Entity<
                 let path = `${acc.join('.')}.#${id}`
                 let value = `${id.replace(/\[(\d+)\]/, '_$1')}`
 
-                if (input === undefined) {
+                if (input === undefined || input === null) {
                   REMOVE.push(`${path}`)
                 } else if (input.$add) {
                   ADD.push(`${path} :${value}`)
@@ -1198,9 +1256,8 @@ class Entity<
 
                   values[`:${value}`] = input.$append
                   // add default list value
-                  values[
-                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
-                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] =
+                    ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(
                     `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
@@ -1208,9 +1265,8 @@ class Entity<
 
                   values[`:${value}`] = input.$prepend
                   // add default list value
-                  values[
-                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
-                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] =
+                    ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {
@@ -1225,7 +1281,7 @@ class Entity<
                   values[`:${value}`] = input
                 }
 
-                if (input.$set) {
+                if (input?.$set) {
                   Object.keys(input.$set).forEach(i => {
                     if (String(parseInt(i)) !== i) {
                       error(
@@ -1242,8 +1298,11 @@ class Entity<
               }
             })
           })
-          // Add field to names
-          names[`#${field}`] = field
+
+          const shouldAppendFieldToExpressionNames = Object.keys(data[field].$set).length > 0
+          if (shouldAppendFieldToExpressionNames) {
+            names[`#${field}`] = field
+          }
           // else add to SET
         } else {
           let value = transformAttr(mapping, validateType(mapping, field, data[field]), data)
@@ -1310,9 +1369,16 @@ class Entity<
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined= true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
@@ -1330,7 +1396,7 @@ class Entity<
             DocumentClient.PutItemOutput,
             'Attributes',
             FirstDefined<
-              [MethodItemOverlay, EntityItemOverlay, A.Compute<O.Pick<Item, ResponseAttributes>>]
+              [MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]
             >
           >
         >
@@ -1387,11 +1453,26 @@ class Entity<
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
-    >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+  >(
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {}
   ): { [key: string]: DocumentClient.WriteRequest } {
-    const payload = this.putParams<MethodItemOverlay, ShownItemAttributes, ResponseAttributes, 'NONE', Execute, Parse, StrictSchemaCheck>(item, options)
+    const payload = this.putParams<
+      MethodItemOverlay,
+      ShownItemAttributes,
+      ResponseAttributes,
+      'NONE',
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    >(item, options)
     return { [payload.TableName]: { PutRequest: { Item: payload.Item } } }
   }
 
@@ -1413,7 +1494,14 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: Partial<DocumentClient.PutItemInput>
   ): { Put: DocumentClient.Put } {
@@ -1441,7 +1529,6 @@ class Entity<
       StrictSchemaCheck
     >(item, options, params)
 
-
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
       let { ReturnValues, ..._payload } = payload
@@ -1466,7 +1553,14 @@ class Entity<
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): DocumentClient.PutItemInput {

@@ -3,7 +3,7 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
-import { A, B, L, O } from 'ts-toolbelt'
+import { A, L } from 'ts-toolbelt'
 
 import { PureAttributeDefinition } from '../classes/Entity'
 import { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table'
@@ -79,11 +79,7 @@ export const transformAttr = (mapping: PureAttributeDefinition, value: any, data
 }
 
 // Type now exists in ts-toolbelt but requires upgrading ts: See https://github.com/millsp/ts-toolbelt/issues/169
-export type If<C extends B.Boolean, T, E = never> = C extends B.True
-  ? B.True extends C
-    ? T
-    : E
-  : E
+export type If<C extends 0 | 1, T, E = never> = C extends 1 ? (1 extends C ? T : E) : E
 
 export type FirstDefined<List extends L.List> = {
   stopNone: undefined
@@ -93,3 +89,14 @@ export type FirstDefined<List extends L.List> = {
   If<A.Equals<List, []>, 'stopNone', If<A.Equals<L.Head<List>, undefined>, 'continue', 'stopOne'>>,
   'stopNone' | 'stopOne' | 'continue'
 >]
+
+// ts-toolbelt A.Compute has issues: A.Compute<any[]> returns { [key:string]: any } and A.Compute<unknown> returns {}
+export type Compute<A> = A extends Promise<infer T>
+  ? Promise<Compute<T>>
+  : A extends (...args: infer P) => infer R
+  ? (...args: Compute<P>) => Compute<R>
+  : A extends Set<infer V>
+  ? Set<Compute<V>>
+  : A extends object
+  ? { [key in keyof A]: Compute<A[key]> }
+  : A

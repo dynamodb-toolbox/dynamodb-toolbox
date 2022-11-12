@@ -25,20 +25,92 @@ describe('validateTypes', () => {
     }).toThrow(`'attr' must be of type boolean`)
   })
 
-  it('validates number (int)', async () => {
+  it('validates number (123)', async () => {
     let result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 123)
     expect(result).toBe(123)
   })
 
-  it('validates number (float)', async () => {
+  it('validates number (1.23)', async () => {
     let result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 1.23)
     expect(result).toBe(1.23)
   })
 
-  it('fails with invalid number', async () => {
+  it('validates number (0)', async () => {
+    let result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 0)
+    expect(result).toBe(0)
+  })
+
+  // parseFloat("123.00") === 123 -> String(parseFloat("123.00")) !== "123.00"
+  it('validates number (coerce, float "123.00")', async () => {
+    let result = validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', '123.00')
+    expect(result).toBe(123)
+  })
+
+  it('fails with invalid number (NaN)', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number' }, 'attr', NaN)
+    }).toThrow(`'attr' must be a finite number`)
+  })
+
+  it('fails with invalid number (Infinity)', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number' }, 'attr', Infinity)
+    }).toThrow(`'attr' must be a finite number`)
+  })
+
+  it('fails with invalid number (string)', async () => {
     expect(() => {
       validateTypes(DocumentClient)({ type: 'number' }, 'attr', 'string')
     }).toThrow(`'attr' must be of type number`)
+  })
+
+  // parseInt("123abc"), parseFloat("123abc") === 123
+  it('fails with invalid number (coerce, "123abc")', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', '123abc')
+    }).toThrow(`Could not convert '123abc' to a number for 'attr'`)
+  })
+
+  // Number("") === 0
+  it('fails with invalid number (coerce, "")', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', '')
+    }).toThrow(`Could not convert '' to a number for 'attr'`)
+  })
+
+  // Number(true) === 1, Number(false) === 0
+  it('fails with invalid number (coerce, boolean)', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', true)
+    }).toThrow(`Could not convert 'true' to a number for 'attr'`)
+  })
+
+  // Number([]) === 0
+  it('fails with invalid number (coerce, [])', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', [])
+    }).toThrow(`Could not convert '[]' to a number for 'attr'`)
+  })
+
+  // Number([123]) === 123
+  it('fails with invalid number (coerce, [123])', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', [123])
+    }).toThrow(`Could not convert '[123]' to a number for 'attr'`)
+  })
+
+  // Number("Infinity") === Infinity
+  it('fails with invalid number (coerce, "Infinity")', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', 'Infinity')
+    }).toThrow(`Could not convert 'Infinity' to a number for 'attr'`)
+  })
+
+  // Number("NaN") === NaN
+  it('fails with invalid number (coerce, "NaN")', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', 'NaN')
+    }).toThrow(`Could not convert 'NaN' to a number for 'attr'`)
   })
 
   it('validates list', async () => {

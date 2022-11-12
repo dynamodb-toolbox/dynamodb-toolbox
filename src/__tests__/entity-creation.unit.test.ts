@@ -1,7 +1,7 @@
 // Require Table and Entity classes
-import '../classes/Table'
+import Table from '../classes/Table'
 import Entity from '../classes/Entity'
-import './bootstrap.test'
+import {DocumentClient} from './bootstrap.test'
 
 describe('Entity creation', () => {
   it('creates basic entity w/ defaults', async () => {
@@ -29,6 +29,7 @@ describe('Entity creation', () => {
     expect(TestEntity.defaults).toHaveProperty('_ct')
     expect(TestEntity.defaults).toHaveProperty('_md')
     expect(TestEntity._etAlias).toBe('entity')
+    expect(TestEntity.typeHidden).toBe(false)
   })
 
   it('creates basic entity w/o timestamps', () => {
@@ -73,6 +74,18 @@ describe('Entity creation', () => {
     expect(TestEntity.defaults).toHaveProperty('modifiedAt')
   })
 
+  it('creates basic entity with typeHidden set to true', () => {
+    let TestEntity = new Entity({
+      name: 'TestEntity',
+      typeHidden: true,
+      attributes: {
+        pk: { partitionKey: true },
+      }
+    } as const)
+    
+    expect(TestEntity.typeHidden).toBe(true)
+  })
+
   it('creates basic entity w/ required fields', () => {
     let TestEntity = new Entity({
       name: 'TestEntity',
@@ -113,6 +126,29 @@ describe('Entity creation', () => {
 
     expect(TestEntity.schema.attributes.test2.map).toBe('test')
   })
+
+  it('creates entity from shared config constant without modifying it', () => {
+    const config = {
+      name: 'TestEntity',
+      attributes: {
+        pk: { partitionKey: true },
+        sk: { sortKey: true, default: 'some-default-sk-value' },
+      },
+      timestamps: true
+    } as const
+
+    new Entity({
+      ...config,
+      timestamps: false
+    })
+
+    expect(config.name).toBe('TestEntity')
+    expect(config.attributes).toEqual({
+      pk: { partitionKey: true },
+      sk: { sortKey: true, default: 'some-default-sk-value' },
+    });
+    expect(config.timestamps).toBe(true)
+  });
 
   it('fails when creating a entity without a partitionKey', () => {
     let result = () =>
@@ -326,6 +362,45 @@ describe('Entity creation', () => {
     // @ts-expect-error
     let result = () => new Entity([])
     expect(result).toThrow(`Please provide a valid entity definition`)
+  })
+
+  it("creates an attribute with an inverseTransformation function", async () => {
+    const TestTable = new Table({
+      name: "test-table",
+      partitionKey: "pk",
+      sortKey: "sk",
+      DocumentClient,
+    });
+
+    const TestEntity = new Entity({
+      name: "TestEnt",
+      attributes: {
+        pk: {
+          partitionKey: true,
+          format: (val) => val.toUpperCase(),
+          default: "pkDef",
+        },
+        test: {
+          format: (val: string, data: any) => {
+            return val.toUpperCase();
+          },
+          default: () => "defaultVal",
+        },
+        sk: { type: "string", sortKey: true },
+        testx: ["sk", 0],
+        testy: [
+          "sk",
+          1,
+          {
+            default: () => "testDefaultY",
+            format: (val) => {
+              return "__" + val.toUpperCase();
+            },
+          },
+        ],
+      },
+      table: TestTable,
+    })
   })
 
   // it('creates entity w/ table', async () => {

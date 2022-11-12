@@ -22,7 +22,6 @@ export default (attr: string, attrs: any): string => {
     return path.join('.')
     // Throw an error if not a valid attribute or alias
   } else {
-    // TODO: make this error more helpful
-    return error(`'${attr}' is not a valid attribute.`)
+    return error(`'${attr}' is not a valid attribute within the given entity/table.`)
   }
 } // end checkAttribute

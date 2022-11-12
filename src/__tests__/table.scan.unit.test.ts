@@ -64,7 +64,8 @@ describe('scan', () => {
       segment: 0,
       entity: TestEntity.name,
       execute: true,
-      parse: true
+      parse: true,
+      parseAsEntity: TestEntity.name
     })
 
     expect(result).toEqual({
