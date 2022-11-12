@@ -25,14 +25,25 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
       return typeof value === 'boolean' || mapping.coerce
         ? toBool(value)
         : error(`'${field}' must be of type boolean`)
-    case 'number':
-      return typeof value === 'number' || mapping.coerce
-        ? String(parseInt(value)) === String(value)
-          ? parseInt(value)
-          : String(parseFloat(value)) === String(value)
-          ? parseFloat(value)
-          : error(`Could not convert '${value}' to a number for '${field}'`)
-        : error(`'${field}' must be of type number`)
+    case 'number': {
+      if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : error(`'${field}' must be a finite number`)
+      }
+
+      if (!mapping.coerce) {
+        return error(`'${field}' must be of type number`)
+      }
+
+      const coercedValue = Number(value)
+
+      return typeof value === 'string' && Number.isFinite(coercedValue) && value.length > 0
+        ? coercedValue
+        : error(
+            `Could not convert '${
+              Array.isArray(value) ? `[${value}]` : value
+            }' to a number for '${field}'`
+          )
+    }
     case 'list':
       return Array.isArray(value)
         ? value
@@ -42,9 +53,7 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
             .map(x => x.trim())
         : error(`'${field}' must be a list (array)`)
     case 'map':
-      return value?.constructor === Object
-        ? value
-        : error(`'${field}' must be a map (object)`)
+      return value?.constructor === Object ? value : error(`'${field}' must be a map (object)`)
     case 'set':
       if (Array.isArray(value)) {
         if (!DocumentClient) error('DocumentClient required for this operation')
