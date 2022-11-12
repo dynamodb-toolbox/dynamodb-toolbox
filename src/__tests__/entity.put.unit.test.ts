@@ -365,7 +365,6 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        // 💥 TODO: Improve set support
         test_string_set: ['test', 1]
       })
     ).toThrow(`String Set contains Number value`)
