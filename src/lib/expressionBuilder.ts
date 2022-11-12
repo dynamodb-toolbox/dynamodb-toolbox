@@ -37,13 +37,13 @@ interface FilterExpression<Attr extends A.Key = A.Key> {
   negate?: boolean
   entity?: string
 }
+export const SUPPORTED_ATTR_REF_OPERATORS = ['eq', 'ne', 'lt', 'lte', 'gt', 'gte']
+
 
 export type FilterExpressions<Attr extends A.Key = A.Key> =
   | FilterExpression<Attr>
   | FilterExpression<Attr>[]
   | FilterExpressions<Attr>[]
-
-export const SUPPORTED_ATTR_REF_OPERATORS = ['eq', 'ne', 'lt', 'lte', 'gt', 'gte']
 
 const buildExpression = <
   Attr extends A.Key = A.Key,
