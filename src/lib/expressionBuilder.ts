@@ -284,7 +284,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
     } else if (value && typeof value === 'object') {
       const ref = value as Partial<AttrRef>;
       if(!SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.includes(filterType)) error(`AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(', ')}.`)
-      if (ref?.attr && typeof ref?.attr !== 'string') error(`AttrRef must have an attr field which references another attribute in the same entity.`)
+      if (!!ref?.attr && typeof ref?.attr !== 'string') error(`AttrRef must have an attr field which references another attribute in the same entity.`)
 
       names[`#attr${grp}_ref`] = checkAttribute(ref.attr!, (entity ? table[entity].schema.attributes : table.Table.attributes))
       clause = `${operand} ${operator} #attr${grp}_ref`
