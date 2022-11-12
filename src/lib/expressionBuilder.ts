@@ -28,7 +28,7 @@ interface FilterExpression<Attr extends A.Key = A.Key> {
   lte?: string | number | AttrRef
   gt?: string | number | AttrRef
   gte?: string | number | AttrRef
-  between?:	string[] | number[]
+  between?: string[] | number[]
   beginsWith?: string
   in?: any[]
   contains?: string
