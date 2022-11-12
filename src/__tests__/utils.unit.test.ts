@@ -1,4 +1,4 @@
-import { toBool, hasValue, error, cloneDeep } from '../lib/utils';
+import { toBool, hasValue, error } from '../lib/utils';
 
 describe('utility functions', () => {
   it('toBool', () => {
@@ -27,25 +27,5 @@ describe('utility functions', () => {
     expect(() => {
       error('test error');
     }).toThrow('test error');
-  });
-
-  describe('cloneDeep', () => {
-    it('should return a cloned object', () => {
-      const original = {
-        a: 1,
-        b: {
-          someNestedKey: 'someNestedValue',
-        },
-      };
-      const clone = cloneDeep(original);
-
-      expect(clone).toStrictEqual(original);
-      expect(clone).not.toBe(original);
-
-      clone.c = 3;
-
-      expect(clone).toHaveProperty('c');
-      expect(original).not.toHaveProperty('c');
-    });
   });
 });
