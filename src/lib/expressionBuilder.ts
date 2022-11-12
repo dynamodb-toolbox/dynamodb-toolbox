@@ -284,7 +284,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
     } else if (value && typeof value === 'object') {
       const ref = value as Partial<AttrRef>;
       if (ref && (!ref.attr || typeof ref.attr !== 'string')) error(`AttrRef must have an attr field which references another attribute in the same entity.`)
-      if(!SUPPORTED_ATTR_REF_OPERATORS.includes(operator)) error(`AttrRef is only supported for the following operators: ${SUPPORTED_ATTR_REF_OPERATORS.join(', ')}`)
+      if(!SUPPORTED_ATTR_REF_OPERATORS.includes(operator)) error(`AttrRef is only supported for the following operators: ${SUPPORTED_ATTR_REF_OPERATORS.join(', ')}.`)
 
       names[`#attr${grp}_ref`] = checkAttribute(ref.attr!, (entity ? table[entity].schema.attributes : table.Table.attributes))
       clause = `${operand} ${operator} #attr${grp}_ref`

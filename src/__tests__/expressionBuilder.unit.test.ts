@@ -474,7 +474,7 @@ describe('expressionBuilder', () => {
   it(`fails when 'value' type AttrRef is used with an invalid operator`, () => {
     // @ts-expect-error
     expect(() => expressionBuilder({ attr: 'a', beginsWith: { attr: 'some-attr' } }, TestTable, 'TestEntity'))
-      .toThrow(`AttrRef is only supported for the following operators: ${SUPPORTED_ATTR_REF_OPERATORS.join(', ')}`);
+      .toThrow(`AttrRef is only supported for the following operators: ${SUPPORTED_ATTR_REF_OPERATORS.join(', ')}.`);
   })
 
   it(`fails when no condition is provided`, () => {
