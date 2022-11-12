@@ -36,7 +36,7 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
 
       const coercedValue = Number(value)
 
-      return typeof value === 'string' && !Number.isNaN(coercedValue)
+      return value && typeof value === 'string' && Number.isFinite(coercedValue)
         ? coercedValue
         : error(
             `Could not convert '${

@@ -71,6 +71,13 @@ describe('validateTypes', () => {
     }).toThrow(`Could not convert '123abc' to a number for 'attr'`)
   })
 
+  // Number("") === 0
+  it('fails with invalid number (coerce, "")', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', '')
+    }).toThrow(`Could not convert '' to a number for 'attr'`)
+  })
+
   // Number(true) === 1, Number(false) === 0
   it('fails with invalid number (coerce, boolean)', async () => {
     expect(() => {
@@ -92,11 +99,18 @@ describe('validateTypes', () => {
     }).toThrow(`Could not convert '[123]' to a number for 'attr'`)
   })
 
-  // Number(null) === 0
-  it('fails with invalid number (coerce, null)', async () => {
+  // Number("Infinity") === Infinity
+  it('fails with invalid number (coerce, "Infinity")', async () => {
     expect(() => {
-      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', null)
-    }).toThrow(`Could not convert 'null' to a number for 'attr'`)
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', 'Infinity')
+    }).toThrow(`Could not convert 'Infinity' to a number for 'attr'`)
+  })
+
+  // Number("NaN") === NaN
+  it('fails with invalid number (coerce, "NaN")', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', 'NaN')
+    }).toThrow(`Could not convert 'NaN' to a number for 'attr'`)
   })
 
   it('validates list', async () => {
