@@ -14,15 +14,19 @@ import checkAttribute from './checkAttribute'
 import { error } from './utils'
 import { TableDef } from '../classes/Table'
 
+interface AttrRef {
+  attr: string
+}
+
 interface FilterExpression<Attr extends A.Key = A.Key> {
   attr?: Attr
   size?: string
-  eq?: string | number | boolean | null
-  ne?: string | number | boolean | null
-  lt?: string | number
-  lte?: string | number
-  gt?: string | number
-  gte?: string | number
+  eq?: string | number | boolean | null | AttrRef
+  ne?: string | number | boolean | null | AttrRef
+  lt?: string | number | AttrRef
+  lte?: string | number | AttrRef
+  gt?: string | number | AttrRef
+  gte?: string | number | AttrRef
   between?: string[] | number[]
   beginsWith?: string
   in?: any[]
@@ -33,6 +37,8 @@ interface FilterExpression<Attr extends A.Key = A.Key> {
   negate?: boolean
   entity?: string
 }
+export const SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS = ['eq', 'ne', 'lt', 'lte', 'gt', 'gte']
+
 
 export type FilterExpressions<Attr extends A.Key = A.Key> =
   | FilterExpression<Attr>
@@ -183,70 +189,70 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
   const operand = Object.keys(names).join('.')
 
   // Parse clause operator and value
-  let operator, value, f
+  let operator, value, filterType
   if (eq !== undefined) {
     value = eq
-    f = 'eq'
+    filterType = 'eq'
     operator = '='
   }
   if (ne !== undefined) {
-    value = value ? conditionError(f) : ne
-    f = 'ne'
+    value = value ? conditionError(filterType) : ne
+    filterType = 'ne'
     operator = '<>'
   }
   if (_in) {
-    value = value ? conditionError(f) : _in
-    f = 'in'
+    value = value ? conditionError(filterType) : _in
+    filterType = 'in'
     operator = 'IN'
   }
   if (lt !== undefined) {
-    value = value ? conditionError(f) : lt
-    f = 'lt'
+    value = value ? conditionError(filterType) : lt
+    filterType = 'lt'
     operator = '<'
   }
   if (lte !== undefined) {
-    value = value ? conditionError(f) : lte
-    f = 'lte'
+    value = value ? conditionError(filterType) : lte
+    filterType = 'lte'
     operator = '<='
   }
   if (gt !== undefined) {
-    value = value ? conditionError(f) : gt
-    f = 'gt'
+    value = value ? conditionError(filterType) : gt
+    filterType = 'gt'
     operator = '>'
   }
   if (gte !== undefined) {
-    value = value ? conditionError(f) : gte
-    f = 'gte'
+    value = value ? conditionError(filterType) : gte
+    filterType = 'gte'
     operator = '>='
   }
   if (between) {
-    value = value ? conditionError(f) : between
-    f = 'between'
+    value = value ? conditionError(filterType) : between
+    filterType = 'between'
     operator = 'BETWEEN'
   }
   if (exists !== undefined) {
-    value = value ? conditionError(f) : exists
-    f = 'exists'
+    value = value ? conditionError(filterType) : exists
+    filterType = 'exists'
     operator = 'EXISTS'
   }
   if (contains) {
-    value = value ? conditionError(f) : contains
-    f = 'contains'
+    value = value ? conditionError(filterType) : contains
+    filterType = 'contains'
     operator = 'CONTAINS'
   }
   if (beginsWith) {
-    value = value ? conditionError(f) : beginsWith
-    f = 'beginsWith'
+    value = value ? conditionError(filterType) : beginsWith
+    filterType = 'beginsWith'
     operator = 'BEGINS_WITH'
   }
   if (type) {
-    value = value ? conditionError(f) : type
-    f = 'type'
+    value = value ? conditionError(filterType) : type
+    filterType = 'type'
     operator = 'ATTRIBUTE_TYPE'
   }
 
   // If a operator was set
-  if (operator) {
+  if (operator && filterType) {
     // If begins_with
     if (operator === 'BETWEEN') {
       // Verify array input
@@ -275,6 +281,13 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
     } else if (operator === 'EXISTS') {
       if (!attr) error(`'exists' conditions require an 'attr'.`)
       clause = value ? `attribute_exists(${operand})` : `attribute_not_exists(${operand})`
+    } else if (value && typeof value === 'object') {
+      const ref = value as Partial<AttrRef>;
+      if(!SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.includes(filterType)) error(`AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(', ')}.`)
+      if (typeof ref?.attr !== 'string' || !ref?.attr) error(`AttrRef must have an attr field which references another attribute in the same entity.`)
+
+      names[`#attr${grp}_ref`] = checkAttribute(ref.attr!, (entity ? table[entity].schema.attributes : table.Table.attributes))
+      clause = `${operand} ${operator} #attr${grp}_ref`
     } else {
       // Add value
       values[`:attr${grp}`] = value

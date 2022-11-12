@@ -1,19 +1,16 @@
-// @ts-nocheckx
-import expressionBuilder from '../lib/expressionBuilder'
-
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
+import { default as expressionBuilder, SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS} from '../lib/expressionBuilder'
 
 // Create basic table
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk'
 })
-
 // Create basic entity
 const TestEntity = new Entity({
   name: 'TestEntity',
+
   attributes: {
     pk: { partitionKey: true },
     a: 'string',
@@ -407,6 +404,12 @@ describe('expressionBuilder', () => {
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
+  it(`references a secondary attribute in an 'eq' clause`, () => {
+    let result = expressionBuilder({ attr: 'a', eq: { attr: 'b' } }, TestTable, 'TestEntity')
+    expect(result.expression).toBe('#attr1 = #attr1_ref')
+    expect(result.names).toEqual({ '#attr1': 'a', '#attr1_ref': 'b' })
+  })
+
   it(`generates a 'type' clause for a nested attribute`, () => {
     let result = expressionBuilder({ attr: 'a.b.c', type: 'd' }, TestTable, 'TestEntity')
     expect(result.expression).toBe('attribute_type(#attr1_0.#attr1_1.#attr1_2,:attr1)')
@@ -456,6 +459,22 @@ describe('expressionBuilder', () => {
     expect(() => expressionBuilder({ size: 'a', type: 'b' }, TestTable, 'TestEntity')).toThrow(
       `'type' conditions require an 'attr'.`
     )
+  })
+
+  it(`fails when 'value' type AttrRef is used without a property name`, () => {
+    expect(() => expressionBuilder({ attr: 'a', eq: { attr: '' } }, TestTable, 'TestEntity'))
+      .toThrow(`AttrRef must have an attr field which references another attribute in the same entity.`);
+  })
+
+  it(`fails when 'value' type AttrRef is used with a non-existing property name`, () => {
+    expect(() => expressionBuilder({ attr: 'a', eq: { attr: 'nonexistent' } }, TestTable, 'TestEntity'))
+      .toThrow("'nonexistent' is not a valid attribute within the given entity/table.");
+  })
+
+  it(`fails when 'value' type AttrRef is used with an unsupported operator`, () => {
+    // @ts-expect-error
+    expect(() => expressionBuilder({ attr: 'a', beginsWith: { attr: 'some-attr' } }, TestTable, 'TestEntity'))
+      .toThrow(`AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(', ')}.`);
   })
 
   it(`fails when no condition is provided`, () => {
