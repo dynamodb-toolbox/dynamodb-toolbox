@@ -1672,15 +1672,18 @@ class Entity<
         // Loop through valid fields and add appropriate action
         Item: Object.keys(data).reduce((acc, field) => {
           let mapping = schema.attributes[field]
-          let value = validateType(mapping, field, data[field])
-          return value !== undefined &&
+          let value = data[field]
+          if(value !== undefined &&
             (mapping.save === undefined || mapping.save === true) &&
             (!mapping.link || (mapping.link && mapping.save === true)) &&
-            (!_table!._removeNulls || (_table!._removeNulls && value !== null))
-            ? Object.assign(acc, {
-                [field]: transformAttr(mapping, value, data)
-              })
-            : acc
+            (!_table!._removeNulls || (_table!._removeNulls && value !== null))) {
+            // Transform before validation as user can transform entity into
+            // invalid value which will be thrown by DynamoDB Document client
+            value = transformAttr(mapping, value, data)
+            value = validateType(mapping, field, value)
+            return Object.assign(acc, {[field]: value})
+          }
+          return acc
         }, {})
       },
       ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
