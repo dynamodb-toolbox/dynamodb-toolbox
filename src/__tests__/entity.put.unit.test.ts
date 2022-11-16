@@ -98,6 +98,16 @@ const TestEntity5 = new Entity({
   table: TestTable2
 })
 
+const TestEntity6 = new Entity({
+  name: 'TestEntity6',
+  autoExecute: false,
+  attributes: {
+    pk: { partitionKey: true },
+    test_number: { type: 'number', transform: () => 'abc' },
+  },
+  table: TestTable2,
+})
+
 describe('put', () => {
   it('creates basic item', () => {
     let { Item } = TestEntity.putParams({ email: 'test-pk', sort: 'test-sk' })
@@ -538,5 +548,12 @@ describe('put', () => {
     })
     expect(Item.sk).toBe('3')
     // expect(TableName).toBe('test-table')
+  })
+
+  it('fail on invalid transformations', () => {
+    expect(() => TestEntity6.putParams({
+      pk: 'test-pk',
+      test_number: 123,
+    })).toThrow("Could not convert 'abc' to a number for 'test_number'")
   })
 })
