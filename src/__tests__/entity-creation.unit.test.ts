@@ -389,7 +389,7 @@ describe('Entity creation', () => {
 
   it("creates an attribute with an inverseTransformation function", async () => {
     const TestTable = new Table({
-      name: "test-table-1",
+      name: "test-table",
       partitionKey: "pk",
       sortKey: "sk",
       DocumentClient,
