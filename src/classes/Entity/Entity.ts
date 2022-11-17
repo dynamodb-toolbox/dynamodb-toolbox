@@ -179,12 +179,9 @@ class Entity<
       // If this Entity already has a Table, throw an error
       if (this._table) {
         error(`This entity is already assigned a Table (${this._table.name})`)
-        // Else if the Entity doesn't exist in the Table, add it
-      } else if (!table.entities.includes(this.name)) {
-        table.addEntity(this)
       }
 
-      // Set the Entity's table
+      table.addEntity(this)
       this._table = table
 
       // If an entity tracking field is enabled, add the attributes, alias and the default
@@ -202,15 +199,12 @@ class Entity<
           default: this.name
         }
         this.defaults[this._etAlias] = this.name
-      } // end if entity tracking
-
-      // Throw an error if not a valid Table
+      }
     } else {
       error('Invalid Table')
     }
-  } // end set table
+  }
 
-  // Returns the Entity's Table
   get table(): EntityTable {
     if (this._table) {
       return this._table
