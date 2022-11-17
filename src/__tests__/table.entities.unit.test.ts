@@ -36,7 +36,7 @@ describe('entities', () => {
     TestTable.addEntity(TestEntity)
     expect(() => {
       TestTable.addEntity(TestEntity)
-    }).toThrow(`Entity name 'TestEntity' already exists`)
+    }).toThrow(`Entity name 'TestEntity' already exists on table 'test-table'`)
   })
 
   it('fails when assigning the same entity to the table', () => {
