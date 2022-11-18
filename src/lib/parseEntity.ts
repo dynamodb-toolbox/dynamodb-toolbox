@@ -74,7 +74,6 @@ export function parseEntity<
     ReadonlyAttributeDefinitions
   >
 ): ParsedEntity<EntityTable, Name, AutoExecute, AutoParse, TypeAlias> {
-  // TODO: find a way to remove eslint-disable-next-line in this function
   let {
     name,
     timestamps,

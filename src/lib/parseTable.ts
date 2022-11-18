@@ -1,10 +1,3 @@
-/**
- * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
- * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @license MIT
- */
-
-// Import libraries, types, and classes
 import { A } from 'ts-toolbelt'
 
 import parseAttributes from './parseTableAttributes'
@@ -29,11 +22,17 @@ export const parseTable = <
     entityField,
     attributes,
     indexes,
+    // eslint-disable-next-line prefer-const
     autoExecute,
+    // eslint-disable-next-line prefer-const
     autoParse,
+    // eslint-disable-next-line prefer-const
     removeNullAttributes,
+    // eslint-disable-next-line prefer-const
     entities,
+    // eslint-disable-next-line prefer-const
     DocumentClient,
+    // eslint-disable-next-line prefer-const
     ...args // extraneous config
   } = table
 
