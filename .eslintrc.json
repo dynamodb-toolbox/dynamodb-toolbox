@@ -42,7 +42,8 @@
       }
     ],
     "@typescript-eslint/ban-ts-comment": "warn",
-    "@typescript-eslint/no-explicit-any": "warn"
+    // TODO: remove this rule when all the code is fully migrated to TS
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "globals": {
     "expect": true,
