@@ -36,7 +36,7 @@ import type {
 } from './types'
 
 // Import standard error handler
-import { error, conditionError, hasProperty, If, Compute } from '../../lib/utils'
+import { error, conditionError, If, Compute } from '../../lib/utils'
 
 // Declare Table class
 class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
