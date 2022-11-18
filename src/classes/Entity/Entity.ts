@@ -237,8 +237,8 @@ class Entity<
     return typeof this._execute === 'boolean'
       ? this._execute
       : typeof this.table?.autoExecute === 'boolean'
-      ? this.table.autoExecute
-      : true
+        ? this.table.autoExecute
+        : true
   }
 
   // Sets the auto parse mode (default to true)
@@ -251,8 +251,8 @@ class Entity<
     return typeof this._parse === 'boolean'
       ? this._parse
       : typeof this.table?.autoParse === 'boolean'
-      ? this.table.autoParse
-      : true
+        ? this.table.autoParse
+        : true
   }
 
   // Primary key getters
@@ -272,8 +272,8 @@ class Entity<
     return this.schema.attributes[attr] && this.schema.attributes[attr].map
       ? this.schema.attributes[attr].map
       : this.schema.attributes[attr]
-      ? attr
-      : error(`'${attr}' does not exist or is an invalid alias`)
+        ? attr
+        : error(`'${attr}' does not exist or is an invalid alias`)
   } // end attribute
 
   // Parses the item

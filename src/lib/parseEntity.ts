@@ -144,7 +144,7 @@ export function parseEntity<
 
   // Add timestamps
   if (timestamps) {
-    ;(attributes as AttributeDefinitions)[created] = {
+    (attributes as AttributeDefinitions)[created] = {
       type: 'string',
       alias: createdAlias,
       default: () => new Date().toISOString()

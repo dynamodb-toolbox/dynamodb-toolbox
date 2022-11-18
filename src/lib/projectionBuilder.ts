@@ -39,8 +39,8 @@ const projectionBuilder = <EntityTable extends TableDef | undefined>(
     ? attributes
     : // support simple string list
     typeof attributes === 'string'
-    ? attributes.split(',').map(x => x.trim())
-    : [attributes]
+      ? attributes.split(',').map(x => x.trim())
+      : [attributes]
 
   // Check that table is valid and contains attributes
   if (!table || !table.Table || Object.keys(table.Table.attributes).length == 0) {
@@ -82,10 +82,10 @@ const projectionBuilder = <EntityTable extends TableDef | undefined>(
             ? attribute[entity]
             : // support simple string list
             typeof attribute[entity] === 'string'
-            ? String(attribute[entity])
+              ? String(attribute[entity])
                 .split(',')
                 .map(x => x.trim())
-            : error(`Only arrays or strings are supported`)
+              : error(`Only arrays or strings are supported`)
 
           // Loop entity projections
           for (const ent_attribute of ent_attrs) {

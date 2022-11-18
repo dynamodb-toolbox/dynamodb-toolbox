@@ -409,8 +409,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   EntityProjections[itemEntityName]
                     ? EntityProjections[itemEntityName]
                     : TableProjections
-                    ? TableProjections
-                    : []
+                      ? TableProjections
+                      : []
                 )
               }
 
@@ -420,14 +420,14 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           // If last evaluated key, return a next function
           result.LastEvaluatedKey
             ? {
-                next: () => {
-                  return this.query(
-                    pk,
-                    Object.assign(options, { startKey: result.LastEvaluatedKey }),
-                    params
-                  )
-                }
+              next: () => {
+                return this.query(
+                  pk,
+                  Object.assign(options, { startKey: result.LastEvaluatedKey }),
+                  params
+                )
               }
+            }
             : null
         ) as any
       } else {
@@ -591,8 +591,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           ? this.Table.attributes[this.Table.indexes[index].sortKey!] || { type: 'string' }
           : error(`Conditional expressions require the index to have a sortKey`)
         : this.Table.sortKey
-        ? this.Table.attributes[this.Table.sortKey]
-        : error(`Conditional expressions require the table to have a sortKey`)
+          ? this.Table.attributes[this.Table.sortKey]
+          : error(`Conditional expressions require the table to have a sortKey`)
 
       // Init validateType
       const validateType = validateTypes(this.DocumentClient!)
@@ -735,8 +735,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   EntityProjections[itemEntityName]
                     ? EntityProjections[itemEntityName]
                     : TableProjections
-                    ? TableProjections
-                    : []
+                      ? TableProjections
+                      : []
                 )
               } else {
                 return item
@@ -746,13 +746,13 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           // If last evaluated key, return a next function
           result.LastEvaluatedKey
             ? {
-                next: () => {
-                  return this.scan(
-                    Object.assign(options, { startKey: result.LastEvaluatedKey }),
-                    params
-                  )
-                }
+              next: () => {
+                return this.scan(
+                  Object.assign(options, { startKey: result.LastEvaluatedKey }),
+                  params
+                )
               }
+            }
             : null
         ) as any
       } else {
@@ -965,59 +965,59 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       // If reponses exist
       result.Responses
         ? {
-            // Loop through the tables
-            Responses: Object.keys(result.Responses).reduce((acc, table) => {
-              // Merge in tables
-              return Object.assign(acc, {
-                // Map over the items
-                [(Tables[table] && Tables[table].alias) || table]: result.Responses[table].map(
-                  (item: TableDef) => {
-                    // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
-                    if (
-                      Tables[table] &&
+          // Loop through the tables
+          Responses: Object.keys(result.Responses).reduce((acc, table) => {
+            // Merge in tables
+            return Object.assign(acc, {
+              // Map over the items
+              [(Tables[table] && Tables[table].alias) || table]: result.Responses[table].map(
+                (item: TableDef) => {
+                  // Check that the table has a reference, the entityField exists, and that the entity type exists on the table
+                  if (
+                    Tables[table] &&
                       Tables[table][item[String(Tables[table].Table.entityField)]]
-                    ) {
-                      // Parse the item and pass in projection references
-                      return Tables[table][item[String(Tables[table].Table.entityField)]].parse(
-                        item,
-                        EntityProjections[table] &&
+                  ) {
+                    // Parse the item and pass in projection references
+                    return Tables[table][item[String(Tables[table].Table.entityField)]].parse(
+                      item,
+                      EntityProjections[table] &&
                           EntityProjections[table][item[String(Tables[table].Table.entityField)]]
-                          ? EntityProjections[table][item[String(Tables[table].Table.entityField)]]
-                          : TableProjections[table]
+                        ? EntityProjections[table][item[String(Tables[table].Table.entityField)]]
+                        : TableProjections[table]
                           ? TableProjections[table]
                           : []
-                      )
-                      // Else, just return the original item
-                    } else {
-                      return item
-                    }
+                    )
+                    // Else, just return the original item
+                  } else {
+                    return item
                   }
-                ) // end item map
-              }) // end assign
-            }, {}) // end table reduce
-          }
+                }
+              ) // end item map
+            }) // end assign
+          }, {}) // end table reduce
+        }
         : null, // end if Responses
       // If UnprocessedKeys, return a next function
       result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length > 0
         ? {
-            next: async (): Promise<any> => {
-              const nextResult = await this.DocumentClient!.batchGet(
-                Object.assign(
-                  { RequestItems: result.UnprocessedKeys },
-                  options.capacity
-                    ? { ReturnConsumedCapacity: options.capacity.toUpperCase() }
-                    : null
-                )
-              ).promise()
-              return this.parseBatchGetResponse(
-                nextResult,
-                Tables,
-                EntityProjections,
-                TableProjections,
-                options
+          next: async (): Promise<any> => {
+            const nextResult = await this.DocumentClient!.batchGet(
+              Object.assign(
+                { RequestItems: result.UnprocessedKeys },
+                options.capacity
+                  ? { ReturnConsumedCapacity: options.capacity.toUpperCase() }
+                  : null
               )
-            }
+            ).promise()
+            return this.parseBatchGetResponse(
+              nextResult,
+              Tables,
+              EntityProjections,
+              TableProjections,
+              options
+            )
           }
+        }
         : { next: () => false } // TODO: How should this return?
     ) // end parse assign
   } // end parseBatchGetResponse
@@ -1145,11 +1145,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     return meta
       ? {
-          payload,
-          Tables,
-          EntityProjections,
-          TableProjections
-        }
+        payload,
+        Tables,
+        EntityProjections,
+        TableProjections
+      }
       : payload
   } // batchGetParams
 
@@ -1189,21 +1189,21 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       // If UnprocessedItems, return a next function
       result.UnprocessedItems && Object.keys(result.UnprocessedItems).length > 0
         ? {
-            next: async () => {
-              const nextResult = await this.DocumentClient!.batchWrite(
-                Object.assign(
-                  { RequestItems: result.UnprocessedItems },
-                  options.capacity
-                    ? { ReturnConsumedCapacity: options.capacity.toUpperCase() }
-                    : null,
-                  options.metrics
-                    ? { ReturnItemCollectionMetrics: options.metrics.toUpperCase() }
-                    : null
-                )
-              ).promise()
-              return this.parseBatchWriteResponse(nextResult, options)
-            }
+          next: async () => {
+            const nextResult = await this.DocumentClient!.batchWrite(
+              Object.assign(
+                { RequestItems: result.UnprocessedItems },
+                options.capacity
+                  ? { ReturnConsumedCapacity: options.capacity.toUpperCase() }
+                  : null,
+                options.metrics
+                  ? { ReturnItemCollectionMetrics: options.metrics.toUpperCase() }
+                  : null
+              )
+            ).promise()
+            return this.parseBatchWriteResponse(nextResult, options)
           }
+        }
         : { next: () => false } // TODO: How should this return?
     ) // end parse assign
   } // end parseBatchWriteResponse
@@ -1307,14 +1307,14 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           result.Responses
             ? {
-                Responses: result.Responses!.map((res, i) => {
-                  if (res.Item) {
-                    return { Item: Entities[i].parse ? Entities[i].parse(res.Item) : res.Item }
-                  } else {
-                    return {}
-                  }
-                })
-              }
+              Responses: result.Responses!.map((res, i) => {
+                if (res.Item) {
+                  return { Item: Entities[i].parse ? Entities[i].parse(res.Item) : res.Item }
+                } else {
+                  return {}
+                }
+              })
+            }
             : null
         ) as DocumentClient.TransactGetItemsOutput
       } else {

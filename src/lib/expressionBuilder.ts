@@ -48,12 +48,12 @@ const buildExpression = <
   Attr extends A.Key = A.Key,
   EntityTable extends TableDef | undefined = undefined
 >(
-  exp: FilterExpressions<Attr>,
-  table: EntityTable,
-  entity?: string,
-  group = 0,
-  level = 0
-): any => {
+    exp: FilterExpressions<Attr>,
+    table: EntityTable,
+    entity?: string,
+    group = 0,
+    level = 0
+  ): any => {
   // Coerce to array if not already
   const clauses = Array.isArray(exp) ? exp : [exp]
   let expression = ''
@@ -174,8 +174,8 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
     typeof attr === 'string'
       ? checkAttribute(attr, entity ? table[entity].schema.attributes : table.Table.attributes)
       : typeof size === 'string'
-      ? checkAttribute(size, entity ? table[entity].schema.attributes : table.Table.attributes)
-      : error(`A string for 'attr' or 'size' is required for condition expressions`)
+        ? checkAttribute(size, entity ? table[entity].schema.attributes : table.Table.attributes)
+        : error(`A string for 'attr' or 'size' is required for condition expressions`)
 
   const pathParts = path.split('.')
 

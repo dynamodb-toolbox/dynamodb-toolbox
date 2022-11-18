@@ -380,7 +380,7 @@ describe('put', () => {
     ).toThrow(`String Set contains Number value`)
   })
 
-  it("fails when set coerces array and doesn't match type", () => {
+  it('fails when set coerces array and doesn\'t match type', () => {
     expect(() =>
       TestEntity.putParams({
         email: 'test-pk',
@@ -401,7 +401,7 @@ describe('put', () => {
     expect(Item['test_string_set_type_coerce'].values).toEqual(['1', '2', '3'])
   })
 
-  it("fails when set doesn't contain array with no coercion", () => {
+  it('fails when set doesn\'t contain array with no coercion', () => {
     expect(() =>
       TestEntity.putParams({
         email: 'test-pk',
@@ -563,6 +563,6 @@ describe('put', () => {
         pk: 'test-pk',
         test_number: 123
       })
-    ).toThrow("Could not convert 'abc' to a number for 'test_number'")
+    ).toThrow('Could not convert \'abc\' to a number for \'test_number\'')
   })
 })

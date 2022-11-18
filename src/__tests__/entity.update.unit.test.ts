@@ -573,7 +573,7 @@ describe('update', () => {
     )
   })
 
-  it("doesn't provide a default list value when not appending/prepending a value to a list", () => {
+  it('doesn\'t provide a default list value when not appending/prepending a value to a list', () => {
     const { TableName, Key, ExpressionAttributeValues } = TestEntity.updateParams({
       email: 'test-pk',
       sort: 'test-sk'
@@ -585,7 +585,7 @@ describe('update', () => {
     expect(ExpressionAttributeValues).not.toHaveProperty(ATTRIBUTE_VALUES_LIST_DEFAULT_KEY)
   })
 
-  it("doesn't provide a default list value when not appending/prepending a value to a nested list within a map.", () => {
+  it('doesn\'t provide a default list value when not appending/prepending a value to a nested list within a map.', () => {
     const {
       TableName,
       Key,
@@ -846,7 +846,7 @@ describe('update', () => {
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
-  it("fails when missing an 'always' required field", () => {
+  it('fails when missing an \'always\' required field', () => {
     // @ts-expect-error
     expect(() => TestEntity3.updateParams({ email: 'test-pk' })).toThrow(
       `'test2' is a required field`
@@ -1101,7 +1101,7 @@ describe('update', () => {
         { email: 'x', sort: 'y', unknown: '?' },
         { strictSchemaCheck: true }
       )
-    ).toThrow("Field 'unknown' does not have a mapping or alias")
+    ).toThrow('Field \'unknown\' does not have a mapping or alias')
   })
 
   it('allows unmapped attributes when strictSchemaCheck is false.', () => {

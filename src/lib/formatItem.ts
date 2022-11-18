@@ -68,8 +68,8 @@ export default (DocumentClient: DocumentClient) => (
     const fieldValue =
       attributes[field] && (attributes[field].prefix || attributes[field].suffix)
         ? item[field]
-            .replace(new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`), '')
-            .replace(new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`), '')
+          .replace(new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`), '')
+          .replace(new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`), '')
         : item[field]
 
     const transformedValue =
