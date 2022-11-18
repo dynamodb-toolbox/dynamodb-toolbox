@@ -81,7 +81,7 @@ class Entity<
         >,
         ParsedAttributes<keyof EntityItemOverlay>
       >,
-  $Item extends any = string extends Name
+  $Item = string extends Name
     ? any
     : If<
         A.Equals<EntityItemOverlay, undefined>,
