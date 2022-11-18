@@ -2,9 +2,6 @@
 // @ts-ignore: No type file available
 import dynalite from 'dynalite'
 
-// Load simple table creation parameters
-export const createTableParams = require('./tables/create-table.json')
-
 export const dynaliteServer = dynalite({
   createTableMs: 0,
   updateTableMs: 0,
