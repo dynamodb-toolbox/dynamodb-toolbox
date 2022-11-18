@@ -4,7 +4,7 @@ import type {
   AttributeDefinitions,
   EntityConstructor,
   PureAttributeDefinition,
-  Readonly,
+  Readonly
 } from '../classes/Entity'
 import { error } from './utils'
 
@@ -31,22 +31,22 @@ export type ParsedEntity<
   AutoExecute extends boolean = boolean,
   AutoParse extends boolean = boolean,
   TypeAlias extends string = string,
-  TypeHidden extends boolean = boolean,
+  TypeHidden extends boolean = boolean
 > = {
-  name: Name;
+  name: Name
   schema: {
-    keys: any;
-    attributes: Record<string, PureAttributeDefinition>;
-  };
-  _etAlias: TypeAlias;
-  typeHidden: TypeHidden;
-  autoParse: AutoParse | undefined;
-  autoExecute: AutoExecute | undefined;
-  linked: Linked;
-  defaults: any;
-  required: any;
-  table?: EntityTable | undefined;
-};
+    keys: any
+    attributes: Record<string, PureAttributeDefinition>
+  }
+  _etAlias: TypeAlias
+  typeHidden: TypeHidden
+  autoParse: AutoParse | undefined
+  autoExecute: AutoExecute | undefined
+  linked: Linked
+  defaults: any
+  required: any
+  table?: EntityTable | undefined
+}
 
 // Parse entity
 export function parseEntity<
@@ -144,7 +144,7 @@ export function parseEntity<
 
   // Add timestamps
   if (timestamps) {
-    (attributes as AttributeDefinitions)[created] = {
+    ;(attributes as AttributeDefinitions)[created] = {
       type: 'string',
       alias: createdAlias,
       default: () => new Date().toISOString()

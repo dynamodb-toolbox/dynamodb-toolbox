@@ -49,7 +49,7 @@ describe('parseEntity', () => {
 
       expect(() => {
         parseEntity(input)
-      }).toThrow('Please provide a valid \'attributes\' object')
+      }).toThrow("Please provide a valid 'attributes' object")
     })
   })
 

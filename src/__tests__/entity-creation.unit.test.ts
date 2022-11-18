@@ -1,7 +1,7 @@
 // Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
-import {DocumentClient} from './bootstrap.test'
+import { DocumentClient } from './bootstrap.test'
 
 describe('Entity creation', () => {
   it('creates basic entity w/ defaults', async () => {
@@ -79,10 +79,10 @@ describe('Entity creation', () => {
       name: 'TestEntity',
       typeHidden: true,
       attributes: {
-        pk: { partitionKey: true },
+        pk: { partitionKey: true }
       }
     } as const)
-    
+
     expect(TestEntity.typeHidden).toBe(true)
   })
 
@@ -132,7 +132,7 @@ describe('Entity creation', () => {
       name: 'TestEntity',
       attributes: {
         pk: { partitionKey: true },
-        sk: { sortKey: true, default: 'some-default-sk-value' },
+        sk: { sortKey: true, default: 'some-default-sk-value' }
       },
       timestamps: true
     } as const
@@ -145,7 +145,7 @@ describe('Entity creation', () => {
     expect(config.name).toBe('TestEntity')
     expect(config.attributes).toEqual({
       pk: { partitionKey: true },
-      sk: { sortKey: true, default: 'some-default-sk-value' },
+      sk: { sortKey: true, default: 'some-default-sk-value' }
     })
     expect(config.timestamps).toBe(true)
   })
@@ -369,7 +369,7 @@ describe('Entity creation', () => {
       name: 'test-table',
       partitionKey: 'pk',
       sortKey: 'sk',
-      DocumentClient,
+      DocumentClient
     })
 
     const TestEntity = new Entity({
@@ -377,14 +377,14 @@ describe('Entity creation', () => {
       attributes: {
         pk: {
           partitionKey: true,
-          format: (val) => val.toUpperCase(),
-          default: 'pkDef',
+          format: val => val.toUpperCase(),
+          default: 'pkDef'
         },
         test: {
           format: (val: string, data: any) => {
             return val.toUpperCase()
           },
-          default: () => 'defaultVal',
+          default: () => 'defaultVal'
         },
         sk: { type: 'string', sortKey: true },
         testx: ['sk', 0],
@@ -393,13 +393,13 @@ describe('Entity creation', () => {
           1,
           {
             default: () => 'testDefaultY',
-            format: (val) => {
+            format: val => {
               return '__' + val.toUpperCase()
-            },
-          },
-        ],
+            }
+          }
+        ]
       },
-      table: TestTable,
+      table: TestTable
     })
   })
 

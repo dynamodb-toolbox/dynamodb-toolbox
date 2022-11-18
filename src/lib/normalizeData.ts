@@ -23,7 +23,7 @@ export default (DocumentClient: DocumentClient) => (
   const dependsOn = (map: any, attr: any) => {
     // If the default depends on other attributes
     if (schema[attr].dependsOn) {
-      (Array.isArray(schema[attr].dependsOn)
+      ;(Array.isArray(schema[attr].dependsOn)
         ? schema[attr].dependsOn
         : [schema[attr].dependsOn]
       ).forEach((dependent: any) => {
@@ -61,14 +61,14 @@ export default (DocumentClient: DocumentClient) => (
         acc,
         schema[field]
           ? {
-            data: { ...acc.data, [schema[field].map || field]: data[field] },
-            aliases: { ...acc.aliases, [schema[field].alias || field]: data[field] }
-          }
+              data: { ...acc.data, [schema[field].map || field]: data[field] },
+              aliases: { ...acc.aliases, [schema[field].alias || field]: data[field] }
+            }
           : filter
-            ? {} // this will filter out non-mapped fields
-            : field === '$remove'
-              ? { data: { ...acc.data, $remove: data[field] } } // support for removes
-              : error(`Field '${field}' does not have a mapping or alias`)
+          ? {} // this will filter out non-mapped fields
+          : field === '$remove'
+          ? { data: { ...acc.data, $remove: data[field] } } // support for removes
+          : error(`Field '${field}' does not have a mapping or alias`)
       )
     },
     { data: {}, aliases: {} }

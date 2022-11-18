@@ -41,8 +41,8 @@ export type KeyAttributeDefinition = {
   suffix: string
   onUpdate: boolean
   dependsOn: string | string[]
-  transform: (value: any, data: any) => any,
-  format: (value: any, data: any) => any,
+  transform: (value: any, data: any) => any
+  format: (value: any, data: any) => any
   coerce: boolean
   // 💥 TODO: Are following options forbidden in KeyAttributeDefinitions ?
   save: never
@@ -233,7 +233,8 @@ export type InferItemAttributeValue<
     | PureAttributeDefinition
     ? Definition['type'] extends DynamoDBTypes
       ? Definition['setType'] extends DynamoDBKeyTypes
-       ? FromDynamoData<NonNullable<Definition['setType']>>[] : FromDynamoData<A.Cast<Definition['type'], DynamoDBTypes>>
+        ? FromDynamoData<NonNullable<Definition['setType']>>[]
+        : FromDynamoData<A.Cast<Definition['type'], DynamoDBTypes>>
       : any
     : never
   composite: Definition extends CompositeAttributeDefinition
@@ -453,34 +454,70 @@ export interface UpdateCustomParameters {
 
 export type UpdateCustomParams = O.Partial<UpdateCustomParameters & DocumentClient.UpdateItemInput>
 
-export type UpdateItem<MethodItemOverlay extends Overlay,
+export type UpdateItem<
+  MethodItemOverlay extends Overlay,
   EntityItemOverlay extends Overlay,
   CompositePrimaryKey extends O.Object,
   Item extends O.Object,
   Attributes extends ParsedAttributes,
-  StrictSchemaCheck extends boolean | undefined = true> = FirstDefined<[
-    MethodItemOverlay,
-    EntityItemOverlay,
-    Compute<CompositePrimaryKey &
-      {
-        [inputAttr in Attributes['always']['input'] & keyof Item]: AttributeUpdateInput<Item[inputAttr]>
-      } &
-      {
-        [inputRequiredOrWithDefaultAttribute in (Attributes['required']['all'] | Attributes['always']['default']) & keyof Item]?: AttributeUpdateInput<Item[inputRequiredOrWithDefaultAttribute]>
-      } &
-      {
-        [inputOptionalAttribute in Attributes['optional'] & keyof Item]?: AttributeUpdateInput<Item[inputOptionalAttribute]> | null
-      } & { $remove?: Attributes['optional'] | Attributes['optional'][] }>
-  ]
-  | If<A.Equals<StrictSchemaCheck, true>, never, any>>
+  StrictSchemaCheck extends boolean | undefined = true
+> = FirstDefined<
+  | [
+      MethodItemOverlay,
+      EntityItemOverlay,
+      Compute<
+        CompositePrimaryKey &
+          {
+            [inputAttr in Attributes['always']['input'] & keyof Item]: AttributeUpdateInput<
+              Item[inputAttr]
+            >
+          } &
+          {
+            [inputRequiredOrWithDefaultAttribute in (
+              | Attributes['required']['all']
+              | Attributes['always']['default']
+            ) &
+              keyof Item]?: AttributeUpdateInput<Item[inputRequiredOrWithDefaultAttribute]>
+          } &
+          {
+            [inputOptionalAttribute in Attributes['optional'] & keyof Item]?: AttributeUpdateInput<
+              Item[inputOptionalAttribute]
+            > | null
+          } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
+      >
+    ]
+  | If<A.Equals<StrictSchemaCheck, true>, never, any>
+>
 
 export type AttributeUpdateInput<AttributeType> =
-    | If<A.Equals<AttributeType, FromDynamoData<'list' | 'set'> | undefined>, { $delete?: string[]; $add?: any; $prepend?: AttributeType; $append?: AttributeType; $remove?: number[] } | AttributeType, AttributeType>
-    | If<A.Equals<AttributeType, number[] | undefined>, { $delete?: number[]; $add?: number[]; $prepend?: AttributeType; $append?: number[]; } | string[]>
-    | If<A.Equals<AttributeType, string[] | undefined>, { $delete?: string[]; $add?: string[]; $prepend?: AttributeType; $append?: string[]; } | number[]>
-    | If<A.Equals<AttributeType, boolean[] | undefined>, { $delete?: boolean[]; $add?: boolean[]; $prepend?: AttributeType; $append?: boolean[]; } | boolean[]>
-    | If<A.Equals<AttributeType, FromDynamoData<'number'> | undefined>, { $add?: number }>
-
+  | If<
+      A.Equals<AttributeType, FromDynamoData<'list' | 'set'> | undefined>,
+      | {
+          $delete?: string[]
+          $add?: any
+          $prepend?: AttributeType
+          $append?: AttributeType
+          $remove?: number[]
+        }
+      | AttributeType,
+      AttributeType
+    >
+  | If<
+      A.Equals<AttributeType, number[] | undefined>,
+      | { $delete?: number[]; $add?: number[]; $prepend?: AttributeType; $append?: number[] }
+      | string[]
+    >
+  | If<
+      A.Equals<AttributeType, string[] | undefined>,
+      | { $delete?: string[]; $add?: string[]; $prepend?: AttributeType; $append?: string[] }
+      | number[]
+    >
+  | If<
+      A.Equals<AttributeType, boolean[] | undefined>,
+      | { $delete?: boolean[]; $add?: boolean[]; $prepend?: AttributeType; $append?: boolean[] }
+      | boolean[]
+    >
+  | If<A.Equals<AttributeType, FromDynamoData<'number'> | undefined>, { $add?: number }>
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
@@ -548,17 +585,18 @@ export type EntityItem<E extends Entity> = E['_typesOnly']['_entityItemOverlay']
   ? E['_typesOnly']['_entityItemOverlay']
   : InferEntityItem<E>
 
-export type ExtractAttributes<E extends Entity> =
-  E['_typesOnly']['_entityItemOverlay'] extends Record<A.Key, any>
-    ? ParsedAttributes<keyof E['_typesOnly']['_entityItemOverlay']>
-    : ParseAttributes<
-        A.Cast<O.Writable<E['attributes'], A.Key, 'deep'>, AttributeDefinitions>,
-        E['timestamps'],
-        E['createdAlias'],
-        E['modifiedAlias'],
-        E['typeAlias'],
-        E['typeHidden']
-      >
+export type ExtractAttributes<
+  E extends Entity
+> = E['_typesOnly']['_entityItemOverlay'] extends Record<A.Key, any>
+  ? ParsedAttributes<keyof E['_typesOnly']['_entityItemOverlay']>
+  : ParseAttributes<
+      A.Cast<O.Writable<E['attributes'], A.Key, 'deep'>, AttributeDefinitions>,
+      E['timestamps'],
+      E['createdAlias'],
+      E['modifiedAlias'],
+      E['typeAlias'],
+      E['typeHidden']
+    >
 
 export type GetOptions<
   E extends Entity,

@@ -1,6 +1,9 @@
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
-import { default as expressionBuilder, SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS} from '../lib/expressionBuilder'
+import {
+  default as expressionBuilder,
+  SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS
+} from '../lib/expressionBuilder'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -331,7 +334,11 @@ describe('expressionBuilder', () => {
   })
 
   it(`generates a 'between' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', between: ['d', 'e'] }, TestTable, 'TestEntity')
+    const result = expressionBuilder(
+      { attr: 'a.b.c', between: ['d', 'e'] },
+      TestTable,
+      'TestEntity'
+    )
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 between :attr1_0 and :attr1_1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1_0': 'd', ':attr1_1': 'e' })
@@ -345,7 +352,11 @@ describe('expressionBuilder', () => {
   })
 
   it(`generates a 'between' clause with 'size' for a nested attribute`, () => {
-    const result = expressionBuilder({ size: 'a.b.c', between: ['d', 'e'] }, TestTable, 'TestEntity')
+    const result = expressionBuilder(
+      { size: 'a.b.c', between: ['d', 'e'] },
+      TestTable,
+      'TestEntity'
+    )
     expect(result.expression).toBe('size(#attr1_0.#attr1_1.#attr1_2) between :attr1_0 and :attr1_1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1_0': 'd', ':attr1_1': 'e' })
@@ -461,19 +472,28 @@ describe('expressionBuilder', () => {
   })
 
   it(`fails when 'value' type AttrRef is used without a property name`, () => {
-    expect(() => expressionBuilder({ attr: 'a', eq: { attr: '' } }, TestTable, 'TestEntity'))
-      .toThrow(`AttrRef must have an attr field which references another attribute in the same entity.`)
+    expect(() =>
+      expressionBuilder({ attr: 'a', eq: { attr: '' } }, TestTable, 'TestEntity')
+    ).toThrow(
+      `AttrRef must have an attr field which references another attribute in the same entity.`
+    )
   })
 
   it(`fails when 'value' type AttrRef is used with a non-existing property name`, () => {
-    expect(() => expressionBuilder({ attr: 'a', eq: { attr: 'nonexistent' } }, TestTable, 'TestEntity'))
-      .toThrow('\'nonexistent\' is not a valid attribute within the given entity/table.')
+    expect(() =>
+      expressionBuilder({ attr: 'a', eq: { attr: 'nonexistent' } }, TestTable, 'TestEntity')
+    ).toThrow("'nonexistent' is not a valid attribute within the given entity/table.")
   })
 
   it(`fails when 'value' type AttrRef is used with an unsupported operator`, () => {
     // @ts-expect-error
-    expect(() => expressionBuilder({ attr: 'a', beginsWith: { attr: 'some-attr' } }, TestTable, 'TestEntity'))
-      .toThrow(`AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(', ')}.`)
+    expect(() =>
+      expressionBuilder({ attr: 'a', beginsWith: { attr: 'some-attr' } }, TestTable, 'TestEntity')
+    ).toThrow(
+      `AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(
+        ', '
+      )}.`
+    )
   })
 
   it(`fails when no condition is provided`, () => {
@@ -497,7 +517,7 @@ describe('expressionBuilder', () => {
     )
   })
 
-  it('doesn\'t mutate input expression', () => {
+  it("doesn't mutate input expression", () => {
     const expObj = { attr: 'a', eq: 'b' }
     const expArr = [{ attr: 'a', eq: 'b' }]
     expressionBuilder(expObj, TestTable, 'TestEntity')

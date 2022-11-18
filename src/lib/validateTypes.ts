@@ -39,19 +39,19 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
       return typeof value === 'string' && Number.isFinite(coercedValue) && value.length > 0
         ? coercedValue
         : error(
-          `Could not convert '${
-            Array.isArray(value) ? `[${value}]` : value
-          }' to a number for '${field}'`
-        )
+            `Could not convert '${
+              Array.isArray(value) ? `[${value}]` : value
+            }' to a number for '${field}'`
+          )
     }
     case 'list':
       return Array.isArray(value)
         ? value
         : mapping.coerce
-          ? String(value)
+        ? String(value)
             .split(',')
             .map(x => x.trim())
-          : error(`'${field}' must be a list (array)`)
+        : error(`'${field}' must be a list (array)`)
     case 'map':
       return value?.constructor === Object ? value : error(`'${field}' must be a map (object)`)
     case 'set':

@@ -49,12 +49,12 @@ export default (DocumentClient: DocumentClient) => (
     },
     sortKey !== null
       ? {
-        [sortKey]: transformAttr(
-          schema[sortKey],
-          validateType(schema[sortKey], sortKey, sk),
-          data
-        )
-      }
+          [sortKey]: transformAttr(
+            schema[sortKey],
+            validateType(schema[sortKey], sortKey, sk),
+            data
+          )
+        }
       : {}
   ) // end assign
 } // end get keys

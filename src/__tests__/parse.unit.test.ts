@@ -28,7 +28,7 @@ const TestEntity = new Entity({
     simple_string: 'string',
     format_simple_string: {
       type: 'string',
-      format: (input: string) => input.toUpperCase(),
+      format: (input: string) => input.toUpperCase()
     }
   }
 })

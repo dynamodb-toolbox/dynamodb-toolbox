@@ -142,16 +142,13 @@ class Entity<
       error('Please provide a valid entity definition')
     }
 
-    const {
-      table,
-      ...entitySchemaWithoutTable
-    } = entity
+    const { table, ...entitySchemaWithoutTable } = entity
 
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
       ...cloneDeep(entitySchemaWithoutTable),
-      ...(table ? { table } : {}),
+      ...(table ? { table } : {})
     }
 
     const {
@@ -240,8 +237,8 @@ class Entity<
     return typeof this._execute === 'boolean'
       ? this._execute
       : typeof this.table?.autoExecute === 'boolean'
-        ? this.table.autoExecute
-        : true
+      ? this.table.autoExecute
+      : true
   }
 
   // Sets the auto parse mode (default to true)
@@ -254,8 +251,8 @@ class Entity<
     return typeof this._parse === 'boolean'
       ? this._parse
       : typeof this.table?.autoParse === 'boolean'
-        ? this.table.autoParse
-        : true
+      ? this.table.autoParse
+      : true
   }
 
   // Primary key getters
@@ -275,8 +272,8 @@ class Entity<
     return this.schema.attributes[attr] && this.schema.attributes[attr].map
       ? this.schema.attributes[attr].map
       : this.schema.attributes[attr]
-        ? attr
-        : error(`'${attr}' does not exist or is an invalid alias`)
+      ? attr
+      : error(`'${attr}' does not exist or is an invalid alias`)
   } // end attribute
 
   // Parses the item
@@ -843,27 +840,35 @@ class Entity<
       If<
         B.Not<ShouldExecute<Execute, AutoExecute>>,
         DocumentClient.UpdateItemInput,
-         If<
+        If<
           B.Not<ShouldParse<Parse, AutoParse>>,
           DocumentClient.UpdateItemOutput,
-           If<A.Equals<ReturnValues, 'NONE'>,
-           Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-           O.Update<
-            DocumentClient.UpdateItemOutput,
-            'Attributes',
+          If<
+            A.Equals<ReturnValues, 'NONE'>,
+            Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
+            O.Update<
+              DocumentClient.UpdateItemOutput,
+              'Attributes',
               If<
                 B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
-                FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+                FirstDefined<
+                  [O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]
+                >,
                 If<
-                  B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>, A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-                  FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
+                  B.Or<
+                    A.Equals<ReturnValues, 'UPDATED_OLD'>,
+                    A.Equals<ReturnValues, 'UPDATED_NEW'>
+                  >,
+                  FirstDefined<
+                    [MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]
                   >
                 >
               >
             >
           >
         >
-        >
+      >
+    >
   > {
     // Generate the payload
     const updateParams = this.updateParams<
@@ -1256,8 +1261,9 @@ class Entity<
 
                   values[`:${value}`] = input.$append
                   // add default list value
-                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] =
-                    ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  values[
+                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
+                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(
                     `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
@@ -1265,8 +1271,9 @@ class Entity<
 
                   values[`:${value}`] = input.$prepend
                   // add default list value
-                  values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] =
-                    ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  values[
+                    `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
+                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {
@@ -1673,15 +1680,17 @@ class Entity<
         Item: Object.keys(data).reduce((acc, field) => {
           const mapping = schema.attributes[field]
           let value = data[field]
-          if(value !== undefined &&
+          if (
+            value !== undefined &&
             (mapping.save === undefined || mapping.save === true) &&
             (!mapping.link || (mapping.link && mapping.save === true)) &&
-            (!_table!._removeNulls || (_table!._removeNulls && value !== null))) {
+            (!_table!._removeNulls || (_table!._removeNulls && value !== null))
+          ) {
             // Transform before validation as user can transform entity into
             // invalid value which will be thrown by DynamoDB Document client
             value = transformAttr(mapping, value, data)
             value = validateType(mapping, field, value)
-            return Object.assign(acc, {[field]: value})
+            return Object.assign(acc, { [field]: value })
           }
           return acc
         }, {})

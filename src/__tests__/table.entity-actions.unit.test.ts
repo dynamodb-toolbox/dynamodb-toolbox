@@ -64,7 +64,11 @@ describe('table.update', () => {
 
 describe('table.put', () => {
   it('puts an entity to the table', async () => {
-    const result = await TestTable.put('TestEntity', { email: 'val1', sort: 'val2', test: 'testing' })
+    const result = await TestTable.put('TestEntity', {
+      email: 'val1',
+      sort: 'val2',
+      test: 'testing'
+    })
     expect(result.TableName).toBe('test-table')
     expect(result.Item.pk).toBe('val1')
     expect(result.Item.sk).toBe('val2')

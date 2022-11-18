@@ -29,7 +29,7 @@ const TestEntity = new Entity({
     simple_string: 'string',
     format_simple_string: {
       type: 'string',
-      format: (input: string) => input.toUpperCase(),
+      format: (input: string) => input.toUpperCase()
     }
   }
 })
@@ -59,7 +59,7 @@ const TestEntityHiddenType = new Entity({
   name: 'TestEntityHiddenType',
   attributes: {
     pk: { type: 'string', partitionKey: true },
-    sk: { type: 'string', sortKey: true },
+    sk: { type: 'string', sortKey: true }
   },
   typeHidden: true,
   table: TestTable
@@ -69,7 +69,7 @@ const TestEntityHiddenTypeWithAlias = new Entity({
   name: 'TestEntityHiddenType',
   attributes: {
     pk: { type: 'string', partitionKey: true },
-    sk: { type: 'string', sortKey: true },
+    sk: { type: 'string', sortKey: true }
   },
   typeHidden: true,
   typeAlias: 'TestEntityHiddenTypeAlias',
@@ -107,7 +107,7 @@ describe('parse', () => {
     const item = TestEntityHiddenType.parse({
       pk: 'test@test.com',
       sk: 'email',
-      _et: 'TestEntity',
+      _et: 'TestEntity'
     })
 
     expect(item).toEqual({
@@ -120,7 +120,7 @@ describe('parse', () => {
     const item = TestEntityHiddenTypeWithAlias.parse({
       pk: 'test@test.com',
       sk: 'email',
-      _et: 'TestEntity',
+      _et: 'TestEntity'
     })
 
     expect(item).toEqual({
