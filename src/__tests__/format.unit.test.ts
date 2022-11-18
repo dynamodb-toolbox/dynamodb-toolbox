@@ -19,10 +19,12 @@ const FormatEntity = new Entity({
   attributes: {
     pk: { type: 'string', partitionKey: true },
     formatted_field: {
-      type: 'string', format: (value: string) => value.toUpperCase()
+      type: 'string',
+      format: (value: string) => value.toUpperCase()
     },
     formatted_field_2: {
-      type: 'number', format: (value: number) => value.toFixed(1)
+      type: 'number',
+      format: (value: number) => value.toFixed(1)
     }
   },
   table: TestTable
@@ -40,7 +42,7 @@ describe('format', () => {
       pk: 'test@test.com',
       formatted_field: 'TEST',
       formatted_field_2: '100.1',
-      entity: 'TestEntity',
+      entity: 'TestEntity'
     })
   })
 }) // end format

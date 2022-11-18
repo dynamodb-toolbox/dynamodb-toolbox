@@ -103,9 +103,9 @@ const TestEntity6 = new Entity({
   autoExecute: false,
   attributes: {
     pk: { partitionKey: true },
-    test_number: { type: 'number', transform: () => 'abc' },
+    test_number: { type: 'number', transform: () => 'abc' }
   },
-  table: TestTable2,
+  table: TestTable2
 })
 
 describe('put', () => {
@@ -512,8 +512,15 @@ describe('put', () => {
   })
 
   it('sets conditions', () => {
-    const { TableName, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
-      TestEntity.putParams({ email: 'x', sort: 'y' }, { conditions: { attr: 'email', gt: 'test' } })
+    const {
+      TableName,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    } = TestEntity.putParams(
+      { email: 'x', sort: 'y' },
+      { conditions: { attr: 'email', gt: 'test' } }
+    )
     expect(TableName).toBe('test-table')
     expect(ExpressionAttributeNames).toEqual({ '#attr1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':attr1': 'test' })
@@ -551,9 +558,11 @@ describe('put', () => {
   })
 
   it('fail on invalid transformations', () => {
-    expect(() => TestEntity6.putParams({
-      pk: 'test-pk',
-      test_number: 123,
-    })).toThrow('Could not convert \'abc\' to a number for \'test_number\'')
+    expect(() =>
+      TestEntity6.putParams({
+        pk: 'test-pk',
+        test_number: 123
+      })
+    ).toThrow('Could not convert \'abc\' to a number for \'test_number\'')
   })
 })

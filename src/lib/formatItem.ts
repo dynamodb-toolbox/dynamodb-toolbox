@@ -66,29 +66,19 @@ export default (DocumentClient: DocumentClient) => (
     }
 
     const fieldValue =
-        attributes[field] &&
-        (attributes[field].prefix || attributes[field].suffix)
-          ? item[field]
-            .replace(
-              new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`),
-              ''
-            )
-            .replace(
-              new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`),
-              ''
-            )
-          : item[field]
+      attributes[field] && (attributes[field].prefix || attributes[field].suffix)
+        ? item[field]
+          .replace(new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`), '')
+          .replace(new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`), '')
+        : item[field]
 
     const transformedValue =
-        attributes[field] && attributes[field].format
-          ? (
-              attributes[field] as Required<PureAttributeDefinition>
-          ).format(fieldValue, item)
-          : fieldValue
+      attributes[field] && attributes[field].format
+        ? (attributes[field] as Required<PureAttributeDefinition>).format(fieldValue, item)
+        : fieldValue
 
     return Object.assign(acc, {
-      [(attributes[field] && attributes[field].alias) || field]:
-        transformedValue,
+      [(attributes[field] && attributes[field].alias) || field]: transformedValue
     })
   }, {})
 }

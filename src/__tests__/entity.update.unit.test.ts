@@ -179,7 +179,11 @@ describe('update', () => {
   })
 
   it('allows overriding default field values', () => {
-    const {UpdateExpression,ExpressionAttributeNames,ExpressionAttributeValues} = TestEntity.updateParams({
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
       email: 'test-pk',
       sort: 'test-sk',
       test_boolean_default: true
@@ -187,7 +191,6 @@ describe('update', () => {
 
     expect(ExpressionAttributeNames!['#test_boolean_default']).toBe('test_boolean_default')
     expect(ExpressionAttributeValues![':test_boolean_default']).toBe(true)
-
 
     expect(UpdateExpression).toBe(
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
@@ -201,10 +204,12 @@ describe('update', () => {
   })
 
   it('creates update that just removes a field', () => {
-    const { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
-      email: 'test-pk',
-      test: null
-    })
+    const { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams(
+      {
+        email: 'test-pk',
+        test: null
+      }
+    )
     expect(UpdateExpression).toBe('REMOVE #test')
     expect(ExpressionAttributeNames).toEqual({ '#test': 'test' })
     expect(Key).toEqual({ pk: 'test-pk' })
@@ -212,10 +217,12 @@ describe('update', () => {
   })
 
   it('creates update that just removes a composite field', () => {
-    const { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams({
-      email: 'test-pk',
-      test_composite: null
-    })
+    const { TableName, Key, UpdateExpression, ExpressionAttributeNames } = TestEntity2.updateParams(
+      {
+        email: 'test-pk',
+        test_composite: null
+      }
+    )
     expect(UpdateExpression).toBe('REMOVE #test_composite')
     expect(ExpressionAttributeNames).toEqual({ '#test_composite': 'test_composite' })
     expect(Key).toEqual({ pk: 'test-pk' })
@@ -260,18 +267,20 @@ describe('update', () => {
   })
 
   it('validates field types', () => {
-    const { TableName, Key, UpdateExpression, ExpressionAttributeValues } = TestEntity.updateParams({
-      email: 'test-pk',
-      sort: 'test-sk',
-      test_string: 'test',
-      test_number: 1,
-      test_boolean: false,
-      test_list: ['a', 'b', 'c'],
-      test_map: { a: 1, b: 2 },
-      test_binary: Buffer.from('test'),
-      test_boolean_default: false,
-      test_number_coerce: 0
-    })
+    const { TableName, Key, UpdateExpression, ExpressionAttributeValues } = TestEntity.updateParams(
+      {
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_string: 'test',
+        test_number: 1,
+        test_boolean: false,
+        test_list: ['a', 'b', 'c'],
+        test_map: { a: 1, b: 2 },
+        test_binary: Buffer.from('test'),
+        test_boolean_default: false,
+        test_number_coerce: 0
+      }
+    )
 
     expect(UpdateExpression).toBe(
       'SET #test_string = :test_string, #test_number_coerce = :test_number_coerce, #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_number = :test_number, #test_boolean = :test_boolean, #test_list = :test_list, #test_map = :test_map, #test_binary = :test_binary'
@@ -715,17 +724,22 @@ describe('update', () => {
   })
 
   it('removes nested data in a map when set to null or undefined', () => {
-    const { TableName, Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity.updateParams({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: {
-          $set: {
-            prop1: null,
-            prop2: undefined
-          }
+    const {
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_map: {
+        $set: {
+          prop1: null,
+          prop2: undefined
         }
-      })
+      }
+    })
 
     expect(ExpressionAttributeNames).toEqual({
       '#_et': '_et',

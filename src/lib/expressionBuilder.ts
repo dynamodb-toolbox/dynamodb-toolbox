@@ -39,7 +39,6 @@ interface FilterExpression<Attr extends A.Key = A.Key> {
 }
 export const SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS = ['eq', 'ne', 'lt', 'lte', 'gt', 'gte']
 
-
 export type FilterExpressions<Attr extends A.Key = A.Key> =
   | FilterExpression<Attr>
   | FilterExpression<Attr>[]
@@ -283,10 +282,21 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       clause = value ? `attribute_exists(${operand})` : `attribute_not_exists(${operand})`
     } else if (value && typeof value === 'object') {
       const ref = value as Partial<AttrRef>
-      if(!SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.includes(filterType)) error(`AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(', ')}.`)
-      if (typeof ref?.attr !== 'string' || !ref?.attr) error(`AttrRef must have an attr field which references another attribute in the same entity.`)
+      if (!SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.includes(filterType))
+        error(
+          `AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(
+            ', '
+          )}.`
+        )
+      if (typeof ref?.attr !== 'string' || !ref?.attr)
+        error(
+          `AttrRef must have an attr field which references another attribute in the same entity.`
+        )
 
-      names[`#attr${grp}_ref`] = checkAttribute(ref.attr!, (entity ? table[entity].schema.attributes : table.Table.attributes))
+      names[`#attr${grp}_ref`] = checkAttribute(
+        ref.attr!,
+        entity ? table[entity].schema.attributes : table.Table.attributes
+      )
       clause = `${operand} ${operator} #attr${grp}_ref`
     } else {
       // Add value

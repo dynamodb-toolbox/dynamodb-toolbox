@@ -48,8 +48,8 @@ type ExpectedQueryOpts<
     index: string
     limit: number
     reverse: boolean
-    entity: string,
-    parseAsEntity: string,
+    entity: string
+    parseAsEntity: string
     select: DocumentClientType.Select
     filters: ConditionsOrFilters<FilteredAttributes>
     eq: string | number
@@ -2097,7 +2097,11 @@ describe('Entity', () => {
       })
 
       it('Attributes match MethodItemOverlay, when returnValues is not NONE', () => {
-        const updatePromise = () => ent.update<MethodItemOverlay, any, any , 'UPDATED_NEW'>({ ...ck0, num0 }, { returnValues: 'UPDATED_NEW' })
+        const updatePromise = () =>
+          ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>(
+            { ...ck0, num0 },
+            { returnValues: 'UPDATED_NEW' }
+          )
         type UpdateItem = A.Await<F.Return<typeof updatePromise>>['Attributes']
         type TestUpdateItem = A.Equals<UpdateItem, MethodItemOverlay | undefined>
         const testUpdateItem: TestUpdateItem = 1
@@ -2635,7 +2639,11 @@ describe('Entity', () => {
         })
 
         it('Attributes match MethodItemOverlay, whatever the returnValues option is', () => {
-          const updateO1Promise = () => ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>({ ...ck1, num1 }, { returnValues: 'UPDATED_NEW'})
+          const updateO1Promise = () =>
+            ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>(
+              { ...ck1, num1 },
+              { returnValues: 'UPDATED_NEW' }
+            )
           type UpdateO1Item = A.Await<F.Return<typeof updateO1Promise>>['Attributes']
           type TestUpdateO1Item = A.Equals<UpdateO1Item, MethodItemOverlay | undefined>
           const testUpdateO1Item: TestUpdateO1Item = 1

@@ -183,7 +183,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
               break
 
             // For secondary indexes
-            default: // end for
+            default:
+              // end for
               // Verify that the table has this index
               if (!this.Table.indexes[key]) error(`'${key}' is not a valid secondary index name`)
 
@@ -299,8 +300,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                 mappings: {
                   [entity.name]: Object.assign(
                     {
-                      [entity.schema.attributes[attr].alias || attr]:
-                        entity.schema.attributes[attr].type
+                      [entity.schema.attributes[attr].alias || attr]: entity.schema.attributes[attr]
+                        .type
                     },
                     // Add setType if type 'set'
                     entity.schema.attributes[attr].type === 'set'
@@ -388,30 +389,33 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         return Object.assign(
           result,
           {
-            Items:
-              result.Items?.map((item: unknown) => {
-                if (typeof item !== 'object' || item === null) {
-                  return item
-                }
-
-                const itemEntityName = options.parseAsEntity || (item as Record<string, any>)[this.Table.entityField !== false ? this.Table.entityField : undefined as never]
-                if (typeof itemEntityName !== 'string') {
-                  return item
-                }
-
-                if (this[itemEntityName]) {
-                  return this[itemEntityName].parse(
-                    item,
-                    EntityProjections[itemEntityName]
-                      ? EntityProjections[itemEntityName]
-                      : TableProjections
-                        ? TableProjections
-                        : []
-                  )
-                }
-
+            Items: result.Items?.map((item: unknown) => {
+              if (typeof item !== 'object' || item === null) {
                 return item
-              })
+              }
+
+              const itemEntityName =
+                options.parseAsEntity ||
+                (item as Record<string, any>)[
+                  this.Table.entityField !== false ? this.Table.entityField : (undefined as never)
+                ]
+              if (typeof itemEntityName !== 'string') {
+                return item
+              }
+
+              if (this[itemEntityName]) {
+                return this[itemEntityName].parse(
+                  item,
+                  EntityProjections[itemEntityName]
+                    ? EntityProjections[itemEntityName]
+                    : TableProjections
+                      ? TableProjections
+                      : []
+                )
+              }
+
+              return item
+            })
           },
           // If last evaluated key, return a next function
           result.LastEvaluatedKey
@@ -718,7 +722,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           result,
           {
             Items: result.Items?.map(item => {
-              const itemEntityName = options.parseAsEntity || item[this.Table.entityField !== false ? this.Table.entityField : undefined as never]
+              const itemEntityName =
+                options.parseAsEntity ||
+                item[
+                  this.Table.entityField !== false ? this.Table.entityField : (undefined as never)
+                ]
               const itemEntityInstance = this[itemEntityName]
 
               if (itemEntityInstance != null) {
@@ -941,13 +949,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       return result
     }
 
-    return this.parseBatchGetResponse(
-      result,
-      Tables,
-      EntityProjections,
-      TableProjections,
-      options
-    )
+    return this.parseBatchGetResponse(result, Tables, EntityProjections, TableProjections, options)
   }
 
   parseBatchGetResponse(
