@@ -174,6 +174,7 @@ class Entity<
 
   // Set the Entity's Table
   set table(table: EntityTable) {
+    console.log('set table', this.name)
     // If a Table
     if (table?.Table?.attributes) {
       // If this Entity already has a Table, throw an error

@@ -15,6 +15,8 @@ import {
 
 import { Table, Entity } from '../index'
 
+jest.spyOn(Table.prototype, 'addEntity').mockReturnValue()
+
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
   obj: O,
   ...keys: K
