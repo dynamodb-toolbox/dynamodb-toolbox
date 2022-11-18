@@ -36,7 +36,7 @@ describe('transactGet', () => {
   })
 
   it('transactGets data from a single table', () => {
-    let result = TestTable.transactGetParams([
+    const result = TestTable.transactGetParams([
       TestEntity.getTransaction({ email: 'test', sort: 'testsk' })
     ])
     expect(result).toHaveProperty('TransactItems')

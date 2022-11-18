@@ -4,7 +4,7 @@ import { DocumentClient } from './bootstrap.test'
 
 describe('validateTypes', () => {
   it('validates string', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'string' }, 'attr', 'string value')
+    const result = validateTypes(DocumentClient)({ type: 'string' }, 'attr', 'string value')
     expect(result).toBe('string value')
   })
 
@@ -15,7 +15,7 @@ describe('validateTypes', () => {
   })
 
   it('validates boolean', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'boolean' }, 'attr', false)
+    const result = validateTypes(DocumentClient)({ type: 'boolean' }, 'attr', false)
     expect(result).toBe(false)
   })
 
@@ -26,23 +26,23 @@ describe('validateTypes', () => {
   })
 
   it('validates number (123)', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 123)
+    const result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 123)
     expect(result).toBe(123)
   })
 
   it('validates number (1.23)', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 1.23)
+    const result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 1.23)
     expect(result).toBe(1.23)
   })
 
   it('validates number (0)', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 0)
+    const result = validateTypes(DocumentClient)({ type: 'number' }, 'attr', 0)
     expect(result).toBe(0)
   })
 
   // parseFloat("123.00") === 123 -> String(parseFloat("123.00")) !== "123.00"
   it('validates number (coerce, float "123.00")', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', '123.00')
+    const result = validateTypes(DocumentClient)({ type: 'number', coerce: true }, 'attr', '123.00')
     expect(result).toBe(123)
   })
 
@@ -114,7 +114,7 @@ describe('validateTypes', () => {
   })
 
   it('validates list', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'list' }, 'attr', [1, 2, 3])
+    const result = validateTypes(DocumentClient)({ type: 'list' }, 'attr', [1, 2, 3])
     expect(result).toEqual([1, 2, 3])
   })
 
@@ -125,7 +125,7 @@ describe('validateTypes', () => {
   })
 
   it('validates map', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'map' }, 'attr', { test: true })
+    const result = validateTypes(DocumentClient)({ type: 'map' }, 'attr', { test: true })
     expect(result).toEqual({ test: true })
   })
 
@@ -136,7 +136,7 @@ describe('validateTypes', () => {
   })
 
   it('validates set', async () => {
-    let result = validateTypes(DocumentClient)({ type: 'set', setType: 'number' }, 'attr', [
+    const result = validateTypes(DocumentClient)({ type: 'set', setType: 'number' }, 'attr', [
       1,
       2,
       3

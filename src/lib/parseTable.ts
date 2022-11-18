@@ -1,10 +1,3 @@
-/**
- * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
- * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @license MIT
- */
-
-// Import libraries, types, and classes
 import { A } from 'ts-toolbelt'
 
 import parseAttributes from './parseTableAttributes'
@@ -19,8 +12,8 @@ export const parseTable = <
   PartitionKey extends A.Key,
   SortKey extends A.Key | null
 >(
-  table: TableConstructor<Name, PartitionKey, SortKey>
-) => {
+    table: TableConstructor<Name, PartitionKey, SortKey>
+  ) => {
   let {
     name, // Table name
     alias, // For batch references
@@ -29,11 +22,17 @@ export const parseTable = <
     entityField,
     attributes,
     indexes,
+    // eslint-disable-next-line prefer-const
     autoExecute,
+    // eslint-disable-next-line prefer-const
     autoParse,
+    // eslint-disable-next-line prefer-const
     removeNullAttributes,
+    // eslint-disable-next-line prefer-const
     entities,
+    // eslint-disable-next-line prefer-const
     DocumentClient,
+    // eslint-disable-next-line prefer-const
     ...args // extraneous config
   } = table
 
@@ -52,8 +51,8 @@ export const parseTable = <
     typeof alias === 'string' && alias.trim().length > 0
       ? alias.trim()
       : alias
-      ? error(`'alias' must be a string value`)
-      : null
+        ? error(`'alias' must be a string value`)
+        : null
 
   // 🔨 TOIMPROVE: Not triming would be better for type safety (no need to cast)
   // Specify partitionKey attribute
@@ -66,24 +65,24 @@ export const parseTable = <
   sortKey = (typeof sortKey === 'string' && sortKey.trim().length > 0
     ? sortKey.trim()
     : sortKey
-    ? error(`'sortKey' must be a string value`)
-    : null) as SortKey
+      ? error(`'sortKey' must be a string value`)
+      : null) as SortKey
 
   // Disable, or rename field for entity tracking
   entityField =
     entityField === false
       ? false
       : typeof entityField === 'string' && entityField.trim().length > 0
-      ? entityField.trim()
-      : '_et'
+        ? entityField.trim()
+        : '_et'
 
   // Parse table attributes
   attributes =
     hasValue(attributes) && attributes?.constructor === Object
       ? attributes
       : attributes
-      ? error(`Please provide a valid 'attributes' object`)
-      : {}
+        ? error(`Please provide a valid 'attributes' object`)
+        : {}
 
   // Add entityField to attributes
   if (entityField) attributes[entityField] = 'string'
@@ -92,10 +91,10 @@ export const parseTable = <
   indexes =
     hasValue(indexes) && indexes?.constructor === Object
       ? // 🔨 TOIMPROVE: Allow numbers & symbols in parseIndexes ?
-        parseIndexes(indexes, partitionKey as string)
+      parseIndexes(indexes, partitionKey as string)
       : indexes
-      ? error(`Please provide a valid 'indexes' object`)
-      : {}
+        ? error(`Please provide a valid 'indexes' object`)
+        : {}
 
   // Return the table
   return Object.assign(

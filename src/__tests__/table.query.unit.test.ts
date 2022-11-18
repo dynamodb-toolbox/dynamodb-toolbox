@@ -39,7 +39,7 @@ const TestEntity = new Entity({
 
 describe('query', () => {
   it('queries a table with no options', async () => {
-    let result = await TestTable.query('test', { execute: false })
+    const result = await TestTable.query('test', { execute: false })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -50,7 +50,7 @@ describe('query', () => {
   })
 
   it('queries a table with no options using numeric pk', () => {
-    let result = TestTable.queryParams(1)
+    const result = TestTable.queryParams(1)
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -61,7 +61,7 @@ describe('query', () => {
   })
 
   it('queries a table with projections', () => {
-    let result = TestTable.queryParams('test', { attributes: ['pk'] }, {}, true)
+    const result = TestTable.queryParams('test', { attributes: ['pk'] }, {}, true)
 
     expect(result).toEqual({
       payload: {
@@ -78,7 +78,7 @@ describe('query', () => {
 
   it('queries a table and ignores bad parameters', () => {
     // @ts-expect-error
-    let result = TestTable.queryParams('test', {}, 'test')
+    const result = TestTable.queryParams('test', {}, 'test')
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -89,7 +89,7 @@ describe('query', () => {
   })
 
   it('queries a table with options', () => {
-    let result = TestTable.queryParams('test', {
+    const result = TestTable.queryParams('test', {
       index: 'GSI1',
       limit: 10,
       reverse: true,
@@ -132,7 +132,7 @@ describe('query', () => {
   })
 
   it('queries a table with options including a nested attribute filter', () => {
-    let result = TestTable.queryParams('test', {
+    const result = TestTable.queryParams('test', {
       index: 'GSI1',
       limit: 10,
       reverse: true,
@@ -253,7 +253,7 @@ describe('query', () => {
   })
 
   it('queries a table with lt', () => {
-    let result = TestTable.queryParams('test', { lt: 'val' })
+    const result = TestTable.queryParams('test', { lt: 'val' })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -264,7 +264,7 @@ describe('query', () => {
   })
 
   it('queries a table with eq, even with 0', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', eq: 0 })
+    const result = TestTable.queryParams('test', { index: 'GSINumber', eq: 0 })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -276,7 +276,7 @@ describe('query', () => {
   })
 
   it('queries a table with lt, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', lt: 0 })
+    const result = TestTable.queryParams('test', { index: 'GSINumber', lt: 0 })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -288,7 +288,7 @@ describe('query', () => {
   })
 
   it('queries a table with lte', () => {
-    let result = TestTable.queryParams('test', { lte: 'val' })
+    const result = TestTable.queryParams('test', { lte: 'val' })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -299,7 +299,7 @@ describe('query', () => {
   })
 
   it('queries a table with lte, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', lte: 0 })
+    const result = TestTable.queryParams('test', { index: 'GSINumber', lte: 0 })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -311,7 +311,7 @@ describe('query', () => {
   })
 
   it('queries a table with gt', () => {
-    let result = TestTable.queryParams('test', { gt: 'val' })
+    const result = TestTable.queryParams('test', { gt: 'val' })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -322,7 +322,7 @@ describe('query', () => {
   })
 
   it('queries a table with gt, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', gt: 0 })
+    const result = TestTable.queryParams('test', { index: 'GSINumber', gt: 0 })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -334,7 +334,7 @@ describe('query', () => {
   })
 
   it('queries a table with gte', () => {
-    let result = TestTable.queryParams('test', { gte: 'val' })
+    const result = TestTable.queryParams('test', { gte: 'val' })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -345,7 +345,7 @@ describe('query', () => {
   })
 
   it('queries a table with gte, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', gte: 0 })
+    const result = TestTable.queryParams('test', { index: 'GSINumber', gte: 0 })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -357,7 +357,7 @@ describe('query', () => {
   })
 
   it('queries a table with beginsWith', () => {
-    let result = TestTable.queryParams('test', { beginsWith: 'val' })
+    const result = TestTable.queryParams('test', { beginsWith: 'val' })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -368,7 +368,7 @@ describe('query', () => {
   })
 
   it('queries a table with beginsWith, even falsy ("")', () => {
-    let result = TestTable.queryParams('test', { beginsWith: '' })
+    const result = TestTable.queryParams('test', { beginsWith: '' })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -379,7 +379,7 @@ describe('query', () => {
   })
 
   it('queries a table with between', () => {
-    let result = TestTable.queryParams('test', { between: ['val', 'val1'] })
+    const result = TestTable.queryParams('test', { between: ['val', 'val1'] })
 
     expect(result).toEqual({
       TableName: 'test-table',
@@ -390,7 +390,7 @@ describe('query', () => {
   })
 
   it('queries a table with between, even falsy (0)', () => {
-    let result = TestTable.queryParams('test', { index: 'GSINumber', between: [0, 0] })
+    const result = TestTable.queryParams('test', { index: 'GSINumber', between: [0, 0] })
 
     expect(result).toEqual({
       TableName: 'test-table',

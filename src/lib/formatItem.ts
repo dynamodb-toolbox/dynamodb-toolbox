@@ -69,21 +69,21 @@ export default (DocumentClient: DocumentClient) => (
         attributes[field] &&
         (attributes[field].prefix || attributes[field].suffix)
           ? item[field]
-              .replace(
-                new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`),
-                ""
-              )
-              .replace(
-                new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`),
-                ""
-              )
-          : item[field];
+            .replace(
+              new RegExp(`^${escapeRegExp(attributes[field].prefix!)}`),
+              ''
+            )
+            .replace(
+              new RegExp(`${escapeRegExp(attributes[field].suffix!)}$`),
+              ''
+            )
+          : item[field]
 
     const transformedValue =
         attributes[field] && attributes[field].format
           ? (
               attributes[field] as Required<PureAttributeDefinition>
-            ).format(fieldValue, item)
+          ).format(fieldValue, item)
           : fieldValue
 
     return Object.assign(acc, {

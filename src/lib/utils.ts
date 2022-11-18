@@ -1,8 +1,3 @@
-/**
- * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
- * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @license MIT
- */
 import { A, L } from 'ts-toolbelt'
 
 import { PureAttributeDefinition } from '../classes/Entity'
@@ -26,16 +21,13 @@ export const isDynamoDbType = (value: string): value is DynamoDBTypes =>
 export const isDynamoDbKeyType = (value: string): value is DynamoDBKeyTypes =>
   validKeyTypes.includes(value as DynamoDBKeyTypes)
 
-export const hasProperty = <P extends string>(obj: object, prop: P): obj is Record<P, unknown> =>
-  obj.hasOwnProperty(prop)
-
 // Boolean conversion
 export const toBool = (val: any) =>
   typeof val === 'boolean'
     ? val
     : ['false', '0', 'no'].includes(String(val).toLowerCase())
-    ? false
-    : Boolean(val)
+      ? false
+      : Boolean(val)
 
 // has value shortcut
 export const hasValue = (val: any) => val !== undefined && val !== null

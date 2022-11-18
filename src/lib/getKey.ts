@@ -20,10 +20,10 @@ export default (DocumentClient: DocumentClient) => (
   sortKey = (schema[sortKey] && schema[sortKey].map) || sortKey || null
 
   // Intialize validate type
-  let validateType = validateTypes(DocumentClient)
+  const validateType = validateTypes(DocumentClient)
 
   // TODO: Add tests for 0 values
-  let pk = data[partitionKey]
+  const pk = data[partitionKey]
   if (pk === undefined || pk === null || pk === '') {
     error(
       `'${partitionKey}'${
@@ -49,12 +49,12 @@ export default (DocumentClient: DocumentClient) => (
     },
     sortKey !== null
       ? {
-          [sortKey]: transformAttr(
-            schema[sortKey],
-            validateType(schema[sortKey], sortKey, sk),
-            data
-          )
-        }
+        [sortKey]: transformAttr(
+          schema[sortKey],
+          validateType(schema[sortKey], sortKey, sk),
+          data
+        )
+      }
       : {}
   ) // end assign
 } // end get keys

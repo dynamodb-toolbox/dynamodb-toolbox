@@ -5,7 +5,7 @@ import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
 // Create basic table
-let DefaultTable = new Table({
+const DefaultTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk'

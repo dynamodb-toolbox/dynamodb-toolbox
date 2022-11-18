@@ -30,7 +30,7 @@ const FormatEntity = new Entity({
 
 describe('format', () => {
   it('format single item', () => {
-    let item = FormatEntity.parse({
+    const item = FormatEntity.parse({
       pk: 'test@test.com',
       formatted_field: 'test',
       formatted_field_2: 100.123,

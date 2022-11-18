@@ -1,18 +1,11 @@
-/**
- * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
- * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @license MIT
- */
-
-// Import libraries & types
 import parseEntityAttributes from './parseEntityAttributes'
-import { TableDef } from '../classes/Table'
-import {
+import type { TableDef } from '../classes/Table'
+import type {
   AttributeDefinitions,
   EntityConstructor,
   PureAttributeDefinition,
   Readonly,
-} from "../classes/Entity";
+} from '../classes/Entity'
 import { error } from './utils'
 
 export interface TrackingInfo {
@@ -91,9 +84,13 @@ export function parseEntity<
     typeAlias,
     typeHidden,
     attributes,
+    // eslint-disable-next-line prefer-const
     autoExecute,
+    // eslint-disable-next-line prefer-const
     autoParse,
+    // eslint-disable-next-line prefer-const
     table,
+    // eslint-disable-next-line prefer-const
     ...args // extraneous config
   } = entity
 
@@ -147,7 +144,7 @@ export function parseEntity<
 
   // Add timestamps
   if (timestamps) {
-    ;(attributes as AttributeDefinitions)[created] = {
+    (attributes as AttributeDefinitions)[created] = {
       type: 'string',
       alias: createdAlias,
       default: () => new Date().toISOString()
@@ -161,7 +158,7 @@ export function parseEntity<
   }
 
   // Tracking info
-  let track: TrackingInfo = {
+  const track: TrackingInfo = {
     fields: Object.keys(attributes), // attributes and alias list,
     defaults: {}, // tracks default attributes
     required: {},

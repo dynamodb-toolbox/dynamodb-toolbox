@@ -23,7 +23,7 @@ const TestEntity = new Entity({
 
 describe('table.get', () => {
   it('gets an entity from the table', async () => {
-    let result = await TestTable.get('TestEntity', { email: 'val1', sort: 'val2' })
+    const result = await TestTable.get('TestEntity', { email: 'val1', sort: 'val2' })
     expect(result).toEqual({ TableName: 'test-table', Key: { pk: 'val1', sk: 'val2' } })
   })
 
@@ -34,7 +34,7 @@ describe('table.get', () => {
 
 describe('table.delete', () => {
   it('deletes an entity from the table', async () => {
-    let result = await TestTable.delete('TestEntity', { email: 'val1', sort: 'val2' })
+    const result = await TestTable.delete('TestEntity', { email: 'val1', sort: 'val2' })
     expect(result).toEqual({ TableName: 'test-table', Key: { pk: 'val1', sk: 'val2' } })
   })
 
@@ -45,7 +45,7 @@ describe('table.delete', () => {
 
 describe('table.update', () => {
   it('updates an entity from the table', async () => {
-    let result = await TestTable.update('TestEntity', {
+    const result = await TestTable.update('TestEntity', {
       email: 'val1',
       sort: 'val2',
       test: 'testing'
@@ -64,7 +64,7 @@ describe('table.update', () => {
 
 describe('table.put', () => {
   it('puts an entity to the table', async () => {
-    let result = await TestTable.put('TestEntity', { email: 'val1', sort: 'val2', test: 'testing' })
+    const result = await TestTable.put('TestEntity', { email: 'val1', sort: 'val2', test: 'testing' })
     expect(result.TableName).toBe('test-table')
     expect(result.Item.pk).toBe('val1')
     expect(result.Item.sk).toBe('val2')
@@ -78,7 +78,7 @@ describe('table.put', () => {
 
 describe('table.parse', () => {
   it('parses single item', async () => {
-    let item = await TestTable.parse(TestEntity.name, {
+    const item = await TestTable.parse(TestEntity.name, {
       pk: 'test@test.com',
       sk: 'email',
       test: 'testing',

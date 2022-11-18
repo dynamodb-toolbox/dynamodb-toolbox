@@ -39,31 +39,31 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
       return typeof value === 'string' && Number.isFinite(coercedValue) && value.length > 0
         ? coercedValue
         : error(
-            `Could not convert '${
-              Array.isArray(value) ? `[${value}]` : value
-            }' to a number for '${field}'`
-          )
+          `Could not convert '${
+            Array.isArray(value) ? `[${value}]` : value
+          }' to a number for '${field}'`
+        )
     }
     case 'list':
       return Array.isArray(value)
         ? value
         : mapping.coerce
-        ? String(value)
+          ? String(value)
             .split(',')
             .map(x => x.trim())
-        : error(`'${field}' must be a list (array)`)
+          : error(`'${field}' must be a list (array)`)
     case 'map':
       return value?.constructor === Object ? value : error(`'${field}' must be a map (object)`)
     case 'set':
       if (Array.isArray(value)) {
         if (!DocumentClient) error('DocumentClient required for this operation')
-        let set = DocumentClient.createSet(value, { validate: true })
+        const set = DocumentClient.createSet(value, { validate: true })
         return !mapping.setType || mapping.setType === set.type.toLowerCase()
           ? set
           : error(`'${field}' must be a valid set (array) containing only ${mapping.setType} types`)
       } else if (mapping.coerce) {
         if (!DocumentClient) error('DocumentClient required for this operation')
-        let set = DocumentClient.createSet(
+        const set = DocumentClient.createSet(
           String(value)
             .split(',')
             .map(x => x.trim())
