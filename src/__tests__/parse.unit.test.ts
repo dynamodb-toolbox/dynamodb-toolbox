@@ -1,4 +1,6 @@
+import Table from '../classes/Table'
 import Entity from '../classes/Entity'
+import { DocumentClient } from './bootstrap.test'
 
 const TestEntity = new Entity({
   name: 'TestEntity',
@@ -41,6 +43,14 @@ const SimpleEntity = new Entity({
     test_composite2: ['sk', 1, { save: false }],
     test_undefined: { default: () => undefined }
   }
+})
+
+new Table({
+  name: 'test-table',
+  partitionKey: 'pk',
+  sortKey: 'sk',
+  entities: [TestEntity, SimpleEntity],
+  DocumentClient
 })
 
 describe('parse', () => {
