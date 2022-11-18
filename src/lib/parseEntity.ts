@@ -1,13 +1,6 @@
-/**
- * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
- * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @license MIT
- */
-
-// Import libraries & types
 import parseEntityAttributes from './parseEntityAttributes'
-import { TableDef } from '../classes/Table'
-import {
+import type { TableDef } from '../classes/Table'
+import type {
   AttributeDefinitions,
   EntityConstructor,
   PureAttributeDefinition,
@@ -81,6 +74,7 @@ export function parseEntity<
     ReadonlyAttributeDefinitions
   >
 ): ParsedEntity<EntityTable, Name, AutoExecute, AutoParse, TypeAlias> {
+  // TODO: find a way to remove eslint-disable-next-line in this function
   let {
     name,
     timestamps,
@@ -91,9 +85,13 @@ export function parseEntity<
     typeAlias,
     typeHidden,
     attributes,
+    // eslint-disable-next-line prefer-const
     autoExecute,
+    // eslint-disable-next-line prefer-const
     autoParse,
+    // eslint-disable-next-line prefer-const
     table,
+    // eslint-disable-next-line prefer-const
     ...args // extraneous config
   } = entity
 
