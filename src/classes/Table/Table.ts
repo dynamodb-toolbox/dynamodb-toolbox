@@ -345,7 +345,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   // ----------------------------------------------------------------//
 
   async query<
-    Item extends unknown = DocumentClient.AttributeMap,
+    Item = DocumentClient.AttributeMap,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
   >(
@@ -676,7 +676,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   // SCAN the table
   async scan<
-    Item extends unknown = DocumentClient.AttributeMap,
+    Item = DocumentClient.AttributeMap,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
   >(
