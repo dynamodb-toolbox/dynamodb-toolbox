@@ -37,6 +37,7 @@ describe('parseEntity', () => {
     expect(ent.typeHidden).toBe(true)
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const nonObjectValues = [null, 'string', true, 1, [], () => {}]
   nonObjectValues.forEach(value => {
     it(`fails on non-object value: ${value}`, async () => {
