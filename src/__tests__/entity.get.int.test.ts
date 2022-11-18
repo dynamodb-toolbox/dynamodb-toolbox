@@ -46,19 +46,19 @@ describe.skip('get - integration', () => {
   })
 
   it('gets the key from input aliases (async)', async () => {
-    let { TableName, Key } = await TestEntity.get({ email: 'test-pk', sort: 'test-sk' })
+    const { TableName, Key } = await TestEntity.get({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('filters out extra data (async)', async () => {
-    let { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
+    const { TableName, Key } = await TestEntity.get({ pk: 'test-pk', sk: 'test-sk', test: 'test' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('coerces key values to correct types (async)', async () => {
-    let { TableName, Key } = await TestEntity.get({ pk: 1, sk: true })
+    const { TableName, Key } = await TestEntity.get({ pk: 1, sk: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })

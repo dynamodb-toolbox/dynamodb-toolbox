@@ -33,7 +33,7 @@ describe('Entity creation', () => {
   })
 
   it('creates basic entity w/o timestamps', () => {
-    let TestEntity = new Entity({
+    const TestEntity = new Entity({
       name: 'TestEntity',
       timestamps: false,
       attributes: {
@@ -58,7 +58,7 @@ describe('Entity creation', () => {
   })
 
   it('creates entity that overrides timestamp names', () => {
-    let TestEntity = new Entity({
+    const TestEntity = new Entity({
       name: 'TestEntity',
       created: 'createdAt',
       modified: 'modifiedAt',
@@ -75,7 +75,7 @@ describe('Entity creation', () => {
   })
 
   it('creates basic entity with typeHidden set to true', () => {
-    let TestEntity = new Entity({
+    const TestEntity = new Entity({
       name: 'TestEntity',
       typeHidden: true,
       attributes: {
@@ -87,7 +87,7 @@ describe('Entity creation', () => {
   })
 
   it('creates basic entity w/ required fields', () => {
-    let TestEntity = new Entity({
+    const TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
         pk: { partitionKey: true },
@@ -101,7 +101,7 @@ describe('Entity creation', () => {
   })
 
   it('creates entity w/ composite field type defaults and string assignment', () => {
-    let TestEntity = new Entity({
+    const TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
         pk: { partitionKey: true },
@@ -116,7 +116,7 @@ describe('Entity creation', () => {
   })
 
   it('creates entity w/ composite field alias', () => {
-    let TestEntity = new Entity({
+    const TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
         pk: { partitionKey: true },
@@ -146,12 +146,12 @@ describe('Entity creation', () => {
     expect(config.attributes).toEqual({
       pk: { partitionKey: true },
       sk: { sortKey: true, default: 'some-default-sk-value' },
-    });
+    })
     expect(config.timestamps).toBe(true)
-  });
+  })
 
   it('fails when creating a entity without a partitionKey', () => {
-    let result = () =>
+    const result = () =>
       new Entity({
         name: 'TestEntity',
         attributes: {}
@@ -160,7 +160,7 @@ describe('Entity creation', () => {
   })
 
   it('fails when creating a entity without a name', () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         attributes: {
@@ -171,7 +171,7 @@ describe('Entity creation', () => {
   })
 
   it('fails when creating a entity with an invalid attributes object (array)', () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -181,7 +181,7 @@ describe('Entity creation', () => {
   })
 
   it('fails when creating a entity with an invalid attributes object (string)', () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -191,7 +191,7 @@ describe('Entity creation', () => {
   })
 
   it('fails when attribute has an invalid type (string style)', () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -205,7 +205,7 @@ describe('Entity creation', () => {
   })
 
   it('fails when attribute has an invalid type (object style)', () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -219,7 +219,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when an attribute has invalid 'onUpdate' setting`, () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -232,7 +232,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when attribute alias duplicates existing property`, () => {
-    let result = () =>
+    const result = () =>
       new Entity({
         name: 'TestEntity',
         attributes: {
@@ -244,7 +244,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when an attribute uses 'setType' when not a 'set'`, () => {
-    let result = () =>
+    const result = () =>
       new Entity({
         name: 'TestEntity',
         attributes: {
@@ -256,7 +256,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when attribute uses invalid 'setType'`, () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -269,7 +269,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when setting an invalid attribute property type`, () => {
-    let result = () =>
+    const result = () =>
       new Entity({
         name: 'TestEntity',
         attributes: {
@@ -281,7 +281,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when setting an invalid required property`, () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -294,7 +294,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when composite references missing field`, () => {
-    let result = () =>
+    const result = () =>
       new Entity({
         name: 'TestEntity',
         attributes: {
@@ -306,7 +306,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when composite uses non-numeric index`, () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -319,7 +319,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when composite uses invalid type`, () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -334,7 +334,7 @@ describe('Entity creation', () => {
   })
 
   it(`fails when composite array length is incorrect`, () => {
-    let result = () =>
+    const result = () =>
       // @ts-expect-error
       new Entity({
         name: 'TestEntity',
@@ -348,53 +348,53 @@ describe('Entity creation', () => {
 
   it(`fails when missing entity definition`, () => {
     // @ts-expect-error
-    let result = () => new Entity()
+    const result = () => new Entity()
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
   it(`fails when providing an invalid entity definition`, () => {
     // @ts-expect-error
-    let result = () => new Entity('test')
+    const result = () => new Entity('test')
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
   it(`fails when providing an array as the entity definition`, () => {
     // @ts-expect-error
-    let result = () => new Entity([])
+    const result = () => new Entity([])
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
-  it("creates an attribute with an inverseTransformation function", async () => {
+  it('creates an attribute with an inverseTransformation function', async () => {
     const TestTable = new Table({
-      name: "test-table",
-      partitionKey: "pk",
-      sortKey: "sk",
+      name: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
       DocumentClient,
-    });
+    })
 
     const TestEntity = new Entity({
-      name: "TestEnt",
+      name: 'TestEnt',
       attributes: {
         pk: {
           partitionKey: true,
           format: (val) => val.toUpperCase(),
-          default: "pkDef",
+          default: 'pkDef',
         },
         test: {
           format: (val: string, data: any) => {
-            return val.toUpperCase();
+            return val.toUpperCase()
           },
-          default: () => "defaultVal",
+          default: () => 'defaultVal',
         },
-        sk: { type: "string", sortKey: true },
-        testx: ["sk", 0],
+        sk: { type: 'string', sortKey: true },
+        testx: ['sk', 0],
         testy: [
-          "sk",
+          'sk',
           1,
           {
-            default: () => "testDefaultY",
+            default: () => 'testDefaultY',
             format: (val) => {
-              return "__" + val.toUpperCase();
+              return '__' + val.toUpperCase()
             },
           },
         ],

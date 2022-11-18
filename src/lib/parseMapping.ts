@@ -38,8 +38,8 @@ export default (
       case 'transform':
         if (typeof config[prop] !== 'function') error(`'${prop}' must be a function`)
         break
-      case "format":
-        if (typeof config[prop] !== "function") error(`'${prop}' must be a function`)
+      case 'format':
+        if (typeof config[prop] !== 'function') error(`'${prop}' must be a function`)
         break
       case 'coerce':
       case 'onUpdate':
@@ -93,7 +93,7 @@ export default (
           )[]
 
           // Loop through values and track keys
-          for (let i in indexes) {
+          for (const i in indexes) {
             // If a boolean, set primary pk/sk
             if (typeof indexes[i] === 'boolean') {
               // Check that another prop isn't already a key
@@ -163,13 +163,13 @@ export default (
     },
     alias
       ? {
-          [alias]: Object.assign({}, _config, { map: field })
-        }
+        [alias]: Object.assign({}, _config, { map: field })
+      }
       : {},
     map
       ? {
-          [map]: Object.assign({}, _config, { alias: field })
-        }
+        [map]: Object.assign({}, _config, { alias: field })
+      }
       : {}
   ) // end assign
 }

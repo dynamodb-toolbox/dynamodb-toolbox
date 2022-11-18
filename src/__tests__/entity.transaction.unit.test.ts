@@ -169,7 +169,7 @@ describe('Entity transactional operations', () => {
     })
 
     it('omits unmapped attributes when strictSchemaCheck is false.', () => {
-      let {
+      const {
         Put: { Item }
       } = TestEntity.putTransaction(
         { pk: 'x', sk: 'y', unknown: '?' },
@@ -318,7 +318,7 @@ describe('Entity transactional operations', () => {
     })
 
     it('omits unmapped attributes when strictSchemaCheck is false.', () => {
-      let {
+      const {
         Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
       } = TestEntity.updateTransaction(
         { pk: 'x', sk: 'y', testString: 'some-updated-test-string', unknown: '?' },

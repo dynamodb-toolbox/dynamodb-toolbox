@@ -22,7 +22,7 @@ const entity = {
 
 describe('parseEntity', () => {
   it('parses entity definition with all available options', async () => {
-    let ent = parseEntity(entity)
+    const ent = parseEntity(entity)
     expect(ent.name).toBe('TestEntity')
     expect(ent.schema.keys).toEqual({ partitionKey: 'pk', sortKey: 'sk' })
     expect(ent.schema.attributes).toHaveProperty('_created')
@@ -48,7 +48,7 @@ describe('parseEntity', () => {
 
       expect(() => {
         parseEntity(input)
-      }).toThrow("Please provide a valid 'attributes' object")
+      }).toThrow('Please provide a valid \'attributes\' object')
     })
   })
 

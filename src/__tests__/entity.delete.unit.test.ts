@@ -51,7 +51,7 @@ describe('delete', () => {
   })
 
   it('filters out extra data (sync)', async () => {
-    let { TableName, Key } = TestEntity.deleteParams({
+    const { TableName, Key } = TestEntity.deleteParams({
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error 💥 TODO: This should not error as test can be used in default function
@@ -62,7 +62,7 @@ describe('delete', () => {
   })
 
   it('filters out extra data (async)', async () => {
-    let { TableName, Key } = await TestEntity.delete({
+    const { TableName, Key } = await TestEntity.delete({
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error 💥 TODO: This should not error as test can be used in default function
@@ -74,14 +74,14 @@ describe('delete', () => {
 
   it('coerces key values to correct types (sync)', async () => {
     // @ts-expect-error 💥 TODO: Support coerce keyword
-    let { TableName, Key } = TestEntity.deleteParams({ email: 1, sort: true })
+    const { TableName, Key } = TestEntity.deleteParams({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
 
   it('coerces key values to correct types (async)', async () => {
     // @ts-expect-error 💥 TODO: Support coerce keyword
-    let { TableName, Key } = await TestEntity.delete({ email: 1, sort: true })
+    const { TableName, Key } = await TestEntity.delete({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
@@ -129,7 +129,7 @@ describe('delete', () => {
   })
 
   it('allows execute and parse options', () => {
-    let { TableName, Key } = TestEntity.deleteParams(
+    const { TableName, Key } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { execute: false, parse: false }
     )
@@ -178,7 +178,7 @@ describe('delete', () => {
   })
 
   it('sets capacity options', () => {
-    let { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
+    const { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { capacity: 'none' }
     )
@@ -188,7 +188,7 @@ describe('delete', () => {
   })
 
   it('sets metrics options', () => {
-    let { TableName, Key, ReturnItemCollectionMetrics } = TestEntity.deleteParams(
+    const { TableName, Key, ReturnItemCollectionMetrics } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { metrics: 'size' }
     )
@@ -198,7 +198,7 @@ describe('delete', () => {
   })
 
   it('sets returnValues options', () => {
-    let { TableName, Key, ReturnValues } = TestEntity.deleteParams(
+    const { TableName, Key, ReturnValues } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { returnValues: 'ALL_OLD' }
     )
@@ -208,7 +208,7 @@ describe('delete', () => {
   })
 
   it('sets conditions', () => {
-    let result = TestEntity.deleteParams(
+    const result = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { conditions: { attr: 'email', gt: 'test' } }
     )
@@ -223,7 +223,7 @@ describe('delete', () => {
   })
 
   it('handles extra parameters', () => {
-    let { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
+    const { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       {},
       { ReturnConsumedCapacity: 'NONE' }
@@ -234,7 +234,7 @@ describe('delete', () => {
   })
 
   it('handles invalid parameter input', () => {
-    let { TableName, Key } = TestEntity.deleteParams(
+    const { TableName, Key } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       {},
       // @ts-expect-error
@@ -245,7 +245,7 @@ describe('delete', () => {
   })
 
   it('formats a batch delete response', async () => {
-    let result = TestEntity.deleteBatch({ email: 'x', sort: 'y' })
+    const result = TestEntity.deleteBatch({ email: 'x', sort: 'y' })
     expect(result).toEqual({ 'test-table': { DeleteRequest: { Key: { pk: 'x', sk: 'y' } } } })
   })
 
@@ -285,7 +285,7 @@ describe('delete', () => {
 
     const key = { id: 'xyz' }
     // @ts-expect-error 💥 TODO: Because default can be a func, composite keys in deletes and gets should accept extra data
-    let result = Foos.deleteParams(key) // Fails with v0.2.0-beta. Fine with v0.2.0-alpha
+    const result = Foos.deleteParams(key) // Fails with v0.2.0-beta. Fine with v0.2.0-alpha
     expect(result).toEqual({ TableName: 'test-table', Key: { pk: 'FOO#xyz', sk: 'FOO#xyz' } })
   })
 })

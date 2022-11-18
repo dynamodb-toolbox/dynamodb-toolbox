@@ -23,7 +23,7 @@ export default (DocumentClient: DocumentClient) => (
   const dependsOn = (map: any, attr: any) => {
     // If the default depends on other attributes
     if (schema[attr].dependsOn) {
-      ;(Array.isArray(schema[attr].dependsOn)
+      (Array.isArray(schema[attr].dependsOn)
         ? schema[attr].dependsOn
         : [schema[attr].dependsOn]
       ).forEach((dependent: any) => {
@@ -54,21 +54,21 @@ export default (DocumentClient: DocumentClient) => (
   } // end dependsOn
 
   // Generate normalized data object
-  let dataMap = Object.keys(data).reduce(
+  const dataMap = Object.keys(data).reduce(
     (acc, field) => {
       // Return a map with normalized data and alias references
       return Object.assign(
         acc,
         schema[field]
           ? {
-              data: { ...acc.data, [schema[field].map || field]: data[field] },
-              aliases: { ...acc.aliases, [schema[field].alias || field]: data[field] }
-            }
+            data: { ...acc.data, [schema[field].map || field]: data[field] },
+            aliases: { ...acc.aliases, [schema[field].alias || field]: data[field] }
+          }
           : filter
-          ? {} // this will filter out non-mapped fields
-          : field === '$remove'
-          ? { data: { ...acc.data, $remove: data[field] } } // support for removes
-          : error(`Field '${field}' does not have a mapping or alias`)
+            ? {} // this will filter out non-mapped fields
+            : field === '$remove'
+              ? { data: { ...acc.data, $remove: data[field] } } // support for removes
+              : error(`Field '${field}' does not have a mapping or alias`)
       )
     },
     { data: {}, aliases: {} }
@@ -79,26 +79,26 @@ export default (DocumentClient: DocumentClient) => (
   const defaults: Record<string, any> = Object.keys(defaultMap).reduce((acc, attr) => {
     // If a function, resolve the dependency graph
     if (typeof defaultMap[attr] === 'function') {
-      let map = dependsOn(defaultMap, attr)
+      const map = dependsOn(defaultMap, attr)
       defaultMap = map
     }
     return Object.assign(acc, { [attr]: defaultMap[attr] })
   }, {})
 
   // Generate final data and evaluate function expressions
-  let _data: Record<string, any> = Object.keys(dataMap.data).reduce((acc, field) => {
+  const _data: Record<string, any> = Object.keys(dataMap.data).reduce((acc, field) => {
     return Object.assign(acc, {
       [field]: defaults[field]
     })
   }, {})
 
   // Process linked
-  let composites = Object.keys(linked).reduce((acc, attr) => {
+  const composites = Object.keys(linked).reduce((acc, attr) => {
     // Convert field to mapped field
     const field = (schema[attr] && schema[attr].map) || attr
 
     if (_data[field] !== undefined) return acc // if value exists, let override
-    let values = linked[attr]
+    const values = linked[attr]
       .map((f: any) => {
         if (_data[f] === undefined) {
           return null

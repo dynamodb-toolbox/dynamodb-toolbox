@@ -34,7 +34,7 @@ const CompositeEntity = new Entity({
 
 describe('parse', () => {
   it('parses single item', () => {
-    let item = TestEntity.parse({
+    const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'email',
       test_string: 'test',
@@ -49,7 +49,7 @@ describe('parse', () => {
   })
 
   it('parses single item and includes certain fields', () => {
-    let item = TestEntity.parse(
+    const item = TestEntity.parse(
       { pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' },
       ['email', 'sk']
     )
@@ -60,7 +60,7 @@ describe('parse', () => {
   })
 
   it('parses multiple items', () => {
-    let items = TestEntity.parse([
+    const items = TestEntity.parse([
       { pk: 'test@test.com', sk: 'email', test_string: 'test' },
       { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
     ])
@@ -79,7 +79,7 @@ describe('parse', () => {
   })
 
   it('parses multiple items and incudes certain field', () => {
-    let items = TestEntity.parse(
+    const items = TestEntity.parse(
       [
         { pk: 'test@test.com', sk: 'email', test_string: 'test' },
         { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
@@ -99,7 +99,7 @@ describe('parse', () => {
   })
 
   it('parses composite field', () => {
-    let item = SimpleEntity.parse({
+    const item = SimpleEntity.parse({
       pk: 'test@test.com',
       sk: 'active#email',
       test_composite: 'test'

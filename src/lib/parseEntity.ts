@@ -12,7 +12,7 @@ import {
   EntityConstructor,
   PureAttributeDefinition,
   Readonly,
-} from "../classes/Entity";
+} from '../classes/Entity'
 import { error } from './utils'
 
 export interface TrackingInfo {
@@ -147,7 +147,7 @@ export function parseEntity<
 
   // Add timestamps
   if (timestamps) {
-    ;(attributes as AttributeDefinitions)[created] = {
+    (attributes as AttributeDefinitions)[created] = {
       type: 'string',
       alias: createdAlias,
       default: () => new Date().toISOString()
@@ -161,7 +161,7 @@ export function parseEntity<
   }
 
   // Tracking info
-  let track: TrackingInfo = {
+  const track: TrackingInfo = {
     fields: Object.keys(attributes), // attributes and alias list,
     defaults: {}, // tracks default attributes
     required: {},

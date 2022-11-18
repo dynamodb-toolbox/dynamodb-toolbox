@@ -34,8 +34,8 @@ export const toBool = (val: any) =>
   typeof val === 'boolean'
     ? val
     : ['false', '0', 'no'].includes(String(val).toLowerCase())
-    ? false
-    : Boolean(val)
+      ? false
+      : Boolean(val)
 
 // has value shortcut
 export const hasValue = (val: any) => val !== undefined && val !== null

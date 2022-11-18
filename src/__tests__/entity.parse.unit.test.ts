@@ -41,7 +41,7 @@ const TestEntityHiddenTypeWithAlias = new Entity({
 
 describe('parse', () => {
   it('parses single item', () => {
-    let item = TestEntity.parse({
+    const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'email',
       test_string: 'test',
@@ -56,7 +56,7 @@ describe('parse', () => {
   })
 
   it('parses single item and includes certain fields', () => {
-    let item = TestEntity.parse(
+    const item = TestEntity.parse(
       { pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' },
       ['email', 'sk']
     )
@@ -67,7 +67,7 @@ describe('parse', () => {
   })
 
   it('parses single item and hide the entity type', () => {
-    let item = TestEntityHiddenType.parse({
+    const item = TestEntityHiddenType.parse({
       pk: 'test@test.com',
       sk: 'email',
       _et: 'TestEntity',
@@ -80,7 +80,7 @@ describe('parse', () => {
   })  
 
   it('parses single item with alias and hide the entity type', () => {
-    let item = TestEntityHiddenTypeWithAlias.parse({
+    const item = TestEntityHiddenTypeWithAlias.parse({
       pk: 'test@test.com',
       sk: 'email',
       _et: 'TestEntity',
@@ -93,7 +93,7 @@ describe('parse', () => {
   })  
 
   it('parses multiple items', () => {
-    let items = TestEntity.parse([
+    const items = TestEntity.parse([
       { pk: 'test@test.com', sk: 'email', test_string: 'test' },
       { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
     ])
@@ -112,7 +112,7 @@ describe('parse', () => {
   })
 
   it('parses multiple items and incudes certain field', () => {
-    let items = TestEntity.parse(
+    const items = TestEntity.parse(
       [
         { pk: 'test@test.com', sk: 'email', test_string: 'test' },
         { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
@@ -132,7 +132,7 @@ describe('parse', () => {
   })
 
   it('parses multiple items and hide the entity type', () => {
-    let items = TestEntityHiddenType.parse([
+    const items = TestEntityHiddenType.parse([
       { pk: 'test@test.com', sk: 'email', _et: 'TestEntity' },
       { pk: 'test2@test.com', sk: 'email2', _et: 'TestEntity' }
     ])
@@ -150,7 +150,7 @@ describe('parse', () => {
   })  
 
   it('parses composite field', () => {
-    let item = SimpleEntity.parse({
+    const item = SimpleEntity.parse({
       pk: 'test@test.com',
       sk: 'active#email',
       test_composite: 'test'

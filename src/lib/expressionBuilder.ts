@@ -49,12 +49,12 @@ const buildExpression = <
   Attr extends A.Key = A.Key,
   EntityTable extends TableDef | undefined = undefined
 >(
-  exp: FilterExpressions<Attr>,
-  table: EntityTable,
-  entity?: string,
-  group = 0,
-  level = 0
-): any => {
+    exp: FilterExpressions<Attr>,
+    table: EntityTable,
+    entity?: string,
+    group = 0,
+    level = 0
+  ): any => {
   // Coerce to array if not already
   const clauses = Array.isArray(exp) ? exp : [exp]
   let expression = ''
@@ -69,7 +69,7 @@ const buildExpression = <
     // If clause is nested in an array
     if (Array.isArray(clauses[id])) {
       // Build the sub clause
-      let sub = buildExpression(clauses[id], table, entity, group, level)
+      const sub = buildExpression(clauses[id], table, entity, group, level)
 
       // If no logic at this level, capture from sub clause
       logic = logic ? logic : sub.logic
@@ -175,8 +175,8 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
     typeof attr === 'string'
       ? checkAttribute(attr, entity ? table[entity].schema.attributes : table.Table.attributes)
       : typeof size === 'string'
-      ? checkAttribute(size, entity ? table[entity].schema.attributes : table.Table.attributes)
-      : error(`A string for 'attr' or 'size' is required for condition expressions`)
+        ? checkAttribute(size, entity ? table[entity].schema.attributes : table.Table.attributes)
+        : error(`A string for 'attr' or 'size' is required for condition expressions`)
 
   const pathParts = path.split('.')
 
@@ -282,7 +282,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       if (!attr) error(`'exists' conditions require an 'attr'.`)
       clause = value ? `attribute_exists(${operand})` : `attribute_not_exists(${operand})`
     } else if (value && typeof value === 'object') {
-      const ref = value as Partial<AttrRef>;
+      const ref = value as Partial<AttrRef>
       if(!SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.includes(filterType)) error(`AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(', ')}.`)
       if (typeof ref?.attr !== 'string' || !ref?.attr) error(`AttrRef must have an attr field which references another attribute in the same entity.`)
 

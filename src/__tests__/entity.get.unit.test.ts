@@ -51,7 +51,7 @@ describe('get', () => {
   })
 
   it('filters out extra data (sync)', async () => {
-    let { TableName, Key } = TestEntity.getParams({
+    const { TableName, Key } = TestEntity.getParams({
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error
@@ -62,7 +62,7 @@ describe('get', () => {
   })
 
   it('filters out extra data (async)', async () => {
-    let { TableName, Key } = await TestEntity.get({
+    const { TableName, Key } = await TestEntity.get({
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error
@@ -74,14 +74,14 @@ describe('get', () => {
 
   it('coerces key values to correct types (sync)', async () => {
     // @ts-expect-error 💥 TODO: Support coerce keyword
-    let { TableName, Key } = TestEntity.getParams({ email: 1, sort: true })
+    const { TableName, Key } = TestEntity.getParams({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
 
   it('coerces key values to correct types (async)', async () => {
     // @ts-expect-error 💥 TODO: Support coerce keyword
-    let { TableName, Key } = await TestEntity.get({ email: 1, sort: true })
+    const { TableName, Key } = await TestEntity.get({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
@@ -127,7 +127,7 @@ describe('get', () => {
   })
 
   it('allows execute and parse options', () => {
-    let { TableName, Key } = TestEntity.getParams(
+    const { TableName, Key } = TestEntity.getParams(
       { email: 'x', sort: 'y' },
       { execute: false, parse: false }
     )
@@ -160,7 +160,7 @@ describe('get', () => {
   })
 
   it('parses attribute projections', () => {
-    let { TableName, Key, ExpressionAttributeNames, ProjectionExpression } = TestEntity.getParams(
+    const { TableName, Key, ExpressionAttributeNames, ProjectionExpression } = TestEntity.getParams(
       { email: 'x', sort: 'y' },
       { attributes: ['email'] }
     )
@@ -171,7 +171,7 @@ describe('get', () => {
   })
 
   it('sets consistent and capacity options', () => {
-    let { TableName, Key, ConsistentRead, ReturnConsumedCapacity } = TestEntity.getParams(
+    const { TableName, Key, ConsistentRead, ReturnConsumedCapacity } = TestEntity.getParams(
       { email: 'x', sort: 'y' },
       { consistent: true, capacity: 'none' }
     )
@@ -182,7 +182,7 @@ describe('get', () => {
   })
 
   it('handles extra parameters', () => {
-    let { TableName, Key, ConsistentRead } = TestEntity.getParams(
+    const { TableName, Key, ConsistentRead } = TestEntity.getParams(
       { email: 'x', sort: 'y' },
       {},
       { ConsistentRead: true }
@@ -193,7 +193,7 @@ describe('get', () => {
   })
 
   it('handles invalid parameter input', () => {
-    let { TableName, Key } = TestEntity.getParams(
+    const { TableName, Key } = TestEntity.getParams(
       { email: 'x', sort: 'y' },
       {},
       // @ts-expect-error
@@ -204,7 +204,7 @@ describe('get', () => {
   })
 
   it('formats a batch get response', async () => {
-    let { Table, Key } = TestEntity.getBatch({ email: 'a', sort: 'b' })
+    const { Table, Key } = TestEntity.getBatch({ email: 'a', sort: 'b' })
     expect(Table.name).toBe('test-table')
     expect(Key).toEqual({ pk: 'a', sk: 'b' })
   })

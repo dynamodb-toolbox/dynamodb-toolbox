@@ -16,11 +16,11 @@ const track: TrackingInfo = {
 
 describe('parseCompositeKey', () => {
   it('converts item config to linked mapping', async () => {
-    let result = parseCompositeKey('linked', ['sk', 0, { save: false }], track, attributes)
+    const result = parseCompositeKey('linked', ['sk', 0, { save: false }], track, attributes)
     expect(result).toEqual({
       linked: { save: false, type: 'string', coerce: true, link: 'sk', pos: 0 }
     })
-    let result2 = parseCompositeKey('linked2', ['sk', 1], track, attributes)
+    const result2 = parseCompositeKey('linked2', ['sk', 1], track, attributes)
     expect(result2).toEqual({
       linked2: { save: true, type: 'string', coerce: true, link: 'sk', pos: 1 }
     })

@@ -37,7 +37,7 @@ describe('batchWrite', () => {
   })
 
   it('batchWrites data to a single table', () => {
-    let result = TestTable.batchWriteParams(
+    const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' })
     ) as DocumentClient.BatchWriteItemInput
     expect(result.RequestItems['test-table'][0].PutRequest!.Item.pk).toBe('test')
@@ -72,7 +72,7 @@ describe('batchWrite', () => {
   })
 
   it('batchWrites data to a single table with options', () => {
-    let result = TestTable.batchWriteParams(
+    const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       { capacity: 'total', metrics: 'size' }
     ) as DocumentClient.BatchWriteItemInput
@@ -84,7 +84,7 @@ describe('batchWrite', () => {
   })
 
   it('batchWrites data to a single table with invalid params', () => {
-    let result = TestTable.batchWriteParams(
+    const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       {},
       // @ts-expect-error
@@ -96,7 +96,7 @@ describe('batchWrite', () => {
   })
 
   it('returns meta data', () => {
-    let result = TestTable.batchWriteParams(
+    const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       {},
       {},
@@ -110,7 +110,7 @@ describe('batchWrite', () => {
   })
 
   it('batchWrites data to a single table with multiple items', () => {
-    let result = TestTable.batchWriteParams([
+    const result = TestTable.batchWriteParams([
       TestEntity.putBatch({ email: 'test', sort: 'testsk1', test: 'test1' }),
       TestEntity.putBatch({ email: 'test', sort: 'testsk2', test: 'test2' }),
       TestEntity.deleteBatch({ email: 'test', sort: 'testsk3' })
@@ -146,7 +146,7 @@ describe('batchWrite', () => {
       table: TestTable2
     } as const)
 
-    let result = TestTable.batchWriteParams([
+    const result = TestTable.batchWriteParams([
       TestEntity.putBatch({ email: 'test', sort: 'testsk1', test: 'test1' }),
       TestEntity.putBatch({ email: 'test', sort: 'testsk2', test: 'test2' }),
       TestEntity2.putBatch({ email: 'test', sort: 'testsk3', test: 'test3' })

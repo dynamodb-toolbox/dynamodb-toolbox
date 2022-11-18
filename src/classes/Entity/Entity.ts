@@ -145,14 +145,14 @@ class Entity<
     const {
       table,
       ...entitySchemaWithoutTable
-    } = entity;
+    } = entity
 
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
       ...cloneDeep(entitySchemaWithoutTable),
       ...(table ? { table } : {}),
-    };
+    }
 
     const {
       attributes,
@@ -240,8 +240,8 @@ class Entity<
     return typeof this._execute === 'boolean'
       ? this._execute
       : typeof this.table?.autoExecute === 'boolean'
-      ? this.table.autoExecute
-      : true
+        ? this.table.autoExecute
+        : true
   }
 
   // Sets the auto parse mode (default to true)
@@ -254,8 +254,8 @@ class Entity<
     return typeof this._parse === 'boolean'
       ? this._parse
       : typeof this.table?.autoParse === 'boolean'
-      ? this.table.autoParse
-      : true
+        ? this.table.autoParse
+        : true
   }
 
   // Primary key getters
@@ -275,8 +275,8 @@ class Entity<
     return this.schema.attributes[attr] && this.schema.attributes[attr].map
       ? this.schema.attributes[attr].map
       : this.schema.attributes[attr]
-      ? attr
-      : error(`'${attr}' does not exist or is an invalid alias`)
+        ? attr
+        : error(`'${attr}' does not exist or is an invalid alias`)
   } // end attribute
 
   // Parses the item
@@ -441,7 +441,7 @@ class Entity<
     }
 
     // Generate the get parameters
-    let payload = this.getParams<
+    const payload = this.getParams<
       MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ShownItemAttributes,
@@ -682,7 +682,7 @@ class Entity<
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
-      let { ReturnValues, ..._payload } = payload
+      const { ReturnValues, ..._payload } = payload
       payload = Object.assign({}, _payload, { ReturnValuesOnConditionCheckFailure: ReturnValues })
     }
 
@@ -952,7 +952,7 @@ class Entity<
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
-      let { ReturnValues, ..._payload } = payload
+      const { ReturnValues, ..._payload } = payload
       payload = Object.assign({}, _payload, { ReturnValuesOnConditionCheckFailure: ReturnValues })
     }
 
@@ -1231,17 +1231,17 @@ class Entity<
           // if a map and updating by nested attribute/index
         } else if (mapping.type === 'map' && data[field]?.$set) {
           Object.keys(data[field].$set).forEach(f => {
-            let props = f.split('.')
-            let acc = [`#${field}`]
+            const props = f.split('.')
+            const acc = [`#${field}`]
             props.forEach((prop, i) => {
-              let id = `${field}_${props.slice(0, i + 1).join('_')}`
+              const id = `${field}_${props.slice(0, i + 1).join('_')}`
               // Add names and values
               names[`#${id.replace(/\[(\d+)\]/, '')}`] = prop.replace(/\[(\d+)\]/, '')
               // if the final prop, add the SET and values
               if (i === props.length - 1) {
-                let input = data[field].$set[f]
-                let path = `${acc.join('.')}.#${id}`
-                let value = `${id.replace(/\[(\d+)\]/, '_$1')}`
+                const input = data[field].$set[f]
+                const path = `${acc.join('.')}.#${id}`
+                const value = `${id.replace(/\[(\d+)\]/, '_$1')}`
 
                 if (input === undefined || input === null) {
                   REMOVE.push(`${path}`)
@@ -1305,7 +1305,7 @@ class Entity<
           }
           // else add to SET
         } else {
-          let value = transformAttr(mapping, validateType(mapping, field, data[field]), data)
+          const value = transformAttr(mapping, validateType(mapping, field, data[field]), data)
 
           // It's possible that defaults can purposely return undefined values
           // if (hasValue(value)) {
@@ -1531,7 +1531,7 @@ class Entity<
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
-      let { ReturnValues, ..._payload } = payload
+      const { ReturnValues, ..._payload } = payload
       payload = Object.assign({}, _payload, { ReturnValuesOnConditionCheckFailure: ReturnValues })
     }
 
@@ -1671,7 +1671,7 @@ class Entity<
         TableName: _table!.name,
         // Loop through valid fields and add appropriate action
         Item: Object.keys(data).reduce((acc, field) => {
-          let mapping = schema.attributes[field]
+          const mapping = schema.attributes[field]
           let value = data[field]
           if(value !== undefined &&
             (mapping.save === undefined || mapping.save === true) &&
@@ -1745,7 +1745,7 @@ class Entity<
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
-      let { ReturnValues, ..._payload } = payload
+      const { ReturnValues, ..._payload } = payload
       payload = Object.assign({}, _payload, { ReturnValuesOnConditionCheckFailure: ReturnValues })
     }
 

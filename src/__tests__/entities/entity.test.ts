@@ -29,7 +29,7 @@ export = {
     test_binary: { type: 'binary' },
     simple_string: 'string',
     format_simple_string: {
-      type: "string",
+      type: 'string',
       format: (input: string) => input.toUpperCase(),
     }
   }
