@@ -482,12 +482,12 @@ describe('expressionBuilder', () => {
   it(`fails when 'value' type AttrRef is used with a non-existing property name`, () => {
     expect(() =>
       expressionBuilder({ attr: 'a', eq: { attr: 'nonexistent' } }, TestTable, 'TestEntity')
-    ).toThrow("'nonexistent' is not a valid attribute within the given entity/table.")
+    ).toThrow('\'nonexistent\' is not a valid attribute within the given entity/table.')
   })
 
   it(`fails when 'value' type AttrRef is used with an unsupported operator`, () => {
-    // @ts-expect-error
     expect(() =>
+      // @ts-expect-error
       expressionBuilder({ attr: 'a', beginsWith: { attr: 'some-attr' } }, TestTable, 'TestEntity')
     ).toThrow(
       `AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(
@@ -517,7 +517,7 @@ describe('expressionBuilder', () => {
     )
   })
 
-  it("doesn't mutate input expression", () => {
+  it('doesn\'t mutate input expression', () => {
     const expObj = { attr: 'a', eq: 'b' }
     const expArr = [{ attr: 'a', eq: 'b' }]
     expressionBuilder(expObj, TestTable, 'TestEntity')
