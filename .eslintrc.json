@@ -42,7 +42,7 @@
       }
     ],
     "@typescript-eslint/ban-ts-comment": "warn",
-    // TODO: remove this rule when all the code is fully migrated to TS, currently it just produces a lot of noise
+    // TODO: remove this rule when all the code is fully migrated to TS, atm it just produces a lot of noise
     "@typescript-eslint/no-explicit-any": "off"
   },
   "globals": {
