@@ -1,27 +1,10 @@
 import Table from '../classes/Table'
-import Entity from '../classes/Entity'
 import { default as expressionBuilder, SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS} from '../lib/expressionBuilder'
 
-// Create basic table
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk'
 })
-// Create basic entity
-const TestEntity = new Entity({
-  name: 'TestEntity',
-
-  attributes: {
-    pk: { partitionKey: true },
-    a: 'string',
-    b: 'string',
-    c: 'string',
-    d: 'string',
-    x: 'string',
-    y: 'string'
-  },
-  table: TestTable
-} as const)
 
 describe('expressionBuilder', () => {
   it('builds complex expression', () => {
