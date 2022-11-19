@@ -37,7 +37,7 @@ describe('transactWrite', () => {
   })
 
   it('transactWrite put, update, delete data', () => {
-    let result = TestTable.transactWriteParams([
+    const result = TestTable.transactWriteParams([
       TestEntity.putTransaction({ email: 'test', sort: 'testsk1', test: 'test' }),
       TestEntity.updateTransaction({ email: 'test', sort: 'testsk2', test: 'test' }),
       TestEntity.deleteTransaction({ email: 'test', sort: 'testsk3' })

@@ -20,9 +20,9 @@ const parseEntityAttributes = <
     | AttributeDefinitions
     | O.Readonly<AttributeDefinitions, A.Key, 'deep'>
 >(
-  attributes: ReadonlyAttributeDefinitions,
-  track: TrackingInfo
-) => {
+    attributes: ReadonlyAttributeDefinitions,
+    track: TrackingInfo
+  ) => {
   // Parse attributes into standard format
   const parsedAttributes = Object.keys(attributes).reduce((acc, field: string) => {
     const attributeDefinition = attributes[field]

@@ -1,30 +1,6 @@
-// // Bootstrap testing
-const { DocumentClient } = require('./bootstrap.test')
-
-// // console.log(DocumentClient);
-// // console.log(DocumentClient.constructor.name);
-
-// // Start up Dynalite on port 4567
-// beforeAll(async () => {
-//   // Listen on port 4567
-//   await new Promise((resolve,reject) => {
-//     dynaliteServer.listen(4567, function(err) {
-//       if (err) reject(err)
-//       resolve(true)
-//     })
-//   })
-//   // Create test table
-//   await DynamoDB.createTable(Object.assign(createTableParams,{ TableName: 'test-table'})).promise()
-// })
-
-// afterAll(async () => {
-//   await DynamoDB.deleteTable({ TableName: 'test-table'}).promise()
-//   dynaliteServer.close()
-// })
-
-// // Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
+import { DocumentClient } from './bootstrap.test'
 
 describe('Misc Tests (development only)', () => {
   it('uses a numeric pk value', async () => {

@@ -7,7 +7,7 @@ import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
 // Create basic table
-let DefaultTable = new Table({
+const DefaultTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
@@ -38,7 +38,7 @@ const linked = DefaultTable.User.linked
 
 describe('normalizeData', () => {
   it('converts entity input to table attributes', async () => {
-    let result = normalizeData(DocumentClient)(attributes, linked, {
+    const result = normalizeData(DocumentClient)(attributes, linked, {
       pk: 'test',
       set_alias: ['1', '2', '3'],
       number: 1,
@@ -61,7 +61,7 @@ describe('normalizeData', () => {
   })
 
   it('filter out non-mapped fields', async () => {
-    let result = normalizeData(DocumentClient)(
+    const result = normalizeData(DocumentClient)(
       attributes,
       linked,
       { pk: 'test', $remove: 'testx', notAField: 'test123' },

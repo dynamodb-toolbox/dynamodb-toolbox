@@ -1,1 +1,1 @@
-import type * as types from "../dist";
+import type * as types from '../dist'

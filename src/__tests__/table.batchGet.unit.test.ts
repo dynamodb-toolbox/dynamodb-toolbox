@@ -36,7 +36,7 @@ describe('batchGet', () => {
   })
 
   it('batchGets data from a single table', () => {
-    let result = TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }))
+    const result = TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }))
     expect(result).toEqual({
       RequestItems: { 'test-table': { Keys: [{ pk: 'test', sk: 'testsk' }] } }
     })
@@ -61,9 +61,12 @@ describe('batchGet', () => {
   })
 
   it('add consistent flag', () => {
-    let result = TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }), {
-      consistent: true
-    })
+    const result = TestTable.batchGetParams(
+      TestEntity.getBatch({ email: 'test', sort: 'testsk' }),
+      {
+        consistent: true
+      }
+    )
     expect(result).toEqual({
       RequestItems: { 'test-table': { ConsistentRead: true, Keys: [{ pk: 'test', sk: 'testsk' }] } }
     })
@@ -89,7 +92,7 @@ describe('batchGet', () => {
       table: TestTable2
     } as const)
 
-    let result = TestTable.batchGetParams(
+    const result = TestTable.batchGetParams(
       [
         TestEntity.getBatch({ email: 'test', sort: 'testsk' }),
         TestEntity2.getBatch({ email: 'test', sort: 'testsk' })

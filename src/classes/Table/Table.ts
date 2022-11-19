@@ -920,7 +920,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     const shouldExecute = options.execute || (this.autoExecute && options.execute !== false);
     if (!shouldExecute) {
-      return payload;
+      return payload
     }
 
     const result = await this.DocumentClient!.batchGet(payload).promise();

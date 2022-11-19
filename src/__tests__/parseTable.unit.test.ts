@@ -3,7 +3,7 @@ import parseTable from '../lib/parseTable'
 // Require Table and Entity classes
 import { TableConstructor } from '../classes/Table'
 
-let table: TableConstructor<'test-table', 'pk', 'sk'> = {
+const table: TableConstructor<'test-table', 'pk', 'sk'> = {
   name: 'test-table',
   alias: 'test-table-alias',
   partitionKey: 'pk',
@@ -17,7 +17,7 @@ let table: TableConstructor<'test-table', 'pk', 'sk'> = {
 
 describe('parseTable', () => {
   it('parses simple mapping', async () => {
-    let tbl = parseTable(table)
+    const tbl = parseTable(table)
     expect(tbl.name).toBe('test-table')
     expect(tbl.alias).toBe('test-table-alias')
     expect(tbl.Table.attributes.entity).toEqual({ type: 'string', mappings: {} })

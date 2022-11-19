@@ -103,14 +103,14 @@ const TestEntity6 = new Entity({
   autoExecute: false,
   attributes: {
     pk: { partitionKey: true },
-    test_number: { type: 'number', transform: () => 'abc' },
+    test_number: { type: 'number', transform: () => 'abc' }
   },
-  table: TestTable2,
+  table: TestTable2
 })
 
 describe('put', () => {
   it('creates basic item', () => {
-    let { Item } = TestEntity.putParams({ email: 'test-pk', sort: 'test-sk' })
+    const { Item } = TestEntity.putParams({ email: 'test-pk', sort: 'test-sk' })
 
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('test-sk')
@@ -121,7 +121,7 @@ describe('put', () => {
   })
 
   it('creates item with aliases', () => {
-    let { Item } = TestEntity.putParams({
+    const { Item } = TestEntity.putParams({
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error 💥 TODO: Handle aliases
@@ -138,7 +138,7 @@ describe('put', () => {
   })
 
   it('creates basic item with float values', () => {
-    let { Item } = TestEntity.putParams({
+    const { Item } = TestEntity.putParams({
       pk: 'test-pk',
       sk: 'test-sk',
       float: 1.234,
@@ -157,7 +157,7 @@ describe('put', () => {
   })
 
   it('creates item with default override', () => {
-    let { Item } = TestEntity.putParams({
+    const { Item } = TestEntity.putParams({
       email: 'test-pk',
       sort: 'test-sk',
       test_string: 'different value'
@@ -171,7 +171,7 @@ describe('put', () => {
   })
 
   it('creates item with saved composite field', () => {
-    let { Item } = TestEntity2.putParams({
+    const { Item } = TestEntity2.putParams({
       email: 'test-pk',
       test_composite: 'test'
     })
@@ -180,7 +180,7 @@ describe('put', () => {
   })
 
   it('creates item that ignores field with no value', () => {
-    let { Item } = TestEntity2.putParams({
+    const { Item } = TestEntity2.putParams({
       email: 'test-pk',
       test_composite: undefined
     })
@@ -191,7 +191,7 @@ describe('put', () => {
   })
 
   it('accepts null values for optional attributes', () => {
-    let { Item } = TestEntity3.putParams({
+    const { Item } = TestEntity3.putParams({
       email: 'test-pk',
       test: 'hello',
       test2: null
@@ -212,7 +212,7 @@ describe('put', () => {
   })
 
   it('creates item that overrides composite key', () => {
-    let { Item } = TestEntity2.putParams({
+    const { Item } = TestEntity2.putParams({
       email: 'test-pk',
       sort: 'override',
       test_composite: 'test',
@@ -226,7 +226,7 @@ describe('put', () => {
   })
 
   it('creates item that generates composite key', () => {
-    let { Item } = TestEntity2.putParams({
+    const { Item } = TestEntity2.putParams({
       email: 'test-pk',
       test_composite: 'test',
       test_composite2: 'test2'
@@ -285,7 +285,7 @@ describe('put', () => {
   })
 
   it('omits unmapped attributes when strictSchemaCheck is false.', () => {
-    let { Item } = TestEntity.putParams(
+    const { Item } = TestEntity.putParams(
       { email: 'x', sort: 'y', unknown: '?' },
       { strictSchemaCheck: false }
     )
@@ -380,7 +380,7 @@ describe('put', () => {
     ).toThrow(`String Set contains Number value`)
   })
 
-  it("fails when set coerces array and doesn't match type", () => {
+  it('fails when set coerces array and doesn\'t match type', () => {
     expect(() =>
       TestEntity.putParams({
         email: 'test-pk',
@@ -392,7 +392,7 @@ describe('put', () => {
   })
 
   it('coerces array into set', () => {
-    let { Item } = TestEntity.putParams({
+    const { Item } = TestEntity.putParams({
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error
@@ -401,7 +401,7 @@ describe('put', () => {
     expect(Item['test_string_set_type_coerce'].values).toEqual(['1', '2', '3'])
   })
 
-  it("fails when set doesn't contain array with no coercion", () => {
+  it('fails when set doesn\'t contain array with no coercion', () => {
     expect(() =>
       TestEntity.putParams({
         email: 'test-pk',
@@ -423,7 +423,7 @@ describe('put', () => {
   })
 
   it('puts 0 and false to required fields', () => {
-    let { Item } = TestEntity5.putParams({
+    const { Item } = TestEntity5.putParams({
       pk: 'test-pk',
       test_required_boolean: false,
       test_required_number: 0
@@ -434,7 +434,7 @@ describe('put', () => {
   })
 
   it('formats a batch put response', async () => {
-    let result = TestEntity.putBatch({ email: 'x', sort: 'y' })
+    const result = TestEntity.putBatch({ email: 'x', sort: 'y' })
 
     expect(result).toHaveProperty('test-table.PutRequest')
     expect(result['test-table'].PutRequest!.Item).toHaveProperty('_ct')
@@ -461,7 +461,7 @@ describe('put', () => {
   })
 
   it('sets capacity options', () => {
-    let { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
+    const { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
       { capacity: 'none' }
     )
@@ -470,7 +470,7 @@ describe('put', () => {
   })
 
   it('sets metrics options', () => {
-    let { TableName, ReturnItemCollectionMetrics } = TestEntity.putParams(
+    const { TableName, ReturnItemCollectionMetrics } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
       { metrics: 'size' }
     )
@@ -479,7 +479,7 @@ describe('put', () => {
   })
 
   it('sets returnValues options', () => {
-    let { TableName, ReturnValues } = TestEntity.putParams(
+    const { TableName, ReturnValues } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
       { returnValues: 'ALL_OLD' }
     )
@@ -512,8 +512,15 @@ describe('put', () => {
   })
 
   it('sets conditions', () => {
-    let { TableName, ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
-      TestEntity.putParams({ email: 'x', sort: 'y' }, { conditions: { attr: 'email', gt: 'test' } })
+    const {
+      TableName,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    } = TestEntity.putParams(
+      { email: 'x', sort: 'y' },
+      { conditions: { attr: 'email', gt: 'test' } }
+    )
     expect(TableName).toBe('test-table')
     expect(ExpressionAttributeNames).toEqual({ '#attr1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':attr1': 'test' })
@@ -521,7 +528,7 @@ describe('put', () => {
   })
 
   it('handles extra parameters', () => {
-    let { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
+    const { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
       {},
       { ReturnConsumedCapacity: 'NONE' }
@@ -531,7 +538,7 @@ describe('put', () => {
   })
 
   it('handles invalid parameter input', () => {
-    let { TableName } = TestEntity.putParams(
+    const { TableName } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
       {},
       // @ts-expect-error
@@ -541,7 +548,7 @@ describe('put', () => {
   })
 
   it('correctly aliases pks', () => {
-    let { Item } = TestEntity4.putParams({
+    const { Item } = TestEntity4.putParams({
       id: 3,
       // @ts-expect-error 💥 TODO: Handle aliases
       xyz: '123'
@@ -551,9 +558,11 @@ describe('put', () => {
   })
 
   it('fail on invalid transformations', () => {
-    expect(() => TestEntity6.putParams({
-      pk: 'test-pk',
-      test_number: 123,
-    })).toThrow("Could not convert 'abc' to a number for 'test_number'")
+    expect(() =>
+      TestEntity6.putParams({
+        pk: 'test-pk',
+        test_number: 123
+      })
+    ).toThrow('Could not convert \'abc\' to a number for \'test_number\'')
   })
 })

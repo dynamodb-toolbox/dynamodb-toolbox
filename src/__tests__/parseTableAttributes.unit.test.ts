@@ -1,7 +1,7 @@
 import { TableAttributes } from '../classes/Table'
 import parseTableAttributes from '../lib/parseTableAttributes'
 
-let attrs: TableAttributes = {
+const attrs: TableAttributes = {
   pk: 'string',
   sk: 'string'
 }

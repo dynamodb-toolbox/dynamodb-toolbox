@@ -23,14 +23,14 @@ const TestEntity = new Entity({
 
 describe('scan', () => {
   it('scans a table with no options', () => {
-    let result = TestTable.scanParams()
+    const result = TestTable.scanParams()
     expect(result).toEqual({
       TableName: 'test-table'
     })
   })
 
   it('scans a table with meta data', () => {
-    let result = TestTable.scanParams({ attributes: ['pk'] }, {}, true)
+    const result = TestTable.scanParams({ attributes: ['pk'] }, {}, true)
     expect(result).toEqual({
       payload: {
         TableName: 'test-table',
@@ -44,14 +44,14 @@ describe('scan', () => {
 
   it('scans a table and ignores bad parameters', () => {
     // @ts-expect-error
-    let result = TestTable.scanParams({}, 'test')
+    const result = TestTable.scanParams({}, 'test')
     expect(result).toEqual({
       TableName: 'test-table'
     })
   })
 
   it('scans a table with options', () => {
-    let result = TestTable.scanParams({
+    const result = TestTable.scanParams({
       index: 'GSI1',
       limit: 10,
       consistent: true,
@@ -190,7 +190,7 @@ describe('scan', () => {
       })
     })
 
-    let result = await TestEntity.scan({
+    const result = await TestEntity.scan({
       parse: true
     })
     expect(result).toEqual({
@@ -219,7 +219,7 @@ describe('scan', () => {
       })
     })
 
-    let result = await TestEntity.scan({
+    const result = await TestEntity.scan({
       parse: false
     })
     expect(result).toEqual({
@@ -248,7 +248,7 @@ describe('scan', () => {
       })
     })
 
-    let result = await TestEntity.scan()
+    const result = await TestEntity.scan()
     expect(result).toEqual({
       Items: [
         {

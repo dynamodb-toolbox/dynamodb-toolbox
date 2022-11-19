@@ -50,8 +50,8 @@ type ExpectedQueryOpts<
     index: string
     limit: number
     reverse: boolean
-    entity: string,
-    parseAsEntity: string,
+    entity: string
+    parseAsEntity: string
     select: DocumentClientType.Select
     filters: ConditionsOrFilters<FilteredAttributes>
     eq: string | number
@@ -1915,14 +1915,14 @@ describe('Entity', () => {
     describe('get method', () => {
       describe('MethodItemOverlay', () => {
         it('composite key should match infered composite key', () => {
-          ;() => ent.get<MethodItemOverlay>(ck)
+          () => ent.get<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck0)
         })
 
         it('filtered attribute should match MethodItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.get<MethodItemOverlay>(ck, { attributes: ['pk'] })
+          () => ent.get<MethodItemOverlay>(ck, { attributes: ['pk'] })
           ;() => ent.get<MethodItemOverlay>(ck, { attributes: ['pk0'] })
         })
 
@@ -1950,12 +1950,12 @@ describe('Entity', () => {
       describe('MethodItemOverlay + MethodCompositeKeyOverlay', () => {
         it('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
         })
 
         it('filtered attribute should (still) match MethodItemOverlay', () => {
-          ;() =>
+          () =>
             ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0, {
               // @ts-expect-error
               attributes: ['pk']
@@ -1992,13 +1992,13 @@ describe('Entity', () => {
     describe('delete method', () => {
       describe('MethodItemOverlay', () => {
         it('composite key should match infered composite key', () => {
-          ;() => ent.delete<MethodItemOverlay>(ck)
+          () => ent.delete<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck0)
         })
 
         it('condition attributes should match MethodItemOverlay', () => {
-          ;() =>
+          () =>
             ent.delete<MethodItemOverlay>(ck, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2021,12 +2021,12 @@ describe('Entity', () => {
       describe('MethodItemOverlay + MethodCompositeKeyOverlay', () => {
         it('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
         })
 
         it('condition attributes should (still) match MethodItemOverlay', () => {
-          ;() =>
+          () =>
             ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2050,12 +2050,12 @@ describe('Entity', () => {
     describe('put method', () => {
       it('Item should match MethodItemOverlay', () => {
         // @ts-expect-error
-        ;() => ent.put<MethodItemOverlay>(ck)
+        () => ent.put<MethodItemOverlay>(ck)
         ;() => ent.put<MethodItemOverlay>({ ...ck0, num0, str0 })
       })
 
       it('condition attributes should match MethodItemOverlay', () => {
-        ;() =>
+        () =>
           ent.put<MethodItemOverlay>(
             { ...ck0, num0 },
             // @ts-expect-error
@@ -2080,12 +2080,12 @@ describe('Entity', () => {
     describe('update method', () => {
       it('item should match MethodItemOverlay', () => {
         // @ts-expect-error
-        ;() => ent.update<MethodItemOverlay>(ck)
+        () => ent.update<MethodItemOverlay>(ck)
         ;() => ent.update<MethodItemOverlay>({ ...ck0, num0 })
       })
 
       it('condition attributes should match MethodItemOverlay', () => {
-        ;() =>
+        () =>
           ent.update<MethodItemOverlay>(
             { ...ck0, num0 },
             // @ts-expect-error
@@ -2099,7 +2099,11 @@ describe('Entity', () => {
       })
 
       it('Attributes match MethodItemOverlay, when returnValues is not NONE', () => {
-        const updatePromise = () => ent.update<MethodItemOverlay, any, any , 'UPDATED_NEW'>({ ...ck0, num0 }, { returnValues: 'UPDATED_NEW' })
+        const updatePromise = () =>
+          ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>(
+            { ...ck0, num0 },
+            { returnValues: 'UPDATED_NEW' }
+          )
         type UpdateItem = A.Await<F.Return<typeof updatePromise>>['Attributes']
         type TestUpdateItem = A.Equals<UpdateItem, MethodItemOverlay | undefined>
         const testUpdateItem: TestUpdateItem = 1
@@ -2110,7 +2114,7 @@ describe('Entity', () => {
     describe('query method', () => {
       it('condition attributes should match MethodItemOverlay', () => {
         // @ts-expect-error
-        ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
+        () => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
         ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk0'] })
       })
 
@@ -2187,13 +2191,13 @@ describe('Entity', () => {
       describe('EntityOverlay only', () => {
         it('composite key should match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          ;() => ent.get(ck)
+          () => ent.get(ck)
           ;() => ent.get(ck0)
         })
 
         it('filtered attribute should match EntityItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.get(ck0, { attributes: ['pk'] })
+          () => ent.get(ck0, { attributes: ['pk'] })
           ;() => ent.get(ck0, { attributes: ['pk0'] })
 
           type GetItemOptions = GetOptions<typeof ent>
@@ -2231,7 +2235,7 @@ describe('Entity', () => {
       describe('MethodItemOverlay + EntityCompositeKeyOverlay', () => {
         it('composite key should (still) match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          ;() => ent.get<MethodItemOverlay>(ck)
+          () => ent.get<MethodItemOverlay>(ck)
           ;() => ent.get<MethodItemOverlay>(ck0)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck1)
@@ -2239,7 +2243,7 @@ describe('Entity', () => {
 
         it('filtered attribute should match MethodItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk'] })
+          () => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk'] })
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk0'] })
           ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk1'] })
@@ -2257,14 +2261,14 @@ describe('Entity', () => {
       describe('Method Overlay only', () => {
         it('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
         })
 
         it('filtered attribute should (still) match MethodItemOverlay', () => {
-          ;() =>
+          () =>
             ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1, {
               // @ts-expect-error
               attributes: ['pk']
@@ -2294,7 +2298,7 @@ describe('Entity', () => {
       describe('EntityOverlay only', () => {
         it('composite key should match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          ;() => ent.delete(ck)
+          () => ent.delete(ck)
           ;() => ent.delete(ck0)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck1)
@@ -2302,7 +2306,7 @@ describe('Entity', () => {
 
         it('condition attributes should match EntityItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.delete(ck0, { conditions: { attr: 'pk', exists: true } })
+          () => ent.delete(ck0, { conditions: { attr: 'pk', exists: true } })
           ;() => ent.delete(ck0, { conditions: { attr: 'pk0', exists: true } })
 
           type DeleteItemOptions = DeleteOptions<typeof ent>
@@ -2347,14 +2351,14 @@ describe('Entity', () => {
       describe('MethodItemOverlay + EntityCompositeKeyOverlay', () => {
         it('composite key should (still) match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          ;() => ent.delete<MethodItemOverlay>(ck)
+          () => ent.delete<MethodItemOverlay>(ck)
           ;() => ent.delete<MethodItemOverlay>(ck0)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck1)
         })
 
         it('condition attributes should match MethodItemOverlay', () => {
-          ;() =>
+          () =>
             ent.delete<MethodItemOverlay>(ck0, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2382,14 +2386,14 @@ describe('Entity', () => {
       describe('Method Overlay only', () => {
         it('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
         })
 
         it('condition attributes should (still) match MethodItemOverlay', () => {
-          ;() =>
+          () =>
             ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2419,7 +2423,7 @@ describe('Entity', () => {
       describe('EntityItemOverlay', () => {
         it('Item should match EntityItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.put(ck)
+          () => ent.put(ck)
           // @ts-expect-error
           ;() => ent.put(ck0)
           ;() => ent.put({ ...ck0, num0 })
@@ -2427,7 +2431,7 @@ describe('Entity', () => {
         })
 
         it('condition attributes should match EntityItemOverlay', () => {
-          ;() =>
+          () =>
             ent.put(
               { ...ck0, num0 },
               // @ts-expect-error
@@ -2474,7 +2478,7 @@ describe('Entity', () => {
       describe('MethodItemOverlay', () => {
         it('Item should match MethodItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.put<MethodItemOverlay>(ck)
+          () => ent.put<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.put<MethodItemOverlay>({ ...ck0, num0 })
           ;() => ent.put<MethodItemOverlay>({ ...ck1, num1 })
@@ -2482,7 +2486,7 @@ describe('Entity', () => {
         })
 
         it('condition attributes should match MethodItemOverlay', () => {
-          ;() =>
+          () =>
             ent.put<MethodItemOverlay>(
               { ...ck1, num1 },
               // @ts-expect-error
@@ -2515,12 +2519,12 @@ describe('Entity', () => {
       describe('EntityOverlay only', () => {
         it('item should match EntityItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.update(ck)
+          () => ent.update(ck)
           ;() => ent.update({ ...ck0, num0 })
         })
 
         it('condition attributes should match EntityItemOverlay', () => {
-          ;() =>
+          () =>
             ent.update(
               { ...ck0, num0 },
               // @ts-expect-error
@@ -2608,7 +2612,7 @@ describe('Entity', () => {
       describe('MethodOverlay', () => {
         it('item should match MethodItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.update<MethodItemOverlay>(ck)
+          () => ent.update<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.update<MethodItemOverlay>({ ...ck0, num0 })
           // @ts-expect-error
@@ -2617,7 +2621,7 @@ describe('Entity', () => {
         })
 
         it('condition attributes should match MethodItemOverlay', () => {
-          ;() =>
+          () =>
             ent.update<MethodItemOverlay>(
               { ...ck1, num1 },
               // @ts-expect-error
@@ -2637,7 +2641,11 @@ describe('Entity', () => {
         })
 
         it('Attributes match MethodItemOverlay, whatever the returnValues option is', () => {
-          const updateO1Promise = () => ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>({ ...ck1, num1 }, { returnValues: 'UPDATED_NEW'})
+          const updateO1Promise = () =>
+            ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>(
+              { ...ck1, num1 },
+              { returnValues: 'UPDATED_NEW' }
+            )
           type UpdateO1Item = A.Await<F.Return<typeof updateO1Promise>>['Attributes']
           type TestUpdateO1Item = A.Equals<UpdateO1Item, MethodItemOverlay | undefined>
           const testUpdateO1Item: TestUpdateO1Item = 1
@@ -2650,7 +2658,7 @@ describe('Entity', () => {
       describe('EntityOverlay only', () => {
         it('condition attributes should match EntityItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.query('pk', { attributes: ['pk'] })
+          () => ent.query('pk', { attributes: ['pk'] })
           ;() => ent.query('pk', { attributes: ['pk0'] })
         })
 
@@ -2683,7 +2691,7 @@ describe('Entity', () => {
       describe('MethodOverlay', () => {
         it('condition attributes should match MethodItemOverlay', () => {
           // @ts-expect-error
-          ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
+          () => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
           // @ts-expect-error
           ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk0'] })
           ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk1'] })
@@ -2702,7 +2710,7 @@ describe('Entity', () => {
     describe('scan method', () => {
       describe('EntityOverlay only', () => {
         it('condition attributes should not necessarily match EntityItemOverlay', () => {
-          ;() => ent.scan({ attributes: ['pk'] })
+          () => ent.scan({ attributes: ['pk'] })
         })
 
         it('returned Items should not necessarily match EntityItemOverlay', () => {
@@ -2716,7 +2724,7 @@ describe('Entity', () => {
 
       describe('MethodOverlay', () => {
         it('condition attributes should not necessarily match MethodItemOverlay', () => {
-          ;() => ent.scan<MethodItemOverlay>({ attributes: ['pk'] })
+          () => ent.scan<MethodItemOverlay>({ attributes: ['pk'] })
         })
 
         it('returned Items should match MethodItemOverlay', () => {
