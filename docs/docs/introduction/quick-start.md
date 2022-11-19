@@ -2,14 +2,17 @@
 
 ## Install DynamoDB Toolbox
 
-Using your favorite package manager, install DynamoDB Toolbox in your project by running one of the following commands:
+Using your favorite package manager, install DynamoDB Toolbox and aws-sdk v2 in your project by running one of the following commands:
 
 ```bash
 # npm
 npm i dynamodb-toolbox
+npm install aws-sdk
 
 # yarn
 yarn add dynamodb-toolbox
+yarn add aws-sdk
+
 ```
 
 ## Add to your code
@@ -23,14 +26,20 @@ const { Table, Entity } = require('dynamodb-toolbox')
 ```typescript title="TypeScript"
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
+:::info
+We're using **aws-sdk v2** with DynamoDB tools the support for **aws-sdk v3** is on the way. <br />
+You can read more about the development [here](https://github.com/jeremydaly/dynamodb-toolbox/pull/174).
 
-## Load the DocumentClient
+:::
+## Load the DocumentClient using aws-sdk v2
 
-```typescript title="TypeScript
+```typescript title="TypeScript"
 import DynamoDB from 'aws-sdk/clients/dynamodb'
 
+// const region = 'DynamoDB-Table-Region'
 const DocumentClient = new DynamoDB.DocumentClient({
   // Specify your client options as usual
+  // region,
   convertEmptyValues: false
 })
 ```
