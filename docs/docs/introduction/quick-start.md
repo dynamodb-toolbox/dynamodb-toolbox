@@ -1,4 +1,9 @@
 # Quick Start
+:::info
+We're using **aws-sdk v2** with DynamoDB tools the support for **aws-sdk v3** is on the way. <br />
+You can read more about the development [here](https://github.com/jeremydaly/dynamodb-toolbox/pull/174).
+
+:::
 
 ## Install DynamoDB Toolbox
 
@@ -26,11 +31,6 @@ const { Table, Entity } = require('dynamodb-toolbox')
 ```typescript title="TypeScript"
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
-:::info
-We're using **aws-sdk v2** with DynamoDB tools the support for **aws-sdk v3** is on the way. <br />
-You can read more about the development [here](https://github.com/jeremydaly/dynamodb-toolbox/pull/174).
-
-:::
 ## Load the DocumentClient using aws-sdk v2
 
 ```typescript title="TypeScript"
