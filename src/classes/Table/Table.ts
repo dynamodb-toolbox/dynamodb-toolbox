@@ -317,9 +317,6 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
       // Add the entity to the Table object
       this[entity.name] = entity
-
-      // Set the Entity's table by reference
-      entity.table = this
     }
   }
 
@@ -338,7 +335,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   // Table actions
   // ----------------------------------------------------------------//
 
-  async query<Item extends unknown = DocumentClient.AttributeMap,
+  async query<Item = DocumentClient.AttributeMap,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
     pk: any,

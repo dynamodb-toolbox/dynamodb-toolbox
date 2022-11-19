@@ -165,13 +165,12 @@ class Entity<
     this.modifiedAlias = modifiedAlias as ModifiedAlias
     this.typeAlias = typeAlias as TypeAlias
     this.typeHidden = typeHidden as TypeHidden
-    // Parse the entity and merge into this
+
     Object.assign(this, parseEntity(entity))
-  } // end construcor
+  }
 
   // Set the Entity's Table
   set table(table: EntityTable) {
-    console.log('set table', this.name)
     // If a Table
     if (table?.Table?.attributes) {
       // If this Entity already has a Table, throw an error

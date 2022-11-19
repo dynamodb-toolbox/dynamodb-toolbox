@@ -166,21 +166,18 @@ export function parseEntity<
     keys: {} // tracks partition/sort/index keys
   }
 
-  // Return the entity
-  return Object.assign(
-    {
-      name,
-      schema: parseEntityAttributes<ReadonlyAttributeDefinitions>(attributes, track), // removed nested attribute?
-      defaults: track.defaults,
-      required: track.required,
-      linked: track.linked,
-      autoExecute,
-      autoParse,
-      typeHidden,
-      _etAlias: typeAlias
-    },
-    table ? { table } : {}
-  ) // end mapping object
-} // end parseEntity
+  return {
+    name,
+    schema: parseEntityAttributes<ReadonlyAttributeDefinitions>(attributes, track), // removed nested attribute?
+    defaults: track.defaults,
+    required: track.required,
+    linked: track.linked,
+    autoExecute,
+    autoParse,
+    typeHidden,
+    _etAlias: typeAlias,
+    table
+  }
+}
 
 export default parseEntity
