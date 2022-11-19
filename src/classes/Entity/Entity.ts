@@ -178,8 +178,8 @@ class Entity<
         error(`This entity is already assigned a Table (${this._table.name})`)
       }
 
-      table.addEntity(this)
       this._table = table
+      table.addEntity(this)
 
       // If an entity tracking field is enabled, add the attributes, alias and the default
       if (table.Table.entityField) {

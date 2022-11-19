@@ -317,6 +317,10 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
       // Add the entity to the Table object
       this[entity.name] = entity
+
+      if(!entity.table) {
+        entity.table = this
+      }
     }
   }
 
