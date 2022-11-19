@@ -1,4 +1,3 @@
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 import { DocumentClient } from './bootstrap.test'
@@ -171,7 +170,7 @@ describe('Entity creation', () => {
     } as const)
 
     expect(tableAddEntity).toHaveBeenCalledWith(TestEntity)
-  });
+  })
 
   it('fails when creating a entity without a partitionKey', () => {
     const result = () =>
