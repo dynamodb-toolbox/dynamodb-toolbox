@@ -12,7 +12,7 @@ import parseProjections from '../../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
-  ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+  ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE,
 } from '../../constants'
 import type { ScanOptions, TableDef } from '../Table'
 import type {
@@ -40,11 +40,10 @@ import type {
   UpdateOptionsReturnValues,
   Writable,
   Readonly,
-  $PutBatchOptions
+  $PutBatchOptions,
 } from './types'
 
-class Entity<
-  Name extends string = string,
+class Entity<Name extends string = string,
   // Name is used to detect Entity instances (new Entity(...)) vs Entity type (const e: Entity = ...)
   // "string extends Name" means that Name is not defined, which only happens when using the Entity type
   // In this case, broader types should be applied
@@ -62,37 +61,28 @@ class Entity<
   WritableAttributeDefinitions extends AttributeDefinitions = Writable<ReadonlyAttributeDefinitions>,
   Attributes extends ParsedAttributes = string extends Name
     ? ParsedAttributes
-    : If<
-        A.Equals<EntityItemOverlay, undefined>,
-        // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
-        ParseAttributes<
-          WritableAttributeDefinitions,
-          Timestamps,
-          CreatedAlias,
-          ModifiedAlias,
-          TypeAlias,
-          TypeHidden
-        >,
-        ParsedAttributes<keyof EntityItemOverlay>
-      >,
+    : If<A.Equals<EntityItemOverlay, undefined>,
+      // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
+      ParseAttributes<WritableAttributeDefinitions,
+        Timestamps,
+        CreatedAlias,
+        ModifiedAlias,
+        TypeAlias,
+        TypeHidden>,
+      ParsedAttributes<keyof EntityItemOverlay>>,
   $Item = string extends Name
     ? any
-    : If<
-        A.Equals<EntityItemOverlay, undefined>,
-        // 🔨 TOIMPROVE: Use EntityTable in item infering
-        InferItem<WritableAttributeDefinitions, Attributes>,
-        EntityItemOverlay
-      >,
+    : If<A.Equals<EntityItemOverlay, undefined>,
+      // 🔨 TOIMPROVE: Use EntityTable in item infering
+      InferItem<WritableAttributeDefinitions, Attributes>,
+      EntityItemOverlay>,
   // Necessary to cast in a second step to prevent infinite loop during type check
   Item extends O.Object = string extends Name ? O.Object : A.Cast<$Item, O.Object>,
   CompositePrimaryKey extends O.Object = string extends Name
     ? O.Object
-    : If<
-        A.Equals<EntityItemOverlay, undefined>,
-        InferCompositePrimaryKey<Item, Attributes>,
-        O.Object
-      >
-> {
+    : If<A.Equals<EntityItemOverlay, undefined>,
+      InferCompositePrimaryKey<Item, Attributes>,
+      O.Object>> {
   // @ts-ignore
   public _typesOnly: {
     _entityItemOverlay: EntityItemOverlay
@@ -118,8 +108,7 @@ class Entity<
 
   // Declare constructor (entity config)
   constructor(
-    entity: EntityConstructor<
-      EntityTable,
+    entity: EntityConstructor<EntityTable,
       Name,
       AutoExecute,
       AutoParse,
@@ -128,8 +117,7 @@ class Entity<
       ModifiedAlias,
       TypeAlias,
       TypeHidden,
-      ReadonlyAttributeDefinitions
-    >
+      ReadonlyAttributeDefinitions>,
   ) {
     // Sanity check the entity object
     if (entity?.constructor !== Object) {
@@ -142,7 +130,7 @@ class Entity<
     // to mutate the original table instance
     entity = {
       ...cloneDeep(entitySchemaWithoutTable),
-      ...(table ? { table } : {})
+      ...(table ? { table } : {}),
     }
 
     const {
@@ -151,7 +139,7 @@ class Entity<
       createdAlias = 'created',
       modifiedAlias = 'modified',
       typeAlias = 'entity',
-      typeHidden = false
+      typeHidden = false,
     } = entity
     this.attributes = attributes
     this.timestamps = timestamps as Timestamps
@@ -165,38 +153,17 @@ class Entity<
 
   // Set the Entity's Table
   set table(table: EntityTable | undefined) {
-    if(table === undefined) {
-      this._table = undefined
-      return
+    if (this._table) {
+      error(`This entity is already assigned a Table (${this._table.name})`)
     }
 
-    if (table?.Table?.attributes) {
-      if (this._table) {
-        error(`This entity is already assigned a Table (${this._table.name})`)
-      }
-
-      this._table = table
-      table.addEntity(this)
-
-      // If an entity tracking field is enabled, add the attributes, alias and the default
-      if (table.Table.entityField) {
-        this.schema.attributes[table.Table.entityField] = {
-          type: 'string',
-          hidden: this.typeHidden,
-          alias: this._etAlias,
-          default: this.name
-        }
-        this.defaults[table.Table.entityField] = this.name
-        this.schema.attributes[this._etAlias] = {
-          type: 'string',
-          map: table.Table.entityField,
-          default: this.name
-        }
-        this.defaults[this._etAlias] = this.name
-      }
-    } else {
+    const isValidTable = table?.Table?.attributes
+    if(!isValidTable) {
       error('Invalid Table')
     }
+
+    table.addEntity(this)
+    this.setTable(table)
   }
 
   get table(): EntityTable | undefined {
@@ -283,7 +250,7 @@ class Entity<
 
     if (Array.isArray(data)) {
       return data.map(item =>
-        formatItem(this.DocumentClient)(schema.attributes, linked, item, include)
+        formatItem(this.DocumentClient)(schema.attributes, linked, item, include),
       ) as any
     } else {
       return formatItem(this.DocumentClient)(schema.attributes, linked, data, include) as any
@@ -296,46 +263,30 @@ class Entity<
    * @param {object} [options] - Additional get options.
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the get request.
    */
-  async get<
-    MethodItemOverlay extends Overlay = undefined,
+  async get<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
-  >(
+    Parse extends boolean | undefined = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
-    params: Partial<DocumentClient.GetItemInput> = {}
-  ): Promise<
-    If<
-      B.Not<ShouldExecute<Execute, AutoExecute>>,
-      DocumentClient.GetItemInput,
-      If<
-        B.Not<ShouldParse<Parse, AutoParse>>,
-        DocumentClient.GetItemOutput,
-        Compute<
-          O.Update<
-            DocumentClient.GetItemOutput,
-            'Item',
-            FirstDefined<[MethodItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>
-          >
-        >
-      >
-    >
-  > {
-    const getParams = this.getParams<
-      MethodItemOverlay,
+    params: Partial<DocumentClient.GetItemInput> = {},
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    DocumentClient.GetItemInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      DocumentClient.GetItemOutput,
+      Compute<O.Update<DocumentClient.GetItemOutput,
+        'Item',
+        FirstDefined<[MethodItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
+    const getParams = this.getParams<MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ShownItemAttributes,
       ResponseAttributes,
       Execute,
-      Parse
-    >(item, options, params)
+      Parse>(item, options, params)
 
     if (!shouldExecute(options.execute, this.autoExecute)) {
       return getParams as any
@@ -363,11 +314,11 @@ class Entity<
    * @param {object} item - The keys from item you wish to get.
    */
   getBatch<MethodCompositeKeyOverlay extends Overlay = undefined>(
-    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
   ) {
     return {
       Table: this.table,
-      Key: this.getParams<undefined, MethodCompositeKeyOverlay>(item).Key
+      Key: this.getParams<undefined, MethodCompositeKeyOverlay>(item).Key,
     }
   }
 
@@ -378,21 +329,16 @@ class Entity<
    *
    * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Get.html
    */
-  getTransaction<
-    MethodItemOverlay extends Overlay = undefined,
+  getTransaction<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
-    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes
-  >(
+      keyof MethodItemOverlay>,
+    ResponseAttributes extends ShownItemAttributes = ShownItemAttributes>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: { attributes?: ResponseAttributes[] } = {}
+    options: { attributes?: ResponseAttributes[] } = {},
   ): {
-    Entity: Entity<
-      Name,
+    Entity: Entity<Name,
       EntityItemOverlay,
       EntityCompositeKeyOverlay,
       EntityTable,
@@ -408,8 +354,7 @@ class Entity<
       Attributes,
       $Item,
       Item,
-      CompositePrimaryKey
-    >
+      CompositePrimaryKey>
   } & DocumentClient.TransactGetItem {
     // Destructure options to check for extraneous arguments
     const {
@@ -423,17 +368,15 @@ class Entity<
     }
 
     // Generate the get parameters
-    const payload = this.getParams<
-      MethodItemOverlay,
+    const payload = this.getParams<MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ShownItemAttributes,
-      ResponseAttributes
-    >(item, options)
+      ResponseAttributes>(item, options)
 
     // Return in transaction format
     return {
       Entity: this,
-      Get: payload
+      Get: payload,
     }
   }
 
@@ -443,21 +386,17 @@ class Entity<
    * @param {object} [options] - Additional get options.
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the get request.
    */
-  getParams<
-    MethodItemOverlay extends Overlay = undefined,
+  getParams<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
-  >(
+    Parse extends boolean | undefined = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
-    params: Partial<DocumentClient.GetItemInput> = {}
+    params: Partial<DocumentClient.GetItemInput> = {},
   ): DocumentClient.GetItemInput {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
@@ -465,7 +404,7 @@ class Entity<
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
-      true
+      true,
     )
 
     const {
@@ -517,14 +456,14 @@ class Entity<
           data,
           schema.attributes,
           schema.keys.partitionKey,
-          schema.keys.sortKey
-        )
+          schema.keys.sortKey,
+        ),
       },
       ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
       ProjectionExpression ? { ProjectionExpression } : null,
       consistent ? { ConsistentRead: consistent } : null,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
-      typeof params === 'object' ? params : {}
+      typeof params === 'object' ? params : {},
     )
 
     return payload
@@ -536,53 +475,35 @@ class Entity<
    * @param {object} [options] - Additional delete options.
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the delete request.
    */
-  async delete<
-    MethodItemOverlay extends Overlay = undefined,
+  async delete<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends DeleteOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
-  >(
+    Parse extends boolean | undefined = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
-    params: Partial<DocumentClient.DeleteItemInput> = {}
-  ): Promise<
-    If<
-      B.Not<ShouldExecute<Execute, AutoExecute>>,
-      DocumentClient.DeleteItemInput,
-      If<
-        B.Not<ShouldParse<Parse, AutoParse>>,
-        DocumentClient.DeleteItemOutput,
-        If<
-          // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-          B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-          O.Omit<DocumentClient.DeleteItemOutput, 'Attributes'>,
-          O.Update<
-            DocumentClient.DeleteItemOutput,
-            'Attributes',
-            FirstDefined<
-              [MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]
-            >
-          >
-        >
-      >
-    >
-  > {
-    const deleteParams = this.deleteParams<
-      MethodItemOverlay,
+    params: Partial<DocumentClient.DeleteItemInput> = {},
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    DocumentClient.DeleteItemInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      DocumentClient.DeleteItemOutput,
+      If<// If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
+        B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
+        O.Omit<DocumentClient.DeleteItemOutput, 'Attributes'>,
+        O.Update<DocumentClient.DeleteItemOutput,
+          'Attributes',
+          FirstDefined<[MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
+    const deleteParams = this.deleteParams<MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ShownItemAttributes,
       ResponseAttributes,
       ReturnValues,
       Execute,
-      Parse
-    >(item, options, params)
+      Parse>(item, options, params)
 
     if (!shouldExecute(options.execute, this.autoExecute)) {
       return deleteParams as any
@@ -613,7 +534,7 @@ class Entity<
    *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
    */
   deleteBatch<MethodCompositeKeyOverlay extends Overlay = undefined>(
-    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
   ): { [key: string]: DocumentClient.WriteRequest } {
     const payload = this.deleteParams<undefined, MethodCompositeKeyOverlay>(item)
     return { [payload.TableName]: { DeleteRequest: { Key: payload.Key } } }
@@ -627,19 +548,15 @@ class Entity<
    *
    * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Delete.html
    */
-  deleteTransaction<
-    MethodItemOverlay extends Overlay = undefined,
+  deleteTransaction<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+    ItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
-      keyof MethodItemOverlay
-    >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
-  >(
+      keyof MethodItemOverlay>,
+    ResponseAttributes extends ItemAttributes = ItemAttributes>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: TransactionOptions<ResponseAttributes> = {},
-    params?: Partial<DocumentClient.DeleteItemInput>
+    params?: Partial<DocumentClient.DeleteItemInput>,
   ): { Delete: DocumentClient.Delete } {
     // Destructure options to check for extraneous arguments
     const {
@@ -654,13 +571,11 @@ class Entity<
     }
 
     // Generate the delete parameters
-    let payload = this.deleteParams<
-      MethodItemOverlay,
+    let payload = this.deleteParams<MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ItemAttributes,
       ResponseAttributes,
-      TransactionOptionsReturnValues
-    >(item, options, params)
+      TransactionOptionsReturnValues>(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -678,22 +593,18 @@ class Entity<
    * @param {object} [options] - Additional delete options.
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the delete request.
    */
-  deleteParams<
-    MethodItemOverlay extends Overlay = undefined,
+  deleteParams<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends DeleteOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
-  >(
+    Parse extends boolean | undefined = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
-    params: Partial<DocumentClient.DeleteItemInput> = {}
+    params: Partial<DocumentClient.DeleteItemInput> = {},
   ): DocumentClient.DeleteItemInput {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
@@ -701,7 +612,7 @@ class Entity<
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
-      true
+      true,
     )
 
     const {
@@ -770,8 +681,8 @@ class Entity<
           data,
           schema.attributes,
           schema.keys.partitionKey,
-          schema.keys.sortKey
-        )
+          schema.keys.sortKey,
+        ),
       },
       ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
       !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : null,
@@ -779,7 +690,7 @@ class Entity<
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
       returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
-      typeof params === 'object' ? params : {}
+      typeof params === 'object' ? params : {},
     )
 
     return payload
@@ -791,80 +702,48 @@ class Entity<
    * @param {object} [options] - Additional update options.
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the update request.
    */
-  async update<
-    MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+  async update<MethodItemOverlay extends Overlay = undefined,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends UpdateOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined = true
-  >(
-    item: UpdateItem<
-      MethodItemOverlay,
+    StrictSchemaCheck extends boolean | undefined = true>(
+    item: UpdateItem<MethodItemOverlay,
       EntityItemOverlay,
       CompositePrimaryKey,
       Item,
       Attributes,
-      StrictSchemaCheck
-    >,
-    options: $UpdateOptions<
-      ResponseAttributes,
+      StrictSchemaCheck>,
+    options: $UpdateOptions<ResponseAttributes,
       ReturnValues,
       Execute,
       Parse,
-      StrictSchemaCheck
-    > = {},
-    params: UpdateCustomParams = {}
-  ): Promise<
-    Compute<
-      If<
-        B.Not<ShouldExecute<Execute, AutoExecute>>,
-        DocumentClient.UpdateItemInput,
-        If<
-          B.Not<ShouldParse<Parse, AutoParse>>,
-          DocumentClient.UpdateItemOutput,
-          If<
-            A.Equals<ReturnValues, 'NONE'>,
-            Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-            O.Update<
-              DocumentClient.UpdateItemOutput,
-              'Attributes',
-              If<
-                B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
-                FirstDefined<
-                  [O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]
-                >,
-                If<
-                  B.Or<
-                    A.Equals<ReturnValues, 'UPDATED_OLD'>,
-                    A.Equals<ReturnValues, 'UPDATED_NEW'>
-                  >,
-                  FirstDefined<
-                    [MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]
-                  >
-                >
-              >
-            >
-          >
-        >
-      >
-    >
-  > {
+      StrictSchemaCheck> = {},
+    params: UpdateCustomParams = {},
+  ): Promise<Compute<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    DocumentClient.UpdateItemInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      DocumentClient.UpdateItemOutput,
+      If<A.Equals<ReturnValues, 'NONE'>,
+        Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
+        O.Update<DocumentClient.UpdateItemOutput,
+          'Attributes',
+          If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
+            FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+            If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
+              A.Equals<ReturnValues, 'UPDATED_NEW'>>,
+              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>>> {
     // Generate the payload
-    const updateParams = this.updateParams<
-      MethodItemOverlay,
+    const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,
       ResponseAttributes,
       ReturnValues,
       Execute,
       Parse,
-      StrictSchemaCheck
-    >(item, options, params)
+      StrictSchemaCheck>(item, options, params)
 
     if (!shouldExecute(options.execute, this.autoExecute)) {
       return updateParams as any
@@ -895,26 +774,20 @@ class Entity<
    *
    * Creates an Update object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Update.html
    */
-  updateTransaction<
-    MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+  updateTransaction<MethodItemOverlay extends Overlay = undefined,
+    ItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ItemAttributes = ItemAttributes,
-    StrictSchemaCheck extends boolean | undefined = true
-  >(
-    item: UpdateItem<
-      MethodItemOverlay,
+    StrictSchemaCheck extends boolean | undefined = true>(
+    item: UpdateItem<MethodItemOverlay,
       EntityItemOverlay,
       CompositePrimaryKey,
       Item,
       Attributes,
-      StrictSchemaCheck
-    >,
+      StrictSchemaCheck>,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
-    params?: UpdateCustomParams
+    params?: UpdateCustomParams,
   ): { Update: DocumentClient.Update } {
     // Destructure options to check for extraneous arguments
     const {
@@ -930,15 +803,13 @@ class Entity<
     }
 
     // Generate the update parameters
-    let payload = this.updateParams<
-      MethodItemOverlay,
+    let payload = this.updateParams<MethodItemOverlay,
       ItemAttributes,
       ResponseAttributes,
       TransactionOptionsReturnValues,
       undefined,
       undefined,
-      StrictSchemaCheck
-    >(item, options, params)
+      StrictSchemaCheck>(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -951,34 +822,26 @@ class Entity<
   }
 
   // Generate UPDATE Parameters
-  updateParams<
-    MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+  updateParams<MethodItemOverlay extends Overlay = undefined,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends UpdateOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined = true
-  >(
-    item: UpdateItem<
-      MethodItemOverlay,
+    StrictSchemaCheck extends boolean | undefined = true>(
+    item: UpdateItem<MethodItemOverlay,
       EntityItemOverlay,
       CompositePrimaryKey,
       Item,
       Attributes,
-      StrictSchemaCheck
-    >,
-    options: $UpdateOptions<
-      ResponseAttributes,
+      StrictSchemaCheck>,
+    options: $UpdateOptions<ResponseAttributes,
       ReturnValues,
       Execute,
       Parse,
-      StrictSchemaCheck
-    > = {},
+      StrictSchemaCheck> = {},
     {
       SET = [],
       REMOVE = [],
@@ -987,7 +850,7 @@ class Entity<
       ExpressionAttributeNames = {},
       ExpressionAttributeValues = {},
       ...params
-    }: UpdateCustomParams = {}
+    }: UpdateCustomParams = {},
   ): DocumentClient.UpdateItemInput {
     // Validate operation types
     if (!Array.isArray(SET)) error('SET must be an array')
@@ -1018,7 +881,7 @@ class Entity<
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
-      shouldFilterUnmappedFields
+      shouldFilterUnmappedFields,
     )
 
     // Extract valid options
@@ -1059,11 +922,11 @@ class Entity<
       returnValues !== undefined &&
       (typeof returnValues !== 'string' ||
         !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(
-          returnValues.toUpperCase()
+          returnValues.toUpperCase(),
         ))
     ) {
       error(
-        `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', OR 'UPDATED_NEW'`
+        `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', OR 'UPDATED_NEW'`,
       )
     }
 
@@ -1091,8 +954,8 @@ class Entity<
         error(
           `'${field}${
             this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''
-          }' is a required field`
-        )
+          }' is a required field`,
+        ),
     ) // end required field check
 
     // Get partition and sort keys
@@ -1100,7 +963,7 @@ class Entity<
       data,
       schema.attributes,
       schema.keys.partitionKey,
-      schema.keys.sortKey
+      schema.keys.sortKey,
     )
 
     // Init names and values
@@ -1127,7 +990,7 @@ class Entity<
             error(
               `'${attrs[i]}' is the ${
                 schema.attributes[attrs[i]].partitionKey === true ? 'partitionKey' : 'sortKey'
-              } and cannot be removed`
+              } and cannot be removed`,
             )
           }
           // Verify attribute is not required
@@ -1192,12 +1055,12 @@ class Entity<
         } else if (mapping.type === 'list' && (data[field]?.$append || data[field]?.$prepend)) {
           if (data[field].$append) {
             SET.push(
-              `#${field} = list_append(if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:${field})`
+              `#${field} = list_append(if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:${field})`,
             )
             values[`:${field}`] = validateType(mapping, field, data[field].$append)
           } else {
             SET.push(
-              `#${field} = list_append(:${field}, if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+              `#${field} = list_append(:${field}, if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`,
             )
             values[`:${field}`] = validateType(mapping, field, data[field].$prepend)
           }
@@ -1241,7 +1104,7 @@ class Entity<
                   values[`:${value}`] = input.$add
                 } else if (input.$append) {
                   SET.push(
-                    `${path} = list_append(if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :${value})`
+                    `${path} = list_append(if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :${value})`,
                   )
 
                   values[`:${value}`] = input.$append
@@ -1251,7 +1114,7 @@ class Entity<
                   ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(
-                    `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+                    `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`,
                   )
 
                   values[`:${value}`] = input.$prepend
@@ -1277,7 +1140,7 @@ class Entity<
                   Object.keys(input.$set).forEach(i => {
                     if (String(parseInt(i)) !== i) {
                       error(
-                        `Properties must be numeric to update specific list items in '${field}'`
+                        `Properties must be numeric to update specific list items in '${field}'`,
                       )
                     }
                     SET.push(`${path}[${i}] = :${value}_${i}`)
@@ -1307,7 +1170,7 @@ class Entity<
               // @ts-ignore
               mapping.default !== undefined && item[field] === undefined && !mapping.onUpdate
                 ? `#${field} = if_not_exists(#${field},:${field})`
-                : `#${field} = :${field}`
+                : `#${field} = :${field}`,
             )
             // Add names and values
             names[`#${field}`] = field
@@ -1334,14 +1197,14 @@ class Entity<
         TableName: _table!.name,
         Key,
         UpdateExpression: expression,
-        ExpressionAttributeNames: Object.assign(names, ExpressionAttributeNames)
+        ExpressionAttributeNames: Object.assign(names, ExpressionAttributeNames),
       },
       typeof params === 'object' ? params : {},
       !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : {},
       ConditionExpression ? { ConditionExpression } : {},
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
-      returnValues ? { ReturnValues: returnValues.toUpperCase() } : null
+      returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
     ) // end assign
 
     return payload
@@ -1350,60 +1213,40 @@ class Entity<
   } // end updateParams
 
   // PUT - put item
-  async put<
-    MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+  async put<MethodItemOverlay extends Overlay = undefined,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined = true
-  >(
-    item: PutItem<
-      MethodItemOverlay,
+    StrictSchemaCheck extends boolean | undefined = true>(
+    item: PutItem<MethodItemOverlay,
       EntityItemOverlay,
       CompositePrimaryKey,
       Item,
       Attributes,
-      StrictSchemaCheck
-    >,
+      StrictSchemaCheck>,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
-    params: Partial<DocumentClient.PutItemInput> = {}
-  ): Promise<
-    If<
-      B.Not<ShouldExecute<Execute, AutoExecute>>,
-      DocumentClient.PutItemInput,
-      If<
-        B.Not<ShouldParse<Parse, AutoParse>>,
-        DocumentClient.PutItemOutput,
-        // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-        If<
-          B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-          O.Omit<DocumentClient.PutItemOutput, 'Attributes'>,
-          O.Update<
-            DocumentClient.PutItemOutput,
-            'Attributes',
-            FirstDefined<
-              [MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]
-            >
-          >
-        >
-      >
-    >
-  > {
-    const putParams = this.putParams<
-      MethodItemOverlay,
+    params: Partial<DocumentClient.PutItemInput> = {},
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    DocumentClient.PutItemInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      DocumentClient.PutItemOutput,
+      // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
+      If<B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
+        O.Omit<DocumentClient.PutItemOutput, 'Attributes'>,
+        O.Update<DocumentClient.PutItemOutput,
+          'Attributes',
+          FirstDefined<[MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
+    const putParams = this.putParams<MethodItemOverlay,
       ShownItemAttributes,
       ResponseAttributes,
       ReturnValues,
       Execute,
       Parse,
-      StrictSchemaCheck
-    >(item, options, params)
+      StrictSchemaCheck>(item, options, params)
 
     if (!shouldExecute(options.execute, this.autoExecute)) {
       return putParams as any
@@ -1434,37 +1277,29 @@ class Entity<
    * Only Item is supported (e.g. no conditions)
    *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
    */
-  putBatch<
-    MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+  putBatch<MethodItemOverlay extends Overlay = undefined,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined = true
-  >(
-    item: PutItem<
-      MethodItemOverlay,
+    StrictSchemaCheck extends boolean | undefined = true>(
+    item: PutItem<MethodItemOverlay,
       EntityItemOverlay,
       CompositePrimaryKey,
       Item,
       Attributes,
-      StrictSchemaCheck
-    >,
-    options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {}
+      StrictSchemaCheck>,
+    options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {},
   ): { [key: string]: DocumentClient.WriteRequest } {
-    const payload = this.putParams<
-      MethodItemOverlay,
+    const payload = this.putParams<MethodItemOverlay,
       ShownItemAttributes,
       ResponseAttributes,
       'NONE',
       Execute,
       Parse,
-      StrictSchemaCheck
-    >(item, options)
+      StrictSchemaCheck>(item, options)
     return { [payload.TableName]: { PutRequest: { Item: payload.Item } } }
   }
 
@@ -1476,26 +1311,20 @@ class Entity<
    *
    * Creates a Put object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Put.html
    */
-  putTransaction<
-    MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+  putTransaction<MethodItemOverlay extends Overlay = undefined,
+    ItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ItemAttributes = ItemAttributes,
-    StrictSchemaCheck extends boolean | undefined = true
-  >(
-    item: PutItem<
-      MethodItemOverlay,
+    StrictSchemaCheck extends boolean | undefined = true>(
+    item: PutItem<MethodItemOverlay,
       EntityItemOverlay,
       CompositePrimaryKey,
       Item,
       Attributes,
-      StrictSchemaCheck
-    >,
+      StrictSchemaCheck>,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
-    params?: Partial<DocumentClient.PutItemInput>
+    params?: Partial<DocumentClient.PutItemInput>,
   ): { Put: DocumentClient.Put } {
     // Destructure options to check for extraneous arguments
     const {
@@ -1511,15 +1340,13 @@ class Entity<
     }
 
     // Generate the put parameters
-    let payload = this.putParams<
-      MethodItemOverlay,
+    let payload = this.putParams<MethodItemOverlay,
       ItemAttributes,
       ResponseAttributes,
       TransactionOptionsReturnValues,
       undefined,
       undefined,
-      StrictSchemaCheck
-    >(item, options, params)
+      StrictSchemaCheck>(item, options, params)
 
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
@@ -1532,29 +1359,23 @@ class Entity<
   }
 
   // Generate PUT Parameters
-  putParams<
-    MethodItemOverlay extends Overlay = undefined,
-    ShownItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+  putParams<MethodItemOverlay extends Overlay = undefined,
+    ShownItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['shown'],
-      keyof MethodItemOverlay
-    >,
+      keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined = true
-  >(
-    item: PutItem<
-      MethodItemOverlay,
+    StrictSchemaCheck extends boolean | undefined = true>(
+    item: PutItem<MethodItemOverlay,
       EntityItemOverlay,
       CompositePrimaryKey,
       Item,
       Attributes,
-      StrictSchemaCheck
-    >,
+      StrictSchemaCheck>,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
-    params: Partial<DocumentClient.PutItemInput> = {}
+    params: Partial<DocumentClient.PutItemInput> = {},
   ): DocumentClient.PutItemInput {
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
@@ -1569,7 +1390,7 @@ class Entity<
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
-      shouldFilterUnmappedFields
+      shouldFilterUnmappedFields,
     )
 
     // Extract valid options
@@ -1611,11 +1432,11 @@ class Entity<
       returnValues !== undefined &&
       (typeof returnValues !== 'string' ||
         !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(
-          returnValues.toUpperCase()
+          returnValues.toUpperCase(),
         ))
     ) {
       error(
-        `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`
+        `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`,
       )
     }
 
@@ -1645,8 +1466,8 @@ class Entity<
         error(
           `'${field}${
             this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''
-          }' is a required field`
-        )
+          }' is a required field`,
+        ),
     ) // end required field check
 
     // Checks for partition and sort keys
@@ -1654,7 +1475,7 @@ class Entity<
       data,
       schema.attributes,
       schema.keys.partitionKey,
-      schema.keys.sortKey
+      schema.keys.sortKey,
     )
 
     // Generate the payload
@@ -1678,7 +1499,7 @@ class Entity<
             return Object.assign(acc, { [field]: value })
           }
           return acc
-        }, {})
+        }, {}),
       },
       ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
       !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : null,
@@ -1686,7 +1507,7 @@ class Entity<
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
       returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
-      typeof params === 'object' ? params : {}
+      typeof params === 'object' ? params : {},
     )
 
     return payload
@@ -1700,18 +1521,14 @@ class Entity<
    * Creates a ConditionCheck object:
    *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_ConditionCheck.html
    */
-  conditionCheck<
-    MethodItemOverlay extends Overlay = undefined,
+  conditionCheck<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
-    ItemAttributes extends A.Key = If<
-      A.Equals<MethodItemOverlay, undefined>,
+    ItemAttributes extends A.Key = If<A.Equals<MethodItemOverlay, undefined>,
       Attributes['all'],
-      keyof MethodItemOverlay
-    >,
-    ResponseAttributes extends ItemAttributes = ItemAttributes
-  >(
+      keyof MethodItemOverlay>,
+    ResponseAttributes extends ItemAttributes = ItemAttributes>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-    options: TransactionOptions<ResponseAttributes> = {}
+    options: TransactionOptions<ResponseAttributes> = {},
   ): { ConditionCheck: DocumentClient.ConditionCheck } {
     // Destructure options to check for extraneous arguments
     const {
@@ -1726,13 +1543,11 @@ class Entity<
     }
 
     // Generate the condition parameters (same params as delete)
-    let payload = this.deleteParams<
-      MethodItemOverlay,
+    let payload = this.deleteParams<MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ItemAttributes,
       ResponseAttributes,
-      TransactionOptionsReturnValues
-    >(item, options)
+      TransactionOptionsReturnValues>(item, options)
 
     // Error on missing conditions
     if (!('ConditionExpression' in payload)) error(`'conditions' are required in a conditionCheck`)
@@ -1748,50 +1563,66 @@ class Entity<
   }
 
   // Query pass-through (default entity)
-  query<
-    MethodItemOverlay extends Overlay = undefined,
-    ItemAttributes extends { all: A.Key; shown: A.Key } = If<
-      A.Equals<MethodItemOverlay, undefined>,
+  query<MethodItemOverlay extends Overlay = undefined,
+    ItemAttributes extends { all: A.Key; shown: A.Key } = If<A.Equals<MethodItemOverlay, undefined>,
       { all: Attributes['all']; shown: Attributes['shown'] },
-      { all: keyof MethodItemOverlay; shown: keyof MethodItemOverlay }
-    >,
+      { all: keyof MethodItemOverlay; shown: keyof MethodItemOverlay }>,
     ResponseAttributes extends ItemAttributes['shown'] = ItemAttributes['shown'],
     FiltersAttributes extends ItemAttributes['all'] = ItemAttributes['all'],
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
-  >(
+    Parse extends boolean | undefined = undefined>(
     pk: any,
     options: EntityQueryOptions<ResponseAttributes, FiltersAttributes, Execute, Parse> = {},
-    params: Partial<DocumentClient.QueryInput> = {}
+    params: Partial<DocumentClient.QueryInput> = {},
   ) {
     if (!this.table) {
       throw new Error('Entity table is not defined')
     }
 
     options.entity = this.name
-    return this.table.query<
-      FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>,
+    return this.table.query<FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>,
       Execute,
-      Parse
-    >(pk, options, params)
+      Parse>(pk, options, params)
   }
 
   // Scan pass-through (default entity)
-  scan<
-    MethodItemOverlay extends Overlay = undefined,
+  scan<MethodItemOverlay extends Overlay = undefined,
     Execute extends boolean | undefined = undefined,
-    Parse extends boolean | undefined = undefined
-  >(options: ScanOptions<Execute, Parse> = {}, params: Partial<DocumentClient.ScanInput> = {}) {
+    Parse extends boolean | undefined = undefined>(
+    options: ScanOptions<Execute, Parse> = {}, params: Partial<DocumentClient.ScanInput> = {}) {
     if (!this.table) {
       throw new Error('Entity table is not defined')
     }
 
     options.entity = this.name
-    return this.table.scan<
-      FirstDefined<[MethodItemOverlay, DocumentClient.AttributeMap]>,
+    return this.table.scan<FirstDefined<[MethodItemOverlay, DocumentClient.AttributeMap]>,
       Execute,
-      Parse
-    >(options, params)
+      Parse>(options, params)
+  }
+
+  /*
+   * @internal
+   * Set the entity's internal table property
+   */
+  setTable(table: EntityTable | undefined) {
+    this._table = table
+
+    // If an entity tracking field is enabled, add the attributes, alias and the default
+    if (table?.Table?.entityField) {
+      this.schema.attributes[table.Table.entityField] = {
+        type: 'string',
+        hidden: this.typeHidden,
+        alias: this._etAlias,
+        default: this.name,
+      }
+      this.defaults[table.Table.entityField] = this.name
+      this.schema.attributes[this._etAlias] = {
+        type: 'string',
+        map: table.Table.entityField,
+        default: this.name,
+      }
+      this.defaults[this._etAlias] = this.name
+    }
   }
 } // end Entity
 
