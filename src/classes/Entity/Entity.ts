@@ -176,7 +176,9 @@ class Entity<
       }
 
       this._table = table
-      table.addEntity(this)
+      if(!table.entities.includes(this.name)) {
+        table.addEntity(this)
+      }
 
       // If an entity tracking field is enabled, add the attributes, alias and the default
       if (table.Table.entityField) {
