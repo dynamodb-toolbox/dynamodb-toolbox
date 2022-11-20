@@ -38,7 +38,6 @@ import DynamoDB from 'aws-sdk/clients/dynamodb'
 
 const DocumentClient = new DynamoDB.DocumentClient({
   // Specify your client options as usual
-  // region,
   convertEmptyValues: false
 })
 ```
