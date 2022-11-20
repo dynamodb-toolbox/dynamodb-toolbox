@@ -165,6 +165,11 @@ class Entity<
 
   // Set the Entity's Table
   set table(table: EntityTable | undefined) {
+    if(table === undefined) {
+      this._table = undefined
+      return
+    }
+
     if (table?.Table?.attributes) {
       if (this._table) {
         error(`This entity is already assigned a Table (${this._table.name})`)
