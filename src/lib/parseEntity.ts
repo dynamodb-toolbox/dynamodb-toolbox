@@ -176,7 +176,7 @@ export function parseEntity<
     autoParse,
     typeHidden,
     _etAlias: typeAlias,
-    table
+    ...(table ? { table } : {})
   }
 }
 

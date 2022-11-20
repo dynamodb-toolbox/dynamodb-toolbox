@@ -1,9 +1,3 @@
-/**
- * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
- * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @license MIT
- */
-
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import cloneDeep from 'deep-copy'
 import type { A, B, O } from 'ts-toolbelt'
@@ -171,6 +165,8 @@ class Entity<
 
   // Set the Entity's Table
   set table(table: EntityTable) {
+
+    console.log(table)
     // If a Table
     if (table?.Table?.attributes) {
       // If this Entity already has a Table, throw an error
@@ -202,14 +198,8 @@ class Entity<
     }
   }
 
-  get table(): EntityTable {
-    if (this._table) {
-      return this._table
-    } else {
-      return error(
-        `The '${this.name}' entity must be attached to a Table to perform this operation`
-      )
-    }
+  get table(): EntityTable | undefined {
+    return this._table
   }
 
   // Return reference to the DocumentClient
