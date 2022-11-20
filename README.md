@@ -24,15 +24,20 @@ Feedback is welcome and much appreciated! (Huge thanks to [@ThomasAribart](https
 - [GitHub Discussions](https://github.com/jeremydaly/dynamodb-toolbox/discussions)
 
 ## Quick Start
+> :information_source:
+We're using **aws-sdk v2** with DynamoDB tools the support for **aws-sdk v3** is on the way. <br />
+You can read more about the development [here](https://github.com/jeremydaly/dynamodb-toolbox/pull/174).
 
-Install DynamoDB Toolbox:
+Using your favorite package manager, install DynamoDB Toolbox and aws-sdk v2 in your project by running one of the following commands:
 
 ```bash
 # npm
 npm i dynamodb-toolbox
+npm install aws-sdk
 
 # yarn
 yarn add dynamodb-toolbox
+yarn add aws-sdk
 ```
 
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
@@ -41,7 +46,7 @@ Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
 
-Create a Table (with the DocumentClient):
+Create a Table (with the DocumentClient using aws-sdk v2):
 
 ```typescript
 import DynamoDB from 'aws-sdk/clients/dynamodb'
