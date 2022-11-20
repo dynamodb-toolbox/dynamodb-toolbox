@@ -51,7 +51,6 @@ Create a Table (with the DocumentClient using aws-sdk v2):
 ```typescript
 import DynamoDB from 'aws-sdk/clients/dynamodb'
 
-// const region = 'DynamoDB-Table-Region'
 const DocumentClient = new DynamoDB.DocumentClient({
   // Specify your client options as usual
   // region,
