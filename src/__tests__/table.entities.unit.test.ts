@@ -50,7 +50,7 @@ describe('entities', () => {
 
     TestTable.addEntity(TestEntity)
     expect(() => {
-      // TestTable.addEntity(TestEntity2)
+      TestTable.addEntity(TestEntity2)
     }).toThrow(`Entity name 'TestEntity' already exists`)
   })
 
