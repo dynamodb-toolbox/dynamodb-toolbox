@@ -164,12 +164,8 @@ class Entity<
   }
 
   // Set the Entity's Table
-  set table(table: EntityTable) {
-
-    console.log(table)
-    // If a Table
+  set table(table: EntityTable | undefined) {
     if (table?.Table?.attributes) {
-      // If this Entity already has a Table, throw an error
       if (this._table) {
         error(`This entity is already assigned a Table (${this._table.name})`)
       }
