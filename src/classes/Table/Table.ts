@@ -107,6 +107,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   /**
    * Adds an entity to the table
    * @param {Entity|Entity[]} Entity - An Entity or array of Entities to add to the table.
+   * NOTE: this does not adjust the entity's type inference because it is static
    */
   addEntity(entity: ParsedEntity | ParsedEntity[]) {
     // Coerce entity to array
