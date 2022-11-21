@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk'
 import { DocumentClient as DocumentClientType } from 'aws-sdk/clients/dynamodb'
 import MockDate from 'mockdate'
-import { A, C, F, O } from 'ts-toolbelt'
+import { A, F, O } from 'ts-toolbelt'
 
 import {
   EntityItem,

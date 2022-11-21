@@ -12,9 +12,7 @@ describe('Entity properties', () => {
         },
       } as const)
 
-      expect(() => {
-        TestEntity.table
-      }).toThrow(`The 'TestEnt' entity must be attached to a Table to perform this operation`)
+      expect(TestEntity.table).toBeUndefined()
     })
   })
 
