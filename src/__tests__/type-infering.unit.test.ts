@@ -192,12 +192,12 @@ describe('Entity', () => {
       // 🔨 TOIMPROVE: Not sure this is expected behavior: overriding typeAlias doesn't throw
       // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
       // @ts-NOT-expect-error
-      new Entity({
+      expect(()=>new Entity({
         name: entityName,
         typeAlias: 'en',
         attributes: { ...ck, en: 'string' },
         table
-      } as const)
+      } as const)).toThrow()
     })
   })
 
