@@ -1,10 +1,9 @@
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
 describe('Entity properties', () => {
   describe('table', () => {
-    it('returns undefined if there is no table attached to the given entity', async () => {
+    it('returns undefined if there is no table attached to the given entity', () => {
       const TestEntity = new Entity({
         name: 'TestEnt',
         attributes: {
@@ -15,7 +14,7 @@ describe('Entity properties', () => {
       expect(TestEntity.table).toBeUndefined()
     })
 
-    it('returns the table attached to the given entity', async () => {
+    it('returns the table attached to the given entity', () => {
       const TestTable = new Table({
         name: 'TestTable',
         partitionKey: 'pk',
@@ -29,7 +28,7 @@ describe('Entity properties', () => {
         table: TestTable,
       } as const)
 
-      expect(TestEntity.table).toBe(TestTable)
+      expect(TestEntity.table).toBeInstanceOf(TestTable)
     })
   })
 
