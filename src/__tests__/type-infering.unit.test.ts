@@ -2743,6 +2743,9 @@ describe('Entity', () => {
       it('should be updated when the entity is assigned a new table', () => {
         const newTable = new Table({
           name: 'newTable',
+          partitionKey: 'pk',
+          sortKey: 'sk',
+          DocumentClient
         })
         const entity = new Entity({
           name: 'Entity_WithNewTable',
@@ -2767,6 +2770,9 @@ describe('Entity', () => {
       it('should update the type of the table property', () => {
         const newTable = new Table({
           name: 'newTable',
+          partitionKey: 'pk',
+          sortKey: 'sk',
+          DocumentClient
         })
         const entity = new Entity({
           name: 'Entity_WithNewTable',
