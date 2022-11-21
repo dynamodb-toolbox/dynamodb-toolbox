@@ -210,7 +210,7 @@ describe('Entity', () => {
       DocumentClient
     })
 
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PKOnly'
     const pk = 'pk'
     const pkMap1 = 'p1'
     const pkMap2 = 'p2'
@@ -928,7 +928,7 @@ describe('Entity', () => {
   })
 
   describe('PK (mapped) + SK (mapped) Entity', () => {
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PK_SK_Mapped'
     const cr = 'cr'
     const mod = 'mod'
     const en = 'en'
@@ -1593,7 +1593,7 @@ describe('Entity', () => {
   })
 
   describe('PK (dependsOn) + SK (dependsOn) Entity', () => {
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PK_SK_dependsOn'
     const pk = 'pk'
     const pkMap1 = 'p1'
     const pkMap2 = 'p2'
@@ -1773,7 +1773,7 @@ describe('Entity', () => {
   })
 
   describe('PK (default) + SK Entity', () => {
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PK_default_SK'
     const pk = 'pk'
     const pk2 = 'pk2'
     const sk = 'sk'
@@ -1839,7 +1839,7 @@ describe('Entity', () => {
   })
 
   describe('PK + SK (default) Entity', () => {
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PK_SK_default'
     const pk = 'pk'
     const sk = 'sk'
     const sk2 = 'sk2'
