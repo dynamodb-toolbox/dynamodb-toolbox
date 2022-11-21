@@ -43,7 +43,6 @@ describe('Entity properties', () => {
     const InvalidTable = {}
 
     expect(() => {
-      // Create basic entity
       // @ts-expect-error
       new Entity({
         name: 'TestEnt',
