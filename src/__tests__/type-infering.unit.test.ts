@@ -2734,10 +2734,21 @@ describe('Entity', () => {
 
     describe('table', () => {
       it('should have the right type', () => {
-        type Table = typeof ent.table
-        type TestTable = A.Equals<Table, typeof table>
-        const testTable: TestTable = 1
-        testTable
+        const entity = new Entity({
+          name: 'TestEnity_WithTable',
+          attributes: {
+            pk: { partitionKey: true },
+            sk: { sortKey: true },
+          },
+          table
+        })
+
+        type Subject = Omit<typeof entity.table, undefined>
+        type Expected = typeof table
+
+        type Result = A.Equals<Subject, Expected>
+        const result: Result = 1
+        result
       })
 
       it('should be updated when the entity is assigned a new table', () => {
@@ -2785,11 +2796,12 @@ describe('Entity', () => {
 
         entity.setTable(newTable)
 
-        type Table = typeof entity.table
+        type Subject = Omit<typeof entity.table, undefined>
+        type Expected = typeof newTable
 
-        type TestTable = A.Equals<Table, typeof newTable>
-        const testTable: TestTable = 1
-        testTable
+        type Result = A.Equals<Subject, Expected>
+        const result: Result = 1
+        result
       })
     })
   })
