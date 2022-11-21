@@ -3,20 +3,35 @@ import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
 describe('Entity properties', () => {
+  describe('table', () => {
+    it('returns undefined if there is no table attached to the given entity', async () => {
+      const TestEntity = new Entity({
+        name: 'TestEnt',
+        attributes: {
+          pk: { partitionKey: true },
+        },
+      } as const)
+
+      expect(() => {
+        TestEntity.table
+      }).toThrow(`The 'TestEnt' entity must be attached to a Table to perform this operation`)
+    })
+  })
+
   it('fails if trying to add a table when one already exists', async () => {
     // Create basic table
     const TestTable = new Table({
       name: 'test-table',
-      partitionKey: 'pk'
+      partitionKey: 'pk',
     })
 
     // Create basic entity
     const TestEntity = new Entity({
       name: 'TestEnt',
       attributes: {
-        pk: { partitionKey: true }
+        pk: { partitionKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(() => {
@@ -25,8 +40,7 @@ describe('Entity properties', () => {
   })
 
   it('fails if assigning an invalid Table', async () => {
-    // Create invalid tTable
-    const TestTable = {}
+    const InvalidTable = {}
 
     expect(() => {
       // Create basic entity
@@ -34,41 +48,27 @@ describe('Entity properties', () => {
       new Entity({
         name: 'TestEnt',
         attributes: {
-          pk: { partitionKey: true }
+          pk: { partitionKey: true },
         },
-        table: TestTable
+        table: InvalidTable,
       } as const)
     }).toThrow('Invalid Table')
-  })
-
-  it(`fails if trying to get 'table' if not attached`, async () => {
-    // Create basic entity
-    const TestEntity = new Entity({
-      name: 'TestEnt',
-      attributes: {
-        pk: { partitionKey: true }
-      }
-    } as const)
-
-    expect(() => {
-      TestEntity.table
-    }).toThrow(`The 'TestEnt' entity must be attached to a Table to perform this operation`)
   })
 
   it(`fails if trying to get 'DocumentClient' if not on table`, async () => {
     // Create basic table
     const TestTable = new Table({
       name: 'test-table',
-      partitionKey: 'pk'
+      partitionKey: 'pk',
     })
 
     // Create basic entity
     const TestEntity = new Entity({
       name: 'TestEnt',
       attributes: {
-        pk: { partitionKey: true }
+        pk: { partitionKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(() => {
@@ -82,16 +82,16 @@ describe('Entity properties', () => {
       name: 'test-table',
       partitionKey: 'pk',
       autoExecute: false,
-      autoParse: false
+      autoParse: false,
     })
 
     // Create basic entity
     const TestEntity = new Entity({
       name: 'TestEnt',
       attributes: {
-        pk: { partitionKey: true }
+        pk: { partitionKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.autoExecute).toBe(false)
@@ -109,7 +109,7 @@ describe('Entity properties', () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',
-      sortKey: 'sk'
+      sortKey: 'sk',
     })
 
     // Create basic entity
@@ -117,9 +117,9 @@ describe('Entity properties', () => {
       name: 'TestEnt',
       attributes: {
         pk: { partitionKey: true },
-        sk: { sortKey: true }
+        sk: { sortKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.partitionKey).toBe('pk')
@@ -130,16 +130,16 @@ describe('Entity properties', () => {
     // Create basic table
     const TestTable = new Table({
       name: 'test-table',
-      partitionKey: 'pk'
+      partitionKey: 'pk',
     })
 
     // Create basic entity
     const TestEntity = new Entity({
       name: 'TestEnt',
       attributes: {
-        pk: { partitionKey: true }
+        pk: { partitionKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.sortKey).toBeNull()
@@ -149,7 +149,7 @@ describe('Entity properties', () => {
     // Create basic table
     const TestTable = new Table({
       name: 'test-table',
-      partitionKey: 'pk'
+      partitionKey: 'pk',
     })
 
     // Create basic entity
@@ -157,9 +157,9 @@ describe('Entity properties', () => {
       name: 'TestEnt',
       attributes: {
         pk: { partitionKey: true },
-        test: { map: 'sk' }
+        test: { map: 'sk' },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.attribute('pk')).toBe('pk')
