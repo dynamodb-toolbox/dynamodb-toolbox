@@ -28,7 +28,7 @@ describe('Entity properties', () => {
         table: TestTable,
       } as const)
 
-      expect(TestEntity.table).toBeInstanceOf(TestTable)
+      expect(TestEntity.table).toStrictEqual(TestTable)
     })
   })
 
