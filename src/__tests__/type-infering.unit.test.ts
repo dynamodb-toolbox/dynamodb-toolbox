@@ -2735,7 +2735,7 @@ describe('Entity', () => {
     describe('table', () => {
       it('should have the right type', () => {
         type Table = typeof ent.table
-        type TestTable = A.Equals<Table, TableType>
+        type TestTable = A.Equals<Table, typeof table>
         const testTable: TestTable = 1
         testTable
       })
@@ -2750,7 +2750,7 @@ describe('Entity', () => {
             pk: { partitionKey: true },
             sk: { sortKey: true },
           },
-          table: Table,
+          table,
         })
 
         entity.table = newTable
@@ -2774,7 +2774,7 @@ describe('Entity', () => {
             pk: { partitionKey: true },
             sk: { sortKey: true },
           },
-          table: Table,
+          table,
         })
 
         entity.setTable(newTable)
