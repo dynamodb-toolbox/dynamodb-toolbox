@@ -2743,8 +2743,8 @@ describe('Entity', () => {
           table
         })
 
-        type Subject = Omit<typeof entity.table, undefined>
-        type Expected = typeof table
+        type Subject = typeof entity.table
+        type Expected = typeof table | undefined
 
         type Result = A.Equals<Subject, Expected>
         const result: Result = 1
@@ -2769,11 +2769,12 @@ describe('Entity', () => {
 
         entity.table = newTable
 
-        type Table = typeof entity.table
+        type Subject = typeof entity.table
+        type Expected = typeof newTable | undefined
 
-        type TestTable = A.Equals<Table, typeof newTable>
-        const testTable: TestTable = 1
-        testTable
+        type Result = A.Equals<Subject, Expected>
+        const result: Result = 1
+        result
       })
     })
 
@@ -2796,8 +2797,8 @@ describe('Entity', () => {
 
         entity.setTable(newTable)
 
-        type Subject = Omit<typeof entity.table, undefined>
-        type Expected = typeof newTable
+        type Subject = typeof entity.table
+        type Expected = typeof newTable | undefined
 
         type Result = A.Equals<Subject, Expected>
         const result: Result = 1
