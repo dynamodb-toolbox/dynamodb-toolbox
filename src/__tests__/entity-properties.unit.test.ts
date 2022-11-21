@@ -14,6 +14,23 @@ describe('Entity properties', () => {
 
       expect(TestEntity.table).toBeUndefined()
     })
+
+    it('returns the table attached to the given entity', async () => {
+      const TestTable = new Table({
+        name: 'TestTable',
+        partitionKey: 'pk',
+      })
+
+      const TestEntity = new Entity({
+        name: 'TestEnt',
+        attributes: {
+          pk: { partitionKey: true },
+        },
+        table: TestTable,
+      } as const)
+
+      expect(TestEntity.table).toBe(TestTable)
+    })
   })
 
   it('fails if trying to add a table when one already exists', async () => {
