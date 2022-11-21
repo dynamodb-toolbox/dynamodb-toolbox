@@ -2750,32 +2750,6 @@ describe('Entity', () => {
         const result: Result = 1
         result
       })
-
-      it('should be updated when the entity is assigned a new table', () => {
-        const newTable = new Table({
-          name: 'newTable',
-          partitionKey: 'pk',
-          sortKey: 'sk',
-          DocumentClient
-        })
-        const entity = new Entity({
-          name: 'Entity_WithNewTable',
-          attributes: {
-            pk: { partitionKey: true },
-            sk: { sortKey: true },
-          },
-          table,
-        })
-
-        entity.table = newTable
-
-        type Subject = typeof entity.table
-        type Expected = typeof newTable | undefined
-
-        type Result = A.Equals<Subject, Expected>
-        const result: Result = 1
-        result
-      })
     })
 
     describe('setTable', () => {
@@ -2795,9 +2769,9 @@ describe('Entity', () => {
           table,
         })
 
-        entity.setTable(newTable)
+        const entityWithNewTable = entity.setTable(newTable)
 
-        type Subject = typeof entity.table
+        type Subject = typeof entityWithNewTable.table
         type Expected = typeof newTable | undefined
 
         type Result = A.Equals<Subject, Expected>

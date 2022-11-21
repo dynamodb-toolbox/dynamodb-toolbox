@@ -1605,7 +1605,7 @@ class Entity<Name extends string = string,
    * @internal
    * Set the entity's internal table property
    */
-  setTable(table: EntityTable | undefined) {
+  setTable(table: EntityTable | undefined): this {
     this._table = table
 
     // If an entity tracking field is enabled, add the attributes, alias and the default
@@ -1624,6 +1624,8 @@ class Entity<Name extends string = string,
       }
       this.defaults[this._etAlias] = this.name
     }
+
+    return this
   }
 } // end Entity
 
