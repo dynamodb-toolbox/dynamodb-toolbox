@@ -151,7 +151,11 @@ class Entity<Name extends string = string,
     Object.assign(this, parseEntity(entity))
   }
 
-  // Set the Entity's Table
+  /*
+   * @internal
+   * set the table instance that is associated with this entity
+   * NOTE: use setTable instead of this method to set the table
+   */
   set table(table: EntityTable | undefined) {
     if (this._table) {
       error(`This entity is already assigned a Table (${this._table.name})`)
@@ -1602,7 +1606,6 @@ class Entity<Name extends string = string,
   }
 
   /*
-   * @internal
    * Set the entity's internal table property
    */
   setTable(table: EntityTable | undefined): this {
