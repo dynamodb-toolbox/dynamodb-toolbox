@@ -2731,5 +2731,60 @@ describe('Entity', () => {
         })
       })
     })
+
+    describe('table', () => {
+      it('should have the right type', () => {
+        type Table = typeof ent.table
+        type TestTable = A.Equals<Table, TableType>
+        const testTable: TestTable = 1
+        testTable
+      })
+
+      it('should be updated when the entity is assigned a new table', () => {
+        const newTable = new Table({
+          name: 'newTable',
+        })
+        const entity = new Entity({
+          name: 'Entity_WithNewTable',
+          attributes: {
+            pk: { partitionKey: true },
+            sk: { sortKey: true },
+          },
+          table: Table,
+        })
+
+        entity.table = newTable
+
+        type Table = typeof entity.table
+
+        type TestTable = A.Equals<Table, typeof newTable>
+        const testTable: TestTable = 1
+        testTable
+      })
+    })
+
+    describe('setTable', () => {
+      it('should update the type of the table property', () => {
+        const newTable = new Table({
+          name: 'newTable',
+        })
+        const entity = new Entity({
+          name: 'Entity_WithNewTable',
+          attributes: {
+            pk: { partitionKey: true },
+            sk: { sortKey: true },
+          },
+          table: Table,
+        })
+
+        entity.setTable(newTable)
+
+        type Table = typeof entity.table
+
+        type TestTable = A.Equals<Table, typeof newTable>
+        const testTable: TestTable = 1
+        testTable
+      })
+    })
   })
 })
