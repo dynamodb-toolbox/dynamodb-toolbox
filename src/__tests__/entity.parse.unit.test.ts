@@ -66,7 +66,7 @@ const TestEntityHiddenType = new Entity({
 })
 
 const TestEntityHiddenTypeWithAlias = new Entity({
-  name: 'TestEntityHiddenType',
+  name: 'TestEntityHiddenTypeWithAlias',
   attributes: {
     pk: { type: 'string', partitionKey: true },
     sk: { type: 'string', sortKey: true }
