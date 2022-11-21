@@ -45,7 +45,8 @@ export type ParsedEntity<
   linked: Linked
   defaults: any
   required: any
-  table?: EntityTable | undefined
+  table?: EntityTable | undefined,
+  setTable?: (table: EntityTable | undefined) => void
 }
 
 // Parse entity

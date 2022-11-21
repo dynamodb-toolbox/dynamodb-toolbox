@@ -162,7 +162,8 @@ class Entity<Name extends string = string,
       error('Invalid Table')
     }
 
-    table?.addEntity(this)
+    // @ts-ignore
+    table?.addEntity?.(this)
     this.setTable(table)
   }
 
