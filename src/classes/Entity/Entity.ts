@@ -166,6 +166,7 @@ class Entity<Name extends string = string,
       error('Invalid Table')
     }
 
+    this._table?.removeEntity?.(this)
     // @ts-ignore
     table?.addEntity?.(this)
     this.setTable(table)
@@ -1610,7 +1611,7 @@ class Entity<Name extends string = string,
    */
   setTable(table: EntityTable | undefined): this {
     if (!table && !this._table) {
-      return this;
+      return this
     }
 
     this._table = table

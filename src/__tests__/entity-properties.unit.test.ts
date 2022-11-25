@@ -38,7 +38,7 @@ describe('Entity properties', () => {
         name: 'TestTable',
         partitionKey: 'pk',
         sortKey: 'sk',
-      })
+      } as const)
 
       const TestEntity = new Entity({
         name: 'TestEnt',
@@ -47,7 +47,6 @@ describe('Entity properties', () => {
         },
       } as const)
 
-      // @ts-ignore
       TestEntity.setTable(TestTable)
 
       expect(TestEntity.table).toStrictEqual(TestTable)
@@ -76,9 +75,8 @@ describe('Entity properties', () => {
         partitionKey: 'pk',
         sortKey: 'sk',
         entityField: 'entity_field_v2',
-      })
+      } as const)
 
-      // @ts-ignore
       TestEntity.setTable(TestTableV2)
 
       expect(TestEntity.schema.attributes).toEqual(expect.objectContaining({

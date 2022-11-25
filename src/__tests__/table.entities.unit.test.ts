@@ -13,12 +13,12 @@ describe('entities', () => {
       sortKey: 'sk',
       indexes: {
         GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSI1sk' },
-        GSI2: { partitionKey: 'GSI1pk' }
+        GSI2: { partitionKey: 'GSI1pk' },
       },
       DocumentClient,
       attributes: {
-        strongType: 'list'
-      }
+        strongType: 'list',
+      },
     })
 
     TestEntity = new Entity({
@@ -27,8 +27,8 @@ describe('entities', () => {
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        test: 'string'
-      }
+        test: 'string',
+      },
     } as const)
   })
 
@@ -44,8 +44,8 @@ describe('entities', () => {
       name: 'TestEntity',
       attributes: {
         email: { type: 'string', partitionKey: true },
-        sort: { type: 'string', sortKey: true }
-      }
+        sort: { type: 'string', sortKey: true },
+      },
     } as const)
 
     TestTable.addEntity(TestEntity)
@@ -59,8 +59,8 @@ describe('entities', () => {
       name: 'query',
       attributes: {
         email: { type: 'string', partitionKey: true },
-        sort: { type: 'string', sortKey: true }
-      }
+        sort: { type: 'string', sortKey: true },
+      },
     } as const)
 
     expect(() => {
@@ -73,8 +73,8 @@ describe('entities', () => {
       name: 'TestEntity',
       attributes: {
         email: { type: 'string', partitionKey: true },
-        sort: { type: 'string' }
-      }
+        sort: { type: 'string' },
+      },
     } as const)
 
     expect(() => {
@@ -85,15 +85,15 @@ describe('entities', () => {
   it('fails when a sort key should not be defined', () => {
     TestTable = new Table({
       name: 'test-table',
-      partitionKey: 'pk'
+      partitionKey: 'pk',
     })
 
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
         email: { type: 'string', partitionKey: true },
-        sort: { type: 'string', sortKey: true }
-      }
+        sort: { type: 'string', sortKey: true },
+      },
     } as const)
 
     expect(() => {
@@ -107,8 +107,8 @@ describe('entities', () => {
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        pk: 'string'
-      }
+        pk: 'string',
+      },
     } as const)
 
     expect(() => {
@@ -123,9 +123,9 @@ describe('entities', () => {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
         GSI1pk: { partitionKey: 'GSI1' },
-        GSI1sk: { sortKey: 'GSI1' }
+        GSI1sk: { sortKey: 'GSI1' },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.schema.keys).toHaveProperty('GSI1')
@@ -137,8 +137,8 @@ describe('entities', () => {
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        GSI1pk: { partitionKey: 'GSI1x' }
-      }
+        GSI1pk: { partitionKey: 'GSI1x' },
+      },
     } as const)
 
     expect(() => {
@@ -153,8 +153,8 @@ describe('entities', () => {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
         GSI2pk: { partitionKey: 'GSI2' },
-        GSI2sk: { sortKey: 'GSI2' }
-      }
+        GSI2sk: { sortKey: 'GSI2' },
+      },
     } as const)
 
     expect(() => {
@@ -170,8 +170,8 @@ describe('entities', () => {
         sort: { type: 'string', sortKey: true },
         GSI1pk: { partitionKey: 'GSI1' },
         GSI1skx: { sortKey: 'GSI1' },
-        GSI1sk: 'string'
-      }
+        GSI1sk: 'string',
+      },
     } as const)
     expect(() => {
       TestTable.addEntity(TestEntity)
@@ -184,9 +184,9 @@ describe('entities', () => {
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        GSI1pk: { partitionKey: 'GSI1' }
+        GSI1pk: { partitionKey: 'GSI1' },
         // GSI1sk: {  },
-      }
+      },
     } as const)
     expect(() => {
       TestTable.addEntity(TestEntity)
@@ -199,13 +199,13 @@ describe('entities', () => {
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        _et: 'string'
-      }
+        _et: 'string',
+      },
     } as const)
     expect(() => {
       TestTable.addEntity(TestEntity)
     }).toThrow(
-      `Attribute or alias '_et' conflicts with the table's 'entityField' mapping or entity alias`
+      `Attribute or alias '_et' conflicts with the table's 'entityField' mapping or entity alias`,
     )
   })
 
@@ -215,13 +215,13 @@ describe('entities', () => {
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        strongType: 'number'
-      }
+        strongType: 'number',
+      },
     } as const)
     expect(() => {
       TestTable.addEntity(TestEntity)
     }).toThrow(
-      `TestEntity attribute type for 'strongType' (number) does not match table's type (list)`
+      `TestEntity attribute type for 'strongType' (number) does not match table's type (list)`,
     )
   })
 
@@ -231,9 +231,9 @@ describe('entities', () => {
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        testSet: { type: 'set', setType: 'number' }
+        testSet: { type: 'set', setType: 'number' },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     TestEntity2 = new Entity({
@@ -241,9 +241,9 @@ describe('entities', () => {
       attributes: {
         email: { type: 'string', partitionKey: true },
         sort: { type: 'string', sortKey: true },
-        testSet: { type: 'set', setType: 'string' }
+        testSet: { type: 'set', setType: 'string' },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
     expect(TestTable.Table.attributes.testSet.mappings.TestEntity._setType).toBe('number')
     expect(TestTable.Table.attributes.testSet.mappings.TestEntity2._setType).toBe('string')
@@ -253,5 +253,69 @@ describe('entities', () => {
     expect(() => {
       TestTable.addEntity({})
     }).toThrow(`Invalid Entity`)
+  })
+})
+
+describe('removeEntity', () => {
+  beforeEach(() => {
+    TestTable = new Table({
+      name: 'TestTable',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+    } as const)
+
+    TestEntity = new Entity({
+      name: 'TestEntity',
+      attributes: {
+        test_pk: { type: 'string', partitionKey: true },
+        test_sk: { type: 'string', sortKey: true },
+      },
+    })
+  })
+
+  it('removes the given entity from the table', () => {
+    TestTable.addEntity(TestEntity)
+    expect(TestTable.entities).toContain('TestEntity')
+
+    TestTable.removeEntity(TestEntity)
+    expect(TestTable.entities).not.toContain('TestEntity')
+  })
+
+  it('fails when removing an invalid entity', () => {
+    expect(() => {
+      TestTable.removeEntity({})
+    }).toThrow('Entity must be an instance of Entity')
+  })
+
+  it('fails when removing an entity that does not exist in the table', () => {
+    expect(() => {
+      TestTable.removeEntity(TestEntity)
+    }).toThrow('TestEntity is not in the TestTable table')
+  })
+
+  it('removes the entity from the table attributes', () => {
+    TestTable.addEntity(TestEntity)
+    expect(TestTable.Table.attributes).toEqual(expect.objectContaining({
+      pk: {
+        mappings: {
+          TestEntity: {
+            test_pk: 'string',
+          },
+        },
+        type: 'string',
+      },
+      sk: {
+        mappings: {
+          TestEntity: {
+            'test_sk': 'string',
+          },
+        },
+        type: 'string',
+      },
+    }))
+
+    TestTable.removeEntity(TestEntity)
+    expect(TestTable.Table.attributes).not.toHaveProperty('pk')
+    expect(TestTable.Table.attributes).not.toHaveProperty('sk')
   })
 })

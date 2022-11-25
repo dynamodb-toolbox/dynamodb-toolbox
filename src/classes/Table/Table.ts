@@ -330,7 +330,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     }
 
     if (!this._entities.includes(entity.name)) {
-      error(`${entity.name} is not in the table`)
+      error(`${entity.name} is not in the ${this.name} table`)
     }
 
     delete this[entity.name]
@@ -356,11 +356,13 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     // Loop through the entity's indexes
     for (const key in entity.schema.indexes) {
       // If the index is not used by any other entity
+      // @ts-ignore TODO
       if (Object.keys(this.Table.indexes[key].mappings).length === 1) {
         // Remove the index from the table
         delete this.Table.indexes[key]
       } else {
         // Remove the entity from the index's mappings
+        // @ts-ignore TODO
         delete this.Table.indexes[key].mappings[entity.name]
       }
     }
