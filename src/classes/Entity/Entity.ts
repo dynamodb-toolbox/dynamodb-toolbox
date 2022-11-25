@@ -166,7 +166,6 @@ class Entity<Name extends string = string,
       error('Invalid Table')
     }
 
-    this._table?.removeEntity?.(this)
     // @ts-ignore
     table?.addEntity?.(this)
     this.setTable(table)
@@ -1614,6 +1613,7 @@ class Entity<Name extends string = string,
       return this
     }
 
+    this._table?.removeEntity?.(this)
     this._table = table as EntityTable
 
     // If an entity tracking field is enabled, add the attributes, alias and the default
