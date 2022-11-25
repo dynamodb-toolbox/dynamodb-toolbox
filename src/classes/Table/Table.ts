@@ -109,7 +109,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    * @param {Entity|Entity[]} Entity - An Entity or array of Entities to add to the table.
    * NOTE: this does not adjust the entity's type inference because it is static
    */
-  addEntity(entity: ParsedEntity | ParsedEntity[]) {
+  addEntity(entity: ParsedEntity | ParsedEntity[]): void {
     // Coerce entity to array
     const entities = Array.isArray(entity) ? entity : [entity]
 
@@ -321,6 +321,51 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
       entity?.setTable?.(this)
     }
+  }
+
+
+  removeEntity(entity: Entity): void {
+    if (!(entity instanceof Entity)) {
+      error('Entity must be an instance of Entity')
+    }
+
+    if (!this._entities.includes(entity.name)) {
+      error(`${entity.name} is not in the table`)
+    }
+
+    delete this[entity.name]
+
+    // Remove the entity from the table's entity list
+    this._entities.splice(this._entities.indexOf(entity.name), 1)
+
+    // Loop through the entity's attributes
+    for (const attr in entity.schema.attributes) {
+      // If the attribute is not mapped to another entity
+      if (!entity.schema.attributes[attr].map) {
+        // If the attribute is not used by any other entity
+        if (Object.keys(this.Table.attributes[attr].mappings).length === 1) {
+          // Remove the attribute from the table
+          delete this.Table.attributes[attr]
+        } else {
+          // Remove the entity from the attribute's mappings
+          delete this.Table.attributes[attr].mappings[entity.name]
+        }
+      }
+    }
+
+    // Loop through the entity's indexes
+    for (const key in entity.schema.indexes) {
+      // If the index is not used by any other entity
+      if (Object.keys(this.Table.indexes[key].mappings).length === 1) {
+        // Remove the index from the table
+        delete this.Table.indexes[key]
+      } else {
+        // Remove the entity from the index's mappings
+        delete this.Table.indexes[key].mappings[entity.name]
+      }
+    }
+
+    entity?.setTable?.(null)
   }
 
   /*
