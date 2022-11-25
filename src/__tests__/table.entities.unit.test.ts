@@ -376,4 +376,60 @@ describe('removeEntity', () => {
       },
     }))
   })
+
+  it('removes the property mappings from the table for an entity with indexes', () => {
+    TestEntity = new Entity({
+      name: 'TestEntity',
+      attributes: {
+        test_pk: { type: 'string', partitionKey: true },
+        test_sk: { type: 'string', sortKey: true },
+      },
+      indexes: {
+        testGsi1: {
+          partitionKey: 'test_gsi1_pk',
+          sortKey: 'test_gsi1_sk',
+        }
+      }
+    })
+
+    TestTable.addEntity(TestEntity)
+
+    expect(TestTable.Table.attributes).toEqual(expect.objectContaining({
+      pk: {
+        mappings: {
+          TestEntity: {
+            test_pk: 'string',
+          }
+        }
+      },
+      sk: {
+        mappings: {
+          TestEntity: {
+            test_sk: 'string',
+          }
+        }
+      },
+      testGsi1_pk: {
+        mappings: {
+          TestEntity: {
+            test_gsi1_pk: 'string',
+          }
+        }
+      },
+      testGsi1_sk: {
+        mappings: {
+          TestEntity: {
+            test_gsi1_sk: 'string',
+          }
+        }
+      }
+    }))
+
+    TestTable.removeEntity(TestEntity)
+
+    expect(TestTable.Table.attributes).not.toHaveProperty('pk')
+    expect(TestTable.Table.attributes).not.toHaveProperty('sk')
+    expect(TestTable.Table.attributes).not.toHaveProperty('testGsi1_pk')
+    expect(TestTable.Table.attributes).not.toHaveProperty('testGsi1_sk')
+  })
 })
