@@ -365,7 +365,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       }
     }
 
-    entity?.setTable?.(null)
+    entity?.setTable?.(undefined)
   }
 
   /*
