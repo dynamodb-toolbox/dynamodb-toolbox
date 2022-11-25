@@ -312,7 +312,7 @@ const MyEntity = new Entity({
     sk: { sortKey: true }
   },
   table: MyTable
-})
+} as const)
 
 const myNewTable = new Table({
   name: 'MyNewTable',
