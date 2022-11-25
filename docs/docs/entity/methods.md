@@ -318,7 +318,7 @@ const myNewTable = new Table({
   name: 'MyNewTable',
   partitionKey: 'pk',
   sortKey: 'sk'
-})
+} as const)
 
 const myNewEntity = MyEntity.setTable(MyNewTable)
 ```
