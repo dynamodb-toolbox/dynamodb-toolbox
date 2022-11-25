@@ -293,7 +293,7 @@ describe('removeEntity', () => {
     }).toThrow('TestEntity is not in the TestTable table')
   })
 
-  it('removes the entity from the table attributes', () => {
+  it('removes the property mappings from the table in case only the removed entity has them', () => {
     TestTable.addEntity(TestEntity)
     expect(TestTable.Table.attributes).toEqual(expect.objectContaining({
       pk: {
@@ -317,5 +317,63 @@ describe('removeEntity', () => {
     TestTable.removeEntity(TestEntity)
     expect(TestTable.Table.attributes).not.toHaveProperty('pk')
     expect(TestTable.Table.attributes).not.toHaveProperty('sk')
+  })
+
+  it('does not remove the property mappings from the table in case other entities have them', () => {
+    TestTable.addEntity(TestEntity)
+
+    const TestEntity2 = new Entity({
+      name: 'TestEntity2',
+      attributes: {
+        test_pk: { type: 'string', partitionKey: true },
+        test_sk: { type: 'string', sortKey: true },
+      }
+    })
+
+    TestTable.addEntity(TestEntity2)
+    expect(TestTable.Table.attributes).toEqual(expect.objectContaining({
+      pk: {
+        mappings: {
+          TestEntity: {
+            test_pk: 'string',
+          },
+          TestEntity2: {
+            test_pk: 'string',
+          }
+        },
+        type: 'string',
+      },
+      sk: {
+        mappings: {
+          TestEntity: {
+            'test_sk': 'string',
+          },
+          TestEntity2: {
+            'test_sk': 'string',
+          }
+        },
+        type: 'string',
+      },
+    }))
+
+    TestTable.removeEntity(TestEntity)
+    expect(TestTable.Table.attributes).toEqual(expect.objectContaining({
+      pk: {
+        mappings: {
+          TestEntity2: {
+            test_pk: 'string',
+          },
+        },
+        type: 'string',
+      },
+      sk: {
+        mappings: {
+          TestEntity2: {
+            'test_sk': 'string',
+          },
+        },
+        type: 'string',
+      },
+    }))
   })
 })
