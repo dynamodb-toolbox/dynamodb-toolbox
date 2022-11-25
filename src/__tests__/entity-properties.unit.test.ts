@@ -32,6 +32,116 @@ describe('Entity properties', () => {
     })
   })
 
+  describe('setTable', () => {
+    it('sets the table on the given entity', () => {
+      const TestTable = new Table({
+        name: 'TestTable',
+        partitionKey: 'pk',
+        sortKey: 'sk',
+      })
+
+      const TestEntity = new Entity({
+        name: 'TestEnt',
+        attributes: {
+          pk: { partitionKey: true },
+        },
+      } as const)
+
+      // @ts-ignore
+      TestEntity.setTable(TestTable)
+
+      expect(TestEntity.table).toStrictEqual(TestTable)
+    })
+
+    it('sets the _et field attributes mapping on the given entity', () => {
+      const TestTable = new Table({
+        name: 'TestTable',
+        partitionKey: 'pk',
+        sortKey: 'sk',
+        entityField: 'entity_field',
+      })
+
+      const TestEntity = new Entity({
+        name: 'TestEntity',
+        attributes: {
+          test_pk: { partitionKey: true },
+          test_sk: { sortKey: true },
+          test_string: { type: 'string' },
+        },
+        table: TestTable,
+      } as const)
+
+      const TestTableV2 = new Table({
+        name: 'TestTableV2',
+        partitionKey: 'pk',
+        sortKey: 'sk',
+        entityField: 'entity_field_v2',
+      })
+
+      // @ts-ignore
+      TestEntity.setTable(TestTableV2)
+
+      expect(TestEntity.schema.attributes).toEqual(expect.objectContaining({
+        entity_field_v2: {
+          alias: 'entity',
+          type: 'string',
+          hidden: false,
+          default: 'TestEntity',
+        },
+        entity: {
+          'default': 'TestEntity',
+          'map': 'entity_field_v2',
+          'type': 'string',
+        },
+      }))
+      expect(TestEntity.schema.attributes).not.toContain('entity_field')
+      expect(TestEntity.defaults).toEqual(expect.objectContaining({
+        entity_field_v2: 'TestEntity',
+      }))
+    })
+
+    it(
+      're-sets the _et field attributes mapping on the given entity when re-assigning a table to the given entity',
+      () => {
+        const TestTable = new Table({
+          name: 'TestTable',
+          partitionKey: 'pk',
+          sortKey: 'sk',
+          entityField: 'entity_field',
+        })
+
+        const TestEntity = new Entity({
+          name: 'TestEntity',
+          attributes: {
+            test_pk: { partitionKey: true },
+            test_sk: { sortKey: true },
+            test_string: { type: 'string' },
+          },
+        } as const)
+
+        // @ts-ignore
+        TestEntity.setTable(TestTable)
+
+        expect(TestEntity.schema.attributes).toEqual(expect.objectContaining({
+          entity_field: {
+            alias: 'entity',
+            type: 'string',
+            hidden: false,
+            default: 'TestEntity',
+          },
+          entity: {
+            'default': 'TestEntity',
+            'map': 'entity_field',
+            'type': 'string',
+          },
+        }))
+        expect(TestEntity.defaults).toEqual(expect.objectContaining({
+          entity_field: 'TestEntity',
+        }))
+      },
+    )
+  })
+
   it('fails if trying to add a table when one already exists', async () => {
     // Create basic table
     const TestTable = new Table({
