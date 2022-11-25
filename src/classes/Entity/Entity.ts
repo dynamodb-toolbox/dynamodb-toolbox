@@ -1609,7 +1609,7 @@ class Entity<Name extends string = string,
   /*
    * Set the entity's internal table property
    */
-  setTable(table: EntityTable | undefined): this {
+  setTable(table: EntityTable | TableDef | undefined): this {
     if (!table && !this._table) {
       return this
     }
