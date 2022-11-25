@@ -47,6 +47,7 @@ describe('Entity properties', () => {
         },
       } as const)
 
+      // @ts-ignore TODO: fix this
       TestEntity.setTable(TestTable)
 
       expect(TestEntity.table).toStrictEqual(TestTable)
