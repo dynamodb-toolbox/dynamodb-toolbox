@@ -378,19 +378,27 @@ describe('removeEntity', () => {
   })
 
   it('removes the property mappings from the table for an entity with indexes', () => {
+    TestTable = new Table({
+      name: 'TestTable',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      indexes: {
+        testIndex: {
+          partitionKey: 'test_table_gsi1_pk',
+          sortKey: 'test_table_gsi1_sk',
+        }
+      }
+    } as const)
+
     TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
         test_pk: { type: 'string', partitionKey: true },
         test_sk: { type: 'string', sortKey: true },
+        test_entity_gsi1_pk: { type: 'string', partitionKey: 'testIndex' },
+        test_entity_gsi1_sk: { type: 'string', sortKey: 'testIndex' },
       },
-      indexes: {
-        testGsi1: {
-          partitionKey: 'test_gsi1_pk',
-          sortKey: 'test_gsi1_sk',
-        }
-      }
-    })
+    } as const)
 
     TestTable.addEntity(TestEntity)
 
@@ -400,28 +408,32 @@ describe('removeEntity', () => {
           TestEntity: {
             test_pk: 'string',
           }
-        }
+        },
+        type: 'string',
       },
       sk: {
         mappings: {
           TestEntity: {
             test_sk: 'string',
           }
-        }
+        },
+        type: 'string',
       },
-      testGsi1_pk: {
+      test_table_gsi1_pk: {
         mappings: {
           TestEntity: {
-            test_gsi1_pk: 'string',
+            test_entity_gsi1_pk: 'string',
           }
-        }
+        },
+        type: 'string',
       },
-      testGsi1_sk: {
+      test_table_gsi1_sk: {
         mappings: {
           TestEntity: {
-            test_gsi1_sk: 'string',
+            test_entity_gsi1_sk: 'string',
           }
-        }
+        },
+        type: 'string',
       }
     }))
 
