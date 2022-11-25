@@ -303,7 +303,7 @@ const MyTable = new Table({
   name: 'MyTable',
   partitionKey: 'pk',
   sortKey: 'sk'
-})
+} as const)
 
 const MyEntity = new Entity({
   name: 'MyEntity',
