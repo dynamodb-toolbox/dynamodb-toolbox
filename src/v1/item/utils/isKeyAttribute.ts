@@ -1,3 +1,3 @@
-import { Attribute } from 'v1/item'
+import { FrozenAttribute } from 'v1/item'
 
-export const isKeyAttribute = ({ _key }: Attribute): boolean => _key
+export const isKeyAttribute = ({ key }: FrozenAttribute): boolean => key

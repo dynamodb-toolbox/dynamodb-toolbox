@@ -1,14 +1,14 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Item } from 'v1/item/interface'
 import type {
-  Attribute,
+  FrozenItem,
+  FrozenAttribute,
   ResolvedAttribute,
-  AnyAttribute,
-  LeafAttribute,
-  SetAttribute,
-  ListAttribute,
-  MapAttribute,
+  FrozenAnyAttribute,
+  FrozenLeafAttribute,
+  FrozenSetAttribute,
+  FrozenListAttribute,
+  FrozenMapAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always
@@ -22,29 +22,33 @@ import { EntityV2 } from '../class'
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type FormattedItem<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
+export type FormattedItem<
+  Input extends EntityV2 | FrozenItem | FrozenAttribute
+> = Input extends FrozenAnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
-  ? NonNullable<Input['_resolved']>
-  : Input extends SetAttribute
-  ? Set<FormattedItem<Input['_elements']>>
-  : Input extends ListAttribute
-  ? FormattedItem<Input['_elements']>[]
-  : Input extends MapAttribute | Item
+  : Input extends FrozenLeafAttribute
+  ? NonNullable<Input['resolved']>
+  : Input extends FrozenSetAttribute
+  ? Set<FormattedItem<Input['elements']>>
+  : Input extends FrozenListAttribute
+  ? FormattedItem<Input['elements']>[]
+  : Input extends FrozenMapAttribute | FrozenItem
   ? O.Required<
-      O.Partial<{
-        // Keep only non-hidden attributes
-        [key in O.SelectKeys<Input['_attributes'], { _hidden: false }>]: FormattedItem<
-          Input['_attributes'][key]
-        >
-      }>,
+      O.Partial<
+        {
+          // Keep only non-hidden attributes
+          [key in O.SelectKeys<Input['attributes'], { hidden: false }>]: FormattedItem<
+            Input['attributes'][key]
+          >
+        }
+      >,
       // Enforce Required attributes
-      | O.SelectKeys<Input['_attributes'], { _required: AtLeastOnce | OnlyOnce | Always }>
+      | O.SelectKeys<Input['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
       // Enforce attributes that have defined default (initial or computed)
       // (...but not so sure about that anymore, props can have computed default but still be optional)
-      | O.FilterKeys<Input['_attributes'], { _default: undefined }>
+      | O.FilterKeys<Input['attributes'], { default: undefined }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (Input extends { _open: true } ? Record<string, ResolvedAttribute> : {})
+      (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
   : Input extends EntityV2
-  ? FormattedItem<Input['item']>
+  ? FormattedItem<Input['frozenItem']>
   : never

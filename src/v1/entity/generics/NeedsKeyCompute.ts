@@ -9,7 +9,7 @@ type Or<PropositionA extends boolean, PropositionB extends boolean> = Propositio
   ? true
   : false
 
-type NeedsKeyPartCompute<
+type _NeedsKeyPartCompute<
   ItemInput extends Item,
   KeyName extends string,
   KeyType extends IndexableKeyType
@@ -25,6 +25,7 @@ type NeedsKeyPartCompute<
   ? true
   : false
 
+// TODO: Required in Entity constructor... See if possible to use only PutItem
 /**
  * Wether the provided item matches the primary key of a given table
  *
@@ -32,23 +33,23 @@ type NeedsKeyPartCompute<
  * @param TableInput Table
  * @return Boolean
  */
-export type NeedsKeyCompute<
+export type _NeedsKeyCompute<
   ItemInput extends Item,
   TableInput extends TableV2
 > = HasSK<TableInput> extends true
   ? Or<
-      NeedsKeyPartCompute<
+      _NeedsKeyPartCompute<
         ItemInput,
         TableInput['partitionKey']['name'],
         TableInput['partitionKey']['type']
       >,
-      NeedsKeyPartCompute<
+      _NeedsKeyPartCompute<
         ItemInput,
         NonNullable<TableInput['sortKey']>['name'],
         NonNullable<TableInput['sortKey']>['type']
       >
     >
-  : NeedsKeyPartCompute<
+  : _NeedsKeyPartCompute<
       ItemInput,
       TableInput['partitionKey']['name'],
       TableInput['partitionKey']['type']
