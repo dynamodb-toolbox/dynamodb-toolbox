@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Item, Always } from 'v1/item'
+import type { _Item, Always } from 'v1/item'
 import type { TableV2, IndexableKeyType, HasSK } from 'v1/table'
 
 type Or<PropositionA extends boolean, PropositionB extends boolean> = PropositionA extends true
@@ -10,7 +10,7 @@ type Or<PropositionA extends boolean, PropositionB extends boolean> = Propositio
   : false
 
 type _NeedsKeyPartCompute<
-  ItemInput extends Item,
+  ItemInput extends _Item,
   KeyName extends string,
   KeyType extends IndexableKeyType
 > = ItemInput['_attributes'] extends Record<
@@ -34,7 +34,7 @@ type _NeedsKeyPartCompute<
  * @return Boolean
  */
 export type _NeedsKeyCompute<
-  ItemInput extends Item,
+  ItemInput extends _Item,
   TableInput extends TableV2
 > = HasSK<TableInput> extends true
   ? Or<

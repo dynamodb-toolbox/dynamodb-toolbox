@@ -2,20 +2,20 @@ import type { O } from 'ts-toolbelt'
 
 import type {
   FrozenItem,
-  Item,
+  _Item,
   FrozenAttribute,
-  Attribute,
+  _Attribute,
   ResolvedAttribute,
   FrozenAnyAttribute,
-  AnyAttribute,
+  _AnyAttribute,
   FrozenLeafAttribute,
-  LeafAttribute,
+  _LeafAttribute,
   FrozenSetAttribute,
-  SetAttribute,
+  _SetAttribute,
   FrozenListAttribute,
-  ListAttribute,
+  _ListAttribute,
   FrozenMapAttribute,
-  MapAttribute,
+  _MapAttribute,
   Always
 } from 'v1/item'
 
@@ -60,15 +60,15 @@ export type KeyInput<
   : never
 
 // TODO: Required in Entity constructor... See if possible to use only KeyInput w. FrozenItem
-export type _KeyInput<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
+export type _KeyInput<Input extends EntityV2 | _Item | _Attribute> = Input extends _AnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
+  : Input extends _LeafAttribute
   ? NonNullable<Input['_resolved']>
-  : Input extends SetAttribute
+  : Input extends _SetAttribute
   ? Set<_KeyInput<Input['_elements']>>
-  : Input extends ListAttribute
+  : Input extends _ListAttribute
   ? _KeyInput<Input['_elements']>[]
-  : Input extends MapAttribute | Item
+  : Input extends _MapAttribute | _Item
   ? O.Required<
       O.Partial<
         {
@@ -87,5 +87,5 @@ export type _KeyInput<Input extends EntityV2 | Item | Attribute> = Input extends
     > & // Add Record<string, ResolvedAttribute> if map is open
       (Input extends { _open: true } ? Record<string, ResolvedAttribute> : {})
   : Input extends EntityV2
-  ? _KeyInput<Input['item']>
+  ? _KeyInput<Input['_item']>
   : never

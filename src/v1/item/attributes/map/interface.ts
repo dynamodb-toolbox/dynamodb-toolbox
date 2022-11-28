@@ -8,7 +8,7 @@ import type { FreezeAttribute } from '../freeze'
  * MapAttribute attribute interface
  * (Called MapAttribute to differ from native TS Map class)
  */
-export interface MapAttribute<
+export interface _MapAttribute<
   Attributes extends MapAttributeAttributes = MapAttributeAttributes,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
@@ -32,25 +32,25 @@ export interface MapAttribute<
    */
   required: <NextRequired extends RequiredOption = AtLeastOnce>(
     nextRequired?: NextRequired
-  ) => MapAttribute<Attributes, NextRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
+  ) => _MapAttribute<Attributes, NextRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => MapAttribute<Attributes, IsRequired, true, IsKey, IsOpen, SavedAs, Default>
+  hidden: () => _MapAttribute<Attributes, IsRequired, true, IsKey, IsOpen, SavedAs, Default>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => MapAttribute<Attributes, IsRequired, IsHidden, true, IsOpen, SavedAs, Default>
+  key: () => _MapAttribute<Attributes, IsRequired, IsHidden, true, IsOpen, SavedAs, Default>
   /**
    * Accept additional attributes of any type
    */
-  open: () => MapAttribute<Attributes, IsRequired, IsHidden, IsKey, true, SavedAs, Default>
+  open: () => _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, true, SavedAs, Default>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NextSavedAs extends string | undefined>(
     nextSavedAs: NextSavedAs
-  ) => MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, NextSavedAs, Default>
+  ) => _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, NextSavedAs, Default>
   /**
    * Tag attribute as having a computed default value
    *
@@ -58,7 +58,7 @@ export interface MapAttribute<
    */
   default: <NextComputeDefault extends ComputedDefault | undefined>(
     nextDefaultValue: NextComputeDefault
-  ) => MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, NextComputeDefault>
+  ) => _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, NextComputeDefault>
 }
 
 export interface FrozenMapAttribute<
@@ -78,8 +78,8 @@ export interface FrozenMapAttribute<
   requiredAttributesNames: Record<RequiredOption, Set<string>>
 }
 
-export type FreezeMapAttribute<Attribute extends MapAttribute> = FrozenMapAttribute<
-  MapAttribute extends Attribute
+export type FreezeMapAttribute<Attribute extends _MapAttribute> = FrozenMapAttribute<
+  _MapAttribute extends Attribute
     ? FrozenMapAttributeAttributes
     : {
         [key in keyof Attribute['_attributes']]: FreezeAttribute<Attribute['_attributes'][key]>
