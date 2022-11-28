@@ -6,7 +6,7 @@ import type { AnyAttributeDefaultValue } from './types'
 /**
  * Any attribute interface
  */
-export interface AnyAttribute<
+export interface _AnyAttribute<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
@@ -26,21 +26,21 @@ export interface AnyAttribute<
    */
   required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
     nextRequired?: NextIsRequired
-  ) => AnyAttribute<NextIsRequired, IsHidden, IsKey, SavedAs, Default>
+  ) => _AnyAttribute<NextIsRequired, IsHidden, IsKey, SavedAs, Default>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => AnyAttribute<IsRequired, true, IsKey, SavedAs, Default>
+  hidden: () => _AnyAttribute<IsRequired, true, IsKey, SavedAs, Default>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => AnyAttribute<IsRequired, IsHidden, true, SavedAs, Default>
+  key: () => _AnyAttribute<IsRequired, IsHidden, true, SavedAs, Default>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NextSavedAs extends string | undefined>(
     nextSavedAs: NextSavedAs
-  ) => AnyAttribute<IsRequired, IsHidden, IsKey, NextSavedAs, Default>
+  ) => _AnyAttribute<IsRequired, IsHidden, IsKey, NextSavedAs, Default>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
@@ -48,7 +48,7 @@ export interface AnyAttribute<
    */
   default: <NextDefaultValue extends AnyAttributeDefaultValue>(
     nextDefaultValue: NextDefaultValue
-  ) => AnyAttribute<IsRequired, IsHidden, IsKey, SavedAs, NextDefaultValue>
+  ) => _AnyAttribute<IsRequired, IsHidden, IsKey, SavedAs, NextDefaultValue>
 }
 
 export interface FrozenAnyAttribute<
@@ -63,7 +63,7 @@ export interface FrozenAnyAttribute<
   path: string
 }
 
-export type FreezeAnyAttribute<Attribute extends AnyAttribute> = FrozenAnyAttribute<
+export type FreezeAnyAttribute<Attribute extends _AnyAttribute> = FrozenAnyAttribute<
   Attribute['_required'],
   Attribute['_hidden'],
   Attribute['_key'],
