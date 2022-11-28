@@ -1,9 +1,9 @@
-import type { Item } from '../interface'
+import type { _Item } from '../interface'
 import type {
-  Attribute,
-  SetAttribute,
-  ListAttribute,
-  MapAttribute,
+  _Attribute,
+  _SetAttribute,
+  _ListAttribute,
+  _MapAttribute,
   ComputedDefault
 } from '../attributes'
 
@@ -14,13 +14,13 @@ import type {
  * @param Input Item | Attribute
  * @return Boolean
  */
-export type _HasComputedDefaults<Input extends Item | Attribute> = Input extends {
+export type _HasComputedDefaults<Input extends _Item | _Attribute> = Input extends {
   _default: ComputedDefault
 }
   ? true
-  : Input extends SetAttribute | ListAttribute
+  : Input extends _SetAttribute | _ListAttribute
   ? _HasComputedDefaults<Input['_elements']>
-  : Input extends MapAttribute | Item
+  : Input extends _MapAttribute | _Item
   ? true extends {
       [K in keyof Input['_attributes']]: _HasComputedDefaults<Input['_attributes'][K]>
     }[keyof Input['_attributes']]

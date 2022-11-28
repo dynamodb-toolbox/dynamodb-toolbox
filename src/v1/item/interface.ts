@@ -7,7 +7,7 @@ import { FreezeAttribute } from './attributes/freeze'
  * @param MapAttributeAttributesInput Object of attributes
  * @return Item
  */
-export interface Item<
+export interface _Item<
   MapAttributeAttributesInput extends MapAttributeAttributes = MapAttributeAttributes
 > {
   _type: 'item'
@@ -24,7 +24,7 @@ export interface FrozenItem<
   attributes: MapAttributeAttributesInput
 }
 
-export type FreezeItem<ItemInput extends Item> = Item extends ItemInput
+export type FreezeItem<ItemInput extends _Item> = _Item extends ItemInput
   ? FrozenItem
   : FrozenItem<
       {

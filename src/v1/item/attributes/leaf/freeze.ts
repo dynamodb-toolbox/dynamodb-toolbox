@@ -4,10 +4,10 @@ import { validatorsByLeafType } from 'v1/utils/validation'
 
 import { validateAttributeProperties } from '../shared/validate'
 
-import type { LeafAttribute, FreezeLeafAttribute } from './interface'
+import type { _LeafAttribute, FreezeLeafAttribute } from './interface'
 import type { LeafAttributeType, LeafAttributeEnumValues, LeafAttributeDefaultValue } from './types'
 
-type LeafAttributeFreezer = <Attribute extends LeafAttribute>(
+type LeafAttributeFreezer = <Attribute extends _LeafAttribute>(
   attribute: Attribute,
   path: string
 ) => FreezeLeafAttribute<Attribute>
@@ -19,7 +19,7 @@ type LeafAttributeFreezer = <Attribute extends LeafAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeLeafAttribute: LeafAttributeFreezer = <Attribute extends LeafAttribute>(
+export const freezeLeafAttribute: LeafAttributeFreezer = <Attribute extends _LeafAttribute>(
   attribute: Attribute,
   path: string
 ): FreezeLeafAttribute<Attribute> => {
