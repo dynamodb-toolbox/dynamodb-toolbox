@@ -1,20 +1,20 @@
 import type { O } from 'ts-toolbelt'
 
 import type {
-  Item,
+  _Item,
   FrozenItem,
-  Attribute,
+  _Attribute,
   FrozenAttribute,
   ResolvedAttribute,
-  AnyAttribute,
+  _AnyAttribute,
   FrozenAnyAttribute,
-  LeafAttribute,
+  _LeafAttribute,
   FrozenLeafAttribute,
-  SetAttribute,
+  _SetAttribute,
   FrozenSetAttribute,
-  ListAttribute,
+  _ListAttribute,
   FrozenListAttribute,
-  MapAttribute,
+  _MapAttribute,
   FrozenMapAttribute,
   AtLeastOnce,
   OnlyOnce,
@@ -70,17 +70,17 @@ export type PutItemInput<
 
 // TODO: Required in Entity constructor... See if possible to use only PutItemInput
 export type _PutItemInput<
-  Input extends EntityV2 | Item | Attribute,
+  Input extends EntityV2 | _Item | _Attribute,
   RequireInitialDefaults extends boolean = false
-> = Input extends AnyAttribute
+> = Input extends _AnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
+  : Input extends _LeafAttribute
   ? NonNullable<Input['_resolved']>
-  : Input extends SetAttribute
+  : Input extends _SetAttribute
   ? Set<_PutItemInput<Input['_elements'], RequireInitialDefaults>>
-  : Input extends ListAttribute
+  : Input extends _ListAttribute
   ? _PutItemInput<Input['_elements'], RequireInitialDefaults>[]
-  : Input extends MapAttribute | Item
+  : Input extends _MapAttribute | _Item
   ? O.Required<
       O.Partial<
         {
@@ -103,5 +103,5 @@ export type _PutItemInput<
     > & // Add Record<string, ResolvedAttribute> if map is open
       (Input extends { _open: true } ? Record<string, ResolvedAttribute> : {})
   : Input extends EntityV2
-  ? _PutItemInput<Input['item'], RequireInitialDefaults>
+  ? _PutItemInput<Input['_item'], RequireInitialDefaults>
   : never

@@ -2,9 +2,9 @@ import type { RequiredOption } from '../constants/requiredOptions'
 import { validateAttributeProperties } from '../shared/validate'
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 
-import type { MapAttribute, FreezeMapAttribute } from './interface'
+import type { _MapAttribute, FreezeMapAttribute } from './interface'
 
-type MapAttributeFreezer = <Attribute extends MapAttribute>(
+type MapAttributeFreezer = <Attribute extends _MapAttribute>(
   attribute: Attribute,
   path: string
 ) => FreezeMapAttribute<Attribute>
@@ -16,7 +16,7 @@ type MapAttributeFreezer = <Attribute extends MapAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeMapAttribute: MapAttributeFreezer = <Attribute extends MapAttribute>(
+export const freezeMapAttribute: MapAttributeFreezer = <Attribute extends _MapAttribute>(
   attribute: Attribute,
   path: string
 ): FreezeMapAttribute<Attribute> => {
