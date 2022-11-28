@@ -1,7 +1,7 @@
 import type { AtLeastOnce } from '../constants'
-import type { Attribute, FrozenAttribute } from '../types/attribute'
+import type { _Attribute, FrozenAttribute } from '../types/attribute'
 
-export type ListAttributeElements = Attribute & {
+export type ListAttributeElements = _Attribute & {
   _required: AtLeastOnce
   _hidden: false
   _savedAs: undefined

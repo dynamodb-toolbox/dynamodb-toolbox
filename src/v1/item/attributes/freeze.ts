@@ -1,21 +1,23 @@
-import { freezeAnyAttribute, AnyAttribute, FreezeAnyAttribute } from './any'
-import { freezeLeafAttribute, LeafAttribute, FreezeLeafAttribute } from './leaf'
-import { freezeSetAttribute, SetAttribute, FreezeSetAttribute } from './set'
-import { freezeListAttribute, ListAttribute, FreezeListAttribute } from './list'
-import { freezeMapAttribute, MapAttribute, FreezeMapAttribute } from './map'
-import type { Attribute } from './types/attribute'
+import { freezeAnyAttribute, _AnyAttribute, FreezeAnyAttribute } from './any'
+import { freezeLeafAttribute, _LeafAttribute, FreezeLeafAttribute } from './leaf'
+import { freezeSetAttribute, _SetAttribute, FreezeSetAttribute } from './set'
+import { freezeListAttribute, _ListAttribute, FreezeListAttribute } from './list'
+import { freezeMapAttribute, _MapAttribute, FreezeMapAttribute } from './map'
+import type { _Attribute } from './types/attribute'
 
-export type FreezeAttribute<AttributeInput extends Attribute> = AttributeInput extends AnyAttribute
+export type FreezeAttribute<
+  AttributeInput extends _Attribute
+> = AttributeInput extends _AnyAttribute
   ? FreezeAnyAttribute<AttributeInput>
-  : AttributeInput extends LeafAttribute
+  : AttributeInput extends _LeafAttribute
   ? FreezeLeafAttribute<AttributeInput>
-  : AttributeInput extends SetAttribute
+  : AttributeInput extends _SetAttribute
   ? FreezeSetAttribute<AttributeInput>
-  : AttributeInput extends ListAttribute
+  : AttributeInput extends _ListAttribute
   ? FreezeListAttribute<AttributeInput>
-  : AttributeInput extends ListAttribute
+  : AttributeInput extends _ListAttribute
   ? FreezeListAttribute<AttributeInput>
-  : AttributeInput extends MapAttribute
+  : AttributeInput extends _MapAttribute
   ? FreezeMapAttribute<AttributeInput>
   : never
 
@@ -26,7 +28,7 @@ export type FreezeAttribute<AttributeInput extends Attribute> = AttributeInput e
  * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return FrozenAttribute
  */
-export const freezeAttribute = <AttributeInput extends Attribute>(
+export const freezeAttribute = <AttributeInput extends _Attribute>(
   attribute: AttributeInput,
   path: string
 ): FreezeAttribute<AttributeInput> => {

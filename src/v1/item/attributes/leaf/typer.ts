@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
 
-import type { LeafAttribute } from './interface'
+import type { _LeafAttribute } from './interface'
 import { LeafAttributeOptions, LEAF_DEFAULT_OPTIONS } from './options'
 import type { LeafAttributeType, LeafAttributeEnumValues, LeafAttributeDefaultValue } from './types'
 
@@ -29,7 +29,7 @@ const leaf = <
     Enum,
     Default
   >
-): LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> => {
+): _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> => {
   const {
     type: _type,
     required: _required,
@@ -56,7 +56,7 @@ const leaf = <
     savedAs: nextSavedAs => leaf({ ...options, savedAs: nextSavedAs }),
     default: nextDefault => leaf({ ...options, default: nextDefault }),
     enum: (...nextEnum) => leaf({ ...options, _enum: nextEnum })
-  } as LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+  } as _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
 }
 
 type LeafAttributeTyper<Type extends LeafAttributeType> = <
@@ -70,7 +70,7 @@ type LeafAttributeTyper<Type extends LeafAttributeType> = <
   options?: O.Partial<
     LeafAttributeOptions<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
   >
-) => LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
 
 const getLeafAttributeTyper = <Type extends LeafAttributeType>(type: Type) =>
   (<

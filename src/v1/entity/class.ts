@@ -1,4 +1,4 @@
-import { Item, _HasComputedDefaults, freezeItem, FreezeItem, FrozenItem } from 'v1/item'
+import { _Item, _HasComputedDefaults, freezeItem, FreezeItem, FrozenItem } from 'v1/item'
 import { TableV2, PrimaryKey } from 'v1/table'
 
 import type {
@@ -16,23 +16,23 @@ import { getDefaultComputeKey } from './utils/defaultComputeKey'
 export class EntityV2<
   EntityName extends string = string,
   EntityTable extends TableV2 = TableV2,
-  EntityItem extends Item = Item,
+  EntityItem extends _Item = _Item,
   // TODO: See if possible not to add it as a generic here
   EntityFrozenItem extends FrozenItem = FreezeItem<EntityItem>
 > {
   public type: 'entity'
   public name: EntityName
   public table: EntityTable
-  public item: EntityItem
+  public _item: EntityItem
   public frozenItem: EntityFrozenItem
   // any is needed for contravariance
   computeKey: (
-    keyInput: Item extends EntityItem ? any : KeyInput<EntityFrozenItem>
+    keyInput: _Item extends EntityItem ? any : KeyInput<EntityFrozenItem>
   ) => PrimaryKey<EntityTable>
   // TODO: Split in putComputeDefaults & updateComputeDefaults
   // any is needed for contravariance
   computeDefaults: (
-    putItemInput: Item extends EntityItem ? any : PutItemInput<EntityFrozenItem, true>
+    putItemInput: _Item extends EntityItem ? any : PutItemInput<EntityFrozenItem, true>
   ) => PutItem<EntityFrozenItem>
 
   /**
@@ -48,7 +48,7 @@ export class EntityV2<
   constructor({
     name,
     table,
-    item,
+    item: _item,
     computeKey,
     computeDefaults
   }: {
@@ -66,8 +66,8 @@ export class EntityV2<
     this.table = table
 
     // TODO: validate that item respects table key design
-    this.item = item
-    this.frozenItem = freezeItem(item) as any
+    this._item = _item
+    this.frozenItem = freezeItem(_item) as any
 
     this.computeKey = computeKey ?? (getDefaultComputeKey(this.table) as any)
     this.computeDefaults = computeDefaults ?? (defaultComputeDefaults as any)

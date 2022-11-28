@@ -1,13 +1,18 @@
-import type { AnyAttribute, FrozenAnyAttribute } from '../any'
-import type { LeafAttribute, ResolvedLeafAttributeType, FrozenLeafAttribute } from '../leaf'
-import type { SetAttribute, FrozenSetAttribute } from '../set'
-import type { ListAttribute, FrozenListAttribute } from '../list'
-import type { MapAttribute, FrozenMapAttribute } from '../map'
+import type { _AnyAttribute, FrozenAnyAttribute } from '../any'
+import type { _LeafAttribute, ResolvedLeafAttributeType, FrozenLeafAttribute } from '../leaf'
+import type { _SetAttribute, FrozenSetAttribute } from '../set'
+import type { _ListAttribute, FrozenListAttribute } from '../list'
+import type { _MapAttribute, FrozenMapAttribute } from '../map'
 
 /**
  * Possible attributes types
  */
-export type Attribute = AnyAttribute | LeafAttribute | SetAttribute | ListAttribute | MapAttribute
+export type _Attribute =
+  | _AnyAttribute
+  | _LeafAttribute
+  | _SetAttribute
+  | _ListAttribute
+  | _MapAttribute
 
 export type FrozenAttribute =
   | FrozenAnyAttribute
@@ -20,7 +25,7 @@ export type FrozenAttribute =
  * Dictionary of attributes
  */
 export interface MapAttributeAttributes {
-  [key: string]: Attribute
+  [key: string]: _Attribute
 }
 
 export interface FrozenMapAttributeAttributes {
