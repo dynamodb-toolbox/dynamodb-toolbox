@@ -1,9 +1,9 @@
 import { validateAttributeProperties } from '../shared/validate'
 import { freezeAttribute } from '../freeze'
 
-import { SetAttribute, FreezeSetAttribute } from './interface'
+import { _SetAttribute, FreezeSetAttribute } from './interface'
 
-type SetAttributeFreezer = <Attribute extends SetAttribute>(
+type SetAttributeFreezer = <Attribute extends _SetAttribute>(
   attribute: Attribute,
   path: string
 ) => FreezeSetAttribute<Attribute>
@@ -15,7 +15,7 @@ type SetAttributeFreezer = <Attribute extends SetAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeSetAttribute: SetAttributeFreezer = <Attribute extends SetAttribute>(
+export const freezeSetAttribute: SetAttributeFreezer = <Attribute extends _SetAttribute>(
   attribute: Attribute,
   path: string
 ): FreezeSetAttribute<Attribute> => {
