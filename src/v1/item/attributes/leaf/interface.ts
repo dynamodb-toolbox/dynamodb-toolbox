@@ -11,7 +11,7 @@ import type {
 /**
  * Leaf attribute interface
  */
-export type LeafAttribute<
+export type _LeafAttribute<
   Type extends LeafAttributeType = LeafAttributeType,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
@@ -37,21 +37,21 @@ export type LeafAttribute<
    */
   required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
     nextRequired?: NextIsRequired
-  ) => LeafAttribute<Type, NextIsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+  ) => _LeafAttribute<Type, NextIsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => LeafAttribute<Type, IsRequired, true, IsKey, SavedAs, Enum, Default>
+  hidden: () => _LeafAttribute<Type, IsRequired, true, IsKey, SavedAs, Enum, Default>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => LeafAttribute<Type, IsRequired, IsHidden, true, SavedAs, Enum, Default>
+  key: () => _LeafAttribute<Type, IsRequired, IsHidden, true, SavedAs, Enum, Default>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NextSavedAs extends string | undefined>(
     nextSavedAs: NextSavedAs
-  ) => LeafAttribute<Type, IsRequired, IsHidden, IsKey, NextSavedAs, Enum, Default>
+  ) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, NextSavedAs, Enum, Default>
   /**
    * Provide a finite list of possible values for attribute
    * (For typing reasons, enums are only available as attribute methods, not as input options)
@@ -62,7 +62,7 @@ export type LeafAttribute<
    */
   enum: <NextEnum extends ResolveLeafAttributeType<Type>[]>(
     ...nextEnum: NextEnum
-  ) => LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, NextEnum, Default & NextEnum>
+  ) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, NextEnum, Default & NextEnum>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
@@ -75,7 +75,7 @@ export type LeafAttribute<
         : unknown)
   >(
     nextDefaultValue: NextDefault
-  ) => LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, NextDefault>
+  ) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, NextDefault>
 }
 
 export type FrozenLeafAttribute<
@@ -96,7 +96,7 @@ export type FrozenLeafAttribute<
   default: Default
 }
 
-export type FreezeLeafAttribute<Attribute extends LeafAttribute> = FrozenLeafAttribute<
+export type FreezeLeafAttribute<Attribute extends _LeafAttribute> = FrozenLeafAttribute<
   Attribute['_type'],
   Attribute['_required'],
   Attribute['_hidden'],

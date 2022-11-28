@@ -3,7 +3,7 @@ import type { O } from 'ts-toolbelt'
 import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constants'
 import type { MapAttributeAttributes, Narrow } from '../types'
 
-import type { MapAttribute } from './interface'
+import type { _MapAttribute } from './interface'
 import { MapAttributeOptions, MAPPED_DEFAULT_OPTIONS } from './options'
 
 type MapAttributeAttributeTyper = <
@@ -17,7 +17,7 @@ type MapAttributeAttributeTyper = <
 >(
   _attributes: Narrow<Attributes>,
   options?: O.Partial<MapAttributeOptions<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>>
-) => MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
+) => _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
 
 /**
  * Define a new map attribute
@@ -36,7 +36,7 @@ export const map: MapAttributeAttributeTyper = <
 >(
   attributes: Narrow<Attributes>,
   options?: O.Partial<MapAttributeOptions<IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>>
-): MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> => {
+): _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default> => {
   const appliedOptions = { ...MAPPED_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
@@ -57,12 +57,12 @@ export const map: MapAttributeAttributeTyper = <
     _savedAs,
     _default,
     required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
-      nextRequired: NextIsRequired = 'atLeastOnce' as unknown as NextIsRequired
+      nextRequired: NextIsRequired = ('atLeastOnce' as unknown) as NextIsRequired
     ) => map(attributes, { ...appliedOptions, required: nextRequired }),
     hidden: () => map(attributes, { ...appliedOptions, hidden: true }),
     key: () => map(attributes, { ...appliedOptions, key: true }),
     open: () => map(attributes, { ...appliedOptions, open: true }),
     savedAs: nextSavedAs => map(attributes, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => map(attributes, { ...appliedOptions, default: nextDefault })
-  } as MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
+  } as _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
 }

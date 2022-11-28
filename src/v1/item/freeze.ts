@@ -1,10 +1,10 @@
-import { Item, FreezeItem } from './interface'
+import { _Item, FreezeItem } from './interface'
 import { FreezeAttribute, freezeAttribute } from './attributes/freeze'
 import { RequiredOption } from './attributes/constants/requiredOptions'
 
-type ItemFreezer = <ItemInput extends Item>(item: ItemInput) => FreezeItem<ItemInput>
+type ItemFreezer = <ItemInput extends _Item>(item: ItemInput) => FreezeItem<ItemInput>
 
-export const freezeItem: ItemFreezer = <ItemInput extends Item>(
+export const freezeItem: ItemFreezer = <ItemInput extends _Item>(
   item: ItemInput
 ): FreezeItem<ItemInput> => {
   const { _type: type, _open: open } = item
