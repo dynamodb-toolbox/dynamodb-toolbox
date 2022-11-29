@@ -30,6 +30,7 @@ const TestEntity = new Entity({
     test_boolean_default: { type: 'boolean', default: false },
     test_list: { type: 'list' },
     test_list_coerce: { type: 'list', coerce: true },
+    test_list_required: { type: 'list', required: true },
     test_map: { type: 'map', alias: 'contents' },
     test_string_set: { type: 'set' },
     test_number_set: { type: 'set' },
@@ -808,6 +809,17 @@ describe('update', () => {
       test3: 0
     })
     expect(ExpressionAttributeValues![':test3']).toBe(0)
+  })
+
+  it('allows using list operations on a required list field', ()=> {
+    const { ExpressionAttributeValues } = TestEntity.updateParams({
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_list_required: {
+        $prepend: [1, 2, 3]
+      }
+    })
+    expect(ExpressionAttributeValues![':test_list_required']).toEqual([1, 2, 3])
   })
 
   it('removes unused expression values/names when using $set for a map field with an empty object', () => {
