@@ -475,8 +475,6 @@ export type UpdateItem<
           {
             [inputRequiredOrWithDefaultAttribute in (
               | Attributes['required']['all']
-              | Attributes['required']['default']
-              | Attributes['required']['input']
               | Attributes['always']['default']
             ) &
               keyof Item]?: AttributeUpdateInput<Item[inputRequiredOrWithDefaultAttribute]>
