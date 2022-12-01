@@ -55,7 +55,8 @@ export default (
       case 'map':
         if (
           typeof config[prop] !== 'string' ||
-          track.fields.includes((config[prop] || '').trim()) ||
+          // check fields not have alias field except the field itself.
+          (field !== config[prop] && track.fields.includes((config[prop] || '').trim())) ||
           (config[prop] || '').trim().length === 0
         )
           error(`'${prop}' must be a unique string`)
