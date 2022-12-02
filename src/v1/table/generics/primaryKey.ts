@@ -9,20 +9,18 @@ import { HasSK } from './hasSk'
  * @param TableInput Table
  * @return Object
  */
-export type PrimaryKey<TableInput extends TableV2 = TableV2> = TableV2 extends TableInput
+export type PrimaryKey<TABLE extends TableV2 = TableV2> = TableV2 extends TABLE
   ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>
-  : HasSK<TableInput> extends true
+  : HasSK<TABLE> extends true
   ? {
       [K in
-        | TableInput['partitionKey']['name']
-        | NonNullable<TableInput['sortKey']>['name']]: K extends TableInput['partitionKey']['name']
-        ? ResolveIndexableKeyType<TableInput['partitionKey']['type']>
-        : K extends NonNullable<TableInput['sortKey']>['name']
-        ? ResolveIndexableKeyType<NonNullable<TableInput['sortKey']>['type']>
+        | TABLE['partitionKey']['name']
+        | NonNullable<TABLE['sortKey']>['name']]: K extends TABLE['partitionKey']['name']
+        ? ResolveIndexableKeyType<TABLE['partitionKey']['type']>
+        : K extends NonNullable<TABLE['sortKey']>['name']
+        ? ResolveIndexableKeyType<NonNullable<TABLE['sortKey']>['type']>
         : never
     }
   : {
-      [K in TableInput['partitionKey']['name']]: ResolveIndexableKeyType<
-        TableInput['partitionKey']['type']
-      >
+      [K in TABLE['partitionKey']['name']]: ResolveIndexableKeyType<TABLE['partitionKey']['type']>
     }

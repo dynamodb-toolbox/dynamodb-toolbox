@@ -7,16 +7,16 @@ import type { AnyAttributeDefaultValue } from './types'
  * Input options of Any Attribute
  */
 export interface AnyAttributeOptions<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends AnyAttributeDefaultValue = AnyAttributeDefaultValue
-> extends AttributeOptions<IsRequired, IsHidden, IsKey, SavedAs> {
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  DEFAULT extends AnyAttributeDefaultValue = AnyAttributeDefaultValue
+> extends AttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    */
-  default: Default
+  default: DEFAULT
 }
 
 export const ANY_DEFAULT_OPTIONS: AnyAttributeOptions<Never, false, false, undefined, undefined> = {

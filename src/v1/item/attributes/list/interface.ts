@@ -8,16 +8,16 @@ import type { _ListAttributeElements, ListAttributeElements } from './types'
  * List attribute interface
  */
 export interface _ListAttribute<
-  Elements extends _ListAttributeElements = _ListAttributeElements,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+  ELEMENTS extends _ListAttributeElements = _ListAttributeElements,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
   _type: 'list'
-  _elements: Elements
-  _default: Default
+  _elements: ELEMENTS
+  _default: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -27,52 +27,52 @@ export interface _ListAttribute<
    *
    * @param nextRequired RequiredOption
    */
-  required: <NextRequired extends RequiredOption = AtLeastOnce>(
-    nextRequired?: NextRequired
-  ) => _ListAttribute<Elements, NextRequired, IsHidden, IsKey, SavedAs, Default>
+  required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+    nextRequired?: NEXT_IS_REQUIRED
+  ) => _ListAttribute<ELEMENTS, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _ListAttribute<Elements, IsRequired, true, IsKey, SavedAs, Default>
+  hidden: () => _ListAttribute<ELEMENTS, IS_REQUIRED, true, IS_KEY, SAVED_AS, DEFAULT>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _ListAttribute<Elements, IsRequired, IsHidden, true, SavedAs, Default>
+  key: () => _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, true, SAVED_AS, DEFAULT>
   /**
    * Rename attribute before save commands
    */
-  savedAs: <NextSavedAs extends string | undefined>(
-    nextSavedAs: NextSavedAs
-  ) => _ListAttribute<Elements, IsRequired, IsHidden, IsKey, NextSavedAs, Default>
+  savedAs: <NEXT_SAVED_AS extends string | undefined>(
+    nextSavedAs: NEXT_SAVED_AS
+  ) => _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, NEXT_SAVED_AS, DEFAULT>
   /**
    * Tag attribute as having a computed default value
    *
    * @param nextDefaultValue `ComputedDefault`
    */
-  default: <NextDefault extends ComputedDefault | undefined>(
-    nextDefaultValue: NextDefault
-  ) => _ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, NextDefault>
+  default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
+    nextDefaultValue: NEXT_DEFAULT
+  ) => _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, NEXT_DEFAULT>
 }
 
 export interface ListAttribute<
-  Elements extends ListAttributeElements = ListAttributeElements,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+  ELEMENTS extends ListAttributeElements = ListAttributeElements,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
   type: 'list'
-  elements: Elements
-  default: Default
+  elements: ELEMENTS
+  default: DEFAULT
   path: string
 }
 
-export type FreezeListAttribute<Attribute extends _ListAttribute> = ListAttribute<
-  FreezeAttribute<Attribute['_elements']>,
-  Attribute['_required'],
-  Attribute['_hidden'],
-  Attribute['_key'],
-  Attribute['_savedAs'],
-  Attribute['_default']
+export type FreezeListAttribute<_LIST_ATTRIBUTE extends _ListAttribute> = ListAttribute<
+  FreezeAttribute<_LIST_ATTRIBUTE['_elements']>,
+  _LIST_ATTRIBUTE['_required'],
+  _LIST_ATTRIBUTE['_hidden'],
+  _LIST_ATTRIBUTE['_key'],
+  _LIST_ATTRIBUTE['_savedAs'],
+  _LIST_ATTRIBUTE['_default']
 >

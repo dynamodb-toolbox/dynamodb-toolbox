@@ -9,18 +9,18 @@ import type { FreezeAttribute } from '../freeze'
  * (Called MapAttribute to differ from native TS Map class)
  */
 export interface _MapAttribute<
-  Attributes extends _MapAttributeAttributes = _MapAttributeAttributes,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  IsOpen extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+  ATTRIBUTES extends _MapAttributeAttributes = _MapAttributeAttributes,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  IS_OPEN extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
   _type: 'map'
-  _attributes: Attributes
-  _open: IsOpen
-  _default: Default
+  _attributes: ATTRIBUTES
+  _open: IS_OPEN
+  _default: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -30,64 +30,66 @@ export interface _MapAttribute<
    *
    * @param nextRequired RequiredOption
    */
-  required: <NextRequired extends RequiredOption = AtLeastOnce>(
-    nextRequired?: NextRequired
-  ) => _MapAttribute<Attributes, NextRequired, IsHidden, IsKey, IsOpen, SavedAs, Default>
+  required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
+    nextRequired?: NEXT_REQUIRED
+  ) => _MapAttribute<ATTRIBUTES, NEXT_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _MapAttribute<Attributes, IsRequired, true, IsKey, IsOpen, SavedAs, Default>
+  hidden: () => _MapAttribute<ATTRIBUTES, IS_REQUIRED, true, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _MapAttribute<Attributes, IsRequired, IsHidden, true, IsOpen, SavedAs, Default>
+  key: () => _MapAttribute<ATTRIBUTES, IS_REQUIRED, IS_HIDDEN, true, IS_OPEN, SAVED_AS, DEFAULT>
   /**
    * Accept additional attributes of any type
    */
-  open: () => _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, true, SavedAs, Default>
+  open: () => _MapAttribute<ATTRIBUTES, IS_REQUIRED, IS_HIDDEN, IS_KEY, true, SAVED_AS, DEFAULT>
   /**
    * Rename attribute before save commands
    */
-  savedAs: <NextSavedAs extends string | undefined>(
-    nextSavedAs: NextSavedAs
-  ) => _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, NextSavedAs, Default>
+  savedAs: <NEXT_SAVED_AS extends string | undefined>(
+    nextSavedAs: NEXT_SAVED_AS
+  ) => _MapAttribute<ATTRIBUTES, IS_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, NEXT_SAVED_AS, DEFAULT>
   /**
    * Tag attribute as having a computed default value
    *
    * @param nextDefaultValue `ComputedDefault`
    */
-  default: <NextComputeDefault extends ComputedDefault | undefined>(
-    nextDefaultValue: NextComputeDefault
-  ) => _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, NextComputeDefault>
+  default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
+    nextDefaultValue: NEXT_DEFAULT
+  ) => _MapAttribute<ATTRIBUTES, IS_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, NEXT_DEFAULT>
 }
 
 export interface MapAttribute<
-  Attributes extends MapAttributeAttributes = MapAttributeAttributes,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  IsOpen extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  IS_OPEN extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
   type: 'map'
-  attributes: Attributes
-  open: IsOpen
-  default: Default
+  attributes: ATTRIBUTES
+  open: IS_OPEN
+  default: DEFAULT
   path: string
   requiredAttributesNames: Record<RequiredOption, Set<string>>
 }
 
-export type FreezeMapAttribute<Attribute extends _MapAttribute> = MapAttribute<
-  _MapAttribute extends Attribute
+export type FreezeMapAttribute<_MAP_ATTRIBUTE extends _MapAttribute> = MapAttribute<
+  _MapAttribute extends _MAP_ATTRIBUTE
     ? MapAttributeAttributes
     : {
-        [key in keyof Attribute['_attributes']]: FreezeAttribute<Attribute['_attributes'][key]>
+        [key in keyof _MAP_ATTRIBUTE['_attributes']]: FreezeAttribute<
+          _MAP_ATTRIBUTE['_attributes'][key]
+        >
       },
-  Attribute['_required'],
-  Attribute['_hidden'],
-  Attribute['_key'],
-  Attribute['_open'],
-  Attribute['_savedAs'],
-  Attribute['_default']
+  _MAP_ATTRIBUTE['_required'],
+  _MAP_ATTRIBUTE['_hidden'],
+  _MAP_ATTRIBUTE['_key'],
+  _MAP_ATTRIBUTE['_open'],
+  _MAP_ATTRIBUTE['_savedAs'],
+  _MAP_ATTRIBUTE['_default']
 >
