@@ -1,13 +1,13 @@
 import type { O } from 'ts-toolbelt'
 
 import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constants'
-import type { MapAttributeAttributes, Narrow } from '../types'
+import type { _MapAttributeAttributes, Narrow } from '../types'
 
 import type { _MapAttribute } from './interface'
 import { MapAttributeOptions, MAPPED_DEFAULT_OPTIONS } from './options'
 
 type MapAttributeAttributeTyper = <
-  Attributes extends MapAttributeAttributes = {},
+  Attributes extends _MapAttributeAttributes = {},
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,
@@ -26,7 +26,7 @@ type MapAttributeAttributeTyper = <
  * @param options _(optional)_ Map Options
  */
 export const map: MapAttributeAttributeTyper = <
-  Attributes extends MapAttributeAttributes = {},
+  Attributes extends _MapAttributeAttributes = {},
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,

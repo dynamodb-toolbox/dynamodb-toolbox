@@ -1,6 +1,6 @@
 import { RequiredOption } from '../constants/requiredOptions'
 
-export interface AttributeProperties<
+export interface _AttributeProperties<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
@@ -12,7 +12,7 @@ export interface AttributeProperties<
   _savedAs: SavedAs
 }
 
-export interface FrozenAttributeProperties<
+export interface AttributeProperties<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,

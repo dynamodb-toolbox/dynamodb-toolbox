@@ -1,14 +1,14 @@
 import type { O } from 'ts-toolbelt'
 
 import type {
-  FrozenItem,
-  FrozenAttribute,
+  Item,
+  Attribute,
   ResolvedAttribute,
-  FrozenAnyAttribute,
-  FrozenLeafAttribute,
-  FrozenSetAttribute,
-  FrozenListAttribute,
-  FrozenMapAttribute,
+  AnyAttribute,
+  LeafAttribute,
+  SetAttribute,
+  ListAttribute,
+  MapAttribute,
   OnlyOnce,
   Always
 } from 'v1/item'
@@ -21,17 +21,15 @@ import type { EntityV2 } from '../class'
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type UpdateItemInput<
-  Input extends EntityV2 | FrozenItem | FrozenAttribute
-> = Input extends FrozenAnyAttribute
+export type UpdateItemInput<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends FrozenLeafAttribute
+  : Input extends LeafAttribute
   ? NonNullable<Input['resolved']>
-  : Input extends FrozenSetAttribute
+  : Input extends SetAttribute
   ? Set<UpdateItemInput<Input['elements']>>
-  : Input extends FrozenListAttribute
+  : Input extends ListAttribute
   ? UpdateItemInput<Input['elements']>[]
-  : Input extends FrozenMapAttribute | FrozenItem
+  : Input extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
@@ -50,5 +48,5 @@ export type UpdateItemInput<
     > & // Add Record<string, ResolvedAttribute> if map is open
       (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
   : Input extends EntityV2
-  ? UpdateItemInput<Input['frozenItem']>
+  ? UpdateItemInput<Input['item']>
   : never
