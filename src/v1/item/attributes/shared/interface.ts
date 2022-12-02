@@ -1,25 +1,25 @@
 import { RequiredOption } from '../constants/requiredOptions'
 
 export interface _AttributeProperties<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined
 > {
-  _required: IsRequired
-  _hidden: IsHidden
-  _key: IsKey
-  _savedAs: SavedAs
+  _required: IS_REQUIRED
+  _hidden: IS_HIDDEN
+  _key: IS_KEY
+  _savedAs: SAVED_AS
 }
 
 export interface AttributeProperties<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined
 > {
-  required: IsRequired
-  hidden: IsHidden
-  key: IsKey
-  savedAs: SavedAs
+  required: IS_REQUIRED
+  hidden: IS_HIDDEN
+  key: IS_KEY
+  savedAs: SAVED_AS
 }

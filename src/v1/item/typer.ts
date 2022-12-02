@@ -1,9 +1,9 @@
 import type { _MapAttributeAttributes, Narrow } from './attributes/types'
 import type { _Item } from './interface'
 
-type ItemTyper = <MapAttributeAttributesInput extends _MapAttributeAttributes = {}>(
-  _attributes: Narrow<MapAttributeAttributesInput>
-) => _Item<MapAttributeAttributesInput>
+type ItemTyper = <_MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = {}>(
+  _attributes: Narrow<_MAP_ATTRIBUTE_ATTRIBUTES>
+) => _Item<_MAP_ATTRIBUTE_ATTRIBUTES>
 
 // TODO: Enable item opening
 /**
@@ -12,11 +12,11 @@ type ItemTyper = <MapAttributeAttributesInput extends _MapAttributeAttributes = 
  * @param attributes Object of attributes
  * @return Item
  */
-export const item: ItemTyper = <MapAttributeAttributesInput extends _MapAttributeAttributes = {}>(
-  attributes: Narrow<MapAttributeAttributesInput>
-): _Item<MapAttributeAttributesInput> =>
+export const item: ItemTyper = <_MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = {}>(
+  attributes: Narrow<_MAP_ATTRIBUTE_ATTRIBUTES>
+): _Item<_MAP_ATTRIBUTE_ATTRIBUTES> =>
   ({
     _type: 'item',
     _open: false,
     _attributes: attributes
-  } as _Item<MapAttributeAttributesInput>)
+  } as _Item<_MAP_ATTRIBUTE_ATTRIBUTES>)

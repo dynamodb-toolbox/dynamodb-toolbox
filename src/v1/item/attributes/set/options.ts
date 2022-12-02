@@ -6,16 +6,16 @@ import { ComputedDefault } from '../constants/computedDefault'
  * Input options of Set Attribute
  */
 export interface SetAttributeOptions<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeOptions<IsRequired, IsHidden, IsKey, SavedAs> {
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
+> extends AttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
   /**
    * Tag attribute as having a computed default value
    */
-  default: Default
+  default: DEFAULT
 }
 
 export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeOptions<

@@ -3,10 +3,10 @@ import { freezeAttribute } from '../freeze'
 
 import type { _ListAttribute, FreezeListAttribute } from './interface'
 
-type ListAttributeFreezer = <Attribute extends _ListAttribute>(
-  attribute: Attribute,
+type ListAttributeFreezer = <_LIST_ATTRIBUTE extends _ListAttribute>(
+  attribute: _LIST_ATTRIBUTE,
   path: string
-) => FreezeListAttribute<Attribute>
+) => FreezeListAttribute<_LIST_ATTRIBUTE>
 
 /**
  * Freezes a list instance
@@ -15,10 +15,10 @@ type ListAttributeFreezer = <Attribute extends _ListAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeListAttribute: ListAttributeFreezer = <Attribute extends _ListAttribute>(
-  attribute: Attribute,
+export const freezeListAttribute: ListAttributeFreezer = <_LIST_ATTRIBUTE extends _ListAttribute>(
+  attribute: _LIST_ATTRIBUTE,
   path: string
-): FreezeListAttribute<Attribute> => {
+): FreezeListAttribute<_LIST_ATTRIBUTE> => {
   validateAttributeProperties(attribute, path)
 
   const {
@@ -30,7 +30,7 @@ export const freezeListAttribute: ListAttributeFreezer = <Attribute extends _Lis
     _default
   } = attribute
 
-  const elements: Attribute['_elements'] = attribute._elements
+  const elements: _LIST_ATTRIBUTE['_elements'] = attribute._elements
   const {
     _required: elementsRequired,
     _hidden: elementsHidden,
