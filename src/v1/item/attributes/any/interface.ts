@@ -1,5 +1,5 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
+import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
 
 import type { AnyAttributeDefaultValue } from './types'
 
@@ -12,7 +12,7 @@ export interface _AnyAttribute<
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends AnyAttributeDefaultValue = AnyAttributeDefaultValue
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _type: 'any'
   _default: Default
   /**
@@ -51,19 +51,19 @@ export interface _AnyAttribute<
   ) => _AnyAttribute<IsRequired, IsHidden, IsKey, SavedAs, NextDefaultValue>
 }
 
-export interface FrozenAnyAttribute<
+export interface AnyAttribute<
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends AnyAttributeDefaultValue = AnyAttributeDefaultValue
-> extends FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   type: 'any'
   default: Default
   path: string
 }
 
-export type FreezeAnyAttribute<Attribute extends _AnyAttribute> = FrozenAnyAttribute<
+export type FreezeAnyAttribute<Attribute extends _AnyAttribute> = AnyAttribute<
   Attribute['_required'],
   Attribute['_hidden'],
   Attribute['_key'],
