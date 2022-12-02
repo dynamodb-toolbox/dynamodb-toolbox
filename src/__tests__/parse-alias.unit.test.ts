@@ -25,7 +25,7 @@ const TestTable = new Table({
 })
 
 describe('alias-parse-test', () => {
-  it('success parse item with alias same to field', () => {
+  it('successfully parse item with alias same as field', () => {
     const item = TestEntity.parse({
       pk: 'testPk',
       sk: 'testSk',
