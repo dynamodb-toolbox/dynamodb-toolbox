@@ -7,19 +7,19 @@ import type { LeafAttributeType, LeafAttributeEnumValues, LeafAttributeDefaultVa
  * Input options of Leaf Attribute
  */
 export interface LeafAttributeOptions<
-  Type extends LeafAttributeType = LeafAttributeType,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
-  Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
-> extends AttributeOptions<IsRequired, IsHidden, IsKey, SavedAs> {
-  _enum: Enum
+  TYPE extends LeafAttributeType = LeafAttributeType,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  ENUM extends LeafAttributeEnumValues<TYPE> = LeafAttributeEnumValues<TYPE>,
+  DEFAULT extends LeafAttributeDefaultValue<TYPE> = LeafAttributeDefaultValue<TYPE>
+> extends AttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
+  _enum: ENUM
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    */
-  default: Default
+  default: DEFAULT
 }
 
 export const LEAF_DEFAULT_OPTIONS: LeafAttributeOptions<

@@ -12,24 +12,24 @@ import type { LeafAttributeType, LeafAttributeEnumValues, LeafAttributeDefaultVa
  * @param options _(optional)_ Leaf Options
  */
 const leaf = <
-  Type extends LeafAttributeType = LeafAttributeType,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
-  Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
+  TYPE extends LeafAttributeType = LeafAttributeType,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  ENUM extends LeafAttributeEnumValues<TYPE> = LeafAttributeEnumValues<TYPE>,
+  DEFAULT extends LeafAttributeDefaultValue<TYPE> = LeafAttributeDefaultValue<TYPE>
 >(
-  options: { type: Type } & LeafAttributeOptions<
-    Type,
-    IsRequired,
-    IsHidden,
-    IsKey,
-    SavedAs,
-    Enum,
-    Default
+  options: { type: TYPE } & LeafAttributeOptions<
+    TYPE,
+    IS_REQUIRED,
+    IS_HIDDEN,
+    IS_KEY,
+    SAVED_AS,
+    ENUM,
+    DEFAULT
   >
-): _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default> => {
+): _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT> => {
   const {
     type: _type,
     required: _required,
@@ -48,43 +48,43 @@ const leaf = <
     _savedAs,
     _default,
     _enum,
-    required: <NextRequired extends RequiredOption = AtLeastOnce>(
-      nextRequired = 'atLeastOnce' as NextRequired
+    required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
+      nextRequired = 'atLeastOnce' as NEXT_REQUIRED
     ) => leaf({ ...options, required: nextRequired }),
     hidden: () => leaf({ ...options, hidden: true }),
     key: () => leaf({ ...options, key: true }),
     savedAs: nextSavedAs => leaf({ ...options, savedAs: nextSavedAs }),
     default: nextDefault => leaf({ ...options, default: nextDefault }),
     enum: (...nextEnum) => leaf({ ...options, _enum: nextEnum })
-  } as _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+  } as _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
 }
 
-type LeafAttributeTyper<Type extends LeafAttributeType> = <
-  IsRequired extends RequiredOption = Never,
-  IsHidden extends boolean = false,
-  IsKey extends boolean = false,
-  SavedAs extends string | undefined = undefined,
-  Enum extends LeafAttributeEnumValues<Type> = undefined,
-  Default extends LeafAttributeDefaultValue<Type> = undefined
+type LeafAttributeTyper<TYPE extends LeafAttributeType> = <
+  IS_REQUIRED extends RequiredOption = Never,
+  IS_HIDDEN extends boolean = false,
+  IS_KEY extends boolean = false,
+  SAVED_AS extends string | undefined = undefined,
+  ENUM extends LeafAttributeEnumValues<TYPE> = undefined,
+  DEFAULT extends LeafAttributeDefaultValue<TYPE> = undefined
 >(
   options?: O.Partial<
-    LeafAttributeOptions<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+    LeafAttributeOptions<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
   >
-) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+) => _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
 
-const getLeafAttributeTyper = <Type extends LeafAttributeType>(type: Type) =>
+const getLeafAttributeTyper = <TYPE extends LeafAttributeType>(type: TYPE) =>
   (<
-    Required extends RequiredOption = Never,
-    Hidden extends boolean = false,
-    Key extends boolean = false,
-    SavedAs extends string | undefined = undefined,
-    Enum extends LeafAttributeEnumValues<Type> = undefined,
-    Default extends LeafAttributeDefaultValue<Type> = undefined
+    REQUIRED extends RequiredOption = Never,
+    HIDDEN extends boolean = false,
+    KEY extends boolean = false,
+    SAVED_AS extends string | undefined = undefined,
+    ENUM extends LeafAttributeEnumValues<TYPE> = undefined,
+    DEFAULT extends LeafAttributeDefaultValue<TYPE> = undefined
   >(
     leafOptions?: O.Partial<
-      LeafAttributeOptions<Type, Required, Hidden, Key, SavedAs, Enum, Default>
+      LeafAttributeOptions<TYPE, REQUIRED, HIDDEN, KEY, SAVED_AS, ENUM, DEFAULT>
     >
-  ) => leaf({ ...LEAF_DEFAULT_OPTIONS, ...leafOptions, type })) as LeafAttributeTyper<Type>
+  ) => leaf({ ...LEAF_DEFAULT_OPTIONS, ...leafOptions, type })) as LeafAttributeTyper<TYPE>
 
 /**
  * Define a new string attribute

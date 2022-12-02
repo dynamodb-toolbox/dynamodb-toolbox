@@ -7,16 +7,16 @@ import type { _ListAttribute } from './interface'
 import { ListAttributeOptions, LIST_DEFAULT_OPTIONS } from './options'
 
 type ListTyper = <
-  Elements extends _ListAttributeElements,
-  IsRequired extends RequiredOption = Never,
-  IsHidden extends boolean = false,
-  IsKey extends boolean = false,
-  SavedAs extends string | undefined = undefined,
-  Default extends ComputedDefault | undefined = undefined
+  ELEMENTS extends _ListAttributeElements,
+  IS_REQUIRED extends RequiredOption = Never,
+  IS_HIDDEN extends boolean = false,
+  IS_KEY extends boolean = false,
+  SAVED_AS extends string | undefined = undefined,
+  DEFAULT extends ComputedDefault | undefined = undefined
 >(
-  _elements: Elements,
-  options?: O.Partial<ListAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-) => _ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
+  _elements: ELEMENTS,
+  options?: O.Partial<ListAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
+) => _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
 
 /**
  * Define a new list attribute
@@ -30,16 +30,16 @@ type ListTyper = <
  * @param options _(optional)_ List Options
  */
 export const list: ListTyper = <
-  Elements extends _ListAttributeElements,
-  IsRequired extends RequiredOption = Never,
-  IsHidden extends boolean = false,
-  IsKey extends boolean = false,
-  SavedAs extends string | undefined = undefined,
-  Default extends ComputedDefault | undefined = undefined
+  ELEMENTS extends _ListAttributeElements,
+  IS_REQUIRED extends RequiredOption = Never,
+  IS_HIDDEN extends boolean = false,
+  IS_KEY extends boolean = false,
+  SAVED_AS extends string | undefined = undefined,
+  DEFAULT extends ComputedDefault | undefined = undefined
 >(
-  elements: Elements,
-  options?: O.Partial<ListAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-): _ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
+  elements: ELEMENTS,
+  options?: O.Partial<ListAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
+): _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
   const appliedOptions = { ...LIST_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
@@ -57,12 +57,12 @@ export const list: ListTyper = <
     _key,
     _savedAs,
     _default,
-    required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
-      nextRequired: NextIsRequired = 'atLeastOnce' as NextIsRequired
+    required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+      nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => list(elements, { ...appliedOptions, required: nextRequired }),
     hidden: () => list(elements, { ...appliedOptions, hidden: true }),
     key: () => list(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(elements, { ...appliedOptions, default: nextDefault })
-  } as _ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
+  } as _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
 }

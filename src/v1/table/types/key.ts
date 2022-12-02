@@ -8,11 +8,11 @@ import { IndexableKeyType } from './keyType'
  * @return Key
  */
 export interface Key<
-  KeyName extends string = string,
-  KeyType extends IndexableKeyType = IndexableKeyType
+  KEY_NAME extends string = string,
+  KEY_TYPE extends IndexableKeyType = IndexableKeyType
 > {
-  name: KeyName
-  type: KeyType
+  name: KEY_NAME
+  type: KEY_TYPE
 }
 
 /**
@@ -21,6 +21,6 @@ export interface Key<
  * @param KeyInput Key
  * @return Key
  */
-export type NarrowKey<KeyInput extends Key> = {
-  [Property in keyof KeyInput]: KeyInput[Property]
+export type NarrowKey<KEY_INPUT extends Key> = {
+  [Property in keyof KEY_INPUT]: KEY_INPUT[Property]
 }
