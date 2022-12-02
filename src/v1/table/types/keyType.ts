@@ -9,10 +9,10 @@ export type IndexableKeyType = 'string' | 'binary' | 'number'
  * @param KeyType Attribute Type
  * @return Type
  */
-export type ResolveIndexableKeyType<KeyType extends IndexableKeyType> = KeyType extends 'string'
+export type ResolveIndexableKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYPE extends 'string'
   ? string
-  : KeyType extends 'number'
+  : KEY_TYPE extends 'number'
   ? number
-  : KeyType extends 'binary'
+  : KEY_TYPE extends 'binary'
   ? Buffer
   : never

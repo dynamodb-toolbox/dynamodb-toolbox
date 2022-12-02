@@ -32,76 +32,76 @@ import type { EntityV2 } from '../class'
  * @return Object
  */
 export type PutItemInput<
-  Input extends EntityV2 | Item | Attribute,
-  RequireInitialDefaults extends boolean = false
-> = Input extends AnyAttribute
+  INPUT extends EntityV2 | Item | Attribute,
+  REQUIRE_INITIAL_DEFAULTS extends boolean = false
+> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
-  ? NonNullable<Input['resolved']>
-  : Input extends SetAttribute
-  ? Set<PutItemInput<Input['elements'], RequireInitialDefaults>>
-  : Input extends ListAttribute
-  ? PutItemInput<Input['elements'], RequireInitialDefaults>[]
-  : Input extends MapAttribute | Item
+  : INPUT extends LeafAttribute
+  ? NonNullable<INPUT['resolved']>
+  : INPUT extends SetAttribute
+  ? Set<PutItemInput<INPUT['elements'], REQUIRE_INITIAL_DEFAULTS>>
+  : INPUT extends ListAttribute
+  ? PutItemInput<INPUT['elements'], REQUIRE_INITIAL_DEFAULTS>[]
+  : INPUT extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Keep all attributes
-          [key in keyof Input['attributes']]: PutItemInput<
-            Input['attributes'][key],
-            RequireInitialDefaults
+          [key in keyof INPUT['attributes']]: PutItemInput<
+            INPUT['attributes'][key],
+            REQUIRE_INITIAL_DEFAULTS
           >
         }
       >,
       // Enforce Required attributes except those that have default (will be provided by the lib)
       | O.SelectKeys<
-          Input['attributes'],
+          INPUT['attributes'],
           { required: AtLeastOnce | OnlyOnce | Always; default: undefined }
         >
       // Add attributes with initial (non-computed) defaults if RequireInitialDefaults is true
-      | (RequireInitialDefaults extends true
-          ? O.FilterKeys<Input['attributes'], { default: undefined | ComputedDefault }>
+      | (REQUIRE_INITIAL_DEFAULTS extends true
+          ? O.FilterKeys<INPUT['attributes'], { default: undefined | ComputedDefault }>
           : never)
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : Input extends EntityV2
-  ? PutItemInput<Input['item'], RequireInitialDefaults>
+      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : INPUT extends EntityV2
+  ? PutItemInput<INPUT['item'], REQUIRE_INITIAL_DEFAULTS>
   : never
 
 // TODO: Required in Entity constructor... See if possible to use only PutItemInput
 export type _PutItemInput<
-  Input extends EntityV2 | _Item | _Attribute,
-  RequireInitialDefaults extends boolean = false
-> = Input extends _AnyAttribute
+  INPUT extends EntityV2 | _Item | _Attribute,
+  REQUIRE_INITIAL_DEFAULTS extends boolean = false
+> = INPUT extends _AnyAttribute
   ? ResolvedAttribute
-  : Input extends _LeafAttribute
-  ? NonNullable<Input['_resolved']>
-  : Input extends _SetAttribute
-  ? Set<_PutItemInput<Input['_elements'], RequireInitialDefaults>>
-  : Input extends _ListAttribute
-  ? _PutItemInput<Input['_elements'], RequireInitialDefaults>[]
-  : Input extends _MapAttribute | _Item
+  : INPUT extends _LeafAttribute
+  ? NonNullable<INPUT['_resolved']>
+  : INPUT extends _SetAttribute
+  ? Set<_PutItemInput<INPUT['_elements'], REQUIRE_INITIAL_DEFAULTS>>
+  : INPUT extends _ListAttribute
+  ? _PutItemInput<INPUT['_elements'], REQUIRE_INITIAL_DEFAULTS>[]
+  : INPUT extends _MapAttribute | _Item
   ? O.Required<
       O.Partial<
         {
           // Keep all attributes
-          [key in keyof Input['_attributes']]: _PutItemInput<
-            Input['_attributes'][key],
-            RequireInitialDefaults
+          [key in keyof INPUT['_attributes']]: _PutItemInput<
+            INPUT['_attributes'][key],
+            REQUIRE_INITIAL_DEFAULTS
           >
         }
       >,
       // Enforce Required attributes except those that have default (will be provided by the lib)
       | O.SelectKeys<
-          Input['_attributes'],
+          INPUT['_attributes'],
           { _required: AtLeastOnce | OnlyOnce | Always; _default: undefined }
         >
       // Add attributes with initial (non-computed) defaults if RequireInitialDefaults is true
-      | (RequireInitialDefaults extends true
-          ? O.FilterKeys<Input['_attributes'], { _default: undefined | ComputedDefault }>
+      | (REQUIRE_INITIAL_DEFAULTS extends true
+          ? O.FilterKeys<INPUT['_attributes'], { _default: undefined | ComputedDefault }>
           : never)
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (Input extends { _open: true } ? Record<string, ResolvedAttribute> : {})
-  : Input extends EntityV2
-  ? _PutItemInput<Input['_item'], RequireInitialDefaults>
+      (INPUT extends { _open: true } ? Record<string, ResolvedAttribute> : {})
+  : INPUT extends EntityV2
+  ? _PutItemInput<INPUT['_item'], REQUIRE_INITIAL_DEFAULTS>
   : never
