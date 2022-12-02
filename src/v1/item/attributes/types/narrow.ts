@@ -1,4 +1,4 @@
-import { MapAttributeAttributes, _Attribute } from './attribute'
+import { _MapAttributeAttributes, _Attribute } from './attribute'
 
 /**
  * Utility type to narrow the inferred attributes of a map or item
@@ -6,9 +6,9 @@ import { MapAttributeAttributes, _Attribute } from './attribute'
  * @param AttributeInput MapAttributeAttributes | Attribute
  * @return MapAttributeAttributes | Attribute
  */
-export type Narrow<AttributeInput extends MapAttributeAttributes | _Attribute> = {
+export type Narrow<AttributeInput extends _MapAttributeAttributes | _Attribute> = {
   [AttributeProperty in keyof AttributeInput]: AttributeInput[AttributeProperty] extends
-    | MapAttributeAttributes
+    | _MapAttributeAttributes
     | _Attribute
     ? Narrow<AttributeInput[AttributeProperty]>
     : AttributeInput[AttributeProperty]
