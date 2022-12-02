@@ -22,30 +22,30 @@ import type { EntityV2 } from '../class'
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type UpdateItem<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
+export type UpdateItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
-  ? NonNullable<Input['resolved']>
-  : Input extends SetAttribute
-  ? Set<UpdateItem<Input['elements']>>
-  : Input extends ListAttribute
-  ? UpdateItem<Input['elements']>[]
-  : Input extends MapAttribute | Item
+  : INPUT extends LeafAttribute
+  ? NonNullable<INPUT['resolved']>
+  : INPUT extends SetAttribute
+  ? Set<UpdateItem<INPUT['elements']>>
+  : INPUT extends ListAttribute
+  ? UpdateItem<INPUT['elements']>[]
+  : INPUT extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Filter Required OnlyOnce attributes
-          [key in O.FilterKeys<Input['attributes'], { required: OnlyOnce }>]: UpdateItem<
-            Input['attributes'][key]
+          [key in O.FilterKeys<INPUT['attributes'], { required: OnlyOnce }>]: UpdateItem<
+            INPUT['attributes'][key]
           >
         }
       >,
       // Enforce Always Required attributes
-      | O.SelectKeys<Input['attributes'], { required: Always }>
+      | O.SelectKeys<INPUT['attributes'], { required: Always }>
       // Enforce attributes that have initial default
-      | O.FilterKeys<Input['attributes'], { default: undefined | ComputedDefault }>
+      | O.FilterKeys<INPUT['attributes'], { default: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : Input extends EntityV2
-  ? UpdateItem<Input['item']>
+      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : INPUT extends EntityV2
+  ? UpdateItem<INPUT['item']>
   : never

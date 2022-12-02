@@ -22,17 +22,17 @@ const hasNoAttributes = (
  * @param putItemInput PutItemInput
  * @return PutItemCommandOutput
  */
-export const putItem = async <EntityInput extends EntityV2>(
-  entity: EntityInput,
-  putItemInput: PutItemInput<EntityInput>
+export const putItem = async <ENTITY extends EntityV2>(
+  entity: ENTITY,
+  putItemInput: PutItemInput<ENTITY>
 ): Promise<
   O.Merge<
     Omit<PutItemCommandOutput, 'Attributes'>,
-    { Attributes?: FormattedItem<EntityInput> | undefined }
+    { Attributes?: FormattedItem<ENTITY> | undefined }
   >
 > => {
   const commandOutput = await entity.table.dynamoDbClient.send(
-    new PutItemCommand(putItemParams<EntityInput>(entity, putItemInput))
+    new PutItemCommand(putItemParams<ENTITY>(entity, putItemInput))
   )
 
   if (hasNoAttributes(commandOutput)) {
@@ -61,9 +61,9 @@ export const putItem = async <EntityInput extends EntityV2>(
  * @param putItemInput Input
  * @return PutItemCommandInput
  */
-export const putItemParams = <EntityInput extends EntityV2>(
-  entity: EntityInput,
-  putItemInput: PutItemInput<EntityInput>
+export const putItemParams = <ENTITY extends EntityV2>(
+  entity: ENTITY,
+  putItemInput: PutItemInput<ENTITY>
 ): PutItemCommandInput => {
   const { name: tableName } = entity.table
 

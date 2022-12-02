@@ -14,16 +14,18 @@ import type {
  * @param Input Item | Attribute
  * @return Boolean
  */
-export type _HasComputedDefaults<Input extends _Item | _Attribute> = Input extends {
+export type _HasComputedDefaults<INPUT extends _Item | _Attribute> = INPUT extends {
   _default: ComputedDefault
 }
   ? true
-  : Input extends _SetAttribute | _ListAttribute
-  ? _HasComputedDefaults<Input['_elements']>
-  : Input extends _MapAttribute | _Item
+  : INPUT extends _SetAttribute | _ListAttribute
+  ? _HasComputedDefaults<INPUT['_elements']>
+  : INPUT extends _MapAttribute | _Item
   ? true extends {
-      [K in keyof Input['_attributes']]: _HasComputedDefaults<Input['_attributes'][K]>
-    }[keyof Input['_attributes']]
+      [ATTRIBUTE_NAME in keyof INPUT['_attributes']]: _HasComputedDefaults<
+        INPUT['_attributes'][ATTRIBUTE_NAME]
+      >
+    }[keyof INPUT['_attributes']]
     ? true
     : false
   : never

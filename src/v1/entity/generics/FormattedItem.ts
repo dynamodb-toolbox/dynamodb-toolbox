@@ -22,31 +22,31 @@ import { EntityV2 } from '../class'
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type FormattedItem<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
+export type FormattedItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
-  ? NonNullable<Input['resolved']>
-  : Input extends SetAttribute
-  ? Set<FormattedItem<Input['elements']>>
-  : Input extends ListAttribute
-  ? FormattedItem<Input['elements']>[]
-  : Input extends MapAttribute | Item
+  : INPUT extends LeafAttribute
+  ? NonNullable<INPUT['resolved']>
+  : INPUT extends SetAttribute
+  ? Set<FormattedItem<INPUT['elements']>>
+  : INPUT extends ListAttribute
+  ? FormattedItem<INPUT['elements']>[]
+  : INPUT extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Keep only non-hidden attributes
-          [key in O.SelectKeys<Input['attributes'], { hidden: false }>]: FormattedItem<
-            Input['attributes'][key]
+          [key in O.SelectKeys<INPUT['attributes'], { hidden: false }>]: FormattedItem<
+            INPUT['attributes'][key]
           >
         }
       >,
       // Enforce Required attributes
-      | O.SelectKeys<Input['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+      | O.SelectKeys<INPUT['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
       // Enforce attributes that have defined default (initial or computed)
       // (...but not so sure about that anymore, props can have computed default but still be optional)
-      | O.FilterKeys<Input['attributes'], { default: undefined }>
+      | O.FilterKeys<INPUT['attributes'], { default: undefined }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : Input extends EntityV2
-  ? FormattedItem<Input['item']>
+      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : INPUT extends EntityV2
+  ? FormattedItem<INPUT['item']>
   : never

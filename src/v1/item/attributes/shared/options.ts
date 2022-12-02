@@ -4,10 +4,10 @@ import { RequiredOption } from '../constants/requiredOptions'
  * Common input options of all Attributes
  */
 export interface AttributeOptions<
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined
 > {
   /**
    * Tag attribute as required. Possible values are:
@@ -16,17 +16,17 @@ export interface AttributeOptions<
    * - `"always"`: Required in PUTs and UPDATEs
    * - `"onlyOnce"`: Required in PUTs, denied in UPDATEs
    */
-  required: IsRequired
+  required: IS_REQUIRED
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: IsHidden
+  hidden: IS_HIDDEN
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: IsKey
+  key: IS_KEY
   /**
    * Rename attribute before save commands
    */
-  savedAs: SavedAs
+  savedAs: SAVED_AS
 }

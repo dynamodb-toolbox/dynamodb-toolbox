@@ -3,24 +3,24 @@ import type { O } from 'ts-toolbelt'
 import type { _Item, Always } from 'v1/item'
 import type { TableV2, IndexableKeyType, HasSK } from 'v1/table'
 
-type Or<PropositionA extends boolean, PropositionB extends boolean> = PropositionA extends true
+type Or<BOOL_A extends boolean, BOOL_B extends boolean> = BOOL_A extends true
   ? true
-  : PropositionB extends true
+  : BOOL_B extends true
   ? true
   : false
 
 type _NeedsKeyPartCompute<
-  ItemInput extends _Item,
-  KeyName extends string,
-  KeyType extends IndexableKeyType
-> = ItemInput['_attributes'] extends Record<
-  KeyName,
-  { _type: KeyType; _required: Always; _key: true; _savedAs: undefined }
+  _ITEM extends _Item,
+  KEY_PART_NAME extends string,
+  KEY_PART_TYPE extends IndexableKeyType
+> = _ITEM['_attributes'] extends Record<
+  KEY_PART_NAME,
+  { _type: KEY_PART_TYPE; _required: Always; _key: true; _savedAs: undefined }
 >
   ? false
   : O.SelectKeys<
-      ItemInput['_attributes'],
-      { _type: KeyType; _required: Always; _key: true; _savedAs: KeyName }
+      _ITEM['_attributes'],
+      { _type: KEY_PART_TYPE; _required: Always; _key: true; _savedAs: KEY_PART_NAME }
     > extends never
   ? true
   : false
@@ -33,24 +33,13 @@ type _NeedsKeyPartCompute<
  * @param TableInput Table
  * @return Boolean
  */
-export type _NeedsKeyCompute<
-  ItemInput extends _Item,
-  TableInput extends TableV2
-> = HasSK<TableInput> extends true
+export type _NeedsKeyCompute<_ITEM extends _Item, TABLE extends TableV2> = HasSK<TABLE> extends true
   ? Or<
+      _NeedsKeyPartCompute<_ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>,
       _NeedsKeyPartCompute<
-        ItemInput,
-        TableInput['partitionKey']['name'],
-        TableInput['partitionKey']['type']
-      >,
-      _NeedsKeyPartCompute<
-        ItemInput,
-        NonNullable<TableInput['sortKey']>['name'],
-        NonNullable<TableInput['sortKey']>['type']
+        _ITEM,
+        NonNullable<TABLE['sortKey']>['name'],
+        NonNullable<TABLE['sortKey']>['type']
       >
     >
-  : _NeedsKeyPartCompute<
-      ItemInput,
-      TableInput['partitionKey']['name'],
-      TableInput['partitionKey']['type']
-    >
+  : _NeedsKeyPartCompute<_ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>
