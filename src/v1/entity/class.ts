@@ -14,26 +14,24 @@ import { defaultComputeDefaults } from './utils/defaultComputeDefaults'
 import { getDefaultComputeKey } from './utils/defaultComputeKey'
 
 export class EntityV2<
-  EntityName extends string = string,
-  EntityTable extends TableV2 = TableV2,
-  _EntityItem extends _Item = _Item,
+  NAME extends string = string,
+  TABLE extends TableV2 = TableV2,
+  _ITEM extends _Item = _Item,
   // TODO: See if possible not to add it as a generic here
-  EntityItem extends Item = FreezeItem<_EntityItem>
+  ITEM extends Item = FreezeItem<_ITEM>
 > {
   public type: 'entity'
-  public name: EntityName
-  public table: EntityTable
-  public _item: _EntityItem
-  public item: EntityItem
+  public name: NAME
+  public table: TABLE
+  public _item: _ITEM
+  public item: ITEM
   // any is needed for contravariance
-  computeKey: (
-    keyInput: _Item extends _EntityItem ? any : KeyInput<EntityItem>
-  ) => PrimaryKey<EntityTable>
+  computeKey: (keyInput: _Item extends _ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
   // TODO: Split in putComputeDefaults & updateComputeDefaults
   // any is needed for contravariance
   computeDefaults: (
-    putItemInput: _Item extends _EntityItem ? any : PutItemInput<EntityItem, true>
-  ) => PutItem<EntityItem>
+    putItemInput: _Item extends _ITEM ? any : PutItemInput<ITEM, true>
+  ) => PutItem<ITEM>
 
   /**
    * Define an Entity for a given table
@@ -52,14 +50,14 @@ export class EntityV2<
     computeKey,
     computeDefaults
   }: {
-    name: EntityName
-    table: EntityTable
-    item: _EntityItem
-  } & (_NeedsKeyCompute<_EntityItem, EntityTable> extends true
-    ? { computeKey: (keyInput: _KeyInput<_EntityItem>) => PrimaryKey<EntityTable> }
+    name: NAME
+    table: TABLE
+    item: _ITEM
+  } & (_NeedsKeyCompute<_ITEM, TABLE> extends true
+    ? { computeKey: (keyInput: _KeyInput<_ITEM>) => PrimaryKey<TABLE> }
     : { computeKey?: undefined }) &
-    (_HasComputedDefaults<_EntityItem> extends true
-      ? { computeDefaults: (input: _PutItemInput<_EntityItem, true>) => _PutItem<_EntityItem> }
+    (_HasComputedDefaults<_ITEM> extends true
+      ? { computeDefaults: (input: _PutItemInput<_ITEM, true>) => _PutItem<_ITEM> }
       : { computeDefaults?: undefined })) {
     this.type = 'entity'
     this.name = name

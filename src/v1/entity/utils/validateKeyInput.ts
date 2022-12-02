@@ -15,9 +15,9 @@ import type { KeyInput } from '../generics'
 
 type ValidationContext = { elementsIndexes?: number[] }
 
-type KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
-  entity: Input,
-  keyInput: KeyInput<Input>,
+type KeyInputValidator = <INPUT extends EntityV2 | Item | Attribute>(
+  entity: INPUT,
+  keyInput: KeyInput<INPUT>,
   context?: ValidationContext
 ) => void
 
@@ -29,9 +29,9 @@ type KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
  * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return void
  */
-export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
-  entry: Input,
-  keyInput: KeyInput<Input>,
+export const validateKeyInput: KeyInputValidator = <INPUT extends EntityV2 | Item | Attribute>(
+  entry: INPUT,
+  keyInput: KeyInput<INPUT>,
   context: ValidationContext = {}
 ): void => {
   if (entry.type === 'entity') {

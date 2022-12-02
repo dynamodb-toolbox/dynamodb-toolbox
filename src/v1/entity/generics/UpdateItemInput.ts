@@ -21,32 +21,32 @@ import type { EntityV2 } from '../class'
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type UpdateItemInput<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
+export type UpdateItemInput<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
-  ? NonNullable<Input['resolved']>
-  : Input extends SetAttribute
-  ? Set<UpdateItemInput<Input['elements']>>
-  : Input extends ListAttribute
-  ? UpdateItemInput<Input['elements']>[]
-  : Input extends MapAttribute | Item
+  : INPUT extends LeafAttribute
+  ? NonNullable<INPUT['resolved']>
+  : INPUT extends SetAttribute
+  ? Set<UpdateItemInput<INPUT['elements']>>
+  : INPUT extends ListAttribute
+  ? UpdateItemInput<INPUT['elements']>[]
+  : INPUT extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Filter Required OnlyOnce attributes
-          [key in O.FilterKeys<Input['attributes'], { required: OnlyOnce }>]: UpdateItemInput<
-            Input['attributes'][key]
+          [key in O.FilterKeys<INPUT['attributes'], { required: OnlyOnce }>]: UpdateItemInput<
+            INPUT['attributes'][key]
           >
         }
       >,
       Exclude<
         // Enforce Required Always attributes...
-        O.SelectKeys<Input['attributes'], { required: Always }>,
+        O.SelectKeys<INPUT['attributes'], { required: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<Input['attributes'], { default: undefined }>
+        O.FilterKeys<INPUT['attributes'], { default: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : Input extends EntityV2
-  ? UpdateItemInput<Input['item']>
+      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : INPUT extends EntityV2
+  ? UpdateItemInput<INPUT['item']>
   : never

@@ -5,20 +5,18 @@ import { freezeListAttribute, _ListAttribute, FreezeListAttribute } from './list
 import { freezeMapAttribute, _MapAttribute, FreezeMapAttribute } from './map'
 import type { _Attribute } from './types/attribute'
 
-export type FreezeAttribute<
-  AttributeInput extends _Attribute
-> = AttributeInput extends _AnyAttribute
-  ? FreezeAnyAttribute<AttributeInput>
-  : AttributeInput extends _LeafAttribute
-  ? FreezeLeafAttribute<AttributeInput>
-  : AttributeInput extends _SetAttribute
-  ? FreezeSetAttribute<AttributeInput>
-  : AttributeInput extends _ListAttribute
-  ? FreezeListAttribute<AttributeInput>
-  : AttributeInput extends _ListAttribute
-  ? FreezeListAttribute<AttributeInput>
-  : AttributeInput extends _MapAttribute
-  ? FreezeMapAttribute<AttributeInput>
+export type FreezeAttribute<_ATTRIBUTE extends _Attribute> = _ATTRIBUTE extends _AnyAttribute
+  ? FreezeAnyAttribute<_ATTRIBUTE>
+  : _ATTRIBUTE extends _LeafAttribute
+  ? FreezeLeafAttribute<_ATTRIBUTE>
+  : _ATTRIBUTE extends _SetAttribute
+  ? FreezeSetAttribute<_ATTRIBUTE>
+  : _ATTRIBUTE extends _ListAttribute
+  ? FreezeListAttribute<_ATTRIBUTE>
+  : _ATTRIBUTE extends _ListAttribute
+  ? FreezeListAttribute<_ATTRIBUTE>
+  : _ATTRIBUTE extends _MapAttribute
+  ? FreezeMapAttribute<_ATTRIBUTE>
   : never
 
 /**
@@ -28,10 +26,10 @@ export type FreezeAttribute<
  * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return Attribute
  */
-export const freezeAttribute = <AttributeInput extends _Attribute>(
-  attribute: AttributeInput,
+export const freezeAttribute = <_ATTRIBUTE extends _Attribute>(
+  attribute: _ATTRIBUTE,
   path: string
-): FreezeAttribute<AttributeInput> => {
+): FreezeAttribute<_ATTRIBUTE> => {
   switch (attribute._type) {
     case 'boolean':
     case 'binary':

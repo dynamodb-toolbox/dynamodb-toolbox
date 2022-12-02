@@ -2,12 +2,12 @@ import type { EntityV2 } from '../class'
 import type { UpdateItemInput } from '../generics'
 
 type UpdateItemInputValidator = <
-  EntityInput extends EntityV2,
-  EntityUpdateItem extends Record<string, any> = UpdateItemInput<EntityInput>
+  ENTITY extends EntityV2,
+  UPDATE_ITEM_INPUT extends Record<string, any> = UpdateItemInput<ENTITY>
 >(
-  entity: EntityInput,
+  entity: ENTITY,
   updateItemInput: Record<string, any>
-) => updateItemInput is EntityUpdateItem
+) => updateItemInput is UPDATE_ITEM_INPUT
 
 /**
  * Validate the input of an UPDATE command for a given Entity
@@ -17,12 +17,12 @@ type UpdateItemInputValidator = <
  * @return Boolean
  */
 export const validateUpdateItemInput: UpdateItemInputValidator = <
-  EntityInput extends EntityV2,
-  EntityUpdateItem extends Record<string, any> = UpdateItemInput<EntityInput>
+  ENTITY extends EntityV2,
+  UPDATE_ITEM_INPUT extends Record<string, any> = UpdateItemInput<ENTITY>
 >(
-  entity: EntityInput,
+  entity: ENTITY,
   updateItemInput: Record<string, any>
-): updateItemInput is EntityUpdateItem => {
+): updateItemInput is UPDATE_ITEM_INPUT => {
   entity
   updateItemInput
   // TODO

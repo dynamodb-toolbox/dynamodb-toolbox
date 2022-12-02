@@ -6,10 +6,8 @@ import { _MapAttributeAttributes, _Attribute } from './attribute'
  * @param AttributeInput MapAttributeAttributes | Attribute
  * @return MapAttributeAttributes | Attribute
  */
-export type Narrow<AttributeInput extends _MapAttributeAttributes | _Attribute> = {
-  [AttributeProperty in keyof AttributeInput]: AttributeInput[AttributeProperty] extends
-    | _MapAttributeAttributes
-    | _Attribute
-    ? Narrow<AttributeInput[AttributeProperty]>
-    : AttributeInput[AttributeProperty]
+export type Narrow<_ATTRIBUTE extends _MapAttributeAttributes | _Attribute> = {
+  [PROPERTY in keyof _ATTRIBUTE]: _ATTRIBUTE[PROPERTY] extends _MapAttributeAttributes | _Attribute
+    ? Narrow<_ATTRIBUTE[PROPERTY]>
+    : _ATTRIBUTE[PROPERTY]
 }

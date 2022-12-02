@@ -27,63 +27,63 @@ import { EntityV2 } from '../class'
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type KeyInput<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
+export type KeyInput<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
-  ? NonNullable<Input['resolved']>
-  : Input extends SetAttribute
-  ? Set<KeyInput<Input['elements']>>
-  : Input extends ListAttribute
-  ? KeyInput<Input['elements']>[]
-  : Input extends MapAttribute | Item
+  : INPUT extends LeafAttribute
+  ? NonNullable<INPUT['resolved']>
+  : INPUT extends SetAttribute
+  ? Set<KeyInput<INPUT['elements']>>
+  : INPUT extends ListAttribute
+  ? KeyInput<INPUT['elements']>[]
+  : INPUT extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Keep only key attributes
-          [key in O.SelectKeys<Input['attributes'], { key: true }>]: KeyInput<
-            Input['attributes'][key]
+          [key in O.SelectKeys<INPUT['attributes'], { key: true }>]: KeyInput<
+            INPUT['attributes'][key]
           >
         }
       >,
       Exclude<
         // Enforce Always Required attributes
-        O.SelectKeys<Input['attributes'], { required: Always }>,
+        O.SelectKeys<INPUT['attributes'], { required: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<Input['attributes'], { default: undefined }>
+        O.FilterKeys<INPUT['attributes'], { default: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : Input extends EntityV2
-  ? KeyInput<Input['item']>
+      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : INPUT extends EntityV2
+  ? KeyInput<INPUT['item']>
   : never
 
 // TODO: Required in Entity constructor... See if possible to use only KeyInput w. Item
-export type _KeyInput<Input extends EntityV2 | _Item | _Attribute> = Input extends _AnyAttribute
+export type _KeyInput<INPUT extends EntityV2 | _Item | _Attribute> = INPUT extends _AnyAttribute
   ? ResolvedAttribute
-  : Input extends _LeafAttribute
-  ? NonNullable<Input['_resolved']>
-  : Input extends _SetAttribute
-  ? Set<_KeyInput<Input['_elements']>>
-  : Input extends _ListAttribute
-  ? _KeyInput<Input['_elements']>[]
-  : Input extends _MapAttribute | _Item
+  : INPUT extends _LeafAttribute
+  ? NonNullable<INPUT['_resolved']>
+  : INPUT extends _SetAttribute
+  ? Set<_KeyInput<INPUT['_elements']>>
+  : INPUT extends _ListAttribute
+  ? _KeyInput<INPUT['_elements']>[]
+  : INPUT extends _MapAttribute | _Item
   ? O.Required<
       O.Partial<
         {
           // Keep only key attributes
-          [key in O.SelectKeys<Input['_attributes'], { _key: true }>]: _KeyInput<
-            Input['_attributes'][key]
+          [key in O.SelectKeys<INPUT['_attributes'], { _key: true }>]: _KeyInput<
+            INPUT['_attributes'][key]
           >
         }
       >,
       Exclude<
         // Enforce Always Required attributes
-        O.SelectKeys<Input['_attributes'], { _required: Always }>,
+        O.SelectKeys<INPUT['_attributes'], { _required: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<Input['_attributes'], { _default: undefined }>
+        O.FilterKeys<INPUT['_attributes'], { _default: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (Input extends { _open: true } ? Record<string, ResolvedAttribute> : {})
-  : Input extends EntityV2
-  ? _KeyInput<Input['_item']>
+      (INPUT extends { _open: true } ? Record<string, ResolvedAttribute> : {})
+  : INPUT extends EntityV2
+  ? _KeyInput<INPUT['_item']>
   : never
