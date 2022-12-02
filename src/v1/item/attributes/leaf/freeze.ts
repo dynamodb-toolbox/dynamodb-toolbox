@@ -7,10 +7,10 @@ import { validateAttributeProperties } from '../shared/validate'
 import type { _LeafAttribute, FreezeLeafAttribute } from './interface'
 import type { LeafAttributeType, LeafAttributeEnumValues, LeafAttributeDefaultValue } from './types'
 
-type LeafAttributeFreezer = <Attribute extends _LeafAttribute>(
-  attribute: Attribute,
+type LeafAttributeFreezer = <_LEAF_ATTRIBUTE extends _LeafAttribute>(
+  attribute: _LEAF_ATTRIBUTE,
   path: string
-) => FreezeLeafAttribute<Attribute>
+) => FreezeLeafAttribute<_LEAF_ATTRIBUTE>
 
 /**
  * Validates a leaf instance
@@ -19,10 +19,10 @@ type LeafAttributeFreezer = <Attribute extends _LeafAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeLeafAttribute: LeafAttributeFreezer = <Attribute extends _LeafAttribute>(
-  attribute: Attribute,
+export const freezeLeafAttribute: LeafAttributeFreezer = <_LEAF_ATTRIBUTE extends _LeafAttribute>(
+  attribute: _LEAF_ATTRIBUTE,
   path: string
-): FreezeLeafAttribute<Attribute> => {
+): FreezeLeafAttribute<_LEAF_ATTRIBUTE> => {
   validateAttributeProperties(attribute, path)
 
   const { _type: leafType, _enum: enumValues, _default: defaultValue, ...leafInstance } = attribute
@@ -59,10 +59,13 @@ export const freezeLeafAttribute: LeafAttributeFreezer = <Attribute extends _Lea
     hidden,
     key,
     savedAs,
-    enum: enumValues as Extract<Attribute['_enum'], LeafAttributeEnumValues<Attribute['_type']>>,
+    enum: enumValues as Extract<
+      _LEAF_ATTRIBUTE['_enum'],
+      LeafAttributeEnumValues<_LEAF_ATTRIBUTE['_type']>
+    >,
     default: defaultValue as Extract<
-      Attribute['_default'],
-      LeafAttributeDefaultValue<Attribute['_type']>
+      _LEAF_ATTRIBUTE['_default'],
+      LeafAttributeDefaultValue<_LEAF_ATTRIBUTE['_type']>
     >
   }
 }

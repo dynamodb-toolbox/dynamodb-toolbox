@@ -7,14 +7,14 @@ import type { _AnyAttribute } from './interface'
 import { AnyAttributeOptions, ANY_DEFAULT_OPTIONS } from './options'
 
 type AnyAttributeTyper = <
-  IsRequired extends RequiredOption = Never,
-  IsHidden extends boolean = false,
-  IsKey extends boolean = false,
-  SavedAs extends string | undefined = undefined,
-  Default extends AnyAttributeDefaultValue = undefined
+  IS_REQUIRED extends RequiredOption = Never,
+  IS_HIDDEN extends boolean = false,
+  IS_KEY extends boolean = false,
+  SAVED_AS extends string | undefined = undefined,
+  DEFAULT extends AnyAttributeDefaultValue = undefined
 >(
-  options?: O.Partial<AnyAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-) => _AnyAttribute<IsRequired, IsHidden, IsKey, SavedAs, Default>
+  options?: O.Partial<AnyAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
+) => _AnyAttribute<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
 
 /**
  * Define a new attribute of any type
@@ -22,14 +22,14 @@ type AnyAttributeTyper = <
  * @param options _(optional)_ Boolean Options
  */
 export const any: AnyAttributeTyper = <
-  IsRequired extends RequiredOption = Never,
-  IsHidden extends boolean = false,
-  IsKey extends boolean = false,
-  SavedAs extends string | undefined = undefined,
-  Default extends AnyAttributeDefaultValue = undefined
+  IS_REQUIRED extends RequiredOption = Never,
+  IS_HIDDEN extends boolean = false,
+  IS_KEY extends boolean = false,
+  SAVED_AS extends string | undefined = undefined,
+  DEFAULT extends AnyAttributeDefaultValue = undefined
 >(
-  options?: O.Partial<AnyAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-): _AnyAttribute<IsRequired, IsHidden, IsKey, SavedAs, Default> => {
+  options?: O.Partial<AnyAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
+): _AnyAttribute<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
   const appliedOptions = { ...ANY_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
@@ -46,12 +46,12 @@ export const any: AnyAttributeTyper = <
     _key,
     _savedAs,
     _default,
-    required: <NextRequired extends RequiredOption = AtLeastOnce>(
-      nextRequired: NextRequired = ('atLeastOnce' as unknown) as NextRequired
+    required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
+      nextRequired: NEXT_REQUIRED = ('atLeastOnce' as unknown) as NEXT_REQUIRED
     ) => any({ ...appliedOptions, required: nextRequired }),
     hidden: () => any({ ...appliedOptions, hidden: true }),
     key: () => any({ ...appliedOptions, key: true }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => any({ ...appliedOptions, default: nextDefault })
-  } as _AnyAttribute<IsRequired, IsHidden, IsKey, SavedAs, Default>
+  } as _AnyAttribute<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
 }

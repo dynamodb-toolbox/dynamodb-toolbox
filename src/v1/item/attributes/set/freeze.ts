@@ -3,10 +3,10 @@ import { freezeAttribute } from '../freeze'
 
 import { _SetAttribute, FreezeSetAttribute } from './interface'
 
-type SetAttributeFreezer = <Attribute extends _SetAttribute>(
-  attribute: Attribute,
+type SetAttributeFreezer = <_SET_ATTRIBUTE extends _SetAttribute>(
+  attribute: _SET_ATTRIBUTE,
   path: string
-) => FreezeSetAttribute<Attribute>
+) => FreezeSetAttribute<_SET_ATTRIBUTE>
 
 /**
  * Validates a set instance
@@ -15,10 +15,10 @@ type SetAttributeFreezer = <Attribute extends _SetAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeSetAttribute: SetAttributeFreezer = <Attribute extends _SetAttribute>(
-  attribute: Attribute,
+export const freezeSetAttribute: SetAttributeFreezer = <_SET_ATTRIBUTE extends _SetAttribute>(
+  attribute: _SET_ATTRIBUTE,
   path: string
-): FreezeSetAttribute<Attribute> => {
+): FreezeSetAttribute<_SET_ATTRIBUTE> => {
   validateAttributeProperties(attribute, path)
 
   const {
@@ -30,7 +30,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <Attribute extends _SetAt
     _default
   } = attribute
 
-  const elements: Attribute['_elements'] = attribute._elements
+  const elements: _SET_ATTRIBUTE['_elements'] = attribute._elements
   const {
     _required: elementsRequired,
     _hidden: elementsHidden,

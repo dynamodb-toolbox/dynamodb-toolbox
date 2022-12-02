@@ -29,35 +29,35 @@ import type { EntityV2 } from '../class'
  * SwapWithSavedAs<{ keyA: { ...attribute, _savedAs: "keyB" }}>
  * => { keyB: { ...attribute, _savedAs: "keyB"  }}
  */
-type SwapWithSavedAs<MapAttributeAttributesInput extends MapAttributeAttributes> = A.Compute<
+type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = A.Compute<
   U.IntersectOf<
     {
-      [K in keyof MapAttributeAttributesInput]: MapAttributeAttributesInput[K] extends {
+      [K in keyof MAP_ATTRIBUTE_ATTRIBUTES]: MAP_ATTRIBUTE_ATTRIBUTES[K] extends {
         savedAs: string
       }
-        ? Record<MapAttributeAttributesInput[K]['savedAs'], MapAttributeAttributesInput[K]>
-        : Record<K, MapAttributeAttributesInput[K]>
-    }[keyof MapAttributeAttributesInput]
+        ? Record<MAP_ATTRIBUTE_ATTRIBUTES[K]['savedAs'], MAP_ATTRIBUTE_ATTRIBUTES[K]>
+        : Record<K, MAP_ATTRIBUTE_ATTRIBUTES[K]>
+    }[keyof MAP_ATTRIBUTE_ATTRIBUTES]
   >
 >
 
 type RecSavedItem<
-  Input extends MapAttribute | Item,
-  S extends MapAttributeAttributes = SwapWithSavedAs<Input['attributes']>
+  INPUT extends MapAttribute | Item,
+  SWAPPED_ATTRIBUTES extends MapAttributeAttributes = SwapWithSavedAs<INPUT['attributes']>
 > = O.Required<
   O.Partial<
     {
       // Keep all attributes
-      [key in keyof S]: SavedItem<S[key]>
+      [key in keyof SWAPPED_ATTRIBUTES]: SavedItem<SWAPPED_ATTRIBUTES[key]>
     }
   >,
   // Enforce Required attributes
-  | O.SelectKeys<S, { required: AtLeastOnce | OnlyOnce | Always }>
+  | O.SelectKeys<SWAPPED_ATTRIBUTES, { required: AtLeastOnce | OnlyOnce | Always }>
   // Enforce attributes that have defined default (initial or computed)
   // (...but not so sure about that anymore, props can have computed default but still be optional)
-  | O.FilterKeys<S, { default: undefined }>
+  | O.FilterKeys<SWAPPED_ATTRIBUTES, { default: undefined }>
 > & // Add Record<string, ResolvedAttribute> if map is open
-  (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
 
 /**
  * Shape of saved item in DynamoDB for a given Entity, Item or Attribute
@@ -65,16 +65,16 @@ type RecSavedItem<
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type SavedItem<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
+export type SavedItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
-  ? NonNullable<Input['resolved']>
-  : Input extends SetAttribute
-  ? Set<SavedItem<Input['elements']>>
-  : Input extends ListAttribute
-  ? SavedItem<Input['elements']>[]
-  : Input extends MapAttribute | Item
-  ? RecSavedItem<Input>
-  : Input extends EntityV2
-  ? SavedItem<Input['item']> & PrimaryKey<Input['table']>
+  : INPUT extends LeafAttribute
+  ? NonNullable<INPUT['resolved']>
+  : INPUT extends SetAttribute
+  ? Set<SavedItem<INPUT['elements']>>
+  : INPUT extends ListAttribute
+  ? SavedItem<INPUT['elements']>[]
+  : INPUT extends MapAttribute | Item
+  ? RecSavedItem<INPUT>
+  : INPUT extends EntityV2
+  ? SavedItem<INPUT['item']> & PrimaryKey<INPUT['table']>
   : never

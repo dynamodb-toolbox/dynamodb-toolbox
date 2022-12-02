@@ -8,16 +8,16 @@ import { SetAttributeOptions, SET_ATTRIBUTE_DEFAULT_OPTIONS } from './options'
 import type { _SetAttributeElements } from './types'
 
 type SetTyper = <
-  Elements extends _SetAttributeElements,
-  IsRequired extends RequiredOption = Never,
-  IsHidden extends boolean = false,
-  IsKey extends boolean = false,
-  SavedAs extends string | undefined = undefined,
-  Default extends ComputedDefault | undefined = undefined
+  ELEMENTS extends _SetAttributeElements,
+  IS_REQUIRED extends RequiredOption = Never,
+  IS_HIDDEN extends boolean = false,
+  IS_KEY extends boolean = false,
+  SAVED_AS extends string | undefined = undefined,
+  DEFAULT extends ComputedDefault | undefined = undefined
 >(
-  _elements: Elements,
-  options?: O.Partial<SetAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-) => _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
+  _elements: ELEMENTS,
+  options?: O.Partial<SetAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
+) => _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
 
 /**
  * Define a new set attribute
@@ -31,16 +31,16 @@ type SetTyper = <
  * @param options _(optional)_ List Options
  */
 export const set: SetTyper = <
-  Elements extends _SetAttributeElements,
-  IsRequired extends RequiredOption = Never,
-  IsHidden extends boolean = false,
-  IsKey extends boolean = false,
-  SavedAs extends string | undefined = undefined,
-  Default extends ComputedDefault | undefined = undefined
+  ELEMENTS extends _SetAttributeElements,
+  IS_REQUIRED extends RequiredOption = Never,
+  IS_HIDDEN extends boolean = false,
+  IS_KEY extends boolean = false,
+  SAVED_AS extends string | undefined = undefined,
+  DEFAULT extends ComputedDefault | undefined = undefined
 >(
-  elements: Elements,
-  options?: O.Partial<SetAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-): _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
+  elements: ELEMENTS,
+  options?: O.Partial<SetAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
+): _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
   const appliedOptions = { ...SET_ATTRIBUTE_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
@@ -58,12 +58,12 @@ export const set: SetTyper = <
     _key,
     _savedAs,
     _default,
-    required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
-      nextRequired: NextIsRequired = 'atLeastOnce' as NextIsRequired
+    required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+      nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => set(elements, { ...appliedOptions, required: nextRequired }),
     hidden: () => set(elements, { ...appliedOptions, hidden: true }),
     key: () => set(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => set(elements, { ...appliedOptions, default: nextDefault })
-  } as _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
+  } as _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
 }

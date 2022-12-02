@@ -2,11 +2,9 @@ import { _Item, FreezeItem } from './interface'
 import { FreezeAttribute, freezeAttribute } from './attributes/freeze'
 import { RequiredOption } from './attributes/constants/requiredOptions'
 
-type ItemFreezer = <ItemInput extends _Item>(item: ItemInput) => FreezeItem<ItemInput>
+type ItemFreezer = <_ITEM extends _Item>(item: _ITEM) => FreezeItem<_ITEM>
 
-export const freezeItem: ItemFreezer = <ItemInput extends _Item>(
-  item: ItemInput
-): FreezeItem<ItemInput> => {
+export const freezeItem: ItemFreezer = <_ITEM extends _Item>(item: _ITEM): FreezeItem<_ITEM> => {
   const { _type: type, _open: open } = item
 
   const attributesSavedAs = new Set<string>()
@@ -18,9 +16,9 @@ export const freezeItem: ItemFreezer = <ItemInput extends _Item>(
     never: new Set()
   }
 
-  const attributes: ItemInput['_attributes'] = item._attributes
+  const attributes: _ITEM['_attributes'] = item._attributes
   const frozenAttributes: {
-    [key in keyof ItemInput['_attributes']]: FreezeAttribute<ItemInput['_attributes'][key]>
+    [key in keyof _ITEM['_attributes']]: FreezeAttribute<_ITEM['_attributes'][key]>
   } = {} as any
 
   for (const attributeName in attributes) {

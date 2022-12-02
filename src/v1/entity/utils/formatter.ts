@@ -2,13 +2,13 @@ import type { EntityV2 } from '../class'
 import type { FormattedItem, SavedItem } from '../generics'
 
 type Formatter = <
-  EntityInput extends EntityV2,
-  EntitySavedItem extends Record<string, any> = SavedItem<EntityInput>,
-  EntityFormattedItem extends Record<string, any> = FormattedItem<EntityInput>
+  ENTITY extends EntityV2,
+  SAVED_ITEM extends Record<string, any> = SavedItem<ENTITY>,
+  FORMATTED_ITEM extends Record<string, any> = FormattedItem<ENTITY>
 >(
-  entity: EntityInput,
-  savedItem: EntitySavedItem
-) => EntityFormattedItem
+  entity: ENTITY,
+  savedItem: SAVED_ITEM
+) => FORMATTED_ITEM
 
 /**
  * Format saved item in DynamoDB to desired output for a given Entity

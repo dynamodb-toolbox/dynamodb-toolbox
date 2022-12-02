@@ -2,12 +2,12 @@ import type { EntityV2 } from '../class'
 import type { SavedItem } from '../generics'
 
 type SavedItemValidator = <
-  EntityInput extends EntityV2,
-  EntitySavedItem extends Record<string, any> = SavedItem<EntityInput>
+  ENTITY extends EntityV2,
+  SAVED_ITEM extends Record<string, any> = SavedItem<ENTITY>
 >(
-  entity: EntityInput,
+  entity: ENTITY,
   savedItem: Record<string, any>
-) => savedItem is EntitySavedItem
+) => savedItem is SAVED_ITEM
 
 /**
  * Validates the saved item in DynamoDB for a given Entity
@@ -17,12 +17,12 @@ type SavedItemValidator = <
  * @return Boolean
  */
 export const validateSavedItem: SavedItemValidator = <
-  EntityInput extends EntityV2,
-  EntitySavedItem extends Record<string, any> = SavedItem<EntityInput>
+  ENTITY extends EntityV2,
+  SAVED_ITEM extends Record<string, any> = SavedItem<ENTITY>
 >(
-  entity: EntityInput,
+  entity: ENTITY,
   savedItem: Record<string, any>
-): savedItem is EntitySavedItem => {
+): savedItem is SAVED_ITEM => {
   entity
   savedItem
   // TODO

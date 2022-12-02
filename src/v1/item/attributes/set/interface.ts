@@ -8,16 +8,16 @@ import type { _SetAttributeElements, SetAttributeElements } from './types'
  * Set attribute interface
  */
 export type _SetAttribute<
-  Elements extends _SetAttributeElements = _SetAttributeElements,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> = _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+  ELEMENTS extends _SetAttributeElements = _SetAttributeElements,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
+> = _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
   _type: 'set'
-  _elements: Elements
-  _default: Default
+  _elements: ELEMENTS
+  _default: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -27,52 +27,52 @@ export type _SetAttribute<
    *
    * @param nextRequired RequiredOption
    */
-  required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
-    nextRequired?: NextIsRequired
-  ) => _SetAttribute<Elements, NextIsRequired, IsHidden, IsKey, SavedAs, Default>
+  required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+    nextRequired?: NEXT_IS_REQUIRED
+  ) => _SetAttribute<ELEMENTS, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _SetAttribute<Elements, IsRequired, true, IsKey, SavedAs, Default>
+  hidden: () => _SetAttribute<ELEMENTS, IS_REQUIRED, true, IS_KEY, SAVED_AS, DEFAULT>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _SetAttribute<Elements, IsRequired, IsHidden, true, SavedAs, Default>
+  key: () => _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, true, SAVED_AS, DEFAULT>
   /**
    * Rename attribute before save commands
    */
-  savedAs: <NextSavedAs extends string | undefined>(
-    nextSavedAs: NextSavedAs
-  ) => _SetAttribute<Elements, IsRequired, IsHidden, IsKey, NextSavedAs, Default>
+  savedAs: <NEXT_SAVED_AS extends string | undefined>(
+    nextSavedAs: NEXT_SAVED_AS
+  ) => _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, NEXT_SAVED_AS, DEFAULT>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
    * @param nextDefaultValue `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
-  default: <NextDefault extends ComputedDefault | undefined>(
-    nextDefaultValue: NextDefault
-  ) => _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, NextDefault>
+  default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
+    nextDefaultValue: NEXT_DEFAULT
+  ) => _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, NEXT_DEFAULT>
 }
 
 export type SetAttribute<
-  Elements extends SetAttributeElements = SetAttributeElements,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> = AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+  ELEMENTS extends SetAttributeElements = SetAttributeElements,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
+> = AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
   type: 'set'
   path: string
-  elements: Elements
-  default: Default
+  elements: ELEMENTS
+  default: DEFAULT
 }
 
-export type FreezeSetAttribute<Attribute extends _SetAttribute> = SetAttribute<
-  FreezeAttribute<Attribute['_elements']>,
-  Attribute['_required'],
-  Attribute['_hidden'],
-  Attribute['_key'],
-  Attribute['_savedAs'],
-  Attribute['_default']
+export type FreezeSetAttribute<_SET_ATTRIBUTE extends _SetAttribute> = SetAttribute<
+  FreezeAttribute<_SET_ATTRIBUTE['_elements']>,
+  _SET_ATTRIBUTE['_required'],
+  _SET_ATTRIBUTE['_hidden'],
+  _SET_ATTRIBUTE['_key'],
+  _SET_ATTRIBUTE['_savedAs'],
+  _SET_ATTRIBUTE['_default']
 >

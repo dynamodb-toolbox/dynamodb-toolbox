@@ -2,10 +2,10 @@ import { validateAttributeProperties } from '../shared/validate'
 
 import type { _AnyAttribute, FreezeAnyAttribute } from './interface'
 
-type AnyAttributeFreezer = <Attribute extends _AnyAttribute>(
-  attribute: Attribute,
+type AnyAttributeFreezer = <_ANY_ATTRIBUTE extends _AnyAttribute>(
+  attribute: _ANY_ATTRIBUTE,
   path: string
-) => FreezeAnyAttribute<Attribute>
+) => FreezeAnyAttribute<_ANY_ATTRIBUTE>
 
 /**
  * Validates an any instance
@@ -14,10 +14,10 @@ type AnyAttributeFreezer = <Attribute extends _AnyAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeAnyAttribute: AnyAttributeFreezer = <Attribute extends _AnyAttribute>(
-  attribute: Attribute,
+export const freezeAnyAttribute: AnyAttributeFreezer = <_ANY_ATTRIBUTE extends _AnyAttribute>(
+  attribute: _ANY_ATTRIBUTE,
   path: string
-): FreezeAnyAttribute<Attribute> => {
+): FreezeAnyAttribute<_ANY_ATTRIBUTE> => {
   validateAttributeProperties(attribute, path)
 
   // TODO: validate that _default is valid ?
