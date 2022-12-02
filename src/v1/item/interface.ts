@@ -1,4 +1,4 @@
-import { MapAttributeAttributes, FrozenMapAttributeAttributes, RequiredOption } from './attributes'
+import { _MapAttributeAttributes, MapAttributeAttributes, RequiredOption } from './attributes'
 import { FreezeAttribute } from './attributes/freeze'
 
 /**
@@ -8,15 +8,15 @@ import { FreezeAttribute } from './attributes/freeze'
  * @return Item
  */
 export interface _Item<
-  MapAttributeAttributesInput extends MapAttributeAttributes = MapAttributeAttributes
+  MapAttributeAttributesInput extends _MapAttributeAttributes = _MapAttributeAttributes
 > {
   _type: 'item'
   _open: boolean
   _attributes: MapAttributeAttributesInput
 }
 
-export interface FrozenItem<
-  MapAttributeAttributesInput extends FrozenMapAttributeAttributes = FrozenMapAttributeAttributes
+export interface Item<
+  MapAttributeAttributesInput extends MapAttributeAttributes = MapAttributeAttributes
 > {
   type: 'item'
   open: boolean
@@ -25,8 +25,8 @@ export interface FrozenItem<
 }
 
 export type FreezeItem<ItemInput extends _Item> = _Item extends ItemInput
-  ? FrozenItem
-  : FrozenItem<
+  ? Item
+  : Item<
       {
         [key in keyof ItemInput['_attributes']]: FreezeAttribute<ItemInput['_attributes'][key]>
       }

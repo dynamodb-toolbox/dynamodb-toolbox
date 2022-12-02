@@ -1,8 +1,8 @@
 import { AtLeastOnce } from '../constants'
-import type { FrozenLeafAttribute, _LeafAttribute } from '../leaf/interface'
+import type { LeafAttribute, _LeafAttribute } from '../leaf/interface'
 import { LeafAttributeEnumValues } from '../leaf/types'
 
-export type SetAttributeElements = _LeafAttribute<
+export type _SetAttributeElements = _LeafAttribute<
   'string' | 'number' | 'binary',
   AtLeastOnce,
   false,
@@ -12,7 +12,7 @@ export type SetAttributeElements = _LeafAttribute<
   undefined
 >
 
-export type FrozenSetAttributeElements = FrozenLeafAttribute<
+export type SetAttributeElements = LeafAttribute<
   'string' | 'number' | 'binary',
   AtLeastOnce,
   false,

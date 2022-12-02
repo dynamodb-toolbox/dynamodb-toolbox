@@ -1,5 +1,5 @@
-import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
-import type { MapAttributeAttributes, FrozenMapAttributeAttributes } from '../types/attribute'
+import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
+import type { _MapAttributeAttributes, MapAttributeAttributes } from '../types/attribute'
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 import type { FreezeAttribute } from '../freeze'
 
@@ -9,14 +9,14 @@ import type { FreezeAttribute } from '../freeze'
  * (Called MapAttribute to differ from native TS Map class)
  */
 export interface _MapAttribute<
-  Attributes extends MapAttributeAttributes = MapAttributeAttributes,
+  Attributes extends _MapAttributeAttributes = _MapAttributeAttributes,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _type: 'map'
   _attributes: Attributes
   _open: IsOpen
@@ -61,15 +61,15 @@ export interface _MapAttribute<
   ) => _MapAttribute<Attributes, IsRequired, IsHidden, IsKey, IsOpen, SavedAs, NextComputeDefault>
 }
 
-export interface FrozenMapAttribute<
-  Attributes extends FrozenMapAttributeAttributes = FrozenMapAttributeAttributes,
+export interface MapAttribute<
+  Attributes extends MapAttributeAttributes = MapAttributeAttributes,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   IsOpen extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   type: 'map'
   attributes: Attributes
   open: IsOpen
@@ -78,9 +78,9 @@ export interface FrozenMapAttribute<
   requiredAttributesNames: Record<RequiredOption, Set<string>>
 }
 
-export type FreezeMapAttribute<Attribute extends _MapAttribute> = FrozenMapAttribute<
+export type FreezeMapAttribute<Attribute extends _MapAttribute> = MapAttribute<
   _MapAttribute extends Attribute
-    ? FrozenMapAttributeAttributes
+    ? MapAttributeAttributes
     : {
         [key in keyof Attribute['_attributes']]: FreezeAttribute<Attribute['_attributes'][key]>
       },
