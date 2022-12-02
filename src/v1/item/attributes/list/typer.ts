@@ -2,12 +2,12 @@ import type { O } from 'ts-toolbelt'
 
 import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constants'
 
-import type { ListAttributeElements } from './types'
+import type { _ListAttributeElements } from './types'
 import type { _ListAttribute } from './interface'
 import { ListAttributeOptions, LIST_DEFAULT_OPTIONS } from './options'
 
 type ListTyper = <
-  Elements extends ListAttributeElements,
+  Elements extends _ListAttributeElements,
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,
@@ -30,7 +30,7 @@ type ListTyper = <
  * @param options _(optional)_ List Options
  */
 export const list: ListTyper = <
-  Elements extends ListAttributeElements,
+  Elements extends _ListAttributeElements,
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,

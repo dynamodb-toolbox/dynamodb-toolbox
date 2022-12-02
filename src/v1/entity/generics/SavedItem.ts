@@ -1,15 +1,16 @@
 import type { A, O, U } from 'ts-toolbelt'
 
 import type {
-  FrozenItem,
-  FrozenAttribute,
+  Item,
+  Attribute,
   ResolvedAttribute,
-  FrozenAnyAttribute,
-  FrozenLeafAttribute,
-  FrozenSetAttribute,
-  FrozenListAttribute,
-  FrozenMapAttribute,
-  FrozenMapAttributeAttributes,
+  AnyAttribute,
+  LeafAttribute,
+  SetAttribute,
+  ListAttribute,
+  MapAttribute,
+  MapAttributeAttributes,
+  _MapAttributeAttributes,
   AtLeastOnce,
   OnlyOnce,
   Always
@@ -28,7 +29,7 @@ import type { EntityV2 } from '../class'
  * SwapWithSavedAs<{ keyA: { ...attribute, _savedAs: "keyB" }}>
  * => { keyB: { ...attribute, _savedAs: "keyB"  }}
  */
-type SwapWithSavedAs<MapAttributeAttributesInput extends FrozenMapAttributeAttributes> = A.Compute<
+type SwapWithSavedAs<MapAttributeAttributesInput extends MapAttributeAttributes> = A.Compute<
   U.IntersectOf<
     {
       [K in keyof MapAttributeAttributesInput]: MapAttributeAttributesInput[K] extends {
@@ -41,8 +42,8 @@ type SwapWithSavedAs<MapAttributeAttributesInput extends FrozenMapAttributeAttri
 >
 
 type RecSavedItem<
-  Input extends FrozenMapAttribute | FrozenItem,
-  S extends FrozenMapAttributeAttributes = SwapWithSavedAs<Input['attributes']>
+  Input extends MapAttribute | Item,
+  S extends MapAttributeAttributes = SwapWithSavedAs<Input['attributes']>
 > = O.Required<
   O.Partial<
     {
@@ -64,18 +65,16 @@ type RecSavedItem<
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type SavedItem<
-  Input extends EntityV2 | FrozenItem | FrozenAttribute
-> = Input extends FrozenAnyAttribute
+export type SavedItem<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends FrozenLeafAttribute
+  : Input extends LeafAttribute
   ? NonNullable<Input['resolved']>
-  : Input extends FrozenSetAttribute
+  : Input extends SetAttribute
   ? Set<SavedItem<Input['elements']>>
-  : Input extends FrozenListAttribute
+  : Input extends ListAttribute
   ? SavedItem<Input['elements']>[]
-  : Input extends FrozenMapAttribute | FrozenItem
+  : Input extends MapAttribute | Item
   ? RecSavedItem<Input>
   : Input extends EntityV2
-  ? SavedItem<Input['frozenItem']> & PrimaryKey<Input['table']>
+  ? SavedItem<Input['item']> & PrimaryKey<Input['table']>
   : never

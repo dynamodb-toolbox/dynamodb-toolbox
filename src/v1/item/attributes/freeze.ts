@@ -26,7 +26,7 @@ export type FreezeAttribute<
  *
  * @param attribute Attribute
  * @param path _(optional)_ Path of the attribute in the related item (string)
- * @return FrozenAttribute
+ * @return Attribute
  */
 export const freezeAttribute = <AttributeInput extends _Attribute>(
   attribute: AttributeInput,

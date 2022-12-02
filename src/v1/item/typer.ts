@@ -1,7 +1,7 @@
-import type { MapAttributeAttributes, Narrow } from './attributes/types'
+import type { _MapAttributeAttributes, Narrow } from './attributes/types'
 import type { _Item } from './interface'
 
-type ItemTyper = <MapAttributeAttributesInput extends MapAttributeAttributes = {}>(
+type ItemTyper = <MapAttributeAttributesInput extends _MapAttributeAttributes = {}>(
   _attributes: Narrow<MapAttributeAttributesInput>
 ) => _Item<MapAttributeAttributesInput>
 
@@ -12,7 +12,7 @@ type ItemTyper = <MapAttributeAttributesInput extends MapAttributeAttributes = {
  * @param attributes Object of attributes
  * @return Item
  */
-export const item: ItemTyper = <MapAttributeAttributesInput extends MapAttributeAttributes = {}>(
+export const item: ItemTyper = <MapAttributeAttributesInput extends _MapAttributeAttributes = {}>(
   attributes: Narrow<MapAttributeAttributesInput>
 ): _Item<MapAttributeAttributesInput> =>
   ({
