@@ -1,5 +1,5 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
+import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
 import type {
   LeafAttributeType,
   ResolveLeafAttributeType,
@@ -19,7 +19,7 @@ export type _LeafAttribute<
   SavedAs extends string | undefined = string | undefined,
   Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
   Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
-> = AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+> = _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
   _type: Type
   _resolved?: Enum extends ResolveLeafAttributeType<Type>[]
     ? Enum[number]
@@ -78,7 +78,7 @@ export type _LeafAttribute<
   ) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, NextDefault>
 }
 
-export type FrozenLeafAttribute<
+export type LeafAttribute<
   Type extends LeafAttributeType = LeafAttributeType,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
@@ -86,7 +86,7 @@ export type FrozenLeafAttribute<
   SavedAs extends string | undefined = string | undefined,
   Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
   Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
-> = FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+> = AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
   path: string
   type: Type
   resolved?: Enum extends ResolveLeafAttributeType<Type>[]
@@ -96,7 +96,7 @@ export type FrozenLeafAttribute<
   default: Default
 }
 
-export type FreezeLeafAttribute<Attribute extends _LeafAttribute> = FrozenLeafAttribute<
+export type FreezeLeafAttribute<Attribute extends _LeafAttribute> = LeafAttribute<
   Attribute['_type'],
   Attribute['_required'],
   Attribute['_hidden'],

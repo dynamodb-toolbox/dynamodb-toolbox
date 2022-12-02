@@ -1,11 +1,11 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import type {
-  FrozenAttribute,
+  Attribute,
   ResolvedAttribute,
-  FrozenSetAttribute,
-  FrozenListAttribute,
-  FrozenMapAttribute,
-  FrozenItem
+  SetAttribute,
+  ListAttribute,
+  MapAttribute,
+  Item
 } from 'v1/item'
 import { isClosed, isKeyAttribute } from 'v1/item/utils'
 import { validatorsByLeafType, isArray, isSet, isObject } from 'v1/utils/validation'
@@ -15,7 +15,7 @@ import type { KeyInput } from '../generics'
 
 type ValidationContext = { elementsIndexes?: number[] }
 
-type KeyInputValidator = <Input extends EntityV2 | FrozenItem | FrozenAttribute>(
+type KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
   entity: Input,
   keyInput: KeyInput<Input>,
   context?: ValidationContext
@@ -29,15 +29,13 @@ type KeyInputValidator = <Input extends EntityV2 | FrozenItem | FrozenAttribute>
  * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return void
  */
-export const validateKeyInput: KeyInputValidator = <
-  Input extends EntityV2 | FrozenItem | FrozenAttribute
->(
+export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
   entry: Input,
   keyInput: KeyInput<Input>,
   context: ValidationContext = {}
 ): void => {
   if (entry.type === 'entity') {
-    return validateKeyInput(entry.frozenItem, keyInput, context)
+    return validateKeyInput(entry.item, keyInput, context)
   }
 
   if (entry.type === 'item') {
@@ -81,7 +79,7 @@ export const validateKeyInput: KeyInputValidator = <
 }
 
 const validateSetElements = (
-  set: FrozenSetAttribute,
+  set: SetAttribute,
   keyInput: Set<string | number | Buffer>,
   context: ValidationContext
 ): void => {
@@ -89,7 +87,7 @@ const validateSetElements = (
 }
 
 const validateListElements = (
-  list: FrozenListAttribute,
+  list: ListAttribute,
   keyInput: ResolvedAttribute[],
   context: ValidationContext
 ): void => {
@@ -101,7 +99,7 @@ const validateListElements = (
 }
 
 const validateAttributes = (
-  itemOrMapAttribute: FrozenItem | FrozenMapAttribute,
+  itemOrMapAttribute: Item | MapAttribute,
   keyInput: ResolvedAttribute,
   context: ValidationContext
 ): void => {
@@ -149,7 +147,7 @@ export class InvalidKeyInputValueTypeError extends Error {
     context,
     path
   }: {
-    expectedType: FrozenAttribute['type']
+    expectedType: Attribute['type']
     keyInput: unknown
     context: ValidationContext
     path?: string
