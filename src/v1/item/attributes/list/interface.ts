@@ -1,20 +1,20 @@
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 import type { FreezeAttribute } from '../freeze'
-import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
+import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
 
-import type { ListAttributeElements, FrozenListAttributeElements } from './types'
+import type { _ListAttributeElements, ListAttributeElements } from './types'
 
 /**
  * List attribute interface
  */
 export interface _ListAttribute<
-  Elements extends ListAttributeElements = ListAttributeElements,
+  Elements extends _ListAttributeElements = _ListAttributeElements,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   _type: 'list'
   _elements: Elements
   _default: Default
@@ -54,21 +54,21 @@ export interface _ListAttribute<
   ) => _ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, NextDefault>
 }
 
-export interface FrozenListAttribute<
-  Elements extends FrozenListAttributeElements = FrozenListAttributeElements,
+export interface ListAttribute<
+  Elements extends ListAttributeElements = ListAttributeElements,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
+> extends AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> {
   type: 'list'
   elements: Elements
   default: Default
   path: string
 }
 
-export type FreezeListAttribute<Attribute extends _ListAttribute> = FrozenListAttribute<
+export type FreezeListAttribute<Attribute extends _ListAttribute> = ListAttribute<
   FreezeAttribute<Attribute['_elements']>,
   Attribute['_required'],
   Attribute['_hidden'],

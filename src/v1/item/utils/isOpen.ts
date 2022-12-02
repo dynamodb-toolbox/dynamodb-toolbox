@@ -1,11 +1,9 @@
-import { FrozenItem, FrozenMapAttribute } from 'v1/item'
+import { Item, MapAttribute } from 'v1/item'
 
 export const isOpen = (
-  itemOrMapAttribute: FrozenItem | FrozenMapAttribute
-): itemOrMapAttribute is (FrozenItem | FrozenMapAttribute) & { open: true } =>
-  itemOrMapAttribute.open
+  itemOrMapAttribute: Item | MapAttribute
+): itemOrMapAttribute is (Item | MapAttribute) & { open: true } => itemOrMapAttribute.open
 
 export const isClosed = (
-  itemOrMapAttribute: FrozenItem | FrozenMapAttribute
-): itemOrMapAttribute is (FrozenItem | FrozenMapAttribute) & { open: false } =>
-  !isOpen(itemOrMapAttribute)
+  itemOrMapAttribute: Item | MapAttribute
+): itemOrMapAttribute is (Item | MapAttribute) & { open: false } => !isOpen(itemOrMapAttribute)
