@@ -299,19 +299,12 @@ This method returns the entity instance with the new type definitions.
 You must use the returned value to get the correct type definitions because TypeScript is statically typed.
 
 ```typescript
-const MyTable = new Table({
-  name: 'MyTable',
-  partitionKey: 'pk',
-  sortKey: 'sk'
-} as const)
-
 const MyEntity = new Entity({
   name: 'MyEntity',
   attributes: {
     pk: { partitionKey: true },
     sk: { sortKey: true }
-  },
-  table: MyTable
+  }
 } as const)
 
 const myNewTable = new Table({
