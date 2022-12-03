@@ -1612,7 +1612,7 @@ class Entity<Name extends string = string,
       return this as any
     }
 
-    if(table.name === this._table.name) {
+    if(table?.name === this?._table?.name) {
       return this as any
     }
 
