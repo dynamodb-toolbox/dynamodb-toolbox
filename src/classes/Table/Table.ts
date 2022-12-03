@@ -370,13 +370,6 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     entity?.setTable?.(undefined)
   }
 
-  /*
-   * @deprecated
-  */
-  set entities(entity: any) {
-    this.addEntity(entity)
-  }
-
   get entities() {
     return this._entities
   }
