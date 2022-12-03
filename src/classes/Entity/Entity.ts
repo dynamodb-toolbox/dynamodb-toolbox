@@ -151,26 +151,6 @@ class Entity<Name extends string = string,
     Object.assign(this, parseEntity(entity))
   }
 
-  /*
-   * @internal
-   * set the table instance that is associated with this entity
-   * NOTE: use setTable instead of this method to set the table
-   */
-  set table(table: EntityTable | undefined) {
-    if (this._table) {
-      error(`This entity is already assigned a Table (${this._table.name})`)
-    }
-
-    const isValidTable = table?.Table?.attributes
-    if(!isValidTable) {
-      error('Invalid Table')
-    }
-
-    // @ts-ignore
-    table?.addEntity?.(this)
-    this.setTable(table)
-  }
-
   get table(): EntityTable | undefined {
     return this._table
   }
@@ -1605,15 +1585,28 @@ class Entity<Name extends string = string,
       Parse>(options, params)
   }
 
-  /*
-   * Set the entity's internal table property
-   */
-  setTable(table: TableDef | undefined): this {
-    if (!table && !this._table) {
-      return this
+  setTable<Table extends TableDef | undefined>(table: Table): Entity<Name,
+    EntityItemOverlay,
+    EntityCompositeKeyOverlay,
+    Table,
+    AutoExecute,
+    AutoParse,
+    Timestamps,
+    CreatedAlias, ModifiedAlias,
+    TypeAlias,
+    TypeHidden,
+    ReadonlyAttributeDefinitions,
+    WritableAttributeDefinitions,
+    Attributes,
+    $Item,
+    Item,
+    CompositePrimaryKey> {
+    if (table === undefined && !this._table) {
+      return this as any
     }
 
     this._table?.removeEntity?.(this)
+    table.addEntity(this)
     this._table = table as EntityTable
 
     // If an entity tracking field is enabled, add the attributes, alias and the default
@@ -1633,9 +1626,10 @@ class Entity<Name extends string = string,
       this.defaults[this._etAlias] = this.name
     }
 
-    return this
+    return this as any
   }
-} // end Entity
+
+}
 
 export default Entity
 
