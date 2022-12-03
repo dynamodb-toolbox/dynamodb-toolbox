@@ -155,6 +155,13 @@ class Entity<Name extends string = string,
     return this._table
   }
 
+  /*
+   * @internal
+   */
+  set table(table: EntityTable | undefined) {
+    this.setTable(table)
+  }
+
   // Return reference to the DocumentClient
   get DocumentClient(): DocumentClient {
     if (this.table?.DocumentClient) {
@@ -1605,9 +1612,13 @@ class Entity<Name extends string = string,
       return this as any
     }
 
+    if(table.name === this._table.name) {
+      return this as any
+    }
+
     this._table?.removeEntity?.(this)
-    table!.addEntity(this)
     this._table = table as EntityTable | undefined
+    table!.addEntity(this)
 
     // If an entity tracking field is enabled, add the attributes, alias and the default
     if (table?.Table?.entityField) {
