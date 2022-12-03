@@ -1096,7 +1096,7 @@ class Entity<Name extends string = string,
                   // add default list value
                   values[
                     `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
-                    ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(
                     `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`,
@@ -1106,7 +1106,7 @@ class Entity<Name extends string = string,
                   // add default list value
                   values[
                     `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
-                    ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {
