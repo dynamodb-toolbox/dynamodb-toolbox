@@ -157,7 +157,7 @@ describe('Entity properties', () => {
     } as const)
 
     expect(() => {
-      TestEntity.table = TestTable
+      TestEntity.setTable(TestTable)
     }).toThrow('This entity is already assigned a Table (test-table)')
   })
 
