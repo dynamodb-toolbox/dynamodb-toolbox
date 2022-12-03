@@ -1585,10 +1585,10 @@ class Entity<Name extends string = string,
       Parse>(options, params)
   }
 
-  setTable<Table extends TableDef | undefined>(table: Table): Entity<Name,
+  setTable<NextTable extends TableDef | undefined>(table: NextTable): Entity<Name,
     EntityItemOverlay,
     EntityCompositeKeyOverlay,
-    Table,
+    NextTable,
     AutoExecute,
     AutoParse,
     Timestamps,
