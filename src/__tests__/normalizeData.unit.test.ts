@@ -2,11 +2,9 @@ import normalizeData from '../lib/normalizeData'
 
 import { DocumentClient } from './bootstrap.test'
 
-// Import Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
-// Create basic table
 const DefaultTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
@@ -14,8 +12,7 @@ const DefaultTable = new Table({
   DocumentClient
 })
 
-// Create basic entity
-DefaultTable.entities = new Entity({
+new Entity({
   name: 'User',
   attributes: {
     pk: { type: 'string', partitionKey: true },
@@ -28,7 +25,8 @@ DefaultTable.entities = new Entity({
     test: 'map',
     linked1: ['sk', 0, { save: true }],
     linked2: ['sk', 1]
-  }
+  },
+  table: DefaultTable
 } as const)
 
 // console.log(DefaultTable.User);
