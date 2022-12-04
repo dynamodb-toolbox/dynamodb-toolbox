@@ -42,6 +42,7 @@ import type {
   Readonly,
   $PutBatchOptions,
 } from './types'
+import Table from '../Table'
 
 class Entity<Name extends string = string,
   // Name is used to detect Entity instances (new Entity(...)) vs Entity type (const e: Entity = ...)
@@ -1616,7 +1617,7 @@ class Entity<Name extends string = string,
       return this as any
     }
 
-    if(!table?.Table?.attributes) {
+    if(!(table instanceof Table)) {
       error(`Entity ${this.name} was assigned an invalid table`)
     }
 
