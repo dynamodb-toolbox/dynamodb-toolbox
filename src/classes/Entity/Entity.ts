@@ -1622,8 +1622,8 @@ class Entity<Name extends string = string,
     }
 
     if (this._table?.Table?.entityField) {
-      delete this.schema.attributes[table.Table.entityField]
-      delete this.defaults[table.Table.entityField]
+      delete this.schema.attributes[this._table.Table.entityField]
+      delete this.defaults[this._table.Table.entityField]
       delete this.schema.attributes[this._etAlias]
       delete this.defaults[this._etAlias]
     }
