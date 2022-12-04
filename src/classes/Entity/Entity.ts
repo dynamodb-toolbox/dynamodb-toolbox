@@ -1624,10 +1624,9 @@ class Entity<Name extends string = string,
     if (this._table?.Table?.entityField) {
       delete this.schema.attributes[table.Table.entityField]
       delete this.defaults[table.Table.entityField]
-      delete his.schema.attributes[this._etAlias]
+      delete this.schema.attributes[this._etAlias]
       delete this.defaults[this._etAlias]
     }
-
     this._table?.removeEntity?.(this)
     this._table = table as EntityTable | undefined
     table?.addEntity(this)
