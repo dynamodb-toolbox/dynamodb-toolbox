@@ -110,8 +110,6 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    * NOTE: this does not adjust the entity's type inference because it is static
    */
   addEntity(entity: ParsedEntity | ParsedEntity[]): void {
-    console.log('addEntity',this.name, entity)
-
     // Coerce entity to array
     const entities = Array.isArray(entity) ? entity : [entity]
 
