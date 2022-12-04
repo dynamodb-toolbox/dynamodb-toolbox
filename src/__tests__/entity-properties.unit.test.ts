@@ -141,27 +141,6 @@ describe('Entity properties', () => {
     )
   })
 
-  it('fails if trying to add a table when one already exists', async () => {
-    // Create basic table
-    const TestTable = new Table({
-      name: 'test-table',
-      partitionKey: 'pk',
-    })
-
-    // Create basic entity
-    const TestEntity = new Entity({
-      name: 'TestEnt',
-      attributes: {
-        pk: { partitionKey: true },
-      },
-      table: TestTable,
-    } as const)
-
-    expect(() => {
-      TestEntity.setTable(TestTable)
-    }).toThrow('This entity is already assigned a Table (test-table)')
-  })
-
   it('fails if assigning an invalid Table', async () => {
     const InvalidTable = {}
 
