@@ -1,9 +1,9 @@
-export type { NeedsKeyCompute } from './NeedsKeyCompute'
+export type { _NeedsKeyCompute } from './NeedsKeyCompute'
 
-export type { KeyInput } from './KeyInput'
+export type { KeyInput, _KeyInput } from './KeyInput'
 
-export type { PutItem } from './PutItem'
-export type { PutItemInput } from './PutItemInput'
+export type { PutItem, _PutItem } from './PutItem'
+export type { PutItemInput, _PutItemInput } from './PutItemInput'
 export type { UpdateItemInput } from './UpdateItemInput'
 export type { UpdateItem } from './UpdateItem'
 
