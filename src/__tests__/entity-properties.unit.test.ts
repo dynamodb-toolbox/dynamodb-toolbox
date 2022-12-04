@@ -141,8 +141,10 @@ describe('Entity properties', () => {
     )
   })
 
-  it('fails if assigning an invalid Table', async () => {
-    const InvalidTable = {}
+  it('fails when assigning an invalid Table', async () => {
+    const InvalidTable = {
+      name: 'InvalidTable',
+    }
 
     expect(() => {
       // @ts-expect-error
