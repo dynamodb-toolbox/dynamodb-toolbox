@@ -153,7 +153,7 @@ describe('Entity properties', () => {
         },
         table: InvalidTable,
       } as const)
-    }).toThrow('Invalid Table')
+    }).toThrow('Entity TestEnt was assigned an invalid table')
   })
 
   it(`fails if trying to get 'DocumentClient' if not on table`, async () => {
