@@ -1621,6 +1621,8 @@ class Entity<Name extends string = string,
       error(`Entity ${this.name} was assigned an invalid table`)
     }
 
+    console.log('blabla');
+    
     this._table?.removeEntity?.(this)
     this._table = table as EntityTable | undefined
     table?.addEntity(this)
