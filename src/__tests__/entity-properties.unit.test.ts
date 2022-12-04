@@ -56,8 +56,8 @@ describe('Entity properties', () => {
     it('sets the _et field attributes mapping on the given entity', () => {
       const TestTable = new Table({
         name: 'TestTable',
-        partitionKey: 'pk',
-        sortKey: 'sk',
+        partitionKey: 'somePk',
+        sortKey: 'someSk',
         entityField: 'entity_field',
       })
 
