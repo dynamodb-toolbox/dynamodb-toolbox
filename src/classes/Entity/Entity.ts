@@ -1618,7 +1618,7 @@ class Entity<Name extends string = string,
 
     this._table?.removeEntity?.(this)
     this._table = table as EntityTable | undefined
-    table!.addEntity(this)
+    table?.addEntity(this)
 
     // If an entity tracking field is enabled, add the attributes, alias and the default
     if (table?.Table?.entityField) {

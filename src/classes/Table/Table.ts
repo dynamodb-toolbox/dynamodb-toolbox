@@ -330,7 +330,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     }
 
     if (!this._entities.includes(entity.name)) {
-      error(`${entity.name} is not in the ${this.name} table`)
+      return
     }
 
     delete this[entity.name]
