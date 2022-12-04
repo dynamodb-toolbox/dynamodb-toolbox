@@ -1,11 +1,11 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import type {
-  Attribute,
+  FrozenAttribute,
   ResolvedAttribute,
-  SetAttribute,
-  ListAttribute,
-  MapAttribute,
-  Item
+  FrozenSetAttribute,
+  FrozenListAttribute,
+  FrozenMapAttribute,
+  FrozenItem
 } from 'v1/item'
 import { isClosed, isKeyAttribute } from 'v1/item/utils'
 import { validatorsByLeafType, isArray, isSet, isObject } from 'v1/utils/validation'
@@ -13,10 +13,12 @@ import { validatorsByLeafType, isArray, isSet, isObject } from 'v1/utils/validat
 import type { EntityV2 } from '../class'
 import type { KeyInput } from '../generics'
 
-type KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
+type ValidationContext = { elementsIndexes?: number[] }
+
+type KeyInputValidator = <Input extends EntityV2 | FrozenItem | FrozenAttribute>(
   entity: Input,
   keyInput: KeyInput<Input>,
-  path?: string
+  context?: ValidationContext
 ) => void
 
 /**
@@ -27,74 +29,95 @@ type KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
  * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return void
  */
-export const validateKeyInput: KeyInputValidator = <Input extends EntityV2 | Item | Attribute>(
+export const validateKeyInput: KeyInputValidator = <
+  Input extends EntityV2 | FrozenItem | FrozenAttribute
+>(
   entry: Input,
   keyInput: KeyInput<Input>,
-  path?: string
+  context: ValidationContext = {}
 ): void => {
-  if (entry._type === 'entity') {
-    return validateKeyInput(entry.item, keyInput)
+  if (entry.type === 'entity') {
+    return validateKeyInput(entry.frozenItem, keyInput, context)
   }
 
-  if (entry._type === 'item') {
-    return validateAttributes(entry, keyInput, path)
+  if (entry.type === 'item') {
+    return validateAttributes(entry, keyInput, context)
   }
+
+  const { path } = entry
 
   if (!isKeyAttribute(entry)) throw new UnrecognizedKeyInputAttributeError({ path })
 
-  switch (entry._type) {
+  switch (entry.type) {
     case 'any':
       break
     case 'boolean':
     case 'binary':
     case 'number':
     case 'string':
-      const validator = validatorsByLeafType[entry._type]
+      const validator = validatorsByLeafType[entry.type]
       if (!validator(keyInput))
-        throw new InvalidKeyInputValueTypeError({ expectedType: entry._type, keyInput, path })
+        throw new InvalidKeyInputValueTypeError({
+          expectedType: entry.type,
+          keyInput,
+          path,
+          context
+        })
       break
     case 'set':
       if (!isSet(keyInput))
-        throw new InvalidKeyInputValueTypeError({ expectedType: 'set', keyInput, path })
-      validateElements(entry, keyInput as Set<ResolvedAttribute>, path)
+        throw new InvalidKeyInputValueTypeError({ expectedType: 'set', keyInput, path, context })
+      validateSetElements(entry, keyInput as Set<string | number | Buffer>, context)
       break
     case 'list':
       if (!isArray(keyInput))
-        throw new InvalidKeyInputValueTypeError({ expectedType: 'list', keyInput, path })
-      validateElements(entry, keyInput as ResolvedAttribute[], path)
+        throw new InvalidKeyInputValueTypeError({ expectedType: 'list', keyInput, path, context })
+      validateListElements(entry, keyInput as ResolvedAttribute[], context)
       break
     case 'map':
-      validateAttributes(entry, keyInput, path)
+      validateAttributes(entry, keyInput, context)
       break
   }
 }
 
-const validateElements = (
-  listOrSet: ListAttribute | SetAttribute,
-  keyInput: Set<ResolvedAttribute> | ResolvedAttribute[],
-  path?: string
+const validateSetElements = (
+  set: FrozenSetAttribute,
+  keyInput: Set<string | number | Buffer>,
+  context: ValidationContext
 ): void => {
-  keyInput.forEach((keyInputElement, index) =>
-    validateKeyInput(listOrSet._elements, keyInputElement, `${path ?? ''}[${index}]`)
+  keyInput.forEach(keyInputElement => validateKeyInput(set.elements, keyInputElement, context))
+}
+
+const validateListElements = (
+  list: FrozenListAttribute,
+  keyInput: ResolvedAttribute[],
+  context: ValidationContext
+): void => {
+  keyInput.forEach((keyInputElement, elementIndex) =>
+    validateKeyInput(list.elements, keyInputElement, {
+      elementsIndexes: [...(context?.elementsIndexes ?? []), elementIndex]
+    })
   )
 }
 
 const validateAttributes = (
-  itemOrMapAttribute: Item | MapAttribute,
+  itemOrMapAttribute: FrozenItem | FrozenMapAttribute,
   keyInput: ResolvedAttribute,
-  path?: string
+  context: ValidationContext
 ): void => {
+  const path = itemOrMapAttribute.type === 'map' ? itemOrMapAttribute.path : undefined
+
   if (!isObject(keyInput))
-    throw new InvalidKeyInputValueTypeError({ expectedType: 'map', keyInput, path })
+    throw new InvalidKeyInputValueTypeError({ expectedType: 'map', keyInput, path, context })
 
   // Check that keyInput values match item or mapped
   Object.entries(keyInput).forEach(([attributeName, attributeInput]) => {
-    const attribute = itemOrMapAttribute._attributes[attributeName]
+    const attribute = itemOrMapAttribute.attributes[attributeName]
     // TODO, create joinPath util
     const attributePath = [path, attributeName].filter(Boolean).join('.')
 
     if (attribute !== undefined) {
-      validateKeyInput(attribute, attributeInput, attributePath)
+      validateKeyInput(attribute, attributeInput, context)
     } else {
       if (isClosed(itemOrMapAttribute)) {
         throw new UnexpectedAttributeError({ path: attributePath })
@@ -104,15 +127,15 @@ const validateAttributes = (
   })
 
   // Check that all key & always required attributes are present in keyInput
-  Object.entries(itemOrMapAttribute._attributes)
-    .filter(([, attribute]) => isKeyAttribute(attribute) && attribute._required === 'always')
+  Object.entries(itemOrMapAttribute.attributes)
+    .filter(([, attribute]) => isKeyAttribute(attribute) && attribute.required === 'always')
     .forEach(([attributeName, attribute]) => {
       const attributeKeyInput = keyInput[attributeName]
       // TODO, create joinPath util
       const attributePath = [path, attributeName].filter(Boolean).join('.')
 
       if (attributeKeyInput !== undefined) {
-        validateKeyInput(attribute, attributeKeyInput, attributePath)
+        validateKeyInput(attribute, attributeKeyInput, context)
       } else {
         throw new MissingRequiredAttributeError({ path: attributePath })
       }
@@ -123,38 +146,44 @@ export class InvalidKeyInputValueTypeError extends Error {
   constructor({
     expectedType,
     keyInput,
+    context,
     path
   }: {
-    expectedType: Attribute['_type']
+    expectedType: FrozenAttribute['type']
     keyInput: unknown
+    context: ValidationContext
     path?: string
   }) {
+    let computedPath = path
+
+    if (computedPath && context.elementsIndexes) {
+      context.elementsIndexes.forEach(elementIndex => {
+        computedPath = (computedPath as string).replace('[n]', `[${elementIndex}]`)
+      })
+    }
+
     super(
       `Invalid key input value type${getInfoTextForItemPath(
-        path
+        computedPath
       )}. Expected: ${expectedType}. Received: ${String(keyInput)}.`
     )
   }
 }
 
 export class UnrecognizedKeyInputAttributeError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(
-      `Unrecognized key input attribute${getInfoTextForItemPath(
-        path
-      )}. Attribute is not tagged as key input.`
-    )
+  constructor({ path }: { path: string }) {
+    super(`Unrecognized key input attribute at path ${path}. Attribute is not tagged as key input.`)
   }
 }
 
 export class MissingRequiredAttributeError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(`Missing always required key input attribute${getInfoTextForItemPath(path)}.`)
+  constructor({ path }: { path: string }) {
+    super(`Missing always required key input attribute at path ${path}.`)
   }
 }
 
 export class UnexpectedAttributeError extends Error {
-  constructor({ path }: { path?: string }) {
-    super(`Unexpected key input attribute${getInfoTextForItemPath(path)}.`)
+  constructor({ path }: { path: string }) {
+    super(`Unexpected key input attribute at path ${path}.`)
   }
 }
