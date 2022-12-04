@@ -1,15 +1,15 @@
 import type { A, O, U } from 'ts-toolbelt'
 
-import type { Item } from 'v1/item/interface'
 import type {
-  Attribute,
+  FrozenItem,
+  FrozenAttribute,
   ResolvedAttribute,
-  AnyAttribute,
-  LeafAttribute,
-  SetAttribute,
-  ListAttribute,
-  MapAttribute,
-  MapAttributeAttributes,
+  FrozenAnyAttribute,
+  FrozenLeafAttribute,
+  FrozenSetAttribute,
+  FrozenListAttribute,
+  FrozenMapAttribute,
+  FrozenMapAttributeAttributes,
   AtLeastOnce,
   OnlyOnce,
   Always
@@ -28,33 +28,35 @@ import type { EntityV2 } from '../class'
  * SwapWithSavedAs<{ keyA: { ...attribute, _savedAs: "keyB" }}>
  * => { keyB: { ...attribute, _savedAs: "keyB"  }}
  */
-type SwapWithSavedAs<MapAttributeAttributesInput extends MapAttributeAttributes> = A.Compute<
+type SwapWithSavedAs<MapAttributeAttributesInput extends FrozenMapAttributeAttributes> = A.Compute<
   U.IntersectOf<
     {
       [K in keyof MapAttributeAttributesInput]: MapAttributeAttributesInput[K] extends {
-        _savedAs: string
+        savedAs: string
       }
-        ? Record<MapAttributeAttributesInput[K]['_savedAs'], MapAttributeAttributesInput[K]>
+        ? Record<MapAttributeAttributesInput[K]['savedAs'], MapAttributeAttributesInput[K]>
         : Record<K, MapAttributeAttributesInput[K]>
     }[keyof MapAttributeAttributesInput]
   >
 >
 
 type RecSavedItem<
-  Input extends MapAttribute | Item,
-  S extends MapAttributeAttributes = SwapWithSavedAs<Input['_attributes']>
+  Input extends FrozenMapAttribute | FrozenItem,
+  S extends FrozenMapAttributeAttributes = SwapWithSavedAs<Input['attributes']>
 > = O.Required<
-  O.Partial<{
-    // Keep all attributes
-    [key in keyof S]: SavedItem<S[key]>
-  }>,
+  O.Partial<
+    {
+      // Keep all attributes
+      [key in keyof S]: SavedItem<S[key]>
+    }
+  >,
   // Enforce Required attributes
-  | O.SelectKeys<S, { _required: AtLeastOnce | OnlyOnce | Always }>
+  | O.SelectKeys<S, { required: AtLeastOnce | OnlyOnce | Always }>
   // Enforce attributes that have defined default (initial or computed)
   // (...but not so sure about that anymore, props can have computed default but still be optional)
-  | O.FilterKeys<S, { _default: undefined }>
+  | O.FilterKeys<S, { default: undefined }>
 > & // Add Record<string, ResolvedAttribute> if map is open
-  (Input extends { _open: true } ? Record<string, ResolvedAttribute> : {})
+  (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
 
 /**
  * Shape of saved item in DynamoDB for a given Entity, Item or Attribute
@@ -62,16 +64,18 @@ type RecSavedItem<
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type SavedItem<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
+export type SavedItem<
+  Input extends EntityV2 | FrozenItem | FrozenAttribute
+> = Input extends FrozenAnyAttribute
   ? ResolvedAttribute
-  : Input extends LeafAttribute
-  ? NonNullable<Input['_resolved']>
-  : Input extends SetAttribute
-  ? Set<SavedItem<Input['_elements']>>
-  : Input extends ListAttribute
-  ? SavedItem<Input['_elements']>[]
-  : Input extends MapAttribute | Item
+  : Input extends FrozenLeafAttribute
+  ? NonNullable<Input['resolved']>
+  : Input extends FrozenSetAttribute
+  ? Set<SavedItem<Input['elements']>>
+  : Input extends FrozenListAttribute
+  ? SavedItem<Input['elements']>[]
+  : Input extends FrozenMapAttribute | FrozenItem
   ? RecSavedItem<Input>
   : Input extends EntityV2
-  ? SavedItem<Input['item']> & PrimaryKey<Input['table']>
+  ? SavedItem<Input['frozenItem']> & PrimaryKey<Input['table']>
   : never
