@@ -491,7 +491,7 @@ export type UpdateItem<
 
 export type AttributeUpdateInput<AttributeType> =
   | If<
-      A.Equals<AttributeType, FromDynamoData<'list' | 'set'> | undefined>,
+      B.Or<A.Equals<AttributeType, FromDynamoData<'list' | 'set'>>, A.Equals<AttributeType, FromDynamoData<'list' | 'set'> | undefined>>,
       | {
           $delete?: string[]
           $add?: any
@@ -503,21 +503,21 @@ export type AttributeUpdateInput<AttributeType> =
       AttributeType
     >
   | If<
-      A.Equals<AttributeType, number[] | undefined>,
+      B.Or<A.Equals<AttributeType, number[]>, A.Equals<AttributeType, number[] | undefined>>,
       | { $delete?: number[]; $add?: number[]; $prepend?: AttributeType; $append?: number[] }
       | string[]
     >
   | If<
-      A.Equals<AttributeType, string[] | undefined>,
+      B.Or<A.Equals<AttributeType, string[]>, A.Equals<AttributeType, string[] | undefined>>,
       | { $delete?: string[]; $add?: string[]; $prepend?: AttributeType; $append?: string[] }
       | number[]
     >
   | If<
-      A.Equals<AttributeType, boolean[] | undefined>,
+      B.Or<A.Equals<AttributeType, boolean[]>, A.Equals<AttributeType, boolean[] | undefined>>,
       | { $delete?: boolean[]; $add?: boolean[]; $prepend?: AttributeType; $append?: boolean[] }
       | boolean[]
     >
-  | If<A.Equals<AttributeType, FromDynamoData<'number'> | undefined>, { $add?: number }>
+  | If<B.Or<A.Equals<AttributeType, FromDynamoData<'number'>>, A.Equals<AttributeType, FromDynamoData<'number'> | undefined>>, { $add?: number }>
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 

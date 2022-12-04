@@ -3,7 +3,7 @@
 /**
  * DynamoDB Toolbox: A simple set of tools for working with Amazon DynamoDB
  * @author Jeremy Daly <jeremy@jeremydaly.com>
- * @version 0.6.0
+ * @version 0.6.2
  * @license MIT
  */
 
