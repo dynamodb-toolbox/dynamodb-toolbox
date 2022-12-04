@@ -1621,8 +1621,13 @@ class Entity<Name extends string = string,
       error(`Entity ${this.name} was assigned an invalid table`)
     }
 
-    console.log('blabla');
-    
+    if (this._table?.Table?.entityField) {
+      delete this.schema.attributes[table.Table.entityField]
+      delete this.defaults[table.Table.entityField]
+      delete his.schema.attributes[this._etAlias]
+      delete this.defaults[this._etAlias]
+    }
+
     this._table?.removeEntity?.(this)
     this._table = table as EntityTable | undefined
     table?.addEntity(this)
@@ -1646,7 +1651,6 @@ class Entity<Name extends string = string,
 
     return this as any
   }
-
 }
 
 export default Entity
