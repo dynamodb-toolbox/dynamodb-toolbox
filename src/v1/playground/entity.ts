@@ -25,4 +25,4 @@ type UserPutItemInput = PutItemInput<typeof UserEntity>
 type SavedUser = SavedItem<typeof UserEntity>
 type UserOutput = FormattedItem<typeof UserEntity>
 type UserInputKeys = KeyInput<typeof UserEntity>
-type UserPutItem = PutItem<typeof UserEntity['item']>
+type UserPutItem = PutItem<typeof UserEntity>
