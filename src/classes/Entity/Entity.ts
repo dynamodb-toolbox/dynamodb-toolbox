@@ -1617,7 +1617,7 @@ class Entity<Name extends string = string,
       return this as any
     }
 
-    if(!(table instanceof Table)) {
+    if(!table.Table.attributes) {
       error(`Entity ${this.name} was assigned an invalid table`)
     }
 
