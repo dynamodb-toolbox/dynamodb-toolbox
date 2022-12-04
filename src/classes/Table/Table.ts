@@ -122,7 +122,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       }
 
       if (this._entities?.includes?.(entity.name)) {
-        error(`Entity name '${entity.name}' already exists on table '${this.name}'`)
+        return
       }
 
       // Generate the reserved words list

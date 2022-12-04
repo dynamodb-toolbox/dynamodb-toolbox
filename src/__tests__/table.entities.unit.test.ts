@@ -32,21 +32,6 @@ describe('entities', () => {
     } as const)
   })
 
-  it('fails when assigning the same entity to the table', () => {
-    TestEntity2 = new Entity({
-      name: 'TestEntity',
-      attributes: {
-        email: { type: 'string', partitionKey: true },
-        sort: { type: 'string', sortKey: true },
-      },
-    } as const)
-
-    TestTable.addEntity(TestEntity)
-    expect(() => {
-      TestTable.addEntity(TestEntity2)
-    }).toThrow(`Entity name 'TestEntity' already exists`)
-  })
-
   it('fails when using a reserved word as an entity name', () => {
     TestEntity = new Entity({
       name: 'query',
