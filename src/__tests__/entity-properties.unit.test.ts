@@ -44,6 +44,7 @@ describe('Entity properties', () => {
         name: 'TestEnt',
         attributes: {
           pk: { partitionKey: true },
+          sk: { sortKey: true },
         },
       } as const)
 

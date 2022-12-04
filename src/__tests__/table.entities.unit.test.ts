@@ -265,12 +265,6 @@ describe('removeEntity', () => {
     }).toThrow('Entity must be an instance of Entity')
   })
 
-  it('fails when removing an entity that does not exist in the table', () => {
-    expect(() => {
-      TestTable.removeEntity(TestEntity)
-    }).toThrow('TestEntity is not in the TestTable table')
-  })
-
   it('removes the property mappings from the table in case only the removed entity has them', () => {
     TestTable.addEntity(TestEntity)
     expect(TestTable.Table.attributes).toEqual(expect.objectContaining({
