@@ -16,8 +16,9 @@ import {
   FormattedItem,
   SavedItem,
   KeyInput,
-  HasComputedDefaults
+  _HasComputedDefaults
 } from 'v1'
+import { freezeItem, FreezeItem } from 'v1/item'
 
 const playgroundItem1 = item({
   reqStr: string().required(),
@@ -44,9 +45,10 @@ const playgroundItem1 = item({
   ).required(),
   hiddenList: list(string().required()).hidden()
 })
+const frozenPlaygroundItem1 = freezeItem(playgroundItem1)
 
-type PlaygroundItem1PutItemInput = PutItemInput<typeof playgroundItem1>
-type PlaygroundItem1FormattedItem = FormattedItem<typeof playgroundItem1>
+type PlaygroundItem1PutItemInput = PutItemInput<typeof frozenPlaygroundItem1>
+type PlaygroundItem1FormattedItem = FormattedItem<typeof frozenPlaygroundItem1>
 
 const allCasesOfProps = {
   optProp: string(),
@@ -63,11 +65,16 @@ const playgroundItem2 = item({
   list: list(map(allCasesOfProps).required()).required()
 })
 
-type PlaygroundItem2FormattedItem = FormattedItem<typeof playgroundItem2>
-type PlaygroundItem2HasComputedDefault = HasComputedDefaults<typeof playgroundItem2>
-type PlaygroundItem2PutItem = PutItem<typeof playgroundItem2>
-type PlaygroundItem2PutItemInput = PutItemInput<typeof playgroundItem2>
-type PlaygroundItem2PutItemInputWithDefaults = PutItemInput<typeof playgroundItem2, true>
+const frozenPlaygroundItem2 = freezeItem(playgroundItem2)
+
+type PlaygroundItem2FormattedItem = FormattedItem<typeof frozenPlaygroundItem2>
+type PlaygroundItem2HasComputedDefault = _HasComputedDefaults<typeof playgroundItem3>
+type PlaygroundItem2PutItem = PutItem<typeof frozenPlaygroundItem2>
+type PlaygroundItem2PutItemInput = PutItemInput<typeof frozenPlaygroundItem2>
+type PlaygroundItem2PutItemInputWithDefaults = PutItemInput<
+  FreezeItem<typeof playgroundItem2>,
+  true
+>
 
 const playgroundItem3 = item({
   keyEl: string().key().required(),
@@ -82,6 +89,8 @@ const playgroundItem3 = item({
   anyvalue: any().required()
 })
 
-type PlaygroundItem3SavedItem = SavedItem<typeof playgroundItem3>
-type PlaygroundItem3KeyInput = KeyInput<typeof playgroundItem3>
-type PlaygroundItem3HasComputedDefault = HasComputedDefaults<typeof playgroundItem3>
+const frozenPlaygroundItem3 = freezeItem(playgroundItem3)
+
+type PlaygroundItem3SavedItem = SavedItem<typeof frozenPlaygroundItem3>
+type PlaygroundItem3KeyInput = KeyInput<typeof frozenPlaygroundItem3>
+type PlaygroundItem3HasComputedDefault = _HasComputedDefaults<typeof playgroundItem3>

@@ -1,4 +1,11 @@
-import { Item, MapAttribute } from 'v1/item'
+import { FrozenItem, FrozenMapAttribute } from 'v1/item'
 
-export const isOpen = ({ _open }: Item | MapAttribute): boolean => _open
-export const isClosed = (entry: Item | MapAttribute): boolean => !isOpen(entry)
+export const isOpen = (
+  itemOrMapAttribute: FrozenItem | FrozenMapAttribute
+): itemOrMapAttribute is (FrozenItem | FrozenMapAttribute) & { open: true } =>
+  itemOrMapAttribute.open
+
+export const isClosed = (
+  itemOrMapAttribute: FrozenItem | FrozenMapAttribute
+): itemOrMapAttribute is (FrozenItem | FrozenMapAttribute) & { open: false } =>
+  !isOpen(itemOrMapAttribute)
