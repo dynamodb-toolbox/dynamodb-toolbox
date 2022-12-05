@@ -1609,7 +1609,7 @@ class Entity<Name extends string = string,
     $Item,
     Item,
     CompositePrimaryKey> {
-    if (table === undefined && !this._table) {
+    if (table == null && !this._table) {
       return this as any
     }
 
