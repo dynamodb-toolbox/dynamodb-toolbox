@@ -1,38 +1,49 @@
 import { isComputedDefault } from 'v1/item/utils/isComputedDefault'
 import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
-import { validatorsByLeafType } from 'v1/utils/validation'
+import { validatorsByPrimitiveType } from 'v1/utils/validation'
 
 import { validateAttributeProperties } from '../shared/validate'
 
-import type { _LeafAttribute, FreezeLeafAttribute } from './interface'
-import type { LeafAttributeType, LeafAttributeEnumValues, LeafAttributeDefaultValue } from './types'
+import type { _PrimitiveAttribute, FreezePrimitiveAttribute } from './interface'
+import type {
+  PrimitiveAttributeType,
+  PrimitiveAttributeEnumValues,
+  PrimitiveAttributeDefaultValue
+} from './types'
 
-type LeafAttributeFreezer = <_LEAF_ATTRIBUTE extends _LeafAttribute>(
+type PrimitiveAttributeFreezer = <_LEAF_ATTRIBUTE extends _PrimitiveAttribute>(
   attribute: _LEAF_ATTRIBUTE,
   path: string
-) => FreezeLeafAttribute<_LEAF_ATTRIBUTE>
+) => FreezePrimitiveAttribute<_LEAF_ATTRIBUTE>
 
 /**
- * Validates a leaf instance
+ * Validates a primitive instance
  *
- * @param attribute Leaf
+ * @param attribute Primitive
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeLeafAttribute: LeafAttributeFreezer = <_LEAF_ATTRIBUTE extends _LeafAttribute>(
+export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
+  _LEAF_ATTRIBUTE extends _PrimitiveAttribute
+>(
   attribute: _LEAF_ATTRIBUTE,
   path: string
-): FreezeLeafAttribute<_LEAF_ATTRIBUTE> => {
+): FreezePrimitiveAttribute<_LEAF_ATTRIBUTE> => {
   validateAttributeProperties(attribute, path)
 
-  const { _type: leafType, _enum: enumValues, _default: defaultValue, ...leafInstance } = attribute
+  const {
+    _type: primitiveType,
+    _enum: enumValues,
+    _default: defaultValue,
+    ...primitiveInstance
+  } = attribute
 
-  const typeValidator = validatorsByLeafType[leafType]
+  const typeValidator = validatorsByPrimitiveType[primitiveType]
 
   enumValues?.forEach(enumValue => {
     const isEnumValueValid = typeValidator(enumValue)
     if (!isEnumValueValid) {
-      throw new InvalidEnumValueTypeError({ expectedType: leafType, enumValue, path })
+      throw new InvalidEnumValueTypeError({ expectedType: primitiveType, enumValue, path })
     }
   })
 
@@ -42,7 +53,7 @@ export const freezeLeafAttribute: LeafAttributeFreezer = <_LEAF_ATTRIBUTE extend
     isStaticDefault(defaultValue)
   ) {
     if (!typeValidator(defaultValue)) {
-      throw new InvalidDefaultValueTypeError({ expectedType: leafType, defaultValue, path })
+      throw new InvalidDefaultValueTypeError({ expectedType: primitiveType, defaultValue, path })
     }
 
     if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
@@ -50,10 +61,10 @@ export const freezeLeafAttribute: LeafAttributeFreezer = <_LEAF_ATTRIBUTE extend
     }
   }
 
-  const { _required: required, _hidden: hidden, _key: key, _savedAs: savedAs } = leafInstance
+  const { _required: required, _hidden: hidden, _key: key, _savedAs: savedAs } = primitiveInstance
 
   return {
-    type: leafType,
+    type: primitiveType,
     path: path,
     required,
     hidden,
@@ -61,11 +72,11 @@ export const freezeLeafAttribute: LeafAttributeFreezer = <_LEAF_ATTRIBUTE extend
     savedAs,
     enum: enumValues as Extract<
       _LEAF_ATTRIBUTE['_enum'],
-      LeafAttributeEnumValues<_LEAF_ATTRIBUTE['_type']>
+      PrimitiveAttributeEnumValues<_LEAF_ATTRIBUTE['_type']>
     >,
     default: defaultValue as Extract<
       _LEAF_ATTRIBUTE['_default'],
-      LeafAttributeDefaultValue<_LEAF_ATTRIBUTE['_type']>
+      PrimitiveAttributeDefaultValue<_LEAF_ATTRIBUTE['_type']>
     >
   }
 }
@@ -76,8 +87,8 @@ export class InvalidEnumValueTypeError extends Error {
     enumValue,
     path
   }: {
-    expectedType: LeafAttributeType
-    enumValue: NonNullable<LeafAttributeEnumValues<LeafAttributeType>>[number]
+    expectedType: PrimitiveAttributeType
+    enumValue: NonNullable<PrimitiveAttributeEnumValues<PrimitiveAttributeType>>[number]
     path: string
   }) {
     super(
@@ -94,8 +105,8 @@ export class InvalidDefaultValueTypeError extends Error {
     defaultValue,
     path
   }: {
-    expectedType: LeafAttributeType
-    defaultValue: NonNullable<LeafAttributeDefaultValue<LeafAttributeType>>
+    expectedType: PrimitiveAttributeType
+    defaultValue: NonNullable<PrimitiveAttributeDefaultValue<PrimitiveAttributeType>>
     path: string
   }) {
     super(
@@ -112,8 +123,8 @@ export class InvalidDefaultValueRangeError extends Error {
     defaultValue,
     path
   }: {
-    enumValues: NonNullable<LeafAttributeEnumValues<LeafAttributeType>>
-    defaultValue: NonNullable<LeafAttributeDefaultValue<LeafAttributeType>>
+    enumValues: NonNullable<PrimitiveAttributeEnumValues<PrimitiveAttributeType>>
+    defaultValue: NonNullable<PrimitiveAttributeDefaultValue<PrimitiveAttributeType>>
     path: string
   }) {
     super(

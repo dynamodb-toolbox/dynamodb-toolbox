@@ -8,8 +8,8 @@ import type {
   ResolvedAttribute,
   _AnyAttribute,
   AnyAttribute,
-  _LeafAttribute,
-  LeafAttribute,
+  _PrimitiveAttribute,
+  PrimitiveAttribute,
   _SetAttribute,
   SetAttribute,
   _ListAttribute,
@@ -32,7 +32,7 @@ import type { EntityV2 } from '../class'
  */
 export type PutItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends LeafAttribute
+  : INPUT extends PrimitiveAttribute
   ? NonNullable<INPUT['resolved']>
   : INPUT extends SetAttribute
   ? Set<PutItem<INPUT['elements']>>
@@ -59,7 +59,7 @@ export type PutItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends A
 // TODO: Required in Entity constructor... See if possible to use only PutItem
 export type _PutItem<INPUT extends EntityV2 | _Item | _Attribute> = INPUT extends _AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends _LeafAttribute
+  : INPUT extends _PrimitiveAttribute
   ? NonNullable<INPUT['_resolved']>
   : INPUT extends _SetAttribute
   ? Set<_PutItem<INPUT['_elements']>>
