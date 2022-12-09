@@ -1,29 +1,29 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
 import type {
-  LeafAttributeType,
-  ResolveLeafAttributeType,
-  LeafAttributeEnumValues,
-  LeafAttributeDefaultValue
+  PrimitiveAttributeType,
+  ResolvePrimitiveAttributeType,
+  PrimitiveAttributeEnumValues,
+  PrimitiveAttributeDefaultValue
 } from './types'
 
 // TODO: Define reqKey / optKey or partitionKey / sortKey shorthands ?
 /**
- * Leaf attribute interface
+ * Primitive attribute interface
  */
-export type _LeafAttribute<
-  TYPE extends LeafAttributeType = LeafAttributeType,
+export type _PrimitiveAttribute<
+  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   IS_REQUIRED extends RequiredOption = RequiredOption,
   IS_HIDDEN extends boolean = boolean,
   IS_KEY extends boolean = boolean,
   SAVED_AS extends string | undefined = string | undefined,
-  ENUM extends LeafAttributeEnumValues<TYPE> = LeafAttributeEnumValues<TYPE>,
-  DEFAULT extends LeafAttributeDefaultValue<TYPE> = LeafAttributeDefaultValue<TYPE>
+  ENUM extends PrimitiveAttributeEnumValues<TYPE> = PrimitiveAttributeEnumValues<TYPE>,
+  DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> = PrimitiveAttributeDefaultValue<TYPE>
 > = _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
   _type: TYPE
-  _resolved?: ENUM extends ResolveLeafAttributeType<TYPE>[]
+  _resolved?: ENUM extends ResolvePrimitiveAttributeType<TYPE>[]
     ? ENUM[number]
-    : ResolveLeafAttributeType<TYPE>
+    : ResolvePrimitiveAttributeType<TYPE>
   _enum: ENUM
   _default: DEFAULT
   /**
@@ -37,21 +37,21 @@ export type _LeafAttribute<
    */
   required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_IS_REQUIRED
-  ) => _LeafAttribute<TYPE, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
+  ) => _PrimitiveAttribute<TYPE, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _LeafAttribute<TYPE, IS_REQUIRED, true, IS_KEY, SAVED_AS, ENUM, DEFAULT>
+  hidden: () => _PrimitiveAttribute<TYPE, IS_REQUIRED, true, IS_KEY, SAVED_AS, ENUM, DEFAULT>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, true, SAVED_AS, ENUM, DEFAULT>
+  key: () => _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, true, SAVED_AS, ENUM, DEFAULT>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, NEXT_SAVED_AS, ENUM, DEFAULT>
+  ) => _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, NEXT_SAVED_AS, ENUM, DEFAULT>
   /**
    * Provide a finite list of possible values for attribute
    * (For typing reasons, enums are only available as attribute methods, not as input options)
@@ -60,9 +60,9 @@ export type _LeafAttribute<
    * @example
    * string().enum('foo', 'bar')
    */
-  enum: <NEXT_ENUM extends ResolveLeafAttributeType<TYPE>[]>(
+  enum: <NEXT_ENUM extends ResolvePrimitiveAttributeType<TYPE>[]>(
     ...nextEnum: NEXT_ENUM
-  ) => _LeafAttribute<
+  ) => _PrimitiveAttribute<
     TYPE,
     IS_REQUIRED,
     IS_HIDDEN,
@@ -77,39 +77,41 @@ export type _LeafAttribute<
    * @param nextDefaultValue `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
   default: <
-    NEXT_DEFAULT extends LeafAttributeDefaultValue<TYPE> &
-      (ENUM extends ResolveLeafAttributeType<TYPE>[]
+    NEXT_DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> &
+      (ENUM extends ResolvePrimitiveAttributeType<TYPE>[]
         ? ENUM[number] | (() => ENUM[number])
         : unknown)
   >(
     nextDefaultValue: NEXT_DEFAULT
-  ) => _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, NEXT_DEFAULT>
+  ) => _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, NEXT_DEFAULT>
 }
 
-export type LeafAttribute<
-  TYPE extends LeafAttributeType = LeafAttributeType,
+export type PrimitiveAttribute<
+  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   IS_REQUIRED extends RequiredOption = RequiredOption,
   IS_HIDDEN extends boolean = boolean,
   IS_KEY extends boolean = boolean,
   SAVED_AS extends string | undefined = string | undefined,
-  ENUM extends LeafAttributeEnumValues<TYPE> = LeafAttributeEnumValues<TYPE>,
-  DEFAULT extends LeafAttributeDefaultValue<TYPE> = LeafAttributeDefaultValue<TYPE>
+  ENUM extends PrimitiveAttributeEnumValues<TYPE> = PrimitiveAttributeEnumValues<TYPE>,
+  DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> = PrimitiveAttributeDefaultValue<TYPE>
 > = AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
   path: string
   type: TYPE
-  resolved?: ENUM extends ResolveLeafAttributeType<TYPE>[]
+  resolved?: ENUM extends ResolvePrimitiveAttributeType<TYPE>[]
     ? ENUM[number]
-    : ResolveLeafAttributeType<TYPE>
+    : ResolvePrimitiveAttributeType<TYPE>
   enum: ENUM
   default: DEFAULT
 }
 
-export type FreezeLeafAttribute<_LEAF_ATTRIBUTE extends _LeafAttribute> = LeafAttribute<
+export type FreezePrimitiveAttribute<
+  _LEAF_ATTRIBUTE extends _PrimitiveAttribute
+> = PrimitiveAttribute<
   _LEAF_ATTRIBUTE['_type'],
   _LEAF_ATTRIBUTE['_required'],
   _LEAF_ATTRIBUTE['_hidden'],
   _LEAF_ATTRIBUTE['_key'],
   _LEAF_ATTRIBUTE['_savedAs'],
-  Extract<_LEAF_ATTRIBUTE['_enum'], LeafAttributeEnumValues<_LEAF_ATTRIBUTE['_type']>>,
-  Extract<_LEAF_ATTRIBUTE['_default'], LeafAttributeDefaultValue<_LEAF_ATTRIBUTE['_type']>>
+  Extract<_LEAF_ATTRIBUTE['_enum'], PrimitiveAttributeEnumValues<_LEAF_ATTRIBUTE['_type']>>,
+  Extract<_LEAF_ATTRIBUTE['_default'], PrimitiveAttributeDefaultValue<_LEAF_ATTRIBUTE['_type']>>
 >

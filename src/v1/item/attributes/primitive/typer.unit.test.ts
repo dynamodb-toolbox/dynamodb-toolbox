@@ -4,13 +4,13 @@ import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../consta
 
 import { string, number, boolean, binary } from './typer'
 import {
-  freezeLeafAttribute,
+  freezePrimitiveAttribute,
   InvalidEnumValueTypeError,
   InvalidDefaultValueTypeError,
   InvalidDefaultValueRangeError
 } from './freeze'
 
-describe('leafAttribute', () => {
+describe('primitiveAttribute', () => {
   const path = 'some.path'
 
   describe('string', () => {
@@ -146,7 +146,7 @@ describe('leafAttribute', () => {
       )
 
       expect(() =>
-        freezeLeafAttribute(
+        freezePrimitiveAttribute(
           string().enum(
             // @ts-expect-error
             42,
@@ -175,7 +175,7 @@ describe('leafAttribute', () => {
       })
 
       expect(() =>
-        freezeLeafAttribute(
+        freezePrimitiveAttribute(
           string({
             // @ts-expect-error
             default: 42
@@ -213,7 +213,7 @@ describe('leafAttribute', () => {
       )
 
       expect(() =>
-        freezeLeafAttribute(
+        freezePrimitiveAttribute(
           string().default(
             // @ts-expect-error
             42
@@ -251,7 +251,7 @@ describe('leafAttribute', () => {
       )
 
       expect(() =>
-        freezeLeafAttribute(
+        freezePrimitiveAttribute(
           string().enum('foo', 'bar').default(
             // @ts-expect-error
             'baz'

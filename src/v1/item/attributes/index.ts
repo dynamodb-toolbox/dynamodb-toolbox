@@ -1,5 +1,5 @@
 export * from './any'
-export * from './leaf'
+export * from './primitive'
 export * from './set'
 export * from './list'
 export * from './map'

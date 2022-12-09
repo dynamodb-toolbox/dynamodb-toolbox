@@ -1,5 +1,9 @@
 import { freezeAnyAttribute, _AnyAttribute, FreezeAnyAttribute } from './any'
-import { freezeLeafAttribute, _LeafAttribute, FreezeLeafAttribute } from './leaf'
+import {
+  freezePrimitiveAttribute,
+  _PrimitiveAttribute,
+  FreezePrimitiveAttribute
+} from './primitive'
 import { freezeSetAttribute, _SetAttribute, FreezeSetAttribute } from './set'
 import { freezeListAttribute, _ListAttribute, FreezeListAttribute } from './list'
 import { freezeMapAttribute, _MapAttribute, FreezeMapAttribute } from './map'
@@ -7,8 +11,8 @@ import type { _Attribute } from './types/attribute'
 
 export type FreezeAttribute<_ATTRIBUTE extends _Attribute> = _ATTRIBUTE extends _AnyAttribute
   ? FreezeAnyAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends _LeafAttribute
-  ? FreezeLeafAttribute<_ATTRIBUTE>
+  : _ATTRIBUTE extends _PrimitiveAttribute
+  ? FreezePrimitiveAttribute<_ATTRIBUTE>
   : _ATTRIBUTE extends _SetAttribute
   ? FreezeSetAttribute<_ATTRIBUTE>
   : _ATTRIBUTE extends _ListAttribute
@@ -35,7 +39,7 @@ export const freezeAttribute = <_ATTRIBUTE extends _Attribute>(
     case 'binary':
     case 'number':
     case 'string':
-      return freezeLeafAttribute(attribute, path) as any
+      return freezePrimitiveAttribute(attribute, path) as any
     case 'set':
       return freezeSetAttribute(attribute, path) as any
     case 'list':

@@ -4,7 +4,7 @@ import { item } from './typer'
 import { boolean, binary, number, string, set, list, map } from './attributes'
 
 describe('item', () => {
-  it('leafs', () => {
+  it('primitives', () => {
     const reqStr = string().required()
     const hidBool = boolean().hidden()
     const defNum = number().default(42)

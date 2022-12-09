@@ -1,4 +1,4 @@
-import { string } from '../leaf'
+import { string } from '../primitive'
 import { validateAttributeProperties } from '../shared/validate'
 import * as freezeAttributeModule from '../freeze'
 
