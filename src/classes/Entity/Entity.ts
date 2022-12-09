@@ -1609,7 +1609,7 @@ class Entity<Name extends string = string,
     $Item,
     Item,
     CompositePrimaryKey> {
-    if (table === undefined && !this._table) {
+    if (table == null && !this._table) {
       return this as any
     }
 
@@ -1617,7 +1617,7 @@ class Entity<Name extends string = string,
       return this as any
     }
 
-    if(table !== undefined && !table?.Table?.attributes) {
+    if(table != null && !table?.Table?.attributes) {
       error(`Entity ${this.name} was assigned an invalid table`)
     }
 
