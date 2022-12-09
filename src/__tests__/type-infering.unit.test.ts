@@ -2092,18 +2092,6 @@ describe('Entity', () => {
             { conditions: { attr: 'pk0', exists: true } }
           )
       })
-
-      it('Attributes match MethodItemOverlay, when returnValues is not NONE', () => {
-        const updatePromise = () =>
-          ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>(
-            { ...ck0, num0 },
-            { returnValues: 'UPDATED_NEW' }
-          )
-        type UpdateItem = A.Await<F.Return<typeof updatePromise>>['Attributes']
-        type TestUpdateItem = A.Equals<UpdateItem, MethodItemOverlay | undefined>
-        const testUpdateItem: TestUpdateItem = 1
-        testUpdateItem
-      })
     })
 
     describe('query method', () => {
