@@ -1,23 +1,23 @@
 import { AtLeastOnce } from '../constants'
-import type { LeafAttribute, _LeafAttribute } from '../leaf/interface'
-import { LeafAttributeEnumValues } from '../leaf/types'
+import type { PrimitiveAttribute, _PrimitiveAttribute } from '../primitive/interface'
+import { PrimitiveAttributeEnumValues } from '../primitive/types'
 
-export type _SetAttributeElements = _LeafAttribute<
+export type _SetAttributeElements = _PrimitiveAttribute<
   'string' | 'number' | 'binary',
   AtLeastOnce,
   false,
   boolean,
   undefined,
-  LeafAttributeEnumValues<'string' | 'number' | 'binary'>,
+  PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>,
   undefined
 >
 
-export type SetAttributeElements = LeafAttribute<
+export type SetAttributeElements = PrimitiveAttribute<
   'string' | 'number' | 'binary',
   AtLeastOnce,
   false,
   boolean,
   undefined,
-  LeafAttributeEnumValues<'string' | 'number' | 'binary'>,
+  PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>,
   undefined
 >
