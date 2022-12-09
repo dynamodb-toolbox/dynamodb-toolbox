@@ -299,7 +299,7 @@ describe('removeEntity', () => {
       attributes: {
         test_pk: { type: 'string', partitionKey: true },
         test_sk: { type: 'string', sortKey: true },
-      }
+      },
     })
 
     TestTable.addEntity(TestEntity2)
@@ -311,7 +311,7 @@ describe('removeEntity', () => {
           },
           TestEntity2: {
             test_pk: 'string',
-          }
+          },
         },
         type: 'string',
       },
@@ -322,7 +322,7 @@ describe('removeEntity', () => {
           },
           TestEntity2: {
             'test_sk': 'string',
-          }
+          },
         },
         type: 'string',
       },
@@ -358,8 +358,8 @@ describe('removeEntity', () => {
         testIndex: {
           partitionKey: 'test_table_gsi1_pk',
           sortKey: 'test_table_gsi1_sk',
-        }
-      }
+        },
+      },
     } as const)
 
     TestEntity = new Entity({
@@ -379,7 +379,7 @@ describe('removeEntity', () => {
         mappings: {
           TestEntity: {
             test_pk: 'string',
-          }
+          },
         },
         type: 'string',
       },
@@ -387,7 +387,7 @@ describe('removeEntity', () => {
         mappings: {
           TestEntity: {
             test_sk: 'string',
-          }
+          },
         },
         type: 'string',
       },
@@ -395,7 +395,7 @@ describe('removeEntity', () => {
         mappings: {
           TestEntity: {
             test_entity_gsi1_pk: 'string',
-          }
+          },
         },
         type: 'string',
       },
@@ -403,10 +403,10 @@ describe('removeEntity', () => {
         mappings: {
           TestEntity: {
             test_entity_gsi1_sk: 'string',
-          }
+          },
         },
         type: 'string',
-      }
+      },
     }))
 
     TestTable.removeEntity(TestEntity)
@@ -415,5 +415,99 @@ describe('removeEntity', () => {
     expect(TestTable.Table.attributes).not.toHaveProperty('sk')
     expect(TestTable.Table.attributes).not.toHaveProperty('testGsi1_pk')
     expect(TestTable.Table.attributes).not.toHaveProperty('testGsi1_sk')
+  })
+
+  it('removes the property index mappings from the table for an entity with indexes', () => {
+    TestTable = new Table({
+      name: 'TestTable',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      indexes: {
+        testIndex: {
+          partitionKey: 'test_table_gsi1_pk',
+          sortKey: 'test_table_gsi1_sk',
+        },
+      },
+    } as const)
+
+    TestEntity = new Entity({
+      name: 'TestEntity',
+      attributes: {
+        test_pk: { type: 'string', partitionKey: true },
+        test_sk: { type: 'string', sortKey: true },
+        test_entity_gsi1_pk: { type: 'string', partitionKey: 'testIndex' },
+        test_entity_gsi1_sk: { type: 'string', sortKey: 'testIndex' },
+      },
+    } as const)
+
+    TestTable.addEntity(TestEntity)
+
+    expect(TestTable.Table.indexes).toEqual(expect.objectContaining({
+      testIndex: {
+        partitionKey: 'test_table_gsi1_pk',
+        sortKey: 'test_table_gsi1_sk',
+        type: 'GSI',
+      },
+    }))
+
+    TestTable.removeEntity(TestEntity)
+
+    expect(TestTable.Table.indexes).toHaveProperty('testIndex')
+  })
+
+  it('does not remove the property index mappings from the table in case other entities have them', () => {
+    TestTable = new Table({
+      name: 'TestTable',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      indexes: {
+        testIndex: {
+          partitionKey: 'test_table_gsi1_pk',
+          sortKey: 'test_table_gsi1_sk',
+        },
+      },
+    } as const)
+
+    TestEntity = new Entity({
+      name: 'TestEntity',
+      attributes: {
+        test_pk: { type: 'string', partitionKey: true },
+        test_sk: { type: 'string', sortKey: true },
+        test_entity_gsi1_pk: { type: 'string', partitionKey: 'testIndex' },
+        test_entity_gsi1_sk: { type: 'string', sortKey: 'testIndex' },
+      },
+    } as const)
+
+    TestTable.addEntity(TestEntity)
+
+    const TestEntity2 = new Entity({
+      name: 'TestEntity2',
+      attributes: {
+        test_pk: { type: 'string', partitionKey: true },
+        test_sk: { type: 'string', sortKey: true },
+        test_entity_gsi1_pk: { type: 'string', partitionKey: 'testIndex' },
+        test_entity_gsi1_sk: { type: 'string', sortKey: 'testIndex' },
+      },
+    } as const)
+
+    TestTable.addEntity(TestEntity2)
+
+    expect(TestTable.Table.indexes).toEqual(expect.objectContaining({
+      testIndex: {
+        partitionKey: 'test_table_gsi1_pk',
+        sortKey: 'test_table_gsi1_sk',
+        type: 'GSI',
+      },
+    }))
+
+    TestTable.removeEntity(TestEntity)
+
+    expect(TestTable.Table.indexes).toEqual(expect.objectContaining({
+      testIndex: {
+        partitionKey: 'test_table_gsi1_pk',
+        sortKey: 'test_table_gsi1_sk',
+        type: 'GSI',
+      },
+    }))
   })
 })
