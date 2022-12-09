@@ -8,8 +8,8 @@ import type {
   ResolvedAttribute,
   AnyAttribute,
   _AnyAttribute,
-  LeafAttribute,
-  _LeafAttribute,
+  PrimitiveAttribute,
+  _PrimitiveAttribute,
   SetAttribute,
   _SetAttribute,
   ListAttribute,
@@ -29,7 +29,7 @@ import { EntityV2 } from '../class'
  */
 export type KeyInput<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends LeafAttribute
+  : INPUT extends PrimitiveAttribute
   ? NonNullable<INPUT['resolved']>
   : INPUT extends SetAttribute
   ? Set<KeyInput<INPUT['elements']>>
@@ -60,7 +60,7 @@ export type KeyInput<INPUT extends EntityV2 | Item | Attribute> = INPUT extends 
 // TODO: Required in Entity constructor... See if possible to use only KeyInput w. Item
 export type _KeyInput<INPUT extends EntityV2 | _Item | _Attribute> = INPUT extends _AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends _LeafAttribute
+  : INPUT extends _PrimitiveAttribute
   ? NonNullable<INPUT['_resolved']>
   : INPUT extends _SetAttribute
   ? Set<_KeyInput<INPUT['_elements']>>
