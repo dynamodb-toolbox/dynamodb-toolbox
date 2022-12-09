@@ -720,6 +720,7 @@ class Entity<Name extends string = string,
     DocumentClient.UpdateItemInput,
     If<B.Not<ShouldParse<Parse, AutoParse>>,
       DocumentClient.UpdateItemOutput,
+      // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
       If<B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
         Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
         O.Update<DocumentClient.UpdateItemOutput,
