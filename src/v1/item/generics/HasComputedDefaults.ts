@@ -7,7 +7,7 @@ import type {
   ComputedDefault
 } from '../attributes'
 
-// TODO: Required in Entity constructor... See if possible to use only Frozen Item
+// TODO: Required in Entity constructor... See if possible to use only Item
 /**
  * Wether an Item or Attribute has a default value that needs to be computed (recursive)
  *

@@ -1,8 +1,8 @@
 export type { Narrow } from './narrow'
 export type {
   _Attribute,
-  FrozenAttribute,
+  Attribute,
+  _MapAttributeAttributes,
   MapAttributeAttributes,
-  FrozenMapAttributeAttributes,
   ResolvedAttribute
 } from './attribute'

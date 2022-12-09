@@ -5,10 +5,10 @@ import { ComputedDefault } from '../constants'
 
 import type { _SetAttribute } from './interface'
 import { SetAttributeOptions, SET_ATTRIBUTE_DEFAULT_OPTIONS } from './options'
-import type { SetAttributeElements } from './types'
+import type { _SetAttributeElements } from './types'
 
 type SetTyper = <
-  Elements extends SetAttributeElements,
+  Elements extends _SetAttributeElements,
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,
@@ -31,7 +31,7 @@ type SetTyper = <
  * @param options _(optional)_ List Options
  */
 export const set: SetTyper = <
-  Elements extends SetAttributeElements,
+  Elements extends _SetAttributeElements,
   IsRequired extends RequiredOption = Never,
   IsHidden extends boolean = false,
   IsKey extends boolean = false,

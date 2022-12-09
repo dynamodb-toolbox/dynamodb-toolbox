@@ -1,20 +1,20 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { ComputedDefault } from '../constants/computedDefault'
-import type { AttributeProperties, FrozenAttributeProperties } from '../shared/interface'
+import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
 import type { FreezeAttribute } from '../freeze'
-import type { SetAttributeElements, FrozenSetAttributeElements } from './types'
+import type { _SetAttributeElements, SetAttributeElements } from './types'
 
 /**
  * Set attribute interface
  */
 export type _SetAttribute<
-  Elements extends SetAttributeElements = SetAttributeElements,
+  Elements extends _SetAttributeElements = _SetAttributeElements,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> = AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+> = _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
   _type: 'set'
   _elements: Elements
   _default: Default
@@ -54,21 +54,21 @@ export type _SetAttribute<
   ) => _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, NextDefault>
 }
 
-export type FrozenSetAttribute<
-  Elements extends FrozenSetAttributeElements = FrozenSetAttributeElements,
+export type SetAttribute<
+  Elements extends SetAttributeElements = SetAttributeElements,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
   IsKey extends boolean = boolean,
   SavedAs extends string | undefined = string | undefined,
   Default extends ComputedDefault | undefined = ComputedDefault | undefined
-> = FrozenAttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+> = AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
   type: 'set'
   path: string
   elements: Elements
   default: Default
 }
 
-export type FreezeSetAttribute<Attribute extends _SetAttribute> = FrozenSetAttribute<
+export type FreezeSetAttribute<Attribute extends _SetAttribute> = SetAttribute<
   FreezeAttribute<Attribute['_elements']>,
   Attribute['_required'],
   Attribute['_hidden'],

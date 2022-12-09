@@ -2,20 +2,20 @@ import type { O } from 'ts-toolbelt'
 
 import type {
   _Item,
-  FrozenItem,
+  Item,
   _Attribute,
-  FrozenAttribute,
+  Attribute,
   ResolvedAttribute,
   _AnyAttribute,
-  FrozenAnyAttribute,
+  AnyAttribute,
   _LeafAttribute,
-  FrozenLeafAttribute,
+  LeafAttribute,
   _SetAttribute,
-  FrozenSetAttribute,
+  SetAttribute,
   _ListAttribute,
-  FrozenListAttribute,
+  ListAttribute,
   _MapAttribute,
-  FrozenMapAttribute,
+  MapAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -30,17 +30,15 @@ import type { EntityV2 } from '../class'
  * @param Input Entity | Item | Attribute
  * @return Object
  */
-export type PutItem<
-  Input extends EntityV2 | FrozenItem | FrozenAttribute
-> = Input extends FrozenAnyAttribute
+export type PutItem<Input extends EntityV2 | Item | Attribute> = Input extends AnyAttribute
   ? ResolvedAttribute
-  : Input extends FrozenLeafAttribute
+  : Input extends LeafAttribute
   ? NonNullable<Input['resolved']>
-  : Input extends FrozenSetAttribute
+  : Input extends SetAttribute
   ? Set<PutItem<Input['elements']>>
-  : Input extends FrozenListAttribute
+  : Input extends ListAttribute
   ? PutItem<Input['elements']>[]
-  : Input extends FrozenMapAttribute | FrozenItem
+  : Input extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
@@ -55,7 +53,7 @@ export type PutItem<
     > & // Add Record<string, ResolvedAttribute> if map is open
       (Input extends { open: true } ? Record<string, ResolvedAttribute> : {})
   : Input extends EntityV2
-  ? PutItem<Input['frozenItem']>
+  ? PutItem<Input['item']>
   : never
 
 // TODO: Required in Entity constructor... See if possible to use only PutItem

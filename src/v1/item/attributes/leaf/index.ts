@@ -4,7 +4,7 @@ export type {
   ResolveLeafAttributeType,
   ResolvedLeafAttributeType
 } from './types'
-export type { _LeafAttribute, FrozenLeafAttribute, FreezeLeafAttribute } from './interface'
+export type { _LeafAttribute, LeafAttribute, FreezeLeafAttribute } from './interface'
 export {
   freezeLeafAttribute,
   InvalidEnumValueTypeError,

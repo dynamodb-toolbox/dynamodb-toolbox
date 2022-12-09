@@ -2,7 +2,7 @@ import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import { isBoolean, isString } from 'v1/utils/validation'
 
 import { requiredOptionsSet } from '../constants/requiredOptions'
-import type { AttributeProperties } from './interface'
+import type { _AttributeProperties } from './interface'
 
 /**
  * Validates an attribute shared properties
@@ -12,7 +12,7 @@ import type { AttributeProperties } from './interface'
  * @return void
  */
 export const validateAttributeProperties = (
-  { _required, _hidden, _key, _savedAs }: AttributeProperties,
+  { _required, _hidden, _key, _savedAs }: _AttributeProperties,
   path?: string
 ): void => {
   if (!requiredOptionsSet.has(_required)) {
