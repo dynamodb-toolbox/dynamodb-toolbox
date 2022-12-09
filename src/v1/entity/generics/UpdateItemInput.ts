@@ -5,7 +5,7 @@ import type {
   Attribute,
   ResolvedAttribute,
   AnyAttribute,
-  LeafAttribute,
+  PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
   MapAttribute,
@@ -23,7 +23,7 @@ import type { EntityV2 } from '../class'
  */
 export type UpdateItemInput<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends LeafAttribute
+  : INPUT extends PrimitiveAttribute
   ? NonNullable<INPUT['resolved']>
   : INPUT extends SetAttribute
   ? Set<UpdateItemInput<INPUT['elements']>>
