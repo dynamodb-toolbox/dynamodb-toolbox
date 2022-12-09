@@ -5,7 +5,7 @@ import type {
   Attribute,
   ResolvedAttribute,
   AnyAttribute,
-  LeafAttribute,
+  PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
   MapAttribute,
@@ -67,7 +67,7 @@ type RecSavedItem<
  */
 export type SavedItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends LeafAttribute
+  : INPUT extends PrimitiveAttribute
   ? NonNullable<INPUT['resolved']>
   : INPUT extends SetAttribute
   ? Set<SavedItem<INPUT['elements']>>

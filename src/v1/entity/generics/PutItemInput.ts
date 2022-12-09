@@ -8,8 +8,8 @@ import type {
   ResolvedAttribute,
   _AnyAttribute,
   AnyAttribute,
-  _LeafAttribute,
-  LeafAttribute,
+  _PrimitiveAttribute,
+  PrimitiveAttribute,
   _SetAttribute,
   SetAttribute,
   _ListAttribute,
@@ -36,7 +36,7 @@ export type PutItemInput<
   REQUIRE_INITIAL_DEFAULTS extends boolean = false
 > = INPUT extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends LeafAttribute
+  : INPUT extends PrimitiveAttribute
   ? NonNullable<INPUT['resolved']>
   : INPUT extends SetAttribute
   ? Set<PutItemInput<INPUT['elements'], REQUIRE_INITIAL_DEFAULTS>>
@@ -74,7 +74,7 @@ export type _PutItemInput<
   REQUIRE_INITIAL_DEFAULTS extends boolean = false
 > = INPUT extends _AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends _LeafAttribute
+  : INPUT extends _PrimitiveAttribute
   ? NonNullable<INPUT['_resolved']>
   : INPUT extends _SetAttribute
   ? Set<_PutItemInput<INPUT['_elements'], REQUIRE_INITIAL_DEFAULTS>>
