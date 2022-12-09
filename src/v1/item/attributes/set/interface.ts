@@ -7,7 +7,7 @@ import type { SetAttributeElements, FrozenSetAttributeElements } from './types'
 /**
  * Set attribute interface
  */
-export type SetAttribute<
+export type _SetAttribute<
   Elements extends SetAttributeElements = SetAttributeElements,
   IsRequired extends RequiredOption = RequiredOption,
   IsHidden extends boolean = boolean,
@@ -29,21 +29,21 @@ export type SetAttribute<
    */
   required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
     nextRequired?: NextIsRequired
-  ) => SetAttribute<Elements, NextIsRequired, IsHidden, IsKey, SavedAs, Default>
+  ) => _SetAttribute<Elements, NextIsRequired, IsHidden, IsKey, SavedAs, Default>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => SetAttribute<Elements, IsRequired, true, IsKey, SavedAs, Default>
+  hidden: () => _SetAttribute<Elements, IsRequired, true, IsKey, SavedAs, Default>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => SetAttribute<Elements, IsRequired, IsHidden, true, SavedAs, Default>
+  key: () => _SetAttribute<Elements, IsRequired, IsHidden, true, SavedAs, Default>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NextSavedAs extends string | undefined>(
     nextSavedAs: NextSavedAs
-  ) => SetAttribute<Elements, IsRequired, IsHidden, IsKey, NextSavedAs, Default>
+  ) => _SetAttribute<Elements, IsRequired, IsHidden, IsKey, NextSavedAs, Default>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
@@ -51,7 +51,7 @@ export type SetAttribute<
    */
   default: <NextDefault extends ComputedDefault | undefined>(
     nextDefaultValue: NextDefault
-  ) => SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, NextDefault>
+  ) => _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, NextDefault>
 }
 
 export type FrozenSetAttribute<
@@ -68,7 +68,7 @@ export type FrozenSetAttribute<
   default: Default
 }
 
-export type FreezeSetAttribute<Attribute extends SetAttribute> = FrozenSetAttribute<
+export type FreezeSetAttribute<Attribute extends _SetAttribute> = FrozenSetAttribute<
   FreezeAttribute<Attribute['_elements']>,
   Attribute['_required'],
   Attribute['_hidden'],

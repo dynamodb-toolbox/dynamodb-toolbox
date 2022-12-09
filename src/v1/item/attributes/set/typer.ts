@@ -3,7 +3,7 @@ import type { O } from 'ts-toolbelt'
 import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
 import { ComputedDefault } from '../constants'
 
-import type { SetAttribute } from './interface'
+import type { _SetAttribute } from './interface'
 import { SetAttributeOptions, SET_ATTRIBUTE_DEFAULT_OPTIONS } from './options'
 import type { SetAttributeElements } from './types'
 
@@ -17,7 +17,7 @@ type SetTyper = <
 >(
   _elements: Elements,
   options?: O.Partial<SetAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-) => SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
+) => _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
  * Define a new set attribute
@@ -40,7 +40,7 @@ export const set: SetTyper = <
 >(
   elements: Elements,
   options?: O.Partial<SetAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-): SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
+): _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
   const appliedOptions = { ...SET_ATTRIBUTE_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
@@ -65,5 +65,5 @@ export const set: SetTyper = <
     key: () => set(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => set(elements, { ...appliedOptions, default: nextDefault })
-  } as SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
+  } as _SetAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 }

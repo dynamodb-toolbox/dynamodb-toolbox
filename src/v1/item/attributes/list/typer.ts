@@ -3,7 +3,7 @@ import type { O } from 'ts-toolbelt'
 import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constants'
 
 import type { ListAttributeElements } from './types'
-import type { ListAttribute } from './interface'
+import type { _ListAttribute } from './interface'
 import { ListAttributeOptions, LIST_DEFAULT_OPTIONS } from './options'
 
 type ListTyper = <
@@ -16,7 +16,7 @@ type ListTyper = <
 >(
   _elements: Elements,
   options?: O.Partial<ListAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-) => ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
+) => _ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 
 /**
  * Define a new list attribute
@@ -39,7 +39,7 @@ export const list: ListTyper = <
 >(
   elements: Elements,
   options?: O.Partial<ListAttributeOptions<IsRequired, IsHidden, IsKey, SavedAs, Default>>
-): ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
+): _ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default> => {
   const appliedOptions = { ...LIST_DEFAULT_OPTIONS, ...options }
   const {
     required: _required,
@@ -64,5 +64,5 @@ export const list: ListTyper = <
     key: () => list(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(elements, { ...appliedOptions, default: nextDefault })
-  } as ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
+  } as _ListAttribute<Elements, IsRequired, IsHidden, IsKey, SavedAs, Default>
 }

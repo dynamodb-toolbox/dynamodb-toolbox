@@ -1,8 +1,8 @@
 import { validateAttributeProperties } from '../shared/validate'
 
-import type { AnyAttribute, FreezeAnyAttribute } from './interface'
+import type { _AnyAttribute, FreezeAnyAttribute } from './interface'
 
-type AnyAttributeFreezer = <Attribute extends AnyAttribute>(
+type AnyAttributeFreezer = <Attribute extends _AnyAttribute>(
   attribute: Attribute,
   path: string
 ) => FreezeAnyAttribute<Attribute>
@@ -14,7 +14,7 @@ type AnyAttributeFreezer = <Attribute extends AnyAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeAnyAttribute: AnyAttributeFreezer = <Attribute extends AnyAttribute>(
+export const freezeAnyAttribute: AnyAttributeFreezer = <Attribute extends _AnyAttribute>(
   attribute: Attribute,
   path: string
 ): FreezeAnyAttribute<Attribute> => {
