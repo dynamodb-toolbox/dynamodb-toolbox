@@ -4,10 +4,10 @@ import { freezeAttribute, FreezeAttribute } from '../freeze'
 
 import type { _MapAttribute, FreezeMapAttribute } from './interface'
 
-type MapAttributeFreezer = <Attribute extends _MapAttribute>(
-  attribute: Attribute,
+type MapAttributeFreezer = <_MAP_ATTRIBUTE extends _MapAttribute>(
+  attribute: _MAP_ATTRIBUTE,
   path: string
-) => FreezeMapAttribute<Attribute>
+) => FreezeMapAttribute<_MAP_ATTRIBUTE>
 
 /**
  * Freezes a map instance
@@ -16,10 +16,10 @@ type MapAttributeFreezer = <Attribute extends _MapAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeMapAttribute: MapAttributeFreezer = <Attribute extends _MapAttribute>(
-  attribute: Attribute,
+export const freezeMapAttribute: MapAttributeFreezer = <_MAP_ATTRIBUTE extends _MapAttribute>(
+  attribute: _MAP_ATTRIBUTE,
   path: string
-): FreezeMapAttribute<Attribute> => {
+): FreezeMapAttribute<_MAP_ATTRIBUTE> => {
   validateAttributeProperties(attribute, path)
 
   const {
@@ -41,9 +41,11 @@ export const freezeMapAttribute: MapAttributeFreezer = <Attribute extends _MapAt
     never: new Set()
   }
 
-  const attributes: Attribute['_attributes'] = attribute._attributes
+  const attributes: _MAP_ATTRIBUTE['_attributes'] = attribute._attributes
   const frozenAttributes: {
-    [key in keyof Attribute['_attributes']]: FreezeAttribute<Attribute['_attributes'][key]>
+    [key in keyof _MAP_ATTRIBUTE['_attributes']]: FreezeAttribute<
+      _MAP_ATTRIBUTE['_attributes'][key]
+    >
   } = {} as any
 
   for (const attributeName in attributes) {

@@ -12,20 +12,20 @@ import type {
  * Leaf attribute interface
  */
 export type _LeafAttribute<
-  Type extends LeafAttributeType = LeafAttributeType,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
-  Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
-> = _AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
-  _type: Type
-  _resolved?: Enum extends ResolveLeafAttributeType<Type>[]
-    ? Enum[number]
-    : ResolveLeafAttributeType<Type>
-  _enum: Enum
-  _default: Default
+  TYPE extends LeafAttributeType = LeafAttributeType,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  ENUM extends LeafAttributeEnumValues<TYPE> = LeafAttributeEnumValues<TYPE>,
+  DEFAULT extends LeafAttributeDefaultValue<TYPE> = LeafAttributeDefaultValue<TYPE>
+> = _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
+  _type: TYPE
+  _resolved?: ENUM extends ResolveLeafAttributeType<TYPE>[]
+    ? ENUM[number]
+    : ResolveLeafAttributeType<TYPE>
+  _enum: ENUM
+  _default: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -35,23 +35,23 @@ export type _LeafAttribute<
    *
    * @param nextRequired RequiredOption
    */
-  required: <NextIsRequired extends RequiredOption = AtLeastOnce>(
-    nextRequired?: NextIsRequired
-  ) => _LeafAttribute<Type, NextIsRequired, IsHidden, IsKey, SavedAs, Enum, Default>
+  required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+    nextRequired?: NEXT_IS_REQUIRED
+  ) => _LeafAttribute<TYPE, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _LeafAttribute<Type, IsRequired, true, IsKey, SavedAs, Enum, Default>
+  hidden: () => _LeafAttribute<TYPE, IS_REQUIRED, true, IS_KEY, SAVED_AS, ENUM, DEFAULT>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _LeafAttribute<Type, IsRequired, IsHidden, true, SavedAs, Enum, Default>
+  key: () => _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, true, SAVED_AS, ENUM, DEFAULT>
   /**
    * Rename attribute before save commands
    */
-  savedAs: <NextSavedAs extends string | undefined>(
-    nextSavedAs: NextSavedAs
-  ) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, NextSavedAs, Enum, Default>
+  savedAs: <NEXT_SAVED_AS extends string | undefined>(
+    nextSavedAs: NEXT_SAVED_AS
+  ) => _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, NEXT_SAVED_AS, ENUM, DEFAULT>
   /**
    * Provide a finite list of possible values for attribute
    * (For typing reasons, enums are only available as attribute methods, not as input options)
@@ -60,48 +60,56 @@ export type _LeafAttribute<
    * @example
    * string().enum('foo', 'bar')
    */
-  enum: <NextEnum extends ResolveLeafAttributeType<Type>[]>(
-    ...nextEnum: NextEnum
-  ) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, NextEnum, Default & NextEnum>
+  enum: <NEXT_ENUM extends ResolveLeafAttributeType<TYPE>[]>(
+    ...nextEnum: NEXT_ENUM
+  ) => _LeafAttribute<
+    TYPE,
+    IS_REQUIRED,
+    IS_HIDDEN,
+    IS_KEY,
+    SAVED_AS,
+    NEXT_ENUM,
+    DEFAULT & NEXT_ENUM
+  >
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
    * @param nextDefaultValue `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
   default: <
-    NextDefault extends LeafAttributeDefaultValue<Type> &
-      (Enum extends ResolveLeafAttributeType<Type>[]
-        ? Enum[number] | (() => Enum[number])
+    NEXT_DEFAULT extends LeafAttributeDefaultValue<TYPE> &
+      (ENUM extends ResolveLeafAttributeType<TYPE>[]
+        ? ENUM[number] | (() => ENUM[number])
         : unknown)
   >(
-    nextDefaultValue: NextDefault
-  ) => _LeafAttribute<Type, IsRequired, IsHidden, IsKey, SavedAs, Enum, NextDefault>
+    nextDefaultValue: NEXT_DEFAULT
+  ) => _LeafAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, NEXT_DEFAULT>
 }
 
 export type LeafAttribute<
-  Type extends LeafAttributeType = LeafAttributeType,
-  IsRequired extends RequiredOption = RequiredOption,
-  IsHidden extends boolean = boolean,
-  IsKey extends boolean = boolean,
-  SavedAs extends string | undefined = string | undefined,
-  Enum extends LeafAttributeEnumValues<Type> = LeafAttributeEnumValues<Type>,
-  Default extends LeafAttributeDefaultValue<Type> = LeafAttributeDefaultValue<Type>
-> = AttributeProperties<IsRequired, IsHidden, IsKey, SavedAs> & {
+  TYPE extends LeafAttributeType = LeafAttributeType,
+  IS_REQUIRED extends RequiredOption = RequiredOption,
+  IS_HIDDEN extends boolean = boolean,
+  IS_KEY extends boolean = boolean,
+  SAVED_AS extends string | undefined = string | undefined,
+  ENUM extends LeafAttributeEnumValues<TYPE> = LeafAttributeEnumValues<TYPE>,
+  DEFAULT extends LeafAttributeDefaultValue<TYPE> = LeafAttributeDefaultValue<TYPE>
+> = AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
   path: string
-  type: Type
-  resolved?: Enum extends ResolveLeafAttributeType<Type>[]
-    ? Enum[number]
-    : ResolveLeafAttributeType<Type>
-  enum: Enum
-  default: Default
+  type: TYPE
+  resolved?: ENUM extends ResolveLeafAttributeType<TYPE>[]
+    ? ENUM[number]
+    : ResolveLeafAttributeType<TYPE>
+  enum: ENUM
+  default: DEFAULT
 }
 
-export type FreezeLeafAttribute<Attribute extends _LeafAttribute> = LeafAttribute<
-  Attribute['_type'],
-  Attribute['_required'],
-  Attribute['_hidden'],
-  Attribute['_key'],
-  Attribute['_savedAs'],
-  Extract<Attribute['_enum'], LeafAttributeEnumValues<Attribute['_type']>>,
-  Extract<Attribute['_default'], LeafAttributeDefaultValue<Attribute['_type']>>
+export type FreezeLeafAttribute<_LEAF_ATTRIBUTE extends _LeafAttribute> = LeafAttribute<
+  _LEAF_ATTRIBUTE['_type'],
+  _LEAF_ATTRIBUTE['_required'],
+  _LEAF_ATTRIBUTE['_hidden'],
+  _LEAF_ATTRIBUTE['_key'],
+  _LEAF_ATTRIBUTE['_savedAs'],
+  Extract<_LEAF_ATTRIBUTE['_enum'], LeafAttributeEnumValues<_LEAF_ATTRIBUTE['_type']>>,
+  Extract<_LEAF_ATTRIBUTE['_default'], LeafAttributeDefaultValue<_LEAF_ATTRIBUTE['_type']>>
 >

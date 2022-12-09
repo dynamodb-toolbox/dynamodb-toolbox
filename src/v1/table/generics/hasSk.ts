@@ -7,6 +7,4 @@ import { Key } from '../types'
  * @param TableInput Table
  * @return Boolean
  */
-export type HasSK<TableInput extends TableV2 = TableV2> = Key extends TableInput['sortKey']
-  ? false
-  : true
+export type HasSK<TABLE extends TableV2 = TableV2> = Key extends TABLE['sortKey'] ? false : true
