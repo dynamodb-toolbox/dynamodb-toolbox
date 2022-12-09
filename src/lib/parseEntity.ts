@@ -46,7 +46,7 @@ export type ParsedEntity<
   defaults: any
   required: any
   table?: EntityTable | undefined,
-  setTable?: (table: EntityTable | undefined) => void
+  setTable?: <NextTable extends EntityTable | undefined>(table: NextTable) => ParsedEntity<NextTable, Name, AutoExecute, AutoParse, TypeAlias, TypeHidden>
 }
 
 // Parse entity
