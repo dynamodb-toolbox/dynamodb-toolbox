@@ -8,7 +8,7 @@ import type {
   Item
 } from 'v1/item'
 import { isClosed, isKeyAttribute } from 'v1/item/utils'
-import { validatorsByLeafType, isArray, isSet, isObject } from 'v1/utils/validation'
+import { validatorsByPrimitiveType, isArray, isSet, isObject } from 'v1/utils/validation'
 
 import type { EntityV2 } from '../class'
 import type { KeyInput } from '../generics'
@@ -53,7 +53,7 @@ export const validateKeyInput: KeyInputValidator = <INPUT extends EntityV2 | Ite
     case 'binary':
     case 'number':
     case 'string':
-      const validator = validatorsByLeafType[entry.type]
+      const validator = validatorsByPrimitiveType[entry.type]
       if (!validator(keyInput))
         throw new InvalidKeyInputValueTypeError({
           expectedType: entry.type,

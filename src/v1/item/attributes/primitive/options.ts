@@ -1,19 +1,23 @@
 import type { AttributeOptions } from '../shared/options'
 import type { RequiredOption, Never } from '../constants/requiredOptions'
 
-import type { LeafAttributeType, LeafAttributeEnumValues, LeafAttributeDefaultValue } from './types'
+import type {
+  PrimitiveAttributeType,
+  PrimitiveAttributeEnumValues,
+  PrimitiveAttributeDefaultValue
+} from './types'
 
 /**
- * Input options of Leaf Attribute
+ * Input options of Primitive Attribute
  */
-export interface LeafAttributeOptions<
-  TYPE extends LeafAttributeType = LeafAttributeType,
+export interface PrimitiveAttributeOptions<
+  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   IS_REQUIRED extends RequiredOption = RequiredOption,
   IS_HIDDEN extends boolean = boolean,
   IS_KEY extends boolean = boolean,
   SAVED_AS extends string | undefined = string | undefined,
-  ENUM extends LeafAttributeEnumValues<TYPE> = LeafAttributeEnumValues<TYPE>,
-  DEFAULT extends LeafAttributeDefaultValue<TYPE> = LeafAttributeDefaultValue<TYPE>
+  ENUM extends PrimitiveAttributeEnumValues<TYPE> = PrimitiveAttributeEnumValues<TYPE>,
+  DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> = PrimitiveAttributeDefaultValue<TYPE>
 > extends AttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
   _enum: ENUM
   /**
@@ -22,8 +26,8 @@ export interface LeafAttributeOptions<
   default: DEFAULT
 }
 
-export const LEAF_DEFAULT_OPTIONS: LeafAttributeOptions<
-  LeafAttributeType,
+export const LEAF_DEFAULT_OPTIONS: PrimitiveAttributeOptions<
+  PrimitiveAttributeType,
   Never,
   false,
   false,
