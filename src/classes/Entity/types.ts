@@ -380,15 +380,19 @@ export type $PutOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
   StrictSchemaCheck extends boolean | undefined = true
-> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck?: StrictSchemaCheck }>
+> = O.Partial<
+  $WriteOptions<Attributes, Execute, Parse> & {
+    returnValues: ReturnValues
+    strictSchemaCheck?: StrictSchemaCheck
+  }
+>
 
 export type $PutBatchOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
   StrictSchemaCheck extends boolean | undefined = true
 > = O.Partial<
-  Pick<BaseOptions<Execute, Parse>, 'execute' |'parse'>
-  & { strictSchemaCheck?: StrictSchemaCheck }
+  Pick<BaseOptions<Execute, Parse>, 'execute' | 'parse'> & { strictSchemaCheck?: StrictSchemaCheck }
 >
 
 export type PutItem<
@@ -399,18 +403,19 @@ export type PutItem<
   Attributes extends ParsedAttributes,
   StrictSchemaCheck extends boolean | undefined = true
 > = FirstDefined<
-  [
-    MethodItemOverlay,
-    EntityItemOverlay,
-    A.Compute<
-      CompositePrimaryKey &
-        O.Pick<Item, Attributes['always']['input'] | Attributes['required']['input']> &
-        O.Partial<
-          O.Pick<Item, Attributes['always']['default'] | Attributes['required']['default']> &
-            O.Update<Item, Attributes['optional'], A.x | null>
-        >
-    >
-  ] | If<A.Equals<StrictSchemaCheck, true>, never, any>
+  | [
+      MethodItemOverlay,
+      EntityItemOverlay,
+      A.Compute<
+        CompositePrimaryKey &
+          O.Pick<Item, Attributes['always']['input'] | Attributes['required']['input']> &
+          O.Partial<
+            O.Pick<Item, Attributes['always']['default'] | Attributes['required']['default']> &
+              O.Update<Item, Attributes['optional'], A.x | null>
+          >
+      >
+    ]
+  | If<A.Equals<StrictSchemaCheck, true>, never, any>
 >
 
 export type UpdateOptionsReturnValues =
@@ -426,7 +431,12 @@ export type $UpdateOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
   StrictSchemaCheck extends boolean | undefined = true
-> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues, strictSchemaCheck?: StrictSchemaCheck }>
+> = O.Partial<
+  $WriteOptions<Attributes, Execute, Parse> & {
+    returnValues: ReturnValues
+    strictSchemaCheck?: StrictSchemaCheck
+  }
+>
 
 export interface UpdateCustomParameters {
   SET: string[]
@@ -445,29 +455,29 @@ export type UpdateItem<
   Attributes extends ParsedAttributes,
   StrictSchemaCheck extends boolean | undefined = true
 > = FirstDefined<
-  [
-    MethodItemOverlay,
-    EntityItemOverlay,
-    A.Compute<
-      CompositePrimaryKey &
-        {
-          [inputAttr in Attributes['always']['input']]:
-            | Item[A.Cast<inputAttr, keyof Item>]
-            | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[] }
-        } &
-        {
-          [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
-            | Item[A.Cast<optAttr, keyof Item>]
-            | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[] }
-        } &
-        {
-          [attr in Attributes['optional']]?:
-            | null
-            | Item[A.Cast<attr, keyof Item>]
-            | { $delete?: string[]; $add?: any; $append?: any[]; $prepend?: any[] }
-        } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
-    >
-  ]
+  | [
+      MethodItemOverlay,
+      EntityItemOverlay,
+      A.Compute<
+        CompositePrimaryKey &
+          {
+            [inputAttr in Attributes['always']['input']]:
+              | Item[A.Cast<inputAttr, keyof Item>]
+              | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[] }
+          } &
+          {
+            [optAttr in Attributes['required']['all'] | Attributes['always']['default']]?:
+              | Item[A.Cast<optAttr, keyof Item>]
+              | { $delete?: string[]; $add?: any; $prepend?: any[]; $append?: any[] }
+          } &
+          {
+            [attr in Attributes['optional']]?:
+              | null
+              | Item[A.Cast<attr, keyof Item>]
+              | { $delete?: string[]; $add?: any; $append?: any[]; $prepend?: any[] }
+          } & { $remove?: Attributes['optional'] | Attributes['optional'][] }
+      >
+    ]
   | If<A.Equals<StrictSchemaCheck, true>, never, any>
 >
 
@@ -477,7 +487,7 @@ export type RawDeleteOptions<
   Attributes extends A.Key = A.Key,
   ReturnValues extends DeleteOptionsReturnValues = DeleteOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
-  Parse extends boolean | undefined = undefined,
+  Parse extends boolean | undefined = undefined
 > = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 export type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
@@ -485,9 +495,9 @@ export type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 export interface TransactionOptions<
   Attributes extends A.Key = A.Key,
   StrictSchemaCheck extends boolean | undefined = true
-  > {
+> {
   conditions?: ConditionsOrFilters<Attributes>
-  returnValues?: TransactionOptionsReturnValues,
+  returnValues?: TransactionOptionsReturnValues
   strictSchemaCheck?: StrictSchemaCheck
 }
 
@@ -561,7 +571,13 @@ export type QueryOptions<
 export type PutOptions<
   E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
-> = $PutOptions<A['all'], PutOptionsReturnValues, boolean | undefined, boolean | undefined, boolean | undefined>
+> = $PutOptions<
+  A['all'],
+  PutOptionsReturnValues,
+  boolean | undefined,
+  boolean | undefined,
+  boolean | undefined
+>
 
 export type DeleteOptions<
   E extends Entity,
@@ -571,4 +587,10 @@ export type DeleteOptions<
 export type UpdateOptions<
   E extends Entity,
   A extends ParsedAttributes = ExtractAttributes<E>
-> = $UpdateOptions<A['all'], UpdateOptionsReturnValues, boolean | undefined, boolean | undefined, boolean | undefined>
+> = $UpdateOptions<
+  A['all'],
+  UpdateOptionsReturnValues,
+  boolean | undefined,
+  boolean | undefined,
+  boolean | undefined
+>

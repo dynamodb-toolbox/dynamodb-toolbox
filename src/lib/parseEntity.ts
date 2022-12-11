@@ -11,8 +11,8 @@ import {
   AttributeDefinitions,
   EntityConstructor,
   PureAttributeDefinition,
-  Readonly,
-} from "../classes/Entity";
+  Readonly
+} from '../classes/Entity'
 import { error } from './utils'
 
 export interface TrackingInfo {
@@ -39,19 +39,19 @@ export type ParsedEntity<
   AutoParse extends boolean = boolean,
   TypeAlias extends string = string
 > = {
-  name: Name;
+  name: Name
   schema: {
-    keys: any;
-    attributes: Record<string, PureAttributeDefinition>;
-  };
-  _etAlias: TypeAlias;
-  autoParse: AutoParse | undefined;
-  autoExecute: AutoExecute | undefined;
-  linked: Linked;
-  defaults: any;
-  required: any;
-  table?: EntityTable | undefined;
-};
+    keys: any
+    attributes: Record<string, PureAttributeDefinition>
+  }
+  _etAlias: TypeAlias
+  autoParse: AutoParse | undefined
+  autoExecute: AutoExecute | undefined
+  linked: Linked
+  defaults: any
+  required: any
+  table?: EntityTable | undefined
+}
 
 // Parse entity
 export function parseEntity<

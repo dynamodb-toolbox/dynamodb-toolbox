@@ -44,8 +44,9 @@ import type {
   UpdateItem,
   UpdateOptionsReturnValues,
   Writable,
-  Readonly, $PutBatchOptions,
-} from './types';
+  Readonly,
+  $PutBatchOptions
+} from './types'
 
 class Entity<
   Name extends string = string,
@@ -798,10 +799,23 @@ class Entity<
     ReturnValues extends UpdateOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined= true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
-    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
+    options: $UpdateOptions<
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    > = {},
     params: UpdateCustomParams = {}
   ): Promise<
     A.Compute<
@@ -875,7 +889,14 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: UpdateCustomParams
   ): { Update: DocumentClient.Update } {
@@ -927,8 +948,21 @@ class Entity<
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: UpdateItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
-    options: $UpdateOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
+    item: UpdateItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
+    options: $UpdateOptions<
+      ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    > = {},
     {
       SET = [],
       REMOVE = [],
@@ -961,7 +995,7 @@ class Entity<
     // Initialize validateType with the DocumentClient
     const validateType = validateTypes(this.DocumentClient)
 
-     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
+    const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
     // Merge defaults
     const data = normalizeData(this.DocumentClient)(
@@ -1310,9 +1344,16 @@ class Entity<
     ReturnValues extends PutOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined= true
+    StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): Promise<
@@ -1387,11 +1428,26 @@ class Entity<
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
-    >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+  >(
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {}
   ): { [key: string]: DocumentClient.WriteRequest } {
-    const payload = this.putParams<MethodItemOverlay, ShownItemAttributes, ResponseAttributes, 'NONE', Execute, Parse, StrictSchemaCheck>(item, options)
+    const payload = this.putParams<
+      MethodItemOverlay,
+      ShownItemAttributes,
+      ResponseAttributes,
+      'NONE',
+      Execute,
+      Parse,
+      StrictSchemaCheck
+    >(item, options)
     return { [payload.TableName]: { PutRequest: { Item: payload.Item } } }
   }
 
@@ -1413,7 +1469,14 @@ class Entity<
     ResponseAttributes extends ItemAttributes = ItemAttributes,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: Partial<DocumentClient.PutItemInput>
   ): { Put: DocumentClient.Put } {
@@ -1441,7 +1504,6 @@ class Entity<
       StrictSchemaCheck
     >(item, options, params)
 
-
     // If ReturnValues exists, replace with ReturnValuesOnConditionCheckFailure
     if ('ReturnValues' in payload) {
       let { ReturnValues, ..._payload } = payload
@@ -1466,7 +1528,14 @@ class Entity<
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true
   >(
-    item: PutItem<MethodItemOverlay, EntityItemOverlay, CompositePrimaryKey, Item, Attributes, StrictSchemaCheck>,
+    item: PutItem<
+      MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck
+    >,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
     params: Partial<DocumentClient.PutItemInput> = {}
   ): DocumentClient.PutItemInput {
