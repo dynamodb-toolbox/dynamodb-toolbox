@@ -12,6 +12,7 @@
     "test-types": "tsd",
     "check-types": "tsc --noEmit",
     "lint": "eslint .",
+    "prettier": "prettier --check 'src/**/*.(js|ts)'",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint && npm run test-types",
