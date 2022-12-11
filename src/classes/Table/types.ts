@@ -1,10 +1,10 @@
-import type { default as DynamoDb, DocumentClient} from 'aws-sdk/clients/dynamodb'
-import type { A, O } from 'ts-toolbelt';
+import type { default as DynamoDb, DocumentClient } from 'aws-sdk/clients/dynamodb'
+import type { A, O } from 'ts-toolbelt'
 
-import type { ProjectionAttributes } from '../../lib/projectionBuilder';
+import type { ProjectionAttributes } from '../../lib/projectionBuilder'
 import type { FilterExpressions } from '../../lib/expressionBuilder'
 import type { $ReadOptions, ConditionsOrFilters } from '../Entity'
-import type Table  from './Table';
+import type Table from './Table'
 
 export interface TableConstructor<
   Name extends string,
