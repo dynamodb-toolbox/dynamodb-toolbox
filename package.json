@@ -18,6 +18,11 @@
     "prepublishOnly": "npm test && npm run lint && npm run test-types",
     "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
   },
+  "lint-staged": {
+    "*.(ts|js)": [
+      "prettier --write"
+    ]
+  },
   "license": "MIT",
   "dependencies": {
     "ts-toolbelt": "^6.15.5"
@@ -45,6 +50,7 @@
     "dynalite": "^3.2.1",
     "eslint": "^8.2.0",
     "jest": "^27.3.1",
+    "lint-staged": "^13.1.0",
     "mockdate": "^3.0.2",
     "prettier": "^2.2.1",
     "ts-jest": "^27.0.7",
