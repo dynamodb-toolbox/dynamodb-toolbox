@@ -1763,7 +1763,7 @@ class Entity<
   }
 
   // Query pass-through (default entity)
-  query<
+  async query<
     MethodItemOverlay extends Overlay = undefined,
     ItemAttributes extends { all: A.Key; shown: A.Key } = If<
       A.Equals<MethodItemOverlay, undefined>,
@@ -1783,16 +1783,21 @@ class Entity<
       throw new Error('Entity table is not defined')
     }
 
-    options.entity = this.name
-    return this.table.query<
+    options.entity = this.name // I don't think this is working
+    const queryResult = await this.table.query<
       FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>]>,
       Execute,
       Parse
     >(pk, options, params)
+
+    return {
+      ...queryResult,
+      Items: queryResult?.Items?.filter((item: any) => item[this.table.entityField] === this.name)
+    }
   }
 
   // Scan pass-through (default entity)
-  scan<
+  async scan<
     MethodItemOverlay extends Overlay = undefined,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined
@@ -1801,12 +1806,17 @@ class Entity<
       throw new Error('Entity table is not defined')
     }
 
-    options.entity = this.name
-    return this.table.scan<
+    options.entity = this.name // I don't think this is working
+    const scanResult = await this.table.scan<
       FirstDefined<[MethodItemOverlay, DocumentClient.AttributeMap]>,
       Execute,
       Parse
     >(options, params)
+
+    return {
+      ...scanResult,
+      Items: scanResult?.Items?.filter((item: any) => item[this.table.entityField] === this.name)
+    }
   }
 } // end Entity
 
