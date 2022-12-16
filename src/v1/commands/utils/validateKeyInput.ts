@@ -9,9 +9,7 @@ import type {
 } from 'v1/item'
 import { isClosed, isKeyAttribute } from 'v1/item/utils'
 import { validatorsByPrimitiveType, isArray, isSet, isObject } from 'v1/utils/validation'
-
-import type { EntityV2 } from '../class'
-import type { KeyInput } from '../generics'
+import type { EntityV2, KeyInput } from 'v1'
 
 type ValidationContext = { elementsIndexes?: number[] }
 
