@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
-import { string } from '../leaf'
+import { string } from '../primitive'
 
 import { map } from './typer'
 

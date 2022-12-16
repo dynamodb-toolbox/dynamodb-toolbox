@@ -1,5 +1,9 @@
 import type { _AnyAttribute, AnyAttribute } from '../any'
-import type { _LeafAttribute, ResolvedLeafAttributeType, LeafAttribute } from '../leaf'
+import type {
+  _PrimitiveAttribute,
+  ResolvedPrimitiveAttributeType,
+  PrimitiveAttribute
+} from '../primitive'
 import type { _SetAttribute, SetAttribute } from '../set'
 import type { _ListAttribute, ListAttribute } from '../list'
 import type { _MapAttribute, MapAttribute } from '../map'
@@ -9,12 +13,17 @@ import type { _MapAttribute, MapAttribute } from '../map'
  */
 export type _Attribute =
   | _AnyAttribute
-  | _LeafAttribute
+  | _PrimitiveAttribute
   | _SetAttribute
   | _ListAttribute
   | _MapAttribute
 
-export type Attribute = AnyAttribute | LeafAttribute | SetAttribute | ListAttribute | MapAttribute
+export type Attribute =
+  | AnyAttribute
+  | PrimitiveAttribute
+  | SetAttribute
+  | ListAttribute
+  | MapAttribute
 
 /**
  * Dictionary of attributes
@@ -31,7 +40,7 @@ export interface MapAttributeAttributes {
  * Any possible resolved attribute type
  */
 export type ResolvedAttribute =
-  | ResolvedLeafAttributeType
+  | ResolvedPrimitiveAttributeType
   | ResolvedAttribute[]
   | Set<ResolvedAttribute>
   | { [key: string]: ResolvedAttribute }

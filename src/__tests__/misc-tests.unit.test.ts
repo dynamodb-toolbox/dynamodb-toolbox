@@ -47,7 +47,7 @@ describe('Misc Tests (development only)', () => {
       table
     } as const)
 
-    console.log(TestEntity.schema)
+    // console.log(TestEntity.schema)
 
     // console.log(
     //   await TestEntity.query(1)
