@@ -44,3 +44,10 @@ export type ResolvedAttribute =
   | ResolvedAttribute[]
   | Set<ResolvedAttribute>
   | { [key: string]: ResolvedAttribute }
+
+export type PossiblyUndefinedResolvedAttribute =
+  | undefined
+  | ResolvedPrimitiveAttributeType
+  | PossiblyUndefinedResolvedAttribute[]
+  | Set<PossiblyUndefinedResolvedAttribute>
+  | { [key: string]: PossiblyUndefinedResolvedAttribute }
