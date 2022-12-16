@@ -26,6 +26,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/util-dynamodb": "^3.226.0",
+    "lodash.clonedeep": "^4.5.0",
     "ts-toolbelt": "^6.15.5"
   },
   "repository": {
@@ -45,6 +46,7 @@
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.145.0",
     "@types/jest": "^27.0.7",
+    "@types/lodash.clonedeep": "^4.5.7",
     "@types/node": "^14.14.16",
     "aws-sdk": "^2.818.0",
     "coveralls": "^3.1.0",
