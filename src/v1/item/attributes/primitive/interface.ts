@@ -62,15 +62,7 @@ export type _PrimitiveAttribute<
    */
   enum: <NEXT_ENUM extends ResolvePrimitiveAttributeType<TYPE>[]>(
     ...nextEnum: NEXT_ENUM
-  ) => _PrimitiveAttribute<
-    TYPE,
-    IS_REQUIRED,
-    IS_HIDDEN,
-    IS_KEY,
-    SAVED_AS,
-    NEXT_ENUM,
-    DEFAULT & NEXT_ENUM
-  >
+  ) => _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, NEXT_ENUM, DEFAULT>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
