@@ -4,5 +4,6 @@ export type {
   Attribute,
   _MapAttributeAttributes,
   MapAttributeAttributes,
-  ResolvedAttribute
+  ResolvedAttribute,
+  PossiblyUndefinedResolvedAttribute
 } from './attribute'
