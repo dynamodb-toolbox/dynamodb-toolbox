@@ -289,3 +289,29 @@ In TS, the `attributes` option and response types are dynamically inferred. See 
 Executes the `scan` method on the parent Table. This method accepts the same parameters as the [Table `scan` method](/docs/table/methods#scan) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB scans, this method **does not** guarantee that only items of the current entity type will be returned.
 
 In TS, the `attributes` option and response types are dynamically inferred. See [Type Inference](/docs/type-inference) for more details.
+
+
+## setTable
+
+Assigns a Table instance to the entity. This method is called automatically when you use the `Entity` constructor.
+
+This method returns the entity instance with the new type definitions.
+You must use the returned value to get the correct type definitions because TypeScript is statically typed.
+
+```typescript
+const MyEntity = new Entity({
+  name: 'MyEntity',
+  attributes: {
+    pk: { partitionKey: true },
+    sk: { sortKey: true }
+  }
+} as const)
+
+const myNewTable = new Table({
+  name: 'MyNewTable',
+  partitionKey: 'pk',
+  sortKey: 'sk'
+} as const)
+
+const myNewEntity = MyEntity.setTable(MyNewTable)
+```

@@ -1,74 +1,177 @@
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
 describe('Entity properties', () => {
-  it('fails if trying to add a table when one already exists', async () => {
-    // Create basic table
-    const TestTable = new Table({
-      name: 'test-table',
-      partitionKey: 'pk'
+  describe('table', () => {
+    it('returns undefined if there is no table attached to the given entity', () => {
+      const TestEntity = new Entity({
+        name: 'TestEnt',
+        attributes: {
+          pk: { partitionKey: true },
+        },
+      } as const)
+
+      expect(TestEntity.table).toBeUndefined()
     })
 
-    // Create basic entity
-    const TestEntity = new Entity({
-      name: 'TestEnt',
-      attributes: {
-        pk: { partitionKey: true }
-      },
-      table: TestTable
-    } as const)
+    it('returns the table attached to the given entity', () => {
+      const TestTable = new Table({
+        name: 'TestTable',
+        partitionKey: 'pk',
+      })
 
-    expect(() => {
-      TestEntity.table = TestTable
-    }).toThrow('This entity is already assigned a Table (test-table)')
+      const TestEntity = new Entity({
+        name: 'TestEnt',
+        attributes: {
+          pk: { partitionKey: true },
+        },
+        table: TestTable,
+      } as const)
+
+      expect(TestEntity.table).toStrictEqual(TestTable)
+    })
   })
 
-  it('fails if assigning an invalid Table', async () => {
-    // Create invalid tTable
-    const TestTable = {}
+  describe('setTable', () => {
+    it('sets the table on the given entity', () => {
+      const TestTable = new Table({
+        name: 'TestTable',
+        partitionKey: 'pk',
+        sortKey: 'sk',
+      })
+
+      const TestEntity = new Entity({
+        name: 'TestEnt',
+        attributes: {
+          pk: { partitionKey: true },
+          sk: { sortKey: true },
+        },
+      } as const)
+
+      TestEntity.setTable(TestTable)
+
+      expect(TestEntity.table).toStrictEqual(TestTable)
+    })
+
+    it('sets the _et field attributes mapping on the given entity', () => {
+      const TestTable = new Table({
+        name: 'TestTable',
+        partitionKey: 'somePk',
+        sortKey: 'someSk',
+        entityField: 'entity_field',
+      })
+
+      const TestEntity = new Entity({
+        name: 'TestEntity',
+        attributes: {
+          test_pk: { partitionKey: true },
+          test_sk: { sortKey: true },
+          test_string: { type: 'string' },
+        },
+        table: TestTable,
+      } as const)
+
+      const TestTableV2 = new Table({
+        name: 'TestTableV2',
+        partitionKey: 'pk',
+        sortKey: 'sk',
+        entityField: 'entity_field_v2',
+      } as const)
+
+      TestEntity.setTable(TestTableV2)
+
+      expect(TestEntity.schema.attributes).toEqual(expect.objectContaining({
+        entity_field_v2: {
+          alias: 'entity',
+          type: 'string',
+          hidden: false,
+          default: 'TestEntity',
+        },
+        entity: {
+          'default': 'TestEntity',
+          'map': 'entity_field_v2',
+          'type': 'string',
+        },
+      }))
+      expect(TestEntity.schema.attributes).not.toContain('entity_field')
+      expect(TestEntity.defaults).toEqual(expect.objectContaining({
+        entity_field_v2: 'TestEntity',
+      }))
+    })
+
+    it(
+      're-sets the _et field attributes mapping on the given entity when re-assigning a table to the given entity',
+      () => {
+        const TestTable = new Table({
+          name: 'TestTable',
+          partitionKey: 'pk',
+          sortKey: 'sk',
+          entityField: 'entity_field',
+        })
+
+        const TestEntity = new Entity({
+          name: 'TestEntity',
+          attributes: {
+            test_pk: { partitionKey: true },
+            test_sk: { sortKey: true },
+            test_string: { type: 'string' },
+          },
+        } as const)
+
+        // @ts-ignore
+        TestEntity.setTable(TestTable)
+
+        expect(TestEntity.schema.attributes).toEqual(expect.objectContaining({
+          entity_field: {
+            alias: 'entity',
+            type: 'string',
+            hidden: false,
+            default: 'TestEntity',
+          },
+          entity: {
+            'default': 'TestEntity',
+            'map': 'entity_field',
+            'type': 'string',
+          },
+        }))
+        expect(TestEntity.defaults).toEqual(expect.objectContaining({
+          entity_field: 'TestEntity',
+        }))
+      },
+    )
+  })
+
+  it('fails when assigning an invalid Table', async () => {
+    const InvalidTable = {
+      name: 'InvalidTable',
+    }
 
     expect(() => {
-      // Create basic entity
       // @ts-expect-error
       new Entity({
         name: 'TestEnt',
         attributes: {
-          pk: { partitionKey: true }
+          pk: { partitionKey: true },
         },
-        table: TestTable
+        table: InvalidTable,
       } as const)
-    }).toThrow('Invalid Table')
-  })
-
-  it(`fails if trying to get 'table' if not attached`, async () => {
-    // Create basic entity
-    const TestEntity = new Entity({
-      name: 'TestEnt',
-      attributes: {
-        pk: { partitionKey: true }
-      }
-    } as const)
-
-    expect(() => {
-      TestEntity.table
-    }).toThrow(`The 'TestEnt' entity must be attached to a Table to perform this operation`)
+    }).toThrow('Entity TestEnt was assigned an invalid table')
   })
 
   it(`fails if trying to get 'DocumentClient' if not on table`, async () => {
     // Create basic table
     const TestTable = new Table({
       name: 'test-table',
-      partitionKey: 'pk'
+      partitionKey: 'pk',
     })
 
     // Create basic entity
     const TestEntity = new Entity({
       name: 'TestEnt',
       attributes: {
-        pk: { partitionKey: true }
+        pk: { partitionKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(() => {
@@ -82,16 +185,16 @@ describe('Entity properties', () => {
       name: 'test-table',
       partitionKey: 'pk',
       autoExecute: false,
-      autoParse: false
+      autoParse: false,
     })
 
     // Create basic entity
     const TestEntity = new Entity({
       name: 'TestEnt',
       attributes: {
-        pk: { partitionKey: true }
+        pk: { partitionKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.autoExecute).toBe(false)
@@ -109,7 +212,7 @@ describe('Entity properties', () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',
-      sortKey: 'sk'
+      sortKey: 'sk',
     })
 
     // Create basic entity
@@ -117,9 +220,9 @@ describe('Entity properties', () => {
       name: 'TestEnt',
       attributes: {
         pk: { partitionKey: true },
-        sk: { sortKey: true }
+        sk: { sortKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.partitionKey).toBe('pk')
@@ -130,16 +233,16 @@ describe('Entity properties', () => {
     // Create basic table
     const TestTable = new Table({
       name: 'test-table',
-      partitionKey: 'pk'
+      partitionKey: 'pk',
     })
 
     // Create basic entity
     const TestEntity = new Entity({
       name: 'TestEnt',
       attributes: {
-        pk: { partitionKey: true }
+        pk: { partitionKey: true },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.sortKey).toBeNull()
@@ -149,7 +252,7 @@ describe('Entity properties', () => {
     // Create basic table
     const TestTable = new Table({
       name: 'test-table',
-      partitionKey: 'pk'
+      partitionKey: 'pk',
     })
 
     // Create basic entity
@@ -157,9 +260,9 @@ describe('Entity properties', () => {
       name: 'TestEnt',
       attributes: {
         pk: { partitionKey: true },
-        test: { map: 'sk' }
+        test: { map: 'sk' },
       },
-      table: TestTable
+      table: TestTable,
     } as const)
 
     expect(TestEntity.attribute('pk')).toBe('pk')

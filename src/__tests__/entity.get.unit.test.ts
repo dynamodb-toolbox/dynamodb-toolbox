@@ -205,7 +205,7 @@ describe('get', () => {
 
   it('formats a batch get response', async () => {
     const { Table, Key } = TestEntity.getBatch({ email: 'a', sort: 'b' })
-    expect(Table.name).toBe('test-table')
+    expect(Table?.name).toBe('test-table')
     expect(Key).toEqual({ pk: 'a', sk: 'b' })
   })
 

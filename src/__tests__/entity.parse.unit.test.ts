@@ -3,6 +3,13 @@ import { DocumentClient } from './bootstrap.test'
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
+const TestTable = new Table({
+  name: 'test-table',
+  partitionKey: 'pk',
+  sortKey: 'sk',
+  DocumentClient
+})
+
 const TestEntity = new Entity({
   name: 'TestEntity',
   attributes: {
@@ -31,11 +38,11 @@ const TestEntity = new Entity({
       type: 'string',
       format: (input: string) => input.toUpperCase()
     }
-  }
+  },
+  table: TestTable
 })
 const SimpleEntity = new Entity({
   name: 'SimpleEntity',
-
   attributes: {
     pk: { type: 'string', partitionKey: true },
     sk: { type: 'string', hidden: true, sortKey: true },
@@ -43,16 +50,8 @@ const SimpleEntity = new Entity({
     test_composite: ['sk', 0, { save: true }],
     test_composite2: ['sk', 1, { save: false }],
     test_undefined: { default: () => undefined }
-  }
-})
-
-// Create basic table
-const TestTable = new Table({
-  name: 'test-table',
-  partitionKey: 'pk',
-  sortKey: 'sk',
-  entities: [TestEntity, SimpleEntity],
-  DocumentClient
+  },
+  table: TestTable
 })
 
 const TestEntityHiddenType = new Entity({
@@ -66,7 +65,7 @@ const TestEntityHiddenType = new Entity({
 })
 
 const TestEntityHiddenTypeWithAlias = new Entity({
-  name: 'TestEntityHiddenType',
+  name: 'TestEntityHiddenTypeWithAlias',
   attributes: {
     pk: { type: 'string', partitionKey: true },
     sk: { type: 'string', sortKey: true }

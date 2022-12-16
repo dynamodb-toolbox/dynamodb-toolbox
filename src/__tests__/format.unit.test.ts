@@ -1,10 +1,7 @@
-import { DocumentClient } from './bootstrap.test'
-
-// Import Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
+import { DocumentClient } from './bootstrap.test'
 
-// Create basic table
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
@@ -12,10 +9,7 @@ const TestTable = new Table({
 })
 
 const FormatEntity = new Entity({
-  // Specify entity name
   name: 'FormatEntity',
-
-  // Define attributes
   attributes: {
     pk: { type: 'string', partitionKey: true },
     formatted_field: {
@@ -45,4 +39,4 @@ describe('format', () => {
       entity: 'TestEntity'
     })
   })
-}) // end format
+})

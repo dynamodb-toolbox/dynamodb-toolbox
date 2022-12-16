@@ -3,6 +3,13 @@ import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 import { DocumentClient } from './bootstrap.test'
 
+const TestTable = new Table({
+  name: 'test-alias',
+  partitionKey: 'pk',
+  sortKey: 'sk',
+  DocumentClient
+})
+
 const TestEntity = new Entity({
   name: 'AliasTest',
   attributes: {
@@ -13,18 +20,12 @@ const TestEntity = new Entity({
   created: 'timeCreated',
   createdAlias: 'timeCreated',
   modified: 'timeUpdated',
-  modifiedAlias: 'timeUpdated'
+  modifiedAlias: 'timeUpdated',
+  table: TestTable
 })
 
-const TestTable = new Table({
-  name: 'test-alias',
-  partitionKey: 'pk',
-  sortKey: 'sk',
-  entities: [TestEntity],
-  DocumentClient
-})
 
-describe('alias-parse-test', () => {
+describe('Parse alias attributes', () => {
   it('successfully parse item with alias same as field', () => {
     const item = TestEntity.parse({
       pk: 'testPk',

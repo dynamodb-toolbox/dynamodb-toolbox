@@ -1,7 +1,8 @@
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 import { DocumentClient } from './bootstrap.test'
+
+const tableAddEntity = jest.spyOn(Table.prototype, 'addEntity').mockReturnValue()
 
 describe('Entity creation', () => {
   it('creates basic entity w/ defaults', async () => {
@@ -148,6 +149,27 @@ describe('Entity creation', () => {
       sk: { sortKey: true, default: 'some-default-sk-value' }
     })
     expect(config.timestamps).toBe(true)
+  })
+
+  it('invokes table.addEntity when created with a table', () => {
+    const table = new Table({
+      name: 'TestTable-2',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      DocumentClient
+    })
+
+
+    const TestEntity = new Entity({
+      name: 'TestEntity-3',
+      attributes: {
+        pk: { partitionKey: true },
+        sk: { sortKey: true }
+      },
+      table
+    } as const)
+
+    expect(tableAddEntity).toHaveBeenCalledWith(TestEntity)
   })
 
   it('fails when creating a entity without a partitionKey', () => {

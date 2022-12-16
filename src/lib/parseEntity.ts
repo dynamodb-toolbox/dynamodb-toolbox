@@ -45,7 +45,8 @@ export type ParsedEntity<
   linked: Linked
   defaults: any
   required: any
-  table?: EntityTable | undefined
+  table?: EntityTable | undefined,
+  setTable?: <NextTable extends EntityTable | undefined>(table: NextTable) => ParsedEntity<NextTable, Name, AutoExecute, AutoParse, TypeAlias, TypeHidden>
 }
 
 // Parse entity
@@ -166,21 +167,18 @@ export function parseEntity<
     keys: {} // tracks partition/sort/index keys
   }
 
-  // Return the entity
-  return Object.assign(
-    {
-      name,
-      schema: parseEntityAttributes<ReadonlyAttributeDefinitions>(attributes, track), // removed nested attribute?
-      defaults: track.defaults,
-      required: track.required,
-      linked: track.linked,
-      autoExecute,
-      autoParse,
-      typeHidden,
-      _etAlias: typeAlias
-    },
-    table ? { table } : {}
-  ) // end mapping object
-} // end parseEntity
+  return {
+    name,
+    schema: parseEntityAttributes<ReadonlyAttributeDefinitions>(attributes, track), // removed nested attribute?
+    defaults: track.defaults,
+    required: track.required,
+    linked: track.linked,
+    autoExecute,
+    autoParse,
+    typeHidden,
+    _etAlias: typeAlias,
+    ...(table ? { table } : {})
+  }
+}
 
 export default parseEntity

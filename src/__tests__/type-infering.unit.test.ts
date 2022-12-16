@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk'
 import { DocumentClient as DocumentClientType } from 'aws-sdk/clients/dynamodb'
 import MockDate from 'mockdate'
-import { A, C, F, O } from 'ts-toolbelt'
+import { A, F, O } from 'ts-toolbelt'
 
 import {
   EntityItem,
@@ -181,25 +181,23 @@ describe('Entity', () => {
         } as const)
       }).toThrow()
 
-      // 🔨 TOIMPROVE: Not sure this is expected behavior: overriding typeAlias doesn't throw
-      // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
       // @ts-NOT-expect-error
-      new Entity({
+      expect(()=>new Entity({
         name: entityName,
         typeAlias: 'en',
         attributes: { ...ck, en: 'string' },
         table
-      } as const)
+      } as const)).toThrow()
 
       // 🔨 TOIMPROVE: Not sure this is expected behavior: overriding typeAlias doesn't throw
       // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
       // @ts-NOT-expect-error
-      new Entity({
+      expect(()=>new Entity({
         name: entityName,
         typeAlias: 'en',
         attributes: { ...ck, en: 'string' },
         table
-      } as const)
+      } as const)).toThrow()
     })
   })
 
@@ -210,14 +208,13 @@ describe('Entity', () => {
       DocumentClient
     })
 
-    const entityName = 'TestEntity'
     const pk = 'pk'
     const pkMap1 = 'p1'
     const pkMap2 = 'p2'
     const pkMaps = { pkMap1, pkMap2 }
 
     const ent = new Entity({
-      name: entityName,
+      name: 'TestEntity_PKOnly',
       attributes: {
         pk: { type: 'string', partitionKey: true },
         pkMap1: ['pk', 0],
@@ -232,7 +229,7 @@ describe('Entity', () => {
     testExtends
 
     const entNoExecute = new Entity({
-      name: entityName,
+      name: 'TestEntity_PKOnly_NoExecute',
       autoExecute: false,
       attributes: {
         pk: { type: 'string', partitionKey: true },
@@ -243,7 +240,7 @@ describe('Entity', () => {
     } as const)
 
     const entNoParse = new Entity({
-      name: entityName,
+      name: 'TestEntity_PKOnly_NoParse',
       autoParse: false,
       attributes: {
         pk: { type: 'string', partitionKey: true },
@@ -254,7 +251,7 @@ describe('Entity', () => {
     } as const)
 
     const entNoTimestamps = new Entity({
-      name: entityName,
+      name: 'TestEntity_PKOnly_NoTimestamps',
       timestamps: false,
       attributes: {
         pk: { type: 'string', partitionKey: true },
@@ -928,7 +925,7 @@ describe('Entity', () => {
   })
 
   describe('PK (mapped) + SK (mapped) Entity', () => {
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PK_SK_Mapped'
     const cr = 'cr'
     const mod = 'mod'
     const en = 'en'
@@ -1593,7 +1590,7 @@ describe('Entity', () => {
   })
 
   describe('PK (dependsOn) + SK (dependsOn) Entity', () => {
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PK_SK_dependsOn'
     const pk = 'pk'
     const pkMap1 = 'p1'
     const pkMap2 = 'p2'
@@ -1773,7 +1770,7 @@ describe('Entity', () => {
   })
 
   describe('PK (default) + SK Entity', () => {
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PK_default_SK'
     const pk = 'pk'
     const pk2 = 'pk2'
     const sk = 'sk'
@@ -1839,7 +1836,7 @@ describe('Entity', () => {
   })
 
   describe('PK + SK (default) Entity', () => {
-    const entityName = 'TestEntity'
+    const entityName = 'TestEntity_PK_SK_default'
     const pk = 'pk'
     const sk = 'sk'
     const sk2 = 'sk2'
@@ -1898,7 +1895,7 @@ describe('Entity', () => {
     type MethodCompositeKeyOverlay = { pk0: string; sk0: string }
 
     const ent = new Entity({
-      name: 'TestEntity',
+      name: 'TestEntity_OverlayedMethods',
       attributes: {
         pk: { type: 'string', partitionKey: true, hidden: true },
         sk: { type: 'string', sortKey: true, hidden: true, default: sk }
@@ -2160,12 +2157,12 @@ describe('Entity', () => {
     type EntityCompositeKeyOverlay = { pk0: string; sk0: string }
 
     const ent = new Entity<
-      'TestEntity',
+      'TestEntity_Overlayed',
       EntityItemOverlay,
       EntityCompositeKeyOverlay,
       typeof table
     >({
-      name: 'TestEntity',
+      name: 'TestEntity_Overlayed',
       attributes: {
         pk: { type: 'string', partitionKey: true },
         sk: { type: 'string', sortKey: true, default: sk }
@@ -2732,6 +2729,54 @@ describe('Entity', () => {
           const testScanItems: TestScanItems = 1
           testScanItems
         })
+      })
+    })
+
+    describe('table', () => {
+      it('should have the right type', () => {
+        const entity = new Entity({
+          name: 'TestEnity_WithTable',
+          attributes: {
+            pk: { partitionKey: true },
+            sk: { sortKey: true },
+          },
+          table
+        })
+
+        type Subject = typeof entity.table
+        type Expected = typeof table | undefined
+
+        type Result = A.Equals<Subject, Expected>
+        const result: Result = 1
+        result
+      })
+    })
+
+    describe('setTable', () => {
+      it('should update the type of the table property', () => {
+        const newTable = new Table({
+          name: 'newTable',
+          partitionKey: 'pk',
+          sortKey: 'sk',
+          DocumentClient
+        })
+        const entity = new Entity({
+          name: 'Entity_WithNewTable',
+          attributes: {
+            pk: { partitionKey: true },
+            sk: { sortKey: true },
+          },
+          table,
+        })
+
+        const entityWithNewTable = entity.setTable(newTable)
+
+        type Subject = typeof entityWithNewTable.table
+        type Expected = typeof newTable | undefined
+
+        type Result = A.Equals<Subject, Expected>
+        const result: Result = 1
+        result
       })
     })
   })
