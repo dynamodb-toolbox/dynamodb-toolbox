@@ -25,7 +25,8 @@
   "license": "MIT",
   "dependencies": {
     "deep-copy": "^1.4.2",
-    "ts-toolbelt": "^9.6.0"
+    "ts-toolbelt": "^9.6.0",
+    "@aws-sdk/util-dynamodb": "^3.226.0"
   },
   "repository": {
     "type": "git",
