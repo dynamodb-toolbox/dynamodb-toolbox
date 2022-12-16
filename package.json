@@ -57,6 +57,7 @@
     "mockdate": "^3.0.2",
     "prettier": "^2.2.1",
     "ts-jest": "^27.0.7",
+    "tsconfig-paths": "^4.1.1",
     "tsd": "^0.23.0",
     "typescript": "^4.3.0"
   },
