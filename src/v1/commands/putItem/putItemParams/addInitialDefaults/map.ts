@@ -19,7 +19,7 @@ export const addMapInitialDefaults = (
 
   const putItemInputWithInitialDefaults: { [key: string]: PossiblyUndefinedResolvedAttribute } = {}
 
-  const additionalAttributes: Set<string> = new Set(...Object.keys(putItemInput))
+  const additionalAttributes: Set<string> = new Set(Object.keys(putItemInput))
 
   Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
     putItemInputWithInitialDefaults[attributeName] = addAttributeInitialDefaults(
