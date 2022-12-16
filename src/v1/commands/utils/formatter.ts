@@ -1,5 +1,4 @@
-import type { EntityV2 } from '../class'
-import type { FormattedItem, SavedItem } from '../generics'
+import type { EntityV2, FormattedItem, SavedItem } from 'v1'
 
 type Formatter = <
   ENTITY extends EntityV2,
