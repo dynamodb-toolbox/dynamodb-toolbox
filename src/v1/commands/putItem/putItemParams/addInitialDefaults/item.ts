@@ -15,7 +15,7 @@ export const addItemInitialDefaults = (
 
   const putItemInputWithInitialDefaults: { [key: string]: PossiblyUndefinedResolvedAttribute } = {}
 
-  const additionalAttributes: Set<string> = new Set(...Object.keys(putItemInput))
+  const additionalAttributes: Set<string> = new Set(Object.keys(putItemInput))
 
   Object.entries(item.attributes).forEach(([attributeName, attribute]) => {
     putItemInputWithInitialDefaults[attributeName] = addAttributeInitialDefaults(
