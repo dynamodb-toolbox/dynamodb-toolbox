@@ -21,5 +21,8 @@
     "resolveJsonModule": true
   },
   "compileOnSave": false,
-  "exclude": ["node_modules", "dist", "**/*.test-d.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test-d.ts"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
 }
