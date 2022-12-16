@@ -28,4 +28,4 @@ export type _HasComputedDefaults<INPUT extends _Item | _Attribute> = INPUT exten
     }[keyof INPUT['_attributes']]
     ? true
     : false
-  : never
+  : false
