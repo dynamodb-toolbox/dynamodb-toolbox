@@ -1,5 +1,4 @@
-import type { EntityV2 } from '../class'
-import type { UpdateItemInput } from '../generics'
+import type { EntityV2, UpdateItemInput } from 'v1'
 
 type UpdateItemInputValidator = <
   ENTITY extends EntityV2,
