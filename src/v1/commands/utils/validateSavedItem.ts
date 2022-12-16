@@ -1,5 +1,4 @@
-import type { EntityV2 } from '../class'
-import type { SavedItem } from '../generics'
+import type { EntityV2, SavedItem } from 'v1'
 
 type SavedItemValidator = <
   ENTITY extends EntityV2,
