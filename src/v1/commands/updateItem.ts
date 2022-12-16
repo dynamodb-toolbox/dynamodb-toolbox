@@ -5,14 +5,9 @@ import {
   UpdateItemCommandOutput
 } from '@aws-sdk/client-dynamodb'
 
-import {
-  EntityV2,
-  UpdateItemInput,
-  validateUpdateItemInput,
-  FormattedItem,
-  format,
-  validateSavedItem
-} from 'v1'
+import { EntityV2, UpdateItemInput, FormattedItem } from 'v1'
+
+import { format, validateSavedItem, validateUpdateItemInput } from './utils'
 
 const hasNoAttributes = (
   commandOutput: UpdateItemCommandOutput
