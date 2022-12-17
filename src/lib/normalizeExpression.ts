@@ -37,5 +37,5 @@ export const normalizeExpression = (
 }
 
 const normalizeKey = (key: string): string => {
-  return key.replace(/[.#[]- ]/g, '_')
+  return key.replace(/[\\/.#[]- ]/g, '_')
 }
