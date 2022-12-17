@@ -238,9 +238,9 @@ describe('update', () => {
         'test-with-dash': 'test-value-with-dash'
       }
     )
-    expect(UpdateExpression).toBe('SET #test_dash = :test_dash')
-    expect(ExpressionAttributeNames).toEqual({ '#test_dash': 'test-value-with-dash' })
-    expect(ExpressionAttributeValues).toEqual({ ':test_dash': 'test-value-with-dash' })
+    expect(UpdateExpression).toBe('SET #test_with_dash = :test_dash')
+    expect(ExpressionAttributeNames).toEqual({ '#test_with_dash': 'test-value-with-dash' })
+    expect(ExpressionAttributeValues).toEqual({ ':test_with_dash': 'test-value-with-dash' })
     expect(Key).toEqual({ pk: 'test-pk' })
     expect(TableName).toBe('test-table2')
   })
