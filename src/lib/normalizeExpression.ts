@@ -1,6 +1,11 @@
 export const normalizeExpression = (
-  expressionNames: Record<string, string>,
-  expressionValues: Record<string, string>,
+  {
+    expressionNames = {},
+    expressionValues = {},
+  }: {
+    expressionNames?: Record<string, string>,
+    expressionValues?: Record<string, string>,
+  },
 ): {
   ExpressionAttributeNames: Record<string, string>
   ExpressionAttributeValues: Record<string, string>
@@ -30,7 +35,6 @@ export const normalizeExpression = (
     ExpressionAttributeValues: normalizedExpressionValues,
   }
 }
-
 
 const normalizeKey = (key: string): string => {
   return key.replace(/[.#[]- ]/g, '_')

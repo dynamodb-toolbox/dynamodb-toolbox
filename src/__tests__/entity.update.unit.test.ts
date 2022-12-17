@@ -62,7 +62,8 @@ const TestEntity2 = new Entity({
     test: { type: 'string', prefix: 'test---' },
     test_composite: ['sort', 0, { save: true }],
     test_composite2: ['sort', 1],
-    test_undefined: { default: () => undefined }
+    test_undefined: { default: () => undefined },
+    'test-with-dash': { type: 'string', default: () => 'value-with-dash' }
   },
   timestamps: false,
   table: TestTable2
@@ -226,6 +227,20 @@ describe('update', () => {
     )
     expect(UpdateExpression).toBe('REMOVE #test_composite')
     expect(ExpressionAttributeNames).toEqual({ '#test_composite': 'test_composite' })
+    expect(Key).toEqual({ pk: 'test-pk' })
+    expect(TableName).toBe('test-table2')
+  })
+
+  it('creates update for a field that has dash in its name', () => {
+    const { ExpressionAttributeNames, ExpressionAttributeValues, UpdateExpression, Key, TableName } = TestEntity2.updateParams(
+      {
+        email: 'test-pk',
+        'test-with-dash': 'test-value-with-dash'
+      }
+    )
+    expect(UpdateExpression).toBe('SET #test_dash = :test_dash')
+    expect(ExpressionAttributeNames).toEqual({ '#test_dash': 'test-value-with-dash' })
+    expect(ExpressionAttributeValues).toEqual({ ':test_dash': 'test-value-with-dash' })
     expect(Key).toEqual({ pk: 'test-pk' })
     expect(TableName).toBe('test-table2')
   })

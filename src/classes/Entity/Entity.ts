@@ -442,6 +442,12 @@ class Entity<Name extends string = string,
       } // end if names
     } // end if projections
 
+    const {
+      ExpressionAttributeNames: normalizedExpressionAttributeNames,
+    } = normalizeExpression(
+      { ExpressionAttributeNames },
+    )
+
     // Generate the payload
     const payload = Object.assign(
       {
@@ -453,7 +459,7 @@ class Entity<Name extends string = string,
           schema.keys.sortKey,
         ),
       },
-      ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
+      normalizedExpressionAttributeNames ? { ExpressionAttributeNames: normalizedExpressionAttributeNames } : null,
       ProjectionExpression ? { ProjectionExpression } : null,
       consistent ? { ConsistentRead: consistent } : null,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
@@ -1105,7 +1111,7 @@ class Entity<Name extends string = string,
                   // add default list value
                   values[
                     `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
-                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                    ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(
                     `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`,
@@ -1115,7 +1121,7 @@ class Entity<Name extends string = string,
                   // add default list value
                   values[
                     `:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`
-                  ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
+                    ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$remove) {
                   // console.log('REMOVE:',input.$remove);
                   input.$remove.forEach((i: number) => {
@@ -1185,15 +1191,19 @@ class Entity<Name extends string = string,
     // Merge attribute values
     ExpressionAttributeValues = Object.assign(values, ExpressionAttributeValues)
 
-    const {ExpressionAttributeNames: normalizedExpressionAttributeNames,
-      ExpressionAttributeValues: normalizedExpressionAttributeValues
-
-    } = normalizeExpression({ ...names,
-      ...ExpressionAttributeNames,
-    }, {
-      ...values,
-      ...ExpressionAttributeValues,
-    } )
+    const {
+      ExpressionAttributeNames: normalizedExpressionAttributeNames,
+      ExpressionAttributeValues: normalizedExpressionAttributeValues,
+    } = normalizeExpression({
+      expressionNames: {
+        ...names,
+        ...ExpressionAttributeNames,
+      },
+      expressionValues: {
+        ...values,
+        ...ExpressionAttributeValues,
+      },
+    })
 
     // Generate the payload
     const payload = Object.assign(
@@ -1204,7 +1214,9 @@ class Entity<Name extends string = string,
         ExpressionAttributeNames: normalizedExpressionAttributeNames,
       },
       typeof params === 'object' ? params : {},
-      !isEmpty(normalizedExpressionAttributeValues) ? { ExpressionAttributeValues: normalizedExpressionAttributeValues } : {},
+      !isEmpty(normalizedExpressionAttributeValues)
+        ? { ExpressionAttributeValues: normalizedExpressionAttributeValues }
+        : {},
       ConditionExpression ? { ConditionExpression } : {},
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
@@ -1482,6 +1494,14 @@ class Entity<Name extends string = string,
       schema.keys.sortKey,
     )
 
+    const {
+      ExpressionAttributeNames: normalizedExpressionAttributeNames,
+      ExpressionAttributeValues: normalizedExpressionAttributeValues,
+    } = normalizeExpression({
+      expressionNames: ExpressionAttributeNames,
+      expressionValues: ExpressionAttributeValues,
+    })
+
     // Generate the payload
     const payload = Object.assign(
       {
@@ -1505,8 +1525,10 @@ class Entity<Name extends string = string,
           return acc
         }, {}),
       },
-      ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
-      !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : null,
+      normalizedExpressionAttributeNames ? { ExpressionAttributeNames: normalizedExpressionAttributeNames } : null,
+      !isEmpty(normalizedExpressionAttributeValues)
+        ? { ExpressionAttributeValues: normalizedExpressionAttributeValues }
+        : null,
       ConditionExpression ? { ConditionExpression } : null,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
@@ -1624,11 +1646,11 @@ class Entity<Name extends string = string,
       return this as any
     }
 
-    if(table?.name === this?._table?.name) {
+    if (table?.name === this?._table?.name) {
       return this as any
     }
 
-    if(table != null && !table?.Table?.attributes) {
+    if (table != null && !table?.Table?.attributes) {
       error(`Entity ${this.name} was assigned an invalid table`)
     }
 
