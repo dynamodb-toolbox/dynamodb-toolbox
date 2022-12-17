@@ -63,7 +63,7 @@ const TestEntity2 = new Entity({
     test_composite: ['sort', 0, { save: true }],
     test_composite2: ['sort', 1],
     test_undefined: { default: () => undefined },
-    'test-with-dash': { type: 'string', default: () => 'value-with-dash' }
+    'test-with-dash': { type: 'string' }
   },
   timestamps: false,
   table: TestTable2

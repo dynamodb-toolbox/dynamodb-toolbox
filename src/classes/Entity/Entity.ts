@@ -1188,9 +1188,6 @@ class Entity<Name extends string = string,
       (DELETE.length > 0 ? ' DELETE ' + DELETE.join(', ') : '')
     ).trim()
 
-    // Merge attribute values
-    ExpressionAttributeValues = Object.assign(values, ExpressionAttributeValues)
-
     const {
       ExpressionAttributeNames: normalizedExpressionAttributeNames,
       ExpressionAttributeValues: normalizedExpressionAttributeValues,
