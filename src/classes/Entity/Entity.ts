@@ -43,6 +43,7 @@ import type {
   $PutBatchOptions,
 } from './types'
 import Table from '../Table'
+import { normalizeExpression } from '../../lib/normalizeExpression'
 
 class Entity<Name extends string = string,
   // Name is used to detect Entity instances (new Entity(...)) vs Entity type (const e: Entity = ...)
@@ -1184,16 +1185,26 @@ class Entity<Name extends string = string,
     // Merge attribute values
     ExpressionAttributeValues = Object.assign(values, ExpressionAttributeValues)
 
+    const {ExpressionAttributeNames: normalizedExpressionAttributeNames,
+      ExpressionAttributeValues: normalizedExpressionAttributeValues
+
+    } = normalizeExpression({ ...names,
+      ...ExpressionAttributeNames,
+    }, {
+      ...values,
+      ...ExpressionAttributeValues,
+    } )
+
     // Generate the payload
     const payload = Object.assign(
       {
         TableName: _table!.name,
         Key,
         UpdateExpression: expression,
-        ExpressionAttributeNames: Object.assign(names, ExpressionAttributeNames),
+        ExpressionAttributeNames: normalizedExpressionAttributeNames,
       },
       typeof params === 'object' ? params : {},
-      !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : {},
+      !isEmpty(normalizedExpressionAttributeValues) ? { ExpressionAttributeValues: normalizedExpressionAttributeValues } : {},
       ConditionExpression ? { ConditionExpression } : {},
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
