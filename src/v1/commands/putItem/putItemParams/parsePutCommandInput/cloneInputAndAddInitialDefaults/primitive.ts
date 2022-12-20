@@ -6,16 +6,14 @@ import {
   ComputedDefault,
   AnyAttribute
 } from 'v1'
-
 import { isFunction } from 'v1/utils/validation'
 
-export const addPrimitiveInitialDefault = (
+export const clonePrimitiveAttributeInputAndAddInitialDefaults = (
   attribute: PrimitiveAttribute | AnyAttribute,
-  putItemInput: PossiblyUndefinedResolvedAttribute
+  input: PossiblyUndefinedResolvedAttribute
 ): PossiblyUndefinedResolvedAttribute => {
-  if (putItemInput !== undefined) {
-    // small risk to mute non valid input (like objects or arrays)
-    return cloneDeep(putItemInput)
+  if (input !== undefined) {
+    return cloneDeep(input)
   }
 
   if (attribute.default === undefined || attribute.default === ComputedDefault) {
