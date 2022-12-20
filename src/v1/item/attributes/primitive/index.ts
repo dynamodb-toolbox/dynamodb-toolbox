@@ -2,7 +2,7 @@ export { string, boolean, binary, number } from './typer'
 export type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
-  ResolvedPrimitiveAttributeType
+  ResolvedPrimitiveAttribute
 } from './types'
 export type { _PrimitiveAttribute, PrimitiveAttribute, FreezePrimitiveAttribute } from './interface'
 export {

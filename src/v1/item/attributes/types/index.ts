@@ -4,6 +4,14 @@ export type {
   Attribute,
   _MapAttributeAttributes,
   MapAttributeAttributes,
+  ResolvedListAttribute,
+  ResolvedSetAttribute,
+  ResolvedMapAttribute,
   ResolvedAttribute,
-  PossiblyUndefinedResolvedAttribute
+  ResolvedItem,
+  PossiblyUndefinedResolvedListAttribute,
+  PossiblyUndefinedResolvedSetAttribute,
+  PossiblyUndefinedResolvedMapAttribute,
+  PossiblyUndefinedResolvedAttribute,
+  PossiblyUndefinedResolvedItem
 } from './attribute'
