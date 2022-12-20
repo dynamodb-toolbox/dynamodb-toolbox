@@ -1,27 +1,26 @@
-import { Item } from 'v1'
+import { Item, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
 import { isObject } from 'v1/utils/validation'
 import { isClosed } from 'v1/item/utils'
 
 import { parseAttributePutCommandInput } from './attribute'
-import { PutCommandInputParser } from './types'
 
-export const parseItemPutCommandInput: PutCommandInputParser<Item> = (item, putItemInput) => {
-  if (!isObject(putItemInput)) {
+export const parseItemPutCommandInput = <ITEM extends Item>(
+  item: Item,
+  input: PossiblyUndefinedResolvedItem
+): PutItem<ITEM> => {
+  if (!isObject(input)) {
     // TODO
     throw new Error()
   }
 
-  const parsedPutItemInput = {} as any
+  const parsedPutItemInput: PossiblyUndefinedResolvedItem = {}
 
   // Check that putItemInput entries match schema
-  Object.entries(putItemInput).forEach(([attributeName, attributeInput]) => {
-    const attributeSchema = item.attributes[attributeName]
+  Object.entries(input).forEach(([attributeName, attributeInput]) => {
+    const attribute = item.attributes[attributeName]
 
-    if (attributeSchema !== undefined) {
-      parsedPutItemInput[attributeName] = parseAttributePutCommandInput(
-        attributeSchema,
-        attributeInput
-      )
+    if (attribute !== undefined) {
+      parsedPutItemInput[attributeName] = parseAttributePutCommandInput(attribute, attributeInput)
     } else {
       if (isClosed(item)) {
         // TODO
@@ -33,17 +32,11 @@ export const parseItemPutCommandInput: PutCommandInputParser<Item> = (item, putI
   })
 
   // Check that schema attributes entries are matched by putItemInput
-  Object.entries(item.attributes).forEach(([attributeName, attributeSchema]) => {
+  Object.entries(item.attributes).forEach(([attributeName, attribute]) => {
     if (parsedPutItemInput[attributeName] === undefined) {
-      parsedPutItemInput[attributeName] = parseAttributePutCommandInput(attributeSchema, undefined)
-    }
-
-    // Maybe do swap in a second step and merge this step with addInitialDefaults
-    if (attributeSchema.savedAs !== undefined) {
-      parsedPutItemInput[attributeSchema.savedAs] = parsedPutItemInput[attributeName]
-      delete parsedPutItemInput[attributeName]
+      parsedPutItemInput[attributeName] = parseAttributePutCommandInput(attribute, undefined)
     }
   })
 
-  return parsedPutItemInput
+  return parsedPutItemInput as PutItem<ITEM>
 }

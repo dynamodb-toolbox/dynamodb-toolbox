@@ -1,27 +1,30 @@
-import { PrimitiveAttribute } from 'v1'
+import {
+  PrimitiveAttribute,
+  PossiblyUndefinedResolvedAttribute,
+  ResolvedPrimitiveAttribute,
+  PutItem
+} from 'v1'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 
-import { PutCommandInputParser } from './types'
-
-export const parsePrimitiveAttributePutCommandInput: PutCommandInputParser<PrimitiveAttribute> = (
-  primitiveAttribute,
-  putCommandInput
-) => {
-  let parsedPutItemInput: any = putCommandInput
-
+export const parsePrimitiveAttributePutCommandInput = <
+  PRIMITIVE_ATTRIBUTE extends PrimitiveAttribute
+>(
+  primitiveAttribute: PRIMITIVE_ATTRIBUTE,
+  input: PossiblyUndefinedResolvedAttribute
+): PutItem<PRIMITIVE_ATTRIBUTE> => {
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
-  if (!validator(putCommandInput)) {
+  if (!validator(input)) {
     // TODO
     throw new Error()
   }
 
   if (
     primitiveAttribute.enum !== undefined &&
-    !primitiveAttribute.enum.includes(parsedPutItemInput)
+    !primitiveAttribute.enum.includes(input as ResolvedPrimitiveAttribute)
   ) {
     // TODO
     throw new Error()
   }
 
-  return parsedPutItemInput
+  return input as PutItem<PRIMITIVE_ATTRIBUTE>
 }

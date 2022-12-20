@@ -1,12 +1,18 @@
-import { PutItemInput, EntityV2, PossiblyUndefinedResolvedAttribute } from 'v1'
+import { EntityV2, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
 
-import { PutCommandInputParser } from './types'
 import { parseItemPutCommandInput } from './item'
+import { cloneInputAndAddInitialDefaults } from './cloneInputAndAddInitialDefaults'
 
-export const parseEntityPutCommandInput: PutCommandInputParser<EntityV2> = <
-  ENTITY extends EntityV2,
-  PUT_ITEM_INPUT extends PutItemInput<ENTITY, true> = PutItemInput<ENTITY, true>
->(
-  entity: ENTITY,
-  putItemInput: PossiblyUndefinedResolvedAttribute
-): PUT_ITEM_INPUT => parseItemPutCommandInput(entity.item, putItemInput)
+export const parseEntityPutCommandInput = <ENTITY extends EntityV2>(
+  entity: EntityV2,
+  input: PossiblyUndefinedResolvedItem
+): PutItem<ENTITY> => {
+  const clonedInputWithInitialDefaults = cloneInputAndAddInitialDefaults(entity.item, input)
+
+  const clonedInputWithComputedDefaults = entity.computeDefaults(clonedInputWithInitialDefaults)
+
+  return parseItemPutCommandInput<ENTITY['item']>(
+    entity.item,
+    clonedInputWithComputedDefaults
+  ) as PutItem<ENTITY>
+}
