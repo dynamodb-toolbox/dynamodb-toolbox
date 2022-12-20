@@ -25,7 +25,7 @@ export type ResolvePrimitiveAttributeType<
 /**
  * TS type of any Primitive Attribute
  */
-export type ResolvedPrimitiveAttributeType = ResolvePrimitiveAttributeType<PrimitiveAttributeType>
+export type ResolvedPrimitiveAttribute = ResolvePrimitiveAttributeType<PrimitiveAttributeType>
 
 /**
  * Primitive Enum values constraint
