@@ -34,41 +34,39 @@ import type { EntityV2 } from '../class'
 export type PutItemInput<
   SCHEMA extends EntityV2 | Item | Attribute,
   REQUIRE_INITIAL_DEFAULTS extends boolean = false
-> =
-  | (SCHEMA extends { required: AtLeastOnce | OnlyOnce | Always } ? never : undefined)
-  | (SCHEMA extends AnyAttribute
-      ? ResolvedAttribute
-      : SCHEMA extends PrimitiveAttribute
-      ? NonNullable<SCHEMA['resolved']>
-      : SCHEMA extends SetAttribute
-      ? Set<PutItemInput<SCHEMA['elements'], REQUIRE_INITIAL_DEFAULTS>>
-      : SCHEMA extends ListAttribute
-      ? PutItemInput<SCHEMA['elements'], REQUIRE_INITIAL_DEFAULTS>[]
-      : SCHEMA extends MapAttribute | Item
-      ? O.Required<
-          O.Partial<
-            {
-              // Keep all attributes
-              [KEY in keyof SCHEMA['attributes']]: PutItemInput<
-                SCHEMA['attributes'][KEY],
-                REQUIRE_INITIAL_DEFAULTS
-              >
-            }
-          >,
-          // Enforce Required attributes except those that have default (will be provided by the lib)
-          | O.SelectKeys<
-              SCHEMA['attributes'],
-              { required: AtLeastOnce | OnlyOnce | Always; default: undefined }
-            >
-          // Add attributes with initial (non-computed) defaults if RequireInitialDefaults is true
-          | (REQUIRE_INITIAL_DEFAULTS extends true
-              ? O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
-              : never)
-        > & // Add Record<string, ResolvedAttribute> if map is open
-          (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
-      : SCHEMA extends EntityV2
-      ? PutItemInput<SCHEMA['item'], REQUIRE_INITIAL_DEFAULTS>
-      : never)
+> = SCHEMA extends AnyAttribute
+  ? ResolvedAttribute
+  : SCHEMA extends PrimitiveAttribute
+  ? NonNullable<SCHEMA['resolved']>
+  : SCHEMA extends SetAttribute
+  ? Set<PutItemInput<SCHEMA['elements'], REQUIRE_INITIAL_DEFAULTS>>
+  : SCHEMA extends ListAttribute
+  ? PutItemInput<SCHEMA['elements'], REQUIRE_INITIAL_DEFAULTS>[]
+  : SCHEMA extends MapAttribute | Item
+  ? O.Required<
+      O.Partial<
+        {
+          // Keep all attributes
+          [KEY in keyof SCHEMA['attributes']]: PutItemInput<
+            SCHEMA['attributes'][KEY],
+            REQUIRE_INITIAL_DEFAULTS
+          >
+        }
+      >,
+      // Enforce Required attributes except those that have default (will be provided by the lib)
+      | O.SelectKeys<
+          SCHEMA['attributes'],
+          { required: AtLeastOnce | OnlyOnce | Always; default: undefined }
+        >
+      // Add attributes with initial (non-computed) defaults if RequireInitialDefaults is true
+      | (REQUIRE_INITIAL_DEFAULTS extends true
+          ? O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
+          : never)
+    > & // Add Record<string, ResolvedAttribute> if map is open
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : SCHEMA extends EntityV2
+  ? PutItemInput<SCHEMA['item'], REQUIRE_INITIAL_DEFAULTS>
+  : never
 
 // TODO: Required in Entity constructor... See if possible to use only PutItemInput
 export type _PutItemInput<
