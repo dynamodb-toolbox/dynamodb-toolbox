@@ -1,10 +1,7 @@
 import { isFunction } from 'v1/utils/validation'
 
-import { ComputedDefault, ResolvedPrimitiveAttributeType } from '../attributes'
+import { ComputedDefault, ResolvedPrimitiveAttribute } from '../attributes'
 
 export const isDynamicDefault = (
-  defaultValue:
-    | ResolvedPrimitiveAttributeType
-    | (() => ResolvedPrimitiveAttributeType)
-    | ComputedDefault
-): defaultValue is () => ResolvedPrimitiveAttributeType => isFunction(defaultValue)
+  defaultValue: ResolvedPrimitiveAttribute | (() => ResolvedPrimitiveAttribute) | ComputedDefault
+): defaultValue is () => ResolvedPrimitiveAttribute => isFunction(defaultValue)
