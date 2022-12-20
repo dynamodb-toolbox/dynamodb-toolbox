@@ -1,10 +1,9 @@
-import { Attribute, RequiredOption } from 'v1'
+import { RequiredOption, Attribute, PossiblyUndefinedResolvedAttribute, PutItem } from 'v1'
 
 import { parsePrimitiveAttributePutCommandInput } from './primitive'
 import { parseSetAttributePutCommandInput } from './set'
 import { parseListAttributePutCommandInput } from './list'
 import { parseMapAttributePutCommandInput } from './map'
-import { PutCommandInputParser } from './types'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'onlyOnce', 'atLeastOnce'])
 
@@ -15,34 +14,36 @@ export const isRequired = (attribute: Attribute): boolean =>
  * Recursively parse the input of a PUT command for any attribute
  *
  * @param attribute Attribute
- * @param putCommandInput any
+ * @param input any
  * @return PutItemInput
  */
-export const parseAttributePutCommandInput: PutCommandInputParser<Attribute> = (
-  attribute,
-  putCommandInput
-) => {
-  if (putCommandInput === undefined) {
+export const parseAttributePutCommandInput = <ATTRIBUTE extends Attribute>(
+  attribute: ATTRIBUTE,
+  input: PossiblyUndefinedResolvedAttribute
+): PutItem<ATTRIBUTE> => {
+  if (input === undefined) {
     if (isRequired(attribute)) {
+      // TODO
       throw new Error()
     } else {
+      // @ts-expect-error TODO: Return can be undefined
       return undefined
     }
   }
 
   switch (attribute.type) {
     case 'any':
-      return putCommandInput as any
+      return input as PutItem<ATTRIBUTE>
     case 'boolean':
     case 'binary':
     case 'number':
     case 'string':
-      return parsePrimitiveAttributePutCommandInput(attribute, putCommandInput) as any
+      return parsePrimitiveAttributePutCommandInput(attribute, input) as PutItem<ATTRIBUTE>
     case 'set':
-      return parseSetAttributePutCommandInput(attribute, putCommandInput) as any
+      return parseSetAttributePutCommandInput(attribute, input) as PutItem<ATTRIBUTE>
     case 'list':
-      return parseListAttributePutCommandInput(attribute, putCommandInput) as any
+      return parseListAttributePutCommandInput(attribute, input) as PutItem<ATTRIBUTE>
     case 'map':
-      return parseMapAttributePutCommandInput(attribute, putCommandInput) as any
+      return parseMapAttributePutCommandInput(attribute, input) as PutItem<ATTRIBUTE>
   }
 }

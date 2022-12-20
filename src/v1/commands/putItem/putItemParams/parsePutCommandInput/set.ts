@@ -1,23 +1,22 @@
-import { SetAttribute } from 'v1'
+import { SetAttribute, PossiblyUndefinedResolvedAttribute, PutItem } from 'v1'
 import { isSet } from 'v1/utils/validation'
 
 import { parseAttributePutCommandInput } from './attribute'
-import { PutCommandInputParser } from './types'
 
-export const parseSetAttributePutCommandInput: PutCommandInputParser<SetAttribute> = (
-  setAttribute,
-  putItemInput
-) => {
-  if (!isSet(putItemInput)) {
+export const parseSetAttributePutCommandInput = <SET_ATTRIBUTE extends SetAttribute>(
+  setAttribute: SET_ATTRIBUTE,
+  input: PossiblyUndefinedResolvedAttribute
+): PutItem<SET_ATTRIBUTE> => {
+  if (!isSet(input)) {
     // TODO
     throw new Error()
   }
 
-  const parsedPutItemInput = new Set()
+  const parsedPutItemInput: PossiblyUndefinedResolvedAttribute = new Set()
 
-  putItemInput.forEach(element =>
+  input.forEach(element =>
     parsedPutItemInput.add(parseAttributePutCommandInput(setAttribute.elements, element))
   )
 
-  return parsedPutItemInput as any
+  return parsedPutItemInput as PutItem<SET_ATTRIBUTE>
 }
