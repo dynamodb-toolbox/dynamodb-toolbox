@@ -1,10 +1,11 @@
 import type { O } from 'ts-toolbelt'
 import { PutItemCommand, PutItemCommandOutput } from '@aws-sdk/client-dynamodb'
+import { unmarshall } from '@aws-sdk/util-dynamodb'
 
 import { EntityV2, PutItemInput, FormattedItem } from 'v1'
 
-import { format, validateSavedItem } from '../utils'
 import { putItemParams } from './putItemParams'
+import { parseSavedItem } from './parseSavedItem'
 
 /**
  * Run a PUT Item command for a given Entity
@@ -32,13 +33,7 @@ export const putItem = async <ENTITY extends EntityV2>(
     return restCommandOutput
   }
 
-  // Maybe not a good idea
-  if (!validateSavedItem(entity, attributes)) {
-    // TODO
-    throw new Error()
-  }
-
-  const formattedItem = format(entity, attributes)
+  const formattedItem = parseSavedItem(entity, unmarshall(attributes))
 
   return { Attributes: formattedItem, ...restCommandOutput }
 }
