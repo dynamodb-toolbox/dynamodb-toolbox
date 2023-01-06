@@ -7,6 +7,7 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'ts-jest'
   },
   moduleNameMapper: {
-    '^v1/(.*)$': '<rootDir>/src/v1/$1'
+    '^v1/(.*)$': '<rootDir>/src/v1/$1',
+    v1: '<rootDir>/src/v1'
   }
 }

@@ -1,7 +1,7 @@
 import type { _AnyAttribute, AnyAttribute } from '../any'
 import type {
   _PrimitiveAttribute,
-  ResolvedPrimitiveAttributeType,
+  ResolvedPrimitiveAttribute,
   PrimitiveAttribute
 } from '../primitive'
 import type { _SetAttribute, SetAttribute } from '../set'
@@ -36,11 +36,38 @@ export interface MapAttributeAttributes {
   [key: string]: Attribute
 }
 
+export type ResolvedListAttribute = ResolvedAttribute[]
+
+export type ResolvedSetAttribute = Set<ResolvedAttribute>
+
+export type ResolvedMapAttribute = { [key: string]: ResolvedAttribute }
+
 /**
  * Any possible resolved attribute type
  */
 export type ResolvedAttribute =
-  | ResolvedPrimitiveAttributeType
-  | ResolvedAttribute[]
-  | Set<ResolvedAttribute>
-  | { [key: string]: ResolvedAttribute }
+  | ResolvedPrimitiveAttribute
+  | ResolvedListAttribute
+  | ResolvedSetAttribute
+  | ResolvedMapAttribute
+
+export type ResolvedItem = { [key: string]: ResolvedAttribute }
+
+export type PossiblyUndefinedResolvedListAttribute = PossiblyUndefinedResolvedAttribute[]
+
+export type PossiblyUndefinedResolvedSetAttribute = Set<PossiblyUndefinedResolvedAttribute>
+
+export type PossiblyUndefinedResolvedMapAttribute = {
+  [key: string]: PossiblyUndefinedResolvedAttribute
+}
+
+export type PossiblyUndefinedResolvedAttribute =
+  | undefined
+  | ResolvedPrimitiveAttribute
+  | PossiblyUndefinedResolvedAttribute[]
+  | Set<PossiblyUndefinedResolvedAttribute>
+  | { [key: string]: PossiblyUndefinedResolvedAttribute }
+
+export type PossiblyUndefinedResolvedItem = {
+  [key: string]: PossiblyUndefinedResolvedAttribute
+}
