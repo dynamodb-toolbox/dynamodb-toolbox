@@ -1146,7 +1146,23 @@ describe('update', () => {
     )
 
     expect(params.UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = :test_list')
-    expect(params.ExpressionAttributeNames).toEqual({ '#test_array': 'test_array' })
-    expect(params.ExpressionAttributeValues).toEqual({ ':test_array': [] })
+    expect(params.ExpressionAttributeNames).toEqual({
+      '#_ct': '_ct',
+      '#_et': '_et',
+      '#_md': '_md',
+      '#test_boolean_default': 'test_boolean_default',
+      '#test_list': 'test_list',
+      '#test_number_coerce': 'test_number_coerce',
+      '#test_string': 'test_string',
+    })
+    expect(params.ExpressionAttributeValues).toEqual({
+      ':_ct': expect.any(String),
+      ':_et': 'TestEntity',
+      ':_md': expect.any(String),
+      ':test_boolean_default': false,
+      ':test_list':  [],
+      ':test_number_coerce': 0,
+      ':test_string': 'default string'
+    })
   })
 }) // end describe
