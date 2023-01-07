@@ -1004,6 +1004,7 @@ class Entity<Name extends string = string,
       } else if (
         this._table!._removeNulls === true &&
         (data[field] === null || String(data[field]).trim() === '') &&
+        !Array.isArray(data[field]) &&
         (!mapping.link || mapping.save)
       ) {
         // Verify attribute is not required
