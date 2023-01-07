@@ -1145,7 +1145,7 @@ describe('update', () => {
       { email: 'x', sort: 'y', test_list: [] },
     )
 
-    expect(params.UpdateExpression).toBe('SET #test_array = :test_array')
+    expect(params.UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = :test_list')
     expect(params.ExpressionAttributeNames).toEqual({ '#test_array': 'test_array' })
     expect(params.ExpressionAttributeValues).toEqual({ ':test_array': [] })
   })
