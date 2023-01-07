@@ -12,7 +12,8 @@ const TestTable = new Table({
   DocumentClient,
   indexes: {
     GSI1: { partitionKey: 'GSI1pk' }
-  }
+  },
+  removeNullAttributes: true
 })
 
 const TestEntity = new Entity({
@@ -1137,5 +1138,15 @@ describe('update', () => {
     expect(ExpressionAttributeValues).not.toHaveProperty(':unknown')
     expect(ExpressionAttributeNames).toHaveProperty('#test_string')
     expect(ExpressionAttributeValues).toHaveProperty(':test_string')
+  })
+
+  it('should keep empty lists if removeNulls is true', () => {
+    const params = TestEntity.updateParams(
+      { email: 'x', sort: 'y', test_list: [] },
+    )
+
+    expect(params.UpdateExpression).toBe('SET #test_array = :test_array')
+    expect(params.ExpressionAttributeNames).toEqual({ '#test_array': 'test_array' })
+    expect(params.ExpressionAttributeValues).toEqual({ ':test_array': [] })
   })
 }) // end describe
