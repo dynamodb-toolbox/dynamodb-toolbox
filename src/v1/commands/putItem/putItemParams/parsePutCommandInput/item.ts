@@ -23,6 +23,7 @@ export const parseItemPutCommandInput = <ITEM extends Item>(
       parsedPutItemInput[attributeName] = parseAttributePutCommandInput(attribute, attributeInput)
     } else {
       if (isClosed(item)) {
+        // TODO Add strict mode, and simply return if strict mode is off
         // TODO
         throw new Error()
       } else {
