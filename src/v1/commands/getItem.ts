@@ -61,7 +61,7 @@ export const getItemParams = <ENTITY extends EntityV2>(
 
   validateKeyInput(entity, keyInput)
 
-  const Key = entity.computeKey(keyInput)
+  const Key = entity.computeKey ? entity.computeKey(keyInput) : keyInput
 
   return {
     TableName: tableName,

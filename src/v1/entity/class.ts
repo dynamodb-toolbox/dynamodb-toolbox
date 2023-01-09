@@ -10,8 +10,6 @@ import type {
   KeyInput,
   _KeyInput
 } from './generics'
-import { defaultComputeDefaults } from './utils/defaultComputeDefaults'
-import { getDefaultComputeKey } from './utils/defaultComputeKey'
 
 export class EntityV2<
   NAME extends string = string,
@@ -26,10 +24,10 @@ export class EntityV2<
   public _item: _ITEM
   public item: ITEM
   // any is needed for contravariance
-  computeKey: (keyInput: _Item extends _ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
+  computeKey?: (keyInput: _Item extends _ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
   // TODO: Split in putComputeDefaults & updateComputeDefaults
   // any is needed for contravariance
-  computeDefaults: (
+  computeDefaults?: (
     putItemInput: _Item extends _ITEM ? any : PutItemInput<ITEM, true>
   ) => PutItem<ITEM>
 
@@ -67,7 +65,7 @@ export class EntityV2<
     this._item = _item
     this.item = freezeItem(_item) as any
 
-    this.computeKey = computeKey ?? (getDefaultComputeKey(this.table) as any)
-    this.computeDefaults = computeDefaults ?? (defaultComputeDefaults as any)
+    this.computeKey = computeKey as any
+    this.computeDefaults = computeDefaults as any
   }
 }
