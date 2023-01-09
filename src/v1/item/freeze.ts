@@ -9,6 +9,8 @@ export const freezeItem: ItemFreezer = <_ITEM extends _Item>(item: _ITEM): Freez
 
   const attributesSavedAs = new Set<string>()
 
+  const keyAttributesNames = new Set<string>()
+
   const requiredAttributesNames: Record<RequiredOption, Set<string>> = {
     always: new Set(),
     atLeastOnce: new Set(),
@@ -30,6 +32,9 @@ export const freezeItem: ItemFreezer = <_ITEM extends _Item>(item: _ITEM): Freez
     }
     attributesSavedAs.add(attributeSavedAs)
 
+    if (attribute._key) {
+      keyAttributesNames.add(attributeName)
+    }
     requiredAttributesNames[attribute._required].add(attributeName)
 
     frozenAttributes[attributeName] = freezeAttribute(attribute, attributeName)
@@ -38,6 +43,7 @@ export const freezeItem: ItemFreezer = <_ITEM extends _Item>(item: _ITEM): Freez
   return {
     type,
     open,
+    keyAttributesNames,
     requiredAttributesNames,
     attributes: frozenAttributes
   }

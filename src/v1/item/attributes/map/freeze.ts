@@ -34,6 +34,8 @@ export const freezeMapAttribute: MapAttributeFreezer = <_MAP_ATTRIBUTE extends _
 
   const attributesSavedAs = new Set<string>()
 
+  const keyAttributesNames = new Set<string>()
+
   const requiredAttributesNames: Record<RequiredOption, Set<string>> = {
     always: new Set(),
     atLeastOnce: new Set(),
@@ -57,6 +59,10 @@ export const freezeMapAttribute: MapAttributeFreezer = <_MAP_ATTRIBUTE extends _
     }
     attributesSavedAs.add(attributeSavedAs)
 
+    if (attribute._key) {
+      keyAttributesNames.add(attributeName)
+    }
+
     requiredAttributesNames[attribute._required].add(attributeName)
 
     frozenAttributes[attributeName] = freezeAttribute(attribute, [path, attributeName].join('.'))
@@ -66,6 +72,7 @@ export const freezeMapAttribute: MapAttributeFreezer = <_MAP_ATTRIBUTE extends _
     type,
     path,
     attributes: frozenAttributes,
+    keyAttributesNames,
     requiredAttributesNames,
     required,
     hidden,
