@@ -21,12 +21,12 @@ export const cloneMapAttributeInputAndAddInitialDefaults = (
     return cloneDeep(input)
   }
 
-  const putItemInputWithInitialDefaults: PossiblyUndefinedResolvedMapAttribute = {}
+  const inputWithInitialDefaults: PossiblyUndefinedResolvedMapAttribute = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
-    putItemInputWithInitialDefaults[attributeName] = cloneAttributeInputAndAddInitialDefaults(
+    inputWithInitialDefaults[attributeName] = cloneAttributeInputAndAddInitialDefaults(
       attribute,
       input[attributeName]
     )
@@ -35,8 +35,8 @@ export const cloneMapAttributeInputAndAddInitialDefaults = (
   })
 
   additionalAttributes.forEach(attributeName => {
-    putItemInputWithInitialDefaults[attributeName] = cloneDeep(input[attributeName])
+    inputWithInitialDefaults[attributeName] = cloneDeep(input[attributeName])
   })
 
-  return putItemInputWithInitialDefaults
+  return inputWithInitialDefaults
 }
