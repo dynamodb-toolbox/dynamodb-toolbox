@@ -3,9 +3,9 @@ import { PutItemCommand, PutItemCommandOutput } from '@aws-sdk/client-dynamodb'
 import { unmarshall } from '@aws-sdk/util-dynamodb'
 
 import { EntityV2, PutItemInput, FormattedItem } from 'v1'
+import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
 
 import { putItemParams } from './putItemParams'
-import { parseSavedItem } from './parseSavedItem'
 
 /**
  * Run a PUT Item command for a given Entity
