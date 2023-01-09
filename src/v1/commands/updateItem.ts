@@ -71,8 +71,11 @@ export const updateItemParams = <ENTITY extends EntityV2>(
   }
 
   // TODO: Recursively add initial defaults
-  const Item = entity.computeDefaults(updateItemInput as any)
-  const Key = entity.computeKey(updateItemInput)
+  const Item = entity.computeDefaults
+    ? entity.computeDefaults(updateItemInput as any)
+    : updateItemInput
+
+  const Key = entity.computeKey ? entity.computeKey(updateItemInput) : updateItemInput
 
   return {
     TableName: tableName,
