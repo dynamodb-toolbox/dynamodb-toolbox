@@ -20,6 +20,7 @@ export interface Item<
 > {
   type: 'item'
   open: boolean
+  keyAttributesNames: Set<string>
   requiredAttributesNames: Record<RequiredOption, Set<string>>
   attributes: MAP_ATTRIBUTE_ATTRIBUTES
 }

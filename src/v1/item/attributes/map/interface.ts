@@ -75,6 +75,7 @@ export interface MapAttribute<
   open: IS_OPEN
   default: DEFAULT
   path: string
+  keyAttributesNames: Set<string>
   requiredAttributesNames: Record<RequiredOption, Set<string>>
 }
 
