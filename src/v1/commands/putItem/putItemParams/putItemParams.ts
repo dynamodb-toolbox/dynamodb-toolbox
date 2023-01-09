@@ -2,10 +2,10 @@ import { PutItemCommandInput } from '@aws-sdk/client-dynamodb'
 
 import { EntityV2, PutItemInput } from 'v1'
 import { marshall } from 'v1/utils/marshall'
+import { parsePrimaryKey } from 'v1/commands/utils/parsePrimaryKey'
 
 import { parseEntityPutCommandInput } from './parsePutCommandInput'
 import { renameSavedAsAttributes } from './renameSavedAsAttributes'
-import { parsePrimaryKey } from './parsePrimaryKey'
 
 /**
  * Builds a PUT Item command input for a given Entity
