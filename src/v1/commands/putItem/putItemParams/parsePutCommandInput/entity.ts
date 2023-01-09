@@ -1,7 +1,7 @@
 import { EntityV2, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
+import { cloneInputAndAddInitialDefaults } from 'v1/commands/utils/cloneInputAndAddInitialDefaults'
 
 import { parseItemPutCommandInput } from './item'
-import { cloneInputAndAddInitialDefaults } from './cloneInputAndAddInitialDefaults'
 
 export const parseEntityPutCommandInput = <ENTITY extends EntityV2>(
   entity: EntityV2,
