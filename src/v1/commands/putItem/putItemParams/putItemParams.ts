@@ -20,9 +20,9 @@ export const putItemParams = <ENTITY extends EntityV2>(
   const validInput = parseEntityPutCommandInput<ENTITY>(entity, input)
 
   // TODO: Create a parseKey function that will throw an error if the key is invalid
-  const key = entity.computeKey(validInput)
+  const key = entity.computeKey ? entity.computeKey(validInput) : {}
 
-  const renamedInput = renameSavedAsAttributes(entity.item, input)
+  const renamedInput = renameSavedAsAttributes(entity.item, validInput)
 
   return {
     TableName: entity.table.name,
