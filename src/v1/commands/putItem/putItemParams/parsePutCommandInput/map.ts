@@ -23,6 +23,7 @@ export const parseMapAttributePutCommandInput = <MAP_ATTRIBUTE extends MapAttrib
       parsedPutItemInput[attributeName] = parseAttributePutCommandInput(attribute, attributeInput)
     } else {
       if (isClosed(mapAttribute)) {
+        // TODO Add strict mode, and simply return if strict mode is off
         // TODO
         throw new Error()
       } else {
