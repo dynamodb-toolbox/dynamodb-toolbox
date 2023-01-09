@@ -13,12 +13,12 @@ export const cloneInputAndAddInitialDefaults = (
     return cloneDeep(input)
   }
 
-  const putItemInputWithInitialDefaults: PossiblyUndefinedResolvedItem = {}
+  const inputWithInitialDefaults: PossiblyUndefinedResolvedItem = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   Object.entries(item.attributes).forEach(([attributeName, attribute]) => {
-    putItemInputWithInitialDefaults[attributeName] = cloneAttributeInputAndAddInitialDefaults(
+    inputWithInitialDefaults[attributeName] = cloneAttributeInputAndAddInitialDefaults(
       attribute,
       input[attributeName]
     )
@@ -27,8 +27,8 @@ export const cloneInputAndAddInitialDefaults = (
   })
 
   additionalAttributes.forEach(attributeName => {
-    putItemInputWithInitialDefaults[attributeName] = cloneDeep(input[attributeName])
+    inputWithInitialDefaults[attributeName] = cloneDeep(input[attributeName])
   })
 
-  return putItemInputWithInitialDefaults
+  return inputWithInitialDefaults
 }
