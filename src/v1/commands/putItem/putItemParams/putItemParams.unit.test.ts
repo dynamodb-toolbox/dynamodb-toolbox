@@ -224,17 +224,15 @@ describe('put', () => {
     ).toThrow('')
   })
 
-  it('fails if additional attribute is provided and item is closed', () => {
-    expect(
-      () =>
-        putItemParams(TestEntity, {
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          unknown: '?'
-        })
-      // TODO: Nice error message
-    ).toThrow('')
+  it('ignores additional attribute if item is closed and strict mode is off (TODO)', () => {
+    const { Item = {} } = putItemParams(TestEntity, {
+      email: 'test-pk',
+      sort: 'test-sk',
+      // @ts-expect-error
+      unknown: '?'
+    })
+
+    expect(unmarshall(Item)).not.toHaveProperty('unknown')
   })
 
   it('fails when invalid string provided with no coercion', () => {
@@ -270,7 +268,7 @@ describe('put', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_number: 'x'
+          count: 'x'
         })
       // TODO: Nice error message
     ).toThrow('')
