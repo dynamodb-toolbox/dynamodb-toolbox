@@ -1,3 +1,2 @@
-export { getItem } from './getItem'
+export { getItem, getItemParams } from './getItem'
 export { putItem, putItemParams } from './putItem'
-export { updateItem } from './updateItem'

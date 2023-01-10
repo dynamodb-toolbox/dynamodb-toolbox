@@ -2,9 +2,10 @@ import { PutItemCommandInput } from '@aws-sdk/client-dynamodb'
 
 import { EntityV2, PutItemInput } from 'v1'
 import { marshall } from 'v1/utils/marshall'
+import { parsePrimaryKey } from 'v1/commands/utils/parsePrimaryKey'
+import { renameSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes'
 
 import { parseEntityPutCommandInput } from './parsePutCommandInput'
-import { renameSavedAsAttributes } from './renameSavedAsAttributes'
 
 /**
  * Builds a PUT Item command input for a given Entity
@@ -19,13 +20,15 @@ export const putItemParams = <ENTITY extends EntityV2>(
 ): PutItemCommandInput => {
   const validInput = parseEntityPutCommandInput<ENTITY>(entity, input)
 
-  // TODO: Create a parseKey function that will throw an error if the key is invalid
-  const key = entity.computeKey ? entity.computeKey(validInput) : {}
+  // Important to do it before renaming as validInput is muted (to improve?)
+  let keyInput = entity.computeKey ? entity.computeKey(validInput) : undefined
 
   const renamedInput = renameSavedAsAttributes(entity.item, validInput)
 
+  const primaryKey = parsePrimaryKey(entity, keyInput ?? renamedInput)
+
   return {
     TableName: entity.table.name,
-    Item: marshall({ ...renamedInput, ...key })
+    Item: marshall({ ...renamedInput, ...primaryKey })
   }
 }
