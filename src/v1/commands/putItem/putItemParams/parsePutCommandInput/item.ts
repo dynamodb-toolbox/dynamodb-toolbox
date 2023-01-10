@@ -20,12 +20,18 @@ export const parseItemPutCommandInput = <ITEM extends Item>(
     const attribute = item.attributes[attributeName]
 
     if (attribute !== undefined) {
-      parsedPutItemInput[attributeName] = parseAttributePutCommandInput(attribute, attributeInput)
+      const parsedAttributePutCommandInput = parseAttributePutCommandInput(
+        attribute,
+        attributeInput
+      )
+
+      if (parsedAttributePutCommandInput !== undefined) {
+        parsedPutItemInput[attributeName] = parsedAttributePutCommandInput
+      }
     } else {
       if (isClosed(item)) {
-        // TODO Add strict mode, and simply return if strict mode is off
-        // TODO
-        throw new Error()
+        // TODO Add strict mode, and throw if strict mode is on
+        return
       } else {
         parsedPutItemInput[attributeName] = attributeInput
       }
