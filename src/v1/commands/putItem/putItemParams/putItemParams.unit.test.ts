@@ -1,3 +1,6 @@
+import { unmarshall } from '@aws-sdk/util-dynamodb'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+
 import {
   TableV2,
   EntityV2,
@@ -12,8 +15,6 @@ import {
   map,
   ComputedDefault
 } from 'v1'
-import { unmarshall } from '@aws-sdk/util-dynamodb'
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 
 import { putItemParams } from './putItemParams'
 
