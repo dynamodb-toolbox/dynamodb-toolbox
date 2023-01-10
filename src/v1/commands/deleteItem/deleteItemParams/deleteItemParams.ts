@@ -1,4 +1,4 @@
-import { GetItemCommandInput } from '@aws-sdk/client-dynamodb'
+import { DeleteItemCommandInput } from '@aws-sdk/client-dynamodb'
 
 import { EntityV2, KeyInput } from 'v1'
 import { marshall } from 'v1/utils/marshall'
@@ -7,16 +7,16 @@ import { parsePrimaryKey } from 'v1/commands/utils/parsePrimaryKey'
 import { renameSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes'
 
 /**
- * Builds a GET Item command input for a given Entity
+ * Builds a DELETE Item command input for a given Entity
  *
  * @param entity Entity
  * @param input Input
- * @return GetItemCommandInput
+ * @return DeleteItemCommandInput
  */
-export const getItemParams = <ENTITY extends EntityV2>(
+export const deleteItemParams = <ENTITY extends EntityV2>(
   entity: ENTITY,
   input: KeyInput<ENTITY>
-): GetItemCommandInput => {
+): DeleteItemCommandInput => {
   const validKeyInput = parseEntityKeyInput<ENTITY>(entity, input)
 
   // Important to do it before renaming as validKeyInput is muted (to improve?)
