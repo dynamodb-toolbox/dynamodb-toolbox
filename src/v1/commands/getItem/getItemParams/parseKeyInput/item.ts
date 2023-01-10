@@ -19,11 +19,14 @@ export const parseItemKeyInput = <ITEM extends Item>(
     const attribute = item.attributes[attributeName]
 
     if (attribute !== undefined && attribute.key) {
-      parsedKeyInput[attributeName] = parseAttributeKeyInput(attribute, attributeInput)
+      const parsedAttributeKeyInput = parseAttributeKeyInput(attribute, attributeInput)
+
+      if (parsedAttributeKeyInput !== undefined) {
+        parsedKeyInput[attributeName] = parsedAttributeKeyInput
+      }
     } else {
-      // TODO Add strict mode, and simply return if strict mode is off
-      // TODO
-      throw new Error()
+      // TODO Add strict mode, and throw if strict mode is on
+      return
     }
   })
 
