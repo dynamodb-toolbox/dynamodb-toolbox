@@ -41,7 +41,11 @@ export const parseItemPutCommandInput = <ITEM extends Item>(
   // Check that schema attributes entries are matched by putItemInput
   Object.entries(item.attributes).forEach(([attributeName, attribute]) => {
     if (parsedPutItemInput[attributeName] === undefined) {
-      parsedPutItemInput[attributeName] = parseAttributePutCommandInput(attribute, undefined)
+      const parsedAttributePutCommandInput = parseAttributePutCommandInput(attribute, undefined)
+
+      if (parsedAttributePutCommandInput !== undefined) {
+        parsedPutItemInput[attributeName] = parsedAttributePutCommandInput
+      }
     }
   })
 

@@ -18,10 +18,14 @@ export const cloneInputAndAddInitialDefaults = (
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   Object.entries(item.attributes).forEach(([attributeName, attribute]) => {
-    inputWithInitialDefaults[attributeName] = cloneAttributeInputAndAddInitialDefaults(
+    const attributeInputWithInitialDefaults = cloneAttributeInputAndAddInitialDefaults(
       attribute,
       input[attributeName]
     )
+
+    if (attributeInputWithInitialDefaults !== undefined) {
+      inputWithInitialDefaults[attributeName] = attributeInputWithInitialDefaults
+    }
 
     additionalAttributes.delete(attributeName)
   })

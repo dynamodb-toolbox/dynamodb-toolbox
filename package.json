@@ -25,7 +25,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/util-dynamodb": "^3.226.0",
     "lodash.clonedeep": "^4.5.0",
     "ts-toolbelt": "^6.15.5"
   },
@@ -45,6 +44,7 @@
   "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.145.0",
+    "@aws-sdk/lib-dynamodb": "^3.245.0",
     "@types/jest": "^27.0.7",
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/node": "^14.14.16",

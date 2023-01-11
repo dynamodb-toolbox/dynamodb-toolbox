@@ -35,7 +35,11 @@ export const parseMapAttributeKeyInput = <MAP_ATTRIBUTE extends MapAttribute>(
     const attribute = mapAttribute.attributes[attributeName]
 
     if (parsedKeyInput[attributeName] === undefined) {
-      parsedKeyInput[attributeName] = parseAttributeKeyInput(attribute, undefined)
+      const parsedAttributeKeyInput = parseAttributeKeyInput(attribute, undefined)
+
+      if (parsedAttributeKeyInput !== undefined) {
+        parsedKeyInput[attributeName] = parsedAttributeKeyInput
+      }
     }
   })
 
