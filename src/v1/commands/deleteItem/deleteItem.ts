@@ -1,6 +1,5 @@
 import type { O } from 'ts-toolbelt'
-import { DeleteItemCommand, DeleteItemCommandOutput } from '@aws-sdk/client-dynamodb'
-import { unmarshall } from '@aws-sdk/util-dynamodb'
+import { DeleteCommand, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, FormattedItem, KeyInput } from 'v1'
 import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
@@ -18,10 +17,10 @@ export const deleteItem = async <ENTITY extends EntityV2>(
   entity: ENTITY,
   keyInput: KeyInput<ENTITY>
 ): Promise<
-  O.Merge<Omit<DeleteItemCommandOutput, 'Attributes'>, { Item?: FormattedItem<ENTITY> | undefined }>
+  O.Merge<Omit<DeleteCommandOutput, 'Attributes'>, { Item?: FormattedItem<ENTITY> | undefined }>
 > => {
-  const commandOutput = await entity.table.dynamoDbClient.send(
-    new DeleteItemCommand(deleteItemParams<ENTITY>(entity, keyInput))
+  const commandOutput = await entity.table.documentClient.send(
+    new DeleteCommand(deleteItemParams<ENTITY>(entity, keyInput))
   )
 
   const { Attributes: attributes, ...restCommandOutput } = commandOutput
@@ -30,7 +29,7 @@ export const deleteItem = async <ENTITY extends EntityV2>(
     return restCommandOutput
   }
 
-  const formattedItem = parseSavedItem(entity, unmarshall(attributes))
+  const formattedItem = parseSavedItem(entity, attributes)
 
   return { Item: formattedItem, ...restCommandOutput }
 }
