@@ -1,4 +1,4 @@
-import { unmarshall } from '@aws-sdk/util-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 
 import {
@@ -20,6 +20,8 @@ import { putItemParams } from './putItemParams'
 
 const dynamoDbClient = new DynamoDBClient({})
 
+const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
+
 const TestTable = new TableV2({
   name: 'test-table',
   partitionKey: {
@@ -30,7 +32,7 @@ const TestTable = new TableV2({
     type: 'string',
     name: 'sk'
   },
-  dynamoDbClient
+  documentClient
 })
 
 const TestEntity = new EntityV2({
@@ -58,7 +60,7 @@ const TestEntity = new EntityV2({
 const TestTable2 = new TableV2({
   name: 'test-table',
   partitionKey: { type: 'string', name: 'pk' },
-  dynamoDbClient
+  documentClient
 })
 
 const TestEntity2 = new EntityV2({
@@ -69,15 +71,14 @@ const TestEntity2 = new EntityV2({
     test_composite: string(),
     test_composite2: string()
   }),
-  computeDefaults: ({ test_composite, test_composite2, sort, ...restItem }) => ({
-    test_composite,
-    test_composite2,
-    sort,
-    ...(sort === undefined && test_composite !== undefined && test_composite2 !== undefined
-      ? { sort: [test_composite, test_composite2].join('#') }
-      : {}),
-    ...restItem
-  }),
+  computeDefaults: item => {
+    const { test_composite, test_composite2, sort } = item
+
+    if (sort !== undefined || test_composite === undefined || test_composite2 === undefined)
+      return item
+
+    return { ...item, sort: [test_composite, test_composite2].join('#') }
+  },
   table: TestTable2
 })
 
@@ -95,7 +96,7 @@ const TestTable3 = new TableV2({
   name: 'TestTable3',
   partitionKey: { type: 'string', name: 'pk' },
   sortKey: { type: 'string', name: 'sk' },
-  dynamoDbClient
+  documentClient
 })
 
 const TestEntity4 = new EntityV2({
@@ -121,9 +122,9 @@ const TestEntity5 = new EntityV2({
 
 describe('put', () => {
   it('creates basic item', () => {
-    const { Item = {} } = putItemParams(TestEntity, { email: 'test-pk', sort: 'test-sk' })
+    const { Item } = putItemParams(TestEntity, { email: 'test-pk', sort: 'test-sk' })
 
-    expect(unmarshall(Item)).toMatchObject({
+    expect(Item).toMatchObject({
       // TODO
       // _et: 'TestEntity',
       // _ct:
@@ -136,59 +137,59 @@ describe('put', () => {
   })
 
   it('creates item with aliases', () => {
-    const { Item = {} } = putItemParams(TestEntity, {
+    const { Item } = putItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       count: 0
     })
 
-    expect(unmarshall(Item)).toMatchObject({ test_number: 0 })
+    expect(Item).toMatchObject({ test_number: 0 })
   })
 
   it('creates item with overridden default override', () => {
     const overrideValue = 'different value'
 
-    const { Item = {} } = putItemParams(TestEntity, {
+    const { Item } = putItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       test_string: overrideValue
     })
 
-    expect(unmarshall(Item)).toMatchObject({ test_string: overrideValue })
+    expect(Item).toMatchObject({ test_string: overrideValue })
   })
 
   it('creates item with saved composite field', () => {
-    const { Item = {} } = putItemParams(TestEntity2, {
+    const { Item } = putItemParams(TestEntity2, {
       email: 'test-pk',
       test_composite: 'test'
     })
 
-    expect(unmarshall(Item)).toStrictEqual({
+    expect(Item).toStrictEqual({
       pk: 'test-pk',
       test_composite: 'test'
     })
   })
 
   it('creates item that ignores field with no value', () => {
-    const { Item = {} } = putItemParams(TestEntity2, {
+    const { Item } = putItemParams(TestEntity2, {
       email: 'test-pk',
       test_composite: undefined
     })
 
-    expect(unmarshall(Item)).toStrictEqual({
+    expect(Item).toStrictEqual({
       pk: 'test-pk'
     })
   })
 
   it('creates item that overrides composite key', () => {
-    const { Item = {} } = putItemParams(TestEntity2, {
+    const { Item } = putItemParams(TestEntity2, {
       email: 'test-pk',
       sort: 'override',
       test_composite: 'test',
       test_composite2: 'test2'
     })
 
-    expect(unmarshall(Item)).toStrictEqual({
+    expect(Item).toStrictEqual({
       pk: 'test-pk',
       sk: 'override',
       test_composite: 'test',
@@ -198,13 +199,13 @@ describe('put', () => {
   })
 
   it('creates item that generates composite key', () => {
-    const { Item = {} } = putItemParams(TestEntity2, {
+    const { Item } = putItemParams(TestEntity2, {
       email: 'test-pk',
       test_composite: 'test',
       test_composite2: 'test2'
     })
 
-    expect(unmarshall(Item)).toStrictEqual({
+    expect(Item).toStrictEqual({
       pk: 'test-pk',
       sk: 'test#test2',
       test_composite: 'test',
@@ -226,14 +227,14 @@ describe('put', () => {
   })
 
   it('ignores additional attribute if item is closed and strict mode is off (TODO)', () => {
-    const { Item = {} } = putItemParams(TestEntity, {
+    const { Item } = putItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error
       unknown: '?'
     })
 
-    expect(unmarshall(Item)).not.toHaveProperty('unknown')
+    expect(Item).not.toHaveProperty('unknown')
   })
 
   it('fails when invalid string provided with no coercion', () => {
@@ -276,13 +277,13 @@ describe('put', () => {
   })
 
   it('with valid array', () => {
-    const { Item = {} } = putItemParams(TestEntity, {
+    const { Item } = putItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       test_list: ['a', 'b']
     })
 
-    expect(unmarshall(Item)).toMatchObject({
+    expect(Item).toMatchObject({
       test_list: ['a', 'b']
     })
   })
@@ -301,7 +302,7 @@ describe('put', () => {
   })
 
   it('with valid map', () => {
-    const { Item = {} } = putItemParams(TestEntity, {
+    const { Item } = putItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       test_map: {
@@ -309,7 +310,7 @@ describe('put', () => {
       }
     })
 
-    expect(unmarshall(Item)).toMatchObject({
+    expect(Item).toMatchObject({
       test_map: { str: 'x' }
     })
   })
@@ -328,13 +329,13 @@ describe('put', () => {
   })
 
   it('with valid set', () => {
-    const { Item = {} } = putItemParams(TestEntity, {
+    const { Item } = putItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       test_string_set: new Set(['a', 'b', 'c'])
     })
 
-    expect(unmarshall(Item)).toMatchObject({
+    expect(Item).toMatchObject({
       test_string_set: new Set(['a', 'b', 'c'])
     })
   })
@@ -365,25 +366,25 @@ describe('put', () => {
   })
 
   it('puts 0 and false to required fields', () => {
-    const { Item = {} } = putItemParams(TestEntity5, {
+    const { Item } = putItemParams(TestEntity5, {
       pk: 'test-pk',
       test_required_boolean: false,
       test_required_number: 0
     })
 
-    expect(unmarshall(Item)).toMatchObject({
+    expect(Item).toMatchObject({
       test_required_boolean: false,
       test_required_number: 0
     })
   })
 
   it('correctly aliases pks', () => {
-    const { Item = {} } = putItemParams(TestEntity4, {
+    const { Item } = putItemParams(TestEntity4, {
       id: 3,
       xyz: '123'
     })
 
-    expect(unmarshall(Item)).toStrictEqual({
+    expect(Item).toStrictEqual({
       pk: '3',
       sk: '3',
       test: '123'
