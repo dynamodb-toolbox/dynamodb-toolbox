@@ -1,7 +1,6 @@
-import { GetItemCommandInput } from '@aws-sdk/client-dynamodb'
+import { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, KeyInput } from 'v1'
-import { marshall } from 'v1/utils/marshall'
 import { parseEntityKeyInput } from 'v1/commands/utils/parseKeyInput'
 import { parsePrimaryKey } from 'v1/commands/utils/parsePrimaryKey'
 import { renameSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes'
@@ -11,12 +10,12 @@ import { renameSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttribut
  *
  * @param entity Entity
  * @param input Input
- * @return GetItemCommandInput
+ * @return GetCommandInput
  */
 export const getItemParams = <ENTITY extends EntityV2>(
   entity: ENTITY,
   input: KeyInput<ENTITY>
-): GetItemCommandInput => {
+): GetCommandInput => {
   const validKeyInput = parseEntityKeyInput<ENTITY>(entity, input)
 
   // Important to do it before renaming as validKeyInput is muted (to improve?)
@@ -28,6 +27,6 @@ export const getItemParams = <ENTITY extends EntityV2>(
 
   return {
     TableName: entity.table.name,
-    Key: marshall(primaryKey)
+    Key: primaryKey
   }
 }
