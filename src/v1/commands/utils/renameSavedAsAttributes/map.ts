@@ -13,7 +13,7 @@ export const renameMapAttributeSavedAsAttributes = (
       input[attributeName] = renameAttributeSavedAsAttributes(attribute, attributeInput)
     }
 
-    if (attribute.savedAs !== undefined) {
+    if (attribute.savedAs !== undefined && input[attributeName] !== undefined) {
       input[attribute.savedAs] = input[attributeName]
       delete input[attributeName]
     }

@@ -1,11 +1,13 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { unmarshall } from '@aws-sdk/util-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import { TableV2, EntityV2, item, string } from 'v1'
 
 import { deleteItemParams } from './deleteItemParams'
 
 const dynamoDbClient = new DynamoDBClient({})
+
+const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
 const TestTable = new TableV2({
   name: 'test-table',
@@ -17,7 +19,7 @@ const TestTable = new TableV2({
     type: 'string',
     name: 'sk'
   },
-  dynamoDbClient
+  documentClient
 })
 
 const TestEntity = new EntityV2({
@@ -42,24 +44,24 @@ const TestEntity2 = new EntityV2({
 
 describe('delete', () => {
   it('deletes the key from inputs', async () => {
-    const { TableName, Key = {} } = deleteItemParams(TestEntity, {
+    const { TableName, Key } = deleteItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk'
     })
 
     expect(TableName).toBe('test-table')
-    expect(unmarshall(Key)).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
+    expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('filters out extra data', async () => {
-    let { Key = {} } = deleteItemParams(TestEntity, {
+    let { Key } = deleteItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error
       test: 'test'
     })
 
-    expect(unmarshall(Key)).not.toHaveProperty('test')
+    expect(Key).not.toHaveProperty('test')
   })
 
   it('fails with undefined input', () => {

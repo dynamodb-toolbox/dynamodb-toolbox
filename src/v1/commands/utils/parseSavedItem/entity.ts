@@ -24,7 +24,11 @@ export const parseSavedItem = <ENTITY extends EntityV2>(
     }
 
     if (savedItem[attributeSavedAs] !== undefined) {
-      formattedItem[attributeName] = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
+      const formattedAttribute = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
+
+      if (formattedAttribute !== undefined) {
+        formattedItem[attributeName] = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
+      }
     }
   })
 
