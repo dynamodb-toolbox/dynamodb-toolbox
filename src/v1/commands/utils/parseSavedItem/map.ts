@@ -3,6 +3,8 @@ import cloneDeep from 'lodash.clonedeep'
 import { MapAttribute, ResolvedAttribute, ResolvedMapAttribute } from 'v1/item'
 import { isObject } from 'v1/utils/validation'
 
+import { parseSavedAttribute } from './attribute'
+
 export const parseSavedMapAttribute = (
   mapAttribute: MapAttribute,
   savedItem: ResolvedAttribute
@@ -25,7 +27,14 @@ export const parseSavedMapAttribute = (
     }
 
     if (savedItem[attributeSavedAs] !== undefined) {
-      formattedMapAttribute[attributeName] = savedItem[attributeSavedAs]
+      const formattedAttribute = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
+
+      if (formattedAttribute !== undefined) {
+        formattedMapAttribute[attributeName] = parseSavedAttribute(
+          attribute,
+          savedItem[attributeSavedAs]
+        )
+      }
     }
   })
 
