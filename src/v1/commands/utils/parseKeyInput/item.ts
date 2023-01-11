@@ -35,7 +35,11 @@ export const parseItemKeyInput = <ITEM extends Item>(
     const attribute = item.attributes[attributeName]
 
     if (parsedKeyInput[attributeName] === undefined) {
-      parsedKeyInput[attributeName] = parseAttributeKeyInput(attribute, undefined)
+      const parsedAttributeKeyInput = parseAttributeKeyInput(attribute, undefined)
+
+      if (parsedAttributeKeyInput !== undefined) {
+        parsedKeyInput[attributeName] = parsedAttributeKeyInput
+      }
     }
   })
 

@@ -41,7 +41,11 @@ export const parseMapAttributePutCommandInput = <MAP_ATTRIBUTE extends MapAttrib
   // Check that schema attributes entries are matched by putItemInput
   Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
     if (parsedPutItemInput[attributeName] === undefined) {
-      parsedPutItemInput[attributeName] = parseAttributePutCommandInput(attribute, undefined)
+      const parsedAttributePutCommandInput = parseAttributePutCommandInput(attribute, undefined)
+
+      if (parsedAttributePutCommandInput !== undefined) {
+        parsedPutItemInput[attributeName] = parsedAttributePutCommandInput
+      }
     }
   })
 

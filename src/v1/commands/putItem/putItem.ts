@@ -1,6 +1,5 @@
 import type { O } from 'ts-toolbelt'
-import { PutItemCommand, PutItemCommandOutput } from '@aws-sdk/client-dynamodb'
-import { unmarshall } from '@aws-sdk/util-dynamodb'
+import { PutCommand, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, PutItemInput, FormattedItem } from 'v1'
 import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
@@ -12,19 +11,16 @@ import { putItemParams } from './putItemParams'
  *
  * @param entity Entity
  * @param putItemInput PutItemInput
- * @return PutItemCommandOutput
+ * @return PutCommandOutput
  */
 export const putItem = async <ENTITY extends EntityV2>(
   entity: ENTITY,
   putItemInput: PutItemInput<ENTITY>
 ): Promise<
-  O.Merge<
-    Omit<PutItemCommandOutput, 'Attributes'>,
-    { Attributes?: FormattedItem<ENTITY> | undefined }
-  >
+  O.Merge<Omit<PutCommandOutput, 'Attributes'>, { Attributes?: FormattedItem<ENTITY> | undefined }>
 > => {
-  const commandOutput = await entity.table.dynamoDbClient.send(
-    new PutItemCommand(putItemParams<ENTITY>(entity, putItemInput))
+  const commandOutput = await entity.table.documentClient.send(
+    new PutCommand(putItemParams<ENTITY>(entity, putItemInput))
   )
 
   const { Attributes: attributes, ...restCommandOutput } = commandOutput
@@ -33,7 +29,7 @@ export const putItem = async <ENTITY extends EntityV2>(
     return restCommandOutput
   }
 
-  const formattedItem = parseSavedItem(entity, unmarshall(attributes))
+  const formattedItem = parseSavedItem(entity, attributes)
 
   return { Attributes: formattedItem, ...restCommandOutput }
 }
