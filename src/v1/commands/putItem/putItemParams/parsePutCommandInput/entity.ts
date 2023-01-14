@@ -1,5 +1,5 @@
 import { EntityV2, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
-import { cloneInputAndAddInitialDefaults } from 'v1/commands/utils/cloneInputAndAddInitialDefaults'
+import { cloneInputAndAddDefaults } from 'v1/commands/utils/cloneInputAndAddDefaults'
 
 import { parseItemPutCommandInput } from './item'
 
@@ -7,14 +7,12 @@ export const parseEntityPutCommandInput = <ENTITY extends EntityV2>(
   entity: EntityV2,
   input: PossiblyUndefinedResolvedItem
 ): PutItem<ENTITY> => {
-  const clonedInputWithInitialDefaults = cloneInputAndAddInitialDefaults(entity.item, input)
-
-  const clonedInputWithComputedDefaults = entity.computeDefaults
-    ? entity.computeDefaults(clonedInputWithInitialDefaults)
-    : clonedInputWithInitialDefaults
+  const clonedInputWithDefaults = cloneInputAndAddDefaults(entity.item, input, {
+    computeDefaults: entity.computedDefaults
+  })
 
   return parseItemPutCommandInput<ENTITY['item']>(
     entity.item,
-    clonedInputWithComputedDefaults
+    clonedInputWithDefaults
   ) as PutItem<ENTITY>
 }
