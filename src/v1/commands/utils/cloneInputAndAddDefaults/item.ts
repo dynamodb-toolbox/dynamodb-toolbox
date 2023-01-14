@@ -1,13 +1,14 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import { Item, PossiblyUndefinedResolvedItem } from 'v1'
+import { Item, PossiblyUndefinedResolvedItem, ItemDefaultsComputer } from 'v1'
 import { isObject } from 'v1/utils/validation'
 
-import { cloneAttributeInputAndAddInitialDefaults } from './attribute'
+import { cloneAttributeInputAndAddDefaults } from './attribute'
 
-export const cloneInputAndAddInitialDefaults = (
+export const cloneInputAndAddDefaults = (
   item: Item,
-  input: PossiblyUndefinedResolvedItem
+  input: PossiblyUndefinedResolvedItem,
+  { computeDefaults }: { computeDefaults: ItemDefaultsComputer }
 ): PossiblyUndefinedResolvedItem => {
   if (!isObject(input)) {
     return cloneDeep(input)
@@ -18,9 +19,10 @@ export const cloneInputAndAddInitialDefaults = (
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   Object.entries(item.attributes).forEach(([attributeName, attribute]) => {
-    const attributeInputWithInitialDefaults = cloneAttributeInputAndAddInitialDefaults(
+    const attributeInputWithInitialDefaults = cloneAttributeInputAndAddDefaults(
       attribute,
-      input[attributeName]
+      input[attributeName],
+      { computeDefaults: computeDefaults && computeDefaults[attributeName], contextInputs: [input] }
     )
 
     if (attributeInputWithInitialDefaults !== undefined) {
