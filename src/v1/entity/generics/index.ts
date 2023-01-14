@@ -1,5 +1,7 @@
 export * from './_PutItem'
+export * from './_DefaultsComputer'
 
+export { ItemDefaultsComputer, AttributeDefaultsComputer } from './DefaultsComputer'
 export type { _NeedsKeyCompute } from './NeedsKeyCompute'
 
 export type { KeyInput, _KeyInput } from './KeyInput'
