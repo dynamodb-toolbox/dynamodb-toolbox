@@ -3,12 +3,12 @@ import { TableV2, PrimaryKey } from 'v1/table'
 
 import type {
   _NeedsKeyCompute,
-  PutItem,
   _PutItem,
-  PutItemInput,
   _PutItemInput,
   KeyInput,
-  _KeyInput
+  _KeyInput,
+  _ItemPutDefaultsComputer,
+  ItemDefaultsComputer
 } from './generics'
 
 export class EntityV2<
@@ -16,6 +16,10 @@ export class EntityV2<
   TABLE extends TableV2 = TableV2,
   _ITEM extends _Item = _Item,
   // TODO: See if possible not to add it as a generic here
+  PUT_DEFAULTS_COMPUTER = _Item extends _ITEM
+    ? ItemDefaultsComputer
+    : _ItemPutDefaultsComputer<_ITEM>,
+  CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER,
   ITEM extends Item = FreezeItem<_ITEM>
 > {
   public type: 'entity'
@@ -25,11 +29,7 @@ export class EntityV2<
   public item: ITEM
   // any is needed for contravariance
   computeKey?: (keyInput: _Item extends _ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
-  // TODO: Split in putComputeDefaults & updateComputeDefaults
-  // any is needed for contravariance
-  computeDefaults?: (
-    putItemInput: _Item extends _ITEM ? any : PutItemInput<ITEM, true>
-  ) => PutItem<ITEM>
+  computedDefaults?: PUT_DEFAULTS_COMPUTER
 
   /**
    * Define an Entity for a given table
@@ -39,14 +39,14 @@ export class EntityV2<
    * @param table Table
    * @param item Item
    * @param computeKey _(optional)_ Transforms key input to primary key
-   * @param computeDefaults _(optional)_ Computes computed defaults
+   * @param computedDefaults _(optional)_ Computes computed defaults
    */
   constructor({
     name,
     table,
     item: _item,
     computeKey,
-    computeDefaults
+    computedDefaults
   }: {
     name: NAME
     table: TABLE
@@ -55,8 +55,8 @@ export class EntityV2<
     ? { computeKey: (keyInput: _KeyInput<_ITEM>) => PrimaryKey<TABLE> }
     : { computeKey?: undefined }) &
     (_HasComputedDefaults<_ITEM> extends true
-      ? { computeDefaults: (input: _PutItemInput<_ITEM, true>) => _PutItem<_ITEM> }
-      : { computeDefaults?: undefined })) {
+      ? { computedDefaults: CONSTRUCTOR_PUT_DEFAULTS_COMPUTER }
+      : { computedDefaults?: undefined })) {
     this.type = 'entity'
     this.name = name
     this.table = table
@@ -66,6 +66,6 @@ export class EntityV2<
     this.item = freezeItem(_item) as any
 
     this.computeKey = computeKey as any
-    this.computeDefaults = computeDefaults as any
+    this.computedDefaults = computedDefaults
   }
 }

@@ -71,13 +71,9 @@ const TestEntity2 = new EntityV2({
     test_composite: string(),
     test_composite2: string()
   }),
-  computeDefaults: item => {
-    const { test_composite, test_composite2, sort } = item
-
-    if (sort !== undefined || test_composite === undefined || test_composite2 === undefined)
-      return item
-
-    return { ...item, sort: [test_composite, test_composite2].join('#') }
+  computedDefaults: {
+    sort: ({ test_composite, test_composite2 }) =>
+      test_composite && test_composite2 && [test_composite, test_composite2].join('#')
   },
   table: TestTable2
 })

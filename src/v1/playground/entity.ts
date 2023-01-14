@@ -18,7 +18,9 @@ export const UserEntity = new EntityV2({
     somethingComputed: string().required().default(ComputedDefault),
     someSet: set(string().required().enum('a', 'b', 'c'))
   }),
-  computeDefaults: item => ({ ...item, somethingComputed: 'something' })
+  computedDefaults: {
+    somethingComputed: item => item.firstName + item.lastName
+  }
 })
 
 type UserPutItemInput = PutItemInput<typeof UserEntity>
