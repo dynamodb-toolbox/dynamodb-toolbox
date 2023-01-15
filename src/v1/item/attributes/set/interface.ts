@@ -31,6 +31,10 @@ export type _SetAttribute<
     nextRequired?: NEXT_IS_REQUIRED
   ) => _SetAttribute<ELEMENTS, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
   /**
+   * Shorthand for `required('never')`
+   */
+  optional: () => _SetAttribute<ELEMENTS, 'never', IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  /**
    * Hide attribute after fetch commands and formatting
    */
   hidden: () => _SetAttribute<ELEMENTS, IS_REQUIRED, true, IS_KEY, SAVED_AS, DEFAULT>

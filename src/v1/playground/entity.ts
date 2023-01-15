@@ -9,47 +9,55 @@ export const UserEntity = new EntityV2({
   item: item({
     userId: string().key().required('always'),
     age: number().key().required('always').enum(41, 42).default(42).savedAs('sk'),
-    firstName: string().required().savedAs('fn'),
-    lastName: string().required().savedAs('ln'),
+    firstName: string().savedAs('fn'),
+    lastName: string().savedAs('ln'),
     parents: map({
-      father: string().required(),
-      mother: string().required()
+      father: string(),
+      mother: string()
     }),
 
     // Primitive
-    completeName: string().required().default(ComputedDefault),
+    completeName: string().default(ComputedDefault),
 
     // Maps
     defaultedMap: map({
-      nestedCompleteName: string().required()
-    }).default(ComputedDefault),
+      nestedCompleteName: string()
+    })
+      .optional()
+      .default(ComputedDefault),
 
     defaultInMap: map({
-      nestedCompleteName: string().required().default(ComputedDefault)
-    }),
+      nestedCompleteName: string().default(ComputedDefault)
+    }).optional(),
 
     bothDefaultsMap: map({
-      nestedCompleteName: string().required().default(ComputedDefault)
-    }).default(ComputedDefault),
+      nestedCompleteName: string().default(ComputedDefault)
+    })
+      .optional()
+      .default(ComputedDefault),
 
     // List
     defaultedList: list(
       map({
-        nestedCompleteName: string().required()
-      }).required()
-    ).default(ComputedDefault),
+        nestedCompleteName: string()
+      })
+    )
+      .optional()
+      .default(ComputedDefault),
 
     defaultInList: list(
       map({
-        nestedCompleteName: string().required().default(ComputedDefault)
-      }).required()
-    ),
+        nestedCompleteName: string().default(ComputedDefault)
+      })
+    ).optional(),
 
     bothDefaultsList: list(
       map({
-        nestedCompleteName: string().required().default(ComputedDefault)
-      }).required()
-    ).default(ComputedDefault)
+        nestedCompleteName: string().default(ComputedDefault)
+      })
+    )
+      .optional()
+      .default(ComputedDefault)
   }),
 
   computedDefaults: {
