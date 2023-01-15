@@ -1,5 +1,5 @@
 import type { AttributeOptions } from '../shared/options'
-import type { RequiredOption, Never } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import { ComputedDefault } from '../constants/computedDefault'
 
 /**
@@ -19,13 +19,13 @@ export interface SetAttributeOptions<
 }
 
 export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeOptions<
-  Never,
+  AtLeastOnce,
   false,
   false,
   undefined,
   undefined
 > = {
-  required: 'never',
+  required: 'atLeastOnce',
   hidden: false,
   key: false,
   savedAs: undefined,
