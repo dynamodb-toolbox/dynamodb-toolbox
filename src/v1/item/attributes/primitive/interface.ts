@@ -39,6 +39,10 @@ export type _PrimitiveAttribute<
     nextRequired?: NEXT_IS_REQUIRED
   ) => _PrimitiveAttribute<TYPE, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
   /**
+   * Shorthand for `required('never')`
+   */
+  optional: () => _PrimitiveAttribute<TYPE, 'never', IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
+  /**
    * Hide attribute after fetch commands and formatting
    */
   hidden: () => _PrimitiveAttribute<TYPE, IS_REQUIRED, true, IS_KEY, SAVED_AS, ENUM, DEFAULT>

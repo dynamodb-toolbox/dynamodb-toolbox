@@ -34,6 +34,10 @@ export interface _MapAttribute<
     nextRequired?: NEXT_REQUIRED
   ) => _MapAttribute<ATTRIBUTES, NEXT_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>
   /**
+   * Shorthand for `required('never')`
+   */
+  optional: () => _MapAttribute<ATTRIBUTES, 'never', IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>
+  /**
    * Hide attribute after fetch commands and formatting
    */
   hidden: () => _MapAttribute<ATTRIBUTES, IS_REQUIRED, true, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>

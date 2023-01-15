@@ -22,7 +22,7 @@ describe('primitiveAttribute', () => {
         {
           _type: 'string'
           _resolved?: string
-          _required: Never
+          _required: AtLeastOnce
           _hidden: false
           _savedAs: undefined
           _key: false
@@ -33,7 +33,7 @@ describe('primitiveAttribute', () => {
 
       expect(str).toMatchObject({
         _type: 'string',
-        _required: 'never',
+        _required: 'atLeastOnce',
         _hidden: false,
         _savedAs: undefined,
         _key: false,
@@ -67,6 +67,7 @@ describe('primitiveAttribute', () => {
       const strOnlyOnce = string().required('onlyOnce')
       const strAlways = string().required('always')
       const strNever = string().required('never')
+      const strOpt = string().optional()
 
       const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { _required: AtLeastOnce }> = 1
       assertAtLeastOnce
@@ -76,11 +77,14 @@ describe('primitiveAttribute', () => {
       assertAlways
       const assertNever: A.Contains<typeof strNever, { _required: Never }> = 1
       assertNever
+      const assertOpt: A.Contains<typeof strOpt, { _required: Never }> = 1
+      assertOpt
 
       expect(strAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
       expect(strOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
       expect(strAlways).toMatchObject({ _required: 'always' })
       expect(strNever).toMatchObject({ _required: 'never' })
+      expect(strOpt).toMatchObject({ _required: 'never' })
     })
 
     it('returns hidden string (option)', () => {

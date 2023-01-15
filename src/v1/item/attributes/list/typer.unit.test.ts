@@ -14,19 +14,19 @@ import {
 
 describe('list', () => {
   const path = 'some.path'
-  const strElement = string().required()
+  const strElement = string()
 
   it('rejects non-required elements', () => {
     list(
       // @ts-expect-error
-      string()
+      string().optional()
     )
 
     expect(() =>
       freezeListAttribute(
         list(
           // @ts-expect-error
-          string()
+          string().optional()
         ),
         path
       )
@@ -107,7 +107,7 @@ describe('list', () => {
       {
         _type: 'list'
         _elements: typeof strElement
-        _required: Never
+        _required: AtLeastOnce
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -119,7 +119,7 @@ describe('list', () => {
     expect(lst).toMatchObject({
       _type: 'list',
       _elements: strElement,
-      _required: 'never',
+      _required: 'atLeastOnce',
       _key: false,
       _savedAs: undefined,
       _hidden: false
@@ -152,6 +152,7 @@ describe('list', () => {
     const lstOnlyOnce = list(strElement).required('onlyOnce')
     const lstAlways = list(strElement).required('always')
     const lstNever = list(strElement).required('never')
+    const lstOpt = list(strElement).optional()
 
     const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -161,6 +162,8 @@ describe('list', () => {
     assertAlways
     const assertNever: A.Contains<typeof lstNever, { _required: Never }> = 1
     assertNever
+    const assertOpt: A.Contains<typeof lstOpt, { _required: Never }> = 1
+    assertOpt
 
     expect(lstAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
     expect(lstOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
@@ -241,7 +244,7 @@ describe('list', () => {
   })
 
   it('list of lists', () => {
-    const lst = list(list(strElement).required())
+    const lst = list(list(strElement))
 
     const assertList: A.Contains<
       typeof lst,
@@ -256,7 +259,7 @@ describe('list', () => {
           _savedAs: undefined
           _default: undefined
         }
-        _required: Never
+        _required: AtLeastOnce
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -276,7 +279,7 @@ describe('list', () => {
         _savedAs: undefined,
         _default: undefined
       },
-      _required: 'never',
+      _required: 'atLeastOnce',
       _hidden: false,
       _key: false,
       _savedAs: undefined,

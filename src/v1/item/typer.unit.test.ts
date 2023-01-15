@@ -5,7 +5,7 @@ import { boolean, binary, number, string, set, list, map } from './attributes'
 
 describe('item', () => {
   it('primitives', () => {
-    const reqStr = string().required()
+    const reqStr = string()
     const hidBool = boolean().hidden()
     const defNum = number().default(42)
     const savedAsBin = binary().savedAs('_b')
@@ -49,12 +49,12 @@ describe('item', () => {
   })
 
   it('maps', () => {
-    const str = string().required()
+    const str = string()
     const flatMap = map({ str })
     const nestedMap = map({
       nested: map({ str })
     })
-    const reqMap = map({ str }).required()
+    const reqMap = map({ str })
     const hiddenMap = map({ str }).hidden()
 
     const itm = item({ flatMap, nestedMap, reqMap, hiddenMap })
@@ -83,11 +83,11 @@ describe('item', () => {
   })
 
   it('list', () => {
-    const str = string().required()
-    const optList = list(str)
-    const nestedList = list(list(str).required())
-    const reqList = list(str).required()
-    const hiddenList = list(str).hidden()
+    const str = string()
+    const optList = list(str).optional()
+    const nestedList = list(list(str))
+    const reqList = list(str)
+    const hiddenList = list(str).optional().hidden()
 
     const itm = item({
       optList,
@@ -120,10 +120,10 @@ describe('item', () => {
   })
 
   it('sets', () => {
-    const str = string().required()
-    const optSet = set(str)
-    const reqSet = set(str).required()
-    const hiddenSet = set(str).hidden()
+    const str = string()
+    const optSet = set(str).optional()
+    const reqSet = set(str)
+    const hiddenSet = set(str).optional().hidden()
 
     const itm = item({
       optSet,
