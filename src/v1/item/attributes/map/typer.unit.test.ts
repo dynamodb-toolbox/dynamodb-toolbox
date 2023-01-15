@@ -6,7 +6,7 @@ import { string } from '../primitive'
 import { map } from './typer'
 
 describe('map', () => {
-  const str = string().required()
+  const str = string()
 
   it('returns default map', () => {
     const mapped = map({ str })
@@ -18,7 +18,7 @@ describe('map', () => {
         _attributes: {
           str: typeof str
         }
-        _required: Never
+        _required: AtLeastOnce
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -30,7 +30,7 @@ describe('map', () => {
     expect(mapped).toMatchObject({
       _type: 'map',
       _attributes: { str },
-      _required: 'never',
+      _required: 'atLeastOnce',
       _key: false,
       _savedAs: undefined,
       _hidden: false
@@ -66,6 +66,7 @@ describe('map', () => {
     const mappedOnlyOnce = map({ str }).required('onlyOnce')
     const mappedAlways = map({ str }).required('always')
     const mappedNever = map({ str }).required('never')
+    const mappedOpt = map({ str }).optional()
 
     const assertMapAttributeAtLeastOnce: A.Contains<
       typeof mappedAtLeastOnce,
@@ -78,11 +79,14 @@ describe('map', () => {
     assertMapAttributeAlways
     const assertMapAttributeNever: A.Contains<typeof mappedNever, { _required: Never }> = 1
     assertMapAttributeNever
+    const assertMapAttributeOpt: A.Contains<typeof mappedOpt, { _required: Never }> = 1
+    assertMapAttributeOpt
 
     expect(mappedAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
     expect(mappedOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
     expect(mappedAlways).toMatchObject({ _required: 'always' })
     expect(mappedNever).toMatchObject({ _required: 'never' })
+    expect(mappedOpt).toMatchObject({ _required: 'never' })
   })
 
   it('returns hidden map (option)', () => {
@@ -183,7 +187,7 @@ describe('map', () => {
         nestedAgain: map({
           str
         }).hidden()
-      }).required()
+      })
     })
 
     const assertMapAttribute: A.Contains<
@@ -199,7 +203,7 @@ describe('map', () => {
                 _attributes: {
                   str: typeof str
                 }
-                _required: Never
+                _required: AtLeastOnce
                 _hidden: true
                 _key: false
                 _savedAs: undefined
@@ -213,7 +217,7 @@ describe('map', () => {
             _default: undefined
           }
         }
-        _required: Never
+        _required: AtLeastOnce
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -233,7 +237,7 @@ describe('map', () => {
               _attributes: {
                 str
               },
-              _required: 'never',
+              _required: 'atLeastOnce',
               _hidden: true,
               _key: false,
               _savedAs: undefined,
@@ -247,7 +251,7 @@ describe('map', () => {
           _default: undefined
         }
       },
-      _required: 'never',
+      _required: 'atLeastOnce',
       _hidden: false,
       _key: false,
       _savedAs: undefined,

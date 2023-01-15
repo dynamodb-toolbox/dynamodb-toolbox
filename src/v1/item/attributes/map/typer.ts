@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constants'
+import { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 import type { _MapAttributeAttributes, Narrow } from '../types'
 
 import type { _MapAttribute } from './interface'
@@ -8,7 +8,7 @@ import { MapAttributeOptions, MAPPED_DEFAULT_OPTIONS } from './options'
 
 type MapAttributeAttributeTyper = <
   ATTRIBUTES extends _MapAttributeAttributes = {},
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   IS_OPEN extends boolean = false,
@@ -29,7 +29,7 @@ type MapAttributeAttributeTyper = <
  */
 export const map: MapAttributeAttributeTyper = <
   ATTRIBUTES extends _MapAttributeAttributes = {},
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   IS_OPEN extends boolean = false,
@@ -63,6 +63,7 @@ export const map: MapAttributeAttributeTyper = <
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = ('atLeastOnce' as unknown) as NEXT_IS_REQUIRED
     ) => map(attributes, { ...appliedOptions, required: nextRequired }),
+    optional: () => map(attributes, { ...appliedOptions, required: 'never' }),
     hidden: () => map(attributes, { ...appliedOptions, hidden: true }),
     key: () => map(attributes, { ...appliedOptions, key: true }),
     open: () => map(attributes, { ...appliedOptions, open: true }),
