@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import { ComputedDefault } from '../constants'
 
 import type { _SetAttribute } from './interface'
@@ -9,7 +9,7 @@ import type { _SetAttributeElements } from './types'
 
 type SetTyper = <
   ELEMENTS extends _SetAttributeElements,
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   SAVED_AS extends string | undefined = undefined,
@@ -32,7 +32,7 @@ type SetTyper = <
  */
 export const set: SetTyper = <
   ELEMENTS extends _SetAttributeElements,
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   SAVED_AS extends string | undefined = undefined,
@@ -61,6 +61,7 @@ export const set: SetTyper = <
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => set(elements, { ...appliedOptions, required: nextRequired }),
+    optional: () => set(elements, { ...appliedOptions, required: 'never' }),
     hidden: () => set(elements, { ...appliedOptions, hidden: true }),
     key: () => set(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),

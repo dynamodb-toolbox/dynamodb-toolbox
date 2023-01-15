@@ -1,5 +1,5 @@
 import type { AttributeOptions } from '../shared/options'
-import { ComputedDefault, RequiredOption, Never } from '../constants'
+import { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
 /**
  * Input options of MapAttribute Attribute
@@ -23,14 +23,14 @@ export interface MapAttributeOptions<
 }
 
 export const MAPPED_DEFAULT_OPTIONS: MapAttributeOptions<
-  Never,
+  AtLeastOnce,
   false,
   false,
   false,
   undefined,
   undefined
 > = {
-  required: 'never',
+  required: 'atLeastOnce',
   hidden: false,
   key: false,
   open: false,

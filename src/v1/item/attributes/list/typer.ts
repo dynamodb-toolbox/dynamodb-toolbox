@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import { ComputedDefault, RequiredOption, Never, AtLeastOnce } from '../constants'
+import { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
 import type { _ListAttributeElements } from './types'
 import type { _ListAttribute } from './interface'
@@ -8,7 +8,7 @@ import { ListAttributeOptions, LIST_DEFAULT_OPTIONS } from './options'
 
 type ListTyper = <
   ELEMENTS extends _ListAttributeElements,
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   SAVED_AS extends string | undefined = undefined,
@@ -31,7 +31,7 @@ type ListTyper = <
  */
 export const list: ListTyper = <
   ELEMENTS extends _ListAttributeElements,
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   SAVED_AS extends string | undefined = undefined,
@@ -60,6 +60,7 @@ export const list: ListTyper = <
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => list(elements, { ...appliedOptions, required: nextRequired }),
+    optional: () => list(elements, { ...appliedOptions, required: 'never' }),
     hidden: () => list(elements, { ...appliedOptions, hidden: true }),
     key: () => list(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
