@@ -14,19 +14,19 @@ import {
 
 describe('set', () => {
   const path = 'some.path'
-  const strElement = string().required()
+  const strElement = string()
 
   it('rejects non-required elements', () => {
     set(
       // @ts-expect-error
-      string()
+      string().optional()
     )
 
     expect(() =>
       freezeSetAttribute(
         set(
           // @ts-expect-error
-          string()
+          string().optional()
         ),
         path
       )
@@ -113,7 +113,7 @@ describe('set', () => {
       {
         _type: 'set'
         _elements: typeof strElement
-        _required: Never
+        _required: AtLeastOnce
         _hidden: false
         _key: false
         _savedAs: undefined
@@ -125,7 +125,7 @@ describe('set', () => {
     expect(st).toMatchObject({
       _type: 'set',
       _elements: strElement,
-      _required: 'never',
+      _required: 'atLeastOnce',
       _key: false,
       _savedAs: undefined,
       _hidden: false
@@ -158,6 +158,7 @@ describe('set', () => {
     const stOnlyOnce = set(strElement).required('onlyOnce')
     const stAlways = set(strElement).required('always')
     const stNever = set(strElement).required('never')
+    const stOpt = set(strElement).optional()
 
     const assertAtLeastOnce: A.Contains<typeof stAtLeastOnce, { _required: AtLeastOnce }> = 1
     assertAtLeastOnce
@@ -167,11 +168,14 @@ describe('set', () => {
     assertAlways
     const assertNever: A.Contains<typeof stNever, { _required: Never }> = 1
     assertNever
+    const assertOpt: A.Contains<typeof stOpt, { _required: Never }> = 1
+    assertOpt
 
     expect(stAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
     expect(stOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
     expect(stAlways).toMatchObject({ _required: 'always' })
     expect(stNever).toMatchObject({ _required: 'never' })
+    expect(stOpt).toMatchObject({ _required: 'never' })
   })
 
   it('returns hidden set (option)', () => {

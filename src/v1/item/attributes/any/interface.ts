@@ -28,6 +28,10 @@ export interface _AnyAttribute<
     nextRequired?: NEXT_IS_REQUIRED
   ) => _AnyAttribute<NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
   /**
+   * Shorthand for `required('never')`
+   */
+  optional: () => _AnyAttribute<'never', IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  /**
    * Hide attribute after fetch commands and formatting
    */
   hidden: () => _AnyAttribute<IS_REQUIRED, true, IS_KEY, SAVED_AS, DEFAULT>

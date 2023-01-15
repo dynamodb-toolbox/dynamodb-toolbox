@@ -1,5 +1,5 @@
 import type { AttributeOptions } from '../shared/options'
-import { ComputedDefault, RequiredOption, Never } from '../constants'
+import { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
 /**
  * Input options of List Attribute
@@ -18,13 +18,13 @@ export interface ListAttributeOptions<
 }
 
 export const LIST_DEFAULT_OPTIONS: ListAttributeOptions<
-  Never,
+  AtLeastOnce,
   false,
   false,
   undefined,
   undefined
 > = {
-  required: 'never',
+  required: 'atLeastOnce',
   hidden: false,
   key: false,
   savedAs: undefined,
