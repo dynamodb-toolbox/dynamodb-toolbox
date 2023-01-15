@@ -1,13 +1,13 @@
 import type { O } from 'ts-toolbelt'
 
-import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
 import type { AnyAttributeDefaultValue } from './types'
 import type { _AnyAttribute } from './interface'
 import { AnyAttributeOptions, ANY_DEFAULT_OPTIONS } from './options'
 
 type AnyAttributeTyper = <
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   SAVED_AS extends string | undefined = undefined,
@@ -22,7 +22,7 @@ type AnyAttributeTyper = <
  * @param options _(optional)_ Boolean Options
  */
 export const any: AnyAttributeTyper = <
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   SAVED_AS extends string | undefined = undefined,
@@ -49,6 +49,7 @@ export const any: AnyAttributeTyper = <
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_REQUIRED = ('atLeastOnce' as unknown) as NEXT_REQUIRED
     ) => any({ ...appliedOptions, required: nextRequired }),
+    optional: () => any({ ...appliedOptions, required: 'never' }),
     hidden: () => any({ ...appliedOptions, hidden: true }),
     key: () => any({ ...appliedOptions, key: true }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),

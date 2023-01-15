@@ -1,5 +1,5 @@
 import type { AttributeOptions } from '../shared/options'
-import type { RequiredOption, Never } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
 import type {
   PrimitiveAttributeType,
@@ -28,14 +28,14 @@ export interface PrimitiveAttributeOptions<
 
 export const LEAF_DEFAULT_OPTIONS: PrimitiveAttributeOptions<
   PrimitiveAttributeType,
-  Never,
+  AtLeastOnce,
   false,
   false,
   undefined,
   undefined,
   undefined
 > = {
-  required: 'never',
+  required: 'atLeastOnce',
   hidden: false,
   key: false,
   savedAs: undefined,

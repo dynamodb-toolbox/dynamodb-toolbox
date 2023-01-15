@@ -21,29 +21,31 @@ import {
 import { freezeItem, FreezeItem } from 'v1/item'
 
 const playgroundItem1 = item({
-  reqStr: string().required(),
-  reqStrWithDef: string().required().default('string'),
-  hiddenStr: string().hidden(),
-  num: number(),
-  bool: boolean(),
-  bin: binary(),
+  reqStr: string(),
+  reqStrWithDef: string().default('string'),
+  hiddenStr: string().optional().hidden(),
+  num: number().optional(),
+  bool: boolean().optional(),
+  bin: binary().optional(),
   map: map({
     nestedMap: map({
-      str: string()
-    })
-  }),
+      str: string().optional()
+    }).optional()
+  }).optional(),
   reqMap: map({
-    str: string()
-  }).required(),
+    str: string().optional()
+  }),
   hiddenMap: map({
-    str: string()
-  }).hidden(),
+    str: string().optional()
+  })
+    .optional()
+    .hidden(),
   reqList: list(
     map({
-      str: string()
-    }).required()
-  ).required(),
-  hiddenList: list(string().required()).hidden()
+      str: string().optional()
+    })
+  ),
+  hiddenList: list(string()).optional().hidden()
 })
 const frozenPlaygroundItem1 = freezeItem(playgroundItem1)
 
@@ -51,18 +53,18 @@ type PlaygroundItem1PutItemInput = PutItemInput<typeof frozenPlaygroundItem1>
 type PlaygroundItem1FormattedItem = FormattedItem<typeof frozenPlaygroundItem1>
 
 const allCasesOfProps = {
-  optProp: string(),
-  optPropWithInitDef: string().default('foo'),
-  optPropWithCompDef: string().default(ComputedDefault),
-  reqProp: string().required(),
-  reqPropWithInitDef: string().required().default('baz'),
-  reqPropWithCompDef: string().required().default(ComputedDefault)
+  optProp: string().optional(),
+  optPropWithInitDef: string().optional().default('foo'),
+  optPropWithCompDef: string().optional().default(ComputedDefault),
+  reqProp: string(),
+  reqPropWithInitDef: string().default('baz'),
+  reqPropWithCompDef: string().default(ComputedDefault)
 }
 
 const playgroundItem2 = item({
   ...allCasesOfProps,
-  map: map(allCasesOfProps).required(),
-  list: list(map(allCasesOfProps).required()).required()
+  map: map(allCasesOfProps),
+  list: list(map(allCasesOfProps))
 })
 
 const frozenPlaygroundItem2 = freezeItem(playgroundItem2)
@@ -77,16 +79,15 @@ type PlaygroundItem2PutItemInputWithDefaults = PutItemInput<
 >
 
 const playgroundItem3 = item({
-  keyEl: string().key().required(),
-  nonKeyEl: string(),
+  keyEl: string().key(),
+  nonKeyEl: string().optional(),
   coucou: map({
-    renamed: string().required().savedAs('bar').key()
+    renamed: string().savedAs('bar').key()
   })
-    .required()
     .savedAs('baz')
     .key()
     .open(),
-  anyvalue: any().required()
+  anyvalue: any()
 })
 
 const frozenPlaygroundItem3 = freezeItem(playgroundItem3)

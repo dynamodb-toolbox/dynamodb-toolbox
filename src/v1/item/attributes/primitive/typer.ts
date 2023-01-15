@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { RequiredOption, Never, AtLeastOnce } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
 import type { _PrimitiveAttribute } from './interface'
 import { PrimitiveAttributeOptions, LEAF_DEFAULT_OPTIONS } from './options'
@@ -55,6 +55,7 @@ const primitive = <
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired = 'atLeastOnce' as NEXT_REQUIRED
     ) => primitive({ ...options, required: nextRequired }),
+    optional: () => primitive({ ...options, required: 'never' }),
     hidden: () => primitive({ ...options, hidden: true }),
     key: () => primitive({ ...options, key: true }),
     savedAs: nextSavedAs => primitive({ ...options, savedAs: nextSavedAs }),
@@ -64,7 +65,7 @@ const primitive = <
 }
 
 type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
-  IS_REQUIRED extends RequiredOption = Never,
+  IS_REQUIRED extends RequiredOption = AtLeastOnce,
   IS_HIDDEN extends boolean = false,
   IS_KEY extends boolean = false,
   SAVED_AS extends string | undefined = undefined,
@@ -78,7 +79,7 @@ type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
 
 const getPrimitiveAttributeTyper = <TYPE extends PrimitiveAttributeType>(type: TYPE) =>
   (<
-    REQUIRED extends RequiredOption = Never,
+    REQUIRED extends RequiredOption = AtLeastOnce,
     HIDDEN extends boolean = false,
     KEY extends boolean = false,
     SAVED_AS extends string | undefined = undefined,
