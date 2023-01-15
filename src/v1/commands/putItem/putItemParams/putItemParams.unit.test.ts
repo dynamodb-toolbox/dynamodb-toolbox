@@ -40,19 +40,19 @@ const TestEntity = new EntityV2({
   item: item({
     email: string().key().savedAs('pk').required('always'),
     sort: string().key().savedAs('sk').required('always'),
-    test_any: any(),
-    test_binary: binary(),
+    test_any: any().optional(),
+    test_binary: binary().optional(),
     test_string: string().default('test string'),
-    count: number().savedAs('test_number'),
+    count: number().optional().savedAs('test_number'),
     test_number_default: number().default(0),
-    test_boolean: boolean(),
-    test_list: list(string().required()),
+    test_boolean: boolean().optional(),
+    test_list: list(string()).optional(),
     test_map: map({
-      str: string().required()
-    }),
-    test_string_set: set(string().required()),
-    test_number_set: set(number().required()),
-    test_binary_set: set(binary().required())
+      str: string()
+    }).optional(),
+    test_string_set: set(string()).optional(),
+    test_number_set: set(number()).optional(),
+    test_binary_set: set(binary()).optional()
   }),
   table: TestTable
 })
@@ -67,9 +67,9 @@ const TestEntity2 = new EntityV2({
   name: 'TestEntity2',
   item: item({
     email: string().key().required('always').savedAs('pk'),
-    sort: string().savedAs('sk').default(ComputedDefault),
-    test_composite: string(),
-    test_composite2: string()
+    sort: string().optional().savedAs('sk').default(ComputedDefault),
+    test_composite: string().optional(),
+    test_composite2: string().optional()
   }),
   computedDefaults: {
     sort: ({ test_composite, test_composite2 }) =>
@@ -82,8 +82,8 @@ const TestEntity3 = new EntityV2({
   name: 'TestEntity3',
   item: item({
     email: string().key().required('always').savedAs('pk'),
-    test: any().required(),
-    test2: string()
+    test: any(),
+    test2: string().optional()
   }),
   table: TestTable2
 })
@@ -100,7 +100,7 @@ const TestEntity4 = new EntityV2({
   item: item({
     id: number().required('always').key().savedAs('pk'),
     // sk: { hidden: true, sortKey: true, default: (data: any) => data.id },
-    xyz: any().savedAs('test')
+    xyz: any().optional().savedAs('test')
   }),
   computeKey: ({ id }) => ({ pk: String(id), sk: String(id) }),
   table: TestTable3
@@ -110,8 +110,8 @@ const TestEntity5 = new EntityV2({
   name: 'TestEntity5',
   item: item({
     pk: string().key().required('always'),
-    test_required_boolean: boolean().required(),
-    test_required_number: number().required()
+    test_required_boolean: boolean(),
+    test_required_number: number()
   }),
   table: TestTable2
 })

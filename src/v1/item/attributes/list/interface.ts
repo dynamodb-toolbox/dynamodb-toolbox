@@ -31,6 +31,10 @@ export interface _ListAttribute<
     nextRequired?: NEXT_IS_REQUIRED
   ) => _ListAttribute<ELEMENTS, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
   /**
+   * Shorthand for `required('never')`
+   */
+  optional: () => _ListAttribute<ELEMENTS, 'never', IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  /**
    * Hide attribute after fetch commands and formatting
    */
   hidden: () => _ListAttribute<ELEMENTS, IS_REQUIRED, true, IS_KEY, SAVED_AS, DEFAULT>
