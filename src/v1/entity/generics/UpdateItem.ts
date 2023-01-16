@@ -19,33 +19,33 @@ import type { EntityV2 } from '../class'
 /**
  * Formatted input of an UPDATE command for a given Entity, Item or Attribute
  *
- * @param Input Entity | Item | Attribute
+ * @param Schema Entity | Item | Attribute
  * @return Object
  */
-export type UpdateItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
+export type UpdateItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends PrimitiveAttribute
-  ? NonNullable<INPUT['resolved']>
-  : INPUT extends SetAttribute
-  ? Set<UpdateItem<INPUT['elements']>>
-  : INPUT extends ListAttribute
-  ? UpdateItem<INPUT['elements']>[]
-  : INPUT extends MapAttribute | Item
+  : SCHEMA extends PrimitiveAttribute
+  ? NonNullable<SCHEMA['resolved']>
+  : SCHEMA extends SetAttribute
+  ? Set<UpdateItem<SCHEMA['elements']>>
+  : SCHEMA extends ListAttribute
+  ? UpdateItem<SCHEMA['elements']>[]
+  : SCHEMA extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Filter Required OnlyOnce attributes
-          [key in O.FilterKeys<INPUT['attributes'], { required: OnlyOnce }>]: UpdateItem<
-            INPUT['attributes'][key]
+          [key in O.FilterKeys<SCHEMA['attributes'], { required: OnlyOnce }>]: UpdateItem<
+            SCHEMA['attributes'][key]
           >
         }
       >,
       // Enforce Always Required attributes
-      | O.SelectKeys<INPUT['attributes'], { required: Always }>
-      // Enforce attributes that have initial default
-      | O.FilterKeys<INPUT['attributes'], { default: undefined | ComputedDefault }>
+      | O.SelectKeys<SCHEMA['attributes'], { required: Always }>
+      // Enforce attributes that have hard default
+      | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : INPUT extends EntityV2
-  ? UpdateItem<INPUT['item']>
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : SCHEMA extends EntityV2
+  ? UpdateItem<SCHEMA['item']>
   : never
