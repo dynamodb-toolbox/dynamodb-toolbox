@@ -42,8 +42,8 @@ type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = 
 >
 
 type RecSavedItem<
-  INPUT extends MapAttribute | Item,
-  SWAPPED_ATTRIBUTES extends MapAttributeAttributes = SwapWithSavedAs<INPUT['attributes']>
+  SCHEMA extends MapAttribute | Item,
+  SWAPPED_ATTRIBUTES extends MapAttributeAttributes = SwapWithSavedAs<SCHEMA['attributes']>
 > = O.Required<
   O.Partial<
     {
@@ -53,28 +53,28 @@ type RecSavedItem<
   >,
   // Enforce Required attributes
   | O.SelectKeys<SWAPPED_ATTRIBUTES, { required: AtLeastOnce | OnlyOnce | Always }>
-  // Enforce attributes that have defined default (initial or computed)
+  // Enforce attributes that have defined default (hard or computed)
   // (...but not so sure about that anymore, props can have computed default but still be optional)
   | O.FilterKeys<SWAPPED_ATTRIBUTES, { default: undefined }>
 > & // Add Record<string, ResolvedAttribute> if map is open
-  (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
 
 /**
  * Shape of saved item in DynamoDB for a given Entity, Item or Attribute
  *
- * @param Input Entity | Item | Attribute
+ * @param Schema Entity | Item | Attribute
  * @return Object
  */
-export type SavedItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
+export type SavedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends PrimitiveAttribute
-  ? NonNullable<INPUT['resolved']>
-  : INPUT extends SetAttribute
-  ? Set<SavedItem<INPUT['elements']>>
-  : INPUT extends ListAttribute
-  ? SavedItem<INPUT['elements']>[]
-  : INPUT extends MapAttribute | Item
-  ? RecSavedItem<INPUT>
-  : INPUT extends EntityV2
-  ? SavedItem<INPUT['item']> & PrimaryKey<INPUT['table']>
+  : SCHEMA extends PrimitiveAttribute
+  ? NonNullable<SCHEMA['resolved']>
+  : SCHEMA extends SetAttribute
+  ? Set<SavedItem<SCHEMA['elements']>>
+  : SCHEMA extends ListAttribute
+  ? SavedItem<SCHEMA['elements']>[]
+  : SCHEMA extends MapAttribute | Item
+  ? RecSavedItem<SCHEMA>
+  : SCHEMA extends EntityV2
+  ? SavedItem<SCHEMA['item']> & PrimaryKey<SCHEMA['table']>
   : never

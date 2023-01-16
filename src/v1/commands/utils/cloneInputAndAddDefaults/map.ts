@@ -53,14 +53,14 @@ export const cloneMapAttributeInputAndAddDefaults = (
         ? computeDefaults._attributes[attributeName]
         : undefined
 
-    const attributeInputWithInitialDefaults = cloneAttributeInputAndAddDefaults(
+    const attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
       attribute,
       input[attributeName],
       { computeDefaults: attributeComputeDefaults, contextInputs: [input, ...contextInputs] }
     )
 
-    if (attributeInputWithInitialDefaults !== undefined) {
-      inputWithDefaults[attributeName] = attributeInputWithInitialDefaults
+    if (attributeInputWithDefaults !== undefined) {
+      inputWithDefaults[attributeName] = attributeInputWithDefaults
     }
 
     additionalAttributes.delete(attributeName)

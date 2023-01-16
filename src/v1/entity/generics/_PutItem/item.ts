@@ -26,7 +26,7 @@ export type _ItemPutItem<_ITEM extends _Item> = O.Required<
   >,
   // Enforce Required attributes
   | O.SelectKeys<_ITEM['_attributes'], { _required: AtLeastOnce | OnlyOnce | Always }>
-  // Enforce attributes that have initial default
+  // Enforce attributes that have hard default
   | O.FilterKeys<_ITEM['_attributes'], { _default: undefined | ComputedDefault }>
 > & // Add Record<string, ResolvedAttribute> if map is open
   (_ITEM extends { _open: true } ? Record<string, ResolvedAttribute> : {})
