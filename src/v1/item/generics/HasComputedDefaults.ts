@@ -11,21 +11,21 @@ import type {
 /**
  * Wether an Item or Attribute has a default value that needs to be computed (recursive)
  *
- * @param Input Item | Attribute
+ * @param Schema Item | Attribute
  * @return Boolean
  */
-export type _HasComputedDefaults<INPUT extends _Item | _Attribute> = INPUT extends {
+export type _HasComputedDefaults<SCHEMA extends _Item | _Attribute> = SCHEMA extends {
   _default: ComputedDefault
 }
   ? true
-  : INPUT extends _SetAttribute | _ListAttribute
-  ? _HasComputedDefaults<INPUT['_elements']>
-  : INPUT extends _MapAttribute | _Item
+  : SCHEMA extends _SetAttribute | _ListAttribute
+  ? _HasComputedDefaults<SCHEMA['_elements']>
+  : SCHEMA extends _MapAttribute | _Item
   ? true extends {
-      [ATTRIBUTE_NAME in keyof INPUT['_attributes']]: _HasComputedDefaults<
-        INPUT['_attributes'][ATTRIBUTE_NAME]
+      [ATTRIBUTE_NAME in keyof SCHEMA['_attributes']]: _HasComputedDefaults<
+        SCHEMA['_attributes'][ATTRIBUTE_NAME]
       >
-    }[keyof INPUT['_attributes']]
+    }[keyof SCHEMA['_attributes']]
     ? true
     : false
   : false

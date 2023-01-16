@@ -19,34 +19,34 @@ import { EntityV2 } from '../class'
 /**
  * Returned item of a fetch command (GET, QUERY ...) for a given Entity, Item or Attribute
  *
- * @param Input Entity | Item | Attribute
+ * @param Schema Entity | Item | Attribute
  * @return Object
  */
-export type FormattedItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
+export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends PrimitiveAttribute
-  ? NonNullable<INPUT['resolved']>
-  : INPUT extends SetAttribute
-  ? Set<FormattedItem<INPUT['elements']>>
-  : INPUT extends ListAttribute
-  ? FormattedItem<INPUT['elements']>[]
-  : INPUT extends MapAttribute | Item
+  : SCHEMA extends PrimitiveAttribute
+  ? NonNullable<SCHEMA['resolved']>
+  : SCHEMA extends SetAttribute
+  ? Set<FormattedItem<SCHEMA['elements']>>
+  : SCHEMA extends ListAttribute
+  ? FormattedItem<SCHEMA['elements']>[]
+  : SCHEMA extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Keep only non-hidden attributes
-          [key in O.SelectKeys<INPUT['attributes'], { hidden: false }>]: FormattedItem<
-            INPUT['attributes'][key]
+          [key in O.SelectKeys<SCHEMA['attributes'], { hidden: false }>]: FormattedItem<
+            SCHEMA['attributes'][key]
           >
         }
       >,
       // Enforce Required attributes
-      | O.SelectKeys<INPUT['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
-      // Enforce attributes that have defined default (initial or computed)
+      | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+      // Enforce attributes that have defined default (hard or computed)
       // (...but not so sure about that anymore, props can have computed default but still be optional)
-      | O.FilterKeys<INPUT['attributes'], { default: undefined }>
+      | O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : INPUT extends EntityV2
-  ? FormattedItem<INPUT['item']>
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : SCHEMA extends EntityV2
+  ? FormattedItem<SCHEMA['item']>
   : never
