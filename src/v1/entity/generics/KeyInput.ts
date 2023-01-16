@@ -24,66 +24,66 @@ import { EntityV2 } from '../class'
 /**
  * Key input of a single item command (GET, DELETE ...) for an Entity, Item or Attribute
  *
- * @param Input Entity | Item | Attribute
+ * @param Schema Entity | Item | Attribute
  * @return Object
  */
-export type KeyInput<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
+export type KeyInput<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends PrimitiveAttribute
-  ? NonNullable<INPUT['resolved']>
-  : INPUT extends SetAttribute
-  ? Set<KeyInput<INPUT['elements']>>
-  : INPUT extends ListAttribute
-  ? KeyInput<INPUT['elements']>[]
-  : INPUT extends MapAttribute | Item
+  : SCHEMA extends PrimitiveAttribute
+  ? NonNullable<SCHEMA['resolved']>
+  : SCHEMA extends SetAttribute
+  ? Set<KeyInput<SCHEMA['elements']>>
+  : SCHEMA extends ListAttribute
+  ? KeyInput<SCHEMA['elements']>[]
+  : SCHEMA extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Keep only key attributes
-          [key in O.SelectKeys<INPUT['attributes'], { key: true }>]: KeyInput<
-            INPUT['attributes'][key]
+          [key in O.SelectKeys<SCHEMA['attributes'], { key: true }>]: KeyInput<
+            SCHEMA['attributes'][key]
           >
         }
       >,
       Exclude<
         // Enforce Always Required attributes
-        O.SelectKeys<INPUT['attributes'], { required: Always }>,
+        O.SelectKeys<SCHEMA['attributes'], { required: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<INPUT['attributes'], { default: undefined }>
+        O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : INPUT extends EntityV2
-  ? KeyInput<INPUT['item']>
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : SCHEMA extends EntityV2
+  ? KeyInput<SCHEMA['item']>
   : never
 
 // TODO: Required in Entity constructor... See if possible to use only KeyInput w. Item
-export type _KeyInput<INPUT extends EntityV2 | _Item | _Attribute> = INPUT extends _AnyAttribute
+export type _KeyInput<SCHEMA extends EntityV2 | _Item | _Attribute> = SCHEMA extends _AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends _PrimitiveAttribute
-  ? NonNullable<INPUT['_resolved']>
-  : INPUT extends _SetAttribute
-  ? Set<_KeyInput<INPUT['_elements']>>
-  : INPUT extends _ListAttribute
-  ? _KeyInput<INPUT['_elements']>[]
-  : INPUT extends _MapAttribute | _Item
+  : SCHEMA extends _PrimitiveAttribute
+  ? NonNullable<SCHEMA['_resolved']>
+  : SCHEMA extends _SetAttribute
+  ? Set<_KeyInput<SCHEMA['_elements']>>
+  : SCHEMA extends _ListAttribute
+  ? _KeyInput<SCHEMA['_elements']>[]
+  : SCHEMA extends _MapAttribute | _Item
   ? O.Required<
       O.Partial<
         {
           // Keep only key attributes
-          [key in O.SelectKeys<INPUT['_attributes'], { _key: true }>]: _KeyInput<
-            INPUT['_attributes'][key]
+          [key in O.SelectKeys<SCHEMA['_attributes'], { _key: true }>]: _KeyInput<
+            SCHEMA['_attributes'][key]
           >
         }
       >,
       Exclude<
         // Enforce Always Required attributes
-        O.SelectKeys<INPUT['_attributes'], { _required: Always }>,
+        O.SelectKeys<SCHEMA['_attributes'], { _required: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<INPUT['_attributes'], { _default: undefined }>
+        O.FilterKeys<SCHEMA['_attributes'], { _default: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (INPUT extends { _open: true } ? Record<string, ResolvedAttribute> : {})
-  : INPUT extends EntityV2
-  ? _KeyInput<INPUT['_item']>
+      (SCHEMA extends { _open: true } ? Record<string, ResolvedAttribute> : {})
+  : SCHEMA extends EntityV2
+  ? _KeyInput<SCHEMA['_item']>
   : never
