@@ -1,4 +1,4 @@
-import { MapAttribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
+import type { MapAttribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
 import { isObject } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'
