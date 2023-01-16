@@ -30,7 +30,7 @@ export type _MapAttributePutItem<_MAP_ATTRIBUTE extends _MapAttribute> = _MAP_AT
               _MAP_ATTRIBUTE['_attributes'],
               { _required: AtLeastOnce | OnlyOnce | Always }
             >
-          // Enforce attributes that have initial default
+          // Enforce attributes that have hard default
           | O.FilterKeys<_MAP_ATTRIBUTE['_attributes'], { _default: undefined | ComputedDefault }>
         > & // Add Record<string, ResolvedAttribute> if map is open
           (_MAP_ATTRIBUTE extends { _open: true } ? Record<string, ResolvedAttribute> : {}))
@@ -45,7 +45,7 @@ export type _MapAttributePutItem<_MAP_ATTRIBUTE extends _MapAttribute> = _MAP_AT
       >,
       // Enforce Required attributes
       | O.SelectKeys<_MAP_ATTRIBUTE['_attributes'], { _required: AtLeastOnce | OnlyOnce | Always }>
-      // Enforce attributes that have initial default
+      // Enforce attributes that have hard default
       | O.FilterKeys<_MAP_ATTRIBUTE['_attributes'], { _default: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedAttribute> if map is open
       (_MAP_ATTRIBUTE extends { _open: true } ? Record<string, ResolvedAttribute> : {})
