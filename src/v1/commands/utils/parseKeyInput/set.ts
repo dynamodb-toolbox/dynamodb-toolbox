@@ -1,4 +1,4 @@
-import { SetAttribute, PossiblyUndefinedResolvedAttribute, PutItem } from 'v1'
+import type { SetAttribute, PossiblyUndefinedResolvedAttribute, PutItem } from 'v1'
 import { isSet } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'

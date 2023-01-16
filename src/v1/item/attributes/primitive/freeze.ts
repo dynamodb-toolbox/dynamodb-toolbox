@@ -65,7 +65,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
 
   return {
     type: primitiveType,
-    path: path,
+    path,
     required,
     hidden,
     key,

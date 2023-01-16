@@ -1,6 +1,6 @@
-import { ComputedDefault, ResolvedPrimitiveAttribute } from '../attributes'
+import { ComputedDefault, ResolvedAttribute } from '../attributes'
 import { isDynamicDefault } from './isDynamicDefault'
 
 export const isStaticDefault = (
-  defaultValue: ResolvedPrimitiveAttribute | (() => ResolvedPrimitiveAttribute) | ComputedDefault
-): defaultValue is ResolvedPrimitiveAttribute | ComputedDefault => !isDynamicDefault(defaultValue)
+  defaultValue: ResolvedAttribute | (() => ResolvedAttribute) | ComputedDefault
+): defaultValue is ResolvedAttribute | ComputedDefault => !isDynamicDefault(defaultValue)

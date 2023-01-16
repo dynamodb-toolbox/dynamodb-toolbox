@@ -8,6 +8,8 @@ import type {
   ResolvedAttribute,
   _AnyAttribute,
   AnyAttribute,
+  _ConstantAttribute,
+  ConstantAttribute,
   _PrimitiveAttribute,
   PrimitiveAttribute,
   _SetAttribute,
@@ -36,6 +38,8 @@ export type PutItemInput<
   REQUIRE_HARD_DEFAULTS extends boolean = false
 > = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
+  : SCHEMA extends ConstantAttribute
+  ? SCHEMA['value']
   : SCHEMA extends PrimitiveAttribute
   ? NonNullable<SCHEMA['resolved']>
   : SCHEMA extends SetAttribute
@@ -74,6 +78,8 @@ export type _PutItemInput<
   REQUIRE_HARD_DEFAULTS extends boolean = false
 > = _SCHEMA extends _AnyAttribute
   ? ResolvedAttribute
+  : _SCHEMA extends _ConstantAttribute
+  ? _SCHEMA['_value']
   : _SCHEMA extends _PrimitiveAttribute
   ? NonNullable<_SCHEMA['_resolved']>
   : _SCHEMA extends _SetAttribute

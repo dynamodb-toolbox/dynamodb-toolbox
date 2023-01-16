@@ -8,6 +8,8 @@ import type {
   ResolvedAttribute,
   AnyAttribute,
   _AnyAttribute,
+  ConstantAttribute,
+  _ConstantAttribute,
   PrimitiveAttribute,
   _PrimitiveAttribute,
   SetAttribute,
@@ -29,6 +31,8 @@ import { EntityV2 } from '../class'
  */
 export type KeyInput<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
+  : SCHEMA extends ConstantAttribute
+  ? SCHEMA['value']
   : SCHEMA extends PrimitiveAttribute
   ? NonNullable<SCHEMA['resolved']>
   : SCHEMA extends SetAttribute
@@ -60,6 +64,8 @@ export type KeyInput<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extend
 // TODO: Required in Entity constructor... See if possible to use only KeyInput w. Item
 export type _KeyInput<SCHEMA extends EntityV2 | _Item | _Attribute> = SCHEMA extends _AnyAttribute
   ? ResolvedAttribute
+  : SCHEMA extends _ConstantAttribute
+  ? SCHEMA['_value']
   : SCHEMA extends _PrimitiveAttribute
   ? NonNullable<SCHEMA['_resolved']>
   : SCHEMA extends _SetAttribute

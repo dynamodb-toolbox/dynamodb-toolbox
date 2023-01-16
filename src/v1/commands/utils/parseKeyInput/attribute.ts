@@ -1,5 +1,6 @@
 import { RequiredOption, Attribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
 
+import { parseConstantAttributeKeyInput } from './constant'
 import { parsePrimitiveAttributeKeyInput } from './primitive'
 import { parseSetAttributeKeyInput } from './set'
 import { parseListAttributeKeyInput } from './list'
@@ -27,6 +28,8 @@ export const parseAttributeKeyInput = <ATTRIBUTE extends Attribute>(
   switch (attribute.type) {
     case 'any':
       return input as KeyInput<ATTRIBUTE>
+    case 'constant':
+      return parseConstantAttributeKeyInput(attribute, input) as KeyInput<ATTRIBUTE>
     case 'boolean':
     case 'binary':
     case 'number':
