@@ -5,6 +5,7 @@ import type {
   Attribute,
   ResolvedAttribute,
   AnyAttribute,
+  ConstantAttribute,
   PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
@@ -24,6 +25,8 @@ import type { EntityV2 } from '../class'
  */
 export type UpdateItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
+  : SCHEMA extends ConstantAttribute
+  ? SCHEMA['value']
   : SCHEMA extends PrimitiveAttribute
   ? NonNullable<SCHEMA['resolved']>
   : SCHEMA extends SetAttribute

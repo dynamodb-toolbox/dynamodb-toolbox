@@ -1,5 +1,5 @@
-import { ComputedDefault, ResolvedPrimitiveAttribute } from '../attributes'
+import { ComputedDefault, ResolvedAttribute } from '../attributes'
 
 export const isComputedDefault = (
-  defaultValue: ResolvedPrimitiveAttribute | (() => ResolvedPrimitiveAttribute) | ComputedDefault
+  defaultValue: ResolvedAttribute | (() => ResolvedAttribute) | ComputedDefault
 ): defaultValue is ComputedDefault => defaultValue === ComputedDefault
