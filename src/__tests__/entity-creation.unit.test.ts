@@ -222,7 +222,7 @@ describe('Entity creation', () => {
         }
       } as const)
     expect(result).toThrow(
-      `Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
+      `Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'bigint', 'list', 'map', 'binary', and 'set'.`
     )
   })
 
@@ -236,7 +236,7 @@ describe('Entity creation', () => {
         }
       } as const)
     expect(result).toThrow(
-      `Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
+      `Invalid or missing type for 'pk'. Valid types are 'string', 'boolean', 'number', 'bigint', 'list', 'map', 'binary', and 'set'.`
     )
   })
 
@@ -287,7 +287,7 @@ describe('Entity creation', () => {
           test: { type: 'set', setType: 'test' }
         }
       } as const)
-    expect(result).toThrow(`Invalid 'setType', must be 'string', 'number', or 'binary'`)
+    expect(result).toThrow(`Invalid 'setType', must be 'string', 'number', 'bigint', or 'binary'`)
   })
 
   it(`fails when setting an invalid attribute property type`, () => {

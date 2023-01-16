@@ -5,7 +5,7 @@
  */
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { toBool, hasValue, error } from './utils'
+import { toBool, hasValue, error, toDynamoBigInt } from './utils'
 
 // Performs type validation/coercian
 export default (DocumentClient: DocumentClient) => (mapping: any, field: any, value: any) => {
@@ -44,6 +44,10 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
           }' to a number for '${field}'`
         )
     }
+    case 'bigint':
+      return toDynamoBigInt(typeof value === 'bigint' || mapping.coerce
+        ? BigInt(value)
+        : error(`'${field}' must be of type bigint`))
     case 'list':
       return Array.isArray(value)
         ? value

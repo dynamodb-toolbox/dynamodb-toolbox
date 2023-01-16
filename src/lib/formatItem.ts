@@ -64,6 +64,13 @@ export default (DocumentClient: DocumentClient) => (
     ) {
       item[field] = item[field].values
     }
+    // Convert wrapped number values to bigints
+    if (
+      attributes[field] &&
+      attributes[field].type === 'bigint'
+    ) {
+      item[field] = BigInt(item[field])
+    }
 
     const fieldValue =
       attributes[field] && (attributes[field].prefix || attributes[field].suffix)
