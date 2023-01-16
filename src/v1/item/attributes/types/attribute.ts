@@ -1,4 +1,5 @@
 import type { _AnyAttribute, AnyAttribute } from '../any'
+import type { _ConstantAttribute, ConstantAttribute } from '../constant'
 import type {
   _PrimitiveAttribute,
   ResolvedPrimitiveAttribute,
@@ -13,6 +14,7 @@ import type { _MapAttribute, MapAttribute } from '../map'
  */
 export type _Attribute =
   | _AnyAttribute
+  | _ConstantAttribute
   | _PrimitiveAttribute
   | _SetAttribute
   | _ListAttribute
@@ -20,6 +22,7 @@ export type _Attribute =
 
 export type Attribute =
   | AnyAttribute
+  | ConstantAttribute
   | PrimitiveAttribute
   | SetAttribute
   | ListAttribute

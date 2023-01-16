@@ -1,4 +1,4 @@
-import { ListAttribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
+import type { ListAttribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
 import { isArray } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'

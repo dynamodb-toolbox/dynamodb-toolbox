@@ -1,4 +1,4 @@
-import { Item, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
+import type { Item, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
 import { isObject } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'
