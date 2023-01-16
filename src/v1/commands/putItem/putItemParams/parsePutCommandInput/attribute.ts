@@ -1,5 +1,6 @@
 import { RequiredOption, Attribute, PossiblyUndefinedResolvedAttribute, PutItem } from 'v1'
 
+import { parseConstantAttributePutCommandInput } from './constant'
 import { parsePrimitiveAttributePutCommandInput } from './primitive'
 import { parseSetAttributePutCommandInput } from './set'
 import { parseListAttributePutCommandInput } from './list'
@@ -34,6 +35,8 @@ export const parseAttributePutCommandInput = <ATTRIBUTE extends Attribute>(
   switch (attribute.type) {
     case 'any':
       return input as PutItem<ATTRIBUTE>
+    case 'constant':
+      return parseConstantAttributePutCommandInput(attribute, input) as PutItem<ATTRIBUTE>
     case 'boolean':
     case 'binary':
     case 'number':

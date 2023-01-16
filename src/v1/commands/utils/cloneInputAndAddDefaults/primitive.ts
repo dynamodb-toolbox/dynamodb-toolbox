@@ -4,6 +4,7 @@ import {
   PossiblyUndefinedResolvedAttribute,
   ComputedDefault,
   AnyAttribute,
+  ConstantAttribute,
   PrimitiveAttribute,
   SetAttribute
 } from 'v1'
@@ -12,7 +13,7 @@ import { isFunction } from 'v1/utils/validation'
 import { DefaultsComputeOptions } from './types'
 
 export const clonePrimitiveAttributeInputAndAddDefaults = (
-  attribute: AnyAttribute | PrimitiveAttribute | SetAttribute,
+  attribute: AnyAttribute | ConstantAttribute | PrimitiveAttribute | SetAttribute,
   input: PossiblyUndefinedResolvedAttribute,
   { computeDefaults, contextInputs }: DefaultsComputeOptions
 ): PossiblyUndefinedResolvedAttribute => {
