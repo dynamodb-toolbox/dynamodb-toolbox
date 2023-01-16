@@ -1,4 +1,4 @@
-import { EntityV2, PossiblyUndefinedResolvedItem, KeyInput } from 'v1'
+import type { EntityV2, PossiblyUndefinedResolvedItem, KeyInput } from 'v1'
 import { cloneInputAndAddDefaults } from 'v1/commands/utils/cloneInputAndAddDefaults'
 
 import { parseItemKeyInput } from './item'

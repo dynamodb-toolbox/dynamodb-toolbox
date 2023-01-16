@@ -2,6 +2,7 @@ import type {
   ComputedDefault,
   _Attribute,
   _AnyAttribute,
+  _ConstantAttribute,
   _PrimitiveAttribute,
   _SetAttribute,
   _ListAttribute,
@@ -16,7 +17,12 @@ import type { _MapAttributePutDefaultsComputer } from './map'
 export type _AttributePutDefaultsComputer<
   _ATTRIBUTE extends _Attribute,
   CONTEXT_INPUTS extends any[]
-> = _ATTRIBUTE extends (_AnyAttribute | _PrimitiveAttribute | _SetAttribute) & {
+> = _ATTRIBUTE extends (
+  | _AnyAttribute
+  | _ConstantAttribute
+  | _PrimitiveAttribute
+  | _SetAttribute
+) & {
   _default: ComputedDefault
 }
   ? (...contextInputs: CONTEXT_INPUTS) => _AttributePutItem<_ATTRIBUTE>
