@@ -20,31 +20,31 @@ import type { EntityV2 } from '../class'
 /**
  * Formatted input of a PUT command for a given Entity, Item or Attribute
  *
- * @param Input Entity | Item | Attribute
+ * @param Schema Entity | Item | Attribute
  * @return Object
  */
-export type PutItem<INPUT extends EntityV2 | Item | Attribute> = INPUT extends AnyAttribute
+export type PutItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
-  : INPUT extends PrimitiveAttribute
-  ? NonNullable<INPUT['resolved']>
-  : INPUT extends SetAttribute
-  ? Set<PutItem<INPUT['elements']>>
-  : INPUT extends ListAttribute
-  ? PutItem<INPUT['elements']>[]
-  : INPUT extends MapAttribute | Item
+  : SCHEMA extends PrimitiveAttribute
+  ? NonNullable<SCHEMA['resolved']>
+  : SCHEMA extends SetAttribute
+  ? Set<PutItem<SCHEMA['elements']>>
+  : SCHEMA extends ListAttribute
+  ? PutItem<SCHEMA['elements']>[]
+  : SCHEMA extends MapAttribute | Item
   ? O.Required<
       O.Partial<
         {
           // Keep all attributes
-          [key in keyof INPUT['attributes']]: PutItem<INPUT['attributes'][key]>
+          [key in keyof SCHEMA['attributes']]: PutItem<SCHEMA['attributes'][key]>
         }
       >,
       // Enforce Required attributes
-      | O.SelectKeys<INPUT['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
-      // Enforce attributes that have initial default
-      | O.FilterKeys<INPUT['attributes'], { default: undefined | ComputedDefault }>
+      | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+      // Enforce attributes that have hard default
+      | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (INPUT extends { open: true } ? Record<string, ResolvedAttribute> : {})
-  : INPUT extends EntityV2
-  ? PutItem<INPUT['item']>
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+  : SCHEMA extends EntityV2
+  ? PutItem<SCHEMA['item']>
   : never
