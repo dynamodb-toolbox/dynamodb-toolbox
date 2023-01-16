@@ -11,6 +11,7 @@ export const parseSavedAttribute = (
 ): ResolvedAttribute => {
   switch (attribute.type) {
     case 'any':
+    case 'constant':
     case 'string':
     case 'binary':
     case 'boolean':

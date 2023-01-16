@@ -11,11 +11,12 @@ export const cloneAttributeInputAndAddDefaults = (
   defaultsComputeOptions: DefaultsComputeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   switch (attribute.type) {
+    case 'any':
+    case 'constant':
     case 'string':
     case 'number':
     case 'binary':
     case 'boolean':
-    case 'any':
     case 'set':
       return clonePrimitiveAttributeInputAndAddDefaults(attribute, input, defaultsComputeOptions)
     case 'list':
