@@ -1,4 +1,5 @@
 import { freezeAnyAttribute, _AnyAttribute, FreezeAnyAttribute } from './any'
+import { freezeConstantAttribute, _ConstantAttribute, FreezeConstantAttribute } from './constant'
 import {
   freezePrimitiveAttribute,
   _PrimitiveAttribute,
@@ -11,6 +12,8 @@ import type { _Attribute } from './types/attribute'
 
 export type FreezeAttribute<_ATTRIBUTE extends _Attribute> = _ATTRIBUTE extends _AnyAttribute
   ? FreezeAnyAttribute<_ATTRIBUTE>
+  : _ATTRIBUTE extends _ConstantAttribute
+  ? FreezeConstantAttribute<_ATTRIBUTE>
   : _ATTRIBUTE extends _PrimitiveAttribute
   ? FreezePrimitiveAttribute<_ATTRIBUTE>
   : _ATTRIBUTE extends _SetAttribute
@@ -35,6 +38,10 @@ export const freezeAttribute = <_ATTRIBUTE extends _Attribute>(
   path: string
 ): FreezeAttribute<_ATTRIBUTE> => {
   switch (attribute._type) {
+    case 'any':
+      return freezeAnyAttribute(attribute, path) as any
+    case 'constant':
+      return freezeConstantAttribute(attribute, path) as any
     case 'boolean':
     case 'binary':
     case 'number':
@@ -46,7 +53,5 @@ export const freezeAttribute = <_ATTRIBUTE extends _Attribute>(
       return freezeListAttribute(attribute, path) as any
     case 'map':
       return freezeMapAttribute(attribute, path) as any
-    case 'any':
-      return freezeAnyAttribute(attribute, path) as any
   }
 }
