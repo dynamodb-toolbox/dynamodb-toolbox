@@ -32,7 +32,7 @@ export const toBool = (val: any) =>
       : Boolean(val)
 
 export const toDynamoBigInt = (value: bigint) =>
-  DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true });
+  DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true })
 
 // has value shortcut
 export const hasValue = (val: any) => val !== undefined && val !== null

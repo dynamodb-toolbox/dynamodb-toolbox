@@ -89,7 +89,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   // Validate and sets the document client (extend with options.convertEmptyValues because it's not typed)
   set DocumentClient(
-    docClient: (DocumentClient & { options?: { convertEmptyValues: boolean } }) | undefined,
+    docClient: (DocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean } }) | undefined,
   ) {
     // If a valid document client
     // @ts-ignore

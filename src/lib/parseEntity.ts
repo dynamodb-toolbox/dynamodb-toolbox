@@ -167,9 +167,24 @@ export function parseEntity<
     keys: {} // tracks partition/sort/index keys
   }
 
+  const schema = parseEntityAttributes<ReadonlyAttributeDefinitions>(attributes, track) // removed nested attribute?
+
+  // Safety check for bigint users, to avoid losing precision
+  if (table && table.DocumentClient) {
+    Object.keys(schema.attributes).forEach((field) => {
+      const config = schema.attributes[field]
+      if (config.type && config.type === 'bigint' || config.setType && config.setType === 'bigint') {
+        // Verify DocumentClient has wrapNumbers set to true
+        if (table?.DocumentClient?.options?.wrapNumbers !== true) {
+          error('Please set `wrapNumbers: true` in your DocumentClient to avoid losing precision with bigint fields')
+        }
+      }
+    })
+  }
+
   return {
     name,
-    schema: parseEntityAttributes<ReadonlyAttributeDefinitions>(attributes, track), // removed nested attribute?
+    schema,
     defaults: track.defaults,
     required: track.required,
     linked: track.linked,

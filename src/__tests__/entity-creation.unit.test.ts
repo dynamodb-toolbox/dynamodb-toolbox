@@ -1,6 +1,6 @@
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient, DocumentClientWrappedNumbers } from './bootstrap.test'
 
 const tableAddEntity = jest.spyOn(Table.prototype, 'addEntity').mockReturnValue()
 
@@ -423,6 +423,38 @@ describe('Entity creation', () => {
       },
       table: TestTable
     })
+  })
+
+  it('requires wrapNumbers if DocumentClient provided', () => {
+    const entityDefn = {
+      name: 'TestEntity',
+      attributes: {
+        pk: { partitionKey: true },
+        test: { type: 'bigint' }
+      }
+    } as const
+
+    const TestTable1 = new Table({
+      name: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      DocumentClient
+    })
+    expect(() => new Entity({ ...entityDefn, table: TestTable1 })).toThrow(
+      'Please set `wrapNumbers: true` in your DocumentClient to avoid losing precision with bigint fields'
+    )
+
+    const TestTable2 = new Table({
+      name: 'test-table',
+      partitionKey: 'pk',
+      sortKey: 'sk',
+      DocumentClient: DocumentClientWrappedNumbers
+    })
+    const TestEntity = new Entity({
+      ...entityDefn,
+      table: TestTable2
+    })
+    expect(TestEntity.schema.attributes).toHaveProperty('test')
   })
 
   // it('creates entity w/ table', async () => {

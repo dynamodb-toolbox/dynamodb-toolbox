@@ -61,8 +61,15 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
     case 'set':
       if (Array.isArray(value)) {
         if (!DocumentClient) error('DocumentClient required for this operation')
+        // DocumentClient needs an array of NumberValues for createSet. It treats
+        // everything as a Number type.
+        let setType = mapping.setType
+        if (mapping.setType === 'bigint') {
+          setType = 'number'
+          value = value.map((n) => toDynamoBigInt(n))
+        }
         const set = DocumentClient.createSet(value, { validate: true })
-        return !mapping.setType || mapping.setType === set.type.toLowerCase()
+        return !setType || setType === set.type.toLowerCase()
           ? set
           : error(`'${field}' must be a valid set (array) containing only ${mapping.setType} types`)
       } else if (mapping.coerce) {

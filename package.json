@@ -7,6 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest unit",
+    "test:bigint": "jest --maxWorkers=1 unit",
     "test-cov": "jest unit --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "test-types": "tsd",

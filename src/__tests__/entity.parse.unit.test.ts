@@ -1,13 +1,15 @@
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient, DocumentClientWrappedNumbers } from './bootstrap.test'
 
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
+import { toDynamoBigInt } from '../lib/utils'
+import DynamoDB from 'aws-sdk/clients/dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
-  DocumentClient
+  DocumentClient: DocumentClientWrappedNumbers
 })
 
 const TestEntity = new Entity({
@@ -19,6 +21,8 @@ const TestEntity = new Entity({
     test_string_coerce: { type: 'string' },
     test_number: { type: 'number', alias: 'count', coerce: false },
     test_number_coerce: { type: 'number', default: 0 },
+    test_bigint: { type: 'bigint', coerce: false },
+    test_bigint_coerce: { type: 'bigint' },
     test_boolean: { type: 'boolean', coerce: false },
     test_boolean_coerce: { type: 'boolean' },
     test_list: { type: 'list' },
@@ -30,8 +34,10 @@ const TestEntity = new Entity({
     test_string_set_type: { type: 'set', setType: 'string' },
     test_number_set_type: { type: 'set', setType: 'number' },
     test_binary_set_type: { type: 'set', setType: 'binary' },
+    test_bigint_set_type: { type: 'set', setType: 'bigint' },
     test_string_set_type_coerce: { type: 'set', setType: 'string', coerce: true },
     test_number_set_type_coerce: { type: 'set', setType: 'number', coerce: true },
+    test_bigint_set_type_coerce: { type: 'set', setType: 'bigint', coerce: true },
     test_binary: { type: 'binary' },
     simple_string: 'string',
     format_simple_string: {
@@ -195,6 +201,60 @@ describe('parse', () => {
       pk: 'test@test.com',
       test_composite: 'test',
       test_composite2: 'email'
+    })
+  })
+ 
+  it('parses wrapped numbers', () => {
+    const wrap = (value: number) =>
+      DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true });
+
+    const item = TestEntity.parse({
+      pk: 'test@test.com',
+      sk: 'bigint',
+      test_number: wrap(1234.567),
+      test_number_coerce: wrap(-0.0023)
+    })
+    expect(item).toEqual({
+      email: 'test@test.com',
+      test_type: 'bigint',
+      count: 1234.567,
+      test_number_coerce: -0.0023
+    })
+  })
+
+  it('parses bigints', () => {
+    const item = TestEntity.parse({
+      pk: 'test@test.com',
+      sk: 'bigint',
+      test_bigint: toDynamoBigInt(BigInt('90071992547409911234')),
+      test_bigint_coerce: '12345'
+    })
+    expect(item).toEqual({
+      email: 'test@test.com',
+      test_type: 'bigint',
+      test_bigint: BigInt('90071992547409911234'),
+      test_bigint_coerce: BigInt('12345')
+    })
+  })
+
+  it('parses bigint sets', () => {
+    const item = TestEntity.parse({
+      pk: 'test@test.com',
+      sk: 'bigint',
+      test_bigint_set_type: DocumentClient.createSet([
+        toDynamoBigInt(BigInt('90071992547409911234')),
+        toDynamoBigInt(BigInt('-90071992547409911234')),
+        1234
+      ]),
+    })
+    expect(item).toEqual({
+      email: 'test@test.com',
+      test_type: 'bigint',
+      test_bigint_set_type: [
+        BigInt('90071992547409911234'),
+        BigInt('-90071992547409911234'),
+        BigInt(1234),
+      ]
     })
   })
 }) // end parse

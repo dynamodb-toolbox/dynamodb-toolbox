@@ -32,6 +32,16 @@ export const DocumentClient = new AWS.DynamoDB.DocumentClient({
   // convertEmptyValues: true
 })
 
+export const DocumentClientWrappedNumbers = new AWS.DynamoDB.DocumentClient({
+  endpoint: 'http://localhost:4567',
+  region: 'us-east-1',
+  credentials: new AWS.Credentials({
+    accessKeyId: 'test',
+    secretAccessKey: 'test'
+  }),
+  wrapNumbers: true
+})
+
 // Delay helper
 export const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 

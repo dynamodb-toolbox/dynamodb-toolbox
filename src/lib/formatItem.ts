@@ -5,9 +5,41 @@
  */
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
-import { KeyAttributeDefinition, PureAttributeDefinition } from '../classes/Entity'
+import { PureAttributeDefinition } from '../classes/Entity'
 import validateTypes from './validateTypes'
 import { Linked } from './parseEntity'
+
+// Convert from DocumentClient values, which may be wrapped sets or numbers,
+// into normal TS values.
+const convertDynamoValues = (value: any, attr?: PureAttributeDefinition) => {
+  // Extract values from sets
+  if (
+    attr &&
+    attr.type === 'set' &&
+    Array.isArray(value.values)
+  ) {
+    value = value.values
+  }
+
+  // Unwrap bigint/number sets to regular numbers/bigints
+  if (attr && attr.type === 'set') {
+    if (attr.setType === 'bigint') {
+      value = value.map((n: any) => BigInt(n))
+    } else if (attr.setType === 'number') {
+      value = value.map((n: any) => Number(n))
+    }
+  }
+
+  // Convert wrapped number values to bigints
+  if (attr && attr.type === 'bigint') {
+    value = BigInt(value)
+  }
+  if (attr && attr.type === 'number') {
+    value = Number(value)
+  }
+
+  return value
+}
 
 // Format item based on attribute defnition
 export default (DocumentClient: DocumentClient) => (
@@ -56,21 +88,8 @@ export default (DocumentClient: DocumentClient) => (
       (include.length > 0 && !include.includes(field))
     )
       return acc
-    // Extract values from sets
-    if (
-      attributes[field] &&
-      attributes[field].type === 'set' &&
-      Array.isArray(item[field].values)
-    ) {
-      item[field] = item[field].values
-    }
-    // Convert wrapped number values to bigints
-    if (
-      attributes[field] &&
-      attributes[field].type === 'bigint'
-    ) {
-      item[field] = BigInt(item[field])
-    }
+
+    item[field] = convertDynamoValues(item[field], attributes[field])
 
     const fieldValue =
       attributes[field] && (attributes[field].prefix || attributes[field].suffix)
