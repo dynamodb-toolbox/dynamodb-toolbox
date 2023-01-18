@@ -206,7 +206,7 @@ describe('parse', () => {
  
   it('parses wrapped numbers', () => {
     const wrap = (value: number) =>
-      DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true });
+      DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true })
 
     const item = TestEntity.parse({
       pk: 'test@test.com',
