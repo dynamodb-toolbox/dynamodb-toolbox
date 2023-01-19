@@ -1021,7 +1021,7 @@ class Entity<Name extends string = string,
       ) {
         // If a number or a set and adding
         if (
-          ['number', 'set'].includes(mapping.type) &&
+          ['bigint', 'number', 'set'].includes(mapping.type) &&
           data[field]?.$add !== undefined &&
           data[field]?.$add !== null
         ) {
