@@ -2,6 +2,15 @@ import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import { ComputedDefault } from '../constants'
+import {
+  $type,
+  $elements,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
 import type { _SetAttribute } from './interface'
 import { SetAttributeOptions, SET_ATTRIBUTE_DEFAULT_OPTIONS } from './options'
@@ -42,22 +51,15 @@ export const set: SetTyper = <
   options?: O.Partial<SetAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
 ): _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
   const appliedOptions = { ...SET_ATTRIBUTE_DEFAULT_OPTIONS, ...options }
-  const {
-    required: _required,
-    hidden: _hidden,
-    key: _key,
-    savedAs: _savedAs,
-    default: _default
-  } = appliedOptions
 
   return {
-    _type: 'set',
-    _elements: elements,
-    _required,
-    _hidden,
-    _key,
-    _savedAs,
-    _default,
+    [$type]: 'set',
+    [$elements]: elements,
+    [$required]: appliedOptions.required,
+    [$hidden]: appliedOptions.hidden,
+    [$key]: appliedOptions.key,
+    [$savedAs]: appliedOptions.savedAs,
+    [$default]: appliedOptions.default,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => set(elements, { ...appliedOptions, required: nextRequired }),

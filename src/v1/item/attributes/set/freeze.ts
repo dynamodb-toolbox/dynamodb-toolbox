@@ -1,70 +1,64 @@
-import { validateAttributeProperties } from '../shared/validate'
 import { freezeAttribute } from '../freeze'
+import { validateAttributeProperties } from '../shared/validate'
+import {
+  $type,
+  $elements,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
 import { _SetAttribute, FreezeSetAttribute } from './interface'
 
 type SetAttributeFreezer = <_SET_ATTRIBUTE extends _SetAttribute>(
-  attribute: _SET_ATTRIBUTE,
+  _setAttribute: _SET_ATTRIBUTE,
   path: string
 ) => FreezeSetAttribute<_SET_ATTRIBUTE>
 
 /**
  * Validates a set instance
  *
- * @param attribute SetAttribute
+ * @param _setAttribute SetAttribute
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
 export const freezeSetAttribute: SetAttributeFreezer = <_SET_ATTRIBUTE extends _SetAttribute>(
-  attribute: _SET_ATTRIBUTE,
+  _setAttribute: _SET_ATTRIBUTE,
   path: string
 ): FreezeSetAttribute<_SET_ATTRIBUTE> => {
-  validateAttributeProperties(attribute, path)
+  validateAttributeProperties(_setAttribute, path)
 
-  const {
-    _type: type,
-    _required: required,
-    _hidden: hidden,
-    _key: key,
-    _savedAs: savedAs,
-    _default
-  } = attribute
+  const elements: _SET_ATTRIBUTE[$elements] = _setAttribute[$elements]
 
-  const elements: _SET_ATTRIBUTE['_elements'] = attribute._elements
-  const {
-    _required: elementsRequired,
-    _hidden: elementsHidden,
-    _savedAs: elementsSavedAs,
-    _default: elementsDefault
-  } = elements
-
-  if (elementsRequired !== 'atLeastOnce') {
+  if (elements[$required] !== 'atLeastOnce') {
     throw new OptionalSetElementsError({ path })
   }
 
-  if (elementsHidden !== false) {
+  if (elements[$hidden] !== false) {
     throw new HiddenSetElementsError({ path })
   }
 
-  if (elementsSavedAs !== undefined) {
+  if (elements[$savedAs] !== undefined) {
     throw new SavedAsSetElementsError({ path })
   }
 
-  if (elementsDefault !== undefined) {
+  if (elements[$default] !== undefined) {
     throw new DefaultedSetElementsError({ path })
   }
 
   const frozenElements = freezeAttribute(elements, `${path}[x]`)
 
   return {
-    type,
     path,
+    type: _setAttribute[$type],
     elements: frozenElements,
-    required,
-    hidden,
-    key,
-    savedAs,
-    default: _default
+    required: _setAttribute[$required],
+    hidden: _setAttribute[$hidden],
+    key: _setAttribute[$key],
+    savedAs: _setAttribute[$savedAs],
+    default: _setAttribute[$default]
   }
 }
 

@@ -1,5 +1,6 @@
 import type { ComputedDefault, _ListAttribute } from 'v1/item'
 import type { OmitUndefinedProperties } from 'v1/types'
+import type { $elements, $default } from 'v1/item/attributes/constants/symbols'
 
 import type { _AttributePutItem } from '../_PutItem'
 
@@ -9,11 +10,11 @@ export type _ListAttributePutDefaultsComputer<
   _LIST_ATTRIBUTE extends _ListAttribute,
   CONTEXT_INPUTS extends any[],
   _ELEMENTS_DEFAULT_COMPUTER = _AttributePutDefaultsComputer<
-    _LIST_ATTRIBUTE['_elements'],
+    _LIST_ATTRIBUTE[$elements],
     [number, ...CONTEXT_INPUTS]
   >,
   _LIST_ATTRIBUTE_DEFAULT_COMPUTER = OmitUndefinedProperties<{
-    _list: _LIST_ATTRIBUTE extends { _default: ComputedDefault }
+    _list: _LIST_ATTRIBUTE extends { [$default]: ComputedDefault }
       ? (...contextInputs: CONTEXT_INPUTS) => _AttributePutItem<_LIST_ATTRIBUTE>
       : undefined
     _elements: _ELEMENTS_DEFAULT_COMPUTER extends undefined

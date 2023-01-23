@@ -1,4 +1,5 @@
 import { requiredOptionsSet, Never } from '../constants/requiredOptions'
+import { $required, $hidden, $key, $savedAs } from '../constants/symbols'
 
 import { _AttributeProperties } from './interface'
 import { validateAttributeProperties, InvalidAttributePropertyError } from './validate'
@@ -7,10 +8,10 @@ describe('shared properties validation', () => {
   const path = 'some/path'
 
   const validProperties: _AttributeProperties<Never, false, false, undefined> = {
-    _required: 'never',
-    _hidden: false,
-    _key: false,
-    _savedAs: undefined
+    [$required]: 'never',
+    [$hidden]: false,
+    [$key]: false,
+    [$savedAs]: undefined
   }
 
   it('throws if required option is invalid', () => {
@@ -21,7 +22,7 @@ describe('shared properties validation', () => {
         {
           ...validProperties,
           // @ts-expect-error
-          _required: invalidRequiredOption
+          [$required]: invalidRequiredOption
         },
         path
       )
@@ -36,13 +37,13 @@ describe('shared properties validation', () => {
 
     expect(() => validateAttributeProperties(validProperties)).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, _required: 'atLeastOnce' })
+      validateAttributeProperties({ ...validProperties, [$required]: 'atLeastOnce' })
     ).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, _required: 'onlyOnce' })
+      validateAttributeProperties({ ...validProperties, [$required]: 'onlyOnce' })
     ).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, _required: 'always' })
+      validateAttributeProperties({ ...validProperties, [$required]: 'always' })
     ).not.toThrow()
   })
 
@@ -54,7 +55,7 @@ describe('shared properties validation', () => {
         {
           ...validProperties,
           // @ts-expect-error
-          _hidden: invalidKeyOption
+          [$hidden]: invalidKeyOption
         },
         path
       )
@@ -68,7 +69,7 @@ describe('shared properties validation', () => {
     )
 
     expect(() => validateAttributeProperties(validProperties)).not.toThrow()
-    expect(() => validateAttributeProperties({ ...validProperties, _hidden: true })).not.toThrow()
+    expect(() => validateAttributeProperties({ ...validProperties, [$hidden]: true })).not.toThrow()
   })
 
   it('throws if key option is invalid', () => {
@@ -79,7 +80,7 @@ describe('shared properties validation', () => {
         {
           ...validProperties,
           // @ts-expect-error
-          _key: invalidKeyOption
+          [$key]: invalidKeyOption
         },
         path
       )
@@ -93,7 +94,7 @@ describe('shared properties validation', () => {
     )
 
     expect(() => validateAttributeProperties(validProperties)).not.toThrow()
-    expect(() => validateAttributeProperties({ ...validProperties, _key: true })).not.toThrow()
+    expect(() => validateAttributeProperties({ ...validProperties, [$key]: true })).not.toThrow()
   })
 
   it('throws if savedAs option is invalid', () => {
@@ -104,7 +105,7 @@ describe('shared properties validation', () => {
         {
           ...validProperties,
           // @ts-expect-error
-          _savedAs: invalidSavedAsOption
+          [$savedAs]: invalidSavedAsOption
         },
         path
       )
@@ -118,6 +119,8 @@ describe('shared properties validation', () => {
     )
 
     expect(() => validateAttributeProperties(validProperties)).not.toThrow()
-    expect(() => validateAttributeProperties({ ...validProperties, _savedAs: 'foo' })).not.toThrow()
+    expect(() =>
+      validateAttributeProperties({ ...validProperties, [$savedAs]: 'foo' })
+    ).not.toThrow()
   })
 })
