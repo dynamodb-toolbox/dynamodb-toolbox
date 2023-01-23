@@ -1,9 +1,19 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
+import {
+  $type,
+  $resolved,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $enum,
+  $default
+} from '../constants/symbols'
 
 import type { _PrimitiveAttribute } from './interface'
-import { PrimitiveAttributeOptions, LEAF_DEFAULT_OPTIONS } from './options'
+import { PrimitiveAttributeOptions, PRIMITIVE_DEFAULT_OPTIONS } from './options'
 import type {
   PrimitiveAttributeType,
   PrimitiveAttributeEnumValues,
@@ -33,25 +43,15 @@ const primitive = <
     ENUM,
     DEFAULT
   >
-): _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT> => {
-  const {
-    type: _type,
-    required: _required,
-    hidden: _hidden,
-    key: _key,
-    savedAs: _savedAs,
-    default: _default,
-    _enum
-  } = options
-
-  return {
-    _type,
-    _required,
-    _hidden,
-    _key,
-    _savedAs,
-    _default,
-    _enum,
+): _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT> =>
+  ({
+    [$type]: options.type,
+    [$required]: options.required,
+    [$hidden]: options.hidden,
+    [$key]: options.key,
+    [$savedAs]: options.savedAs,
+    [$enum]: options._enum,
+    [$default]: options.default,
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired = 'atLeastOnce' as NEXT_REQUIRED
     ) => primitive({ ...options, required: nextRequired }),
@@ -61,8 +61,7 @@ const primitive = <
     savedAs: nextSavedAs => primitive({ ...options, savedAs: nextSavedAs }),
     default: nextDefault => primitive({ ...options, default: nextDefault }),
     enum: (...nextEnum) => primitive({ ...options, _enum: nextEnum })
-  } as _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
-}
+  } as _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>)
 
 type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
   IS_REQUIRED extends RequiredOption = AtLeastOnce,
@@ -91,7 +90,7 @@ const getPrimitiveAttributeTyper = <TYPE extends PrimitiveAttributeType>(type: T
     >
   ) =>
     primitive({
-      ...LEAF_DEFAULT_OPTIONS,
+      ...PRIMITIVE_DEFAULT_OPTIONS,
       ...primitiveOptions,
       type
     })) as PrimitiveAttributeTyper<TYPE>

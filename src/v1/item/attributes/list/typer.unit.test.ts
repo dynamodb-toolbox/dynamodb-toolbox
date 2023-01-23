@@ -2,6 +2,15 @@ import type { A } from 'ts-toolbelt'
 
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
 import { string } from '../primitive'
+import {
+  $type,
+  $elements,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
 import { list } from './typer'
 import {
@@ -105,24 +114,24 @@ describe('list', () => {
     const assertList: A.Contains<
       typeof lst,
       {
-        _type: 'list'
-        _elements: typeof strElement
-        _required: AtLeastOnce
-        _hidden: false
-        _key: false
-        _savedAs: undefined
-        _default: undefined
+        [$type]: 'list'
+        [$elements]: typeof strElement
+        [$required]: AtLeastOnce
+        [$hidden]: false
+        [$key]: false
+        [$savedAs]: undefined
+        [$default]: undefined
       }
     > = 1
     assertList
 
     expect(lst).toMatchObject({
-      _type: 'list',
-      _elements: strElement,
-      _required: 'atLeastOnce',
-      _key: false,
-      _savedAs: undefined,
-      _hidden: false
+      [$type]: 'list',
+      [$elements]: strElement,
+      [$required]: 'atLeastOnce',
+      [$key]: false,
+      [$savedAs]: undefined,
+      [$hidden]: false
     })
   })
 
@@ -132,19 +141,19 @@ describe('list', () => {
     const lstAlways = list(strElement, { required: 'always' })
     const lstNever = list(strElement, { required: 'never' })
 
-    const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
+    const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { [$required]: AtLeastOnce }> = 1
     assertAtLeastOnce
-    const assertOnlyOnce: A.Contains<typeof lstOnlyOnce, { _required: OnlyOnce }> = 1
+    const assertOnlyOnce: A.Contains<typeof lstOnlyOnce, { [$required]: OnlyOnce }> = 1
     assertOnlyOnce
-    const assertAlways: A.Contains<typeof lstAlways, { _required: Always }> = 1
+    const assertAlways: A.Contains<typeof lstAlways, { [$required]: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof lstNever, { _required: Never }> = 1
+    const assertNever: A.Contains<typeof lstNever, { [$required]: Never }> = 1
     assertNever
 
-    expect(lstAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
-    expect(lstOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
-    expect(lstAlways).toMatchObject({ _required: 'always' })
-    expect(lstNever).toMatchObject({ _required: 'never' })
+    expect(lstAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
+    expect(lstOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
+    expect(lstAlways).toMatchObject({ [$required]: 'always' })
+    expect(lstNever).toMatchObject({ [$required]: 'never' })
   })
 
   it('returns required list (method)', () => {
@@ -154,93 +163,93 @@ describe('list', () => {
     const lstNever = list(strElement).required('never')
     const lstOpt = list(strElement).optional()
 
-    const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { _required: AtLeastOnce }> = 1
+    const assertAtLeastOnce: A.Contains<typeof lstAtLeastOnce, { [$required]: AtLeastOnce }> = 1
     assertAtLeastOnce
-    const assertOnlyOnce: A.Contains<typeof lstOnlyOnce, { _required: OnlyOnce }> = 1
+    const assertOnlyOnce: A.Contains<typeof lstOnlyOnce, { [$required]: OnlyOnce }> = 1
     assertOnlyOnce
-    const assertAlways: A.Contains<typeof lstAlways, { _required: Always }> = 1
+    const assertAlways: A.Contains<typeof lstAlways, { [$required]: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof lstNever, { _required: Never }> = 1
+    const assertNever: A.Contains<typeof lstNever, { [$required]: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<typeof lstOpt, { _required: Never }> = 1
+    const assertOpt: A.Contains<typeof lstOpt, { [$required]: Never }> = 1
     assertOpt
 
-    expect(lstAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
-    expect(lstOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
-    expect(lstAlways).toMatchObject({ _required: 'always' })
-    expect(lstNever).toMatchObject({ _required: 'never' })
+    expect(lstAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
+    expect(lstOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
+    expect(lstAlways).toMatchObject({ [$required]: 'always' })
+    expect(lstNever).toMatchObject({ [$required]: 'never' })
   })
 
   it('returns hidden list (option)', () => {
     const lst = list(strElement, { hidden: true })
 
-    const assertList: A.Contains<typeof lst, { _hidden: true }> = 1
+    const assertList: A.Contains<typeof lst, { [$hidden]: true }> = 1
     assertList
 
-    expect(lst).toMatchObject({ _hidden: true })
+    expect(lst).toMatchObject({ [$hidden]: true })
   })
 
   it('returns hidden list (method)', () => {
     const lst = list(strElement).hidden()
 
-    const assertList: A.Contains<typeof lst, { _hidden: true }> = 1
+    const assertList: A.Contains<typeof lst, { [$hidden]: true }> = 1
     assertList
 
-    expect(lst).toMatchObject({ _hidden: true })
+    expect(lst).toMatchObject({ [$hidden]: true })
   })
 
   it('returns key list (option)', () => {
     const lst = list(strElement, { key: true })
 
-    const assertList: A.Contains<typeof lst, { _key: true }> = 1
+    const assertList: A.Contains<typeof lst, { [$key]: true }> = 1
     assertList
 
-    expect(lst).toMatchObject({ _key: true })
+    expect(lst).toMatchObject({ [$key]: true })
   })
 
   it('returns key list (method)', () => {
     const lst = list(strElement).key()
 
-    const assertList: A.Contains<typeof lst, { _key: true }> = 1
+    const assertList: A.Contains<typeof lst, { [$key]: true }> = 1
     assertList
 
-    expect(lst).toMatchObject({ _key: true })
+    expect(lst).toMatchObject({ [$key]: true })
   })
 
   it('returns savedAs list (option)', () => {
     const lst = list(strElement, { savedAs: 'foo' })
 
-    const assertList: A.Contains<typeof lst, { _savedAs: 'foo' }> = 1
+    const assertList: A.Contains<typeof lst, { [$savedAs]: 'foo' }> = 1
     assertList
 
-    expect(lst).toMatchObject({ _savedAs: 'foo' })
+    expect(lst).toMatchObject({ [$savedAs]: 'foo' })
   })
 
   it('returns savedAs list (method)', () => {
     const lst = list(strElement).savedAs('foo')
 
-    const assertList: A.Contains<typeof lst, { _savedAs: 'foo' }> = 1
+    const assertList: A.Contains<typeof lst, { [$savedAs]: 'foo' }> = 1
     assertList
 
-    expect(lst).toMatchObject({ _savedAs: 'foo' })
+    expect(lst).toMatchObject({ [$savedAs]: 'foo' })
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
     const lst = list(strElement, { default: ComputedDefault })
 
-    const assertList: A.Contains<typeof lst, { _default: ComputedDefault }> = 1
+    const assertList: A.Contains<typeof lst, { [$default]: ComputedDefault }> = 1
     assertList
 
-    expect(lst).toMatchObject({ _default: ComputedDefault })
+    expect(lst).toMatchObject({ [$default]: ComputedDefault })
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
     const lst = list(strElement).default(ComputedDefault)
 
-    const assertList: A.Contains<typeof lst, { _default: ComputedDefault }> = 1
+    const assertList: A.Contains<typeof lst, { [$default]: ComputedDefault }> = 1
     assertList
 
-    expect(lst).toMatchObject({ _default: ComputedDefault })
+    expect(lst).toMatchObject({ [$default]: ComputedDefault })
   })
 
   it('list of lists', () => {
@@ -249,41 +258,41 @@ describe('list', () => {
     const assertList: A.Contains<
       typeof lst,
       {
-        _type: 'list'
-        _elements: {
-          _type: 'list'
-          _elements: typeof strElement
-          _required: AtLeastOnce
-          _hidden: false
-          _key: false
-          _savedAs: undefined
-          _default: undefined
+        [$type]: 'list'
+        [$elements]: {
+          [$type]: 'list'
+          [$elements]: typeof strElement
+          [$required]: AtLeastOnce
+          [$hidden]: false
+          [$key]: false
+          [$savedAs]: undefined
+          [$default]: undefined
         }
-        _required: AtLeastOnce
-        _hidden: false
-        _key: false
-        _savedAs: undefined
-        _default: undefined
+        [$required]: AtLeastOnce
+        [$hidden]: false
+        [$key]: false
+        [$savedAs]: undefined
+        [$default]: undefined
       }
     > = 1
     assertList
 
     expect(lst).toMatchObject({
-      _type: 'list',
-      _elements: {
-        _type: 'list',
-        _elements: strElement,
-        _required: 'atLeastOnce',
-        _hidden: false,
-        _key: false,
-        _savedAs: undefined,
-        _default: undefined
+      [$type]: 'list',
+      [$elements]: {
+        [$type]: 'list',
+        [$elements]: strElement,
+        [$required]: 'atLeastOnce',
+        [$hidden]: false,
+        [$key]: false,
+        [$savedAs]: undefined,
+        [$default]: undefined
       },
-      _required: 'atLeastOnce',
-      _hidden: false,
-      _key: false,
-      _savedAs: undefined,
-      _default: undefined
+      [$required]: 'atLeastOnce',
+      [$hidden]: false,
+      [$key]: false,
+      [$savedAs]: undefined,
+      [$default]: undefined
     })
   })
 })

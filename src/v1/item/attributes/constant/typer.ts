@@ -1,6 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
+import { $type, $value, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
 import { ResolvedAttribute } from '../types'
 
 import type { _ConstantAttribute } from './interface'
@@ -51,22 +52,15 @@ export const constant: ConstantTyper = <
   >
 ): _ConstantAttribute<VALUE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
   const appliedOptions = { ...CONST_DEFAULT_OPTIONS, ...options }
-  const {
-    required: _required,
-    hidden: _hidden,
-    key: _key,
-    savedAs: _savedAs,
-    default: _default
-  } = appliedOptions
 
   return {
-    _type: 'constant',
-    _value: value,
-    _required,
-    _hidden,
-    _key,
-    _savedAs,
-    _default,
+    [$type]: 'constant',
+    [$value]: value,
+    [$required]: appliedOptions.required,
+    [$hidden]: appliedOptions.hidden,
+    [$key]: appliedOptions.key,
+    [$savedAs]: appliedOptions.savedAs,
+    [$default]: appliedOptions.default,
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired = 'atLeastOnce' as NEXT_REQUIRED
     ) => constant(value, { ...appliedOptions, required: nextRequired }),

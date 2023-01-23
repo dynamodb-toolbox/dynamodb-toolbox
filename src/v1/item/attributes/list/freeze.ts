@@ -1,70 +1,64 @@
-import { validateAttributeProperties } from '../shared/validate'
 import { freezeAttribute } from '../freeze'
+import { validateAttributeProperties } from '../shared/validate'
+import {
+  $type,
+  $elements,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
 import type { _ListAttribute, FreezeListAttribute } from './interface'
 
 type ListAttributeFreezer = <_LIST_ATTRIBUTE extends _ListAttribute>(
-  attribute: _LIST_ATTRIBUTE,
+  _listAttribute: _LIST_ATTRIBUTE,
   path: string
 ) => FreezeListAttribute<_LIST_ATTRIBUTE>
 
 /**
  * Freezes a list instance
  *
- * @param attribute List
+ * @param _listAttribute List
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
 export const freezeListAttribute: ListAttributeFreezer = <_LIST_ATTRIBUTE extends _ListAttribute>(
-  attribute: _LIST_ATTRIBUTE,
+  _listAttribute: _LIST_ATTRIBUTE,
   path: string
 ): FreezeListAttribute<_LIST_ATTRIBUTE> => {
-  validateAttributeProperties(attribute, path)
+  validateAttributeProperties(_listAttribute, path)
 
-  const {
-    _type: type,
-    _required: required,
-    _hidden: hidden,
-    _key: key,
-    _savedAs: savedAs,
-    _default
-  } = attribute
+  const elements: _LIST_ATTRIBUTE[$elements] = _listAttribute[$elements]
 
-  const elements: _LIST_ATTRIBUTE['_elements'] = attribute._elements
-  const {
-    _required: elementsRequired,
-    _hidden: elementsHidden,
-    _savedAs: elementsSavedAs,
-    _default: elementsDefault
-  } = elements
-
-  if (elementsRequired !== 'atLeastOnce') {
+  if (elements[$required] !== 'atLeastOnce') {
     throw new OptionalListAttributeElementsError({ path })
   }
 
-  if (elementsHidden !== false) {
+  if (elements[$hidden] !== false) {
     throw new HiddenListAttributeElementsError({ path })
   }
 
-  if (elementsSavedAs !== undefined) {
+  if (elements[$savedAs] !== undefined) {
     throw new SavedAsListAttributeElementsError({ path })
   }
 
-  if (elementsDefault !== undefined) {
+  if (elements[$default] !== undefined) {
     throw new DefaultedListAttributeElementsError({ path })
   }
 
   const frozenElements = freezeAttribute(elements, `${path}[n]`)
 
   return {
-    type,
     path,
+    type: _listAttribute[$type],
     elements: frozenElements,
-    required,
-    hidden,
-    key,
-    savedAs,
-    default: _default
+    required: _listAttribute[$required],
+    hidden: _listAttribute[$hidden],
+    key: _listAttribute[$key],
+    savedAs: _listAttribute[$savedAs],
+    default: _listAttribute[$default]
   }
 }
 
