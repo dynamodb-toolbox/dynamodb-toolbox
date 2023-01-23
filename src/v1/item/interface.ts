@@ -1,5 +1,6 @@
 import { _MapAttributeAttributes, MapAttributeAttributes, RequiredOption } from './attributes'
 import { FreezeAttribute } from './attributes/freeze'
+import { $type, $attributes, $open } from './attributes/constants/symbols'
 
 /**
  * Entity items shape
@@ -10,9 +11,9 @@ import { FreezeAttribute } from './attributes/freeze'
 export interface _Item<
   _MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = _MapAttributeAttributes
 > {
-  _type: 'item'
-  _open: boolean
-  _attributes: _MAP_ATTRIBUTE_ATTRIBUTES
+  [$type]: 'item'
+  [$open]: boolean
+  [$attributes]: _MAP_ATTRIBUTE_ATTRIBUTES
 }
 
 export interface Item<
@@ -29,6 +30,6 @@ export type FreezeItem<_ITEM extends _Item> = _Item extends _ITEM
   ? Item
   : Item<
       {
-        [key in keyof _ITEM['_attributes']]: FreezeAttribute<_ITEM['_attributes'][key]>
+        [KEY in keyof _ITEM[$attributes]]: FreezeAttribute<_ITEM[$attributes][KEY]>
       }
     >

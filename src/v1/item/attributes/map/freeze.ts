@@ -1,36 +1,36 @@
 import type { RequiredOption } from '../constants/requiredOptions'
 import { validateAttributeProperties } from '../shared/validate'
 import { freezeAttribute, FreezeAttribute } from '../freeze'
+import {
+  $type,
+  $attributes,
+  $required,
+  $hidden,
+  $key,
+  $open,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
 import type { _MapAttribute, FreezeMapAttribute } from './interface'
 
 type MapAttributeFreezer = <_MAP_ATTRIBUTE extends _MapAttribute>(
-  attribute: _MAP_ATTRIBUTE,
+  _mapAttribute: _MAP_ATTRIBUTE,
   path: string
 ) => FreezeMapAttribute<_MAP_ATTRIBUTE>
 
 /**
  * Freezes a map instance
  *
- * @param attribute MapAttribute
+ * @param _mapAttribute MapAttribute
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
 export const freezeMapAttribute: MapAttributeFreezer = <_MAP_ATTRIBUTE extends _MapAttribute>(
-  attribute: _MAP_ATTRIBUTE,
+  _mapAttribute: _MAP_ATTRIBUTE,
   path: string
 ): FreezeMapAttribute<_MAP_ATTRIBUTE> => {
-  validateAttributeProperties(attribute, path)
-
-  const {
-    _type: type,
-    _required: required,
-    _hidden: hidden,
-    _key: key,
-    _open: open,
-    _savedAs: savedAs,
-    _default
-  } = attribute
+  validateAttributeProperties(_mapAttribute, path)
 
   const attributesSavedAs = new Set<string>()
 
@@ -43,43 +43,41 @@ export const freezeMapAttribute: MapAttributeFreezer = <_MAP_ATTRIBUTE extends _
     never: new Set()
   }
 
-  const attributes: _MAP_ATTRIBUTE['_attributes'] = attribute._attributes
+  const attributes: _MAP_ATTRIBUTE[$attributes] = _mapAttribute[$attributes]
   const frozenAttributes: {
-    [key in keyof _MAP_ATTRIBUTE['_attributes']]: FreezeAttribute<
-      _MAP_ATTRIBUTE['_attributes'][key]
-    >
+    [KEY in keyof _MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<_MAP_ATTRIBUTE[$attributes][KEY]>
   } = {} as any
 
   for (const attributeName in attributes) {
     const attribute = attributes[attributeName]
 
-    const attributeSavedAs = attribute._savedAs ?? attributeName
+    const attributeSavedAs = attribute[$savedAs] ?? attributeName
     if (attributesSavedAs.has(attributeSavedAs)) {
       throw new DuplicateSavedAsAttributesError({ duplicatedSavedAs: attributeSavedAs, path })
     }
     attributesSavedAs.add(attributeSavedAs)
 
-    if (attribute._key) {
+    if (attribute[$key]) {
       keyAttributesNames.add(attributeName)
     }
 
-    requiredAttributesNames[attribute._required].add(attributeName)
+    requiredAttributesNames[attribute[$required]].add(attributeName)
 
     frozenAttributes[attributeName] = freezeAttribute(attribute, [path, attributeName].join('.'))
   }
 
   return {
-    type,
     path,
+    type: _mapAttribute[$type],
     attributes: frozenAttributes,
     keyAttributesNames,
     requiredAttributesNames,
-    required,
-    hidden,
-    key,
-    open,
-    savedAs,
-    default: _default
+    required: _mapAttribute[$required],
+    hidden: _mapAttribute[$hidden],
+    key: _mapAttribute[$key],
+    open: _mapAttribute[$open],
+    savedAs: _mapAttribute[$savedAs],
+    default: _mapAttribute[$default]
   }
 }
 
