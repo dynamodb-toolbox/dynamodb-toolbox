@@ -14,19 +14,19 @@ import type {
   Always,
   ComputedDefault
 } from 'v1/item'
-
+import type { $attributes, $required, $open, $default } from 'v1/item/attributes/constants/symbols'
 import type { _AttributePutItem } from './attribute'
 
 export type _ItemPutItem<_ITEM extends _Item> = O.Required<
   O.Partial<
     {
       // Keep all attributes
-      [KEY in keyof _ITEM['_attributes']]: _AttributePutItem<_ITEM['_attributes'][KEY]>
+      [KEY in keyof _ITEM[$attributes]]: _AttributePutItem<_ITEM[$attributes][KEY]>
     }
   >,
   // Enforce Required attributes
-  | O.SelectKeys<_ITEM['_attributes'], { _required: AtLeastOnce | OnlyOnce | Always }>
+  | O.SelectKeys<_ITEM[$attributes], { [$required]: AtLeastOnce | OnlyOnce | Always }>
   // Enforce attributes that have hard default
-  | O.FilterKeys<_ITEM['_attributes'], { _default: undefined | ComputedDefault }>
+  | O.FilterKeys<_ITEM[$attributes], { [$default]: undefined | ComputedDefault }>
 > & // Add Record<string, ResolvedAttribute> if map is open
-  (_ITEM extends { _open: true } ? Record<string, ResolvedAttribute> : {})
+  (_ITEM extends { [$open]: true } ? Record<string, ResolvedAttribute> : {})

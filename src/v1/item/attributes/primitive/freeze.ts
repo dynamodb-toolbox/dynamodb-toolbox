@@ -3,6 +3,7 @@ import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 
 import { validateAttributeProperties } from '../shared/validate'
+import { $type, $required, $hidden, $key, $savedAs, $enum, $default } from '../constants/symbols'
 
 import type { _PrimitiveAttribute, FreezePrimitiveAttribute } from './interface'
 import type {
@@ -11,35 +12,30 @@ import type {
   PrimitiveAttributeDefaultValue
 } from './types'
 
-type PrimitiveAttributeFreezer = <_LEAF_ATTRIBUTE extends _PrimitiveAttribute>(
-  attribute: _LEAF_ATTRIBUTE,
+type PrimitiveAttributeFreezer = <_PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute>(
+  _primitiveAttribute: _PRIMITIVE_ATTRIBUTE,
   path: string
-) => FreezePrimitiveAttribute<_LEAF_ATTRIBUTE>
+) => FreezePrimitiveAttribute<_PRIMITIVE_ATTRIBUTE>
 
 /**
  * Validates a primitive instance
  *
- * @param attribute Primitive
+ * @param _primitiveAttribute Primitive
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
 export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
-  _LEAF_ATTRIBUTE extends _PrimitiveAttribute
+  _PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute
 >(
-  attribute: _LEAF_ATTRIBUTE,
+  _primitiveAttribute: _PRIMITIVE_ATTRIBUTE,
   path: string
-): FreezePrimitiveAttribute<_LEAF_ATTRIBUTE> => {
-  validateAttributeProperties(attribute, path)
+): FreezePrimitiveAttribute<_PRIMITIVE_ATTRIBUTE> => {
+  validateAttributeProperties(_primitiveAttribute, path)
 
-  const {
-    _type: primitiveType,
-    _enum: enumValues,
-    _default: defaultValue,
-    ...primitiveInstance
-  } = attribute
-
+  const primitiveType = _primitiveAttribute[$type]
   const typeValidator = validatorsByPrimitiveType[primitiveType]
 
+  const enumValues = _primitiveAttribute[$enum]
   enumValues?.forEach(enumValue => {
     const isEnumValueValid = typeValidator(enumValue)
     if (!isEnumValueValid) {
@@ -47,6 +43,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     }
   })
 
+  const defaultValue = _primitiveAttribute[$default]
   if (
     defaultValue !== undefined &&
     !isComputedDefault(defaultValue) &&
@@ -61,22 +58,20 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     }
   }
 
-  const { _required: required, _hidden: hidden, _key: key, _savedAs: savedAs } = primitiveInstance
-
   return {
-    type: primitiveType,
     path,
-    required,
-    hidden,
-    key,
-    savedAs,
+    type: primitiveType,
+    required: _primitiveAttribute[$required],
+    hidden: _primitiveAttribute[$hidden],
+    key: _primitiveAttribute[$key],
+    savedAs: _primitiveAttribute[$savedAs],
     enum: enumValues as Extract<
-      _LEAF_ATTRIBUTE['_enum'],
-      PrimitiveAttributeEnumValues<_LEAF_ATTRIBUTE['_type']>
+      _PRIMITIVE_ATTRIBUTE[$enum],
+      PrimitiveAttributeEnumValues<_PRIMITIVE_ATTRIBUTE[$type]>
     >,
     default: defaultValue as Extract<
-      _LEAF_ATTRIBUTE['_default'],
-      PrimitiveAttributeDefaultValue<_LEAF_ATTRIBUTE['_type']>
+      _PRIMITIVE_ATTRIBUTE[$default],
+      PrimitiveAttributeDefaultValue<_PRIMITIVE_ATTRIBUTE[$type]>
     >
   }
 }

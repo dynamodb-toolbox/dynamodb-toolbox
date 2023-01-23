@@ -19,6 +19,7 @@ export interface PrimitiveAttributeOptions<
   ENUM extends PrimitiveAttributeEnumValues<TYPE> = PrimitiveAttributeEnumValues<TYPE>,
   DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> = PrimitiveAttributeDefaultValue<TYPE>
 > extends AttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
+  // TODO: See if possible to use symbol
   _enum: ENUM
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
@@ -26,7 +27,7 @@ export interface PrimitiveAttributeOptions<
   default: DEFAULT
 }
 
-export const LEAF_DEFAULT_OPTIONS: PrimitiveAttributeOptions<
+export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeOptions<
   PrimitiveAttributeType,
   AtLeastOnce,
   false,

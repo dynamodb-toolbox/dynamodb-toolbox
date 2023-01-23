@@ -1,4 +1,5 @@
 import type { _MapAttributeAttributes, Narrow } from './attributes/types'
+import { $type, $attributes, $open } from './attributes/constants/symbols'
 import type { _Item } from './interface'
 
 type ItemTyper = <_MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = {}>(
@@ -16,7 +17,7 @@ export const item: ItemTyper = <_MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeA
   attributes: Narrow<_MAP_ATTRIBUTE_ATTRIBUTES>
 ): _Item<_MAP_ATTRIBUTE_ATTRIBUTES> =>
   ({
-    _type: 'item',
-    _open: false,
-    _attributes: attributes
+    [$type]: 'item',
+    [$open]: false,
+    [$attributes]: attributes
   } as _Item<_MAP_ATTRIBUTE_ATTRIBUTES>)

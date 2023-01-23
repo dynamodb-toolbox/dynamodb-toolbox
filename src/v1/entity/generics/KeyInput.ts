@@ -20,6 +20,16 @@ import type {
   _MapAttribute,
   Always
 } from 'v1/item'
+import type {
+  $resolved,
+  $elements,
+  $attributes,
+  $value,
+  $required,
+  $key,
+  $open,
+  $default
+} from 'v1/item/attributes/constants/symbols'
 
 import { EntityV2 } from '../class'
 
@@ -65,31 +75,31 @@ export type KeyInput<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extend
 export type _KeyInput<SCHEMA extends EntityV2 | _Item | _Attribute> = SCHEMA extends _AnyAttribute
   ? ResolvedAttribute
   : SCHEMA extends _ConstantAttribute
-  ? SCHEMA['_value']
+  ? SCHEMA[$value]
   : SCHEMA extends _PrimitiveAttribute
-  ? NonNullable<SCHEMA['_resolved']>
+  ? NonNullable<SCHEMA[$resolved]>
   : SCHEMA extends _SetAttribute
-  ? Set<_KeyInput<SCHEMA['_elements']>>
+  ? Set<_KeyInput<SCHEMA[$elements]>>
   : SCHEMA extends _ListAttribute
-  ? _KeyInput<SCHEMA['_elements']>[]
+  ? _KeyInput<SCHEMA[$elements]>[]
   : SCHEMA extends _MapAttribute | _Item
   ? O.Required<
       O.Partial<
         {
           // Keep only key attributes
-          [key in O.SelectKeys<SCHEMA['_attributes'], { _key: true }>]: _KeyInput<
-            SCHEMA['_attributes'][key]
+          [key in O.SelectKeys<SCHEMA[$attributes], { [$key]: true }>]: _KeyInput<
+            SCHEMA[$attributes][key]
           >
         }
       >,
       Exclude<
         // Enforce Always Required attributes
-        O.SelectKeys<SCHEMA['_attributes'], { _required: Always }>,
+        O.SelectKeys<SCHEMA[$attributes], { [$required]: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<SCHEMA['_attributes'], { _default: undefined }>
+        O.FilterKeys<SCHEMA[$attributes], { [$default]: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { _open: true } ? Record<string, ResolvedAttribute> : {})
+      (SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : {})
   : SCHEMA extends EntityV2
   ? _KeyInput<SCHEMA['_item']>
   : never
