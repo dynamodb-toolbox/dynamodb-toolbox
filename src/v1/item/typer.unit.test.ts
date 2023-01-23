@@ -2,6 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { item } from './typer'
 import { boolean, binary, number, string, set, list, map } from './attributes'
+import { $type, $attributes, $open } from './attributes/constants/symbols'
 
 describe('item', () => {
   it('primitives', () => {
@@ -24,7 +25,8 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        _attributes: {
+        [$type]: 'item'
+        [$attributes]: {
           reqStr: typeof reqStr
           hidBool: typeof hidBool
           defNum: typeof defNum
@@ -32,12 +34,13 @@ describe('item', () => {
           keyStr: typeof keyStr
           enumStr: typeof enumStr
         }
+        [$open]: boolean
       }
     > = 1
     assertItm
 
     expect(itm).toMatchObject({
-      _attributes: {
+      [$attributes]: {
         reqStr,
         hidBool,
         defNum,
@@ -62,7 +65,7 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        _attributes: {
+        [$attributes]: {
           flatMap: typeof flatMap
           nestedMap: typeof nestedMap
           reqMap: typeof reqMap
@@ -73,7 +76,7 @@ describe('item', () => {
     assertItm
 
     expect(itm).toMatchObject({
-      _attributes: {
+      [$attributes]: {
         flatMap,
         nestedMap,
         reqMap,
@@ -99,7 +102,7 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        _attributes: {
+        [$attributes]: {
           optList: typeof optList
           nestedList: typeof nestedList
           reqList: typeof reqList
@@ -110,7 +113,7 @@ describe('item', () => {
     assertItm
 
     expect(itm).toMatchObject({
-      _attributes: {
+      [$attributes]: {
         optList,
         nestedList,
         reqList,
@@ -134,7 +137,7 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        _attributes: {
+        [$attributes]: {
           optSet: typeof optSet
           reqSet: typeof reqSet
           hiddenSet: typeof hiddenSet
@@ -144,7 +147,7 @@ describe('item', () => {
     assertItm
 
     expect(itm).toMatchObject({
-      _attributes: {
+      [$attributes]: {
         optSet,
         reqSet,
         hiddenSet

@@ -1,7 +1,17 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { ComputedDefault } from '../constants/computedDefault'
-import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
 import type { FreezeAttribute } from '../freeze'
+import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
+import {
+  $type,
+  $elements,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/symbols'
+
 import type { _SetAttributeElements, SetAttributeElements } from './types'
 
 /**
@@ -15,9 +25,9 @@ export type _SetAttribute<
   SAVED_AS extends string | undefined = string | undefined,
   DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
 > = _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
-  _type: 'set'
-  _elements: ELEMENTS
-  _default: DEFAULT
+  [$type]: 'set'
+  [$elements]: ELEMENTS
+  [$default]: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -73,10 +83,10 @@ export type SetAttribute<
 }
 
 export type FreezeSetAttribute<_SET_ATTRIBUTE extends _SetAttribute> = SetAttribute<
-  FreezeAttribute<_SET_ATTRIBUTE['_elements']>,
-  _SET_ATTRIBUTE['_required'],
-  _SET_ATTRIBUTE['_hidden'],
-  _SET_ATTRIBUTE['_key'],
-  _SET_ATTRIBUTE['_savedAs'],
-  _SET_ATTRIBUTE['_default']
+  FreezeAttribute<_SET_ATTRIBUTE[$elements]>,
+  _SET_ATTRIBUTE[$required],
+  _SET_ATTRIBUTE[$hidden],
+  _SET_ATTRIBUTE[$key],
+  _SET_ATTRIBUTE[$savedAs],
+  _SET_ATTRIBUTE[$default]
 >

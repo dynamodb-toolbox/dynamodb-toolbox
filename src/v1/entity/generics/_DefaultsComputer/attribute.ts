@@ -8,6 +8,7 @@ import type {
   _ListAttribute,
   _MapAttribute
 } from 'v1/item'
+import { $default } from 'v1/item/attributes/constants/symbols'
 
 import type { _AttributePutItem } from '../_PutItem'
 
@@ -22,9 +23,7 @@ export type _AttributePutDefaultsComputer<
   | _ConstantAttribute
   | _PrimitiveAttribute
   | _SetAttribute
-) & {
-  _default: ComputedDefault
-}
+) & { [$default]: ComputedDefault }
   ? (...contextInputs: CONTEXT_INPUTS) => _AttributePutItem<_ATTRIBUTE>
   : _ATTRIBUTE extends _ListAttribute
   ? _ListAttributePutDefaultsComputer<_ATTRIBUTE, CONTEXT_INPUTS>

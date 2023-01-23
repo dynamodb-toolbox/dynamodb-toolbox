@@ -1,6 +1,15 @@
 import type { O } from 'ts-toolbelt'
 
 import { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import {
+  $type,
+  $elements,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
 import type { _ListAttributeElements } from './types'
 import type { _ListAttribute } from './interface'
@@ -41,22 +50,15 @@ export const list: ListTyper = <
   options?: O.Partial<ListAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
 ): _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
   const appliedOptions = { ...LIST_DEFAULT_OPTIONS, ...options }
-  const {
-    required: _required,
-    hidden: _hidden,
-    key: _key,
-    savedAs: _savedAs,
-    default: _default
-  } = appliedOptions
 
   return {
-    _type: 'list',
-    _elements: elements,
-    _required,
-    _hidden,
-    _key,
-    _savedAs,
-    _default,
+    [$type]: 'list',
+    [$elements]: elements,
+    [$required]: appliedOptions.required,
+    [$hidden]: appliedOptions.hidden,
+    [$key]: appliedOptions.key,
+    [$savedAs]: appliedOptions.savedAs,
+    [$default]: appliedOptions.default,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => list(elements, { ...appliedOptions, required: nextRequired }),

@@ -6,6 +6,7 @@ import type {
   _MapAttribute,
   ComputedDefault
 } from '../attributes'
+import { $elements, $attributes, $default } from '../attributes/constants/symbols'
 
 // TODO: Required in Entity constructor... See if possible to use only Item
 /**
@@ -15,17 +16,17 @@ import type {
  * @return Boolean
  */
 export type _HasComputedDefaults<SCHEMA extends _Item | _Attribute> = SCHEMA extends {
-  _default: ComputedDefault
+  [$default]: ComputedDefault
 }
   ? true
   : SCHEMA extends _SetAttribute | _ListAttribute
-  ? _HasComputedDefaults<SCHEMA['_elements']>
+  ? _HasComputedDefaults<SCHEMA[$elements]>
   : SCHEMA extends _MapAttribute | _Item
   ? true extends {
-      [ATTRIBUTE_NAME in keyof SCHEMA['_attributes']]: _HasComputedDefaults<
-        SCHEMA['_attributes'][ATTRIBUTE_NAME]
+      [ATTRIBUTE_NAME in keyof SCHEMA[$attributes]]: _HasComputedDefaults<
+        SCHEMA[$attributes][ATTRIBUTE_NAME]
       >
-    }[keyof SCHEMA['_attributes']]
+    }[keyof SCHEMA[$attributes]]
     ? true
     : false
   : false

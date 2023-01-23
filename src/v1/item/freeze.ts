@@ -1,12 +1,18 @@
 import { _Item, FreezeItem } from './interface'
 import { FreezeAttribute, freezeAttribute } from './attributes/freeze'
 import { RequiredOption } from './attributes/constants/requiredOptions'
+import {
+  $type,
+  $attributes,
+  $key,
+  $open,
+  $savedAs,
+  $required
+} from './attributes/constants/symbols'
 
 type ItemFreezer = <_ITEM extends _Item>(item: _ITEM) => FreezeItem<_ITEM>
 
 export const freezeItem: ItemFreezer = <_ITEM extends _Item>(item: _ITEM): FreezeItem<_ITEM> => {
-  const { _type: type, _open: open } = item
-
   const attributesSavedAs = new Set<string>()
 
   const keyAttributesNames = new Set<string>()
@@ -18,31 +24,31 @@ export const freezeItem: ItemFreezer = <_ITEM extends _Item>(item: _ITEM): Freez
     never: new Set()
   }
 
-  const attributes: _ITEM['_attributes'] = item._attributes
+  const attributes: _ITEM[$attributes] = item[$attributes]
   const frozenAttributes: {
-    [key in keyof _ITEM['_attributes']]: FreezeAttribute<_ITEM['_attributes'][key]>
+    [key in keyof _ITEM[$attributes]]: FreezeAttribute<_ITEM[$attributes][key]>
   } = {} as any
 
   for (const attributeName in attributes) {
     const attribute = attributes[attributeName]
 
-    const attributeSavedAs = attribute._savedAs ?? attributeName
+    const attributeSavedAs = attribute[$savedAs] ?? attributeName
     if (attributesSavedAs.has(attributeSavedAs)) {
       throw new DuplicateSavedAsAttributesError({ duplicatedSavedAs: attributeSavedAs })
     }
     attributesSavedAs.add(attributeSavedAs)
 
-    if (attribute._key) {
+    if (attribute[$key]) {
       keyAttributesNames.add(attributeName)
     }
-    requiredAttributesNames[attribute._required].add(attributeName)
+    requiredAttributesNames[attribute[$required]].add(attributeName)
 
     frozenAttributes[attributeName] = freezeAttribute(attribute, attributeName)
   }
 
   return {
-    type,
-    open,
+    type: item[$type],
+    open: item[$open],
     keyAttributesNames,
     requiredAttributesNames,
     attributes: frozenAttributes
