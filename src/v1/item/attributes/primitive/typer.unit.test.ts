@@ -1,6 +1,16 @@
 import type { A } from 'ts-toolbelt'
 
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
+import {
+  $type,
+  $resolved,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $enum,
+  $default
+} from '../constants/symbols'
 
 import { string, number, boolean, binary } from './typer'
 import {
@@ -20,24 +30,26 @@ describe('primitiveAttribute', () => {
       const assertStr: A.Contains<
         typeof str,
         {
-          _type: 'string'
-          _resolved?: string
-          _required: AtLeastOnce
-          _hidden: false
-          _savedAs: undefined
-          _key: false
-          _default: undefined
+          [$type]: 'string'
+          [$resolved]?: string
+          [$required]: AtLeastOnce
+          [$hidden]: false
+          [$savedAs]: undefined
+          [$key]: false
+          [$enum]: undefined
+          [$default]: undefined
         }
       > = 1
       assertStr
 
       expect(str).toMatchObject({
-        _type: 'string',
-        _required: 'atLeastOnce',
-        _hidden: false,
-        _savedAs: undefined,
-        _key: false,
-        _default: undefined
+        [$type]: 'string',
+        [$required]: 'atLeastOnce',
+        [$hidden]: false,
+        [$savedAs]: undefined,
+        [$key]: false,
+        [$enum]: undefined,
+        [$default]: undefined
       })
     })
 
@@ -47,19 +59,19 @@ describe('primitiveAttribute', () => {
       const strAlways = string({ required: 'always' })
       const strNever = string({ required: 'never' })
 
-      const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { _required: AtLeastOnce }> = 1
+      const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { [$required]: AtLeastOnce }> = 1
       assertAtLeastOnce
-      const assertOnlyOnce: A.Contains<typeof strOnlyOnce, { _required: OnlyOnce }> = 1
+      const assertOnlyOnce: A.Contains<typeof strOnlyOnce, { [$required]: OnlyOnce }> = 1
       assertOnlyOnce
-      const assertAlways: A.Contains<typeof strAlways, { _required: Always }> = 1
+      const assertAlways: A.Contains<typeof strAlways, { [$required]: Always }> = 1
       assertAlways
-      const assertNever: A.Contains<typeof strNever, { _required: Never }> = 1
+      const assertNever: A.Contains<typeof strNever, { [$required]: Never }> = 1
       assertNever
 
-      expect(strAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
-      expect(strOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
-      expect(strAlways).toMatchObject({ _required: 'always' })
-      expect(strNever).toMatchObject({ _required: 'never' })
+      expect(strAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
+      expect(strOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
+      expect(strAlways).toMatchObject({ [$required]: 'always' })
+      expect(strNever).toMatchObject({ [$required]: 'never' })
     })
 
     it('returns required string (method)', () => {
@@ -69,76 +81,76 @@ describe('primitiveAttribute', () => {
       const strNever = string().required('never')
       const strOpt = string().optional()
 
-      const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { _required: AtLeastOnce }> = 1
+      const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { [$required]: AtLeastOnce }> = 1
       assertAtLeastOnce
-      const assertOnlyOnce: A.Contains<typeof strOnlyOnce, { _required: OnlyOnce }> = 1
+      const assertOnlyOnce: A.Contains<typeof strOnlyOnce, { [$required]: OnlyOnce }> = 1
       assertOnlyOnce
-      const assertAlways: A.Contains<typeof strAlways, { _required: Always }> = 1
+      const assertAlways: A.Contains<typeof strAlways, { [$required]: Always }> = 1
       assertAlways
-      const assertNever: A.Contains<typeof strNever, { _required: Never }> = 1
+      const assertNever: A.Contains<typeof strNever, { [$required]: Never }> = 1
       assertNever
-      const assertOpt: A.Contains<typeof strOpt, { _required: Never }> = 1
+      const assertOpt: A.Contains<typeof strOpt, { [$required]: Never }> = 1
       assertOpt
 
-      expect(strAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
-      expect(strOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
-      expect(strAlways).toMatchObject({ _required: 'always' })
-      expect(strNever).toMatchObject({ _required: 'never' })
-      expect(strOpt).toMatchObject({ _required: 'never' })
+      expect(strAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
+      expect(strOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
+      expect(strAlways).toMatchObject({ [$required]: 'always' })
+      expect(strNever).toMatchObject({ [$required]: 'never' })
+      expect(strOpt).toMatchObject({ [$required]: 'never' })
     })
 
     it('returns hidden string (option)', () => {
       const str = string({ hidden: true })
 
-      const assertStr: A.Contains<typeof str, { _hidden: true }> = 1
+      const assertStr: A.Contains<typeof str, { [$hidden]: true }> = 1
       assertStr
 
-      expect(str).toMatchObject({ _hidden: true })
+      expect(str).toMatchObject({ [$hidden]: true })
     })
 
     it('returns hidden string (method)', () => {
       const str = string().hidden()
 
-      const assertStr: A.Contains<typeof str, { _hidden: true }> = 1
+      const assertStr: A.Contains<typeof str, { [$hidden]: true }> = 1
       assertStr
 
-      expect(str).toMatchObject({ _hidden: true })
+      expect(str).toMatchObject({ [$hidden]: true })
     })
 
     it('returns key string (option)', () => {
       const str = string({ key: true })
 
-      const assertStr: A.Contains<typeof str, { _key: true }> = 1
+      const assertStr: A.Contains<typeof str, { [$key]: true }> = 1
       assertStr
 
-      expect(str).toMatchObject({ _key: true })
+      expect(str).toMatchObject({ [$key]: true })
     })
 
     it('returns key string (method)', () => {
       const str = string().key()
 
-      const assertStr: A.Contains<typeof str, { _key: true }> = 1
+      const assertStr: A.Contains<typeof str, { [$key]: true }> = 1
       assertStr
 
-      expect(str).toMatchObject({ _key: true })
+      expect(str).toMatchObject({ [$key]: true })
     })
 
     it('returns savedAs string (option)', () => {
       const str = string({ savedAs: 'foo' })
 
-      const assertStr: A.Contains<typeof str, { _savedAs: 'foo' }> = 1
+      const assertStr: A.Contains<typeof str, { [$savedAs]: 'foo' }> = 1
       assertStr
 
-      expect(str).toMatchObject({ _savedAs: 'foo' })
+      expect(str).toMatchObject({ [$savedAs]: 'foo' })
     })
 
     it('returns savedAs string (method)', () => {
       const str = string().savedAs('foo')
 
-      const assertStr: A.Contains<typeof str, { _savedAs: 'foo' }> = 1
+      const assertStr: A.Contains<typeof str, { [$savedAs]: 'foo' }> = 1
       assertStr
 
-      expect(str).toMatchObject({ _savedAs: 'foo' })
+      expect(str).toMatchObject({ [$savedAs]: 'foo' })
     })
 
     it('returns string with enum values (method)', () => {
@@ -165,11 +177,11 @@ describe('primitiveAttribute', () => {
 
       const assertStr: A.Contains<
         typeof str,
-        { _resolved?: 'foo' | 'bar' | undefined; _enum: ['foo', 'bar'] }
+        { [$resolved]?: 'foo' | 'bar' | undefined; [$enum]: ['foo', 'bar'] }
       > = 1
       assertStr
 
-      expect(str).toMatchObject({ _enum: ['foo', 'bar'] })
+      expect(str).toMatchObject({ [$enum]: ['foo', 'bar'] })
     })
 
     it('returns string with default value (option)', () => {
@@ -199,15 +211,15 @@ describe('primitiveAttribute', () => {
       const sayHello = () => 'hello'
       const strB = string({ default: sayHello })
 
-      const assertStrA: A.Contains<typeof strA, { _default: 'hello' }> = 1
+      const assertStrA: A.Contains<typeof strA, { [$default]: 'hello' }> = 1
       assertStrA
 
-      expect(strA).toMatchObject({ _default: 'hello' })
+      expect(strA).toMatchObject({ [$default]: 'hello' })
 
-      const assertStrB: A.Contains<typeof strB, { _default: () => string }> = 1
+      const assertStrB: A.Contains<typeof strB, { [$default]: () => string }> = 1
       assertStrB
 
-      expect(strB).toMatchObject({ _default: sayHello })
+      expect(strB).toMatchObject({ [$default]: sayHello })
     })
 
     it('returns string with default value (method)', () => {
@@ -237,15 +249,15 @@ describe('primitiveAttribute', () => {
       const sayHello = () => 'hello'
       const strB = string().default(sayHello)
 
-      const assertStrA: A.Contains<typeof strA, { _default: 'hello' }> = 1
+      const assertStrA: A.Contains<typeof strA, { [$default]: 'hello' }> = 1
       assertStrA
 
-      expect(strA).toMatchObject({ _default: 'hello' })
+      expect(strA).toMatchObject({ [$default]: 'hello' })
 
-      const assertStrB: A.Contains<typeof strB, { _default: () => string }> = 1
+      const assertStrB: A.Contains<typeof strB, { [$default]: () => string }> = 1
       assertStrB
 
-      expect(strB).toMatchObject({ _default: sayHello })
+      expect(strB).toMatchObject({ [$default]: sayHello })
     })
 
     it('default with enum values', () => {
@@ -270,18 +282,18 @@ describe('primitiveAttribute', () => {
       const sayFoo = (): 'foo' => 'foo'
       const strB = string().enum('foo', 'bar').default(sayFoo)
 
-      const assertStrA: A.Contains<typeof strA, { _default: 'foo'; _enum: ['foo', 'bar'] }> = 1
+      const assertStrA: A.Contains<typeof strA, { [$default]: 'foo'; [$enum]: ['foo', 'bar'] }> = 1
       assertStrA
 
-      expect(strA).toMatchObject({ _default: 'foo' })
+      expect(strA).toMatchObject({ [$default]: 'foo' })
 
       const assertStrB: A.Contains<
         typeof strB,
-        { _default: () => 'foo'; _enum: ['foo', 'bar'] }
+        { [$default]: () => 'foo'; [$enum]: ['foo', 'bar'] }
       > = 1
       assertStrB
 
-      expect(strB).toMatchObject({ _default: sayFoo, _enum: ['foo', 'bar'] })
+      expect(strB).toMatchObject({ [$default]: sayFoo, [$enum]: ['foo', 'bar'] })
     })
   })
 
@@ -289,10 +301,10 @@ describe('primitiveAttribute', () => {
     it('returns default number', () => {
       const num = number()
 
-      const assertNum: A.Contains<typeof num, { _type: 'number' }> = 1
+      const assertNum: A.Contains<typeof num, { [$type]: 'number' }> = 1
       assertNum
 
-      expect(num).toMatchObject({ _type: 'number' })
+      expect(num).toMatchObject({ [$type]: 'number' })
     })
   })
 
@@ -300,10 +312,10 @@ describe('primitiveAttribute', () => {
     it('returns default boolean', () => {
       const bool = boolean()
 
-      const assertBool: A.Contains<typeof bool, { _type: 'boolean' }> = 1
+      const assertBool: A.Contains<typeof bool, { [$type]: 'boolean' }> = 1
       assertBool
 
-      expect(bool).toMatchObject({ _type: 'boolean' })
+      expect(bool).toMatchObject({ [$type]: 'boolean' })
     })
   })
 
@@ -311,10 +323,10 @@ describe('primitiveAttribute', () => {
     it('returns default binary', () => {
       const bin = binary()
 
-      const assertBin: A.Contains<typeof bin, { _type: 'binary' }> = 1
+      const assertBin: A.Contains<typeof bin, { [$type]: 'binary' }> = 1
       assertBin
 
-      expect(bin).toMatchObject({ _type: 'binary' })
+      expect(bin).toMatchObject({ [$type]: 'binary' })
     })
   })
 
@@ -322,19 +334,19 @@ describe('primitiveAttribute', () => {
     it('accepts ComputedDefault as default value (option)', () => {
       const str = string({ default: ComputedDefault })
 
-      const assertStr: A.Contains<typeof str, { _default: ComputedDefault }> = 1
+      const assertStr: A.Contains<typeof str, { [$default]: ComputedDefault }> = 1
       assertStr
 
-      expect(str).toMatchObject({ _default: ComputedDefault })
+      expect(str).toMatchObject({ [$default]: ComputedDefault })
     })
 
     it('accepts ComputedDefault as default value (option)', () => {
       const str = string().default(ComputedDefault)
 
-      const assertStr: A.Contains<typeof str, { _default: ComputedDefault }> = 1
+      const assertStr: A.Contains<typeof str, { [$default]: ComputedDefault }> = 1
       assertStr
 
-      expect(str).toMatchObject({ _default: ComputedDefault })
+      expect(str).toMatchObject({ [$default]: ComputedDefault })
     })
   })
 })

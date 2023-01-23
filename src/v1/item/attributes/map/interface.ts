@@ -1,9 +1,18 @@
-import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
 import type { _MapAttributeAttributes, MapAttributeAttributes } from '../types/attribute'
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 import type { FreezeAttribute } from '../freeze'
+import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
+import {
+  $type,
+  $attributes,
+  $required,
+  $hidden,
+  $key,
+  $open,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
-// TODO: Add false saveAs option
 /**
  * MapAttribute attribute interface
  * (Called MapAttribute to differ from native TS Map class)
@@ -17,10 +26,10 @@ export interface _MapAttribute<
   SAVED_AS extends string | undefined = string | undefined,
   DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
 > extends _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
-  _type: 'map'
-  _attributes: ATTRIBUTES
-  _open: IS_OPEN
-  _default: DEFAULT
+  [$type]: 'map'
+  [$attributes]: ATTRIBUTES
+  [$open]: IS_OPEN
+  [$default]: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -87,14 +96,14 @@ export type FreezeMapAttribute<_MAP_ATTRIBUTE extends _MapAttribute> = MapAttrib
   _MapAttribute extends _MAP_ATTRIBUTE
     ? MapAttributeAttributes
     : {
-        [key in keyof _MAP_ATTRIBUTE['_attributes']]: FreezeAttribute<
-          _MAP_ATTRIBUTE['_attributes'][key]
+        [KEY in keyof _MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
+          _MAP_ATTRIBUTE[$attributes][KEY]
         >
       },
-  _MAP_ATTRIBUTE['_required'],
-  _MAP_ATTRIBUTE['_hidden'],
-  _MAP_ATTRIBUTE['_key'],
-  _MAP_ATTRIBUTE['_open'],
-  _MAP_ATTRIBUTE['_savedAs'],
-  _MAP_ATTRIBUTE['_default']
+  _MAP_ATTRIBUTE[$required],
+  _MAP_ATTRIBUTE[$hidden],
+  _MAP_ATTRIBUTE[$key],
+  _MAP_ATTRIBUTE[$open],
+  _MAP_ATTRIBUTE[$savedAs],
+  _MAP_ATTRIBUTE[$default]
 >
