@@ -1,5 +1,6 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
+import type { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
 
 import type { AnyAttributeDefaultValue } from './types'
 
@@ -13,8 +14,8 @@ export interface _AnyAttribute<
   SAVED_AS extends string | undefined = string | undefined,
   DEFAULT extends AnyAttributeDefaultValue = AnyAttributeDefaultValue
 > extends _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
-  _type: 'any'
-  _default: DEFAULT
+  [$type]: 'any'
+  [$default]: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -68,9 +69,9 @@ export interface AnyAttribute<
 }
 
 export type FreezeAnyAttribute<_ANY_ATTRIBUTE extends _AnyAttribute> = AnyAttribute<
-  _ANY_ATTRIBUTE['_required'],
-  _ANY_ATTRIBUTE['_hidden'],
-  _ANY_ATTRIBUTE['_key'],
-  _ANY_ATTRIBUTE['_savedAs'],
-  _ANY_ATTRIBUTE['_default']
+  _ANY_ATTRIBUTE[$required],
+  _ANY_ATTRIBUTE[$hidden],
+  _ANY_ATTRIBUTE[$key],
+  _ANY_ATTRIBUTE[$savedAs],
+  _ANY_ATTRIBUTE[$default]
 >

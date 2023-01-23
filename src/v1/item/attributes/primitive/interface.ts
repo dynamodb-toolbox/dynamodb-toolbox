@@ -1,5 +1,16 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
+import {
+  $type,
+  $resolved,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $enum,
+  $default
+} from '../constants/symbols'
+
 import type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
@@ -20,12 +31,12 @@ export type _PrimitiveAttribute<
   ENUM extends PrimitiveAttributeEnumValues<TYPE> = PrimitiveAttributeEnumValues<TYPE>,
   DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> = PrimitiveAttributeDefaultValue<TYPE>
 > = _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
-  _type: TYPE
-  _resolved?: ENUM extends ResolvePrimitiveAttributeType<TYPE>[]
+  [$type]: TYPE
+  [$resolved]?: ENUM extends ResolvePrimitiveAttributeType<TYPE>[]
     ? ENUM[number]
     : ResolvePrimitiveAttributeType<TYPE>
-  _enum: ENUM
-  _default: DEFAULT
+  [$enum]: ENUM
+  [$default]: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -101,13 +112,16 @@ export type PrimitiveAttribute<
 }
 
 export type FreezePrimitiveAttribute<
-  _LEAF_ATTRIBUTE extends _PrimitiveAttribute
+  _PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute
 > = PrimitiveAttribute<
-  _LEAF_ATTRIBUTE['_type'],
-  _LEAF_ATTRIBUTE['_required'],
-  _LEAF_ATTRIBUTE['_hidden'],
-  _LEAF_ATTRIBUTE['_key'],
-  _LEAF_ATTRIBUTE['_savedAs'],
-  Extract<_LEAF_ATTRIBUTE['_enum'], PrimitiveAttributeEnumValues<_LEAF_ATTRIBUTE['_type']>>,
-  Extract<_LEAF_ATTRIBUTE['_default'], PrimitiveAttributeDefaultValue<_LEAF_ATTRIBUTE['_type']>>
+  _PRIMITIVE_ATTRIBUTE[$type],
+  _PRIMITIVE_ATTRIBUTE[$required],
+  _PRIMITIVE_ATTRIBUTE[$hidden],
+  _PRIMITIVE_ATTRIBUTE[$key],
+  _PRIMITIVE_ATTRIBUTE[$savedAs],
+  Extract<_PRIMITIVE_ATTRIBUTE[$enum], PrimitiveAttributeEnumValues<_PRIMITIVE_ATTRIBUTE[$type]>>,
+  Extract<
+    _PRIMITIVE_ATTRIBUTE[$default],
+    PrimitiveAttributeDefaultValue<_PRIMITIVE_ATTRIBUTE[$type]>
+  >
 >

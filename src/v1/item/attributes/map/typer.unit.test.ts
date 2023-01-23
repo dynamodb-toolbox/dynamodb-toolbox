@@ -2,6 +2,16 @@ import type { A } from 'ts-toolbelt'
 
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
 import { string } from '../primitive'
+import {
+  $type,
+  $attributes,
+  $required,
+  $hidden,
+  $key,
+  $open,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
 import { map } from './typer'
 
@@ -14,26 +24,28 @@ describe('map', () => {
     const assertMapAttribute: A.Contains<
       typeof mapped,
       {
-        _type: 'map'
-        _attributes: {
+        [$type]: 'map'
+        [$attributes]: {
           str: typeof str
         }
-        _required: AtLeastOnce
-        _hidden: false
-        _key: false
-        _savedAs: undefined
-        _default: undefined
+        [$required]: AtLeastOnce
+        [$hidden]: false
+        [$key]: false
+        [$open]: false
+        [$savedAs]: undefined
+        [$default]: undefined
       }
     > = 1
     assertMapAttribute
 
     expect(mapped).toMatchObject({
-      _type: 'map',
-      _attributes: { str },
-      _required: 'atLeastOnce',
-      _key: false,
-      _savedAs: undefined,
-      _hidden: false
+      [$type]: 'map',
+      [$attributes]: { str },
+      [$required]: 'atLeastOnce',
+      [$key]: false,
+      [$open]: false,
+      [$savedAs]: undefined,
+      [$hidden]: false
     })
   })
 
@@ -45,20 +57,23 @@ describe('map', () => {
 
     const assertMapAttributeAtLeastOnce: A.Contains<
       typeof mappedAtLeastOnce,
-      { _required: AtLeastOnce }
+      { [$required]: AtLeastOnce }
     > = 1
     assertMapAttributeAtLeastOnce
-    const assertMapAttributeOnlyOnce: A.Contains<typeof mappedOnlyOnce, { _required: OnlyOnce }> = 1
+    const assertMapAttributeOnlyOnce: A.Contains<
+      typeof mappedOnlyOnce,
+      { [$required]: OnlyOnce }
+    > = 1
     assertMapAttributeOnlyOnce
-    const assertMapAttributeAlways: A.Contains<typeof mappedAlways, { _required: Always }> = 1
+    const assertMapAttributeAlways: A.Contains<typeof mappedAlways, { [$required]: Always }> = 1
     assertMapAttributeAlways
-    const assertMapAttributeNever: A.Contains<typeof mappedNever, { _required: Never }> = 1
+    const assertMapAttributeNever: A.Contains<typeof mappedNever, { [$required]: Never }> = 1
     assertMapAttributeNever
 
-    expect(mappedAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
-    expect(mappedOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
-    expect(mappedAlways).toMatchObject({ _required: 'always' })
-    expect(mappedNever).toMatchObject({ _required: 'never' })
+    expect(mappedAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
+    expect(mappedOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
+    expect(mappedAlways).toMatchObject({ [$required]: 'always' })
+    expect(mappedNever).toMatchObject({ [$required]: 'never' })
   })
 
   it('returns required map (method)', () => {
@@ -70,114 +85,117 @@ describe('map', () => {
 
     const assertMapAttributeAtLeastOnce: A.Contains<
       typeof mappedAtLeastOnce,
-      { _required: AtLeastOnce }
+      { [$required]: AtLeastOnce }
     > = 1
     assertMapAttributeAtLeastOnce
-    const assertMapAttributeOnlyOnce: A.Contains<typeof mappedOnlyOnce, { _required: OnlyOnce }> = 1
+    const assertMapAttributeOnlyOnce: A.Contains<
+      typeof mappedOnlyOnce,
+      { [$required]: OnlyOnce }
+    > = 1
     assertMapAttributeOnlyOnce
-    const assertMapAttributeAlways: A.Contains<typeof mappedAlways, { _required: Always }> = 1
+    const assertMapAttributeAlways: A.Contains<typeof mappedAlways, { [$required]: Always }> = 1
     assertMapAttributeAlways
-    const assertMapAttributeNever: A.Contains<typeof mappedNever, { _required: Never }> = 1
+    const assertMapAttributeNever: A.Contains<typeof mappedNever, { [$required]: Never }> = 1
     assertMapAttributeNever
-    const assertMapAttributeOpt: A.Contains<typeof mappedOpt, { _required: Never }> = 1
+    const assertMapAttributeOpt: A.Contains<typeof mappedOpt, { [$required]: Never }> = 1
     assertMapAttributeOpt
 
-    expect(mappedAtLeastOnce).toMatchObject({ _required: 'atLeastOnce' })
-    expect(mappedOnlyOnce).toMatchObject({ _required: 'onlyOnce' })
-    expect(mappedAlways).toMatchObject({ _required: 'always' })
-    expect(mappedNever).toMatchObject({ _required: 'never' })
-    expect(mappedOpt).toMatchObject({ _required: 'never' })
+    expect(mappedAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
+    expect(mappedOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
+    expect(mappedAlways).toMatchObject({ [$required]: 'always' })
+    expect(mappedNever).toMatchObject({ [$required]: 'never' })
+    expect(mappedOpt).toMatchObject({ [$required]: 'never' })
   })
 
   it('returns hidden map (option)', () => {
     const mapped = map({ str }, { hidden: true })
 
-    const assertMapAttribute: A.Contains<typeof mapped, { _hidden: true }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$hidden]: true }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ _hidden: true })
+    expect(mapped).toMatchObject({ [$hidden]: true })
   })
 
   it('returns hidden map (method)', () => {
     const mapped = map({ str }).hidden()
 
-    const assertMapAttribute: A.Contains<typeof mapped, { _hidden: true }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$hidden]: true }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ _hidden: true })
+    expect(mapped).toMatchObject({ [$hidden]: true })
   })
 
   it('returns key map (option)', () => {
     const mapped = map({ str }, { key: true })
 
-    const assertMapAttribute: A.Contains<typeof mapped, { _key: true }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$key]: true }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ _key: true })
+    expect(mapped).toMatchObject({ [$key]: true })
   })
 
   it('returns key map (method)', () => {
     const mapped = map({ str }).key()
 
-    const assertMapAttribute: A.Contains<typeof mapped, { _key: true }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$key]: true }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ _key: true })
+    expect(mapped).toMatchObject({ [$key]: true })
   })
 
   it('returns open map (option)', () => {
     const mapped = map({ str }, { open: true })
 
-    const assertMapAttribute: A.Contains<typeof mapped, { _open: true }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$open]: true }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ _open: true })
+    expect(mapped).toMatchObject({ [$open]: true })
   })
 
   it('returns open map (method)', () => {
     const mapped = map({ str }).open()
 
-    const assertMapAttribute: A.Contains<typeof mapped, { _open: true }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$open]: true }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ _open: true })
+    expect(mapped).toMatchObject({ [$open]: true })
   })
 
   it('returns savedAs map (option)', () => {
     const mapped = map({ str }, { savedAs: 'foo' })
 
-    const assertMapAttribute: A.Contains<typeof mapped, { _savedAs: 'foo' }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$savedAs]: 'foo' }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ _savedAs: 'foo' })
+    expect(mapped).toMatchObject({ [$savedAs]: 'foo' })
   })
 
   it('returns savedAs map (method)', () => {
     const mapped = map({ str }).savedAs('foo')
 
-    const assertMapAttribute: A.Contains<typeof mapped, { _savedAs: 'foo' }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$savedAs]: 'foo' }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ _savedAs: 'foo' })
+    expect(mapped).toMatchObject({ [$savedAs]: 'foo' })
   })
 
   describe('default', () => {
     it('accepts ComputedDefault as default value (option)', () => {
       const mapped = map({ str }, { default: ComputedDefault })
 
-      const assertMapAttribute: A.Contains<typeof mapped, { _default: ComputedDefault }> = 1
+      const assertMapAttribute: A.Contains<typeof mapped, { [$default]: ComputedDefault }> = 1
       assertMapAttribute
 
-      expect(mapped).toMatchObject({ _default: ComputedDefault })
+      expect(mapped).toMatchObject({ [$default]: ComputedDefault })
     })
 
     it('accepts ComputedDefault as default value (method)', () => {
       const mapped = map({ str }).default(ComputedDefault)
 
-      const assertMapAttribute: A.Contains<typeof mapped, { _default: ComputedDefault }> = 1
+      const assertMapAttribute: A.Contains<typeof mapped, { [$default]: ComputedDefault }> = 1
       assertMapAttribute
 
-      expect(mapped).toMatchObject({ _default: ComputedDefault })
+      expect(mapped).toMatchObject({ [$default]: ComputedDefault })
     })
   })
 
@@ -193,69 +211,69 @@ describe('map', () => {
     const assertMapAttribute: A.Contains<
       typeof mapped,
       {
-        _type: 'map'
-        _attributes: {
+        [$type]: 'map'
+        [$attributes]: {
           nested: {
-            _type: 'map'
-            _attributes: {
+            [$type]: 'map'
+            [$attributes]: {
               nestedAgain: {
-                _type: 'map'
-                _attributes: {
+                [$type]: 'map'
+                [$attributes]: {
                   str: typeof str
                 }
-                _required: AtLeastOnce
-                _hidden: true
-                _key: false
-                _savedAs: undefined
-                _default: undefined
+                [$required]: AtLeastOnce
+                [$hidden]: true
+                [$key]: false
+                [$savedAs]: undefined
+                [$default]: undefined
               }
             }
-            _required: AtLeastOnce
-            _hidden: false
-            _key: false
-            _savedAs: undefined
-            _default: undefined
+            [$required]: AtLeastOnce
+            [$hidden]: false
+            [$key]: false
+            [$savedAs]: undefined
+            [$default]: undefined
           }
         }
-        _required: AtLeastOnce
-        _hidden: false
-        _key: false
-        _savedAs: undefined
-        _default: undefined
+        [$required]: AtLeastOnce
+        [$hidden]: false
+        [$key]: false
+        [$savedAs]: undefined
+        [$default]: undefined
       }
     > = 1
     assertMapAttribute
 
     expect(mapped).toMatchObject({
-      _type: 'map',
-      _attributes: {
+      [$type]: 'map',
+      [$attributes]: {
         nested: {
-          _type: 'map',
-          _attributes: {
+          [$type]: 'map',
+          [$attributes]: {
             nestedAgain: {
-              _type: 'map',
-              _attributes: {
+              [$type]: 'map',
+              [$attributes]: {
                 str
               },
-              _required: 'atLeastOnce',
-              _hidden: true,
-              _key: false,
-              _savedAs: undefined,
-              _default: undefined
+              [$required]: 'atLeastOnce',
+              [$hidden]: true,
+              [$key]: false,
+              [$savedAs]: undefined,
+              [$default]: undefined
             }
           },
-          _required: 'atLeastOnce',
-          _hidden: false,
-          _key: false,
-          _savedAs: undefined,
-          _default: undefined
+          [$required]: 'atLeastOnce',
+          [$hidden]: false,
+          [$key]: false,
+          [$savedAs]: undefined,
+          [$default]: undefined
         }
       },
-      _required: 'atLeastOnce',
-      _hidden: false,
-      _key: false,
-      _savedAs: undefined,
-      _default: undefined
+      [$required]: 'atLeastOnce',
+      [$hidden]: false,
+      [$key]: false,
+      [$savedAs]: undefined,
+      [$default]: undefined
     })
   })
 })

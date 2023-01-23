@@ -1,6 +1,13 @@
 import type { O } from 'ts-toolbelt'
 
 import type { _Item, Always } from 'v1/item'
+import type {
+  $type,
+  $attributes,
+  $required,
+  $key,
+  $savedAs
+} from 'v1/item/attributes/constants/symbols'
 import type { TableV2, IndexableKeyType, HasSK } from 'v1/table'
 
 type Or<BOOL_A extends boolean, BOOL_B extends boolean> = BOOL_A extends true
@@ -13,14 +20,14 @@ type _NeedsKeyPartCompute<
   _ITEM extends _Item,
   KEY_PART_NAME extends string,
   KEY_PART_TYPE extends IndexableKeyType
-> = _ITEM['_attributes'] extends Record<
+> = _ITEM[$attributes] extends Record<
   KEY_PART_NAME,
-  { _type: KEY_PART_TYPE; _required: Always; _key: true; _savedAs: undefined }
+  { [$type]: KEY_PART_TYPE; [$required]: Always; [$key]: true; [$savedAs]: undefined }
 >
   ? false
   : O.SelectKeys<
-      _ITEM['_attributes'],
-      { _type: KEY_PART_TYPE; _required: Always; _key: true; _savedAs: KEY_PART_NAME }
+      _ITEM[$attributes],
+      { [$type]: KEY_PART_TYPE; [$required]: Always; [$key]: true; [$savedAs]: KEY_PART_NAME }
     > extends never
   ? true
   : false

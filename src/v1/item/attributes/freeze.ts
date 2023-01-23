@@ -1,3 +1,4 @@
+import { $type } from './constants/symbols'
 import { freezeAnyAttribute, _AnyAttribute, FreezeAnyAttribute } from './any'
 import { freezeConstantAttribute, _ConstantAttribute, FreezeConstantAttribute } from './constant'
 import {
@@ -37,7 +38,7 @@ export const freezeAttribute = <_ATTRIBUTE extends _Attribute>(
   attribute: _ATTRIBUTE,
   path: string
 ): FreezeAttribute<_ATTRIBUTE> => {
-  switch (attribute._type) {
+  switch (attribute[$type]) {
     case 'any':
       return freezeAnyAttribute(attribute, path) as any
     case 'constant':

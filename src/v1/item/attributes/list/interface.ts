@@ -1,6 +1,15 @@
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 import type { FreezeAttribute } from '../freeze'
 import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
+import {
+  $type,
+  $elements,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/symbols'
 
 import type { _ListAttributeElements, ListAttributeElements } from './types'
 
@@ -15,9 +24,9 @@ export interface _ListAttribute<
   SAVED_AS extends string | undefined = string | undefined,
   DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
 > extends _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
-  _type: 'list'
-  _elements: ELEMENTS
-  _default: DEFAULT
+  [$type]: 'list'
+  [$elements]: ELEMENTS
+  [$default]: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -73,10 +82,10 @@ export interface ListAttribute<
 }
 
 export type FreezeListAttribute<_LIST_ATTRIBUTE extends _ListAttribute> = ListAttribute<
-  FreezeAttribute<_LIST_ATTRIBUTE['_elements']>,
-  _LIST_ATTRIBUTE['_required'],
-  _LIST_ATTRIBUTE['_hidden'],
-  _LIST_ATTRIBUTE['_key'],
-  _LIST_ATTRIBUTE['_savedAs'],
-  _LIST_ATTRIBUTE['_default']
+  FreezeAttribute<_LIST_ATTRIBUTE[$elements]>,
+  _LIST_ATTRIBUTE[$required],
+  _LIST_ATTRIBUTE[$hidden],
+  _LIST_ATTRIBUTE[$key],
+  _LIST_ATTRIBUTE[$savedAs],
+  _LIST_ATTRIBUTE[$default]
 >

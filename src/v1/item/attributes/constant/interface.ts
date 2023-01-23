@@ -1,6 +1,8 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
+import { $type, $value, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
 import { ResolvedAttribute } from '../types'
+
 import { ConstantAttributeDefaultValue } from './types'
 
 /**
@@ -14,9 +16,9 @@ export type _ConstantAttribute<
   SAVED_AS extends string | undefined = string | undefined,
   DEFAULT extends ConstantAttributeDefaultValue<VALUE> = ConstantAttributeDefaultValue<VALUE>
 > = _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
-  _type: 'constant'
-  _value: VALUE
-  _default: DEFAULT
+  [$type]: 'constant'
+  [$value]: VALUE
+  [$default]: DEFAULT
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -74,10 +76,10 @@ export type ConstantAttribute<
 export type FreezeConstantAttribute<
   _CONSTANT_ATTRIBUTE extends _ConstantAttribute
 > = ConstantAttribute<
-  _CONSTANT_ATTRIBUTE['_value'],
-  _CONSTANT_ATTRIBUTE['_required'],
-  _CONSTANT_ATTRIBUTE['_hidden'],
-  _CONSTANT_ATTRIBUTE['_key'],
-  _CONSTANT_ATTRIBUTE['_savedAs'],
-  _CONSTANT_ATTRIBUTE['_default']
+  _CONSTANT_ATTRIBUTE[$value],
+  _CONSTANT_ATTRIBUTE[$required],
+  _CONSTANT_ATTRIBUTE[$hidden],
+  _CONSTANT_ATTRIBUTE[$key],
+  _CONSTANT_ATTRIBUTE[$savedAs],
+  _CONSTANT_ATTRIBUTE[$default]
 >

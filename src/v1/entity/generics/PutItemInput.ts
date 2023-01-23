@@ -23,6 +23,16 @@ import type {
   Always,
   ComputedDefault
 } from 'v1/item'
+import type {
+  $resolved,
+  $elements,
+  $attributes,
+  $value,
+  $required,
+  $key,
+  $open,
+  $default
+} from 'v1/item/attributes/constants/symbols'
 
 import type { EntityV2 } from '../class'
 
@@ -79,35 +89,35 @@ export type _PutItemInput<
 > = _SCHEMA extends _AnyAttribute
   ? ResolvedAttribute
   : _SCHEMA extends _ConstantAttribute
-  ? _SCHEMA['_value']
+  ? _SCHEMA[$value]
   : _SCHEMA extends _PrimitiveAttribute
-  ? NonNullable<_SCHEMA['_resolved']>
+  ? NonNullable<_SCHEMA[$resolved]>
   : _SCHEMA extends _SetAttribute
-  ? Set<_PutItemInput<_SCHEMA['_elements'], REQUIRE_HARD_DEFAULTS>>
+  ? Set<_PutItemInput<_SCHEMA[$elements], REQUIRE_HARD_DEFAULTS>>
   : _SCHEMA extends _ListAttribute
-  ? _PutItemInput<_SCHEMA['_elements'], REQUIRE_HARD_DEFAULTS>[]
+  ? _PutItemInput<_SCHEMA[$elements], REQUIRE_HARD_DEFAULTS>[]
   : _SCHEMA extends _MapAttribute | _Item
   ? O.Required<
       O.Partial<
         {
           // Keep all attributes
-          [KEY in keyof _SCHEMA['_attributes']]: _PutItemInput<
-            _SCHEMA['_attributes'][KEY],
+          [KEY in keyof _SCHEMA[$attributes]]: _PutItemInput<
+            _SCHEMA[$attributes][KEY],
             REQUIRE_HARD_DEFAULTS
           >
         }
       >,
       // Enforce Required attributes except those that have default (will be provided by the lib)
       | O.SelectKeys<
-          _SCHEMA['_attributes'],
-          { _required: AtLeastOnce | OnlyOnce | Always; _default: undefined }
+          _SCHEMA[$attributes],
+          { [$required]: AtLeastOnce | OnlyOnce | Always; [$default]: undefined }
         >
       // Add attributes with hard (non-computed) defaults if REQUIRE_HARD_DEFAULTS is true
       | (REQUIRE_HARD_DEFAULTS extends true
-          ? O.FilterKeys<_SCHEMA['_attributes'], { _default: undefined | ComputedDefault }>
+          ? O.FilterKeys<_SCHEMA[$attributes], { [$default]: undefined | ComputedDefault }>
           : never)
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (_SCHEMA extends { _open: true } ? Record<string, ResolvedAttribute> : {})
+      (_SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : {})
   : _SCHEMA extends EntityV2
   ? _PutItemInput<_SCHEMA['_item'], REQUIRE_HARD_DEFAULTS>
   : never

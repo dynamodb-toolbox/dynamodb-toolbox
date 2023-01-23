@@ -1,6 +1,7 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import { isBoolean, isString } from 'v1/utils/validation'
 
+import { $required, $hidden, $key, $savedAs } from '../constants/symbols'
 import { requiredOptionsSet } from '../constants/requiredOptions'
 import type { _AttributeProperties } from './interface'
 
@@ -12,41 +13,45 @@ import type { _AttributeProperties } from './interface'
  * @return void
  */
 export const validateAttributeProperties = (
-  { _required, _hidden, _key, _savedAs }: _AttributeProperties,
+  _attribute: _AttributeProperties,
   path?: string
 ): void => {
-  if (!requiredOptionsSet.has(_required)) {
+  const attributeRequired = _attribute[$required]
+  if (!requiredOptionsSet.has(attributeRequired)) {
     throw new InvalidAttributePropertyError({
       propertyName: 'required',
       expectedType: [...requiredOptionsSet].join(', '),
-      receivedValue: _required,
+      receivedValue: attributeRequired,
       path
     })
   }
 
-  if (!isBoolean(_hidden)) {
+  const attributeHidden = _attribute[$hidden]
+  if (!isBoolean(attributeHidden)) {
     throw new InvalidAttributePropertyError({
       propertyName: 'hidden',
       expectedType: 'boolean',
-      receivedValue: _hidden,
+      receivedValue: attributeHidden,
       path
     })
   }
 
-  if (!isBoolean(_key)) {
+  const attributeKey = _attribute[$key]
+  if (!isBoolean(attributeKey)) {
     throw new InvalidAttributePropertyError({
       propertyName: 'key',
       expectedType: 'boolean',
-      receivedValue: _key,
+      receivedValue: attributeKey,
       path
     })
   }
 
-  if (_savedAs !== undefined && !isString(_savedAs)) {
+  const attributeSavedAs = _attribute[$savedAs]
+  if (attributeSavedAs !== undefined && !isString(attributeSavedAs)) {
     throw new InvalidAttributePropertyError({
       propertyName: 'savedAs',
       expectedType: 'string',
-      receivedValue: _savedAs,
+      receivedValue: attributeSavedAs,
       path
     })
   }
