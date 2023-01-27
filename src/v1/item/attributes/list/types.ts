@@ -1,6 +1,6 @@
 import type { AtLeastOnce } from '../constants'
 import type { _Attribute, Attribute } from '../types/attribute'
-import { $required, $hidden, $savedAs, $default } from '../constants/symbols'
+import { $required, $hidden, $savedAs, $default } from '../constants/attributeOptions'
 
 export type _ListAttributeElements = _Attribute & {
   [$required]: AtLeastOnce

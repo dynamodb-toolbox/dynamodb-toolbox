@@ -1,6 +1,6 @@
 import type { _Item } from 'v1/item'
 import type { OmitUndefinedProperties } from 'v1/types'
-import type { $attributes } from 'v1/item/attributes/constants/symbols'
+import type { $attributes } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { _PutItemInput } from '../PutItemInput'
 

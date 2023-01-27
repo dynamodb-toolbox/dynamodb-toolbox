@@ -1,4 +1,4 @@
-import { $type } from './constants/symbols'
+import { $type } from './constants/attributeOptions'
 import { freezeAnyAttribute, _AnyAttribute, FreezeAnyAttribute } from './any'
 import { freezeConstantAttribute, _ConstantAttribute, FreezeConstantAttribute } from './constant'
 import {

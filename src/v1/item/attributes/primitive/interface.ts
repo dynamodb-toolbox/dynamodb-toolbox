@@ -9,7 +9,7 @@ import {
   $savedAs,
   $enum,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 import type {
   PrimitiveAttributeType,

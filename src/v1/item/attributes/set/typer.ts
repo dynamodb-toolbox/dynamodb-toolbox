@@ -10,7 +10,7 @@ import {
   $key,
   $savedAs,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 import type { _SetAttribute } from './interface'
 import { SetAttributeOptions, SET_ATTRIBUTE_DEFAULT_OPTIONS } from './options'

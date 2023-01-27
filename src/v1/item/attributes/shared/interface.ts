@@ -1,6 +1,6 @@
 import { RequiredOption } from '../constants/requiredOptions'
 
-import { $required, $hidden, $key, $savedAs } from '../constants/symbols'
+import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
 
 export interface _AttributeProperties<
   IS_REQUIRED extends RequiredOption = RequiredOption,
