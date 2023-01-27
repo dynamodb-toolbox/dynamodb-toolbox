@@ -1,6 +1,14 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
-import { $type, $value, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
+import {
+  $type,
+  $value,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/attributeOptions'
 import { ResolvedAttribute } from '../types'
 
 import { ConstantAttributeDefaultValue } from './types'

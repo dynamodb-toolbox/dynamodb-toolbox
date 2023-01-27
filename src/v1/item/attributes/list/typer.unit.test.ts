@@ -10,7 +10,7 @@ import {
   $key,
   $savedAs,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 import { list } from './typer'
 import {

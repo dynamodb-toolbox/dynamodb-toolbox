@@ -8,7 +8,12 @@ import type {
   Always,
   ComputedDefault
 } from 'v1/item'
-import type { $attributes, $required, $open, $default } from 'v1/item/attributes/constants/symbols'
+import type {
+  $attributes,
+  $required,
+  $open,
+  $default
+} from 'v1/item/attributes/constants/attributeOptions'
 
 import type { _AttributePutItem } from './attribute'
 

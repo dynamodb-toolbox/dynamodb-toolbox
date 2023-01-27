@@ -29,10 +29,9 @@ import type {
   $attributes,
   $value,
   $required,
-  $key,
   $open,
   $default
-} from 'v1/item/attributes/constants/symbols'
+} from 'v1/item/attributes/constants/attributeOptions'
 
 import type { EntityV2 } from '../class'
 

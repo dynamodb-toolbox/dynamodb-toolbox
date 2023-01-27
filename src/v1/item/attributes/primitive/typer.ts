@@ -3,14 +3,13 @@ import type { O } from 'ts-toolbelt'
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import {
   $type,
-  $resolved,
   $required,
   $hidden,
   $key,
   $savedAs,
   $enum,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 import type { _PrimitiveAttribute } from './interface'
 import { PrimitiveAttributeOptions, PRIMITIVE_DEFAULT_OPTIONS } from './options'
