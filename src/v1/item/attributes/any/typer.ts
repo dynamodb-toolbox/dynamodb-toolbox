@@ -1,20 +1,15 @@
-import type { O } from 'ts-toolbelt'
+import type { NarrowObject } from 'v1/types/narrowObject'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
 import type { _AnyAttribute } from './interface'
-import { AnyAttributeOptions, ANY_DEFAULT_OPTIONS } from './options'
+import { AnyAttributeOptions, AnyAttributeDefaultOptions, ANY_DEFAULT_OPTIONS } from './options'
 
-type AnyAttributeTyper = <
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends AnyAttributeDefaultValue = undefined
->(
-  options?: O.Partial<AnyAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
-) => _AnyAttribute<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+type AnyAttributeTyper = <OPTIONS extends Partial<AnyAttributeOptions> = AnyAttributeOptions>(
+  options?: NarrowObject<OPTIONS>
+) => _AnyAttribute<InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS>>
 
 /**
  * Define a new attribute of any type
@@ -22,14 +17,10 @@ type AnyAttributeTyper = <
  * @param options _(optional)_ Boolean Options
  */
 export const any: AnyAttributeTyper = <
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends AnyAttributeDefaultValue = undefined
+  OPTIONS extends Partial<AnyAttributeOptions> = AnyAttributeOptions
 >(
-  options?: O.Partial<AnyAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
-): _AnyAttribute<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
+  options?: NarrowObject<OPTIONS>
+) => {
   const appliedOptions = { ...ANY_DEFAULT_OPTIONS, ...options }
 
   return {
@@ -47,5 +38,7 @@ export const any: AnyAttributeTyper = <
     key: () => any({ ...appliedOptions, key: true }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => any({ ...appliedOptions, default: nextDefault })
-  } as _AnyAttribute<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  } as _AnyAttribute<
+    InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS>
+  >
 }
