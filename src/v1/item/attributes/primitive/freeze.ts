@@ -3,7 +3,15 @@ import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 
 import { validateAttributeProperties } from '../shared/validate'
-import { $type, $required, $hidden, $key, $savedAs, $enum, $default } from '../constants/symbols'
+import {
+  $type,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $enum,
+  $default
+} from '../constants/attributeOptions'
 
 import type { _PrimitiveAttribute, FreezePrimitiveAttribute } from './interface'
 import type {

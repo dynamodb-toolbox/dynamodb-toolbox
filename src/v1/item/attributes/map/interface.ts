@@ -11,7 +11,7 @@ import {
   $open,
   $savedAs,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 /**
  * MapAttribute attribute interface

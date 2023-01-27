@@ -8,7 +8,7 @@ import {
   $key,
   $savedAs,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 import { _SetAttribute, FreezeSetAttribute } from './interface'
 

@@ -8,7 +8,7 @@ import type {
   _ListAttribute,
   _MapAttribute
 } from 'v1/item'
-import { $default } from 'v1/item/attributes/constants/symbols'
+import { $default } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { _AttributePutItem } from '../_PutItem'
 

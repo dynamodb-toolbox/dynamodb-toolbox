@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
-import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
+import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
 
 import { any } from './typer'
 
