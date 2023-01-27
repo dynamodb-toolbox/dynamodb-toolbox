@@ -1,7 +1,7 @@
 import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import { isBoolean, isString } from 'v1/utils/validation'
 
-import { $required, $hidden, $key, $savedAs } from '../constants/symbols'
+import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
 import { requiredOptionsSet } from '../constants/requiredOptions'
 import type { _AttributeProperties } from './interface'
 

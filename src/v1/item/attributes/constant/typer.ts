@@ -1,7 +1,15 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import { $type, $value, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
+import {
+  $type,
+  $value,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/attributeOptions'
 import { ResolvedAttribute } from '../types'
 
 import type { _ConstantAttribute } from './interface'

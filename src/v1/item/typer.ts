@@ -1,5 +1,5 @@
 import type { _MapAttributeAttributes, Narrow } from './attributes/types'
-import { $type, $attributes, $open } from './attributes/constants/symbols'
+import { $type, $attributes, $open } from './attributes/constants/attributeOptions'
 import type { _Item } from './interface'
 
 type ItemTyper = <_MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = {}>(

@@ -1,5 +1,5 @@
 import type { _ListAttribute } from 'v1/item'
-import type { $elements, $required } from 'v1/item/attributes/constants/symbols'
+import type { $elements, $required } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { _AttributePutItem } from './attribute'
 
