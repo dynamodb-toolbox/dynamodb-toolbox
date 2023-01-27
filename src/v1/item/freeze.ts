@@ -8,7 +8,7 @@ import {
   $open,
   $savedAs,
   $required
-} from './attributes/constants/symbols'
+} from './attributes/constants/attributeOptions'
 
 type ItemFreezer = <_ITEM extends _Item>(item: _ITEM) => FreezeItem<_ITEM>
 

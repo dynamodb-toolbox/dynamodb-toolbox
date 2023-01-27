@@ -10,7 +10,7 @@ import {
   $savedAs,
   $enum,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 import { string, number, boolean, binary } from './typer'
 import {

@@ -1,9 +1,8 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
+import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
 
-import type { AnyAttributeDefaultValue } from './types'
 import type { _AnyAttribute } from './interface'
 import { AnyAttributeOptions, ANY_DEFAULT_OPTIONS } from './options'
 

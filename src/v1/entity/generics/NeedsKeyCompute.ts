@@ -7,7 +7,7 @@ import type {
   $required,
   $key,
   $savedAs
-} from 'v1/item/attributes/constants/symbols'
+} from 'v1/item/attributes/constants/attributeOptions'
 import type { TableV2, IndexableKeyType, HasSK } from 'v1/table'
 
 type Or<BOOL_A extends boolean, BOOL_B extends boolean> = BOOL_A extends true

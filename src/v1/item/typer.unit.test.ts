@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { item } from './typer'
 import { boolean, binary, number, string, set, list, map } from './attributes'
-import { $type, $attributes, $open } from './attributes/constants/symbols'
+import { $type, $attributes, $open } from './attributes/constants/attributeOptions'
 
 describe('item', () => {
   it('primitives', () => {
