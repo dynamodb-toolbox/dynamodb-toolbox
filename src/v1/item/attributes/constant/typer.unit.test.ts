@@ -1,7 +1,15 @@
 import type { A } from 'ts-toolbelt'
 
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
-import { $type, $value, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
+import {
+  $type,
+  $value,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/attributeOptions'
 
 import { constant } from './typer'
 import { freezeConstantAttribute, InvalidDefaultValueError } from './freeze'

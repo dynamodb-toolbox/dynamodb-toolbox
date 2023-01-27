@@ -10,7 +10,7 @@ import {
   $open,
   $savedAs,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 import type { _MapAttribute, FreezeMapAttribute } from './interface'
 

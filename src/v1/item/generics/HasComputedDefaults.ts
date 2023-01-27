@@ -6,7 +6,7 @@ import type {
   _MapAttribute,
   ComputedDefault
 } from '../attributes'
-import { $elements, $attributes, $default } from '../attributes/constants/symbols'
+import { $elements, $attributes, $default } from '../attributes/constants/attributeOptions'
 
 // TODO: Required in Entity constructor... See if possible to use only Item
 /**

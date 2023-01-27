@@ -1,6 +1,6 @@
 import { _MapAttributeAttributes, MapAttributeAttributes, RequiredOption } from './attributes'
 import { FreezeAttribute } from './attributes/freeze'
-import { $type, $attributes, $open } from './attributes/constants/symbols'
+import { $type, $attributes, $open } from './attributes/constants/attributeOptions'
 
 /**
  * Entity items shape

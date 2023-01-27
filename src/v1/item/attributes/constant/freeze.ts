@@ -3,7 +3,15 @@ import isEqual from 'lodash.isequal'
 import { isComputedDefault } from 'v1/item/utils/isComputedDefault'
 import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
 
-import { $type, $value, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
+import {
+  $type,
+  $value,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/attributeOptions'
 import { validateAttributeProperties } from '../shared/validate'
 import { ResolvedAttribute } from '../types'
 

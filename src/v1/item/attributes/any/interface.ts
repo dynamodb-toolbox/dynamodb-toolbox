@@ -1,6 +1,12 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
-import type { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
+import type {
+  $type,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default
+} from '../constants/attributeOptions'
 
 import type { AnyAttributeDefaultValue } from './types'
 
