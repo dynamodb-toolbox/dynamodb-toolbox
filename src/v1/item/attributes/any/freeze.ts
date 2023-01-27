@@ -9,8 +9,11 @@ import {
   AttributeOptionNameSymbol
 } from '../constants/attributeOptions'
 
+import type { _AnyAttribute, AnyAttributeStateConstraint, AnyAttribute } from './interface'
 
-import type { _AnyAttribute, FreezeAnyAttribute } from './interface'
+export type FreezeAnyAttribute<_ANY_ATTRIBUTE extends _AnyAttribute> = AnyAttribute<
+  { [KEY in keyof AnyAttributeStateConstraint]: _ANY_ATTRIBUTE[AttributeOptionNameSymbol[KEY]] }
+>
 
 type AnyAttributeFreezer = <_ANY_ATTRIBUTE extends _AnyAttribute>(
   _anyAttribute: _ANY_ATTRIBUTE,
