@@ -36,7 +36,7 @@ export type $enum = typeof $enum
 export const $savedAs = Symbol()
 export type $savedAs = typeof $savedAs
 
-export type $AttributeOption =
+export type $AttributeOptionSymbol =
   | $type
   | $resolved
   | $elements
@@ -80,7 +80,7 @@ export type AttributeOptionNameSymbol = {
   savedAs: $savedAs
 }
 
-export type AttributeOptionName = AttributeOptionSymbolName[$AttributeOption]
+export type AttributeOptionName = AttributeOptionSymbolName[$AttributeOptionSymbol]
 
 export type AttributeOptionsConstraints = {
   required: RequiredOption
