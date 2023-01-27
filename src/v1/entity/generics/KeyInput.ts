@@ -29,7 +29,7 @@ import type {
   $key,
   $open,
   $default
-} from 'v1/item/attributes/constants/symbols'
+} from 'v1/item/attributes/constants/attributeOptions'
 
 import { EntityV2 } from '../class'
 

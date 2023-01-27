@@ -11,7 +11,7 @@ import {
   $open,
   $savedAs,
   $default
-} from '../constants/symbols'
+} from '../constants/attributeOptions'
 
 import type { _MapAttribute } from './interface'
 import { MapAttributeOptions, MAPPED_DEFAULT_OPTIONS } from './options'

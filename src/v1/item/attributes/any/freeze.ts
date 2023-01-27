@@ -1,5 +1,14 @@
 import { validateAttributeProperties } from '../shared/validate'
-import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/symbols'
+import {
+  $type,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $default,
+  AttributeOptionNameSymbol
+} from '../constants/attributeOptions'
+
 
 import type { _AnyAttribute, FreezeAnyAttribute } from './interface'
 

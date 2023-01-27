@@ -1,5 +1,5 @@
 import type { _ConstantAttribute } from 'v1/item'
-import type { $value, $required } from 'v1/item/attributes/constants/symbols'
+import type { $value, $required } from 'v1/item/attributes/constants/attributeOptions'
 
 export type _ConstantAttributePutItem<
   _CONSTANT_ATTRIBUTE extends _ConstantAttribute

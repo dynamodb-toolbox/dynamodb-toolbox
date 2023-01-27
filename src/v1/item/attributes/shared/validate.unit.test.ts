@@ -1,5 +1,5 @@
 import { requiredOptionsSet, Never } from '../constants/requiredOptions'
-import { $required, $hidden, $key, $savedAs } from '../constants/symbols'
+import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
 
 import { _AttributeProperties } from './interface'
 import { validateAttributeProperties, InvalidAttributePropertyError } from './validate'
