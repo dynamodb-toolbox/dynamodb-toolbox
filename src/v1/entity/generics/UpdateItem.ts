@@ -48,7 +48,7 @@ export type UpdateItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA exte
       // Enforce attributes that have hard default
       | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
   ? UpdateItem<SCHEMA['item']>
   : never

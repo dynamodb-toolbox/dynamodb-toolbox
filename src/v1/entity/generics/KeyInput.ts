@@ -66,7 +66,7 @@ export type KeyInput<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extend
         O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
   ? KeyInput<SCHEMA['item']>
   : never
@@ -99,7 +99,7 @@ export type _KeyInput<SCHEMA extends EntityV2 | _Item | _Attribute> = SCHEMA ext
         O.FilterKeys<SCHEMA[$attributes], { [$default]: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : {})
+      (SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
   ? _KeyInput<SCHEMA['_item']>
   : never
