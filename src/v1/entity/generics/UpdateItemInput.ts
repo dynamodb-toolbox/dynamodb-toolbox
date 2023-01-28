@@ -51,7 +51,7 @@ export type UpdateItemInput<
         O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
   ? UpdateItemInput<SCHEMA['item']>
   : never
