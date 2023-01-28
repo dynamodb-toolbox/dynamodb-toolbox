@@ -20,7 +20,7 @@ export const putItemParams = <ENTITY extends EntityV2>(
   const validInput = parseEntityPutCommandInput<ENTITY>(entity, input)
 
   // Important to do it before renaming as validInput is muted (to improve?)
-  let keyInput = entity.computeKey ? entity.computeKey(validInput) : undefined
+  const keyInput = entity.computeKey ? entity.computeKey(validInput) : undefined
 
   const renamedInput = renameSavedAsAttributes(entity.item, validInput)
 

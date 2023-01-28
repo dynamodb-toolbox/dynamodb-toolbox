@@ -3,8 +3,6 @@ import { TableV2, PrimaryKey } from 'v1/table'
 
 import type {
   _NeedsKeyCompute,
-  _PutItem,
-  _PutItemInput,
   KeyInput,
   _KeyInput,
   _ItemPutDefaultsComputer,

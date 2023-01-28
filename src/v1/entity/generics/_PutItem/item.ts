@@ -2,13 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import type {
   _Item,
-  _Attribute,
   ResolvedAttribute,
-  _AnyAttribute,
-  _PrimitiveAttribute,
-  _SetAttribute,
-  _ListAttribute,
-  _MapAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -34,4 +28,4 @@ export type _ItemPutItem<_ITEM extends _Item> = O.Required<
   // Enforce attributes that have hard default
   | O.FilterKeys<_ITEM[$attributes], { [$default]: undefined | ComputedDefault }>
 > & // Add Record<string, ResolvedAttribute> if map is open
-  (_ITEM extends { [$open]: true } ? Record<string, ResolvedAttribute> : {})
+  (_ITEM extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
