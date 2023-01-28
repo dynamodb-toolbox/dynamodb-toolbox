@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { putItem } from 'v1/commands'
 
 import { UserEntity } from '../entity'

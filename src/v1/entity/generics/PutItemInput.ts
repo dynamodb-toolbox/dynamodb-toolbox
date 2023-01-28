@@ -76,7 +76,7 @@ export type PutItemInput<
           ? O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
           : never)
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
   ? PutItemInput<SCHEMA['item'], REQUIRE_HARD_DEFAULTS>
   : never
@@ -116,7 +116,7 @@ export type _PutItemInput<
           ? O.FilterKeys<_SCHEMA[$attributes], { [$default]: undefined | ComputedDefault }>
           : never)
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (_SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : {})
+      (_SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
   : _SCHEMA extends EntityV2
   ? _PutItemInput<_SCHEMA['_item'], REQUIRE_HARD_DEFAULTS>
   : never

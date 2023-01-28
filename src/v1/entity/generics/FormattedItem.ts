@@ -20,7 +20,7 @@ import { EntityV2 } from '../class'
 /**
  * Returned item of a fetch command (GET, QUERY ...) for a given Entity, Item or Attribute
  *
- * @param Schema Entity | Item | Attribute
+ * @param Schema Entity | Item | Attribute
  * @return Object
  */
 export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
@@ -49,7 +49,7 @@ export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA e
       // (...but not so sure about that anymore, props can have computed default but still be optional)
       | O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : {})
+      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
   ? FormattedItem<SCHEMA['item']>
   : never
