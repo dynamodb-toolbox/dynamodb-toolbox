@@ -58,7 +58,7 @@ describe('get', () => {
   })
 
   it('filters out extra data', async () => {
-    let { Key } = getItemParams(TestEntity, {
+    const { Key } = getItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error
