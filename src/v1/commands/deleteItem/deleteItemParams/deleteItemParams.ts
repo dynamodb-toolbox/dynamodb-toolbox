@@ -19,7 +19,7 @@ export const deleteItemParams = <ENTITY extends EntityV2>(
   const validKeyInput = parseEntityKeyInput<ENTITY>(entity, input)
 
   // Important to do it before renaming as validKeyInput is muted (to improve?)
-  let keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : undefined
+  const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : undefined
 
   const renamedInput = renameSavedAsAttributes(entity.item, validKeyInput)
 

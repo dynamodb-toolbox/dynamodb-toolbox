@@ -39,7 +39,7 @@ export type _MapAttributePutItem<_MAP_ATTRIBUTE extends _MapAttribute> = _MAP_AT
           // Enforce attributes that have hard default
           | O.FilterKeys<_MAP_ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
         > & // Add Record<string, ResolvedAttribute> if map is open
-          (_MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : {}))
+          (_MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown))
   : O.Required<
       O.Partial<
         {
@@ -54,4 +54,4 @@ export type _MapAttributePutItem<_MAP_ATTRIBUTE extends _MapAttribute> = _MAP_AT
       // Enforce attributes that have hard default
       | O.FilterKeys<_MAP_ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (_MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : {})
+      (_MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)

@@ -54,7 +54,7 @@ describe('delete', () => {
   })
 
   it('filters out extra data', async () => {
-    let { Key } = deleteItemParams(TestEntity, {
+    const { Key } = deleteItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',
       // @ts-expect-error

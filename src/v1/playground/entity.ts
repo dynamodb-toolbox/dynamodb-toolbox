@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ComputedDefault, number, set, string, map, list, item } from 'v1/item'
 import { EntityV2, PutItemInput, SavedItem, FormattedItem, KeyInput, PutItem } from 'v1/entity'
 
