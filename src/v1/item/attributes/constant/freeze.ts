@@ -10,12 +10,25 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $default,
+  AttributeOptionNameSymbol
 } from '../constants/attributeOptions'
 import { validateAttributeProperties } from '../shared/validate'
 import { ResolvedAttribute } from '../types'
 
-import type { _ConstantAttribute, FreezeConstantAttribute } from './interface'
+import {
+  _ConstantAttribute,
+  ConstantAttributeStateConstraint,
+  ConstantAttribute
+} from './interface'
+
+export type FreezeConstantAttribute<
+  _CONSTANT_ATTRIBUTE extends _ConstantAttribute
+> = ConstantAttribute<
+  {
+    [KEY in keyof ConstantAttributeStateConstraint]: _CONSTANT_ATTRIBUTE[AttributeOptionNameSymbol[KEY]]
+  }
+>
 
 type ConstantAttributeFreezer = <_CONSTANT_ATTRIBUTE extends _ConstantAttribute>(
   _constantAttribute: _CONSTANT_ATTRIBUTE,
@@ -29,12 +42,7 @@ type ConstantAttributeFreezer = <_CONSTANT_ATTRIBUTE extends _ConstantAttribute>
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeConstantAttribute: ConstantAttributeFreezer = <
-  _CONSTANT_ATTRIBUTE extends _ConstantAttribute
->(
-  _constantAttribute: _CONSTANT_ATTRIBUTE,
-  path: string
-): FreezeConstantAttribute<_CONSTANT_ATTRIBUTE> => {
+export const freezeConstantAttribute: ConstantAttributeFreezer = (_constantAttribute, path) => {
   validateAttributeProperties(_constantAttribute, path)
 
   const constValue = _constantAttribute[$value]
