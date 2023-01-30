@@ -27,10 +27,7 @@ type AnyAttributeFreezer = <_ANY_ATTRIBUTE extends _AnyAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeAnyAttribute: AnyAttributeFreezer = <_ANY_ATTRIBUTE extends _AnyAttribute>(
-  _anyAttribute: _ANY_ATTRIBUTE,
-  path: string
-): FreezeAnyAttribute<_ANY_ATTRIBUTE> => {
+export const freezeAnyAttribute: AnyAttributeFreezer = (_anyAttribute, path) => {
   validateAttributeProperties(_anyAttribute, path)
 
   return {

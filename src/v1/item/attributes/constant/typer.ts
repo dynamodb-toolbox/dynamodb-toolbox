@@ -1,4 +1,4 @@
-import type { O } from 'ts-toolbelt'
+import type { NarrowObject } from 'v1/types/narrowObject'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import {
@@ -10,35 +10,29 @@ import {
   $savedAs,
   $default
 } from '../constants/attributeOptions'
-import { ResolvedAttribute } from '../types'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
+import type { ResolvedAttribute } from '../types'
 
 import type { _ConstantAttribute } from './interface'
-import { ConstAttributeOptions, CONST_DEFAULT_OPTIONS } from './options'
-import type { ConstantAttributeDefaultValue } from './types'
+import {
+  ConstantAttributeOptions,
+  ConstantAttributeDefaultOptions,
+  CONSTANT_DEFAULT_OPTIONS
+} from './options'
 
-/**
- * @debt refactor "Use ts-toolbelt with increased version when possible"
- */
-type Narrow<A> =
-  | (A extends [] ? [] : never)
-  | (A extends string | number | boolean ? A : never)
-  | {
-      [K in keyof A]: A[K] extends (...args: unknown[]) => unknown ? A[K] : Narrow<A[K]>
-    }
-
-type ConstantTyper = <
-  VALUE extends ResolvedAttribute,
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends ConstantAttributeDefaultValue<VALUE> = undefined
+type ConstantAttributeTyper = <
+  VALUE extends ResolvedAttribute = ResolvedAttribute,
+  OPTIONS extends Partial<ConstantAttributeOptions<VALUE>> = ConstantAttributeOptions<VALUE>
 >(
-  _elements: Narrow<VALUE>,
-  options?: O.Partial<
-    ConstAttributeOptions<VALUE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  _elements: VALUE,
+  options?: NarrowObject<OPTIONS>
+) => _ConstantAttribute<
+  { [$value]: VALUE } & InferStateFromOptions<
+    ConstantAttributeOptions<VALUE>,
+    ConstantAttributeDefaultOptions,
+    OPTIONS
   >
-) => _ConstantAttribute<VALUE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+>
 
 /**
  * Define a new constant attribute
@@ -46,20 +40,14 @@ type ConstantTyper = <
  * @param value Valid DynamoDB value
  * @param options _(optional)_ Constant Options
  */
-export const constant: ConstantTyper = <
+export const constant: ConstantAttributeTyper = <
   VALUE extends ResolvedAttribute = ResolvedAttribute,
-  IS_REQUIRED extends RequiredOption = RequiredOption,
-  IS_HIDDEN extends boolean = boolean,
-  IS_KEY extends boolean = boolean,
-  SAVED_AS extends string | undefined = string | undefined,
-  DEFAULT extends ConstantAttributeDefaultValue<VALUE> = ConstantAttributeDefaultValue<VALUE>
+  OPTIONS extends Partial<ConstantAttributeOptions<VALUE>> = ConstantAttributeOptions<VALUE>
 >(
-  value: Narrow<VALUE>,
-  options?: O.Partial<
-    ConstAttributeOptions<VALUE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
-  >
-): _ConstantAttribute<VALUE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
-  const appliedOptions = { ...CONST_DEFAULT_OPTIONS, ...options }
+  value: VALUE,
+  options?: NarrowObject<OPTIONS>
+) => {
+  const appliedOptions = { ...CONSTANT_DEFAULT_OPTIONS, ...options }
 
   return {
     [$type]: 'constant',
@@ -77,5 +65,11 @@ export const constant: ConstantTyper = <
     key: () => constant(value, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => constant(value, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => constant(value, { ...appliedOptions, default: nextDefault })
-  } as _ConstantAttribute<VALUE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  } as _ConstantAttribute<
+    { [$value]: VALUE } & InferStateFromOptions<
+      ConstantAttributeOptions<VALUE>,
+      ConstantAttributeDefaultOptions,
+      OPTIONS
+    >
+  >
 }
