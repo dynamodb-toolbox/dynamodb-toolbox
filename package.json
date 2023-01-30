@@ -10,7 +10,7 @@
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "test-types": "tsd",
     "check-types": "tsc --noEmit",
-    "lint": "eslint .",
+    "lint": "eslint src/v1",
     "prettier": "prettier --check 'src/**/*.(js|ts)'",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
@@ -24,8 +24,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "deep-copy": "^1.4.2",
     "@aws-sdk/util-dynamodb": "^3.226.0",
+    "deep-copy": "^1.4.2",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0",
     "ts-toolbelt": "^9.6.0"
@@ -48,9 +48,9 @@
     "node": ">=14.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.2.1",
     "@aws-sdk/client-dynamodb": "^3.145.0",
     "@aws-sdk/lib-dynamodb": "^3.245.0",
+    "@types/jest": "^29.2.1",
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/lodash.isequal": "^4.5.6",
     "@types/node": "^14.14.16",
@@ -60,6 +60,10 @@
     "coveralls": "^3.1.0",
     "dynalite": "^3.2.1",
     "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "jest": "^29.2.2",
     "lint-staged": "^13.1.0",
     "mockdate": "^3.0.2",
