@@ -1,4 +1,4 @@
-import type { RequiredOption } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { ComputedDefault } from '../constants/computedDefault'
 
 // Note: May sound like a duplicate of AnyAttributeState but actually adds JSDocs
@@ -34,7 +34,7 @@ export interface SetAttributeOptions {
 }
 
 export type SetAttributeDefaultOptions = {
-  required: 'atLeastOnce'
+  required: AtLeastOnce
   hidden: false
   key: false
   savedAs: undefined

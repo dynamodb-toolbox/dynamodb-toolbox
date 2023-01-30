@@ -1,6 +1,6 @@
-import type { O } from 'ts-toolbelt'
+import type { NarrowObject } from 'v1/types/narrowObject'
 
-import { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import type { RequiredOption, AtLeastOnce } from '../constants'
 import {
   $type,
   $elements,
@@ -10,22 +10,25 @@ import {
   $savedAs,
   $default
 } from '../constants/attributeOptions'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
 import type { _ListAttributeElements } from './types'
 import type { _ListAttribute } from './interface'
-import { ListAttributeOptions, LIST_DEFAULT_OPTIONS } from './options'
+import { ListAttributeOptions, ListAttributeDefaultOptions, LIST_DEFAULT_OPTIONS } from './options'
 
-type ListTyper = <
+type ListAttributeTyper = <
   ELEMENTS extends _ListAttributeElements,
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends ComputedDefault | undefined = undefined
+  OPTIONS extends Partial<ListAttributeOptions> = ListAttributeOptions
 >(
-  _elements: ELEMENTS,
-  options?: O.Partial<ListAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
-) => _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  elements: ELEMENTS,
+  options?: NarrowObject<OPTIONS>
+) => _ListAttribute<
+  { [$elements]: ELEMENTS } & InferStateFromOptions<
+    ListAttributeOptions,
+    ListAttributeDefaultOptions,
+    OPTIONS
+  >
+>
 
 /**
  * Define a new list attribute
@@ -38,17 +41,13 @@ type ListTyper = <
  * @param elements Attribute (With constraints)
  * @param options _(optional)_ List Options
  */
-export const list: ListTyper = <
+export const list: ListAttributeTyper = <
   ELEMENTS extends _ListAttributeElements,
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends ComputedDefault | undefined = undefined
+  OPTIONS extends Partial<ListAttributeOptions> = ListAttributeOptions
 >(
   elements: ELEMENTS,
-  options?: O.Partial<ListAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
-): _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
+  options?: NarrowObject<OPTIONS>
+) => {
   const appliedOptions = { ...LIST_DEFAULT_OPTIONS, ...options }
 
   return {
@@ -67,5 +66,11 @@ export const list: ListTyper = <
     key: () => list(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(elements, { ...appliedOptions, default: nextDefault })
-  } as _ListAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  } as _ListAttribute<
+    { [$elements]: ELEMENTS } & InferStateFromOptions<
+      ListAttributeOptions,
+      ListAttributeDefaultOptions,
+      OPTIONS
+    >
+  >
 }

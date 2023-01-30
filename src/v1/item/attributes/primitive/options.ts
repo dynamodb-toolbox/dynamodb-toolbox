@@ -1,4 +1,4 @@
-import type { RequiredOption } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
 import type {
   PrimitiveAttributeType,
@@ -43,7 +43,7 @@ export type PrimitiveAttributeOptions<
 }
 
 export type PrimitiveAttributeDefaultOptions = {
-  required: 'atLeastOnce'
+  required: AtLeastOnce
   hidden: false
   key: false
   savedAs: undefined
