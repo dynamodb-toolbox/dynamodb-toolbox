@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import {
+import type {
   $type,
   $resolved,
   $required,
@@ -18,7 +18,7 @@ import type {
   PrimitiveAttributeEnumValues,
   PrimitiveAttributeDefaultValue
 } from './types'
-import { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
 
 interface _PrimitiveAttributeStateConstraint<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
@@ -110,16 +110,9 @@ export type PrimitiveAttributeStateConstraint<
 
 export type PrimitiveAttribute<
   STATE extends PrimitiveAttributeStateConstraint = PrimitiveAttributeStateConstraint
-> = {
+> = STATE & {
   path: string
-  type: STATE['type']
   resolved?: STATE['enum'] extends ResolvePrimitiveAttributeType<STATE['type']>[]
     ? STATE['enum'][number]
     : ResolvePrimitiveAttributeType<STATE['type']>
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  enum: STATE['enum']
-  default: STATE['default']
 }

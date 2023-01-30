@@ -1,4 +1,4 @@
-import { freezeAttribute } from '../freeze'
+import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
 import {
   $type,
@@ -10,7 +10,16 @@ import {
   $default
 } from '../constants/attributeOptions'
 
-import { _SetAttribute, FreezeSetAttribute } from './interface'
+import type { _SetAttribute, SetAttribute } from './interface'
+
+export type FreezeSetAttribute<_SET_ATTRIBUTE extends _SetAttribute> = SetAttribute<{
+  elements: FreezeAttribute<_SET_ATTRIBUTE[$elements]>
+  required: _SET_ATTRIBUTE[$required]
+  hidden: _SET_ATTRIBUTE[$hidden]
+  key: _SET_ATTRIBUTE[$key]
+  savedAs: _SET_ATTRIBUTE[$savedAs]
+  default: _SET_ATTRIBUTE[$default]
+}>
 
 type SetAttributeFreezer = <_SET_ATTRIBUTE extends _SetAttribute>(
   _setAttribute: _SET_ATTRIBUTE,
