@@ -1,4 +1,4 @@
-import type { RequiredOption } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { ResolvedAttribute } from '../types'
 
 import type { ConstantAttributeDefaultValue } from './types'
@@ -36,7 +36,7 @@ export interface ConstantAttributeOptions<VALUE extends ResolvedAttribute = Reso
 }
 
 export type ConstantAttributeDefaultOptions = {
-  required: 'atLeastOnce'
+  required: AtLeastOnce
   hidden: false
   key: false
   savedAs: undefined

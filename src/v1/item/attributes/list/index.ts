@@ -1,6 +1,7 @@
 export { list } from './typer'
-export type { _ListAttribute, ListAttribute, FreezeListAttribute } from './interface'
+export type { _ListAttribute, ListAttribute } from './interface'
 export {
+  FreezeListAttribute,
   HiddenListAttributeElementsError,
   SavedAsListAttributeElementsError,
   OptionalListAttributeElementsError,
