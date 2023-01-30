@@ -1,35 +1,51 @@
-import type { AttributeOptions } from '../shared/options'
-import { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+
+// Note: May sound like a duplicate of AnyAttributeState but actually adds JSDocs
 
 /**
  * Input options of MapAttribute Attribute
  */
-export interface MapAttributeOptions<
-  IS_REQUIRED extends RequiredOption = RequiredOption,
-  IS_HIDDEN extends boolean = boolean,
-  IS_KEY extends boolean = boolean,
-  IS_OPEN extends boolean = boolean,
-  SAVED_AS extends string | undefined = string | undefined,
-  DEFAULT extends ComputedDefault | undefined = ComputedDefault | undefined
-> extends AttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> {
+export interface MapAttributeOptions {
+  /**
+   * Tag attribute as required. Possible values are:
+   * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
+   * - `"never"`: Optional in PUTs and UPDATEs
+   * - `"always"`: Required in PUTs and UPDATEs
+   * - `"onlyOnce"`: Required in PUTs, denied in UPDATEs
+   */
+  required: RequiredOption
+  /**
+   * Hide attribute after fetch commands and formatting
+   */
+  hidden: boolean
+  /**
+   * Tag attribute as needed for Primary Key computing
+   */
+  key: boolean
   /**
    * Accept additional attributes of any type
    */
-  open: IS_OPEN
+  open: boolean
+  /**
+   * Rename attribute before save commands
+   */
+  savedAs: string | undefined
   /**
    * Tag attribute as having a computed default value
    */
-  default: DEFAULT
+  default: ComputedDefault | undefined
 }
 
-export const MAPPED_DEFAULT_OPTIONS: MapAttributeOptions<
-  AtLeastOnce,
-  false,
-  false,
-  false,
-  undefined,
-  undefined
-> = {
+export type MapAttributeDefaultOptions = {
+  required: AtLeastOnce
+  hidden: false
+  key: false
+  open: false
+  savedAs: undefined
+  default: undefined
+}
+
+export const MAP_DEFAULT_OPTIONS: MapAttributeDefaultOptions = {
   required: 'atLeastOnce',
   hidden: false,
   key: false,
