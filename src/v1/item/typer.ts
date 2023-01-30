@@ -5,7 +5,7 @@ import type { _Item } from './interface'
 type ItemTyper = <
   _MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = Record<never, _Attribute>
 >(
-  _attributes: Narrow<_MAP_ATTRIBUTE_ATTRIBUTES>
+  attributes: Narrow<_MAP_ATTRIBUTE_ATTRIBUTES>
 ) => _Item<_MAP_ATTRIBUTE_ATTRIBUTES>
 
 // TODO: Enable item opening
