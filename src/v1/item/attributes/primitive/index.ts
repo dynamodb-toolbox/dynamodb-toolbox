@@ -4,8 +4,9 @@ export type {
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute
 } from './types'
-export type { _PrimitiveAttribute, PrimitiveAttribute, FreezePrimitiveAttribute } from './interface'
+export type { _PrimitiveAttribute, PrimitiveAttribute } from './interface'
 export {
+  FreezePrimitiveAttribute,
   freezePrimitiveAttribute,
   InvalidEnumValueTypeError,
   InvalidDefaultValueTypeError,
