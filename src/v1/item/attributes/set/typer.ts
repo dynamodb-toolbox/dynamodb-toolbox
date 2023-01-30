@@ -24,7 +24,7 @@ type SetAttributeTyper = <
   ELEMENTS extends _SetAttributeElements,
   OPTIONS extends Partial<SetAttributeOptions> = SetAttributeOptions
 >(
-  _elements: ELEMENTS,
+  elements: ELEMENTS,
   options?: NarrowObject<OPTIONS>
 ) => _SetAttribute<
   { [$elements]: ELEMENTS } & InferStateFromOptions<
