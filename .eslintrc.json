@@ -6,22 +6,20 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier"
   ],
+  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports"],
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
   "root": true,
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
   "rules": {
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
+    "prettier/prettier": "error",
+    "linebreak-style": ["error", "unix"],
     "quotes": [
       "error",
       "single",
@@ -29,18 +27,7 @@
         "allowTemplateLiterals": true
       }
     ],
-    "semi": [
-      "error",
-      "never"
-    ],
-    "indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1,
-        "flatTernaryExpressions": true
-      }
-    ],
+    "semi": ["error", "never"],
     // TODO: remove this rule when all the code is fully migrated to TS, atm it just produces a lot of noise
     "@typescript-eslint/ban-ts-comment": "off",
     // TODO: remove this rule when all the code is fully migrated to TS, atm it just produces a lot of noise
