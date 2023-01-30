@@ -10,15 +10,28 @@ import {
   $key,
   $savedAs,
   $enum,
-  $default
+  $default,
+  AttributeOptionNameSymbol
 } from '../constants/attributeOptions'
 
-import type { _PrimitiveAttribute, FreezePrimitiveAttribute } from './interface'
+import {
+  _PrimitiveAttribute,
+  PrimitiveAttribute,
+  PrimitiveAttributeStateConstraint
+} from './interface'
 import type {
   PrimitiveAttributeType,
   PrimitiveAttributeEnumValues,
   PrimitiveAttributeDefaultValue
 } from './types'
+
+export type FreezePrimitiveAttribute<
+  _PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute
+> = PrimitiveAttribute<
+  {
+    [KEY in keyof PrimitiveAttributeStateConstraint]: _PRIMITIVE_ATTRIBUTE[AttributeOptionNameSymbol[KEY]]
+  }
+>
 
 type PrimitiveAttributeFreezer = <_PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute>(
   _primitiveAttribute: _PRIMITIVE_ATTRIBUTE,
@@ -37,7 +50,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
 >(
   _primitiveAttribute: _PRIMITIVE_ATTRIBUTE,
   path: string
-): FreezePrimitiveAttribute<_PRIMITIVE_ATTRIBUTE> => {
+) => {
   validateAttributeProperties(_primitiveAttribute, path)
 
   const primitiveType = _primitiveAttribute[$type]
