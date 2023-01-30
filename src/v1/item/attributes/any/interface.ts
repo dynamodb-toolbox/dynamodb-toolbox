@@ -78,11 +78,11 @@ export type AnyAttributeStateConstraint = FreezeAttributeStateConstraint<_AnyAtt
 export interface AnyAttribute<
   STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
 > {
+  path: string
   type: 'any'
   required: STATE['required']
   hidden: STATE['hidden']
   key: STATE['key']
   savedAs: STATE['savedAs']
   default: STATE['default']
-  path: string
 }
