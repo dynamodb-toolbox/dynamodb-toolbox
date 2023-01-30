@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import {
+import type {
   $type,
   $value,
   $required,
@@ -10,10 +10,10 @@ import {
   $savedAs,
   $default
 } from '../constants/attributeOptions'
-import { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
-import { ResolvedAttribute } from '../types'
+import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type { ResolvedAttribute } from '../types'
 
-import { ConstantAttributeDefaultValue } from './types'
+import type { ConstantAttributeDefaultValue } from './types'
 
 interface _ConstantAttributeStateConstraint<VALUE extends ResolvedAttribute = ResolvedAttribute> {
   [$value]: VALUE
