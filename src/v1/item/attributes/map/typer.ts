@@ -1,6 +1,6 @@
-import type { O } from 'ts-toolbelt'
+import type { NarrowObject } from 'v1/types/narrowObject'
 
-import { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import type { RequiredOption, AtLeastOnce } from '../constants'
 import type { _Attribute, _MapAttributeAttributes, Narrow } from '../types'
 import {
   $type,
@@ -12,24 +12,24 @@ import {
   $savedAs,
   $default
 } from '../constants/attributeOptions'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
 import type { _MapAttribute } from './interface'
-import { MapAttributeOptions, MAPPED_DEFAULT_OPTIONS } from './options'
+import { MapAttributeOptions, MapAttributeDefaultOptions, MAP_DEFAULT_OPTIONS } from './options'
 
-type MapAttributeAttributeTyper = <
+type MapAttributeTyper = <
   ATTRIBUTES extends _MapAttributeAttributes = Record<never, _Attribute>,
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  IS_OPEN extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends ComputedDefault | undefined = undefined
+  OPTIONS extends Partial<MapAttributeOptions> = MapAttributeOptions
 >(
   attributes: Narrow<ATTRIBUTES>,
-  options?: O.Partial<
-    MapAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>
+  options?: NarrowObject<OPTIONS>
+) => _MapAttribute<
+  { [$attributes]: ATTRIBUTES } & InferStateFromOptions<
+    MapAttributeOptions,
+    MapAttributeDefaultOptions,
+    OPTIONS
   >
-) => _MapAttribute<ATTRIBUTES, IS_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>
+>
 
 /**
  * Define a new map attribute
@@ -37,21 +37,14 @@ type MapAttributeAttributeTyper = <
  * @param attributes Dictionary of attributes
  * @param options _(optional)_ Map Options
  */
-export const map: MapAttributeAttributeTyper = <
+export const map: MapAttributeTyper = <
   ATTRIBUTES extends _MapAttributeAttributes = Record<never, _Attribute>,
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  IS_OPEN extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends ComputedDefault | undefined = undefined
+  OPTIONS extends Partial<MapAttributeOptions> = MapAttributeOptions
 >(
   attributes: Narrow<ATTRIBUTES>,
-  options?: O.Partial<
-    MapAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>
-  >
-): _MapAttribute<ATTRIBUTES, IS_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT> => {
-  const appliedOptions = { ...MAPPED_DEFAULT_OPTIONS, ...options }
+  options?: NarrowObject<OPTIONS>
+) => {
+  const appliedOptions = { ...MAP_DEFAULT_OPTIONS, ...options }
 
   return {
     [$type]: 'map',
@@ -71,5 +64,11 @@ export const map: MapAttributeAttributeTyper = <
     open: () => map(attributes, { ...appliedOptions, open: true }),
     savedAs: nextSavedAs => map(attributes, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => map(attributes, { ...appliedOptions, default: nextDefault })
-  } as _MapAttribute<ATTRIBUTES, IS_REQUIRED, IS_HIDDEN, IS_KEY, IS_OPEN, SAVED_AS, DEFAULT>
+  } as _MapAttribute<
+    { [$attributes]: ATTRIBUTES } & InferStateFromOptions<
+      MapAttributeOptions,
+      MapAttributeDefaultOptions,
+      OPTIONS
+    >
+  >
 }

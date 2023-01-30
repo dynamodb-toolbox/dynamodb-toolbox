@@ -12,6 +12,7 @@ import {
 
 import { _ListAttribute, ListAttribute } from './interface'
 
+// TODO probably can be improved
 export type FreezeListAttribute<_LIST_ATTRIBUTE extends _ListAttribute> = ListAttribute<{
   elements: FreezeAttribute<_LIST_ATTRIBUTE[$elements]>
   required: _LIST_ATTRIBUTE[$required]
