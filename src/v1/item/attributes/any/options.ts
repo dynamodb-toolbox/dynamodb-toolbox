@@ -1,4 +1,4 @@
-import type { RequiredOption } from '../constants/requiredOptions'
+import { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
 import type { AnyAttributeDefaultValue } from './types'
 
@@ -32,7 +32,7 @@ export interface AnyAttributeOptions {
 }
 
 export type AnyAttributeDefaultOptions = {
-  required: 'atLeastOnce'
+  required: AtLeastOnce
   hidden: false
   key: false
   savedAs: undefined

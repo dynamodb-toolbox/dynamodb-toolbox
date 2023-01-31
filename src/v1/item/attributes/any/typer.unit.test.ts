@@ -3,6 +3,9 @@ import type { A } from 'ts-toolbelt'
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
 import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
 
+import { freezeAnyAttribute } from './freeze'
+import type { _AnyAttribute, AnyAttribute } from './interface'
+
 import { any } from './typer'
 
 describe('anyAttribute', () => {
@@ -21,6 +24,13 @@ describe('anyAttribute', () => {
       }
     > = 1
     assertAny
+
+    const assertExtends: A.Extends<typeof anyInstance, _AnyAttribute> = 1
+    assertExtends
+
+    const frozenAny = freezeAnyAttribute(anyInstance, 'some.path')
+    const assertFrozenExtends: A.Extends<typeof frozenAny, AnyAttribute> = 1
+    assertFrozenExtends
 
     expect(anyInstance).toMatchObject({
       [$type]: 'any',

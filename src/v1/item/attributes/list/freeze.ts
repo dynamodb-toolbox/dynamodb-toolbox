@@ -1,4 +1,4 @@
-import { freezeAttribute } from '../freeze'
+import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
 import {
   $type,
@@ -10,7 +10,18 @@ import {
   $default
 } from '../constants/attributeOptions'
 
-import type { _ListAttribute, FreezeListAttribute } from './interface'
+import { _ListAttribute, ListAttribute } from './interface'
+
+export type FreezeListAttribute<_LIST_ATTRIBUTE extends _ListAttribute> = ListAttribute<
+  FreezeAttribute<_LIST_ATTRIBUTE[$elements]>,
+  {
+    required: _LIST_ATTRIBUTE[$required]
+    hidden: _LIST_ATTRIBUTE[$hidden]
+    key: _LIST_ATTRIBUTE[$key]
+    savedAs: _LIST_ATTRIBUTE[$savedAs]
+    default: _LIST_ATTRIBUTE[$default]
+  }
+>
 
 type ListAttributeFreezer = <_LIST_ATTRIBUTE extends _ListAttribute>(
   _listAttribute: _LIST_ATTRIBUTE,

@@ -1,4 +1,4 @@
-import type { O } from 'ts-toolbelt'
+import type { NarrowObject } from 'v1/types/narrowObject'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import {
@@ -10,88 +10,99 @@ import {
   $enum,
   $default
 } from '../constants/attributeOptions'
+import { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
 import type { _PrimitiveAttribute } from './interface'
-import { PrimitiveAttributeOptions, PRIMITIVE_DEFAULT_OPTIONS } from './options'
-import type {
-  PrimitiveAttributeType,
-  PrimitiveAttributeEnumValues,
-  PrimitiveAttributeDefaultValue
-} from './types'
+import {
+  PrimitiveAttributeOptions,
+  PrimitiveAttributeDefaultOptions,
+  PRIMITIVE_DEFAULT_OPTIONS
+} from './options'
+import type { PrimitiveAttributeType } from './types'
+
+type AnyPrimitiveAttributeTyper = <
+  TYPE extends PrimitiveAttributeType,
+  OPTIONS extends PrimitiveAttributeOptions<TYPE> = PrimitiveAttributeOptions<TYPE>
+>(
+  type: TYPE,
+  options: NarrowObject<OPTIONS>
+) => _PrimitiveAttribute<
+  TYPE,
+  {
+    [$required]: OPTIONS['required']
+    [$hidden]: OPTIONS['hidden']
+    [$key]: OPTIONS['key']
+    [$savedAs]: OPTIONS['savedAs']
+    [$enum]: OPTIONS['enum']
+    [$default]: OPTIONS['default']
+  }
+>
 
 /**
  * Define a new "primitive" attribute, i.e. string, number, binary or boolean
  *
  * @param options _(optional)_ Primitive Options
  */
-const primitive = <
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  IS_REQUIRED extends RequiredOption = RequiredOption,
-  IS_HIDDEN extends boolean = boolean,
-  IS_KEY extends boolean = boolean,
-  SAVED_AS extends string | undefined = string | undefined,
-  ENUM extends PrimitiveAttributeEnumValues<TYPE> = PrimitiveAttributeEnumValues<TYPE>,
-  DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> = PrimitiveAttributeDefaultValue<TYPE>
+const primitive: AnyPrimitiveAttributeTyper = <
+  TYPE extends PrimitiveAttributeType,
+  OPTIONS extends PrimitiveAttributeOptions<TYPE> = PrimitiveAttributeOptions<TYPE>
 >(
-  options: { type: TYPE } & PrimitiveAttributeOptions<
-    TYPE,
-    IS_REQUIRED,
-    IS_HIDDEN,
-    IS_KEY,
-    SAVED_AS,
-    ENUM,
-    DEFAULT
-  >
-): _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT> =>
+  type: TYPE,
+  options: NarrowObject<OPTIONS>
+) =>
   ({
-    [$type]: options.type,
+    [$type]: type,
     [$required]: options.required,
     [$hidden]: options.hidden,
     [$key]: options.key,
     [$savedAs]: options.savedAs,
-    [$enum]: options._enum,
+    [$enum]: options.enum,
     [$default]: options.default,
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired = 'atLeastOnce' as NEXT_REQUIRED
-    ) => primitive({ ...options, required: nextRequired }),
-    optional: () => primitive({ ...options, required: 'never' }),
-    hidden: () => primitive({ ...options, hidden: true }),
-    key: () => primitive({ ...options, key: true }),
-    savedAs: nextSavedAs => primitive({ ...options, savedAs: nextSavedAs }),
-    default: nextDefault => primitive({ ...options, default: nextDefault }),
-    enum: (...nextEnum) => primitive({ ...options, _enum: nextEnum })
-  } as _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>)
+    ) => primitive(type, { ...options, required: nextRequired }),
+    optional: () => primitive(type, { ...options, required: 'never' }),
+    hidden: () => primitive(type, { ...options, hidden: true }),
+    key: () => primitive(type, { ...options, key: true }),
+    savedAs: nextSavedAs => primitive(type, { ...options, savedAs: nextSavedAs }),
+    default: nextDefault => primitive(type, { ...options, default: nextDefault }),
+    enum: (...nextEnum) => primitive(type, { ...options, enum: nextEnum })
+  } as _PrimitiveAttribute<
+    TYPE,
+    {
+      [$required]: OPTIONS['required']
+      [$hidden]: OPTIONS['hidden']
+      [$key]: OPTIONS['key']
+      [$savedAs]: OPTIONS['savedAs']
+      [$enum]: OPTIONS['enum']
+      [$default]: OPTIONS['default']
+    }
+  >)
 
 type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  ENUM extends PrimitiveAttributeEnumValues<TYPE> = undefined,
-  DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> = undefined
+  OPTIONS extends Partial<PrimitiveAttributeOptions<TYPE>> = PrimitiveAttributeOptions<TYPE>
 >(
-  options?: O.Partial<
-    PrimitiveAttributeOptions<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
-  >
-) => _PrimitiveAttribute<TYPE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, ENUM, DEFAULT>
+  primitiveOptions?: NarrowObject<OPTIONS>
+) => _PrimitiveAttribute<
+  TYPE,
+  InferStateFromOptions<PrimitiveAttributeOptions<TYPE>, PrimitiveAttributeDefaultOptions, OPTIONS>
+>
 
-const getPrimitiveAttributeTyper = <TYPE extends PrimitiveAttributeType>(type: TYPE) =>
-  (<
-    REQUIRED extends RequiredOption = AtLeastOnce,
-    HIDDEN extends boolean = false,
-    KEY extends boolean = false,
-    SAVED_AS extends string | undefined = undefined,
-    ENUM extends PrimitiveAttributeEnumValues<TYPE> = undefined,
-    DEFAULT extends PrimitiveAttributeDefaultValue<TYPE> = undefined
-  >(
-    primitiveOptions?: O.Partial<
-      PrimitiveAttributeOptions<TYPE, REQUIRED, HIDDEN, KEY, SAVED_AS, ENUM, DEFAULT>
-    >
+type PrimitiveAttributeTyperFactory = <TYPE extends PrimitiveAttributeType>(
+  type: TYPE
+) => PrimitiveAttributeTyper<TYPE>
+
+const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory = <
+  TYPE extends PrimitiveAttributeType
+>(
+  type: TYPE
+) =>
+  (<OPTIONS extends Partial<PrimitiveAttributeOptions<TYPE>> = PrimitiveAttributeOptions<TYPE>>(
+    primitiveOptions = {} as NarrowObject<OPTIONS>
   ) =>
-    primitive({
+    primitive(type, {
       ...PRIMITIVE_DEFAULT_OPTIONS,
-      ...primitiveOptions,
-      type
+      ...primitiveOptions
     })) as PrimitiveAttributeTyper<TYPE>
 
 /**
@@ -99,25 +110,25 @@ const getPrimitiveAttributeTyper = <TYPE extends PrimitiveAttributeType>(type: T
  *
  * @param options _(optional)_ String Options
  */
-export const string = getPrimitiveAttributeTyper('string')
+export const string = primitiveAttributeTyperFactory('string')
 
 /**
  * Define a new number attribute
  *
  * @param options _(optional)_ Number Options
  */
-export const number = getPrimitiveAttributeTyper('number')
+export const number = primitiveAttributeTyperFactory('number')
 
 /**
  * Define a new binary attribute
  *
  * @param options _(optional)_ Binary Options
  */
-export const binary = getPrimitiveAttributeTyper('binary')
+export const binary = primitiveAttributeTyperFactory('binary')
 
 /**
  * Define a new boolean attribute
  *
  * @param options _(optional)_ Boolean Options
  */
-export const boolean = getPrimitiveAttributeTyper('boolean')
+export const boolean = primitiveAttributeTyperFactory('boolean')

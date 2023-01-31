@@ -1,7 +1,6 @@
-import type { O } from 'ts-toolbelt'
+import type { NarrowObject } from 'v1/types/narrowObject'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import { ComputedDefault } from '../constants'
 import {
   $type,
   $elements,
@@ -11,22 +10,26 @@ import {
   $savedAs,
   $default
 } from '../constants/attributeOptions'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
 import type { _SetAttribute } from './interface'
-import { SetAttributeOptions, SET_ATTRIBUTE_DEFAULT_OPTIONS } from './options'
+import {
+  SetAttributeOptions,
+  SetAttributeDefaultOptions,
+  SET_ATTRIBUTE_DEFAULT_OPTIONS
+} from './options'
 import type { _SetAttributeElements } from './types'
 
-type SetTyper = <
+type SetAttributeTyper = <
   ELEMENTS extends _SetAttributeElements,
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends ComputedDefault | undefined = undefined
+  OPTIONS extends Partial<SetAttributeOptions> = SetAttributeOptions
 >(
-  _elements: ELEMENTS,
-  options?: O.Partial<SetAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
-) => _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  elements: ELEMENTS,
+  options?: NarrowObject<OPTIONS>
+) => _SetAttribute<
+  ELEMENTS,
+  InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
+>
 
 /**
  * Define a new set attribute
@@ -39,17 +42,13 @@ type SetTyper = <
  * @param elements Attribute (With constraints)
  * @param options _(optional)_ List Options
  */
-export const set: SetTyper = <
+export const set: SetAttributeTyper = <
   ELEMENTS extends _SetAttributeElements,
-  IS_REQUIRED extends RequiredOption = AtLeastOnce,
-  IS_HIDDEN extends boolean = false,
-  IS_KEY extends boolean = false,
-  SAVED_AS extends string | undefined = undefined,
-  DEFAULT extends ComputedDefault | undefined = undefined
+  OPTIONS extends Partial<SetAttributeOptions> = SetAttributeOptions
 >(
   elements: ELEMENTS,
-  options?: O.Partial<SetAttributeOptions<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>>
-): _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT> => {
+  options?: NarrowObject<OPTIONS>
+) => {
   const appliedOptions = { ...SET_ATTRIBUTE_DEFAULT_OPTIONS, ...options }
 
   return {
@@ -68,5 +67,8 @@ export const set: SetTyper = <
     key: () => set(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => set(elements, { ...appliedOptions, default: nextDefault })
-  } as _SetAttribute<ELEMENTS, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  } as _SetAttribute<
+    ELEMENTS,
+    InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
+  >
 }

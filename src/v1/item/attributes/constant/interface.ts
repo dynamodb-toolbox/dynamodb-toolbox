@@ -1,6 +1,7 @@
+import type { O } from 'ts-toolbelt'
+
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import type { _AttributeProperties, AttributeProperties } from '../shared/interface'
-import {
+import type {
   $type,
   $value,
   $required,
@@ -9,24 +10,33 @@ import {
   $savedAs,
   $default
 } from '../constants/attributeOptions'
-import { ResolvedAttribute } from '../types'
+import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type { ResolvedAttribute } from '../types'
 
-import { ConstantAttributeDefaultValue } from './types'
+import type { ConstantAttributeDefaultValue } from './types'
+
+interface _ConstantAttributeStateConstraint<VALUE extends ResolvedAttribute = ResolvedAttribute> {
+  [$required]: RequiredOption
+  [$hidden]: boolean
+  [$key]: boolean
+  [$savedAs]: string | undefined
+  [$default]: ConstantAttributeDefaultValue<VALUE>
+}
 
 /**
  * Const attribute interface
  */
-export type _ConstantAttribute<
+export interface _ConstantAttribute<
   VALUE extends ResolvedAttribute = ResolvedAttribute,
-  IS_REQUIRED extends RequiredOption = RequiredOption,
-  IS_HIDDEN extends boolean = boolean,
-  IS_KEY extends boolean = boolean,
-  SAVED_AS extends string | undefined = string | undefined,
-  DEFAULT extends ConstantAttributeDefaultValue<VALUE> = ConstantAttributeDefaultValue<VALUE>
-> = _AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
+  STATE extends _ConstantAttributeStateConstraint<VALUE> = _ConstantAttributeStateConstraint<VALUE>
+> {
   [$type]: 'constant'
   [$value]: VALUE
-  [$default]: DEFAULT
+  [$required]: STATE[$required]
+  [$hidden]: STATE[$hidden]
+  [$key]: STATE[$key]
+  [$savedAs]: STATE[$savedAs]
+  [$default]: STATE[$default]
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -38,25 +48,25 @@ export type _ConstantAttribute<
    */
   required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_IS_REQUIRED
-  ) => _ConstantAttribute<VALUE, NEXT_IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  ) => _ConstantAttribute<VALUE, O.Update<STATE, $required, NEXT_IS_REQUIRED>>
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => _ConstantAttribute<VALUE, 'never', IS_HIDDEN, IS_KEY, SAVED_AS, DEFAULT>
+  optional: () => _ConstantAttribute<VALUE, O.Update<STATE, $required, 'never'>>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _ConstantAttribute<VALUE, IS_REQUIRED, true, IS_KEY, SAVED_AS, DEFAULT>
+  hidden: () => _ConstantAttribute<VALUE, O.Update<STATE, $hidden, true>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _ConstantAttribute<VALUE, IS_REQUIRED, IS_HIDDEN, true, SAVED_AS, DEFAULT>
+  key: () => _ConstantAttribute<VALUE, O.Update<STATE, $key, true>>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => _ConstantAttribute<VALUE, IS_REQUIRED, IS_HIDDEN, IS_KEY, NEXT_SAVED_AS, DEFAULT>
+  ) => _ConstantAttribute<VALUE, O.Update<STATE, $savedAs, NEXT_SAVED_AS>>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
@@ -64,30 +74,23 @@ export type _ConstantAttribute<
    */
   default: <NEXT_DEFAULT extends ConstantAttributeDefaultValue<VALUE>>(
     nextDefaultValue: NEXT_DEFAULT
-  ) => _ConstantAttribute<VALUE, IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS, NEXT_DEFAULT>
+  ) => _ConstantAttribute<VALUE, O.Update<STATE, $default, NEXT_DEFAULT>>
 }
 
-export type ConstantAttribute<
+export type ConstantAttributeStateConstraint<
+  VALUE extends ResolvedAttribute = ResolvedAttribute
+> = FreezeAttributeStateConstraint<_ConstantAttributeStateConstraint<VALUE>>
+
+export interface ConstantAttribute<
   VALUE extends ResolvedAttribute = ResolvedAttribute,
-  IS_REQUIRED extends RequiredOption = RequiredOption,
-  IS_HIDDEN extends boolean = boolean,
-  IS_KEY extends boolean = boolean,
-  SAVED_AS extends string | undefined = string | undefined,
-  DEFAULT extends ConstantAttributeDefaultValue<VALUE> = ConstantAttributeDefaultValue<VALUE>
-> = AttributeProperties<IS_REQUIRED, IS_HIDDEN, IS_KEY, SAVED_AS> & {
+  STATE extends ConstantAttributeStateConstraint = ConstantAttributeStateConstraint
+> {
   path: string
   type: 'constant'
   value: VALUE
-  default: DEFAULT
+  required: STATE['required']
+  hidden: STATE['hidden']
+  key: STATE['key']
+  savedAs: STATE['savedAs']
+  default: STATE['default']
 }
-
-export type FreezeConstantAttribute<
-  _CONSTANT_ATTRIBUTE extends _ConstantAttribute
-> = ConstantAttribute<
-  _CONSTANT_ATTRIBUTE[$value],
-  _CONSTANT_ATTRIBUTE[$required],
-  _CONSTANT_ATTRIBUTE[$hidden],
-  _CONSTANT_ATTRIBUTE[$key],
-  _CONSTANT_ATTRIBUTE[$savedAs],
-  _CONSTANT_ATTRIBUTE[$default]
->

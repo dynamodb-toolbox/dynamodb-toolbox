@@ -13,12 +13,32 @@ import {
   $default
 } from '../constants/attributeOptions'
 
-import type { _PrimitiveAttribute, FreezePrimitiveAttribute } from './interface'
+import { _PrimitiveAttribute, PrimitiveAttribute } from './interface'
 import type {
   PrimitiveAttributeType,
   PrimitiveAttributeEnumValues,
   PrimitiveAttributeDefaultValue
 } from './types'
+
+export type FreezePrimitiveAttribute<
+  _PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute
+> = PrimitiveAttribute<
+  _PRIMITIVE_ATTRIBUTE[$type],
+  {
+    required: _PRIMITIVE_ATTRIBUTE[$required]
+    hidden: _PRIMITIVE_ATTRIBUTE[$hidden]
+    key: _PRIMITIVE_ATTRIBUTE[$key]
+    savedAs: _PRIMITIVE_ATTRIBUTE[$savedAs]
+    enum: Extract<
+      _PRIMITIVE_ATTRIBUTE[$enum],
+      PrimitiveAttributeEnumValues<_PRIMITIVE_ATTRIBUTE[$type]>
+    >
+    default: Extract<
+      _PRIMITIVE_ATTRIBUTE[$default],
+      PrimitiveAttributeDefaultValue<_PRIMITIVE_ATTRIBUTE[$type]>
+    >
+  }
+>
 
 type PrimitiveAttributeFreezer = <_PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute>(
   _primitiveAttribute: _PRIMITIVE_ATTRIBUTE,

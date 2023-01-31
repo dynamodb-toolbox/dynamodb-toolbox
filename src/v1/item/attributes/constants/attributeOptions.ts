@@ -3,9 +3,6 @@ import { RequiredOption } from './requiredOptions'
 export const $type = Symbol()
 export type $type = typeof $type
 
-export const $resolved = Symbol()
-export type $resolved = typeof $resolved
-
 export const $elements = Symbol()
 export type $elements = typeof $elements
 
@@ -38,7 +35,6 @@ export type $savedAs = typeof $savedAs
 
 export type $AttributeOptionSymbol =
   | $type
-  | $resolved
   | $elements
   | $attributes
   | $value
@@ -52,7 +48,6 @@ export type $AttributeOptionSymbol =
 
 export type AttributeOptionSymbolName = {
   [$type]: 'type'
-  [$resolved]: 'resolved'
   [$elements]: 'elements'
   [$attributes]: 'attributes'
   [$value]: 'value'
@@ -67,7 +62,6 @@ export type AttributeOptionSymbolName = {
 
 export type AttributeOptionNameSymbol = {
   type: $type
-  resolved: $resolved
   elements: $elements
   attributes: $attributes
   value: $value
