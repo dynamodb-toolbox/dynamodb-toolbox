@@ -15,7 +15,6 @@ import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeSt
 import type { _ListAttributeElements, ListAttributeElements } from './types'
 
 interface _ListAttributeStateConstraint {
-  [$elements]: _ListAttributeElements
   [$required]: RequiredOption
   [$hidden]: boolean
   [$key]: boolean
@@ -27,10 +26,11 @@ interface _ListAttributeStateConstraint {
  * List attribute interface
  */
 export interface _ListAttribute<
+  ELEMENTS extends _ListAttributeElements = _ListAttributeElements,
   STATE extends _ListAttributeStateConstraint = _ListAttributeStateConstraint
 > {
   [$type]: 'list'
-  [$elements]: STATE[$elements]
+  [$elements]: ELEMENTS
   [$required]: STATE[$required]
   [$hidden]: STATE[$hidden]
   [$key]: STATE[$key]
@@ -47,25 +47,25 @@ export interface _ListAttribute<
    */
   required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_IS_REQUIRED
-  ) => _ListAttribute<O.Update<STATE, $required, NEXT_IS_REQUIRED>>
+  ) => _ListAttribute<ELEMENTS, O.Update<STATE, $required, NEXT_IS_REQUIRED>>
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => _ListAttribute<O.Update<STATE, $required, 'never'>>
+  optional: () => _ListAttribute<ELEMENTS, O.Update<STATE, $required, 'never'>>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _ListAttribute<O.Update<STATE, $hidden, true>>
+  hidden: () => _ListAttribute<ELEMENTS, O.Update<STATE, $hidden, true>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _ListAttribute<O.Update<STATE, $key, true>>
+  key: () => _ListAttribute<ELEMENTS, O.Update<STATE, $key, true>>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => _ListAttribute<O.Update<STATE, $savedAs, NEXT_SAVED_AS>>
+  ) => _ListAttribute<ELEMENTS, O.Update<STATE, $savedAs, NEXT_SAVED_AS>>
   /**
    * Tag attribute as having a computed default value
    *
@@ -73,16 +73,21 @@ export interface _ListAttribute<
    */
   default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
     nextDefaultValue: NEXT_DEFAULT
-  ) => _ListAttribute<O.Update<STATE, $default, NEXT_DEFAULT>>
+  ) => _ListAttribute<ELEMENTS, O.Update<STATE, $default, NEXT_DEFAULT>>
 }
 
-export type ListAttributeStateConstraint = {
-  elements: ListAttributeElements
-} & FreezeAttributeStateConstraint<Omit<_ListAttributeStateConstraint, $elements>>
+export type ListAttributeStateConstraint = FreezeAttributeStateConstraint<_ListAttributeStateConstraint>
 
-export type ListAttribute<
+export interface ListAttribute<
+  ELEMENTS extends ListAttributeElements = ListAttributeElements,
   STATE extends ListAttributeStateConstraint = ListAttributeStateConstraint
-> = STATE & {
+> {
   path: string
   type: 'list'
+  elements: ELEMENTS
+  required: STATE['required']
+  hidden: STATE['hidden']
+  key: STATE['key']
+  savedAs: STATE['savedAs']
+  default: STATE['default']
 }
