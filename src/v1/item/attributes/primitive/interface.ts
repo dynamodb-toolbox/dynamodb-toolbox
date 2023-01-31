@@ -18,14 +18,15 @@ import type {
   PrimitiveAttributeDefaultValue
 } from './types'
 import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type {
+  _AttributeSharedStateConstraint,
+  _AttributeSharedState,
+  AttributeSharedState
+} from '../shared/interface'
 
 interface _PrimitiveAttributeStateConstraint<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
-> {
-  [$required]: RequiredOption
-  [$hidden]: boolean
-  [$key]: boolean
-  [$savedAs]: string | undefined
+> extends _AttributeSharedStateConstraint {
   [$enum]: PrimitiveAttributeEnumValues<TYPE>
   [$default]: PrimitiveAttributeDefaultValue<TYPE>
 }
@@ -36,12 +37,8 @@ interface _PrimitiveAttributeStateConstraint<
 export interface _PrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   STATE extends _PrimitiveAttributeStateConstraint<TYPE> = _PrimitiveAttributeStateConstraint<TYPE>
-> {
+> extends _AttributeSharedState<STATE> {
   [$type]: TYPE
-  [$required]: STATE[$required]
-  [$hidden]: STATE[$hidden]
-  [$key]: STATE[$key]
-  [$savedAs]: STATE[$savedAs]
   [$enum]: STATE[$enum]
   [$default]: STATE[$default]
   /**
@@ -107,13 +104,9 @@ export type PrimitiveAttributeStateConstraint<
 export interface PrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   STATE extends PrimitiveAttributeStateConstraint<TYPE> = PrimitiveAttributeStateConstraint<TYPE>
-> {
+> extends AttributeSharedState<STATE> {
   path: string
   type: TYPE
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
   enum: STATE['enum']
   default: STATE['default']
 }
