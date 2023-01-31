@@ -12,14 +12,15 @@ import type {
   $default
 } from '../constants/attributeOptions'
 import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type {
+  _AttributeSharedStateConstraint,
+  _AttributeSharedState,
+  AttributeSharedState
+} from '../shared/interface'
 
 import type { _SetAttributeElements, SetAttributeElements } from './types'
 
-interface _SetAttributeStateConstraint {
-  [$required]: RequiredOption
-  [$hidden]: boolean
-  [$key]: boolean
-  [$savedAs]: string | undefined
+interface _SetAttributeStateConstraint extends _AttributeSharedStateConstraint {
   [$default]: ComputedDefault | undefined
 }
 
@@ -29,13 +30,9 @@ interface _SetAttributeStateConstraint {
 export interface _SetAttribute<
   ELEMENTS extends _SetAttributeElements = _SetAttributeElements,
   STATE extends _SetAttributeStateConstraint = _SetAttributeStateConstraint
-> {
+> extends _AttributeSharedState<STATE> {
   [$type]: 'set'
   [$elements]: ELEMENTS
-  [$required]: STATE[$required]
-  [$hidden]: STATE[$hidden]
-  [$key]: STATE[$key]
-  [$savedAs]: STATE[$savedAs]
   [$default]: STATE[$default]
   /**
    * Tag attribute as required. Possible values are:
@@ -82,13 +79,9 @@ export type SetAttributeStateConstraint = FreezeAttributeStateConstraint<_SetAtt
 export interface SetAttribute<
   ELEMENTS extends SetAttributeElements = SetAttributeElements,
   STATE extends SetAttributeStateConstraint = SetAttributeStateConstraint
-> {
+> extends AttributeSharedState<STATE> {
   path: string
   type: 'set'
   elements: ELEMENTS
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
   default: STATE['default']
 }

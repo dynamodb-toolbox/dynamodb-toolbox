@@ -10,14 +10,15 @@ import type {
   $default
 } from '../constants/attributeOptions'
 import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type {
+  _AttributeSharedStateConstraint,
+  _AttributeSharedState,
+  AttributeSharedState
+} from '../shared/interface'
 
 import type { AnyAttributeDefaultValue } from './types'
 
-interface _AnyAttributeStateConstraint {
-  [$required]: RequiredOption
-  [$hidden]: boolean
-  [$key]: boolean
-  [$savedAs]: string | undefined
+interface _AnyAttributeStateConstraint extends _AttributeSharedStateConstraint {
   [$default]: AnyAttributeDefaultValue
 }
 
@@ -26,12 +27,8 @@ interface _AnyAttributeStateConstraint {
  */
 export interface _AnyAttribute<
   STATE extends _AnyAttributeStateConstraint = _AnyAttributeStateConstraint
-> {
+> extends _AttributeSharedState<STATE> {
   [$type]: 'any'
-  [$required]: STATE[$required]
-  [$hidden]: STATE[$hidden]
-  [$key]: STATE[$key]
-  [$savedAs]: STATE[$savedAs]
   [$default]: STATE[$default]
   /**
    * Tag attribute as required. Possible values are:
@@ -77,12 +74,8 @@ export type AnyAttributeStateConstraint = FreezeAttributeStateConstraint<_AnyAtt
 
 export interface AnyAttribute<
   STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> {
+> extends AttributeSharedState<STATE> {
   path: string
   type: 'any'
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
   default: STATE['default']
 }

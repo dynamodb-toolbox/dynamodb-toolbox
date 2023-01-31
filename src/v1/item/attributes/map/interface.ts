@@ -13,13 +13,14 @@ import type {
   $default
 } from '../constants/attributeOptions'
 import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type {
+  _AttributeSharedStateConstraint,
+  _AttributeSharedState,
+  AttributeSharedState
+} from '../shared/interface'
 
-interface _MapAttributeStateConstraint {
-  [$required]: RequiredOption
-  [$hidden]: boolean
-  [$key]: boolean
+interface _MapAttributeStateConstraint extends _AttributeSharedStateConstraint {
   [$open]: boolean
-  [$savedAs]: string | undefined
   [$default]: ComputedDefault | undefined
 }
 
@@ -29,14 +30,10 @@ interface _MapAttributeStateConstraint {
 export interface _MapAttribute<
   ATTRIBUTES extends _MapAttributeAttributes = _MapAttributeAttributes,
   STATE extends _MapAttributeStateConstraint = _MapAttributeStateConstraint
-> {
+> extends _AttributeSharedState<STATE> {
   [$type]: 'map'
   [$attributes]: ATTRIBUTES
-  [$required]: STATE[$required]
-  [$hidden]: STATE[$hidden]
-  [$key]: STATE[$key]
   [$open]: STATE[$open]
-  [$savedAs]: STATE[$savedAs]
   [$default]: STATE[$default]
   /**
    * Tag attribute as required. Possible values are:
@@ -87,15 +84,11 @@ export type MapAttributeStateConstraint = FreezeAttributeStateConstraint<_MapAtt
 export interface MapAttribute<
   ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes,
   STATE extends MapAttributeStateConstraint = MapAttributeStateConstraint
-> {
+> extends AttributeSharedState<STATE> {
   path: string
   type: 'map'
   attributes: ATTRIBUTES
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
   open: STATE['open']
-  savedAs: STATE['savedAs']
   default: STATE['default']
   keyAttributesNames: Set<string>
   requiredAttributesNames: Record<RequiredOption, Set<string>>

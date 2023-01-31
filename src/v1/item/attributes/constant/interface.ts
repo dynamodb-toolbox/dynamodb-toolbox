@@ -11,15 +11,17 @@ import type {
   $default
 } from '../constants/attributeOptions'
 import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type {
+  _AttributeSharedStateConstraint,
+  _AttributeSharedState,
+  AttributeSharedState
+} from '../shared/interface'
 import type { ResolvedAttribute } from '../types'
 
 import type { ConstantAttributeDefaultValue } from './types'
 
-interface _ConstantAttributeStateConstraint<VALUE extends ResolvedAttribute = ResolvedAttribute> {
-  [$required]: RequiredOption
-  [$hidden]: boolean
-  [$key]: boolean
-  [$savedAs]: string | undefined
+interface _ConstantAttributeStateConstraint<VALUE extends ResolvedAttribute = ResolvedAttribute>
+  extends _AttributeSharedStateConstraint {
   [$default]: ConstantAttributeDefaultValue<VALUE>
 }
 
@@ -29,13 +31,9 @@ interface _ConstantAttributeStateConstraint<VALUE extends ResolvedAttribute = Re
 export interface _ConstantAttribute<
   VALUE extends ResolvedAttribute = ResolvedAttribute,
   STATE extends _ConstantAttributeStateConstraint<VALUE> = _ConstantAttributeStateConstraint<VALUE>
-> {
+> extends _AttributeSharedState<STATE> {
   [$type]: 'constant'
   [$value]: VALUE
-  [$required]: STATE[$required]
-  [$hidden]: STATE[$hidden]
-  [$key]: STATE[$key]
-  [$savedAs]: STATE[$savedAs]
   [$default]: STATE[$default]
   /**
    * Tag attribute as required. Possible values are:
@@ -84,13 +82,9 @@ export type ConstantAttributeStateConstraint<
 export interface ConstantAttribute<
   VALUE extends ResolvedAttribute = ResolvedAttribute,
   STATE extends ConstantAttributeStateConstraint = ConstantAttributeStateConstraint
-> {
+> extends AttributeSharedState<STATE> {
   path: string
   type: 'constant'
   value: VALUE
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
   default: STATE['default']
 }

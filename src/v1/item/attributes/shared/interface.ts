@@ -1,16 +1,27 @@
 import { RequiredOption } from '../constants/requiredOptions'
-
 import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
 
-// TO REMOVE
-export interface _AttributeProperties<
-  IS_REQUIRED extends RequiredOption = RequiredOption,
-  IS_HIDDEN extends boolean = boolean,
-  IS_KEY extends boolean = boolean,
-  SAVED_AS extends string | undefined = string | undefined
-> {
-  [$required]: IS_REQUIRED
-  [$hidden]: IS_HIDDEN
-  [$key]: IS_KEY
-  [$savedAs]: SAVED_AS
+import { FreezeAttributeStateConstraint } from './freezeAttributeStateConstraint'
+
+export interface _AttributeSharedStateConstraint {
+  [$required]: RequiredOption
+  [$hidden]: boolean
+  [$key]: boolean
+  [$savedAs]: string | undefined
+}
+
+export interface _AttributeSharedState<STATE extends _AttributeSharedStateConstraint> {
+  [$required]: STATE[$required]
+  [$hidden]: STATE[$hidden]
+  [$key]: STATE[$key]
+  [$savedAs]: STATE[$savedAs]
+}
+
+export type AttributeSharedStateConstraint = FreezeAttributeStateConstraint<_AttributeSharedStateConstraint>
+
+export interface AttributeSharedState<STATE extends AttributeSharedStateConstraint> {
+  required: STATE['required']
+  hidden: STATE['hidden']
+  key: STATE['key']
+  savedAs: STATE['savedAs']
 }
