@@ -11,14 +11,15 @@ import type {
   $default
 } from '../constants/attributeOptions'
 import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type {
+  _AttributeSharedStateConstraint,
+  _AttributeSharedState,
+  AttributeSharedState
+} from '../shared/interface'
 
 import type { _ListAttributeElements, ListAttributeElements } from './types'
 
-interface _ListAttributeStateConstraint {
-  [$required]: RequiredOption
-  [$hidden]: boolean
-  [$key]: boolean
-  [$savedAs]: string | undefined
+interface _ListAttributeStateConstraint extends _AttributeSharedStateConstraint {
   [$default]: ComputedDefault | undefined
 }
 
@@ -28,13 +29,9 @@ interface _ListAttributeStateConstraint {
 export interface _ListAttribute<
   ELEMENTS extends _ListAttributeElements = _ListAttributeElements,
   STATE extends _ListAttributeStateConstraint = _ListAttributeStateConstraint
-> {
+> extends _AttributeSharedState<STATE> {
   [$type]: 'list'
   [$elements]: ELEMENTS
-  [$required]: STATE[$required]
-  [$hidden]: STATE[$hidden]
-  [$key]: STATE[$key]
-  [$savedAs]: STATE[$savedAs]
   [$default]: STATE[$default]
   /**
    * Tag attribute as required. Possible values are:
@@ -81,13 +78,9 @@ export type ListAttributeStateConstraint = FreezeAttributeStateConstraint<_ListA
 export interface ListAttribute<
   ELEMENTS extends ListAttributeElements = ListAttributeElements,
   STATE extends ListAttributeStateConstraint = ListAttributeStateConstraint
-> {
+> extends AttributeSharedState<STATE> {
   path: string
   type: 'list'
   elements: ELEMENTS
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
   default: STATE['default']
 }

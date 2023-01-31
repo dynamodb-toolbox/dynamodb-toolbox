@@ -1,13 +1,18 @@
 import { requiredOptionsSet, Never } from '../constants/requiredOptions'
 import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
 
-import { _AttributeProperties } from './interface'
+import { _AttributeSharedState } from './interface'
 import { validateAttributeProperties, InvalidAttributePropertyError } from './validate'
 
 describe('shared properties validation', () => {
   const path = 'some/path'
 
-  const validProperties: _AttributeProperties<Never, false, false, undefined> = {
+  const validProperties: _AttributeSharedState<{
+    [$required]: Never
+    [$hidden]: false
+    [$key]: false
+    [$savedAs]: undefined
+  }> = {
     [$required]: 'never',
     [$hidden]: false,
     [$key]: false,
