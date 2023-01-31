@@ -25,6 +25,7 @@ import {
 export type FreezeConstantAttribute<
   _CONSTANT_ATTRIBUTE extends _ConstantAttribute
 > = ConstantAttribute<
+  _CONSTANT_ATTRIBUTE[$value],
   {
     [KEY in keyof ConstantAttributeStateConstraint]: _CONSTANT_ATTRIBUTE[AttributeOptionNameSymbol[KEY]]
   }

@@ -13,6 +13,7 @@ import {
 
 import { constant } from './typer'
 import { freezeConstantAttribute, InvalidDefaultValueError } from './freeze'
+import type { ConstantAttribute, _ConstantAttribute } from './interface'
 
 const path = 'some.path'
 
@@ -34,6 +35,13 @@ describe('constantAttribute', () => {
         }
       > = 1
       assertFoobar
+
+      const assertExtends: A.Extends<typeof foobar, _ConstantAttribute> = 1
+      assertExtends
+
+      const frozenFoobar = freezeConstantAttribute(foobar, path)
+      const assertFrozenExtends: A.Extends<typeof frozenFoobar, ConstantAttribute> = 1
+      assertFrozenExtends
 
       expect(foobar).toMatchObject({
         [$type]: 'constant',
