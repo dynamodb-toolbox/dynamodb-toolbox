@@ -21,17 +21,14 @@ import {
 } from './options'
 
 type ConstantAttributeTyper = <
-  VALUE extends ResolvedAttribute = ResolvedAttribute,
+  VALUE extends ResolvedAttribute,
   OPTIONS extends Partial<ConstantAttributeOptions<VALUE>> = ConstantAttributeOptions<VALUE>
 >(
-  _elements: VALUE,
+  value: VALUE,
   options?: NarrowObject<OPTIONS>
 ) => _ConstantAttribute<
-  { [$value]: VALUE } & InferStateFromOptions<
-    ConstantAttributeOptions<VALUE>,
-    ConstantAttributeDefaultOptions,
-    OPTIONS
-  >
+  VALUE,
+  InferStateFromOptions<ConstantAttributeOptions<VALUE>, ConstantAttributeDefaultOptions, OPTIONS>
 >
 
 /**
@@ -41,7 +38,7 @@ type ConstantAttributeTyper = <
  * @param options _(optional)_ Constant Options
  */
 export const constant: ConstantAttributeTyper = <
-  VALUE extends ResolvedAttribute = ResolvedAttribute,
+  VALUE extends ResolvedAttribute,
   OPTIONS extends Partial<ConstantAttributeOptions<VALUE>> = ConstantAttributeOptions<VALUE>
 >(
   value: VALUE,
@@ -66,10 +63,7 @@ export const constant: ConstantAttributeTyper = <
     savedAs: nextSavedAs => constant(value, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => constant(value, { ...appliedOptions, default: nextDefault })
   } as _ConstantAttribute<
-    { [$value]: VALUE } & InferStateFromOptions<
-      ConstantAttributeOptions<VALUE>,
-      ConstantAttributeDefaultOptions,
-      OPTIONS
-    >
+    VALUE,
+    InferStateFromOptions<ConstantAttributeOptions<VALUE>, ConstantAttributeDefaultOptions, OPTIONS>
   >
 }

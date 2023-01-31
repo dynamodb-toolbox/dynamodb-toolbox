@@ -13,7 +13,8 @@ import type {
   AtLeastOnce,
   OnlyOnce,
   Always,
-  ComputedDefault
+  ComputedDefault,
+  ResolvePrimitiveAttributeType
 } from 'v1/item'
 
 import type { EntityV2 } from '../class'
@@ -29,7 +30,9 @@ export type PutItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends
   : SCHEMA extends ConstantAttribute
   ? SCHEMA['value']
   : SCHEMA extends PrimitiveAttribute
-  ? NonNullable<SCHEMA['resolved']>
+  ? SCHEMA['enum'] extends ResolvePrimitiveAttributeType<SCHEMA['type']>[]
+    ? SCHEMA['enum'][number]
+    : ResolvePrimitiveAttributeType<SCHEMA['type']>
   : SCHEMA extends ConstantAttribute
   ? NonNullable<SCHEMA['value']>
   : SCHEMA extends SetAttribute

@@ -12,7 +12,8 @@ import type {
   MapAttribute,
   AtLeastOnce,
   OnlyOnce,
-  Always
+  Always,
+  ResolvePrimitiveAttributeType
 } from 'v1/item'
 
 import { EntityV2 } from '../class'
@@ -28,7 +29,9 @@ export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA e
   : SCHEMA extends ConstantAttribute
   ? SCHEMA['value']
   : SCHEMA extends PrimitiveAttribute
-  ? NonNullable<SCHEMA['resolved']>
+  ? SCHEMA['enum'] extends ResolvePrimitiveAttributeType<SCHEMA['type']>[]
+    ? SCHEMA['enum'][number]
+    : ResolvePrimitiveAttributeType<SCHEMA['type']>
   : SCHEMA extends SetAttribute
   ? Set<FormattedItem<SCHEMA['elements']>>
   : SCHEMA extends ListAttribute

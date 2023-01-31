@@ -16,7 +16,6 @@ import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeSt
 import type { _SetAttributeElements, SetAttributeElements } from './types'
 
 interface _SetAttributeStateConstraint {
-  [$elements]: _SetAttributeElements
   [$required]: RequiredOption
   [$hidden]: boolean
   [$key]: boolean
@@ -27,11 +26,12 @@ interface _SetAttributeStateConstraint {
 /**
  * Set attribute interface
  */
-export type _SetAttribute<
+export interface _SetAttribute<
+  ELEMENTS extends _SetAttributeElements = _SetAttributeElements,
   STATE extends _SetAttributeStateConstraint = _SetAttributeStateConstraint
-> = {
+> {
   [$type]: 'set'
-  [$elements]: STATE[$elements]
+  [$elements]: ELEMENTS
   [$required]: STATE[$required]
   [$hidden]: STATE[$hidden]
   [$key]: STATE[$key]
@@ -48,25 +48,25 @@ export type _SetAttribute<
    */
   required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_IS_REQUIRED
-  ) => _SetAttribute<O.Update<STATE, $required, NEXT_IS_REQUIRED>>
+  ) => _SetAttribute<ELEMENTS, O.Update<STATE, $required, NEXT_IS_REQUIRED>>
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => _SetAttribute<O.Update<STATE, $required, 'never'>>
+  optional: () => _SetAttribute<ELEMENTS, O.Update<STATE, $required, 'never'>>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _SetAttribute<O.Update<STATE, $hidden, true>>
+  hidden: () => _SetAttribute<ELEMENTS, O.Update<STATE, $hidden, true>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _SetAttribute<O.Update<STATE, $key, true>>
+  key: () => _SetAttribute<ELEMENTS, O.Update<STATE, $key, true>>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => _SetAttribute<O.Update<STATE, $savedAs, NEXT_SAVED_AS>>
+  ) => _SetAttribute<ELEMENTS, O.Update<STATE, $savedAs, NEXT_SAVED_AS>>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
@@ -74,16 +74,21 @@ export type _SetAttribute<
    */
   default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
     nextDefaultValue: NEXT_DEFAULT
-  ) => _SetAttribute<O.Update<STATE, $default, NEXT_DEFAULT>>
+  ) => _SetAttribute<ELEMENTS, O.Update<STATE, $default, NEXT_DEFAULT>>
 }
 
-export type SetAttributeStateConstraint = {
-  elements: SetAttributeElements
-} & FreezeAttributeStateConstraint<Omit<_SetAttributeStateConstraint, $elements>>
+export type SetAttributeStateConstraint = FreezeAttributeStateConstraint<_SetAttributeStateConstraint>
 
-export type SetAttribute<
+export interface SetAttribute<
+  ELEMENTS extends SetAttributeElements = SetAttributeElements,
   STATE extends SetAttributeStateConstraint = SetAttributeStateConstraint
-> = STATE & {
+> {
   path: string
   type: 'set'
+  elements: ELEMENTS
+  required: STATE['required']
+  hidden: STATE['hidden']
+  key: STATE['key']
+  savedAs: STATE['savedAs']
+  default: STATE['default']
 }
