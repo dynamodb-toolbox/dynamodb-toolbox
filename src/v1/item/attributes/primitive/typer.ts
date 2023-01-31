@@ -21,19 +21,22 @@ import {
 import type { PrimitiveAttributeType } from './types'
 
 type AnyPrimitiveAttributeTyper = <
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
+  TYPE extends PrimitiveAttributeType,
   OPTIONS extends PrimitiveAttributeOptions<TYPE> = PrimitiveAttributeOptions<TYPE>
 >(
-  options: { type: TYPE } & NarrowObject<OPTIONS>
-) => _PrimitiveAttribute<{
-  [$type]: TYPE
-  [$required]: OPTIONS['required']
-  [$hidden]: OPTIONS['hidden']
-  [$key]: OPTIONS['key']
-  [$savedAs]: OPTIONS['savedAs']
-  [$enum]: OPTIONS['enum']
-  [$default]: OPTIONS['default']
-}>
+  type: TYPE,
+  options: NarrowObject<OPTIONS>
+) => _PrimitiveAttribute<
+  TYPE,
+  {
+    [$required]: OPTIONS['required']
+    [$hidden]: OPTIONS['hidden']
+    [$key]: OPTIONS['key']
+    [$savedAs]: OPTIONS['savedAs']
+    [$enum]: OPTIONS['enum']
+    [$default]: OPTIONS['default']
+  }
+>
 
 /**
  * Define a new "primitive" attribute, i.e. string, number, binary or boolean
@@ -41,13 +44,14 @@ type AnyPrimitiveAttributeTyper = <
  * @param options _(optional)_ Primitive Options
  */
 const primitive: AnyPrimitiveAttributeTyper = <
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
+  TYPE extends PrimitiveAttributeType,
   OPTIONS extends PrimitiveAttributeOptions<TYPE> = PrimitiveAttributeOptions<TYPE>
 >(
-  options: { type: TYPE } & NarrowObject<OPTIONS>
+  type: TYPE,
+  options: NarrowObject<OPTIONS>
 ) =>
   ({
-    [$type]: options.type,
+    [$type]: type,
     [$required]: options.required,
     [$hidden]: options.hidden,
     [$key]: options.key,
@@ -56,33 +60,32 @@ const primitive: AnyPrimitiveAttributeTyper = <
     [$default]: options.default,
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired = 'atLeastOnce' as NEXT_REQUIRED
-    ) => primitive({ ...options, required: nextRequired }),
-    optional: () => primitive({ ...options, required: 'never' }),
-    hidden: () => primitive({ ...options, hidden: true }),
-    key: () => primitive({ ...options, key: true }),
-    savedAs: nextSavedAs => primitive({ ...options, savedAs: nextSavedAs }),
-    default: nextDefault => primitive({ ...options, default: nextDefault }),
-    enum: (...nextEnum) => primitive({ ...options, enum: nextEnum })
-  } as _PrimitiveAttribute<{
-    [$type]: TYPE
-    [$required]: OPTIONS['required']
-    [$hidden]: OPTIONS['hidden']
-    [$key]: OPTIONS['key']
-    [$savedAs]: OPTIONS['savedAs']
-    [$enum]: OPTIONS['enum']
-    [$default]: OPTIONS['default']
-  }>)
+    ) => primitive(type, { ...options, required: nextRequired }),
+    optional: () => primitive(type, { ...options, required: 'never' }),
+    hidden: () => primitive(type, { ...options, hidden: true }),
+    key: () => primitive(type, { ...options, key: true }),
+    savedAs: nextSavedAs => primitive(type, { ...options, savedAs: nextSavedAs }),
+    default: nextDefault => primitive(type, { ...options, default: nextDefault }),
+    enum: (...nextEnum) => primitive(type, { ...options, enum: nextEnum })
+  } as _PrimitiveAttribute<
+    TYPE,
+    {
+      [$required]: OPTIONS['required']
+      [$hidden]: OPTIONS['hidden']
+      [$key]: OPTIONS['key']
+      [$savedAs]: OPTIONS['savedAs']
+      [$enum]: OPTIONS['enum']
+      [$default]: OPTIONS['default']
+    }
+  >)
 
 type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
   OPTIONS extends Partial<PrimitiveAttributeOptions<TYPE>> = PrimitiveAttributeOptions<TYPE>
 >(
   primitiveOptions?: NarrowObject<OPTIONS>
 ) => _PrimitiveAttribute<
-  { [$type]: TYPE } & InferStateFromOptions<
-    PrimitiveAttributeOptions<TYPE>,
-    PrimitiveAttributeDefaultOptions,
-    OPTIONS
-  >
+  TYPE,
+  InferStateFromOptions<PrimitiveAttributeOptions<TYPE>, PrimitiveAttributeDefaultOptions, OPTIONS>
 >
 
 type PrimitiveAttributeTyperFactory = <TYPE extends PrimitiveAttributeType>(
@@ -97,10 +100,9 @@ const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory = <
   (<OPTIONS extends Partial<PrimitiveAttributeOptions<TYPE>> = PrimitiveAttributeOptions<TYPE>>(
     primitiveOptions = {} as NarrowObject<OPTIONS>
   ) =>
-    primitive({
+    primitive(type, {
       ...PRIMITIVE_DEFAULT_OPTIONS,
-      ...primitiveOptions,
-      type
+      ...primitiveOptions
     })) as PrimitiveAttributeTyper<TYPE>
 
 /**

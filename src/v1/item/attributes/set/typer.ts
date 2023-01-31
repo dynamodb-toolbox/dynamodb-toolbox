@@ -27,11 +27,8 @@ type SetAttributeTyper = <
   elements: ELEMENTS,
   options?: NarrowObject<OPTIONS>
 ) => _SetAttribute<
-  { [$elements]: ELEMENTS } & InferStateFromOptions<
-    SetAttributeOptions,
-    SetAttributeDefaultOptions,
-    OPTIONS
-  >
+  ELEMENTS,
+  InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
 >
 
 /**
@@ -71,10 +68,7 @@ export const set: SetAttributeTyper = <
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => set(elements, { ...appliedOptions, default: nextDefault })
   } as _SetAttribute<
-    { [$elements]: ELEMENTS } & InferStateFromOptions<
-      SetAttributeOptions,
-      SetAttributeDefaultOptions,
-      OPTIONS
-    >
+    ELEMENTS,
+    InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
   >
 }

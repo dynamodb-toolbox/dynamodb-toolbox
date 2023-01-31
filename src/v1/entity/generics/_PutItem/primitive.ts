@@ -1,8 +1,16 @@
-import type { _PrimitiveAttribute } from 'v1/item'
-import type { $resolved, $required } from 'v1/item/attributes/constants/attributeOptions'
+import type { ResolvePrimitiveAttributeType, _PrimitiveAttribute } from 'v1/item'
+import type { $type, $required, $enum } from 'v1/item/attributes/constants/attributeOptions'
 
 export type _PrimitiveAttributePutItem<
   _PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute
 > = _PRIMITIVE_ATTRIBUTE extends { [$required]: 'never' }
-  ? undefined | NonNullable<_PRIMITIVE_ATTRIBUTE[$resolved]>
-  : NonNullable<_PRIMITIVE_ATTRIBUTE[$resolved]>
+  ?
+      | undefined
+      | (_PRIMITIVE_ATTRIBUTE[$enum] extends ResolvePrimitiveAttributeType<
+          _PRIMITIVE_ATTRIBUTE[$type]
+        >[]
+          ? _PRIMITIVE_ATTRIBUTE[$enum][number]
+          : ResolvePrimitiveAttributeType<_PRIMITIVE_ATTRIBUTE[$type]>)
+  : _PRIMITIVE_ATTRIBUTE[$enum] extends ResolvePrimitiveAttributeType<_PRIMITIVE_ATTRIBUTE[$type]>[]
+  ? _PRIMITIVE_ATTRIBUTE[$enum][number]
+  : ResolvePrimitiveAttributeType<_PRIMITIVE_ATTRIBUTE[$type]>
