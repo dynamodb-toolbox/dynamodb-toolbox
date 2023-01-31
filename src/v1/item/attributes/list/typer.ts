@@ -23,11 +23,8 @@ type ListAttributeTyper = <
   elements: ELEMENTS,
   options?: NarrowObject<OPTIONS>
 ) => _ListAttribute<
-  { [$elements]: ELEMENTS } & InferStateFromOptions<
-    ListAttributeOptions,
-    ListAttributeDefaultOptions,
-    OPTIONS
-  >
+  ELEMENTS,
+  InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
 >
 
 /**
@@ -67,10 +64,7 @@ export const list: ListAttributeTyper = <
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(elements, { ...appliedOptions, default: nextDefault })
   } as _ListAttribute<
-    { [$elements]: ELEMENTS } & InferStateFromOptions<
-      ListAttributeOptions,
-      ListAttributeDefaultOptions,
-      OPTIONS
-    >
+    ELEMENTS,
+    InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
   >
 }
