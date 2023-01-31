@@ -21,16 +21,18 @@ import type {
   AtLeastOnce,
   OnlyOnce,
   Always,
-  ComputedDefault
+  ComputedDefault,
+  ResolvePrimitiveAttributeType
 } from 'v1/item'
 import type {
-  $resolved,
   $elements,
   $attributes,
   $value,
   $required,
   $open,
-  $default
+  $default,
+  $type,
+  $enum
 } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { EntityV2 } from '../class'
@@ -50,7 +52,9 @@ export type PutItemInput<
   : SCHEMA extends ConstantAttribute
   ? SCHEMA['value']
   : SCHEMA extends PrimitiveAttribute
-  ? NonNullable<SCHEMA['resolved']>
+  ? SCHEMA['enum'] extends ResolvePrimitiveAttributeType<SCHEMA['type']>[]
+    ? SCHEMA['enum'][number]
+    : ResolvePrimitiveAttributeType<SCHEMA['type']>
   : SCHEMA extends SetAttribute
   ? Set<PutItemInput<SCHEMA['elements'], REQUIRE_HARD_DEFAULTS>>
   : SCHEMA extends ListAttribute
@@ -90,7 +94,9 @@ export type _PutItemInput<
   : _SCHEMA extends _ConstantAttribute
   ? _SCHEMA[$value]
   : _SCHEMA extends _PrimitiveAttribute
-  ? NonNullable<_SCHEMA[$resolved]>
+  ? _SCHEMA[$enum] extends ResolvePrimitiveAttributeType<_SCHEMA[$type]>[]
+    ? _SCHEMA[$enum][number]
+    : ResolvePrimitiveAttributeType<_SCHEMA[$type]>
   : _SCHEMA extends _SetAttribute
   ? Set<_PutItemInput<_SCHEMA[$elements], REQUIRE_HARD_DEFAULTS>>
   : _SCHEMA extends _ListAttribute

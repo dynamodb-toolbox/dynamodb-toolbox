@@ -15,7 +15,6 @@ import type {
 import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
 
 interface _MapAttributeStateConstraint {
-  [$attributes]: _MapAttributeAttributes
   [$required]: RequiredOption
   [$hidden]: boolean
   [$key]: boolean
@@ -28,10 +27,11 @@ interface _MapAttributeStateConstraint {
  * MapAttribute attribute interface
  */
 export interface _MapAttribute<
+  ATTRIBUTES extends _MapAttributeAttributes = _MapAttributeAttributes,
   STATE extends _MapAttributeStateConstraint = _MapAttributeStateConstraint
 > {
   [$type]: 'map'
-  [$attributes]: STATE[$attributes]
+  [$attributes]: ATTRIBUTES
   [$required]: STATE[$required]
   [$hidden]: STATE[$hidden]
   [$key]: STATE[$key]
@@ -49,29 +49,29 @@ export interface _MapAttribute<
    */
   required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_REQUIRED
-  ) => _MapAttribute<O.Update<STATE, $required, NEXT_REQUIRED>>
+  ) => _MapAttribute<ATTRIBUTES, O.Update<STATE, $required, NEXT_REQUIRED>>
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => _MapAttribute<O.Update<STATE, $required, 'never'>>
+  optional: () => _MapAttribute<ATTRIBUTES, O.Update<STATE, $required, 'never'>>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _MapAttribute<O.Update<STATE, $hidden, true>>
+  hidden: () => _MapAttribute<ATTRIBUTES, O.Update<STATE, $hidden, true>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _MapAttribute<O.Update<STATE, $key, true>>
+  key: () => _MapAttribute<ATTRIBUTES, O.Update<STATE, $key, true>>
   /**
    * Accept additional attributes of any type
    */
-  open: () => _MapAttribute<O.Update<STATE, $open, true>>
+  open: () => _MapAttribute<ATTRIBUTES, O.Update<STATE, $open, true>>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => _MapAttribute<O.Update<STATE, $savedAs, NEXT_SAVED_AS>>
+  ) => _MapAttribute<ATTRIBUTES, O.Update<STATE, $savedAs, NEXT_SAVED_AS>>
   /**
    * Tag attribute as having a computed default value
    *
@@ -79,18 +79,24 @@ export interface _MapAttribute<
    */
   default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
     nextDefaultValue: NEXT_DEFAULT
-  ) => _MapAttribute<O.Update<STATE, $default, NEXT_DEFAULT>>
+  ) => _MapAttribute<ATTRIBUTES, O.Update<STATE, $default, NEXT_DEFAULT>>
 }
 
-export type MapAttributeStateConstraint = {
-  attributes: MapAttributeAttributes
-} & FreezeAttributeStateConstraint<Omit<_MapAttributeStateConstraint, $attributes>>
+export type MapAttributeStateConstraint = FreezeAttributeStateConstraint<_MapAttributeStateConstraint>
 
-export type MapAttribute<
+export interface MapAttribute<
+  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes,
   STATE extends MapAttributeStateConstraint = MapAttributeStateConstraint
-> = STATE & {
+> {
   path: string
   type: 'map'
+  attributes: ATTRIBUTES
+  required: STATE['required']
+  hidden: STATE['hidden']
+  key: STATE['key']
+  open: STATE['open']
+  savedAs: STATE['savedAs']
+  default: STATE['default']
   keyAttributesNames: Set<string>
   requiredAttributesNames: Record<RequiredOption, Set<string>>
 }

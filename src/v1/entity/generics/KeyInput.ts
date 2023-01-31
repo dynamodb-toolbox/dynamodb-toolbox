@@ -18,17 +18,19 @@ import type {
   _ListAttribute,
   MapAttribute,
   _MapAttribute,
-  Always
+  Always,
+  ResolvePrimitiveAttributeType
 } from 'v1/item'
 import type {
-  $resolved,
+  $type,
   $elements,
   $attributes,
   $value,
   $required,
   $key,
   $open,
-  $default
+  $default,
+  $enum
 } from 'v1/item/attributes/constants/attributeOptions'
 
 import { EntityV2 } from '../class'
@@ -44,7 +46,11 @@ export type KeyInput<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extend
   : SCHEMA extends ConstantAttribute
   ? SCHEMA['value']
   : SCHEMA extends PrimitiveAttribute
-  ? NonNullable<SCHEMA['resolved']>
+  ? // TODO: FIX THIS ISSUE
+    // ? SCHEMA['enum'] extends ResolvePrimitiveAttributeType<SCHEMA['type']>[]
+    //   ? SCHEMA['enum'][number]
+    //   : ResolvePrimitiveAttributeType<SCHEMA['type']>
+    ResolvePrimitiveAttributeType<SCHEMA['type']>
   : SCHEMA extends SetAttribute
   ? Set<KeyInput<SCHEMA['elements']>>
   : SCHEMA extends ListAttribute
@@ -77,7 +83,11 @@ export type _KeyInput<SCHEMA extends EntityV2 | _Item | _Attribute> = SCHEMA ext
   : SCHEMA extends _ConstantAttribute
   ? SCHEMA[$value]
   : SCHEMA extends _PrimitiveAttribute
-  ? NonNullable<SCHEMA[$resolved]>
+  ? // TODO: FIX THIS ISSUE
+    // ? SCHEMA[$enum] extends ResolvePrimitiveAttributeType<SCHEMA[$type]>[]
+    //   ? SCHEMA[$enum][number]
+    //   : ResolvePrimitiveAttributeType<SCHEMA[$type]>
+    ResolvePrimitiveAttributeType<SCHEMA[$type]>
   : SCHEMA extends _SetAttribute
   ? Set<_KeyInput<SCHEMA[$elements]>>
   : SCHEMA extends _ListAttribute

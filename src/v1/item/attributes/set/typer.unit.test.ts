@@ -20,6 +20,7 @@ import {
   SavedAsSetElementsError,
   freezeSetAttribute
 } from './freeze'
+import { SetAttribute, _SetAttribute } from './interface'
 
 describe('set', () => {
   const path = 'some.path'
@@ -130,6 +131,13 @@ describe('set', () => {
       }
     > = 1
     assertSet
+
+    const assertExtends: A.Extends<typeof st, _SetAttribute> = 1
+    assertExtends
+
+    const frozenSet = freezeSetAttribute(st, path)
+    const assertFrozenExtends: A.Extends<typeof frozenSet, SetAttribute> = 1
+    assertFrozenExtends
 
     expect(st).toMatchObject({
       [$type]: 'set',

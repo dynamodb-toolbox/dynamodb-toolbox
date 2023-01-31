@@ -1,7 +1,7 @@
 import type { NarrowObject } from 'v1/types/narrowObject'
 
 import type { RequiredOption, AtLeastOnce } from '../constants'
-import type { _Attribute, _MapAttributeAttributes, Narrow } from '../types'
+import type { _MapAttributeAttributes, Narrow } from '../types'
 import {
   $type,
   $attributes,
@@ -18,17 +18,14 @@ import type { _MapAttribute } from './interface'
 import { MapAttributeOptions, MapAttributeDefaultOptions, MAP_DEFAULT_OPTIONS } from './options'
 
 type MapAttributeTyper = <
-  ATTRIBUTES extends _MapAttributeAttributes = Record<never, _Attribute>,
+  ATTRIBUTES extends _MapAttributeAttributes,
   OPTIONS extends Partial<MapAttributeOptions> = MapAttributeOptions
 >(
   attributes: Narrow<ATTRIBUTES>,
   options?: NarrowObject<OPTIONS>
 ) => _MapAttribute<
-  { [$attributes]: ATTRIBUTES } & InferStateFromOptions<
-    MapAttributeOptions,
-    MapAttributeDefaultOptions,
-    OPTIONS
-  >
+  ATTRIBUTES,
+  InferStateFromOptions<MapAttributeOptions, MapAttributeDefaultOptions, OPTIONS>
 >
 
 /**
@@ -38,7 +35,7 @@ type MapAttributeTyper = <
  * @param options _(optional)_ Map Options
  */
 export const map: MapAttributeTyper = <
-  ATTRIBUTES extends _MapAttributeAttributes = Record<never, _Attribute>,
+  ATTRIBUTES extends _MapAttributeAttributes,
   OPTIONS extends Partial<MapAttributeOptions> = MapAttributeOptions
 >(
   attributes: Narrow<ATTRIBUTES>,
@@ -65,10 +62,7 @@ export const map: MapAttributeTyper = <
     savedAs: nextSavedAs => map(attributes, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => map(attributes, { ...appliedOptions, default: nextDefault })
   } as _MapAttribute<
-    { [$attributes]: ATTRIBUTES } & InferStateFromOptions<
-      MapAttributeOptions,
-      MapAttributeDefaultOptions,
-      OPTIONS
-    >
+    ATTRIBUTES,
+    InferStateFromOptions<MapAttributeOptions, MapAttributeDefaultOptions, OPTIONS>
   >
 }

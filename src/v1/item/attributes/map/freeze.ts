@@ -15,21 +15,23 @@ import type { MapAttributeAttributes } from '../types/attribute'
 
 import type { _MapAttribute, MapAttribute } from './interface'
 
-export type FreezeMapAttribute<_MAP_ATTRIBUTE extends _MapAttribute> = MapAttribute<{
-  attributes: _MapAttribute extends _MAP_ATTRIBUTE
+export type FreezeMapAttribute<_MAP_ATTRIBUTE extends _MapAttribute> = MapAttribute<
+  _MapAttribute extends _MAP_ATTRIBUTE
     ? MapAttributeAttributes
     : {
         [KEY in keyof _MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
           _MAP_ATTRIBUTE[$attributes][KEY]
         >
-      }
-  required: _MAP_ATTRIBUTE[$required]
-  hidden: _MAP_ATTRIBUTE[$hidden]
-  key: _MAP_ATTRIBUTE[$key]
-  open: _MAP_ATTRIBUTE[$open]
-  savedAs: _MAP_ATTRIBUTE[$savedAs]
-  default: _MAP_ATTRIBUTE[$default]
-}>
+      },
+  {
+    required: _MAP_ATTRIBUTE[$required]
+    hidden: _MAP_ATTRIBUTE[$hidden]
+    key: _MAP_ATTRIBUTE[$key]
+    open: _MAP_ATTRIBUTE[$open]
+    savedAs: _MAP_ATTRIBUTE[$savedAs]
+    default: _MAP_ATTRIBUTE[$default]
+  }
+>
 
 type MapAttributeFreezer = <_MAP_ATTRIBUTE extends _MapAttribute>(
   _mapAttribute: _MAP_ATTRIBUTE,

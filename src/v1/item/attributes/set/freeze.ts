@@ -12,15 +12,16 @@ import {
 
 import type { _SetAttribute, SetAttribute } from './interface'
 
-// TODO probably can be improved
-export type FreezeSetAttribute<_SET_ATTRIBUTE extends _SetAttribute> = SetAttribute<{
-  elements: FreezeAttribute<_SET_ATTRIBUTE[$elements]>
-  required: _SET_ATTRIBUTE[$required]
-  hidden: _SET_ATTRIBUTE[$hidden]
-  key: _SET_ATTRIBUTE[$key]
-  savedAs: _SET_ATTRIBUTE[$savedAs]
-  default: _SET_ATTRIBUTE[$default]
-}>
+export type FreezeSetAttribute<_SET_ATTRIBUTE extends _SetAttribute> = SetAttribute<
+  FreezeAttribute<_SET_ATTRIBUTE[$elements]>,
+  {
+    required: _SET_ATTRIBUTE[$required]
+    hidden: _SET_ATTRIBUTE[$hidden]
+    key: _SET_ATTRIBUTE[$key]
+    savedAs: _SET_ATTRIBUTE[$savedAs]
+    default: _SET_ATTRIBUTE[$default]
+  }
+>
 
 type SetAttributeFreezer = <_SET_ATTRIBUTE extends _SetAttribute>(
   _setAttribute: _SET_ATTRIBUTE,

@@ -3,7 +3,6 @@ import type { A } from 'ts-toolbelt'
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
 import {
   $type,
-  $resolved,
   $required,
   $hidden,
   $key,
@@ -19,6 +18,7 @@ import {
   InvalidDefaultValueTypeError,
   InvalidDefaultValueRangeError
 } from './freeze'
+import type { PrimitiveAttribute, _PrimitiveAttribute } from './interface'
 
 describe('primitiveAttribute', () => {
   const path = 'some.path'
@@ -31,7 +31,6 @@ describe('primitiveAttribute', () => {
         typeof str,
         {
           [$type]: 'string'
-          [$resolved]?: string
           [$required]: AtLeastOnce
           [$hidden]: false
           [$savedAs]: undefined
@@ -41,6 +40,13 @@ describe('primitiveAttribute', () => {
         }
       > = 1
       assertStr
+
+      const assertExtends: A.Extends<typeof str, _PrimitiveAttribute> = 1
+      assertExtends
+
+      const frozenStr = freezePrimitiveAttribute(str, path)
+      const assertFrozenExtends: A.Extends<typeof frozenStr, PrimitiveAttribute> = 1
+      assertFrozenExtends
 
       expect(str).toMatchObject({
         [$type]: 'string',
@@ -175,10 +181,7 @@ describe('primitiveAttribute', () => {
 
       const str = string().enum('foo', 'bar')
 
-      const assertStr: A.Contains<
-        typeof str,
-        { [$resolved]?: 'foo' | 'bar' | undefined; [$enum]: ['foo', 'bar'] }
-      > = 1
+      const assertStr: A.Contains<typeof str, { [$enum]: ['foo', 'bar'] }> = 1
       assertStr
 
       expect(str).toMatchObject({ [$enum]: ['foo', 'bar'] })
