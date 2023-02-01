@@ -3,21 +3,21 @@ import { $required, $hidden, $key, $savedAs } from '../constants/attributeOption
 
 import { FreezeAttributeStateConstraint } from './freezeAttributeStateConstraint'
 
-export interface _AttributeSharedStateConstraint {
+export interface $AttributeSharedStateConstraint {
   [$required]: RequiredOption
   [$hidden]: boolean
   [$key]: boolean
   [$savedAs]: string | undefined
 }
 
-export interface _AttributeSharedState<STATE extends _AttributeSharedStateConstraint> {
+export interface $AttributeSharedState<STATE extends $AttributeSharedStateConstraint> {
   [$required]: STATE[$required]
   [$hidden]: STATE[$hidden]
   [$key]: STATE[$key]
   [$savedAs]: STATE[$savedAs]
 }
 
-export type AttributeSharedStateConstraint = FreezeAttributeStateConstraint<_AttributeSharedStateConstraint>
+export type AttributeSharedStateConstraint = FreezeAttributeStateConstraint<$AttributeSharedStateConstraint>
 
 export interface AttributeSharedState<STATE extends AttributeSharedStateConstraint> {
   required: STATE['required']

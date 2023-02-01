@@ -4,7 +4,7 @@ export type {
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute
 } from './types'
-export type { _PrimitiveAttribute, PrimitiveAttribute } from './interface'
+export type { $PrimitiveAttribute, PrimitiveAttribute } from './interface'
 export {
   FreezePrimitiveAttribute,
   freezePrimitiveAttribute,

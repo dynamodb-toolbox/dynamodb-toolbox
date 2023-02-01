@@ -12,17 +12,17 @@ import {
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
-import type { _ListAttributeElements } from './types'
-import type { _ListAttribute } from './interface'
+import type { $ListAttributeElements } from './types'
+import type { $ListAttribute } from './interface'
 import { ListAttributeOptions, ListAttributeDefaultOptions, LIST_DEFAULT_OPTIONS } from './options'
 
 type ListAttributeTyper = <
-  ELEMENTS extends _ListAttributeElements,
+  ELEMENTS extends $ListAttributeElements,
   OPTIONS extends Partial<ListAttributeOptions> = ListAttributeOptions
 >(
   elements: ELEMENTS,
   options?: NarrowObject<OPTIONS>
-) => _ListAttribute<
+) => $ListAttribute<
   ELEMENTS,
   InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
 >
@@ -39,7 +39,7 @@ type ListAttributeTyper = <
  * @param options _(optional)_ List Options
  */
 export const list: ListAttributeTyper = <
-  ELEMENTS extends _ListAttributeElements,
+  ELEMENTS extends $ListAttributeElements,
   OPTIONS extends Partial<ListAttributeOptions> = ListAttributeOptions
 >(
   elements: ELEMENTS,
@@ -63,7 +63,7 @@ export const list: ListAttributeTyper = <
     key: () => list(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(elements, { ...appliedOptions, default: nextDefault })
-  } as _ListAttribute<
+  } as $ListAttribute<
     ELEMENTS,
     InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
   >

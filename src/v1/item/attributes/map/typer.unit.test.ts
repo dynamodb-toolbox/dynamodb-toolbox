@@ -14,7 +14,7 @@ import {
 } from '../constants/attributeOptions'
 
 import { map } from './typer'
-import type { MapAttribute, _MapAttribute } from './interface'
+import type { MapAttribute, $MapAttribute } from './interface'
 import { freezeMapAttribute } from './freeze'
 
 describe('map', () => {
@@ -40,7 +40,7 @@ describe('map', () => {
     > = 1
     assertMapAttribute
 
-    const assertExtends: A.Extends<typeof mapped, _MapAttribute> = 1
+    const assertExtends: A.Extends<typeof mapped, $MapAttribute> = 1
     assertExtends
 
     const frozenMap = freezeMapAttribute(mapped, 'some.path')

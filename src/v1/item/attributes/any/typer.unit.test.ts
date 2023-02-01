@@ -4,7 +4,7 @@ import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../consta
 import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
 
 import { freezeAnyAttribute } from './freeze'
-import type { _AnyAttribute, AnyAttribute } from './interface'
+import type { $AnyAttribute, AnyAttribute } from './interface'
 
 import { any } from './typer'
 
@@ -25,7 +25,7 @@ describe('anyAttribute', () => {
     > = 1
     assertAny
 
-    const assertExtends: A.Extends<typeof anyInstance, _AnyAttribute> = 1
+    const assertExtends: A.Extends<typeof anyInstance, $AnyAttribute> = 1
     assertExtends
 
     const frozenAny = freezeAnyAttribute(anyInstance, 'some.path')

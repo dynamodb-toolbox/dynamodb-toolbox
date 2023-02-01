@@ -10,38 +10,38 @@ import {
   $default
 } from '../constants/attributeOptions'
 
-import type { _SetAttribute, SetAttribute } from './interface'
+import type { $SetAttribute, SetAttribute } from './interface'
 
-export type FreezeSetAttribute<_SET_ATTRIBUTE extends _SetAttribute> = SetAttribute<
-  FreezeAttribute<_SET_ATTRIBUTE[$elements]>,
+export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttribute> = SetAttribute<
+  FreezeAttribute<$SET_ATTRIBUTE[$elements]>,
   {
-    required: _SET_ATTRIBUTE[$required]
-    hidden: _SET_ATTRIBUTE[$hidden]
-    key: _SET_ATTRIBUTE[$key]
-    savedAs: _SET_ATTRIBUTE[$savedAs]
-    default: _SET_ATTRIBUTE[$default]
+    required: $SET_ATTRIBUTE[$required]
+    hidden: $SET_ATTRIBUTE[$hidden]
+    key: $SET_ATTRIBUTE[$key]
+    savedAs: $SET_ATTRIBUTE[$savedAs]
+    default: $SET_ATTRIBUTE[$default]
   }
 >
 
-type SetAttributeFreezer = <_SET_ATTRIBUTE extends _SetAttribute>(
-  _setAttribute: _SET_ATTRIBUTE,
+type SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
+  $setAttribute: $SET_ATTRIBUTE,
   path: string
-) => FreezeSetAttribute<_SET_ATTRIBUTE>
+) => FreezeSetAttribute<$SET_ATTRIBUTE>
 
 /**
  * Validates a set instance
  *
- * @param _setAttribute SetAttribute
+ * @param $setAttribute SetAttribute
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeSetAttribute: SetAttributeFreezer = <_SET_ATTRIBUTE extends _SetAttribute>(
-  _setAttribute: _SET_ATTRIBUTE,
+export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
+  $setAttribute: $SET_ATTRIBUTE,
   path: string
-): FreezeSetAttribute<_SET_ATTRIBUTE> => {
-  validateAttributeProperties(_setAttribute, path)
+): FreezeSetAttribute<$SET_ATTRIBUTE> => {
+  validateAttributeProperties($setAttribute, path)
 
-  const elements: _SET_ATTRIBUTE[$elements] = _setAttribute[$elements]
+  const elements: $SET_ATTRIBUTE[$elements] = $setAttribute[$elements]
 
   if (elements[$required] !== 'atLeastOnce') {
     throw new OptionalSetElementsError({ path })
@@ -63,13 +63,13 @@ export const freezeSetAttribute: SetAttributeFreezer = <_SET_ATTRIBUTE extends _
 
   return {
     path,
-    type: _setAttribute[$type],
+    type: $setAttribute[$type],
     elements: frozenElements,
-    required: _setAttribute[$required],
-    hidden: _setAttribute[$hidden],
-    key: _setAttribute[$key],
-    savedAs: _setAttribute[$savedAs],
-    default: _setAttribute[$default]
+    required: $setAttribute[$required],
+    hidden: $setAttribute[$hidden],
+    key: $setAttribute[$key],
+    savedAs: $setAttribute[$savedAs],
+    default: $setAttribute[$default]
   }
 }
 
