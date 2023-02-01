@@ -33,7 +33,7 @@ type AnyPrimitiveAttributeTyper = <
     [$hidden]: OPTIONS['hidden']
     [$key]: OPTIONS['key']
     [$savedAs]: OPTIONS['savedAs']
-    [$enum]: OPTIONS['enum']
+    [$enum]: OPTIONS[$enum]
     [$default]: OPTIONS['default']
   }
 >
@@ -56,7 +56,7 @@ const primitive: AnyPrimitiveAttributeTyper = <
     [$hidden]: options.hidden,
     [$key]: options.key,
     [$savedAs]: options.savedAs,
-    [$enum]: options.enum,
+    [$enum]: options[$enum],
     [$default]: options.default,
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired = 'atLeastOnce' as NEXT_REQUIRED
@@ -66,7 +66,7 @@ const primitive: AnyPrimitiveAttributeTyper = <
     key: () => primitive(type, { ...options, key: true }),
     savedAs: nextSavedAs => primitive(type, { ...options, savedAs: nextSavedAs }),
     default: nextDefault => primitive(type, { ...options, default: nextDefault }),
-    enum: (...nextEnum) => primitive(type, { ...options, enum: nextEnum })
+    enum: (...nextEnum) => primitive(type, { ...options, [$enum]: nextEnum })
   } as _PrimitiveAttribute<
     TYPE,
     {
@@ -74,7 +74,7 @@ const primitive: AnyPrimitiveAttributeTyper = <
       [$hidden]: OPTIONS['hidden']
       [$key]: OPTIONS['key']
       [$savedAs]: OPTIONS['savedAs']
-      [$enum]: OPTIONS['enum']
+      [$enum]: OPTIONS[$enum]
       [$default]: OPTIONS['default']
     }
   >)
@@ -85,7 +85,13 @@ type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
   primitiveOptions?: NarrowObject<OPTIONS>
 ) => _PrimitiveAttribute<
   TYPE,
-  InferStateFromOptions<PrimitiveAttributeOptions<TYPE>, PrimitiveAttributeDefaultOptions, OPTIONS>
+  InferStateFromOptions<
+    Omit<PrimitiveAttributeOptions<TYPE>, $enum> & { enum: PrimitiveAttributeOptions<TYPE>[$enum] },
+    Omit<PrimitiveAttributeDefaultOptions, $enum> & {
+      enum: PrimitiveAttributeDefaultOptions[$enum]
+    },
+    Omit<OPTIONS, $enum> & { enum: OPTIONS[$enum] }
+  >
 >
 
 type PrimitiveAttributeTyperFactory = <TYPE extends PrimitiveAttributeType>(
