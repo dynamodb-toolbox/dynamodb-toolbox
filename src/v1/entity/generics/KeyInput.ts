@@ -2,22 +2,22 @@ import type { O } from 'ts-toolbelt'
 
 import type {
   Item,
-  _Item,
+  $Item,
   Attribute,
-  _Attribute,
+  $Attribute,
   ResolvedAttribute,
   AnyAttribute,
-  _AnyAttribute,
+  $AnyAttribute,
   ConstantAttribute,
-  _ConstantAttribute,
+  $ConstantAttribute,
   PrimitiveAttribute,
-  _PrimitiveAttribute,
+  $PrimitiveAttribute,
   SetAttribute,
-  _SetAttribute,
+  $SetAttribute,
   ListAttribute,
-  _ListAttribute,
+  $ListAttribute,
   MapAttribute,
-  _MapAttribute,
+  $MapAttribute,
   Always,
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute
@@ -77,24 +77,24 @@ export type KeyInput<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extend
   : never
 
 // TODO: Required in Entity constructor... See if possible to use only KeyInput w. Item
-export type _KeyInput<SCHEMA extends EntityV2 | _Item | _Attribute> = SCHEMA extends _AnyAttribute
+export type $KeyInput<SCHEMA extends EntityV2 | $Item | $Attribute> = SCHEMA extends $AnyAttribute
   ? ResolvedAttribute
-  : SCHEMA extends _ConstantAttribute
+  : SCHEMA extends $ConstantAttribute
   ? SCHEMA[$value]
-  : SCHEMA extends _PrimitiveAttribute
+  : SCHEMA extends $PrimitiveAttribute
   ? SCHEMA[$enum] extends ResolvedPrimitiveAttribute[]
     ? SCHEMA[$enum][number]
     : ResolvePrimitiveAttributeType<SCHEMA[$type]>
-  : SCHEMA extends _SetAttribute
-  ? Set<_KeyInput<SCHEMA[$elements]>>
-  : SCHEMA extends _ListAttribute
-  ? _KeyInput<SCHEMA[$elements]>[]
-  : SCHEMA extends _MapAttribute | _Item
+  : SCHEMA extends $SetAttribute
+  ? Set<$KeyInput<SCHEMA[$elements]>>
+  : SCHEMA extends $ListAttribute
+  ? $KeyInput<SCHEMA[$elements]>[]
+  : SCHEMA extends $MapAttribute | $Item
   ? O.Required<
       O.Partial<
         {
           // Keep only key attributes
-          [key in O.SelectKeys<SCHEMA[$attributes], { [$key]: true }>]: _KeyInput<
+          [key in O.SelectKeys<SCHEMA[$attributes], { [$key]: true }>]: $KeyInput<
             SCHEMA[$attributes][key]
           >
         }
@@ -108,5 +108,5 @@ export type _KeyInput<SCHEMA extends EntityV2 | _Item | _Attribute> = SCHEMA ext
     > & // Add Record<string, ResolvedAttribute> if map is open
       (SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
-  ? _KeyInput<SCHEMA['_item']>
+  ? $KeyInput<SCHEMA['$item']>
   : never

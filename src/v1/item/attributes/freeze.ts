@@ -1,29 +1,29 @@
 import { $type } from './constants/attributeOptions'
-import { freezeAnyAttribute, _AnyAttribute, FreezeAnyAttribute } from './any'
-import { freezeConstantAttribute, _ConstantAttribute, FreezeConstantAttribute } from './constant'
+import { freezeAnyAttribute, $AnyAttribute, FreezeAnyAttribute } from './any'
+import { freezeConstantAttribute, $ConstantAttribute, FreezeConstantAttribute } from './constant'
 import {
   freezePrimitiveAttribute,
-  _PrimitiveAttribute,
+  $PrimitiveAttribute,
   FreezePrimitiveAttribute
 } from './primitive'
-import { freezeSetAttribute, _SetAttribute, FreezeSetAttribute } from './set'
-import { freezeListAttribute, _ListAttribute, FreezeListAttribute } from './list'
-import { freezeMapAttribute, _MapAttribute, FreezeMapAttribute } from './map'
-import type { _Attribute } from './types/attribute'
+import { freezeSetAttribute, $SetAttribute, FreezeSetAttribute } from './set'
+import { freezeListAttribute, $ListAttribute, FreezeListAttribute } from './list'
+import { freezeMapAttribute, $MapAttribute, FreezeMapAttribute } from './map'
+import type { $Attribute } from './types/attribute'
 
-export type FreezeAttribute<_ATTRIBUTE extends _Attribute> = _ATTRIBUTE extends _AnyAttribute
+export type FreezeAttribute<_ATTRIBUTE extends $Attribute> = _ATTRIBUTE extends $AnyAttribute
   ? FreezeAnyAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends _ConstantAttribute
+  : _ATTRIBUTE extends $ConstantAttribute
   ? FreezeConstantAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends _PrimitiveAttribute
+  : _ATTRIBUTE extends $PrimitiveAttribute
   ? FreezePrimitiveAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends _SetAttribute
+  : _ATTRIBUTE extends $SetAttribute
   ? FreezeSetAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends _ListAttribute
+  : _ATTRIBUTE extends $ListAttribute
   ? FreezeListAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends _ListAttribute
+  : _ATTRIBUTE extends $ListAttribute
   ? FreezeListAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends _MapAttribute
+  : _ATTRIBUTE extends $MapAttribute
   ? FreezeMapAttribute<_ATTRIBUTE>
   : never
 
@@ -34,7 +34,7 @@ export type FreezeAttribute<_ATTRIBUTE extends _Attribute> = _ATTRIBUTE extends 
  * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return Attribute
  */
-export const freezeAttribute = <_ATTRIBUTE extends _Attribute>(
+export const freezeAttribute = <_ATTRIBUTE extends $Attribute>(
   attribute: _ATTRIBUTE,
   path: string
 ): FreezeAttribute<_ATTRIBUTE> => {

@@ -17,37 +17,37 @@ import { validateAttributeProperties } from '../shared/validate'
 import { ResolvedAttribute } from '../types'
 
 import {
-  _ConstantAttribute,
+  $ConstantAttribute,
   ConstantAttributeStateConstraint,
   ConstantAttribute
 } from './interface'
 
 export type FreezeConstantAttribute<
-  _CONSTANT_ATTRIBUTE extends _ConstantAttribute
+  $CONSTANT_ATTRIBUTE extends $ConstantAttribute
 > = ConstantAttribute<
-  _CONSTANT_ATTRIBUTE[$value],
+  $CONSTANT_ATTRIBUTE[$value],
   {
-    [KEY in keyof ConstantAttributeStateConstraint]: _CONSTANT_ATTRIBUTE[AttributeOptionNameSymbol[KEY]]
+    [KEY in keyof ConstantAttributeStateConstraint]: $CONSTANT_ATTRIBUTE[AttributeOptionNameSymbol[KEY]]
   }
 >
 
-type ConstantAttributeFreezer = <_CONSTANT_ATTRIBUTE extends _ConstantAttribute>(
-  _constantAttribute: _CONSTANT_ATTRIBUTE,
+type ConstantAttributeFreezer = <$CONSTANT_ATTRIBUTE extends $ConstantAttribute>(
+  $constantAttribute: $CONSTANT_ATTRIBUTE,
   path: string
-) => FreezeConstantAttribute<_CONSTANT_ATTRIBUTE>
+) => FreezeConstantAttribute<$CONSTANT_ATTRIBUTE>
 
 /**
  * Validates a constant instance
  *
- * @param _constantAttribute Primitive
+ * @param $constantAttribute Primitive
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeConstantAttribute: ConstantAttributeFreezer = (_constantAttribute, path) => {
-  validateAttributeProperties(_constantAttribute, path)
+export const freezeConstantAttribute: ConstantAttributeFreezer = ($constantAttribute, path) => {
+  validateAttributeProperties($constantAttribute, path)
 
-  const constValue = _constantAttribute[$value]
-  const defaultValue = _constantAttribute[$default]
+  const constValue = $constantAttribute[$value]
+  const defaultValue = $constantAttribute[$default]
   if (
     defaultValue !== undefined &&
     !isComputedDefault(defaultValue) &&
@@ -60,12 +60,12 @@ export const freezeConstantAttribute: ConstantAttributeFreezer = (_constantAttri
 
   return {
     path,
-    type: _constantAttribute[$type],
+    type: $constantAttribute[$type],
     value: constValue,
-    required: _constantAttribute[$required],
-    hidden: _constantAttribute[$hidden],
-    key: _constantAttribute[$key],
-    savedAs: _constantAttribute[$savedAs],
+    required: $constantAttribute[$required],
+    hidden: $constantAttribute[$hidden],
+    key: $constantAttribute[$key],
+    savedAs: $constantAttribute[$savedAs],
     default: defaultValue
   }
 }

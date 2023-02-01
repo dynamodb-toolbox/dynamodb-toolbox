@@ -20,7 +20,7 @@ import {
   SavedAsSetElementsError,
   freezeSetAttribute
 } from './freeze'
-import { SetAttribute, _SetAttribute } from './interface'
+import { SetAttribute, $SetAttribute } from './interface'
 
 describe('set', () => {
   const path = 'some.path'
@@ -132,7 +132,7 @@ describe('set', () => {
     > = 1
     assertSet
 
-    const assertExtends: A.Extends<typeof st, _SetAttribute> = 1
+    const assertExtends: A.Extends<typeof st, $SetAttribute> = 1
     assertExtends
 
     const frozenSet = freezeSetAttribute(st, path)

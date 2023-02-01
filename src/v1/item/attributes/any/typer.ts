@@ -4,12 +4,12 @@ import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
-import type { _AnyAttribute } from './interface'
+import type { $AnyAttribute } from './interface'
 import { AnyAttributeOptions, AnyAttributeDefaultOptions, ANY_DEFAULT_OPTIONS } from './options'
 
 type AnyAttributeTyper = <OPTIONS extends Partial<AnyAttributeOptions> = AnyAttributeOptions>(
   options?: NarrowObject<OPTIONS>
-) => _AnyAttribute<InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS>>
+) => $AnyAttribute<InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS>>
 
 /**
  * Define a new attribute of any type
@@ -38,7 +38,7 @@ export const any: AnyAttributeTyper = <
     key: () => any({ ...appliedOptions, key: true }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => any({ ...appliedOptions, default: nextDefault })
-  } as _AnyAttribute<
+  } as $AnyAttribute<
     InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS>
   >
 }

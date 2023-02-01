@@ -13,7 +13,7 @@ import {
   $default
 } from '../constants/attributeOptions'
 
-import { _PrimitiveAttribute, PrimitiveAttribute } from './interface'
+import { $PrimitiveAttribute, PrimitiveAttribute } from './interface'
 import type {
   PrimitiveAttributeType,
   PrimitiveAttributeEnumValues,
@@ -21,49 +21,49 @@ import type {
 } from './types'
 
 export type FreezePrimitiveAttribute<
-  _PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute
+  $PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute
 > = PrimitiveAttribute<
-  _PRIMITIVE_ATTRIBUTE[$type],
+  $PRIMITIVE_ATTRIBUTE[$type],
   {
-    required: _PRIMITIVE_ATTRIBUTE[$required]
-    hidden: _PRIMITIVE_ATTRIBUTE[$hidden]
-    key: _PRIMITIVE_ATTRIBUTE[$key]
-    savedAs: _PRIMITIVE_ATTRIBUTE[$savedAs]
+    required: $PRIMITIVE_ATTRIBUTE[$required]
+    hidden: $PRIMITIVE_ATTRIBUTE[$hidden]
+    key: $PRIMITIVE_ATTRIBUTE[$key]
+    savedAs: $PRIMITIVE_ATTRIBUTE[$savedAs]
     enum: Extract<
-      _PRIMITIVE_ATTRIBUTE[$enum],
-      PrimitiveAttributeEnumValues<_PRIMITIVE_ATTRIBUTE[$type]>
+      $PRIMITIVE_ATTRIBUTE[$enum],
+      PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
     >
     default: Extract<
-      _PRIMITIVE_ATTRIBUTE[$default],
-      PrimitiveAttributeDefaultValue<_PRIMITIVE_ATTRIBUTE[$type]>
+      $PRIMITIVE_ATTRIBUTE[$default],
+      PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
     >
   }
 >
 
-type PrimitiveAttributeFreezer = <_PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute>(
-  _primitiveAttribute: _PRIMITIVE_ATTRIBUTE,
+type PrimitiveAttributeFreezer = <$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute>(
+  $primitiveAttribute: $PRIMITIVE_ATTRIBUTE,
   path: string
-) => FreezePrimitiveAttribute<_PRIMITIVE_ATTRIBUTE>
+) => FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE>
 
 /**
  * Validates a primitive instance
  *
- * @param _primitiveAttribute Primitive
+ * @param $primitiveAttribute Primitive
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
 export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
-  _PRIMITIVE_ATTRIBUTE extends _PrimitiveAttribute
+  _PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute
 >(
-  _primitiveAttribute: _PRIMITIVE_ATTRIBUTE,
+  $primitiveAttribute: _PRIMITIVE_ATTRIBUTE,
   path: string
 ): FreezePrimitiveAttribute<_PRIMITIVE_ATTRIBUTE> => {
-  validateAttributeProperties(_primitiveAttribute, path)
+  validateAttributeProperties($primitiveAttribute, path)
 
-  const primitiveType = _primitiveAttribute[$type]
+  const primitiveType = $primitiveAttribute[$type]
   const typeValidator = validatorsByPrimitiveType[primitiveType]
 
-  const enumValues = _primitiveAttribute[$enum]
+  const enumValues = $primitiveAttribute[$enum]
   enumValues?.forEach(enumValue => {
     const isEnumValueValid = typeValidator(enumValue)
     if (!isEnumValueValid) {
@@ -71,7 +71,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     }
   })
 
-  const defaultValue = _primitiveAttribute[$default]
+  const defaultValue = $primitiveAttribute[$default]
   if (
     defaultValue !== undefined &&
     !isComputedDefault(defaultValue) &&
@@ -89,10 +89,10 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
   return {
     path,
     type: primitiveType,
-    required: _primitiveAttribute[$required],
-    hidden: _primitiveAttribute[$hidden],
-    key: _primitiveAttribute[$key],
-    savedAs: _primitiveAttribute[$savedAs],
+    required: $primitiveAttribute[$required],
+    hidden: $primitiveAttribute[$hidden],
+    key: $primitiveAttribute[$key],
+    savedAs: $primitiveAttribute[$savedAs],
     enum: enumValues as Extract<
       _PRIMITIVE_ATTRIBUTE[$enum],
       PrimitiveAttributeEnumValues<_PRIMITIVE_ATTRIBUTE[$type]>

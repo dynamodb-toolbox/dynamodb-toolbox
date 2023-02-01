@@ -18,7 +18,7 @@ import {
   InvalidDefaultValueTypeError,
   InvalidDefaultValueRangeError
 } from './freeze'
-import type { PrimitiveAttribute, _PrimitiveAttribute } from './interface'
+import type { PrimitiveAttribute, $PrimitiveAttribute } from './interface'
 
 describe('primitiveAttribute', () => {
   const path = 'some.path'
@@ -41,7 +41,7 @@ describe('primitiveAttribute', () => {
       > = 1
       assertStr
 
-      const assertExtends: A.Extends<typeof str, _PrimitiveAttribute> = 1
+      const assertExtends: A.Extends<typeof str, $PrimitiveAttribute> = 1
       assertExtends
 
       const frozenStr = freezePrimitiveAttribute(str, path)

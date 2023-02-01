@@ -12,27 +12,27 @@ import type {
 } from '../constants/attributeOptions'
 import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
 import type {
-  _AttributeSharedStateConstraint,
-  _AttributeSharedState,
+  $AttributeSharedStateConstraint,
+  $AttributeSharedState,
   AttributeSharedState
 } from '../shared/interface'
 
-import type { _ListAttributeElements, ListAttributeElements } from './types'
+import type { $ListAttributeElements, ListAttributeElements } from './types'
 
-interface _ListAttributeStateConstraint extends _AttributeSharedStateConstraint {
+interface $ListAttributeStateConstraint extends $AttributeSharedStateConstraint {
   [$default]: ComputedDefault | undefined
 }
 
 /**
  * List attribute interface
  */
-export interface _ListAttribute<
-  ELEMENTS extends _ListAttributeElements = _ListAttributeElements,
-  STATE extends _ListAttributeStateConstraint = _ListAttributeStateConstraint
-> extends _AttributeSharedState<STATE> {
+export interface $ListAttribute<
+  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
+  $STATE extends $ListAttributeStateConstraint = $ListAttributeStateConstraint
+> extends $AttributeSharedState<$STATE> {
   [$type]: 'list'
-  [$elements]: ELEMENTS
-  [$default]: STATE[$default]
+  [$elements]: $ELEMENTS
+  [$default]: $STATE[$default]
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -44,25 +44,25 @@ export interface _ListAttribute<
    */
   required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_IS_REQUIRED
-  ) => _ListAttribute<ELEMENTS, O.Update<STATE, $required, NEXT_IS_REQUIRED>>
+  ) => $ListAttribute<$ELEMENTS, O.Update<$STATE, $required, NEXT_IS_REQUIRED>>
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => _ListAttribute<ELEMENTS, O.Update<STATE, $required, 'never'>>
+  optional: () => $ListAttribute<$ELEMENTS, O.Update<$STATE, $required, 'never'>>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => _ListAttribute<ELEMENTS, O.Update<STATE, $hidden, true>>
+  hidden: () => $ListAttribute<$ELEMENTS, O.Update<$STATE, $hidden, true>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => _ListAttribute<ELEMENTS, O.Update<STATE, $key, true>>
+  key: () => $ListAttribute<$ELEMENTS, O.Update<$STATE, $key, true>>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => _ListAttribute<ELEMENTS, O.Update<STATE, $savedAs, NEXT_SAVED_AS>>
+  ) => $ListAttribute<$ELEMENTS, O.Update<$STATE, $savedAs, NEXT_SAVED_AS>>
   /**
    * Tag attribute as having a computed default value
    *
@@ -70,10 +70,10 @@ export interface _ListAttribute<
    */
   default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
     nextDefaultValue: NEXT_DEFAULT
-  ) => _ListAttribute<ELEMENTS, O.Update<STATE, $default, NEXT_DEFAULT>>
+  ) => $ListAttribute<$ELEMENTS, O.Update<$STATE, $default, NEXT_DEFAULT>>
 }
 
-export type ListAttributeStateConstraint = FreezeAttributeStateConstraint<_ListAttributeStateConstraint>
+export type ListAttributeStateConstraint = FreezeAttributeStateConstraint<$ListAttributeStateConstraint>
 
 export interface ListAttribute<
   ELEMENTS extends ListAttributeElements = ListAttributeElements,

@@ -1,9 +1,9 @@
-import type { _Item } from '../interface'
+import type { $Item } from '../interface'
 import type {
-  _Attribute,
-  _SetAttribute,
-  _ListAttribute,
-  _MapAttribute,
+  $Attribute,
+  $SetAttribute,
+  $ListAttribute,
+  $MapAttribute,
   ComputedDefault
 } from '../attributes'
 import { $elements, $attributes, $default } from '../attributes/constants/attributeOptions'
@@ -15,15 +15,15 @@ import { $elements, $attributes, $default } from '../attributes/constants/attrib
  * @param Schema Item | Attribute
  * @return Boolean
  */
-export type _HasComputedDefaults<SCHEMA extends _Item | _Attribute> = SCHEMA extends {
+export type $HasComputedDefaults<SCHEMA extends $Item | $Attribute> = SCHEMA extends {
   [$default]: ComputedDefault
 }
   ? true
-  : SCHEMA extends _SetAttribute | _ListAttribute
-  ? _HasComputedDefaults<SCHEMA[$elements]>
-  : SCHEMA extends _MapAttribute | _Item
+  : SCHEMA extends $SetAttribute | $ListAttribute
+  ? $HasComputedDefaults<SCHEMA[$elements]>
+  : SCHEMA extends $MapAttribute | $Item
   ? true extends {
-      [ATTRIBUTE_NAME in keyof SCHEMA[$attributes]]: _HasComputedDefaults<
+      [ATTRIBUTE_NAME in keyof SCHEMA[$attributes]]: $HasComputedDefaults<
         SCHEMA[$attributes][ATTRIBUTE_NAME]
       >
     }[keyof SCHEMA[$attributes]]
