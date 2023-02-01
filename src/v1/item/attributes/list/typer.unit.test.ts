@@ -20,7 +20,7 @@ import {
   SavedAsListAttributeElementsError,
   freezeListAttribute
 } from './freeze'
-import type { ListAttribute, _ListAttribute } from './interface'
+import type { ListAttribute, $ListAttribute } from './interface'
 
 describe('list', () => {
   const path = 'some.path'
@@ -126,7 +126,7 @@ describe('list', () => {
     > = 1
     assertList
 
-    const assertExtends: A.Extends<typeof lst, _ListAttribute> = 1
+    const assertExtends: A.Extends<typeof lst, $ListAttribute> = 1
     assertExtends
 
     const frozenList = freezeListAttribute(lst, path)

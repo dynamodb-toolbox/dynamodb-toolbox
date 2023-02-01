@@ -13,7 +13,7 @@ import {
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 import type { ResolvedAttribute } from '../types'
 
-import type { _ConstantAttribute } from './interface'
+import type { $ConstantAttribute } from './interface'
 import {
   ConstantAttributeOptions,
   ConstantAttributeDefaultOptions,
@@ -26,7 +26,7 @@ type ConstantAttributeTyper = <
 >(
   value: VALUE,
   options?: NarrowObject<OPTIONS>
-) => _ConstantAttribute<
+) => $ConstantAttribute<
   VALUE,
   InferStateFromOptions<ConstantAttributeOptions<VALUE>, ConstantAttributeDefaultOptions, OPTIONS>
 >
@@ -62,7 +62,7 @@ export const constant: ConstantAttributeTyper = <
     key: () => constant(value, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => constant(value, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => constant(value, { ...appliedOptions, default: nextDefault })
-  } as _ConstantAttribute<
+  } as $ConstantAttribute<
     VALUE,
     InferStateFromOptions<ConstantAttributeOptions<VALUE>, ConstantAttributeDefaultOptions, OPTIONS>
   >

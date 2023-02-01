@@ -1,9 +1,9 @@
 import { AtLeastOnce } from '../constants'
 import { $required, $hidden, $key, $savedAs, $enum, $default } from '../constants/attributeOptions'
-import type { PrimitiveAttribute, _PrimitiveAttribute } from '../primitive/interface'
+import type { PrimitiveAttribute, $PrimitiveAttribute } from '../primitive/interface'
 import { PrimitiveAttributeEnumValues } from '../primitive/types'
 
-export type _SetAttributeElements = _PrimitiveAttribute<
+export type $SetAttributeElements = $PrimitiveAttribute<
   'string' | 'number' | 'binary',
   {
     [$required]: AtLeastOnce

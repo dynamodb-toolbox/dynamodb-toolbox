@@ -1,4 +1,4 @@
-import { _Item, FreezeItem } from './interface'
+import { $Item, FreezeItem } from './interface'
 import { FreezeAttribute, freezeAttribute } from './attributes/freeze'
 import { RequiredOption } from './attributes/constants/requiredOptions'
 import {
@@ -10,9 +10,9 @@ import {
   $required
 } from './attributes/constants/attributeOptions'
 
-type ItemFreezer = <_ITEM extends _Item>(item: _ITEM) => FreezeItem<_ITEM>
+type ItemFreezer = <$ITEM extends $Item>(item: $ITEM) => FreezeItem<$ITEM>
 
-export const freezeItem: ItemFreezer = <_ITEM extends _Item>(item: _ITEM): FreezeItem<_ITEM> => {
+export const freezeItem: ItemFreezer = <$ITEM extends $Item>(item: $ITEM): FreezeItem<$ITEM> => {
   const attributesSavedAs = new Set<string>()
 
   const keyAttributesNames = new Set<string>()
@@ -24,9 +24,9 @@ export const freezeItem: ItemFreezer = <_ITEM extends _Item>(item: _ITEM): Freez
     never: new Set()
   }
 
-  const attributes: _ITEM[$attributes] = item[$attributes]
+  const attributes: $ITEM[$attributes] = item[$attributes]
   const frozenAttributes: {
-    [key in keyof _ITEM[$attributes]]: FreezeAttribute<_ITEM[$attributes][key]>
+    [key in keyof $ITEM[$attributes]]: FreezeAttribute<$ITEM[$attributes][key]>
   } = {} as any
 
   for (const attributeName in attributes) {

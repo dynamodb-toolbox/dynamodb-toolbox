@@ -13,7 +13,7 @@ import {
 
 import { constant } from './typer'
 import { freezeConstantAttribute, InvalidDefaultValueError } from './freeze'
-import type { ConstantAttribute, _ConstantAttribute } from './interface'
+import type { ConstantAttribute, $ConstantAttribute } from './interface'
 
 const path = 'some.path'
 
@@ -36,7 +36,7 @@ describe('constantAttribute', () => {
       > = 1
       assertFoobar
 
-      const assertExtends: A.Extends<typeof foobar, _ConstantAttribute> = 1
+      const assertExtends: A.Extends<typeof foobar, $ConstantAttribute> = 1
       assertExtends
 
       const frozenFoobar = freezeConstantAttribute(foobar, path)

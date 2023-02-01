@@ -13,30 +13,30 @@ import {
 } from '../constants/attributeOptions'
 import type { MapAttributeAttributes } from '../types/attribute'
 
-import type { _MapAttribute, MapAttribute } from './interface'
+import type { $MapAttribute, MapAttribute } from './interface'
 
-export type FreezeMapAttribute<_MAP_ATTRIBUTE extends _MapAttribute> = MapAttribute<
-  _MapAttribute extends _MAP_ATTRIBUTE
+export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttribute> = MapAttribute<
+  $MapAttribute extends $MAP_ATTRIBUTE
     ? MapAttributeAttributes
     : {
-        [KEY in keyof _MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
-          _MAP_ATTRIBUTE[$attributes][KEY]
+        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
+          $MAP_ATTRIBUTE[$attributes][KEY]
         >
       },
   {
-    required: _MAP_ATTRIBUTE[$required]
-    hidden: _MAP_ATTRIBUTE[$hidden]
-    key: _MAP_ATTRIBUTE[$key]
-    open: _MAP_ATTRIBUTE[$open]
-    savedAs: _MAP_ATTRIBUTE[$savedAs]
-    default: _MAP_ATTRIBUTE[$default]
+    required: $MAP_ATTRIBUTE[$required]
+    hidden: $MAP_ATTRIBUTE[$hidden]
+    key: $MAP_ATTRIBUTE[$key]
+    open: $MAP_ATTRIBUTE[$open]
+    savedAs: $MAP_ATTRIBUTE[$savedAs]
+    default: $MAP_ATTRIBUTE[$default]
   }
 >
 
-type MapAttributeFreezer = <_MAP_ATTRIBUTE extends _MapAttribute>(
-  _mapAttribute: _MAP_ATTRIBUTE,
+type MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
+  _mapAttribute: $MAP_ATTRIBUTE,
   path: string
-) => FreezeMapAttribute<_MAP_ATTRIBUTE>
+) => FreezeMapAttribute<$MAP_ATTRIBUTE>
 
 /**
  * Freezes a map instance
@@ -45,8 +45,8 @@ type MapAttributeFreezer = <_MAP_ATTRIBUTE extends _MapAttribute>(
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeMapAttribute: MapAttributeFreezer = <_MAP_ATTRIBUTE extends _MapAttribute>(
-  _mapAttribute: _MAP_ATTRIBUTE,
+export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
+  _mapAttribute: $MAP_ATTRIBUTE,
   path: string
 ) => {
   validateAttributeProperties(_mapAttribute, path)
@@ -62,9 +62,9 @@ export const freezeMapAttribute: MapAttributeFreezer = <_MAP_ATTRIBUTE extends _
     never: new Set()
   }
 
-  const attributes: _MAP_ATTRIBUTE[$attributes] = _mapAttribute[$attributes]
+  const attributes: $MAP_ATTRIBUTE[$attributes] = _mapAttribute[$attributes]
   const frozenAttributes: {
-    [KEY in keyof _MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<_MAP_ATTRIBUTE[$attributes][KEY]>
+    [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<$MAP_ATTRIBUTE[$attributes][KEY]>
   } = {} as any
 
   for (const attributeName in attributes) {
