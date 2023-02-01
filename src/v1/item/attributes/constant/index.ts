@@ -1,5 +1,5 @@
 export { constant } from './typer'
-export type { _ConstantAttribute, ConstantAttribute } from './interface'
+export type { $ConstantAttribute, ConstantAttribute } from './interface'
 export {
   FreezeConstantAttribute,
   freezeConstantAttribute,

@@ -1,10 +1,10 @@
-import type { _MapAttributeAttributes, Narrow } from './attributes'
+import type { $MapAttributeAttributes, Narrow } from './attributes'
 import { $type, $attributes, $open } from './attributes/constants/attributeOptions'
-import type { _Item } from './interface'
+import type { $Item } from './interface'
 
-type ItemTyper = <_MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = {}>(
-  attributes: Narrow<_MAP_ATTRIBUTE_ATTRIBUTES>
-) => _Item<_MAP_ATTRIBUTE_ATTRIBUTES>
+type ItemTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $MapAttributeAttributes = {}>(
+  attributes: Narrow<$MAP_ATTRIBUTE_ATTRIBUTES>
+) => $Item<$MAP_ATTRIBUTE_ATTRIBUTES>
 
 // TODO: Enable item opening
 /**
@@ -13,11 +13,11 @@ type ItemTyper = <_MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = {}
  * @param attributes Object of attributes
  * @return Item
  */
-export const item: ItemTyper = <_MAP_ATTRIBUTE_ATTRIBUTES extends _MapAttributeAttributes = {}>(
-  attributes: Narrow<_MAP_ATTRIBUTE_ATTRIBUTES>
-): _Item<_MAP_ATTRIBUTE_ATTRIBUTES> =>
+export const item: ItemTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $MapAttributeAttributes = {}>(
+  attributes: Narrow<$MAP_ATTRIBUTE_ATTRIBUTES>
+): $Item<$MAP_ATTRIBUTE_ATTRIBUTES> =>
   ({
     [$type]: 'item',
     [$open]: false,
     [$attributes]: attributes
-  } as _Item<_MAP_ATTRIBUTE_ATTRIBUTES>)
+  } as $Item<$MAP_ATTRIBUTE_ATTRIBUTES>)

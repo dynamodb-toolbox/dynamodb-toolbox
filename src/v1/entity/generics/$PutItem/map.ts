@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import type {
   ResolvedAttribute,
-  _MapAttribute,
+  $MapAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -15,9 +15,9 @@ import type {
   $default
 } from 'v1/item/attributes/constants/attributeOptions'
 
-import type { _AttributePutItem } from './attribute'
+import type { $AttributePutItem } from './attribute'
 
-export type _MapAttributePutItem<_MAP_ATTRIBUTE extends _MapAttribute> = _MAP_ATTRIBUTE extends {
+export type $MapAttributePutItem<$MAP_ATTRIBUTE extends $MapAttribute> = $MAP_ATTRIBUTE extends {
   [$required]: 'never'
 }
   ?
@@ -26,32 +26,32 @@ export type _MapAttributePutItem<_MAP_ATTRIBUTE extends _MapAttribute> = _MAP_AT
           O.Partial<
             {
               // Keep all attributes
-              [KEY in keyof _MAP_ATTRIBUTE[$attributes]]: _AttributePutItem<
-                _MAP_ATTRIBUTE[$attributes][KEY]
+              [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: $AttributePutItem<
+                $MAP_ATTRIBUTE[$attributes][KEY]
               >
             }
           >,
           // Enforce Required attributes
           | O.SelectKeys<
-              _MAP_ATTRIBUTE[$attributes],
+              $MAP_ATTRIBUTE[$attributes],
               { [$required]: AtLeastOnce | OnlyOnce | Always }
             >
           // Enforce attributes that have hard default
-          | O.FilterKeys<_MAP_ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
+          | O.FilterKeys<$MAP_ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
         > & // Add Record<string, ResolvedAttribute> if map is open
-          (_MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown))
+          ($MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown))
   : O.Required<
       O.Partial<
         {
           // Keep all attributes
-          [KEY in keyof _MAP_ATTRIBUTE[$attributes]]: _AttributePutItem<
-            _MAP_ATTRIBUTE[$attributes][KEY]
+          [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: $AttributePutItem<
+            $MAP_ATTRIBUTE[$attributes][KEY]
           >
         }
       >,
       // Enforce Required attributes
-      | O.SelectKeys<_MAP_ATTRIBUTE[$attributes], { [$required]: AtLeastOnce | OnlyOnce | Always }>
+      | O.SelectKeys<$MAP_ATTRIBUTE[$attributes], { [$required]: AtLeastOnce | OnlyOnce | Always }>
       // Enforce attributes that have hard default
-      | O.FilterKeys<_MAP_ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
+      | O.FilterKeys<$MAP_ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedAttribute> if map is open
-      (_MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+      ($MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)

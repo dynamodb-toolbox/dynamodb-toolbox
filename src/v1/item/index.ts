@@ -1,5 +1,5 @@
 export * from './attributes'
 export * from './generics'
-export type { _Item, Item, FreezeItem } from './interface'
+export type { $Item, Item, FreezeItem } from './interface'
 export { item } from './typer'
 export { freezeItem } from './freeze'

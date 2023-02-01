@@ -12,7 +12,7 @@ import {
 } from '../constants/attributeOptions'
 import { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
-import type { _PrimitiveAttribute } from './interface'
+import type { $PrimitiveAttribute } from './interface'
 import {
   PrimitiveAttributeOptions,
   PrimitiveAttributeDefaultOptions,
@@ -26,7 +26,7 @@ type AnyPrimitiveAttributeTyper = <
 >(
   type: TYPE,
   options: NarrowObject<OPTIONS>
-) => _PrimitiveAttribute<
+) => $PrimitiveAttribute<
   TYPE,
   {
     [$required]: OPTIONS['required']
@@ -67,7 +67,7 @@ const primitive: AnyPrimitiveAttributeTyper = <
     savedAs: nextSavedAs => primitive(type, { ...options, savedAs: nextSavedAs }),
     default: nextDefault => primitive(type, { ...options, default: nextDefault }),
     enum: (...nextEnum) => primitive(type, { ...options, [$enum]: nextEnum })
-  } as _PrimitiveAttribute<
+  } as $PrimitiveAttribute<
     TYPE,
     {
       [$required]: OPTIONS['required']
@@ -83,7 +83,7 @@ type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
   OPTIONS extends Partial<PrimitiveAttributeOptions<TYPE>> = PrimitiveAttributeOptions<TYPE>
 >(
   primitiveOptions?: NarrowObject<OPTIONS>
-) => _PrimitiveAttribute<
+) => $PrimitiveAttribute<
   TYPE,
   InferStateFromOptions<
     Omit<PrimitiveAttributeOptions<TYPE>, $enum> & { enum: PrimitiveAttributeOptions<TYPE>[$enum] },
