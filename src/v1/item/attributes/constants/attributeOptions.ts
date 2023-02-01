@@ -1,3 +1,5 @@
+import { ResolvedPrimitiveAttribute } from '../primitive'
+
 import { RequiredOption } from './requiredOptions'
 
 export const $type = Symbol()
@@ -82,4 +84,5 @@ export type AttributeOptionsConstraints = {
   key: boolean
   open: boolean
   savedAs: string | undefined
+  enum: ResolvedPrimitiveAttribute[] | undefined
 }
