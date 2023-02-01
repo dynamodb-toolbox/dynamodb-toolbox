@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type {
-  _Item,
+  $Item,
   ResolvedAttribute,
   AtLeastOnce,
   OnlyOnce,
@@ -14,18 +14,18 @@ import type {
   $open,
   $default
 } from 'v1/item/attributes/constants/attributeOptions'
-import type { _AttributePutItem } from './attribute'
+import type { $AttributePutItem } from './attribute'
 
-export type _ItemPutItem<_ITEM extends _Item> = O.Required<
+export type $ItemPutItem<$ITEM extends $Item> = O.Required<
   O.Partial<
     {
       // Keep all attributes
-      [KEY in keyof _ITEM[$attributes]]: _AttributePutItem<_ITEM[$attributes][KEY]>
+      [KEY in keyof $ITEM[$attributes]]: $AttributePutItem<$ITEM[$attributes][KEY]>
     }
   >,
   // Enforce Required attributes
-  | O.SelectKeys<_ITEM[$attributes], { [$required]: AtLeastOnce | OnlyOnce | Always }>
+  | O.SelectKeys<$ITEM[$attributes], { [$required]: AtLeastOnce | OnlyOnce | Always }>
   // Enforce attributes that have hard default
-  | O.FilterKeys<_ITEM[$attributes], { [$default]: undefined | ComputedDefault }>
+  | O.FilterKeys<$ITEM[$attributes], { [$default]: undefined | ComputedDefault }>
 > & // Add Record<string, ResolvedAttribute> if map is open
-  (_ITEM extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+  ($ITEM extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)

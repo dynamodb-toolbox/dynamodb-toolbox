@@ -12,21 +12,21 @@ import {
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
-import type { _SetAttribute } from './interface'
+import type { $SetAttribute } from './interface'
 import {
   SetAttributeOptions,
   SetAttributeDefaultOptions,
   SET_ATTRIBUTE_DEFAULT_OPTIONS
 } from './options'
-import type { _SetAttributeElements } from './types'
+import type { $SetAttributeElements } from './types'
 
 type SetAttributeTyper = <
-  ELEMENTS extends _SetAttributeElements,
+  ELEMENTS extends $SetAttributeElements,
   OPTIONS extends Partial<SetAttributeOptions> = SetAttributeOptions
 >(
   elements: ELEMENTS,
   options?: NarrowObject<OPTIONS>
-) => _SetAttribute<
+) => $SetAttribute<
   ELEMENTS,
   InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
 >
@@ -43,7 +43,7 @@ type SetAttributeTyper = <
  * @param options _(optional)_ List Options
  */
 export const set: SetAttributeTyper = <
-  ELEMENTS extends _SetAttributeElements,
+  ELEMENTS extends $SetAttributeElements,
   OPTIONS extends Partial<SetAttributeOptions> = SetAttributeOptions
 >(
   elements: ELEMENTS,
@@ -67,7 +67,7 @@ export const set: SetAttributeTyper = <
     key: () => set(elements, { ...appliedOptions, key: true }),
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => set(elements, { ...appliedOptions, default: nextDefault })
-  } as _SetAttribute<
+  } as $SetAttribute<
     ELEMENTS,
     InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
   >

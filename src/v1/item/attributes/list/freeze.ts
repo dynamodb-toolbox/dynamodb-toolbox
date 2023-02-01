@@ -10,38 +10,38 @@ import {
   $default
 } from '../constants/attributeOptions'
 
-import { _ListAttribute, ListAttribute } from './interface'
+import { $ListAttribute, ListAttribute } from './interface'
 
-export type FreezeListAttribute<_LIST_ATTRIBUTE extends _ListAttribute> = ListAttribute<
-  FreezeAttribute<_LIST_ATTRIBUTE[$elements]>,
+export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttribute> = ListAttribute<
+  FreezeAttribute<$LIST_ATTRIBUTE[$elements]>,
   {
-    required: _LIST_ATTRIBUTE[$required]
-    hidden: _LIST_ATTRIBUTE[$hidden]
-    key: _LIST_ATTRIBUTE[$key]
-    savedAs: _LIST_ATTRIBUTE[$savedAs]
-    default: _LIST_ATTRIBUTE[$default]
+    required: $LIST_ATTRIBUTE[$required]
+    hidden: $LIST_ATTRIBUTE[$hidden]
+    key: $LIST_ATTRIBUTE[$key]
+    savedAs: $LIST_ATTRIBUTE[$savedAs]
+    default: $LIST_ATTRIBUTE[$default]
   }
 >
 
-type ListAttributeFreezer = <_LIST_ATTRIBUTE extends _ListAttribute>(
-  _listAttribute: _LIST_ATTRIBUTE,
+type ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttribute>(
+  $listAttribute: $LIST_ATTRIBUTE,
   path: string
-) => FreezeListAttribute<_LIST_ATTRIBUTE>
+) => FreezeListAttribute<$LIST_ATTRIBUTE>
 
 /**
  * Freezes a list instance
  *
- * @param _listAttribute List
+ * @param $listAttribute List
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
-export const freezeListAttribute: ListAttributeFreezer = <_LIST_ATTRIBUTE extends _ListAttribute>(
-  _listAttribute: _LIST_ATTRIBUTE,
+export const freezeListAttribute: ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttribute>(
+  $listAttribute: $LIST_ATTRIBUTE,
   path: string
-): FreezeListAttribute<_LIST_ATTRIBUTE> => {
-  validateAttributeProperties(_listAttribute, path)
+): FreezeListAttribute<$LIST_ATTRIBUTE> => {
+  validateAttributeProperties($listAttribute, path)
 
-  const elements: _LIST_ATTRIBUTE[$elements] = _listAttribute[$elements]
+  const elements: $LIST_ATTRIBUTE[$elements] = $listAttribute[$elements]
 
   if (elements[$required] !== 'atLeastOnce') {
     throw new OptionalListAttributeElementsError({ path })
@@ -63,13 +63,13 @@ export const freezeListAttribute: ListAttributeFreezer = <_LIST_ATTRIBUTE extend
 
   return {
     path,
-    type: _listAttribute[$type],
+    type: $listAttribute[$type],
     elements: frozenElements,
-    required: _listAttribute[$required],
-    hidden: _listAttribute[$hidden],
-    key: _listAttribute[$key],
-    savedAs: _listAttribute[$savedAs],
-    default: _listAttribute[$default]
+    required: $listAttribute[$required],
+    hidden: $listAttribute[$hidden],
+    key: $listAttribute[$key],
+    savedAs: $listAttribute[$savedAs],
+    default: $listAttribute[$default]
   }
 }
 
