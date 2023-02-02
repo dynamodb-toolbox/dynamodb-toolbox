@@ -27,8 +27,8 @@ import type { EntityV2 } from '../class'
  * @param MapAttributeAttributesInput MapAttribute Attributes
  * @return MapAttribute Attributes
  * @example
- * SwapWithSavedAs<{ keyA: { ...attribute, _savedAs: "keyB" }}>
- * => { keyB: { ...attribute, _savedAs: "keyB"  }}
+ * SwapWithSavedAs<{ keyA: { ...attribute, savedAs: "keyB" }}>
+ * => { keyB: { ...attribute, savedAs: "keyB"  }}
  */
 type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = A.Compute<
   U.IntersectOf<
