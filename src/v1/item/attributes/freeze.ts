@@ -11,20 +11,20 @@ import { freezeListAttribute, $ListAttribute, FreezeListAttribute } from './list
 import { freezeMapAttribute, $MapAttribute, FreezeMapAttribute } from './map'
 import type { $Attribute } from './types/attribute'
 
-export type FreezeAttribute<_ATTRIBUTE extends $Attribute> = _ATTRIBUTE extends $AnyAttribute
-  ? FreezeAnyAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends $ConstantAttribute
-  ? FreezeConstantAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends $PrimitiveAttribute
-  ? FreezePrimitiveAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends $SetAttribute
-  ? FreezeSetAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends $ListAttribute
-  ? FreezeListAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends $ListAttribute
-  ? FreezeListAttribute<_ATTRIBUTE>
-  : _ATTRIBUTE extends $MapAttribute
-  ? FreezeMapAttribute<_ATTRIBUTE>
+export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends $AnyAttribute
+  ? FreezeAnyAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $ConstantAttribute
+  ? FreezeConstantAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $PrimitiveAttribute
+  ? FreezePrimitiveAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $SetAttribute
+  ? FreezeSetAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $ListAttribute
+  ? FreezeListAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $ListAttribute
+  ? FreezeListAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $MapAttribute
+  ? FreezeMapAttribute<$ATTRIBUTE>
   : never
 
 /**

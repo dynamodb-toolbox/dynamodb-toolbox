@@ -16,17 +16,17 @@ type Or<BOOL_A extends boolean, BOOL_B extends boolean> = BOOL_A extends true
   ? true
   : false
 
-type _NeedsKeyPartCompute<
-  _ITEM extends $Item,
+type $NeedsKeyPartCompute<
+  $ITEM extends $Item,
   KEY_PART_NAME extends string,
   KEY_PART_TYPE extends IndexableKeyType
-> = _ITEM[$attributes] extends Record<
+> = $ITEM[$attributes] extends Record<
   KEY_PART_NAME,
   { [$type]: KEY_PART_TYPE; [$required]: Always; [$key]: true; [$savedAs]: undefined }
 >
   ? false
   : O.SelectKeys<
-      _ITEM[$attributes],
+      $ITEM[$attributes],
       { [$type]: KEY_PART_TYPE; [$required]: Always; [$key]: true; [$savedAs]: KEY_PART_NAME }
     > extends never
   ? true
@@ -42,11 +42,11 @@ type _NeedsKeyPartCompute<
  */
 export type $NeedsKeyCompute<$ITEM extends $Item, TABLE extends TableV2> = HasSK<TABLE> extends true
   ? Or<
-      _NeedsKeyPartCompute<$ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>,
-      _NeedsKeyPartCompute<
+      $NeedsKeyPartCompute<$ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>,
+      $NeedsKeyPartCompute<
         $ITEM,
         NonNullable<TABLE['sortKey']>['name'],
         NonNullable<TABLE['sortKey']>['type']
       >
     >
-  : _NeedsKeyPartCompute<$ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>
+  : $NeedsKeyPartCompute<$ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>
