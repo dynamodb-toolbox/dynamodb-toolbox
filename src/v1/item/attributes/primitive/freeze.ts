@@ -53,11 +53,11 @@ type PrimitiveAttributeFreezer = <$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribu
  * @return void
  */
 export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
-  _PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute
+  $PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute
 >(
-  $primitiveAttribute: _PRIMITIVE_ATTRIBUTE,
+  $primitiveAttribute: $PRIMITIVE_ATTRIBUTE,
   path: string
-): FreezePrimitiveAttribute<_PRIMITIVE_ATTRIBUTE> => {
+): FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE> => {
   validateAttributeProperties($primitiveAttribute, path)
 
   const primitiveType = $primitiveAttribute[$type]
@@ -94,12 +94,12 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     key: $primitiveAttribute[$key],
     savedAs: $primitiveAttribute[$savedAs],
     enum: enumValues as Extract<
-      _PRIMITIVE_ATTRIBUTE[$enum],
-      PrimitiveAttributeEnumValues<_PRIMITIVE_ATTRIBUTE[$type]>
+      $PRIMITIVE_ATTRIBUTE[$enum],
+      PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
     >,
     default: defaultValue as Extract<
-      _PRIMITIVE_ATTRIBUTE[$default],
-      PrimitiveAttributeDefaultValue<_PRIMITIVE_ATTRIBUTE[$type]>
+      $PRIMITIVE_ATTRIBUTE[$default],
+      PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
     >
   }
 }
