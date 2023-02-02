@@ -34,22 +34,22 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttribute> = MapAttrib
 >
 
 type MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
-  _mapAttribute: $MAP_ATTRIBUTE,
+  $mapAttribute: $MAP_ATTRIBUTE,
   path: string
 ) => FreezeMapAttribute<$MAP_ATTRIBUTE>
 
 /**
  * Freezes a map instance
  *
- * @param _mapAttribute MapAttribute
+ * @param $mapAttribute MapAttribute
  * @param path _(optional)_ Path of the instance in the related item (string)
  * @return void
  */
 export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
-  _mapAttribute: $MAP_ATTRIBUTE,
+  $mapAttribute: $MAP_ATTRIBUTE,
   path: string
 ) => {
-  validateAttributeProperties(_mapAttribute, path)
+  validateAttributeProperties($mapAttribute, path)
 
   const attributesSavedAs = new Set<string>()
 
@@ -62,7 +62,7 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
     never: new Set()
   }
 
-  const attributes: $MAP_ATTRIBUTE[$attributes] = _mapAttribute[$attributes]
+  const attributes: $MAP_ATTRIBUTE[$attributes] = $mapAttribute[$attributes]
   const frozenAttributes: {
     [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<$MAP_ATTRIBUTE[$attributes][KEY]>
   } = {} as any
@@ -87,16 +87,16 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
 
   return {
     path,
-    type: _mapAttribute[$type],
+    type: $mapAttribute[$type],
     attributes: frozenAttributes,
     keyAttributesNames,
     requiredAttributesNames,
-    required: _mapAttribute[$required],
-    hidden: _mapAttribute[$hidden],
-    key: _mapAttribute[$key],
-    open: _mapAttribute[$open],
-    savedAs: _mapAttribute[$savedAs],
-    default: _mapAttribute[$default]
+    required: $mapAttribute[$required],
+    hidden: $mapAttribute[$hidden],
+    key: $mapAttribute[$key],
+    open: $mapAttribute[$open],
+    savedAs: $mapAttribute[$savedAs],
+    default: $mapAttribute[$default]
   }
 }
 
