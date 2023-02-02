@@ -13,10 +13,10 @@ import type { $AttributeSharedStateConstraint } from './interface'
  * @return void
  */
 export const validateAttributeProperties = (
-  _attribute: $AttributeSharedStateConstraint,
+  $attribute: $AttributeSharedStateConstraint,
   path?: string
 ): void => {
-  const attributeRequired = _attribute[$required]
+  const attributeRequired = $attribute[$required]
   if (!requiredOptionsSet.has(attributeRequired)) {
     throw new InvalidAttributePropertyError({
       propertyName: 'required',
@@ -26,7 +26,7 @@ export const validateAttributeProperties = (
     })
   }
 
-  const attributeHidden = _attribute[$hidden]
+  const attributeHidden = $attribute[$hidden]
   if (!isBoolean(attributeHidden)) {
     throw new InvalidAttributePropertyError({
       propertyName: 'hidden',
@@ -36,7 +36,7 @@ export const validateAttributeProperties = (
     })
   }
 
-  const attributeKey = _attribute[$key]
+  const attributeKey = $attribute[$key]
   if (!isBoolean(attributeKey)) {
     throw new InvalidAttributePropertyError({
       propertyName: 'key',
@@ -46,7 +46,7 @@ export const validateAttributeProperties = (
     })
   }
 
-  const attributeSavedAs = _attribute[$savedAs]
+  const attributeSavedAs = $attribute[$savedAs]
   if (attributeSavedAs !== undefined && !isString(attributeSavedAs)) {
     throw new InvalidAttributePropertyError({
       propertyName: 'savedAs',
