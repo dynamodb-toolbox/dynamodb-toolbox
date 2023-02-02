@@ -1,4 +1,5 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
+import { $enum } from '../constants/attributeOptions'
 
 import type {
   PrimitiveAttributeType,
@@ -34,8 +35,7 @@ export type PrimitiveAttributeOptions<
    * Rename attribute before save commands
    */
   savedAs: string | undefined
-  // TODO: Use symbol
-  enum: PrimitiveAttributeEnumValues<TYPE>
+  [$enum]: PrimitiveAttributeEnumValues<TYPE>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    */
@@ -47,7 +47,7 @@ export type PrimitiveAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
-  enum: undefined
+  [$enum]: undefined
   default: undefined
 }
 
@@ -56,6 +56,6 @@ export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
-  enum: undefined,
+  [$enum]: undefined,
   default: undefined
 }

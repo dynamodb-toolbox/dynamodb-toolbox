@@ -17,7 +17,7 @@ import {
   FormattedItem,
   SavedItem,
   KeyInput,
-  _HasComputedDefaults
+  $HasComputedDefaults
 } from 'v1'
 import { freezeItem, FreezeItem } from 'v1/item'
 
@@ -71,7 +71,7 @@ const playgroundItem2 = item({
 const frozenPlaygroundItem2 = freezeItem(playgroundItem2)
 
 type PlaygroundItem2FormattedItem = FormattedItem<typeof frozenPlaygroundItem2>
-type PlaygroundItem2HasComputedDefault = _HasComputedDefaults<typeof playgroundItem3>
+type PlaygroundItem2HasComputedDefault = $HasComputedDefaults<typeof playgroundItem3>
 type PlaygroundItem2PutItem = PutItem<typeof frozenPlaygroundItem2>
 type PlaygroundItem2PutItemInput = PutItemInput<typeof frozenPlaygroundItem2>
 type PlaygroundItem2PutItemInputWithDefaults = PutItemInput<
@@ -95,4 +95,4 @@ const frozenPlaygroundItem3 = freezeItem(playgroundItem3)
 
 type PlaygroundItem3SavedItem = SavedItem<typeof frozenPlaygroundItem3>
 type PlaygroundItem3KeyInput = KeyInput<typeof frozenPlaygroundItem3>
-type PlaygroundItem3HasComputedDefault = _HasComputedDefaults<typeof playgroundItem3>
+type PlaygroundItem3HasComputedDefault = $HasComputedDefaults<typeof playgroundItem3>
