@@ -1,3 +1,5 @@
+import type { O } from 'ts-toolbelt'
+
 import type {
   AttributeOptionNameSymbol,
   AttributeOptionsConstraints,
@@ -20,14 +22,20 @@ export type InferStateFromOptions<
   OPTIONS_CONSTRAINTS extends Partial<AttributeOptionsConstraints>,
   DEFAULT_OPTIONS extends OPTIONS_CONSTRAINTS,
   OPTIONS extends Partial<OPTIONS_CONSTRAINTS>
-> = {
-  [KEY in Extract<
-    keyof OPTIONS_CONSTRAINTS,
-    AttributeOptionName
-  > as AttributeOptionNameSymbol[KEY]]: InferStateValueFromOption<
-    OPTIONS_CONSTRAINTS,
-    DEFAULT_OPTIONS,
-    OPTIONS,
-    KEY
+> =
+  // Applying void O.Update improves type display
+  O.Update<
+    {
+      [KEY in Extract<
+        keyof OPTIONS_CONSTRAINTS,
+        AttributeOptionName
+      > as AttributeOptionNameSymbol[KEY]]: InferStateValueFromOption<
+        OPTIONS_CONSTRAINTS,
+        DEFAULT_OPTIONS,
+        OPTIONS,
+        KEY
+      >
+    },
+    never,
+    never
   >
-}

@@ -10,6 +10,12 @@ import type {
   $enum,
   $default
 } from '../constants/attributeOptions'
+import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
+import type {
+  $AttributeSharedStateConstraint,
+  $AttributeSharedState,
+  AttributeSharedState
+} from '../shared/interface'
 
 import type {
   PrimitiveAttributeType,
@@ -17,12 +23,6 @@ import type {
   PrimitiveAttributeEnumValues,
   PrimitiveAttributeDefaultValue
 } from './types'
-import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
-import type {
-  $AttributeSharedStateConstraint,
-  $AttributeSharedState,
-  AttributeSharedState
-} from '../shared/interface'
 
 interface $PrimitiveAttributeStateConstraint<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType

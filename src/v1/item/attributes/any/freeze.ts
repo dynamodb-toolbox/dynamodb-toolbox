@@ -1,3 +1,5 @@
+import type { O } from 'ts-toolbelt'
+
 import { validateAttributeProperties } from '../shared/validate'
 import {
   $type,
@@ -11,9 +13,15 @@ import {
 
 import type { $AnyAttribute, AnyAttributeStateConstraint, AnyAttribute } from './interface'
 
-export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttribute> = AnyAttribute<
-  { [KEY in keyof AnyAttributeStateConstraint]: $ANY_ATTRIBUTE[AttributeOptionNameSymbol[KEY]] }
->
+export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttribute> =
+  // Applying void O.Update improves type display
+  O.Update<
+    AnyAttribute<
+      { [KEY in keyof AnyAttributeStateConstraint]: $ANY_ATTRIBUTE[AttributeOptionNameSymbol[KEY]] }
+    >,
+    never,
+    never
+  >
 
 type AnyAttributeFreezer = <$ANY_ATTRIBUTE extends $AnyAttribute>(
   _anyAttribute: $ANY_ATTRIBUTE,
