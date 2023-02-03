@@ -21,8 +21,6 @@ export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends 
   ? FreezeSetAttribute<$ATTRIBUTE>
   : $ATTRIBUTE extends $ListAttribute
   ? FreezeListAttribute<$ATTRIBUTE>
-  : $ATTRIBUTE extends $ListAttribute
-  ? FreezeListAttribute<$ATTRIBUTE>
   : $ATTRIBUTE extends $MapAttribute
   ? FreezeMapAttribute<$ATTRIBUTE>
   : never
