@@ -1,3 +1,4 @@
+import type { O } from 'ts-toolbelt'
 import isEqual from 'lodash.isequal'
 
 import { isComputedDefault } from 'v1/item/utils/isComputedDefault'
@@ -22,14 +23,18 @@ import {
   ConstantAttribute
 } from './interface'
 
-export type FreezeConstantAttribute<
-  $CONSTANT_ATTRIBUTE extends $ConstantAttribute
-> = ConstantAttribute<
-  $CONSTANT_ATTRIBUTE[$value],
-  {
-    [KEY in keyof ConstantAttributeStateConstraint]: $CONSTANT_ATTRIBUTE[AttributeOptionNameSymbol[KEY]]
-  }
->
+export type FreezeConstantAttribute<$CONSTANT_ATTRIBUTE extends $ConstantAttribute> =
+  // Applying void O.Update improves type display
+  O.Update<
+    ConstantAttribute<
+      $CONSTANT_ATTRIBUTE[$value],
+      {
+        [KEY in keyof ConstantAttributeStateConstraint]: $CONSTANT_ATTRIBUTE[AttributeOptionNameSymbol[KEY]]
+      }
+    >,
+    never,
+    never
+  >
 
 type ConstantAttributeFreezer = <$CONSTANT_ATTRIBUTE extends $ConstantAttribute>(
   $constantAttribute: $CONSTANT_ATTRIBUTE,
