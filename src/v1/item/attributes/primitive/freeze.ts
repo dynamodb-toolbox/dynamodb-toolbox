@@ -1,3 +1,5 @@
+import type { O } from 'ts-toolbelt'
+
 import { isComputedDefault } from 'v1/item/utils/isComputedDefault'
 import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
@@ -20,25 +22,29 @@ import type {
   PrimitiveAttributeDefaultValue
 } from './types'
 
-export type FreezePrimitiveAttribute<
-  $PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute
-> = PrimitiveAttribute<
-  $PRIMITIVE_ATTRIBUTE[$type],
-  {
-    required: $PRIMITIVE_ATTRIBUTE[$required]
-    hidden: $PRIMITIVE_ATTRIBUTE[$hidden]
-    key: $PRIMITIVE_ATTRIBUTE[$key]
-    savedAs: $PRIMITIVE_ATTRIBUTE[$savedAs]
-    enum: Extract<
-      $PRIMITIVE_ATTRIBUTE[$enum],
-      PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
-    >
-    default: Extract<
-      $PRIMITIVE_ATTRIBUTE[$default],
-      PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
-    >
-  }
->
+export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute> =
+  // Applying void O.Update improves type display
+  O.Update<
+    PrimitiveAttribute<
+      $PRIMITIVE_ATTRIBUTE[$type],
+      {
+        required: $PRIMITIVE_ATTRIBUTE[$required]
+        hidden: $PRIMITIVE_ATTRIBUTE[$hidden]
+        key: $PRIMITIVE_ATTRIBUTE[$key]
+        savedAs: $PRIMITIVE_ATTRIBUTE[$savedAs]
+        enum: Extract<
+          $PRIMITIVE_ATTRIBUTE[$enum],
+          PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
+        >
+        default: Extract<
+          $PRIMITIVE_ATTRIBUTE[$default],
+          PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
+        >
+      }
+    >,
+    never,
+    never
+  >
 
 type PrimitiveAttributeFreezer = <$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute>(
   $primitiveAttribute: $PRIMITIVE_ATTRIBUTE,

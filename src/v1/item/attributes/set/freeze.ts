@@ -1,3 +1,5 @@
+import type { O } from 'ts-toolbelt'
+
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
 import {
@@ -12,16 +14,22 @@ import {
 
 import type { $SetAttribute, SetAttribute } from './interface'
 
-export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttribute> = SetAttribute<
-  FreezeAttribute<$SET_ATTRIBUTE[$elements]>,
-  {
-    required: $SET_ATTRIBUTE[$required]
-    hidden: $SET_ATTRIBUTE[$hidden]
-    key: $SET_ATTRIBUTE[$key]
-    savedAs: $SET_ATTRIBUTE[$savedAs]
-    default: $SET_ATTRIBUTE[$default]
-  }
->
+export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttribute> =
+  // Applying void O.Update improves type display
+  O.Update<
+    SetAttribute<
+      FreezeAttribute<$SET_ATTRIBUTE[$elements]>,
+      {
+        required: $SET_ATTRIBUTE[$required]
+        hidden: $SET_ATTRIBUTE[$hidden]
+        key: $SET_ATTRIBUTE[$key]
+        savedAs: $SET_ATTRIBUTE[$savedAs]
+        default: $SET_ATTRIBUTE[$default]
+      }
+    >,
+    never,
+    never
+  >
 
 type SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
   $setAttribute: $SET_ATTRIBUTE,
