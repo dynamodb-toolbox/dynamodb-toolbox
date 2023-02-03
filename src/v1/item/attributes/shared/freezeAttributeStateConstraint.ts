@@ -1,14 +1,13 @@
 import type {
   $AttributeOptionSymbol,
-  AttributeOptionSymbolName,
-  AttributeOptionNameSymbol
+  AttributeOptionSymbolName
 } from '../constants/attributeOptions'
 
 export type FreezeAttributeStateConstraint<
   $ATTRIBUTE_STATE_CONSTRAINTS extends Partial<Record<$AttributeOptionSymbol, unknown>>
 > = {
-  [KEY in AttributeOptionSymbolName[Extract<
+  [KEY in Extract<
     keyof $ATTRIBUTE_STATE_CONSTRAINTS,
     $AttributeOptionSymbol
-  >]]: $ATTRIBUTE_STATE_CONSTRAINTS[AttributeOptionNameSymbol[KEY]]
+  > as AttributeOptionSymbolName[KEY]]: $ATTRIBUTE_STATE_CONSTRAINTS[KEY]
 }

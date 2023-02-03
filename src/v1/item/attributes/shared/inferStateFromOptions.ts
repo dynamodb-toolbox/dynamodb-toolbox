@@ -1,5 +1,4 @@
 import type {
-  AttributeOptionSymbolName,
   AttributeOptionNameSymbol,
   AttributeOptionsConstraints,
   AttributeOptionName
@@ -22,13 +21,13 @@ export type InferStateFromOptions<
   DEFAULT_OPTIONS extends OPTIONS_CONSTRAINTS,
   OPTIONS extends Partial<OPTIONS_CONSTRAINTS>
 > = {
-  [KEY in AttributeOptionNameSymbol[Extract<
+  [KEY in Extract<
     keyof OPTIONS_CONSTRAINTS,
     AttributeOptionName
-  >]]: InferStateValueFromOption<
+  > as AttributeOptionNameSymbol[KEY]]: InferStateValueFromOption<
     OPTIONS_CONSTRAINTS,
     DEFAULT_OPTIONS,
     OPTIONS,
-    Extract<AttributeOptionSymbolName[KEY], keyof OPTIONS_CONSTRAINTS>
+    KEY
   >
 }
