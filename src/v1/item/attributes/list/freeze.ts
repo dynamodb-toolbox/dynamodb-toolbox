@@ -1,3 +1,5 @@
+import type { O } from 'ts-toolbelt'
+
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
 import {
@@ -12,16 +14,22 @@ import {
 
 import { $ListAttribute, ListAttribute } from './interface'
 
-export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttribute> = ListAttribute<
-  FreezeAttribute<$LIST_ATTRIBUTE[$elements]>,
-  {
-    required: $LIST_ATTRIBUTE[$required]
-    hidden: $LIST_ATTRIBUTE[$hidden]
-    key: $LIST_ATTRIBUTE[$key]
-    savedAs: $LIST_ATTRIBUTE[$savedAs]
-    default: $LIST_ATTRIBUTE[$default]
-  }
->
+export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttribute> =
+  // Applying void O.Update improves type display
+  O.Update<
+    ListAttribute<
+      FreezeAttribute<$LIST_ATTRIBUTE[$elements]>,
+      {
+        required: $LIST_ATTRIBUTE[$required]
+        hidden: $LIST_ATTRIBUTE[$hidden]
+        key: $LIST_ATTRIBUTE[$key]
+        savedAs: $LIST_ATTRIBUTE[$savedAs]
+        default: $LIST_ATTRIBUTE[$default]
+      }
+    >,
+    never,
+    never
+  >
 
 type ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttribute>(
   $listAttribute: $LIST_ATTRIBUTE,
