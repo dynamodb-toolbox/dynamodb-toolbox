@@ -1,3 +1,5 @@
+import type { O } from 'ts-toolbelt'
+
 import type { RequiredOption } from '../constants/requiredOptions'
 import { validateAttributeProperties } from '../shared/validate'
 import { freezeAttribute, FreezeAttribute } from '../freeze'
@@ -15,23 +17,29 @@ import type { MapAttributeAttributes } from '../types/attribute'
 
 import type { $MapAttribute, MapAttribute } from './interface'
 
-export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttribute> = MapAttribute<
-  $MapAttribute extends $MAP_ATTRIBUTE
-    ? MapAttributeAttributes
-    : {
-        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
-          $MAP_ATTRIBUTE[$attributes][KEY]
-        >
-      },
-  {
-    required: $MAP_ATTRIBUTE[$required]
-    hidden: $MAP_ATTRIBUTE[$hidden]
-    key: $MAP_ATTRIBUTE[$key]
-    open: $MAP_ATTRIBUTE[$open]
-    savedAs: $MAP_ATTRIBUTE[$savedAs]
-    default: $MAP_ATTRIBUTE[$default]
-  }
->
+export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttribute> =
+  // Applying void O.Update improves type display
+  O.Update<
+    MapAttribute<
+      $MapAttribute extends $MAP_ATTRIBUTE
+        ? MapAttributeAttributes
+        : {
+            [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
+              $MAP_ATTRIBUTE[$attributes][KEY]
+            >
+          },
+      {
+        required: $MAP_ATTRIBUTE[$required]
+        hidden: $MAP_ATTRIBUTE[$hidden]
+        key: $MAP_ATTRIBUTE[$key]
+        open: $MAP_ATTRIBUTE[$open]
+        savedAs: $MAP_ATTRIBUTE[$savedAs]
+        default: $MAP_ATTRIBUTE[$default]
+      }
+    >,
+    never,
+    never
+  >
 
 type MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
   $mapAttribute: $MAP_ATTRIBUTE,
