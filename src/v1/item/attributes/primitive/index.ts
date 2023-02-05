@@ -12,3 +12,4 @@ export {
   InvalidDefaultValueTypeError,
   InvalidDefaultValueRangeError
 } from './freeze'
+export type { $ResolvePrimitiveAttribute, ResolvePrimitiveAttribute } from './resolve'
