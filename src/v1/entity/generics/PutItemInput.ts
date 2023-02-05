@@ -22,17 +22,17 @@ import type {
   OnlyOnce,
   Always,
   ComputedDefault,
-  ResolvePrimitiveAttributeType
+  $ResolveConstantAttribute,
+  ResolveConstantAttribute,
+  $ResolvePrimitiveAttribute,
+  ResolvePrimitiveAttribute
 } from 'v1/item'
 import type {
   $elements,
   $attributes,
-  $value,
   $required,
   $open,
-  $default,
-  $type,
-  $enum
+  $default
 } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { EntityV2 } from '../class'
@@ -50,11 +50,9 @@ export type PutItemInput<
 > = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
   : SCHEMA extends ConstantAttribute
-  ? SCHEMA['value']
+  ? ResolveConstantAttribute<SCHEMA>
   : SCHEMA extends PrimitiveAttribute
-  ? SCHEMA['enum'] extends ResolvePrimitiveAttributeType<SCHEMA['type']>[]
-    ? SCHEMA['enum'][number]
-    : ResolvePrimitiveAttributeType<SCHEMA['type']>
+  ? ResolvePrimitiveAttribute<SCHEMA>
   : SCHEMA extends SetAttribute
   ? Set<PutItemInput<SCHEMA['elements'], REQUIRE_HARD_DEFAULTS>>
   : SCHEMA extends ListAttribute
@@ -92,11 +90,9 @@ export type $PutItemInput<
 > = $SCHEMA extends $AnyAttribute
   ? ResolvedAttribute
   : $SCHEMA extends $ConstantAttribute
-  ? $SCHEMA[$value]
+  ? $ResolveConstantAttribute<$SCHEMA>
   : $SCHEMA extends $PrimitiveAttribute
-  ? $SCHEMA[$enum] extends ResolvePrimitiveAttributeType<$SCHEMA[$type]>[]
-    ? $SCHEMA[$enum][number]
-    : ResolvePrimitiveAttributeType<$SCHEMA[$type]>
+  ? $ResolvePrimitiveAttribute<$SCHEMA>
   : $SCHEMA extends $SetAttribute
   ? Set<$PutItemInput<$SCHEMA[$elements], REQUIRE_HARD_DEFAULTS>>
   : $SCHEMA extends $ListAttribute
