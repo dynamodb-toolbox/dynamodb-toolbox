@@ -5,3 +5,4 @@ export {
   freezeConstantAttribute,
   InvalidDefaultValueError
 } from './freeze'
+export type { $ResolveConstantAttribute, ResolveConstantAttribute } from './resolve'

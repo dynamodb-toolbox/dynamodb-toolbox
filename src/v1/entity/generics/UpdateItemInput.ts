@@ -12,7 +12,8 @@ import type {
   MapAttribute,
   OnlyOnce,
   Always,
-  ResolvePrimitiveAttributeType
+  ResolveConstantAttribute,
+  ResolvePrimitiveAttribute
 } from 'v1/item'
 
 import type { EntityV2 } from '../class'
@@ -28,11 +29,9 @@ export type UpdateItemInput<
 > = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
   : SCHEMA extends ConstantAttribute
-  ? SCHEMA['value']
+  ? ResolveConstantAttribute<SCHEMA>
   : SCHEMA extends PrimitiveAttribute
-  ? SCHEMA['enum'] extends ResolvePrimitiveAttributeType<SCHEMA['type']>[]
-    ? SCHEMA['enum'][number]
-    : ResolvePrimitiveAttributeType<SCHEMA['type']>
+  ? ResolvePrimitiveAttribute<SCHEMA>
   : SCHEMA extends SetAttribute
   ? Set<UpdateItemInput<SCHEMA['elements']>>
   : SCHEMA extends ListAttribute

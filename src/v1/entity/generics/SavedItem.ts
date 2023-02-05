@@ -14,7 +14,8 @@ import type {
   AtLeastOnce,
   OnlyOnce,
   Always,
-  ResolvePrimitiveAttributeType
+  ResolveConstantAttribute,
+  ResolvePrimitiveAttribute
 } from 'v1/item'
 import type { PrimaryKey } from 'v1/table'
 
@@ -69,11 +70,9 @@ type RecSavedItem<
 export type SavedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
   : SCHEMA extends ConstantAttribute
-  ? SCHEMA['value']
+  ? ResolveConstantAttribute<SCHEMA>
   : SCHEMA extends PrimitiveAttribute
-  ? SCHEMA['enum'] extends ResolvePrimitiveAttributeType<SCHEMA['type']>[]
-    ? SCHEMA['enum'][number]
-    : ResolvePrimitiveAttributeType<SCHEMA['type']>
+  ? ResolvePrimitiveAttribute<SCHEMA>
   : SCHEMA extends SetAttribute
   ? Set<SavedItem<SCHEMA['elements']>>
   : SCHEMA extends ListAttribute
