@@ -1,9 +1,10 @@
 import type { O } from 'ts-toolbelt'
 import { GetCommand, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, FormattedItem, KeyInput } from 'v1'
+import type { EntityV2, FormattedItem, KeyInput } from 'v1'
 import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
 
+import type { GetItemOptions } from './options'
 import { getItemParams } from './getItemParams'
 
 /**
@@ -11,16 +12,18 @@ import { getItemParams } from './getItemParams'
  *
  * @param entity Entity
  * @param keyInput KeyInput
+ * @param getItemOptions GetItemOptions
  * @return GetCommandOutput
  */
 export const getItem = async <ENTITY extends EntityV2>(
   entity: ENTITY,
-  keyInput: KeyInput<ENTITY>
+  keyInput: KeyInput<ENTITY>,
+  getItemOptions: GetItemOptions = {}
 ): Promise<
   O.Merge<Omit<GetCommandOutput, 'Attributes'>, { Item?: FormattedItem<ENTITY> | undefined }>
 > => {
   const commandOutput = await entity.table.documentClient.send(
-    new GetCommand(getItemParams<ENTITY>(entity, keyInput))
+    new GetCommand(getItemParams<ENTITY>(entity, keyInput, getItemOptions))
   )
 
   const { Item: item, ...restCommandOutput } = commandOutput
