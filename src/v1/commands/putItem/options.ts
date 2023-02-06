@@ -25,8 +25,8 @@ export const returnValuesOptionsSet = new Set<ReturnValuesOption>([
   'UPDATED_NEW'
 ])
 
-export interface PutItemOptions {
+export interface PutItemOptions<RETURN_VALUES extends ReturnValuesOption = ReturnValuesOption> {
   capacity?: CapacityOption
   metrics?: MetricsOption
-  returnValues?: ReturnValuesOption
+  returnValues?: RETURN_VALUES
 }
