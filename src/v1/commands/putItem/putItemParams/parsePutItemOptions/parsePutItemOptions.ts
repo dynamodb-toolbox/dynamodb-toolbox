@@ -1,6 +1,6 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { DynamoDBToolboxError } from 'v1/errors/dynamoDbToolboxError'
+import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 
 import {
   capacityOptionsSet,
