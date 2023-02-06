@@ -7,10 +7,12 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest ",
+    "v1-test": "jest v1",
     "test-cov": "jest  --coverage",
     "test-ci": "eslint . && jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "test-types": "tsd",
     "check-types": "tsc --noEmit",
+    "v1-check-types": "tsc --noEmit -p tsconfig.v1.json",
     "lint": "eslint src/v1",
     "prettier": "prettier --check 'src/**/*.(js|ts)'",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
