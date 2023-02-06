@@ -1,5 +1,6 @@
 import {
   InvalidCapacityOptionErrorBlueprint,
+  InvalidConsistentOptionErrorBlueprint,
   InvalidMetricsOptionErrorBlueprint,
   InvalidReturnValuesOptionErrorBlueprint,
   UnknownOptionErrorBlueprint
@@ -9,6 +10,7 @@ import { ErrorBlueprint } from './blueprint'
 
 type ErrorBlueprints =
   | InvalidCapacityOptionErrorBlueprint
+  | InvalidConsistentOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
