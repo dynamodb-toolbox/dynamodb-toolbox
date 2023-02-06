@@ -2,14 +2,19 @@ import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDbToolboxError'
 
-import { capacityOptionsSet, metricsOptionsSet, PutItemOptions } from '../../options'
+import {
+  capacityOptionsSet,
+  metricsOptionsSet,
+  returnValuesOptionsSet,
+  PutItemOptions
+} from '../../options'
 
 type CommandOptions = Omit<PutCommandInput, 'TableName' | 'Item'>
 
 export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOptions => {
   const commandOptions: CommandOptions = {}
 
-  const { capacity, metrics } = putItemOptions
+  const { capacity, metrics, returnValues, ...extraOptions } = putItemOptions
 
   if (capacity !== undefined) {
     if (!capacityOptionsSet.has(capacity)) {
@@ -35,6 +40,27 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
     } else {
       commandOptions.ReturnItemCollectionMetrics = metrics
     }
+  }
+
+  if (returnValues !== undefined) {
+    if (!returnValuesOptionsSet.has(returnValues)) {
+      throw new DynamoDBToolboxError('invalidReturnValuesOption', {
+        message: `Invalid returnValues option: '${String(
+          returnValues
+        )}'. 'returnValues' must be one of: ${[...returnValuesOptionsSet].join(', ')}.`,
+        payload: { returnValues }
+      })
+    } else {
+      commandOptions.ReturnValues = returnValues
+    }
+  }
+
+  const [extraOption] = Object.keys(extraOptions)
+  if (extraOption !== undefined) {
+    throw new DynamoDBToolboxError('unknownOption', {
+      message: `Unkown option: ${extraOption}.`,
+      payload: { option: extraOption }
+    })
   }
 
   return commandOptions
