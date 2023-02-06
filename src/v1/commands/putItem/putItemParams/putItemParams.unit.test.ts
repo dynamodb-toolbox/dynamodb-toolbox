@@ -439,41 +439,45 @@ describe('put', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidMetricsOption' }))
   })
 
-  // it('sets returnValues options', () => {
-  //   const { TableName, ReturnValues } = putItemParams(
-  //     TestEntity,
-  //     { email: 'x', sort: 'y' },
-  //     { returnValues: 'ALL_OLD' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(ReturnValues).toBe('ALL_OLD')
-  // })
+  it('sets returnValues options', () => {
+    const { ReturnValues } = putItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { returnValues: 'ALL_OLD' }
+    )
 
-  // it('fails on invalid returnValues option', () => {
-  //   expect(() =>
-  //     putItemParams(
-  //       TestEntity,
-  //       { email: 'x', sort: 'y' },
-  //       {
-  //         // @ts-expect-error
-  //         returnValues: 'test'
-  //       }
-  //     )
-  //   ).toThrow(
-  //     `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`
-  //   )
-  // })
+    expect(ReturnValues).toBe('ALL_OLD')
+  })
 
-  // it('fails on extra options', () => {
-  //   expect(() =>
-  //     putItemParams(
-  //       TestEntity,
-  //       { email: 'x', sort: 'y' },
-  //       // @ts-expect-error
-  //       { extra: true }
-  //     )
-  //   ).toThrow('Invalid put options: extra')
-  // })
+  it('fails on invalid returnValues option', () => {
+    const invalidCall = () =>
+      putItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        {
+          // @ts-expect-error
+          returnValues: 'test'
+        }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidReturnValuesOption' }))
+  })
+
+  it('fails on extra options', () => {
+    const invalidCall = () =>
+      putItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        {
+          // @ts-expect-error
+          extra: true
+        }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownOption' }))
+  })
 
   // TODO Enable typed conditions
   // it('sets conditions', () => {
