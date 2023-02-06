@@ -1,4 +1,3 @@
-import { getInfoTextForItemPath } from 'v1/errors/getInfoTextForItemPath'
 import { isBoolean, isString } from 'v1/utils/validation'
 
 import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
@@ -70,9 +69,9 @@ export class InvalidAttributePropertyError extends Error {
     path?: string
   }) {
     super(
-      `Invalid option value type${getInfoTextForItemPath(
-        path
-      )}. Property: ${propertyName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
+      `Invalid option value type${
+        path !== undefined ? ` at path ${path}` : ''
+      }. Property: ${propertyName}. Expected: ${expectedType}. Received: ${String(receivedValue)}.`
     )
   }
 }
