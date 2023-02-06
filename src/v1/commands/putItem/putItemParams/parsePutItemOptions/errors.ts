@@ -11,3 +11,15 @@ export type InvalidMetricsOptionErrorBlueprint = ErrorBlueprint<{
   hasPath: false
   payload: { metrics: unknown }
 }>
+
+export type InvalidReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'invalidReturnValuesOption'
+  hasPath: false
+  payload: { returnValues: unknown }
+}>
+
+export type UnknownOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'unknownOption'
+  hasPath: false
+  payload: { option: unknown }
+}>
