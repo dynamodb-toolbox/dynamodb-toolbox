@@ -38,10 +38,8 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
-      - name: Check types
-        run: npm run check-types
-      - name: Test types
-        run: npm run test-types
+      - name: Check types (v1)
+        run: npm run v1-check-types
 
   lint:
     name: 'ESLint'
