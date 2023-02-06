@@ -1,13 +1,9 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
+import { capacityOptionsSet } from 'v1/commands/options'
 
-import {
-  capacityOptionsSet,
-  metricsOptionsSet,
-  returnValuesOptionsSet,
-  PutItemOptions
-} from '../../options'
+import { metricsOptionsSet, returnValuesOptionsSet, PutItemOptions } from '../../options'
 
 type CommandOptions = Omit<PutCommandInput, 'TableName' | 'Item'>
 
