@@ -13,7 +13,8 @@ import {
   set,
   list,
   map,
-  ComputedDefault
+  ComputedDefault,
+  DynamoDBToolboxError
 } from 'v1'
 
 import { putItemParams } from './putItemParams'
@@ -387,37 +388,60 @@ describe('put', () => {
     })
   })
 
-  // TODO Add options in putItemParams
-  // it('fails on extra options', () => {
-  //   expect(() =>
-  //     TestEntity.putParams(
-  //       { email: 'x', sort: 'y' },
-  //       // @ts-expect-error
-  //       { extra: true }
-  //     )
-  //   ).toThrow('Invalid put options: extra')
-  // })
+  // Options
+  it('sets capacity options', () => {
+    const { ReturnConsumedCapacity } = putItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { capacity: 'NONE' }
+    )
 
-  // it('sets capacity options', () => {
-  //   const { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
-  //     { email: 'x', sort: 'y' },
-  //     { capacity: 'none' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(ReturnConsumedCapacity).toBe('NONE')
-  // })
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
 
-  // it('sets metrics options', () => {
-  //   const { TableName, ReturnItemCollectionMetrics } = TestEntity.putParams(
-  //     { email: 'x', sort: 'y' },
-  //     { metrics: 'size' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(ReturnItemCollectionMetrics).toBe('SIZE')
-  // })
+  it('fails on invalid capacity option', () => {
+    const invalidCall = () =>
+      putItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        {
+          // @ts-expect-error
+          capacity: 'test'
+        }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCapacityOption' }))
+  })
+
+  it('sets metrics options', () => {
+    const { ReturnItemCollectionMetrics } = putItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { metrics: 'SIZE' }
+    )
+
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
+  })
+
+  it('fails on invalid metrics option', () => {
+    const invalidCall = () =>
+      putItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        {
+          // @ts-expect-error
+          metrics: 'test'
+        }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidMetricsOption' }))
+  })
 
   // it('sets returnValues options', () => {
-  //   const { TableName, ReturnValues } = TestEntity.putParams(
+  //   const { TableName, ReturnValues } = putItemParams(
+  //     TestEntity,
   //     { email: 'x', sort: 'y' },
   //     { returnValues: 'ALL_OLD' }
   //   )
@@ -425,28 +449,30 @@ describe('put', () => {
   //   expect(ReturnValues).toBe('ALL_OLD')
   // })
 
-  // it('fails on invalid capacity option', () => {
-  //   expect(() => TestEntity.putParams({ email: 'x', sort: 'y' }, { capacity: 'test' })).toThrow(
-  //     `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
-  //   )
-  // })
-
-  // it('fails on invalid metrics option', () => {
-  //   expect(() => TestEntity.putParams({ email: 'x', sort: 'y' }, { metrics: 'test' })).toThrow(
-  //     `'metrics' must be one of 'NONE' OR 'SIZE'`
-  //   )
-  // })
-
   // it('fails on invalid returnValues option', () => {
   //   expect(() =>
-  //     TestEntity.putParams(
+  //     putItemParams(
+  //       TestEntity,
   //       { email: 'x', sort: 'y' },
-  //       // @ts-expect-error
-  //       { returnValues: 'test' }
+  //       {
+  //         // @ts-expect-error
+  //         returnValues: 'test'
+  //       }
   //     )
   //   ).toThrow(
   //     `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`
   //   )
+  // })
+
+  // it('fails on extra options', () => {
+  //   expect(() =>
+  //     putItemParams(
+  //       TestEntity,
+  //       { email: 'x', sort: 'y' },
+  //       // @ts-expect-error
+  //       { extra: true }
+  //     )
+  //   ).toThrow('Invalid put options: extra')
   // })
 
   // TODO Enable typed conditions
