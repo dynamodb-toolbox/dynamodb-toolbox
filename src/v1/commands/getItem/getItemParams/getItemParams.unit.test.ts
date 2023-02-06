@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { TableV2, EntityV2, item, string } from 'v1'
+import { TableV2, EntityV2, item, string, DynamoDBToolboxError } from 'v1'
 
 import { getItemParams } from './getItemParams'
 
@@ -116,41 +116,71 @@ describe('get', () => {
     ).toThrow('')
   })
 
-  // TODO Add options in putItemParams
-  // it('fails on extra options', () => {
-  //   expect(() =>
-  //     TestEntity.getParams(
-  //       { email: 'x', sort: 'y' },
-  //       // @ts-expect-error
-  //       { execute: false, parse: false, extra: true }
-  //     )
-  //   ).toThrow('Invalid get options: extra')
-  // })
+  // Options
+  it('sets capacity options', () => {
+    const { ReturnConsumedCapacity } = getItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { capacity: 'NONE' }
+    )
 
-  // it('fails on invalid consistent option', () => {
-  //   // @ts-expect-error
-  //   expect(() => TestEntity.getParams({ email: 'x', sort: 'y' }, { consistent: 'true' })).toThrow(
-  //     `'consistent' requires a boolean`
-  //   )
-  // })
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
 
-  // it('fails on invalid capacity option', () => {
-  //   // 💥 TODO: Improve capacity type
-  //   expect(() => TestEntity.getParams({ email: 'x', sort: 'y' }, { capacity: 'test' })).toThrow(
-  //     `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
-  //   )
-  // })
+  it('fails on invalid capacity option', () => {
+    const invalidCall = () =>
+      getItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        {
+          // @ts-expect-error
+          capacity: 'test'
+        }
+      )
 
-  // it('sets consistent and capacity options', () => {
-  //   let { TableName, Key, ConsistentRead, ReturnConsumedCapacity } = TestEntity.getParams(
-  //     { email: 'x', sort: 'y' },
-  //     { consistent: true, capacity: 'none' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  //   expect(ConsistentRead).toBe(true)
-  //   expect(ReturnConsumedCapacity).toBe('NONE')
-  // })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCapacityOption' }))
+  })
+
+  it('sets consistent and capacity options', () => {
+    const { ConsistentRead } = getItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { consistent: true }
+    )
+
+    expect(ConsistentRead).toBe(true)
+  })
+
+  it('fails on invalid consistent option', () => {
+    const invalidCall = () =>
+      getItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        {
+          // @ts-expect-error
+          consistent: 'true'
+        }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidConsistentOption' }))
+  })
+
+  it('fails on extra options', () => {
+    const invalidCall = () =>
+      getItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        {
+          // @ts-expect-error
+          extra: true
+        }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownOption' }))
+  })
 
   // TODO Handle ProjectionExpression
   // it('parses attribute projections', () => {

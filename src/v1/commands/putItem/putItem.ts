@@ -7,11 +7,11 @@ import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
 import type {
   PutItemOptions,
   ReturnValuesOption,
-  None,
-  UpdatedOld,
-  UpdatedNew,
-  AllOld,
-  AllNew
+  NoneReturnValuesOption,
+  UpdatedOldReturnValuesOption,
+  UpdatedNewReturnValuesOption,
+  AllOldReturnValuesOption,
+  AllNewReturnValuesOption
 } from './options'
 import { putItemParams } from './putItemParams'
 
@@ -20,11 +20,11 @@ type ReturnedAttributes<
   RETURN_VALUES extends ReturnValuesOption
 > = ReturnValuesOption extends RETURN_VALUES
   ? undefined
-  : RETURN_VALUES extends None
+  : RETURN_VALUES extends NoneReturnValuesOption
   ? undefined
-  : RETURN_VALUES extends UpdatedOld | UpdatedNew
+  : RETURN_VALUES extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
   ? Partial<FormattedItem<ENTITY>> | undefined
-  : RETURN_VALUES extends AllNew | AllOld
+  : RETURN_VALUES extends AllNewReturnValuesOption | AllOldReturnValuesOption
   ? FormattedItem<ENTITY> | undefined
   : never
 
