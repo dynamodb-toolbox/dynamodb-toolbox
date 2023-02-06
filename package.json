@@ -27,6 +27,7 @@
     "build:esm": "tsc -p tsconfig.esm.json && echo '{ \"type\": \"module\" }' > dist/esm/package.json",
     "build": "npm run build:cjs & npm run build:esm",
     "prebuild": "rm -rf dist",
+    "v1-check-types": "tsc --noEmit -p tsconfig.v1.json",
     "lint": "eslint src/v1",
     "prettier": "prettier --check 'src/**/*.(js|ts)'",
     "prepublishOnly": "npm test && npm run lint && npm run test-types",
@@ -72,7 +73,6 @@
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.145.0",
-    "@aws-sdk/lib-dynamodb": "^3.245.0",
     "@types/jest": "^29.2.1",
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/lodash.isequal": "^4.5.6",
