@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
       - name: Run tests
-        run: npm run test
+        run: npm run v1-test
 
   check_types:
     name: 'Check types'
