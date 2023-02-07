@@ -1,5 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
+import { DynamoDBToolboxError } from 'v1/errors'
+
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
 import {
   $type,
@@ -12,12 +14,7 @@ import {
 } from '../constants/attributeOptions'
 
 import { string, number, boolean, binary } from './typer'
-import {
-  freezePrimitiveAttribute,
-  InvalidEnumValueTypeError,
-  InvalidDefaultValueTypeError,
-  InvalidDefaultValueRangeError
-} from './freeze'
+import { freezePrimitiveAttribute } from './freeze'
 import type { PrimitiveAttribute, $PrimitiveAttribute } from './interface'
 
 describe('primitiveAttribute', () => {
@@ -167,7 +164,7 @@ describe('primitiveAttribute', () => {
         'bar'
       )
 
-      expect(() =>
+      const invalidCall = () =>
         freezePrimitiveAttribute(
           string().enum(
             // @ts-expect-error
@@ -177,7 +174,9 @@ describe('primitiveAttribute', () => {
           ),
           path
         )
-      ).toThrow(new InvalidEnumValueTypeError({ expectedType: 'string', enumValue: 42, path }))
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidEnumValueType', path }))
 
       const str = string().enum('foo', 'bar')
 
@@ -193,7 +192,7 @@ describe('primitiveAttribute', () => {
         default: 42
       })
 
-      expect(() =>
+      const invalidCall = () =>
         freezePrimitiveAttribute(
           string({
             // @ts-expect-error
@@ -201,8 +200,10 @@ describe('primitiveAttribute', () => {
           }),
           path
         )
-      ).toThrow(
-        new InvalidDefaultValueTypeError({ expectedType: 'string', defaultValue: 42, path })
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'invalidDefaultValueType', path })
       )
 
       string({
@@ -231,7 +232,7 @@ describe('primitiveAttribute', () => {
         42
       )
 
-      expect(() =>
+      const invalidCall = () =>
         freezePrimitiveAttribute(
           string().default(
             // @ts-expect-error
@@ -239,8 +240,10 @@ describe('primitiveAttribute', () => {
           ),
           path
         )
-      ).toThrow(
-        new InvalidDefaultValueTypeError({ expectedType: 'string', defaultValue: 42, path })
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'invalidDefaultValueType', path })
       )
 
       string().default(
@@ -269,7 +272,7 @@ describe('primitiveAttribute', () => {
         'baz'
       )
 
-      expect(() =>
+      const invalidCall = () =>
         freezePrimitiveAttribute(
           string().enum('foo', 'bar').default(
             // @ts-expect-error
@@ -277,8 +280,10 @@ describe('primitiveAttribute', () => {
           ),
           path
         )
-      ).toThrow(
-        new InvalidDefaultValueRangeError({ enumValues: ['foo', 'bar'], defaultValue: 'baz', path })
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'invalidDefaultValueRange', path })
       )
 
       const strA = string().enum('foo', 'bar').default('foo')
