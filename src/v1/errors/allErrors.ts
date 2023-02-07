@@ -1,8 +1,12 @@
 import type {
-  InvalidDefaultValueErrorBlueprint,
-  InvalidEnumValueTypeErrorBlueprint,
-  InvalidDefaultValueTypeErrorBlueprint,
-  InvalidDefaultValueRangeErrorBlueprint,
+  InvalidConstantAttributeDefaultValueErrorBlueprint,
+  InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint,
+  InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint,
+  InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint,
+  OptionalSetAttributeElementsErrorBlueprint,
+  HiddenSetAttributeElementsErrorBlueprint,
+  SavedAsSetAttributeElementsErrorBlueprint,
+  DefaultedSetAttributeElementsErrorBlueprint,
   OptionalListAttributeElementsErrorBlueprint,
   HiddenListAttributeElementsErrorBlueprint,
   SavedAsListAttributeElementsErrorBlueprint,
@@ -21,10 +25,14 @@ import type {
 import type { ErrorBlueprint } from './blueprint'
 
 type ErrorBlueprints =
-  | InvalidDefaultValueErrorBlueprint
-  | InvalidEnumValueTypeErrorBlueprint
-  | InvalidDefaultValueTypeErrorBlueprint
-  | InvalidDefaultValueRangeErrorBlueprint
+  | InvalidConstantAttributeDefaultValueErrorBlueprint
+  | InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint
+  | InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint
+  | InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint
+  | OptionalSetAttributeElementsErrorBlueprint
+  | HiddenSetAttributeElementsErrorBlueprint
+  | SavedAsSetAttributeElementsErrorBlueprint
+  | DefaultedSetAttributeElementsErrorBlueprint
   | OptionalListAttributeElementsErrorBlueprint
   | HiddenListAttributeElementsErrorBlueprint
   | SavedAsListAttributeElementsErrorBlueprint
