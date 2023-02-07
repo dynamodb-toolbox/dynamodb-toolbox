@@ -1,8 +1,10 @@
+import { DynamoDBToolboxError } from 'v1/errors'
+
 import { string } from '../primitive'
 import { validateAttributeProperties } from '../shared/validate'
 import * as freezeAttributeModule from '../freeze'
 
-import { DuplicateSavedAsAttributesError, freezeMapAttribute } from './freeze'
+import { freezeMapAttribute } from './freeze'
 import { map } from './typer'
 
 jest.mock('../shared/validate', () => ({
@@ -57,12 +59,20 @@ describe('map properties freeze', () => {
   })
 
   it('throws if map attribute has duplicate savedAs', () => {
-    expect(() =>
+    const invalidCallA = () =>
       freezeMapAttribute(map({ a: stringAttr, b: stringAttr.savedAs('a') }), pathMock)
-    ).toThrow(new DuplicateSavedAsAttributesError({ duplicatedSavedAs: 'a', path: pathMock }))
 
-    expect(() =>
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'duplicateSavedAsMapAttributes', path: pathMock })
+    )
+
+    const invalidCallB = () =>
       freezeMapAttribute(map({ a: stringAttr.savedAs('c'), b: stringAttr.savedAs('c') }), pathMock)
-    ).toThrow(new DuplicateSavedAsAttributesError({ duplicatedSavedAs: 'c', path: pathMock }))
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'duplicateSavedAsMapAttributes', path: pathMock })
+    )
   })
 })
