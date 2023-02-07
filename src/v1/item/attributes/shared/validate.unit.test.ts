@@ -40,15 +40,15 @@ describe('shared properties validation', () => {
       })
     )
 
-    expect(() => validateAttributeProperties(validProperties)).not.toThrow()
+    expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$required]: 'atLeastOnce' })
+      validateAttributeProperties({ ...validProperties, [$required]: 'atLeastOnce' }, path)
     ).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$required]: 'onlyOnce' })
+      validateAttributeProperties({ ...validProperties, [$required]: 'onlyOnce' }, path)
     ).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$required]: 'always' })
+      validateAttributeProperties({ ...validProperties, [$required]: 'always' }, path)
     ).not.toThrow()
   })
 
@@ -73,8 +73,10 @@ describe('shared properties validation', () => {
       })
     )
 
-    expect(() => validateAttributeProperties(validProperties)).not.toThrow()
-    expect(() => validateAttributeProperties({ ...validProperties, [$hidden]: true })).not.toThrow()
+    expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
+    expect(() =>
+      validateAttributeProperties({ ...validProperties, [$hidden]: true }, path)
+    ).not.toThrow()
   })
 
   it('throws if key option is invalid', () => {
@@ -98,8 +100,10 @@ describe('shared properties validation', () => {
       })
     )
 
-    expect(() => validateAttributeProperties(validProperties)).not.toThrow()
-    expect(() => validateAttributeProperties({ ...validProperties, [$key]: true })).not.toThrow()
+    expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
+    expect(() =>
+      validateAttributeProperties({ ...validProperties, [$key]: true }, path)
+    ).not.toThrow()
   })
 
   it('throws if savedAs option is invalid', () => {
@@ -123,9 +127,9 @@ describe('shared properties validation', () => {
       })
     )
 
-    expect(() => validateAttributeProperties(validProperties)).not.toThrow()
+    expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$savedAs]: 'foo' })
+      validateAttributeProperties({ ...validProperties, [$savedAs]: 'foo' }, path)
     ).not.toThrow()
   })
 })
