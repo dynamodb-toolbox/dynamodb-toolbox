@@ -1,6 +1,7 @@
 import type { O } from 'ts-toolbelt'
 import isEqual from 'lodash.isequal'
 
+import { DynamoDBToolboxError } from 'v1/errors'
 import { isComputedDefault } from 'v1/item/utils/isComputedDefault'
 import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
 
@@ -15,9 +16,8 @@ import {
   AttributeOptionNameSymbol
 } from '../constants/attributeOptions'
 import { validateAttributeProperties } from '../shared/validate'
-import { ResolvedAttribute } from '../types'
 
-import {
+import type {
   $ConstantAttribute,
   ConstantAttributeStateConstraint,
   ConstantAttribute
@@ -59,7 +59,13 @@ export const freezeConstantAttribute: ConstantAttributeFreezer = ($constantAttri
     isStaticDefault(defaultValue)
   ) {
     if (!isEqual(constValue, defaultValue)) {
-      throw new InvalidDefaultValueError({ constValue, defaultValue, path })
+      throw new DynamoDBToolboxError('invalidDefaultValue', {
+        message: `Invalid default value at path ${path}: Expected: ${String(
+          constValue
+        )}. Received: ${String(defaultValue)}`,
+        path,
+        payload: { expectedValues: [constValue], defaultValue }
+      })
     }
   }
 
@@ -72,23 +78,5 @@ export const freezeConstantAttribute: ConstantAttributeFreezer = ($constantAttri
     key: $constantAttribute[$key],
     savedAs: $constantAttribute[$savedAs],
     default: defaultValue
-  }
-}
-
-export class InvalidDefaultValueError extends Error {
-  constructor({
-    constValue,
-    defaultValue,
-    path
-  }: {
-    constValue: ResolvedAttribute
-    defaultValue: ResolvedAttribute
-    path: string
-  }) {
-    super(
-      `Invalid default value at path ${path}: Expected: ${String(constValue)}. Received: ${String(
-        defaultValue
-      )}.`
-    )
   }
 }

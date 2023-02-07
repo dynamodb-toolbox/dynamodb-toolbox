@@ -1,5 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
+import { DynamoDBToolboxError } from 'v1/errors'
+
 import type { RequiredOption } from '../constants/requiredOptions'
 import { validateAttributeProperties } from '../shared/validate'
 import { freezeAttribute, FreezeAttribute } from '../freeze'
@@ -80,7 +82,11 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
 
     const attributeSavedAs = attribute[$savedAs] ?? attributeName
     if (attributesSavedAs.has(attributeSavedAs)) {
-      throw new DuplicateSavedAsAttributesError({ duplicatedSavedAs: attributeSavedAs, path })
+      throw new DynamoDBToolboxError('duplicateSavedAsMapAttributes', {
+        message: `Invalid map attributes at path ${path}: More than two attributes are saved as '${attributeSavedAs}'`,
+        path,
+        payload: { savedAs: attributeSavedAs }
+      })
     }
     attributesSavedAs.add(attributeSavedAs)
 
@@ -105,13 +111,5 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
     open: $mapAttribute[$open],
     savedAs: $mapAttribute[$savedAs],
     default: $mapAttribute[$default]
-  }
-}
-
-export class DuplicateSavedAsAttributesError extends Error {
-  constructor({ duplicatedSavedAs, path }: { duplicatedSavedAs: string; path: string }) {
-    super(
-      `Invalid map attributes at path ${path}: More than two attributes are saved as '${duplicatedSavedAs}'`
-    )
   }
 }
