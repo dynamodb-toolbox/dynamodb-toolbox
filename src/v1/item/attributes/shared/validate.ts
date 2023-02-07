@@ -8,12 +8,12 @@ import type { $AttributeSharedStateConstraint } from './interface'
  * Validates an attribute shared properties
  *
  * @param attribute Attribute
- * @param path _(optional)_ Path of the instance in the related item (string)
+ * @param path Path of the instance in the related item (string)
  * @return void
  */
 export const validateAttributeProperties = (
   $attribute: $AttributeSharedStateConstraint,
-  path?: string
+  path: string
 ): void => {
   const attributeRequired = $attribute[$required]
   if (!requiredOptionsSet.has(attributeRequired)) {
