@@ -52,7 +52,7 @@ type MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
  * Freezes a map instance
  *
  * @param $mapAttribute MapAttribute
- * @param path _(optional)_ Path of the instance in the related item (string)
+ * @param path Path of the instance in the related item (string)
  * @return void
  */
 export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(

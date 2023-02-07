@@ -42,7 +42,7 @@ type SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
  * Validates a set instance
  *
  * @param $setAttribute SetAttribute
- * @param path _(optional)_ Path of the instance in the related item (string)
+ * @param path Path of the instance in the related item (string)
  * @return void
  */
 export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(

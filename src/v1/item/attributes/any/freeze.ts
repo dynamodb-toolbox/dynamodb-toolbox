@@ -32,7 +32,7 @@ type AnyAttributeFreezer = <$ANY_ATTRIBUTE extends $AnyAttribute>(
  * Validates an any instance
  *
  * @param $anyAttribute Any
- * @param path _(optional)_ Path of the instance in the related item (string)
+ * @param path Path of the instance in the related item (string)
  * @return void
  */
 export const freezeAnyAttribute: AnyAttributeFreezer = ($anyAttribute, path) => {

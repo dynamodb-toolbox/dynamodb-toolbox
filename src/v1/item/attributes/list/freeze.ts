@@ -42,7 +42,7 @@ type ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttribute>(
  * Freezes a list instance
  *
  * @param $listAttribute List
- * @param path _(optional)_ Path of the instance in the related item (string)
+ * @param path Path of the instance in the related item (string)
  * @return void
  */
 export const freezeListAttribute: ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttribute>(
