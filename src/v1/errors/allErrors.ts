@@ -1,5 +1,9 @@
 import type {
   InvalidDefaultValueErrorBlueprint,
+  OptionalListAttributeElementsErrorBlueprint,
+  HiddenListAttributeElementsErrorBlueprint,
+  SavedAsListAttributeElementsErrorBlueprint,
+  DefaultedListAttributeElementsErrorBlueprint,
   DuplicateSavedAsMapAttributesErrorBlueprint,
   DuplicateSavedAsItemAttributesErrorBlueprint
 } from 'v1/item/errors'
@@ -15,6 +19,10 @@ import type { ErrorBlueprint } from './blueprint'
 
 type ErrorBlueprints =
   | InvalidDefaultValueErrorBlueprint
+  | OptionalListAttributeElementsErrorBlueprint
+  | HiddenListAttributeElementsErrorBlueprint
+  | SavedAsListAttributeElementsErrorBlueprint
+  | DefaultedListAttributeElementsErrorBlueprint
   | DuplicateSavedAsMapAttributesErrorBlueprint
   | DuplicateSavedAsItemAttributesErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
