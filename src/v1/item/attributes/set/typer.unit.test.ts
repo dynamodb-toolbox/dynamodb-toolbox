@@ -1,5 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
+import { DynamoDBToolboxError } from 'v1/errors'
+
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
 import { string } from '../primitive'
 import {
@@ -13,13 +15,7 @@ import {
 } from '../constants/attributeOptions'
 
 import { set } from './typer'
-import {
-  DefaultedSetElementsError,
-  HiddenSetElementsError,
-  OptionalSetElementsError,
-  SavedAsSetElementsError,
-  freezeSetAttribute
-} from './freeze'
+import { freezeSetAttribute } from './freeze'
 import { SetAttribute, $SetAttribute } from './interface'
 
 describe('set', () => {
@@ -32,7 +28,7 @@ describe('set', () => {
       string().optional()
     )
 
-    expect(() =>
+    const invalidCall = () =>
       freezeSetAttribute(
         set(
           // @ts-expect-error
@@ -40,7 +36,11 @@ describe('set', () => {
         ),
         path
       )
-    ).toThrow(new OptionalSetElementsError({ path }))
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'optionalSetAttributeElements', path })
+    )
   })
 
   it('rejects hidden elements', () => {
@@ -49,7 +49,7 @@ describe('set', () => {
       strElement.hidden()
     )
 
-    expect(() =>
+    const invalidCall = () =>
       freezeSetAttribute(
         set(
           // @ts-expect-error
@@ -57,9 +57,10 @@ describe('set', () => {
         ),
         path
       )
-    ).toThrow(
-      // @prettier-ignore - force a line break
-      new HiddenSetElementsError({ path })
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'hiddenSetAttributeElements', path })
     )
   })
 
@@ -69,7 +70,7 @@ describe('set', () => {
       strElement.savedAs('foo')
     )
 
-    expect(() =>
+    const invalidCall = () =>
       freezeSetAttribute(
         set(
           // @ts-expect-error
@@ -77,9 +78,10 @@ describe('set', () => {
         ),
         path
       )
-    ).toThrow(
-      // @prettier-ignore - force a line break
-      new SavedAsSetElementsError({ path })
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'savedAsSetAttributeElements', path })
     )
   })
 
@@ -89,7 +91,7 @@ describe('set', () => {
       strElement.default('foo')
     )
 
-    expect(() =>
+    const invalidCallA = () =>
       freezeSetAttribute(
         set(
           // @ts-expect-error
@@ -97,14 +99,18 @@ describe('set', () => {
         ),
         path
       )
-    ).toThrow(new DefaultedSetElementsError({ path }))
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'defaultedSetAttributeElements', path })
+    )
 
     set(
       // @ts-expect-error
       strElement.default(ComputedDefault)
     )
 
-    expect(() =>
+    const invalidCallB = () =>
       freezeSetAttribute(
         set(
           // @ts-expect-error
@@ -112,7 +118,11 @@ describe('set', () => {
         ),
         path
       )
-    ).toThrow(new DefaultedSetElementsError({ path }))
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'defaultedSetAttributeElements', path })
+    )
   })
 
   it('returns default set', () => {
