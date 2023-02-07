@@ -1,5 +1,8 @@
 import type {
   InvalidDefaultValueErrorBlueprint,
+  InvalidEnumValueTypeErrorBlueprint,
+  InvalidDefaultValueTypeErrorBlueprint,
+  InvalidDefaultValueRangeErrorBlueprint,
   OptionalListAttributeElementsErrorBlueprint,
   HiddenListAttributeElementsErrorBlueprint,
   SavedAsListAttributeElementsErrorBlueprint,
@@ -19,6 +22,9 @@ import type { ErrorBlueprint } from './blueprint'
 
 type ErrorBlueprints =
   | InvalidDefaultValueErrorBlueprint
+  | InvalidEnumValueTypeErrorBlueprint
+  | InvalidDefaultValueTypeErrorBlueprint
+  | InvalidDefaultValueRangeErrorBlueprint
   | OptionalListAttributeElementsErrorBlueprint
   | HiddenListAttributeElementsErrorBlueprint
   | SavedAsListAttributeElementsErrorBlueprint
