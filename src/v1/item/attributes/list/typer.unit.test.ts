@@ -1,5 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
+import { DynamoDBToolboxError } from 'v1/errors'
+
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
 import { string } from '../primitive'
 import {
@@ -13,13 +15,7 @@ import {
 } from '../constants/attributeOptions'
 
 import { list } from './typer'
-import {
-  DefaultedListAttributeElementsError,
-  HiddenListAttributeElementsError,
-  OptionalListAttributeElementsError,
-  SavedAsListAttributeElementsError,
-  freezeListAttribute
-} from './freeze'
+import { freezeListAttribute } from './freeze'
 import type { ListAttribute, $ListAttribute } from './interface'
 
 describe('list', () => {
@@ -32,7 +28,7 @@ describe('list', () => {
       string().optional()
     )
 
-    expect(() =>
+    const invalidCall = () =>
       freezeListAttribute(
         list(
           // @ts-expect-error
@@ -40,7 +36,11 @@ describe('list', () => {
         ),
         path
       )
-    ).toThrow(new OptionalListAttributeElementsError({ path }))
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'optionalListAttributeElements', path })
+    )
   })
 
   it('rejects hidden elements', () => {
@@ -49,7 +49,7 @@ describe('list', () => {
       strElement.hidden()
     )
 
-    expect(() =>
+    const invalidCall = () =>
       freezeListAttribute(
         list(
           // @ts-expect-error
@@ -57,7 +57,11 @@ describe('list', () => {
         ),
         path
       )
-    ).toThrow(new HiddenListAttributeElementsError({ path }))
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'hiddenListAttributeElements', path })
+    )
   })
 
   it('rejects elements with savedAs values', () => {
@@ -66,7 +70,7 @@ describe('list', () => {
       strElement.savedAs('foo')
     )
 
-    expect(() =>
+    const invalidCall = () =>
       freezeListAttribute(
         list(
           // @ts-expect-error
@@ -74,7 +78,11 @@ describe('list', () => {
         ),
         path
       )
-    ).toThrow(new SavedAsListAttributeElementsError({ path }))
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'savedAsListAttributeElements', path })
+    )
   })
 
   it('rejects elements with default values', () => {
@@ -83,7 +91,7 @@ describe('list', () => {
       strElement.default('foo')
     )
 
-    expect(() =>
+    const invalidCallA = () =>
       freezeListAttribute(
         list(
           // @ts-expect-error
@@ -91,14 +99,18 @@ describe('list', () => {
         ),
         path
       )
-    ).toThrow(new DefaultedListAttributeElementsError({ path }))
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'defaultedListAttributeElements', path })
+    )
 
     list(
       // @ts-expect-error
       strElement.default(ComputedDefault)
     )
 
-    expect(() =>
+    const invalidCallB = () =>
       freezeListAttribute(
         list(
           // @ts-expect-error
@@ -106,7 +118,11 @@ describe('list', () => {
         ),
         path
       )
-    ).toThrow(new DefaultedListAttributeElementsError({ path }))
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'defaultedListAttributeElements', path })
+    )
   })
 
   it('returns default list', () => {
