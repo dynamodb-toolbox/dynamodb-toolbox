@@ -52,7 +52,7 @@ type PrimitiveAttributeFreezer = <$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribu
  * Validates a primitive instance
  *
  * @param $primitiveAttribute Primitive
- * @param path _(optional)_ Path of the instance in the related item (string)
+ * @param path Path of the instance in the related item (string)
  * @return void
  */
 export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
