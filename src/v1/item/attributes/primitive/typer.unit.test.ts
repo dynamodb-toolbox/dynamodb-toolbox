@@ -176,7 +176,9 @@ describe('primitiveAttribute', () => {
         )
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
-      expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidEnumValueType', path }))
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'invalidPrimitiveAttributeEnumValueType', path })
+      )
 
       const str = string().enum('foo', 'bar')
 
@@ -203,7 +205,7 @@ describe('primitiveAttribute', () => {
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
-        expect.objectContaining({ code: 'invalidDefaultValueType', path })
+        expect.objectContaining({ code: 'invalidPrimitiveAttributeDefaultValueType', path })
       )
 
       string({
@@ -243,7 +245,7 @@ describe('primitiveAttribute', () => {
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
-        expect.objectContaining({ code: 'invalidDefaultValueType', path })
+        expect.objectContaining({ code: 'invalidPrimitiveAttributeDefaultValueType', path })
       )
 
       string().default(
@@ -283,7 +285,7 @@ describe('primitiveAttribute', () => {
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
-        expect.objectContaining({ code: 'invalidDefaultValueRange', path })
+        expect.objectContaining({ code: 'invalidPrimitiveAttributeDefaultValueRange', path })
       )
 
       const strA = string().enum('foo', 'bar').default('foo')
