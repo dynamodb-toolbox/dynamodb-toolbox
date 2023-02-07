@@ -1,4 +1,9 @@
-import {
+import type {
+  InvalidDefaultValueErrorBlueprint,
+  DuplicateSavedAsMapAttributesErrorBlueprint,
+  DuplicateSavedAsItemAttributesErrorBlueprint
+} from 'v1/item/errors'
+import type {
   InvalidCapacityOptionErrorBlueprint,
   InvalidConsistentOptionErrorBlueprint,
   InvalidMetricsOptionErrorBlueprint,
@@ -6,9 +11,12 @@ import {
   UnknownOptionErrorBlueprint
 } from 'v1/commands/errors'
 
-import { ErrorBlueprint } from './blueprint'
+import type { ErrorBlueprint } from './blueprint'
 
 type ErrorBlueprints =
+  | InvalidDefaultValueErrorBlueprint
+  | DuplicateSavedAsMapAttributesErrorBlueprint
+  | DuplicateSavedAsItemAttributesErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
   | InvalidConsistentOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
