@@ -70,7 +70,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
   enumValues?.forEach(enumValue => {
     const isEnumValueValid = typeValidator(enumValue)
     if (!isEnumValueValid) {
-      throw new DynamoDBToolboxError('invalidEnumValueType', {
+      throw new DynamoDBToolboxError('invalidPrimitiveAttributeEnumValueType', {
         message: `Invalid enum value type at path ${path}. Expected: ${primitiveType}. Received: ${String(
           enumValue
         )}.`,
@@ -87,7 +87,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     isStaticDefault(defaultValue)
   ) {
     if (!typeValidator(defaultValue)) {
-      throw new DynamoDBToolboxError('invalidDefaultValueType', {
+      throw new DynamoDBToolboxError('invalidPrimitiveAttributeDefaultValueType', {
         message: `Invalid default value type at path ${path}: Expected: ${primitiveType}. Received: ${String(
           defaultValue
         )}.`,
@@ -97,7 +97,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     }
 
     if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
-      throw new DynamoDBToolboxError('invalidDefaultValueRange', {
+      throw new DynamoDBToolboxError('invalidPrimitiveAttributeDefaultValueRange', {
         message: `Invalid default value at path ${path}: Expected one of: ${enumValues.join(
           ', '
         )}. Received: ${String(defaultValue)}.`,
