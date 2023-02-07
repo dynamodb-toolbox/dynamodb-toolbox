@@ -1,5 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
+import { DynamoDBToolboxError } from 'v1/errors'
+
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
 import {
   $type,
@@ -12,7 +14,7 @@ import {
 } from '../constants/attributeOptions'
 
 import { constant } from './typer'
-import { freezeConstantAttribute, InvalidDefaultValueError } from './freeze'
+import { freezeConstantAttribute } from './freeze'
 import type { ConstantAttribute, $ConstantAttribute } from './interface'
 
 const path = 'some.path'
@@ -166,7 +168,7 @@ describe('constantAttribute', () => {
         default: 42
       })
 
-      expect(() =>
+      const invalidCall = () =>
         freezeConstantAttribute(
           constant('foobar', {
             // @ts-expect-error
@@ -174,7 +176,9 @@ describe('constantAttribute', () => {
           }),
           path
         )
-      ).toThrow(new InvalidDefaultValueError({ constValue: 'foobar', defaultValue: 42, path }))
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidDefaultValue', path }))
 
       constant('foobar', {
         // @ts-expect-error Unable to throw here (it would require executing the fn)
@@ -202,7 +206,7 @@ describe('constantAttribute', () => {
         42
       )
 
-      expect(() =>
+      const invalidCall = () =>
         freezeConstantAttribute(
           constant('foobar').default(
             // @ts-expect-error
@@ -210,7 +214,9 @@ describe('constantAttribute', () => {
           ),
           path
         )
-      ).toThrow(new InvalidDefaultValueError({ constValue: 'foobar', defaultValue: 42, path }))
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidDefaultValue', path }))
 
       constant('foobar').default(
         // @ts-expect-error Unable to throw here (it would require executing the fn)
