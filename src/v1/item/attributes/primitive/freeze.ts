@@ -1,5 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
+import { DynamoDBToolboxError } from 'v1/errors'
 import { isComputedDefault } from 'v1/item/utils/isComputedDefault'
 import { isStaticDefault } from 'v1/item/utils/isStaticDefault'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
@@ -15,12 +16,8 @@ import {
   $default
 } from '../constants/attributeOptions'
 
-import { $PrimitiveAttribute, PrimitiveAttribute } from './interface'
-import type {
-  PrimitiveAttributeType,
-  PrimitiveAttributeEnumValues,
-  PrimitiveAttributeDefaultValue
-} from './types'
+import type { $PrimitiveAttribute, PrimitiveAttribute } from './interface'
+import type { PrimitiveAttributeEnumValues, PrimitiveAttributeDefaultValue } from './types'
 
 export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute> =
   // Applying void O.Update improves type display
@@ -73,7 +70,13 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
   enumValues?.forEach(enumValue => {
     const isEnumValueValid = typeValidator(enumValue)
     if (!isEnumValueValid) {
-      throw new InvalidEnumValueTypeError({ expectedType: primitiveType, enumValue, path })
+      throw new DynamoDBToolboxError('invalidEnumValueType', {
+        message: `Invalid enum value type at path ${path}. Expected: ${primitiveType}. Received: ${String(
+          enumValue
+        )}.`,
+        path,
+        payload: { expectedType: primitiveType, enumValue }
+      })
     }
   })
 
@@ -84,11 +87,23 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     isStaticDefault(defaultValue)
   ) {
     if (!typeValidator(defaultValue)) {
-      throw new InvalidDefaultValueTypeError({ expectedType: primitiveType, defaultValue, path })
+      throw new DynamoDBToolboxError('invalidDefaultValueType', {
+        message: `Invalid default value type at path ${path}: Expected: ${primitiveType}. Received: ${String(
+          defaultValue
+        )}.`,
+        path,
+        payload: { expectedType: primitiveType, defaultValue }
+      })
     }
 
     if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
-      throw new InvalidDefaultValueRangeError({ enumValues, defaultValue, path })
+      throw new DynamoDBToolboxError('invalidDefaultValueRange', {
+        message: `Invalid default value at path ${path}: Expected one of: ${enumValues.join(
+          ', '
+        )}. Received: ${String(defaultValue)}.`,
+        path,
+        payload: { enumValues, defaultValue }
+      })
     }
   }
 
@@ -107,59 +122,5 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
       $PRIMITIVE_ATTRIBUTE[$default],
       PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
     >
-  }
-}
-
-export class InvalidEnumValueTypeError extends Error {
-  constructor({
-    expectedType,
-    enumValue,
-    path
-  }: {
-    expectedType: PrimitiveAttributeType
-    enumValue: NonNullable<PrimitiveAttributeEnumValues<PrimitiveAttributeType>>[number]
-    path: string
-  }) {
-    super(
-      `Invalid enum value type at path${path}. Expected: ${expectedType}. Received: ${String(
-        enumValue
-      )}.`
-    )
-  }
-}
-
-export class InvalidDefaultValueTypeError extends Error {
-  constructor({
-    expectedType,
-    defaultValue,
-    path
-  }: {
-    expectedType: PrimitiveAttributeType
-    defaultValue: NonNullable<PrimitiveAttributeDefaultValue<PrimitiveAttributeType>>
-    path: string
-  }) {
-    super(
-      `Invalid default value type at path${path}: Expected: ${expectedType}. Received: ${String(
-        defaultValue
-      )}.`
-    )
-  }
-}
-
-export class InvalidDefaultValueRangeError extends Error {
-  constructor({
-    enumValues,
-    defaultValue,
-    path
-  }: {
-    enumValues: NonNullable<PrimitiveAttributeEnumValues<PrimitiveAttributeType>>
-    defaultValue: NonNullable<PrimitiveAttributeDefaultValue<PrimitiveAttributeType>>
-    path: string
-  }) {
-    super(
-      `Invalid default value at path ${path}: Expected one of: ${enumValues.join(
-        ', '
-      )}. Received: ${String(defaultValue)}.`
-    )
   }
 }
