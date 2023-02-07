@@ -1,3 +1,5 @@
+import { DynamoDBToolboxError } from 'v1/errors'
+
 import { $Item, FreezeItem } from './interface'
 import { FreezeAttribute, freezeAttribute } from './attributes/freeze'
 import { RequiredOption } from './attributes/constants/requiredOptions'
@@ -34,7 +36,10 @@ export const freezeItem: ItemFreezer = <$ITEM extends $Item>(item: $ITEM): Freez
 
     const attributeSavedAs = attribute[$savedAs] ?? attributeName
     if (attributesSavedAs.has(attributeSavedAs)) {
-      throw new DuplicateSavedAsAttributesError({ duplicatedSavedAs: attributeSavedAs })
+      throw new DynamoDBToolboxError('duplicateSavedAsItemAttributes', {
+        message: `Invalid item: More than two attributes are saved as '${attributeSavedAs}'`,
+        payload: { savedAs: attributeSavedAs }
+      })
     }
     attributesSavedAs.add(attributeSavedAs)
 
@@ -52,11 +57,5 @@ export const freezeItem: ItemFreezer = <$ITEM extends $Item>(item: $ITEM): Freez
     keyAttributesNames,
     requiredAttributesNames,
     attributes: frozenAttributes
-  }
-}
-
-export class DuplicateSavedAsAttributesError extends Error {
-  constructor({ duplicatedSavedAs }: { duplicatedSavedAs: string }) {
-    super(`Invalid item: More than two attributes are saved as '${duplicatedSavedAs}'`)
   }
 }
