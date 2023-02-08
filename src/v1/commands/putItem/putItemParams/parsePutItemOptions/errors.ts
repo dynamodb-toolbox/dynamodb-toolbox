@@ -1,13 +1,17 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-export type InvalidMetricsOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidMetricsOption'
+type InvalidPutItemCommandMetricsOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'invalidPutItemCommandMetricsOption'
   hasPath: false
   payload: { metrics: unknown }
 }>
 
-export type InvalidReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidReturnValuesOption'
+type InvalidPutItemReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'invalidPutItemReturnValuesOption'
   hasPath: false
   payload: { returnValues: unknown }
 }>
+
+export type ParsePutItemCommandOptionsErrorBlueprints =
+  | InvalidPutItemCommandMetricsOptionErrorBlueprint
+  | InvalidPutItemReturnValuesOptionErrorBlueprint

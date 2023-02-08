@@ -411,7 +411,7 @@ describe('put', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCapacityOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCapacityCommandOption' }))
   })
 
   it('sets metrics options', () => {
@@ -436,7 +436,9 @@ describe('put', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidMetricsOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'invalidPutItemCommandMetricsOption' })
+    )
   })
 
   it('sets returnValues options', () => {
@@ -461,7 +463,9 @@ describe('put', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidReturnValuesOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'invalidPutItemReturnValuesOption' })
+    )
   })
 
   it('fails on extra options', () => {
@@ -476,7 +480,7 @@ describe('put', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownCommandOption' }))
   })
 
   // TODO Enable typed conditions

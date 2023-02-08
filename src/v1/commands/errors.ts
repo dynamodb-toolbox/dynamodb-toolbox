@@ -1,16 +1,22 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-export * from './getItem/errors'
-export * from './putItem/errors'
+import { GetItemCommandErrorBlueprints } from './getItem/errors'
+import { PutItemCommandErrorBlueprints } from './putItem/errors'
 
-export type InvalidCapacityOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidCapacityOption'
+type InvalidCapacityCommandOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'invalidCapacityCommandOption'
   hasPath: false
   payload: { capacity: unknown }
 }>
 
-export type UnknownOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'unknownOption'
+type UnknownCommandOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'unknownCommandOption'
   hasPath: false
   payload: { option: unknown }
 }>
+
+export type CommandErrorBlueprints =
+  | GetItemCommandErrorBlueprints
+  | PutItemCommandErrorBlueprints
+  | InvalidCapacityCommandOptionErrorBlueprint
+  | UnknownCommandOptionErrorBlueprint
