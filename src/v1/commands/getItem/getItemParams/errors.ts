@@ -1,1 +1,3 @@
-export * from './parseGetItemOptions/errors'
+import type { ParseGetItemCommandOptionsErrorBlueprints } from './parseGetItemOptions/errors'
+
+export type GetItemCommandParamsErrorBlueprints = ParseGetItemCommandOptionsErrorBlueprints

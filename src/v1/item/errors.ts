@@ -1,9 +1,13 @@
-export * from './attributes/errors'
+import type { AttributeErrorBlueprints } from './attributes/errors'
 
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-export type DuplicateSavedAsItemAttributesErrorBlueprint = ErrorBlueprint<{
+type DuplicateSavedAsItemAttributesErrorBlueprint = ErrorBlueprint<{
   code: 'duplicateSavedAsItemAttributes'
   hasPath: false
   payload: { savedAs: string }
 }>
+
+export type ItemErrorBlueprints =
+  | AttributeErrorBlueprints
+  | DuplicateSavedAsItemAttributesErrorBlueprint
