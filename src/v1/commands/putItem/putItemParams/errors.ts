@@ -1,1 +1,3 @@
-export * from './parsePutItemOptions/errors'
+import type { ParsePutItemCommandOptionsErrorBlueprints } from './parsePutItemOptions/errors'
+
+export type PutItemCommandParamsErrorBlueprints = ParsePutItemCommandOptionsErrorBlueprints

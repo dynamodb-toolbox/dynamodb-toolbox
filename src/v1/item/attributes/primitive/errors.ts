@@ -7,7 +7,7 @@ import type {
   PrimitiveAttributeEnumValues
 } from './types'
 
-export type InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint = ErrorBlueprint<{
+type InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint = ErrorBlueprint<{
   code: 'invalidPrimitiveAttributeEnumValueType'
   hasPath: true
   payload: {
@@ -16,7 +16,7 @@ export type InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint = ErrorBlueprin
   }
 }>
 
-export type InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
+type InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
   code: 'invalidPrimitiveAttributeDefaultValueType'
   hasPath: true
   payload: {
@@ -25,7 +25,7 @@ export type InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint = ErrorBluep
   }
 }>
 
-export type InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
+type InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
   code: 'invalidPrimitiveAttributeDefaultValueRange'
   hasPath: true
   payload: {
@@ -33,3 +33,8 @@ export type InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint = ErrorBlue
     defaultValue: NonNullable<PrimitiveAttributeDefaultValue<PrimitiveAttributeType>>
   }
 }>
+
+export type PrimitiveAttributeErrorBlueprints =
+  | InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint
+  | InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint
+  | InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint
