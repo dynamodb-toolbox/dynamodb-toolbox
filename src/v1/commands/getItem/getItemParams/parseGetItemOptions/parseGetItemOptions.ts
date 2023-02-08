@@ -15,7 +15,7 @@ export const parseGetItemOptions = (putItemOptions: GetItemOptions): CommandOpti
 
   if (capacity !== undefined) {
     if (!capacityOptionsSet.has(capacity)) {
-      throw new DynamoDBToolboxError('invalidCapacityOption', {
+      throw new DynamoDBToolboxError('invalidCapacityCommandOption', {
         message: `Invalid capacity option: '${String(capacity)}'. 'capacity' must be one of: ${[
           ...capacityOptionsSet
         ].join(', ')}.`,
@@ -28,7 +28,7 @@ export const parseGetItemOptions = (putItemOptions: GetItemOptions): CommandOpti
 
   if (consistent !== undefined) {
     if (!isBoolean(consistent)) {
-      throw new DynamoDBToolboxError('invalidConsistentOption', {
+      throw new DynamoDBToolboxError('invalidGetItemCommandConsistentOption', {
         message: `Invalid consistent option: '${String(
           consistent
         )}'. 'consistent' must be boolean.`,
@@ -41,7 +41,7 @@ export const parseGetItemOptions = (putItemOptions: GetItemOptions): CommandOpti
 
   const [extraOption] = Object.keys(extraOptions)
   if (extraOption !== undefined) {
-    throw new DynamoDBToolboxError('unknownOption', {
+    throw new DynamoDBToolboxError('unknownCommandOption', {
       message: `Unkown option: ${extraOption}.`,
       payload: { option: extraOption }
     })

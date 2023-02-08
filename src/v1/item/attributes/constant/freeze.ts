@@ -45,7 +45,7 @@ type ConstantAttributeFreezer = <$CONSTANT_ATTRIBUTE extends $ConstantAttribute>
  * Validates a constant instance
  *
  * @param $constantAttribute Primitive
- * @param path _(optional)_ Path of the instance in the related item (string)
+ * @param path Path of the instance in the related item (string)
  * @return void
  */
 export const freezeConstantAttribute: ConstantAttributeFreezer = ($constantAttribute, path) => {
@@ -59,12 +59,12 @@ export const freezeConstantAttribute: ConstantAttributeFreezer = ($constantAttri
     isStaticDefault(defaultValue)
   ) {
     if (!isEqual(constValue, defaultValue)) {
-      throw new DynamoDBToolboxError('invalidDefaultValue', {
+      throw new DynamoDBToolboxError('invalidConstantAttributeDefaultValue', {
         message: `Invalid default value at path ${path}: Expected: ${String(
           constValue
         )}. Received: ${String(defaultValue)}`,
         path,
-        payload: { expectedValues: [constValue], defaultValue }
+        payload: { expectedValue: constValue, defaultValue }
       })
     }
   }

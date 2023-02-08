@@ -1,5 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
+import { DynamoDBToolboxError } from 'v1/errors'
+
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
 import {
@@ -40,7 +42,7 @@ type SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
  * Validates a set instance
  *
  * @param $setAttribute SetAttribute
- * @param path _(optional)_ Path of the instance in the related item (string)
+ * @param path Path of the instance in the related item (string)
  * @return void
  */
 export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
@@ -52,19 +54,31 @@ export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $
   const elements: $SET_ATTRIBUTE[$elements] = $setAttribute[$elements]
 
   if (elements[$required] !== 'atLeastOnce') {
-    throw new OptionalSetElementsError({ path })
+    throw new DynamoDBToolboxError('optionalSetAttributeElements', {
+      message: `Invalid set elements at path ${path}: Set elements must be required`,
+      path
+    })
   }
 
   if (elements[$hidden] !== false) {
-    throw new HiddenSetElementsError({ path })
+    throw new DynamoDBToolboxError('hiddenSetAttributeElements', {
+      message: `Invalid set elements at path ${path}: Set elements cannot be hidden`,
+      path
+    })
   }
 
   if (elements[$savedAs] !== undefined) {
-    throw new SavedAsSetElementsError({ path })
+    throw new DynamoDBToolboxError('savedAsSetAttributeElements', {
+      message: `Invalid set elements at path ${path}: Set elements cannot be renamed (have savedAs option)`,
+      path
+    })
   }
 
   if (elements[$default] !== undefined) {
-    throw new DefaultedSetElementsError({ path })
+    throw new DynamoDBToolboxError('defaultedSetAttributeElements', {
+      message: `Invalid set elements at path ${path}: Set elements cannot have default values`,
+      path
+    })
   }
 
   const frozenElements = freezeAttribute(elements, `${path}[x]`)
@@ -78,31 +92,5 @@ export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $
     key: $setAttribute[$key],
     savedAs: $setAttribute[$savedAs],
     default: $setAttribute[$default]
-  }
-}
-
-export class OptionalSetElementsError extends Error {
-  constructor({ path }: { path: string }) {
-    super(`Invalid set elements at path ${path}: Set elements must be required`)
-  }
-}
-
-export class HiddenSetElementsError extends Error {
-  constructor({ path }: { path: string }) {
-    super(`Invalid set elements at path ${path}: Set elements cannot be hidden`)
-  }
-}
-
-export class SavedAsSetElementsError extends Error {
-  constructor({ path }: { path: string }) {
-    super(
-      `Invalid set elements at path ${path}: Set elements cannot be renamed (have savedAs option)`
-    )
-  }
-}
-
-export class DefaultedSetElementsError extends Error {
-  constructor({ path }: { path: string }) {
-    super(`Invalid set elements at path ${path}: Set elements cannot have default values`)
   }
 }

@@ -1,7 +1,11 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-export type InvalidDefaultValueErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidDefaultValue'
+import type { ResolvedAttribute } from '../types'
+
+type InvalidConstantAttributeDefaultValueErrorBlueprint = ErrorBlueprint<{
+  code: 'invalidConstantAttributeDefaultValue'
   hasPath: true
-  payload: { expectedValues?: unknown[]; defaultValue: unknown }
+  payload: { expectedValue: ResolvedAttribute; defaultValue: unknown }
 }>
+
+export type ConstantAttributeErrorBlueprints = InvalidConstantAttributeDefaultValueErrorBlueprint

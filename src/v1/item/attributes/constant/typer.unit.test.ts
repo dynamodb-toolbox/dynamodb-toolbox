@@ -178,7 +178,9 @@ describe('constantAttribute', () => {
         )
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
-      expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidDefaultValue', path }))
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'invalidConstantAttributeDefaultValue', path })
+      )
 
       constant('foobar', {
         // @ts-expect-error Unable to throw here (it would require executing the fn)
@@ -216,7 +218,9 @@ describe('constantAttribute', () => {
         )
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
-      expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidDefaultValue', path }))
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'invalidConstantAttributeDefaultValue', path })
+      )
 
       constant('foobar').default(
         // @ts-expect-error Unable to throw here (it would require executing the fn)
