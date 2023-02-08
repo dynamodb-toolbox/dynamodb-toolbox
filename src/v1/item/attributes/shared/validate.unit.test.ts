@@ -1,8 +1,10 @@
-import { requiredOptionsSet, Never } from '../constants/requiredOptions'
+import { DynamoDBToolboxError } from 'v1/errors'
+
+import type { Never } from '../constants/requiredOptions'
 import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
 
-import { $AttributeSharedState } from './interface'
-import { validateAttributeProperties, InvalidAttributePropertyError } from './validate'
+import type { $AttributeSharedState } from './interface'
+import { validateAttributeProperties } from './validate'
 
 describe('shared properties validation', () => {
   const path = 'some/path'
@@ -22,7 +24,7 @@ describe('shared properties validation', () => {
   it('throws if required option is invalid', () => {
     const invalidRequiredOption = 'invalid'
 
-    expect(() =>
+    const invalidCall = () =>
       validateAttributeProperties(
         {
           ...validProperties,
@@ -31,14 +33,9 @@ describe('shared properties validation', () => {
         },
         path
       )
-    ).toThrow(
-      new InvalidAttributePropertyError({
-        propertyName: 'required',
-        expectedType: [...requiredOptionsSet].join(', '),
-        receivedValue: invalidRequiredOption,
-        path
-      })
-    )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidAttributeProperty', path }))
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
@@ -55,7 +52,7 @@ describe('shared properties validation', () => {
   it('throws if hidden option is invalid', () => {
     const invalidKeyOption = 'invalid'
 
-    expect(() =>
+    const invalidCall = () =>
       validateAttributeProperties(
         {
           ...validProperties,
@@ -64,14 +61,9 @@ describe('shared properties validation', () => {
         },
         path
       )
-    ).toThrow(
-      new InvalidAttributePropertyError({
-        propertyName: 'hidden',
-        expectedType: 'boolean',
-        receivedValue: invalidKeyOption,
-        path
-      })
-    )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidAttributeProperty', path }))
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
@@ -82,7 +74,7 @@ describe('shared properties validation', () => {
   it('throws if key option is invalid', () => {
     const invalidKeyOption = 'invalid'
 
-    expect(() =>
+    const invalidCall = () =>
       validateAttributeProperties(
         {
           ...validProperties,
@@ -91,14 +83,9 @@ describe('shared properties validation', () => {
         },
         path
       )
-    ).toThrow(
-      new InvalidAttributePropertyError({
-        propertyName: 'key',
-        expectedType: 'boolean',
-        receivedValue: invalidKeyOption,
-        path
-      })
-    )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidAttributeProperty', path }))
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
@@ -109,7 +96,7 @@ describe('shared properties validation', () => {
   it('throws if savedAs option is invalid', () => {
     const invalidSavedAsOption = 42
 
-    expect(() =>
+    const invalidCall = () =>
       validateAttributeProperties(
         {
           ...validProperties,
@@ -118,14 +105,9 @@ describe('shared properties validation', () => {
         },
         path
       )
-    ).toThrow(
-      new InvalidAttributePropertyError({
-        propertyName: 'savedAs',
-        expectedType: 'string',
-        receivedValue: invalidSavedAsOption,
-        path
-      })
-    )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidAttributeProperty', path }))
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
