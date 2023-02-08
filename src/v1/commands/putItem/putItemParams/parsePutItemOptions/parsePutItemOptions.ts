@@ -14,7 +14,7 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
 
   if (capacity !== undefined) {
     if (!capacityOptionsSet.has(capacity)) {
-      throw new DynamoDBToolboxError('invalidCapacityOption', {
+      throw new DynamoDBToolboxError('invalidCapacityCommandOption', {
         message: `Invalid capacity option: '${String(capacity)}'. 'capacity' must be one of: ${[
           ...capacityOptionsSet
         ].join(', ')}.`,
@@ -27,7 +27,7 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
 
   if (metrics !== undefined) {
     if (!metricsOptionsSet.has(metrics)) {
-      throw new DynamoDBToolboxError('invalidMetricsOption', {
+      throw new DynamoDBToolboxError('invalidPutItemCommandMetricsOption', {
         message: `Invalid metrics option: '${String(metrics)}'. 'metrics' must be one of: ${[
           ...metricsOptionsSet
         ].join(', ')}.`,
@@ -40,7 +40,7 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
 
   if (returnValues !== undefined) {
     if (!returnValuesOptionsSet.has(returnValues)) {
-      throw new DynamoDBToolboxError('invalidReturnValuesOption', {
+      throw new DynamoDBToolboxError('invalidPutItemReturnValuesOption', {
         message: `Invalid returnValues option: '${String(
           returnValues
         )}'. 'returnValues' must be one of: ${[...returnValuesOptionsSet].join(', ')}.`,
@@ -53,7 +53,7 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
 
   const [extraOption] = Object.keys(extraOptions)
   if (extraOption !== undefined) {
-    throw new DynamoDBToolboxError('unknownOption', {
+    throw new DynamoDBToolboxError('unknownCommandOption', {
       message: `Unkown option: ${extraOption}.`,
       payload: { option: extraOption }
     })
