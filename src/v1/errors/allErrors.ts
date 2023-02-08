@@ -12,7 +12,8 @@ import type {
   SavedAsListAttributeElementsErrorBlueprint,
   DefaultedListAttributeElementsErrorBlueprint,
   DuplicateSavedAsMapAttributesErrorBlueprint,
-  DuplicateSavedAsItemAttributesErrorBlueprint
+  DuplicateSavedAsItemAttributesErrorBlueprint,
+  InvalidAttributePropertyErrorBlueprint
 } from 'v1/item/errors'
 import type {
   InvalidCapacityOptionErrorBlueprint,
@@ -39,6 +40,7 @@ type ErrorBlueprints =
   | DefaultedListAttributeElementsErrorBlueprint
   | DuplicateSavedAsMapAttributesErrorBlueprint
   | DuplicateSavedAsItemAttributesErrorBlueprint
+  | InvalidAttributePropertyErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
   | InvalidConsistentOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
