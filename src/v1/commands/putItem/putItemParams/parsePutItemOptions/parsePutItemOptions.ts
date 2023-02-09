@@ -1,7 +1,8 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
-import { capacityOptionsSet } from 'v1/commands/options'
+import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
+import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
 
 import { metricsOptionsSet, returnValuesOptionsSet, PutItemOptions } from '../../options'
 
@@ -13,17 +14,7 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
   const { capacity, metrics, returnValues, ...extraOptions } = putItemOptions
 
   if (capacity !== undefined) {
-    // TODO Factorize with parseGetItemOptions
-    if (!capacityOptionsSet.has(capacity)) {
-      throw new DynamoDBToolboxError('invalidCommandCapacityOption', {
-        message: `Invalid capacity option: '${String(capacity)}'. 'capacity' must be one of: ${[
-          ...capacityOptionsSet
-        ].join(', ')}.`,
-        payload: { capacity }
-      })
-    } else {
-      commandOptions.ReturnConsumedCapacity = capacity
-    }
+    commandOptions.ReturnConsumedCapacity = parseCapacityOption(capacity)
   }
 
   if (metrics !== undefined) {
@@ -52,14 +43,7 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
     }
   }
 
-  const [extraOption] = Object.keys(extraOptions)
-  if (extraOption !== undefined) {
-    // TODO Factorize with parseGetItemOptions
-    throw new DynamoDBToolboxError('unknownCommandOption', {
-      message: `Unkown option: ${extraOption}.`,
-      payload: { option: extraOption }
-    })
-  }
+  rejectExtraOptions(extraOptions)
 
   return commandOptions
 }
