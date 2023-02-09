@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { TableV2, EntityV2, item, string } from 'v1'
+import { TableV2, EntityV2, item, string, DynamoDBToolboxError } from 'v1'
 
 import { deleteItemParams } from './deleteItemParams'
 
@@ -112,25 +112,37 @@ describe('delete', () => {
     ).toThrow('')
   })
 
-  // TODO Add options in putItemParams
-  // it('fails on extra options', () => {
-  //   expect(() =>
-  //     TestEntity.deleteParams(
-  //       { email: 'x', sort: 'y' },
-  //       // @ts-expect-error
-  //       { execute: false, parse: false, extra: true }
-  //     )
-  //   ).toThrow('Invalid delete options: extra')
-  // })
+  it('sets capacity options', () => {
+    const { ReturnConsumedCapacity } = deleteItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { capacity: 'NONE' }
+    )
 
-  // it('fails on invalid capacity option', () => {
-  //   expect(() =>
-  //     TestEntity.deleteParams(
-  //       { email: 'x', sort: 'y' },
-  //       // 💥 TODO: Improve capacity type
-  //       { capacity: 'test' }
-  //     )
-  //   ).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
+
+  it('fails on invalid capacity option', () => {
+    const invalidCall = () =>
+      deleteItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        // @ts-expect-error
+        { capacity: 'test' }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCommandCapacityOption' }))
+  })
+
+  // it('sets metrics options', () => {
+  //   let { TableName, Key, ReturnItemCollectionMetrics } = TestEntity.deleteParams(
+  //     { email: 'x', sort: 'y' },
+  //     { metrics: 'size' }
+  //   )
+  //   expect(TableName).toBe('test-table')
+  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
+  //   expect(ReturnItemCollectionMetrics).toBe('SIZE')
   // })
 
   // it('fails on invalid metrics option', () => {
@@ -143,6 +155,16 @@ describe('delete', () => {
   //   ).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   // })
 
+  // it('sets returnValues options', () => {
+  //   let { TableName, Key, ReturnValues } = TestEntity.deleteParams(
+  //     { email: 'x', sort: 'y' },
+  //     { returnValues: 'ALL_OLD' }
+  //   )
+  //   expect(TableName).toBe('test-table')
+  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
+  //   expect(ReturnValues).toBe('ALL_OLD')
+  // })
+
   // it('fails on invalid returnValues option', () => {
   //   expect(() =>
   //     TestEntity.deleteParams(
@@ -153,34 +175,14 @@ describe('delete', () => {
   //   ).toThrow(`'returnValues' must be one of 'NONE' OR 'ALL_OLD'`)
   // })
 
-  // it('sets capacity options', () => {
-  //   let { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
-  //     { email: 'x', sort: 'y' },
-  //     { capacity: 'none' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  //   expect(ReturnConsumedCapacity).toBe('NONE')
-  // })
-
-  // it('sets metrics options', () => {
-  //   let { TableName, Key, ReturnItemCollectionMetrics } = TestEntity.deleteParams(
-  //     { email: 'x', sort: 'y' },
-  //     { metrics: 'size' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  //   expect(ReturnItemCollectionMetrics).toBe('SIZE')
-  // })
-
-  // it('sets returnValues options', () => {
-  //   let { TableName, Key, ReturnValues } = TestEntity.deleteParams(
-  //     { email: 'x', sort: 'y' },
-  //     { returnValues: 'ALL_OLD' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  //   expect(ReturnValues).toBe('ALL_OLD')
+  // it('fails on extra options', () => {
+  //   expect(() =>
+  //     TestEntity.deleteParams(
+  //       { email: 'x', sort: 'y' },
+  //       // @ts-expect-error
+  //       { execute: false, parse: false, extra: true }
+  //     )
+  //   ).toThrow('Invalid delete options: extra')
   // })
 
   // TODO Enable typed conditions
