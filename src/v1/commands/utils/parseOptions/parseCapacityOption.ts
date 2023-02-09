@@ -9,7 +9,7 @@ export const parseCapacityOption = (capacity: CapacityOption): CapacityOption =>
       ].join(', ')}.`,
       payload: { capacity }
     })
-  } else {
-    return capacity
   }
+
+  return capacity
 }
