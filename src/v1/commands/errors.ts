@@ -9,6 +9,12 @@ type InvalidCommandCapacityOptionErrorBlueprint = ErrorBlueprint<{
   payload: { capacity: unknown }
 }>
 
+type InvalidCommandMetricsOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'invalidCommandMetricsOption'
+  hasPath: false
+  payload: { metrics: unknown }
+}>
+
 type UnknownCommandOptionErrorBlueprint = ErrorBlueprint<{
   code: 'unknownCommandOption'
   hasPath: false
@@ -19,4 +25,5 @@ export type CommandErrorBlueprints =
   | GetItemCommandErrorBlueprints
   | PutItemCommandErrorBlueprints
   | InvalidCommandCapacityOptionErrorBlueprint
+  | InvalidCommandMetricsOptionErrorBlueprint
   | UnknownCommandOptionErrorBlueprint
