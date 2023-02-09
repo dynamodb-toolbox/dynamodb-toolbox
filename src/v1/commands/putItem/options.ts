@@ -1,10 +1,5 @@
 import type { CapacityOption } from 'v1/commands/constants/options/capacity'
-
-export type NoneMetricsOption = 'NONE'
-export type SizeMetricsOption = 'SIZE'
-export type MetricsOption = NoneMetricsOption | SizeMetricsOption
-
-export const metricsOptionsSet = new Set<MetricsOption>(['NONE', 'SIZE'])
+import type { MetricsOption } from 'v1/commands/constants/options/metrics'
 
 export type NoneReturnValuesOption = 'NONE'
 export type AllOldReturnValuesOption = 'ALL_OLD'
