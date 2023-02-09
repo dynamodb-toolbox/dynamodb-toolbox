@@ -6,12 +6,12 @@ type InvalidPutItemCommandMetricsOptionErrorBlueprint = ErrorBlueprint<{
   payload: { metrics: unknown }
 }>
 
-type InvalidPutItemReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidPutItemReturnValuesOption'
+type InvalidPutItemCommandReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'invalidPutItemCommandReturnValuesOption'
   hasPath: false
   payload: { returnValues: unknown }
 }>
 
 export type ParsePutItemCommandOptionsErrorBlueprints =
   | InvalidPutItemCommandMetricsOptionErrorBlueprint
-  | InvalidPutItemReturnValuesOptionErrorBlueprint
+  | InvalidPutItemCommandReturnValuesOptionErrorBlueprint
