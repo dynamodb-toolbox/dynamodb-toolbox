@@ -139,7 +139,7 @@ describe('get', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCapacityCommandOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCommandCapacityOption' }))
   })
 
   it('sets consistent and capacity options', () => {
