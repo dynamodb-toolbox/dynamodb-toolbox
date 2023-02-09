@@ -13,8 +13,9 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
   const { capacity, metrics, returnValues, ...extraOptions } = putItemOptions
 
   if (capacity !== undefined) {
+    // TODO Factorize with parseGetItemOptions
     if (!capacityOptionsSet.has(capacity)) {
-      throw new DynamoDBToolboxError('invalidCapacityCommandOption', {
+      throw new DynamoDBToolboxError('invalidCommandCapacityOption', {
         message: `Invalid capacity option: '${String(capacity)}'. 'capacity' must be one of: ${[
           ...capacityOptionsSet
         ].join(', ')}.`,
@@ -40,7 +41,7 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
 
   if (returnValues !== undefined) {
     if (!returnValuesOptionsSet.has(returnValues)) {
-      throw new DynamoDBToolboxError('invalidPutItemReturnValuesOption', {
+      throw new DynamoDBToolboxError('invalidPutItemCommandReturnValuesOption', {
         message: `Invalid returnValues option: '${String(
           returnValues
         )}'. 'returnValues' must be one of: ${[...returnValuesOptionsSet].join(', ')}.`,
@@ -53,6 +54,7 @@ export const parsePutItemOptions = (putItemOptions: PutItemOptions): CommandOpti
 
   const [extraOption] = Object.keys(extraOptions)
   if (extraOption !== undefined) {
+    // TODO Factorize with parseGetItemOptions
     throw new DynamoDBToolboxError('unknownCommandOption', {
       message: `Unkown option: ${extraOption}.`,
       payload: { option: extraOption }
