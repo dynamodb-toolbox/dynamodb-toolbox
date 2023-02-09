@@ -135,25 +135,30 @@ describe('delete', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCommandCapacityOption' }))
   })
 
-  // it('sets metrics options', () => {
-  //   let { TableName, Key, ReturnItemCollectionMetrics } = TestEntity.deleteParams(
-  //     { email: 'x', sort: 'y' },
-  //     { metrics: 'size' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  //   expect(ReturnItemCollectionMetrics).toBe('SIZE')
-  // })
+  it('sets metrics options', () => {
+    const { ReturnItemCollectionMetrics } = deleteItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { metrics: 'SIZE' }
+    )
 
-  // it('fails on invalid metrics option', () => {
-  //   expect(() =>
-  //     TestEntity.deleteParams(
-  //       { email: 'x', sort: 'y' },
-  //       // 💥 TODO: Improve capacity type
-  //       { metrics: 'test' }
-  //     )
-  //   ).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
-  // })
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
+  })
+
+  it('fails on invalid metrics option', () => {
+    const invalidCall = () =>
+      deleteItemParams(
+        TestEntity,
+        { email: 'x', sort: 'y' },
+        {
+          // @ts-expect-error
+          metrics: 'test'
+        }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCommandMetricsOption' }))
+  })
 
   // it('sets returnValues options', () => {
   //   let { TableName, Key, ReturnValues } = TestEntity.deleteParams(
