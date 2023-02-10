@@ -1,7 +1,8 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
-import { capacityOptionsSet } from 'v1/commands/options'
+import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
+import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
 import { isBoolean } from 'v1/utils/validation/isBoolean'
 
 import type { GetItemOptions } from '../../options'
@@ -14,16 +15,7 @@ export const parseGetItemOptions = (putItemOptions: GetItemOptions): CommandOpti
   const { capacity, consistent, ...extraOptions } = putItemOptions
 
   if (capacity !== undefined) {
-    if (!capacityOptionsSet.has(capacity)) {
-      throw new DynamoDBToolboxError('invalidCapacityCommandOption', {
-        message: `Invalid capacity option: '${String(capacity)}'. 'capacity' must be one of: ${[
-          ...capacityOptionsSet
-        ].join(', ')}.`,
-        payload: { capacity }
-      })
-    } else {
-      commandOptions.ReturnConsumedCapacity = capacity
-    }
+    commandOptions.ReturnConsumedCapacity = parseCapacityOption(capacity)
   }
 
   if (consistent !== undefined) {
@@ -39,13 +31,7 @@ export const parseGetItemOptions = (putItemOptions: GetItemOptions): CommandOpti
     }
   }
 
-  const [extraOption] = Object.keys(extraOptions)
-  if (extraOption !== undefined) {
-    throw new DynamoDBToolboxError('unknownCommandOption', {
-      message: `Unkown option: ${extraOption}.`,
-      payload: { option: extraOption }
-    })
-  }
+  rejectExtraOptions(extraOptions)
 
   return commandOptions
 }
