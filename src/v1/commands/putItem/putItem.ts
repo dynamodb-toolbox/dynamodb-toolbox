@@ -3,22 +3,21 @@ import { PutCommand, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2, PutItemInput, FormattedItem } from 'v1'
 import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
-
 import type {
-  PutItemOptions,
-  ReturnValuesOption,
   NoneReturnValuesOption,
   UpdatedOldReturnValuesOption,
   UpdatedNewReturnValuesOption,
   AllOldReturnValuesOption,
   AllNewReturnValuesOption
-} from './options'
+} from 'v1/commands/constants/options/returnValues'
+
+import type { PutItemCommandReturnValuesOption, PutItemOptions } from './options'
 import { putItemParams } from './putItemParams'
 
 type ReturnedAttributes<
   ENTITY extends EntityV2,
-  RETURN_VALUES extends ReturnValuesOption
-> = ReturnValuesOption extends RETURN_VALUES
+  RETURN_VALUES extends PutItemCommandReturnValuesOption
+> = PutItemCommandReturnValuesOption extends RETURN_VALUES
   ? undefined
   : RETURN_VALUES extends NoneReturnValuesOption
   ? undefined
@@ -38,7 +37,7 @@ type ReturnedAttributes<
  */
 export const putItem = async <
   ENTITY extends EntityV2,
-  RETURN_VALUES extends ReturnValuesOption = ReturnValuesOption
+  RETURN_VALUES extends PutItemCommandReturnValuesOption = PutItemCommandReturnValuesOption
 >(
   entity: ENTITY,
   putItemInput: PutItemInput<ENTITY>,
