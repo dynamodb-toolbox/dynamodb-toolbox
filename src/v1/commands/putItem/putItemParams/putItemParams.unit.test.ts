@@ -462,7 +462,7 @@ describe('put', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'invalidPutItemCommandReturnValuesOption' })
+      expect.objectContaining({ code: 'invalidCommandReturnValuesOption' })
     )
   })
 
