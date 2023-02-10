@@ -1,19 +1,10 @@
 import type { CapacityOption } from 'v1/commands/constants/options/capacity'
 import type { MetricsOption } from 'v1/commands/constants/options/metrics'
+import type { ReturnValuesOption } from 'v1/commands/constants/options/returnValues'
 
-export type NoneReturnValuesOption = 'NONE'
-export type AllOldReturnValuesOption = 'ALL_OLD'
-export type UpdatedOldReturnValuesOption = 'UPDATED_OLD'
-export type AllNewReturnValuesOption = 'ALL_NEW'
-export type UpdatedNewReturnValuesOption = 'UPDATED_NEW'
-export type ReturnValuesOption =
-  | NoneReturnValuesOption
-  | AllOldReturnValuesOption
-  | UpdatedOldReturnValuesOption
-  | AllNewReturnValuesOption
-  | UpdatedNewReturnValuesOption
+export type PutItemCommandReturnValuesOption = ReturnValuesOption
 
-export const returnValuesOptionsSet = new Set<ReturnValuesOption>([
+export const putItemCommandReturnValuesOptionsSet = new Set<PutItemCommandReturnValuesOption>([
   'NONE',
   'ALL_OLD',
   'UPDATED_OLD',
@@ -21,7 +12,9 @@ export const returnValuesOptionsSet = new Set<ReturnValuesOption>([
   'UPDATED_NEW'
 ])
 
-export interface PutItemOptions<RETURN_VALUES extends ReturnValuesOption = ReturnValuesOption> {
+export interface PutItemOptions<
+  RETURN_VALUES extends PutItemCommandReturnValuesOption = PutItemCommandReturnValuesOption
+> {
   capacity?: CapacityOption
   metrics?: MetricsOption
   returnValues?: RETURN_VALUES
