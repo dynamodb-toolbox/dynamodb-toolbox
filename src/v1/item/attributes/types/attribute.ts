@@ -8,6 +8,7 @@ import type {
 import type { $SetAttribute, SetAttribute } from '../set'
 import type { $ListAttribute, ListAttribute } from '../list'
 import type { $MapAttribute, MapAttribute } from '../map'
+import type { $AnyOfAttribute, AnyOfAttribute } from '../anyOf'
 
 /**
  * Possible attributes types
@@ -19,6 +20,7 @@ export type $Attribute =
   | $SetAttribute
   | $ListAttribute
   | $MapAttribute
+  | $AnyOfAttribute
 
 export type Attribute =
   | AnyAttribute
@@ -27,6 +29,7 @@ export type Attribute =
   | SetAttribute
   | ListAttribute
   | MapAttribute
+  | AnyOfAttribute
 
 /**
  * Dictionary of attributes

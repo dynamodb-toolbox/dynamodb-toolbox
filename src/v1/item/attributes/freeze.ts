@@ -9,6 +9,7 @@ import {
 import { freezeSetAttribute, $SetAttribute, FreezeSetAttribute } from './set'
 import { freezeListAttribute, $ListAttribute, FreezeListAttribute } from './list'
 import { freezeMapAttribute, $MapAttribute, FreezeMapAttribute } from './map'
+import { freezeAnyOfAttribute, $AnyOfAttribute, FreezeAnyOfAttribute } from './anyOf'
 import type { $Attribute } from './types/attribute'
 
 export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends $AnyAttribute
@@ -23,6 +24,8 @@ export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends 
   ? FreezeListAttribute<$ATTRIBUTE>
   : $ATTRIBUTE extends $MapAttribute
   ? FreezeMapAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $AnyOfAttribute
+  ? FreezeAnyOfAttribute<$ATTRIBUTE>
   : never
 
 /**
@@ -32,10 +35,10 @@ export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends 
  * @param path _(optional)_ Path of the attribute in the related item (string)
  * @return Attribute
  */
-export const freezeAttribute = <_ATTRIBUTE extends $Attribute>(
-  attribute: _ATTRIBUTE,
+export const freezeAttribute = <$ATTRIBUTE extends $Attribute>(
+  attribute: $ATTRIBUTE,
   path: string
-): FreezeAttribute<_ATTRIBUTE> => {
+): FreezeAttribute<$ATTRIBUTE> => {
   switch (attribute[$type]) {
     case 'any':
       return freezeAnyAttribute(attribute, path) as any
@@ -52,5 +55,7 @@ export const freezeAttribute = <_ATTRIBUTE extends $Attribute>(
       return freezeListAttribute(attribute, path) as any
     case 'map':
       return freezeMapAttribute(attribute, path) as any
+    case 'anyOf':
+      return freezeAnyOfAttribute(attribute, path) as any
   }
 }
