@@ -5,6 +5,7 @@ import { parsePrimitiveAttributeKeyInput } from './primitive'
 import { parseSetAttributeKeyInput } from './set'
 import { parseListAttributeKeyInput } from './list'
 import { parseMapAttributeKeyInput } from './map'
+import { parseAnyOfAttributeKeyInput } from './anyOf'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'onlyOnce', 'atLeastOnce'])
 
@@ -41,5 +42,7 @@ export const parseAttributeKeyInput = <ATTRIBUTE extends Attribute>(
       return parseListAttributeKeyInput(attribute, input) as KeyInput<ATTRIBUTE>
     case 'map':
       return parseMapAttributeKeyInput(attribute, input) as KeyInput<ATTRIBUTE>
+    case 'anyOf':
+      return parseAnyOfAttributeKeyInput(attribute, input) as KeyInput<ATTRIBUTE>
   }
 }
