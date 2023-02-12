@@ -18,6 +18,8 @@ import type {
   ListAttribute,
   $MapAttribute,
   MapAttribute,
+  $AnyOfAttribute,
+  AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -79,6 +81,8 @@ export type PutItemInput<
           : never)
     > & // Add Record<string, ResolvedAttribute> if map is open
       (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+  : SCHEMA extends AnyOfAttribute
+  ? PutItemInput<SCHEMA['elements'][number], REQUIRE_HARD_DEFAULTS>
   : SCHEMA extends EntityV2
   ? PutItemInput<SCHEMA['item'], REQUIRE_HARD_DEFAULTS>
   : never
@@ -119,6 +123,8 @@ export type $PutItemInput<
           : never)
     > & // Add Record<string, ResolvedAttribute> if map is open
       ($SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+  : $SCHEMA extends $AnyOfAttribute
+  ? $PutItemInput<$SCHEMA[$elements][number], REQUIRE_HARD_DEFAULTS>
   : $SCHEMA extends EntityV2
   ? $PutItemInput<$SCHEMA['$item'], REQUIRE_HARD_DEFAULTS>
   : never

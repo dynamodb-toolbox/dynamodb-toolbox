@@ -1,6 +1,6 @@
-import type { A, O, U } from 'ts-toolbelt'
+import type { O, U } from 'ts-toolbelt'
 
-import type {
+import {
   Item,
   Attribute,
   ResolvedAttribute,
@@ -11,6 +11,7 @@ import type {
   ListAttribute,
   MapAttribute,
   MapAttributeAttributes,
+  AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -19,7 +20,7 @@ import type {
 } from 'v1/item'
 import type { PrimaryKey } from 'v1/table'
 
-import type { EntityV2 } from '../class'
+import { EntityV2 } from '../class'
 
 /**
  * Swaps the key of a attributes dictionnary for their "savedAs" values if they exist
@@ -31,16 +32,17 @@ import type { EntityV2 } from '../class'
  * SwapWithSavedAs<{ keyA: { ...attribute, savedAs: "keyB" }}>
  * => { keyB: { ...attribute, savedAs: "keyB"  }}
  */
-type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = A.Compute<
+type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = Extract<
   U.IntersectOf<
     {
-      [K in keyof MAP_ATTRIBUTE_ATTRIBUTES]: MAP_ATTRIBUTE_ATTRIBUTES[K] extends {
+      [KEY in keyof MAP_ATTRIBUTE_ATTRIBUTES]: MAP_ATTRIBUTE_ATTRIBUTES[KEY] extends {
         savedAs: string
       }
-        ? Record<MAP_ATTRIBUTE_ATTRIBUTES[K]['savedAs'], MAP_ATTRIBUTE_ATTRIBUTES[K]>
-        : Record<K, MAP_ATTRIBUTE_ATTRIBUTES[K]>
+        ? Record<MAP_ATTRIBUTE_ATTRIBUTES[KEY]['savedAs'], MAP_ATTRIBUTE_ATTRIBUTES[KEY]>
+        : Record<KEY, MAP_ATTRIBUTE_ATTRIBUTES[KEY]>
     }[keyof MAP_ATTRIBUTE_ATTRIBUTES]
-  >
+  >,
+  MapAttributeAttributes
 >
 
 type RecSavedItem<
@@ -50,7 +52,7 @@ type RecSavedItem<
   O.Partial<
     {
       // Keep all attributes
-      [key in keyof SWAPPED_ATTRIBUTES]: SavedItem<SWAPPED_ATTRIBUTES[key]>
+      [KEY in keyof SWAPPED_ATTRIBUTES]: SavedItem<SWAPPED_ATTRIBUTES[KEY]>
     }
   >,
   // Enforce Required attributes
@@ -79,6 +81,8 @@ export type SavedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA exten
   ? SavedItem<SCHEMA['elements']>[]
   : SCHEMA extends MapAttribute | Item
   ? RecSavedItem<SCHEMA>
+  : SCHEMA extends AnyOfAttribute
+  ? SavedItem<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
   ? SavedItem<SCHEMA['item']> & PrimaryKey<SCHEMA['table']>
   : never

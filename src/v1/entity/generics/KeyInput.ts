@@ -18,6 +18,8 @@ import type {
   $ListAttribute,
   MapAttribute,
   $MapAttribute,
+  AnyOfAttribute,
+  $AnyOfAttribute,
   Always,
   $ResolveConstantAttribute,
   ResolveConstantAttribute,
@@ -69,6 +71,8 @@ export type KeyInput<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extend
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
       (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+  : SCHEMA extends AnyOfAttribute
+  ? KeyInput<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
   ? KeyInput<SCHEMA['item']>
   : never
@@ -102,6 +106,8 @@ export type $KeyInput<SCHEMA extends EntityV2 | $Item | $Attribute> = SCHEMA ext
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
       (SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+  : SCHEMA extends $AnyOfAttribute
+  ? $KeyInput<SCHEMA[$elements][number]>
   : SCHEMA extends EntityV2
   ? $KeyInput<SCHEMA['$item']>
   : never
