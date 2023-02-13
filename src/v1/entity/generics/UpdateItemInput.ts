@@ -10,6 +10,7 @@ import type {
   SetAttribute,
   ListAttribute,
   MapAttribute,
+  AnyOfAttribute,
   OnlyOnce,
   Always,
   ResolveConstantAttribute,
@@ -54,6 +55,8 @@ export type UpdateItemInput<
       >
     > & // Add Record<string, ResolvedAttribute> if map is open
       (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+  : SCHEMA extends AnyOfAttribute
+  ? UpdateItemInput<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
   ? UpdateItemInput<SCHEMA['item']>
   : never
