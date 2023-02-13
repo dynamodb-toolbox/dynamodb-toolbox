@@ -2,14 +2,14 @@ import type {
   PrimitiveAttribute,
   PossiblyUndefinedResolvedAttribute,
   ResolvedPrimitiveAttribute,
-  KeyInput
+  AttributeKeyInput
 } from 'v1'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 
 export const parsePrimitiveAttributeKeyInput = <PRIMITIVE_ATTRIBUTE extends PrimitiveAttribute>(
   primitiveAttribute: PRIMITIVE_ATTRIBUTE,
   input: PossiblyUndefinedResolvedAttribute
-): KeyInput<PRIMITIVE_ATTRIBUTE> => {
+): AttributeKeyInput<PRIMITIVE_ATTRIBUTE> => {
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(input)) {
     // TODO
@@ -24,5 +24,5 @@ export const parsePrimitiveAttributeKeyInput = <PRIMITIVE_ATTRIBUTE extends Prim
     throw new Error()
   }
 
-  return input as KeyInput<PRIMITIVE_ATTRIBUTE>
+  return input as AttributeKeyInput<PRIMITIVE_ATTRIBUTE>
 }

@@ -1,4 +1,4 @@
-import type { MapAttribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
+import type { MapAttribute, PossiblyUndefinedResolvedAttribute, AttributeKeyInput } from 'v1'
 import { isObject } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'
@@ -6,7 +6,7 @@ import { parseAttributeKeyInput } from './attribute'
 export const parseMapAttributeKeyInput = <MAP_ATTRIBUTE extends MapAttribute>(
   mapAttribute: MAP_ATTRIBUTE,
   input: PossiblyUndefinedResolvedAttribute
-): KeyInput<MAP_ATTRIBUTE> => {
+): AttributeKeyInput<MAP_ATTRIBUTE> => {
   if (!isObject(input)) {
     // TODO
     throw new Error()
@@ -43,5 +43,5 @@ export const parseMapAttributeKeyInput = <MAP_ATTRIBUTE extends MapAttribute>(
     }
   })
 
-  return parsedKeyInput as KeyInput<MAP_ATTRIBUTE>
+  return parsedKeyInput as AttributeKeyInput<MAP_ATTRIBUTE>
 }
