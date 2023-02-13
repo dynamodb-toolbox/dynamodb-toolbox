@@ -1,4 +1,4 @@
-import type { Item, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
+import type { Item, PossiblyUndefinedResolvedItem, KeyInput } from 'v1'
 import { isObject } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'
@@ -6,7 +6,7 @@ import { parseAttributeKeyInput } from './attribute'
 export const parseItemKeyInput = <ITEM extends Item>(
   item: Item,
   input: PossiblyUndefinedResolvedItem
-): PutItem<ITEM> => {
+): KeyInput<ITEM> => {
   if (!isObject(input)) {
     // TODO
     throw new Error()
@@ -43,5 +43,5 @@ export const parseItemKeyInput = <ITEM extends Item>(
     }
   })
 
-  return parsedKeyInput as PutItem<ITEM>
+  return parsedKeyInput as KeyInput<ITEM>
 }
