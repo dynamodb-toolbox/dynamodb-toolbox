@@ -1,11 +1,11 @@
-import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
+import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute, AttributeKeyInput } from 'v1'
 
 import { parseAttributeKeyInput } from './attribute'
 
 export const parseAnyOfAttributeKeyInput = <ANY_OF_ATTRIBUTE extends AnyOfAttribute>(
   anyOfAttribute: ANY_OF_ATTRIBUTE,
   input: PossiblyUndefinedResolvedAttribute
-): KeyInput<ANY_OF_ATTRIBUTE> => {
+): AttributeKeyInput<ANY_OF_ATTRIBUTE> => {
   let parsedKeyInput: PossiblyUndefinedResolvedAttribute = undefined
   let firstError: unknown = undefined
 
@@ -28,5 +28,5 @@ export const parseAnyOfAttributeKeyInput = <ANY_OF_ATTRIBUTE extends AnyOfAttrib
       throw new Error()
     }
   }
-  return parsedKeyInput as KeyInput<ANY_OF_ATTRIBUTE>
+  return parsedKeyInput as AttributeKeyInput<ANY_OF_ATTRIBUTE>
 }
