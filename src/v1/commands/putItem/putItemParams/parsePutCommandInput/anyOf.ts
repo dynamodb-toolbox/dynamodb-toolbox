@@ -1,11 +1,11 @@
-import { AnyOfAttribute, PossiblyUndefinedResolvedAttribute, PutItem } from 'v1'
+import { AnyOfAttribute, PossiblyUndefinedResolvedAttribute, AttributePutItem } from 'v1'
 
 import { parseAttributePutCommandInput } from './attribute'
 
 export const parseAnyOfAttributePutCommandInput = <ANY_OF_ATTRIBUTE extends AnyOfAttribute>(
   anyOfAttribute: ANY_OF_ATTRIBUTE,
   input: PossiblyUndefinedResolvedAttribute
-): PutItem<ANY_OF_ATTRIBUTE> => {
+): AttributePutItem<ANY_OF_ATTRIBUTE> => {
   let parsedPutItemInput: PossiblyUndefinedResolvedAttribute = undefined
   let firstError: unknown = undefined
 
@@ -29,5 +29,5 @@ export const parseAnyOfAttributePutCommandInput = <ANY_OF_ATTRIBUTE extends AnyO
     }
   }
 
-  return parsedPutItemInput as PutItem<ANY_OF_ATTRIBUTE>
+  return parsedPutItemInput as AttributePutItem<ANY_OF_ATTRIBUTE>
 }
