@@ -1,4 +1,4 @@
-import { MapAttribute, PossiblyUndefinedResolvedAttribute, PutItem } from 'v1'
+import { MapAttribute, PossiblyUndefinedResolvedAttribute, AttributePutItem } from 'v1'
 import { isObject } from 'v1/utils/validation'
 import { isClosed } from 'v1/item/utils'
 
@@ -7,7 +7,7 @@ import { parseAttributePutCommandInput } from './attribute'
 export const parseMapAttributePutCommandInput = <MAP_ATTRIBUTE extends MapAttribute>(
   mapAttribute: MAP_ATTRIBUTE,
   input: PossiblyUndefinedResolvedAttribute
-): PutItem<MAP_ATTRIBUTE> => {
+): AttributePutItem<MAP_ATTRIBUTE> => {
   if (!isObject(input)) {
     // TODO
     throw new Error()
@@ -49,5 +49,5 @@ export const parseMapAttributePutCommandInput = <MAP_ATTRIBUTE extends MapAttrib
     }
   })
 
-  return parsedPutItemInput as PutItem<MAP_ATTRIBUTE>
+  return parsedPutItemInput as AttributePutItem<MAP_ATTRIBUTE>
 }
