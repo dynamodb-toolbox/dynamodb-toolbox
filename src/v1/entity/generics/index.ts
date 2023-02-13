@@ -4,7 +4,7 @@ export * from './$DefaultsComputer'
 export type { ItemDefaultsComputer, AttributeDefaultsComputer } from './DefaultsComputer'
 export type { $NeedsKeyCompute } from './$NeedsKeyCompute'
 
-export type { KeyInput, $KeyInput } from './KeyInput'
+export type { KeyInput, AttributeKeyInput, $KeyInput, $AttributeKeyInput } from './KeyInput'
 
 export type { PutItem, AttributePutItem } from './PutItem'
 export type {
