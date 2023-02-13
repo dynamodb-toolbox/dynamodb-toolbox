@@ -10,6 +10,7 @@ import type {
   SetAttribute,
   ListAttribute,
   MapAttribute,
+  AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -17,7 +18,7 @@ import type {
   ResolvePrimitiveAttribute
 } from 'v1/item'
 
-import { EntityV2 } from '../class'
+import type { EntityV2 } from '../class'
 
 /**
  * Returned item of a fetch command (GET, QUERY ...) for a given Entity, Item or Attribute
@@ -52,6 +53,8 @@ export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA e
       | O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
     > & // Add Record<string, ResolvedAttribute> if map is open
       (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+  : SCHEMA extends AnyOfAttribute
+  ? FormattedItem<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
   ? FormattedItem<SCHEMA['item']>
   : never
