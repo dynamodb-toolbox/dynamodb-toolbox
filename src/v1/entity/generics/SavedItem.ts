@@ -11,6 +11,7 @@ import type {
   ListAttribute,
   MapAttribute,
   MapAttributeAttributes,
+  AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -50,7 +51,7 @@ type RecSavedItem<
   O.Partial<
     {
       // Keep all attributes
-      [key in keyof SWAPPED_ATTRIBUTES]: SavedItem<SWAPPED_ATTRIBUTES[key]>
+      [KEY in keyof SWAPPED_ATTRIBUTES]: SavedItem<SWAPPED_ATTRIBUTES[KEY]>
     }
   >,
   // Enforce Required attributes
@@ -79,6 +80,8 @@ export type SavedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA exten
   ? SavedItem<SCHEMA['elements']>[]
   : SCHEMA extends MapAttribute | Item
   ? RecSavedItem<SCHEMA>
+  : SCHEMA extends AnyOfAttribute
+  ? SavedItem<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
   ? SavedItem<SCHEMA['item']> & PrimaryKey<SCHEMA['table']>
   : never
