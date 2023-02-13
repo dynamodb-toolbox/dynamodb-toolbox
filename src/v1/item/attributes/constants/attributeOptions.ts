@@ -62,6 +62,8 @@ export type AttributeOptionSymbolName = {
   [$savedAs]: 'savedAs'
 }
 
+export type AttributeOptionName = AttributeOptionSymbolName[$AttributeOptionSymbol]
+
 export type AttributeOptionNameSymbol = {
   type: $type
   elements: $elements
@@ -75,8 +77,6 @@ export type AttributeOptionNameSymbol = {
   enum: $enum
   savedAs: $savedAs
 }
-
-export type AttributeOptionName = AttributeOptionSymbolName[$AttributeOptionSymbol]
 
 export type AttributeOptionsConstraints = {
   required: RequiredOption
