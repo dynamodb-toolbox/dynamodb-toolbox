@@ -6,6 +6,7 @@ import type {
   $Attribute,
   Attribute,
   ResolvedAttribute,
+  ResolvedMapAttribute,
   $AnyAttribute,
   AnyAttribute,
   $ConstantAttribute,
@@ -18,6 +19,8 @@ import type {
   ListAttribute,
   $MapAttribute,
   MapAttribute,
+  $AnyOfAttribute,
+  AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -38,31 +41,25 @@ import type {
 import type { EntityV2 } from '../class'
 
 /**
- * User input of a PUT command for a given Entity, Item or Attribute
+ * User input of a PUT command for a given Entity or Item
  *
- * @param Schema Entity | Item | Attribute
+ * @param Schema Entity | Item
  * @param RequireHardDefaults Boolean
  * @return Object
  */
 export type PutItemInput<
-  SCHEMA extends EntityV2 | Item | Attribute,
+  SCHEMA extends EntityV2 | Item,
   REQUIRE_HARD_DEFAULTS extends boolean = false
-> = SCHEMA extends AnyAttribute
-  ? ResolvedAttribute
-  : SCHEMA extends ConstantAttribute
-  ? ResolveConstantAttribute<SCHEMA>
-  : SCHEMA extends PrimitiveAttribute
-  ? ResolvePrimitiveAttribute<SCHEMA>
-  : SCHEMA extends SetAttribute
-  ? Set<PutItemInput<SCHEMA['elements'], REQUIRE_HARD_DEFAULTS>>
-  : SCHEMA extends ListAttribute
-  ? PutItemInput<SCHEMA['elements'], REQUIRE_HARD_DEFAULTS>[]
-  : SCHEMA extends MapAttribute | Item
+> = EntityV2 extends SCHEMA
+  ? ResolvedMapAttribute
+  : Item extends SCHEMA
+  ? ResolvedMapAttribute
+  : SCHEMA extends Item
   ? O.Required<
       O.Partial<
         {
           // Keep all attributes
-          [KEY in keyof SCHEMA['attributes']]: PutItemInput<
+          [KEY in keyof SCHEMA['attributes']]: AttributePutItemInput<
             SCHEMA['attributes'][KEY],
             REQUIRE_HARD_DEFAULTS
           >
@@ -77,32 +74,74 @@ export type PutItemInput<
       | (REQUIRE_HARD_DEFAULTS extends true
           ? O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
           : never)
-    > & // Add Record<string, ResolvedAttribute> if map is open
+    > & // Add Record<string, ResolvedAttribute> if item is open
       (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
   ? PutItemInput<SCHEMA['item'], REQUIRE_HARD_DEFAULTS>
   : never
 
-// TODO: Required in Entity constructor... See if possible to use only PutItemInput
-export type $PutItemInput<
-  $SCHEMA extends EntityV2 | $Item | $Attribute,
+/**
+ * User input of a PUT command for a given Entity, Item or Attribute
+ *
+ * @param Attribute Attribute
+ * @param RequireHardDefaults Boolean
+ * @return Any
+ */
+export type AttributePutItemInput<
+  ATTRIBUTE extends Attribute,
   REQUIRE_HARD_DEFAULTS extends boolean = false
-> = $SCHEMA extends $AnyAttribute
+> = Attribute extends ATTRIBUTE
   ? ResolvedAttribute
-  : $SCHEMA extends $ConstantAttribute
-  ? $ResolveConstantAttribute<$SCHEMA>
-  : $SCHEMA extends $PrimitiveAttribute
-  ? $ResolvePrimitiveAttribute<$SCHEMA>
-  : $SCHEMA extends $SetAttribute
-  ? Set<$PutItemInput<$SCHEMA[$elements], REQUIRE_HARD_DEFAULTS>>
-  : $SCHEMA extends $ListAttribute
-  ? $PutItemInput<$SCHEMA[$elements], REQUIRE_HARD_DEFAULTS>[]
-  : $SCHEMA extends $MapAttribute | $Item
+  : ATTRIBUTE extends AnyAttribute
+  ? ResolvedAttribute
+  : ATTRIBUTE extends ConstantAttribute
+  ? ResolveConstantAttribute<ATTRIBUTE>
+  : ATTRIBUTE extends PrimitiveAttribute
+  ? ResolvePrimitiveAttribute<ATTRIBUTE>
+  : ATTRIBUTE extends SetAttribute
+  ? Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_HARD_DEFAULTS>>
+  : ATTRIBUTE extends ListAttribute
+  ? AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_HARD_DEFAULTS>[]
+  : ATTRIBUTE extends MapAttribute
   ? O.Required<
       O.Partial<
         {
           // Keep all attributes
-          [KEY in keyof $SCHEMA[$attributes]]: $PutItemInput<
+          [KEY in keyof ATTRIBUTE['attributes']]: AttributePutItemInput<
+            ATTRIBUTE['attributes'][KEY],
+            REQUIRE_HARD_DEFAULTS
+          >
+        }
+      >,
+      // Enforce Required attributes except those that have default (will be provided by the lib)
+      | O.SelectKeys<
+          ATTRIBUTE['attributes'],
+          { required: AtLeastOnce | OnlyOnce | Always; default: undefined }
+        >
+      // Add attributes with hard (non-computed) defaults if REQUIRE_HARD_DEFAULTS is true
+      | (REQUIRE_HARD_DEFAULTS extends true
+          ? O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
+          : never)
+    > & // Add Record<string, ResolvedAttribute> if map is open
+      (ATTRIBUTE extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+  : ATTRIBUTE extends AnyOfAttribute
+  ? AttributePutItemInput<ATTRIBUTE['elements'][number], REQUIRE_HARD_DEFAULTS>
+  : never
+
+// TODO: Required in Entity constructor... See if possible to use only PutItemInput
+export type $PutItemInput<
+  $SCHEMA extends EntityV2 | $Item,
+  REQUIRE_HARD_DEFAULTS extends boolean = false
+> = EntityV2 extends $SCHEMA
+  ? ResolvedMapAttribute
+  : $Item extends $SCHEMA
+  ? ResolvedMapAttribute
+  : $SCHEMA extends $Item
+  ? O.Required<
+      O.Partial<
+        {
+          // Keep all attributes
+          [KEY in keyof $SCHEMA[$attributes]]: $AttributePutItemInput<
             $SCHEMA[$attributes][KEY],
             REQUIRE_HARD_DEFAULTS
           >
@@ -117,8 +156,48 @@ export type $PutItemInput<
       | (REQUIRE_HARD_DEFAULTS extends true
           ? O.FilterKeys<$SCHEMA[$attributes], { [$default]: undefined | ComputedDefault }>
           : never)
-    > & // Add Record<string, ResolvedAttribute> if map is open
+    > & // Add Record<string, ResolvedAttribute> if item is open
       ($SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
   : $SCHEMA extends EntityV2
   ? $PutItemInput<$SCHEMA['$item'], REQUIRE_HARD_DEFAULTS>
+  : never
+
+// TODO: Required in Entity constructor... See if possible to use only PutItemInput
+export type $AttributePutItemInput<
+  $ATTRIBUTE extends $Attribute,
+  REQUIRE_HARD_DEFAULTS extends boolean = false
+> = $ATTRIBUTE extends $AnyAttribute
+  ? ResolvedAttribute
+  : $ATTRIBUTE extends $ConstantAttribute
+  ? $ResolveConstantAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $PrimitiveAttribute
+  ? $ResolvePrimitiveAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $SetAttribute
+  ? Set<$AttributePutItemInput<$ATTRIBUTE[$elements], REQUIRE_HARD_DEFAULTS>>
+  : $ATTRIBUTE extends $ListAttribute
+  ? $AttributePutItemInput<$ATTRIBUTE[$elements], REQUIRE_HARD_DEFAULTS>[]
+  : $ATTRIBUTE extends $MapAttribute
+  ? O.Required<
+      O.Partial<
+        {
+          // Keep all attributes
+          [KEY in keyof $ATTRIBUTE[$attributes]]: $AttributePutItemInput<
+            $ATTRIBUTE[$attributes][KEY],
+            REQUIRE_HARD_DEFAULTS
+          >
+        }
+      >,
+      // Enforce Required attributes except those that have default (will be provided by the lib)
+      | O.SelectKeys<
+          $ATTRIBUTE[$attributes],
+          { [$required]: AtLeastOnce | OnlyOnce | Always; [$default]: undefined }
+        >
+      // Add attributes with hard (non-computed) defaults if REQUIRE_HARD_DEFAULTS is true
+      | (REQUIRE_HARD_DEFAULTS extends true
+          ? O.FilterKeys<$ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
+          : never)
+    > & // Add Record<string, ResolvedAttribute> if map is open
+      ($ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+  : $ATTRIBUTE extends $AnyOfAttribute
+  ? $AttributePutItemInput<$ATTRIBUTE[$elements][number], REQUIRE_HARD_DEFAULTS>
   : never

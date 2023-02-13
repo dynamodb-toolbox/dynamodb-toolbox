@@ -3,7 +3,7 @@ import type { OmitUndefinedProperties } from 'v1/types'
 import type { $attributes, $default } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { $AttributePutItem } from '../$PutItem'
-import type { $PutItemInput } from '../PutItemInput'
+import type { $AttributePutItemInput } from '../PutItemInput'
 
 import type { $AttributePutDefaultsComputer } from './attribute'
 
@@ -14,7 +14,7 @@ export type $MapAttributePutDefaultsComputer<
     {
       [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: $AttributePutDefaultsComputer<
         $MAP_ATTRIBUTE[$attributes][KEY],
-        [$PutItemInput<$MAP_ATTRIBUTE>, ...CONTEXT_INPUTS]
+        [$AttributePutItemInput<$MAP_ATTRIBUTE>, ...CONTEXT_INPUTS]
       >
     }
   >,
