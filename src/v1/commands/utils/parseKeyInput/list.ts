@@ -1,4 +1,4 @@
-import type { ListAttribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
+import type { ListAttribute, PossiblyUndefinedResolvedAttribute, AttributeKeyInput } from 'v1'
 import { isArray } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'
@@ -6,7 +6,7 @@ import { parseAttributeKeyInput } from './attribute'
 export const parseListAttributeKeyInput = <LIST_ATTRIBUTE extends ListAttribute>(
   listAttribute: LIST_ATTRIBUTE,
   input: PossiblyUndefinedResolvedAttribute
-): KeyInput<LIST_ATTRIBUTE> => {
+): AttributeKeyInput<LIST_ATTRIBUTE> => {
   if (!isArray(input)) {
     // TODO
     throw new Error()
@@ -18,5 +18,5 @@ export const parseListAttributeKeyInput = <LIST_ATTRIBUTE extends ListAttribute>
     parsedKeyInput.push(parseAttributeKeyInput(listAttribute.elements, element))
   )
 
-  return parsedKeyInput as KeyInput<LIST_ATTRIBUTE>
+  return parsedKeyInput as AttributeKeyInput<LIST_ATTRIBUTE>
 }

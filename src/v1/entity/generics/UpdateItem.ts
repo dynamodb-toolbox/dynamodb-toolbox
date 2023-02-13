@@ -10,6 +10,7 @@ import type {
   SetAttribute,
   ListAttribute,
   MapAttribute,
+  AnyOfAttribute,
   OnlyOnce,
   Always,
   ComputedDefault,
@@ -51,6 +52,8 @@ export type UpdateItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA exte
       | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
     > & // Add Record<string, ResolvedAttribute> if map is open
       (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+  : SCHEMA extends AnyOfAttribute
+  ? UpdateItem<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
   ? UpdateItem<SCHEMA['item']>
   : never

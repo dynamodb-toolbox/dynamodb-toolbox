@@ -6,7 +6,8 @@ import type {
   $PrimitiveAttribute,
   $SetAttribute,
   $ListAttribute,
-  $MapAttribute
+  $MapAttribute,
+  $AnyOfAttribute
 } from 'v1/item'
 import { $default } from 'v1/item/attributes/constants/attributeOptions'
 
@@ -23,6 +24,7 @@ export type $AttributePutDefaultsComputer<
   | $ConstantAttribute
   | $PrimitiveAttribute
   | $SetAttribute
+  | $AnyOfAttribute
 ) & { [$default]: ComputedDefault }
   ? (...contextInputs: CONTEXT_INPUTS) => $AttributePutItem<$ATTRIBUTE>
   : $ATTRIBUTE extends $ListAttribute

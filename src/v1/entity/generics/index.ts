@@ -1,13 +1,18 @@
 export * from './$PutItem'
 export * from './$DefaultsComputer'
 
-export { ItemDefaultsComputer, AttributeDefaultsComputer } from './DefaultsComputer'
+export type { ItemDefaultsComputer, AttributeDefaultsComputer } from './DefaultsComputer'
 export type { $NeedsKeyCompute } from './$NeedsKeyCompute'
 
-export type { KeyInput, $KeyInput } from './KeyInput'
+export type { KeyInput, AttributeKeyInput, $KeyInput, $AttributeKeyInput } from './KeyInput'
 
-export type { PutItem } from './PutItem'
-export type { PutItemInput, $PutItemInput } from './PutItemInput'
+export type { PutItem, AttributePutItem } from './PutItem'
+export type {
+  PutItemInput,
+  AttributePutItemInput,
+  $PutItemInput,
+  $AttributePutItemInput
+} from './PutItemInput'
 export type { UpdateItemInput } from './UpdateItemInput'
 export type { UpdateItem } from './UpdateItem'
 

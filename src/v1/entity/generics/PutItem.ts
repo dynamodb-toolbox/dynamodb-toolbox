@@ -4,12 +4,14 @@ import type {
   Item,
   Attribute,
   ResolvedAttribute,
+  ResolvedMapAttribute,
   AnyAttribute,
   ConstantAttribute,
   PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
   MapAttribute,
+  AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
   Always,
@@ -21,35 +23,65 @@ import type {
 import type { EntityV2 } from '../class'
 
 /**
- * Formatted input of a PUT command for a given Entity, Item or Attribute
+ * Formatted input of a PUT command for a given Entity or Item
  *
- * @param Schema Entity | Item | Attribute
+ * @param SCHEMA Entity | Item
  * @return Object
  */
-export type PutItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
-  ? ResolvedAttribute
-  : SCHEMA extends ConstantAttribute
-  ? ResolveConstantAttribute<SCHEMA>
-  : SCHEMA extends PrimitiveAttribute
-  ? ResolvePrimitiveAttribute<SCHEMA>
-  : SCHEMA extends SetAttribute
-  ? Set<PutItem<SCHEMA['elements']>>
-  : SCHEMA extends ListAttribute
-  ? PutItem<SCHEMA['elements']>[]
-  : SCHEMA extends MapAttribute | Item
+export type PutItem<SCHEMA extends EntityV2 | Item> = EntityV2 extends SCHEMA
+  ? ResolvedMapAttribute
+  : Item extends SCHEMA
+  ? ResolvedMapAttribute
+  : SCHEMA extends Item
   ? O.Required<
       O.Partial<
         {
           // Keep all attributes
-          [key in keyof SCHEMA['attributes']]: PutItem<SCHEMA['attributes'][key]>
+          [KEY in keyof SCHEMA['attributes']]: AttributePutItem<SCHEMA['attributes'][KEY]>
         }
       >,
       // Enforce Required attributes
       | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
       // Enforce attributes that have hard default
       | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
-    > & // Add Record<string, ResolvedAttribute> if map is open
+    > & // Add Record<string, ResolvedAttribute> if item is open
       (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
   : SCHEMA extends EntityV2
   ? PutItem<SCHEMA['item']>
+  : never
+
+/**
+ * Formatted input of a PUT command for a given Attribute
+ *
+ * @param Attribute Attribute
+ * @return Any
+ */
+export type AttributePutItem<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
+  ? ResolvedAttribute
+  : ATTRIBUTE extends AnyAttribute
+  ? ResolvedAttribute
+  : ATTRIBUTE extends ConstantAttribute
+  ? ResolveConstantAttribute<ATTRIBUTE>
+  : ATTRIBUTE extends PrimitiveAttribute
+  ? ResolvePrimitiveAttribute<ATTRIBUTE>
+  : ATTRIBUTE extends SetAttribute
+  ? Set<AttributePutItem<ATTRIBUTE['elements']>>
+  : ATTRIBUTE extends ListAttribute
+  ? AttributePutItem<ATTRIBUTE['elements']>[]
+  : ATTRIBUTE extends MapAttribute
+  ? O.Required<
+      O.Partial<
+        {
+          // Keep all attributes
+          [KEY in keyof ATTRIBUTE['attributes']]: AttributePutItem<ATTRIBUTE['attributes'][KEY]>
+        }
+      >,
+      // Enforce Required attributes
+      | O.SelectKeys<ATTRIBUTE['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+      // Enforce attributes that have hard default
+      | O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
+    > & // Add Record<string, ResolvedAttribute> if map is open
+      (ATTRIBUTE extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+  : ATTRIBUTE extends AnyOfAttribute
+  ? AttributePutItem<ATTRIBUTE['elements'][number]>
   : never
