@@ -1,4 +1,4 @@
-import type { SetAttribute, PossiblyUndefinedResolvedAttribute, KeyInput } from 'v1'
+import type { SetAttribute, PossiblyUndefinedResolvedAttribute, AttributeKeyInput } from 'v1'
 import { isSet } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'
@@ -6,7 +6,7 @@ import { parseAttributeKeyInput } from './attribute'
 export const parseSetAttributeKeyInput = <SET_ATTRIBUTE extends SetAttribute>(
   setAttribute: SET_ATTRIBUTE,
   input: PossiblyUndefinedResolvedAttribute
-): KeyInput<SET_ATTRIBUTE> => {
+): AttributeKeyInput<SET_ATTRIBUTE> => {
   if (!isSet(input)) {
     // TODO
     throw new Error()
@@ -18,5 +18,5 @@ export const parseSetAttributeKeyInput = <SET_ATTRIBUTE extends SetAttribute>(
     parsedKeyInput.add(parseAttributeKeyInput(setAttribute.elements, element))
   )
 
-  return parsedKeyInput as KeyInput<SET_ATTRIBUTE>
+  return parsedKeyInput as AttributeKeyInput<SET_ATTRIBUTE>
 }
