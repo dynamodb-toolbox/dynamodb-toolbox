@@ -8,7 +8,6 @@ import type {
   $required,
   $hidden,
   $key,
-  $open,
   $savedAs,
   $default
 } from '../constants/attributeOptions'
@@ -20,7 +19,6 @@ import type {
 } from '../shared/interface'
 
 interface $MapAttributeStateConstraint extends $AttributeSharedStateConstraint {
-  [$open]: boolean
   [$default]: ComputedDefault | undefined
 }
 
@@ -33,7 +31,6 @@ export interface $MapAttribute<
 > extends $AttributeSharedState<$STATE> {
   [$type]: 'map'
   [$attributes]: $ATTRIBUTES
-  [$open]: $STATE[$open]
   [$default]: $STATE[$default]
   /**
    * Tag attribute as required. Possible values are:
@@ -60,10 +57,6 @@ export interface $MapAttribute<
    */
   key: () => $MapAttribute<$ATTRIBUTES, O.Update<$STATE, $key, true>>
   /**
-   * Accept additional attributes of any type
-   */
-  open: () => $MapAttribute<$ATTRIBUTES, O.Update<$STATE, $open, true>>
-  /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
@@ -88,7 +81,6 @@ export interface MapAttribute<
   path: string
   type: 'map'
   attributes: ATTRIBUTES
-  open: STATE['open']
   default: STATE['default']
   keyAttributesNames: Set<string>
   requiredAttributesNames: Record<RequiredOption, Set<string>>

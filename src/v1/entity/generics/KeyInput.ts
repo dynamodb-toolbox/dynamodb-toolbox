@@ -32,7 +32,6 @@ import type {
   $attributes,
   $required,
   $key,
-  $open,
   $default
 } from 'v1/item/attributes/constants/attributeOptions'
 
@@ -61,8 +60,7 @@ export type KeyInput<SCHEMA extends EntityV2 | Item> = SCHEMA extends Item
         // ...Except those that have default (not required from user, can be provided by the lib)
         O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
       >
-    > & // Add Record<string, ResolvedAttribute> if item is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : SCHEMA extends EntityV2
   ? KeyInput<SCHEMA['item']>
   : never
@@ -101,8 +99,7 @@ export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends A
         // ...Except those that have default (not required from user, can be provided by the lib)
         O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined }>
       >
-    > & // Add Record<string, ResolvedAttribute> if map is open
-      (ATTRIBUTE extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : ATTRIBUTE extends AnyOfAttribute
   ? AttributeKeyInput<ATTRIBUTE['elements'][number]>
   : never
@@ -128,8 +125,7 @@ export type $KeyInput<SCHEMA extends EntityV2 | $Item> = EntityV2 extends SCHEMA
         // ...Except those that have default (not required from user, can be provided by the lib)
         O.FilterKeys<SCHEMA[$attributes], { [$default]: undefined }>
       >
-    > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : SCHEMA extends EntityV2
   ? $KeyInput<SCHEMA['$item']>
   : never
@@ -163,8 +159,7 @@ export type $AttributeKeyInput<ATTRIBUTE extends $Attribute> = $Attribute extend
         // ...Except those that have default (not required from user, can be provided by the lib)
         O.FilterKeys<ATTRIBUTE[$attributes], { [$default]: undefined }>
       >
-    > & // Add Record<string, ResolvedAttribute> if map is open
-      (ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : ATTRIBUTE extends $AnyOfAttribute
   ? $AttributeKeyInput<ATTRIBUTE[$elements][number]>
   : never

@@ -44,8 +44,7 @@ export type PutItem<SCHEMA extends EntityV2 | Item> = EntityV2 extends SCHEMA
       | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
       // Enforce attributes that have hard default
       | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
-    > & // Add Record<string, ResolvedAttribute> if item is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : SCHEMA extends EntityV2
   ? PutItem<SCHEMA['item']>
   : never
@@ -80,8 +79,7 @@ export type AttributePutItem<ATTRIBUTE extends Attribute> = Attribute extends AT
       | O.SelectKeys<ATTRIBUTE['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
       // Enforce attributes that have hard default
       | O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
-    > & // Add Record<string, ResolvedAttribute> if map is open
-      (ATTRIBUTE extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : ATTRIBUTE extends AnyOfAttribute
   ? AttributePutItem<ATTRIBUTE['elements'][number]>
   : never

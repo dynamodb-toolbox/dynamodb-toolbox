@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { item } from './typer'
 import { boolean, binary, number, string, set, list, map } from './attributes'
-import { $type, $attributes, $open } from './attributes/constants/attributeOptions'
+import { $type, $attributes } from './attributes/constants/attributeOptions'
 
 describe('item', () => {
   it('primitives', () => {
@@ -34,7 +34,6 @@ describe('item', () => {
           keyStr: typeof keyStr
           enumStr: typeof enumStr
         }
-        [$open]: boolean
       }
     > = 1
     assertItm
