@@ -11,7 +11,6 @@ import {
   $required,
   $hidden,
   $key,
-  $open,
   $savedAs,
   $default
 } from '../constants/attributeOptions'
@@ -34,7 +33,6 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttribute> =
         required: $MAP_ATTRIBUTE[$required]
         hidden: $MAP_ATTRIBUTE[$hidden]
         key: $MAP_ATTRIBUTE[$key]
-        open: $MAP_ATTRIBUTE[$open]
         savedAs: $MAP_ATTRIBUTE[$savedAs]
         default: $MAP_ATTRIBUTE[$default]
       }
@@ -108,7 +106,6 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
     required: $mapAttribute[$required],
     hidden: $mapAttribute[$hidden],
     key: $mapAttribute[$key],
-    open: $mapAttribute[$open],
     savedAs: $mapAttribute[$savedAs],
     default: $mapAttribute[$default]
   }

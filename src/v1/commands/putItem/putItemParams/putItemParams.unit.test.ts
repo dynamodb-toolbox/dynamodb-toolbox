@@ -223,7 +223,7 @@ describe('put', () => {
     ).toThrow('')
   })
 
-  it('ignores additional attribute if item is closed and strict mode is off (TODO)', () => {
+  it('ignores additional attribute', () => {
     const { Item } = putItemParams(TestEntity, {
       email: 'test-pk',
       sort: 'test-sk',

@@ -86,8 +86,7 @@ const playgroundItem3 = item({
     renamed: string().savedAs('bar').key()
   })
     .savedAs('baz')
-    .key()
-    .open(),
+    .key(),
   anyvalue: any()
 })
 
