@@ -7,7 +7,6 @@ import {
   $type,
   $attributes,
   $key,
-  $open,
   $savedAs,
   $required
 } from './attributes/constants/attributeOptions'
@@ -53,7 +52,6 @@ export const freezeItem: ItemFreezer = <$ITEM extends $Item>(item: $ITEM): Freez
 
   return {
     type: item[$type],
-    open: item[$open],
     keyAttributesNames,
     requiredAttributesNames,
     attributes: frozenAttributes

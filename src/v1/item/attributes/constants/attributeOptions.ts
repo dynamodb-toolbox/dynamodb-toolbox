@@ -23,9 +23,6 @@ export type $hidden = typeof $hidden
 export const $key = Symbol()
 export type $key = typeof $key
 
-export const $open = Symbol()
-export type $open = typeof $open
-
 export const $default = Symbol()
 export type $default = typeof $default
 
@@ -43,7 +40,6 @@ export type $AttributeOptionSymbol =
   | $required
   | $hidden
   | $key
-  | $open
   | $default
   | $enum
   | $savedAs
@@ -56,7 +52,6 @@ export type AttributeOptionSymbolName = {
   [$required]: 'required'
   [$hidden]: 'hidden'
   [$key]: 'key'
-  [$open]: 'open'
   [$default]: 'default'
   [$enum]: 'enum'
   [$savedAs]: 'savedAs'
@@ -72,7 +67,6 @@ export type AttributeOptionNameSymbol = {
   required: $required
   hidden: $hidden
   key: $key
-  open: $open
   default: $default
   enum: $enum
   savedAs: $savedAs
@@ -82,7 +76,6 @@ export type AttributeOptionsConstraints = {
   required: RequiredOption
   hidden: boolean
   key: boolean
-  open: boolean
   savedAs: string | undefined
   enum: ResolvedPrimitiveAttribute[] | undefined
 }

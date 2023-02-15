@@ -51,8 +51,7 @@ export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA e
       // Enforce attributes that have defined default (hard or computed)
       // (...but not so sure about that anymore, props can have computed default but still be optional)
       | O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
-    > & // Add Record<string, ResolvedAttribute> if map is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : SCHEMA extends AnyOfAttribute
   ? FormattedItem<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
