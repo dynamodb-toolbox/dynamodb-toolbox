@@ -23,10 +23,6 @@ export interface MapAttributeOptions {
    */
   key: boolean
   /**
-   * Accept additional attributes of any type
-   */
-  open: boolean
-  /**
    * Rename attribute before save commands
    */
   savedAs: string | undefined
@@ -40,7 +36,6 @@ export type MapAttributeDefaultOptions = {
   required: AtLeastOnce
   hidden: false
   key: false
-  open: false
   savedAs: undefined
   default: undefined
 }
@@ -49,7 +44,6 @@ export const MAP_DEFAULT_OPTIONS: MapAttributeDefaultOptions = {
   required: 'atLeastOnce',
   hidden: false,
   key: false,
-  open: false,
   savedAs: undefined,
   default: undefined
 }
