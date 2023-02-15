@@ -1,17 +1,9 @@
 import type { O } from 'ts-toolbelt'
 
-import type {
-  ResolvedAttribute,
-  $MapAttribute,
-  AtLeastOnce,
-  OnlyOnce,
-  Always,
-  ComputedDefault
-} from 'v1/item'
+import type { $MapAttribute, AtLeastOnce, OnlyOnce, Always, ComputedDefault } from 'v1/item'
 import type {
   $attributes,
   $required,
-  $open,
   $default
 } from 'v1/item/attributes/constants/attributeOptions'
 
@@ -22,7 +14,7 @@ export type $MapAttributePutItem<$MAP_ATTRIBUTE extends $MapAttribute> = $MAP_AT
 }
   ?
       | undefined
-      | (O.Required<
+      | O.Required<
           O.Partial<
             {
               // Keep all attributes
@@ -38,8 +30,7 @@ export type $MapAttributePutItem<$MAP_ATTRIBUTE extends $MapAttribute> = $MAP_AT
             >
           // Enforce attributes that have hard default
           | O.FilterKeys<$MAP_ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
-        > & // Add Record<string, ResolvedAttribute> if map is open
-          ($MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown))
+        >
   : O.Required<
       O.Partial<
         {
@@ -53,5 +44,4 @@ export type $MapAttributePutItem<$MAP_ATTRIBUTE extends $MapAttribute> = $MAP_AT
       | O.SelectKeys<$MAP_ATTRIBUTE[$attributes], { [$required]: AtLeastOnce | OnlyOnce | Always }>
       // Enforce attributes that have hard default
       | O.FilterKeys<$MAP_ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
-    > & // Add Record<string, ResolvedAttribute> if map is open
-      ($MAP_ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+    >

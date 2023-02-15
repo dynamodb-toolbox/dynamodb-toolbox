@@ -1,6 +1,5 @@
 import { Item, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
 import { isObject } from 'v1/utils/validation'
-import { isClosed } from 'v1/item/utils'
 
 import { parseAttributePutCommandInput } from './attribute'
 
@@ -19,22 +18,12 @@ export const parseItemPutCommandInput = <ITEM extends Item>(
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
     const attribute = item.attributes[attributeName]
 
-    if (attribute !== undefined) {
-      const parsedAttributePutCommandInput = parseAttributePutCommandInput(
-        attribute,
-        attributeInput
-      )
+    if (attribute === undefined) return
 
-      if (parsedAttributePutCommandInput !== undefined) {
-        parsedPutItemInput[attributeName] = parsedAttributePutCommandInput
-      }
-    } else {
-      if (isClosed(item)) {
-        // TODO Add strict mode, and throw if strict mode is on
-        return
-      } else {
-        parsedPutItemInput[attributeName] = attributeInput
-      }
+    const parsedAttributePutCommandInput = parseAttributePutCommandInput(attribute, attributeInput)
+
+    if (parsedAttributePutCommandInput !== undefined) {
+      parsedPutItemInput[attributeName] = parsedAttributePutCommandInput
     }
   })
 

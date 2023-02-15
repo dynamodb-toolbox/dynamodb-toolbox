@@ -34,7 +34,6 @@ import type {
   $elements,
   $attributes,
   $required,
-  $open,
   $default
 } from 'v1/item/attributes/constants/attributeOptions'
 
@@ -74,8 +73,7 @@ export type PutItemInput<
       | (REQUIRE_HARD_DEFAULTS extends true
           ? O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
           : never)
-    > & // Add Record<string, ResolvedAttribute> if item is open
-      (SCHEMA extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : SCHEMA extends EntityV2
   ? PutItemInput<SCHEMA['item'], REQUIRE_HARD_DEFAULTS>
   : never
@@ -122,8 +120,7 @@ export type AttributePutItemInput<
       | (REQUIRE_HARD_DEFAULTS extends true
           ? O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
           : never)
-    > & // Add Record<string, ResolvedAttribute> if map is open
-      (ATTRIBUTE extends { open: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : ATTRIBUTE extends AnyOfAttribute
   ? AttributePutItemInput<ATTRIBUTE['elements'][number], REQUIRE_HARD_DEFAULTS>
   : never
@@ -156,8 +153,7 @@ export type $PutItemInput<
       | (REQUIRE_HARD_DEFAULTS extends true
           ? O.FilterKeys<$SCHEMA[$attributes], { [$default]: undefined | ComputedDefault }>
           : never)
-    > & // Add Record<string, ResolvedAttribute> if item is open
-      ($SCHEMA extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : $SCHEMA extends EntityV2
   ? $PutItemInput<$SCHEMA['$item'], REQUIRE_HARD_DEFAULTS>
   : never
@@ -196,8 +192,7 @@ export type $AttributePutItemInput<
       | (REQUIRE_HARD_DEFAULTS extends true
           ? O.FilterKeys<$ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
           : never)
-    > & // Add Record<string, ResolvedAttribute> if map is open
-      ($ATTRIBUTE extends { [$open]: true } ? Record<string, ResolvedAttribute> : unknown)
+    >
   : $ATTRIBUTE extends $AnyOfAttribute
   ? $AttributePutItemInput<$ATTRIBUTE[$elements][number], REQUIRE_HARD_DEFAULTS>
   : never

@@ -8,7 +8,6 @@ import {
   $required,
   $hidden,
   $key,
-  $open,
   $savedAs,
   $default
 } from '../constants/attributeOptions'
@@ -33,7 +32,6 @@ describe('map', () => {
         [$required]: AtLeastOnce
         [$hidden]: false
         [$key]: false
-        [$open]: false
         [$savedAs]: undefined
         [$default]: undefined
       }
@@ -52,7 +50,6 @@ describe('map', () => {
       [$attributes]: { str },
       [$required]: 'atLeastOnce',
       [$key]: false,
-      [$open]: false,
       [$savedAs]: undefined,
       [$hidden]: false
     })
@@ -150,24 +147,6 @@ describe('map', () => {
     assertMapAttribute
 
     expect(mapped).toMatchObject({ [$key]: true })
-  })
-
-  it('returns open map (option)', () => {
-    const mapped = map({ str }, { open: true })
-
-    const assertMapAttribute: A.Contains<typeof mapped, { [$open]: true }> = 1
-    assertMapAttribute
-
-    expect(mapped).toMatchObject({ [$open]: true })
-  })
-
-  it('returns open map (method)', () => {
-    const mapped = map({ str }).open()
-
-    const assertMapAttribute: A.Contains<typeof mapped, { [$open]: true }> = 1
-    assertMapAttribute
-
-    expect(mapped).toMatchObject({ [$open]: true })
   })
 
   it('returns savedAs map (option)', () => {

@@ -11,8 +11,5 @@ export const parseEntityPutCommandInput = <ENTITY extends EntityV2>(
     computeDefaults: entity.computedDefaults
   })
 
-  return parseItemPutCommandInput<ENTITY['item']>(
-    entity.item,
-    clonedInputWithDefaults
-  ) as PutItem<ENTITY>
+  return parseItemPutCommandInput(entity.item, clonedInputWithDefaults) as PutItem<ENTITY>
 }
