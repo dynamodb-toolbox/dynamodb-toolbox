@@ -8,7 +8,6 @@ import {
   $required,
   $hidden,
   $key,
-  $open,
   $savedAs,
   $default
 } from '../constants/attributeOptions'
@@ -49,7 +48,6 @@ export const map: MapAttributeTyper = <
     [$required]: appliedOptions.required,
     [$hidden]: appliedOptions.hidden,
     [$key]: appliedOptions.key,
-    [$open]: appliedOptions.open,
     [$savedAs]: appliedOptions.savedAs,
     [$default]: appliedOptions.default,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
@@ -58,7 +56,6 @@ export const map: MapAttributeTyper = <
     optional: () => map(attributes, { ...appliedOptions, required: 'never' }),
     hidden: () => map(attributes, { ...appliedOptions, hidden: true }),
     key: () => map(attributes, { ...appliedOptions, key: true }),
-    open: () => map(attributes, { ...appliedOptions, open: true }),
     savedAs: nextSavedAs => map(attributes, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => map(attributes, { ...appliedOptions, default: nextDefault })
   } as $MapAttribute<
