@@ -4,6 +4,7 @@ export * from './primitive'
 export * from './set'
 export * from './list'
 export * from './map'
+export * from './record'
 export * from './anyOf'
 
 export * from './constants'
