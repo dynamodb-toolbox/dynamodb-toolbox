@@ -6,6 +6,7 @@ import type {
   $SetAttribute,
   $ListAttribute,
   $MapAttribute,
+  $RecordAttribute,
   $AnyOfAttribute
 } from 'v1/item'
 
@@ -15,6 +16,7 @@ import type { $PrimitiveAttributePutItem } from './primitive'
 import type { $SetAttributePutItem } from './set'
 import type { $ListAttributePutItem } from './list'
 import type { $MapAttributePutItem } from './map'
+import type { $RecordAttributePutItem } from './record'
 import type { $AnyOfAttributePutItem } from './anyOf'
 
 export type $AttributePutItem<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends $AnyAttribute
@@ -29,6 +31,8 @@ export type $AttributePutItem<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extend
   ? $ListAttributePutItem<$ATTRIBUTE>
   : $ATTRIBUTE extends $MapAttribute
   ? $MapAttributePutItem<$ATTRIBUTE>
+  : $ATTRIBUTE extends $RecordAttribute
+  ? $RecordAttributePutItem<$ATTRIBUTE>
   : $ATTRIBUTE extends $AnyOfAttribute
   ? $AnyOfAttributePutItem<$ATTRIBUTE>
   : never

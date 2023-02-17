@@ -9,6 +9,7 @@ import {
 import { freezeSetAttribute, $SetAttribute, FreezeSetAttribute } from './set'
 import { freezeListAttribute, $ListAttribute, FreezeListAttribute } from './list'
 import { freezeMapAttribute, $MapAttribute, FreezeMapAttribute } from './map'
+import { freezeRecordAttribute, $RecordAttribute, FreezeRecordAttribute } from './record'
 import { freezeAnyOfAttribute, $AnyOfAttribute, FreezeAnyOfAttribute } from './anyOf'
 import type { $Attribute } from './types/attribute'
 
@@ -24,6 +25,8 @@ export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends 
   ? FreezeListAttribute<$ATTRIBUTE>
   : $ATTRIBUTE extends $MapAttribute
   ? FreezeMapAttribute<$ATTRIBUTE>
+  : $ATTRIBUTE extends $RecordAttribute
+  ? FreezeRecordAttribute<$ATTRIBUTE>
   : $ATTRIBUTE extends $AnyOfAttribute
   ? FreezeAnyOfAttribute<$ATTRIBUTE>
   : never
@@ -55,6 +58,8 @@ export const freezeAttribute = <$ATTRIBUTE extends $Attribute>(
       return freezeListAttribute(attribute, path) as any
     case 'map':
       return freezeMapAttribute(attribute, path) as any
+    case 'record':
+      return freezeRecordAttribute(attribute, path) as any
     case 'anyOf':
       return freezeAnyOfAttribute(attribute, path) as any
   }

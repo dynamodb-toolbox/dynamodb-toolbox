@@ -494,51 +494,51 @@ describe('record', () => {
     expect(rec).toMatchObject({ [$default]: ComputedDefault })
   })
 
-  // it('record of records', () => {
-  //   const rec = record(fooBar, record(fooBar, str))
+  it('record of records', () => {
+    const rec = record(fooBar, record(fooBar, str))
 
-  //   const assertRec: A.Contains<
-  //     typeof rec,
-  //     {
-  //       [$type]: 'record'
-  //       [$keys]: typeof fooBar
-  //       [$elements]: {
-  //         [$type]: 'record'
-  //         [$keys]: typeof fooBar
-  //         [$elements]: typeof str
-  //         [$required]: AtLeastOnce
-  //         [$hidden]: false
-  //         [$key]: false
-  //         [$savedAs]: undefined
-  //         [$default]: undefined
-  //       }
-  //       [$required]: AtLeastOnce
-  //       [$hidden]: false
-  //       [$key]: false
-  //       [$savedAs]: undefined
-  //       [$default]: undefined
-  //     }
-  //   > = 1
-  //   assertRec
+    const assertRec: A.Contains<
+      typeof rec,
+      {
+        [$type]: 'record'
+        [$keys]: typeof fooBar
+        [$elements]: {
+          [$type]: 'record'
+          [$keys]: typeof fooBar
+          [$elements]: typeof str
+          [$required]: AtLeastOnce
+          [$hidden]: false
+          [$key]: false
+          [$savedAs]: undefined
+          [$default]: undefined
+        }
+        [$required]: AtLeastOnce
+        [$hidden]: false
+        [$key]: false
+        [$savedAs]: undefined
+        [$default]: undefined
+      }
+    > = 1
+    assertRec
 
-  //   expect(rec).toMatchObject({
-  //     [$type]: 'record',
-  //     [$keys]: fooBar,
-  //     [$elements]: {
-  //       [$type]: 'record',
-  //       [$keys]: fooBar,
-  //       [$elements]: str,
-  //       [$required]: 'atLeastOnce',
-  //       [$hidden]: false,
-  //       [$key]: false,
-  //       [$savedAs]: undefined,
-  //       [$default]: undefined
-  //     },
-  //     [$required]: 'atLeastOnce',
-  //     [$hidden]: false,
-  //     [$key]: false,
-  //     [$savedAs]: undefined,
-  //     [$default]: undefined
-  //   })
-  // })
+    expect(rec).toMatchObject({
+      [$type]: 'record',
+      [$keys]: fooBar,
+      [$elements]: {
+        [$type]: 'record',
+        [$keys]: fooBar,
+        [$elements]: str,
+        [$required]: 'atLeastOnce',
+        [$hidden]: false,
+        [$key]: false,
+        [$savedAs]: undefined,
+        [$default]: undefined
+      },
+      [$required]: 'atLeastOnce',
+      [$hidden]: false,
+      [$key]: false,
+      [$savedAs]: undefined,
+      [$default]: undefined
+    })
+  })
 })

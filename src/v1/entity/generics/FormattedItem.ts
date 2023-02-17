@@ -10,6 +10,7 @@ import type {
   SetAttribute,
   ListAttribute,
   MapAttribute,
+  RecordAttribute,
   AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
@@ -41,8 +42,8 @@ export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA e
       O.Partial<
         {
           // Keep only non-hidden attributes
-          [key in O.SelectKeys<SCHEMA['attributes'], { hidden: false }>]: FormattedItem<
-            SCHEMA['attributes'][key]
+          [KEY in O.SelectKeys<SCHEMA['attributes'], { hidden: false }>]: FormattedItem<
+            SCHEMA['attributes'][KEY]
           >
         }
       >,
@@ -54,6 +55,8 @@ export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA e
     >
   : SCHEMA extends AnyOfAttribute
   ? FormattedItem<SCHEMA['elements'][number]>
+  : SCHEMA extends RecordAttribute
+  ? Record<ResolvePrimitiveAttribute<SCHEMA['keys']>, FormattedItem<SCHEMA['elements']>>
   : SCHEMA extends EntityV2
   ? FormattedItem<SCHEMA['item']>
   : never

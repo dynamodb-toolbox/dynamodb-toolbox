@@ -11,6 +11,7 @@ import type {
   SetAttribute,
   ListAttribute,
   MapAttribute,
+  RecordAttribute,
   AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
@@ -80,6 +81,12 @@ export type AttributePutItem<ATTRIBUTE extends Attribute> = Attribute extends AT
       // Enforce attributes that have hard default
       | O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
     >
+  : ATTRIBUTE extends RecordAttribute
+  ? {
+      [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributePutItem<
+        ATTRIBUTE['elements']
+      >
+    }
   : ATTRIBUTE extends AnyOfAttribute
   ? AttributePutItem<ATTRIBUTE['elements'][number]>
   : never

@@ -13,3 +13,7 @@ export type AttributeDefaultsComputer =
       _elements: AttributeDefaultsComputer | Record<string, AttributeDefaultsComputer>
       _list?: (...contextInputs: any[]) => PossiblyUndefinedResolvedAttribute
     }
+  | {
+      _elements: AttributeDefaultsComputer | Record<string, AttributeDefaultsComputer>
+      _record?: (...contextInputs: any[]) => PossiblyUndefinedResolvedAttribute
+    }
