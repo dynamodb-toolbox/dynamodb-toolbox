@@ -19,6 +19,8 @@ import type {
   ListAttribute,
   $MapAttribute,
   MapAttribute,
+  $RecordAttribute,
+  RecordAttribute,
   $AnyOfAttribute,
   AnyOfAttribute,
   AtLeastOnce,
@@ -31,6 +33,7 @@ import type {
   ResolvePrimitiveAttribute
 } from 'v1/item'
 import type {
+  $keys,
   $elements,
   $attributes,
   $required,
@@ -121,6 +124,13 @@ export type AttributePutItemInput<
           ? O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
           : never)
     >
+  : ATTRIBUTE extends RecordAttribute
+  ? {
+      [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributePutItemInput<
+        ATTRIBUTE['elements'],
+        REQUIRE_HARD_DEFAULTS
+      >
+    }
   : ATTRIBUTE extends AnyOfAttribute
   ? AttributePutItemInput<ATTRIBUTE['elements'][number], REQUIRE_HARD_DEFAULTS>
   : never
@@ -193,6 +203,13 @@ export type $AttributePutItemInput<
           ? O.FilterKeys<$ATTRIBUTE[$attributes], { [$default]: undefined | ComputedDefault }>
           : never)
     >
+  : $ATTRIBUTE extends $RecordAttribute
+  ? {
+      [KEY in $ResolvePrimitiveAttribute<$ATTRIBUTE[$keys]>]: $AttributePutItemInput<
+        $ATTRIBUTE[$elements],
+        REQUIRE_HARD_DEFAULTS
+      >
+    }
   : $ATTRIBUTE extends $AnyOfAttribute
   ? $AttributePutItemInput<$ATTRIBUTE[$elements][number], REQUIRE_HARD_DEFAULTS>
   : never

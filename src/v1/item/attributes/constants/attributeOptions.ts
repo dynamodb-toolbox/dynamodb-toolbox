@@ -20,6 +20,9 @@ export type $required = typeof $required
 export const $hidden = Symbol()
 export type $hidden = typeof $hidden
 
+export const $keys = Symbol()
+export type $keys = typeof $keys
+
 export const $key = Symbol()
 export type $key = typeof $key
 
@@ -34,6 +37,7 @@ export type $savedAs = typeof $savedAs
 
 export type $AttributeOptionSymbol =
   | $type
+  | $keys
   | $elements
   | $attributes
   | $value
@@ -46,6 +50,7 @@ export type $AttributeOptionSymbol =
 
 export type AttributeOptionSymbolName = {
   [$type]: 'type'
+  [$keys]: 'keys'
   [$elements]: 'elements'
   [$attributes]: 'attributes'
   [$value]: 'value'
@@ -61,6 +66,7 @@ export type AttributeOptionName = AttributeOptionSymbolName[$AttributeOptionSymb
 
 export type AttributeOptionNameSymbol = {
   type: $type
+  keys: $keys
   elements: $elements
   attributes: $attributes
   value: $value

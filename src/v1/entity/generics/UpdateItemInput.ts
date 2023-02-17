@@ -10,6 +10,7 @@ import type {
   SetAttribute,
   ListAttribute,
   MapAttribute,
+  RecordAttribute,
   AnyOfAttribute,
   OnlyOnce,
   Always,
@@ -42,8 +43,8 @@ export type UpdateItemInput<
       O.Partial<
         {
           // Filter Required OnlyOnce attributes
-          [key in O.FilterKeys<SCHEMA['attributes'], { required: OnlyOnce }>]: UpdateItemInput<
-            SCHEMA['attributes'][key]
+          [KEY in O.FilterKeys<SCHEMA['attributes'], { required: OnlyOnce }>]: UpdateItemInput<
+            SCHEMA['attributes'][KEY]
           >
         }
       >,
@@ -54,6 +55,8 @@ export type UpdateItemInput<
         O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
       >
     >
+  : SCHEMA extends RecordAttribute
+  ? { [KEY in ResolvePrimitiveAttribute<SCHEMA['keys']>]?: UpdateItemInput<SCHEMA['elements']> }
   : SCHEMA extends AnyOfAttribute
   ? UpdateItemInput<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2

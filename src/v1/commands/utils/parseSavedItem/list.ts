@@ -1,5 +1,3 @@
-import cloneDeep from 'lodash.clonedeep'
-
 import { ResolvedAttribute, ListAttribute } from 'v1'
 import { isArray } from 'v1/utils/validation'
 
@@ -10,7 +8,8 @@ export const parseSavedListAttribute = (
   input: ResolvedAttribute
 ): ResolvedAttribute => {
   if (!isArray(input)) {
-    return cloneDeep(input)
+    // TODO
+    throw new Error()
   }
 
   return input.map(elementInput => parseSavedAttribute(attribute.elements, elementInput))
