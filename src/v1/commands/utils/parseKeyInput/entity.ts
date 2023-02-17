@@ -13,8 +13,5 @@ export const parseEntityKeyInput = <ENTITY extends EntityV2>(
 
   const clonedInputWithComputedDefaults = clonedInputWithDefaults
 
-  return parseItemKeyInput<ENTITY['item']>(
-    entity.item,
-    clonedInputWithComputedDefaults
-  ) as KeyInput<ENTITY>
+  return parseItemKeyInput(entity.item, clonedInputWithComputedDefaults) as KeyInput<ENTITY>
 }

@@ -1,12 +1,12 @@
-import { ListAttribute, PossiblyUndefinedResolvedAttribute, AttributePutItem } from 'v1'
+import { ListAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
 import { isArray } from 'v1/utils/validation'
 
 import { parseAttributePutCommandInput } from './attribute'
 
-export const parseListAttributePutCommandInput = <LIST_ATTRIBUTE extends ListAttribute>(
-  listAttribute: LIST_ATTRIBUTE,
+export const parseListAttributePutCommandInput = (
+  listAttribute: ListAttribute,
   input: PossiblyUndefinedResolvedAttribute
-): AttributePutItem<LIST_ATTRIBUTE> => {
+): PossiblyUndefinedResolvedAttribute => {
   if (!isArray(input)) {
     // TODO
     throw new Error()
@@ -18,5 +18,5 @@ export const parseListAttributePutCommandInput = <LIST_ATTRIBUTE extends ListAtt
     parsedPutItemInput.push(parseAttributePutCommandInput(listAttribute.elements, element))
   )
 
-  return parsedPutItemInput as AttributePutItem<LIST_ATTRIBUTE>
+  return parsedPutItemInput
 }
