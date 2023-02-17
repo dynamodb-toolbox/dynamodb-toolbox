@@ -1,12 +1,12 @@
-import type { Item, PossiblyUndefinedResolvedItem, KeyInput } from 'v1'
+import type { Item, PossiblyUndefinedResolvedItem } from 'v1'
 import { isObject } from 'v1/utils/validation'
 
 import { parseAttributeKeyInput } from './attribute'
 
-export const parseItemKeyInput = <ITEM extends Item>(
+export const parseItemKeyInput = (
   item: Item,
   input: PossiblyUndefinedResolvedItem
-): KeyInput<ITEM> => {
+): PossiblyUndefinedResolvedItem => {
   if (!isObject(input)) {
     // TODO
     throw new Error()
@@ -24,9 +24,6 @@ export const parseItemKeyInput = <ITEM extends Item>(
       if (parsedAttributeKeyInput !== undefined) {
         parsedKeyInput[attributeName] = parsedAttributeKeyInput
       }
-    } else {
-      // TODO Add strict mode, and throw if strict mode is on
-      return
     }
   })
 
@@ -43,5 +40,5 @@ export const parseItemKeyInput = <ITEM extends Item>(
     }
   })
 
-  return parsedKeyInput as KeyInput<ITEM>
+  return parsedKeyInput
 }

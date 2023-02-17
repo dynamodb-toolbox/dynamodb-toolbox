@@ -8,7 +8,6 @@ import type {
   $MapAttribute,
   $AnyOfAttribute
 } from 'v1/item'
-import type { $elements } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { $AnyAttributePutItem } from './any'
 import type { $ConstantAttributePutItem } from './constant'
@@ -16,6 +15,7 @@ import type { $PrimitiveAttributePutItem } from './primitive'
 import type { $SetAttributePutItem } from './set'
 import type { $ListAttributePutItem } from './list'
 import type { $MapAttributePutItem } from './map'
+import type { $AnyOfAttributePutItem } from './anyOf'
 
 export type $AttributePutItem<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends $AnyAttribute
   ? $AnyAttributePutItem<$ATTRIBUTE>
@@ -30,5 +30,5 @@ export type $AttributePutItem<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extend
   : $ATTRIBUTE extends $MapAttribute
   ? $MapAttributePutItem<$ATTRIBUTE>
   : $ATTRIBUTE extends $AnyOfAttribute
-  ? $AttributePutItem<$ATTRIBUTE[$elements][number]>
+  ? $AnyOfAttributePutItem<$ATTRIBUTE>
   : never
