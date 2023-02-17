@@ -63,8 +63,8 @@ export default (
         break
       case 'setType':
         if (config.type !== 'set') error(`'setType' is only valid for type 'set'`)
-        if (!['string', 'number', 'binary'].includes(config[prop] || ''))
-          error(`Invalid 'setType', must be 'string', 'number', or 'binary'`)
+        if (!['string', 'number', 'bigint', 'binary'].includes(config[prop] || ''))
+          error(`Invalid 'setType', must be 'string', 'number', 'bigint', or 'binary'`)
         break
       case 'delimiter':
         if (typeof config[prop] !== 'string' || (config[prop] || '').trim().length === 0)
@@ -144,7 +144,7 @@ export default (
   if (!config.type) config.type = 'string'
 
   // Default coerce based on type
-  if (['string', 'boolean', 'number'].includes(config.type) && typeof config.coerce === 'undefined')
+  if (['string', 'boolean', 'number', 'bigint'].includes(config.type) && typeof config.coerce === 'undefined')
     config.coerce = true
 
   // Set defaults

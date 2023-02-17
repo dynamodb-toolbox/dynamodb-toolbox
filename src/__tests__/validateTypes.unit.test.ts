@@ -1,3 +1,4 @@
+import { toDynamoBigInt } from '../lib/utils'
 import validateTypes from '../lib/validateTypes'
 
 import { DocumentClient } from './bootstrap.test'
@@ -162,5 +163,35 @@ describe('validateTypes', () => {
       // @ts-expect-error
       validateTypes()({ type: 'set', setType: 'string', coerce: true }, 'attr', 'test')
     }).toThrow(`DocumentClient required for this operation`)
+  })
+
+  it('coerces strings to bigints', async () => {
+    const result = validateTypes(DocumentClient)({ type: 'bigint', coerce: true }, 'attr', '123000000000000000000001')
+    expect(result).toEqual(toDynamoBigInt(BigInt('123000000000000000000001')))
+  })
+
+  it('coerces numbers to bigints', async () => {
+    const result = validateTypes(DocumentClient)({ type: 'bigint', coerce: true }, 'attr', 12e10)
+    expect(result).toEqual(toDynamoBigInt(BigInt('120000000000')))
+  })
+
+  it('fails if non-bigint values if coerce is not true', async () => {
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'bigint' }, 'attr', '123000000000000000000001')
+    }).toThrow(`'attr' must be of type bigint`)
+    expect(() => {
+      validateTypes(DocumentClient)({ type: 'bigint' }, 'attr', 12e10)
+    }).toThrow(`'attr' must be of type bigint`)
+  })
+
+  it('converts arrays of bigints to sets', async () => {
+    const result = validateTypes(DocumentClient)({ type: 'set', setType: 'bigint' }, 'attr', [
+      BigInt(-1234),
+      BigInt('123000000000000000000001')
+    ])
+    expect(result).toEqual(DocumentClient.createSet([
+      toDynamoBigInt(BigInt(-1234)),
+      toDynamoBigInt(BigInt('123000000000000000000001'))
+    ], { validate: false }))
   })
 })

@@ -25,8 +25,8 @@ export interface TableConstructor<
   removeNullAttributes?: boolean
 }
 
-export type DynamoDBTypes = 'string' | 'boolean' | 'number' | 'list' | 'map' | 'binary' | 'set'
-export type DynamoDBKeyTypes = 'string' | 'number' | 'binary'
+export type DynamoDBTypes = 'string' | 'boolean' | 'number' | 'bigint' | 'list' | 'map' | 'binary' | 'set'
+export type DynamoDBKeyTypes = 'string' | 'number' | 'bigint' | 'binary'
 
 export interface executeParse {
   execute?: boolean
@@ -65,12 +65,12 @@ export type $QueryOptions<
     reverse: boolean
     select: DocumentClient.Select
     // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
-    eq: string | number
-    lt: string | number
-    lte: string | number
-    gt: string | number
-    gte: string | number
-    between: [string, string] | [number, number]
+    eq: string | number | bigint
+    lt: string | number | bigint
+    lte: string | number | bigint
+    gt: string | number | bigint
+    gte: string | number | bigint
+    between: [string, string] | [number, number] | [bigint, bigint]
     beginsWith: string
     startKey: {}
   }

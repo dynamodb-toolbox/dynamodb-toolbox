@@ -52,12 +52,12 @@ type ExpectedQueryOpts<
     parseAsEntity: string
     select: DocumentClientType.Select
     filters: ConditionsOrFilters<FilteredAttributes>
-    eq: string | number
-    lt: string | number
-    lte: string | number
-    gt: string | number
-    gte: string | number
-    between: [string, string] | [number, number]
+    eq: string | number | bigint
+    lt: string | number | bigint
+    lte: string | number | bigint
+    gt: string | number | bigint
+    gte: string | number | bigint
+    between: [string, string] | [number, number] | [bigint, bigint]
     beginsWith: string
     startKey: {}
   }

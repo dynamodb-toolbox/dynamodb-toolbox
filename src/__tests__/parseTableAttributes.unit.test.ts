@@ -19,7 +19,7 @@ describe('parseTableAttributes', () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { test: {} }), 'pk', 'sk')
     }).toThrow(
-      `Invalid or missing type for 'test'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
+      `Invalid or missing type for 'test'. Valid types are 'string', 'boolean', 'number', 'bigint', 'list', 'map', 'binary', and 'set'.`
     )
   })
 
@@ -43,7 +43,7 @@ describe('parseTableAttributes', () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { test: 'not-a-type' }), 'pk', 'sk')
     }).toThrow(
-      `Invalid or missing type for 'test'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
+      `Invalid or missing type for 'test'. Valid types are 'string', 'boolean', 'number', 'bigint', 'list', 'map', 'binary', and 'set'.`
     )
   })
 
@@ -67,7 +67,7 @@ describe('parseTableAttributes', () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { test: { type: 'not-a-type' } }), 'pk', 'sk')
     }).toThrow(
-      `Invalid or missing type for 'test'. Valid types are 'string', 'boolean', 'number', 'list', 'map', 'binary', and 'set'.`
+      `Invalid or missing type for 'test'. Valid types are 'string', 'boolean', 'number', 'bigint', 'list', 'map', 'binary', and 'set'.`
     )
   })
 
@@ -88,7 +88,7 @@ describe('parseTableAttributes', () => {
         'pk',
         'sk'
       )
-    }).toThrow(`Invalid 'setType', must be 'string', 'number', or 'binary'`)
+    }).toThrow(`Invalid 'setType', must be 'string', 'number', 'bigint' or 'binary'`)
   })
 
   it('fails when attribute has an invalid config option', async () => {

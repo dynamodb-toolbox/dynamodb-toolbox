@@ -32,7 +32,7 @@ export interface EntityConstructor<
 }
 
 export type KeyAttributeDefinition = {
-  type: 'string' | 'number' | 'binary'
+  type: 'string' | 'number' | 'bigint' | 'binary'
   // 🔨 TOIMPROVE: Probably typable
   default: any
   hidden: boolean
@@ -213,6 +213,7 @@ export type FromDynamoData<T extends DynamoDBTypes> = {
   string: string
   boolean: boolean
   number: number
+  bigint: bigint
   list: any[]
   map: any
   binary: any
@@ -320,13 +321,13 @@ export type ConditionOrFilter<Attributes extends A.Key = A.Key> = (
     negate: boolean
     entity: string
     // 🔨 TOIMPROVE: Probably typable
-    eq: string | number | boolean | null
-    ne: string | number | boolean | null
+    eq: string | number | bigint | boolean | null
+    ne: string | number | bigint | boolean | null
     lt: string | number
-    lte: string | number
-    gt: string | number
-    gte: string | number
-    between: [string, string] | [number, number]
+    lte: string | bigint | number
+    gt: string | bigint | number
+    gte: string | bigint | number
+    between: [string, string] | [number, number] | [bigint, bigint]
     beginsWith: string
     in: any[]
   }>
@@ -508,6 +509,11 @@ export type AttributeUpdateInput<AttributeType> =
       | string[]
     >
   | If<
+      B.Or<A.Equals<AttributeType, bigint[]>, A.Equals<AttributeType, bigint[] | undefined>>,
+      | { $delete?: bigint[]; $add?: bigint[]; $prepend?: AttributeType; $append?: bigint[] }
+      | string[]
+    >
+  | If<
       B.Or<A.Equals<AttributeType, string[]>, A.Equals<AttributeType, string[] | undefined>>,
       | { $delete?: string[]; $add?: string[]; $prepend?: AttributeType; $append?: string[] }
       | number[]
@@ -518,6 +524,7 @@ export type AttributeUpdateInput<AttributeType> =
       | boolean[]
     >
   | If<B.Or<A.Equals<AttributeType, FromDynamoData<'number'>>, A.Equals<AttributeType, FromDynamoData<'number'> | undefined>>, { $add?: number }>
+  | If<B.Or<A.Equals<AttributeType, FromDynamoData<'bigint'>>, A.Equals<AttributeType, FromDynamoData<'bigint'> | undefined>>, { $add?: bigint }>
 
 export type DeleteOptionsReturnValues = 'NONE' | 'ALL_OLD'
 

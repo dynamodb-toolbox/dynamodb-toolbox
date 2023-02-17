@@ -53,8 +53,8 @@ const parseAttributeConfig = (
         break
       case 'setType':
         if (config.type !== 'set') error(`'setType' is only valid for type 'set'`)
-        if (!['string', 'number', 'binary'].includes(config[prop]!))
-          error(`Invalid 'setType', must be 'string', 'number', or 'binary'`)
+        if (!['string', 'number', 'bigint', 'binary'].includes(config[prop]!))
+          error(`Invalid 'setType', must be 'string', 'number', 'bigint' or 'binary'`)
         break
       default:
         error(`'${prop}' is not a valid property type`)

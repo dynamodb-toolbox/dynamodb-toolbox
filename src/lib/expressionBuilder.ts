@@ -11,7 +11,7 @@
 import { A } from 'ts-toolbelt'
 
 import checkAttribute from './checkAttribute'
-import { error } from './utils'
+import { error, toDynamoBigInt } from './utils'
 import { TableDef } from '../classes/Table'
 
 interface AttrRef {
@@ -21,13 +21,13 @@ interface AttrRef {
 interface FilterExpression<Attr extends A.Key = A.Key> {
   attr?: Attr
   size?: string
-  eq?: string | number | boolean | null | AttrRef
-  ne?: string | number | boolean | null | AttrRef
-  lt?: string | number | AttrRef
-  lte?: string | number | AttrRef
-  gt?: string | number | AttrRef
-  gte?: string | number | AttrRef
-  between?: string[] | number[]
+  eq?: string | number | bigint | boolean | null | AttrRef
+  ne?: string | number | bigint | boolean | null | AttrRef
+  lt?: string | number | bigint | AttrRef
+  lte?: string | number | bigint | AttrRef
+  gt?: string | number | bigint | AttrRef
+  gte?: string | number | bigint | AttrRef
+  between?: string[] | number[] | bigint[]
   beginsWith?: string
   in?: any[]
   contains?: string
@@ -43,6 +43,13 @@ export type FilterExpressions<Attr extends A.Key = A.Key> =
   | FilterExpression<Attr>
   | FilterExpression<Attr>[]
   | FilterExpressions<Attr>[]
+
+const toDynamoValue = (value: any): any => {
+  if (typeof value === 'bigint') {
+    return toDynamoBigInt(value)
+  }
+  return value
+}
 
 const buildExpression = <
   Attr extends A.Key = A.Key,
@@ -257,8 +264,8 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       // Verify array input
       if (Array.isArray(value) && value.length === 2) {
         // Add values and special key condition
-        values[`:attr${grp}_0`] = value[0]
-        values[`:attr${grp}_1`] = value[1]
+        values[`:attr${grp}_0`] = toDynamoValue(value[0])
+        values[`:attr${grp}_1`] = toDynamoValue(value[1])
         clause = `${size ? `size(${operand})` : operand} between :attr${grp}_0 and :attr${grp}_1`
       } else {
         error(`'between' conditions require an array with two values.`)
@@ -270,7 +277,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
         // Add values and special key condition
         clause = `${operand} IN (${value
           .map((x, i) => {
-            values[`:attr${grp}_${i}`] = x
+            values[`:attr${grp}_${i}`] = toDynamoValue(x)
             return `:attr${grp}_${i}`
           })
           .join(',')})`
@@ -300,7 +307,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       clause = `${operand} ${operator} #attr${grp}_ref`
     } else {
       // Add value
-      values[`:attr${grp}`] = value
+      values[`:attr${grp}`] = toDynamoValue(value)
       // If begins_with, add special key condition
       if (operator === 'BEGINS_WITH') {
         if (!attr) error(`'beginsWith' conditions require an 'attr'.`)

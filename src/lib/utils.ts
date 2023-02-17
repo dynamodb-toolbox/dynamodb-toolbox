@@ -2,18 +2,20 @@ import { A, L } from 'ts-toolbelt'
 
 import { PureAttributeDefinition } from '../classes/Entity'
 import { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table'
+import DynamoDB from 'aws-sdk/clients/dynamodb'
 
 export const validTypes: DynamoDBTypes[] = [
   'string',
   'boolean',
   'number',
+  'bigint',
   'list',
   'map',
   'binary',
   'set'
 ]
 
-export const validKeyTypes: DynamoDBKeyTypes[] = ['string', 'number', 'binary']
+export const validKeyTypes: DynamoDBKeyTypes[] = ['string', 'number', 'bigint', 'binary']
 
 export const isDynamoDbType = (value: string): value is DynamoDBTypes =>
   validTypes.includes(value as DynamoDBTypes)
@@ -28,6 +30,9 @@ export const toBool = (val: any) =>
     : ['false', '0', 'no'].includes(String(val).toLowerCase())
       ? false
       : Boolean(val)
+
+export const toDynamoBigInt = (value: bigint) =>
+  DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true })
 
 // has value shortcut
 export const hasValue = (val: any) => val !== undefined && val !== null

@@ -5,7 +5,7 @@
  */
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { toBool, hasValue, error } from './utils'
+import { toBool, hasValue, error, toDynamoBigInt } from './utils'
 
 // Performs type validation/coercian
 export default (DocumentClient: DocumentClient) => (mapping: any, field: any, value: any) => {
@@ -44,6 +44,10 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
           }' to a number for '${field}'`
         )
     }
+    case 'bigint':
+      return toDynamoBigInt(typeof value === 'bigint' || mapping.coerce
+        ? BigInt(value)
+        : error(`'${field}' must be of type bigint`))
     case 'list':
       return Array.isArray(value)
         ? value
@@ -57,8 +61,15 @@ export default (DocumentClient: DocumentClient) => (mapping: any, field: any, va
     case 'set':
       if (Array.isArray(value)) {
         if (!DocumentClient) error('DocumentClient required for this operation')
+        // DocumentClient needs an array of NumberValues for createSet. It treats
+        // everything as a Number type.
+        let setType = mapping.setType
+        if (mapping.setType === 'bigint') {
+          setType = 'number'
+          value = value.map((n) => toDynamoBigInt(n))
+        }
         const set = DocumentClient.createSet(value, { validate: true })
-        return !mapping.setType || mapping.setType === set.type.toLowerCase()
+        return !setType || setType === set.type.toLowerCase()
           ? set
           : error(`'${field}' must be a valid set (array) containing only ${mapping.setType} types`)
       } else if (mapping.coerce) {
