@@ -47,7 +47,9 @@ export const cloneListAttributeInputAndAddDefaults = (
   if (isObject(computeDefaults) && '_elements' in computeDefaults) {
     switch (listAttribute.elements.type) {
       case 'map':
-        elementsComputeDefaults = { _attributes: computeDefaults._elements }
+        elementsComputeDefaults = {
+          _attributes: computeDefaults._elements as Record<string, AttributeDefaultsComputer>
+        }
         break
       case 'list':
         elementsComputeDefaults = { _elements: computeDefaults._elements }

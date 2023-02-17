@@ -1,15 +1,15 @@
 import isEqual from 'lodash.isequal'
 
-import { ConstantAttribute, PossiblyUndefinedResolvedAttribute, AttributePutItem } from 'v1'
+import { ConstantAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
 
-export const parseConstantAttributePutCommandInput = <CONSTANT_ATTRIBUTE extends ConstantAttribute>(
-  constantAttribute: CONSTANT_ATTRIBUTE,
+export const parseConstantAttributePutCommandInput = (
+  constantAttribute: ConstantAttribute,
   input: PossiblyUndefinedResolvedAttribute
-): AttributePutItem<CONSTANT_ATTRIBUTE> => {
+): PossiblyUndefinedResolvedAttribute => {
   if (!isEqual(constantAttribute.value, input)) {
     // TODO
     throw new Error()
   }
 
-  return input as AttributePutItem<CONSTANT_ATTRIBUTE>
+  return input
 }
