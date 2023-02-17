@@ -3,15 +3,17 @@ import { cloneInputAndAddDefaults } from 'v1/commands/utils/cloneInputAndAddDefa
 
 import { parseItemKeyInput } from './item'
 
-export const parseEntityKeyInput = <ENTITY extends EntityV2>(
-  entity: EntityV2,
+type EntityKeyInputParser = <ENTITY extends EntityV2>(
+  entity: ENTITY,
   input: PossiblyUndefinedResolvedItem
-): KeyInput<ENTITY> => {
+) => KeyInput<ENTITY>
+
+export const parseEntityKeyInput: EntityKeyInputParser = (entity, input) => {
   const clonedInputWithDefaults = cloneInputAndAddDefaults(entity.item, input, {
     computeDefaults: undefined
   })
 
   const clonedInputWithComputedDefaults = clonedInputWithDefaults
 
-  return parseItemKeyInput(entity.item, clonedInputWithComputedDefaults) as KeyInput<ENTITY>
+  return parseItemKeyInput(entity.item, clonedInputWithComputedDefaults) as any
 }

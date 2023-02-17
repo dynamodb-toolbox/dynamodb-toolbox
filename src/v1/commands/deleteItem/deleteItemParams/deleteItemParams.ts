@@ -22,7 +22,7 @@ export const deleteItemParams = <ENTITY extends EntityV2>(
   input: KeyInput<ENTITY>,
   deleteItemOptions: DeleteItemOptions = {}
 ): DeleteCommandInput => {
-  const validKeyInput = parseEntityKeyInput<ENTITY>(entity, input)
+  const validKeyInput = parseEntityKeyInput(entity, input)
 
   // Important to do it before renaming as validKeyInput is muted (to improve?)
   const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : undefined
