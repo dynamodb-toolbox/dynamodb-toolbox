@@ -2,22 +2,22 @@ import cloneDeep from 'lodash.clonedeep'
 
 import {
   PossiblyUndefinedResolvedAttribute,
-  ListAttribute,
+  RecordAttribute,
   ComputedDefault,
   AttributeDefaultsComputer
 } from 'v1'
-import { isArray, isFunction, isObject } from 'v1/utils/validation'
+import { isObject, isFunction } from 'v1/utils/validation'
 
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 import { DefaultsComputeOptions } from './types'
 
-export const cloneListAttributeInputAndAddDefaults = (
-  listAttribute: ListAttribute,
+export const cloneRecordAttributeInputAndAddDefaults = (
+  recordAttribute: RecordAttribute,
   input: PossiblyUndefinedResolvedAttribute,
   { computeDefaults, contextInputs }: DefaultsComputeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   if (input === undefined) {
-    if (listAttribute.default === ComputedDefault) {
+    if (recordAttribute.default === ComputedDefault) {
       if (!computeDefaults) {
         // TODO
         throw new Error()
@@ -29,23 +29,23 @@ export const cloneListAttributeInputAndAddDefaults = (
 
       if (
         isObject(computeDefaults) &&
-        '_list' in computeDefaults &&
-        isFunction(computeDefaults._list)
+        '_record' in computeDefaults &&
+        isFunction(computeDefaults._record)
       ) {
-        return computeDefaults._list(...contextInputs)
+        return computeDefaults._record(...contextInputs)
       }
     }
 
     return undefined
   }
 
-  if (!isArray(input)) {
+  if (!isObject(input)) {
     return cloneDeep(input)
   }
 
   let elementsComputeDefaults: AttributeDefaultsComputer
   if (isObject(computeDefaults) && '_elements' in computeDefaults) {
-    switch (listAttribute.elements.type) {
+    switch (recordAttribute.elements.type) {
       case 'map':
         elementsComputeDefaults = {
           _attributes: computeDefaults._elements as Record<string, AttributeDefaultsComputer>
@@ -59,10 +59,13 @@ export const cloneListAttributeInputAndAddDefaults = (
     }
   }
 
-  return input.map((elementInput, elementIndex) =>
-    cloneAttributeInputAndAddDefaults(listAttribute.elements, elementInput, {
-      computeDefaults: elementsComputeDefaults,
-      contextInputs: [elementIndex, ...contextInputs]
-    })
+  return Object.fromEntries(
+    Object.entries(input).map(([elementKey, elementInput]) => [
+      elementKey,
+      cloneAttributeInputAndAddDefaults(recordAttribute.elements, elementInput, {
+        computeDefaults: elementsComputeDefaults,
+        contextInputs: [elementKey, ...contextInputs]
+      })
+    ])
   )
 }

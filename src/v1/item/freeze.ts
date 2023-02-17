@@ -27,7 +27,7 @@ export const freezeItem: ItemFreezer = <$ITEM extends $Item>(item: $ITEM): Freez
 
   const attributes: $ITEM[$attributes] = item[$attributes]
   const frozenAttributes: {
-    [key in keyof $ITEM[$attributes]]: FreezeAttribute<$ITEM[$attributes][key]>
+    [KEY in keyof $ITEM[$attributes]]: FreezeAttribute<$ITEM[$attributes][KEY]>
   } = {} as any
 
   for (const attributeName in attributes) {
