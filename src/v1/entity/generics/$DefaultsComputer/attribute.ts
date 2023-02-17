@@ -9,7 +9,7 @@ import type {
   $MapAttribute,
   $AnyOfAttribute
 } from 'v1/item'
-import { $default } from 'v1/item/attributes/constants/attributeOptions'
+import type { $default } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { $AttributePutItem } from '../$PutItem'
 
@@ -24,6 +24,7 @@ export type $AttributePutDefaultsComputer<
   | $ConstantAttribute
   | $PrimitiveAttribute
   | $SetAttribute
+  // TODO: Prevent nested ComputedDefaults in anyOf
   | $AnyOfAttribute
 ) & { [$default]: ComputedDefault }
   ? (...contextInputs: CONTEXT_INPUTS) => $AttributePutItem<$ATTRIBUTE>

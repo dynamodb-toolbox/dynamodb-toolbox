@@ -1,12 +1,12 @@
-import { SetAttribute, PossiblyUndefinedResolvedAttribute, AttributePutItem } from 'v1'
+import { SetAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
 import { isSet } from 'v1/utils/validation'
 
 import { parseAttributePutCommandInput } from './attribute'
 
-export const parseSetAttributePutCommandInput = <SET_ATTRIBUTE extends SetAttribute>(
-  setAttribute: SET_ATTRIBUTE,
+export const parseSetAttributePutCommandInput = (
+  setAttribute: SetAttribute,
   input: PossiblyUndefinedResolvedAttribute
-): AttributePutItem<SET_ATTRIBUTE> => {
+): PossiblyUndefinedResolvedAttribute => {
   if (!isSet(input)) {
     // TODO
     throw new Error()
@@ -18,5 +18,5 @@ export const parseSetAttributePutCommandInput = <SET_ATTRIBUTE extends SetAttrib
     parsedPutItemInput.add(parseAttributePutCommandInput(setAttribute.elements, element))
   )
 
-  return parsedPutItemInput as AttributePutItem<SET_ATTRIBUTE>
+  return parsedPutItemInput
 }

@@ -83,7 +83,7 @@ export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends A
   ? Set<AttributeKeyInput<ATTRIBUTE['elements']>>
   : ATTRIBUTE extends ListAttribute
   ? AttributeKeyInput<ATTRIBUTE['elements']>[]
-  : ATTRIBUTE extends MapAttribute | Item
+  : ATTRIBUTE extends MapAttribute
   ? O.Required<
       O.Partial<
         {

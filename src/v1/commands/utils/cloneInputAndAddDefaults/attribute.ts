@@ -1,9 +1,9 @@
-import { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1'
+import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1'
 
 import { clonePrimitiveAttributeInputAndAddDefaults } from './primitive'
 import { cloneListAttributeInputAndAddDefaults } from './list'
 import { cloneMapAttributeInputAndAddDefaults } from './map'
-import { DefaultsComputeOptions } from './types'
+import type { DefaultsComputeOptions } from './types'
 
 export const cloneAttributeInputAndAddDefaults = (
   attribute: Attribute,
@@ -23,5 +23,8 @@ export const cloneAttributeInputAndAddDefaults = (
       return cloneListAttributeInputAndAddDefaults(attribute, input, defaultsComputeOptions)
     case 'map':
       return cloneMapAttributeInputAndAddDefaults(attribute, input, defaultsComputeOptions)
+    case 'anyOf':
+      // TODO
+      return undefined
   }
 }
