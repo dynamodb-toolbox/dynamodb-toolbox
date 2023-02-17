@@ -1,12 +1,12 @@
-import { Item, PossiblyUndefinedResolvedItem, PutItem } from 'v1'
+import { Item, PossiblyUndefinedResolvedItem } from 'v1'
 import { isObject } from 'v1/utils/validation'
 
 import { parseAttributePutCommandInput } from './attribute'
 
-export const parseItemPutCommandInput = <ITEM extends Item>(
+export const parseItemPutCommandInput = (
   item: Item,
   input: PossiblyUndefinedResolvedItem
-): PutItem<ITEM> => {
+): PossiblyUndefinedResolvedItem => {
   if (!isObject(input)) {
     // TODO
     throw new Error()
@@ -38,5 +38,5 @@ export const parseItemPutCommandInput = <ITEM extends Item>(
     }
   })
 
-  return parsedPutItemInput as PutItem<ITEM>
+  return parsedPutItemInput
 }

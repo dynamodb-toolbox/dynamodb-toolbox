@@ -10,6 +10,6 @@ export type AttributeDefaultsComputer =
       _map?: (...contextInputs: any[]) => PossiblyUndefinedResolvedAttribute
     }
   | {
-      _elements: Record<string, AttributeDefaultsComputer>
+      _elements: AttributeDefaultsComputer | Record<string, AttributeDefaultsComputer>
       _list?: (...contextInputs: any[]) => PossiblyUndefinedResolvedAttribute
     }

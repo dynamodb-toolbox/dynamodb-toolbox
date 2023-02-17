@@ -1,17 +1,14 @@
 import {
   PrimitiveAttribute,
   PossiblyUndefinedResolvedAttribute,
-  ResolvedPrimitiveAttribute,
-  AttributePutItem
+  ResolvedPrimitiveAttribute
 } from 'v1'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 
-export const parsePrimitiveAttributePutCommandInput = <
-  PRIMITIVE_ATTRIBUTE extends PrimitiveAttribute
->(
-  primitiveAttribute: PRIMITIVE_ATTRIBUTE,
+export const parsePrimitiveAttributePutCommandInput = (
+  primitiveAttribute: PrimitiveAttribute,
   input: PossiblyUndefinedResolvedAttribute
-): AttributePutItem<PRIMITIVE_ATTRIBUTE> => {
+): PossiblyUndefinedResolvedAttribute => {
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(input)) {
     // TODO
@@ -26,5 +23,5 @@ export const parsePrimitiveAttributePutCommandInput = <
     throw new Error()
   }
 
-  return input as AttributePutItem<PRIMITIVE_ATTRIBUTE>
+  return input
 }
