@@ -11,6 +11,7 @@ import type {
   ListAttribute,
   MapAttribute,
   MapAttributeAttributes,
+  RecordAttribute,
   AnyOfAttribute,
   AtLeastOnce,
   OnlyOnce,
@@ -79,6 +80,8 @@ export type SavedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA exten
   ? SavedItem<SCHEMA['elements']>[]
   : SCHEMA extends MapAttribute | Item
   ? RecSavedItem<SCHEMA>
+  : SCHEMA extends RecordAttribute
+  ? { [KEY in ResolvePrimitiveAttribute<SCHEMA['keys']>]?: SavedItem<SCHEMA['elements']> }
   : SCHEMA extends AnyOfAttribute
   ? SavedItem<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2

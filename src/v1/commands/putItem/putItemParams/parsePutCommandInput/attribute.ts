@@ -5,6 +5,7 @@ import { parsePrimitiveAttributePutCommandInput } from './primitive'
 import { parseSetAttributePutCommandInput } from './set'
 import { parseListAttributePutCommandInput } from './list'
 import { parseMapAttributePutCommandInput } from './map'
+import { parseRecordAttributePutCommandInput } from './record'
 import { parseAnyOfAttributePutCommandInput } from './anyOf'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'onlyOnce', 'atLeastOnce'])
@@ -48,6 +49,8 @@ export const parseAttributePutCommandInput = (
       return parseListAttributePutCommandInput(attribute, input)
     case 'map':
       return parseMapAttributePutCommandInput(attribute, input)
+    case 'record':
+      return parseRecordAttributePutCommandInput(attribute, input)
     case 'anyOf':
       return parseAnyOfAttributePutCommandInput(attribute, input)
   }

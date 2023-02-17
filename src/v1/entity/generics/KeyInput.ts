@@ -19,6 +19,8 @@ import type {
   $ListAttribute,
   MapAttribute,
   $MapAttribute,
+  RecordAttribute,
+  $RecordAttribute,
   AnyOfAttribute,
   $AnyOfAttribute,
   Always,
@@ -28,6 +30,7 @@ import type {
   ResolvePrimitiveAttribute
 } from 'v1/item'
 import type {
+  $keys,
   $elements,
   $attributes,
   $required,
@@ -100,6 +103,12 @@ export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends A
         O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined }>
       >
     >
+  : ATTRIBUTE extends RecordAttribute
+  ? {
+      [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributeKeyInput<
+        ATTRIBUTE['elements']
+      >
+    }
   : ATTRIBUTE extends AnyOfAttribute
   ? AttributeKeyInput<ATTRIBUTE['elements'][number]>
   : never
@@ -148,8 +157,8 @@ export type $AttributeKeyInput<ATTRIBUTE extends $Attribute> = $Attribute extend
       O.Partial<
         {
           // Keep only key attributes
-          [key in O.SelectKeys<ATTRIBUTE[$attributes], { [$key]: true }>]: $AttributeKeyInput<
-            ATTRIBUTE[$attributes][key]
+          [KEY in O.SelectKeys<ATTRIBUTE[$attributes], { [$key]: true }>]: $AttributeKeyInput<
+            ATTRIBUTE[$attributes][KEY]
           >
         }
       >,
@@ -160,6 +169,12 @@ export type $AttributeKeyInput<ATTRIBUTE extends $Attribute> = $Attribute extend
         O.FilterKeys<ATTRIBUTE[$attributes], { [$default]: undefined }>
       >
     >
+  : ATTRIBUTE extends $RecordAttribute
+  ? {
+      [KEY in $ResolvePrimitiveAttribute<ATTRIBUTE[$keys]>]: $AttributeKeyInput<
+        ATTRIBUTE[$elements]
+      >
+    }
   : ATTRIBUTE extends $AnyOfAttribute
   ? $AttributeKeyInput<ATTRIBUTE[$elements][number]>
   : never
