@@ -3,13 +3,15 @@ import { cloneInputAndAddDefaults } from 'v1/commands/utils/cloneInputAndAddDefa
 
 import { parseItemPutCommandInput } from './item'
 
-export const parseEntityPutCommandInput = <ENTITY extends EntityV2>(
-  entity: EntityV2,
+type EntityPutCommandInputParser = <ENTITY extends EntityV2>(
+  entity: ENTITY,
   input: PossiblyUndefinedResolvedItem
-): PutItem<ENTITY> => {
+) => PutItem<ENTITY>
+
+export const parseEntityPutCommandInput: EntityPutCommandInputParser = (entity, input) => {
   const clonedInputWithDefaults = cloneInputAndAddDefaults(entity.item, input, {
     computeDefaults: entity.computedDefaults
   })
 
-  return parseItemPutCommandInput(entity.item, clonedInputWithDefaults) as PutItem<ENTITY>
+  return parseItemPutCommandInput(entity.item, clonedInputWithDefaults) as any
 }

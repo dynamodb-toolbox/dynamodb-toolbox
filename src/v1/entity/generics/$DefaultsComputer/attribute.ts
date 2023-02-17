@@ -7,6 +7,7 @@ import type {
   $SetAttribute,
   $ListAttribute,
   $MapAttribute,
+  $RecordAttribute,
   $AnyOfAttribute
 } from 'v1/item'
 import type { $default } from 'v1/item/attributes/constants/attributeOptions'
@@ -15,6 +16,7 @@ import type { $AttributePutItem } from '../$PutItem'
 
 import type { $ListAttributePutDefaultsComputer } from './list'
 import type { $MapAttributePutDefaultsComputer } from './map'
+import type { $RecordAttributePutDefaultsComputer } from './record'
 
 export type $AttributePutDefaultsComputer<
   $ATTRIBUTE extends $Attribute,
@@ -32,4 +34,6 @@ export type $AttributePutDefaultsComputer<
   ? $ListAttributePutDefaultsComputer<$ATTRIBUTE, CONTEXT_INPUTS>
   : $ATTRIBUTE extends $MapAttribute
   ? $MapAttributePutDefaultsComputer<$ATTRIBUTE, CONTEXT_INPUTS>
+  : $ATTRIBUTE extends $RecordAttribute
+  ? $RecordAttributePutDefaultsComputer<$ATTRIBUTE, CONTEXT_INPUTS>
   : undefined
