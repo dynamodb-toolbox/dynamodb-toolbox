@@ -1,11 +1,15 @@
 import type { O } from 'ts-toolbelt'
 
-import type { $MapAttribute, AtLeastOnce, OnlyOnce, Always, ComputedDefault } from 'v1/item'
 import type {
+  $MapAttribute,
+  AtLeastOnce,
+  OnlyOnce,
+  Always,
+  ComputedDefault,
   $attributes,
   $required,
   $default
-} from 'v1/item/attributes/constants/attributeOptions'
+} from 'v1/item'
 
 import type { $AttributePutItem } from './attribute'
 

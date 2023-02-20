@@ -8,9 +8,9 @@ import type {
   $ListAttribute,
   $MapAttribute,
   $RecordAttribute,
-  $AnyOfAttribute
+  $AnyOfAttribute,
+  $default
 } from 'v1/item'
-import type { $default } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { $AttributePutItem } from '../$PutItem'
 
