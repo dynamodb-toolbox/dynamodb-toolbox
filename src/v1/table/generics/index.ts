@@ -1,2 +1,1 @@
-export { HasSK } from './hasSk'
-export { PrimaryKey } from './primaryKey'
+export type { PrimaryKey } from './primaryKey'

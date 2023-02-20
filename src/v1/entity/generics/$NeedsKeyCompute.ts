@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { $Item, Always, $type, $attributes, $required, $key, $savedAs } from 'v1/item'
-import type { TableV2, IndexableKeyType, HasSK } from 'v1/table'
+import type { TableV2, IndexableKeyType, Key } from 'v1/table'
 
 type Or<BOOL_A extends boolean, BOOL_B extends boolean> = BOOL_A extends true
   ? true
@@ -33,7 +33,12 @@ type $NeedsKeyPartCompute<
  * @param TableInput Table
  * @return Boolean
  */
-export type $NeedsKeyCompute<$ITEM extends $Item, TABLE extends TableV2> = HasSK<TABLE> extends true
+export type $NeedsKeyCompute<
+  $ITEM extends $Item,
+  TABLE extends TableV2
+> = Key extends TABLE['sortKey']
+  ? $NeedsKeyPartCompute<$ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>
+  : NonNullable<TABLE['sortKey']> extends Key
   ? Or<
       $NeedsKeyPartCompute<$ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>,
       $NeedsKeyPartCompute<
@@ -42,4 +47,4 @@ export type $NeedsKeyCompute<$ITEM extends $Item, TABLE extends TableV2> = HasSK
         NonNullable<TABLE['sortKey']>['type']
       >
     >
-  : $NeedsKeyPartCompute<$ITEM, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>
+  : never
