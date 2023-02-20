@@ -1,5 +1,10 @@
-import type { $RecordAttribute, $ResolvePrimitiveAttribute } from 'v1/item'
-import type { $keys, $elements, $required } from 'v1/item/attributes/constants/attributeOptions'
+import type {
+  $RecordAttribute,
+  $ResolvePrimitiveAttribute,
+  $keys,
+  $elements,
+  $required
+} from 'v1/item'
 
 import type { $AttributePutItem } from './attribute'
 

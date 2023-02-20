@@ -1,5 +1,4 @@
-import type { $ConstantAttribute, $ResolveConstantAttribute } from 'v1/item'
-import type { $required } from 'v1/item/attributes/constants/attributeOptions'
+import type { $ConstantAttribute, $ResolveConstantAttribute, $required } from 'v1/item'
 
 export type $ConstantAttributePutItem<
   $CONSTANT_ATTRIBUTE extends $ConstantAttribute
