@@ -33,7 +33,7 @@
     "prettier": "prettier --check 'src/**/*.(js|ts)'",
     "v1-build": "rm -rf dist && tsc -p tsconfig.v1-build.json",
     "prepare": "npm run v1-build",
-    "prepublishOnly": "npm v1-test && npm run lint && npm run v1-check-types",
+    "prepublishOnly": "npm run v1-test && npm run lint && npm run v1-check-types",
     "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
   },
   "lint-staged": {
