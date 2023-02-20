@@ -1,6 +1,5 @@
-import type { ComputedDefault, $MapAttribute } from 'v1/item'
+import type { ComputedDefault, $MapAttribute, $attributes, $default } from 'v1/item'
 import type { OmitUndefinedProperties } from 'v1/types'
-import type { $attributes, $default } from 'v1/item/attributes/constants/attributeOptions'
 
 import type { $AttributePutItem } from '../$PutItem'
 import type { $AttributePutItemInput } from '../PutItemInput'
