@@ -82,9 +82,6 @@
     "typescript": "^4.3.0"
   },
   "files": [
-    "dist/index.*",
-    "dist/constants.*",
-    "dist/classes/",
-    "dist/lib/"
+    "dist"
   ]
 }
