@@ -2,7 +2,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { HasSK, PrimaryKey, TableV2 } from 'v1/table'
+import { PrimaryKey, TableV2 } from 'v1/table'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -21,5 +21,4 @@ export const MyTable = new TableV2({
   documentClient
 })
 
-type HasSecKey = HasSK<typeof MyTable>
 type PK = PrimaryKey<typeof MyTable>

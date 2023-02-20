@@ -1,7 +1,5 @@
-import { TableV2 } from '../class'
-import { IndexableKeyType, ResolveIndexableKeyType } from '../types'
-
-import { HasSK } from './hasSk'
+import type { TableV2 } from '../class'
+import type { IndexableKeyType, ResolveIndexableKeyType, Key } from '../types'
 
 /**
  * Returns the TS type of a Table Primary Key
@@ -11,16 +9,18 @@ import { HasSK } from './hasSk'
  */
 export type PrimaryKey<TABLE extends TableV2 = TableV2> = TableV2 extends TABLE
   ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>
-  : HasSK<TABLE> extends true
+  : Key extends TABLE['sortKey']
   ? {
-      [K in
+      [KEY in TABLE['partitionKey']['name']]: ResolveIndexableKeyType<TABLE['partitionKey']['type']>
+    }
+  : NonNullable<TABLE['sortKey']> extends Key
+  ? {
+      [KEY in
         | TABLE['partitionKey']['name']
-        | NonNullable<TABLE['sortKey']>['name']]: K extends TABLE['partitionKey']['name']
+        | NonNullable<TABLE['sortKey']>['name']]: KEY extends TABLE['partitionKey']['name']
         ? ResolveIndexableKeyType<TABLE['partitionKey']['type']>
-        : K extends NonNullable<TABLE['sortKey']>['name']
+        : KEY extends NonNullable<TABLE['sortKey']>['name']
         ? ResolveIndexableKeyType<NonNullable<TABLE['sortKey']>['type']>
         : never
     }
-  : {
-      [K in TABLE['partitionKey']['name']]: ResolveIndexableKeyType<TABLE['partitionKey']['type']>
-    }
+  : never
