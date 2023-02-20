@@ -2,7 +2,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "baseUrl": "src",
-    "rootDir": "src/v1"
+    "rootDir": "src/v1",
+    "paths": {
+      "v1": ["v1"],
+      "v1/*": ["v1/*"]
+    }
   },
   "include": ["src/v1/**/*"]
 }
