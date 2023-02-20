@@ -31,7 +31,9 @@
     "v1-check-types": "tsc --noEmit -p tsconfig.v1.json",
     "lint": "eslint src/v1",
     "prettier": "prettier --check 'src/**/*.(js|ts)'",
-    "prepublishOnly": "npm test && npm run lint && npm run test-types",
+    "v1-build": "rm -rf dist && tsc -p tsconfig.v1-build.json",
+    "prepare": "npm run v1-build",
+    "prepublishOnly": "npm v1-test && npm run lint && npm run v1-check-types",
     "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
   },
   "lint-staged": {
