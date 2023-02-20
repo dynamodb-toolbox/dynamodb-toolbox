@@ -30,15 +30,13 @@ import type {
   $ResolveConstantAttribute,
   ResolveConstantAttribute,
   $ResolvePrimitiveAttribute,
-  ResolvePrimitiveAttribute
-} from 'v1/item'
-import type {
+  ResolvePrimitiveAttribute,
   $keys,
   $elements,
   $attributes,
   $required,
   $default
-} from 'v1/item/attributes/constants/attributeOptions'
+} from 'v1/item'
 
 import type { EntityV2 } from '../class'
 
