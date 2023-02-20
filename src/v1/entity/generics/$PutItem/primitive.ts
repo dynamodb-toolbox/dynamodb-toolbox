@@ -1,5 +1,4 @@
-import { $PrimitiveAttribute, $ResolvePrimitiveAttribute } from 'v1/item'
-import type { $required } from 'v1/item/attributes/constants/attributeOptions'
+import { $PrimitiveAttribute, $ResolvePrimitiveAttribute, $required } from 'v1/item'
 
 export type $PrimitiveAttributePutItem<
   $PRIMITIVE_ATTRIBUTE extends $PrimitiveAttribute

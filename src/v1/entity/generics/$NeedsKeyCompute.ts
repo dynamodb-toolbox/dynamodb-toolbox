@@ -1,13 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { $Item, Always } from 'v1/item'
-import type {
-  $type,
-  $attributes,
-  $required,
-  $key,
-  $savedAs
-} from 'v1/item/attributes/constants/attributeOptions'
+import type { $Item, Always, $type, $attributes, $required, $key, $savedAs } from 'v1/item'
 import type { TableV2, IndexableKeyType, HasSK } from 'v1/table'
 
 type Or<BOOL_A extends boolean, BOOL_B extends boolean> = BOOL_A extends true
