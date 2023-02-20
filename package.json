@@ -31,7 +31,7 @@
     "v1-check-types": "tsc --noEmit -p tsconfig.v1.json",
     "lint": "eslint src/v1",
     "prettier": "prettier --check 'src/**/*.(js|ts)'",
-    "v1-build": "rm -rf dist && tsc -p tsconfig.v1-build.json",
+    "v1-build": "rm -rf dist && tsc -p tsconfig.v1-build.json && tsc-alias -p tsconfig.json",
     "prepare": "npm run v1-build",
     "prepublishOnly": "npm run v1-test && npm run lint && npm run v1-check-types",
     "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
@@ -91,6 +91,7 @@
     "jest": "^29.2.2",
     "prettier": "^2.2.1",
     "ts-jest": "^29.0.3",
+    "tsc-alias": "^1.8.2",
     "tsconfig-paths": "^4.1.1",
     "tsd": "^0.23.0",
     "typescript": "^4.3.0"
