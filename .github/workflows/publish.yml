@@ -21,9 +21,9 @@ jobs:
       # Store the name of the release
       # See https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
       - run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - run: echo "RELEASE_NPM_TAG=${{ github.event.release.prerelease && 'alpha' ||  'latest' }}" >> $GITHUB_ENV
       - run: npm ci
       - run: npm version $RELEASE_VERSION --no-git-tag-version
-      - run: npm run build
-      - run: npm publish --access public
+      - run: npm publish --access public --tag $RELEASE_NPM_TAG
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
