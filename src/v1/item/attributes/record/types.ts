@@ -1,37 +1,36 @@
 import type { AtLeastOnce } from '../constants'
-import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
+import type { $type, $default } from '../constants/attributeOptions'
+import type { $AttributeSharedState, AttributeSharedState } from '../shared/interface'
 import type { $Attribute, Attribute } from '../types/attribute'
+
+type RecordAttributeKeysState = {
+  required: AtLeastOnce
+  hidden: false
+  key: false
+  savedAs: undefined
+}
 
 export type $RecordAttributeKeys = $Attribute & {
   [$type]: 'string'
-  [$required]: AtLeastOnce
-  [$hidden]: false
-  [$key]: false
-  [$savedAs]: undefined
   [$default]: undefined
-}
+} & $AttributeSharedState<RecordAttributeKeysState>
 
 export type RecordAttributeKeys = Attribute & {
   type: 'string'
+  default: undefined
+} & AttributeSharedState<RecordAttributeKeysState>
+
+type RecordAttributeElementsState = {
   required: AtLeastOnce
   hidden: false
   key: false
   savedAs: undefined
-  default: undefined
 }
 
 export type $RecordAttributeElements = $Attribute & {
-  [$required]: AtLeastOnce
-  [$hidden]: false
-  [$key]: false
-  [$savedAs]: undefined
   [$default]: undefined
-}
+} & $AttributeSharedState<RecordAttributeElementsState>
 
 export type RecordAttributeElements = Attribute & {
-  required: AtLeastOnce
-  hidden: false
-  key: false
-  savedAs: undefined
   default: undefined
-}
+} & AttributeSharedState<RecordAttributeElementsState>

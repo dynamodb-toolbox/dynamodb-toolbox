@@ -10,10 +10,10 @@ describe('shared properties validation', () => {
   const path = 'some/path'
 
   const validProperties: $AttributeSharedState<{
-    [$required]: Never
-    [$hidden]: false
-    [$key]: false
-    [$savedAs]: undefined
+    required: Never
+    hidden: false
+    key: false
+    savedAs: undefined
   }> = {
     [$required]: 'never',
     [$hidden]: false,
