@@ -29,12 +29,12 @@ type AnyPrimitiveAttributeTyper = <
 ) => $PrimitiveAttribute<
   TYPE,
   {
-    [$required]: OPTIONS['required']
-    [$hidden]: OPTIONS['hidden']
-    [$key]: OPTIONS['key']
-    [$savedAs]: OPTIONS['savedAs']
-    [$enum]: OPTIONS[$enum]
-    [$default]: OPTIONS['default']
+    required: OPTIONS['required']
+    hidden: OPTIONS['hidden']
+    key: OPTIONS['key']
+    savedAs: OPTIONS['savedAs']
+    enum: OPTIONS[$enum]
+    default: OPTIONS['default']
   }
 >
 
@@ -70,12 +70,12 @@ const primitive: AnyPrimitiveAttributeTyper = <
   } as $PrimitiveAttribute<
     TYPE,
     {
-      [$required]: OPTIONS['required']
-      [$hidden]: OPTIONS['hidden']
-      [$key]: OPTIONS['key']
-      [$savedAs]: OPTIONS['savedAs']
-      [$enum]: OPTIONS[$enum]
-      [$default]: OPTIONS['default']
+      required: OPTIONS['required']
+      hidden: OPTIONS['hidden']
+      key: OPTIONS['key']
+      savedAs: OPTIONS['savedAs']
+      enum: OPTIONS[$enum]
+      default: OPTIONS['default']
     }
   >)
 
