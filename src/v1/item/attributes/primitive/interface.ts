@@ -1,18 +1,9 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
+import type { $type, $enum, $default } from '../constants/attributeOptions'
 import type {
-  $type,
-  $required,
-  $hidden,
-  $key,
-  $savedAs,
-  $enum,
-  $default
-} from '../constants/attributeOptions'
-import type { FreezeAttributeStateConstraint } from '../shared/freezeAttributeStateConstraint'
-import type {
-  $AttributeSharedStateConstraint,
+  AttributeSharedStateConstraint,
   $AttributeSharedState,
   AttributeSharedState
 } from '../shared/interface'
@@ -24,11 +15,11 @@ import type {
   PrimitiveAttributeDefaultValue
 } from './types'
 
-interface $PrimitiveAttributeStateConstraint<
+interface PrimitiveAttributeStateConstraint<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
-> extends $AttributeSharedStateConstraint {
-  [$enum]: PrimitiveAttributeEnumValues<TYPE>
-  [$default]: PrimitiveAttributeDefaultValue<TYPE>
+> extends AttributeSharedStateConstraint {
+  enum: PrimitiveAttributeEnumValues<TYPE>
+  default: PrimitiveAttributeDefaultValue<TYPE>
 }
 
 /**
@@ -36,11 +27,11 @@ interface $PrimitiveAttributeStateConstraint<
  */
 export interface $PrimitiveAttribute<
   $TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  $STATE extends $PrimitiveAttributeStateConstraint<$TYPE> = $PrimitiveAttributeStateConstraint<$TYPE>
-> extends $AttributeSharedState<$STATE> {
+  STATE extends PrimitiveAttributeStateConstraint<$TYPE> = PrimitiveAttributeStateConstraint<$TYPE>
+> extends $AttributeSharedState<STATE> {
   [$type]: $TYPE
-  [$enum]: $STATE[$enum]
-  [$default]: $STATE[$default]
+  [$enum]: STATE['enum']
+  [$default]: STATE['default']
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -52,25 +43,25 @@ export interface $PrimitiveAttribute<
    */
   required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_IS_REQUIRED
-  ) => $PrimitiveAttribute<$TYPE, O.Update<$STATE, $required, NEXT_IS_REQUIRED>>
+  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'required', NEXT_IS_REQUIRED>>
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $PrimitiveAttribute<$TYPE, O.Update<$STATE, $required, 'never'>>
+  optional: () => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'required', 'never'>>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $PrimitiveAttribute<$TYPE, O.Update<$STATE, $hidden, true>>
+  hidden: () => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'hidden', true>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $PrimitiveAttribute<$TYPE, O.Update<$STATE, $key, true>>
+  key: () => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'key', true>>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => $PrimitiveAttribute<$TYPE, O.Update<$STATE, $savedAs, NEXT_SAVED_AS>>
+  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
   /**
    * Provide a finite list of possible values for attribute
    * (For typing reasons, enums are only available as attribute methods, not as input options)
@@ -81,7 +72,7 @@ export interface $PrimitiveAttribute<
    */
   enum: <NEXT_ENUM extends ResolvePrimitiveAttributeType<$TYPE>[]>(
     ...nextEnum: NEXT_ENUM
-  ) => $PrimitiveAttribute<$TYPE, O.Update<$STATE, $enum, NEXT_ENUM>>
+  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', NEXT_ENUM>>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
@@ -89,17 +80,13 @@ export interface $PrimitiveAttribute<
    */
   default: <
     NEXT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
-      ($STATE[$enum] extends ResolvePrimitiveAttributeType<$TYPE>[]
-        ? $STATE[$enum][number] | (() => $STATE[$enum][number])
+      (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
+        ? STATE['enum'][number] | (() => STATE['enum'][number])
         : unknown)
   >(
     nextDefaultValue: NEXT_DEFAULT
-  ) => $PrimitiveAttribute<$TYPE, O.Update<$STATE, $default, NEXT_DEFAULT>>
+  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'default', NEXT_DEFAULT>>
 }
-
-export type PrimitiveAttributeStateConstraint<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
-> = FreezeAttributeStateConstraint<$PrimitiveAttributeStateConstraint<TYPE>>
 
 export interface PrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,

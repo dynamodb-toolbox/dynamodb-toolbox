@@ -10,7 +10,7 @@
     "plugin:prettier/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports"],
+  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports", "prettier"],
   "parser": "@typescript-eslint/parser",
   "root": true,
   "parserOptions": {

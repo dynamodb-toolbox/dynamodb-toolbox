@@ -1,29 +1,22 @@
-import { AtLeastOnce } from '../constants'
-import { $required, $hidden, $key, $savedAs, $enum, $default } from '../constants/attributeOptions'
+import type { AtLeastOnce } from '../constants'
 import type { PrimitiveAttribute, $PrimitiveAttribute } from '../primitive/interface'
-import { PrimitiveAttributeEnumValues } from '../primitive/types'
+import type { PrimitiveAttributeEnumValues } from '../primitive/types'
+
+interface SetAttributeElementState {
+  required: AtLeastOnce
+  hidden: false
+  key: boolean
+  savedAs: undefined
+  enum: PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>
+  default: undefined
+}
 
 export type $SetAttributeElements = $PrimitiveAttribute<
   'string' | 'number' | 'binary',
-  {
-    [$required]: AtLeastOnce
-    [$hidden]: false
-    [$key]: boolean
-    [$savedAs]: undefined
-    [$enum]: PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>
-    [$default]: undefined
-  }
+  SetAttributeElementState
 >
 
-// TODO: Just use FreezeAttribute ?
 export type SetAttributeElements = PrimitiveAttribute<
   'string' | 'number' | 'binary',
-  {
-    required: AtLeastOnce
-    hidden: false
-    key: boolean
-    savedAs: undefined
-    enum: PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>
-    default: undefined
-  }
+  SetAttributeElementState
 >
