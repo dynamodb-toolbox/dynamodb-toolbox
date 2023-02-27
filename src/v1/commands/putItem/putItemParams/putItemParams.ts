@@ -22,7 +22,7 @@ export const putItemParams = <ENTITY extends EntityV2>(
   input: PutItemInput<ENTITY, false>,
   putItemOptions: PutItemOptions = {}
 ): PutCommandInput => {
-  const validInput = parseEntityPutCommandInput(entity, input)
+  const validInput = parseEntityPutCommandInput<EntityV2>(entity, input)
 
   // Important to do it before renaming as validInput is muted (to improve?)
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : undefined
