@@ -1,1 +1,1 @@
-export type { $HasComputedDefaults } from './$HasComputedDefaults'
+export type { HasComputedDefaults } from './HasComputedDefaults'
