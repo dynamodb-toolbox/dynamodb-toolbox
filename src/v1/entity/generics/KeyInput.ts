@@ -2,38 +2,19 @@ import type { O } from 'ts-toolbelt'
 
 import type {
   Item,
-  $Item,
   Attribute,
-  $Attribute,
   ResolvedAttribute,
-  ResolvedMapAttribute,
   AnyAttribute,
-  $AnyAttribute,
   ConstantAttribute,
-  $ConstantAttribute,
   PrimitiveAttribute,
-  $PrimitiveAttribute,
   SetAttribute,
-  $SetAttribute,
   ListAttribute,
-  $ListAttribute,
   MapAttribute,
-  $MapAttribute,
   RecordAttribute,
-  $RecordAttribute,
   AnyOfAttribute,
-  $AnyOfAttribute,
   Always,
-  $ResolveConstantAttribute,
   ResolveConstantAttribute,
-  $ResolvePrimitiveAttribute,
-  ResolvePrimitiveAttribute,
-  $keys,
-  $elements,
-  $attributes,
-  $required,
-  $key,
-  $default
+  ResolvePrimitiveAttribute
 } from 'v1/item'
 
 import type { EntityV2 } from '../class'
@@ -109,70 +90,4 @@ export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends A
     }
   : ATTRIBUTE extends AnyOfAttribute
   ? AttributeKeyInput<ATTRIBUTE['elements'][number]>
-  : never
-
-// TODO: Required in Entity constructor... See if possible to use only KeyInput w. Item
-export type $KeyInput<SCHEMA extends EntityV2 | $Item> = EntityV2 extends SCHEMA
-  ? ResolvedMapAttribute
-  : $Item extends SCHEMA
-  ? ResolvedMapAttribute
-  : SCHEMA extends $Item
-  ? O.Required<
-      O.Partial<
-        {
-          // Keep only key attributes
-          [KEY in O.SelectKeys<SCHEMA[$attributes], { [$key]: true }>]: $AttributeKeyInput<
-            SCHEMA[$attributes][KEY]
-          >
-        }
-      >,
-      Exclude<
-        // Enforce Always Required attributes
-        O.SelectKeys<SCHEMA[$attributes], { [$required]: Always }>,
-        // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<SCHEMA[$attributes], { [$default]: undefined }>
-      >
-    >
-  : SCHEMA extends EntityV2
-  ? $KeyInput<SCHEMA['$item']>
-  : never
-
-// TODO: Required in Entity constructor... See if possible to use only KeyInput w. Item
-export type $AttributeKeyInput<ATTRIBUTE extends $Attribute> = $Attribute extends ATTRIBUTE
-  ? ResolvedAttribute
-  : ATTRIBUTE extends $AnyAttribute
-  ? ResolvedAttribute
-  : ATTRIBUTE extends $ConstantAttribute
-  ? $ResolveConstantAttribute<ATTRIBUTE>
-  : ATTRIBUTE extends $PrimitiveAttribute
-  ? $ResolvePrimitiveAttribute<ATTRIBUTE>
-  : ATTRIBUTE extends $SetAttribute
-  ? Set<$AttributeKeyInput<ATTRIBUTE[$elements]>>
-  : ATTRIBUTE extends $ListAttribute
-  ? $AttributeKeyInput<ATTRIBUTE[$elements]>[]
-  : ATTRIBUTE extends $MapAttribute
-  ? O.Required<
-      O.Partial<
-        {
-          // Keep only key attributes
-          [KEY in O.SelectKeys<ATTRIBUTE[$attributes], { [$key]: true }>]: $AttributeKeyInput<
-            ATTRIBUTE[$attributes][KEY]
-          >
-        }
-      >,
-      Exclude<
-        // Enforce Always Required attributes
-        O.SelectKeys<ATTRIBUTE[$attributes], { [$required]: Always }>,
-        // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<ATTRIBUTE[$attributes], { [$default]: undefined }>
-      >
-    >
-  : ATTRIBUTE extends $RecordAttribute
-  ? {
-      [KEY in $ResolvePrimitiveAttribute<ATTRIBUTE[$keys]>]: $AttributeKeyInput<
-        ATTRIBUTE[$elements]
-      >
-    }
-  : ATTRIBUTE extends $AnyOfAttribute
-  ? $AttributeKeyInput<ATTRIBUTE[$elements][number]>
   : never
