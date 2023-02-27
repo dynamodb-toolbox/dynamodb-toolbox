@@ -1,32 +1,27 @@
-import { $Item, $HasComputedDefaults, freezeItem, FreezeItem, Item } from 'v1/item'
+import { HasComputedDefaults, Item } from 'v1/item'
 import { TableV2, PrimaryKey } from 'v1/table'
 
 import type {
-  $NeedsKeyCompute,
+  NeedsKeyCompute,
   KeyInput,
-  $KeyInput,
-  $ItemPutDefaultsComputer,
+  ItemPutDefaultsComputer,
   ItemDefaultsComputer
 } from './generics'
 
 export class EntityV2<
   NAME extends string = string,
   TABLE extends TableV2 = TableV2,
-  $ITEM extends $Item = $Item,
+  ITEM extends Item = Item,
   // TODO: See if possible not to add it as a generic here
-  PUT_DEFAULTS_COMPUTER = $Item extends $ITEM
-    ? ItemDefaultsComputer
-    : $ItemPutDefaultsComputer<$ITEM>,
-  CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER,
-  ITEM extends Item = FreezeItem<$ITEM>
+  PUT_DEFAULTS_COMPUTER = Item extends ITEM ? ItemDefaultsComputer : ItemPutDefaultsComputer<ITEM>,
+  CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER
 > {
   public type: 'entity'
   public name: NAME
   public table: TABLE
-  public $item: $ITEM
   public item: ITEM
   // any is needed for contravariance
-  computeKey?: (keyInput: $Item extends $ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
+  computeKey?: (keyInput: Item extends ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
   computedDefaults?: PUT_DEFAULTS_COMPUTER
 
   /**
@@ -42,17 +37,17 @@ export class EntityV2<
   constructor({
     name,
     table,
-    item: $item,
+    item,
     computeKey,
     computedDefaults
   }: {
     name: NAME
     table: TABLE
-    item: $ITEM
-  } & ($NeedsKeyCompute<$ITEM, TABLE> extends true
-    ? { computeKey: (keyInput: $KeyInput<$ITEM>) => PrimaryKey<TABLE> }
+    item: ITEM
+  } & (NeedsKeyCompute<ITEM, TABLE> extends true
+    ? { computeKey: (keyInput: KeyInput<ITEM>) => PrimaryKey<TABLE> }
     : { computeKey?: undefined }) &
-    ($HasComputedDefaults<$ITEM> extends true
+    (HasComputedDefaults<ITEM> extends true
       ? { computedDefaults: CONSTRUCTOR_PUT_DEFAULTS_COMPUTER }
       : { computedDefaults?: undefined })) {
     this.type = 'entity'
@@ -60,8 +55,7 @@ export class EntityV2<
     this.table = table
 
     // TODO: validate that item respects table key design
-    this.$item = $item
-    this.item = freezeItem($item) as any
+    this.item = item
 
     this.computeKey = computeKey as any
     this.computedDefaults = computedDefaults

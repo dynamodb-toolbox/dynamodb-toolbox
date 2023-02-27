@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { item } from './typer'
 import { boolean, binary, number, string, set, list, map } from './attributes'
-import { $type, $attributes } from './attributes/constants/attributeOptions'
+import { freezeAttribute, FreezeAttribute } from './attributes/freeze'
 
 describe('item', () => {
   it('primitives', () => {
@@ -25,27 +25,27 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        [$type]: 'item'
-        [$attributes]: {
-          reqStr: typeof reqStr
-          hidBool: typeof hidBool
-          defNum: typeof defNum
-          savedAsBin: typeof savedAsBin
-          keyStr: typeof keyStr
-          enumStr: typeof enumStr
+        type: 'item'
+        attributes: {
+          reqStr: FreezeAttribute<typeof reqStr>
+          hidBool: FreezeAttribute<typeof hidBool>
+          defNum: FreezeAttribute<typeof defNum>
+          savedAsBin: FreezeAttribute<typeof savedAsBin>
+          keyStr: FreezeAttribute<typeof keyStr>
+          enumStr: FreezeAttribute<typeof enumStr>
         }
       }
     > = 1
     assertItm
 
     expect(itm).toMatchObject({
-      [$attributes]: {
-        reqStr,
-        hidBool,
-        defNum,
-        savedAsBin,
-        keyStr,
-        enumStr
+      attributes: {
+        reqStr: freezeAttribute(reqStr, 'reqStr'),
+        hidBool: freezeAttribute(hidBool, 'hidBool'),
+        defNum: freezeAttribute(defNum, 'defNum'),
+        savedAsBin: freezeAttribute(savedAsBin, 'savedAsBin'),
+        keyStr: freezeAttribute(keyStr, 'keyStr'),
+        enumStr: freezeAttribute(enumStr, 'enumStr')
       }
     })
   })
@@ -64,22 +64,22 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        [$attributes]: {
-          flatMap: typeof flatMap
-          nestedMap: typeof nestedMap
-          reqMap: typeof reqMap
-          hiddenMap: typeof hiddenMap
+        attributes: {
+          flatMap: FreezeAttribute<typeof flatMap>
+          nestedMap: FreezeAttribute<typeof nestedMap>
+          reqMap: FreezeAttribute<typeof reqMap>
+          hiddenMap: FreezeAttribute<typeof hiddenMap>
         }
       }
     > = 1
     assertItm
 
     expect(itm).toMatchObject({
-      [$attributes]: {
-        flatMap,
-        nestedMap,
-        reqMap,
-        hiddenMap
+      attributes: {
+        flatMap: freezeAttribute(flatMap, 'flatMap'),
+        nestedMap: freezeAttribute(nestedMap, 'nestedMap'),
+        reqMap: freezeAttribute(reqMap, 'reqMap'),
+        hiddenMap: freezeAttribute(hiddenMap, 'hiddenMap')
       }
     })
   })
@@ -101,22 +101,22 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        [$attributes]: {
-          optList: typeof optList
-          nestedList: typeof nestedList
-          reqList: typeof reqList
-          hiddenList: typeof hiddenList
+        attributes: {
+          optList: FreezeAttribute<typeof optList>
+          nestedList: FreezeAttribute<typeof nestedList>
+          reqList: FreezeAttribute<typeof reqList>
+          hiddenList: FreezeAttribute<typeof hiddenList>
         }
       }
     > = 1
     assertItm
 
     expect(itm).toMatchObject({
-      [$attributes]: {
-        optList,
-        nestedList,
-        reqList,
-        hiddenList
+      attributes: {
+        optList: freezeAttribute(optList, 'optList'),
+        nestedList: freezeAttribute(nestedList, 'nestedList'),
+        reqList: freezeAttribute(reqList, 'reqList'),
+        hiddenList: freezeAttribute(hiddenList, 'hiddenList')
       }
     })
   })
@@ -136,20 +136,20 @@ describe('item', () => {
     const assertItm: A.Contains<
       typeof itm,
       {
-        [$attributes]: {
-          optSet: typeof optSet
-          reqSet: typeof reqSet
-          hiddenSet: typeof hiddenSet
+        attributes: {
+          optSet: FreezeAttribute<typeof optSet>
+          reqSet: FreezeAttribute<typeof reqSet>
+          hiddenSet: FreezeAttribute<typeof hiddenSet>
         }
       }
     > = 1
     assertItm
 
     expect(itm).toMatchObject({
-      [$attributes]: {
-        optSet,
-        reqSet,
-        hiddenSet
+      attributes: {
+        optSet: freezeAttribute(optSet, 'optSet'),
+        reqSet: freezeAttribute(reqSet, 'reqSet'),
+        hiddenSet: freezeAttribute(hiddenSet, 'hiddenSet')
       }
     })
   })
