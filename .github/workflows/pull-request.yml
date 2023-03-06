@@ -24,6 +24,8 @@ jobs:
         run: npm ci --legacy-peer-deps
       - name: Install TS at correct version
         run: npm i typescript@${{ matrix.typescript }}
+      - name: Run type check
+        run: npm run v1-check-types
       - name: Run tests
         run: npm run v1-test
 
