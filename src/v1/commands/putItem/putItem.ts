@@ -16,14 +16,14 @@ import { putItemParams } from './putItemParams'
 
 type ReturnedAttributes<
   ENTITY extends EntityV2,
-  RETURN_VALUES extends PutItemCommandReturnValuesOption
-> = PutItemCommandReturnValuesOption extends RETURN_VALUES
+  OPTIONS extends PutItemOptions<ENTITY>
+> = PutItemCommandReturnValuesOption extends OPTIONS['returnValues']
   ? undefined
-  : RETURN_VALUES extends NoneReturnValuesOption
+  : OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
-  : RETURN_VALUES extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
+  : OPTIONS['returnValues'] extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
   ? Partial<FormattedItem<ENTITY>> | undefined
-  : RETURN_VALUES extends AllNewReturnValuesOption | AllOldReturnValuesOption
+  : OPTIONS['returnValues'] extends AllNewReturnValuesOption | AllOldReturnValuesOption
   ? FormattedItem<ENTITY> | undefined
   : never
 
@@ -37,19 +37,19 @@ type ReturnedAttributes<
  */
 export const putItem = async <
   ENTITY extends EntityV2,
-  RETURN_VALUES extends PutItemCommandReturnValuesOption = PutItemCommandReturnValuesOption
+  OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 >(
   entity: ENTITY,
   putItemInput: PutItemInput<ENTITY>,
-  putItemOptions: PutItemOptions<RETURN_VALUES> = {}
+  putItemOptions: OPTIONS = {} as OPTIONS
 ): Promise<
   O.Merge<
     Omit<PutCommandOutput, 'Attributes'>,
-    { Attributes?: ReturnedAttributes<ENTITY, RETURN_VALUES> }
+    { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
   >
 > => {
   const commandOutput = await entity.table.documentClient.send(
-    new PutCommand(putItemParams<ENTITY>(entity, putItemInput, putItemOptions))
+    new PutCommand(putItemParams<ENTITY, OPTIONS>(entity, putItemInput, putItemOptions))
   )
 
   const { Attributes: attributes, ...restCommandOutput } = commandOutput
@@ -64,7 +64,7 @@ export const putItem = async <
   const formattedItem = parseSavedItem(entity, attributes)
 
   return {
-    Attributes: formattedItem as ReturnedAttributes<ENTITY, RETURN_VALUES>,
+    Attributes: formattedItem as ReturnedAttributes<ENTITY, OPTIONS>,
     ...restCommandOutput
   }
 }
