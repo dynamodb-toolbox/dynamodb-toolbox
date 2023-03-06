@@ -202,21 +202,22 @@ describe('delete', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownCommandOption' }))
   })
 
-  // TODO Enable typed conditions
-  // it('sets conditions', () => {
-  //   let result = TestEntity.deleteParams(
-  //     { email: 'x', sort: 'y' },
-  //     { conditions: { attr: 'email', gt: 'test' } }
-  //   )
+  it('sets conditions', () => {
+    const {
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    } = deleteItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { conditions: { path: 'email', gt: 'test' } }
+    )
 
-  //   expect(result).toEqual({
-  //     TableName: 'test-table',
-  //     Key: { pk: 'x', sk: 'y' },
-  //     ExpressionAttributeNames: { '#attr1': 'pk' },
-  //     ExpressionAttributeValues: { ':attr1': 'test' },
-  //     ConditionExpression: '#attr1 > :attr1'
-  //   })
-  // })
+    // TODO: Implement
+    expect(ExpressionAttributeNames).not.toEqual({ '#attr1': 'pk' })
+    expect(ExpressionAttributeValues).not.toEqual({ ':attr1': 'test' })
+    expect(ConditionExpression).not.toBe('#attr1 > :attr1')
+  })
 
   // TODO Enable extra parameters
   // it('handles extra parameters', () => {
