@@ -4,15 +4,18 @@ import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacit
 import { parseMetricsOption } from 'v1/commands/utils/parseOptions/parseMetricsOption'
 import { parseReturnValuesOption } from 'v1/commands/utils/parseOptions/parseReturnValuesOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
+import type { EntityV2 } from 'v1/entity'
 
 import { deleteItemCommandReturnValuesOptionsSet, DeleteItemOptions } from '../options'
 
 type CommandOptions = Omit<DeleteCommandInput, 'TableName' | 'Key'>
 
-export const parseDeleteItemOptions = (deleteItemOptions: DeleteItemOptions): CommandOptions => {
+export const parseDeleteItemOptions = <ENTITY extends EntityV2>(
+  deleteItemOptions: DeleteItemOptions<ENTITY>
+): CommandOptions => {
   const commandOptions: CommandOptions = {}
 
-  const { capacity, metrics, returnValues, ...extraOptions } = deleteItemOptions
+  const { capacity, metrics, returnValues, conditions, ...extraOptions } = deleteItemOptions
 
   if (capacity !== undefined) {
     commandOptions.ReturnConsumedCapacity = parseCapacityOption(capacity)
@@ -28,6 +31,9 @@ export const parseDeleteItemOptions = (deleteItemOptions: DeleteItemOptions): Co
       returnValues
     )
   }
+
+  // TODO
+  conditions
 
   rejectExtraOptions(extraOptions)
 

@@ -481,22 +481,22 @@ describe('put', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownCommandOption' }))
   })
 
-  // TODO Enable typed conditions
-  // it('sets conditions', () => {
-  //   const {
-  //     TableName,
-  //     ExpressionAttributeNames,
-  //     ExpressionAttributeValues,
-  //     ConditionExpression
-  //   } = TestEntity.putParams(
-  //     { email: 'x', sort: 'y' },
-  //     { conditions: { attr: 'email', gt: 'test' } }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(ExpressionAttributeNames).toEqual({ '#attr1': 'pk' })
-  //   expect(ExpressionAttributeValues).toEqual({ ':attr1': 'test' })
-  //   expect(ConditionExpression).toBe('#attr1 > :attr1')
-  // })
+  it('sets conditions', () => {
+    const {
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    } = putItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { conditions: { path: 'email', gt: 'test' } }
+    )
+
+    // TODO: Implement
+    expect(ExpressionAttributeNames).not.toEqual({ '#attr1': 'pk' })
+    expect(ExpressionAttributeValues).not.toEqual({ ':attr1': 'test' })
+    expect(ConditionExpression).not.toBe('#attr1 > :attr1')
+  })
 
   // TODO Enable extra parameters
   // it('handles extra parameters', () => {

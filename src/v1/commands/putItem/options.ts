@@ -1,6 +1,8 @@
 import type { CapacityOption } from 'v1/commands/constants/options/capacity'
 import type { MetricsOption } from 'v1/commands/constants/options/metrics'
 import type { ReturnValuesOption } from 'v1/commands/constants/options/returnValues'
+import type { Conditions } from 'v1/commands/conditions/types'
+import type { EntityV2 } from 'v1/entity'
 
 export type PutItemCommandReturnValuesOption = ReturnValuesOption
 
@@ -12,10 +14,9 @@ export const putItemCommandReturnValuesOptionsSet = new Set<PutItemCommandReturn
   'UPDATED_NEW'
 ])
 
-export interface PutItemOptions<
-  RETURN_VALUES extends PutItemCommandReturnValuesOption = PutItemCommandReturnValuesOption
-> {
+export interface PutItemOptions<ENTITY extends EntityV2 = EntityV2> {
   capacity?: CapacityOption
   metrics?: MetricsOption
-  returnValues?: RETURN_VALUES
+  returnValues?: PutItemCommandReturnValuesOption
+  conditions?: Conditions<ENTITY>
 }
