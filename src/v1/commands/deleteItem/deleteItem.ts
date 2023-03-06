@@ -13,12 +13,12 @@ import type { DeleteItemCommandReturnValuesOption, DeleteItemOptions } from './o
 
 type ReturnedAttributes<
   ENTITY extends EntityV2,
-  RETURN_VALUES extends DeleteItemCommandReturnValuesOption
-> = DeleteItemCommandReturnValuesOption extends RETURN_VALUES
+  OPTIONS extends DeleteItemOptions<ENTITY>
+> = DeleteItemCommandReturnValuesOption extends OPTIONS['returnValues']
   ? undefined
-  : RETURN_VALUES extends NoneReturnValuesOption
+  : OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
-  : RETURN_VALUES extends AllOldReturnValuesOption
+  : OPTIONS['returnValues'] extends AllOldReturnValuesOption
   ? FormattedItem<ENTITY> | undefined
   : never
 
@@ -32,19 +32,19 @@ type ReturnedAttributes<
  */
 export const deleteItem = async <
   ENTITY extends EntityV2,
-  RETURN_VALUES extends DeleteItemCommandReturnValuesOption = DeleteItemCommandReturnValuesOption
+  OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
 >(
   entity: ENTITY,
   keyInput: KeyInput<ENTITY>,
-  deleteItemOptions: DeleteItemOptions<RETURN_VALUES> = {}
+  deleteItemOptions: OPTIONS = {} as OPTIONS
 ): Promise<
   O.Merge<
     Omit<DeleteCommandOutput, 'Attributes'>,
-    { Attributes?: ReturnedAttributes<ENTITY, RETURN_VALUES> | undefined }
+    { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> | undefined }
   >
 > => {
   const commandOutput = await entity.table.documentClient.send(
-    new DeleteCommand(deleteItemParams<ENTITY>(entity, keyInput, deleteItemOptions))
+    new DeleteCommand(deleteItemParams<ENTITY, OPTIONS>(entity, keyInput, deleteItemOptions))
   )
 
   const { Attributes: attributes, ...restCommandOutput } = commandOutput
@@ -56,7 +56,7 @@ export const deleteItem = async <
   const formattedItem = parseSavedItem(entity, attributes)
 
   return {
-    Attributes: formattedItem as ReturnedAttributes<ENTITY, RETURN_VALUES>,
+    Attributes: formattedItem as ReturnedAttributes<ENTITY, OPTIONS>,
     ...restCommandOutput
   }
 }

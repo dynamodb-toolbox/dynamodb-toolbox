@@ -1,6 +1,6 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2, KeyInput } from 'v1'
+import type { EntityV2, KeyInput } from 'v1/entity'
 import { parseEntityKeyInput } from 'v1/commands/utils/parseKeyInput'
 import { parsePrimaryKey } from 'v1/commands/utils/parsePrimaryKey'
 import { renameSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes'
@@ -17,10 +17,13 @@ import { parseDeleteItemOptions } from './parseDeleteItemOptions'
  * @param deleteItemOptions DeleteItemOptions
  * @return DeleteCommandInput
  */
-export const deleteItemParams = <ENTITY extends EntityV2>(
+export const deleteItemParams = <
+  ENTITY extends EntityV2,
+  OPTIONS extends DeleteItemOptions<ENTITY>
+>(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
-  deleteItemOptions: DeleteItemOptions = {}
+  deleteItemOptions: OPTIONS = {} as OPTIONS
 ): DeleteCommandInput => {
   const validKeyInput = parseEntityKeyInput(entity, input)
 
