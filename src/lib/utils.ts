@@ -75,6 +75,59 @@ export const transformAttr = (mapping: PureAttributeDefinition, value: any, data
     : value
 }
 
+export function typeOf(data?: any) {
+  if (data === null && typeof data === 'object') {
+    return 'null'
+  } else if (data !== undefined && isBinary(data)) {
+    return 'Binary'
+  } else if (data !== undefined && data.constructor) {
+    return data.constructor.name
+  } else if (data !== undefined && typeof data === 'object') {
+    // this object is the result of Object.create(null), hence the absence of a
+    // defined constructor
+    return 'Object'
+  } else {
+    return 'undefined'
+  }
+}
+
+export function isArrayOfSameType<T>(array: Array<T>): boolean {
+  const length = array.length
+  if (length <= 1) {
+    return true
+  }
+  const firstType = typeOf(array[0])
+
+  return array.slice(1).every((el: T) => typeOf(el) === firstType)
+}
+
+export function isBinary(data: any): boolean {
+  const binaryTypes = [
+    'ArrayBuffer',
+    'Blob',
+    'Buffer',
+    'DataView',
+    'File',
+    'Int8Array',
+    'Uint8Array',
+    'Uint8ClampedArray',
+    'Int16Array',
+    'Uint16Array',
+    'Int32Array',
+    'Uint32Array',
+    'Float32Array',
+    'Float64Array',
+    'BigInt64Array',
+    'BigUint64Array',
+  ]
+
+  if (data?.constructor) {
+    return binaryTypes.includes(data.constructor.name)
+  }
+
+  return false
+}
+
 // Type now exists in ts-toolbelt but requires upgrading ts: See https://github.com/millsp/ts-toolbelt/issues/169
 export type If<C extends 0 | 1, T, E = never> = C extends 1 ? (1 extends C ? T : E) : E
 
