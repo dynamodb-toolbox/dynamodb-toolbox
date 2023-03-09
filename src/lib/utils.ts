@@ -2,7 +2,7 @@ import { A, L } from 'ts-toolbelt'
 
 import { PureAttributeDefinition } from '../classes/Entity'
 import { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table'
-import DynamoDB from 'aws-sdk/clients/dynamodb'
+import { unmarshall } from '@aws-sdk/util-dynamodb'
 
 export const validTypes: DynamoDBTypes[] = [
   'string',
@@ -32,7 +32,7 @@ export const toBool = (val: any) =>
       : Boolean(val)
 
 export const toDynamoBigInt = (value: bigint) =>
-  DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true })
+  unmarshall({ valueToUnmarshall: {N: value.toString()} }, { wrapNumbers: true }).valueToUnmarshall
 
 // has value shortcut
 export const hasValue = (val: any) => val !== undefined && val !== null
