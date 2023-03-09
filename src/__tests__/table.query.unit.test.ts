@@ -94,8 +94,8 @@ describe('query', () => {
       limit: 10,
       reverse: true,
       consistent: true,
-      capacity: 'total',
-      select: 'all_attributes',
+      capacity: 'TOTAL',
+      select: 'ALL_ATTRIBUTES',
       eq: 'skVal',
       filters: { attr: 'test', eq: 'testFilter' },
       attributes: ['pk', 'sk', 'test'],
@@ -229,6 +229,7 @@ describe('query', () => {
   })
 
   it('fails on invalid select setting', () => {
+    // @ts-expect-error - invalid select
     expect(() => TestTable.queryParams('test', { select: 'test' })).toThrow(
       `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
     )
