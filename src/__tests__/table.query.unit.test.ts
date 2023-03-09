@@ -137,8 +137,8 @@ describe('query', () => {
       limit: 10,
       reverse: true,
       consistent: true,
-      capacity: 'total',
-      select: 'all_attributes',
+      capacity: 'TOTAL',
+      select: 'ALL_ATTRIBUTES',
       eq: 'skVal',
       filters: { attr: 'test.a.b', eq: 'testFilter' },
       attributes: ['pk', 'sk', 'test'],
@@ -235,6 +235,7 @@ describe('query', () => {
   })
 
   it('fails on invalid capacity setting', () => {
+    // @ts-expect-error - invalid capacity
     expect(() => TestTable.queryParams('test', { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
