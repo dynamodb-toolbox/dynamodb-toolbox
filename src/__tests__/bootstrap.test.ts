@@ -1,52 +1,27 @@
-// Include dynalite and config server (use in memory)
-// @ts-ignore: No type file available
-import dynalite from 'dynalite'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-export const dynaliteServer = dynalite({
-  createTableMs: 0,
-  updateTableMs: 0,
-  deleteTableMs: 0
-})
+const marshallOptions = {
+  // Whether to automatically convert empty strings, blobs, and sets to `null`.
+  convertEmptyValues: false, // false, by default.
+  // Whether to remove undefined values while marshalling.
+  removeUndefinedValues: false, // false, by default.
+  // Whether to convert typeof object to map attribute.
+  convertClassInstanceToMap: false, // false, by default.
+}
 
-// Load AWS SDK
-import AWS from 'aws-sdk'
+const unmarshallOptions = {
+  // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
+  wrapNumbers: false, // false, by default.
+}
 
-// Create DynamoDB connection to dynalite
-export const DynamoDB = new AWS.DynamoDB({
+const translateConfig = { marshallOptions, unmarshallOptions }
+
+export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({
   endpoint: 'http://localhost:4567',
   region: 'us-east-1',
-  credentials: new AWS.Credentials({
+  credentials: {
     accessKeyId: 'test',
-    secretAccessKey: 'test'
-  })
-})
-
-// Create our document client
-export const DocumentClient = new AWS.DynamoDB.DocumentClient({
-  endpoint: 'http://localhost:4567',
-  region: 'us-east-1',
-  credentials: new AWS.Credentials({
-    accessKeyId: 'test',
-    secretAccessKey: 'test'
-  })
-  // convertEmptyValues: true
-})
-
-export const DocumentClientWrappedNumbers = new AWS.DynamoDB.DocumentClient({
-  endpoint: 'http://localhost:4567',
-  region: 'us-east-1',
-  credentials: new AWS.Credentials({
-    accessKeyId: 'test',
-    secretAccessKey: 'test'
-  }),
-  wrapNumbers: true
-})
-
-// Delay helper
-export const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
-
-export const DocumentClient2 = new AWS.DynamoDB.DocumentClient({
-  region: 'us-east-1',
-  credentials: new AWS.SharedIniFileCredentials({ profile: '' })
-  // convertEmptyValues: false
-})
+    secretAccessKey: 'test',
+  },
+}), translateConfig)

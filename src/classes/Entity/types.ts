@@ -1,9 +1,11 @@
-import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, B, O, F } from 'ts-toolbelt'
+import { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
+import { ReturnConsumedCapacity, ReturnItemCollectionMetrics } from '@aws-sdk/client-dynamodb'
 
 import type { Compute, FirstDefined, If } from '../../lib/utils'
 import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table'
 import Entity from './Entity'
+import { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
 export interface EntityConstructor<
   EntityTable extends TableDef | undefined = undefined,
@@ -340,7 +342,7 @@ export type BaseOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = {
-  capacity: DocumentClient.ReturnConsumedCapacity
+  capacity: ReturnConsumedCapacity
   execute: Execute
   parse: Parse
 }
@@ -376,7 +378,7 @@ export type $WriteOptions<
   Parse extends boolean | undefined = undefined
 > = BaseOptions<Execute, Parse> & {
   conditions: ConditionsOrFilters<Attributes>
-  metrics: DocumentClient.ReturnItemCollectionMetrics
+  metrics: ReturnItemCollectionMetrics
   include: string[]
 }
 
@@ -453,7 +455,7 @@ export interface UpdateCustomParameters {
   DELETE: string[]
 }
 
-export type UpdateCustomParams = O.Partial<UpdateCustomParameters & DocumentClient.UpdateItemInput>
+export type UpdateCustomParams = O.Partial<UpdateCustomParameters & UpdateCommandInput>
 
 export type UpdateItem<
   MethodItemOverlay extends Overlay,
@@ -641,3 +643,5 @@ export type UpdateOptions<
   boolean | undefined,
   boolean | undefined
 >
+
+export type AttributeMap = Record<string, NativeAttributeValue>
