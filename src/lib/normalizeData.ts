@@ -4,13 +4,14 @@
  * @license MIT
  */
 
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import validateTypes from './validateTypes'
 import { error, transformAttr } from './utils'
 
 // Normalize Data
-export default (DocumentClient: DocumentClient) => (
+export default (DocumentClient: DynamoDBDocumentClient) => (
   schema: any,
   linked: any,
   data: any,
