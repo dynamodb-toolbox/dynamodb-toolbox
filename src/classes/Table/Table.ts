@@ -98,8 +98,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     return this._removeNulls
   }
 
-  // Retrieves the document client
-  get DocumentClient() {
+  get DocumentClient(): DynamoDBDocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean }} {
     return this._docClient
   }
 
