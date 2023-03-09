@@ -4,11 +4,11 @@
  * @license MIT
  */
 
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { toBool, hasValue, error, toDynamoBigInt } from './utils'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 // Performs type validation/coercian
-export default (DocumentClient: DocumentClient) => (mapping: any, field: any, value: any) => {
+export default (DocumentClient: DynamoDBDocumentClient) => (mapping: any, field: any, value: any) => {
   // Evaluate function expressions
   // TODO: should this happen here?
   // let value = typeof input === 'function' ? input(data) : input
