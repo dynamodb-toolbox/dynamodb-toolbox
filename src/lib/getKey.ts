@@ -4,12 +4,13 @@
  * @license MIT
  */
 
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+
 import validateTypes from './validateTypes'
 import { error, transformAttr } from './utils'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
 // Get partitionKey/sortKey
-export default (DocumentClient: DocumentClient) => (
+export default (DocumentClient: DynamoDBDocumentClient) => (
   data: any,
   schema: any,
   partitionKey: any,
