@@ -48,7 +48,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   private _execute = true
   private _parse = true
   public _removeNulls = true
-  private _docClient?: DynamoDBDocumentClient
+  private _docClient?: DynamoDBDocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean } }
   private _entities: string[] = []
   public Table!: ParsedTable['Table']
   public name!: string
@@ -98,8 +98,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     return this._removeNulls
   }
 
-  get DocumentClient(): DynamoDBDocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean }} {
-    return this._docClient
+  get DocumentClient(): DynamoDBDocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean } } {
+    return this._docClient as any
   }
 
   // Validate and sets the document client (extend with options.convertEmptyValues because it's not typed)
