@@ -548,7 +548,7 @@ class Entity<Name extends string = string,
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
   ): { [key: string]: WriteRequest } {
     const payload = this.deleteParams<undefined, MethodCompositeKeyOverlay>(item)
-    return { [payload.TableName]: { DeleteRequest: { Key: payload.Key } } }
+    return { [payload.TableName!]: { DeleteRequest: { Key: payload.Key } } }
   }
 
   /**
@@ -567,7 +567,7 @@ class Entity<Name extends string = string,
     ResponseAttributes extends ItemAttributes = ItemAttributes>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: TransactionOptions<ResponseAttributes> = {},
-    params?: Partial<DeleteCommandOutput>,
+    params?: Partial<DeleteCommandInput>,
   ): { Delete: Delete } {
     // Destructure options to check for extraneous arguments
     const {
