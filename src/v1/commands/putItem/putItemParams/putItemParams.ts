@@ -27,11 +27,11 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
   // Important to do it before renaming as validInput is muted (to improve?)
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : undefined
 
+  const options = parsePutItemOptions(putItemOptions)
+
   const renamedInput = renameSavedAsAttributes(entity.item, validInput)
 
   const primaryKey = parsePrimaryKey(entity, keyInput ?? renamedInput)
-
-  const options = parsePutItemOptions(putItemOptions)
 
   return {
     TableName: entity.table.name,
