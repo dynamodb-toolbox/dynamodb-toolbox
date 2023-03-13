@@ -492,10 +492,11 @@ describe('put', () => {
       { conditions: { path: 'email', gt: 'test' } }
     )
 
-    // TODO: Implement
-    expect(ExpressionAttributeNames).not.toEqual({ '#attr1': 'pk' })
-    expect(ExpressionAttributeValues).not.toEqual({ ':attr1': 'test' })
-    expect(ConditionExpression).not.toBe('#attr1 > :attr1')
+    // TODO: Rename savedAs attributes (parse condition first)
+    expect(ExpressionAttributeNames).not.toEqual({ '#1': 'pk' })
+    expect(ExpressionAttributeNames).toEqual({ '#1': 'email' })
+    expect(ExpressionAttributeValues).toEqual({ ':1': 'test' })
+    expect(ConditionExpression).toBe('#1 > :1')
   })
 
   // TODO Enable extra parameters
