@@ -1,3 +1,4 @@
+import { O } from 'ts-toolbelt'
 import type { EntityV2 } from 'v1/entity'
 import type {
   AnyAttribute,
@@ -109,7 +110,7 @@ export type PrimitiveAttributeExtraCondition<
       ? StringOrBinaryAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE>
       : never)
 
-export type Condition<ENTITY extends EntityV2> = EntityV2 extends ENTITY
+export type Condition<ENTITY extends EntityV2 = EntityV2> = EntityV2 extends ENTITY
   ? AnyAttributeCondition<string>
   : keyof ENTITY['item']['attributes'] extends infer ATTRIBUTE_NAME
   ? ATTRIBUTE_NAME extends string
@@ -117,8 +118,8 @@ export type Condition<ENTITY extends EntityV2> = EntityV2 extends ENTITY
     : never
   : never
 
-export type Conditions<ENTITY extends EntityV2> =
+export type Conditions<ENTITY extends EntityV2 = EntityV2> =
   | Condition<ENTITY>
-  | { path?: never; and: Conditions<ENTITY>[] }
-  | { path?: never; or: Conditions<ENTITY>[] }
-  | { path?: never; not: Condition<ENTITY> }
+  | { and: Conditions<ENTITY>[] }
+  | { or: Conditions<ENTITY>[] }
+  | { not: Condition<ENTITY> }
