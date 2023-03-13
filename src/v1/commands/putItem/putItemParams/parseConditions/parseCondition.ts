@@ -1,10 +1,7 @@
 import type { Conditions } from 'v1/commands/conditions/types'
 
-type ParsingState = {
-  expressionAttributeNames: string[]
-  expressionAttributeValues: unknown[]
-  conditionExpression: string
-}
+import { ParsingState } from './types'
+import { detectConditionType, parseComparisonCondition } from './comparison'
 
 export const parseCondition = (
   conditions: Conditions,
@@ -14,29 +11,14 @@ export const parseCondition = (
     conditionExpression: ''
   }
 ): ParsingState => {
-  if ('gt' in conditions) {
-    const { path, gt: expressionAttributeValue } = conditions
+  const results = detectConditionType(conditions)
 
-    const pathMatches = path.matchAll(/\w+(?=(\.|$|(\[\d+\])))/g)
-
-    let conditionExpression = ''
-
-    for (const pathMatch of pathMatches) {
-      const [expressionAttributeName, followingSeparator] = pathMatch
-
-      const expressionAttributeNameIndex = state.expressionAttributeNames.push(
-        expressionAttributeName
-      )
-      conditionExpression += `#${expressionAttributeNameIndex}${followingSeparator}`
+  switch (results?.type) {
+    case 'comparison': {
+      const { condition, operator } = results
+      return parseComparisonCondition(condition, operator, state)
     }
-
-    const expressionAttributeValueIndex = state.expressionAttributeValues.push(
-      expressionAttributeValue
-    )
-    conditionExpression += ` > :${expressionAttributeValueIndex}`
-
-    return { ...state, conditionExpression }
+    default:
+      return state
   }
-
-  return state
 }
