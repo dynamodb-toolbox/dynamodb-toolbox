@@ -202,7 +202,7 @@ describe('delete', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownCommandOption' }))
   })
 
-  it('sets conditions', () => {
+  it('sets condition', () => {
     const {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
@@ -210,7 +210,7 @@ describe('delete', () => {
     } = deleteItemParams(
       TestEntity,
       { email: 'x', sort: 'y' },
-      { conditions: { path: 'email', gt: 'test' } }
+      { condition: { path: 'email', gt: 'test' } }
     )
 
     // TODO: Implement

@@ -138,7 +138,7 @@ export type PrimitiveAttributeExtraCondition<
       ? StringOrBinaryAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
 
-export type Condition<ENTITY extends EntityV2 = EntityV2> = EntityV2 extends ENTITY
+export type NonLogicalCondition<ENTITY extends EntityV2 = EntityV2> = EntityV2 extends ENTITY
   ? AnyAttributeCondition<string, string>
   : keyof ENTITY['item']['attributes'] extends infer ATTRIBUTE_PATH
   ? ATTRIBUTE_PATH extends string
@@ -187,8 +187,8 @@ export type AnyAttributePath<
     : never
   : never
 
-export type Conditions<ENTITY extends EntityV2 = EntityV2> =
-  | Condition<ENTITY>
-  | { and: Conditions<ENTITY>[] }
-  | { or: Conditions<ENTITY>[] }
+export type Condition<ENTITY extends EntityV2 = EntityV2> =
+  | NonLogicalCondition<ENTITY>
+  | { and: Condition<ENTITY>[] }
+  | { or: Condition<ENTITY>[] }
   | { not: Condition<ENTITY> }
