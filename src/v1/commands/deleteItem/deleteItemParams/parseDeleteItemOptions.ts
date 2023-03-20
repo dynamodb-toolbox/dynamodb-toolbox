@@ -15,7 +15,7 @@ export const parseDeleteItemOptions = <ENTITY extends EntityV2>(
 ): CommandOptions => {
   const commandOptions: CommandOptions = {}
 
-  const { capacity, metrics, returnValues, conditions, ...extraOptions } = deleteItemOptions
+  const { capacity, metrics, returnValues, condition, ...extraOptions } = deleteItemOptions
 
   if (capacity !== undefined) {
     commandOptions.ReturnConsumedCapacity = parseCapacityOption(capacity)
@@ -33,7 +33,7 @@ export const parseDeleteItemOptions = <ENTITY extends EntityV2>(
   }
 
   // TODO
-  conditions
+  condition
 
   rejectExtraOptions(extraOptions)
 

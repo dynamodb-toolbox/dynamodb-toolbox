@@ -1,19 +1,26 @@
-import type { Conditions } from 'v1/commands/conditions/types'
+import type { Condition } from 'v1/commands/condition/types'
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { parseCondition } from './parseCondition'
+import { appendConditionToState } from './appendConditionToState'
+import { ParsingState } from './types'
 
-export const parseConditions = (
-  conditions: Conditions
+export const parseCondition = (
+  condition: Condition
 ): Pick<
   PutCommandInput,
   'ExpressionAttributeNames' | 'ExpressionAttributeValues' | 'ConditionExpression'
 > => {
+  const initialState: ParsingState = {
+    expressionAttributeNames: [],
+    expressionAttributeValues: [],
+    conditionExpression: ''
+  }
+
   const {
     expressionAttributeNames,
     expressionAttributeValues,
     conditionExpression: ConditionExpression
-  } = parseCondition(conditions)
+  } = appendConditionToState(initialState, condition)
 
   const ExpressionAttributeNames: PutCommandInput['ExpressionAttributeNames'] = {}
   expressionAttributeNames.forEach((expressionAttributeName, index) => {
