@@ -1,8 +1,8 @@
-import { parseConditions } from '../parseConditions'
+import { parseCondition } from '../parseCondition'
 
-describe('parseConditions - comparison', () => {
+describe('parseCondition - comparison', () => {
   it('equal to (value)', () => {
-    expect(parseConditions({ path: 'num', eq: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'num', eq: 42 })).toStrictEqual({
       ConditionExpression: '#1 = :1',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42 }
@@ -10,7 +10,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('equal to (attribute)', () => {
-    expect(parseConditions({ path: 'num', eq: { attr: 'otherNum' } })).toStrictEqual({
+    expect(parseCondition({ path: 'num', eq: { attr: 'otherNum' } })).toStrictEqual({
       ConditionExpression: '#1 = #2',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
       ExpressionAttributeValues: {}
@@ -18,7 +18,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('not equal to (value)', () => {
-    expect(parseConditions({ path: 'num', ne: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'num', ne: 42 })).toStrictEqual({
       ConditionExpression: '#1 <> :1',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42 }
@@ -26,7 +26,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('not equal to (attribute)', () => {
-    expect(parseConditions({ path: 'num', ne: { attr: 'otherNum' } })).toStrictEqual({
+    expect(parseCondition({ path: 'num', ne: { attr: 'otherNum' } })).toStrictEqual({
       ConditionExpression: '#1 <> #2',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
       ExpressionAttributeValues: {}
@@ -34,7 +34,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('greater than (value)', () => {
-    expect(parseConditions({ path: 'num', gt: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'num', gt: 42 })).toStrictEqual({
       ConditionExpression: '#1 > :1',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42 }
@@ -42,7 +42,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('greater than (attribute)', () => {
-    expect(parseConditions({ path: 'num', gt: { attr: 'otherNum' } })).toStrictEqual({
+    expect(parseCondition({ path: 'num', gt: { attr: 'otherNum' } })).toStrictEqual({
       ConditionExpression: '#1 > #2',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
       ExpressionAttributeValues: {}
@@ -50,7 +50,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('greater than or equal to (value)', () => {
-    expect(parseConditions({ path: 'num', gte: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'num', gte: 42 })).toStrictEqual({
       ConditionExpression: '#1 >= :1',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42 }
@@ -58,7 +58,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('greater than or equal to (attribute)', () => {
-    expect(parseConditions({ path: 'num', gte: { attr: 'otherNum' } })).toStrictEqual({
+    expect(parseCondition({ path: 'num', gte: { attr: 'otherNum' } })).toStrictEqual({
       ConditionExpression: '#1 >= #2',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
       ExpressionAttributeValues: {}
@@ -66,7 +66,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('less than (value)', () => {
-    expect(parseConditions({ path: 'num', lt: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'num', lt: 42 })).toStrictEqual({
       ConditionExpression: '#1 < :1',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42 }
@@ -74,7 +74,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('less than (attribute)', () => {
-    expect(parseConditions({ path: 'num', lt: { attr: 'otherNum' } })).toStrictEqual({
+    expect(parseCondition({ path: 'num', lt: { attr: 'otherNum' } })).toStrictEqual({
       ConditionExpression: '#1 < #2',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
       ExpressionAttributeValues: {}
@@ -82,7 +82,7 @@ describe('parseConditions - comparison', () => {
   })
 
   it('less than or equal to (value)', () => {
-    expect(parseConditions({ path: 'num', lte: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'num', lte: 42 })).toStrictEqual({
       ConditionExpression: '#1 <= :1',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42 }
@@ -90,17 +90,15 @@ describe('parseConditions - comparison', () => {
   })
 
   it('less than or equal to (attribute)', () => {
-    expect(parseConditions({ path: 'num', lte: { attr: 'otherNum' } })).toStrictEqual({
+    expect(parseCondition({ path: 'num', lte: { attr: 'otherNum' } })).toStrictEqual({
       ConditionExpression: '#1 <= #2',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
       ExpressionAttributeValues: {}
     })
   })
-})
 
-describe('nested paths', () => {
   it('deep maps (value)', () => {
-    expect(parseConditions({ path: 'map.nestedA.nestedB', eq: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'map.nestedA.nestedB', eq: 42 })).toStrictEqual({
       ConditionExpression: '#1.#2.#3 = :1',
       ExpressionAttributeNames: {
         '#1': 'map',
@@ -113,7 +111,7 @@ describe('nested paths', () => {
 
   it('deep maps (attribute)', () => {
     expect(
-      parseConditions({ path: 'map.nestedA.nestedB', eq: { attr: 'other.nested.value' } })
+      parseCondition({ path: 'map.nestedA.nestedB', eq: { attr: 'other.nested.value' } })
     ).toStrictEqual({
       ConditionExpression: '#1.#2.#3 = #4.#5.#6',
       ExpressionAttributeNames: {
@@ -129,7 +127,7 @@ describe('nested paths', () => {
   })
 
   it('deep maps and lists (value)', () => {
-    expect(parseConditions({ path: 'listA[1].nested.listB[2].value', eq: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'listA[1].nested.listB[2].value', eq: 42 })).toStrictEqual({
       ConditionExpression: '#1[1]#2.#3[2]#4 = :1',
       ExpressionAttributeNames: {
         '#1': 'listA',
@@ -143,7 +141,7 @@ describe('nested paths', () => {
 
   it('deep maps and lists (attribute)', () => {
     expect(
-      parseConditions({
+      parseCondition({
         path: 'listA[1].nestedA.listB[2].valueA',
         eq: { attr: 'listC[3].nestedB.listD[4].valueB' }
       })
@@ -164,7 +162,7 @@ describe('nested paths', () => {
   })
 
   it('deep lists (value)', () => {
-    expect(parseConditions({ path: 'list[1][2][3]', eq: 42 })).toStrictEqual({
+    expect(parseCondition({ path: 'list[1][2][3]', eq: 42 })).toStrictEqual({
       ConditionExpression: '#1[1][2][3] = :1',
       ExpressionAttributeNames: { '#1': 'list' },
       ExpressionAttributeValues: { ':1': 42 }
@@ -173,7 +171,7 @@ describe('nested paths', () => {
 
   it('deep lists (attribute)', () => {
     expect(
-      parseConditions({ path: 'listA[1][2][3]', eq: { attr: 'listB[4][5][6]' } })
+      parseCondition({ path: 'listA[1][2][3]', eq: { attr: 'listB[4][5][6]' } })
     ).toStrictEqual({
       ConditionExpression: '#1[1][2][3] = #2[4][5][6]',
       ExpressionAttributeNames: { '#1': 'listA', '#2': 'listB' },
