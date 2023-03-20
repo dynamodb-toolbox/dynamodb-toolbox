@@ -5,6 +5,10 @@ import { isComparisonCondition, appendComparisonConditionToState } from './compa
 import { isSingleArgFnCondition, appendSingleArgFnConditionToState } from './singleArgFn'
 import { isBetweenCondition, appendBetweenConditionToState } from './between'
 import { isNotCondition, appendNotConditionToState } from './not'
+import {
+  isLogicalCombinationCondition,
+  appendLogicalCombinationConditionToState
+} from './logicalCombination'
 
 export const appendConditionToState = (state: ParsingState, condition: Condition): ParsingState => {
   if (isComparisonCondition(condition)) {
@@ -21,6 +25,10 @@ export const appendConditionToState = (state: ParsingState, condition: Condition
 
   if (isNotCondition(condition)) {
     return appendNotConditionToState(state, condition)
+  }
+
+  if (isLogicalCombinationCondition(condition)) {
+    return appendLogicalCombinationConditionToState(state, condition)
   }
 
   return state
