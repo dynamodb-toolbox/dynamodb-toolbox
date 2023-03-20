@@ -481,7 +481,7 @@ describe('put', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownCommandOption' }))
   })
 
-  it('sets conditions', () => {
+  it('sets condition', () => {
     const {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
@@ -489,7 +489,7 @@ describe('put', () => {
     } = putItemParams(
       TestEntity,
       { email: 'x', sort: 'y' },
-      { conditions: { path: 'email', gt: 'test' } }
+      { condition: { path: 'email', gt: 'test' } }
     )
 
     // TODO: Rename savedAs attributes (parse condition first)

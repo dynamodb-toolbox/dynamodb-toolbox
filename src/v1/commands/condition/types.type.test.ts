@@ -21,8 +21,8 @@ import {
 } from 'v1'
 
 import type {
-  Conditions,
   Condition,
+  NonLogicalCondition,
   AttributeCondition,
   SharedAttributeCondition,
   TypeCondition,
@@ -296,8 +296,8 @@ const assertUnionCondition: A.Equals<
 > = 1
 assertUnionCondition
 
-type ENTITY_CONDITION = Condition<typeof entity>
-const assertEntityAttributePaths: A.Contains<
+type ENTITY_NON_LOGICAL_CONDITION = NonLogicalCondition<typeof entity>
+const assertEntityNonLogicalCondition: A.Contains<
   | PARENT_ID_CONDITION
   | CHILD_ID_CONDITION
   | ANY_CONDITION
@@ -310,15 +310,15 @@ const assertEntityAttributePaths: A.Contains<
   | MAP_CONDITION
   | RECORD_CONDITION
   | UNION_CONDITION,
-  ENTITY_CONDITION
+  ENTITY_NON_LOGICAL_CONDITION
 > = 1
-assertEntityAttributePaths
+assertEntityNonLogicalCondition
 
-const assertEntityConditions: A.Contains<
-  | ENTITY_CONDITION
-  | { or: ENTITY_CONDITION[] }
-  | { and: ENTITY_CONDITION[] }
-  | { not: ENTITY_CONDITION },
-  Conditions<typeof entity>
+const assertEntityCondition: A.Contains<
+  | ENTITY_NON_LOGICAL_CONDITION
+  | { or: ENTITY_NON_LOGICAL_CONDITION[] }
+  | { and: ENTITY_NON_LOGICAL_CONDITION[] }
+  | { not: ENTITY_NON_LOGICAL_CONDITION },
+  Condition<typeof entity>
 > = 1
-assertEntityConditions
+assertEntityCondition
