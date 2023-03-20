@@ -4,7 +4,7 @@ import { appendAttributeValueOrPathToState } from '../utils/appendAttributeValue
 
 import { isComparisonOperator, ComparisonCondition, ComparisonOperator } from './types'
 
-const comparisonOperatorExpression = {
+const comparisonOperatorExpression: Record<ComparisonOperator, string> = {
   eq: '=',
   ne: '<>',
   gt: '>',
