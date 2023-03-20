@@ -2,6 +2,7 @@ import type { Condition } from 'v1/commands/conditions/types'
 
 import type { ParsingState } from '../types'
 import type { SingleArgFnOperator } from './operators'
+import { parseAttributePath } from '../utils/parseAttributePath'
 
 const getSingleArgFnOperatorExpression = (
   comparisonOperator: SingleArgFnOperator,
@@ -25,24 +26,18 @@ const getSingleArgFnOperatorExpression = (
 export const parseSingleArgFnCondition = <SINGLE_ARG_FN_OPERATOR extends SingleArgFnOperator>(
   condition: Condition,
   comparisonOperator: SINGLE_ARG_FN_OPERATOR,
-  { expressionAttributeNames, expressionAttributeValues }: ParsingState
+  parsingState: ParsingState
 ): ParsingState => {
   const { path: attributePath, [comparisonOperator]: expressionAttributeValue } = condition
 
-  let conditionExpression = `${getSingleArgFnOperatorExpression(
+  parsingState.conditionExpression = `${getSingleArgFnOperatorExpression(
     comparisonOperator,
     expressionAttributeValue
   )}(`
 
-  const pathMatches = attributePath.matchAll(/\w+(?=(\.|$|((\[\d+\])+)))/g)
-  for (const pathMatch of pathMatches) {
-    const [expressionAttributeName, followingSeparator] = pathMatch
+  parseAttributePath(attributePath, parsingState)
 
-    const expressionAttributeNameIndex = expressionAttributeNames.push(expressionAttributeName)
-    conditionExpression += `#${expressionAttributeNameIndex}${followingSeparator}`
-  }
+  parsingState.conditionExpression += ')'
 
-  conditionExpression += ')'
-
-  return { expressionAttributeNames, expressionAttributeValues, conditionExpression }
+  return parsingState
 }
