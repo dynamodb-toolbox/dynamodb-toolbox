@@ -4,16 +4,6 @@ import type { ParsingState } from '../types'
 import { isAttributePath } from '../utils/isAttributePath'
 import type { ComparisonOperator } from './operators'
 
-// export const detectConditionType = (
-//   condition: Conditions
-// ): { type: 'comparison'; condition: Condition; operator: ComparisonOperator } | undefined => {
-//   for (const conditionKey of Object.keys(condition)) {
-//     if (isComparisonOperator(conditionKey)) {
-//       return { type: 'comparison', condition: condition as Condition, operator: conditionKey }
-//     }
-//   }
-// }
-
 const comparisonOperatorExpression = {
   eq: '=',
   ne: '<>',
@@ -30,10 +20,9 @@ export const parseComparisonCondition = <COMPARISON_OPERATOR extends ComparisonO
 ): ParsingState => {
   const { path: attributePath, [comparisonOperator]: expressionAttributeValue } = condition
 
-  const pathMatches = attributePath.matchAll(/\w+(?=(\.|$|((\[\d+\])+)))/g)
-
   let conditionExpression = ''
 
+  const pathMatches = attributePath.matchAll(/\w+(?=(\.|$|((\[\d+\])+)))/g)
   for (const pathMatch of pathMatches) {
     const [expressionAttributeName, followingSeparator] = pathMatch
 
