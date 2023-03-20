@@ -25,7 +25,8 @@ import type {
   Condition,
   AttributeCondition,
   SharedAttributeCondition,
-  TypeCondition
+  TypeCondition,
+  AnyAttributePath
 } from './types'
 
 const dynamoDbClient = new DynamoDBClient({})
@@ -65,159 +66,230 @@ const entity = new EntityV2({
   table
 })
 
+type ATTRIBUTE_PATHS = AnyAttributePath<typeof entity>
+const assertAttributePaths: A.Equals<
+  | 'parentId'
+  | 'childId'
+  | 'any'
+  | `any${string}`
+  | 'const'
+  | 'num'
+  | 'bool'
+  | 'bin'
+  | 'stringSet'
+  | 'stringList'
+  | `stringList[${number}]`
+  | 'mapList'
+  | `mapList[${number}]`
+  | `mapList[${number}].num`
+  | 'map'
+  | `map.num`
+  | `map.stringList`
+  | `map.stringList[${number}]`
+  | `map.map`
+  | `map.map.num`
+  | 'record'
+  | `record.${'foo' | 'bar'}`
+  | `record.${'foo' | 'bar'}.num`
+  | 'union'
+  | 'union.str'
+  | 'union.num',
+  ATTRIBUTE_PATHS
+> = 1
+assertAttributePaths
+
 type ATTRIBUTES = typeof entity['item']['attributes']
 
-type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId']>
+type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
 const assertParentIdCondition: A.Equals<
   | SharedAttributeCondition<'parentId'>
-  | { path: 'parentId'; eq: string }
-  | { path: 'parentId'; ne: string }
-  | { path: 'parentId'; in: string[] }
-  | { path: 'parentId'; lt: string }
-  | { path: 'parentId'; lte: string }
-  | { path: 'parentId'; gt: string }
-  | { path: 'parentId'; gte: string }
-  | { path: 'parentId'; between: [string, string] }
-  | { path: 'parentId'; contains: string }
-  | { path: 'parentId'; notContains: string }
-  | { path: 'parentId'; beginsWith: string },
+  | { path: 'parentId'; eq: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'parentId'; ne: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'parentId'; in: (string | { attr: ATTRIBUTE_PATHS })[] }
+  | { path: 'parentId'; lt: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'parentId'; lte: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'parentId'; gt: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'parentId'; gte: string | { attr: ATTRIBUTE_PATHS } }
+  | {
+      path: 'parentId'
+      between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }]
+    }
+  | { path: 'parentId'; contains: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'parentId'; notContains: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'parentId'; beginsWith: string | { attr: ATTRIBUTE_PATHS } },
   PARENT_ID_CONDITION
 > = 1
 assertParentIdCondition
 
-type CHILD_ID_CONDITION = AttributeCondition<'childId', ATTRIBUTES['childId']>
+type CHILD_ID_CONDITION = AttributeCondition<'childId', ATTRIBUTES['childId'], ATTRIBUTE_PATHS>
 
-type ANY_CONDITION = AttributeCondition<'any', ATTRIBUTES['any']>
+type ANY_CONDITION = AttributeCondition<'any', ATTRIBUTES['any'], ATTRIBUTE_PATHS>
 
 const anyCondition: A.Contains<
   | { path: `any${string}`; exists: boolean }
   | { path: `any${string}`; type: TypeCondition }
   | { path: `any${string}`; size: string }
-  | { path: `any${string}`; eq: boolean | string | number | Buffer }
-  | { path: `any${string}`; ne: boolean | string | number | Buffer }
-  | { path: `any${string}`; in: (boolean | string | number | Buffer)[] }
-  | { path: `any${string}`; lt: string }
-  | { path: `any${string}`; lt: number }
-  | { path: `any${string}`; lt: Buffer }
-  | { path: `any${string}`; lte: string }
-  | { path: `any${string}`; lte: number }
-  | { path: `any${string}`; lte: Buffer }
-  | { path: `any${string}`; gt: string }
-  | { path: `any${string}`; gt: number }
-  | { path: `any${string}`; gt: Buffer }
-  | { path: `any${string}`; gte: string }
-  | { path: `any${string}`; gte: number }
-  | { path: `any${string}`; gte: Buffer }
-  | { path: `any${string}`; between: [string, string] }
-  | { path: `any${string}`; between: [number, number] }
+  | { path: `any${string}`; eq: boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; ne: boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; in: (boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS })[] }
+  | { path: `any${string}`; lt: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; lt: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; lt: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; lte: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; lte: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; lte: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; gt: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; gt: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; gt: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; gte: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; gte: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; gte: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | {
+      path: `any${string}`
+      between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }]
+    }
+  | {
+      path: `any${string}`
+      between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }]
+    }
   // TODO: There is a bug with A.Equals, it does not work with Buffer tuple strangely
-  | { path: `any${string}`; between: [Buffer, Buffer] }
-  | { path: `any${string}`; contains: string }
-  | { path: `any${string}`; contains: Buffer }
-  | { path: `any${string}`; notContains: string }
-  | { path: `any${string}`; notContains: Buffer }
-  | { path: `any${string}`; beginsWith: string }
-  | { path: `any${string}`; beginsWith: Buffer },
+  | {
+      path: `any${string}`
+      between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }]
+    }
+  | { path: `any${string}`; contains: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; contains: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; notContains: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; beginsWith: string | { attr: ATTRIBUTE_PATHS } }
+  | { path: `any${string}`; beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } },
   ANY_CONDITION
 > = 1
 anyCondition
 
 // TODO: const CONDITION
 
-type NUM_CONDITION = AttributeCondition<'num', ATTRIBUTES['num']>
+type NUM_CONDITION = AttributeCondition<'num', ATTRIBUTES['num'], ATTRIBUTE_PATHS>
 const assertNumCondition: A.Equals<
   | SharedAttributeCondition<'num'>
-  | { path: 'num'; eq: number }
-  | { path: 'num'; ne: number }
-  | { path: 'num'; in: number[] }
-  | { path: 'num'; lt: number }
-  | { path: 'num'; lte: number }
-  | { path: 'num'; gt: number }
-  | { path: 'num'; gte: number }
-  | { path: 'num'; between: [number, number] },
+  | { path: 'num'; eq: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'num'; ne: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'num'; in: (number | { attr: ATTRIBUTE_PATHS })[] }
+  | { path: 'num'; lt: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'num'; lte: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'num'; gt: number | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'num'; gte: number | { attr: ATTRIBUTE_PATHS } }
+  | {
+      path: 'num'
+      between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }]
+    },
   NUM_CONDITION
 > = 1
 assertNumCondition
 
-type BOOL_CONDITION = AttributeCondition<'bool', ATTRIBUTES['bool']>
+type BOOL_CONDITION = AttributeCondition<'bool', ATTRIBUTES['bool'], ATTRIBUTE_PATHS>
 const assertBoolCondition: A.Equals<
   | SharedAttributeCondition<'bool'>
-  | { path: 'bool'; eq: boolean }
-  | { path: 'bool'; ne: boolean }
-  | { path: 'bool'; in: boolean[] },
+  | { path: 'bool'; eq: boolean | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bool'; ne: boolean | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bool'; in: (boolean | { attr: ATTRIBUTE_PATHS })[] },
   BOOL_CONDITION
 > = 1
 assertBoolCondition
 
-type BIN_CONDITION = AttributeCondition<'bin', ATTRIBUTES['bin']>
+type BIN_CONDITION = AttributeCondition<'bin', ATTRIBUTES['bin'], ATTRIBUTE_PATHS>
 const assertBinCondition: A.Equals<
   | SharedAttributeCondition<'bin'>
-  | { path: 'bin'; eq: Buffer }
-  | { path: 'bin'; ne: Buffer }
-  | { path: 'bin'; in: Buffer[] }
-  | { path: 'bin'; lt: Buffer }
-  | { path: 'bin'; lte: Buffer }
-  | { path: 'bin'; gt: Buffer }
-  | { path: 'bin'; gte: Buffer }
-  | { path: 'bin'; between: [Buffer, Buffer] }
-  | { path: 'bin'; contains: Buffer }
-  | { path: 'bin'; notContains: Buffer }
-  | { path: 'bin'; beginsWith: Buffer },
+  | { path: 'bin'; eq: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bin'; ne: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bin'; in: (Buffer | { attr: ATTRIBUTE_PATHS })[] }
+  | { path: 'bin'; lt: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bin'; lte: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bin'; gt: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bin'; gte: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | {
+      path: 'bin'
+      between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }]
+    }
+  | { path: 'bin'; contains: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bin'; notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
+  | { path: 'bin'; beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } },
   BIN_CONDITION
 > = 1
 assertBinCondition
 
-type STRING_SET_CONDITION = AttributeCondition<'stringSet', ATTRIBUTES['stringSet']>
+type STRING_SET_CONDITION = AttributeCondition<
+  'stringSet',
+  ATTRIBUTES['stringSet'],
+  ATTRIBUTE_PATHS
+>
 const assertStringSetCondition: A.Equals<
   SharedAttributeCondition<'stringSet'>,
   STRING_SET_CONDITION
 > = 1
 assertStringSetCondition
 
-type STRING_LIST_CONDITION = AttributeCondition<'stringList', ATTRIBUTES['stringList']>
+type STRING_LIST_CONDITION = AttributeCondition<
+  'stringList',
+  ATTRIBUTES['stringList'],
+  ATTRIBUTE_PATHS
+>
 const assertStringListCondition: A.Equals<
   | SharedAttributeCondition<'stringList'>
-  | AttributeCondition<`stringList[${number}]`, ATTRIBUTES['stringList']['elements']>,
+  | AttributeCondition<
+      `stringList[${number}]`,
+      ATTRIBUTES['stringList']['elements'],
+      ATTRIBUTE_PATHS
+    >,
   STRING_LIST_CONDITION
 > = 1
 assertStringListCondition
 
-type MAP_LIST_CONDITION = AttributeCondition<'mapList', ATTRIBUTES['mapList']>
+type MAP_LIST_CONDITION = AttributeCondition<'mapList', ATTRIBUTES['mapList'], ATTRIBUTE_PATHS>
 const assertMapListCondition: A.Equals<
   | SharedAttributeCondition<'mapList'>
-  | AttributeCondition<`mapList[${number}]`, ATTRIBUTES['mapList']['elements']>
+  | AttributeCondition<`mapList[${number}]`, ATTRIBUTES['mapList']['elements'], ATTRIBUTE_PATHS>
   | AttributeCondition<
       `mapList[${number}].num`,
-      ATTRIBUTES['mapList']['elements']['attributes']['num']
+      ATTRIBUTES['mapList']['elements']['attributes']['num'],
+      ATTRIBUTE_PATHS
     >,
   MAP_LIST_CONDITION
 > = 1
 assertMapListCondition
 
-type MAP_CONDITION = AttributeCondition<'map', ATTRIBUTES['map']>
+type MAP_CONDITION = AttributeCondition<'map', ATTRIBUTES['map'], ATTRIBUTE_PATHS>
 const assertMapCondition: A.Equals<
   | SharedAttributeCondition<'map'>
-  | AttributeCondition<`map.num`, ATTRIBUTES['map']['attributes']['num']>
-  | AttributeCondition<`map.stringList`, ATTRIBUTES['map']['attributes']['stringList']>
-  | AttributeCondition<`map.map`, ATTRIBUTES['map']['attributes']['map']>,
+  | AttributeCondition<`map.num`, ATTRIBUTES['map']['attributes']['num'], ATTRIBUTE_PATHS>
+  | AttributeCondition<
+      `map.stringList`,
+      ATTRIBUTES['map']['attributes']['stringList'],
+      ATTRIBUTE_PATHS
+    >
+  | AttributeCondition<`map.map`, ATTRIBUTES['map']['attributes']['map'], ATTRIBUTE_PATHS>,
   MAP_CONDITION
 > = 1
 assertMapCondition
 
-type RECORD_CONDITION = AttributeCondition<'record', ATTRIBUTES['record']>
+type RECORD_CONDITION = AttributeCondition<'record', ATTRIBUTES['record'], ATTRIBUTE_PATHS>
 const assertRecordCondition: A.Equals<
   | SharedAttributeCondition<'record'>
-  | AttributeCondition<'record.foo' | 'record.bar', ATTRIBUTES['record']['elements']>,
+  | AttributeCondition<
+      'record.foo' | 'record.bar',
+      ATTRIBUTES['record']['elements'],
+      ATTRIBUTE_PATHS
+    >,
   RECORD_CONDITION
 > = 1
 assertRecordCondition
 
-type UNION_CONDITION = AttributeCondition<'union', ATTRIBUTES['union']>
+type UNION_CONDITION = AttributeCondition<'union', ATTRIBUTES['union'], ATTRIBUTE_PATHS>
 const assertUnionCondition: A.Equals<
   | SharedAttributeCondition<'union'>
   | (ATTRIBUTES['union']['elements'][number] extends infer ELEMENT
       ? ELEMENT extends Attribute
-        ? AttributeCondition<'union', ELEMENT>
+        ? AttributeCondition<'union', ELEMENT, ATTRIBUTE_PATHS>
         : never
       : never),
   UNION_CONDITION

@@ -1,7 +1,8 @@
 import type { Conditions } from 'v1/commands/conditions/types'
 
 import { ParsingState } from './types'
-import { detectConditionType, parseComparisonCondition } from './comparison'
+import { parseComparisonCondition } from './comparison/comparison'
+import { detectConditionType } from './utils/detectConditionType'
 
 export const parseCondition = (
   conditions: Conditions,
