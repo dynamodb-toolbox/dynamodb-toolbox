@@ -26,9 +26,12 @@ export const appendComparisonConditionToState = <CONDITION extends ComparisonCon
   const comparisonOperator = Object.keys(condition).find(isComparisonOperator) as keyof CONDITION &
     ComparisonOperator
 
-  const { path: attributePath, [comparisonOperator]: expressionAttributeValue } = condition
+  const attributePath = condition.size ?? condition.path
+  const expressionAttributeValue = condition[comparisonOperator]
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath)
+  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+    size: !!condition.size
+  })
 
   nextParsingState.conditionExpression += ` ${comparisonOperatorExpression[comparisonOperator]} `
 
