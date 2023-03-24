@@ -14,7 +14,12 @@ const logicalCombinationOperatorExpression: Record<LogicalCombinationOperator, s
   and: 'AND'
 }
 
-export const appendLogicalCombinationConditionToState = <
+type AppendLogicalCombinationConditionToState = <CONDITION extends LogicalCombinationCondition>(
+  prevParsingState: ParsingState,
+  condition: CONDITION
+) => ParsingState
+
+export const appendLogicalCombinationConditionToState: AppendLogicalCombinationConditionToState = <
   CONDITION extends LogicalCombinationCondition
 >(
   prevParsingState: ParsingState,
