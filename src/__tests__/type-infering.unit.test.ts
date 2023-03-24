@@ -14,6 +14,8 @@ import {
 } from 'classes/Entity'
 
 import { Table, Entity } from '../index'
+import { Select } from '@aws-sdk/client-dynamodb'
+import { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
   obj: O,
@@ -50,7 +52,7 @@ type ExpectedQueryOpts<
     reverse: boolean
     entity: string
     parseAsEntity: string
-    select: DocumentClientType.Select
+    select: Select,
     filters: ConditionsOrFilters<FilteredAttributes>
     eq: string | number | bigint
     lt: string | number | bigint
@@ -297,7 +299,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => entNoExecute.get(item)
         type GetParams = A.Await<F.Return<typeof getPromise>>
-        type TestGetParams = A.Equals<GetParams, DocumentClientType.GetItemInput>
+        type TestGetParams = A.Equals<GetParams, GetCommandInput>
         const testGetParams: TestGetParams = 1
         testGetParams
       })
