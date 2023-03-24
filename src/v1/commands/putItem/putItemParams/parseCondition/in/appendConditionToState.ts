@@ -14,9 +14,12 @@ export const appendInConditionToState = (
     conditionExpression: ''
   }
 
-  const { path: attributePath, in: expressionAttributeValues } = condition
+  const attributePath = condition.size ?? condition.path
+  const expressionAttributeValues = condition.in
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath)
+  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+    size: !!condition.size
+  })
 
   nextParsingState.conditionExpression += ' IN ('
 

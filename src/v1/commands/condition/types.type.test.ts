@@ -20,13 +20,14 @@ import {
   anyOf
 } from 'v1'
 
-import type {
+import {
   Condition,
   NonLogicalCondition,
   AttributeCondition,
   SharedAttributeCondition,
   TypeCondition,
-  AnyAttributePath
+  AnyAttributePath,
+  PathOrSize
 } from './types'
 
 const dynamoDbClient = new DynamoDBClient({})
@@ -102,21 +103,21 @@ type ATTRIBUTES = typeof entity['item']['attributes']
 
 type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
 const assertParentIdCondition: A.Equals<
-  | SharedAttributeCondition<'parentId'>
-  | { path: 'parentId'; eq: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'parentId'; ne: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'parentId'; in: (string | { attr: ATTRIBUTE_PATHS })[] }
-  | { path: 'parentId'; lt: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'parentId'; lte: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'parentId'; gt: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'parentId'; gte: string | { attr: ATTRIBUTE_PATHS } }
-  | {
-      path: 'parentId'
-      between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }]
-    }
-  | { path: 'parentId'; contains: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'parentId'; notContains: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'parentId'; beginsWith: string | { attr: ATTRIBUTE_PATHS } },
+  PathOrSize<'parentId'> &
+    (
+      | SharedAttributeCondition<'parentId'>
+      | { eq: string | { attr: ATTRIBUTE_PATHS } }
+      | { ne: string | { attr: ATTRIBUTE_PATHS } }
+      | { in: (string | { attr: ATTRIBUTE_PATHS })[] }
+      | { lt: string | { attr: ATTRIBUTE_PATHS } }
+      | { lte: string | { attr: ATTRIBUTE_PATHS } }
+      | { gt: string | { attr: ATTRIBUTE_PATHS } }
+      | { gte: string | { attr: ATTRIBUTE_PATHS } }
+      | { between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }] }
+      | { contains: string | { attr: ATTRIBUTE_PATHS } }
+      | { notContains: string | { attr: ATTRIBUTE_PATHS } }
+      | { beginsWith: string | { attr: ATTRIBUTE_PATHS } }
+    ),
   PARENT_ID_CONDITION
 > = 1
 assertParentIdCondition
@@ -126,43 +127,37 @@ type CHILD_ID_CONDITION = AttributeCondition<'childId', ATTRIBUTES['childId'], A
 type ANY_CONDITION = AttributeCondition<'any', ATTRIBUTES['any'], ATTRIBUTE_PATHS>
 
 const anyCondition: A.Contains<
-  | { path: `any${string}`; exists: boolean }
-  | { path: `any${string}`; type: TypeCondition }
-  | { path: `any${string}`; size: string }
-  | { path: `any${string}`; eq: boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; ne: boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; in: (boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS })[] }
-  | { path: `any${string}`; lt: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; lt: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; lt: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; lte: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; lte: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; lte: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; gt: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; gt: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; gt: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; gte: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; gte: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; gte: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | {
-      path: `any${string}`
-      between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }]
-    }
-  | {
-      path: `any${string}`
-      between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }]
-    }
-  // TODO: There is a bug with A.Equals, it does not work with Buffer tuple strangely
-  | {
-      path: `any${string}`
-      between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }]
-    }
-  | { path: `any${string}`; contains: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; contains: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; notContains: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; beginsWith: string | { attr: ATTRIBUTE_PATHS } }
-  | { path: `any${string}`; beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } },
+  PathOrSize<`any${string}`> &
+    (
+      | { exists: boolean }
+      | { type: TypeCondition }
+      | { size: string }
+      | { eq: boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { ne: boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { in: (boolean | string | number | Buffer | { attr: ATTRIBUTE_PATHS })[] }
+      | { lt: string | { attr: ATTRIBUTE_PATHS } }
+      | { lt: number | { attr: ATTRIBUTE_PATHS } }
+      | { lt: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { lte: string | { attr: ATTRIBUTE_PATHS } }
+      | { lte: number | { attr: ATTRIBUTE_PATHS } }
+      | { lte: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { gt: string | { attr: ATTRIBUTE_PATHS } }
+      | { gt: number | { attr: ATTRIBUTE_PATHS } }
+      | { gt: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { gte: string | { attr: ATTRIBUTE_PATHS } }
+      | { gte: number | { attr: ATTRIBUTE_PATHS } }
+      | { gte: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }] }
+      | { between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }] }
+      // TODO: There is a bug with A.Equals, it does not work with Buffer tuple strangely
+      | { between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }] }
+      | { contains: string | { attr: ATTRIBUTE_PATHS } }
+      | { contains: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { notContains: string | { attr: ATTRIBUTE_PATHS } }
+      | { notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { beginsWith: string | { attr: ATTRIBUTE_PATHS } }
+      | { beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } }
+    ),
   ANY_CONDITION
 > = 1
 anyCondition
@@ -171,49 +166,52 @@ anyCondition
 
 type NUM_CONDITION = AttributeCondition<'num', ATTRIBUTES['num'], ATTRIBUTE_PATHS>
 const assertNumCondition: A.Equals<
-  | SharedAttributeCondition<'num'>
-  | { path: 'num'; eq: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'num'; ne: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'num'; in: (number | { attr: ATTRIBUTE_PATHS })[] }
-  | { path: 'num'; lt: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'num'; lte: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'num'; gt: number | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'num'; gte: number | { attr: ATTRIBUTE_PATHS } }
-  | {
-      path: 'num'
-      between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }]
-    },
+  PathOrSize<'num'> &
+    (
+      | SharedAttributeCondition<'num'>
+      | { eq: number | { attr: ATTRIBUTE_PATHS } }
+      | { ne: number | { attr: ATTRIBUTE_PATHS } }
+      | { in: (number | { attr: ATTRIBUTE_PATHS })[] }
+      | { lt: number | { attr: ATTRIBUTE_PATHS } }
+      | { lte: number | { attr: ATTRIBUTE_PATHS } }
+      | { gt: number | { attr: ATTRIBUTE_PATHS } }
+      | { gte: number | { attr: ATTRIBUTE_PATHS } }
+      | { between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }] }
+    ),
   NUM_CONDITION
 > = 1
 assertNumCondition
 
 type BOOL_CONDITION = AttributeCondition<'bool', ATTRIBUTES['bool'], ATTRIBUTE_PATHS>
 const assertBoolCondition: A.Equals<
-  | SharedAttributeCondition<'bool'>
-  | { path: 'bool'; eq: boolean | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bool'; ne: boolean | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bool'; in: (boolean | { attr: ATTRIBUTE_PATHS })[] },
+  PathOrSize<'bool'> &
+    (
+      | SharedAttributeCondition<'bool'>
+      | { eq: boolean | { attr: ATTRIBUTE_PATHS } }
+      | { ne: boolean | { attr: ATTRIBUTE_PATHS } }
+      | { in: (boolean | { attr: ATTRIBUTE_PATHS })[] }
+    ),
   BOOL_CONDITION
 > = 1
 assertBoolCondition
 
 type BIN_CONDITION = AttributeCondition<'bin', ATTRIBUTES['bin'], ATTRIBUTE_PATHS>
 const assertBinCondition: A.Equals<
-  | SharedAttributeCondition<'bin'>
-  | { path: 'bin'; eq: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bin'; ne: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bin'; in: (Buffer | { attr: ATTRIBUTE_PATHS })[] }
-  | { path: 'bin'; lt: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bin'; lte: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bin'; gt: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bin'; gte: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | {
-      path: 'bin'
-      between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }]
-    }
-  | { path: 'bin'; contains: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bin'; notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
-  | { path: 'bin'; beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } },
+  PathOrSize<'bin'> &
+    (
+      | SharedAttributeCondition<'bin'>
+      | { eq: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { ne: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { in: (Buffer | { attr: ATTRIBUTE_PATHS })[] }
+      | { lt: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { lte: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { gt: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { gte: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }] }
+      | { contains: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | { beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } }
+    ),
   BIN_CONDITION
 > = 1
 assertBinCondition

@@ -170,4 +170,12 @@ describe('parseCondition - in', () => {
       ExpressionAttributeValues: {}
     })
   })
+
+  it('with size', () => {
+    expect(parseCondition({ size: 'num', in: [42, 43] })).toStrictEqual({
+      ConditionExpression: 'size(#1) IN (:1, :2)',
+      ExpressionAttributeNames: { '#1': 'num' },
+      ExpressionAttributeValues: { ':1': 42, ':2': 43 }
+    })
+  })
 })

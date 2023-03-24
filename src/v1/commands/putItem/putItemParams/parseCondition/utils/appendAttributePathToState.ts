@@ -8,7 +8,8 @@ export const isAttributePath = (candidate: unknown): candidate is { attr: string
 
 export const appendAttributePathToState = (
   prevParsingState: ParsingState,
-  attributePath: string
+  attributePath: string,
+  options: { size?: boolean } = {}
 ): ParsingState => {
   const nextParsingState: ParsingState = {
     expressionAttributeNames: [...prevParsingState.expressionAttributeNames],
@@ -24,7 +25,12 @@ export const appendAttributePathToState = (
     const expressionAttributeNameIndex = nextParsingState.expressionAttributeNames.push(
       expressionAttributeName
     )
-    nextParsingState.conditionExpression += `#${expressionAttributeNameIndex}${followingSeparator}`
+
+    const conditionExpressionPath = `#${expressionAttributeNameIndex}${followingSeparator}`
+
+    nextParsingState.conditionExpression += options.size
+      ? `size(${conditionExpressionPath})`
+      : conditionExpressionPath
   }
 
   return nextParsingState
