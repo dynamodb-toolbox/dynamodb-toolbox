@@ -14,11 +14,14 @@ export const appendBetweenConditionToState = (
     conditionExpression: ''
   }
 
-  const { path: attributePath, between: expressionAttributeValue } = condition
+  const attributePath = condition.size ?? condition.path
+  const expressionAttributeValue = condition.between
 
   const [lowerRange, higherRange] = expressionAttributeValue
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath)
+  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+    size: !!condition.size
+  })
 
   nextParsingState.conditionExpression += ' BETWEEN '
 
