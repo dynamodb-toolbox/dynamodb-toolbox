@@ -27,17 +27,18 @@ export type AnyAttributeCondition<
 
 export type TypeCondition = 'S' | 'SS' | 'N' | 'NS' | 'B' | 'BS' | 'BOOL' | 'NULL' | 'L' | 'M'
 
-export type SharedAttributeCondition<ATTRIBUTE_PATH extends string> =  // TO VERIFY: Is EXIST applyable to all types of Attributes?
-  | { path: ATTRIBUTE_PATH; exists: boolean }
-  | {
-      path: ATTRIBUTE_PATH
-      type: TypeCondition
-    }
-  | {
-      path: ATTRIBUTE_PATH
-      // TO VERIFY: Is SIZE applyable to all types of Attributes?
-      size: string
-    }
+export type PathOrSize<ATTRIBUTE_PATH extends string> =
+  | { path: ATTRIBUTE_PATH; size?: undefined }
+  | { path?: undefined; size: ATTRIBUTE_PATH }
+
+export type SharedAttributeCondition<ATTRIBUTE_PATH extends string> = PathOrSize<ATTRIBUTE_PATH> &
+  (
+    | // TO VERIFY: Is EXIST applyable to all types of Attributes?
+    { exists: boolean }
+    | { type: TypeCondition }
+    // TO VERIFY: Is SIZE applyable to all types of Attributes?
+    | { size: string }
+  )
 
 export type AttributeCondition<
   ATTRIBUTE_PATH extends string,
@@ -91,52 +92,57 @@ type NumberStringOrBinaryAttributeExtraCondition<
     | PrimitiveAttribute<'binary'>,
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
-> =
-  | { path: ATTRIBUTE_PATH; lt: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-  | { path: ATTRIBUTE_PATH; lte: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-  | { path: ATTRIBUTE_PATH; gt: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-  | { path: ATTRIBUTE_PATH; gte: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-  | {
-      path: ATTRIBUTE_PATH
-      between: [
-        ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH },
-        ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH }
-      ]
-    }
+> = PathOrSize<ATTRIBUTE_PATH> &
+  (
+    | { lt: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | { lte: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | { gt: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | { gte: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | {
+        between: [
+          ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH },
+          ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH }
+        ]
+      }
+  )
 
 type StringOrBinaryAttributeExtraCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends PrimitiveAttribute<'string'> | PrimitiveAttribute<'binary'>,
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
-> =
-  | { path: ATTRIBUTE_PATH; contains: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-  | { path: ATTRIBUTE_PATH; notContains: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-  | { path: ATTRIBUTE_PATH; beginsWith: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+> = PathOrSize<ATTRIBUTE_PATH> &
+  (
+    | { contains: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | { notContains: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | { beginsWith: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+  )
 
 export type PrimitiveAttributeExtraCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends PrimitiveAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
-> =
-  // TO VERIFY: Are EQ | NE | IN applyable to other types than Primitives?
-  | { path: ATTRIBUTE_PATH; eq: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-  | { path: ATTRIBUTE_PATH; ne: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-  | { path: ATTRIBUTE_PATH; in: (ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH })[] }
-  | (ATTRIBUTE extends
-      | PrimitiveAttribute<'string'>
-      | PrimitiveAttribute<'number'>
-      | PrimitiveAttribute<'binary'>
-      ? NumberStringOrBinaryAttributeExtraCondition<
-          ATTRIBUTE_PATH,
-          ATTRIBUTE,
-          COMPARED_ATTRIBUTE_PATH
-        >
-      : never)
-  | (ATTRIBUTE extends PrimitiveAttribute<'string'> | PrimitiveAttribute<'binary'>
-      ? StringOrBinaryAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
-      : never)
+> = PathOrSize<ATTRIBUTE_PATH> &
+  (
+    | // TO VERIFY: Are EQ | NE | IN applyable to other types than Primitives?
+    { eq: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | { ne: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | { in: (ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH })[] }
+    | (ATTRIBUTE extends
+        | PrimitiveAttribute<'string'>
+        | PrimitiveAttribute<'number'>
+        | PrimitiveAttribute<'binary'>
+        ? NumberStringOrBinaryAttributeExtraCondition<
+            ATTRIBUTE_PATH,
+            ATTRIBUTE,
+            COMPARED_ATTRIBUTE_PATH
+          >
+        : never)
+    | (ATTRIBUTE extends PrimitiveAttribute<'string'> | PrimitiveAttribute<'binary'>
+        ? StringOrBinaryAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+        : never)
+  )
 
 export type NonLogicalCondition<ENTITY extends EntityV2 = EntityV2> = EntityV2 extends ENTITY
   ? AnyAttributeCondition<string, string>

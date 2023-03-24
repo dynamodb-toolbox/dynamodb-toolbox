@@ -1,19 +1,16 @@
 import type { ParsingState } from '../types'
 import { appendAttributePathToState } from '../utils/appendAttributePathToState'
+
+import { TwoArgsFnOperator, isTwoArgsFnOperator, TwoArgsFnCondition } from './types'
 import { appendAttributeValueOrPathToState } from '../utils/appendAttributeValueOrPathToState'
 
-import { isComparisonOperator, ComparisonCondition, ComparisonOperator } from './types'
-
-const comparisonOperatorExpression: Record<ComparisonOperator, string> = {
-  eq: '=',
-  ne: '<>',
-  gt: '>',
-  gte: '>=',
-  lt: '<',
-  lte: '<='
+const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
+  contains: 'contains',
+  beginsWith: 'begins_with',
+  type: 'attribute_type'
 }
 
-export const appendComparisonConditionToState = <CONDITION extends ComparisonCondition>(
+export const appendTwoArgsFnConditionToState = <CONDITION extends TwoArgsFnCondition>(
   prevParsingState: ParsingState,
   condition: CONDITION
 ): ParsingState => {
@@ -23,19 +20,24 @@ export const appendComparisonConditionToState = <CONDITION extends ComparisonCon
     conditionExpression: ''
   }
 
-  const comparisonOperator = Object.keys(condition).find(isComparisonOperator) as keyof CONDITION &
-    ComparisonOperator
+  const comparisonOperator = Object.keys(condition).find(isTwoArgsFnOperator) as keyof CONDITION &
+    TwoArgsFnOperator
 
+  // TOIMPROVE: It doesn't make sense to use size in two args fns
   const attributePath = condition.size ?? condition.path
   const expressionAttributeValue = condition[comparisonOperator]
+
+  nextParsingState.conditionExpression = `${twoArgsFnOperatorExpression[comparisonOperator]}(`
 
   nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
     size: !!condition.size
   })
 
-  nextParsingState.conditionExpression += ` ${comparisonOperatorExpression[comparisonOperator]} `
+  nextParsingState.conditionExpression += `, `
 
   nextParsingState = appendAttributeValueOrPathToState(nextParsingState, expressionAttributeValue)
+
+  nextParsingState.conditionExpression += `)`
 
   return nextParsingState
 }
