@@ -14,7 +14,11 @@ export type LogicalCombinationCondition = Condition &
       : never
     : never)
 
-export const isLogicalCombinationCondition = (
+type IsLogicalCombinationCondition = (
+  condition: Condition
+) => condition is LogicalCombinationCondition
+
+export const isLogicalCombinationCondition: IsLogicalCombinationCondition = (
   condition: Condition
 ): condition is LogicalCombinationCondition =>
   Object.keys(condition).some(isLogicalCombinationOperator)
