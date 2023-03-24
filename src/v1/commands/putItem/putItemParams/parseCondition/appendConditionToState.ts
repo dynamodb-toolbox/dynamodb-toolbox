@@ -9,6 +9,7 @@ import {
   isLogicalCombinationCondition,
   appendLogicalCombinationConditionToState
 } from './logicalCombination'
+import { isTwoArgsFnCondition, appendTwoArgsFnConditionToState } from './twoArgsFn'
 
 export const appendConditionToState = (state: ParsingState, condition: Condition): ParsingState => {
   if (isComparisonCondition(condition)) {
@@ -29,6 +30,10 @@ export const appendConditionToState = (state: ParsingState, condition: Condition
 
   if (isLogicalCombinationCondition(condition)) {
     return appendLogicalCombinationConditionToState(state, condition)
+  }
+
+  if (isTwoArgsFnCondition(condition)) {
+    return appendTwoArgsFnConditionToState(state, condition)
   }
 
   return state
