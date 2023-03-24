@@ -7,7 +7,9 @@ export const appendSingleArgFnConditionToState = (
   prevParsingState: ParsingState,
   condition: SingleArgFnCondition
 ): ParsingState => {
-  const { path: attributePath, exists: expressionAttributeValue } = condition
+  // TOIMPROVE: It doesn't make sense to use size in single arg fns
+  const attributePath = condition.size ?? condition.path
+  const expressionAttributeValue = condition.exists
 
   let nextParsingState: ParsingState = {
     expressionAttributeNames: [...prevParsingState.expressionAttributeNames],
@@ -17,7 +19,9 @@ export const appendSingleArgFnConditionToState = (
     }(`
   }
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath)
+  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+    size: !!condition.size
+  })
 
   nextParsingState.conditionExpression += ')'
 

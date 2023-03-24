@@ -23,11 +23,15 @@ export const appendTwoArgsFnConditionToState = <CONDITION extends TwoArgsFnCondi
   const comparisonOperator = Object.keys(condition).find(isTwoArgsFnOperator) as keyof CONDITION &
     TwoArgsFnOperator
 
-  const { path: attributePath, [comparisonOperator]: expressionAttributeValue } = condition
+  // TOIMPROVE: It doesn't make sense to use size in two args fns
+  const attributePath = condition.size ?? condition.path
+  const expressionAttributeValue = condition[comparisonOperator]
 
   nextParsingState.conditionExpression = `${twoArgsFnOperatorExpression[comparisonOperator]}(`
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath)
+  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+    size: !!condition.size
+  })
 
   nextParsingState.conditionExpression += `, `
 
