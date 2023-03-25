@@ -32,7 +32,7 @@ export const toBool = (val: any) =>
       : Boolean(val)
 
 export const toDynamoBigInt = (value: bigint) =>
-  unmarshall({ valueToUnmarshall: {N: value.toString()} }, { wrapNumbers: true }).valueToUnmarshall
+  unmarshall({ valueToUnmarshall: {N: value.toString()} }, { wrapNumbers: true }).valueToUnmarshall.value
 
 // has value shortcut
 export const hasValue = (val: any) => val !== undefined && val !== null

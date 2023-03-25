@@ -206,7 +206,7 @@ describe('parse', () => {
 
   it('parses wrapped numbers', () => {
     const wrap = (value: number) =>
-      unmarshall({ valueToUnmarshall: {N: value.toString()} }, { wrapNumbers: true }).valueToUnmarshall
+      unmarshall({ valueToUnmarshall: {N: value.toString()} }, { wrapNumbers: true }).valueToUnmarshall.value
 
     const item = TestEntity.parse({
       pk: 'test@test.com',
