@@ -398,7 +398,7 @@ describe('put', () => {
       // @ts-expect-error
       test_string_set_type_coerce: '1,2,3'
     })
-    expect(Item!['test_string_set_type_coerce'].values).toEqual(['1', '2', '3'])
+    expect(Item!['test_string_set_type_coerce']).toEqual(new Set(['1', '2', '3']))
   })
 
   it('fails when set doesn\'t contain array with no coercion', () => {

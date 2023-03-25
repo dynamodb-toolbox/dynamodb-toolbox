@@ -93,7 +93,7 @@ export default () => (mapping: any, field: any, value: any) => {
           arrayVal.length === 0 ||
           (expectedSetType === actualSetType && isArrayOfSameType(arrayVal))
           ? new Set(arrayVal)
-          : error(`'${field}' must be a valid set of type ${mapping.setType}`)
+          : error(`'${field}' must be a valid set (array) of type ${mapping.setType}`)
         )
       } else {
         return error(`'${field}' must be a valid set (array)`)

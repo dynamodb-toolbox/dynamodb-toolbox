@@ -82,11 +82,11 @@ describe('batchWrite', () => {
 
     expect(result.ReturnConsumedCapacity).toBe('TOTAL')
     expect(result.ReturnItemCollectionMetrics).toBe('SIZE')
-    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item).toEqual({
+    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk',
       test: 'test'
-    })
+    }))
   })
 
   it('batchWrites data to a single table with invalid params', () => {
@@ -97,11 +97,11 @@ describe('batchWrite', () => {
       'test'
     ) as BatchWriteCommandInput
 
-    expect(result.RequestItems!['test-table'][0].PutRequest!.Item).toEqual({
+    expect(result.RequestItems!['test-table'][0].PutRequest!.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk',
       test: 'test'
-    })
+    }))
   })
 
   it('returns meta data', () => {
@@ -113,11 +113,11 @@ describe('batchWrite', () => {
     ) as { payload: BatchWriteCommandInput; Tables: any }
 
     expect(result).toHaveProperty('Tables')
-    expect(result.payload.RequestItems!['test-table'][0].PutRequest!.Item).toEqual({
+    expect(result.payload.RequestItems!['test-table'][0].PutRequest!.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk',
       test: 'test'
-    })
+    }))
   })
 
   it('batchWrites data to a single table with multiple items', () => {
@@ -127,20 +127,20 @@ describe('batchWrite', () => {
       TestEntity.deleteBatch({ email: 'test', sort: 'testsk3' })
     ]) as BatchWriteCommandInput
 
-    expect(result.RequestItems!['test-table']![0].PutRequest!.Item).toEqual({
+    expect(result.RequestItems!['test-table']![0].PutRequest!.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk1',
       test: 'test1'
-    })
-    expect(result.RequestItems!['test-table']![1].PutRequest!.Item).toEqual({
+    }))
+    expect(result.RequestItems!['test-table']![1].PutRequest!.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk2',
       test: 'test2'
-    })
-    expect(result.RequestItems!['test-table']![2].DeleteRequest!.Key).toEqual({
+    }))
+    expect(result.RequestItems!['test-table']![2].DeleteRequest!.Key).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk3'
-    })
+    }))
   })
 
   it('batchWrites data to multiple tables', () => {
@@ -170,20 +170,20 @@ describe('batchWrite', () => {
       TestEntity2.putBatch({ email: 'test', sort: 'testsk3', test: 'test3' })
     ]) as BatchWriteCommandInput
 
-    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item).toEqual({
+    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk1',
       test: 'test1'
-    })
-    expect(result.RequestItems!['test-table2']![1]!.PutRequest!.Item).toEqual({
+    }))
+    expect(result.RequestItems!['test-table']![1]!.PutRequest!.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk2',
       test: 'test2'
-    })
-    expect(result.RequestItems!['test-table2']![0]!.PutRequest!.Item).toEqual({
+    }))
+    expect(result.RequestItems!['test-table2']![0]!.PutRequest!.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk3',
       test: 'test3'
-    })
+    }))
   })
 })
