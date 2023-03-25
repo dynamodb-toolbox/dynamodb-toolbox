@@ -111,8 +111,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     // @ts-ignore
     if (docClient && docClient.send) {
       // Automatically set convertEmptyValues to true, unless false
-      if (docClient.options!.convertEmptyValues !== false) {
-        docClient.options!.convertEmptyValues = true
+      if (docClient.config.translateConfig?.marshallOptions?.convertEmptyValues !== false) {
+        docClient.config.translateConfig!.marshallOptions!.convertEmptyValues = true
       }
       this._docClient = docClient
     } else {
