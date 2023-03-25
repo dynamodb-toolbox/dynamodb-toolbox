@@ -175,7 +175,7 @@ export function parseEntity<
       const config = schema.attributes[field]
       if (config.type && config.type === 'bigint' || config.setType && config.setType === 'bigint') {
         // Verify DocumentClient has wrapNumbers set to true
-        if (table?.DocumentClient?.options?.wrapNumbers !== true) {
+        if (table?.DocumentClient?.config?.translateConfig?.unmarshallOptions?.wrapNumbers !== true) {
           error('Please set `wrapNumbers: true` in your DocumentClient to avoid losing precision with bigint fields')
         }
       }
