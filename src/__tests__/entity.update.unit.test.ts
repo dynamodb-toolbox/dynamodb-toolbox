@@ -344,12 +344,20 @@ describe('update', () => {
       test_binary_set_type: [Buffer.from('1'), Buffer.from('2'), Buffer.from('3')]
     })
 
-    expect(ExpressionAttributeValues![':test_string_set'].type).toBe('String')
-    expect(ExpressionAttributeValues![':test_number_set'].type).toBe('Number')
-    expect(ExpressionAttributeValues![':test_binary_set'].type).toBe('Binary')
-    expect(ExpressionAttributeValues![':test_string_set_type'].type).toBe('String')
-    expect(ExpressionAttributeValues![':test_number_set_type'].type).toBe('Number')
-    expect(ExpressionAttributeValues![':test_binary_set_type'].type).toBe('Binary')
+    expect(ExpressionAttributeValues![':test_string_set']).toEqual(new Set(['1', '2', '3']))
+    expect(ExpressionAttributeValues![':test_number_set']).toEqual(new Set([1, 2, 3]))
+    expect(ExpressionAttributeValues![':test_binary_set']).toEqual(new Set([
+      Buffer.from('1'),
+      Buffer.from('2'),
+      Buffer.from('3')
+    ]))
+    expect(ExpressionAttributeValues![':test_string_set_type']).toEqual(new Set(['1', '2', '3']))
+    expect(ExpressionAttributeValues![':test_number_set_type']).toEqual(new Set([1, 2, 3]))
+    expect(ExpressionAttributeValues![':test_binary_set_type']).toEqual(new Set([
+      Buffer.from('1'),
+      Buffer.from('2'),
+      Buffer.from('3')
+    ]))
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
   })

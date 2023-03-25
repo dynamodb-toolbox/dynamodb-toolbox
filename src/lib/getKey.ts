@@ -10,7 +10,7 @@ import validateTypes from './validateTypes'
 import { error, transformAttr } from './utils'
 
 // Get partitionKey/sortKey
-export default (DocumentClient: DynamoDBDocumentClient) => (
+export default () => (
   data: any,
   schema: any,
   partitionKey: any,

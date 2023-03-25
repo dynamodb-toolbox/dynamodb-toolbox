@@ -68,8 +68,8 @@ export default () => (mapping: any, field: any, value: any) => {
               `'${field}' must be a valid set containing only ${mapping.setType} types`
             ))
       } else if (Array.isArray(value)) {
-        const expectedSetType = mapping.setType
-        const actualSetType = typeOf(value[0])
+        const expectedSetType = mapping.setType?.toLowerCase?.()
+        const actualSetType = typeOf(value[0])?.toLowerCase?.()
 
         return (!mapping.setType ||
           value.length === 0 ||

@@ -461,7 +461,7 @@ class Entity<Name extends string = string,
     const payload = Object.assign(
       {
         TableName: _table!.name,
-        Key: getKey(this.DocumentClient)(
+        Key: getKey()(
           data,
           schema.attributes,
           schema.keys.partitionKey,
@@ -686,7 +686,7 @@ class Entity<Name extends string = string,
     const payload = Object.assign(
       {
         TableName: _table!.name,
-        Key: getKey(this.DocumentClient)(
+        Key: getKey()(
           data,
           schema.attributes,
           schema.keys.partitionKey,
@@ -968,7 +968,7 @@ class Entity<Name extends string = string,
     ) // end required field check
 
     // Get partition and sort keys
-    const Key = getKey(this.DocumentClient)(
+    const Key = getKey()(
       data,
       schema.attributes,
       schema.keys.partitionKey,
@@ -1481,7 +1481,7 @@ class Entity<Name extends string = string,
     ) // end required field check
 
     // Checks for partition and sort keys
-    getKey(this.DocumentClient)(
+    getKey()(
       data,
       schema.attributes,
       schema.keys.partitionKey,
