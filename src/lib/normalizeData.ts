@@ -11,7 +11,7 @@ import validateTypes from './validateTypes'
 import { error, transformAttr } from './utils'
 
 // Normalize Data
-export default (DocumentClient: DynamoDBDocumentClient) => (
+export default () => (
   schema: any,
   linked: any,
   data: any,

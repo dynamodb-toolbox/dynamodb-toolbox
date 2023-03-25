@@ -76,7 +76,7 @@ export default () => (mapping: any, field: any, value: any) => {
           (expectedSetType === actualSetType && isArrayOfSameType(value))
           ? new Set(value)
           : error(
-            `'${field}' must be a valid set (array) containing only ${mapping.setType ?? typeOf(value[0]).toLowerCase()} types`
+            `'${field}' must be a valid set (array) containing only ${expectedSetType ?? actualSetType} types`
           )
         )
       } else if (mapping.coerce) {

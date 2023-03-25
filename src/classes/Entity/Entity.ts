@@ -409,7 +409,7 @@ class Entity<Name extends string = string,
   ): GetCommandInput {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
-    const data = normalizeData(this.DocumentClient)(
+    const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
@@ -617,7 +617,7 @@ class Entity<Name extends string = string,
   ): DeleteCommandInput {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
-    const data = normalizeData(this.DocumentClient)(
+    const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
@@ -886,7 +886,7 @@ class Entity<Name extends string = string,
     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
     // Merge defaults
-    const data = normalizeData(this.DocumentClient)(
+    const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
@@ -1396,7 +1396,7 @@ class Entity<Name extends string = string,
     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
     // Merge defaults
-    const data = normalizeData(this.DocumentClient)(
+    const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),

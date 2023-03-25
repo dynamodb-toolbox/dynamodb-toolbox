@@ -81,7 +81,7 @@ export function typeOf(data?: any) {
   } else if (data !== undefined && isBinary(data)) {
     return 'Binary'
   } else if (data !== undefined && data.constructor) {
-    return data.constructor.name
+    return data.constructor.name.toLowerCase()
   } else if (data !== undefined && typeof data === 'object') {
     // this object is the result of Object.create(null), hence the absence of a
     // defined constructor
