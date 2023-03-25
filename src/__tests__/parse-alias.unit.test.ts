@@ -1,4 +1,3 @@
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 import { DocumentClient } from './bootstrap.test'
