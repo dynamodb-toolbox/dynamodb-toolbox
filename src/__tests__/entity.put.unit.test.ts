@@ -463,7 +463,7 @@ describe('put', () => {
   it('sets capacity options', () => {
     const { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
-      { capacity: 'NONE' as any }
+      { capacity: 'NONE' }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnConsumedCapacity).toBe('NONE')
@@ -472,7 +472,7 @@ describe('put', () => {
   it('sets metrics options', () => {
     const { TableName, ReturnItemCollectionMetrics } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
-      { metrics: 'SIZE' as any }
+      { metrics: 'SIZE' }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnItemCollectionMetrics).toBe('SIZE')

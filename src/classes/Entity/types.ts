@@ -342,7 +342,7 @@ export type BaseOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = {
-  capacity: ReturnConsumedCapacity
+  capacity: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<`${ReturnConsumedCapacity}`>
   execute: Execute
   parse: Parse
 }
@@ -378,7 +378,7 @@ export type $WriteOptions<
   Parse extends boolean | undefined = undefined
 > = BaseOptions<Execute, Parse> & {
   conditions: ConditionsOrFilters<Attributes>
-  metrics: ReturnItemCollectionMetrics
+  metrics: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<`${ReturnItemCollectionMetrics}`>
   include: string[]
 }
 

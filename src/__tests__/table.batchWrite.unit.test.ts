@@ -76,7 +76,7 @@ describe('batchWrite', () => {
   it('batchWrites data to a single table with options', () => {
     const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
-      { capacity: 'total' as any, metrics: 'size' as any }
+      { capacity: 'total', metrics: 'size' }
     ) as BatchWriteCommandInput
 
 
@@ -97,7 +97,7 @@ describe('batchWrite', () => {
       'test'
     ) as BatchWriteCommandInput
 
-    expect(result.RequestItems['test-table'][0].PutRequest!.Item).toEqual({
+    expect(result.RequestItems!['test-table'][0].PutRequest!.Item).toEqual({
       pk: 'test',
       sk: 'testsk',
       test: 'test'
@@ -113,7 +113,7 @@ describe('batchWrite', () => {
     ) as { payload: BatchWriteCommandInput; Tables: any }
 
     expect(result).toHaveProperty('Tables')
-    expect(result.payload.RequestItems['test-table'][0].PutRequest!.Item).toEqual({
+    expect(result.payload.RequestItems!['test-table'][0].PutRequest!.Item).toEqual({
       pk: 'test',
       sk: 'testsk',
       test: 'test'
@@ -127,17 +127,17 @@ describe('batchWrite', () => {
       TestEntity.deleteBatch({ email: 'test', sort: 'testsk3' })
     ]) as BatchWriteCommandInput
 
-    expect(result.RequestItems['test-table'][0].PutRequest!.Item).toEqual({
+    expect(result.RequestItems!['test-table']![0].PutRequest!.Item).toEqual({
       pk: 'test',
       sk: 'testsk1',
       test: 'test1'
     })
-    expect(result.RequestItems['test-table'][1].PutRequest!.Item).toEqual({
+    expect(result.RequestItems!['test-table']![1].PutRequest!.Item).toEqual({
       pk: 'test',
       sk: 'testsk2',
       test: 'test2'
     })
-    expect(result.RequestItems['test-table'][2].DeleteRequest.Key).toEqual({
+    expect(result.RequestItems!['test-table']![2].DeleteRequest!.Key).toEqual({
       pk: 'test',
       sk: 'testsk3'
     })
