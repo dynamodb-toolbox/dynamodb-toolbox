@@ -49,7 +49,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   private _execute = true
   private _parse = true
   public _removeNulls = true
-  private _docClient?: DynamoDBDocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean } }
+  private _docClient?: DynamoDBDocumentClient
   private _entities: string[] = []
   public Table!: ParsedTable['Table']
   public name!: string
@@ -103,11 +103,10 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     return this._docClient as any
   }
 
-  // Validate and sets the document client (extend with options.convertEmptyValues because it's not typed)
+  // Validate and sets the document client
   set DocumentClient(
-    docClient: (DynamoDBDocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean } }) | undefined,
+    docClient: (DynamoDBDocumentClient) | undefined,
   ) {
-    // If a valid document client
     // @ts-ignore
     if (docClient && docClient.send) {
       // Automatically set convertEmptyValues to true, unless false
@@ -118,7 +117,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     } else {
       error('Invalid DocumentClient')
     }
-  } // end DocumentClient
+  }
 
   /**
    * Adds an entity to the table
