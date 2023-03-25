@@ -1,4 +1,3 @@
-import { DocumentClient as DocumentClientType } from 'aws-sdk/clients/dynamodb'
 import { A } from 'ts-toolbelt'
 
 import {
@@ -13,7 +12,14 @@ import {
 
 import { Table, Entity } from '../index'
 import { Select } from '@aws-sdk/client-dynamodb'
-import { GetCommandInput, GetCommandOutput, PutCommandInput, UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
+import {
+  DeleteCommandInput,
+  DeleteCommandOutput,
+  GetCommandInput,
+  GetCommandOutput,
+  PutCommandInput, PutCommandOutput, QueryCommandInput, ScanCommandInput,
+  UpdateCommandInput, UpdateCommandOutput,
+} from '@aws-sdk/lib-dynamodb'
 import { DocumentClient } from './bootstrap.test'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
@@ -338,7 +344,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => ent.get(item, { parse: false })
         type GetRawResponse = A.Await<ReturnType<typeof getPromise>>
-        type TestGetRawResponse = A.Equals<GetRawResponse, DocumentClientType.GetItemOutput>
+        type TestGetRawResponse = A.Equals<GetRawResponse, GetCommandOutput>
         const testGetRawResponse: TestGetRawResponse = 1
         testGetRawResponse
       })
@@ -407,7 +413,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => entNoExecute.delete(item)
         type DeleteParams = A.Await<ReturnType<typeof deletePromise>>
-        type TestDeleteParams = A.Equals<DeleteParams, DocumentClientType.DeleteItemInput>
+        type TestDeleteParams = A.Equals<DeleteParams, DeleteCommandInput>
         const testDeleteParams: TestDeleteParams = 1
         testDeleteParams
       })
@@ -426,7 +432,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => ent.delete(item, { execute: false })
         type DeleteParams = A.Await<ReturnType<typeof deletePromise>>
-        type TestDeleteParams = A.Equals<DeleteParams, DocumentClientType.DeleteItemInput>
+        type TestDeleteParams = A.Equals<DeleteParams, DeleteCommandInput>
         const testDeleteParams: TestDeleteParams = 1
         testDeleteParams
       })
@@ -437,7 +443,7 @@ describe('Entity', () => {
         type DeleteRawResponse = A.Await<ReturnType<typeof deletePromise>>
         type TestDeleteRawResponse = A.Equals<
           DeleteRawResponse,
-          DocumentClientType.DeleteItemOutput
+          DeleteCommandOutput
         >
         const testDeleteRawResponse: TestDeleteRawResponse = 1
         testDeleteRawResponse
@@ -459,7 +465,7 @@ describe('Entity', () => {
         type DeleteRawResponse = A.Await<ReturnType<typeof deletePromise>>
         type TestDeleteRawResponse = A.Equals<
           DeleteRawResponse,
-          DocumentClientType.DeleteItemOutput
+          DeleteCommandOutput
         >
         const testDeleteRawResponse: TestDeleteRawResponse = 1
         testDeleteRawResponse
@@ -560,7 +566,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => entNoParse.put(item)
         type PutRawResponse = A.Await<ReturnType<typeof putPromise>>
-        type TestPutRawResponse = A.Equals<PutRawResponse, DocumentClientType.PutItemOutput>
+        type TestPutRawResponse = A.Equals<PutRawResponse, PutCommandOutput>
         const testPutRawResponse: TestPutRawResponse = 1
         testPutRawResponse
       })
@@ -578,7 +584,7 @@ describe('Entity', () => {
         const item = { pk }
         const putPromise = () => ent.put(item, { parse: false })
         type PutRawResponse = A.Await<ReturnType<typeof putPromise>>
-        type TestPutRawResponse = A.Equals<PutRawResponse, DocumentClientType.PutItemOutput>
+        type TestPutRawResponse = A.Equals<PutRawResponse, PutCommandOutput>
         const testPutRawResponse: TestPutRawResponse = 1
         testPutRawResponse
       })
@@ -681,7 +687,7 @@ describe('Entity', () => {
         type UpdateRawResponse = A.Await<ReturnType<typeof updatePromise>>
         type TestUpdateRawResponse = A.Equals<
           UpdateRawResponse,
-          DocumentClientType.UpdateItemOutput
+          UpdateCommandOutput
         >
         const testUpdateRawResponse: TestUpdateRawResponse = 1
         testUpdateRawResponse
@@ -703,7 +709,7 @@ describe('Entity', () => {
         type UpdateRawResponse = A.Await<ReturnType<typeof updatePromise>>
         type TestUpdateRawResponse = A.Equals<
           UpdateRawResponse,
-          DocumentClientType.UpdateItemOutput
+          UpdateCommandOutput
         >
         const testUpdateRawResponse: TestUpdateRawResponse = 1
         testUpdateRawResponse
@@ -785,7 +791,7 @@ describe('Entity', () => {
       it('force no execution', () => {
         const queryPromise = () => ent.query('pk', { execute: false, parse: true })
         type QueryInput = A.Await<ReturnType<typeof queryPromise>>
-        type TestQueryInput = A.Equals<QueryInput, DocumentClientType.QueryInput>
+        type TestQueryInput = A.Equals<QueryInput, QueryCommandInput>
         const testQueryInput: TestQueryInput = 1
         testQueryInput
       })
@@ -876,7 +882,7 @@ describe('Entity', () => {
       it('force no execution', () => {
         const scanPromise = () => ent.scan({ execute: false, parse: true })
         type ScanInput = A.Await<ReturnType<typeof scanPromise>>
-        type TestScanInput = A.Equals<ScanInput, DocumentClientType.ScanInput>
+        type TestScanInput = A.Equals<ScanInput, ScanCommandInput>
         const testScanInput: TestScanInput = 1
         testScanInput
       })
