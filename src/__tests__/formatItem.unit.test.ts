@@ -73,7 +73,7 @@ describe('formatItem', () => {
     const result = formatItem(DocumentClient)(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
-      { set: DocumentClient.createSet([1, 2, 3]) }
+      { set: new Set([1, 2, 3]) }
     )
     expect(result).toEqual({ set_alias: [1, 2, 3] })
   })
@@ -82,7 +82,7 @@ describe('formatItem', () => {
     const result = formatItem(DocumentClient)(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
-      { set2: DocumentClient.createSet([1, 2, 3]) }
+      { set2: new Set([1, 2, 3]) }
     )
     expect(result).toEqual({ set_alias2: [1, 2, 3] })
   })

@@ -97,8 +97,8 @@ export type ScanOptions<
       startKey?: {}
       segments?: number
       segment?: number
-      capacity?: ReturnConsumedCapacity
-      select?: Select
+      capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<`${ReturnConsumedCapacity}`>
+      select?: Select | `${Select}` | Lowercase<`${Select}`>
     }
 >
 

@@ -176,7 +176,7 @@ describe('Entity transactional operations', () => {
         { strictSchemaCheck: false }
       )
 
-      expect(Item.unknown).toBeUndefined()
+      expect(Item!.unknown).toBeUndefined()
     })
 
     it('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {

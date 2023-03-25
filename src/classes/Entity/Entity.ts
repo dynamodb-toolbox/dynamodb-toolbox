@@ -337,8 +337,6 @@ class Entity<Name extends string = string,
    * Generate parameters for GET transaction operation
    * @param {object} item - The keys from item you wish to get.
    * @param {object} [options] - Additional get options
-   *
-   * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Get.html
    */
   getTransaction<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,

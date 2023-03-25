@@ -43,6 +43,7 @@ import {
   TransactWriteCommandInput,
   TransactWriteCommandOutput,
 } from '@aws-sdk/lib-dynamodb'
+import { TransactGetItem } from '@aws-sdk/client-dynamodb'
 
 class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
   private _execute = true
@@ -1382,17 +1383,17 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
    */
   transactGetParams(
-    _items: ({ Entity?: any } & TransactGetCommand)[],
+    _items: ({ Entity?: any } & TransactGetItem)[],
     options?: transactGetParamsOptions,
     meta?: false | undefined,
   ): TransactGetCommandInput
   transactGetParams(
-    _items: ({ Entity?: any } & TransactGetCommand)[],
+    _items: ({ Entity?: any } & TransactGetItem)[],
     options: transactGetParamsOptions,
     meta: true,
   ): TransactGetParamsWithMeta
   transactGetParams(
-    _items: ({ Entity?: any } & TransactGetCommand)[],
+    _items: ({ Entity?: any } & TransactGetItem)[],
     options: transactGetParamsOptions = {},
     meta = false,
   ): TransactGetCommandInput | TransactGetParamsWithMeta {

@@ -40,9 +40,12 @@ describe('transactGet', () => {
       TestEntity.getTransaction({ email: 'test', sort: 'testsk' })
     ])
     expect(result).toHaveProperty('TransactItems')
-    expect(result.TransactItems[0]).toHaveProperty('Get')
-    expect(result.TransactItems[0].Get.TableName).toBe('test-table')
-    expect(result.TransactItems[0].Get.Key).toEqual({ pk: 'test', sk: 'testsk' })
+    expect(result.TransactItems![0]).toEqual({
+      Get: {
+        TableName: 'test-table',
+        Key: { pk: 'test', sk: 'testsk' }
+      }
+    })
   })
 
   it('fails when extra options', () => {
@@ -58,6 +61,7 @@ describe('transactGet', () => {
   it('fails when providing an invalid capacity setting', () => {
     expect(() => {
       TestTable.transactGetParams([TestEntity.getTransaction({ email: 'test', sort: 'testsk' })], {
+        // @ts-expect-error
         capacity: 'test'
       })
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
