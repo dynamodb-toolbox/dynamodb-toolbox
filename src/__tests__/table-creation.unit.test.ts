@@ -1,8 +1,5 @@
-// Bootstrap testing
-import { DocumentClient } from './bootstrap.test'
-
-// Require Table and Entity classes
 import Table from '../classes/Table'
+import { DocumentClient } from './bootstrap.test'
 
 describe('Table creation', () => {
   it('creates table w/ minimum options', async () => {
