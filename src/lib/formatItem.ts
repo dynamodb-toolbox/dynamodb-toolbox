@@ -12,21 +12,14 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 // Convert from DocumentClient values, which may be wrapped sets or numbers,
 // into normal TS values.
 const convertDynamoValues = (value: any, attr?: PureAttributeDefinition) => {
-  // Extract values from sets
-  if (
-    attr &&
-    attr.type === 'set' &&
-    Array.isArray(value.values)
-  ) {
-    value = value.values
-  }
-
   // Unwrap bigint/number sets to regular numbers/bigints
   if (attr && attr.type === 'set') {
     if (attr.setType === 'bigint') {
-      value = value.map((n: any) => BigInt(n))
+      value = Array.from(value).map((n: any) => BigInt(n))
     } else if (attr.setType === 'number') {
-      value = value.map((n: any) => Number(n))
+      value = Array.from(value).map((n: any) => Number(n))
+    } else {
+      value = Array.from(value)
     }
   }
 
