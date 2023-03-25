@@ -1334,7 +1334,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    *
    */
   async transactGet(
-    items: ({ Entity?: any } & TransactGetCommand)[] = [],
+    items: ({ Entity?: any } & TransactGetItem)[] = [],
     options: transactGetOptions = {},
     // params: Partial<TransactGetCommandInput> = {}
   ) {

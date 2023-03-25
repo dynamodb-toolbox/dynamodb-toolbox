@@ -142,7 +142,7 @@ describe('validateTypes', () => {
       2,
       3
     ])
-    expect(result).toEqual(DocumentClient.createSet([1, 2, 3]))
+    expect(result).toEqual(new Set([1, 2, 3]))
   })
 
   it('fails with invalid set', async () => {
@@ -189,9 +189,9 @@ describe('validateTypes', () => {
       BigInt(-1234),
       BigInt('123000000000000000000001')
     ])
-    expect(result).toEqual(DocumentClient.createSet([
+    expect(result).toEqual(new Set([
       toDynamoBigInt(BigInt(-1234)),
       toDynamoBigInt(BigInt('123000000000000000000001'))
-    ], { validate: false }))
+    ]))
   })
 })
