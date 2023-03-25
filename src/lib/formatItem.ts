@@ -7,7 +7,6 @@
 import { PureAttributeDefinition } from '../classes/Entity'
 import validateTypes from './validateTypes'
 import { Linked } from './parseEntity'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 // Convert from DocumentClient values, which may be wrapped sets or numbers,
 // into normal TS values.
@@ -35,7 +34,7 @@ const convertDynamoValues = (value: any, attr?: PureAttributeDefinition) => {
 }
 
 // Format item based on attribute defnition
-export default (DocumentClient: DynamoDBDocumentClient) => (
+export default () => (
   attributes: { [key: string]: PureAttributeDefinition },
   linked: Linked,
   item: any,

@@ -261,10 +261,10 @@ class Entity<Name extends string = string,
 
     if (Array.isArray(data)) {
       return data.map(item =>
-        formatItem(this.DocumentClient)(schema.attributes, linked, item, include),
+        formatItem()(schema.attributes, linked, item, include),
       ) as any
     } else {
-      return formatItem(this.DocumentClient)(schema.attributes, linked, data, include) as any
+      return formatItem()(schema.attributes, linked, data, include) as any
     }
   } // end parse
 
