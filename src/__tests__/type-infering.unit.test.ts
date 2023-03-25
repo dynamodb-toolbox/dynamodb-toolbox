@@ -1,6 +1,5 @@
 import { DocumentClient as DocumentClientType } from 'aws-sdk/clients/dynamodb'
-import MockDate from 'mockdate'
-import { A, F } from 'ts-toolbelt'
+import { A } from 'ts-toolbelt'
 
 import {
   EntityItem,
@@ -14,7 +13,7 @@ import {
 
 import { Table, Entity } from '../index'
 import { Select } from '@aws-sdk/client-dynamodb'
-import { GetCommandInput, GetCommandOutput, PutCommandInput } from '@aws-sdk/lib-dynamodb'
+import { GetCommandInput, GetCommandOutput, PutCommandInput, UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 import { DocumentClient } from './bootstrap.test'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
@@ -78,9 +77,6 @@ type ExpectedWriteOpts<
 }>
 
 describe('Entity', () => {
-  const mockedDate = '2020-11-22T23:00:00.000Z'
-  MockDate.set(mockedDate)
-
   const TableName = 'tableName'
   const table = new Table({
     name: TableName,
@@ -315,7 +311,7 @@ describe('Entity', () => {
         const item = { pk }
         const getPromise = () => ent.get(item, { execute: false })
         type GetParams = A.Await<ReturnType<typeof getPromise>>
-        type TestGetParams = A.Equals<GetParams, DocumentClientType.GetItemInput>
+        type TestGetParams = A.Equals<GetParams, GetCommandInput>
         const testGetParams: TestGetParams = 1
         testGetParams
       })
@@ -655,7 +651,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => entNoExecute.update(item)
         type UpdateParams = A.Await<ReturnType<typeof updatePromise>>
-        type TestUpdateParams = A.Equals<UpdateParams, DocumentClientType.UpdateItemInput>
+        type TestUpdateParams = A.Equals<UpdateParams, UpdateCommandInput>
         const testUpdateParams: TestUpdateParams = 1
         testUpdateParams
       })
@@ -674,7 +670,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => ent.update(item, { execute: false })
         type UpdateParams = A.Await<ReturnType<typeof updatePromise>>
-        type TestUpdateParams = A.Equals<UpdateParams, DocumentClientType.UpdateItemInput>
+        type TestUpdateParams = A.Equals<UpdateParams, UpdateCommandInput>
         const testUpdateParams: TestUpdateParams = 1
         testUpdateParams
       })
