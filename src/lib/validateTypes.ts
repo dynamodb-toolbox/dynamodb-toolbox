@@ -59,6 +59,12 @@ export default () => (mapping: any, field: any, value: any) => {
       return value?.constructor === Object ? value : error(`'${field}' must be a map (object)`)
     case 'set':
       if (value instanceof Set) {
+
+        if (mapping.setType === 'bigint') {
+          mapping.setType = 'number'
+          value = Array.from(value).map((n) => toDynamoBigInt(n))
+        }
+
         return (
           !mapping.setType ||
            value.size === 0
@@ -70,6 +76,11 @@ export default () => (mapping: any, field: any, value: any) => {
       } else if (Array.isArray(value)) {
         const expectedSetType = mapping.setType?.toLowerCase?.()
         const actualSetType = typeOf(value[0])?.toLowerCase?.()
+
+        if (mapping.setType === 'bigint') {
+          mapping.setType = 'number'
+          value = value.map((n) => toDynamoBigInt(n))
+        }
 
         return (!mapping.setType ||
           value.length === 0 ||
