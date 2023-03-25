@@ -1,6 +1,6 @@
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
-import { DocumentClient, DocumentClientWrappedNumbers } from './bootstrap.test'
+import { DocumentClient, DocumentClientWithWrappedNumbers } from './bootstrap.test'
 
 const tableAddEntity = jest.spyOn(Table.prototype, 'addEntity').mockReturnValue()
 
@@ -448,7 +448,7 @@ describe('Entity creation', () => {
       name: 'test-table',
       partitionKey: 'pk',
       sortKey: 'sk',
-      DocumentClient: DocumentClientWrappedNumbers
+      DocumentClient: DocumentClientWithWrappedNumbers
     })
     const TestEntity = new Entity({
       ...entityDefn,

@@ -1018,7 +1018,7 @@ describe('update', () => {
   it('sets capacity options', () => {
     const { TableName, ReturnConsumedCapacity } = TestEntity.updateParams(
       { email: 'x', sort: 'y' },
-      { capacity: 'none' }
+      { capacity: 'none' as any }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnConsumedCapacity).toBe('NONE')
@@ -1027,7 +1027,7 @@ describe('update', () => {
   it('sets metrics options', () => {
     const { TableName, ReturnItemCollectionMetrics } = TestEntity.updateParams(
       { email: 'x', sort: 'y' },
-      { metrics: 'size' }
+      { metrics: 'size' as any }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
@@ -1043,12 +1043,14 @@ describe('update', () => {
   })
 
   it('fails on invalid capacity option', () => {
+    // @ts-expect-error
     expect(() => TestEntity.updateParams({ email: 'x', sort: 'y' }, { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
   })
 
   it('fails on invalid metrics option', () => {
+    // @ts-expect-error
     expect(() => TestEntity.updateParams({ email: 'x', sort: 'y' }, { metrics: 'test' })).toThrow(
       `'metrics' must be one of 'NONE' OR 'SIZE'`
     )

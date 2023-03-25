@@ -25,3 +25,19 @@ export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({
     secretAccessKey: 'test',
   },
 }), translateConfig)
+
+
+export const DocumentClientWithWrappedNumbers = DynamoDBDocumentClient.from(new DynamoDBClient({
+  endpoint: 'http://localhost:4567',
+  region: 'us-east-1',
+  credentials: {
+    accessKeyId: 'test',
+    secretAccessKey: 'test',
+  },
+}), {
+  ...translateConfig,
+  unmarshallOptions: {
+    ...translateConfig.unmarshallOptions,
+    wrapNumbers: true,
+  }
+})
