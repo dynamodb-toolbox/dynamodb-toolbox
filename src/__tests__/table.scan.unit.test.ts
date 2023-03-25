@@ -55,8 +55,8 @@ describe('scan', () => {
       index: 'GSI1',
       limit: 10,
       consistent: true,
-      capacity: 'total',
-      select: 'all_attributes',
+      capacity: 'total' as any,
+      select: 'all_attributes' as any,
       filters: { attr: 'test', eq: 'testFilter' },
       attributes: ['pk', 'sk', 'test'],
       startKey: { pk: 'test', sk: 'skVal2' },
@@ -126,12 +126,14 @@ describe('scan', () => {
   })
 
   it('fails on invalid select setting', () => {
+    // @ts-expect-error
     expect(() => TestTable.scanParams({ select: 'test' })).toThrow(
       `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
     )
   })
 
   it('fails on invalid capacity setting', () => {
+    // @ts-expect-error
     expect(() => TestTable.scanParams({ capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
@@ -176,18 +178,16 @@ describe('scan', () => {
   })
 
   it('transforms a set into an array when parse is true', async () => {
-    DocumentClient.scan = jest.fn().mockReturnValueOnce({
-      promise: jest.fn().mockResolvedValueOnce({
-        Items: [
-          {
-            pk: 'test-pk',
-            sk: 'test-sk',
-            testSet: DocumentClient.createSet(['test1', 'test2']),
-            _et: 'TestEntity'
-          }
-        ],
-        LastEvaluatedKey: null
-      })
+    DocumentClient.send = jest.fn().mockReturnValueOnce({
+      Items: [
+        {
+          pk: 'test-pk',
+          sk: 'test-sk',
+          testSet: new Set(['test1', 'test2']),
+          _et: 'TestEntity'
+        }
+      ],
+      LastEvaluatedKey: null
     })
 
     const result = await TestEntity.scan({
@@ -205,18 +205,16 @@ describe('scan', () => {
   })
 
   it('returns a set as is when parse is false', async () => {
-    DocumentClient.scan = jest.fn().mockReturnValueOnce({
-      promise: jest.fn().mockResolvedValueOnce({
-        Items: [
-          {
-            pk: 'test-pk',
-            sk: 'test-sk',
-            testSet: DocumentClient.createSet(['test1', 'test2']),
-            _et: 'TestEntity'
-          }
-        ],
-        LastEvaluatedKey: null
-      })
+    DocumentClient.send = jest.fn().mockResolvedValue({
+      Items: [
+        {
+          pk: 'test-pk',
+          sk: 'test-sk',
+          testSet: new Set(['test1', 'test2']),
+          _et: 'TestEntity'
+        }
+      ],
+      LastEvaluatedKey: null
     })
 
     const result = await TestEntity.scan({
@@ -225,7 +223,7 @@ describe('scan', () => {
     expect(result).toEqual({
       Items: [
         expect.objectContaining({
-          testSet: DocumentClient.createSet(['test1', 'test2']),
+          testSet: new Set(['test1', 'test2']),
           _et: 'TestEntity'
         })
       ],
@@ -234,18 +232,16 @@ describe('scan', () => {
   })
 
   it('should not return hidden properties', async () => {
-    DocumentClient.scan = jest.fn().mockReturnValue({
-      promise: jest.fn().mockResolvedValue({
-        Items: [
-          {
-            pk: 'test-pk',
-            sk: 'test-sk',
-            test: 'some-string',
-            _et: 'TestEntity'
-          }
-        ],
-        LastEvaluatedKey: null
-      })
+    DocumentClient.send = jest.fn().mockReturnValue({
+      Items: [
+        {
+          pk: 'test-pk',
+          sk: 'test-sk',
+          test: 'some-string',
+          _et: 'TestEntity'
+        }
+      ],
+      LastEvaluatedKey: null
     })
 
     const result = await TestEntity.scan()
