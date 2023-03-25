@@ -135,11 +135,11 @@ describe('validateTypes', () => {
   })
 
   it('validates set', async () => {
-    const result = validateTypes()({ type: 'set', setType: 'number' }, 'attr', [
+    const result = validateTypes()({ type: 'set', setType: 'number' }, 'attr', new Set([
       1,
       2,
       3
-    ])
+    ]))
     expect(result).toEqual(new Set([1, 2, 3]))
   })
 

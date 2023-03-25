@@ -880,8 +880,8 @@ class Entity<Name extends string = string,
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
 
-    // Initialize validateType with the DocumentClient
-    const validateType = validateTypes(this.DocumentClient)
+    // Initialize validateType
+    const validateType = validateTypes()
 
     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
@@ -1390,8 +1390,8 @@ class Entity<Name extends string = string,
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
 
-    // Initialize validateType with the DocumentClient
-    const validateType = validateTypes(this.DocumentClient)
+    // Initialize validateType
+    const validateType = validateTypes()
 
     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
