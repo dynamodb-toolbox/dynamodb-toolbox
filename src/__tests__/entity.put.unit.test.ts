@@ -375,9 +375,10 @@ describe('put', () => {
       TestEntity.putParams({
         email: 'test-pk',
         sort: 'test-sk',
-        test_string_set: ['test', 1]
+        // @ts-expect-error
+        test_string_set_type: ['test', 1]
       })
-    ).toThrow(`String Set contains Number value`)
+    ).toThrow('\'test_string_set_type\' must be a valid set (array) containing only string types')
   })
 
   it('fails when set coerces array and doesn\'t match type', () => {
