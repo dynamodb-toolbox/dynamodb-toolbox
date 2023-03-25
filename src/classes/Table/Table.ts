@@ -642,7 +642,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           : error(`Conditional expressions require the table to have a sortKey`)
 
       // Init validateType
-      const validateType = validateTypes(this.DocumentClient!)
+      const validateType = validateTypes()
 
       // Add the sortKey attribute name
       ExpressionAttributeNames['#sk'] =

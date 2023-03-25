@@ -21,7 +21,7 @@ export default (DocumentClient: DynamoDBDocumentClient) => (
   sortKey = (schema[sortKey] && schema[sortKey].map) || sortKey || null
 
   // Intialize validate type
-  const validateType = validateTypes(DocumentClient)
+  const validateType = validateTypes()
 
   // TODO: Add tests for 0 values
   const pk = data[partitionKey]

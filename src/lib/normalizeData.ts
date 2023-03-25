@@ -18,7 +18,7 @@ export default (DocumentClient: DynamoDBDocumentClient) => (
   filter = false
 ) => {
   // Intialize validate type
-  const validateType = validateTypes(DocumentClient)
+  const validateType = validateTypes()
 
   // Build and execute defaults dependency graph
   const dependsOn = (map: any, attr: any) => {

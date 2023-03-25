@@ -46,7 +46,7 @@ export default (DocumentClient: DynamoDBDocumentClient) => (
   // TODO: Test existence of RegExp inputs
 
   // Intialize validate type
-  const validateType = validateTypes(DocumentClient)
+  const validateType = validateTypes()
 
   return Object.keys(item).reduce((acc, field) => {
     const link =
