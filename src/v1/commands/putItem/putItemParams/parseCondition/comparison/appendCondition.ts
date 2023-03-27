@@ -1,6 +1,6 @@
 import type { ParsingState } from '../types'
-import { appendAttributePathToState } from '../utils/appendAttributePathToState'
-import { appendAttributeValueOrPathToState } from '../utils/appendAttributeValueOrPathToState'
+import { appendAttributePath } from '../utils/appendAttributePath'
+import { appendAttributeValueOrPath } from '../utils/appendAttributeValueOrPath'
 
 import { isComparisonOperator, ComparisonCondition, ComparisonOperator } from './types'
 
@@ -13,7 +13,7 @@ const comparisonOperatorExpression: Record<ComparisonOperator, string> = {
   lte: '<='
 }
 
-export const appendComparisonConditionToState = <CONDITION extends ComparisonCondition>(
+export const appendComparisonCondition = <CONDITION extends ComparisonCondition>(
   prevParsingState: ParsingState,
   condition: CONDITION
 ): ParsingState => {
@@ -29,13 +29,13 @@ export const appendComparisonConditionToState = <CONDITION extends ComparisonCon
   const attributePath = condition.size ?? condition.path
   const expressionAttributeValue = condition[comparisonOperator]
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+  nextParsingState = appendAttributePath(nextParsingState, attributePath, {
     size: !!condition.size
   })
 
   nextParsingState.conditionExpression += ` ${comparisonOperatorExpression[comparisonOperator]} `
 
-  nextParsingState = appendAttributeValueOrPathToState(nextParsingState, expressionAttributeValue)
+  nextParsingState = appendAttributeValueOrPath(nextParsingState, expressionAttributeValue)
 
   return nextParsingState
 }

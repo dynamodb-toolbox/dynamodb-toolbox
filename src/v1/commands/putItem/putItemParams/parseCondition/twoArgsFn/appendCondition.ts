@@ -1,8 +1,8 @@
 import type { ParsingState } from '../types'
-import { appendAttributePathToState } from '../utils/appendAttributePathToState'
+import { appendAttributePath } from '../utils/appendAttributePath'
 
 import { TwoArgsFnOperator, isTwoArgsFnOperator, TwoArgsFnCondition } from './types'
-import { appendAttributeValueOrPathToState } from '../utils/appendAttributeValueOrPathToState'
+import { appendAttributeValueOrPath } from '../utils/appendAttributeValueOrPath'
 
 const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
   contains: 'contains',
@@ -10,7 +10,7 @@ const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
   type: 'attribute_type'
 }
 
-export const appendTwoArgsFnConditionToState = <CONDITION extends TwoArgsFnCondition>(
+export const appendTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   prevParsingState: ParsingState,
   condition: CONDITION
 ): ParsingState => {
@@ -29,13 +29,13 @@ export const appendTwoArgsFnConditionToState = <CONDITION extends TwoArgsFnCondi
 
   nextParsingState.conditionExpression = `${twoArgsFnOperatorExpression[comparisonOperator]}(`
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+  nextParsingState = appendAttributePath(nextParsingState, attributePath, {
     size: !!condition.size
   })
 
   nextParsingState.conditionExpression += `, `
 
-  nextParsingState = appendAttributeValueOrPathToState(nextParsingState, expressionAttributeValue)
+  nextParsingState = appendAttributeValueOrPath(nextParsingState, expressionAttributeValue)
 
   nextParsingState.conditionExpression += `)`
 

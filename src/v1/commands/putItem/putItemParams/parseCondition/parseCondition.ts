@@ -1,7 +1,7 @@
 import type { Condition } from 'v1/commands/condition/types'
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { appendConditionToState } from './appendConditionToState'
+import { appendCondition } from './appendCondition'
 import { ParsingState } from './types'
 
 export const parseCondition = (
@@ -20,7 +20,7 @@ export const parseCondition = (
     expressionAttributeNames,
     expressionAttributeValues,
     conditionExpression: ConditionExpression
-  } = appendConditionToState(initialState, condition)
+  } = appendCondition(initialState, condition)
 
   const ExpressionAttributeNames: PutCommandInput['ExpressionAttributeNames'] = {}
   expressionAttributeNames.forEach((expressionAttributeName, index) => {
