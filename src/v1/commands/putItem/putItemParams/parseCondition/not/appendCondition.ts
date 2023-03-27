@@ -1,15 +1,15 @@
 import type { ParsingState } from '../types'
-import { appendConditionToState } from '../appendConditionToState'
+import { appendCondition } from '../appendCondition'
 
 import type { NotCondition } from './types'
 
-export const appendNotConditionToState = (
+export const appendNotCondition = (
   prevParsingState: ParsingState,
   condition: NotCondition
 ): ParsingState => {
   const { not: negatedCondition } = condition
 
-  const negatedConditionState = appendConditionToState(prevParsingState, negatedCondition)
+  const negatedConditionState = appendCondition(prevParsingState, negatedCondition)
 
   return {
     ...negatedConditionState,

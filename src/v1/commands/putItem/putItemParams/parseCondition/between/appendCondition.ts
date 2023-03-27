@@ -1,10 +1,10 @@
 import type { ParsingState } from '../types'
-import { appendAttributePathToState } from '../utils/appendAttributePathToState'
-import { appendAttributeValueOrPathToState } from '../utils/appendAttributeValueOrPathToState'
+import { appendAttributePath } from '../utils/appendAttributePath'
+import { appendAttributeValueOrPath } from '../utils/appendAttributeValueOrPath'
 
 import type { BetweenCondition } from './types'
 
-export const appendBetweenConditionToState = (
+export const appendBetweenCondition = (
   prevParsingState: ParsingState,
   condition: BetweenCondition
 ): ParsingState => {
@@ -19,17 +19,17 @@ export const appendBetweenConditionToState = (
 
   const [lowerRange, higherRange] = expressionAttributeValue
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+  nextParsingState = appendAttributePath(nextParsingState, attributePath, {
     size: !!condition.size
   })
 
   nextParsingState.conditionExpression += ' BETWEEN '
 
-  nextParsingState = appendAttributeValueOrPathToState(nextParsingState, lowerRange)
+  nextParsingState = appendAttributeValueOrPath(nextParsingState, lowerRange)
 
   nextParsingState.conditionExpression += ' AND '
 
-  nextParsingState = appendAttributeValueOrPathToState(nextParsingState, higherRange)
+  nextParsingState = appendAttributeValueOrPath(nextParsingState, higherRange)
 
   return nextParsingState
 }
