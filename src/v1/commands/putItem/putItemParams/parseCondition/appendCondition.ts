@@ -1,6 +1,6 @@
 import type { Condition } from 'v1/commands/condition/types'
 
-import type { ParsingState } from './types'
+import type { ConditionParsingState } from './parsingState'
 import { isComparisonCondition, appendComparisonCondition } from './comparison'
 import { isSingleArgFnCondition, appendSingleArgFnCondition } from './singleArgFn'
 import { isBetweenCondition, appendBetweenCondition } from './between'
@@ -12,7 +12,7 @@ import {
 import { isTwoArgsFnCondition, appendTwoArgsFnCondition } from './twoArgsFn'
 import { isInCondition, appendInCondition } from './in'
 
-export const appendCondition = (state: ParsingState, condition: Condition): ParsingState => {
+export const appendCondition = (state: ConditionParsingState, condition: Condition): void => {
   if (isComparisonCondition(condition)) {
     return appendComparisonCondition(state, condition)
   }
@@ -40,6 +40,4 @@ export const appendCondition = (state: ParsingState, condition: Condition): Pars
   if (isInCondition(condition)) {
     return appendInCondition(state, condition)
   }
-
-  return state
 }

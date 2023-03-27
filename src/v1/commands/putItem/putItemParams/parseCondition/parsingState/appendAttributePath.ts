@@ -1,37 +1,32 @@
+import type { Attribute } from 'v1/item'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 
-import type { ParsingState } from '../types'
+import { ConditionParsingState } from './conditionParsingState'
 
 export const isAttributePath = (candidate: unknown): candidate is { attr: string } =>
   isObject(candidate) && 'attr' in candidate && isString(candidate.attr)
 
 export const appendAttributePath = (
-  prevParsingState: ParsingState,
+  state: ConditionParsingState,
   attributePath: string,
   options: { size?: boolean } = {}
-): ParsingState => {
-  const nextParsingState: ParsingState = {
-    expressionAttributeNames: [...prevParsingState.expressionAttributeNames],
-    expressionAttributeValues: [...prevParsingState.expressionAttributeValues],
-    conditionExpression: prevParsingState.conditionExpression
-  }
-
+): Attribute => {
   const pathMatches = attributePath.matchAll(/\w+(?=(\.|$|((\[\d+\])+)))/g)
 
   for (const pathMatch of pathMatches) {
     const [expressionAttributeName, followingSeparator] = pathMatch
 
-    const expressionAttributeNameIndex = nextParsingState.expressionAttributeNames.push(
+    const expressionAttributeNameIndex = state.expressionAttributeNames.push(
       expressionAttributeName
     )
 
     const conditionExpressionPath = `#${expressionAttributeNameIndex}${followingSeparator}`
 
-    nextParsingState.conditionExpression += options.size
+    state.conditionExpression += options.size
       ? `size(${conditionExpressionPath})`
       : conditionExpressionPath
   }
 
-  return nextParsingState
+  return {} as Attribute
 }
