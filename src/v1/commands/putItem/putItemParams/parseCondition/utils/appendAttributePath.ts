@@ -6,7 +6,7 @@ import type { ParsingState } from '../types'
 export const isAttributePath = (candidate: unknown): candidate is { attr: string } =>
   isObject(candidate) && 'attr' in candidate && isString(candidate.attr)
 
-export const appendAttributePathToState = (
+export const appendAttributePath = (
   prevParsingState: ParsingState,
   attributePath: string,
   options: { size?: boolean } = {}

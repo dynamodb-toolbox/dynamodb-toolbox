@@ -1,7 +1,7 @@
 import type { Condition } from 'v1/commands/condition/types'
 
 import type { ParsingState } from '../types'
-import { appendConditionToState } from '../appendConditionToState'
+import { appendCondition } from '../appendCondition'
 
 import {
   isLogicalCombinationOperator,
@@ -14,12 +14,12 @@ const logicalCombinationOperatorExpression: Record<LogicalCombinationOperator, s
   and: 'AND'
 }
 
-type AppendLogicalCombinationConditionToState = <CONDITION extends LogicalCombinationCondition>(
+type AppendLogicalCombinationCondition = <CONDITION extends LogicalCombinationCondition>(
   prevParsingState: ParsingState,
   condition: CONDITION
 ) => ParsingState
 
-export const appendLogicalCombinationConditionToState: AppendLogicalCombinationConditionToState = <
+export const appendLogicalCombinationCondition: AppendLogicalCombinationCondition = <
   CONDITION extends LogicalCombinationCondition
 >(
   prevParsingState: ParsingState,
@@ -40,7 +40,7 @@ export const appendLogicalCombinationConditionToState: AppendLogicalCombinationC
   const childrenConditions = (condition[logicalCombinationOperator] as unknown) as Condition[]
 
   for (const childrenCondition of childrenConditions) {
-    nextParsingState = appendConditionToState(nextParsingState, childrenCondition)
+    nextParsingState = appendCondition(nextParsingState, childrenCondition)
     childrenConditionExpressions.push(nextParsingState.conditionExpression)
   }
 

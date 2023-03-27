@@ -1,6 +1,6 @@
 import type { ParsingState } from '../types'
 
-export const appendAttributeValueToState = (
+export const appendAttributeValue = (
   prevParsingState: ParsingState,
   expressionAttributeValue: unknown
 ): ParsingState => {
