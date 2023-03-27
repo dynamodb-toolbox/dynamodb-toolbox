@@ -1,8 +1,14 @@
+import { item, list, map, number } from 'v1/item'
+
 import { parseCondition } from '../parseCondition'
 
 describe('parseCondition - singleArgFn', () => {
+  const simpleItem = item({
+    num: number()
+  })
+
   it('exists', () => {
-    expect(parseCondition({ path: 'num', exists: true })).toStrictEqual({
+    expect(parseCondition(simpleItem, { path: 'num', exists: true })).toStrictEqual({
       ConditionExpression: 'attribute_exists(#1)',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: {}
@@ -10,15 +16,23 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('not exists', () => {
-    expect(parseCondition({ path: 'num', exists: false })).toStrictEqual({
+    expect(parseCondition(simpleItem, { path: 'num', exists: false })).toStrictEqual({
       ConditionExpression: 'attribute_not_exists(#1)',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: {}
     })
   })
 
+  const mapItem = item({
+    map: map({
+      nestedA: map({
+        nestedB: number()
+      })
+    })
+  })
+
   it('deep maps', () => {
-    expect(parseCondition({ path: 'map.nestedA.nestedB', exists: true })).toStrictEqual({
+    expect(parseCondition(mapItem, { path: 'map.nestedA.nestedB', exists: true })).toStrictEqual({
       ConditionExpression: 'attribute_exists(#1.#2.#3)',
       ExpressionAttributeNames: {
         '#1': 'map',
@@ -29,8 +43,21 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
+  const listItem = item({
+    listA: list(
+      map({
+        nested: map({
+          listB: list(map({ value: number() }))
+        })
+      })
+    ),
+    list: list(list(list(number())))
+  })
+
   it('deep maps and lists', () => {
-    expect(parseCondition({ path: 'listA[1].nested.listB[2].value', exists: true })).toStrictEqual({
+    expect(
+      parseCondition(listItem, { path: 'listA[1].nested.listB[2].value', exists: true })
+    ).toStrictEqual({
       ConditionExpression: 'attribute_exists(#1[1]#2.#3[2]#4)',
       ExpressionAttributeNames: {
         '#1': 'listA',
@@ -43,7 +70,7 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('deep lists', () => {
-    expect(parseCondition({ path: 'list[1][2][3]', exists: true })).toStrictEqual({
+    expect(parseCondition(listItem, { path: 'list[1][2][3]', exists: true })).toStrictEqual({
       ConditionExpression: 'attribute_exists(#1[1][2][3])',
       ExpressionAttributeNames: { '#1': 'list' },
       ExpressionAttributeValues: {}

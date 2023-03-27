@@ -1,4 +1,4 @@
-import type { EntityV2 } from 'v1/entity'
+import type { Item } from 'v1/item'
 import type {
   AnyAttribute,
   ListAttribute,
@@ -144,15 +144,11 @@ export type PrimitiveAttributeExtraCondition<
         : never)
   )
 
-export type NonLogicalCondition<ENTITY extends EntityV2 = EntityV2> = EntityV2 extends ENTITY
+export type NonLogicalCondition<ITEM extends Item = Item> = Item extends ITEM
   ? AnyAttributeCondition<string, string>
-  : keyof ENTITY['item']['attributes'] extends infer ATTRIBUTE_PATH
+  : keyof ITEM['attributes'] extends infer ATTRIBUTE_PATH
   ? ATTRIBUTE_PATH extends string
-    ? AttributeCondition<
-        ATTRIBUTE_PATH,
-        ENTITY['item']['attributes'][ATTRIBUTE_PATH],
-        AnyAttributePath<ENTITY>
-      >
+    ? AttributeCondition<ATTRIBUTE_PATH, ITEM['attributes'][ATTRIBUTE_PATH], AnyAttributePath<ITEM>>
     : never
   : never
 
@@ -186,15 +182,15 @@ type AttributePath<ATTRIBUTE_PATH extends string, ATTRIBUTE extends Attribute> =
       : never)
 
 export type AnyAttributePath<
-  ENTITY extends EntityV2
-> = keyof ENTITY['item']['attributes'] extends infer ATTRIBUTE_PATH
+  ITEM extends Item
+> = keyof ITEM['attributes'] extends infer ATTRIBUTE_PATH
   ? ATTRIBUTE_PATH extends string
-    ? AttributePath<ATTRIBUTE_PATH, ENTITY['item']['attributes'][ATTRIBUTE_PATH]>
+    ? AttributePath<ATTRIBUTE_PATH, ITEM['attributes'][ATTRIBUTE_PATH]>
     : never
   : never
 
-export type Condition<ENTITY extends EntityV2 = EntityV2> =
-  | NonLogicalCondition<ENTITY>
-  | { and: Condition<ENTITY>[] }
-  | { or: Condition<ENTITY>[] }
-  | { not: Condition<ENTITY> }
+export type Condition<ITEM extends Item = Item> =
+  | NonLogicalCondition<ITEM>
+  | { and: Condition<ITEM>[] }
+  | { or: Condition<ITEM>[] }
+  | { not: Condition<ITEM> }

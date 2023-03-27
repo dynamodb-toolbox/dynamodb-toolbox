@@ -1,36 +1,33 @@
-import type { Condition } from 'v1/commands/condition/types'
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { appendConditionToState } from './appendConditionToState'
-import { ParsingState } from './types'
+import type { Item } from 'v1/item'
+import type { Condition } from 'v1/commands/condition/types'
 
-export const parseCondition = (
-  condition: Condition
+import { appendCondition } from './appendCondition'
+import { ConditionParsingState } from './parsingState'
+
+export const parseCondition = <ITEM extends Item, CONDITION extends Condition<ITEM>>(
+  item: ITEM,
+  condition: CONDITION
 ): Pick<
   PutCommandInput,
   'ExpressionAttributeNames' | 'ExpressionAttributeValues' | 'ConditionExpression'
 > => {
-  const initialState: ParsingState = {
-    expressionAttributeNames: [],
-    expressionAttributeValues: [],
-    conditionExpression: ''
-  }
+  const state = new ConditionParsingState(item)
 
-  const {
-    expressionAttributeNames,
-    expressionAttributeValues,
-    conditionExpression: ConditionExpression
-  } = appendConditionToState(initialState, condition)
+  appendCondition(state, condition)
 
   const ExpressionAttributeNames: PutCommandInput['ExpressionAttributeNames'] = {}
-  expressionAttributeNames.forEach((expressionAttributeName, index) => {
+  state.expressionAttributeNames.forEach((expressionAttributeName, index) => {
     ExpressionAttributeNames[`#${index + 1}`] = expressionAttributeName
   })
 
   const ExpressionAttributeValues: PutCommandInput['ExpressionAttributeValues'] = {}
-  expressionAttributeValues.forEach((expressionAttributeValue, index) => {
+  state.expressionAttributeValues.forEach((expressionAttributeValue, index) => {
     ExpressionAttributeValues[`:${index + 1}`] = expressionAttributeValue
   })
+
+  const ConditionExpression = state.conditionExpression
 
   return {
     ExpressionAttributeNames,

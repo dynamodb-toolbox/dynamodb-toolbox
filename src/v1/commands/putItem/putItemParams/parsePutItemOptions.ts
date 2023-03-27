@@ -12,6 +12,7 @@ import { parseCondition } from './parseCondition'
 type CommandOptions = Omit<PutCommandInput, 'TableName' | 'Item'>
 
 export const parsePutItemOptions = <ENTITY extends EntityV2>(
+  entity: ENTITY,
   putItemOptions: PutItemOptions<ENTITY>
 ): CommandOptions => {
   const commandOptions: CommandOptions = {}
@@ -41,7 +42,7 @@ export const parsePutItemOptions = <ENTITY extends EntityV2>(
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = parseCondition(condition)
+    } = parseCondition(entity.item, condition)
 
     commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
     commandOptions.ExpressionAttributeValues = ExpressionAttributeValues
