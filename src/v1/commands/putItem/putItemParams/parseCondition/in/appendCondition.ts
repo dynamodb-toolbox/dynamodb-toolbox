@@ -1,10 +1,10 @@
 import type { ParsingState } from '../types'
-import { appendAttributePathToState } from '../utils/appendAttributePathToState'
-import { appendAttributeValueOrPathToState } from '../utils/appendAttributeValueOrPathToState'
+import { appendAttributePath } from '../utils/appendAttributePath'
+import { appendAttributeValueOrPath } from '../utils/appendAttributeValueOrPath'
 
 import type { InCondition } from './types'
 
-export const appendInConditionToState = (
+export const appendInCondition = (
   prevParsingState: ParsingState,
   condition: InCondition
 ): ParsingState => {
@@ -17,7 +17,7 @@ export const appendInConditionToState = (
   const attributePath = condition.size ?? condition.path
   const expressionAttributeValues = condition.in
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+  nextParsingState = appendAttributePath(nextParsingState, attributePath, {
     size: !!condition.size
   })
 
@@ -28,7 +28,7 @@ export const appendInConditionToState = (
       nextParsingState.conditionExpression += ', '
     }
 
-    nextParsingState = appendAttributeValueOrPathToState(nextParsingState, expressionAttributeValue)
+    nextParsingState = appendAttributeValueOrPath(nextParsingState, expressionAttributeValue)
   })
 
   nextParsingState.conditionExpression += ')'

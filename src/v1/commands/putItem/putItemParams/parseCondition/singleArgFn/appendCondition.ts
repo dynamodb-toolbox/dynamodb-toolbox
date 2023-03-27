@@ -1,9 +1,9 @@
 import type { ParsingState } from '../types'
-import { appendAttributePathToState } from '../utils/appendAttributePathToState'
+import { appendAttributePath } from '../utils/appendAttributePath'
 
 import type { SingleArgFnCondition } from './types'
 
-export const appendSingleArgFnConditionToState = (
+export const appendSingleArgFnCondition = (
   prevParsingState: ParsingState,
   condition: SingleArgFnCondition
 ): ParsingState => {
@@ -19,7 +19,7 @@ export const appendSingleArgFnConditionToState = (
     }(`
   }
 
-  nextParsingState = appendAttributePathToState(nextParsingState, attributePath, {
+  nextParsingState = appendAttributePath(nextParsingState, attributePath, {
     size: !!condition.size
   })
 
