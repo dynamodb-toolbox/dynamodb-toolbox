@@ -1,9 +1,19 @@
+import { item, number, string, boolean } from 'v1/item'
+
 import { parseCondition } from '../parseCondition'
 
 describe('parseCondition - Logical combination', () => {
+  const myItem = item({
+    num: number(),
+    otherNum: number(),
+    str: string(),
+    otherStr: string(),
+    bool: boolean()
+  })
+
   it('combines OR children conditions (value)', () => {
     expect(
-      parseCondition({
+      parseCondition(myItem, {
         or: [
           { path: 'num', eq: 42 },
           { path: 'str', eq: 'foo' }
@@ -18,7 +28,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines OR children conditions (attribute)', () => {
     expect(
-      parseCondition({
+      parseCondition(myItem, {
         or: [
           { path: 'num', eq: { attr: 'otherNum' } },
           { path: 'str', eq: { attr: 'otherStr' } }
@@ -33,7 +43,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines AND children conditions (value)', () => {
     expect(
-      parseCondition({
+      parseCondition(myItem, {
         and: [
           { path: 'num', eq: 42 },
           { path: 'str', eq: 'foo' }
@@ -48,7 +58,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines AND children conditions (attribute)', () => {
     expect(
-      parseCondition({
+      parseCondition(myItem, {
         and: [
           { path: 'num', eq: { attr: 'otherNum' } },
           { path: 'str', eq: { attr: 'otherStr' } }
@@ -63,7 +73,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines nested combinations', () => {
     expect(
-      parseCondition({
+      parseCondition(myItem, {
         and: [
           {
             or: [

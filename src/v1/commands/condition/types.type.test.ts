@@ -1,10 +1,6 @@
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import type { A } from 'ts-toolbelt'
 
 import {
-  TableV2,
-  EntityV2,
   Attribute,
   item,
   any,
@@ -30,44 +26,29 @@ import {
   PathOrSize
 } from './types'
 
-const dynamoDbClient = new DynamoDBClient({})
-
-const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
-
-const table = new TableV2({
-  name: 'table',
-  partitionKey: { name: 'pk', type: 'string' },
-  sortKey: { name: 'sk', type: 'string' },
-  documentClient
-})
-
-const entity = new EntityV2({
-  name: 'entity',
-  item: item({
-    parentId: string().key().required('always').savedAs('pk'),
-    childId: string().key().required('always').savedAs('sk'),
-    any: any(),
-    const: constant('const'),
+const myItem = item({
+  parentId: string().key().required('always').savedAs('pk'),
+  childId: string().key().required('always').savedAs('sk'),
+  any: any(),
+  const: constant('const'),
+  num: number(),
+  bool: boolean(),
+  bin: binary(),
+  stringSet: set(string()),
+  stringList: list(string()),
+  mapList: list(map({ num: number() })),
+  map: map({
     num: number(),
-    bool: boolean(),
-    bin: binary(),
-    stringSet: set(string()),
     stringList: list(string()),
-    mapList: list(map({ num: number() })),
     map: map({
-      num: number(),
-      stringList: list(string()),
-      map: map({
-        num: number()
-      })
-    }),
-    record: record(string().enum('foo', 'bar'), map({ num: number() })),
-    union: anyOf([map({ str: string() }), map({ num: number() })])
+      num: number()
+    })
   }),
-  table
+  record: record(string().enum('foo', 'bar'), map({ num: number() })),
+  union: anyOf([map({ str: string() }), map({ num: number() })])
 })
 
-type ATTRIBUTE_PATHS = AnyAttributePath<typeof entity>
+type ATTRIBUTE_PATHS = AnyAttributePath<typeof myItem>
 const assertAttributePaths: A.Equals<
   | 'parentId'
   | 'childId'
@@ -99,7 +80,7 @@ const assertAttributePaths: A.Equals<
 > = 1
 assertAttributePaths
 
-type ATTRIBUTES = typeof entity['item']['attributes']
+type ATTRIBUTES = typeof myItem['attributes']
 
 type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
 const assertParentIdCondition: A.Equals<
@@ -294,7 +275,7 @@ const assertUnionCondition: A.Equals<
 > = 1
 assertUnionCondition
 
-type ENTITY_NON_LOGICAL_CONDITION = NonLogicalCondition<typeof entity>
+type ENTITY_NON_LOGICAL_CONDITION = NonLogicalCondition<typeof myItem>
 const assertEntityNonLogicalCondition: A.Contains<
   | PARENT_ID_CONDITION
   | CHILD_ID_CONDITION
@@ -317,6 +298,6 @@ const assertEntityCondition: A.Contains<
   | { or: ENTITY_NON_LOGICAL_CONDITION[] }
   | { and: ENTITY_NON_LOGICAL_CONDITION[] }
   | { not: ENTITY_NON_LOGICAL_CONDITION },
-  Condition<typeof entity>
+  Condition<typeof myItem>
 > = 1
 assertEntityCondition
