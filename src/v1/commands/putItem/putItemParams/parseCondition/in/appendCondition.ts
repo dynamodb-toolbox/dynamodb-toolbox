@@ -1,37 +1,24 @@
-import type { ParsingState } from '../types'
-import { appendAttributePath } from '../utils/appendAttributePath'
-import { appendAttributeValueOrPath } from '../utils/appendAttributeValueOrPath'
+import type { ConditionParsingState } from '../parsingState'
 
 import type { InCondition } from './types'
 
-export const appendInCondition = (
-  prevParsingState: ParsingState,
-  condition: InCondition
-): ParsingState => {
-  let nextParsingState: ParsingState = {
-    expressionAttributeNames: [...prevParsingState.expressionAttributeNames],
-    expressionAttributeValues: [...prevParsingState.expressionAttributeValues],
-    conditionExpression: ''
-  }
+export const appendInCondition = (state: ConditionParsingState, condition: InCondition): void => {
+  state.resetConditionExpression()
 
   const attributePath = condition.size ?? condition.path
   const expressionAttributeValues = condition.in
 
-  nextParsingState = appendAttributePath(nextParsingState, attributePath, {
-    size: !!condition.size
-  })
+  const attribute = state.appendAttributePath(attributePath, { size: !!condition.size })
 
-  nextParsingState.conditionExpression += ' IN ('
+  state.conditionExpression += ' IN ('
 
   expressionAttributeValues.forEach((expressionAttributeValue, index) => {
     if (index > 0) {
-      nextParsingState.conditionExpression += ', '
+      state.conditionExpression += ', '
     }
 
-    nextParsingState = appendAttributeValueOrPath(nextParsingState, expressionAttributeValue)
+    state.appendAttributeValueOrPath(attribute, expressionAttributeValue)
   })
 
-  nextParsingState.conditionExpression += ')'
-
-  return nextParsingState
+  state.conditionExpression += ')'
 }

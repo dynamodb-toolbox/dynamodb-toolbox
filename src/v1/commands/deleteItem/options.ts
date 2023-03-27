@@ -17,5 +17,5 @@ export interface DeleteItemOptions<ENTITY extends EntityV2 = EntityV2> {
   capacity?: CapacityOption
   metrics?: MetricsOption
   returnValues?: DeleteItemCommandReturnValuesOption
-  condition?: Condition<ENTITY>
+  condition?: Condition<ENTITY['item']>
 }
