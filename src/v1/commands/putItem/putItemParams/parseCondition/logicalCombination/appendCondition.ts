@@ -1,6 +1,6 @@
 import type { Condition } from 'v1/commands/condition/types'
 
-import type { ParsingState } from '../types'
+import type { ConditionParsingState } from '../parsingState'
 import { appendCondition } from '../appendCondition'
 
 import {
@@ -15,21 +15,17 @@ const logicalCombinationOperatorExpression: Record<LogicalCombinationOperator, s
 }
 
 type AppendLogicalCombinationCondition = <CONDITION extends LogicalCombinationCondition>(
-  prevParsingState: ParsingState,
+  state: ConditionParsingState,
   condition: CONDITION
-) => ParsingState
+) => void
 
 export const appendLogicalCombinationCondition: AppendLogicalCombinationCondition = <
   CONDITION extends LogicalCombinationCondition
 >(
-  prevParsingState: ParsingState,
+  state: ConditionParsingState,
   condition: CONDITION
-): ParsingState => {
-  let nextParsingState: ParsingState = {
-    expressionAttributeNames: [...prevParsingState.expressionAttributeNames],
-    expressionAttributeValues: [...prevParsingState.expressionAttributeValues],
-    conditionExpression: ''
-  }
+): void => {
+  state.resetConditionExpression()
 
   const childrenConditionExpressions: string[] = []
 
@@ -40,14 +36,11 @@ export const appendLogicalCombinationCondition: AppendLogicalCombinationConditio
   const childrenConditions = (condition[logicalCombinationOperator] as unknown) as Condition[]
 
   for (const childrenCondition of childrenConditions) {
-    nextParsingState = appendCondition(nextParsingState, childrenCondition)
-    childrenConditionExpressions.push(nextParsingState.conditionExpression)
+    appendCondition(state, childrenCondition)
+    childrenConditionExpressions.push(state.conditionExpression)
   }
 
-  return {
-    ...nextParsingState,
-    conditionExpression: `(${childrenConditionExpressions.join(
-      `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
-    )})`
-  }
+  state.conditionExpression = `(${childrenConditionExpressions.join(
+    `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
+  )})`
 }

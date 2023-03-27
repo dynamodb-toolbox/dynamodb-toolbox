@@ -1,8 +1,6 @@
-import type { ParsingState } from '../types'
-import { appendAttributePath } from '../utils/appendAttributePath'
+import type { ConditionParsingState } from '../parsingState'
 
 import { TwoArgsFnOperator, isTwoArgsFnOperator, TwoArgsFnCondition } from './types'
-import { appendAttributeValueOrPath } from '../utils/appendAttributeValueOrPath'
 
 const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
   contains: 'contains',
@@ -11,14 +9,10 @@ const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
 }
 
 export const appendTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
-  prevParsingState: ParsingState,
+  state: ConditionParsingState,
   condition: CONDITION
-): ParsingState => {
-  let nextParsingState: ParsingState = {
-    expressionAttributeNames: [...prevParsingState.expressionAttributeNames],
-    expressionAttributeValues: [...prevParsingState.expressionAttributeValues],
-    conditionExpression: ''
-  }
+): void => {
+  state.resetConditionExpression()
 
   const comparisonOperator = Object.keys(condition).find(isTwoArgsFnOperator) as keyof CONDITION &
     TwoArgsFnOperator
@@ -27,17 +21,13 @@ export const appendTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   const attributePath = condition.size ?? condition.path
   const expressionAttributeValue = condition[comparisonOperator]
 
-  nextParsingState.conditionExpression = `${twoArgsFnOperatorExpression[comparisonOperator]}(`
+  state.conditionExpression = `${twoArgsFnOperatorExpression[comparisonOperator]}(`
 
-  nextParsingState = appendAttributePath(nextParsingState, attributePath, {
-    size: !!condition.size
-  })
+  const attribute = state.appendAttributePath(attributePath, { size: !!condition.size })
 
-  nextParsingState.conditionExpression += `, `
+  state.conditionExpression += `, `
 
-  nextParsingState = appendAttributeValueOrPath(nextParsingState, expressionAttributeValue)
+  state.appendAttributeValueOrPath(attribute, expressionAttributeValue)
 
-  nextParsingState.conditionExpression += `)`
-
-  return nextParsingState
+  state.conditionExpression += `)`
 }
