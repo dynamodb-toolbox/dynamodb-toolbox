@@ -58,7 +58,7 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseCondition(listItem, { path: 'listA[1].nested.listB[2].value', exists: true })
     ).toStrictEqual({
-      ConditionExpression: 'attribute_exists(#1[1]#2.#3[2]#4)',
+      ConditionExpression: 'attribute_exists(#1[1].#2.#3[2].#4)',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
