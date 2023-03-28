@@ -163,7 +163,7 @@ describe('parseCondition - comparison', () => {
     expect(
       parseCondition(mapAndListItem, { path: 'listA[1].nested.listB[2].value', eq: 42 })
     ).toStrictEqual({
-      ConditionExpression: '#1[1]#2.#3[2]#4 = :1',
+      ConditionExpression: '#1[1].#2.#3[2].#4 = :1',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
@@ -181,7 +181,7 @@ describe('parseCondition - comparison', () => {
         eq: { attr: 'listC[3].nested.listD[4].value' }
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1]#2.#3[2]#4 = #5[3]#6.#7[4]#8',
+      ConditionExpression: '#1[1].#2.#3[2].#4 = #5[3].#6.#7[4].#8',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',

@@ -136,7 +136,7 @@ describe('parseCondition - in', () => {
     expect(
       parseCondition(mapAndList, { path: 'listA[1].nested.listB[2].value', in: [42, 43] })
     ).toStrictEqual({
-      ConditionExpression: '#1[1]#2.#3[2]#4 IN (:1, :2)',
+      ConditionExpression: '#1[1].#2.#3[2].#4 IN (:1, :2)',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
@@ -154,7 +154,7 @@ describe('parseCondition - in', () => {
         in: [42, { attr: 'listC[3].nested.listD[4].value' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1]#2.#3[2]#4 IN (:1, #5[3]#6.#7[4]#8)',
+      ConditionExpression: '#1[1].#2.#3[2].#4 IN (:1, #5[3].#6.#7[4].#8)',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
@@ -176,7 +176,7 @@ describe('parseCondition - in', () => {
         in: [{ attr: 'listC[3].nested.listD[4].value' }, { attr: 'listE[3].nested.listF[4].value' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1]#2.#3[2]#4 IN (#5[3]#6.#7[4]#8, #9[3]#10.#11[4]#12)',
+      ConditionExpression: '#1[1].#2.#3[2].#4 IN (#5[3].#6.#7[4].#8, #9[3].#10.#11[4].#12)',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',

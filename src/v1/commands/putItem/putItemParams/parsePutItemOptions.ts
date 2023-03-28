@@ -36,8 +36,6 @@ export const parsePutItemOptions = <ENTITY extends EntityV2>(
   }
 
   if (condition !== undefined) {
-    // TODO: PARSE CONDITION FIRST (VALIDATE & RENAME SAVED AS ATTRIBUTES)
-
     const {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
