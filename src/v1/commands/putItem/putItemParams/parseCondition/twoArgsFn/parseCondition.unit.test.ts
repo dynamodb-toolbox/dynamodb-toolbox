@@ -120,7 +120,7 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseCondition(mapAndList, { path: 'listA[1].nested.listB[2].value', type: 'S' })
     ).toStrictEqual({
-      ConditionExpression: 'attribute_type(#1[1]#2.#3[2]#4, :1)',
+      ConditionExpression: 'attribute_type(#1[1].#2.#3[2].#4, :1)',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
@@ -138,7 +138,7 @@ describe('parseCondition - singleArgFn', () => {
         beginsWith: { attr: 'listC[3].nested.listD[4].value' }
       })
     ).toStrictEqual({
-      ConditionExpression: 'begins_with(#1[1]#2.#3[2]#4, #5[3]#6.#7[4]#8)',
+      ConditionExpression: 'begins_with(#1[1].#2.#3[2].#4, #5[3].#6.#7[4].#8)',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
