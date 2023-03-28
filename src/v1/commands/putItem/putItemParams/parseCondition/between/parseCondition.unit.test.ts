@@ -154,7 +154,7 @@ describe('parseCondition - between', () => {
         between: [42, 43]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1]#2.#3[2]#4 BETWEEN :1 AND :2',
+      ConditionExpression: '#1[1].#2.#3[2].#4 BETWEEN :1 AND :2',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
@@ -172,7 +172,7 @@ describe('parseCondition - between', () => {
         between: [42, { attr: 'listC[3].nested.listD[4].value' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1]#2.#3[2]#4 BETWEEN :1 AND #5[3]#6.#7[4]#8',
+      ConditionExpression: '#1[1].#2.#3[2].#4 BETWEEN :1 AND #5[3].#6.#7[4].#8',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
@@ -197,7 +197,7 @@ describe('parseCondition - between', () => {
         ]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1]#2.#3[2]#4 BETWEEN #5[3]#6.#7[4]#8 AND #9[3]#10.#11[4]#12',
+      ConditionExpression: '#1[1].#2.#3[2].#4 BETWEEN #5[3].#6.#7[4].#8 AND #9[3].#10.#11[4].#12',
       ExpressionAttributeNames: {
         '#1': 'listA',
         '#2': 'nested',
