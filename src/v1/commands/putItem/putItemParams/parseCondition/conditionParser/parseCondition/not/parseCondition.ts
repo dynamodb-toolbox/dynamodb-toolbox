@@ -6,10 +6,9 @@ export const parseNotCondition = (
   conditionParser: ConditionParser,
   condition: NotCondition
 ): void => {
-  conditionParser.resetConditionExpression()
-
   const { not: negatedCondition } = condition
-  conditionParser.parseCondition(negatedCondition)
 
-  conditionParser.conditionExpression = `NOT (${conditionParser.conditionExpression})`
+  conditionParser.resetConditionExpression()
+  conditionParser.parseCondition(negatedCondition)
+  conditionParser.resetConditionExpression(`NOT (${conditionParser.conditionExpression})`)
 }

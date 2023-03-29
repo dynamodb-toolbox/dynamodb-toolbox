@@ -1,4 +1,4 @@
-import { AnyAttribute, Attribute } from 'v1/item'
+import { AnyAttribute, Attribute, PrimitiveAttribute } from 'v1/item'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 
@@ -11,6 +11,16 @@ const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
   key: false,
   savedAs: undefined,
   default: undefined
+}
+
+const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
+  type: 'number',
+  required: 'never',
+  hidden: false,
+  key: false,
+  savedAs: undefined,
+  default: undefined,
+  enum: undefined
 }
 
 const isListAccessor = (accessor: string): accessor is `[${number}]` => /\[\d+\]/g.test(accessor)
@@ -122,9 +132,14 @@ export const appendAttributePath = (
     }
   }
 
-  conditionParser.conditionExpression += options.size
-    ? `size(${conditionExpressionPath})`
-    : conditionExpressionPath
+  conditionParser.appendToConditionExpression(
+    options.size ? `size(${conditionExpressionPath})` : conditionExpressionPath
+  )
 
-  return parentAttribute
+  return options.size
+    ? {
+        path: parentAttribute.path,
+        ...defaultNumberAttribute
+      }
+    : parentAttribute
 }
