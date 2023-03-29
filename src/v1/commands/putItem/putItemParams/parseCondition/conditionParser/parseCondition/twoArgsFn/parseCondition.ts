@@ -12,8 +12,6 @@ export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   conditionParser: ConditionParser,
   condition: CONDITION
 ): void => {
-  conditionParser.resetConditionExpression()
-
   const comparisonOperator = Object.keys(condition).find(isTwoArgsFnOperator) as keyof CONDITION &
     TwoArgsFnOperator
 
@@ -21,13 +19,9 @@ export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   const attributePath = condition.size ?? condition.path
   const expressionAttributeValue = condition[comparisonOperator]
 
-  conditionParser.conditionExpression = `${twoArgsFnOperatorExpression[comparisonOperator]}(`
-
+  conditionParser.resetConditionExpression(`${twoArgsFnOperatorExpression[comparisonOperator]}(`)
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
-
-  conditionParser.conditionExpression += `, `
-
+  conditionParser.appendToConditionExpression(', ')
   conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue)
-
-  conditionParser.conditionExpression += `)`
+  conditionParser.appendToConditionExpression(')')
 }
