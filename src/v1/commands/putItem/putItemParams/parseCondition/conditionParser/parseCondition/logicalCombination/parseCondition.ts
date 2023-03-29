@@ -24,22 +24,20 @@ export const parseLogicalCombinationCondition: AppendLogicalCombinationCondition
   conditionParser: ConditionParser,
   condition: CONDITION
 ): void => {
-  conditionParser.resetConditionExpression()
-
-  const childrenConditionExpressions: string[] = []
-
   const logicalCombinationOperator = Object.keys(condition).find(
     isLogicalCombinationOperator
   ) as keyof CONDITION & LogicalCombinationOperator
 
   const childrenConditions = (condition[logicalCombinationOperator] as unknown) as Condition[]
-
-  for (const childrenCondition of childrenConditions) {
-    conditionParser.parseCondition(childrenCondition)
+  const childrenConditionExpressions: string[] = []
+  conditionParser.resetConditionExpression()
+  for (const childCondition of childrenConditions) {
+    conditionParser.parseCondition(childCondition)
     childrenConditionExpressions.push(conditionParser.conditionExpression)
   }
-
-  conditionParser.conditionExpression = `(${childrenConditionExpressions.join(
-    `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
-  )})`
+  conditionParser.resetConditionExpression(
+    `(${childrenConditionExpressions.join(
+      `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
+    )})`
+  )
 }

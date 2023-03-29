@@ -15,17 +15,16 @@ export const parseComparisonCondition = <CONDITION extends ComparisonCondition>(
   conditionParser: ConditionParser,
   condition: CONDITION
 ): void => {
-  conditionParser.resetConditionExpression()
-
   const comparisonOperator = Object.keys(condition).find(isComparisonOperator) as keyof CONDITION &
     ComparisonOperator
 
   const attributePath = condition.size ?? condition.path
   const expressionAttributeValue = condition[comparisonOperator]
 
+  conditionParser.resetConditionExpression()
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
-
-  conditionParser.conditionExpression += ` ${comparisonOperatorExpression[comparisonOperator]} `
-
+  conditionParser.appendToConditionExpression(
+    ` ${comparisonOperatorExpression[comparisonOperator]} `
+  )
   conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue)
 }
