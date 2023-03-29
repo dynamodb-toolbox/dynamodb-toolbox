@@ -39,8 +39,8 @@ const TestTable = new TableV2({
 const TestEntity = new EntityV2({
   name: 'TestEntity',
   item: item({
-    email: string().key().savedAs('pk').required('always'),
-    sort: string().key().savedAs('sk').required('always'),
+    email: string().key().savedAs('pk'),
+    sort: string().key().savedAs('sk'),
     test_any: any().optional(),
     test_binary: binary().optional(),
     test_string: string().default('test string'),
@@ -67,7 +67,7 @@ const TestTable2 = new TableV2({
 const TestEntity2 = new EntityV2({
   name: 'TestEntity2',
   item: item({
-    email: string().key().required('always').savedAs('pk'),
+    email: string().key().savedAs('pk'),
     sort: string().optional().savedAs('sk').default(ComputedDefault),
     test_composite: string().optional(),
     test_composite2: string().optional()
@@ -82,7 +82,7 @@ const TestEntity2 = new EntityV2({
 const TestEntity3 = new EntityV2({
   name: 'TestEntity3',
   item: item({
-    email: string().key().required('always').savedAs('pk'),
+    email: string().key().savedAs('pk'),
     test: any(),
     test2: string().optional()
   }),
@@ -99,7 +99,7 @@ const TestTable3 = new TableV2({
 const TestEntity4 = new EntityV2({
   name: 'TestEntity4',
   item: item({
-    id: number().required('always').key().savedAs('pk'),
+    id: number().key().savedAs('pk'),
     // sk: { hidden: true, sortKey: true, default: (data: any) => data.id },
     xyz: any().optional().savedAs('test')
   }),
@@ -110,7 +110,7 @@ const TestEntity4 = new EntityV2({
 const TestEntity5 = new EntityV2({
   name: 'TestEntity5',
   item: item({
-    pk: string().key().required('always'),
+    pk: string().key(),
     test_required_boolean: boolean(),
     test_required_number: number()
   }),

@@ -55,7 +55,7 @@ export const map: MapAttributeTyper = <
     ) => map(attributes, { ...appliedOptions, required: nextRequired }),
     optional: () => map(attributes, { ...appliedOptions, required: 'never' }),
     hidden: () => map(attributes, { ...appliedOptions, hidden: true }),
-    key: () => map(attributes, { ...appliedOptions, key: true }),
+    key: () => map(attributes, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => map(attributes, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => map(attributes, { ...appliedOptions, default: nextDefault })
   } as $MapAttribute<

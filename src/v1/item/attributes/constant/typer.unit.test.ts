@@ -129,19 +129,19 @@ describe('constantAttribute', () => {
     it('returns key constant (option)', () => {
       const foobar = constant('foobar', { key: true })
 
-      const assertFoobar: A.Contains<typeof foobar, { [$key]: true }> = 1
+      const assertFoobar: A.Contains<typeof foobar, { [$key]: true; [$required]: AtLeastOnce }> = 1
       assertFoobar
 
-      expect(foobar).toMatchObject({ [$key]: true })
+      expect(foobar).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
     })
 
     it('returns key constant (method)', () => {
       const foobar = constant('foobar').key()
 
-      const assertFoobar: A.Contains<typeof foobar, { [$key]: true }> = 1
+      const assertFoobar: A.Contains<typeof foobar, { [$key]: true; [$required]: Always }> = 1
       assertFoobar
 
-      expect(foobar).toMatchObject({ [$key]: true })
+      expect(foobar).toMatchObject({ [$key]: true, [$required]: 'always' })
     })
 
     it('returns savedAs constant (option)', () => {

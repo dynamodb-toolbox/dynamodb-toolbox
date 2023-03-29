@@ -71,7 +71,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
   }
 
   $anyOfAttribute[$elements].forEach(element => {
-    if (element[$required] !== 'atLeastOnce') {
+    if (element[$required] !== 'atLeastOnce' && element[$required] !== 'always') {
       throw new DynamoDBToolboxError('optionalAnyOfAttributeElements', {
         message: `Invalid anyOf elements at path ${path}: AnyOf elements must be required`,
         path

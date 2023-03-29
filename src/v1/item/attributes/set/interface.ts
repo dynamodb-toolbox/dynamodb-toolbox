@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { ComputedDefault } from '../constants/computedDefault'
 import type { $type, $elements, $default } from '../constants/attributeOptions'
 import type {
@@ -40,7 +40,7 @@ export interface $SetAttribute<
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $SetAttribute<$ELEMENTS, O.Update<STATE, 'required', 'never'>>
+  optional: () => $SetAttribute<$ELEMENTS, O.Update<STATE, 'required', Never>>
   /**
    * Hide attribute after fetch commands and formatting
    */
@@ -48,7 +48,7 @@ export interface $SetAttribute<
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $SetAttribute<$ELEMENTS, O.Update<STATE, 'key', true>>
+  key: () => $SetAttribute<$ELEMENTS, O.Update<O.Update<STATE, 'key', true>, 'required', Always>>
   /**
    * Rename attribute before save commands
    */

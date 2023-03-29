@@ -64,7 +64,7 @@ export const set: SetAttributeTyper = <
     ) => set(elements, { ...appliedOptions, required: nextRequired }),
     optional: () => set(elements, { ...appliedOptions, required: 'never' }),
     hidden: () => set(elements, { ...appliedOptions, hidden: true }),
-    key: () => set(elements, { ...appliedOptions, key: true }),
+    key: () => set(elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => set(elements, { ...appliedOptions, default: nextDefault })
   } as $SetAttribute<

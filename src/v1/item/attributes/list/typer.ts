@@ -60,7 +60,7 @@ export const list: ListAttributeTyper = <
     ) => list(elements, { ...appliedOptions, required: nextRequired }),
     optional: () => list(elements, { ...appliedOptions, required: 'never' }),
     hidden: () => list(elements, { ...appliedOptions, hidden: true }),
-    key: () => list(elements, { ...appliedOptions, key: true }),
+    key: () => list(elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => list(elements, { ...appliedOptions, default: nextDefault })
   } as $ListAttribute<
