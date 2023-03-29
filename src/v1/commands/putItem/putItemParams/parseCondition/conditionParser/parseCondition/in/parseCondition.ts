@@ -6,22 +6,17 @@ export const parseInCondition = (
   conditionParser: ConditionParser,
   condition: InCondition
 ): void => {
-  conditionParser.resetConditionExpression()
-
   const attributePath = condition.size ?? condition.path
   const expressionAttributeValues = condition.in
 
+  conditionParser.resetConditionExpression()
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
-
-  conditionParser.conditionExpression += ' IN ('
-
+  conditionParser.appendToConditionExpression(' IN (')
   expressionAttributeValues.forEach((expressionAttributeValue, index) => {
     if (index > 0) {
-      conditionParser.conditionExpression += ', '
+      conditionParser.appendToConditionExpression(', ')
     }
-
     conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue)
   })
-
-  conditionParser.conditionExpression += ')'
+  conditionParser.appendToConditionExpression(')')
 }
