@@ -22,8 +22,8 @@ export class ConditionParser {
     this.conditionExpression = ''
   }
 
-  resetConditionExpression = () => {
-    this.conditionExpression = ''
+  resetConditionExpression = (initialStr = '') => {
+    this.conditionExpression = initialStr
   }
 
   appendAttributePath = (attributePath: string, options: { size?: boolean } = {}): Attribute =>
@@ -36,6 +36,10 @@ export class ConditionParser {
     attribute: Attribute,
     expressionAttributeValueOrPath: unknown
   ): void => appendAttributeValueOrPath(this, attribute, expressionAttributeValueOrPath)
+
+  appendToConditionExpression = (conditionExpressionPart: string) => {
+    this.conditionExpression += conditionExpressionPart
+  }
 
   parseCondition = (condition: Condition): void => parseCondition(this, condition)
 
