@@ -58,7 +58,7 @@ export const anyOf: AnyOfAttributeTyper = <
     ) => anyOf(elements, { ...appliedOptions, required: nextRequired }),
     optional: () => anyOf(elements, { ...appliedOptions, required: 'never' }),
     hidden: () => anyOf(elements, { ...appliedOptions, hidden: true }),
-    key: () => anyOf(elements, { ...appliedOptions, key: true }),
+    key: () => anyOf(elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => anyOf(elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => anyOf(elements, { ...appliedOptions, default: nextDefault })
   } as $AnyOfAttribute<
