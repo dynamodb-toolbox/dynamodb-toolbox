@@ -27,8 +27,8 @@ import {
 } from './types'
 
 const myItem = item({
-  parentId: string().key().required('always').savedAs('pk'),
-  childId: string().key().required('always').savedAs('sk'),
+  parentId: string().key().savedAs('pk'),
+  childId: string().key().savedAs('sk'),
   any: any(),
   const: constant('const'),
   num: number(),

@@ -123,19 +123,19 @@ describe('primitiveAttribute', () => {
     it('returns key string (option)', () => {
       const str = string({ key: true })
 
-      const assertStr: A.Contains<typeof str, { [$key]: true }> = 1
+      const assertStr: A.Contains<typeof str, { [$key]: true; [$required]: AtLeastOnce }> = 1
       assertStr
 
-      expect(str).toMatchObject({ [$key]: true })
+      expect(str).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
     })
 
     it('returns key string (method)', () => {
       const str = string().key()
 
-      const assertStr: A.Contains<typeof str, { [$key]: true }> = 1
+      const assertStr: A.Contains<typeof str, { [$key]: true; [$required]: Always }> = 1
       assertStr
 
-      expect(str).toMatchObject({ [$key]: true })
+      expect(str).toMatchObject({ [$key]: true, [$required]: 'always' })
     })
 
     it('returns savedAs string (option)', () => {

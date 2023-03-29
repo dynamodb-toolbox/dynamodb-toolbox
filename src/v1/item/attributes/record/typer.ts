@@ -73,7 +73,7 @@ export const record: RecordAttributeTyper = <
     ) => record(keys, elements, { ...appliedOptions, required: nextRequired }),
     optional: () => record(keys, elements, { ...appliedOptions, required: 'never' }),
     hidden: () => record(keys, elements, { ...appliedOptions, hidden: true }),
-    key: () => record(keys, elements, { ...appliedOptions, key: true }),
+    key: () => record(keys, elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => record(keys, elements, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => record(keys, elements, { ...appliedOptions, default: nextDefault })
   } as $RecordAttribute<

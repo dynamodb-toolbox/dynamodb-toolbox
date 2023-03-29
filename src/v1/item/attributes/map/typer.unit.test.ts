@@ -134,19 +134,22 @@ describe('map', () => {
   it('returns key map (option)', () => {
     const mapped = map({ str }, { key: true })
 
-    const assertMapAttribute: A.Contains<typeof mapped, { [$key]: true }> = 1
+    const assertMapAttribute: A.Contains<
+      typeof mapped,
+      { [$key]: true; [$required]: AtLeastOnce }
+    > = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ [$key]: true })
+    expect(mapped).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
   })
 
   it('returns key map (method)', () => {
     const mapped = map({ str }).key()
 
-    const assertMapAttribute: A.Contains<typeof mapped, { [$key]: true }> = 1
+    const assertMapAttribute: A.Contains<typeof mapped, { [$key]: true; [$required]: Always }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ [$key]: true })
+    expect(mapped).toMatchObject({ [$key]: true, [$required]: 'always' })
   })
 
   it('returns savedAs map (option)', () => {

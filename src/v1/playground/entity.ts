@@ -8,8 +8,8 @@ export const UserEntity = new EntityV2({
   name: 'User',
   table: MyTable,
   item: item({
-    userId: string().key().required('always'),
-    age: number().key().required('always').enum(41, 42).default(42).savedAs('sk'),
+    userId: string().key(),
+    age: number().key().enum(41, 42).default(42).savedAs('sk'),
     constant: constant('toto').optional(),
     firstName: string().savedAs('fn'),
     lastName: string().savedAs('ln'),
