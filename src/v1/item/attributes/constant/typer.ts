@@ -59,7 +59,7 @@ export const constant: ConstantAttributeTyper = <
     ) => constant(value, { ...appliedOptions, required: nextRequired }),
     optional: () => constant(value, { ...appliedOptions, required: 'never' }),
     hidden: () => constant(value, { ...appliedOptions, hidden: true }),
-    key: () => constant(value, { ...appliedOptions, key: true }),
+    key: () => constant(value, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => constant(value, { ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => constant(value, { ...appliedOptions, default: nextDefault })
   } as $ConstantAttribute<

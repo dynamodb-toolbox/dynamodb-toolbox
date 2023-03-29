@@ -226,19 +226,19 @@ describe('set', () => {
   it('returns key set (option)', () => {
     const st = set(strElement, { key: true })
 
-    const assertSet: A.Contains<typeof st, { [$key]: true }> = 1
+    const assertSet: A.Contains<typeof st, { [$key]: true; [$required]: AtLeastOnce }> = 1
     assertSet
 
-    expect(st).toMatchObject({ [$key]: true })
+    expect(st).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
   })
 
   it('returns key set (method)', () => {
     const st = set(strElement).key()
 
-    const assertSet: A.Contains<typeof st, { [$key]: true }> = 1
+    const assertSet: A.Contains<typeof st, { [$key]: true; [$required]: Always }> = 1
     assertSet
 
-    expect(st).toMatchObject({ [$key]: true })
+    expect(st).toMatchObject({ [$key]: true, [$required]: 'always' })
   })
 
   it('returns savedAs set (option)', () => {

@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
+import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { $type, $default } from '../constants/attributeOptions'
 import type {
   AttributeSharedStateConstraint,
@@ -37,7 +37,7 @@ export interface $AnyAttribute<
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $AnyAttribute<O.Update<STATE, 'required', 'never'>>
+  optional: () => $AnyAttribute<O.Update<STATE, 'required', Never>>
   /**
    * Hide attribute after fetch commands and formatting
    */
@@ -45,7 +45,7 @@ export interface $AnyAttribute<
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $AnyAttribute<O.Update<STATE, 'key', true>>
+  key: () => $AnyAttribute<O.Update<O.Update<STATE, 'key', true>, 'required', Always>>
   /**
    * Rename attribute before save commands
    */

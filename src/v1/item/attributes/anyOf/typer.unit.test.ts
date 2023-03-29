@@ -244,19 +244,19 @@ describe('anyOf', () => {
   it('returns key anyOf (option)', () => {
     const anyOfAttr = anyOf([str], { key: true })
 
-    const assertAnyOf: A.Contains<typeof anyOfAttr, { [$key]: true }> = 1
+    const assertAnyOf: A.Contains<typeof anyOfAttr, { [$key]: true; [$required]: AtLeastOnce }> = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({ [$key]: true })
+    expect(anyOfAttr).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
   })
 
   it('returns key anyOf (method)', () => {
     const anyOfAttr = anyOf([str]).key()
 
-    const assertAnyOf: A.Contains<typeof anyOfAttr, { [$key]: true }> = 1
+    const assertAnyOf: A.Contains<typeof anyOfAttr, { [$key]: true; [$required]: Always }> = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({ [$key]: true })
+    expect(anyOfAttr).toMatchObject({ [$key]: true, [$required]: 'always' })
   })
 
   it('returns savedAs anyOf (option)', () => {

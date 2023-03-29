@@ -443,19 +443,19 @@ describe('record', () => {
   it('returns key record (option)', () => {
     const rec = record(fooBar, str, { key: true })
 
-    const assertRec: A.Contains<typeof rec, { [$key]: true }> = 1
+    const assertRec: A.Contains<typeof rec, { [$key]: true; [$required]: AtLeastOnce }> = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$key]: true })
+    expect(rec).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
   })
 
   it('returns key record (method)', () => {
     const rec = record(fooBar, str).key()
 
-    const assertRec: A.Contains<typeof rec, { [$key]: true }> = 1
+    const assertRec: A.Contains<typeof rec, { [$key]: true; [$required]: Always }> = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$key]: true })
+    expect(rec).toMatchObject({ [$key]: true, [$required]: 'always' })
   })
 
   it('returns savedAs record (option)', () => {

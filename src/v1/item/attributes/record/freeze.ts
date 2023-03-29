@@ -64,6 +64,14 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
+  // Checking $key before $required as $key implies attribute is always $required
+  if (keys[$key] !== false) {
+    throw new DynamoDBToolboxError('keyRecordAttributeKeys', {
+      message: `Invalid record keys at path ${path}: Record keys cannot be part of primary key`,
+      path
+    })
+  }
+
   if (keys[$required] !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('optionalRecordAttributeKeys', {
       message: `Invalid record keys at path ${path}: Record keys must be required`,
@@ -74,13 +82,6 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   if (keys[$hidden] !== false) {
     throw new DynamoDBToolboxError('hiddenRecordAttributeKeys', {
       message: `Invalid record keys at path ${path}: Record keys cannot be hidden`,
-      path
-    })
-  }
-
-  if (keys[$key] !== false) {
-    throw new DynamoDBToolboxError('keyRecordAttributeKeys', {
-      message: `Invalid record keys at path ${path}: Record keys cannot be part of primary key`,
       path
     })
   }
@@ -101,6 +102,14 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 
   const elements: $RECORD_ATTRIBUTE[$elements] = $recordAttribute[$elements]
 
+  // Checking $key before $required as $key implies attribute is always $required
+  if (elements[$key] !== false) {
+    throw new DynamoDBToolboxError('keyRecordAttributeElements', {
+      message: `Invalid record elements at path ${path}: Record elements cannot be part of primary key`,
+      path
+    })
+  }
+
   if (elements[$required] !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('optionalRecordAttributeElements', {
       message: `Invalid record elements at path ${path}: Record elements must be required`,
@@ -111,13 +120,6 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   if (elements[$hidden] !== false) {
     throw new DynamoDBToolboxError('hiddenRecordAttributeElements', {
       message: `Invalid record elements at path ${path}: Record elements cannot be hidden`,
-      path
-    })
-  }
-
-  if (elements[$key] !== false) {
-    throw new DynamoDBToolboxError('keyRecordAttributeElements', {
-      message: `Invalid record elements at path ${path}: Record elements cannot be part of primary key`,
       path
     })
   }

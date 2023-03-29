@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { $MapAttributeAttributes, MapAttributeAttributes } from '../types/attribute'
-import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import type { ComputedDefault, RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $attributes, $default } from '../constants/attributeOptions'
 import type {
   AttributeSharedStateConstraint,
@@ -38,7 +38,7 @@ export interface $MapAttribute<
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $MapAttribute<$ATTRIBUTES, O.Update<STATE, 'required', 'never'>>
+  optional: () => $MapAttribute<$ATTRIBUTES, O.Update<STATE, 'required', Never>>
   /**
    * Hide attribute after fetch commands and formatting
    */
@@ -46,7 +46,7 @@ export interface $MapAttribute<
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $MapAttribute<$ATTRIBUTES, O.Update<STATE, 'key', true>>
+  key: () => $MapAttribute<$ATTRIBUTES, O.Update<O.Update<STATE, 'key', true>, 'required', Always>>
   /**
    * Rename attribute before save commands
    */

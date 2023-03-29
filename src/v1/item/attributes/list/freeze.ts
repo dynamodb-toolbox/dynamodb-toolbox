@@ -53,7 +53,7 @@ export const freezeListAttribute: ListAttributeFreezer = <$LIST_ATTRIBUTE extend
 
   const elements: $LIST_ATTRIBUTE[$elements] = $listAttribute[$elements]
 
-  if (elements[$required] !== 'atLeastOnce') {
+  if (elements[$required] !== 'atLeastOnce' && elements[$required] !== 'always') {
     throw new DynamoDBToolboxError('optionalListAttributeElements', {
       message: `Invalid list elements at path ${path}: List elements must be required`,
       path
