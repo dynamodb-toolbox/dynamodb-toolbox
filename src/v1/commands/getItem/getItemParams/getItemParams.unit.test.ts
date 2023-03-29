@@ -25,8 +25,8 @@ const TestTable = new TableV2({
 const TestEntity = new EntityV2({
   name: 'TestEntity',
   item: item({
-    email: string().required('always').key().savedAs('pk'),
-    sort: string().required('always').key().savedAs('sk'),
+    email: string().key().savedAs('pk'),
+    sort: string().key().savedAs('sk'),
     test: string()
   }),
   table: TestTable
@@ -42,8 +42,8 @@ const TestTable2 = new TableV2({
 const TestEntity2 = new EntityV2({
   name: 'TestEntity',
   item: item({
-    pk: string().required('always').key(),
-    sk: string().required('always').key(),
+    pk: string().key(),
+    sk: string().key(),
     test: string()
   }),
   table: TestTable2

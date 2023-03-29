@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import type { ComputedDefault, RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $elements, $keys, $default } from '../constants/attributeOptions'
 import type {
   AttributeSharedStateConstraint,
@@ -46,7 +46,7 @@ export interface $RecordAttribute<
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $RecordAttribute<$KEYS, $ELEMENTS, O.Update<$STATE, 'required', 'never'>>
+  optional: () => $RecordAttribute<$KEYS, $ELEMENTS, O.Update<$STATE, 'required', Never>>
   /**
    * Hide attribute after fetch commands and formatting
    */
@@ -54,7 +54,11 @@ export interface $RecordAttribute<
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $RecordAttribute<$KEYS, $ELEMENTS, O.Update<$STATE, 'key', true>>
+  key: () => $RecordAttribute<
+    $KEYS,
+    $ELEMENTS,
+    O.Update<O.Update<$STATE, 'key', true>, 'required', Always>
+  >
   /**
    * Rename attribute before save commands
    */

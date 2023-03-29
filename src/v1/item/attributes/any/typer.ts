@@ -35,7 +35,7 @@ export const any: AnyAttributeTyper = <
     ) => any({ ...appliedOptions, required: nextRequired }),
     optional: () => any({ ...appliedOptions, required: 'never' }),
     hidden: () => any({ ...appliedOptions, hidden: true }),
-    key: () => any({ ...appliedOptions, key: true }),
+    key: () => any({ ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),
     default: nextDefault => any({ ...appliedOptions, default: nextDefault })
   } as $AnyAttribute<

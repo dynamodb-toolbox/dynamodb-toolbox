@@ -225,19 +225,19 @@ describe('list', () => {
   it('returns key list (option)', () => {
     const lst = list(strElement, { key: true })
 
-    const assertList: A.Contains<typeof lst, { [$key]: true }> = 1
+    const assertList: A.Contains<typeof lst, { [$key]: true; [$required]: AtLeastOnce }> = 1
     assertList
 
-    expect(lst).toMatchObject({ [$key]: true })
+    expect(lst).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
   })
 
   it('returns key list (method)', () => {
     const lst = list(strElement).key()
 
-    const assertList: A.Contains<typeof lst, { [$key]: true }> = 1
+    const assertList: A.Contains<typeof lst, { [$key]: true; [$required]: Always }> = 1
     assertList
 
-    expect(lst).toMatchObject({ [$key]: true })
+    expect(lst).toMatchObject({ [$key]: true, [$required]: 'always' })
   })
 
   it('returns savedAs list (option)', () => {

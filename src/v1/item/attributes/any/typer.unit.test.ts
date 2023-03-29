@@ -109,19 +109,19 @@ describe('anyAttribute', () => {
   it('returns key any (option)', () => {
     const anyInstance = any({ key: true })
 
-    const assertAny: A.Contains<typeof anyInstance, { [$key]: true }> = 1
+    const assertAny: A.Contains<typeof anyInstance, { [$key]: true; [$required]: AtLeastOnce }> = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$key]: true })
+    expect(anyInstance).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
   })
 
   it('returns key any (method)', () => {
     const anyInstance = any().key()
 
-    const assertAny: A.Contains<typeof anyInstance, { [$key]: true }> = 1
+    const assertAny: A.Contains<typeof anyInstance, { [$key]: true; [$required]: Always }> = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$key]: true })
+    expect(anyInstance).toMatchObject({ [$key]: true, [$required]: 'always' })
   })
 
   it('returns savedAs any (option)', () => {
