@@ -12,6 +12,7 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint .",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint && npm run test-types",
     "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
   },
