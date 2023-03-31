@@ -461,7 +461,7 @@ describe('Entity', () => {
 
       it('force no parsing', () => {
         const item = { pk }
-        const deletePromise = () => ent.update(item, { parse: false })
+        const deletePromise = () => ent.delete(item, { parse: false })
         type DeleteRawResponse = Awaited<ReturnType<typeof deletePromise>>
         type TestDeleteRawResponse = A.Equals<
           DeleteRawResponse,
