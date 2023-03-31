@@ -54,7 +54,7 @@ export type KeyAttributeDefinition = {
   setType: never
 }
 
-export type PartitionKeyDefinition = O.Partial<KeyAttributeDefinition> & {
+export type PartitionKeyDefinition = Partial<KeyAttributeDefinition> & {
   partitionKey: true
   sortKey?: false
 }
