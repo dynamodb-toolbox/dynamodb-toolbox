@@ -119,8 +119,8 @@ export interface BatchGetParamsMeta {
 }
 
 export interface batchWriteOptions {
-  capacity?: ReturnConsumedCapacity
-  metrics?: ReturnItemCollectionMetrics
+  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
+  metrics?: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<ReturnItemCollectionMetrics>
   execute?: boolean
   parse?: boolean
 }

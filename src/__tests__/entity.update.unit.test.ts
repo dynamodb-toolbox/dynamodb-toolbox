@@ -4,7 +4,6 @@ import {
 } from '../constants'
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap.test'
-import { ReturnConsumedCapacity as ReturnConsumedCapacityType } from '@aws-sdk/client-dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -1027,7 +1026,7 @@ describe('update', () => {
   it('sets capacity options', () => {
     const { TableName, ReturnConsumedCapacity } = TestEntity.updateParams(
       { email: 'x', sort: 'y' },
-      { capacity: ReturnConsumedCapacityType.NONE }
+      { capacity: 'none' }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnConsumedCapacity).toBe('NONE')
