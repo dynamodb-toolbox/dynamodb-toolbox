@@ -1,7 +1,6 @@
 import { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 import { Entity, Table } from '../index'
 import { DocumentClient as docClient } from './bootstrap.test'
-import { ReturnConsumedCapacity, ReturnItemCollectionMetrics } from '@aws-sdk/client-dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
