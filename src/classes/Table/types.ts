@@ -64,7 +64,7 @@ export type $QueryOptions<
 > = $ReadOptions<Execute, Parse> &
   TableReadOptions & {
     reverse: boolean
-    select: Select | `${Select}`
+    select: Select
     // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
     eq: string | number | bigint
     lt: string | number | bigint
@@ -97,8 +97,8 @@ export type ScanOptions<
       startKey?: {}
       segments?: number
       segment?: number
-      capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}`
-      select?: Select | `${Select}`
+      capacity?: ReturnConsumedCapacity
+      select?: Select
     }
 >
 
@@ -119,8 +119,8 @@ export interface BatchGetParamsMeta {
 }
 
 export interface batchWriteOptions {
-  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}`
-  metrics?: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}`
+  capacity?: ReturnConsumedCapacity
+  metrics?: ReturnItemCollectionMetrics
   execute?: boolean
   parse?: boolean
 }

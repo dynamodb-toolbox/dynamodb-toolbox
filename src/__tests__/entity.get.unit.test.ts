@@ -1,5 +1,6 @@
 import { Table, Entity } from '..'
 import { DocumentClient } from './bootstrap.test'
+import { ReturnConsumedCapacity as ReturnConsumedCapacityType } from '@aws-sdk/client-dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -173,7 +174,7 @@ describe('get', () => {
   it('sets consistent and capacity options', () => {
     const { TableName, Key, ConsistentRead, ReturnConsumedCapacity } = TestEntity.getParams(
       { email: 'x', sort: 'y' },
-      { consistent: true, capacity: 'NONE' }
+      { consistent: true, capacity: ReturnConsumedCapacityType.NONE }
     )
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'x', sk: 'y' })

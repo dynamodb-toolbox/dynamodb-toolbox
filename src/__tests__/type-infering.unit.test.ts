@@ -11,7 +11,7 @@ import {
 } from 'classes/Entity'
 
 import { Table, Entity } from '../index'
-import { Select } from '@aws-sdk/client-dynamodb'
+import { ReturnConsumedCapacity, ReturnItemCollectionMetrics, Select } from '@aws-sdk/client-dynamodb'
 import {
   DeleteCommandInput,
   DeleteCommandOutput,
@@ -55,7 +55,7 @@ type ExpectedQueryOpts<
     reverse: boolean
     entity: string
     parseAsEntity: string
-    select: Select | `${Select}`
+    select: Select
     filters: ConditionsOrFilters<FilteredAttributes>
     eq: string | number | bigint
     lt: string | number | bigint
@@ -72,11 +72,11 @@ type ExpectedWriteOpts<
   Attributes extends A.Key = A.Key,
   ReturnValues extends string = string
 > = Partial<{
-  capacity: string
+  capacity: ReturnConsumedCapacity
   execute: boolean
   parse: boolean
   conditions: ConditionsOrFilters<Attributes>
-  metrics: string
+  metrics: ReturnItemCollectionMetrics
   include: string[]
   returnValues: ReturnValues
   strictSchemaCheck: boolean
