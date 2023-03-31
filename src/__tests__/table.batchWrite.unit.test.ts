@@ -1,6 +1,7 @@
 import { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
-import { Table, Entity } from '../index'
+import { Entity, Table } from '../index'
 import { DocumentClient as docClient } from './bootstrap.test'
+import { ReturnConsumedCapacity, ReturnItemCollectionMetrics } from '@aws-sdk/client-dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -76,7 +77,7 @@ describe('batchWrite', () => {
   it('batchWrites data to a single table with options', () => {
     const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
-      { capacity: 'TOTAL', metrics: 'SIZE' }
+      { capacity: ReturnConsumedCapacity.TOTAL, metrics: ReturnItemCollectionMetrics.SIZE }
     ) as BatchWriteCommandInput
 
 
