@@ -1,6 +1,5 @@
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap.test'
-import { ReturnConsumedCapacity as ReturnConsumedCapacityType, ReturnItemCollectionMetrics as ReturnItemCollectionMetricsType } from '@aws-sdk/client-dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -465,7 +464,7 @@ describe('put', () => {
   it('sets capacity options', () => {
     const { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
-      { capacity: ReturnConsumedCapacityType.NONE }
+      { capacity: 'none' }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnConsumedCapacity).toBe('NONE')
@@ -474,7 +473,7 @@ describe('put', () => {
   it('sets metrics options', () => {
     const { TableName, ReturnItemCollectionMetrics } = TestEntity.putParams(
       { email: 'x', sort: 'y' },
-      { metrics: ReturnItemCollectionMetricsType.SIZE }
+      { metrics: 'size' }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
