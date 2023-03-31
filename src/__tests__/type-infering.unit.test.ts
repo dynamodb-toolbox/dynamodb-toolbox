@@ -34,7 +34,7 @@ const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
 }
 
 type ExpectedReadOpts<Attributes extends A.Key = A.Key> = Partial<{
-  capacity: string
+  capacity: ReturnConsumedCapacity
   execute: boolean
   parse: boolean
   attributes: Attributes[]
