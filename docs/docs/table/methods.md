@@ -44,7 +44,7 @@ const result = await MyTable.query(
     limit: 50, // limit to 50 items
     beginsWith: 'order#', // select items where sort key begins with value
     reverse: true, // return items in descending order (newest first)
-    capacity: 'INDEXES', // return the total capacity consumed by the indexes
+    capacity: 'indexes', // return the total capacity consumed by the indexes
     filters: { attr: 'total', gt: 100 }, // only show orders above $100
     index: 'GSI1' // query the GSI1 secondary index
   }
@@ -87,7 +87,7 @@ If you prefer to specify your own parameters, the optional second argument allow
 ```typescript
 const result = await MyTable.scan({
   limit: 100, // limit to 50 items
-  capacity: 'INDEXES', // return the total capacity consumed by the indexes
+  capacity: 'indexes', // return the total capacity consumed by the indexes
   filters: { attr: 'total', between: [100, 500] }, // only return orders between $100 and $500
   index: 'GSI1' // scan the GSI1 secondary index
 })
@@ -144,7 +144,7 @@ const results = await MyTable.batchGet(
     MyTable.Pet.getBatch({ family: 'Brady', name: 'Tiger' })
   ],
   {
-    capacity: 'TOTAL',
+    capacity: 'total',
     attributes: [
         'name', 'family',
         { User: ['dob', 'age'] },
@@ -190,8 +190,8 @@ const result = await Default.batchWrite(
     MyTable.Pet.deleteBatch({ family: 'Brady', name: 'Tiger' })
   ],
   {
-    capacity: 'TOTAL',
-    metrics: 'SIZE'
+    capacity: 'total',
+    metrics: 'size'
   }
 )
 ```
@@ -231,7 +231,7 @@ const results = await MyTable.transactGet(
     User.getTransaction({ family: 'Brady', name: 'Carol' }),
     Pet.getTransaction({ family: 'Brady', name: 'Tiger' })
   ],
-  { capacity: 'TOTAL' }
+  { capacity: 'total' }
 )
 ```
 
@@ -270,8 +270,8 @@ const result = await Default.transactWrite(
     User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, roles: ['father','husband'] }),
     User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, unmappedField: 'unmappedValue' }, { strictSchemaCheck: false})
   ],{
-    capacity: 'TOTAL',
-    metrics: 'SIZE',
+    capacity: 'total',
+    metrics: 'size',
   }
 )
 ```
