@@ -64,7 +64,7 @@ export type $QueryOptions<
 > = $ReadOptions<Execute, Parse> &
   TableReadOptions & {
     reverse: boolean
-    select: Select
+    select: Select | `${Select}` | Lowercase<Select>
     // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
     eq: string | number | bigint
     lt: string | number | bigint
