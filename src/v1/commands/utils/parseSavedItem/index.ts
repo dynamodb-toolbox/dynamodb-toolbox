@@ -1,1 +1,0 @@
-export { parseSavedItem } from './entity'

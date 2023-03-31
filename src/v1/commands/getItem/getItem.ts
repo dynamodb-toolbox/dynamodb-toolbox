@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 import { GetCommand, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2, FormattedItem, KeyInput } from 'v1'
-import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
+import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
 import type { GetItemOptions } from './options'
 import { getItemParams } from './getItemParams'
@@ -32,7 +32,7 @@ export const getItem = async <ENTITY extends EntityV2>(
     return restCommandOutput
   }
 
-  const formattedItem = parseSavedItem(entity, item)
+  const formattedItem = formatSavedItem(entity, item)
 
   return { Item: formattedItem, ...restCommandOutput }
 }
