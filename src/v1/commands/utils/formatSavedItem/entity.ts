@@ -3,7 +3,7 @@ import { ResolvedItem } from 'v1/item'
 
 import { parseSavedAttribute } from './attribute'
 
-export const parseSavedItem = <ENTITY extends EntityV2>(
+export const formatSavedItem = <ENTITY extends EntityV2>(
   entity: ENTITY,
   savedItem: ResolvedItem
 ): FormattedItem<ENTITY> => {

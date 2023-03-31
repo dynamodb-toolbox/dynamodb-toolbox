@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 import { PutCommand, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2, PutItemInput, FormattedItem } from 'v1'
-import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
+import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 import type {
   NoneReturnValuesOption,
   UpdatedOldReturnValuesOption,
@@ -61,7 +61,7 @@ export const putItem = async <
   // TODO: Create parseSavedAttributes util that handles partial Items (for the moment, it will throw)
   // (returned for UpdatedOld/UpdatedNew returnValues option)
   // (Also: is the partial flat or deep ?)
-  const formattedItem = parseSavedItem(entity, attributes)
+  const formattedItem = formatSavedItem(entity, attributes)
 
   return {
     Attributes: formattedItem as ReturnedAttributes<ENTITY, OPTIONS>,
