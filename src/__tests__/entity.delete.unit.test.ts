@@ -180,7 +180,7 @@ describe('delete', () => {
   it('sets capacity options', () => {
     const { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
-      { capacity: 'none' }
+      { capacity: 'NONE' }
     )
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'x', sk: 'y' })

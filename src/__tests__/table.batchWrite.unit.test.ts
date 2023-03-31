@@ -76,7 +76,7 @@ describe('batchWrite', () => {
   it('batchWrites data to a single table with options', () => {
     const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
-      { capacity: 'total', metrics: 'size' }
+      { capacity: 'TOTAL', metrics: 'SIZE' }
     ) as BatchWriteCommandInput
 
 

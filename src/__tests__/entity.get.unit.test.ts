@@ -173,7 +173,7 @@ describe('get', () => {
   it('sets consistent and capacity options', () => {
     const { TableName, Key, ConsistentRead, ReturnConsumedCapacity } = TestEntity.getParams(
       { email: 'x', sort: 'y' },
-      { consistent: true, capacity: 'none' }
+      { consistent: true, capacity: 'NONE' }
     )
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'x', sk: 'y' })

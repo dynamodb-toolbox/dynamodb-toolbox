@@ -1026,7 +1026,7 @@ describe('update', () => {
   it('sets capacity options', () => {
     const { TableName, ReturnConsumedCapacity } = TestEntity.updateParams(
       { email: 'x', sort: 'y' },
-      { capacity: 'none' as any }
+      { capacity: 'NONE' }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnConsumedCapacity).toBe('NONE')
