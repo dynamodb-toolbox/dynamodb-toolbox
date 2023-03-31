@@ -15,8 +15,8 @@ describe('parseCondition - Logical combination', () => {
     expect(
       parseCondition(myItem, {
         or: [
-          { path: 'num', eq: 42 },
-          { path: 'str', eq: 'foo' }
+          { attr: 'num', eq: 42 },
+          { attr: 'str', eq: 'foo' }
         ]
       })
     ).toStrictEqual({
@@ -30,8 +30,8 @@ describe('parseCondition - Logical combination', () => {
     expect(
       parseCondition(myItem, {
         or: [
-          { path: 'num', eq: { attr: 'otherNum' } },
-          { path: 'str', eq: { attr: 'otherStr' } }
+          { attr: 'num', eq: { attr: 'otherNum' } },
+          { attr: 'str', eq: { attr: 'otherStr' } }
         ]
       })
     ).toStrictEqual({
@@ -45,8 +45,8 @@ describe('parseCondition - Logical combination', () => {
     expect(
       parseCondition(myItem, {
         and: [
-          { path: 'num', eq: 42 },
-          { path: 'str', eq: 'foo' }
+          { attr: 'num', eq: 42 },
+          { attr: 'str', eq: 'foo' }
         ]
       })
     ).toStrictEqual({
@@ -60,8 +60,8 @@ describe('parseCondition - Logical combination', () => {
     expect(
       parseCondition(myItem, {
         and: [
-          { path: 'num', eq: { attr: 'otherNum' } },
-          { path: 'str', eq: { attr: 'otherStr' } }
+          { attr: 'num', eq: { attr: 'otherNum' } },
+          { attr: 'str', eq: { attr: 'otherStr' } }
         ]
       })
     ).toStrictEqual({
@@ -77,11 +77,11 @@ describe('parseCondition - Logical combination', () => {
         and: [
           {
             or: [
-              { path: 'num', eq: 42 },
-              { path: 'bool', eq: true }
+              { attr: 'num', eq: 42 },
+              { attr: 'bool', eq: true }
             ]
           },
-          { path: 'str', eq: 'foo' }
+          { attr: 'str', eq: 'foo' }
         ]
       })
     ).toStrictEqual({

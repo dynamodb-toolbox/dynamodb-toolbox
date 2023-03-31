@@ -10,7 +10,7 @@ describe('parseCondition - in', () => {
   })
 
   it('in (values)', () => {
-    expect(parseCondition(simpleItem, { path: 'num', in: [42, 43] })).toStrictEqual({
+    expect(parseCondition(simpleItem, { attr: 'num', in: [42, 43] })).toStrictEqual({
       ConditionExpression: '#1 IN (:1, :2)',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42, ':2': 43 }
@@ -19,7 +19,7 @@ describe('parseCondition - in', () => {
 
   it('in (value + attribute)', () => {
     expect(
-      parseCondition(simpleItem, { path: 'num', in: [42, { attr: 'otherNum' }] })
+      parseCondition(simpleItem, { attr: 'num', in: [42, { attr: 'otherNum' }] })
     ).toStrictEqual({
       ConditionExpression: '#1 IN (:1, #2)',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
@@ -30,7 +30,7 @@ describe('parseCondition - in', () => {
   it('in (attributes)', () => {
     expect(
       parseCondition(simpleItem, {
-        path: 'num',
+        attr: 'num',
         in: [{ attr: 'otherNum' }, { attr: 'yetAnotherNum' }]
       })
     ).toStrictEqual({
@@ -55,7 +55,7 @@ describe('parseCondition - in', () => {
   })
 
   it('deep maps (values)', () => {
-    expect(parseCondition(nestedItem, { path: 'map.nestedA.nestedB', in: [42, 43] })).toStrictEqual(
+    expect(parseCondition(nestedItem, { attr: 'map.nestedA.nestedB', in: [42, 43] })).toStrictEqual(
       {
         ConditionExpression: '#1.#2.#3 IN (:1, :2)',
         ExpressionAttributeNames: {
@@ -71,7 +71,7 @@ describe('parseCondition - in', () => {
   it('deep maps (attribute + value)', () => {
     expect(
       parseCondition(nestedItem, {
-        path: 'map.nestedA.nestedB',
+        attr: 'map.nestedA.nestedB',
         in: [{ attr: 'nestedC.otherNum' }, 43]
       })
     ).toStrictEqual({
@@ -90,7 +90,7 @@ describe('parseCondition - in', () => {
   it('deep maps (attributes)', () => {
     expect(
       parseCondition(nestedItem, {
-        path: 'map.nestedA.nestedB',
+        attr: 'map.nestedA.nestedB',
         in: [{ attr: 'nestedC.otherNum' }, { attr: 'nestedD.yetAnotherNum' }]
       })
     ).toStrictEqual({
@@ -134,7 +134,7 @@ describe('parseCondition - in', () => {
 
   it('deep maps and lists (values)', () => {
     expect(
-      parseCondition(mapAndList, { path: 'listA[1].nested.listB[2].value', in: [42, 43] })
+      parseCondition(mapAndList, { attr: 'listA[1].nested.listB[2].value', in: [42, 43] })
     ).toStrictEqual({
       ConditionExpression: '#1[1].#2.#3[2].#4 IN (:1, :2)',
       ExpressionAttributeNames: {
@@ -150,7 +150,7 @@ describe('parseCondition - in', () => {
   it('deep maps and lists (value + attribute)', () => {
     expect(
       parseCondition(mapAndList, {
-        path: 'listA[1].nested.listB[2].value',
+        attr: 'listA[1].nested.listB[2].value',
         in: [42, { attr: 'listC[3].nested.listD[4].value' }]
       })
     ).toStrictEqual({
@@ -172,7 +172,7 @@ describe('parseCondition - in', () => {
   it('deep maps and lists (attributes)', () => {
     expect(
       parseCondition(mapAndList, {
-        path: 'listA[1].nested.listB[2].value',
+        attr: 'listA[1].nested.listB[2].value',
         in: [{ attr: 'listC[3].nested.listD[4].value' }, { attr: 'listE[3].nested.listF[4].value' }]
       })
     ).toStrictEqual({
@@ -202,7 +202,7 @@ describe('parseCondition - in', () => {
   })
 
   it('deep lists (values)', () => {
-    expect(parseCondition(listsItem, { path: 'list[1][2][3]', in: [42, 43] })).toStrictEqual({
+    expect(parseCondition(listsItem, { attr: 'list[1][2][3]', in: [42, 43] })).toStrictEqual({
       ConditionExpression: '#1[1][2][3] IN (:1, :2)',
       ExpressionAttributeNames: { '#1': 'list' },
       ExpressionAttributeValues: { ':1': 42, ':2': 43 }
@@ -211,7 +211,7 @@ describe('parseCondition - in', () => {
 
   it('deep lists (attribute + value)', () => {
     expect(
-      parseCondition(listsItem, { path: 'list[1][2][3]', in: [{ attr: 'listB[4][5][6]' }, 42] })
+      parseCondition(listsItem, { attr: 'list[1][2][3]', in: [{ attr: 'listB[4][5][6]' }, 42] })
     ).toStrictEqual({
       ConditionExpression: '#1[1][2][3] IN (#2[4][5][6], :1)',
       ExpressionAttributeNames: { '#1': 'list', '#2': 'listB' },
@@ -222,7 +222,7 @@ describe('parseCondition - in', () => {
   it('deep lists (attributes)', () => {
     expect(
       parseCondition(listsItem, {
-        path: 'list[1][2][3]',
+        attr: 'list[1][2][3]',
         in: [{ attr: 'listB[4][5][6]' }, { attr: 'listC[7][8][9]' }]
       })
     ).toStrictEqual({

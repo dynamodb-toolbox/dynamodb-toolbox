@@ -6,7 +6,7 @@ export const parseBetweenCondition = (
   conditionParser: ConditionParser,
   condition: BetweenCondition
 ): void => {
-  const attributePath = condition.size ?? condition.path
+  const attributePath = condition.size ?? condition.attr
   const [lowerRange, higherRange] = condition.between
 
   conditionParser.resetConditionExpression()
