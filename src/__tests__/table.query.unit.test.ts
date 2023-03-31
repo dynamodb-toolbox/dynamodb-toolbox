@@ -1,6 +1,5 @@
 import { Entity, Table } from '../index'
 import { DocumentClient } from './bootstrap.test'
-import { ReturnConsumedCapacity as ReturnConsumedCapacityType, Select as SelectType } from '@aws-sdk/client-dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -95,8 +94,8 @@ describe('query', () => {
       limit: 10,
       reverse: true,
       consistent: true,
-      capacity: ReturnConsumedCapacityType.TOTAL,
-      select: SelectType.ALL_ATTRIBUTES,
+      capacity: 'total',
+      select: 'all_attributes',
       eq: 'skVal',
       filters: { attr: 'test', eq: 'testFilter' },
       attributes: ['pk', 'sk', 'test'],
