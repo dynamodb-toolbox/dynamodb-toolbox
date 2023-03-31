@@ -55,7 +55,7 @@ type ExpectedQueryOpts<
     reverse: boolean
     entity: string
     parseAsEntity: string
-    select: Select
+    select: Select | `${Select}` | Lowercase<Select>
     filters: ConditionsOrFilters<FilteredAttributes>
     eq: string | number | bigint
     lt: string | number | bigint
