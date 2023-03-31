@@ -34,7 +34,7 @@ const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
 }
 
 type ExpectedReadOpts<Attributes extends A.Key = A.Key> = Partial<{
-  capacity: ReturnConsumedCapacity
+  capacity: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
   execute: boolean
   parse: boolean
   attributes: Attributes[]
@@ -72,11 +72,11 @@ type ExpectedWriteOpts<
   Attributes extends A.Key = A.Key,
   ReturnValues extends string = string
 > = Partial<{
-  capacity: ReturnConsumedCapacity
+  capacity: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
   execute: boolean
   parse: boolean
   conditions: ConditionsOrFilters<Attributes>
-  metrics: ReturnItemCollectionMetrics
+  metrics: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<ReturnItemCollectionMetrics>
   include: string[]
   returnValues: ReturnValues
   strictSchemaCheck: boolean
