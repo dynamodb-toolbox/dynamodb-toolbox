@@ -55,7 +55,7 @@ type ExpectedQueryOpts<
     reverse: boolean
     entity: string
     parseAsEntity: string
-    select: Select | `${Select}` | Lowercase<`${Select}`>
+    select: Select | `${Select}`
     filters: ConditionsOrFilters<FilteredAttributes>
     eq: string | number | bigint
     lt: string | number | bigint
@@ -2439,7 +2439,7 @@ describe('Entity', () => {
           type PutItemOptions = PutOptions<typeof ent>
           type TestPutItemOptions = A.Equals<
             PutItemOptions,
-            ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD' | 'none' | 'all_old'>
+            ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD'>
           >
           const testPutItemOptions: TestPutItemOptions = 1
           testPutItemOptions

@@ -97,8 +97,8 @@ export type ScanOptions<
       startKey?: {}
       segments?: number
       segment?: number
-      capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<`${ReturnConsumedCapacity}`>
-      select?: Select | `${Select}` | Lowercase<`${Select}`>
+      capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}`
+      select?: Select | `${Select}`
     }
 >
 
@@ -119,8 +119,8 @@ export interface BatchGetParamsMeta {
 }
 
 export interface batchWriteOptions {
-  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<`${ReturnConsumedCapacity}`>
-  metrics?: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<`${ReturnItemCollectionMetrics}`>
+  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}`
+  metrics?: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}`
   execute?: boolean
   parse?: boolean
 }
