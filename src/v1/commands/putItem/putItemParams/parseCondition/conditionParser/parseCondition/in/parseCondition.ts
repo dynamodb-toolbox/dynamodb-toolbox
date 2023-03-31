@@ -6,7 +6,7 @@ export const parseInCondition = (
   conditionParser: ConditionParser,
   condition: InCondition
 ): void => {
-  const attributePath = condition.size ?? condition.path
+  const attributePath = condition.size ?? condition.attr
   const expressionAttributeValues = condition.in
 
   conditionParser.resetConditionExpression()

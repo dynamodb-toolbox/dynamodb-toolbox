@@ -210,7 +210,7 @@ describe('delete', () => {
     } = deleteItemParams(
       TestEntity,
       { email: 'x', sort: 'y' },
-      { condition: { path: 'email', gt: 'test' } }
+      { condition: { attr: 'email', gt: 'test' } }
     )
 
     // TODO: Implement
