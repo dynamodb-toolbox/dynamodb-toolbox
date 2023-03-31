@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 import { DeleteCommand, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2, FormattedItem, KeyInput } from 'v1'
-import { parseSavedItem } from 'v1/commands/utils/parseSavedItem'
+import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 import type {
   NoneReturnValuesOption,
   AllOldReturnValuesOption
@@ -53,7 +53,7 @@ export const deleteItem = async <
     return restCommandOutput
   }
 
-  const formattedItem = parseSavedItem(entity, attributes)
+  const formattedItem = formatSavedItem(entity, attributes)
 
   return {
     Attributes: formattedItem as ReturnedAttributes<ENTITY, OPTIONS>,
