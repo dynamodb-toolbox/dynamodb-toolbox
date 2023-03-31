@@ -8,7 +8,7 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('exists', () => {
-    expect(parseCondition(simpleItem, { path: 'num', exists: true })).toStrictEqual({
+    expect(parseCondition(simpleItem, { attr: 'num', exists: true })).toStrictEqual({
       ConditionExpression: 'attribute_exists(#1)',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: {}
@@ -16,7 +16,7 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('not exists', () => {
-    expect(parseCondition(simpleItem, { path: 'num', exists: false })).toStrictEqual({
+    expect(parseCondition(simpleItem, { attr: 'num', exists: false })).toStrictEqual({
       ConditionExpression: 'attribute_not_exists(#1)',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: {}
@@ -32,7 +32,7 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('deep maps', () => {
-    expect(parseCondition(mapItem, { path: 'map.nestedA.nestedB', exists: true })).toStrictEqual({
+    expect(parseCondition(mapItem, { attr: 'map.nestedA.nestedB', exists: true })).toStrictEqual({
       ConditionExpression: 'attribute_exists(#1.#2.#3)',
       ExpressionAttributeNames: {
         '#1': 'map',
@@ -56,7 +56,7 @@ describe('parseCondition - singleArgFn', () => {
 
   it('deep maps and lists', () => {
     expect(
-      parseCondition(listItem, { path: 'listA[1].nested.listB[2].value', exists: true })
+      parseCondition(listItem, { attr: 'listA[1].nested.listB[2].value', exists: true })
     ).toStrictEqual({
       ConditionExpression: 'attribute_exists(#1[1].#2.#3[2].#4)',
       ExpressionAttributeNames: {
@@ -70,7 +70,7 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('deep lists', () => {
-    expect(parseCondition(listItem, { path: 'list[1][2][3]', exists: true })).toStrictEqual({
+    expect(parseCondition(listItem, { attr: 'list[1][2][3]', exists: true })).toStrictEqual({
       ConditionExpression: 'attribute_exists(#1[1][2][3])',
       ExpressionAttributeNames: { '#1': 'list' },
       ExpressionAttributeValues: {}

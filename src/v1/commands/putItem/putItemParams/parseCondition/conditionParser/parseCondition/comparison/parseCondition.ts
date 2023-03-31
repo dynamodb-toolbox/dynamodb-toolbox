@@ -18,7 +18,7 @@ export const parseComparisonCondition = <CONDITION extends ComparisonCondition>(
   const comparisonOperator = Object.keys(condition).find(isComparisonOperator) as keyof CONDITION &
     ComparisonOperator
 
-  const attributePath = condition.size ?? condition.path
+  const attributePath = condition.size ?? condition.attr
   const expressionAttributeValue = condition[comparisonOperator]
 
   conditionParser.resetConditionExpression()

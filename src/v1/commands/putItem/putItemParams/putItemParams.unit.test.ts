@@ -489,7 +489,7 @@ describe('put', () => {
     } = putItemParams(
       TestEntity,
       { email: 'x', sort: 'y' },
-      { condition: { path: 'email', gt: 'test' } }
+      { condition: { attr: 'email', gt: 'test' } }
     )
 
     expect(ExpressionAttributeNames).toEqual({ '#1': 'pk' })
