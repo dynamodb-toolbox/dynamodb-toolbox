@@ -16,7 +16,7 @@ export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
     TwoArgsFnOperator
 
   // TOIMPROVE: It doesn't make sense to use size in two args fns
-  const attributePath = condition.size ?? condition.path
+  const attributePath = condition.size ?? condition.attr
   const expressionAttributeValue = condition[comparisonOperator]
 
   conditionParser.resetConditionExpression(`${twoArgsFnOperatorExpression[comparisonOperator]}(`)

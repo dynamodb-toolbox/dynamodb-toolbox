@@ -23,7 +23,7 @@ import {
   SharedAttributeCondition,
   TypeCondition,
   AnyAttributePath,
-  PathOrSize
+  AttrOrSize
 } from './types'
 
 const myItem = item({
@@ -84,7 +84,7 @@ type ATTRIBUTES = typeof myItem['attributes']
 
 type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
 const assertParentIdCondition: A.Equals<
-  PathOrSize<'parentId'> &
+  AttrOrSize<'parentId'> &
     (
       | SharedAttributeCondition<'parentId'>
       | { eq: string | { attr: ATTRIBUTE_PATHS } }
@@ -108,7 +108,7 @@ type CHILD_ID_CONDITION = AttributeCondition<'childId', ATTRIBUTES['childId'], A
 type ANY_CONDITION = AttributeCondition<'any', ATTRIBUTES['any'], ATTRIBUTE_PATHS>
 
 const anyCondition: A.Contains<
-  PathOrSize<`any${string}`> &
+  AttrOrSize<`any${string}`> &
     (
       | { exists: boolean }
       | { type: TypeCondition }
@@ -147,7 +147,7 @@ anyCondition
 
 type NUM_CONDITION = AttributeCondition<'num', ATTRIBUTES['num'], ATTRIBUTE_PATHS>
 const assertNumCondition: A.Equals<
-  PathOrSize<'num'> &
+  AttrOrSize<'num'> &
     (
       | SharedAttributeCondition<'num'>
       | { eq: number | { attr: ATTRIBUTE_PATHS } }
@@ -165,7 +165,7 @@ assertNumCondition
 
 type BOOL_CONDITION = AttributeCondition<'bool', ATTRIBUTES['bool'], ATTRIBUTE_PATHS>
 const assertBoolCondition: A.Equals<
-  PathOrSize<'bool'> &
+  AttrOrSize<'bool'> &
     (
       | SharedAttributeCondition<'bool'>
       | { eq: boolean | { attr: ATTRIBUTE_PATHS } }
@@ -178,7 +178,7 @@ assertBoolCondition
 
 type BIN_CONDITION = AttributeCondition<'bin', ATTRIBUTES['bin'], ATTRIBUTE_PATHS>
 const assertBinCondition: A.Equals<
-  PathOrSize<'bin'> &
+  AttrOrSize<'bin'> &
     (
       | SharedAttributeCondition<'bin'>
       | { eq: Buffer | { attr: ATTRIBUTE_PATHS } }
