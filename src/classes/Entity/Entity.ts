@@ -732,7 +732,7 @@ class Entity<Name extends string = string,
       Parse,
       StrictSchemaCheck> = {},
     params: UpdateCustomParams = {},
-  ): Promise<Compute<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
     UpdateCommandInput,
     If<B.Not<ShouldParse<Parse, AutoParse>>,
       UpdateCommandOutput,
@@ -744,7 +744,7 @@ class Entity<Name extends string = string,
             FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
             If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
               A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>>> {
+              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,
