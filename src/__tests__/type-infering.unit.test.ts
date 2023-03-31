@@ -2439,7 +2439,7 @@ describe('Entity', () => {
           type PutItemOptions = PutOptions<typeof ent>
           type TestPutItemOptions = A.Equals<
             PutItemOptions,
-            ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD'>
+            ExpectedWriteOpts<keyof EntityItemOverlay, 'NONE' | 'ALL_OLD' | 'none' | 'all_old'>
           >
           const testPutItemOptions: TestPutItemOptions = 1
           testPutItemOptions
