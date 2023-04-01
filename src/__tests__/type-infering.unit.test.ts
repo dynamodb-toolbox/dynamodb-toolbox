@@ -761,7 +761,7 @@ describe('Entity', () => {
             ],
             returnValues: 'ALL_NEW',
           },
-        );
+        )
 
         type UpdateParams = A.Await<F.Return<typeof updateParams>>
         type TestUpdateParams = A.Equals<
