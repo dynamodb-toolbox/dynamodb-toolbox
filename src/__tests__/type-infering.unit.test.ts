@@ -1404,7 +1404,7 @@ describe('Entity', () => {
           ...skMaps
         }
         ent.updateParams(item5)
-        const updatePromise5 = () => ent.update(item5, { returnValues: 'UPDATED_OLD' as const })
+        const updatePromise5 = () => ent.update(item5, { returnValues: 'UPDATED_OLD' })
         type UpdateItem5 = A.Await<ReturnType<typeof updatePromise5>>['Attributes']
         type TestUpdateItem5 = A.Equals<UpdateItem5, Omit<ExpectedItem, 'pk' | 'sk'> | undefined>
         const testUpdateItem5: TestUpdateItem5 = 1
