@@ -725,10 +725,10 @@ class Entity<Name extends string = string,
         O.Update<DocumentClient.UpdateItemOutput,
           'Attributes',
           If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
-            FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+            FirstDefined<[EntityItemOverlay, MethodItemOverlay]>,
             If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
               A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>>> {
+              FirstDefined<[MethodItemOverlay, EntityItemOverlay]>>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,

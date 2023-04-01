@@ -745,6 +745,33 @@ describe('Entity', () => {
         // @ts-expect-error
         ;() => ent.update({ pk }, { conditions: { attr: 'sk', exists: true } })
       })
+
+      it('with conditions and returnValues', () => {
+        const updateParams = () => ent.update(
+          {
+            pk,
+          },
+          {
+            execute: false,
+            conditions: [
+              {
+                attr: 'pkMap1',
+                exists: true,
+              },
+            ],
+            returnValues: 'ALL_NEW',
+          },
+        );
+
+        type UpdateParams = A.Await<F.Return<typeof updateParams>>
+        type TestUpdateParams = A.Equals<
+          UpdateParams,
+          EntityItem<typeof ent>
+        >
+
+        const testUpdateParams: TestUpdateParams = 1
+        testUpdateParams
+      })
     })
 
     describe('query method', () => {
