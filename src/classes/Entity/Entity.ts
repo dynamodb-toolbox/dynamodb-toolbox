@@ -731,8 +731,8 @@ class Entity<Name extends string = string,
             O.Update<DocumentClient.UpdateItemOutput,
               'Attributes',
               If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
-                FirstDefined<[EntityItemOverlay, MethodItemOverlay]>,
-                FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
+                FirstDefined<[MethodItemOverlay, EntityItemOverlay]>,
+                FirstDefined<[O.Pick<Item, ResponseAttributes>, MethodItemOverlay, EntityItemOverlay]>
               >
             >
           >
