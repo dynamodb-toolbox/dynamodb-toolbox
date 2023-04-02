@@ -1035,7 +1035,7 @@ describe('update', () => {
   it('sets metrics options', () => {
     const { TableName, ReturnItemCollectionMetrics } = TestEntity.updateParams(
       { email: 'x', sort: 'y' },
-      { metrics: 'size' as any }
+      { metrics: 'size' }
     )
     expect(TableName).toBe('test-table')
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
