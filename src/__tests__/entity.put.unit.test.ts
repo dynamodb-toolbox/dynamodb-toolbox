@@ -230,6 +230,7 @@ describe('put', () => {
       test_composite2: 'test2'
     })
 
+    assert.ok(Item !== undefined, 'Item is undefined')
     expect(Item.pk).toBe('test-pk')
     expect(Item.sk).toBe('override')
     expect(Item.test_composite).toBe('test')
