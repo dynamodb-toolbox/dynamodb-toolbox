@@ -193,6 +193,7 @@ describe('put', () => {
       test_composite: undefined
     })
 
+    assert.ok(Item !== undefined, 'Item is undefined')
     expect(Item.pk).toBe('test-pk')
     expect(Item).not.toHaveProperty('sk')
     expect(Item).not.toHaveProperty('test_composite')
