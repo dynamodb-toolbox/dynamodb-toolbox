@@ -1,5 +1,6 @@
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap.test'
+import assert from 'assert'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -112,10 +113,11 @@ describe('put', () => {
   it('creates basic item', () => {
     const { Item } = TestEntity.putParams({ email: 'test-pk', sort: 'test-sk' })
 
-    expect(Item!.pk).toBe('test-pk')
-    expect(Item!.sk).toBe('test-sk')
-    expect(Item!._et).toBe('TestEntity')
-    expect(Item!.test_string).toBe('test string')
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.sk).toBe('test-sk')
+    expect(Item._et).toBe('TestEntity')
+    expect(Item.test_string).toBe('test string')
     expect(Item).toHaveProperty('_ct')
     expect(Item).toHaveProperty('_md')
   })
@@ -128,11 +130,12 @@ describe('put', () => {
       count: 0
     })
 
-    expect(Item!.pk).toBe('test-pk')
-    expect(Item!.sk).toBe('test-sk')
-    expect(Item!.test_number).toBe(0)
-    expect(Item!._et).toBe('TestEntity')
-    expect(Item!.test_string).toBe('test string')
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.sk).toBe('test-sk')
+    expect(Item.test_number).toBe(0)
+    expect(Item._et).toBe('TestEntity')
+    expect(Item.test_string).toBe('test string')
     expect(Item).toHaveProperty('_ct')
     expect(Item).toHaveProperty('_md')
   })
@@ -146,12 +149,13 @@ describe('put', () => {
       test_float_coerce: '1.234'
     })
 
-    expect(Item!.pk).toBe('test-pk')
-    expect(Item!.sk).toBe('test-sk')
-    expect(Item!._et).toBe('TestEntity')
-    expect(Item!.test_string).toBe('test string')
-    expect(Item!.test_float).toBe(1.234)
-    expect(Item!.test_float_coerce).toBe(1.234)
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.sk).toBe('test-sk')
+    expect(Item._et).toBe('TestEntity')
+    expect(Item.test_string).toBe('test string')
+    expect(Item.test_float).toBe(1.234)
+    expect(Item.test_float_coerce).toBe(1.234)
     expect(Item).toHaveProperty('_ct')
     expect(Item).toHaveProperty('_md')
   })
@@ -162,10 +166,12 @@ describe('put', () => {
       sort: 'test-sk',
       test_string: 'different value'
     })
-    expect(Item!.pk).toBe('test-pk')
-    expect(Item!.sk).toBe('test-sk')
-    expect(Item!._et).toBe('TestEntity')
-    expect(Item!.test_string).toBe('different value')
+
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.sk).toBe('test-sk')
+    expect(Item._et).toBe('TestEntity')
+    expect(Item.test_string).toBe('different value')
     expect(Item).toHaveProperty('_ct')
     expect(Item).toHaveProperty('_md')
   })
@@ -175,8 +181,10 @@ describe('put', () => {
       email: 'test-pk',
       test_composite: 'test'
     })
-    expect(Item!.pk).toBe('test-pk')
-    expect(Item!.test_composite).toBe('test')
+
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.test_composite).toBe('test')
   })
 
   it('creates item that ignores field with no value', () => {
@@ -185,7 +193,7 @@ describe('put', () => {
       test_composite: undefined
     })
 
-    expect(Item!.pk).toBe('test-pk')
+    expect(Item.pk).toBe('test-pk')
     expect(Item).not.toHaveProperty('sk')
     expect(Item).not.toHaveProperty('test_composite')
   })
@@ -196,8 +204,10 @@ describe('put', () => {
       test: 'hello',
       test2: null
     })
-    expect(Item!.pk).toBe('test-pk')
-    expect(Item!.test).toBe('hello')
+
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.test).toBe('hello')
     //Attributes with NULL values are removed (by default)
     expect(Item).not.toHaveProperty('test2')
   })
@@ -219,9 +229,9 @@ describe('put', () => {
       test_composite2: 'test2'
     })
 
-    expect(Item!.pk).toBe('test-pk')
-    expect(Item!.sk).toBe('override')
-    expect(Item!.test_composite).toBe('test')
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.sk).toBe('override')
+    expect(Item.test_composite).toBe('test')
     expect(Item).not.toHaveProperty('test_composite2')
   })
 
@@ -231,9 +241,11 @@ describe('put', () => {
       test_composite: 'test',
       test_composite2: 'test2'
     })
-    expect(Item!.pk).toBe('test-pk')
-    expect(Item!.sk).toBe('test#test2')
-    expect(Item!.test_composite).toBe('test')
+
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.pk).toBe('test-pk')
+    expect(Item.sk).toBe('test#test2')
+    expect(Item.test_composite).toBe('test')
     expect(Item).not.toHaveProperty('test_composite2')
   })
 
@@ -290,7 +302,8 @@ describe('put', () => {
       { strictSchemaCheck: false }
     )
 
-    expect(Item!.unknown).toBeUndefined()
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.unknown).toBeUndefined()
   })
 
   it('fails when invalid string provided with no coercion', () => {
@@ -399,7 +412,9 @@ describe('put', () => {
       // @ts-expect-error
       test_string_set_type_coerce: '1,2,3'
     })
-    expect(Item!['test_string_set_type_coerce']).toEqual(new Set(['1', '2', '3']))
+
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item['test_string_set_type_coerce']).toEqual(new Set(['1', '2', '3']))
   })
 
   it('fails when set doesn\'t contain array with no coercion', () => {
@@ -430,8 +445,9 @@ describe('put', () => {
       test_required_number: 0
     })
 
-    expect(Item!.test_required_boolean).toBe(false)
-    expect(Item!.test_required_number).toBe(0)
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.test_required_boolean).toBe(false)
+    expect(Item.test_required_number).toBe(0)
   })
 
   it('formats a batch put response', async () => {
@@ -536,6 +552,7 @@ describe('put', () => {
       {},
       { ReturnConsumedCapacity: 'NONE' }
     )
+
     expect(TableName).toBe('test-table')
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
@@ -547,6 +564,7 @@ describe('put', () => {
       // @ts-expect-error
       'string'
     )
+
     expect(TableName).toBe('test-table')
   })
 
@@ -556,8 +574,9 @@ describe('put', () => {
       // @ts-expect-error 💥 TODO: Handle aliases
       xyz: '123'
     })
-    expect(Item!.sk).toBe('3')
-    // expect(TableName).toBe('test-table')
+
+    assert.ok(Item !== undefined, 'Item is undefined')
+    expect(Item.sk).toBe('3')
   })
 
   it('fail on invalid transformations', () => {
