@@ -4,8 +4,6 @@
  * @license MIT
  */
 
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-
 import validateTypes from './validateTypes'
 import { error, transformAttr } from './utils'
 
@@ -20,7 +18,6 @@ export default () => (
   partitionKey = schema[partitionKey].map || partitionKey
   sortKey = (schema[sortKey] && schema[sortKey].map) || sortKey || null
 
-  // Intialize validate type
   const validateType = validateTypes()
 
   // TODO: Add tests for 0 values
@@ -57,5 +54,5 @@ export default () => (
         )
       }
       : {}
-  ) // end assign
-} // end get keys
+  )
+}
