@@ -97,14 +97,14 @@ export type ScanOptions<
       startKey?: {}
       segments?: number
       segment?: number
-      capacity?: ReturnConsumedCapacity
-      select?: Select
+      capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
+      select?: Select | `${Select}` | Lowercase<Select>
     }
 >
 
 export interface BatchGetOptions {
   consistent?: boolean | { [tableName: string]: boolean }
-  capacity?: ReturnConsumedCapacity
+  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
   attributes?: ProjectionAttributes
   include?: string[]
   execute?: boolean
@@ -126,14 +126,14 @@ export interface batchWriteOptions {
 }
 
 export interface transactGetParamsOptions {
-  capacity?: ReturnConsumedCapacity
+  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
 }
 
 export type transactGetOptions = transactGetParamsOptions & executeParse
 
 export interface transactWriteParamsOptions {
-  capacity?: ReturnConsumedCapacity
-  metrics?: ReturnItemCollectionMetrics
+  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
+  metrics?: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<ReturnItemCollectionMetrics>
   token?: string
 }
 

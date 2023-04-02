@@ -750,6 +750,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     if (options.execute || (this.autoExecute && options.execute !== false)) {
       const result = await this.DocumentClient!.send(new ScanCommand(payload)) as ScanCommandOutput
 
+        console.log('scan', payload, result)
+
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
         return Object.assign(
