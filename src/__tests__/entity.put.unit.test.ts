@@ -455,13 +455,13 @@ describe('put', () => {
   it('formats a batch put response', async () => {
     const result = TestEntity.putBatch({ email: 'x', sort: 'y' })
 
-    expect(result).toHaveProperty('test-table.PutRequest')
-    expect(result['test-table'].PutRequest!.Item).toHaveProperty('_ct')
-    expect(result['test-table'].PutRequest!.Item).toHaveProperty('_md')
-    expect(result['test-table'].PutRequest!.Item).toHaveProperty('_et')
-    expect(result['test-table'].PutRequest!.Item).toHaveProperty('pk')
-    expect(result['test-table'].PutRequest!.Item).toHaveProperty('sk')
-    expect(result['test-table'].PutRequest!.Item).toHaveProperty('test_string')
+    assert.ok(result['test-table'].PutRequest !== undefined, 'result[\'test-table\'].PutRequest is undefined')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('_ct')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('_md')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('_et')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('pk')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('sk')
+    expect(result['test-table'].PutRequest.Item).toHaveProperty('test_string')
   })
 
   it('fails if no value is provided to the putBatch method', () => {
