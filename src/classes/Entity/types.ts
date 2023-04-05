@@ -4,7 +4,6 @@ import type { A, B, O, F } from 'ts-toolbelt'
 import type { Compute, FirstDefined, If } from '../../lib/utils'
 import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table'
 import Entity from './Entity'
-import { Cast } from 'ts-toolbelt/out/Any/Cast'
 
 export interface EntityConstructor<
   EntityTable extends TableDef | undefined = undefined,
@@ -311,7 +310,7 @@ export type InferCompositePrimaryKey<
 export type Overlay = undefined | O.Object
 
 export type ConditionOrFilter<Attributes extends A.Key = A.Key> = (
-  | { attr: Cast<Attributes, string> }
+  | { attr: A.Cast<Attributes, string> }
   | { size: string }
 ) &
   O.Partial<{
