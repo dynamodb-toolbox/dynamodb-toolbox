@@ -716,30 +716,19 @@ class Entity<Name extends string = string,
       Parse,
       StrictSchemaCheck> = {},
     params: UpdateCustomParams = {},
-  ): Promise<
-    Compute<
-      If<
-        B.Not<ShouldExecute<Execute, AutoExecute>>,
-        DocumentClient.UpdateItemInput,
-        If<
-          B.Not<ShouldParse<Parse, AutoParse>>,
-          DocumentClient.UpdateItemOutput,
-          If<
-            // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-            B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-            O.Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-            O.Update<DocumentClient.UpdateItemOutput,
-              'Attributes',
-              If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
-                FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>,
-                FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>
-              >
-            >
-          >
-        >
-      >
-    >
-  > {
+  ): Promise<Compute<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    DocumentClient.UpdateItemInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      DocumentClient.UpdateItemOutput,
+      If<A.Equals<ReturnValues, 'NONE'>,
+        Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
+        O.Update<DocumentClient.UpdateItemOutput,
+          'Attributes',
+          If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
+            FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+            If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
+              A.Equals<ReturnValues, 'UPDATED_NEW'>>,
+              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,
