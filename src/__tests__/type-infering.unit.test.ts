@@ -772,6 +772,11 @@ describe('Entity', () => {
         const testUpdateParams: TestUpdateParams = 1
         testUpdateParams
       })
+
+      it('with invalid conditions attributes', () => {
+        // @ts-expect-error
+        ent.updateParams({ pk }, { conditions: { attr: 'nonExistentAttr', exists: true } })
+      })
     })
 
     describe('query method', () => {
