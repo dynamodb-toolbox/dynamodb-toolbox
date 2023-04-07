@@ -18,11 +18,6 @@ export const cloneListAttributeInputAndAddDefaults = (
 ): PossiblyUndefinedResolvedAttribute => {
   if (input === undefined) {
     if (listAttribute.default === ComputedDefault) {
-      if (!computeDefaults) {
-        // TODO
-        throw new Error()
-      }
-
       if (isFunction(computeDefaults)) {
         return computeDefaults(...contextInputs)
       }

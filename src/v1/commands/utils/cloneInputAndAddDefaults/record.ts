@@ -18,11 +18,6 @@ export const cloneRecordAttributeInputAndAddDefaults = (
 ): PossiblyUndefinedResolvedAttribute => {
   if (input === undefined) {
     if (recordAttribute.default === ComputedDefault) {
-      if (!computeDefaults) {
-        // TODO
-        throw new Error()
-      }
-
       if (isFunction(computeDefaults)) {
         return computeDefaults(...contextInputs)
       }
