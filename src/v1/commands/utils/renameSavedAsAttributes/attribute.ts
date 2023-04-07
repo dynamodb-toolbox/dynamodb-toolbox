@@ -14,6 +14,7 @@ export const renameAttributeSavedAsAttributes = (
 ): PossiblyUndefinedResolvedAttribute => {
   switch (attribute.type) {
     case 'any':
+    case 'constant':
     case 'boolean':
     case 'binary':
     case 'number':
@@ -30,5 +31,9 @@ export const renameAttributeSavedAsAttributes = (
         attribute,
         input as PossiblyUndefinedResolvedMapAttribute
       )
+    case 'record':
+    case 'anyOf':
+      // TODO
+      return input
   }
 }
