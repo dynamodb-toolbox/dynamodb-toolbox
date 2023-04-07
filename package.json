@@ -47,7 +47,6 @@
     "Naor Peled <me@naor.dev>"
   ],
   "dependencies": {
-    "@aws-sdk/util-dynamodb": "^3.226.0",
     "deep-copy": "^1.4.2",
     "lodash.clonedeep": "^4.5.0",
     "lodash.isequal": "^4.5.0",
