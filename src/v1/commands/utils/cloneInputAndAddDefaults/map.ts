@@ -18,11 +18,6 @@ export const cloneMapAttributeInputAndAddDefaults = (
 ): PossiblyUndefinedResolvedAttribute => {
   if (input === undefined) {
     if (mapAttribute.default === ComputedDefault) {
-      if (!computeDefaults) {
-        // TODO
-        throw new Error()
-      }
-
       if (isFunction(computeDefaults)) {
         return computeDefaults(...contextInputs)
       }
