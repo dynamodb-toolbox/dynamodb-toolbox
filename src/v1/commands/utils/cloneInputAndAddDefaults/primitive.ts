@@ -23,8 +23,7 @@ export const clonePrimitiveAttributeInputAndAddDefaults = (
 
   if (attribute.default === ComputedDefault) {
     if (!computeDefaults || !isFunction(computeDefaults)) {
-      // TODO
-      throw new Error()
+      return undefined
     }
 
     return computeDefaults(...contextInputs)
