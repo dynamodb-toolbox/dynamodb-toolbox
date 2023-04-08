@@ -1437,7 +1437,6 @@ class Entity<Name extends string = string,
     }
 
     // Verify returnValues
-    // TODO: Check this, conflicts with dynalite
     if (
       returnValues !== undefined &&
       (typeof returnValues !== 'string' ||
