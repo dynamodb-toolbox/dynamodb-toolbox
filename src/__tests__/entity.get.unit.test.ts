@@ -153,7 +153,7 @@ describe('get', () => {
   })
 
   it('fails on invalid capacity option', () => {
-    // 💥 TODO: Improve capacity type
+    // @ts-expect-error
     expect(() => TestEntity.getParams({ email: 'x', sort: 'y' }, { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
