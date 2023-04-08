@@ -1,4 +1,4 @@
-import { DocumentClient, DocumentClientWithWrappedNumbers } from './bootstrap.test'
+import { DocumentClientWithWrappedNumbers } from './bootstrap.test'
 
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
