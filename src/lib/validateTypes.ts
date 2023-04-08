@@ -113,4 +113,4 @@ export default () => (mapping: any, field: any, value: any) => {
       // TODO: Binary validation
       return value
   }
-} // end validateTypes
+}

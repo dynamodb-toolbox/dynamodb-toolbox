@@ -1,17 +1,15 @@
 import projectionBuilder from '../lib/projectionBuilder'
 
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
-// Create basic table
 const DefaultTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk'
 })
 
-// Create basic entity
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const User = new Entity({
   name: 'User',
   attributes: {
@@ -26,6 +24,7 @@ const User = new Entity({
   table: DefaultTable
 } as const)
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Pet = new Entity({
   name: 'Pet',
   attributes: {

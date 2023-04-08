@@ -112,12 +112,12 @@ export const parseTable = <
       autoExecute,
       autoParse,
       removeNullAttributes,
-      _entities: [] // init Entity tracker
+      _entities: []
     },
-    DocumentClient ? { DocumentClient } : {}, // end DocumentClient
-    entities ? { entities } : {} // end entities
+    DocumentClient ? { DocumentClient } : {},
+    entities ? { entities } : {}
   )
-} // end parseTable
+}
 
 // Parse Indexes
 const parseIndexes = (indexes: TableIndexes, pk: string): TableIndexes =>
@@ -152,7 +152,7 @@ const parseIndexes = (indexes: TableIndexes, pk: string): TableIndexes =>
         partitionKey && type === 'GSI' ? { partitionKey } : {},
         sortKey ? { sortKey } : {},
         { type }
-      ) // end
+      )
     })
   }, {})
 

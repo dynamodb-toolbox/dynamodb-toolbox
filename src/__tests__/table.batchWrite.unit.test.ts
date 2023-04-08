@@ -1,6 +1,7 @@
 import { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 import { Entity, Table } from '../index'
 import { DocumentClient as docClient } from './bootstrap.test'
+import assert from 'assert'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -40,9 +41,11 @@ describe('batchWrite', () => {
     const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' })
     ) as BatchWriteCommandInput
-    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item!.pk).toBe('test')
-    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item!.sk).toBe('testsk')
-    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item!.test).toBe('test')
+
+    assert.ok(result?.RequestItems?.['test-table']?.[0]?.PutRequest?.Item !== undefined, 'PutRequest.Item is undefined')
+    expect(result.RequestItems['test-table'][0].PutRequest.Item.pk).toBe('test')
+    expect(result.RequestItems['test-table'][0].PutRequest.Item.sk).toBe('testsk')
+    expect(result.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test')
   })
 
   it('fails when extra options', () => {
@@ -82,7 +85,8 @@ describe('batchWrite', () => {
 
     expect(result.ReturnConsumedCapacity).toBe('TOTAL')
     expect(result.ReturnItemCollectionMetrics).toBe('SIZE')
-    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item).toEqual(expect.objectContaining({
+
+    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk',
       test: 'test'
@@ -97,7 +101,7 @@ describe('batchWrite', () => {
       'test'
     ) as BatchWriteCommandInput
 
-    expect(result.RequestItems!['test-table'][0].PutRequest!.Item).toEqual(expect.objectContaining({
+    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk',
       test: 'test'
@@ -113,7 +117,7 @@ describe('batchWrite', () => {
     ) as { payload: BatchWriteCommandInput; Tables: any }
 
     expect(result).toHaveProperty('Tables')
-    expect(result.payload.RequestItems!['test-table'][0].PutRequest!.Item).toEqual(expect.objectContaining({
+    expect(result.payload.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk',
       test: 'test'
@@ -127,17 +131,17 @@ describe('batchWrite', () => {
       TestEntity.deleteBatch({ email: 'test', sort: 'testsk3' })
     ]) as BatchWriteCommandInput
 
-    expect(result.RequestItems!['test-table']![0].PutRequest!.Item).toEqual(expect.objectContaining({
+    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk1',
       test: 'test1'
     }))
-    expect(result.RequestItems!['test-table']![1].PutRequest!.Item).toEqual(expect.objectContaining({
+    expect(result.RequestItems?.['test-table']?.[1]?.PutRequest?.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk2',
       test: 'test2'
     }))
-    expect(result.RequestItems!['test-table']![2].DeleteRequest!.Key).toEqual(expect.objectContaining({
+    expect(result.RequestItems?.['test-table']?.[2]?.DeleteRequest?.Key).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk3'
     }))
@@ -170,17 +174,17 @@ describe('batchWrite', () => {
       TestEntity2.putBatch({ email: 'test', sort: 'testsk3', test: 'test3' })
     ]) as BatchWriteCommandInput
 
-    expect(result.RequestItems!['test-table']![0]!.PutRequest!.Item).toEqual(expect.objectContaining({
+    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk1',
       test: 'test1'
     }))
-    expect(result.RequestItems!['test-table']![1]!.PutRequest!.Item).toEqual(expect.objectContaining({
+    expect(result.RequestItems?.['test-table']?.[1]?.PutRequest?.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk2',
       test: 'test2'
     }))
-    expect(result.RequestItems!['test-table2']![0]!.PutRequest!.Item).toEqual(expect.objectContaining({
+    expect(result.RequestItems?.['test-table2']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
       pk: 'test',
       sk: 'testsk3',
       test: 'test3'

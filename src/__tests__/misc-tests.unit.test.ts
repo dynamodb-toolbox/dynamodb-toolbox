@@ -930,9 +930,9 @@ describe('Misc Tests (development only)', () => {
 //             ProjectionExpression = projections
 //             _EntityProjections = entities
 //             _TableProjections = tableAttrs
-//           } // end if names
+//           }
 
-//         } // end if projections
+//         }
 
 //         // Error if extra arguments are provided along with keys
 //         if (keys !== undefined && Object.keys(args).length > 0)

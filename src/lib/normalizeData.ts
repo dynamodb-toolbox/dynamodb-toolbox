@@ -38,7 +38,7 @@ export default () => (
         } else {
           error(`'${dependent}' is not a valid attribute or alias name`)
         }
-      }) // end dependency loop
+      })
 
       map[attr] = map[attr](map)
       return map
@@ -52,7 +52,7 @@ export default () => (
       }
       return map
     }
-  } // end dependsOn
+  }
 
   // Generate normalized data object
   const dataMap = Object.keys(data).reduce(
@@ -125,7 +125,7 @@ export default () => (
 
   // Return the merged data
   return Object.assign(composites, _data)
-} // end normalizeData
+}
 
 // Generate final data and evaluate function expressions
 // let _data = Object.keys(dataMap.data).reduce((acc,field) => {
