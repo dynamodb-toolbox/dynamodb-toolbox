@@ -1,4 +1,3 @@
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 import { DocumentClient } from './bootstrap.test'
@@ -30,14 +29,14 @@ describe('Parse alias attributes', () => {
     const item = TestEntity.parse({
       pk: 'testPk',
       sk: 'testSk',
-      field: 'someField',
+      field: new Set(['someField']),
       timeCreated: '2022-12-01T17:10:00Z',
       timeUpdated: '2022-12-01T19:10:00Z'
     })
     expect(item).toEqual({
       pk: 'testPk',
       sk: 'testSk',
-      field: 'someField',
+      field: ['someField'],
       timeCreated: '2022-12-01T17:10:00Z',
       timeUpdated: '2022-12-01T19:10:00Z'
     })
