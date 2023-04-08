@@ -14,7 +14,7 @@ The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amaz
 ## Why single table design?
 Learn more about single table design in [Alex Debrie's blog](https://www.alexdebrie.com/posts/dynamodb-single-table).
 
-## Version 0.7 🙌 <!-- omit in toc -->
+## Version 0.8 🙌 <!-- omit in toc -->
 
 Feedback is welcome and much appreciated! (Huge thanks to [@ThomasAribart](https://github.com/ThomasAribart) for all his work on this 🙌)
 

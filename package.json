@@ -16,6 +16,10 @@
     "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
   },
   "license": "MIT",
+  "contributors": [
+    "ThomasAribart <thomasa@theodo.fr>",
+    "Naor Peled <me@naor.dev>"
+  ],
   "dependencies": {
     "deep-copy": "^1.4.2",
     "ts-toolbelt": "^9.6.0"
