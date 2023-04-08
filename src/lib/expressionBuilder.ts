@@ -7,7 +7,6 @@
 // TODO: allow for nesting (use arrays) and boolean settings
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html
 
-// Import standard error handler
 import { A } from 'ts-toolbelt'
 
 import checkAttribute from './checkAttribute'

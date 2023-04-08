@@ -1197,4 +1197,4 @@ describe('update', () => {
       ':test_string': 'default string'
     })
   })
-}) // end describe
+})

@@ -1,4 +1,3 @@
-// import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { Table, Entity } from '../index'
 import { DocumentClient as docClient } from './bootstrap.test'
 
