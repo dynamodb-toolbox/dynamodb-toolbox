@@ -67,7 +67,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     // Parse the table and merge into this
     Object.assign(this, parseTable(table))
-  } // end constructor
+  }
 
   // Sets the auto execute mode (default to true)
   set autoExecute(val) {
@@ -177,7 +177,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   {},
                   entity.schema.attributes[attr],
                   { alias: attr },
-                ) // end assign
+                )
                 // Add a map from the attribute to the new index attribute
                 entity.schema.attributes[attr].map = this.Table[key]
                 // Otherwise, throw an error
@@ -187,12 +187,12 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                     this.Table[key],
                   )}) conflicts with an Entity attribute name`,
                 )
-              } // end if-else
-            } // end if
+              }
+            }
             break
 
           // For secondary indexes
-          default: // end for
+          default:
             // Verify that the table has this index
             if (!this.Table.indexes[key]) error(`'${key}' is not a valid secondary index name`)
 
@@ -231,7 +231,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                     {},
                     entity.schema.attributes[attr[keyType]],
                     { alias: attr[keyType] },
-                  ) // end assign
+                  )
                   // Add a map from the attribute to the new index attribute
                   // @ts-ignore
                   entity.schema.attributes[attr[keyType]].map = this.Table.indexes[key][keyType]
@@ -249,9 +249,9 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                       // @ts-ignore
                       `${key}'s ${keyType} name (${this.Table.indexes[key][keyType]}) conflicts with another Entity attribute name`,
                     )
-                  } // end if
-                } // end if-else
-              } // end if
+                  }
+                }
+              }
             }
 
             // Check that composite keys define both keys
@@ -265,8 +265,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
               error(`${key} requires mappings for both the partitionKey and the sortKey`)
             }
             break
-        } // end switch
-      } // end for
+        }
+      }
 
       // Loop through the Entity's attributes and validate their types against the Table definition
       // Add attribute to table if not defined
@@ -324,9 +324,9 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
             entity.schema.attributes[attr].partitionKey || entity.schema.attributes[attr].sortKey
               ? { type: entity.schema.attributes[attr].type }
               : null,
-          ) // end assign
-        } // end if-else Table attribute exists
-      } // end for loop to check/add attributes
+          )
+        }
+      }
 
       // Add the Entity to the Table's entities list
       this._entities.push(entity.name)
@@ -475,7 +475,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       }
     } else {
       return payload
-    } // end if-else
+    }
   }
 
   // Query the table
@@ -584,8 +584,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     }
     let ExpressionAttributeValues: { [key: string]: any } = { ':pk': pk }
     let KeyConditionExpression = '#pk = :pk'
-    let FilterExpression // init FilterExpression
-    let ProjectionExpression // init ProjectionExpression
+    let FilterExpression
+    let ProjectionExpression
     let EntityProjections = {}
     let TableProjections // FIXME: removed default
 
@@ -665,8 +665,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         } else {
           KeyConditionExpression += ` and #sk ${operator} :sk`
         }
-      } // end if-else
-    } // end if operator
+      }
+    }
 
     // If filter expressions
     if (filters) {
@@ -681,8 +681,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         ExpressionAttributeNames = Object.assign(ExpressionAttributeNames, names)
         ExpressionAttributeValues = Object.assign(ExpressionAttributeValues, values)
         FilterExpression = expression
-      } // end if names
-    } // end if filters
+      }
+    }
 
     // If projections
     if (attributes) {
@@ -699,8 +699,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         ProjectionExpression = projections
         EntityProjections = entities
         TableProjections = tableAttrs
-      } // end if names
-    } // end if projections
+      }
+    }
 
     // Generate the payload
     const payload = Object.assign(
@@ -723,7 +723,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     )
 
     return projections ? { payload, EntityProjections, TableProjections } : payload
-  } // end query
+  }
 
   async scan<Item = AttributeMap,
     Execute extends boolean | undefined = undefined,
@@ -917,8 +917,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         ExpressionAttributeNames = Object.assign(ExpressionAttributeNames, names)
         ExpressionAttributeValues = Object.assign(ExpressionAttributeValues, values)
         FilterExpression = expression
-      } // end if names
-    } // end if filters
+      }
+    }
 
     // If projections
     if (attributes) {
@@ -935,8 +935,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         ProjectionExpression = projections
         EntityProjections = entities
         TableProjections = tableAttrs
-      } // end if names
-    } // end if projections
+      }
+    }
 
     // Generate the payload
     const payload = Object.assign(
@@ -959,7 +959,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     )
 
     return meta ? { payload, EntityProjections, TableProjections } : payload
-  } // end query
+  }
 
   // BatchGet Items
   async batchGet(
@@ -1037,11 +1037,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                     return item
                   }
                 },
-              ), // end item map
-            }) // end assign
-          }, {}), // end table reduce
+              ),
+            })
+          }, {}),
         }
-        : null, // end if Responses
+        : null,
       // If UnprocessedKeys, return a next function
       result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length > 0
         ? {
@@ -1065,8 +1065,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           },
         }
         : { next: () => false }, // TODO: How should this return?
-    ) // end parse assign
-  } // end parseBatchGetResponse
+    )
+  }
 
   // Generate BatchGet Params
   batchGetParams(
@@ -1126,7 +1126,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       } else {
         error(`Item references must contain a valid Table object and Key`)
       }
-    } // end item loop
+    }
 
     // Parse 'consistent' option
     if (consistent) {
@@ -1147,11 +1147,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           } else {
             error(`There are no items for the table or table alias: ${tbl}`)
           }
-        } // end if
+        }
       } else {
         error(`'consistent' must be a boolean or an map of table names`)
       }
-    } // end consistent
+    }
 
     // If projections
     if (attributes) {
@@ -1164,7 +1164,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         } else {
           error(`'attributes' must use a table map when requesting items from multiple tables`)
         }
-      } // end if array
+      }
 
       for (const tbl in attrs as ProjectionAttributesTable) {
         const tbl_name = TableAliases[tbl] || tbl
@@ -1183,7 +1183,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           error(`There are no items for the table: ${tbl}`)
         }
       }
-    } // end if projections
+    }
 
     const payload = Object.assign(
       { RequestItems },
@@ -1250,8 +1250,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           },
         }
         : { next: () => false }, // TODO: How should this return?
-    ) // end parse assign
-  } // end parseBatchWriteResponse
+    )
+  }
 
   /**
    * Generates parameters for a batchWrite
@@ -1369,8 +1369,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       }
     } else {
       return payload as TransactGetCommandInput
-    } // end-if
-  } // end transactGet
+    }
+  }
 
   /**
    * Generates parameters for a transactGet operation
@@ -1575,7 +1575,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     if (!this[entity]) error(`'${entity}' is not a valid Entity`)
     return this[entity].put(item, options, params)
   }
-} // end Table class
+}
 
 // Export the Table class
 export default Table

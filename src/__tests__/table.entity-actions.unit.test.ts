@@ -100,4 +100,4 @@ describe('table.parse', () => {
     // @ts-expect-error
     expect(TestTable.parse('TestEntityX')).rejects.toThrow(`'TestEntityX' is not a valid Entity`)
   })
-}) // end table.parse
+})

@@ -393,6 +393,7 @@ describe('Entity creation', () => {
       DocumentClient
     })
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const TestEntity = new Entity({
       name: 'TestEnt',
       attributes: {
@@ -402,7 +403,7 @@ describe('Entity creation', () => {
           default: 'pkDef'
         },
         test: {
-          format: (val: string, data: any) => {
+          format: (val: string) => {
             return val.toUpperCase()
           },
           default: () => 'defaultVal'

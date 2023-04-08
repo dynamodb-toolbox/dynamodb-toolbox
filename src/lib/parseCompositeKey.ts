@@ -59,7 +59,7 @@ const parseCompositeKey = <
           [sub_config.alias]: Object.assign({}, sub_config, { map: field })
         }
         : {}
-    ) // end assign
+    )
   } else {
     error(`Composite key configurations must have 2 or 3 items`)
   }
