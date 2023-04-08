@@ -584,8 +584,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     }
     let ExpressionAttributeValues: { [key: string]: any } = { ':pk': pk }
     let KeyConditionExpression = '#pk = :pk'
-    let FilterExpression // init FilterExpression
-    let ProjectionExpression // init ProjectionExpression
+    let FilterExpression
+    let ProjectionExpression
     let EntityProjections = {}
     let TableProjections // FIXME: removed default
 
