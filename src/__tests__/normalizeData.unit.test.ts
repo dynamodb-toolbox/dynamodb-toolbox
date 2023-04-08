@@ -36,7 +36,7 @@ const linked = DefaultTable.User.linked
 
 describe('normalizeData', () => {
   it('converts entity input to table attributes', async () => {
-    const result = normalizeData()(attributes, linked, {
+    const result = normalizeData(DocumentClient)(attributes, linked, {
       pk: 'test',
       set_alias: ['1', '2', '3'],
       number: 1,
@@ -59,7 +59,7 @@ describe('normalizeData', () => {
   })
 
   it('filter out non-mapped fields', async () => {
-    const result = normalizeData()(
+    const result = normalizeData(DocumentClient)(
       attributes,
       linked,
       { pk: 'test', $remove: 'testx', notAField: 'test123' },
@@ -73,7 +73,7 @@ describe('normalizeData', () => {
 
   it('fails on non-mapped fields', async () => {
     expect(() => {
-      normalizeData()(attributes, linked, {
+      normalizeData(DocumentClient)(attributes, linked, {
         pk: 'test',
         $remove: 'testx',
         notAField: 'test123'

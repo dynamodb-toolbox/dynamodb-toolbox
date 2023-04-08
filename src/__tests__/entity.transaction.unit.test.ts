@@ -1,6 +1,5 @@
 import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap.test'
-import assert from 'assert'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -177,7 +176,6 @@ describe('Entity transactional operations', () => {
         { strictSchemaCheck: false }
       )
 
-      assert.ok(Item !== undefined, 'Item is undefined')
       expect(Item.unknown).toBeUndefined()
     })
 

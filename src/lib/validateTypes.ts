@@ -4,10 +4,11 @@
  * @license MIT
  */
 
-import { toBool, hasValue, error, toDynamoBigInt, typeOf, isArrayOfSameType } from './utils'
+import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import { toBool, hasValue, error, toDynamoBigInt } from './utils'
 
-// Performs type validation/coercion
-export default () => (mapping: any, field: any, value: any) => {
+// Performs type validation/coercian
+export default (DocumentClient: DocumentClient) => (mapping: any, field: any, value: any) => {
   // Evaluate function expressions
   // TODO: should this happen here?
   // let value = typeof input === 'function' ? input(data) : input
@@ -58,54 +59,29 @@ export default () => (mapping: any, field: any, value: any) => {
     case 'map':
       return value?.constructor === Object ? value : error(`'${field}' must be a map (object)`)
     case 'set':
-      if (value instanceof Set) {
-
+      if (Array.isArray(value)) {
+        if (!DocumentClient) error('DocumentClient required for this operation')
+        // DocumentClient needs an array of NumberValues for createSet. It treats
+        // everything as a Number type.
+        let setType = mapping.setType
         if (mapping.setType === 'bigint') {
-          mapping.setType = 'number'
-          value = Array.from(value).map((n) => toDynamoBigInt(n))
-        }
-
-        return (
-          !mapping.setType ||
-           value.size === 0
-         || isArrayOfSameType([...value])
-            ? value
-            : error(
-              `'${field}' must be a valid set containing only ${mapping.setType} types`
-            ))
-      } else if (Array.isArray(value)) {
-        const expectedSetType = mapping.setType?.toLowerCase?.()
-        const actualSetType = typeOf(value[0])?.toLowerCase?.()
-
-        if (mapping.setType === 'bigint') {
-          mapping.setType = 'number'
+          setType = 'number'
           value = value.map((n) => toDynamoBigInt(n))
         }
-
-        return (!mapping.setType ||
-          value.length === 0 ||
-          (expectedSetType === actualSetType && isArrayOfSameType(value))
-          ? new Set(value)
-          : error(
-            `'${field}' must be a valid set (array) containing only ${expectedSetType ?? actualSetType} types`
-          )
-        )
+        const set = DocumentClient.createSet(value, { validate: true })
+        return !setType || setType === set.type.toLowerCase()
+          ? set
+          : error(`'${field}' must be a valid set (array) containing only ${mapping.setType} types`)
       } else if (mapping.coerce) {
-        if(value instanceof Set) return value
-
-        const arrayVal = String(value)
-          .split(',')
-          .map((x) => x.trim())
-
-        const expectedSetType = mapping.setType
-        const actualSetType = typeOf(arrayVal[0])
-
-        return (!mapping.setType ||
-          arrayVal.length === 0 ||
-          (expectedSetType === actualSetType && isArrayOfSameType(arrayVal))
-          ? new Set(arrayVal)
-          : error(`'${field}' must be a valid set (array) of type ${mapping.setType}`)
+        if (!DocumentClient) error('DocumentClient required for this operation')
+        const set = DocumentClient.createSet(
+          String(value)
+            .split(',')
+            .map(x => x.trim())
         )
+        return !mapping.setType || mapping.setType === set.type.toLowerCase()
+          ? set
+          : error(`'${field}' must be a valid set (array) of type ${mapping.setType}`)
       } else {
         return error(`'${field}' must be a valid set (array)`)
       }

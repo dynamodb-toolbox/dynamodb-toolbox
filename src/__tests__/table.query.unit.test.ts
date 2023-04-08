@@ -1,4 +1,4 @@
-import { Entity, Table } from '../index'
+import { Table, Entity } from '../index'
 import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
@@ -229,14 +229,12 @@ describe('query', () => {
   })
 
   it('fails on invalid select setting', () => {
-    // @ts-expect-error - invalid select
     expect(() => TestTable.queryParams('test', { select: 'test' })).toThrow(
       `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
     )
   })
 
   it('fails on invalid capacity setting', () => {
-    // @ts-expect-error - invalid capacity
     expect(() => TestTable.queryParams('test', { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )

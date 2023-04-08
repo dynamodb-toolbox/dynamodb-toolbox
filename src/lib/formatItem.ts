@@ -3,6 +3,7 @@
  * @author Jeremy Daly <jeremy@jeremydaly.com>
  * @license MIT
  */
+import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
 import { PureAttributeDefinition } from '../classes/Entity'
 import validateTypes from './validateTypes'
@@ -11,14 +12,21 @@ import { Linked } from './parseEntity'
 // Convert from DocumentClient values, which may be wrapped sets or numbers,
 // into normal TS values.
 const convertDynamoValues = (value: any, attr?: PureAttributeDefinition) => {
+  // Extract values from sets
+  if (
+    attr &&
+    attr.type === 'set' &&
+    Array.isArray(value.values)
+  ) {
+    value = value.values
+  }
+
   // Unwrap bigint/number sets to regular numbers/bigints
   if (attr && attr.type === 'set') {
     if (attr.setType === 'bigint') {
-      value = Array.from(value).map((n: any) => BigInt(n))
+      value = value.map((n: any) => BigInt(n))
     } else if (attr.setType === 'number') {
-      value = Array.from(value).map((n: any) => Number(n))
-    } else {
-      value = Array.from(value)
+      value = value.map((n: any) => Number(n))
     }
   }
 
@@ -34,7 +42,7 @@ const convertDynamoValues = (value: any, attr?: PureAttributeDefinition) => {
 }
 
 // Format item based on attribute defnition
-export default () => (
+export default (DocumentClient: DocumentClient) => (
   attributes: { [key: string]: PureAttributeDefinition },
   linked: Linked,
   item: any,
@@ -45,7 +53,7 @@ export default () => (
   // TODO: Test existence of RegExp inputs
 
   // Intialize validate type
-  const validateType = validateTypes()
+  const validateType = validateTypes(DocumentClient)
 
   return Object.keys(item).reduce((acc, field) => {
     const link =

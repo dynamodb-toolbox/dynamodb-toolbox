@@ -1,9 +1,10 @@
+import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, O } from 'ts-toolbelt'
 
 import { parseTable, ParsedTable } from '../../lib/parseTable'
 import parseFilters from '../../lib/expressionBuilder'
 import validateTypes from '../../lib/validateTypes'
-import Entity, { AttributeMap } from '../Entity'
+import Entity from '../Entity'
 import {
   default as parseProjections,
   ProjectionAttributes,
@@ -14,42 +15,24 @@ import type {
   BatchGetOptions,
   BatchGetParamsMeta,
   batchWriteOptions,
-  ScanOptions, ScanParamsWithMeta,
+  ScanOptions,
   TableConstructor,
   TableDef,
   TableQueryOptions,
   transactGetOptions,
-  TransactGetParamsWithMeta,
+  TransactGetParamsMeta,
   transactGetParamsOptions,
   TransactWriteOptions,
   transactWriteParamsOptions,
 } from './types'
 
 import { error, conditionError, If, Compute } from '../../lib/utils'
-import {
-  BatchGetCommand,
-  BatchGetCommandInput, BatchWriteCommand,
-  BatchWriteCommandInput,
-  DynamoDBDocumentClient, QueryCommand,
-  QueryCommandInput,
-  QueryCommandOutput,
-  ScanCommand,
-  ScanCommandInput,
-  ScanCommandOutput,
-  TransactGetCommand,
-  TransactGetCommandInput,
-  TransactGetCommandOutput,
-  TransactWriteCommand,
-  TransactWriteCommandInput,
-  TransactWriteCommandOutput,
-} from '@aws-sdk/lib-dynamodb'
-import { TransactGetItem } from '@aws-sdk/client-dynamodb'
 
 class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.Key | null> {
   private _execute = true
   private _parse = true
   public _removeNulls = true
-  private _docClient?: DynamoDBDocumentClient
+  private _docClient?: DocumentClient
   private _entities: string[] = []
   public Table!: ParsedTable['Table']
   public name!: string
@@ -99,25 +82,27 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     return this._removeNulls
   }
 
-  get DocumentClient(): DynamoDBDocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean } } {
-    return this._docClient as any
+  // Retrieves the document client
+  get DocumentClient() {
+    return this._docClient
   }
 
-  // Validate and sets the document client
+  // Validate and sets the document client (extend with options.convertEmptyValues because it's not typed)
   set DocumentClient(
-    docClient: (DynamoDBDocumentClient) | undefined,
+    docClient: (DocumentClient & { options?: { convertEmptyValues: boolean; wrapNumbers: boolean } }) | undefined,
   ) {
+    // If a valid document client
     // @ts-ignore
-    if (docClient && docClient.send) {
+    if (docClient && docClient.get && docClient.put && docClient.delete && docClient.update) {
       // Automatically set convertEmptyValues to true, unless false
-      if (docClient.config.translateConfig?.marshallOptions?.convertEmptyValues !== false) {
-        docClient.config.translateConfig!.marshallOptions!.convertEmptyValues = true
+      if (docClient.options!.convertEmptyValues !== false) {
+        docClient.options!.convertEmptyValues = true
       }
       this._docClient = docClient
     } else {
       error('Invalid DocumentClient')
     }
-  }
+  } // end DocumentClient
 
   /**
    * Adds an entity to the table
@@ -397,20 +382,20 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   // Table actions
   // ----------------------------------------------------------------//
 
-  async query<Item = AttributeMap,
+  async query<Item = DocumentClient.AttributeMap,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
     pk: any,
     options: TableQueryOptions<Execute, Parse> = {},
-    params: Partial<QueryCommandInput> = {},
+    params: Partial<DocumentClient.QueryInput> = {},
   ): Promise<If<A.Equals<Execute, false>,
-    QueryCommandInput,
+    DocumentClient.QueryInput,
     If<A.Equals<Parse, false>,
-      Compute<QueryCommandOutput & {
-        next?: () => Promise<QueryCommandOutput>
+      Compute<DocumentClient.QueryOutput & {
+        next?: () => Promise<DocumentClient.QueryOutput>
       }>,
-      Compute<O.Update<QueryCommandOutput, 'Items', Item[]> & {
-        next?: () => Promise<O.Update<QueryCommandOutput, 'Items', Item[]>>
+      Compute<O.Update<DocumentClient.QueryOutput, 'Items', Item[]> & {
+        next?: () => Promise<O.Update<DocumentClient.QueryOutput, 'Items', Item[]>>
       }>>>> {
     // Generate query parameters with projection data
     const { payload, EntityProjections, TableProjections } = this.queryParams<Execute, Parse>(
@@ -422,7 +407,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient!.send(new QueryCommand(payload))
+      const result = (await this.DocumentClient!.query(payload).promise()) as any
 
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -471,7 +456,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
             : null,
         ) as any
       } else {
-        return result as any
+        return result
       }
     } else {
       return payload
@@ -483,7 +468,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     Parse extends boolean | undefined = undefined>(
     pk: any,
     options: TableQueryOptions<Execute, Parse> = {},
-    params: Partial<QueryCommandInput> = {},
+    params: Partial<DocumentClient.QueryInput> = {},
     projections = false,
     // 🔨 TOIMPROVE: Type queryParams return
   ): any {
@@ -641,7 +626,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           : error(`Conditional expressions require the table to have a sortKey`)
 
       // Init validateType
-      const validateType = validateTypes()
+      const validateType = validateTypes(this.DocumentClient!)
 
       // Add the sortKey attribute name
       ExpressionAttributeNames['#sk'] =
@@ -725,30 +710,30 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     return projections ? { payload, EntityProjections, TableProjections } : payload
   } // end query
 
-  async scan<Item = AttributeMap,
+  async scan<Item = DocumentClient.AttributeMap,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
     options: ScanOptions<Execute, Parse> = {},
-    params: Partial<ScanCommandInput> = {},
+    params: Partial<DocumentClient.ScanInput> = {},
   ): Promise<If<A.Equals<Execute, false>,
-    ScanCommandInput,
+    DocumentClient.ScanInput,
     If<A.Equals<Parse, false>,
-      Compute<ScanCommandOutput & {
-        next?: () => Promise<ScanCommandOutput>
+      Compute<DocumentClient.ScanOutput & {
+        next?: () => Promise<DocumentClient.ScanOutput>
       }>,
-      Compute<O.Update<ScanCommandOutput, 'Items', Item[]> & {
-        next?: () => Promise<O.Update<ScanCommandOutput, 'Items', Item[]>>
+      Compute<O.Update<DocumentClient.ScanOutput, 'Items', Item[]> & {
+        next?: () => Promise<O.Update<DocumentClient.ScanOutput, 'Items', Item[]>>
       }>>>> {
     // Generate query parameters with meta data
     const { payload, EntityProjections, TableProjections } = this.scanParams<Execute, Parse>(
       options,
       params,
       true,
-    ) as ScanParamsWithMeta
+    )
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient!.send(new ScanCommand(payload)) as ScanCommandOutput
+      const result = await this.DocumentClient!.scan(payload).promise()
 
       // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
@@ -790,17 +775,18 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         return result as any
       }
     } else {
-      return payload as any
-    }
+      return payload
+    } // end if-else
   }
 
   // Generate SCAN Parameters
   scanParams<Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
     options: ScanOptions<Execute, Parse> = {},
-    params: Partial<ScanCommandInput> = {},
+    params: Partial<DocumentClient.ScanInput> = {},
     meta = false,
-  ): ScanCommandInput | ScanParamsWithMeta {
+    // 🔨 TOIMPROVE: Type scanParams return
+  ): any {
     // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.KeyConditionExpressions
 
     // Deconstruct valid options
@@ -965,7 +951,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   async batchGet(
     items: any,
     options: BatchGetOptions = {},
-    params: Partial<BatchGetCommandInput> = {},
+    params: Partial<DocumentClient.BatchGetItemInput> = {},
   ) {
     // Generate the payload with meta information
     const {
@@ -980,7 +966,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       return payload
     }
 
-    const result = await this.DocumentClient!.send(new BatchGetCommand(payload))
+    const result = await this.DocumentClient!.batchGet(payload).promise()
 
     const shouldParse = options.parse || (this.autoParse && options.parse !== false)
     if (!shouldParse) {
@@ -1046,15 +1032,14 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length > 0
         ? {
           next: async (): Promise<any> => {
-            const nextResult = await this.DocumentClient!.send( new BatchGetCommand(
+            const nextResult = await this.DocumentClient!.batchGet(
               Object.assign(
                 { RequestItems: result.UnprocessedKeys },
                 options.capacity
                   ? { ReturnConsumedCapacity: options.capacity.toUpperCase() }
                   : null,
               ),
-            ))
-
+            ).promise()
             return this.parseBatchGetResponse(
               nextResult,
               Tables,
@@ -1072,7 +1057,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   batchGetParams(
     _items: any,
     options: BatchGetOptions = {},
-    params: Partial<BatchGetCommandInput> = {},
+    params: Partial<DocumentClient.BatchGetItemInput> = {},
     meta = false,
   ) {
     const items = Array.isArray(_items) ? _items : [_items]
@@ -1098,7 +1083,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     }
 
     // Init RequestItems and Tables reference
-    const RequestItems: BatchGetCommandInput['RequestItems'] = {}
+    const RequestItems: DocumentClient.BatchGetRequestMap = {}
     const Tables: { [key: string]: any } = {}
     const TableAliases: { [key: string]: any } = {}
     const EntityProjections: { [key: string]: any } = {}
@@ -1122,7 +1107,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           if (item.Table.alias) TableAliases[item.Table.alias] = table
         }
 
-        RequestItems![table]!.Keys!.push(item.Key)
+        // Push request onto the table array
+        RequestItems[table].Keys.push(item.Key)
       } else {
         error(`Item references must contain a valid Table object and Key`)
       }
@@ -1136,7 +1122,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
           RequestItems[tbl].ConsistentRead = true
         }
       } else if (consistent?.constructor === Object) {
-        for (const tbl in consistent as Record<string, unknown>) {
+        for (const tbl in consistent as Object) {
           const tbl_name = TableAliases[tbl] || tbl
           if (RequestItems[tbl_name]) {
             if (typeof consistent[tbl] === 'boolean') {
@@ -1205,27 +1191,31 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   async batchWrite(
     items: any,
     options: batchWriteOptions = {},
-    params: Partial<BatchWriteCommandInput> = {},
+    params: Partial<DocumentClient.BatchWriteItemInput> = {},
   ) {
     // Generate the payload with meta information
     const payload = this.batchWriteParams(
       items,
       options,
       params,
-    ) as BatchWriteCommandInput
+    ) as DocumentClient.BatchWriteItemInput
 
+    // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient!.send( new BatchWriteCommand(payload))
-
+      const result = await this.DocumentClient!.batchWrite(payload).promise()
+      // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
+        // TODO: Left in for testing. Needs to be removed
+        // result.UnprocessedKeys = testUnprocessedKeys
+
         return this.parseBatchWriteResponse(result, options)
       } else {
         return result
       }
     } else {
       return payload
-    }
-  }
+    } // end-if
+  } // end put
 
   private parseBatchWriteResponse(result: any, options: batchWriteOptions = {}): any {
     return Object.assign(
@@ -1234,7 +1224,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       result.UnprocessedItems && Object.keys(result.UnprocessedItems).length > 0
         ? {
           next: async () => {
-            const nextResult = await this.DocumentClient!.send( new BatchWriteCommand(
+            const nextResult = await this.DocumentClient!.batchWrite(
               Object.assign(
                 { RequestItems: result.UnprocessedItems },
                 options.capacity
@@ -1244,8 +1234,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
                   ? { ReturnItemCollectionMetrics: options.metrics.toUpperCase() }
                   : null,
               ),
-            ))
-
+            ).promise()
             return this.parseBatchWriteResponse(nextResult, options)
           },
         }
@@ -1255,7 +1244,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
   /**
    * Generates parameters for a batchWrite
-   * @param {object} _items - An array of objects generated from putBatch and/or deleteBatch entity calls.
+   * @param {object} items - An array of objects generated from putBatch and/or deleteBatch entity calls.
    * @param {object} [options] - Additional batchWrite options
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the batchWrite request.
    * @param {boolean} [meta] - Internal flag to enable entity parsing
@@ -1264,7 +1253,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   batchWriteParams(
     _items: any,
     options: batchWriteOptions = {},
-    params: Partial<BatchWriteCommandInput> = {},
+    params: Partial<DocumentClient.BatchWriteItemInput> = {},
     meta = false,
   ) {
     // Convert items to array
@@ -1315,7 +1304,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       RequestItems[table].push(item[table])
     }
 
-    const payload: BatchWriteCommandInput = Object.assign(
+    const payload: DocumentClient.BatchWriteItemInput = Object.assign(
       { RequestItems },
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
@@ -1333,21 +1322,21 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    *
    */
   async transactGet(
-    items: ({ Entity?: any } & TransactGetItem)[] = [],
+    items: ({ Entity?: any } & DocumentClient.TransactGetItem)[] = [],
     options: transactGetOptions = {},
-    // params: Partial<TransactGetCommandInput> = {}
+    // params: Partial<DocumentClient.TransactGetItemsInput> = {}
   ) {
     // Generate the payload with meta information
     const { payload, Entities } = this.transactGetParams(
       items,
       options,
       true,
-    ) as TransactGetParamsWithMeta
+    ) as TransactGetParamsMeta
 
     // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      const result = await this.DocumentClient!.send ( new TransactGetCommand(payload)) as TransactGetCommandOutput
-
+      const result = await this.DocumentClient!.transactGet(payload).promise()
+      // If auto parse enable
       if (options.parse || (this.autoParse && options.parse !== false)) {
         // Parse the items using the appropriate entity
         return Object.assign(
@@ -1363,39 +1352,38 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
               }),
             }
             : null,
-        ) as TransactGetCommandOutput
+        ) as DocumentClient.TransactGetItemsOutput
       } else {
-        return result as TransactGetCommandOutput
+        return result as DocumentClient.TransactGetItemsOutput
       }
     } else {
-      return payload as TransactGetCommandInput
+      return payload as DocumentClient.TransactGetItemsInput
     } // end-if
   } // end transactGet
 
   /**
    * Generates parameters for a transactGet operation
-   * @param {object} _items - An array of objects generated from getTransaction entity calls.
-   * @param {object} [options] - Additional transactGet options.
-   * @param {boolean} [meta] - A flag for returning metadata, this is for internal use.
+   * @param {object} items - An array of objects generated from getTransaction entity calls.
+   * @param {object} [options] - Additional transactGet options
    *
    * Creates a TransactGetItems object:
    *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html
    */
   transactGetParams(
-    _items: ({ Entity?: any } & TransactGetItem)[],
+    _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
     options?: transactGetParamsOptions,
     meta?: false | undefined,
-  ): TransactGetCommandInput
+  ): DocumentClient.TransactGetItemsInput
   transactGetParams(
-    _items: ({ Entity?: any } & TransactGetItem)[],
+    _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
     options: transactGetParamsOptions,
     meta: true,
-  ): TransactGetParamsWithMeta
+  ): TransactGetParamsMeta
   transactGetParams(
-    _items: ({ Entity?: any } & TransactGetItem)[],
+    _items: ({ Entity?: any } & DocumentClient.TransactGetItem)[],
     options: transactGetParamsOptions = {},
     meta = false,
-  ): TransactGetCommandInput | TransactGetParamsWithMeta {
+  ): DocumentClient.TransactGetItemsInput | TransactGetParamsMeta {
     const items = Array.isArray(_items) ? _items : _items ? [_items] : []
 
     // Error on no items
@@ -1410,8 +1398,10 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     // Remove other valid options from options
     const args = Object.keys(_args).filter(x => !['execute', 'parse'].includes(x))
 
+    // Error on extraneous arguments
     if (args.length > 0) error(`Invalid transactGet options: ${args.join(', ')}`)
 
+    // Verify capacity
     if (
       capacity !== undefined &&
       (typeof capacity !== 'string' ||
@@ -1422,6 +1412,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     const Entities: (any | undefined)[] = []
 
+    // Generate the payload
     const payload = Object.assign(
       {
         // Loop through items and verify transaction objects
@@ -1437,34 +1428,42 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
     )
 
-    return meta ? { Entities, payload } : payload as any
-  }
+    // Return transact items
+    return meta ? { Entities, payload } : payload
+  } // end transactGetParams
 
   /**
    * Performs a transactWrite operation
    * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
    *   entity calls.
-   * @param {object} [options] - Additional transactWrite options.
-   * @param {object} [params] - Additional transactWrite parameters.
+   * @param {object} [options] - Additional transactWrite options
    *
    */
   async transactWrite(
-    items: TransactWriteCommandInput['TransactItems'],
+    items: DocumentClient.TransactWriteItemList,
     options: TransactWriteOptions = {},
-    params?: Partial<TransactWriteCommandInput>,
+    params?: Partial<DocumentClient.TransactWriteItemsInput>,
   ) {
+    // Generate the payload with meta information
     const payload = this.transactWriteParams(items, options, params)
 
+    // If auto execute enabled
     if (options.execute || (this.autoExecute && options.execute !== false)) {
-      return await this.DocumentClient!.send(new TransactWriteCommand(payload)) as TransactWriteCommandOutput
+      const result = await this.DocumentClient!.transactWrite(payload).promise()
+      // If auto parse enable
+      if (options.parse || (this.autoParse && options.parse !== false)) {
+        return result as DocumentClient.TransactWriteItemsOutput
+      } else {
+        return result as DocumentClient.TransactWriteItemsOutput
+      }
     } else {
-      return payload as TransactWriteCommandInput
-    }
-  }
+      return payload as DocumentClient.TransactWriteItemsInput
+    } // end-if
+  } // end transactGet
 
   /**
    * Generates parameters for a transactWrite operation
-   * @param {object} _items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
+   * @param {object} items - An array of objects generated from putTransaction, updateTransaction, or deleteTransaction
    *   entity calls.
    * @param {object} [options] - Additional options
    * @param {object} [params] - Additional DynamoDB parameters you wish to pass to the transactWrite request.
@@ -1473,10 +1472,10 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
    *   https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
    */
   transactWriteParams(
-    _items: TransactWriteCommandInput['TransactItems'],
+    _items: DocumentClient.TransactWriteItemList,
     options: transactWriteParamsOptions = {},
-    params: Partial<TransactWriteCommandInput> = {},
-  ): TransactWriteCommandInput {
+    params: Partial<DocumentClient.TransactWriteItemsInput> = {},
+  ): DocumentClient.TransactWriteItemsInput {
     const items = Array.isArray(_items) ? _items : _items ? [_items] : []
 
     // Error on no items
@@ -1548,7 +1547,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     )
 
     return payload
-  }
+  } // end transactWriteParams
 
   // Entity operation references
   async parse(entity: string, input: any, include = []) {

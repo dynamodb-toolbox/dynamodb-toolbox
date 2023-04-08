@@ -55,7 +55,6 @@ describe('batchGet', () => {
   it('fails when providing an invalid capactiy setting', () => {
     expect(() => {
       TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }), {
-        // @ts-expect-error
         capacity: 'test'
       })
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)

@@ -1,15 +1,15 @@
-import { DocumentClient, DocumentClientWithWrappedNumbers } from './bootstrap.test'
+import { DocumentClient, DocumentClientWrappedNumbers } from './bootstrap.test'
 
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 import { toDynamoBigInt } from '../lib/utils'
-import { unmarshall } from '@aws-sdk/util-dynamodb'
+import DynamoDB from 'aws-sdk/clients/dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
-  DocumentClient: DocumentClientWithWrappedNumbers
+  DocumentClient: DocumentClientWrappedNumbers
 })
 
 const TestEntity = new Entity({
@@ -203,10 +203,10 @@ describe('parse', () => {
       test_composite2: 'email'
     })
   })
-
+ 
   it('parses wrapped numbers', () => {
     const wrap = (value: number) =>
-      unmarshall({ valueToUnmarshall: {N: value.toString()} }, { wrapNumbers: true }).valueToUnmarshall.value
+      DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true })
 
     const item = TestEntity.parse({
       pk: 'test@test.com',
@@ -241,7 +241,7 @@ describe('parse', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'bigint',
-      test_bigint_set_type: new Set([
+      test_bigint_set_type: DocumentClient.createSet([
         toDynamoBigInt(BigInt('90071992547409911234')),
         toDynamoBigInt(BigInt('-90071992547409911234')),
         1234

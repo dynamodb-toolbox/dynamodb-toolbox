@@ -1,5 +1,4 @@
-import { ReturnConsumedCapacity, ReturnItemCollectionMetrics, Select } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, ScanCommandInput, TransactGetCommandInput } from '@aws-sdk/lib-dynamodb'
+import type { default as DynamoDb, DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, O } from 'ts-toolbelt'
 
 import type { ProjectionAttributes } from '../../lib/projectionBuilder'
@@ -21,7 +20,7 @@ export interface TableConstructor<
   indexes?: TableIndexes
   autoExecute?: boolean
   autoParse?: boolean
-  DocumentClient?: DynamoDBDocumentClient
+  DocumentClient?: DynamoDb.DocumentClient
   entities?: {} // improve - not documented
   removeNullAttributes?: boolean
 }
@@ -64,7 +63,7 @@ export type $QueryOptions<
 > = $ReadOptions<Execute, Parse> &
   TableReadOptions & {
     reverse: boolean
-    select: Select | `${Select}` | Lowercase<Select>
+    select: DocumentClient.Select
     // 🔨 TOIMPROVE: Probably typable (should be the same as sort key)
     eq: string | number | bigint
     lt: string | number | bigint
@@ -97,14 +96,14 @@ export type ScanOptions<
       startKey?: {}
       segments?: number
       segment?: number
-      capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
-      select?: Select | `${Select}` | Lowercase<Select>
+      capacity?: DocumentClient.ReturnConsumedCapacity
+      select?: DocumentClient.Select
     }
 >
 
 export interface BatchGetOptions {
   consistent?: boolean | { [tableName: string]: boolean }
-  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
+  capacity?: DocumentClient.ReturnConsumedCapacity
   attributes?: ProjectionAttributes
   include?: string[]
   execute?: boolean
@@ -119,35 +118,29 @@ export interface BatchGetParamsMeta {
 }
 
 export interface batchWriteOptions {
-  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
-  metrics?: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<ReturnItemCollectionMetrics>
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  metrics?: DocumentClient.ReturnItemCollectionMetrics
   execute?: boolean
   parse?: boolean
 }
 
 export interface transactGetParamsOptions {
-  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
+  capacity?: DocumentClient.ReturnConsumedCapacity
 }
 
 export type transactGetOptions = transactGetParamsOptions & executeParse
 
 export interface transactWriteParamsOptions {
-  capacity?: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
-  metrics?: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<ReturnItemCollectionMetrics>
+  capacity?: DocumentClient.ReturnConsumedCapacity
+  metrics?: DocumentClient.ReturnItemCollectionMetrics
   token?: string
 }
 
 export type TransactWriteOptions = transactWriteParamsOptions & executeParse
 
-export interface TransactGetParamsWithMeta {
+export interface TransactGetParamsMeta {
   Entities: (any | undefined)[]
-  payload: TransactGetCommandInput
-}
-
-export interface ScanParamsWithMeta {
-  payload: ScanCommandInput;
-  EntityProjections: { [key: string]: any }
-  TableProjections: { [key: string]: string[] }
+  payload: DocumentClient.TransactGetItemsInput
 }
 
 export type TableDef = Table<string, A.Key, A.Key | null>

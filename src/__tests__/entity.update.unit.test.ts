@@ -344,20 +344,12 @@ describe('update', () => {
       test_binary_set_type: [Buffer.from('1'), Buffer.from('2'), Buffer.from('3')]
     })
 
-    expect(ExpressionAttributeValues![':test_string_set']).toEqual(new Set(['1', '2', '3']))
-    expect(ExpressionAttributeValues![':test_number_set']).toEqual(new Set([1, 2, 3]))
-    expect(ExpressionAttributeValues![':test_binary_set']).toEqual(new Set([
-      Buffer.from('1'),
-      Buffer.from('2'),
-      Buffer.from('3')
-    ]))
-    expect(ExpressionAttributeValues![':test_string_set_type']).toEqual(new Set(['1', '2', '3']))
-    expect(ExpressionAttributeValues![':test_number_set_type']).toEqual(new Set([1, 2, 3]))
-    expect(ExpressionAttributeValues![':test_binary_set_type']).toEqual(new Set([
-      Buffer.from('1'),
-      Buffer.from('2'),
-      Buffer.from('3')
-    ]))
+    expect(ExpressionAttributeValues![':test_string_set'].type).toBe('String')
+    expect(ExpressionAttributeValues![':test_number_set'].type).toBe('Number')
+    expect(ExpressionAttributeValues![':test_binary_set'].type).toBe('Binary')
+    expect(ExpressionAttributeValues![':test_string_set_type'].type).toBe('String')
+    expect(ExpressionAttributeValues![':test_number_set_type'].type).toBe('Number')
+    expect(ExpressionAttributeValues![':test_binary_set_type'].type).toBe('Binary')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
   })
@@ -395,7 +387,7 @@ describe('update', () => {
     expect(ExpressionAttributeValues).toHaveProperty(':_et')
     expect(ExpressionAttributeValues![':_et']).toBe('TestEntity')
     expect(ExpressionAttributeValues![':test_number']).toBe(10)
-    expect(Array.from(ExpressionAttributeValues![':test_number_set_type'])).toEqual([1, 2, 3])
+    expect(ExpressionAttributeValues![':test_number_set_type'].values).toEqual([1, 2, 3])
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
   })
@@ -452,8 +444,8 @@ describe('update', () => {
     expect(ExpressionAttributeValues).not.toHaveProperty(':sk')
     expect(ExpressionAttributeValues).toHaveProperty(':_et')
     expect(ExpressionAttributeValues![':_et']).toBe('TestEntity')
-    expect(Array.from(ExpressionAttributeValues![':test_string_set_type'])).toEqual(['1', '2', '3'])
-    expect(Array.from(ExpressionAttributeValues![':test_number_set_type'])).toEqual([1, 2, 3])
+    expect(ExpressionAttributeValues![':test_string_set_type'].values).toEqual(['1', '2', '3'])
+    expect(ExpressionAttributeValues![':test_number_set_type'].values).toEqual([1, 2, 3])
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
     expect(TableName).toBe('test-table')
   })
@@ -1051,14 +1043,12 @@ describe('update', () => {
   })
 
   it('fails on invalid capacity option', () => {
-    // @ts-expect-error
     expect(() => TestEntity.updateParams({ email: 'x', sort: 'y' }, { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
   })
 
   it('fails on invalid metrics option', () => {
-    // @ts-expect-error
     expect(() => TestEntity.updateParams({ email: 'x', sort: 'y' }, { metrics: 'test' })).toThrow(
       `'metrics' must be one of 'NONE' OR 'SIZE'`
     )

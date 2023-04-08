@@ -1,4 +1,4 @@
-import { Entity, Table } from '..'
+import { Table, Entity } from '..'
 import { DocumentClient } from './bootstrap.test'
 
 const TestTable = new Table({
@@ -151,7 +151,7 @@ describe('delete', () => {
     expect(() =>
       TestEntity.deleteParams(
         { email: 'x', sort: 'y' },
-        // @ts-expect-error
+        // 💥 TODO: Improve capacity type
         { capacity: 'test' }
       )
     ).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
@@ -161,7 +161,7 @@ describe('delete', () => {
     expect(() =>
       TestEntity.deleteParams(
         { email: 'x', sort: 'y' },
-        // @ts-expect-error
+        // 💥 TODO: Improve capacity type
         { metrics: 'test' }
       )
     ).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
