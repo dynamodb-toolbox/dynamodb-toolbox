@@ -40,7 +40,7 @@ describe('transactGet', () => {
       TestEntity.getTransaction({ email: 'test', sort: 'testsk' })
     ])
     expect(result).toHaveProperty('TransactItems')
-    expect(result.TransactItems![0]).toEqual({
+    expect(result.TransactItems?.[0]).toEqual({
       Get: {
         TableName: 'test-table',
         Key: { pk: 'test', sk: 'testsk' }
