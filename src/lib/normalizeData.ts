@@ -4,20 +4,21 @@
  * @license MIT
  */
 
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import validateTypes from './validateTypes'
 import { error, transformAttr } from './utils'
 
 // Normalize Data
-export default (DocumentClient: DocumentClient) => (
+export default () => (
   schema: any,
   linked: any,
   data: any,
   filter = false
 ) => {
   // Intialize validate type
-  const validateType = validateTypes(DocumentClient)
+  const validateType = validateTypes()
 
   // Build and execute defaults dependency graph
   const dependsOn = (map: any, attr: any) => {

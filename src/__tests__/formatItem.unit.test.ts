@@ -2,7 +2,6 @@ import formatItem from '../lib/formatItem'
 
 import { DocumentClient } from './bootstrap.test'
 
-// Require Table and Entity classes
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
 
@@ -43,7 +42,7 @@ DefaultTable.addEntity(
 
 describe('formatItem', () => {
   it('formats item with no alias', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { pk: 'test' }
@@ -52,7 +51,7 @@ describe('formatItem', () => {
   })
 
   it('formats item with alias', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { list: ['test'] }
@@ -61,7 +60,7 @@ describe('formatItem', () => {
   })
 
   it('formats item with mapping', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { list2: ['test'] }
@@ -70,25 +69,25 @@ describe('formatItem', () => {
   })
 
   it('formats item with set (alias)', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
-      { set: DocumentClient.createSet([1, 2, 3]) }
+      { set: new Set([1, 2, 3]) }
     )
     expect(result).toEqual({ set_alias: [1, 2, 3] })
   })
 
   it('formats item with set (map)', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
-      { set2: DocumentClient.createSet([1, 2, 3]) }
+      { set2: new Set([1, 2, 3]) }
     )
     expect(result).toEqual({ set_alias2: [1, 2, 3] })
   })
 
   it('formats item with linked fields', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { sk: 'test1#test2' }
@@ -97,7 +96,7 @@ describe('formatItem', () => {
   })
 
   it('specifies attributes to include', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { pk: 'test' },
@@ -107,7 +106,7 @@ describe('formatItem', () => {
   })
 
   it('specifies attributes to include', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { list: ['test'] },
@@ -117,7 +116,7 @@ describe('formatItem', () => {
   })
 
   it('specifies attributes to include with linked fields', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { sk: 'test1#test2' },
@@ -127,7 +126,7 @@ describe('formatItem', () => {
   })
 
   it('formats item with linked aliased composite field', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { composite1: 'test1#test2' }
@@ -140,7 +139,7 @@ describe('formatItem', () => {
   })
 
   it('formats item with linked mapped composite field', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { composite2: 'test1#test2' }
@@ -153,7 +152,7 @@ describe('formatItem', () => {
   })
 
   it('passes through attribute not specified in entity', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { unspecified: 'value' }
