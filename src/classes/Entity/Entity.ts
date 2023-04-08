@@ -454,8 +454,8 @@ class Entity<Name extends string = string,
         // Merge names and add projection expression
         ExpressionAttributeNames = names
         ProjectionExpression = projections
-      } // end if names
-    } // end if projections
+      }
+    }
 
     // Generate the payload
     const payload = Object.assign(
@@ -679,8 +679,8 @@ class Entity<Name extends string = string,
         ExpressionAttributeNames = names
         ExpressionAttributeValues = values
         ConditionExpression = expression
-      } // end if names
-    } // end if filters
+      }
+    }
 
     // Generate the payload
     const payload = Object.assign(
@@ -952,8 +952,8 @@ class Entity<Name extends string = string,
         ExpressionAttributeNames = Object.assign(ExpressionAttributeNames, names)
         ExpressionAttributeValues = Object.assign(ExpressionAttributeValues, values)
         ConditionExpression = expression
-      } // end if names
-    } // end if conditions
+      }
+    }
 
     // Check for required fields
     Object.keys(required).forEach(
@@ -1464,8 +1464,8 @@ class Entity<Name extends string = string,
         ExpressionAttributeNames = names
         ExpressionAttributeValues = values
         ConditionExpression = expression
-      } // end if names
-    } // end if filters
+      }
+    }
 
     // Check for required fields
     Object.keys(required).forEach(
@@ -1477,7 +1477,7 @@ class Entity<Name extends string = string,
             this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''
           }' is a required field`,
         ),
-    ) // end required field check
+    )
 
     // Checks for partition and sort keys
     getKey()(

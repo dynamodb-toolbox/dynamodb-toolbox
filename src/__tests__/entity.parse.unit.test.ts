@@ -257,4 +257,4 @@ describe('parse', () => {
       ]
     })
   })
-}) // end parse
+})

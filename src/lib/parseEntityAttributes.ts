@@ -74,6 +74,6 @@ const parseEntityAttributes = <
     keys: track.keys,
     attributes: parsedAttributes
   }
-} // end parseEntityAttrbutes
+}
 
 export default parseEntityAttributes

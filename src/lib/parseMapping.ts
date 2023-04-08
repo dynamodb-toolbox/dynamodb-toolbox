@@ -172,5 +172,5 @@ export default (
         [map]: Object.assign({}, _config, { alias: field })
       }
       : {}
-  ) // end assign
+  )
 }

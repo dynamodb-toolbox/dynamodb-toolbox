@@ -18,7 +18,7 @@ describe('Table creation', () => {
     expect(TestTable.autoExecute).toBe(true)
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
-  }) // end table
+  })
 
   it('creates table w/ options', async () => {
     const TestTable = new Table({
@@ -40,7 +40,7 @@ describe('Table creation', () => {
     expect(TestTable.autoExecute).toBe(false)
     expect(TestTable.autoParse).toBe(false)
     expect(TestTable.entities).toEqual([])
-  }) // end table w/ options
+  })
 
   it('creates table w/ attributes', async () => {
     const TestTable = new Table({

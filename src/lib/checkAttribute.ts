@@ -24,4 +24,4 @@ export default (attr: string, attrs: any): string => {
   } else {
     return error(`'${attr}' is not a valid attribute within the given entity/table.`)
   }
-} // end checkAttribute
+}
