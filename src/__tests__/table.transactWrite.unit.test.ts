@@ -1,5 +1,6 @@
 import { Table, Entity } from '../index'
 import { DocumentClient as docClient } from './bootstrap.test'
+import assert from 'assert'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -42,11 +43,12 @@ describe('transactWrite', () => {
       TestEntity.deleteTransaction({ email: 'test', sort: 'testsk3' })
     ])
 
-    expect(result!.TransactItems![0]!.Put!.Item!.sk!).toBe('testsk1')
-    expect(result!.TransactItems![1]!.Update!.UpdateExpression!).toBe(
+    assert.ok(result.TransactItems !== undefined, 'result is undefined')
+    expect(result.TransactItems[0]?.Put?.Item?.sk).toBe('testsk1')
+    expect(result.TransactItems[1]?.Update?.UpdateExpression).toBe(
       'SET #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test = :test'
     )
-    expect(result!.TransactItems![2]!.Delete!.Key!.sk!).toBe('testsk3')
+    expect(result.TransactItems[2]?.Delete?.Key?.sk).toBe('testsk3')
   })
 
   it('fails when extra options', () => {
