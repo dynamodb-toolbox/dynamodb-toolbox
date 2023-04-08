@@ -115,10 +115,10 @@ describe('Table creation', () => {
         attributes: {
           _et: { type: 'string', mappings: {} }
         },
-        autoExecute: true,
-        autoParse: true,
-        entities: [],
-      })
+      }),
+      autoExecute: true,
+      autoParse: true,
+      entities: [],
     }))
   })
 
@@ -138,10 +138,10 @@ describe('Table creation', () => {
         entityField: '_et',
         indexes: {},
         attributes: { _et: { type: 'string', mappings: {} } },
-        autoExecute: true,
-        autoParse: true,
-        entities: [],
-      })
+      }),
+      autoExecute: true,
+      autoParse: true,
+      entities: [],
     }))
   })
 
@@ -151,7 +151,6 @@ describe('Table creation', () => {
       partitionKey: 'pk'
     })
 
-    // Add the DocumentClient
     TestTable.DocumentClient = DocumentClient
 
     expect(TestTable.DocumentClient.constructor.name).toBe('DynamoDBDocumentClient')
@@ -163,10 +162,10 @@ describe('Table creation', () => {
         entityField: '_et',
         indexes: {},
         attributes: { _et: { type: 'string', mappings: {} } },
-        autoExecute: true,
-        autoParse: true,
-        entities: []
-      })
+      }),
+      entities: [],
+      autoExecute: true,
+      autoParse: true,
     }))
   })
 })
