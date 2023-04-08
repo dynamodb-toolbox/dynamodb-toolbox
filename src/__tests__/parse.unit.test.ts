@@ -145,4 +145,4 @@ describe('parse', () => {
   //     test_composite3: 'foo'
   //   })
   // })
-}) // end parse
+})

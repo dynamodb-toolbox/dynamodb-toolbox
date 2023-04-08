@@ -52,7 +52,7 @@ export default () => (
       }
       return map
     }
-  } // end dependsOn
+  }
 
   // Generate normalized data object
   const dataMap = Object.keys(data).reduce(

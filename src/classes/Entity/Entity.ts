@@ -237,7 +237,7 @@ class Entity<Name extends string = string,
       : this.schema.attributes[attr]
         ? attr
         : error(`'${attr}' does not exist or is an invalid alias`)
-  } // end attribute
+  }
 
   // Parses the item
   parse(input: { Item: unknown }, include?: string[]): Item
@@ -266,7 +266,7 @@ class Entity<Name extends string = string,
     } else {
       return formatItem()(schema.attributes, linked, data, include) as any
     }
-  } // end parse
+  }
 
   /**
    * Generate GET parameters and execute operation
@@ -476,7 +476,7 @@ class Entity<Name extends string = string,
     )
 
     return payload
-  } // end getParams
+  }
 
   /**
    * Generate DELETE parameters and execute operation
@@ -703,7 +703,7 @@ class Entity<Name extends string = string,
     )
 
     return payload
-  } // end deleteParams
+  }
 
   /**
    * Generate UPDATE parameters and execute operations
@@ -965,7 +965,7 @@ class Entity<Name extends string = string,
             this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''
           }' is a required field`,
         ),
-    ) // end required field check
+    )
 
     // Get partition and sort keys
     const Key = getKey()(
@@ -1016,7 +1016,7 @@ class Entity<Name extends string = string,
           const attr = schema.attributes[attrs[i]].map || attrs[i]
           REMOVE.push(`#${attr}`)
           names[`#${attr}`] = attr
-        } // end for
+        }
       } else if (
         this._table!._removeNulls === true &&
         (data[field] === null || String(data[field]).trim() === '') &&
@@ -1187,7 +1187,7 @@ class Entity<Name extends string = string,
             values[`:${field}`] = value
           }
         }
-      } // end if undefined
+      }
     })
 
     // Create the update expression
@@ -1215,12 +1215,12 @@ class Entity<Name extends string = string,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
       returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
-    ) // end assign
+    )
 
     return payload
 
     // TODO: Check why primary/secondary GSIs are using if_not_exists
-  } // end updateParams
+  }
 
   // PUT - put item
   async put<MethodItemOverlay extends Overlay = undefined,
@@ -1520,7 +1520,7 @@ class Entity<Name extends string = string,
     )
 
     return payload
-  } // end putParams
+  }
 
   /**
    * Generate parameters for ConditionCheck transaction operation

@@ -107,7 +107,7 @@ const buildExpression = <
       // Capture the first logic indicator at this level
       logic = logic ? logic : clause.logic
     }
-  }) // end for
+  })
 
   return {
     logic,
@@ -321,7 +321,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       } else {
         clause = `${size ? `size(${operand})` : operand} ${operator} :attr${grp}`
       }
-    } // end if-else
+    }
 
     // Negate the clause
     if (negate) {
@@ -329,9 +329,7 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
     }
   } else {
     error('A condition is required')
-  } // end if operator
-
-  // console.log('CLAUSE:',clause,'\nNAMES:',names,'\nVALUES:',values)
+  }
 
   return {
     logic: or ? 'OR' : 'AND',
@@ -339,4 +337,4 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
     names,
     values
   }
-} // end parseClause
+}

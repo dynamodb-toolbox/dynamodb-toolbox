@@ -82,7 +82,7 @@ describe('Table creation', () => {
       binarySetAttr: { type: 'set', setType: 'binary', mappings: {} },
       _et: { type: 'string', mappings: {} }
     })
-  }) // end table w/ attributes
+  })
 
   it('creates table w/ indexes', async () => {
     const TestTable = new Table({
@@ -117,7 +117,7 @@ describe('Table creation', () => {
       LSI1: { sortKey: 'LSI1sk', type: 'LSI' },
       LSI2: { sortKey: 'LSI2sk', type: 'LSI' }
     })
-  }) // end table w/ indexes
+  })
 
   it('creates table w/ DocumentClient', async () => {
     const TestTable = new Table({
@@ -137,7 +137,7 @@ describe('Table creation', () => {
     expect(TestTable.autoExecute).toBe(true)
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
-  }) // end create table w/ DocumentClient
+  })
 
   it('creates table, then add DocumentClient', async () => {
     const TestTable = new Table({
@@ -159,5 +159,5 @@ describe('Table creation', () => {
     expect(TestTable.autoExecute).toBe(true)
     expect(TestTable.autoParse).toBe(true)
     expect(TestTable.entities).toEqual([])
-  }) // end create table w/ DocumentClient
+  })
 })

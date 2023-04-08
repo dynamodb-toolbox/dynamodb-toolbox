@@ -127,7 +127,7 @@ export default (
             } else {
               error(`Index assignments for '${field}' must be string or boolean values`)
             }
-          } // end for
+          }
         } else {
           error(`'${prop}' must be a boolean, string, or array`)
         }
