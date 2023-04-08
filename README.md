@@ -18,6 +18,11 @@ Learn more about single table design in [Alex Debrie's blog](https://www.alexdeb
 
 Feedback is welcome and much appreciated! (Huge thanks to [@ThomasAribart](https://github.com/ThomasAribart) for all his work on this 🙌)
 
+## Using AWS SDK v2?
+
+dynamodb-toolbox@v0.8 and above is using AWS SDK v3.
+If you are using AWS SDK v2, please use versions that are lower than 0.8.
+
 ## Docs & Community
 
 - [Full Documentation](https://www.dynamodbtoolbox.com/docs)
