@@ -109,9 +109,8 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
   ) {
     // @ts-ignore
     if (docClient && docClient.send) {
-      docClient.config.translateConfig ??= {
-        marshallOptions: {}
-      }
+      docClient.config.translateConfig ??= {}
+      docClient.config.translateConfig.marshallOptions ??= {}
 
       // Automatically set convertEmptyValues to true, unless false
       if (docClient.config.translateConfig?.marshallOptions?.convertEmptyValues !== false) {
