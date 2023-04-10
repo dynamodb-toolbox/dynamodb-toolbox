@@ -1,5 +1,5 @@
 import Table from '../classes/Table'
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient, DocumentClientWithoutConfig } from './bootstrap.test'
 
 describe('Table creation', () => {
   it('creates table w/ minimum options', async () => {
@@ -167,5 +167,19 @@ describe('Table creation', () => {
       autoExecute: true,
       autoParse: true,
     }))
+  })
+
+  it('sets translateConfig with marshalOptions for DocumentClient if empty', async () => {
+    const TestTable = new Table({
+      name: 'test-table',
+      partitionKey: 'pk',
+      DocumentClient: DocumentClientWithoutConfig
+    })
+
+    expect(TestTable.DocumentClient.config.translateConfig).toEqual({
+      marshallOptions: {
+        convertEmptyValues: true,
+      }
+    })
   })
 })
