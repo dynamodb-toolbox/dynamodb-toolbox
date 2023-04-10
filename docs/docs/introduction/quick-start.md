@@ -31,7 +31,25 @@ const { Table, Entity } = require('dynamodb-toolbox')
 ```typescript title="TypeScript"
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
-## Load the DocumentClient using aws-sdk v2
+
+## Load the DocumentClient using aws-sdk v3 (>=v0.8.0)
+
+```typescript title="TypeScript"
+import { DynamoDB } from '@aws-sdk/client-dynamodb'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+
+const marshallOptions = {
+  // Specify your client options as usual
+  convertEmptyValues: false 
+}
+
+const translateConfig = { marshallOptions }
+
+export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient(), translateConfig)
+```
+
+## Load the DocumentClient using aws-sdk v2 (<v0.8.0)
 
 ```typescript title="TypeScript"
 import DynamoDB from 'aws-sdk/clients/dynamodb'
