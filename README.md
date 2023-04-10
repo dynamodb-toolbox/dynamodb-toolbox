@@ -51,7 +51,7 @@ Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
 
-Create a Table (with the DocumentClient using aws-sdk v2):
+Create a Table (with the DocumentClient using aws-sdk v3):
 
 ```typescript
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
