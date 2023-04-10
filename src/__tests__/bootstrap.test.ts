@@ -26,6 +26,10 @@ export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({
   },
 }), translateConfig)
 
+export const DocumentClientWithoutConfig = DynamoDBDocumentClient.from(new DynamoDBClient({
+  endpoint: 'http://localhost:4567',
+  region: 'us-east-1',
+}))
 
 export const DocumentClientWithWrappedNumbers = DynamoDBDocumentClient.from(new DynamoDBClient({
   endpoint: 'http://localhost:4567',
