@@ -51,15 +51,32 @@ Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
 
-Create a Table (with the DocumentClient using aws-sdk v2):
+Create a Table (with the DocumentClient using aws-sdk v3):
 
 ```typescript
-import DynamoDB from 'aws-sdk/clients/dynamodb'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-const DocumentClient = new DynamoDB.DocumentClient({
-  // Specify your client options as usual
-  convertEmptyValues: false
-})
+const marshallOptions = {
+  // Whether to automatically convert empty strings, blobs, and sets to `null`.
+  convertEmptyValues: false, // if not false explicitly, we set it to true.
+  // Whether to remove undefined values while marshalling.
+  removeUndefinedValues: false, // false, by default.
+  // Whether to convert typeof object to map attribute.
+  convertClassInstanceToMap: false, // false, by default.
+}
+
+const unmarshallOptions = {
+  // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
+  // NOTE: this is required to be true in order to use the bigint data type.
+  wrapNumbers: false, // false, by default.
+}
+
+const translateConfig = { marshallOptions, unmarshallOptions }
+
+// Instantiate a DocumentClient
+export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient(), translateConfig)
+
 
 // Instantiate a table
 const MyTable = new Table({
