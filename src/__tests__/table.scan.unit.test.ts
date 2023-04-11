@@ -103,7 +103,7 @@ describe('scan', () => {
       IndexName: 'GSI1',
       TotalSegments: 5,
       Segment: 0,
-      Limit: '10',
+      Limit: 10,
       ConsistentRead: true,
       ReturnConsumedCapacity: 'TOTAL',
       Select: 'ALL_ATTRIBUTES',
