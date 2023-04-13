@@ -35,11 +35,11 @@ Using your favorite package manager, install DynamoDB Toolbox and the aws-sdk v3
 ```bash
 # npm
 npm i dynamodb-toolbox
-npm install @aws-sdk/lib-dynamodb @aws-sdk/util-dynamodb
+npm install @aws-sdk/lib-dynamodb @aws-sdk/client-dynamodb
 
 # yarn
 yarn add dynamodb-toolbox
-yarn add @aws-sdk/lib-dynamodb @aws-sdk/util-dynamodb
+yarn add @aws-sdk/lib-dynamodb @aws-sdk/client-dynamodb
 ```
 
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
@@ -72,7 +72,7 @@ const unmarshallOptions = {
 const translateConfig = { marshallOptions, unmarshallOptions }
 
 // Instantiate a DocumentClient
-export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient(), translateConfig)
+export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}), translateConfig)
 
 
 // Instantiate a table
