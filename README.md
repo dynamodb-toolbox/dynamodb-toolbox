@@ -29,20 +29,17 @@ If you are using AWS SDK v2, please use versions that are lower than 0.8.
 - [GitHub Discussions](https://github.com/jeremydaly/dynamodb-toolbox/discussions)
 
 ## Quick Start
-> :information_source:
-We're using **aws-sdk v2** DynamoDB tools, the support for **aws-sdk v3** is on its way. <br />
-You can read more about the development [here](https://github.com/jeremydaly/dynamodb-toolbox/pull/174).
 
-Using your favorite package manager, install DynamoDB Toolbox and aws-sdk v2 in your project by running one of the following commands:
+Using your favorite package manager, install DynamoDB Toolbox and the aws-sdk v3 dependencies in your project by running one of the following commands:
 
 ```bash
 # npm
 npm i dynamodb-toolbox
-npm install aws-sdk
+npm install @aws-sdk/lib-dynamodb @aws-sdk/util-dynamodb
 
 # yarn
 yarn add dynamodb-toolbox
-yarn add aws-sdk
+yarn add @aws-sdk/lib-dynamodb @aws-sdk/util-dynamodb
 ```
 
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
@@ -223,7 +220,7 @@ See [Type Inference](https://www.dynamodbtoolbox.com/docs/type-inference) in the
 
 ## Additional References
 
-- [DocumentClient SDK Reference](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html)
+- [DocumentClient SDK Reference](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_lib_dynamodb.html)
 - [Best Practices for DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
 - [DynamoDB, explained.](https://www.dynamodbguide.com/)
 - [The DynamoDB Book](https://www.dynamodbbook.com/)
