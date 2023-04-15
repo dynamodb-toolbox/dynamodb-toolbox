@@ -1,4 +1,4 @@
-import { AnyAttribute, Attribute, PrimitiveAttribute } from 'v1/item'
+import type { AnyAttribute, Attribute, PrimitiveAttribute } from 'v1/item'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 
@@ -60,7 +60,6 @@ export const appendAttributePath = (
     const childAttributeAccessor = attributeMatch[0]
 
     switch (parentAttribute.type) {
-      case 'constant':
       case 'binary':
       case 'boolean':
       case 'number':
