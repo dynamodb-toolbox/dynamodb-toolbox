@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ComputedDefault, number, constant, string, map, set, list, item } from 'v1/item'
+import { ComputedDefault, number, string, map, set, list, item } from 'v1/item'
 import { EntityV2, PutItemInput, SavedItem, FormattedItem, KeyInput, PutItem } from 'v1/entity'
 
 import { MyTable } from './table'
@@ -10,7 +10,7 @@ export const UserEntity = new EntityV2({
   item: item({
     userId: string().key(),
     age: number().key().enum(41, 42).default(42).savedAs('sk'),
-    constant: constant('toto').optional(),
+    constant: string().const('toto').optional(),
     firstName: string().savedAs('fn'),
     lastName: string().savedAs('ln'),
     parents: map({

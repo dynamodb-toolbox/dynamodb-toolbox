@@ -5,7 +5,6 @@ import type {
   Attribute,
   ResolvedAttribute,
   AnyAttribute,
-  ConstantAttribute,
   PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
@@ -15,7 +14,6 @@ import type {
   AtLeastOnce,
   OnlyOnce,
   Always,
-  ResolveConstantAttribute,
   ResolvePrimitiveAttribute
 } from 'v1/item'
 
@@ -29,8 +27,6 @@ import type { EntityV2 } from '../class'
  */
 export type FormattedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
-  : SCHEMA extends ConstantAttribute
-  ? ResolveConstantAttribute<SCHEMA>
   : SCHEMA extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<SCHEMA>
   : SCHEMA extends SetAttribute
