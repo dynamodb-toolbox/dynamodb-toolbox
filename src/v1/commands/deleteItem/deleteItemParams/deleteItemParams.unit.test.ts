@@ -213,10 +213,9 @@ describe('delete', () => {
       { condition: { attr: 'email', gt: 'test' } }
     )
 
-    // TODO: Implement
-    expect(ExpressionAttributeNames).not.toEqual({ '#attr1': 'pk' })
-    expect(ExpressionAttributeValues).not.toEqual({ ':attr1': 'test' })
-    expect(ConditionExpression).not.toBe('#attr1 > :attr1')
+    expect(ExpressionAttributeNames).toEqual({ '#1': 'pk' })
+    expect(ExpressionAttributeValues).toEqual({ ':1': 'test' })
+    expect(ConditionExpression).toBe('#1 > :1')
   })
 
   // TODO Enable extra parameters
