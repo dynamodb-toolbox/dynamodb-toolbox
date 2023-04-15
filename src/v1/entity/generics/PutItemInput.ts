@@ -6,7 +6,6 @@ import type {
   ResolvedAttribute,
   ResolvedMapAttribute,
   AnyAttribute,
-  ConstantAttribute,
   PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
@@ -17,7 +16,6 @@ import type {
   OnlyOnce,
   Always,
   ComputedDefault,
-  ResolveConstantAttribute,
   ResolvePrimitiveAttribute
 } from 'v1/item'
 
@@ -76,8 +74,6 @@ export type AttributePutItemInput<
   ? ResolvedAttribute
   : ATTRIBUTE extends AnyAttribute
   ? ResolvedAttribute
-  : ATTRIBUTE extends ConstantAttribute
-  ? ResolveConstantAttribute<ATTRIBUTE>
   : ATTRIBUTE extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<ATTRIBUTE>
   : ATTRIBUTE extends SetAttribute

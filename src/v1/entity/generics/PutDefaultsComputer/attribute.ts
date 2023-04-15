@@ -2,7 +2,6 @@ import type {
   ComputedDefault,
   Attribute,
   AnyAttribute,
-  ConstantAttribute,
   PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
@@ -22,7 +21,6 @@ export type AttributePutDefaultsComputer<
   CONTEXT_INPUTS extends any[]
 > = ATTRIBUTE extends (
   | AnyAttribute
-  | ConstantAttribute
   | PrimitiveAttribute
   | SetAttribute
   // TODO: Prevent nested ComputedDefaults in anyOf

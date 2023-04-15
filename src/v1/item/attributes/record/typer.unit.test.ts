@@ -3,7 +3,6 @@ import type { A } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
-import { constant } from '../constant'
 import { string, number } from '../primitive'
 import {
   $type,
@@ -25,7 +24,7 @@ describe('record', () => {
   const fooBar = string().enum('foo', 'bar')
   const str = string()
 
-  it('rejects non-string or constant keys', () => {
+  it('rejects non-string keys', () => {
     record(
       // @ts-expect-error
       number(),
@@ -37,29 +36,6 @@ describe('record', () => {
         record(
           // @ts-expect-error
           number(),
-          str
-        ),
-        path
-      )
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'invalidRecordAttributeKeys', path })
-    )
-  })
-
-  it('rejects non-string constant keys', () => {
-    record(
-      // @ts-expect-error
-      constant(42),
-      str
-    )
-
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          // @ts-expect-error
-          constant(42),
           str
         ),
         path
