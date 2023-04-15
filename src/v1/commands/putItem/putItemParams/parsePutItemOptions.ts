@@ -5,9 +5,9 @@ import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacit
 import { parseMetricsOption } from 'v1/commands/utils/parseOptions/parseMetricsOption'
 import { parseReturnValuesOption } from 'v1/commands/utils/parseOptions/parseReturnValuesOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
+import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 import { putItemCommandReturnValuesOptionsSet, PutItemOptions } from '../options'
-import { parseCondition } from './parseCondition'
 
 type CommandOptions = Omit<PutCommandInput, 'TableName' | 'Item'>
 
