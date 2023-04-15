@@ -5,7 +5,6 @@ import type {
   Attribute,
   ResolvedAttribute,
   AnyAttribute,
-  ConstantAttribute,
   PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
@@ -13,7 +12,6 @@ import type {
   RecordAttribute,
   AnyOfAttribute,
   Always,
-  ResolveConstantAttribute,
   ResolvePrimitiveAttribute
 } from 'v1/item'
 
@@ -57,8 +55,6 @@ export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends A
   ? ResolvedAttribute
   : ATTRIBUTE extends AnyAttribute
   ? ResolvedAttribute
-  : ATTRIBUTE extends ConstantAttribute
-  ? ResolveConstantAttribute<ATTRIBUTE>
   : ATTRIBUTE extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<ATTRIBUTE>
   : ATTRIBUTE extends SetAttribute

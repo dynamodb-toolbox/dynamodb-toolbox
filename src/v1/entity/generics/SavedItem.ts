@@ -5,7 +5,6 @@ import type {
   Attribute,
   ResolvedAttribute,
   AnyAttribute,
-  ConstantAttribute,
   PrimitiveAttribute,
   SetAttribute,
   ListAttribute,
@@ -16,7 +15,6 @@ import type {
   AtLeastOnce,
   OnlyOnce,
   Always,
-  ResolveConstantAttribute,
   ResolvePrimitiveAttribute
 } from 'v1/item'
 import type { PrimaryKey } from 'v1/table'
@@ -70,8 +68,6 @@ type RecSavedItem<
  */
 export type SavedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
   ? ResolvedAttribute
-  : SCHEMA extends ConstantAttribute
-  ? ResolveConstantAttribute<SCHEMA>
   : SCHEMA extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<SCHEMA>
   : SCHEMA extends SetAttribute

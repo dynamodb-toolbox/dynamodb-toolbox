@@ -1,6 +1,5 @@
 import { $type } from './constants/attributeOptions'
 import { freezeAnyAttribute, $AnyAttribute, FreezeAnyAttribute } from './any'
-import { freezeConstantAttribute, $ConstantAttribute, FreezeConstantAttribute } from './constant'
 import {
   freezePrimitiveAttribute,
   $PrimitiveAttribute,
@@ -15,8 +14,6 @@ import type { $Attribute } from './types/attribute'
 
 export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends $AnyAttribute
   ? FreezeAnyAttribute<$ATTRIBUTE>
-  : $ATTRIBUTE extends $ConstantAttribute
-  ? FreezeConstantAttribute<$ATTRIBUTE>
   : $ATTRIBUTE extends $PrimitiveAttribute
   ? FreezePrimitiveAttribute<$ATTRIBUTE>
   : $ATTRIBUTE extends $SetAttribute
@@ -45,8 +42,6 @@ export const freezeAttribute = <$ATTRIBUTE extends $Attribute>(
   switch (attribute[$type]) {
     case 'any':
       return freezeAnyAttribute(attribute, path) as any
-    case 'constant':
-      return freezeConstantAttribute(attribute, path) as any
     case 'boolean':
     case 'binary':
     case 'number':

@@ -188,6 +188,34 @@ describe('primitiveAttribute', () => {
       expect(str).toMatchObject({ [$enum]: ['foo', 'bar'] })
     })
 
+    it('returns string with constant value (method)', () => {
+      string().const(
+        // @ts-expect-error
+        42
+      )
+
+      const invalidCall = () =>
+        freezePrimitiveAttribute(
+          string().const(
+            // @ts-expect-error
+            42
+          ),
+          path
+        )
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'invalidPrimitiveAttributeEnumValueType', path })
+      )
+
+      const str = string().const('foo')
+
+      const assertStr: A.Contains<typeof str, { [$enum]: ['foo'] }> = 1
+      assertStr
+
+      expect(str).toMatchObject({ [$enum]: ['foo'] })
+    })
+
     it('returns string with default value (option)', () => {
       string({
         // @ts-expect-error

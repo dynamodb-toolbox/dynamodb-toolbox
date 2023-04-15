@@ -13,7 +13,6 @@ export const cloneAttributeInputAndAddDefaults = (
 ): PossiblyUndefinedResolvedAttribute => {
   switch (attribute.type) {
     case 'any':
-    case 'constant':
     case 'string':
     case 'number':
     case 'binary':
