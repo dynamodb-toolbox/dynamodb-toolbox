@@ -7,10 +7,12 @@ import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOp
 import type { EntityV2 } from 'v1/entity'
 
 import { deleteItemCommandReturnValuesOptionsSet, DeleteItemOptions } from '../options'
+import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 type CommandOptions = Omit<DeleteCommandInput, 'TableName' | 'Key'>
 
 export const parseDeleteItemOptions = <ENTITY extends EntityV2>(
+  entity: ENTITY,
   deleteItemOptions: DeleteItemOptions<ENTITY>
 ): CommandOptions => {
   const commandOptions: CommandOptions = {}
@@ -32,8 +34,17 @@ export const parseDeleteItemOptions = <ENTITY extends EntityV2>(
     )
   }
 
-  // TODO
-  condition
+  if (condition !== undefined) {
+    const {
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    } = parseCondition(entity.item, condition)
+
+    commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
+    commandOptions.ExpressionAttributeValues = ExpressionAttributeValues
+    commandOptions.ConditionExpression = ConditionExpression
+  }
 
   rejectExtraOptions(extraOptions)
 
