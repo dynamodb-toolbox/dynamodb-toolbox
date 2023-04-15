@@ -30,11 +30,11 @@ export const deleteItemParams = <
   // Important to do it before renaming as validKeyInput is muted (to improve?)
   const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : undefined
 
+  const options = parseDeleteItemOptions(entity, deleteItemOptions)
+
   const renamedInput = renameSavedAsAttributes(entity.item, validKeyInput)
 
   const primaryKey = parsePrimaryKey(entity, keyInput ?? renamedInput)
-
-  const options = parseDeleteItemOptions(deleteItemOptions)
 
   return {
     TableName: entity.table.name,
