@@ -66,13 +66,23 @@ export interface $PrimitiveAttribute<
    * Provide a finite list of possible values for attribute
    * (For typing reasons, enums are only available as attribute methods, not as input options)
    *
-   * @param {Object[]} enum Possible values
+   * @param enum Possible values
    * @example
    * string().enum('foo', 'bar')
    */
   enum: <NEXT_ENUM extends ResolvePrimitiveAttributeType<$TYPE>[]>(
     ...nextEnum: NEXT_ENUM
   ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', NEXT_ENUM>>
+  /**
+   * Shorthand for `enum(constantValue)`
+   *
+   * @param constantValue Constant value
+   * @example
+   * string().const('foo')
+   */
+  const: <CONSTANT extends ResolvePrimitiveAttributeType<$TYPE>>(
+    constant: CONSTANT
+  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', [CONSTANT]>>
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *

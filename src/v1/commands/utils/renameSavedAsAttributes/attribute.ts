@@ -14,7 +14,6 @@ export const renameAttributeSavedAsAttributes = (
 ): PossiblyUndefinedResolvedAttribute => {
   switch (attribute.type) {
     case 'any':
-    case 'constant':
     case 'boolean':
     case 'binary':
     case 'number':

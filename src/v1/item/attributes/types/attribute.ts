@@ -1,5 +1,4 @@
 import type { $AnyAttribute, AnyAttribute } from '../any'
-import type { $ConstantAttribute, ConstantAttribute } from '../constant'
 import type {
   $PrimitiveAttribute,
   ResolvedPrimitiveAttribute,
@@ -16,7 +15,6 @@ import type { $AnyOfAttribute, AnyOfAttribute } from '../anyOf'
  */
 export type $Attribute =
   | $AnyAttribute
-  | $ConstantAttribute
   | $PrimitiveAttribute
   | $SetAttribute
   | $ListAttribute
@@ -26,7 +24,6 @@ export type $Attribute =
 
 export type Attribute =
   | AnyAttribute
-  | ConstantAttribute
   | PrimitiveAttribute
   | SetAttribute
   | ListAttribute
