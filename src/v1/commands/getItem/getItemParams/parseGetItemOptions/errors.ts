@@ -1,9 +1,9 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-type InvalidGetItemCommandConsistentOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidGetItemCommandConsistentOption'
+type InvalidConsistentOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'getItemCommand.invalidConsistentOption'
   hasPath: false
   payload: { consistent: unknown }
 }>
 
-export type ParseGetItemCommandOptionsErrorBlueprints = InvalidGetItemCommandConsistentOptionErrorBlueprint
+export type GetItemCommandErrorBlueprints = InvalidConsistentOptionErrorBlueprint

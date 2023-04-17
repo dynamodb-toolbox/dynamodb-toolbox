@@ -6,7 +6,7 @@ export const parseReturnValuesOption = <ALLOWED_RETURN_VALUES_OPTION extends Ret
   returnValues: ALLOWED_RETURN_VALUES_OPTION
 ): ALLOWED_RETURN_VALUES_OPTION => {
   if (!allowedReturnValuesOptions.has(returnValues)) {
-    throw new DynamoDBToolboxError('invalidCommandReturnValuesOption', {
+    throw new DynamoDBToolboxError('commands.invalidReturnValuesOption', {
       message: `Invalid returnValues option: '${String(
         returnValues
       )}'. 'returnValues' must be one of: ${[...allowedReturnValuesOptions].join(', ')}.`,
