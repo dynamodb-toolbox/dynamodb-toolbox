@@ -1,4 +1,4 @@
-import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
+import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import type { Item, Attribute } from 'v1/item'
 import type { Condition } from 'v1/commands/condition/types'
@@ -43,8 +43,9 @@ export class ConditionParser {
 
   parseCondition = (condition: Condition): void => parseCondition(this, condition)
 
-  toCommandOptions = (): Pick<
-    PutCommandInput,
-    'ExpressionAttributeNames' | 'ExpressionAttributeValues' | 'ConditionExpression'
-  > => toCommandOptions(this)
+  toCommandOptions = (): {
+    ConditionExpression: string
+    ExpressionAttributeNames: Record<string, string>
+    ExpressionAttributeValues: Record<string, NativeAttributeValue>
+  } => toCommandOptions(this)
 }
