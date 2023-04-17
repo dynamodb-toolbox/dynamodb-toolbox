@@ -1,6 +1,7 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-import { GetItemCommandErrorBlueprints } from './getItem/errors'
+import type { GetItemCommandErrorBlueprints } from './getItem/errors'
+import type { CommandUtilsErrorBlueprints } from './utils/errors'
 
 type InvalidCommandCapacityOptionErrorBlueprint = ErrorBlueprint<{
   code: 'invalidCommandCapacityOption'
@@ -28,6 +29,7 @@ type UnknownCommandOptionErrorBlueprint = ErrorBlueprint<{
 
 export type CommandErrorBlueprints =
   | GetItemCommandErrorBlueprints
+  | CommandUtilsErrorBlueprints
   | InvalidCommandCapacityOptionErrorBlueprint
   | InvalidCommandMetricsOptionErrorBlueprint
   | InvalidCommandReturnValuesOptionErrorBlueprint
