@@ -1,7 +1,7 @@
 import type { Item, AtLeastOnce, PrimitiveAttribute } from 'v1/item'
 import type { EntityNameAttributeSavedAs, TableV2 } from 'v1/table'
-
 import { WithRootAttribute, addRootAttribute } from 'v1/item/utils/addRootAttribute'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 export type EntityNameAttribute<
   TABLE extends TableV2,
@@ -43,6 +43,13 @@ export const addEntityNameAttribute = <
   entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
   entityName: ENTITY_NAME
 }): WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME> => {
+  if (entityNameAttributeName in item.attributes) {
+    throw new DynamoDBToolboxError('reservedAttributeName', {
+      message: `${entityNameAttributeName} is a reserved attribute name. Use a different attribute name or set a different entityNameAttributeName option in your Entity constructor.`,
+      path: entityNameAttributeName
+    })
+  }
+
   const entityNameAttribute: EntityNameAttribute<TABLE, ENTITY_NAME> = {
     path: entityNameAttributeName,
     type: 'string',
