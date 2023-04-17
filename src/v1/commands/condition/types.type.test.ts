@@ -129,7 +129,6 @@ const anyCondition: A.Contains<
       | { gte: Buffer | { attr: ATTRIBUTE_PATHS } }
       | { between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }] }
       | { between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }] }
-      // TODO: There is a bug with A.Equals, it does not work with Buffer tuple strangely
       | { between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }] }
       | { contains: string | { attr: ATTRIBUTE_PATHS } }
       | { contains: Buffer | { attr: ATTRIBUTE_PATHS } }
@@ -141,8 +140,6 @@ const anyCondition: A.Contains<
   ANY_CONDITION
 > = 1
 anyCondition
-
-// TODO: const CONDITION
 
 type NUM_CONDITION = AttributeCondition<'num', ATTRIBUTES['num'], ATTRIBUTE_PATHS>
 const assertNumCondition: A.Equals<
