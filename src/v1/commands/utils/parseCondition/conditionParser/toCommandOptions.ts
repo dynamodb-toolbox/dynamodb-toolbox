@@ -1,13 +1,15 @@
+import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { ConditionParser } from './conditionParser'
 
 export const toCommandOptions = (
   conditionParser: ConditionParser
-): Pick<
-  PutCommandInput,
-  'ExpressionAttributeNames' | 'ExpressionAttributeValues' | 'ConditionExpression'
-> => {
+): {
+  ConditionExpression: string
+  ExpressionAttributeNames: Record<string, string>
+  ExpressionAttributeValues: Record<string, NativeAttributeValue>
+} => {
   const ExpressionAttributeNames: PutCommandInput['ExpressionAttributeNames'] = {}
 
   conditionParser.expressionAttributeNames.forEach((expressionAttributeName, index) => {
