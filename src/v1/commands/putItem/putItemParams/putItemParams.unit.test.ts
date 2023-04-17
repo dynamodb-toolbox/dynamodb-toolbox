@@ -377,7 +377,7 @@ describe('put', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCommandCapacityOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
   })
 
   it('sets metrics options', () => {
@@ -402,7 +402,7 @@ describe('put', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCommandMetricsOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidMetricsOption' }))
   })
 
   it('sets returnValues options', () => {
@@ -428,7 +428,7 @@ describe('put', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'invalidCommandReturnValuesOption' })
+      expect.objectContaining({ code: 'commands.invalidReturnValuesOption' })
     )
   })
 
@@ -444,7 +444,7 @@ describe('put', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownCommandOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
   })
 
   it('sets condition', () => {

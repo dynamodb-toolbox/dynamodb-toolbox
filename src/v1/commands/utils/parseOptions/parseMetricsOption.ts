@@ -3,7 +3,7 @@ import { metricsOptionsSet, MetricsOption } from 'v1/commands/constants/options/
 
 export const parseMetricsOption = (metrics: MetricsOption): MetricsOption => {
   if (!metricsOptionsSet.has(metrics)) {
-    throw new DynamoDBToolboxError('invalidCommandMetricsOption', {
+    throw new DynamoDBToolboxError('commands.invalidMetricsOption', {
       message: `Invalid metrics option: '${String(metrics)}'. 'metrics' must be one of: ${[
         ...metricsOptionsSet
       ].join(', ')}.`,
