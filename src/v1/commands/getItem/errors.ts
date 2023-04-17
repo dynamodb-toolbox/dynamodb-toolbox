@@ -1,3 +1,1 @@
-import type { GetItemCommandParamsErrorBlueprints } from './getItemParams/errors'
-
-export type GetItemCommandErrorBlueprints = GetItemCommandParamsErrorBlueprints
+export type { GetItemCommandErrorBlueprints } from './getItemParams/errors'

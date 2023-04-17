@@ -20,7 +20,7 @@ export const parseGetItemOptions = (putItemOptions: GetItemOptions): CommandOpti
 
   if (consistent !== undefined) {
     if (!isBoolean(consistent)) {
-      throw new DynamoDBToolboxError('invalidGetItemCommandConsistentOption', {
+      throw new DynamoDBToolboxError('getItemCommand.invalidConsistentOption', {
         message: `Invalid consistent option: '${String(
           consistent
         )}'. 'consistent' must be boolean.`,

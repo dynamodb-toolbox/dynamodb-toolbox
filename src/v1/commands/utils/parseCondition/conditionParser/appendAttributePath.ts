@@ -24,9 +24,9 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
   enum: undefined
 }
 
-class InvalidConditionAttributePathError extends DynamoDBToolboxError<'invalidConditionAttributePath'> {
+class InvalidConditionAttributePathError extends DynamoDBToolboxError<'commands.invalidConditionAttributePath'> {
   constructor(attributePath: string) {
-    super('invalidConditionAttributePath', {
+    super('commands.invalidConditionAttributePath', {
       message: `Unable to match condition attribute path with item: ${attributePath}`,
       payload: { attributePath }
     })
