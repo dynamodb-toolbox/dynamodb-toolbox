@@ -1,7 +1,7 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
 type InvalidConditionAttributePathErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidConditionAttributePath'
+  code: 'commands.invalidConditionAttributePath'
   hasPath: false
   payload: {
     attributePath: string
