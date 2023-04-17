@@ -1,4 +1,5 @@
-import { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
+import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributePutCommandInput } from './attribute'
 
@@ -7,26 +8,22 @@ export const parseAnyOfAttributePutCommandInput = (
   input: PossiblyUndefinedResolvedAttribute
 ): PossiblyUndefinedResolvedAttribute => {
   let parsedPutItemInput: PossiblyUndefinedResolvedAttribute | undefined = undefined
-  let firstError: unknown = undefined
 
   for (const element of anyOfAttribute.elements) {
     try {
       parsedPutItemInput = parseAttributePutCommandInput(element, input)
       break
-    } catch (error) {
-      if (firstError === undefined) {
-        firstError = error
-      }
+    } catch {
+      continue
     }
   }
 
   if (parsedPutItemInput === undefined) {
-    if (firstError !== undefined) {
-      throw firstError
-    } else {
-      // TODO
-      throw new Error()
-    }
+    throw new DynamoDBToolboxError('putItemCommand.invalidAttributeInput', {
+      message: `Attribute ${anyOfAttribute.path} does not match any of the possible sub-types`,
+      path: anyOfAttribute.path,
+      payload: { received: input }
+    })
   }
 
   return parsedPutItemInput
