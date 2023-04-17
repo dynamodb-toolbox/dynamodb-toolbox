@@ -1,5 +1,5 @@
-import { HasComputedDefaults, Item } from 'v1/item'
-import { TableV2, PrimaryKey } from 'v1/table'
+import type { HasComputedDefaults, Item } from 'v1/item'
+import type { TableV2, PrimaryKey } from 'v1/table'
 
 import type {
   NeedsKeyCompute,
@@ -7,11 +7,13 @@ import type {
   ItemPutDefaultsComputer,
   ItemDefaultsComputer
 } from './generics'
+import { addEntityNameAttribute, WithEntityNameAttribute } from './utils'
 
 export class EntityV2<
   NAME extends string = string,
   TABLE extends TableV2 = TableV2,
   ITEM extends Item = Item,
+  ENTITY_NAME_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
   // TODO: See if possible not to add it as a generic here
   PUT_DEFAULTS_COMPUTER = Item extends ITEM ? ItemDefaultsComputer : ItemPutDefaultsComputer<ITEM>,
   CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER
@@ -19,7 +21,8 @@ export class EntityV2<
   public type: 'entity'
   public name: NAME
   public table: TABLE
-  public item: ITEM
+  public item: WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, NAME>
+  public entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
   // any is needed for contravariance
   computeKey?: (keyInput: Item extends ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
   computedDefaults?: PUT_DEFAULTS_COMPUTER
@@ -39,11 +42,13 @@ export class EntityV2<
     table,
     item,
     computeKey,
-    computedDefaults
+    computedDefaults,
+    entityNameAttributeName = 'entity' as ENTITY_NAME_ATTRIBUTE_NAME
   }: {
     name: NAME
     table: TABLE
     item: ITEM
+    entityNameAttributeName?: ENTITY_NAME_ATTRIBUTE_NAME
   } & (NeedsKeyCompute<ITEM, TABLE> extends true
     ? { computeKey: (keyInput: KeyInput<ITEM>) => PrimaryKey<TABLE> }
     : { computeKey?: undefined }) &
@@ -53,9 +58,15 @@ export class EntityV2<
     this.type = 'entity'
     this.name = name
     this.table = table
+    this.entityNameAttributeName = entityNameAttributeName
 
     // TODO: validate that item respects table key design
-    this.item = item
+    this.item = addEntityNameAttribute({
+      item,
+      table,
+      entityNameAttributeName,
+      entityName: name
+    })
 
     this.computeKey = computeKey as any
     this.computedDefaults = computedDefaults
