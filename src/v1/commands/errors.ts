@@ -1,34 +1,38 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-import { GetItemCommandErrorBlueprints } from './getItem/errors'
+import type { GetItemCommandErrorBlueprints } from './getItem/errors'
+import type { PutItemCommandErrorBlueprints } from './putItem/errors'
+import type { CommandUtilsErrorBlueprints } from './utils/errors'
 
-type InvalidCommandCapacityOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidCommandCapacityOption'
+type InvalidCapacityOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidCapacityOption'
   hasPath: false
   payload: { capacity: unknown }
 }>
 
-type InvalidCommandMetricsOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidCommandMetricsOption'
+type InvalidMetricsOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidMetricsOption'
   hasPath: false
   payload: { metrics: unknown }
 }>
 
-type InvalidCommandReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidCommandReturnValuesOption'
+type InvalidReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidReturnValuesOption'
   hasPath: false
   payload: { returnValues: unknown }
 }>
 
-type UnknownCommandOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'unknownCommandOption'
+type UnknownOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.unknownOption'
   hasPath: false
   payload: { option: unknown }
 }>
 
-export type CommandErrorBlueprints =
+export type CommandsErrorBlueprints =
   | GetItemCommandErrorBlueprints
-  | InvalidCommandCapacityOptionErrorBlueprint
-  | InvalidCommandMetricsOptionErrorBlueprint
-  | InvalidCommandReturnValuesOptionErrorBlueprint
-  | UnknownCommandOptionErrorBlueprint
+  | PutItemCommandErrorBlueprints
+  | CommandUtilsErrorBlueprints
+  | InvalidCapacityOptionErrorBlueprint
+  | InvalidMetricsOptionErrorBlueprint
+  | InvalidReturnValuesOptionErrorBlueprint
+  | UnknownOptionErrorBlueprint

@@ -139,7 +139,7 @@ describe('get', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidCommandCapacityOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
   })
 
   it('sets consistent and capacity options', () => {
@@ -165,7 +165,7 @@ describe('get', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'invalidGetItemCommandConsistentOption' })
+      expect.objectContaining({ code: 'getItemCommand.invalidConsistentOption' })
     )
   })
 
@@ -181,7 +181,7 @@ describe('get', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'unknownCommandOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
   })
 
   // TODO Handle ProjectionExpression

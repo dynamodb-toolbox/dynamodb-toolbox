@@ -1,4 +1,5 @@
 import type { AnyAttribute, Attribute, PrimitiveAttribute } from 'v1/item'
+import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 
@@ -23,6 +24,15 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
   enum: undefined
 }
 
+class InvalidConditionAttributePathError extends DynamoDBToolboxError<'commands.invalidConditionAttributePath'> {
+  constructor(attributePath: string) {
+    super('commands.invalidConditionAttributePath', {
+      message: `Unable to match condition attribute path with item: ${attributePath}`,
+      payload: { attributePath }
+    })
+  }
+}
+
 const isListAccessor = (accessor: string): accessor is `[${number}]` => /\[\d+\]/g.test(accessor)
 
 export const isAttributePath = (candidate: unknown): candidate is { attr: string } =>
@@ -38,15 +48,13 @@ export const appendAttributePath = (
 
   const [rootMatch, ...attributeMatches] = attributePath.matchAll(/\[(\d+)\]|\w+(?=(\.|$|\[))/g)
   if (rootMatch === undefined) {
-    // TODO
-    throw new Error()
+    throw new InvalidConditionAttributePathError(attributePath)
   }
 
   const [rootAttributeAccessor] = rootMatch
   const rootAttribute = conditionParser.item.attributes[rootAttributeAccessor]
   if (rootAttribute === undefined) {
-    // TODO
-    throw new Error()
+    throw new InvalidConditionAttributePathError(attributePath)
   }
 
   parentAttribute = rootAttribute
@@ -65,9 +73,7 @@ export const appendAttributePath = (
       case 'number':
       case 'string':
       case 'set':
-        // We don't allow nested paths on those types
-        // TODO
-        throw new Error()
+        throw new InvalidConditionAttributePathError(attributePath)
       case 'any': {
         const isChildAttributeInList = isListAccessor(childAttributeAccessor)
 
@@ -102,8 +108,7 @@ export const appendAttributePath = (
       case 'map': {
         const childAttribute = parentAttribute.attributes[childAttributeAccessor]
         if (!childAttribute) {
-          // TODO
-          throw new Error()
+          throw new InvalidConditionAttributePathError(attributePath)
         }
 
         const expressionAttributeNameIndex = conditionParser.expressionAttributeNames.push(
@@ -116,8 +121,7 @@ export const appendAttributePath = (
       }
       case 'list': {
         if (!isListAccessor(childAttributeAccessor)) {
-          // TODO
-          throw new Error()
+          throw new InvalidConditionAttributePathError(attributePath)
         }
 
         conditionExpressionPath += childAttributeAccessor
@@ -127,7 +131,7 @@ export const appendAttributePath = (
       }
       case 'anyOf':
         // TODO
-        throw new Error()
+        throw new InvalidConditionAttributePathError(attributePath)
     }
   }
 
