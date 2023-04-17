@@ -1,4 +1,5 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
+import isEmpty from 'lodash.isempty'
 
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
 import { parseMetricsOption } from 'v1/commands/utils/parseOptions/parseMetricsOption'
@@ -41,8 +42,12 @@ export const parseDeleteItemOptions = <ENTITY extends EntityV2>(
       ConditionExpression
     } = parseCondition(entity.item, condition)
 
-    commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
-    commandOptions.ExpressionAttributeValues = ExpressionAttributeValues
+    if (!isEmpty(ExpressionAttributeNames)) {
+      commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
+    }
+    if (!isEmpty(ExpressionAttributeValues)) {
+      commandOptions.ExpressionAttributeValues = ExpressionAttributeValues
+    }
     commandOptions.ConditionExpression = ConditionExpression
   }
 

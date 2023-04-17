@@ -1,4 +1,5 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
+import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
@@ -42,8 +43,12 @@ export const parsePutItemOptions = <ENTITY extends EntityV2>(
       ConditionExpression
     } = parseCondition(entity.item, condition)
 
-    commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
-    commandOptions.ExpressionAttributeValues = ExpressionAttributeValues
+    if (!isEmpty(ExpressionAttributeNames)) {
+      commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
+    }
+    if (!isEmpty(ExpressionAttributeValues)) {
+      commandOptions.ExpressionAttributeValues = ExpressionAttributeValues
+    }
     commandOptions.ConditionExpression = ConditionExpression
   }
 
