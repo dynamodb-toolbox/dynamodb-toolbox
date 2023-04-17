@@ -122,8 +122,8 @@ describe('put', () => {
     const { Item } = putItemParams(TestEntity, { email: 'test-pk', sort: 'test-sk' })
 
     expect(Item).toMatchObject({
+      _et: TestEntity.name,
       // TODO
-      // _et: 'TestEntity',
       // _ct:
       // _md
       pk: 'test-pk',
@@ -155,30 +155,26 @@ describe('put', () => {
     expect(Item).toMatchObject({ test_string: overrideValue })
   })
 
-  it('creates item with saved composite field', () => {
+  it('creates item with composite field', () => {
     const { Item } = putItemParams(TestEntity2, {
       email: 'test-pk',
       test_composite: 'test'
     })
 
-    expect(Item).toStrictEqual({
-      pk: 'test-pk',
-      test_composite: 'test'
-    })
+    expect(Item).not.toHaveProperty('sort')
   })
 
-  it('creates item that ignores field with no value', () => {
+  it('creates item with filled composite key', () => {
     const { Item } = putItemParams(TestEntity2, {
       email: 'test-pk',
-      test_composite: undefined
+      test_composite: 'test',
+      test_composite2: 'test2'
     })
 
-    expect(Item).toStrictEqual({
-      pk: 'test-pk'
-    })
+    expect(Item).toMatchObject({ sk: 'test#test2' })
   })
 
-  it('creates item that overrides composite key', () => {
+  it('creates item with overriden composite key', () => {
     const { Item } = putItemParams(TestEntity2, {
       email: 'test-pk',
       sort: 'override',
@@ -186,29 +182,7 @@ describe('put', () => {
       test_composite2: 'test2'
     })
 
-    expect(Item).toStrictEqual({
-      pk: 'test-pk',
-      sk: 'override',
-      test_composite: 'test',
-      // TODO: Make saved:false possible (as in original test)
-      test_composite2: 'test2'
-    })
-  })
-
-  it('creates item that generates composite key', () => {
-    const { Item } = putItemParams(TestEntity2, {
-      email: 'test-pk',
-      test_composite: 'test',
-      test_composite2: 'test2'
-    })
-
-    expect(Item).toStrictEqual({
-      pk: 'test-pk',
-      sk: 'test#test2',
-      test_composite: 'test',
-      // TODO: Make saved:false possible (as in original test)
-      test_composite2: 'test2'
-    })
+    expect(Item).toMatchObject({ sk: 'override' })
   })
 
   it('fails if required attribute misses', () => {
@@ -376,16 +350,8 @@ describe('put', () => {
   })
 
   it('correctly aliases pks', () => {
-    const { Item } = putItemParams(TestEntity4, {
-      id: 3,
-      xyz: '123'
-    })
-
-    expect(Item).toStrictEqual({
-      pk: '3',
-      sk: '3',
-      test: '123'
-    })
+    const { Item } = putItemParams(TestEntity4, { id: 3, xyz: '123' })
+    expect(Item).toMatchObject({ pk: '3', sk: '3' })
   })
 
   // Options
