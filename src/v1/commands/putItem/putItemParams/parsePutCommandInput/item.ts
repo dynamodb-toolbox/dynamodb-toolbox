@@ -1,5 +1,6 @@
-import { Item, PossiblyUndefinedResolvedItem } from 'v1'
+import type { Item, PossiblyUndefinedResolvedItem } from 'v1/item'
 import { isObject } from 'v1/utils/validation'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributePutCommandInput } from './attribute'
 
@@ -8,8 +9,13 @@ export const parseItemPutCommandInput = (
   input: PossiblyUndefinedResolvedItem
 ): PossiblyUndefinedResolvedItem => {
   if (!isObject(input)) {
-    // TODO
-    throw new Error()
+    throw new DynamoDBToolboxError('putItemCommand.invalidItem', {
+      message: 'Put command items should be objects',
+      payload: {
+        received: input,
+        expected: 'object'
+      }
+    })
   }
 
   const parsedPutItemInput: PossiblyUndefinedResolvedItem = {}

@@ -1,5 +1,6 @@
-import { RecordAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
+import type { RecordAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
 import { isObject } from 'v1/utils/validation'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributePutCommandInput } from './attribute'
 
@@ -8,8 +9,14 @@ export const parseRecordAttributePutCommandInput = (
   input: PossiblyUndefinedResolvedAttribute
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isObject(input)) {
-    // TODO
-    throw new Error()
+    throw new DynamoDBToolboxError('putItemCommand.invalidAttributeInput', {
+      message: `Attribute ${recordAttribute.path} should be an ${recordAttribute.type}`,
+      path: recordAttribute.path,
+      payload: {
+        received: input,
+        expected: recordAttribute.type
+      }
+    })
   }
 
   const parsedPutItemInput: PossiblyUndefinedResolvedAttribute = {}
