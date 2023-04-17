@@ -15,24 +15,17 @@ export const addRootAttribute = <
   item: ITEM,
   attributeName: ATTRIBUTE_NAME,
   attribute: ATTRIBUTE
-): WithRootAttribute<ITEM, ATTRIBUTE_NAME, ATTRIBUTE> => {
-  if (attributeName in item.attributes) {
-    // TODO
-    throw new Error()
-  }
-
-  return {
-    type: item.type,
-    keyAttributesNames: attribute.key
-      ? new Set([...item.keyAttributesNames, attributeName])
-      : item.keyAttributesNames,
-    requiredAttributesNames: {
-      ...item.requiredAttributesNames,
-      [attribute.required]: new Set([
-        ...item.requiredAttributesNames[attribute.required],
-        attributeName
-      ])
-    },
-    attributes: addProperty(item.attributes, attributeName, attribute)
-  }
-}
+): WithRootAttribute<ITEM, ATTRIBUTE_NAME, ATTRIBUTE> => ({
+  type: item.type,
+  keyAttributesNames: attribute.key
+    ? new Set([...item.keyAttributesNames, attributeName])
+    : item.keyAttributesNames,
+  requiredAttributesNames: {
+    ...item.requiredAttributesNames,
+    [attribute.required]: new Set([
+      ...item.requiredAttributesNames[attribute.required],
+      attributeName
+    ])
+  },
+  attributes: addProperty(item.attributes, attributeName, attribute)
+})
