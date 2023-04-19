@@ -27,7 +27,9 @@ export const deleteItemParams = <
 ): DeleteCommandInput => {
   const validKeyInput = parseEntityKeyInput(entity, input)
 
-  // Important to do it before renaming as validKeyInput is muted (to improve?)
+  /**
+   * @debt bug "Important to do it before renaming as validKeyInput is muted (to improve?). But will cause a bug with anyOf attributes (input is not actually the valid input)"
+   */
   const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : undefined
 
   const options = parseDeleteItemOptions(entity, deleteItemOptions)
