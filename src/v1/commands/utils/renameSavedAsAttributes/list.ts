@@ -1,4 +1,4 @@
-import { ListAttribute, PossiblyUndefinedResolvedListAttribute } from 'v1'
+import type { ListAttribute, PossiblyUndefinedResolvedListAttribute } from 'v1/item'
 
 import { renameAttributeSavedAsAttributes } from './attribute'
 

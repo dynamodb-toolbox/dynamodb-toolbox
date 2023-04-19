@@ -1,4 +1,4 @@
-import { Item, PossiblyUndefinedResolvedItem } from 'v1'
+import type { Item, PossiblyUndefinedResolvedItem } from 'v1/item'
 
 import { renameAttributeSavedAsAttributes } from './attribute'
 

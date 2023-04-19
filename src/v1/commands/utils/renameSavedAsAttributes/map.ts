@@ -1,4 +1,4 @@
-import { MapAttribute, PossiblyUndefinedResolvedMapAttribute } from 'v1'
+import type { MapAttribute, PossiblyUndefinedResolvedMapAttribute } from 'v1/item'
 
 import { renameAttributeSavedAsAttributes } from './attribute'
 
