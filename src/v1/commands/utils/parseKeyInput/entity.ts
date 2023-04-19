@@ -13,7 +13,5 @@ export const parseEntityKeyInput: EntityKeyInputParser = (entity, input) => {
     computeDefaults: undefined
   })
 
-  const clonedInputWithComputedDefaults = clonedInputWithDefaults
-
-  return parseItemKeyInput(entity.item, clonedInputWithComputedDefaults) as any
+  return parseItemKeyInput(entity.item, clonedInputWithDefaults) as any
 }
