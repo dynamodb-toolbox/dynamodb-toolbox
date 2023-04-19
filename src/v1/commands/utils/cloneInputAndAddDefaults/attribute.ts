@@ -4,6 +4,7 @@ import { clonePrimitiveAttributeInputAndAddDefaults } from './primitive'
 import { cloneListAttributeInputAndAddDefaults } from './list'
 import { cloneMapAttributeInputAndAddDefaults } from './map'
 import { cloneRecordAttributeInputAndAddDefaults } from './record'
+import { cloneAnyOfAttributeInputAndAddDefaults } from './anyOf'
 import type { DefaultsComputeOptions } from './types'
 
 export const cloneAttributeInputAndAddDefaults = (
@@ -26,7 +27,6 @@ export const cloneAttributeInputAndAddDefaults = (
     case 'record':
       return cloneRecordAttributeInputAndAddDefaults(attribute, input, defaultsComputeOptions)
     case 'anyOf':
-      // TODO
-      return undefined
+      return cloneAnyOfAttributeInputAndAddDefaults(attribute, input, defaultsComputeOptions)
   }
 }
