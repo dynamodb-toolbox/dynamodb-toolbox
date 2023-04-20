@@ -1,5 +1,5 @@
 import { EntityV2, FormattedItem } from 'v1/entity'
-import { ResolvedItem } from 'v1/item'
+import { ResolvedItem, PossiblyUndefinedResolvedItem } from 'v1/item'
 
 import { parseSavedAttribute } from './attribute'
 
@@ -7,23 +7,20 @@ export const formatSavedItem = <ENTITY extends EntityV2>(
   entity: ENTITY,
   savedItem: ResolvedItem
 ): FormattedItem<ENTITY> => {
-  const formattedItem: ResolvedItem = {}
+  const formattedItem: PossiblyUndefinedResolvedItem = {}
 
   const item = entity.item
 
   Object.entries(item.attributes).forEach(([attributeName, attribute]) => {
-    const attributeSavedAs = attribute.savedAs ?? attributeName
-
     if (attribute.hidden) {
       return
     }
 
-    if (savedItem[attributeSavedAs] !== undefined) {
-      const formattedAttribute = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
+    const attributeSavedAs = attribute.savedAs ?? attributeName
 
-      if (formattedAttribute !== undefined) {
-        formattedItem[attributeName] = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
-      }
+    const formattedAttribute = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
+    if (formattedAttribute !== undefined) {
+      formattedItem[attributeName] = formattedAttribute
     }
   })
 
