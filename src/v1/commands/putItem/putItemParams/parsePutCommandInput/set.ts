@@ -1,4 +1,4 @@
-import type { SetAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
+import type { SetAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
