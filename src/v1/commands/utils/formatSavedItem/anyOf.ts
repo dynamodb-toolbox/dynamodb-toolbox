@@ -1,33 +1,25 @@
-import { ResolvedAttribute, AnyOfAttribute } from 'v1'
+import type { PossiblyUndefinedResolvedAttribute, AnyOfAttribute } from 'v1'
 
 import { parseSavedAttribute } from './attribute'
 
 export const parseSavedAnyOfAttribute = (
   attribute: AnyOfAttribute,
-  input: ResolvedAttribute
-): ResolvedAttribute => {
-  let parsedAttribute: ResolvedAttribute | undefined = undefined
-  let firstError: unknown = undefined
+  input: PossiblyUndefinedResolvedAttribute
+): PossiblyUndefinedResolvedAttribute => {
+  let parsedAttribute: PossiblyUndefinedResolvedAttribute | undefined = undefined
 
   for (const element of attribute.elements) {
     try {
       parsedAttribute = parseSavedAttribute(element, input)
-      // TODO: Here we are not able to correctly parse as parsing doesn't throw an error
       break
     } catch (error) {
-      if (firstError === undefined) {
-        firstError = error
-      }
+      continue
     }
   }
 
   if (parsedAttribute === undefined) {
-    if (firstError !== undefined) {
-      throw firstError
-    } else {
-      // TODO
-      throw new Error()
-    }
+    // TODO
+    throw new Error()
   }
 
   return parsedAttribute
