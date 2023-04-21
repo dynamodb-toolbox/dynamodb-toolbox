@@ -67,7 +67,7 @@ const primitive: AnyPrimitiveAttributeTyper = <
     savedAs: nextSavedAs => primitive(type, { ...options, savedAs: nextSavedAs }),
     default: nextDefault => primitive(type, { ...options, default: nextDefault }),
     enum: (...nextEnum) => primitive(type, { ...options, [$enum]: nextEnum }),
-    const: constant => primitive(type, { ...options, [$enum]: [constant] })
+    const: constant => primitive(type, { ...options, [$enum]: [constant], default: constant })
   } as $PrimitiveAttribute<
     TYPE,
     {
