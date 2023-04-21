@@ -1,16 +1,17 @@
-import type { PossiblyUndefinedResolvedAttribute, AnyOfAttribute } from 'v1'
+import type { PossiblyUndefinedResolvedAttribute, AnyOfAttribute } from 'v1/item'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseSavedAttribute } from './attribute'
 
 export const parseSavedAnyOfAttribute = (
-  attribute: AnyOfAttribute,
-  input: PossiblyUndefinedResolvedAttribute
+  anyOfAttribute: AnyOfAttribute,
+  value: PossiblyUndefinedResolvedAttribute
 ): PossiblyUndefinedResolvedAttribute => {
   let parsedAttribute: PossiblyUndefinedResolvedAttribute | undefined = undefined
 
-  for (const element of attribute.elements) {
+  for (const element of anyOfAttribute.elements) {
     try {
-      parsedAttribute = parseSavedAttribute(element, input)
+      parsedAttribute = parseSavedAttribute(element, value)
       break
     } catch (error) {
       continue
@@ -18,8 +19,13 @@ export const parseSavedAnyOfAttribute = (
   }
 
   if (parsedAttribute === undefined) {
-    // TODO
-    throw new Error()
+    throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
+      message: `Saved item attribute does not match any of the possible sub-types: ${anyOfAttribute.path}`,
+      path: anyOfAttribute.path,
+      payload: {
+        received: value
+      }
+    })
   }
 
   return parsedAttribute

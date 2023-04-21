@@ -4,16 +4,23 @@ import type {
   PossiblyUndefinedResolvedMapAttribute
 } from 'v1/item'
 import { isObject } from 'v1/utils/validation'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseSavedAttribute } from './attribute'
 
 export const parseSavedMapAttribute = (
   mapAttribute: MapAttribute,
-  savedItem: PossiblyUndefinedResolvedAttribute
+  value: PossiblyUndefinedResolvedAttribute
 ): PossiblyUndefinedResolvedAttribute => {
-  if (!isObject(savedItem)) {
-    // TODO
-    throw new Error()
+  if (!isObject(value)) {
+    throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
+      message: `Invalid attribute in saved item: ${mapAttribute.path}. Should be a ${mapAttribute.type}`,
+      path: mapAttribute.path,
+      payload: {
+        received: value,
+        expected: mapAttribute.type
+      }
+    })
   }
 
   const formattedMap: PossiblyUndefinedResolvedMapAttribute = {}
@@ -25,9 +32,9 @@ export const parseSavedMapAttribute = (
 
     const attributeSavedAs = attribute.savedAs ?? attributeName
 
-    const formattedAttribute = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
+    const formattedAttribute = parseSavedAttribute(attribute, value[attributeSavedAs])
     if (formattedAttribute !== undefined) {
-      formattedMap[attributeName] = parseSavedAttribute(attribute, savedItem[attributeSavedAs])
+      formattedMap[attributeName] = parseSavedAttribute(attribute, value[attributeSavedAs])
     }
   })
 
