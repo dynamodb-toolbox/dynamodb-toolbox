@@ -210,10 +210,10 @@ describe('primitiveAttribute', () => {
 
       const str = string().const('foo')
 
-      const assertStr: A.Contains<typeof str, { [$enum]: ['foo'] }> = 1
+      const assertStr: A.Contains<typeof str, { [$enum]: ['foo']; [$default]: 'foo' }> = 1
       assertStr
 
-      expect(str).toMatchObject({ [$enum]: ['foo'] })
+      expect(str).toMatchObject({ [$enum]: ['foo'], [$default]: 'foo' })
     })
 
     it('returns string with default value (option)', () => {
