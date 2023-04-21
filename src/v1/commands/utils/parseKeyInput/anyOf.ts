@@ -1,10 +1,11 @@
 import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
-
-import { parseAttributeKeyInput } from './attribute'
 import type {
   AnyOfAttributeClonedInputsWithDefaults,
   ParsedAnyOfAttributeCommandInput
 } from 'v1/commands/types'
+import { DynamoDBToolboxError } from 'v1/errors'
+
+import { parseAttributeKeyInput } from './attribute'
 
 export const parseAnyOfAttributeKeyInput = (
   anyOfAttribute: AnyOfAttribute,
@@ -12,7 +13,10 @@ export const parseAnyOfAttributeKeyInput = (
 ): ParsedAnyOfAttributeCommandInput => {
   let parsedKeyInput: ParsedAnyOfAttributeCommandInput | undefined = undefined
 
-  const { clonedInputsWithDefaults } = input as AnyOfAttributeClonedInputsWithDefaults
+  const {
+    originalInput,
+    clonedInputsWithDefaults
+  } = input as AnyOfAttributeClonedInputsWithDefaults
 
   let subSchemaIndex = 0
   while (parsedKeyInput === undefined && subSchemaIndex < anyOfAttribute.elements.length) {
@@ -32,8 +36,13 @@ export const parseAnyOfAttributeKeyInput = (
   }
 
   if (parsedKeyInput === undefined) {
-    // TODO
-    throw new Error()
+    throw new DynamoDBToolboxError('commands.parseKeyInput.invalidAttributeInput', {
+      message: `Attribute ${anyOfAttribute.path} does not match any of the possible sub-types`,
+      path: anyOfAttribute.path,
+      payload: {
+        received: originalInput
+      }
+    })
   }
 
   return parsedKeyInput
