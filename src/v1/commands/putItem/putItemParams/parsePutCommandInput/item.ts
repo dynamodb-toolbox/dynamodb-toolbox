@@ -9,7 +9,7 @@ export const parseItemPutCommandInput = (
   input: PossiblyUndefinedResolvedItem
 ): PossiblyUndefinedResolvedItem => {
   if (!isObject(input)) {
-    throw new DynamoDBToolboxError('putItemCommand.invalidItem', {
+    throw new DynamoDBToolboxError('commands.putItem.invalidItem', {
       message: 'Put command items should be objects',
       payload: {
         received: input,
