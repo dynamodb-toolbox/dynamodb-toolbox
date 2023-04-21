@@ -10,7 +10,7 @@ export const parseSetAttributePutCommandInput = (
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isSet(input)) {
     throw new DynamoDBToolboxError('commands.putItem.invalidAttributeInput', {
-      message: `Attribute ${setAttribute.path} should be an ${setAttribute.type}`,
+      message: `Attribute ${setAttribute.path} should be a ${setAttribute.type}`,
       path: setAttribute.path,
       payload: {
         received: input,
