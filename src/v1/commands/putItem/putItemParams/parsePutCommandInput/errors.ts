@@ -1,7 +1,7 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
 type InvalidItemErrorBlueprint = ErrorBlueprint<{
-  code: 'putItemCommand.invalidItem'
+  code: 'commands.putItem.invalidItem'
   hasPath: false
   payload: {
     received: unknown
@@ -10,13 +10,13 @@ type InvalidItemErrorBlueprint = ErrorBlueprint<{
 }>
 
 type AttributeRequiredErrorBlueprint = ErrorBlueprint<{
-  code: 'putItemCommand.attributeRequired'
+  code: 'commands.putItem.attributeRequired'
   hasPath: true
   payload: undefined
 }>
 
 type InvalidAttributeInputErrorBlueprint = ErrorBlueprint<{
-  code: 'putItemCommand.invalidAttributeInput'
+  code: 'commands.putItem.invalidAttributeInput'
   hasPath: true
   payload: {
     received: unknown
