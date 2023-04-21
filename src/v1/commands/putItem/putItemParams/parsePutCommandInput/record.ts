@@ -10,7 +10,7 @@ export const parseRecordAttributePutCommandInput = (
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isObject(input)) {
     throw new DynamoDBToolboxError('commands.putItem.invalidAttributeInput', {
-      message: `Attribute ${recordAttribute.path} should be an ${recordAttribute.type}`,
+      message: `Attribute ${recordAttribute.path} should be a ${recordAttribute.type}`,
       path: recordAttribute.path,
       payload: {
         received: input,
