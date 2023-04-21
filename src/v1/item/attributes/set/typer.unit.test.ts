@@ -39,7 +39,7 @@ describe('set', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'optionalSetAttributeElements', path })
+      expect.objectContaining({ code: 'item.setAttribute.optionalElements', path })
     )
   })
 
@@ -60,7 +60,7 @@ describe('set', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'hiddenSetAttributeElements', path })
+      expect.objectContaining({ code: 'item.setAttribute.hiddenElements', path })
     )
   })
 
@@ -81,7 +81,7 @@ describe('set', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'savedAsSetAttributeElements', path })
+      expect.objectContaining({ code: 'item.setAttribute.savedAsElements', path })
     )
   })
 
@@ -102,7 +102,7 @@ describe('set', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedSetAttributeElements', path })
+      expect.objectContaining({ code: 'item.setAttribute.defaultedElements', path })
     )
 
     set(
@@ -121,7 +121,7 @@ describe('set', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'defaultedSetAttributeElements', path })
+      expect.objectContaining({ code: 'item.setAttribute.defaultedElements', path })
     )
   })
 

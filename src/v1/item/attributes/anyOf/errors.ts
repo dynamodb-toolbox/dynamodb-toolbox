@@ -1,44 +1,44 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-type InvalidAnyOfAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidAnyOfAttributeElements'
+type InvalidElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.anyOfAttribute.invalidElements'
   hasPath: true
   payload: undefined
 }>
-type MissingAnyOfAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'missingAnyOfAttributeElements'
-  hasPath: true
-  payload: undefined
-}>
-
-type OptionalAnyOfAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'optionalAnyOfAttributeElements'
+type MissingElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.anyOfAttribute.missingElements'
   hasPath: true
   payload: undefined
 }>
 
-type HiddenAnyOfAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'hiddenAnyOfAttributeElements'
+type OptionalElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.anyOfAttribute.optionalElements'
   hasPath: true
   payload: undefined
 }>
 
-type SavedAsAnyOfAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'savedAsAnyOfAttributeElements'
+type HiddenElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.anyOfAttribute.hiddenElements'
   hasPath: true
   payload: undefined
 }>
 
-type DefaultedAnyOfAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'defaultedAnyOfAttributeElements'
+type SavedAsElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.anyOfAttribute.savedAsElements'
+  hasPath: true
+  payload: undefined
+}>
+
+type DefaultedElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.anyOfAttribute.defaultedElements'
   hasPath: true
   payload: undefined
 }>
 
 export type AnyOfAttributeErrorBlueprints =
-  | InvalidAnyOfAttributeElementsErrorBlueprint
-  | MissingAnyOfAttributeElementsErrorBlueprint
-  | OptionalAnyOfAttributeElementsErrorBlueprint
-  | HiddenAnyOfAttributeElementsErrorBlueprint
-  | SavedAsAnyOfAttributeElementsErrorBlueprint
-  | DefaultedAnyOfAttributeElementsErrorBlueprint
+  | InvalidElementsErrorBlueprint
+  | MissingElementsErrorBlueprint
+  | OptionalElementsErrorBlueprint
+  | HiddenElementsErrorBlueprint
+  | SavedAsElementsErrorBlueprint
+  | DefaultedElementsErrorBlueprint

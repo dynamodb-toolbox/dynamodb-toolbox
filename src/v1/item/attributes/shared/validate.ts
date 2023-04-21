@@ -19,7 +19,7 @@ export const validateAttributeProperties = (
 ): void => {
   const attributeRequired = $attribute[$required]
   if (!requiredOptionsSet.has(attributeRequired)) {
-    throw new DynamoDBToolboxError('invalidAttributeProperty', {
+    throw new DynamoDBToolboxError('item.attribute.invalidProperty', {
       message: `Invalid option value type at path ${path}. Property: 'required'. Expected: ${[
         ...requiredOptionsSet
       ].join(', ')}. Received: ${String(attributeRequired)}.`,
@@ -34,7 +34,7 @@ export const validateAttributeProperties = (
 
   const attributeHidden = $attribute[$hidden]
   if (!isBoolean(attributeHidden)) {
-    throw new DynamoDBToolboxError('invalidAttributeProperty', {
+    throw new DynamoDBToolboxError('item.attribute.invalidProperty', {
       message: `Invalid option value type at path ${path}. Property: 'hidden'. Expected: boolean. Received: ${String(
         attributeHidden
       )}.`,
@@ -48,7 +48,7 @@ export const validateAttributeProperties = (
 
   const attributeKey = $attribute[$key]
   if (!isBoolean(attributeKey)) {
-    throw new DynamoDBToolboxError('invalidAttributeProperty', {
+    throw new DynamoDBToolboxError('item.attribute.invalidProperty', {
       message: `Invalid option value type at path ${path}. Property: 'key'. Expected: boolean. Received: ${String(
         attributeHidden
       )}.`,
@@ -62,7 +62,7 @@ export const validateAttributeProperties = (
 
   const attributeSavedAs = $attribute[$savedAs]
   if (attributeSavedAs !== undefined && !isString(attributeSavedAs)) {
-    throw new DynamoDBToolboxError('invalidAttributeProperty', {
+    throw new DynamoDBToolboxError('item.attribute.invalidProperty', {
       message: `Invalid option value type at path ${path}. Property: 'savedAs'. Expected: string. Received: ${String(
         attributeHidden
       )}.`,

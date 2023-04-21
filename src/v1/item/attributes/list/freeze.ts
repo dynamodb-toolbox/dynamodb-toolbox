@@ -54,28 +54,28 @@ export const freezeListAttribute: ListAttributeFreezer = <$LIST_ATTRIBUTE extend
   const elements: $LIST_ATTRIBUTE[$elements] = $listAttribute[$elements]
 
   if (elements[$required] !== 'atLeastOnce' && elements[$required] !== 'always') {
-    throw new DynamoDBToolboxError('optionalListAttributeElements', {
+    throw new DynamoDBToolboxError('item.listAttribute.optionalElements', {
       message: `Invalid list elements at path ${path}: List elements must be required`,
       path
     })
   }
 
   if (elements[$hidden] !== false) {
-    throw new DynamoDBToolboxError('hiddenListAttributeElements', {
+    throw new DynamoDBToolboxError('item.listAttribute.hiddenElements', {
       message: `Invalid list elements at path ${path}: List elements cannot be hidden`,
       path
     })
   }
 
   if (elements[$savedAs] !== undefined) {
-    throw new DynamoDBToolboxError('savedAsListAttributeElements', {
+    throw new DynamoDBToolboxError('item.listAttribute.savedAsElements', {
       message: `Invalid list elements at path ${path}: List elements cannot be renamed (have savedAs option)`,
       path
     })
   }
 
   if (elements[$default] !== undefined) {
-    throw new DynamoDBToolboxError('defaultedListAttributeElements', {
+    throw new DynamoDBToolboxError('item.listAttribute.defaultedElements', {
       message: `Invalid list elements at path ${path}: List elements cannot have default values`,
       path
     })
