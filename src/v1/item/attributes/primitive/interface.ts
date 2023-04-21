@@ -74,7 +74,7 @@ export interface $PrimitiveAttribute<
     ...nextEnum: NEXT_ENUM
   ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', NEXT_ENUM>>
   /**
-   * Shorthand for `enum(constantValue)`
+   * Shorthand for `enum(constantValue).default(constantValue)`
    *
    * @param constantValue Constant value
    * @example
@@ -82,7 +82,10 @@ export interface $PrimitiveAttribute<
    */
   const: <CONSTANT extends ResolvePrimitiveAttributeType<$TYPE>>(
     constant: CONSTANT
-  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', [CONSTANT]>>
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Update<O.Update<STATE, 'enum', [CONSTANT]>, 'default', CONSTANT>
+  >
   /**
    * Provide a default value for attribute, or tag attribute as having a computed default value
    *
