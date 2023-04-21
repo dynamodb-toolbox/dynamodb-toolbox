@@ -1,7 +1,7 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-type InvalidAttributePropertyErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidAttributeProperty'
+type InvalidPropertyErrorBlueprint = ErrorBlueprint<{
+  code: 'item.attribute.invalidProperty'
   hasPath: true
   payload: {
     propertyName: string
@@ -10,4 +10,4 @@ type InvalidAttributePropertyErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-export type SharedAttributeErrorBlueprints = InvalidAttributePropertyErrorBlueprint
+export type SharedAttributeErrorBlueprints = InvalidPropertyErrorBlueprint

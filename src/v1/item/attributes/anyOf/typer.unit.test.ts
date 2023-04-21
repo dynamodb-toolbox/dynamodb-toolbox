@@ -27,7 +27,7 @@ describe('anyOf', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'missingAnyOfAttributeElements', path })
+      expect.objectContaining({ code: 'item.anyOfAttribute.missingElements', path })
     )
   })
 
@@ -50,7 +50,7 @@ describe('anyOf', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'optionalAnyOfAttributeElements', path })
+      expect.objectContaining({ code: 'item.anyOfAttribute.optionalElements', path })
     )
   })
 
@@ -73,7 +73,7 @@ describe('anyOf', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'hiddenAnyOfAttributeElements', path })
+      expect.objectContaining({ code: 'item.anyOfAttribute.hiddenElements', path })
     )
   })
 
@@ -96,7 +96,7 @@ describe('anyOf', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'savedAsAnyOfAttributeElements', path })
+      expect.objectContaining({ code: 'item.anyOfAttribute.savedAsElements', path })
     )
   })
 
@@ -119,7 +119,7 @@ describe('anyOf', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedAnyOfAttributeElements', path })
+      expect.objectContaining({ code: 'item.anyOfAttribute.defaultedElements', path })
     )
 
     anyOf([
@@ -140,7 +140,7 @@ describe('anyOf', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedAnyOfAttributeElements', path })
+      expect.objectContaining({ code: 'item.anyOfAttribute.defaultedElements', path })
     )
   })
 

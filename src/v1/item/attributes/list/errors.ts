@@ -1,31 +1,31 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-type OptionalListAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'optionalListAttributeElements'
+type OptionalElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.listAttribute.optionalElements'
   hasPath: true
   payload: undefined
 }>
 
-type HiddenListAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'hiddenListAttributeElements'
+type HiddenElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.listAttribute.hiddenElements'
   hasPath: true
   payload: undefined
 }>
 
-type SavedAsListAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'savedAsListAttributeElements'
+type SavedAsElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.listAttribute.savedAsElements'
   hasPath: true
   payload: undefined
 }>
 
-type DefaultedListAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'defaultedListAttributeElements'
+type DefaultedElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.listAttribute.defaultedElements'
   hasPath: true
   payload: undefined
 }>
 
 export type ListAttributeErrorBlueprints =
-  | OptionalListAttributeElementsErrorBlueprint
-  | HiddenListAttributeElementsErrorBlueprint
-  | SavedAsListAttributeElementsErrorBlueprint
-  | DefaultedListAttributeElementsErrorBlueprint
+  | OptionalElementsErrorBlueprint
+  | HiddenElementsErrorBlueprint
+  | SavedAsElementsErrorBlueprint
+  | DefaultedElementsErrorBlueprint

@@ -80,7 +80,7 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
 
     const attributeSavedAs = attribute[$savedAs] ?? attributeName
     if (attributesSavedAs.has(attributeSavedAs)) {
-      throw new DynamoDBToolboxError('duplicateSavedAsMapAttributes', {
+      throw new DynamoDBToolboxError('item.mapAttribute.duplicateSavedAs', {
         message: `Invalid map attributes at path ${path}: More than two attributes are saved as '${attributeSavedAs}'`,
         path,
         payload: { savedAs: attributeSavedAs }

@@ -39,7 +39,7 @@ describe('list', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'optionalListAttributeElements', path })
+      expect.objectContaining({ code: 'item.listAttribute.optionalElements', path })
     )
   })
 
@@ -60,7 +60,7 @@ describe('list', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'hiddenListAttributeElements', path })
+      expect.objectContaining({ code: 'item.listAttribute.hiddenElements', path })
     )
   })
 
@@ -81,7 +81,7 @@ describe('list', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'savedAsListAttributeElements', path })
+      expect.objectContaining({ code: 'item.listAttribute.savedAsElements', path })
     )
   })
 
@@ -102,7 +102,7 @@ describe('list', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedListAttributeElements', path })
+      expect.objectContaining({ code: 'item.listAttribute.defaultedElements', path })
     )
 
     list(
@@ -121,7 +121,7 @@ describe('list', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedListAttributeElements', path })
+      expect.objectContaining({ code: 'item.listAttribute.defaultedElements', path })
     )
   })
 
