@@ -1,7 +1,8 @@
-import { EntityV2 } from 'v1/entity'
-import { PossiblyUndefinedResolvedItem, PossiblyUndefinedResolvedAttribute } from 'v1/item'
-import { PrimaryKey } from 'v1/table'
+import type { EntityV2 } from 'v1/entity'
+import type { PossiblyUndefinedResolvedItem, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { PrimaryKey } from 'v1/table'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
+import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 
 export const parsePrimaryKey = <ENTITY extends EntityV2>(
   entity: ENTITY,
@@ -18,8 +19,15 @@ export const parsePrimaryKey = <ENTITY extends EntityV2>(
   if (partitionKeyValidator(partitionKeyValue)) {
     primaryKey[partitionKey.name] = partitionKeyValue
   } else {
-    // TODO
-    throw new Error()
+    throw new DynamoDBToolboxError('commands.parsePrimaryKey.invalidKeyPart', {
+      message: `Invalid partition key: ${partitionKey.name}`,
+      path: partitionKey.name,
+      payload: {
+        expected: partitionKey.type,
+        received: partitionKeyValue,
+        keyPart: 'partitionKey'
+      }
+    })
   }
 
   if (sortKey !== undefined) {
@@ -29,8 +37,15 @@ export const parsePrimaryKey = <ENTITY extends EntityV2>(
     if (sortKeyValidator(sortKeyValue)) {
       primaryKey[sortKey.name] = sortKeyValue
     } else {
-      // TODO
-      throw new Error()
+      throw new DynamoDBToolboxError('commands.parsePrimaryKey.invalidKeyPart', {
+        message: `Invalid sort key: ${sortKey.name}`,
+        path: sortKey.name,
+        payload: {
+          expected: sortKey.type,
+          received: sortKeyValue,
+          keyPart: 'sortKey'
+        }
+      })
     }
   }
 
