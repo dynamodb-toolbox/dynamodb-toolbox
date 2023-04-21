@@ -36,7 +36,7 @@ export const parseAnyOfAttributePutCommandInput = (
   }
 
   if (parsedPutItemInput === undefined) {
-    throw new DynamoDBToolboxError('putItemCommand.invalidAttributeInput', {
+    throw new DynamoDBToolboxError('commands.putItem.invalidAttributeInput', {
       message: `Attribute ${anyOfAttribute.path} does not match any of the possible sub-types`,
       path: anyOfAttribute.path,
       payload: {
