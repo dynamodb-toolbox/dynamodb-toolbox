@@ -10,7 +10,7 @@ import { Linked } from './parseEntity'
 
 // Convert from DocumentClient values, which may be wrapped sets or numbers,
 // into normal TS values.
-const convertDynamoValues = (value: unknown, attr?: PureAttributeDefinition) => {
+const convertDynamoValues = (value: unknown, attr?: PureAttributeDefinition): unknown => {
   if (value === null) {
     return value
   }
@@ -28,10 +28,10 @@ const convertDynamoValues = (value: unknown, attr?: PureAttributeDefinition) => 
 
   // Convert wrapped number values to bigints
   if (attr && attr.type === 'bigint') {
-    value = BigInt(value as number | string)
+    value = BigInt(value as number)
   }
   if (attr && attr.type === 'number') {
-    value = Number(value)
+    value = Number(value as number)
   }
 
   return value
