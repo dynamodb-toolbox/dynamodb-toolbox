@@ -64,7 +64,7 @@ describe('map properties freeze', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'duplicateSavedAsMapAttributes', path: pathMock })
+      expect.objectContaining({ code: 'item.mapAttribute.duplicateSavedAs', path: pathMock })
     )
 
     const invalidCallB = () =>
@@ -72,7 +72,7 @@ describe('map properties freeze', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'duplicateSavedAsMapAttributes', path: pathMock })
+      expect.objectContaining({ code: 'item.mapAttribute.duplicateSavedAs', path: pathMock })
     )
   })
 })

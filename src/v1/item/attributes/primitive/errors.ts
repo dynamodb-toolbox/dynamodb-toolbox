@@ -7,8 +7,8 @@ import type {
   PrimitiveAttributeEnumValues
 } from './types'
 
-type InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidPrimitiveAttributeEnumValueType'
+type InvalidEnumValueTypeErrorBlueprint = ErrorBlueprint<{
+  code: 'item.primitiveAttribute.invalidEnumValueType'
   hasPath: true
   payload: {
     expectedType: PrimitiveAttributeType
@@ -16,8 +16,8 @@ type InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-type InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidPrimitiveAttributeDefaultValueType'
+type InvalidDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
+  code: 'item.primitiveAttribute.invalidDefaultValueType'
   hasPath: true
   payload: {
     expectedType: PrimitiveAttributeType
@@ -25,8 +25,8 @@ type InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-type InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidPrimitiveAttributeDefaultValueRange'
+type InvalidDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
+  code: 'item.primitiveAttribute.invalidDefaultValueRange'
   hasPath: true
   payload: {
     enumValues: NonNullable<PrimitiveAttributeEnumValues<PrimitiveAttributeType>>
@@ -35,6 +35,6 @@ type InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
 }>
 
 export type PrimitiveAttributeErrorBlueprints =
-  | InvalidPrimitiveAttributeEnumValueTypeErrorBlueprint
-  | InvalidPrimitiveAttributeDefaultValueTypeErrorBlueprint
-  | InvalidPrimitiveAttributeDefaultValueRangeErrorBlueprint
+  | InvalidEnumValueTypeErrorBlueprint
+  | InvalidDefaultValueTypeErrorBlueprint
+  | InvalidDefaultValueRangeErrorBlueprint

@@ -1,80 +1,80 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-type InvalidRecordAttributeKeysErrorBlueprint = ErrorBlueprint<{
-  code: 'invalidRecordAttributeKeys'
+type InvalidKeysErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.invalidKeys'
   hasPath: true
   payload: undefined
 }>
 
-type OptionalRecordAttributeKeysErrorBlueprint = ErrorBlueprint<{
-  code: 'optionalRecordAttributeKeys'
+type OptionalKeysErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.optionalKeys'
   hasPath: true
   payload: undefined
 }>
 
-type HiddenRecordAttributeKeysErrorBlueprint = ErrorBlueprint<{
-  code: 'hiddenRecordAttributeKeys'
+type HiddenKeysErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.hiddenKeys'
   hasPath: true
   payload: undefined
 }>
 
-type KeyRecordAttributeKeysErrorBlueprint = ErrorBlueprint<{
-  code: 'keyRecordAttributeKeys'
+type KeyKeysErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.keyKeys'
   hasPath: true
   payload: undefined
 }>
 
-type SavedAsRecordAttributeKeysErrorBlueprint = ErrorBlueprint<{
-  code: 'savedAsRecordAttributeKeys'
+type SavedAsKeysErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.savedAsKeys'
   hasPath: true
   payload: undefined
 }>
 
-type DefaultedRecordAttributeKeysErrorBlueprint = ErrorBlueprint<{
-  code: 'defaultedRecordAttributeKeys'
+type DefaultedKeysErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.defaultedKeys'
   hasPath: true
   payload: undefined
 }>
 
-type OptionalRecordAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'optionalRecordAttributeElements'
+type OptionalElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.optionalElements'
   hasPath: true
   payload: undefined
 }>
 
-type HiddenRecordAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'hiddenRecordAttributeElements'
+type HiddenElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.hiddenElements'
   hasPath: true
   payload: undefined
 }>
 
-type KeyRecordAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'keyRecordAttributeElements'
+type KeyElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.keyElements'
   hasPath: true
   payload: undefined
 }>
 
-type SavedAsRecordAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'savedAsRecordAttributeElements'
+type SavedAsElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.savedAsElements'
   hasPath: true
   payload: undefined
 }>
 
-type DefaultedRecordAttributeElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'defaultedRecordAttributeElements'
+type DefaultedElementsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.recordAttribute.defaultedElements'
   hasPath: true
   payload: undefined
 }>
 
 export type RecordAttributeErrorBlueprints =
-  | InvalidRecordAttributeKeysErrorBlueprint
-  | OptionalRecordAttributeKeysErrorBlueprint
-  | HiddenRecordAttributeKeysErrorBlueprint
-  | KeyRecordAttributeKeysErrorBlueprint
-  | SavedAsRecordAttributeKeysErrorBlueprint
-  | DefaultedRecordAttributeKeysErrorBlueprint
-  | OptionalRecordAttributeElementsErrorBlueprint
-  | HiddenRecordAttributeElementsErrorBlueprint
-  | KeyRecordAttributeElementsErrorBlueprint
-  | SavedAsRecordAttributeElementsErrorBlueprint
-  | DefaultedRecordAttributeElementsErrorBlueprint
+  | InvalidKeysErrorBlueprint
+  | OptionalKeysErrorBlueprint
+  | HiddenKeysErrorBlueprint
+  | KeyKeysErrorBlueprint
+  | SavedAsKeysErrorBlueprint
+  | DefaultedKeysErrorBlueprint
+  | OptionalElementsErrorBlueprint
+  | HiddenElementsErrorBlueprint
+  | KeyElementsErrorBlueprint
+  | SavedAsElementsErrorBlueprint
+  | DefaultedElementsErrorBlueprint

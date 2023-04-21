@@ -35,7 +35,9 @@ describe('shared properties validation', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidAttributeProperty', path }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'item.attribute.invalidProperty', path })
+    )
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
@@ -63,7 +65,9 @@ describe('shared properties validation', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidAttributeProperty', path }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'item.attribute.invalidProperty', path })
+    )
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
@@ -85,7 +89,9 @@ describe('shared properties validation', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidAttributeProperty', path }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'item.attribute.invalidProperty', path })
+    )
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
@@ -107,7 +113,9 @@ describe('shared properties validation', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'invalidAttributeProperty', path }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'item.attribute.invalidProperty', path })
+    )
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
