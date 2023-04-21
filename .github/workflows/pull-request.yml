@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         node: [14, 16, 18]
-        typescript: ['~4.7.4', '~4.8.3', '~4.9.5', '5.0.4', 'latest']
+        typescript: ['~4.7.4', '~4.8.3', '~4.9.5', '~5.0.4', 'latest']
     name: Node ${{ matrix.node }} / TS ${{ matrix.typescript }}
     steps:
       - name: 'Checkout latest code'
