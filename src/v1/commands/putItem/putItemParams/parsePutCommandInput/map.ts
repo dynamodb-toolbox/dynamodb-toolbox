@@ -9,8 +9,8 @@ export const parseMapAttributePutCommandInput = (
   input: PossiblyUndefinedResolvedAttribute
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isObject(input)) {
-    throw new DynamoDBToolboxError('putItemCommand.invalidAttributeInput', {
-      message: `Attribute ${mapAttribute.path} should be an ${mapAttribute.type}`,
+    throw new DynamoDBToolboxError('commands.putItem.invalidAttributeInput', {
+      message: `Attribute ${mapAttribute.path} should be a ${mapAttribute.type}`,
       path: mapAttribute.path,
       payload: {
         received: input,

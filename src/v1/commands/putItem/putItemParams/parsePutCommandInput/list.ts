@@ -9,8 +9,8 @@ export const parseListAttributePutCommandInput = (
   input: PossiblyUndefinedResolvedAttribute
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isArray(input)) {
-    throw new DynamoDBToolboxError('putItemCommand.invalidAttributeInput', {
-      message: `Attribute ${listAttribute.path} should be an ${listAttribute.type}`,
+    throw new DynamoDBToolboxError('commands.putItem.invalidAttributeInput', {
+      message: `Attribute ${listAttribute.path} should be a ${listAttribute.type}`,
       path: listAttribute.path,
       payload: {
         received: input,

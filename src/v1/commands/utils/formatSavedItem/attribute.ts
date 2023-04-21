@@ -1,6 +1,7 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type { Attribute, RequiredOption, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseSavedPrimitiveAttribute } from './primitive'
 import { parseSavedSetAttribute } from './set'
@@ -20,8 +21,10 @@ export const parseSavedAttribute = (
 ): PossiblyUndefinedResolvedAttribute => {
   if (value === undefined) {
     if (isRequired(attribute)) {
-      // TODO
-      throw new Error()
+      throw new DynamoDBToolboxError('commands.formatSavedItem.savedAttributeRequired', {
+        message: `Missing required attribute in saved item: ${attribute.path}`,
+        path: attribute.path
+      })
     } else {
       return undefined
     }

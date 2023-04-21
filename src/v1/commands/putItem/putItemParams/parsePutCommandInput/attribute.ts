@@ -26,7 +26,7 @@ export const parseAttributePutCommandInput = (
 ): PossiblyUndefinedResolvedAttribute => {
   if (input === undefined) {
     if (isRequired(attribute)) {
-      throw new DynamoDBToolboxError('putItemCommand.attributeRequired', {
+      throw new DynamoDBToolboxError('commands.putItem.attributeRequired', {
         message: `Attribute ${attribute.path} is required`,
         path: attribute.path
       })

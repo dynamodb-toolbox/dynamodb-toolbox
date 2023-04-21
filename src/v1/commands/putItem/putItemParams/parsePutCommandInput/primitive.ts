@@ -12,7 +12,7 @@ export const parsePrimitiveAttributePutCommandInput = (
 ): PossiblyUndefinedResolvedAttribute => {
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(input)) {
-    throw new DynamoDBToolboxError('putItemCommand.invalidAttributeInput', {
+    throw new DynamoDBToolboxError('commands.putItem.invalidAttributeInput', {
       message: `Attribute ${primitiveAttribute.path} should be a ${primitiveAttribute.type}`,
       path: primitiveAttribute.path,
       payload: {
@@ -26,7 +26,7 @@ export const parsePrimitiveAttributePutCommandInput = (
     primitiveAttribute.enum !== undefined &&
     !primitiveAttribute.enum.includes(input as ResolvedPrimitiveAttribute)
   ) {
-    throw new DynamoDBToolboxError('putItemCommand.invalidAttributeInput', {
+    throw new DynamoDBToolboxError('commands.putItem.invalidAttributeInput', {
       message: `Attribute ${
         primitiveAttribute.path
       } should be one of: ${primitiveAttribute.enum.map(String).join(', ')}`,
