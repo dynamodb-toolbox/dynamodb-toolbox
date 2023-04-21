@@ -40,7 +40,7 @@ export const item: ItemTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $MapAttributeA
 
     const attributeSavedAs = attribute[$savedAs] ?? attributeName
     if (itemAttributesSavedAs.has(attributeSavedAs)) {
-      throw new DynamoDBToolboxError('duplicateSavedAsItemAttributes', {
+      throw new DynamoDBToolboxError('item.duplicateSavedAsAttributes', {
         message: `Invalid item: More than two attributes are saved as '${attributeSavedAs}'`,
         payload: { savedAs: attributeSavedAs }
       })

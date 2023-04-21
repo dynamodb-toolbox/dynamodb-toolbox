@@ -1,9 +1,9 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-type DuplicateSavedAsMapAttributesErrorBlueprint = ErrorBlueprint<{
-  code: 'duplicateSavedAsMapAttributes'
+type DuplicateSavedAsErrorBlueprint = ErrorBlueprint<{
+  code: 'item.mapAttribute.duplicateSavedAs'
   hasPath: true
   payload: { savedAs: string }
 }>
 
-export type MapAttributeErrorBlueprints = DuplicateSavedAsMapAttributesErrorBlueprint
+export type MapAttributeErrorBlueprints = DuplicateSavedAsErrorBlueprint

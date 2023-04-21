@@ -54,28 +54,28 @@ export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $
   const elements: $SET_ATTRIBUTE[$elements] = $setAttribute[$elements]
 
   if (elements[$required] !== 'atLeastOnce') {
-    throw new DynamoDBToolboxError('optionalSetAttributeElements', {
+    throw new DynamoDBToolboxError('item.setAttribute.optionalElements', {
       message: `Invalid set elements at path ${path}: Set elements must be required`,
       path
     })
   }
 
   if (elements[$hidden] !== false) {
-    throw new DynamoDBToolboxError('hiddenSetAttributeElements', {
+    throw new DynamoDBToolboxError('item.setAttribute.hiddenElements', {
       message: `Invalid set elements at path ${path}: Set elements cannot be hidden`,
       path
     })
   }
 
   if (elements[$savedAs] !== undefined) {
-    throw new DynamoDBToolboxError('savedAsSetAttributeElements', {
+    throw new DynamoDBToolboxError('item.setAttribute.savedAsElements', {
       message: `Invalid set elements at path ${path}: Set elements cannot be renamed (have savedAs option)`,
       path
     })
   }
 
   if (elements[$default] !== undefined) {
-    throw new DynamoDBToolboxError('defaultedSetAttributeElements', {
+    throw new DynamoDBToolboxError('item.setAttribute.defaultedElements', {
       message: `Invalid set elements at path ${path}: Set elements cannot have default values`,
       path
     })

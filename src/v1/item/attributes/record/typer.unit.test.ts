@@ -43,7 +43,7 @@ describe('record', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'invalidRecordAttributeKeys', path })
+      expect.objectContaining({ code: 'item.recordAttribute.invalidKeys', path })
     )
   })
 
@@ -66,7 +66,7 @@ describe('record', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'optionalRecordAttributeKeys', path })
+      expect.objectContaining({ code: 'item.recordAttribute.optionalKeys', path })
     )
   })
 
@@ -89,7 +89,7 @@ describe('record', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'hiddenRecordAttributeKeys', path })
+      expect.objectContaining({ code: 'item.recordAttribute.hiddenKeys', path })
     )
   })
 
@@ -111,7 +111,9 @@ describe('record', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'keyRecordAttributeKeys', path }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'item.recordAttribute.keyKeys', path })
+    )
   })
 
   it('rejects keys with savedAs values', () => {
@@ -133,7 +135,7 @@ describe('record', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'savedAsRecordAttributeKeys', path })
+      expect.objectContaining({ code: 'item.recordAttribute.savedAsKeys', path })
     )
   })
 
@@ -156,7 +158,7 @@ describe('record', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedRecordAttributeKeys', path })
+      expect.objectContaining({ code: 'item.recordAttribute.defaultedKeys', path })
     )
 
     record(
@@ -177,7 +179,7 @@ describe('record', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedRecordAttributeKeys', path })
+      expect.objectContaining({ code: 'item.recordAttribute.defaultedKeys', path })
     )
   })
 
@@ -200,7 +202,7 @@ describe('record', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'optionalRecordAttributeElements', path })
+      expect.objectContaining({ code: 'item.recordAttribute.optionalElements', path })
     )
   })
 
@@ -223,7 +225,7 @@ describe('record', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'hiddenRecordAttributeElements', path })
+      expect.objectContaining({ code: 'item.recordAttribute.hiddenElements', path })
     )
   })
 
@@ -246,7 +248,7 @@ describe('record', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'keyRecordAttributeElements', path })
+      expect.objectContaining({ code: 'item.recordAttribute.keyElements', path })
     )
   })
 
@@ -269,7 +271,7 @@ describe('record', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'savedAsRecordAttributeElements', path })
+      expect.objectContaining({ code: 'item.recordAttribute.savedAsElements', path })
     )
   })
 
@@ -292,7 +294,7 @@ describe('record', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedRecordAttributeElements', path })
+      expect.objectContaining({ code: 'item.recordAttribute.defaultedElements', path })
     )
 
     record(
@@ -313,7 +315,7 @@ describe('record', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'defaultedRecordAttributeElements', path })
+      expect.objectContaining({ code: 'item.recordAttribute.defaultedElements', path })
     )
   })
 
