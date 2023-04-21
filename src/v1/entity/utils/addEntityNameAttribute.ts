@@ -44,7 +44,7 @@ export const addEntityNameAttribute = <
   entityName: ENTITY_NAME
 }): WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME> => {
   if (entityNameAttributeName in item.attributes) {
-    throw new DynamoDBToolboxError('reservedAttributeName', {
+    throw new DynamoDBToolboxError('entity.reservedAttributeName', {
       message: `${entityNameAttributeName} is a reserved attribute name. Use a different attribute name or set a different entityNameAttributeName option in your Entity constructor.`,
       path: entityNameAttributeName
     })

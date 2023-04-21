@@ -58,7 +58,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   const keys: $RECORD_ATTRIBUTE[$keys] = $recordAttribute[$keys]
 
   if (keys[$type] !== 'string') {
-    throw new DynamoDBToolboxError('invalidRecordAttributeKeys', {
+    throw new DynamoDBToolboxError('item.recordAttribute.invalidKeys', {
       message: `Invalid record keys at path ${path}: Record keys must be a string`,
       path
     })
@@ -66,35 +66,35 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 
   // Checking $key before $required as $key implies attribute is always $required
   if (keys[$key] !== false) {
-    throw new DynamoDBToolboxError('keyRecordAttributeKeys', {
+    throw new DynamoDBToolboxError('item.recordAttribute.keyKeys', {
       message: `Invalid record keys at path ${path}: Record keys cannot be part of primary key`,
       path
     })
   }
 
   if (keys[$required] !== 'atLeastOnce') {
-    throw new DynamoDBToolboxError('optionalRecordAttributeKeys', {
+    throw new DynamoDBToolboxError('item.recordAttribute.optionalKeys', {
       message: `Invalid record keys at path ${path}: Record keys must be required`,
       path
     })
   }
 
   if (keys[$hidden] !== false) {
-    throw new DynamoDBToolboxError('hiddenRecordAttributeKeys', {
+    throw new DynamoDBToolboxError('item.recordAttribute.hiddenKeys', {
       message: `Invalid record keys at path ${path}: Record keys cannot be hidden`,
       path
     })
   }
 
   if (keys[$savedAs] !== undefined) {
-    throw new DynamoDBToolboxError('savedAsRecordAttributeKeys', {
+    throw new DynamoDBToolboxError('item.recordAttribute.savedAsKeys', {
       message: `Invalid record keys at path ${path}: Record keys cannot be renamed (have savedAs option)`,
       path
     })
   }
 
   if (keys[$default] !== undefined) {
-    throw new DynamoDBToolboxError('defaultedRecordAttributeKeys', {
+    throw new DynamoDBToolboxError('item.recordAttribute.defaultedKeys', {
       message: `Invalid record keys at path ${path}: Record keys cannot have default values`,
       path
     })
@@ -104,35 +104,35 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 
   // Checking $key before $required as $key implies attribute is always $required
   if (elements[$key] !== false) {
-    throw new DynamoDBToolboxError('keyRecordAttributeElements', {
+    throw new DynamoDBToolboxError('item.recordAttribute.keyElements', {
       message: `Invalid record elements at path ${path}: Record elements cannot be part of primary key`,
       path
     })
   }
 
   if (elements[$required] !== 'atLeastOnce') {
-    throw new DynamoDBToolboxError('optionalRecordAttributeElements', {
+    throw new DynamoDBToolboxError('item.recordAttribute.optionalElements', {
       message: `Invalid record elements at path ${path}: Record elements must be required`,
       path
     })
   }
 
   if (elements[$hidden] !== false) {
-    throw new DynamoDBToolboxError('hiddenRecordAttributeElements', {
+    throw new DynamoDBToolboxError('item.recordAttribute.hiddenElements', {
       message: `Invalid record elements at path ${path}: Record elements cannot be hidden`,
       path
     })
   }
 
   if (elements[$savedAs] !== undefined) {
-    throw new DynamoDBToolboxError('savedAsRecordAttributeElements', {
+    throw new DynamoDBToolboxError('item.recordAttribute.savedAsElements', {
       message: `Invalid record elements at path ${path}: Record elements cannot be renamed (have savedAs option)`,
       path
     })
   }
 
   if (elements[$default] !== undefined) {
-    throw new DynamoDBToolboxError('defaultedRecordAttributeElements', {
+    throw new DynamoDBToolboxError('item.recordAttribute.defaultedElements', {
       message: `Invalid record elements at path ${path}: Records elements cannot have default values`,
       path
     })

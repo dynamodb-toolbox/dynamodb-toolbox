@@ -57,14 +57,14 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
   const frozenElements: FreezeAttribute<$ANY_OF_ATTRIBUTES[$elements][number]>[] = []
 
   if (!isArray($anyOfAttribute[$elements])) {
-    throw new DynamoDBToolboxError('invalidAnyOfAttributeElements', {
+    throw new DynamoDBToolboxError('item.anyOfAttribute.invalidElements', {
       message: `Invalid anyOf elements at path ${path}: AnyOf elements must be an array`,
       path
     })
   }
 
   if ($anyOfAttribute[$elements].length === 0) {
-    throw new DynamoDBToolboxError('missingAnyOfAttributeElements', {
+    throw new DynamoDBToolboxError('item.anyOfAttribute.missingElements', {
       message: `Invalid anyOf elements at path ${path}: AnyOf attributes must have at least one element`,
       path
     })
@@ -72,28 +72,28 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
 
   $anyOfAttribute[$elements].forEach(element => {
     if (element[$required] !== 'atLeastOnce' && element[$required] !== 'always') {
-      throw new DynamoDBToolboxError('optionalAnyOfAttributeElements', {
+      throw new DynamoDBToolboxError('item.anyOfAttribute.optionalElements', {
         message: `Invalid anyOf elements at path ${path}: AnyOf elements must be required`,
         path
       })
     }
 
     if (element[$hidden] !== false) {
-      throw new DynamoDBToolboxError('hiddenAnyOfAttributeElements', {
+      throw new DynamoDBToolboxError('item.anyOfAttribute.hiddenElements', {
         message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot be hidden`,
         path
       })
     }
 
     if (element[$savedAs] !== undefined) {
-      throw new DynamoDBToolboxError('savedAsAnyOfAttributeElements', {
+      throw new DynamoDBToolboxError('item.anyOfAttribute.savedAsElements', {
         message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot be renamed (have savedAs option)`,
         path
       })
     }
 
     if (element[$default] !== undefined) {
-      throw new DynamoDBToolboxError('defaultedAnyOfAttributeElements', {
+      throw new DynamoDBToolboxError('item.anyOfAttribute.defaultedElements', {
         message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot have default values`,
         path
       })
