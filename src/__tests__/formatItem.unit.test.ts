@@ -159,4 +159,13 @@ describe('formatItem', () => {
     )
     expect(result).toEqual({ unspecified: 'value' })
   })
+
+  it('passes through null attribute', () => {
+    const result = formatItem()(
+      DefaultTable.User.schema.attributes,
+      DefaultTable.User.linked,
+      { number: null }
+    )
+    expect(result).toEqual({ number: null })
+  })
 })
