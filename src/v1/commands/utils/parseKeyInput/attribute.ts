@@ -1,4 +1,5 @@
-import { RequiredOption, Attribute, PossiblyUndefinedResolvedAttribute } from 'v1'
+import type { RequiredOption, Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parsePrimitiveAttributeKeyInput } from './primitive'
 import { parseSetAttributeKeyInput } from './set'
@@ -18,8 +19,10 @@ export const parseAttributeKeyInput = (
 ): PossiblyUndefinedResolvedAttribute => {
   if (input === undefined) {
     if (isRequired(attribute)) {
-      // TODO
-      throw new Error()
+      throw new DynamoDBToolboxError('commands.parseKeyInput.attributeRequired', {
+        message: `Attribute ${attribute.path} is required`,
+        path: attribute.path
+      })
     } else {
       return undefined
     }
