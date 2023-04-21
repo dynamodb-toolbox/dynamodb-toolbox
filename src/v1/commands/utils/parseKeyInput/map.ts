@@ -1,5 +1,6 @@
-import type { MapAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
+import type { MapAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
 import { isObject } from 'v1/utils/validation'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributeKeyInput } from './attribute'
 
@@ -8,8 +9,14 @@ export const parseMapAttributeKeyInput = (
   input: PossiblyUndefinedResolvedAttribute
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isObject(input)) {
-    // TODO
-    throw new Error()
+    throw new DynamoDBToolboxError('commands.parseKeyInput.invalidAttributeInput', {
+      message: `Attribute ${mapAttribute.path} should be an ${mapAttribute.type}`,
+      path: mapAttribute.path,
+      payload: {
+        received: input,
+        expected: mapAttribute.type
+      }
+    })
   }
 
   const parsedKeyInput: PossiblyUndefinedResolvedAttribute = {}
