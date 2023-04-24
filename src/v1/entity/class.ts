@@ -1,3 +1,4 @@
+import { DynamoDBToolboxError } from 'v1/errors'
 import type { HasComputedDefaults, Item } from 'v1/item'
 import type { TableV2, PrimaryKey } from 'v1/table'
 
@@ -7,7 +8,11 @@ import type {
   ItemPutDefaultsComputer,
   ItemDefaultsComputer
 } from './generics'
-import { addEntityNameAttribute, WithEntityNameAttribute } from './utils'
+import {
+  addEntityNameAttribute,
+  WithEntityNameAttribute,
+  doesItemValidateTableSchema
+} from './utils'
 
 export class EntityV2<
   NAME extends string = string,
@@ -60,7 +65,12 @@ export class EntityV2<
     this.table = table
     this.entityNameAttributeName = entityNameAttributeName
 
-    // TODO: validate that item respects table key design
+    if (computeKey === undefined && !doesItemValidateTableSchema(item, table)) {
+      throw new DynamoDBToolboxError('entity.invalidItemSchema', {
+        message: `Entity ${name}'s item does not follow its table primary key schema`
+      })
+    }
+
     this.item = addEntityNameAttribute({
       item,
       table,
