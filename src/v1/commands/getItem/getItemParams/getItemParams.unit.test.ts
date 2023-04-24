@@ -69,51 +69,43 @@ describe('get', () => {
   })
 
   it('fails with undefined input', () => {
-    expect(
-      () =>
-        getItemParams(
-          TestEntity,
-          // @ts-expect-error
-          {}
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      getItemParams(
+        TestEntity,
+        // @ts-expect-error
+        {}
+      )
+    ).toThrow('Attribute email is required')
   })
 
   it('fails when missing the sortKey', () => {
-    expect(
-      () =>
-        getItemParams(
-          TestEntity,
-          // @ts-expect-error
-          { pk: 'test-pk' }
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      getItemParams(
+        TestEntity,
+        // @ts-expect-error
+        { pk: 'test-pk' }
+      )
+    ).toThrow('Attribute email is required')
   })
 
   it('fails when missing partitionKey (no alias)', () => {
-    expect(
-      () =>
-        getItemParams(
-          TestEntity2,
-          // @ts-expect-error
-          {}
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      getItemParams(
+        TestEntity2,
+        // @ts-expect-error
+        {}
+      )
+    ).toThrow('Attribute pk is required')
   })
 
   it('fails when missing the sortKey (no alias)', () => {
-    expect(
-      () =>
-        getItemParams(
-          TestEntity2,
-          // @ts-expect-error
-          { pk: 'test-pk' }
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      getItemParams(
+        TestEntity2,
+        // @ts-expect-error
+        { pk: 'test-pk' }
+      )
+    ).toThrow('Attribute sk is required')
   })
 
   // Options
@@ -194,18 +186,6 @@ describe('get', () => {
   //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
   //   expect(ExpressionAttributeNames).toEqual({ '#proj1': 'pk' })
   //   expect(ProjectionExpression).toBe('#proj1')
-  // })
-
-  // TODO Enable extra parameters
-  // it('handles extra parameters', () => {
-  //   let { TableName, Key, ConsistentRead } = TestEntity.getParams(
-  //     { email: 'x', sort: 'y' },
-  //     {},
-  //     { ConsistentRead: true }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  //   expect(ConsistentRead).toBe(true)
   // })
 
   // TODO Create getBatch method and move tests there

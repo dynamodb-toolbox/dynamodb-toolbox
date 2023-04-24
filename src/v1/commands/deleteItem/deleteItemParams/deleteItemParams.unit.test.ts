@@ -65,51 +65,43 @@ describe('delete', () => {
   })
 
   it('fails with undefined input', () => {
-    expect(
-      () =>
-        deleteItemParams(
-          TestEntity,
-          // @ts-expect-error
-          {}
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      deleteItemParams(
+        TestEntity,
+        // @ts-expect-error
+        {}
+      )
+    ).toThrow('Attribute email is required')
   })
 
   it('fails when missing the sortKey', () => {
-    expect(
-      () =>
-        deleteItemParams(
-          TestEntity,
-          // @ts-expect-error
-          { pk: 'test-pk' }
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      deleteItemParams(
+        TestEntity,
+        // @ts-expect-error
+        { pk: 'test-pk' }
+      )
+    ).toThrow('Attribute email is required')
   })
 
   it('fails when missing partitionKey (no alias)', () => {
-    expect(
-      () =>
-        deleteItemParams(
-          TestEntity2,
-          // @ts-expect-error
-          {}
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      deleteItemParams(
+        TestEntity2,
+        // @ts-expect-error
+        {}
+      )
+    ).toThrow('Attribute pk is required')
   })
 
   it('fails when missing the sortKey (no alias)', () => {
-    expect(
-      () =>
-        deleteItemParams(
-          TestEntity2,
-          // @ts-expect-error
-          { pk: 'test-pk' }
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      deleteItemParams(
+        TestEntity2,
+        // @ts-expect-error
+        { pk: 'test-pk' }
+      )
+    ).toThrow('Attribute sk is required')
   })
 
   it('sets capacity options', () => {
@@ -217,29 +209,6 @@ describe('delete', () => {
     expect(ExpressionAttributeValues).toEqual({ ':1': 'test' })
     expect(ConditionExpression).toBe('#1 > :1')
   })
-
-  // TODO Enable extra parameters
-  // it('handles extra parameters', () => {
-  //   let { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
-  //     { email: 'x', sort: 'y' },
-  //     {},
-  //     { ReturnConsumedCapacity: 'NONE' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  //   expect(ReturnConsumedCapacity).toBe('NONE')
-  // })
-
-  // it('handles invalid parameter input', () => {
-  //   let { TableName, Key } = TestEntity.deleteParams(
-  //     { email: 'x', sort: 'y' },
-  //     {},
-  //     // @ts-expect-error
-  //     'string'
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  // })
 
   // TODO Create deleteBatch method and move tests there
   // it('formats a batch delete response', async () => {
