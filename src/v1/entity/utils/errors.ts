@@ -6,4 +6,12 @@ type ReservedAttributeNameErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
-export type EntityUtilsErrorBlueprints = ReservedAttributeNameErrorBlueprint
+type InvalidItemSchemaErrorBlueprint = ErrorBlueprint<{
+  code: 'entity.invalidItemSchema'
+  hasPath: false
+  payload: undefined
+}>
+
+export type EntityUtilsErrorBlueprints =
+  | ReservedAttributeNameErrorBlueprint
+  | InvalidItemSchemaErrorBlueprint

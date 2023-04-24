@@ -1,3 +1,4 @@
+import { DynamoDBToolboxError } from 'v1/errors'
 import type { HasComputedDefaults, Item } from 'v1/item'
 import type { TableV2, PrimaryKey } from 'v1/table'
 
@@ -7,14 +8,17 @@ import type {
   ItemPutDefaultsComputer,
   ItemDefaultsComputer
 } from './generics'
-import { addEntityNameAttribute, WithEntityNameAttribute } from './utils'
+import {
+  addEntityNameAttribute,
+  WithEntityNameAttribute,
+  doesItemValidateTableSchema
+} from './utils'
 
 export class EntityV2<
   NAME extends string = string,
   TABLE extends TableV2 = TableV2,
   ITEM extends Item = Item,
   ENTITY_NAME_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
-  // TODO: See if possible not to add it as a generic here
   PUT_DEFAULTS_COMPUTER = Item extends ITEM ? ItemDefaultsComputer : ItemPutDefaultsComputer<ITEM>,
   CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER
 > {
@@ -29,13 +33,13 @@ export class EntityV2<
 
   /**
    * Define an Entity for a given table
-   * (TODO: Use more @param for constructor arguments, see https://jsdoc.app/tags-param.html)
    *
    * @param name string
    * @param table Table
    * @param item Item
    * @param computeKey _(optional)_ Transforms key input to primary key
    * @param computedDefaults _(optional)_ Computes computed defaults
+   * @param entityNameAttributeName _(optional)_ Renames internal entity name string attribute (defaults to `entity`)
    */
   constructor({
     name,
@@ -60,7 +64,12 @@ export class EntityV2<
     this.table = table
     this.entityNameAttributeName = entityNameAttributeName
 
-    // TODO: validate that item respects table key design
+    if (computeKey === undefined && !doesItemValidateTableSchema(item, table)) {
+      throw new DynamoDBToolboxError('entity.invalidItemSchema', {
+        message: `Entity ${name}'s item does not follow its table primary key schema`
+      })
+    }
+
     this.item = addEntityNameAttribute({
       item,
       table,

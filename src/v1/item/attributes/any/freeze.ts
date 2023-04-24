@@ -45,7 +45,6 @@ export const freezeAnyAttribute: AnyAttributeFreezer = ($anyAttribute, path) => 
     hidden: $anyAttribute[$hidden],
     key: $anyAttribute[$key],
     savedAs: $anyAttribute[$savedAs],
-    // TODO: validate that default is valid ?
     default: $anyAttribute[$default]
   }
 }

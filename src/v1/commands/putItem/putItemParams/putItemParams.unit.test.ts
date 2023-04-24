@@ -123,7 +123,7 @@ describe('put', () => {
 
     expect(Item).toMatchObject({
       _et: TestEntity.name,
-      // TODO
+      // TODO Support timestamp fields
       // _ct:
       // _md
       pk: 'test-pk',
@@ -186,15 +186,13 @@ describe('put', () => {
   })
 
   it('fails if required attribute misses', () => {
-    expect(
-      () =>
-        putItemParams(
-          TestEntity3,
-          // @ts-expect-error
-          { email: 'test-pk' }
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      putItemParams(
+        TestEntity3,
+        // @ts-expect-error
+        { email: 'test-pk' }
+      )
+    ).toThrow('Attribute test is required')
   })
 
   it('ignores additional attribute', () => {
@@ -209,42 +207,36 @@ describe('put', () => {
   })
 
   it('fails when invalid string provided with no coercion', () => {
-    expect(
-      () =>
-        putItemParams(TestEntity, {
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          test_string: 1
-        })
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      putItemParams(TestEntity, {
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        test_string: 1
+      })
+    ).toThrow('Attribute test_string should be a string')
   })
 
   it('fails when invalid boolean provided with no coercion', () => {
-    expect(
-      () =>
-        putItemParams(TestEntity, {
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          test_boolean: 'x'
-        })
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      putItemParams(TestEntity, {
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        test_boolean: 'x'
+      })
+    ).toThrow('Attribute test_boolean should be a boolean')
   })
 
   it('fails when invalid number provided with no coercion', () => {
-    expect(
-      () =>
-        putItemParams(TestEntity, {
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          count: 'x'
-        })
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      putItemParams(TestEntity, {
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        count: 'x'
+      })
+    ).toThrow('Attribute count should be a number')
   })
 
   it('with valid array', () => {
@@ -260,16 +252,14 @@ describe('put', () => {
   })
 
   it('fails when invalid array provided', () => {
-    expect(
-      () =>
-        putItemParams(TestEntity, {
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          test_list: ['a', 2]
-        })
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      putItemParams(TestEntity, {
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        test_list: ['a', 2]
+      })
+    ).toThrow('Attribute test_list[n] should be a string')
   })
 
   it('with valid map', () => {
@@ -287,16 +277,14 @@ describe('put', () => {
   })
 
   it('fails when invalid map provided', () => {
-    expect(
-      () =>
-        putItemParams(TestEntity, {
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          test_map: { str: 2 }
-        })
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      putItemParams(TestEntity, {
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        test_map: { str: 2 }
+      })
+    ).toThrow('Attribute test_map.str should be a string')
   })
 
   it('with valid set', () => {
@@ -312,28 +300,24 @@ describe('put', () => {
   })
 
   it('fails when set contains different types', () => {
-    expect(
-      () =>
-        putItemParams(TestEntity, {
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          test_string_set: new Set(['a', 'b', 3])
-        })
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      putItemParams(TestEntity, {
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        test_string_set: new Set(['a', 'b', 3])
+      })
+    ).toThrow('Attribute test_string_set[x] should be a string')
   })
 
   it('fails when missing a required field', () => {
-    expect(
-      () =>
-        putItemParams(
-          TestEntity3,
-          // @ts-expect-error
-          { email: 'test-pk', test2: 'test' }
-        )
-      // TODO: Nice error message
-    ).toThrow('')
+    expect(() =>
+      putItemParams(
+        TestEntity3,
+        // @ts-expect-error
+        { email: 'test-pk', test2: 'test' }
+      )
+    ).toThrow('Attribute test is required')
   })
 
   it('puts 0 and false to required fields', () => {
@@ -462,27 +446,6 @@ describe('put', () => {
     expect(ExpressionAttributeValues).toEqual({ ':1': 'test' })
     expect(ConditionExpression).toBe('#1 > :1')
   })
-
-  // TODO Enable extra parameters
-  // it('handles extra parameters', () => {
-  //   const { TableName, ReturnConsumedCapacity } = TestEntity.putParams(
-  //     { email: 'x', sort: 'y' },
-  //     {},
-  //     { ReturnConsumedCapacity: 'NONE' }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(ReturnConsumedCapacity).toBe('NONE')
-  // })
-
-  // it('handles invalid parameter input', () => {
-  //   const { TableName } = TestEntity.putParams(
-  //     { email: 'x', sort: 'y' },
-  //     {},
-  //     // @ts-expect-error
-  //     'string'
-  //   )
-  //   expect(TableName).toBe('test-table')
-  // })
 
   // TODO Create putBatch method and move tests there
   // it('formats a batch put response', async () => {
