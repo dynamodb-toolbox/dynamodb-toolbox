@@ -10,13 +10,13 @@ import { parseCondition } from './parseCondition'
 import { toCommandOptions } from './toCommandOptions'
 
 export class ConditionParser {
-  item: Item
+  schema: Attribute | Item
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]
   conditionExpression: string
 
-  constructor(item: Item) {
-    this.item = item
+  constructor(schema: Attribute | Item) {
+    this.schema = schema
     this.expressionAttributeNames = []
     this.expressionAttributeValues = []
     this.conditionExpression = ''
