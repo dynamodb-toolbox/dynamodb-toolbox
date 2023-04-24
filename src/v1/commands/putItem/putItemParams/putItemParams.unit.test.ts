@@ -123,7 +123,7 @@ describe('put', () => {
 
     expect(Item).toMatchObject({
       _et: TestEntity.name,
-      // TODO
+      // TODO Support timestamp fields
       // _ct:
       // _md
       pk: 'test-pk',

@@ -46,16 +46,8 @@ describe('map properties freeze', () => {
     freezeMapAttribute(mapInstance, pathMock)
 
     expect(freezeAttributeMock).toHaveBeenCalledTimes(2)
-    expect(freezeAttributeMock).toHaveBeenCalledWith(
-      stringAttr,
-      // TODO Mock and use joinPaths util
-      [pathMock, string1Name].join('.')
-    )
-    expect(freezeAttributeMock).toHaveBeenCalledWith(
-      stringAttr,
-      // TODO Mock and use joinPaths util
-      [pathMock, string2Name].join('.')
-    )
+    expect(freezeAttributeMock).toHaveBeenCalledWith(stringAttr, [pathMock, string1Name].join('.'))
+    expect(freezeAttributeMock).toHaveBeenCalledWith(stringAttr, [pathMock, string2Name].join('.'))
   })
 
   it('throws if map attribute has duplicate savedAs', () => {
