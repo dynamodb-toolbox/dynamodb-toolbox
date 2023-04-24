@@ -6,21 +6,30 @@ import {
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute
-} from 'v1'
+} from 'v1/item'
 import { isFunction } from 'v1/utils/validation'
 
-import { DefaultsComputeOptions } from './types'
+import { ComputeDefaultsContext } from './types'
+import { canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const clonePrimitiveAttributeInputAndAddDefaults = (
   attribute: AnyAttribute | PrimitiveAttribute | SetAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  { computeDefaults, contextInputs }: DefaultsComputeOptions
+  computeDefaultsContext?: ComputeDefaultsContext
 ): PossiblyUndefinedResolvedAttribute => {
+  const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
+
   if (input !== undefined) {
     return cloneDeep(input)
   }
 
   if (attribute.default === ComputedDefault) {
+    if (!canComputeDefaults) {
+      return undefined
+    }
+
+    const { computeDefaults, contextInputs } = computeDefaultsContext
+
     if (!computeDefaults || !isFunction(computeDefaults)) {
       return undefined
     }
