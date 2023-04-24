@@ -3,16 +3,16 @@ import cloneDeep from 'lodash.clonedeep'
 import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
 import type { AnyOfAttributeClonedInputsWithDefaults } from 'v1/commands/types'
 
-import type { DefaultsComputeOptions } from './types'
+import type { ComputeDefaultsContext } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 
 export const cloneAnyOfAttributeInputAndAddDefaults = (
   attribute: AnyOfAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  defaultsComputeOptions: DefaultsComputeOptions
+  computeDefaultsContext?: ComputeDefaultsContext
 ): AnyOfAttributeClonedInputsWithDefaults | undefined => {
   const clonedInputsWithDefaults = attribute.elements.map(element =>
-    cloneAttributeInputAndAddDefaults(element, input, defaultsComputeOptions)
+    cloneAttributeInputAndAddDefaults(element, input, computeDefaultsContext)
   )
 
   return clonedInputsWithDefaults.every(clonedInput => clonedInput === undefined)
@@ -21,7 +21,7 @@ export const cloneAnyOfAttributeInputAndAddDefaults = (
       {
         originalInput: cloneDeep(input),
         clonedInputsWithDefaults: attribute.elements.map(element =>
-          cloneAttributeInputAndAddDefaults(element, input, defaultsComputeOptions)
+          cloneAttributeInputAndAddDefaults(element, input, computeDefaultsContext)
         )
       }
 }

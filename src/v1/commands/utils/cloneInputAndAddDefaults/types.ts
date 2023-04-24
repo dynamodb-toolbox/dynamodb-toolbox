@@ -1,6 +1,7 @@
-import { PossiblyUndefinedResolvedAttribute, AttributeDefaultsComputer } from 'v1'
+import type { PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { AttributeDefaultsComputer } from 'v1/entity'
 
-export type DefaultsComputeOptions = {
+export type ComputeDefaultsContext = {
   computeDefaults: AttributeDefaultsComputer
   contextInputs: PossiblyUndefinedResolvedAttribute[]
 }
