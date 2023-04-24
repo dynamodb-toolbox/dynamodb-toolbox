@@ -1,4 +1,4 @@
-import type { AnyAttribute, Attribute, PrimitiveAttribute } from 'v1/item'
+import { AnyAttribute, Attribute, PrimitiveAttribute, Item } from 'v1/item'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
@@ -44,27 +44,11 @@ export const appendAttributePath = (
   options: { size?: boolean } = {}
 ): Attribute => {
   let conditionExpressionPath = ''
-  let parentAttribute: Attribute
+  let parentAttribute: Attribute | Item = conditionParser.schema
+  let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|\w+(?=(\.|$|\[))/g)]
 
-  const [rootMatch, ...attributeMatches] = attributePath.matchAll(/\[(\d+)\]|\w+(?=(\.|$|\[))/g)
-  if (rootMatch === undefined) {
-    throw new InvalidConditionAttributePathError(attributePath)
-  }
-
-  const [rootAttributeAccessor] = rootMatch
-  const rootAttribute = conditionParser.item.attributes[rootAttributeAccessor]
-  if (rootAttribute === undefined) {
-    throw new InvalidConditionAttributePathError(attributePath)
-  }
-
-  parentAttribute = rootAttribute
-
-  const rootExpressionAttributeNameIndex = conditionParser.expressionAttributeNames.push(
-    rootAttribute.savedAs ?? rootAttributeAccessor
-  )
-  conditionExpressionPath += `#${rootExpressionAttributeNameIndex}`
-
-  for (const attributeMatch of attributeMatches) {
+  while (attributeMatches.length > 0) {
+    const attributeMatch = attributeMatches.shift() as RegExpMatchArray
     const childAttributeAccessor = attributeMatch[0]
 
     switch (parentAttribute.type) {
@@ -105,6 +89,7 @@ export const appendAttributePath = (
         parentAttribute = parentAttribute.elements
         break
       }
+      case 'item':
       case 'map': {
         const childAttribute = parentAttribute.attributes[childAttributeAccessor]
         if (!childAttribute) {
@@ -114,7 +99,10 @@ export const appendAttributePath = (
         const expressionAttributeNameIndex = conditionParser.expressionAttributeNames.push(
           childAttribute.savedAs ?? childAttributeAccessor
         )
-        conditionExpressionPath += `.#${expressionAttributeNameIndex}`
+        conditionExpressionPath +=
+          parentAttribute.type === 'item'
+            ? `#${expressionAttributeNameIndex}`
+            : `.#${expressionAttributeNameIndex}`
 
         parentAttribute = childAttribute
         break
@@ -129,10 +117,43 @@ export const appendAttributePath = (
         parentAttribute = parentAttribute.elements
         break
       }
-      case 'anyOf':
-        // TODO
-        throw new InvalidConditionAttributePathError(attributePath)
+      case 'anyOf': {
+        let validElementConditionParser: ConditionParser | undefined = undefined
+        const subPath = attributePath.slice(attributeMatch.index)
+
+        for (const element of parentAttribute.elements) {
+          try {
+            parentAttribute = element
+            const elementConditionParser = new ConditionParser(element)
+            elementConditionParser.expressionAttributeNames = [
+              ...conditionParser.expressionAttributeNames
+            ]
+            elementConditionParser.expressionAttributeValues = [
+              ...conditionParser.expressionAttributeValues
+            ]
+            parentAttribute = elementConditionParser.appendAttributePath(subPath)
+            validElementConditionParser = elementConditionParser
+            /* eslint-disable no-empty */
+          } catch {}
+        }
+
+        if (validElementConditionParser === undefined) {
+          throw new InvalidConditionAttributePathError(attributePath)
+        }
+
+        conditionParser.expressionAttributeNames =
+          validElementConditionParser.expressionAttributeNames
+        conditionExpressionPath += validElementConditionParser.conditionExpression
+        // No need to go over the rest of the path
+        attributeMatches = []
+
+        break
+      }
     }
+  }
+
+  if (parentAttribute.type === 'item') {
+    throw new InvalidConditionAttributePathError(attributePath)
   }
 
   conditionParser.appendToConditionExpression(
