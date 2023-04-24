@@ -15,7 +15,6 @@ export class TableV2<
 
   /**
    * Define a Table
-   * (TODO: Use @typedef for constructor arguments, see https://stackoverflow.com/questions/58410776/how-to-document-destructured-parameters-in-jsdoc)
    *
    * @param documentClient DynamoDBDocumentClient
    * @param name string
