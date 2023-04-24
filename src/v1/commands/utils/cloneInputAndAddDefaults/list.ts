@@ -1,23 +1,28 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import {
-  PossiblyUndefinedResolvedAttribute,
-  ListAttribute,
-  ComputedDefault,
-  AttributeDefaultsComputer
-} from 'v1'
+import { PossiblyUndefinedResolvedAttribute, ListAttribute, ComputedDefault } from 'v1/item'
+import type { AttributeDefaultsComputer } from 'v1/entity'
 import { isArray, isFunction, isObject } from 'v1/utils/validation'
 
 import { cloneAttributeInputAndAddDefaults } from './attribute'
-import { DefaultsComputeOptions } from './types'
+import type { ComputeDefaultsContext } from './types'
+import { canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneListAttributeInputAndAddDefaults = (
   listAttribute: ListAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  { computeDefaults, contextInputs }: DefaultsComputeOptions
+  computeDefaultsContext?: ComputeDefaultsContext
 ): PossiblyUndefinedResolvedAttribute => {
+  const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
+
   if (input === undefined) {
     if (listAttribute.default === ComputedDefault) {
+      if (!canComputeDefaults) {
+        return undefined
+      }
+
+      const { computeDefaults, contextInputs } = computeDefaultsContext
+
       if (isFunction(computeDefaults)) {
         return computeDefaults(...contextInputs)
       }
@@ -37,6 +42,14 @@ export const cloneListAttributeInputAndAddDefaults = (
   if (!isArray(input)) {
     return cloneDeep(input)
   }
+
+  if (!canComputeDefaults) {
+    return input.map(elementInput =>
+      cloneAttributeInputAndAddDefaults(listAttribute.elements, elementInput)
+    )
+  }
+
+  const { computeDefaults, contextInputs } = computeDefaultsContext
 
   let elementsComputeDefaults: AttributeDefaultsComputer
   if (isObject(computeDefaults) && '_elements' in computeDefaults) {

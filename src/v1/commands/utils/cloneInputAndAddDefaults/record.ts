@@ -9,15 +9,24 @@ import {
 import { isObject, isFunction } from 'v1/utils/validation'
 
 import { cloneAttributeInputAndAddDefaults } from './attribute'
-import { DefaultsComputeOptions } from './types'
+import { ComputeDefaultsContext } from './types'
+import { canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneRecordAttributeInputAndAddDefaults = (
   recordAttribute: RecordAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  { computeDefaults, contextInputs }: DefaultsComputeOptions
+  computeDefaultsContext?: ComputeDefaultsContext
 ): PossiblyUndefinedResolvedAttribute => {
+  const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
+
   if (input === undefined) {
     if (recordAttribute.default === ComputedDefault) {
+      if (!canComputeDefaults) {
+        return undefined
+      }
+
+      const { computeDefaults, contextInputs } = computeDefaultsContext
+
       if (isFunction(computeDefaults)) {
         return computeDefaults(...contextInputs)
       }
@@ -37,6 +46,17 @@ export const cloneRecordAttributeInputAndAddDefaults = (
   if (!isObject(input)) {
     return cloneDeep(input)
   }
+
+  if (!canComputeDefaults) {
+    return Object.fromEntries(
+      Object.entries(input).map(([elementKey, elementInput]) => [
+        elementKey,
+        cloneAttributeInputAndAddDefaults(recordAttribute.elements, elementInput)
+      ])
+    )
+  }
+
+  const { computeDefaults, contextInputs } = computeDefaultsContext
 
   let elementsComputeDefaults: AttributeDefaultsComputer
   if (isObject(computeDefaults) && '_elements' in computeDefaults) {
