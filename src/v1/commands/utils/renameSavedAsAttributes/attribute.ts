@@ -7,6 +7,7 @@ import type {
 import type { ParsedAnyOfAttributeCommandInput } from 'v1/commands/types'
 
 import { renameListAttributeSavedAsAttributes } from './list'
+import { renameRecordAttributeSavedAsAttributes } from './record'
 import { renameMapAttributeSavedAsAttributes } from './map'
 import { renameAnyOfAttributeSavedAsAttributes } from './anyOf'
 
@@ -33,8 +34,10 @@ export const renameAttributeSavedAsAttributes = (
         input as PossiblyUndefinedResolvedMapAttribute
       )
     case 'record':
-      // TODO
-      return input
+      return renameRecordAttributeSavedAsAttributes(
+        attribute,
+        input as PossiblyUndefinedResolvedMapAttribute
+      )
     case 'anyOf':
       return renameAnyOfAttributeSavedAsAttributes(
         attribute,
