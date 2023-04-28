@@ -1,9 +1,11 @@
-import { AnyAttribute, Attribute, PrimitiveAttribute, Item } from 'v1/item'
+import type { AnyAttribute, Attribute, PrimitiveAttribute, Item } from 'v1/item'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 
 import { ConditionParser } from './conditionParser'
+
+import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 
 const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
   type: 'any',
@@ -79,10 +81,9 @@ export const appendAttributePath = (
         break
       }
       case 'record': {
-        // TODO: Validate key
-        // const key = parseValue(parentAttribute.keys, attributeMatch[0])
         const expressionAttributeNameIndex = conditionParser.expressionAttributeNames.push(
-          childAttributeAccessor
+          // We don't really need to clone / add default as it is a defined string
+          parseAttributeClonedInput(parentAttribute.keys, childAttributeAccessor) as string
         )
         conditionExpressionPath += `.#${expressionAttributeNameIndex}`
 
