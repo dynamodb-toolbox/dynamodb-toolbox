@@ -5,6 +5,6 @@ export interface AttributeFilters {
 }
 
 export interface ParsingOptions {
-  requiringOptions: Set<RequiredOption>
+  requiringOptions?: Set<RequiredOption>
   filters?: AttributeFilters
 }

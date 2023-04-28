@@ -8,7 +8,7 @@ import type { ParsingOptions } from './types'
 export const parseListAttributeClonedInput = (
   listAttribute: ListAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  parsingOptions: ParsingOptions
+  parsingOptions: ParsingOptions = {}
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isArray(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
