@@ -11,7 +11,7 @@ import type { ParsingOptions } from './types'
 export const parseAnyOfAttributeClonedInput = (
   anyOfAttribute: AnyOfAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  parsingOptions: ParsingOptions
+  parsingOptions: ParsingOptions = {}
 ): ParsedAnyOfAttributeCommandInput => {
   let parsedInput: ParsedAnyOfAttributeCommandInput | undefined = undefined
 

@@ -10,7 +10,7 @@ import type { ParsingOptions } from './types'
 export const parseItemClonedInput = (
   item: Item,
   input: PossiblyUndefinedResolvedItem,
-  parsingOptions: ParsingOptions
+  parsingOptions: ParsingOptions = {}
 ): PossiblyUndefinedResolvedItem => {
   const { filters } = parsingOptions
 
