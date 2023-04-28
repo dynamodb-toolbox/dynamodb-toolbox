@@ -1,1 +1,2 @@
-export { cloneItemInputAndAddDefaults as cloneInputAndAddDefaults } from './item'
+export { cloneItemInputAndAddDefaults } from './item'
+export { cloneAttributeInputAndAddDefaults } from './attribute'
