@@ -9,7 +9,7 @@ import type { ParsingOptions } from './types'
 export const parseMapAttributeClonedInput = (
   mapAttribute: MapAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  parsingOptions: ParsingOptions
+  parsingOptions: ParsingOptions = {}
 ): PossiblyUndefinedResolvedAttribute => {
   const { filters } = parsingOptions
 
