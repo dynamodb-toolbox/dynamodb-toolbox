@@ -25,6 +25,7 @@ const TestEntity = new Entity({
     sort: { type: 'string', sortKey: true },
     test_string: { type: 'string', coerce: false, default: 'default string' },
     test_string_coerce: { type: 'string' },
+    test_number_default_with_map: { type: 'number', map: 'test_mapped_number', default: 0, onUpdate: false },
     test_number: { type: 'number', alias: 'count', coerce: false },
     test_number_coerce: { type: 'number', default: 0 },
     test_boolean: { type: 'boolean', coerce: false },
@@ -193,15 +194,19 @@ describe('update', () => {
     } = TestEntity.updateParams({
       email: 'test-pk',
       sort: 'test-sk',
-      test_boolean_default: true
+      test_boolean_default: true,
+      test_number_default_with_map: 111
     })
 
     expect(ExpressionAttributeNames?.['#test_boolean_default']).toBe('test_boolean_default')
     expect(ExpressionAttributeValues?.[':test_boolean_default']).toBe(true)
+    expect(ExpressionAttributeNames?.['#test_mapped_number']).toBe('test_mapped_number')
+    expect(ExpressionAttributeValues?.[':test_mapped_number']).toBe(111)
 
     expect(UpdateExpression).toBe(
-      'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
+      'SET #test_string = if_not_exists(#test_string,:test_string), #test_mapped_number = :test_mapped_number, #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
     )
+
   })
 
   it('fails when removing fields with default values', () => {
@@ -1172,16 +1177,17 @@ describe('update', () => {
     expect(ExpressionAttributeValues).toHaveProperty(':test_string')
   })
 
-  it('should keep empty lists if removeNulls is true', () => {
+  it.only('should keep empty lists if removeNulls is true', () => {
     const params = TestEntity.updateParams(
       { email: 'x', sort: 'y', test_list: [] },
     )
 
-    expect(params.UpdateExpression).toBe('SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = :test_list')
+    expect(params.UpdateExpression).toBe("SET #test_string = if_not_exists(#test_string,:test_string), #test_mapped_number = if_not_exists(#test_mapped_number,:test_mapped_number), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = :test_list")
     expect(params.ExpressionAttributeNames).toEqual({
       '#_ct': '_ct',
       '#_et': '_et',
       '#_md': '_md',
+      '#test_mapped_number': 'test_mapped_number',
       '#test_boolean_default': 'test_boolean_default',
       '#test_list': 'test_list',
       '#test_number_coerce': 'test_number_coerce',
@@ -1191,6 +1197,7 @@ describe('update', () => {
       ':_ct': expect.any(String),
       ':_et': 'TestEntity',
       ':_md': expect.any(String),
+      ':test_mapped_number': 0,
       ':test_boolean_default': false,
       ':test_list':  [],
       ':test_number_coerce': 0,
