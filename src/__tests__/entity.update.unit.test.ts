@@ -90,6 +90,13 @@ const TestEntity3 = new Entity({
   table: TestTable3
 } as const)
 
+const TestTable4 = new Table({
+  name: 'test-table4',
+  partitionKey: 'pk',
+  entityField: false,
+  DocumentClient
+})
+
 const TestEntity4 = new Entity({
   name: 'TestEntity4',
   autoExecute: false,
@@ -98,7 +105,7 @@ const TestEntity4 = new Entity({
     test_number_default_with_map: { type: 'number', map: 'test_mapped_number', default: 0, onUpdate: false },
   },
   timestamps: false,
-  table: TestTable3
+  table: TestTable4
 } as const)
 
 const TestEntityGSI = new Entity({
