@@ -90,6 +90,24 @@ const TestEntity3 = new Entity({
   table: TestTable3
 } as const)
 
+const TestTable4 = new Table({
+  name: 'test-table4',
+  partitionKey: 'pk',
+  entityField: false,
+  DocumentClient
+})
+
+const TestEntity4 = new Entity({
+  name: 'TestEntity4',
+  autoExecute: false,
+  attributes: {
+    email: { type: 'string', partitionKey: true },
+    test_number_default_with_map: { type: 'number', map: 'test_mapped_number', default: 0, onUpdate: false },
+  },
+  timestamps: false,
+  table: TestTable4
+} as const)
+
 const TestEntityGSI = new Entity({
   name: 'TestEntityGSI',
   autoExecute: false,
@@ -203,6 +221,26 @@ describe('update', () => {
       'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
     )
   })
+
+  it('allows overriding default field values that use mapping', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity4.updateParams({
+      email: 'test-pk',
+      test_number_default_with_map: 111
+    })
+
+    expect(ExpressionAttributeNames?.['#test_mapped_number']).toBe('test_mapped_number')
+    expect(ExpressionAttributeValues?.[':test_mapped_number']).toBe(111)
+
+    expect(UpdateExpression).toBe(
+      'SET #test_mapped_number = :test_mapped_number'
+    )
+
+  })
+
 
   it('fails when removing fields with default values', () => {
     expect(() =>

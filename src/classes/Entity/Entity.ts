@@ -1178,7 +1178,7 @@ class Entity<Name extends string = string,
             // Push the update to SET
             SET.push(
               // @ts-ignore
-              mapping.default !== undefined && item[field] === undefined && !mapping.onUpdate
+              mapping.default !== undefined && item[mapping.alias || field] === undefined && !mapping.onUpdate
                 ? `#${field} = if_not_exists(#${field},:${field})`
                 : `#${field} = :${field}`,
             )
