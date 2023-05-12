@@ -1,2 +1,2 @@
-export { addEntityNameAttribute, WithEntityNameAttribute } from './addEntityNameAttribute'
+export { addInternalAttributes, WithInternalAttributes } from './addInternalAttributes'
 export { doesItemValidateTableSchema } from './doesItemValidateTableSchema'
