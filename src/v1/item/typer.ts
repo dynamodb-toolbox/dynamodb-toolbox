@@ -26,9 +26,9 @@ export const item: ItemTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $MapAttributeA
   const $itemAttributes = $itemAttr as $MapAttributeAttributes
 
   const itemAttributes: MapAttributeAttributes = {}
-  const itemAttributesSavedAs = new Set<string>()
-  const keyAttributesNames = new Set<string>()
-  const requiredAttributesNames: Record<RequiredOption, Set<string>> = {
+  const savedAttributeNames = new Set<string>()
+  const keyAttributeNames = new Set<string>()
+  const requiredAttributeNames: Record<RequiredOption, Set<string>> = {
     always: new Set(),
     atLeastOnce: new Set(),
     onlyOnce: new Set(),
@@ -39,27 +39,28 @@ export const item: ItemTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $MapAttributeA
     const attribute = $itemAttributes[attributeName]
 
     const attributeSavedAs = attribute[$savedAs] ?? attributeName
-    if (itemAttributesSavedAs.has(attributeSavedAs)) {
+    if (savedAttributeNames.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('item.duplicateSavedAsAttributes', {
         message: `Invalid item: More than two attributes are saved as '${attributeSavedAs}'`,
         payload: { savedAs: attributeSavedAs }
       })
     }
-    itemAttributesSavedAs.add(attributeSavedAs)
+    savedAttributeNames.add(attributeSavedAs)
 
     if (attribute[$key]) {
-      keyAttributesNames.add(attributeName)
+      keyAttributeNames.add(attributeName)
     }
 
-    requiredAttributesNames[attribute[$required]].add(attributeName)
+    requiredAttributeNames[attribute[$required]].add(attributeName)
 
     itemAttributes[attributeName] = freezeAttribute(attribute, attributeName)
   }
 
   return {
     type: 'item',
-    keyAttributesNames,
-    requiredAttributesNames,
+    savedAttributeNames,
+    keyAttributeNames,
+    requiredAttributeNames,
     attributes: itemAttributes
   } as Item<
     { [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]> }
