@@ -1,7 +1,8 @@
 import type { Item, AtLeastOnce, PrimitiveAttribute } from 'v1/item'
 import type { EntityNameAttributeSavedAs, TableV2 } from 'v1/table'
-import { WithRootAttribute, addRootAttribute } from 'v1/item/utils/addRootAttribute'
 import { DynamoDBToolboxError } from 'v1/errors'
+
+import { WithRootAttribute, addRootAttribute } from './addRootAttribute'
 
 export type EntityNameAttribute<
   TABLE extends TableV2,
@@ -27,7 +28,19 @@ export type WithEntityNameAttribute<
   ? ITEM
   : WithRootAttribute<ITEM, ENTITY_NAME_ATTRIBUTE_NAME, EntityNameAttribute<TABLE, ENTITY_NAME>>
 
-export const addEntityNameAttribute = <
+type EntityNameAttributeAdder = <
+  ITEM extends Item,
+  TABLE extends TableV2,
+  ENTITY_NAME_ATTRIBUTE_NAME extends string,
+  ENTITY_NAME extends string
+>(props: {
+  item: ITEM
+  table: TABLE
+  entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
+  entityName: ENTITY_NAME
+}) => WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>
+
+export const addEntityNameAttribute: EntityNameAttributeAdder = <
   ITEM extends Item,
   TABLE extends TableV2,
   ENTITY_NAME_ATTRIBUTE_NAME extends string,
@@ -42,7 +55,7 @@ export const addEntityNameAttribute = <
   table: TABLE
   entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
   entityName: ENTITY_NAME
-}): WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME> => {
+}) => {
   if (entityNameAttributeName in item.attributes) {
     throw new DynamoDBToolboxError('entity.reservedAttributeName', {
       message: `${entityNameAttributeName} is a reserved attribute name. Use a different attribute name or set a different entityNameAttributeName option in your Entity constructor.`,
@@ -65,7 +78,5 @@ export const addEntityNameAttribute = <
     item,
     entityNameAttributeName,
     entityNameAttribute
-  ) as string extends ENTITY_NAME
-    ? ITEM
-    : WithRootAttribute<ITEM, ENTITY_NAME_ATTRIBUTE_NAME, EntityNameAttribute<TABLE, ENTITY_NAME>>
+  ) as WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>
 }
