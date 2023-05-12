@@ -9,13 +9,21 @@ export type WithInternalAttributes<
   TABLE extends TableV2,
   ENTITY_NAME_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
-  TIMESTAMPS extends boolean
+  TIMESTAMPS extends boolean,
+  CREATED_TIMESTAMP_ATTRIBUTE_NAME extends string,
+  CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string,
+  MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
+  MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 > = string extends ENTITY_NAME
   ? ITEM
   : TIMESTAMPS extends true
   ? WithTimestampAttributes<
       WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>,
-      ENTITY_NAME
+      ENTITY_NAME,
+      CREATED_TIMESTAMP_ATTRIBUTE_NAME,
+      CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
+      MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
+      MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
     >
   : WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>
 
@@ -24,38 +32,72 @@ type InternalAttributesAdder = <
   TABLE extends TableV2,
   ENTITY_NAME_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
-  TIMESTAMPS extends boolean
+  TIMESTAMPS extends boolean,
+  CREATED_TIMESTAMP_ATTRIBUTE_NAME extends string,
+  CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string,
+  MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
+  MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 >({
   item,
   table,
   entityNameAttributeName,
-  entityName
+  entityName,
+  createdTimestampAttributeName,
+  createdTimestampAttributeSavedAs,
+  modifiedTimestampAttributeName,
+  modifiedTimestampAttributeSavedAs
 }: {
   item: ITEM
   table: TABLE
   entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
   entityName: ENTITY_NAME
   timestamps: TIMESTAMPS
-}) => WithInternalAttributes<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME, TIMESTAMPS>
+  createdTimestampAttributeName: CREATED_TIMESTAMP_ATTRIBUTE_NAME
+  createdTimestampAttributeSavedAs: CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+  modifiedTimestampAttributeName: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
+  modifiedTimestampAttributeSavedAs: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+}) => WithInternalAttributes<
+  ITEM,
+  TABLE,
+  ENTITY_NAME_ATTRIBUTE_NAME,
+  ENTITY_NAME,
+  TIMESTAMPS,
+  CREATED_TIMESTAMP_ATTRIBUTE_NAME,
+  CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
+  MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
+  MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+>
 
 export const addInternalAttributes: InternalAttributesAdder = <
   ITEM extends Item,
   TABLE extends TableV2,
   ENTITY_NAME_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
-  TIMESTAMPS extends boolean
+  TIMESTAMPS extends boolean,
+  CREATED_TIMESTAMP_ATTRIBUTE_NAME extends string,
+  CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string,
+  MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
+  MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 >({
   item,
   table,
   entityNameAttributeName,
   entityName,
-  timestamps
+  timestamps,
+  createdTimestampAttributeName,
+  createdTimestampAttributeSavedAs,
+  modifiedTimestampAttributeName,
+  modifiedTimestampAttributeSavedAs
 }: {
   item: ITEM
   table: TABLE
   entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
   entityName: ENTITY_NAME
   timestamps: TIMESTAMPS
+  createdTimestampAttributeName: CREATED_TIMESTAMP_ATTRIBUTE_NAME
+  createdTimestampAttributeSavedAs: CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+  modifiedTimestampAttributeName: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
+  modifiedTimestampAttributeSavedAs: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
 }) => {
   const withEntityNameAttribute = addEntityNameAttribute({
     item,
@@ -70,13 +112,21 @@ export const addInternalAttributes: InternalAttributesAdder = <
       TABLE,
       ENTITY_NAME_ATTRIBUTE_NAME,
       ENTITY_NAME,
-      TIMESTAMPS
+      TIMESTAMPS,
+      CREATED_TIMESTAMP_ATTRIBUTE_NAME,
+      CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
+      MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
+      MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
     >
   }
 
   const withTimestampAttributes = addTimestampAttributes({
     item: withEntityNameAttribute,
-    entityName
+    entityName,
+    createdTimestampAttributeName,
+    createdTimestampAttributeSavedAs,
+    modifiedTimestampAttributeName,
+    modifiedTimestampAttributeSavedAs
   })
 
   return withTimestampAttributes as WithInternalAttributes<
@@ -84,6 +134,10 @@ export const addInternalAttributes: InternalAttributesAdder = <
     TABLE,
     ENTITY_NAME_ATTRIBUTE_NAME,
     ENTITY_NAME,
-    TIMESTAMPS
+    TIMESTAMPS,
+    CREATED_TIMESTAMP_ATTRIBUTE_NAME,
+    CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
+    MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
+    MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
   >
 }
