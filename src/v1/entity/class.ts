@@ -16,15 +16,33 @@ export class EntityV2<
   ITEM extends Item = Item,
   ENTITY_NAME_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
   TIMESTAMPS extends boolean = string extends NAME ? boolean : true,
+  CREATED_TIMESTAMP_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'created',
+  CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string = string extends NAME ? string : '_ct',
+  MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'modified',
+  MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string = string extends NAME ? string : '_md',
   PUT_DEFAULTS_COMPUTER = Item extends ITEM ? ItemDefaultsComputer : ItemPutDefaultsComputer<ITEM>,
   CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER
 > {
   public type: 'entity'
   public name: NAME
   public table: TABLE
-  public item: WithInternalAttributes<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, NAME, TIMESTAMPS>
-  public timestamps: TIMESTAMPS
+  public item: WithInternalAttributes<
+    ITEM,
+    TABLE,
+    ENTITY_NAME_ATTRIBUTE_NAME,
+    NAME,
+    TIMESTAMPS,
+    CREATED_TIMESTAMP_ATTRIBUTE_NAME,
+    CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
+    MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
+    MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+  >
   public entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
+  public timestamps: TIMESTAMPS
+  public createdTimestampAttributeName: CREATED_TIMESTAMP_ATTRIBUTE_NAME
+  public createdTimestampAttributeSavedAs: CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+  public modifiedTimestampAttributeName: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
+  public modifiedTimestampAttributeSavedAs: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
   // any is needed for contravariance
   computeKey?: (keyInput: Item extends ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
   computedDefaults?: PUT_DEFAULTS_COMPUTER
@@ -46,14 +64,25 @@ export class EntityV2<
     item,
     computeKey,
     computedDefaults,
+    entityNameAttributeName = 'entity' as ENTITY_NAME_ATTRIBUTE_NAME,
     timestamps = true as TIMESTAMPS,
-    entityNameAttributeName = 'entity' as ENTITY_NAME_ATTRIBUTE_NAME
+    created = 'created' as CREATED_TIMESTAMP_ATTRIBUTE_NAME,
+    createdSavedAs = '_ct' as CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
+    modified = 'modified' as MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
+    modifiedSavedAs = '_md' as MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
   }: {
     name: NAME
     table: TABLE
     item: ITEM
     entityNameAttributeName?: ENTITY_NAME_ATTRIBUTE_NAME
+    /**
+     * @debt interface "Find a way to group all of this in single attribute"
+     */
     timestamps?: TIMESTAMPS
+    created?: CREATED_TIMESTAMP_ATTRIBUTE_NAME
+    createdSavedAs?: CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+    modified?: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
+    modifiedSavedAs?: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
   } & (NeedsKeyCompute<ITEM, TABLE> extends true
     ? { computeKey: (keyInput: KeyInput<ITEM>) => PrimaryKey<TABLE> }
     : { computeKey?: undefined }) &
@@ -63,8 +92,12 @@ export class EntityV2<
     this.type = 'entity'
     this.name = name
     this.table = table
-    this.timestamps = timestamps
     this.entityNameAttributeName = entityNameAttributeName
+    this.timestamps = timestamps
+    this.createdTimestampAttributeName = created
+    this.createdTimestampAttributeSavedAs = createdSavedAs
+    this.modifiedTimestampAttributeName = modified
+    this.modifiedTimestampAttributeSavedAs = modifiedSavedAs
 
     if (computeKey === undefined && !doesItemValidateTableSchema(item, table)) {
       throw new DynamoDBToolboxError('entity.invalidItemSchema', {
@@ -77,7 +110,11 @@ export class EntityV2<
       table,
       entityNameAttributeName,
       entityName: name,
-      timestamps
+      timestamps,
+      createdTimestampAttributeName: created,
+      createdTimestampAttributeSavedAs: createdSavedAs,
+      modifiedTimestampAttributeName: modified,
+      modifiedTimestampAttributeSavedAs: modifiedSavedAs
     })
 
     this.computeKey = computeKey as any
