@@ -33,12 +33,7 @@ type EntityNameAttributeAdder = <
   TABLE extends TableV2,
   ENTITY_NAME_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string
->({
-  item,
-  table,
-  entityNameAttributeName,
-  entityName
-}: {
+>(props: {
   item: ITEM
   table: TABLE
   entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
