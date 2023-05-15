@@ -1,6 +1,5 @@
 import { item, number, string, boolean } from 'v1/item'
-
-import { parseCondition } from '../../../../parseCondition'
+import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - Logical combination', () => {
   const myItem = item({

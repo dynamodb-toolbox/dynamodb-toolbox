@@ -1,6 +1,5 @@
 import { item, map, list, number } from 'v1/item'
-
-import { parseCondition } from '../../../../parseCondition'
+import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - comparison', () => {
   const simpleItem = item({
