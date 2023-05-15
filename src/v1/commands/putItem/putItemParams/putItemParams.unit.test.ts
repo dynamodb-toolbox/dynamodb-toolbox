@@ -123,9 +123,8 @@ describe('put', () => {
 
     expect(Item).toMatchObject({
       _et: TestEntity.name,
-      // TODO Support timestamp fields
-      // _ct:
-      // _md
+      _ct: expect.any(String),
+      _md: expect.any(String),
       pk: 'test-pk',
       sk: 'test-sk',
       test_string: 'test string',
