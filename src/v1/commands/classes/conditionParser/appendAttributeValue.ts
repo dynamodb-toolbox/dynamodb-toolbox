@@ -1,9 +1,9 @@
 import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
+import { renameAttributeSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes/index'
 
 import type { ConditionParser } from './conditionParser'
-import { renameAttributeSavedAsAttributes } from '../../renameSavedAsAttributes/index'
 
 export const appendAttributeValue = (
   conditionParser: ConditionParser,
