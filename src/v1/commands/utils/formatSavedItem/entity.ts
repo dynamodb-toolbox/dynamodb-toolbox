@@ -1,12 +1,12 @@
-import { EntityV2, FormattedItem } from 'v1/entity'
-import { ResolvedItem, PossiblyUndefinedResolvedItem } from 'v1/item'
-import { AnyAttributePath } from 'v1/commands/types/paths'
+import type { EntityV2, FormattedItem } from 'v1/entity'
+import type { ResolvedItem, PossiblyUndefinedResolvedItem } from 'v1/item'
+import type { AnyAttributePath } from 'v1/commands/types/paths'
 
 import { parseSavedAttribute } from './attribute'
 import { matchProjection } from './utils'
 
 type FormatSavedItemOptions<ENTITY extends EntityV2> = {
-  projectedAttributes?: AnyAttributePath<ENTITY['item']>[]
+  attributes?: AnyAttributePath<ENTITY['item']>[]
 }
 
 export const formatSavedItem = <
@@ -16,8 +16,10 @@ export const formatSavedItem = <
   entity: ENTITY,
   savedItem: ResolvedItem,
   formatSavedItemOptions: OPTIONS = {} as OPTIONS
-): FormattedItem<ENTITY> => {
-  const { projectedAttributes } = formatSavedItemOptions
+): OPTIONS['attributes'] extends AnyAttributePath<ENTITY['item']>[]
+  ? FormattedItem<ENTITY, OPTIONS['attributes'][number]>
+  : FormattedItem<ENTITY> => {
+  const { attributes } = formatSavedItemOptions
   const formattedItem: PossiblyUndefinedResolvedItem = {}
 
   const item = entity.item
@@ -29,7 +31,7 @@ export const formatSavedItem = <
 
     const { isProjected, childrenAttributes } = matchProjection(
       new RegExp('^' + attributeName),
-      projectedAttributes
+      attributes
     )
 
     if (!isProjected) {
@@ -47,5 +49,5 @@ export const formatSavedItem = <
     }
   })
 
-  return formattedItem as FormattedItem<ENTITY>
+  return formattedItem as any
 }
