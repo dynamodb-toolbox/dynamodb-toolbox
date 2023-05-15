@@ -6,11 +6,15 @@ import type {
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { FormatSavedAttributeOptions } from './types'
+import { parseSavedPrimitiveAttribute } from './primitive'
 import { parseSavedAttribute } from './attribute'
+import { matchProjection } from './utils'
 
 export const parseSavedRecordAttribute = (
   recordAttribute: RecordAttribute,
-  value: PossiblyUndefinedResolvedAttribute
+  value: PossiblyUndefinedResolvedAttribute,
+  { projectedAttributes }: FormatSavedAttributeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isObject(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
@@ -26,10 +30,17 @@ export const parseSavedRecordAttribute = (
   const formattedRecord: PossiblyUndefinedResolvedMapAttribute = {}
 
   Object.entries(value).forEach(([key, element]) => {
-    formattedRecord[parseSavedAttribute(recordAttribute.keys, key) as string] = parseSavedAttribute(
-      recordAttribute.elements,
-      element
+    const parsedKey = parseSavedPrimitiveAttribute(recordAttribute.keys, key) as string
+
+    // We don't need isProjected: We used the saved value key so we know it is
+    const { childrenAttributes } = matchProjection(
+      new RegExp('^\\.' + parsedKey),
+      projectedAttributes
     )
+
+    formattedRecord[parsedKey] = parseSavedAttribute(recordAttribute.elements, element, {
+      projectedAttributes: childrenAttributes
+    })
   })
 
   return formattedRecord

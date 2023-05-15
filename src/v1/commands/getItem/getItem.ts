@@ -32,7 +32,8 @@ export const getItem = async <ENTITY extends EntityV2, OPTIONS extends GetItemOp
     return restCommandOutput
   }
 
-  const formattedItem = formatSavedItem(entity, item)
+  const { attributes: projectedAttributes } = getItemOptions
+  const formattedItem = formatSavedItem(entity, item, { projectedAttributes })
 
   return { Item: formattedItem, ...restCommandOutput }
 }
