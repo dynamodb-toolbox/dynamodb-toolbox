@@ -1,5 +1,5 @@
-import type { Item } from 'v1/item'
 import type {
+  Item,
   AnyAttribute,
   ListAttribute,
   MapAttribute,
