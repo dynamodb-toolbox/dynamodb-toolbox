@@ -2,11 +2,14 @@ import type { PossiblyUndefinedResolvedAttribute, ListAttribute } from 'v1/item'
 import { isArray } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { FormatSavedAttributeOptions } from './types'
 import { parseSavedAttribute } from './attribute'
+import { matchProjection } from './utils'
 
 export const parseSavedListAttribute = (
   listAttribute: ListAttribute,
-  value: PossiblyUndefinedResolvedAttribute
+  value: PossiblyUndefinedResolvedAttribute,
+  { projectedAttributes }: FormatSavedAttributeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isArray(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
@@ -19,5 +22,20 @@ export const parseSavedListAttribute = (
     })
   }
 
-  return value.map(elementInput => parseSavedAttribute(listAttribute.elements, elementInput))
+  // We don't need isProjected:
+  // - Either whole list is projected and we already know => projectedAttributes undefined
+  // - Either some elements are projected => childrenAttributes undefined
+  // - Either projection is nested => childrenAttributes defined
+  const { childrenAttributes } = matchProjection(/\[\d+\]/, projectedAttributes)
+
+  const parsedValues: PossiblyUndefinedResolvedAttribute = []
+  for (const valueElement of value) {
+    parsedValues.push(
+      parseSavedAttribute(listAttribute.elements, valueElement, {
+        projectedAttributes: childrenAttributes
+      })
+    )
+  }
+
+  return parsedValues
 }
