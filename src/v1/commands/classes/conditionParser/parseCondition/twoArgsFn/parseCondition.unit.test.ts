@@ -1,6 +1,5 @@
 import { item, list, map, number, string } from 'v1/item'
-
-import { parseCondition } from '../../../../parseCondition'
+import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - singleArgFn', () => {
   const simpleItem = item({
