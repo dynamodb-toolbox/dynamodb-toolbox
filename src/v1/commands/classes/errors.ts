@@ -1,3 +1,11 @@
-import type { ConditionParserErrorBlueprints } from './conditionParser/errors'
+import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-export type CommandClassesErrorBlueprints = ConditionParserErrorBlueprints
+type InvalidExpressionAttributePathErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidExpressionAttributePath'
+  hasPath: false
+  payload: {
+    attributePath: string
+  }
+}>
+
+export type CommandClassesErrorBlueprints = InvalidExpressionAttributePathErrorBlueprint

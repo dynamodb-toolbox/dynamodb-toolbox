@@ -41,14 +41,14 @@ export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   const attributePath = condition.size ?? condition.attr
   const expressionAttributeValue = condition[comparisonOperator]
 
-  conditionParser.resetConditionExpression(`${twoArgsFnOperatorExpression[comparisonOperator]}(`)
+  conditionParser.resetExpression(`${twoArgsFnOperatorExpression[comparisonOperator]}(`)
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
-  conditionParser.appendToConditionExpression(', ')
+  conditionParser.appendToExpression(', ')
   comparisonOperator === 'type'
     ? conditionParser.appendAttributeValue(
         { ...typeAttribute, path: attributePath },
         expressionAttributeValue
       )
     : conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue)
-  conditionParser.appendToConditionExpression(')')
+  conditionParser.appendToExpression(')')
 }
