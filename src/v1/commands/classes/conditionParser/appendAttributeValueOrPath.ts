@@ -1,6 +1,6 @@
 import type { Attribute } from 'v1/item'
 
-import { isAttributePath } from './appendAttributePath'
+import { isAttributePath } from '../utils/appendAttributePath'
 import type { ConditionParser } from './conditionParser'
 
 export const appendAttributeValueOrPath = (

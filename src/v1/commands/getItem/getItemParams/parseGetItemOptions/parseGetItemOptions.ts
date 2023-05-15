@@ -1,8 +1,10 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
+import isEmpty from 'lodash.isempty'
 
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
+import { parseProjection } from 'v1/commands/utils/parseProjection'
 import { isBoolean } from 'v1/utils/validation/isBoolean'
 import { EntityV2 } from 'v1/entity'
 
@@ -35,9 +37,17 @@ export const parseGetItemOptions = <ENTITY extends EntityV2>(
     }
   }
 
-  // TODO validate projection expression attributes
-  entity
-  attributes
+  if (attributes !== undefined) {
+    const { ExpressionAttributeNames, ProjectionExpression } = parseProjection(
+      entity.item,
+      attributes
+    )
+
+    if (!isEmpty(ExpressionAttributeNames)) {
+      commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
+    }
+    commandOptions.ProjectionExpression = ProjectionExpression
+  }
 
   rejectExtraOptions(extraOptions)
 
