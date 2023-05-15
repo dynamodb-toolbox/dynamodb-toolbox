@@ -1,6 +1,5 @@
 import { item, string, number, anyOf, map } from 'v1/item'
-
-import { parseCondition } from '../../../parseCondition'
+import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - with anyOf', () => {
   const itemWithAnyOf = item({
