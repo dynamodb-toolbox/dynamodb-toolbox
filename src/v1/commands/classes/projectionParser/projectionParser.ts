@@ -26,7 +26,11 @@ export class ProjectionParser {
   }
 
   parseProjection = (attributes: string[]): void => {
-    for (const attribute of attributes) {
+    const [firstAttribute, ...restAttributes] = attributes
+    this.appendAttributePath(firstAttribute)
+
+    for (const attribute of restAttributes) {
+      this.appendToExpression(', ')
       this.appendAttributePath(attribute)
     }
   }
