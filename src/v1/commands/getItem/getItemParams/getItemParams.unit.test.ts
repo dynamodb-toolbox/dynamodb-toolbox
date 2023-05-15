@@ -176,17 +176,16 @@ describe('get', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
   })
 
-  // TODO Handle ProjectionExpression
-  // it('parses attribute projections', () => {
-  //   let { TableName, Key, ExpressionAttributeNames, ProjectionExpression } = TestEntity.getParams(
-  //     { email: 'x', sort: 'y' },
-  //     { attributes: ['email'] }
-  //   )
-  //   expect(TableName).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'x', sk: 'y' })
-  //   expect(ExpressionAttributeNames).toEqual({ '#proj1': 'pk' })
-  //   expect(ProjectionExpression).toBe('#proj1')
-  // })
+  it('parses attribute projections', () => {
+    const { ExpressionAttributeNames, ProjectionExpression } = getItemParams(
+      TestEntity,
+      { email: 'x', sort: 'y' },
+      { attributes: ['email'] }
+    )
+
+    expect(ExpressionAttributeNames).toEqual({ '#1': 'pk' })
+    expect(ProjectionExpression).toBe('#1')
+  })
 
   // TODO Create getBatch method and move tests there
   // it('formats a batch get response', async () => {
