@@ -15,15 +15,15 @@ import { getItemParams } from './getItemParams'
  * @param getItemOptions GetItemOptions
  * @return GetCommandOutput
  */
-export const getItem = async <ENTITY extends EntityV2>(
+export const getItem = async <ENTITY extends EntityV2, OPTIONS extends GetItemOptions<ENTITY>>(
   entity: ENTITY,
   keyInput: KeyInput<ENTITY>,
-  getItemOptions: GetItemOptions = {}
+  getItemOptions: OPTIONS = {} as OPTIONS
 ): Promise<
   O.Merge<Omit<GetCommandOutput, 'Item'>, { Item?: FormattedItem<ENTITY> | undefined }>
 > => {
   const commandOutput = await entity.table.documentClient.send(
-    new GetCommand(getItemParams<ENTITY>(entity, keyInput, getItemOptions))
+    new GetCommand(getItemParams(entity, keyInput, getItemOptions))
   )
 
   const { Item: item, ...restCommandOutput } = commandOutput

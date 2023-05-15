@@ -4,15 +4,19 @@ import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
 import { isBoolean } from 'v1/utils/validation/isBoolean'
+import { EntityV2 } from 'v1/entity'
 
 import type { GetItemOptions } from '../../options'
 
 type CommandOptions = Omit<GetCommandInput, 'TableName' | 'Key'>
 
-export const parseGetItemOptions = (putItemOptions: GetItemOptions): CommandOptions => {
+export const parseGetItemOptions = <ENTITY extends EntityV2>(
+  entity: ENTITY,
+  getItemOptions: GetItemOptions<ENTITY>
+): CommandOptions => {
   const commandOptions: CommandOptions = {}
 
-  const { capacity, consistent, ...extraOptions } = putItemOptions
+  const { capacity, consistent, attributes, ...extraOptions } = getItemOptions
 
   if (capacity !== undefined) {
     commandOptions.ReturnConsumedCapacity = parseCapacityOption(capacity)
@@ -30,6 +34,10 @@ export const parseGetItemOptions = (putItemOptions: GetItemOptions): CommandOpti
       commandOptions.ConsistentRead = consistent
     }
   }
+
+  // TODO validate projection expression attributes
+  entity
+  attributes
 
   rejectExtraOptions(extraOptions)
 
