@@ -2,7 +2,7 @@ import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item
 import type {
   AnyOfAttributeClonedInputsWithDefaults,
   ParsedAnyOfAttributeCommandInput
-} from 'v1/commands/types'
+} from 'v1/commands/types/intermediaryAnyOfAttributeState'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributeClonedInput } from './attribute'
