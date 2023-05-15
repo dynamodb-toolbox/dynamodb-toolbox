@@ -9,14 +9,14 @@ export const parseInCondition = (
   const attributePath = condition.size ?? condition.attr
   const expressionAttributeValues = condition.in
 
-  conditionParser.resetConditionExpression()
+  conditionParser.resetExpression()
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
-  conditionParser.appendToConditionExpression(' IN (')
+  conditionParser.appendToExpression(' IN (')
   expressionAttributeValues.forEach((expressionAttributeValue, index) => {
     if (index > 0) {
-      conditionParser.appendToConditionExpression(', ')
+      conditionParser.appendToExpression(', ')
     }
     conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue)
   })
-  conditionParser.appendToConditionExpression(')')
+  conditionParser.appendToExpression(')')
 }

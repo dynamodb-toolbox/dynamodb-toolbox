@@ -13,17 +13,17 @@ export class ConditionParser {
   schema: Attribute | Item
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]
-  conditionExpression: string
+  expression: string
 
   constructor(schema: Attribute | Item) {
     this.schema = schema
     this.expressionAttributeNames = []
     this.expressionAttributeValues = []
-    this.conditionExpression = ''
+    this.expression = ''
   }
 
-  resetConditionExpression = (initialStr = '') => {
-    this.conditionExpression = initialStr
+  resetExpression = (initialStr = '') => {
+    this.expression = initialStr
   }
 
   appendAttributePath = (attributePath: string, options: { size?: boolean } = {}): Attribute =>
@@ -37,8 +37,8 @@ export class ConditionParser {
     expressionAttributeValueOrPath: unknown
   ): void => appendAttributeValueOrPath(this, attribute, expressionAttributeValueOrPath)
 
-  appendToConditionExpression = (conditionExpressionPart: string) => {
-    this.conditionExpression += conditionExpressionPart
+  appendToExpression = (conditionExpressionPart: string) => {
+    this.expression += conditionExpressionPart
   }
 
   parseCondition = (condition: Condition): void => parseCondition(this, condition)
@@ -48,4 +48,14 @@ export class ConditionParser {
     ExpressionAttributeNames: Record<string, string>
     ExpressionAttributeValues: Record<string, NativeAttributeValue>
   } => toCommandOptions(this)
+
+  clone = (schema?: Attribute | Item): ConditionParser => {
+    const clonedAttributeParser = new ConditionParser(schema ?? this.schema)
+
+    clonedAttributeParser.expressionAttributeNames = [...this.expressionAttributeNames]
+    clonedAttributeParser.expressionAttributeValues = [...this.expressionAttributeValues]
+    clonedAttributeParser.expression = this.expression
+
+    return clonedAttributeParser
+  }
 }
