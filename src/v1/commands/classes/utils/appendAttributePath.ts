@@ -3,9 +3,17 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 
-import { ConditionParser as ExpressionParser } from './conditionParser'
-
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
+
+interface ExpressionParser {
+  schema: Item | Attribute
+  expressionAttributeNames: string[]
+  clone: (schema?: Attribute | Item) => ExpressionParser
+  expression: string
+  resetExpression: (str?: string) => void
+  appendToExpression: (str: string) => void
+  appendAttributePath: (path: string) => Attribute
+}
 
 const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
   type: 'any',
