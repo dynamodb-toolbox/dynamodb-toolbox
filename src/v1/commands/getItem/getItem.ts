@@ -2,6 +2,7 @@ import type { O } from 'ts-toolbelt'
 import { GetCommand, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2, FormattedItem, KeyInput } from 'v1'
+import type { AnyAttributePath } from 'v1/commands/types/paths'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
 import type { GetItemOptions } from './options'
@@ -20,7 +21,16 @@ export const getItem = async <ENTITY extends EntityV2, OPTIONS extends GetItemOp
   keyInput: KeyInput<ENTITY>,
   getItemOptions: OPTIONS = {} as OPTIONS
 ): Promise<
-  O.Merge<Omit<GetCommandOutput, 'Item'>, { Item?: FormattedItem<ENTITY> | undefined }>
+  O.Merge<
+    Omit<GetCommandOutput, 'Item'>,
+    {
+      Item?:
+        | (OPTIONS['attributes'] extends AnyAttributePath<ENTITY['item']>[]
+            ? FormattedItem<ENTITY, OPTIONS['attributes'][number]>
+            : FormattedItem<ENTITY>)
+        | undefined
+    }
+  >
 > => {
   const commandOutput = await entity.table.documentClient.send(
     new GetCommand(getItemParams(entity, keyInput, getItemOptions))
@@ -32,8 +42,14 @@ export const getItem = async <ENTITY extends EntityV2, OPTIONS extends GetItemOp
     return restCommandOutput
   }
 
-  const { attributes: projectedAttributes } = getItemOptions
-  const formattedItem = formatSavedItem(entity, item, { projectedAttributes })
+  const { attributes } = getItemOptions
+  const formattedItem = formatSavedItem(entity, item, { attributes })
 
-  return { Item: formattedItem, ...restCommandOutput }
+  return {
+    /**
+     * @debt type "Weird bug from TS, casting needed. To investigate"
+     */
+    Item: formattedItem as any,
+    ...restCommandOutput
+  }
 }
