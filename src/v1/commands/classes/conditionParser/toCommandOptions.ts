@@ -20,7 +20,7 @@ export const toCommandOptions = (
     ExpressionAttributeValues[`:${index + 1}`] = expressionAttributeValue
   })
 
-  const ConditionExpression = conditionParser.conditionExpression
+  const ConditionExpression = conditionParser.expression
 
   return {
     ExpressionAttributeNames,

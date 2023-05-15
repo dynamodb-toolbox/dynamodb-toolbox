@@ -30,12 +30,12 @@ export const parseLogicalCombinationCondition: AppendLogicalCombinationCondition
 
   const childrenConditions = (condition[logicalCombinationOperator] as unknown) as Condition[]
   const childrenConditionExpressions: string[] = []
-  conditionParser.resetConditionExpression()
+  conditionParser.resetExpression()
   for (const childCondition of childrenConditions) {
     conditionParser.parseCondition(childCondition)
-    childrenConditionExpressions.push(conditionParser.conditionExpression)
+    childrenConditionExpressions.push(conditionParser.expression)
   }
-  conditionParser.resetConditionExpression(
+  conditionParser.resetExpression(
     `(${childrenConditionExpressions.join(
       `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
     )})`

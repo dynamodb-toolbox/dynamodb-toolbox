@@ -21,10 +21,8 @@ export const parseComparisonCondition = <CONDITION extends ComparisonCondition>(
   const attributePath = condition.size ?? condition.attr
   const expressionAttributeValue = condition[comparisonOperator]
 
-  conditionParser.resetConditionExpression()
+  conditionParser.resetExpression()
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
-  conditionParser.appendToConditionExpression(
-    ` ${comparisonOperatorExpression[comparisonOperator]} `
-  )
+  conditionParser.appendToExpression(` ${comparisonOperatorExpression[comparisonOperator]} `)
   conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue)
 }
