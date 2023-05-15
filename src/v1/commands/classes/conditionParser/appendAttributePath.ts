@@ -3,7 +3,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 
-import { ConditionParser } from './conditionParser'
+import { ConditionParser as ExpressionParser } from './conditionParser'
 
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 
@@ -26,10 +26,10 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
   enum: undefined
 }
 
-class InvalidConditionAttributePathError extends DynamoDBToolboxError<'commands.invalidConditionAttributePath'> {
+class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'commands.invalidExpressionAttributePath'> {
   constructor(attributePath: string) {
-    super('commands.invalidConditionAttributePath', {
-      message: `Unable to match condition attribute path with item: ${attributePath}`,
+    super('commands.invalidExpressionAttributePath', {
+      message: `Unable to match expression attribute path with item: ${attributePath}`,
       payload: { attributePath }
     })
   }
@@ -41,12 +41,12 @@ export const isAttributePath = (candidate: unknown): candidate is { attr: string
   isObject(candidate) && 'attr' in candidate && isString(candidate.attr)
 
 export const appendAttributePath = (
-  conditionParser: ConditionParser,
+  parser: ExpressionParser,
   attributePath: string,
   options: { size?: boolean } = {}
 ): Attribute => {
-  let conditionExpressionPath = ''
-  let parentAttribute: Attribute | Item = conditionParser.schema
+  let expressionPath = ''
+  let parentAttribute: Attribute | Item = parser.schema
   let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|\w+(?=(\.|$|\[))/g)]
 
   while (attributeMatches.length > 0) {
@@ -59,17 +59,17 @@ export const appendAttributePath = (
       case 'number':
       case 'string':
       case 'set':
-        throw new InvalidConditionAttributePathError(attributePath)
+        throw new InvalidExpressionAttributePathError(attributePath)
       case 'any': {
         const isChildAttributeInList = isListAccessor(childAttributeAccessor)
 
         if (isChildAttributeInList) {
-          conditionExpressionPath += childAttributeAccessor
+          expressionPath += childAttributeAccessor
         } else {
-          const expressionAttributeNameIndex = conditionParser.expressionAttributeNames.push(
+          const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
             childAttributeAccessor
           )
-          conditionExpressionPath += `.#${expressionAttributeNameIndex}`
+          expressionPath += `.#${expressionAttributeNameIndex}`
         }
 
         parentAttribute = {
@@ -81,11 +81,11 @@ export const appendAttributePath = (
         break
       }
       case 'record': {
-        const expressionAttributeNameIndex = conditionParser.expressionAttributeNames.push(
+        const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
           // We don't really need to clone / add default as it is a defined string
           parseAttributeClonedInput(parentAttribute.keys, childAttributeAccessor) as string
         )
-        conditionExpressionPath += `.#${expressionAttributeNameIndex}`
+        expressionPath += `.#${expressionAttributeNameIndex}`
 
         parentAttribute = parentAttribute.elements
         break
@@ -94,13 +94,13 @@ export const appendAttributePath = (
       case 'map': {
         const childAttribute = parentAttribute.attributes[childAttributeAccessor]
         if (!childAttribute) {
-          throw new InvalidConditionAttributePathError(attributePath)
+          throw new InvalidExpressionAttributePathError(attributePath)
         }
 
-        const expressionAttributeNameIndex = conditionParser.expressionAttributeNames.push(
+        const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
           childAttribute.savedAs ?? childAttributeAccessor
         )
-        conditionExpressionPath +=
+        expressionPath +=
           parentAttribute.type === 'item'
             ? `#${expressionAttributeNameIndex}`
             : `.#${expressionAttributeNameIndex}`
@@ -110,41 +110,35 @@ export const appendAttributePath = (
       }
       case 'list': {
         if (!isListAccessor(childAttributeAccessor)) {
-          throw new InvalidConditionAttributePathError(attributePath)
+          throw new InvalidExpressionAttributePathError(attributePath)
         }
 
-        conditionExpressionPath += childAttributeAccessor
+        expressionPath += childAttributeAccessor
 
         parentAttribute = parentAttribute.elements
         break
       }
       case 'anyOf': {
-        let validElementConditionParser: ConditionParser | undefined = undefined
+        let validElementExpressionParser: ExpressionParser | undefined = undefined
         const subPath = attributePath.slice(attributeMatch.index)
 
         for (const element of parentAttribute.elements) {
           try {
             parentAttribute = element
-            const elementConditionParser = new ConditionParser(element)
-            elementConditionParser.expressionAttributeNames = [
-              ...conditionParser.expressionAttributeNames
-            ]
-            elementConditionParser.expressionAttributeValues = [
-              ...conditionParser.expressionAttributeValues
-            ]
-            parentAttribute = elementConditionParser.appendAttributePath(subPath)
-            validElementConditionParser = elementConditionParser
+            const elementExpressionParser = parser.clone(element)
+            elementExpressionParser.resetExpression()
+            parentAttribute = elementExpressionParser.appendAttributePath(subPath)
+            validElementExpressionParser = elementExpressionParser
             /* eslint-disable no-empty */
           } catch {}
         }
 
-        if (validElementConditionParser === undefined) {
-          throw new InvalidConditionAttributePathError(attributePath)
+        if (validElementExpressionParser === undefined) {
+          throw new InvalidExpressionAttributePathError(attributePath)
         }
 
-        conditionParser.expressionAttributeNames =
-          validElementConditionParser.expressionAttributeNames
-        conditionExpressionPath += validElementConditionParser.conditionExpression
+        parser.expressionAttributeNames = validElementExpressionParser.expressionAttributeNames
+        expressionPath += validElementExpressionParser.expression
         // No need to go over the rest of the path
         attributeMatches = []
 
@@ -154,12 +148,10 @@ export const appendAttributePath = (
   }
 
   if (parentAttribute.type === 'item') {
-    throw new InvalidConditionAttributePathError(attributePath)
+    throw new InvalidExpressionAttributePathError(attributePath)
   }
 
-  conditionParser.appendToConditionExpression(
-    options.size ? `size(${conditionExpressionPath})` : conditionExpressionPath
-  )
+  parser.appendToExpression(options.size ? `size(${expressionPath})` : expressionPath)
 
   return options.size
     ? {
