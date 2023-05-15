@@ -13,7 +13,7 @@ import {
   ComputedDefault,
   // generics
   PutItemInput,
-  FormattedItem,
+  FormattedAttribute,
   SavedItem,
   KeyInput,
   HasComputedDefaults
@@ -48,7 +48,7 @@ const playgroundItem1 = item({
 })
 
 type PlaygroundItem1PutItemInput = PutItemInput<typeof playgroundItem1>
-type PlaygroundItem1FormattedItem = FormattedItem<typeof playgroundItem1>
+type PlaygroundItem1FormattedItem = FormattedAttribute<typeof playgroundItem1>
 
 const allCasesOfProps = {
   optProp: string().optional(),
@@ -65,7 +65,7 @@ const playgroundItem2 = item({
   list: list(map(allCasesOfProps))
 })
 
-type PlaygroundItem2FormattedItem = FormattedItem<typeof playgroundItem2>
+type PlaygroundItem2FormattedItem = FormattedAttribute<typeof playgroundItem2>
 type PlaygroundItem2HasComputedDefault = HasComputedDefaults<typeof playgroundItem3>
 type PlaygroundItem2PutItemInput = PutItemInput<typeof playgroundItem2>
 type PlaygroundItem2PutItemInputWithDefaults = PutItemInput<typeof playgroundItem2, true>
