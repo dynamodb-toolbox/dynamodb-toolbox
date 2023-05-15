@@ -1,4 +1,4 @@
-import type { AnyAttributeCondition, Condition } from 'v1/commands/condition/types'
+import type { AnyAttributeCondition, Condition } from 'v1/commands/types/condition'
 
 export type NotCondition = Condition &
   Extract<AnyAttributeCondition<string, string>, { not: unknown }>

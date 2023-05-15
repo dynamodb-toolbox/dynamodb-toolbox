@@ -23,7 +23,7 @@ import {
   TypeCondition,
   AnyAttributePath,
   AttrOrSize
-} from './types'
+} from './condition'
 
 const myItem = item({
   parentId: string().key().savedAs('pk'),

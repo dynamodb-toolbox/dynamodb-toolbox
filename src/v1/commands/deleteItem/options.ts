@@ -4,7 +4,7 @@ import type {
   NoneReturnValuesOption,
   AllOldReturnValuesOption
 } from 'v1/commands/constants/options/returnValues'
-import type { Condition } from 'v1/commands/condition/types'
+import type { Condition } from 'v1/commands/types/condition'
 import type { EntityV2 } from 'v1/entity'
 
 export type DeleteItemCommandReturnValuesOption = NoneReturnValuesOption | AllOldReturnValuesOption
