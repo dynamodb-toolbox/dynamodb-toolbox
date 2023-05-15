@@ -2,7 +2,7 @@ import type {
   AnyAttributeCondition,
   NonLogicalCondition,
   Condition
-} from 'v1/commands/condition/types'
+} from 'v1/commands/types/condition'
 
 export type SingleArgFnCondition = NonLogicalCondition &
   Extract<AnyAttributeCondition<string, string>, { exists: unknown }>
