@@ -38,9 +38,9 @@ type AttributePath<ATTRIBUTE_PATH extends string, ATTRIBUTE extends Attribute> =
         : never
       : never)
 
-export type AnyAttributePath<
-  ITEM extends Item
-> = keyof ITEM['attributes'] extends infer ATTRIBUTE_PATH
+export type AnyAttributePath<ITEM extends Item> = Item extends ITEM
+  ? string
+  : keyof ITEM['attributes'] extends infer ATTRIBUTE_PATH
   ? ATTRIBUTE_PATH extends string
     ? AttributePath<ATTRIBUTE_PATH, ITEM['attributes'][ATTRIBUTE_PATH]>
     : never
