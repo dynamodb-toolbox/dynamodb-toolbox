@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
-import type { AnyOfAttributeClonedInputsWithDefaults } from 'v1/commands/types'
+import type { AnyOfAttributeClonedInputsWithDefaults } from 'v1/commands/types/intermediaryAnyOfAttributeState'
 
 import type { ComputeDefaultsContext } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'

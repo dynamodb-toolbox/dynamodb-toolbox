@@ -3,6 +3,7 @@ import cloneDeep from 'lodash.clonedeep'
 import type { Attribute, RequiredOption, PossiblyUndefinedResolvedAttribute } from 'v1/item'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { FormatSavedAttributeOptions } from './types'
 import { parseSavedPrimitiveAttribute } from './primitive'
 import { parseSavedSetAttribute } from './set'
 import { parseSavedListAttribute } from './list'
@@ -17,7 +18,8 @@ export const isRequired = (attribute: Attribute): boolean =>
 
 export const parseSavedAttribute = (
   attribute: Attribute,
-  value: PossiblyUndefinedResolvedAttribute
+  value: PossiblyUndefinedResolvedAttribute,
+  options: FormatSavedAttributeOptions = {}
 ): PossiblyUndefinedResolvedAttribute => {
   if (value === undefined) {
     if (isRequired(attribute)) {
@@ -41,12 +43,12 @@ export const parseSavedAttribute = (
     case 'set':
       return parseSavedSetAttribute(attribute, value)
     case 'list':
-      return parseSavedListAttribute(attribute, value)
+      return parseSavedListAttribute(attribute, value, options)
     case 'map':
-      return parseSavedMapAttribute(attribute, value)
+      return parseSavedMapAttribute(attribute, value, options)
     case 'record':
-      return parseSavedRecordAttribute(attribute, value)
+      return parseSavedRecordAttribute(attribute, value, options)
     case 'anyOf':
-      return parseSavedAnyOfAttribute(attribute, value)
+      return parseSavedAnyOfAttribute(attribute, value, options)
   }
 }

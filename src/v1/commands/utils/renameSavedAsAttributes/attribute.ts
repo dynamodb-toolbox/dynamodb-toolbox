@@ -4,7 +4,7 @@ import type {
   PossiblyUndefinedResolvedListAttribute,
   PossiblyUndefinedResolvedMapAttribute
 } from 'v1/item'
-import type { ParsedAnyOfAttributeCommandInput } from 'v1/commands/types'
+import type { ParsedAnyOfAttributeCommandInput } from 'v1/commands/types/intermediaryAnyOfAttributeState'
 
 import { renameListAttributeSavedAsAttributes } from './list'
 import { renameRecordAttributeSavedAsAttributes } from './record'

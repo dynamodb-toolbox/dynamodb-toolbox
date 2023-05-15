@@ -17,10 +17,10 @@ import { parseGetItemOptions } from './parseGetItemOptions'
  * @param getItemOptions GetItemOptions
  * @return GetCommandInput
  */
-export const getItemParams = <ENTITY extends EntityV2>(
+export const getItemParams = <ENTITY extends EntityV2, OPTIONS extends GetItemOptions<ENTITY>>(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
-  getItemOptions: GetItemOptions = {}
+  getItemOptions: OPTIONS = {} as OPTIONS
 ): GetCommandInput => {
   const validKeyInput = parseEntityKeyInput(entity, input)
 
@@ -33,7 +33,7 @@ export const getItemParams = <ENTITY extends EntityV2>(
 
   const primaryKey = parsePrimaryKey(entity, keyInput ?? renamedInput)
 
-  const options = parseGetItemOptions(getItemOptions)
+  const options = parseGetItemOptions(entity, getItemOptions)
 
   return {
     TableName: entity.table.name,

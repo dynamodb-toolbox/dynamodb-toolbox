@@ -1,17 +1,19 @@
 import type { PossiblyUndefinedResolvedAttribute, AnyOfAttribute } from 'v1/item'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { FormatSavedAttributeOptions } from './types'
 import { parseSavedAttribute } from './attribute'
 
 export const parseSavedAnyOfAttribute = (
   anyOfAttribute: AnyOfAttribute,
-  value: PossiblyUndefinedResolvedAttribute
+  value: PossiblyUndefinedResolvedAttribute,
+  options: FormatSavedAttributeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   let parsedAttribute: PossiblyUndefinedResolvedAttribute | undefined = undefined
 
   for (const element of anyOfAttribute.elements) {
     try {
-      parsedAttribute = parseSavedAttribute(element, value)
+      parsedAttribute = parseSavedAttribute(element, value, options)
       break
     } catch (error) {
       continue
