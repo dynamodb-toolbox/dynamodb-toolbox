@@ -6,11 +6,14 @@ import type {
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { FormatSavedAttributeOptions } from './types'
 import { parseSavedAttribute } from './attribute'
+import { matchProjection } from './utils'
 
 export const parseSavedMapAttribute = (
   mapAttribute: MapAttribute,
-  value: PossiblyUndefinedResolvedAttribute
+  value: PossiblyUndefinedResolvedAttribute,
+  { projectedAttributes }: FormatSavedAttributeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isObject(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
@@ -30,9 +33,21 @@ export const parseSavedMapAttribute = (
       return
     }
 
+    const { isProjected, childrenAttributes } = matchProjection(
+      new RegExp('^\\.' + attributeName),
+      projectedAttributes
+    )
+
+    if (!isProjected) {
+      return
+    }
+
     const attributeSavedAs = attribute.savedAs ?? attributeName
 
-    const formattedAttribute = parseSavedAttribute(attribute, value[attributeSavedAs])
+    const formattedAttribute = parseSavedAttribute(attribute, value[attributeSavedAs], {
+      projectedAttributes: childrenAttributes
+    })
+
     if (formattedAttribute !== undefined) {
       formattedMap[attributeName] = parseSavedAttribute(attribute, value[attributeSavedAs])
     }
