@@ -1,5 +1,5 @@
 import type { O } from 'ts-toolbelt'
-import type { Item, AtLeastOnce, OnlyOnce, Always, MapAttribute } from 'v1/item'
+import type { Item, AtLeastOnce, OnlyOnce, Always, MapAttribute, ComputedDefault } from 'v1/item'
 
 import type { FormattedAttribute } from './attribute'
 import type { MatchKeys } from './utils'
@@ -42,7 +42,6 @@ export type FormattedMapAttribute<
         >,
         // Enforce Required attributes
         | O.SelectKeys<MAP_ATTRIBUTE['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
-        // Enforce attributes that have defined default (hard or computed)
-        // (...but not so sure about that anymore, props can have computed default but still be optional)
-        | O.FilterKeys<MAP_ATTRIBUTE['attributes'], { default: undefined }>
+        // Enforce attributes that have defined hard default
+        | O.FilterKeys<MAP_ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
       >
