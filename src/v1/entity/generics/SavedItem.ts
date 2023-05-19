@@ -1,6 +1,6 @@
-import type { A, O, U } from 'ts-toolbelt'
+import type { O } from 'ts-toolbelt'
 
-import type {
+import {
   Item,
   Attribute,
   ResolvedAttribute,
@@ -15,7 +15,8 @@ import type {
   AtLeastOnce,
   OnlyOnce,
   Always,
-  ResolvePrimitiveAttribute
+  ResolvePrimitiveAttribute,
+  ComputedDefault
 } from 'v1/item'
 import type { PrimaryKey } from 'v1/table'
 
@@ -31,17 +32,11 @@ import type { EntityV2 } from '../class'
  * SwapWithSavedAs<{ keyA: { ...attribute, savedAs: "keyB" }}>
  * => { keyB: { ...attribute, savedAs: "keyB"  }}
  */
-type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = A.Compute<
-  U.IntersectOf<
-    {
-      [K in keyof MAP_ATTRIBUTE_ATTRIBUTES]: MAP_ATTRIBUTE_ATTRIBUTES[K] extends {
-        savedAs: string
-      }
-        ? Record<MAP_ATTRIBUTE_ATTRIBUTES[K]['savedAs'], MAP_ATTRIBUTE_ATTRIBUTES[K]>
-        : Record<K, MAP_ATTRIBUTE_ATTRIBUTES[K]>
-    }[keyof MAP_ATTRIBUTE_ATTRIBUTES]
-  >
->
+type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = {
+  [ATTRIBUTE_NAME in keyof MAP_ATTRIBUTE_ATTRIBUTES as MAP_ATTRIBUTE_ATTRIBUTES[ATTRIBUTE_NAME]['savedAs'] extends string
+    ? MAP_ATTRIBUTE_ATTRIBUTES[ATTRIBUTE_NAME]['savedAs']
+    : ATTRIBUTE_NAME]: MAP_ATTRIBUTE_ATTRIBUTES[ATTRIBUTE_NAME]
+}
 
 type RecSavedItem<
   SCHEMA extends MapAttribute | Item,
@@ -55,9 +50,8 @@ type RecSavedItem<
   >,
   // Enforce Required attributes
   | O.SelectKeys<SWAPPED_ATTRIBUTES, { required: AtLeastOnce | OnlyOnce | Always }>
-  // Enforce attributes that have defined default (hard or computed)
-  // (...but not so sure about that anymore, props can have computed default but still be optional)
-  | O.FilterKeys<SWAPPED_ATTRIBUTES, { default: undefined }>
+  // Enforce attributes that have defined hard default
+  | O.FilterKeys<SWAPPED_ATTRIBUTES, { default: undefined | ComputedDefault }>
 >
 
 /**
