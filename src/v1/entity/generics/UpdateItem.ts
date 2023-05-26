@@ -3,7 +3,6 @@ import type { O } from 'ts-toolbelt'
 import type {
   Item,
   Attribute,
-  ResolvedAttribute,
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute,
@@ -26,7 +25,7 @@ import type { EntityV2 } from '../class'
  * @return Object
  */
 export type UpdateItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
-  ? ResolvedAttribute
+  ? unknown
   : SCHEMA extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<SCHEMA>
   : SCHEMA extends SetAttribute

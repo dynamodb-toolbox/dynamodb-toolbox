@@ -73,7 +73,7 @@ export type AttributePutItemInput<
 > = Attribute extends ATTRIBUTE
   ? ResolvedAttribute
   : ATTRIBUTE extends AnyAttribute
-  ? ResolvedAttribute
+  ? unknown
   : ATTRIBUTE extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<ATTRIBUTE>
   : ATTRIBUTE extends SetAttribute

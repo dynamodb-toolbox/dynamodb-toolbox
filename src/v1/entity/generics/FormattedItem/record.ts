@@ -14,9 +14,8 @@ export type FormattedRecordAttribute<
   // Possible in case of anyOf subSchema
   [MATCHING_KEYS] extends [never]
     ? never
-    : Record<
-        MATCHING_KEYS,
-        FormattedAttribute<
+    : {
+        [KEY in MATCHING_KEYS]?: FormattedAttribute<
           RECORD_ATTRIBUTE['elements'],
           MATCHING_KEYS extends infer FILTERED_KEY
             ? FILTERED_KEY extends string
@@ -28,4 +27,4 @@ export type FormattedRecordAttribute<
               : never
             : never
         >
-      >
+      }
