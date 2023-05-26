@@ -10,12 +10,12 @@ export type RecordAttributePutItem<
   ?
       | undefined
       | {
-          [KEY in ResolvePrimitiveAttribute<RECORD_ATTRIBUTE['keys']>]: AttributePutItem<
+          [KEY in ResolvePrimitiveAttribute<RECORD_ATTRIBUTE['keys']>]?: AttributePutItem<
             RECORD_ATTRIBUTE['elements']
           >
         }
   : {
-      [KEY in ResolvePrimitiveAttribute<RECORD_ATTRIBUTE['keys']>]: AttributePutItem<
+      [KEY in ResolvePrimitiveAttribute<RECORD_ATTRIBUTE['keys']>]?: AttributePutItem<
         RECORD_ATTRIBUTE['elements']
       >
     }
