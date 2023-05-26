@@ -1,7 +1,6 @@
 import type {
   Item,
   Attribute,
-  ResolvedAttribute,
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute,
@@ -25,7 +24,7 @@ export type FormattedAttribute<
   SCHEMA extends Item | Attribute,
   FILTERED_ATTRIBUTES extends string = string
 > = SCHEMA extends AnyAttribute
-  ? ResolvedAttribute
+  ? unknown
   : SCHEMA extends PrimitiveAttribute
   ? string extends FILTERED_ATTRIBUTES
     ? ResolvePrimitiveAttribute<SCHEMA>

@@ -54,7 +54,7 @@ export type KeyInput<SCHEMA extends EntityV2 | Item> = SCHEMA extends Item
 export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
   ? ResolvedAttribute
   : ATTRIBUTE extends AnyAttribute
-  ? ResolvedAttribute
+  ? unknown
   : ATTRIBUTE extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<ATTRIBUTE>
   : ATTRIBUTE extends SetAttribute
