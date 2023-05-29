@@ -2,7 +2,7 @@ import type {
   RecordAttribute,
   PossiblyUndefinedResolvedAttribute,
   PossiblyUndefinedResolvedMapAttribute
-} from 'v1/item'
+} from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 

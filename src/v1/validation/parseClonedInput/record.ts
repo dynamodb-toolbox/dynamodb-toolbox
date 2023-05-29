@@ -1,4 +1,4 @@
-import type { RecordAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { RecordAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 

@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import { PossiblyUndefinedResolvedAttribute, ListAttribute, ComputedDefault } from 'v1/item'
+import { PossiblyUndefinedResolvedAttribute, ListAttribute, ComputedDefault } from 'v1/schema'
 import type { AttributeDefaultsComputer } from 'v1/entity'
 import { isArray, isFunction, isObject } from 'v1/utils/validation'
 

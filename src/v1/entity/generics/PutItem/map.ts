@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { MapAttribute, AtLeastOnce, OnlyOnce, Always, ComputedDefault } from 'v1/item'
+import type { MapAttribute, AtLeastOnce, OnlyOnce, Always, ComputedDefault } from 'v1/schema'
 
 import type { AttributePutItem } from './attribute'
 

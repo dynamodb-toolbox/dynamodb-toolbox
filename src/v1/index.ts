@@ -1,4 +1,4 @@
-export * from './item'
+export * from './schema'
 export * from './commands'
 export * from './table'
 export * from './entity'

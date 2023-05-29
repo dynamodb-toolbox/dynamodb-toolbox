@@ -1,5 +1,5 @@
 import type {
-  Item,
+  Schema,
   AnyAttribute,
   ListAttribute,
   MapAttribute,
@@ -9,7 +9,7 @@ import type {
   ResolvePrimitiveAttribute,
   ResolvedPrimitiveAttribute,
   PrimitiveAttribute
-} from 'v1/item'
+} from 'v1/schema'
 import type { AnyAttributePath } from './paths'
 
 export type AnyAttributeCondition<
@@ -145,16 +145,20 @@ export type PrimitiveAttributeExtraCondition<
         : never)
   )
 
-export type NonLogicalCondition<ITEM extends Item = Item> = Item extends ITEM
+export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
   ? AnyAttributeCondition<string, string>
-  : keyof ITEM['attributes'] extends infer ATTRIBUTE_PATH
+  : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
   ? ATTRIBUTE_PATH extends string
-    ? AttributeCondition<ATTRIBUTE_PATH, ITEM['attributes'][ATTRIBUTE_PATH], AnyAttributePath<ITEM>>
+    ? AttributeCondition<
+        ATTRIBUTE_PATH,
+        SCHEMA['attributes'][ATTRIBUTE_PATH],
+        AnyAttributePath<SCHEMA>
+      >
     : never
   : never
 
-export type Condition<ITEM extends Item = Item> =
-  | NonLogicalCondition<ITEM>
-  | { and: Condition<ITEM>[] }
-  | { or: Condition<ITEM>[] }
-  | { not: Condition<ITEM> }
+export type Condition<SCHEMA extends Schema = Schema> =
+  | NonLogicalCondition<SCHEMA>
+  | { and: Condition<SCHEMA>[] }
+  | { or: Condition<SCHEMA>[] }
+  | { not: Condition<SCHEMA> }

@@ -29,7 +29,7 @@ export const getItemParams = <ENTITY extends EntityV2, OPTIONS extends GetItemOp
    */
   const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : undefined
 
-  const renamedInput = renameSavedAsAttributes(entity.item, validKeyInput)
+  const renamedInput = renameSavedAsAttributes(entity.schema, validKeyInput)
 
   const primaryKey = parsePrimaryKey(entity, keyInput ?? renamedInput)
 

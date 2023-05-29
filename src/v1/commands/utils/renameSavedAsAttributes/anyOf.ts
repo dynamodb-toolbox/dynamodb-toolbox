@@ -1,4 +1,4 @@
-import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import type { ParsedAnyOfAttributeCommandInput } from 'v1/commands/types/intermediaryAnyOfAttributeState'
 
 import { renameAttributeSavedAsAttributes } from './attribute'

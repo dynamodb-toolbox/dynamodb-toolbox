@@ -7,7 +7,7 @@ import type {
   MapAttribute,
   RecordAttribute,
   AnyOfAttribute
-} from 'v1/item'
+} from 'v1/schema'
 
 import type { AnyAttributePutItem } from './any'
 import type { PrimitiveAttributePutItem } from './primitive'

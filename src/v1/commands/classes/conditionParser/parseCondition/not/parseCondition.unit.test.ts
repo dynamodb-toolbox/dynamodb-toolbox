@@ -1,14 +1,14 @@
-import { item, number } from 'v1/item'
+import { schema, number } from 'v1/schema'
 import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - Not', () => {
-  const myItem = item({
+  const mySchema = schema({
     num: number(),
     otherNum: number()
   })
 
   it('negates child condition (value)', () => {
-    expect(parseCondition(myItem, { not: { attr: 'num', eq: 42 } })).toStrictEqual({
+    expect(parseCondition(mySchema, { not: { attr: 'num', eq: 42 } })).toStrictEqual({
       ConditionExpression: 'NOT (#1 = :1)',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42 }
@@ -17,7 +17,7 @@ describe('parseCondition - Not', () => {
 
   it('negates child condition (attribute)', () => {
     expect(
-      parseCondition(myItem, { not: { attr: 'num', eq: { attr: 'otherNum' } } })
+      parseCondition(mySchema, { not: { attr: 'num', eq: { attr: 'otherNum' } } })
     ).toStrictEqual({
       ConditionExpression: 'NOT (#1 = #2)',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },

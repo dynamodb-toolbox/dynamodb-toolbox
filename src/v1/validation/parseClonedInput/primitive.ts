@@ -2,7 +2,7 @@ import type {
   PrimitiveAttribute,
   PossiblyUndefinedResolvedAttribute,
   ResolvedPrimitiveAttribute
-} from 'v1/item'
+} from 'v1/schema'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 

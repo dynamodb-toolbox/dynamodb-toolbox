@@ -40,7 +40,7 @@ export const parseDeleteItemOptions = <ENTITY extends EntityV2>(
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = parseCondition(entity.item, condition)
+    } = parseCondition(entity.schema, condition)
 
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames

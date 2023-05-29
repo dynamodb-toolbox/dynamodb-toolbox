@@ -1,6 +1,18 @@
-import { item, any, string, number, boolean, binary, set, list, map, record, anyOf } from 'v1/item'
+import {
+  schema,
+  any,
+  string,
+  number,
+  boolean,
+  binary,
+  set,
+  list,
+  map,
+  record,
+  anyOf
+} from 'v1/schema'
 
-export const myItem = item({
+export const mySchema = schema({
   parentId: string().key().savedAs('pk'),
   childId: string().key().savedAs('sk'),
   any: any(),
