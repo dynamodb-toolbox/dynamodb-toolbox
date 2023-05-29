@@ -1,15 +1,15 @@
-import { item, number, list, map } from 'v1/item'
+import { schema, number, list, map } from 'v1/schema'
 import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - between', () => {
-  const simpleItem = item({
+  const simpleSchema = schema({
     num: number(),
     otherNum: number(),
     yetAnotherNum: number()
   })
 
   it('between (values)', () => {
-    expect(parseCondition(simpleItem, { attr: 'num', between: [42, 43] })).toStrictEqual({
+    expect(parseCondition(simpleSchema, { attr: 'num', between: [42, 43] })).toStrictEqual({
       ConditionExpression: '#1 BETWEEN :1 AND :2',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42, ':2': 43 }
@@ -18,7 +18,7 @@ describe('parseCondition - between', () => {
 
   it('between (value + attribute)', () => {
     expect(
-      parseCondition(simpleItem, {
+      parseCondition(simpleSchema, {
         attr: 'num',
         between: [42, { attr: 'otherNum' }]
       })
@@ -31,7 +31,7 @@ describe('parseCondition - between', () => {
 
   it('between (attributes)', () => {
     expect(
-      parseCondition(simpleItem, {
+      parseCondition(simpleSchema, {
         attr: 'num',
         between: [{ attr: 'otherNum' }, { attr: 'yetAnotherNum' }]
       })
@@ -45,7 +45,7 @@ describe('parseCondition - between', () => {
   it('deep maps (values)', () => {
     expect(
       parseCondition(
-        item({
+        schema({
           map: map({
             nestedA: map({
               nestedB: number()
@@ -68,7 +68,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  const deepMapsItem = item({
+  const deepMapsSchema = schema({
     map: map({
       nestedA: map({
         nestedB: number()
@@ -84,7 +84,7 @@ describe('parseCondition - between', () => {
 
   it('deep maps (attribute + value)', () => {
     expect(
-      parseCondition(deepMapsItem, {
+      parseCondition(deepMapsSchema, {
         attr: 'map.nestedA.nestedB',
         between: [{ attr: 'nestedC.otherNum' }, 43]
       })
@@ -103,7 +103,7 @@ describe('parseCondition - between', () => {
 
   it('deep maps (attributes)', () => {
     expect(
-      parseCondition(deepMapsItem, {
+      parseCondition(deepMapsSchema, {
         attr: 'map.nestedA.nestedB',
         between: [{ attr: 'nestedC.otherNum' }, { attr: 'nestedD.yetAnotherNum' }]
       })
@@ -122,7 +122,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  const deepMapsAndListsItem = item({
+  const deepMapsAndListsSchema = schema({
     listA: list(
       map({
         nested: map({
@@ -148,7 +148,7 @@ describe('parseCondition - between', () => {
 
   it('deep maps and lists (values)', () => {
     expect(
-      parseCondition(deepMapsAndListsItem, {
+      parseCondition(deepMapsAndListsSchema, {
         attr: 'listA[1].nested.listB[2].value',
         between: [42, 43]
       })
@@ -166,7 +166,7 @@ describe('parseCondition - between', () => {
 
   it('deep maps and lists (value + attribute)', () => {
     expect(
-      parseCondition(deepMapsAndListsItem, {
+      parseCondition(deepMapsAndListsSchema, {
         attr: 'listA[1].nested.listB[2].value',
         between: [42, { attr: 'listC[3].nested.listD[4].value' }]
       })
@@ -188,7 +188,7 @@ describe('parseCondition - between', () => {
 
   it('deep maps and lists (attributes)', () => {
     expect(
-      parseCondition(deepMapsAndListsItem, {
+      parseCondition(deepMapsAndListsSchema, {
         attr: 'listA[1].nested.listB[2].value',
         between: [
           { attr: 'listC[3].nested.listD[4].value' },
@@ -215,7 +215,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  const deepListsItem = item({
+  const deepListsSchema = schema({
     list: list(list(list(number()))),
     listB: list(list(list(number()))),
     listC: list(list(list(number())))
@@ -223,7 +223,7 @@ describe('parseCondition - between', () => {
 
   it('deep lists (values)', () => {
     expect(
-      parseCondition(deepListsItem, { attr: 'list[1][2][3]', between: [42, 43] })
+      parseCondition(deepListsSchema, { attr: 'list[1][2][3]', between: [42, 43] })
     ).toStrictEqual({
       ConditionExpression: '#1[1][2][3] BETWEEN :1 AND :2',
       ExpressionAttributeNames: { '#1': 'list' },
@@ -233,7 +233,7 @@ describe('parseCondition - between', () => {
 
   it('deep lists (attribute + value)', () => {
     expect(
-      parseCondition(deepListsItem, {
+      parseCondition(deepListsSchema, {
         attr: 'list[1][2][3]',
         between: [{ attr: 'listB[4][5][6]' }, 42]
       })
@@ -246,7 +246,7 @@ describe('parseCondition - between', () => {
 
   it('deep lists (attributes)', () => {
     expect(
-      parseCondition(deepListsItem, {
+      parseCondition(deepListsSchema, {
         attr: 'list[1][2][3]',
         between: [{ attr: 'listB[4][5][6]' }, { attr: 'listC[7][8][9]' }]
       })
@@ -258,7 +258,7 @@ describe('parseCondition - between', () => {
   })
 
   it('with size', () => {
-    expect(parseCondition(simpleItem, { size: 'num', between: [42, 43] })).toStrictEqual({
+    expect(parseCondition(simpleSchema, { size: 'num', between: [42, 43] })).toStrictEqual({
       ConditionExpression: 'size(#1) BETWEEN :1 AND :2',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42, ':2': 43 }

@@ -1,6 +1,6 @@
-import type { PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 
-export type ItemDefaultsComputer = undefined | Record<string, AttributeDefaultsComputer>
+export type SchemaDefaultsComputer = undefined | Record<string, AttributeDefaultsComputer>
 
 export type AttributeDefaultsComputer =
   | undefined

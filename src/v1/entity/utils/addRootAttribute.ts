@@ -1,30 +1,30 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import type { Item, Attribute } from 'v1/item'
+import type { Schema, Attribute } from 'v1/schema'
 import { addProperty } from 'v1/utils/addProperty'
 
 export type WithRootAttribute<
-  ITEM extends Item,
+  SCHEMA extends Schema,
   ATTRIBUTE_NAME extends string,
   ATTRIBUTE extends Attribute
-> = Item<Omit<ITEM['attributes'], ATTRIBUTE_NAME> & Record<ATTRIBUTE_NAME, ATTRIBUTE>>
+> = Schema<Omit<SCHEMA['attributes'], ATTRIBUTE_NAME> & Record<ATTRIBUTE_NAME, ATTRIBUTE>>
 
 export const addRootAttribute = <
-  ITEM extends Item,
+  SCHEMA extends Schema,
   ATTRIBUTE_NAME extends string,
   ATTRIBUTE extends Attribute
 >(
-  item: ITEM,
+  schema: SCHEMA,
   attributeName: ATTRIBUTE_NAME,
   attribute: ATTRIBUTE
-): WithRootAttribute<ITEM, ATTRIBUTE_NAME, ATTRIBUTE> => {
-  if (attributeName in item.attributes) {
+): WithRootAttribute<SCHEMA, ATTRIBUTE_NAME, ATTRIBUTE> => {
+  if (attributeName in schema.attributes) {
     throw new DynamoDBToolboxError('entity.reservedAttributeName', {
       message: `'${attributeName}' is a reserved attribute name.`,
       path: attributeName
     })
   }
 
-  if (attribute.savedAs !== undefined && attribute.savedAs in item.savedAttributeNames) {
+  if (attribute.savedAs !== undefined && attribute.savedAs in schema.savedAttributeNames) {
     throw new DynamoDBToolboxError('entity.reservedAttributeSavedAs', {
       message: `'${attribute.savedAs}' is a reserved attribute alias (savedAs).`,
       path: attributeName
@@ -32,21 +32,21 @@ export const addRootAttribute = <
   }
 
   return {
-    type: item.type,
+    type: schema.type,
     savedAttributeNames:
       attribute.savedAs !== undefined
-        ? new Set([...item.savedAttributeNames, attribute.savedAs])
-        : item.savedAttributeNames,
+        ? new Set([...schema.savedAttributeNames, attribute.savedAs])
+        : schema.savedAttributeNames,
     keyAttributeNames: attribute.key
-      ? new Set([...item.keyAttributeNames, attributeName])
-      : item.keyAttributeNames,
+      ? new Set([...schema.keyAttributeNames, attributeName])
+      : schema.keyAttributeNames,
     requiredAttributeNames: {
-      ...item.requiredAttributeNames,
+      ...schema.requiredAttributeNames,
       [attribute.required]: new Set([
-        ...item.requiredAttributeNames[attribute.required],
+        ...schema.requiredAttributeNames[attribute.required],
         attributeName
       ])
     },
-    attributes: addProperty(item.attributes, attributeName, attribute)
+    attributes: addProperty(schema.attributes, attributeName, attribute)
   }
 }

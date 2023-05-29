@@ -1,7 +1,7 @@
 import type { EntityV2, PutItem } from 'v1/entity'
-import type { PossiblyUndefinedResolvedItem, RequiredOption } from 'v1/item'
-import { cloneItemInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
-import { parseItemClonedInput } from 'v1/validation/parseClonedInput'
+import type { PossiblyUndefinedResolvedItem, RequiredOption } from 'v1/schema'
+import { cloneSchemaInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
+import { parseSchemaClonedInput } from 'v1/validation/parseClonedInput'
 
 type EntityPutCommandInputParser = <ENTITY extends EntityV2>(
   entity: ENTITY,
@@ -11,9 +11,9 @@ type EntityPutCommandInputParser = <ENTITY extends EntityV2>(
 const requiringOptions = new Set<RequiredOption>(['always', 'onlyOnce', 'atLeastOnce'])
 
 export const parseEntityPutCommandInput: EntityPutCommandInputParser = (entity, input) => {
-  const clonedInputWithDefaults = cloneItemInputAndAddDefaults(entity.item, input, {
+  const clonedInputWithDefaults = cloneSchemaInputAndAddDefaults(entity.schema, input, {
     computeDefaults: entity.computedDefaults
   })
 
-  return parseItemClonedInput(entity.item, clonedInputWithDefaults, { requiringOptions }) as any
+  return parseSchemaClonedInput(entity.schema, clonedInputWithDefaults, { requiringOptions }) as any
 }

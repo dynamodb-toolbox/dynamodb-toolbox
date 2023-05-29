@@ -1,4 +1,4 @@
-import { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/item'
+import { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema'
 
 export type PrimitiveAttributePutItem<
   PRIMITIVE_ATTRIBUTE extends PrimitiveAttribute

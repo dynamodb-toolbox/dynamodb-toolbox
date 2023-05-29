@@ -39,7 +39,7 @@ export const parseGetItemOptions = <ENTITY extends EntityV2>(
 
   if (attributes !== undefined) {
     const { ExpressionAttributeNames, ProjectionExpression } = parseProjection(
-      entity.item,
+      entity.schema,
       attributes
     )
 

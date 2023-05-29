@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
-import {
-  Item,
+import type {
+  Schema,
   Attribute,
   AnyAttribute,
   PrimitiveAttribute,
@@ -16,7 +16,7 @@ import {
   Always,
   ResolvePrimitiveAttribute,
   ComputedDefault
-} from 'v1/item'
+} from 'v1/schema'
 import type { PrimaryKey } from 'v1/table'
 
 import type { EntityV2 } from '../class'
@@ -38,7 +38,7 @@ type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = 
 }
 
 type RecSavedItem<
-  SCHEMA extends MapAttribute | Item,
+  SCHEMA extends Schema | MapAttribute,
   SWAPPED_ATTRIBUTES extends MapAttributeAttributes = SwapWithSavedAs<SCHEMA['attributes']>
 > = O.Required<
   O.Partial<
@@ -54,12 +54,12 @@ type RecSavedItem<
 >
 
 /**
- * Shape of saved item in DynamoDB for a given Entity, Item or Attribute
+ * Shape of saved item in DynamoDB for a given Entity, Schema or Attribute
  *
- * @param Schema Entity | Item | Attribute
+ * @param Schema Entity | Schema | Attribute
  * @return Object
  */
-export type SavedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
+export type SavedItem<SCHEMA extends EntityV2 | Schema | Attribute> = SCHEMA extends AnyAttribute
   ? unknown
   : SCHEMA extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<SCHEMA>
@@ -67,12 +67,12 @@ export type SavedItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA exten
   ? Set<SavedItem<SCHEMA['elements']>>
   : SCHEMA extends ListAttribute
   ? SavedItem<SCHEMA['elements']>[]
-  : SCHEMA extends MapAttribute | Item
+  : SCHEMA extends MapAttribute | Schema
   ? RecSavedItem<SCHEMA>
   : SCHEMA extends RecordAttribute
   ? { [KEY in ResolvePrimitiveAttribute<SCHEMA['keys']>]?: SavedItem<SCHEMA['elements']> }
   : SCHEMA extends AnyOfAttribute
   ? SavedItem<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
-  ? SavedItem<SCHEMA['item']> & PrimaryKey<SCHEMA['table']>
+  ? SavedItem<SCHEMA['schema']> & PrimaryKey<SCHEMA['table']>
   : never

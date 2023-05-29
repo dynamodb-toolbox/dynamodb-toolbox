@@ -1,4 +1,4 @@
-import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
 import { renameAttributeSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes/index'

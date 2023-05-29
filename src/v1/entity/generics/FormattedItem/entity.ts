@@ -11,5 +11,7 @@ import type { FormattedAttribute } from './attribute'
  */
 export type FormattedItem<
   ENTITY extends EntityV2,
-  FILTERED_ATTRIBUTES extends AnyAttributePath<ENTITY['item']> = AnyAttributePath<ENTITY['item']>
-> = FormattedAttribute<ENTITY['item'], FILTERED_ATTRIBUTES>
+  FILTERED_ATTRIBUTES extends AnyAttributePath<ENTITY['schema']> = AnyAttributePath<
+    ENTITY['schema']
+  >
+> = FormattedAttribute<ENTITY['schema'], FILTERED_ATTRIBUTES>

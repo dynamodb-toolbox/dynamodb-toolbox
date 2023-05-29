@@ -1,4 +1,4 @@
-import { Always, PrimitiveAttribute } from 'v1/item'
+import { Always, PrimitiveAttribute } from 'v1/schema'
 
 import type { ConditionParser } from '../../conditionParser'
 import { TwoArgsFnOperator, isTwoArgsFnOperator, TwoArgsFnCondition } from './types'

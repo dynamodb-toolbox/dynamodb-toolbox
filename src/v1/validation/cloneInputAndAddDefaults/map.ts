@@ -5,7 +5,7 @@ import {
   PossiblyUndefinedResolvedAttribute,
   PossiblyUndefinedResolvedMapAttribute,
   ComputedDefault
-} from 'v1/item'
+} from 'v1/schema'
 import { isObject, isFunction } from 'v1/utils/validation'
 
 import { cloneAttributeInputAndAddDefaults } from './attribute'

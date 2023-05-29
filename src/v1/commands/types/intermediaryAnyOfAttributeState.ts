@@ -1,4 +1,4 @@
-import type { PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 
 export type AnyOfAttributeClonedInputsWithDefaults = {
   originalInput: PossiblyUndefinedResolvedAttribute

@@ -1,4 +1,4 @@
-import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 
 import { clonePrimitiveAttributeInputAndAddDefaults } from './primitive'
 import { cloneListAttributeInputAndAddDefaults } from './list'

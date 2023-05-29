@@ -1,4 +1,4 @@
-import type { RequiredOption, Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { RequiredOption, Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parsePrimitiveAttributeClonedInput } from './primitive'
