@@ -1,2 +1,3 @@
-export { putItem } from './putItem'
-export { putItemParams } from './putItemParams'
+export { PutItemCommand } from './command'
+export type { PutItemResponse } from './command'
+export type { PutItemOptions } from './options'

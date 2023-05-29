@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { getItem } from 'v1/commands'
+import { GetItemCommand } from 'v1/commands'
 
 import { UserEntity } from '../entity'
 
 const test = async () => {
-  const { Item } = await getItem(UserEntity, {
-    userId: 'some-user-id',
-    age: 42
-  })
+  const test = await UserEntity.build(GetItemCommand).key({ userId: 'foo', age: 41 }).send()
 }

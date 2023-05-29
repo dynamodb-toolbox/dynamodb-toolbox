@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { putItem } from 'v1/commands'
+import { PutItemCommand } from 'v1/commands'
 
 import { UserEntity } from '../entity'
 
 const test = async () => {
-  const { Attributes } = await putItem(
-    UserEntity,
-    {
+  const commandB = UserEntity.build(PutItemCommand)
+    .item({
       userId: 'some-user-id',
       age: 42,
       firstName: 'john',
       lastName: 'dow',
       parents: {
         father: 'dark vador',
-        mother: 'galadriel'
-      }
-    },
-    { returnValues: 'ALL_OLD' }
-  )
+        mother: 'toto'
+      },
+      someSet: new Set(['foo', 'bar'])
+    })
+    .options({ returnValues: 'ALL_OLD' })
+    .send()
 }
