@@ -3,7 +3,7 @@ import type {
   PossiblyUndefinedResolvedAttribute,
   PossiblyUndefinedResolvedListAttribute,
   PossiblyUndefinedResolvedMapAttribute
-} from 'v1/item'
+} from 'v1/schema'
 import type { ParsedAnyOfAttributeCommandInput } from 'v1/commands/types/intermediaryAnyOfAttributeState'
 
 import { renameListAttributeSavedAsAttributes } from './list'

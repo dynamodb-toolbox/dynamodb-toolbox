@@ -1,4 +1,4 @@
-import type { RecordAttribute, ResolvePrimitiveAttribute } from 'v1/item'
+import type { RecordAttribute, ResolvePrimitiveAttribute } from 'v1/schema'
 
 import type { AttributePutItem } from './attribute'
 

@@ -12,8 +12,8 @@ type ReservedAttributeSavedAsErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
-type InvalidItemSchemaErrorBlueprint = ErrorBlueprint<{
-  code: 'entity.invalidItemSchema'
+type InvalidSchemaErrorBlueprint = ErrorBlueprint<{
+  code: 'entity.invalidSchema'
   hasPath: false
   payload: undefined
 }>
@@ -21,4 +21,4 @@ type InvalidItemSchemaErrorBlueprint = ErrorBlueprint<{
 export type EntityUtilsErrorBlueprints =
   | ReservedAttributeNameErrorBlueprint
   | ReservedAttributeSavedAsErrorBlueprint
-  | InvalidItemSchemaErrorBlueprint
+  | InvalidSchemaErrorBlueprint

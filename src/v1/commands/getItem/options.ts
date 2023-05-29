@@ -5,5 +5,5 @@ import { AnyAttributePath } from 'v1/commands/types/paths'
 export interface GetItemOptions<ENTITY extends EntityV2 = EntityV2> {
   capacity?: CapacityOption
   consistent?: boolean
-  attributes?: AnyAttributePath<ENTITY['item']>[]
+  attributes?: AnyAttributePath<ENTITY['schema']>[]
 }

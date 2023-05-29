@@ -1,4 +1,4 @@
-import type { Attribute } from 'v1/item'
+import type { Attribute } from 'v1/schema'
 
 import type { AttributeFilters } from './types'
 

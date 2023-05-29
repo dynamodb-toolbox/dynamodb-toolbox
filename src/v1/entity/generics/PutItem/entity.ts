@@ -1,8 +1,8 @@
 import type { EntityV2 } from 'v1'
-import type { ResolvedMapAttribute } from 'v1/item'
+import type { ResolvedMapAttribute } from 'v1/schema'
 
-import type { ItemPutItem } from './item'
+import type { SchemaPutItem } from './schema'
 
 export type PutItem<ENTITY extends EntityV2> = EntityV2 extends ENTITY
   ? ResolvedMapAttribute
-  : ItemPutItem<ENTITY['item']>
+  : SchemaPutItem<ENTITY['schema']>

@@ -6,7 +6,7 @@ import {
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute
-} from 'v1/item'
+} from 'v1/schema'
 import { isFunction } from 'v1/utils/validation'
 
 import { ComputeDefaultsContext } from './types'

@@ -1,4 +1,4 @@
-import type { AnyAttribute, Attribute, PrimitiveAttribute, Item } from 'v1/item'
+import type { AnyAttribute, Attribute, PrimitiveAttribute, Schema } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
@@ -6,9 +6,9 @@ import { isString } from 'v1/utils/validation/isString'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 
 interface ExpressionParser {
-  schema: Item | Attribute
+  schema: Schema | Attribute
   expressionAttributeNames: string[]
-  clone: (schema?: Attribute | Item) => ExpressionParser
+  clone: (schema?: Schema | Attribute) => ExpressionParser
   expression: string
   resetExpression: (str?: string) => void
   appendToExpression: (str: string) => void
@@ -37,7 +37,7 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
 class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'commands.invalidExpressionAttributePath'> {
   constructor(attributePath: string) {
     super('commands.invalidExpressionAttributePath', {
-      message: `Unable to match expression attribute path with item: ${attributePath}`,
+      message: `Unable to match expression attribute path with schema: ${attributePath}`,
       payload: { attributePath }
     })
   }
@@ -54,7 +54,7 @@ export const appendAttributePath = (
   options: { size?: boolean } = {}
 ): Attribute => {
   let expressionPath = ''
-  let parentAttribute: Attribute | Item = parser.schema
+  let parentAttribute: Schema | Attribute = parser.schema
   let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|\w+(?=(\.|$|\[))/g)]
 
   while (attributeMatches.length > 0) {
@@ -98,7 +98,7 @@ export const appendAttributePath = (
         parentAttribute = parentAttribute.elements
         break
       }
-      case 'item':
+      case 'schema':
       case 'map': {
         const childAttribute = parentAttribute.attributes[childAttributeAccessor]
         if (!childAttribute) {
@@ -109,7 +109,7 @@ export const appendAttributePath = (
           childAttribute.savedAs ?? childAttributeAccessor
         )
         expressionPath +=
-          parentAttribute.type === 'item'
+          parentAttribute.type === 'schema'
             ? `#${expressionAttributeNameIndex}`
             : `.#${expressionAttributeNameIndex}`
 
@@ -155,7 +155,7 @@ export const appendAttributePath = (
     }
   }
 
-  if (parentAttribute.type === 'item') {
+  if (parentAttribute.type === 'schema') {
     throw new InvalidExpressionAttributePathError(attributePath)
   }
 
