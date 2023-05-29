@@ -18,7 +18,7 @@ export const UserEntity = new EntityV2({
       mother: string()
     }),
 
-    someSet: set(string()).optional(),
+    someSet: set(string().enum('foo', 'bar')).optional(),
 
     // Primitive
     completeName: string().default(ComputedDefault),

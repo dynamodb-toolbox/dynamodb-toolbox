@@ -1,2 +1,3 @@
-export { deleteItem } from './deleteItem'
-export { deleteItemParams } from './deleteItemParams'
+export { DeleteItemCommand } from './command'
+export type { DeleteItemResponse } from './command'
+export type { DeleteItemOptions } from './options'
