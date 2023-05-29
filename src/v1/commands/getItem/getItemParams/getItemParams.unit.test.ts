@@ -1,9 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { TableV2, EntityV2, item, string, DynamoDBToolboxError } from 'v1'
-
-import { getItemParams } from './getItemParams'
+import { TableV2, EntityV2, item, string, DynamoDBToolboxError, GetItemCommand } from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -51,109 +49,116 @@ const TestEntity2 = new EntityV2({
 
 describe('get', () => {
   it('gets the key from inputs', async () => {
-    const { TableName, Key } = getItemParams(TestEntity, { email: 'test-pk', sort: 'test-sk' })
+    const { TableName, Key } = TestEntity.build(GetItemCommand)
+      .key({
+        email: 'test-pk',
+        sort: 'test-sk'
+      })
+      .params()
 
     expect(TableName).toBe('test-table')
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('filters out extra data', async () => {
-    const { Key } = getItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk',
-      // @ts-expect-error
-      test: 'test'
-    })
+    const { Key } = TestEntity.build(GetItemCommand)
+      .key({
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        test: 'test'
+      })
+      .params()
 
     expect(Key).not.toHaveProperty('test')
   })
 
   it('fails with undefined input', () => {
     expect(() =>
-      getItemParams(
-        TestEntity,
-        // @ts-expect-error
-        {}
-      )
+      TestEntity.build(GetItemCommand)
+        .key(
+          // @ts-expect-error
+          {}
+        )
+        .params()
     ).toThrow('Attribute email is required')
   })
 
   it('fails when missing the sortKey', () => {
     expect(() =>
-      getItemParams(
-        TestEntity,
-        // @ts-expect-error
-        { pk: 'test-pk' }
-      )
+      TestEntity.build(GetItemCommand)
+        .key(
+          // @ts-expect-error
+          { pk: 'test-pk' }
+        )
+        .params()
     ).toThrow('Attribute email is required')
   })
 
   it('fails when missing partitionKey (no alias)', () => {
     expect(() =>
-      getItemParams(
-        TestEntity2,
-        // @ts-expect-error
-        {}
-      )
+      TestEntity2.build(GetItemCommand)
+        .key(
+          // @ts-expect-error
+          {}
+        )
+        .params()
     ).toThrow('Attribute pk is required')
   })
 
   it('fails when missing the sortKey (no alias)', () => {
     expect(() =>
-      getItemParams(
-        TestEntity2,
-        // @ts-expect-error
-        { pk: 'test-pk' }
-      )
+      TestEntity2.build(GetItemCommand)
+        .key(
+          // @ts-expect-error
+          { pk: 'test-pk' }
+        )
+        .params()
     ).toThrow('Attribute sk is required')
   })
 
   // Options
   it('sets capacity options', () => {
-    const { ReturnConsumedCapacity } = getItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { capacity: 'NONE' }
-    )
+    const { ReturnConsumedCapacity } = TestEntity.build(GetItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ capacity: 'NONE' })
+      .params()
 
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
   it('fails on invalid capacity option', () => {
     const invalidCall = () =>
-      getItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(GetItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           capacity: 'test'
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
   })
 
   it('sets consistent and capacity options', () => {
-    const { ConsistentRead } = getItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { consistent: true }
-    )
+    const { ConsistentRead } = TestEntity.build(GetItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ consistent: true })
+      .params()
 
     expect(ConsistentRead).toBe(true)
   })
 
   it('fails on invalid consistent option', () => {
     const invalidCall = () =>
-      getItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(GetItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           consistent: 'true'
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -163,28 +168,33 @@ describe('get', () => {
 
   it('fails on extra options', () => {
     const invalidCall = () =>
-      getItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(GetItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           extra: true
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
   })
 
   it('parses attribute projections', () => {
-    const { ExpressionAttributeNames, ProjectionExpression } = getItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { attributes: ['email'] }
-    )
+    const { ExpressionAttributeNames, ProjectionExpression } = TestEntity.build(GetItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ attributes: ['email'] })
+      .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#1': 'pk' })
     expect(ProjectionExpression).toBe('#1')
+  })
+
+  it('missing key', () => {
+    const invalidCall = () => TestEntity.build(GetItemCommand).params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.incompleteCommand' }))
   })
 
   // TODO Create getBatch method and move tests there

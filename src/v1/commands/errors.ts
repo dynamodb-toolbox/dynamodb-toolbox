@@ -4,6 +4,12 @@ import type { GetItemCommandErrorBlueprints } from './getItem/errors'
 import type { CommandUtilsErrorBlueprints } from './utils/errors'
 import type { CommandClassesErrorBlueprints } from './classes/errors'
 
+type IncompleteCommandErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.incompleteCommand'
+  hasPath: false
+  payload: undefined
+}>
+
 type InvalidCapacityOptionErrorBlueprint = ErrorBlueprint<{
   code: 'commands.invalidCapacityOption'
   hasPath: false
@@ -32,6 +38,7 @@ export type CommandsErrorBlueprints =
   | GetItemCommandErrorBlueprints
   | CommandUtilsErrorBlueprints
   | CommandClassesErrorBlueprints
+  | IncompleteCommandErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint
