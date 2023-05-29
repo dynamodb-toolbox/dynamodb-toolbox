@@ -1,6 +1,11 @@
-import { DynamoDBToolboxError } from 'v1/errors'
 import type { HasComputedDefaults, Item } from 'v1/item'
 import type { TableV2, PrimaryKey } from 'v1/table'
+import type { PutItemCommand, GetItemCommand, DeleteItemCommand } from 'v1/commands'
+import type { PutItemCommandClass } from 'v1/commands/putItem/command'
+import type { GetItemCommandClass } from 'v1/commands/getItem/command'
+import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
+import type { CommandClass } from 'v1/commands/class'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import type {
   NeedsKeyCompute,
@@ -44,8 +49,21 @@ export class EntityV2<
   public modifiedTimestampAttributeName: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
   public modifiedTimestampAttributeSavedAs: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
   // any is needed for contravariance
-  computeKey?: (keyInput: Item extends ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
-  computedDefaults?: PUT_DEFAULTS_COMPUTER
+  public computeKey?: (keyInput: Item extends ITEM ? any : KeyInput<ITEM>) => PrimaryKey<TABLE>
+  public computedDefaults?: ItemDefaultsComputer
+  // TODO: Maybe there's a way not to have to list all commands here
+  // (use COMMAND_CLASS somehow) but I haven't found it yet
+  public build: <COMMAND_CLASS extends typeof CommandClass = typeof CommandClass>(
+    commandClass: COMMAND_CLASS
+  ) => string extends NAME
+    ? unknown
+    : COMMAND_CLASS extends PutItemCommandClass
+    ? PutItemCommand<this>
+    : COMMAND_CLASS extends GetItemCommandClass
+    ? GetItemCommand<this>
+    : COMMAND_CLASS extends DeleteItemCommandClass
+    ? DeleteItemCommand<this>
+    : never
 
   /**
    * Define an Entity for a given table
@@ -118,6 +136,7 @@ export class EntityV2<
     })
 
     this.computeKey = computeKey as any
-    this.computedDefaults = computedDefaults
+    this.computedDefaults = computedDefaults as ItemDefaultsComputer
+    this.build = commandClass => new commandClass(this) as any
   }
 }

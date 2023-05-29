@@ -1,9 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { TableV2, EntityV2, item, string, DynamoDBToolboxError } from 'v1'
-
-import { deleteItemParams } from './deleteItemParams'
+import { TableV2, EntityV2, item, string, DynamoDBToolboxError, DeleteItemCommand } from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -44,134 +42,135 @@ const TestEntity2 = new EntityV2({
 
 describe('delete', () => {
   it('deletes the key from inputs', async () => {
-    const { TableName, Key } = deleteItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk'
-    })
+    const { TableName, Key } = TestEntity.build(DeleteItemCommand)
+      .key({ email: 'test-pk', sort: 'test-sk' })
+      .params()
 
     expect(TableName).toBe('test-table')
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('filters out extra data', async () => {
-    const { Key } = deleteItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk',
-      // @ts-expect-error
-      test: 'test'
-    })
+    const { Key } = TestEntity.build(DeleteItemCommand)
+      .key({
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        test: 'test'
+      })
+      .params()
 
     expect(Key).not.toHaveProperty('test')
   })
 
   it('fails with undefined input', () => {
     expect(() =>
-      deleteItemParams(
-        TestEntity,
-        // @ts-expect-error
-        {}
-      )
+      TestEntity.build(DeleteItemCommand)
+        .key(
+          // @ts-expect-error
+          {}
+        )
+        .params()
     ).toThrow('Attribute email is required')
   })
 
   it('fails when missing the sortKey', () => {
     expect(() =>
-      deleteItemParams(
-        TestEntity,
-        // @ts-expect-error
-        { pk: 'test-pk' }
-      )
+      TestEntity.build(DeleteItemCommand)
+        .key(
+          // @ts-expect-error
+          { pk: 'test-pk' }
+        )
+        .params()
     ).toThrow('Attribute email is required')
   })
 
   it('fails when missing partitionKey (no alias)', () => {
     expect(() =>
-      deleteItemParams(
-        TestEntity2,
-        // @ts-expect-error
-        {}
-      )
+      TestEntity2.build(DeleteItemCommand)
+        .key(
+          // @ts-expect-error
+          {}
+        )
+        .params()
     ).toThrow('Attribute pk is required')
   })
 
   it('fails when missing the sortKey (no alias)', () => {
     expect(() =>
-      deleteItemParams(
-        TestEntity2,
-        // @ts-expect-error
-        { pk: 'test-pk' }
-      )
+      TestEntity2.build(DeleteItemCommand)
+        .key(
+          // @ts-expect-error
+          { pk: 'test-pk' }
+        )
+        .params()
     ).toThrow('Attribute sk is required')
   })
 
   it('sets capacity options', () => {
-    const { ReturnConsumedCapacity } = deleteItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { capacity: 'NONE' }
-    )
+    const { ReturnConsumedCapacity } = TestEntity.build(DeleteItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ capacity: 'NONE' })
+      .params()
 
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
   it('fails on invalid capacity option', () => {
     const invalidCall = () =>
-      deleteItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        // @ts-expect-error
-        { capacity: 'test' }
-      )
+      TestEntity.build(DeleteItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options(
+          // @ts-expect-error
+          { capacity: 'test' }
+        )
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
   })
 
   it('sets metrics options', () => {
-    const { ReturnItemCollectionMetrics } = deleteItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { metrics: 'SIZE' }
-    )
+    const { ReturnItemCollectionMetrics } = TestEntity.build(DeleteItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ metrics: 'SIZE' })
+      .params()
 
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
   })
 
   it('fails on invalid metrics option', () => {
     const invalidCall = () =>
-      deleteItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(DeleteItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           metrics: 'test'
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidMetricsOption' }))
   })
 
   it('sets returnValues options', () => {
-    const { ReturnValues } = deleteItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { returnValues: 'ALL_OLD' }
-    )
+    const { ReturnValues } = TestEntity.build(DeleteItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ returnValues: 'ALL_OLD' })
+      .params()
 
     expect(ReturnValues).toBe('ALL_OLD')
   })
 
   it('fails on invalid returnValues option', () => {
     const invalidCall = () =>
-      deleteItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(DeleteItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           returnValues: 'test'
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -181,14 +180,13 @@ describe('delete', () => {
 
   it('fails on extra options', () => {
     const invalidCall = () =>
-      deleteItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(DeleteItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           extra: true
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
@@ -199,15 +197,21 @@ describe('delete', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = deleteItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { condition: { attr: 'email', gt: 'test' } }
-    )
+    } = TestEntity.build(DeleteItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ condition: { attr: 'email', gt: 'test' } })
+      .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':1': 'test' })
     expect(ConditionExpression).toBe('#1 > :1')
+  })
+
+  it('missing key', () => {
+    const invalidCall = () => TestEntity.build(DeleteItemCommand).params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.incompleteCommand' }))
   })
 
   // TODO Create deleteBatch method and move tests there
