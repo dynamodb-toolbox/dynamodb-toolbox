@@ -14,10 +14,9 @@ import {
   list,
   map,
   ComputedDefault,
-  DynamoDBToolboxError
+  DynamoDBToolboxError,
+  PutItemCommand
 } from 'v1'
-
-import { putItemParams } from './putItemParams'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -119,7 +118,9 @@ const TestEntity5 = new EntityV2({
 
 describe('put', () => {
   it('creates basic item', () => {
-    const { Item } = putItemParams(TestEntity, { email: 'test-pk', sort: 'test-sk' })
+    const { Item } = TestEntity.build(PutItemCommand)
+      .item({ email: 'test-pk', sort: 'test-sk' })
+      .params()
 
     expect(Item).toMatchObject({
       _et: TestEntity.name,
@@ -133,11 +134,13 @@ describe('put', () => {
   })
 
   it('creates item with aliases', () => {
-    const { Item } = putItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk',
-      count: 0
-    })
+    const { Item } = TestEntity.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        count: 0
+      })
+      .params()
 
     expect(Item).toMatchObject({ test_number: 0 })
   })
@@ -145,105 +148,124 @@ describe('put', () => {
   it('creates item with overridden default override', () => {
     const overrideValue = 'different value'
 
-    const { Item } = putItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk',
-      test_string: overrideValue
-    })
+    const { Item } = TestEntity.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_string: overrideValue
+      })
+      .params()
 
     expect(Item).toMatchObject({ test_string: overrideValue })
   })
 
   it('creates item with composite field', () => {
-    const { Item } = putItemParams(TestEntity2, {
-      email: 'test-pk',
-      test_composite: 'test'
-    })
+    const { Item } = TestEntity2.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        test_composite: 'test'
+      })
+      .params()
 
     expect(Item).not.toHaveProperty('sort')
   })
 
   it('creates item with filled composite key', () => {
-    const { Item } = putItemParams(TestEntity2, {
-      email: 'test-pk',
-      test_composite: 'test',
-      test_composite2: 'test2'
-    })
+    const { Item } = TestEntity2.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        test_composite: 'test',
+        test_composite2: 'test2'
+      })
+      .params()
 
     expect(Item).toMatchObject({ sk: 'test#test2' })
   })
 
   it('creates item with overriden composite key', () => {
-    const { Item } = putItemParams(TestEntity2, {
-      email: 'test-pk',
-      sort: 'override',
-      test_composite: 'test',
-      test_composite2: 'test2'
-    })
+    const { Item } = TestEntity2.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'override',
+        test_composite: 'test',
+        test_composite2: 'test2'
+      })
+      .params()
 
     expect(Item).toMatchObject({ sk: 'override' })
   })
 
   it('fails if required attribute misses', () => {
     expect(() =>
-      putItemParams(
-        TestEntity3,
-        // @ts-expect-error
-        { email: 'test-pk' }
-      )
+      TestEntity3.build(PutItemCommand)
+        .item(
+          // @ts-expect-error
+          { email: 'test-pk' }
+        )
+        .params()
     ).toThrow('Attribute test is required')
   })
 
   it('ignores additional attribute', () => {
-    const { Item } = putItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk',
-      // @ts-expect-error
-      unknown: '?'
-    })
+    const { Item } = TestEntity.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        unknown: '?'
+      })
+      .params()
 
     expect(Item).not.toHaveProperty('unknown')
   })
 
   it('fails when invalid string provided with no coercion', () => {
     expect(() =>
-      putItemParams(TestEntity, {
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error
-        test_string: 1
-      })
+      TestEntity.build(PutItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_string: 1
+        })
+        .params()
     ).toThrow('Attribute test_string should be a string')
   })
 
   it('fails when invalid boolean provided with no coercion', () => {
     expect(() =>
-      putItemParams(TestEntity, {
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error
-        test_boolean: 'x'
-      })
+      TestEntity.build(PutItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_boolean: 'x'
+        })
+        .params()
     ).toThrow('Attribute test_boolean should be a boolean')
   })
 
   it('fails when invalid number provided with no coercion', () => {
     expect(() =>
-      putItemParams(TestEntity, {
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error
-        count: 'x'
-      })
+      TestEntity.build(PutItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          count: 'x'
+        })
+        .params()
     ).toThrow('Attribute count should be a number')
   })
 
   it('with valid array', () => {
-    const { Item } = putItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk',
-      test_list: ['a', 'b']
-    })
+    const { Item } = TestEntity.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: ['a', 'b']
+      })
+      .params()
 
     expect(Item).toMatchObject({
       test_list: ['a', 'b']
@@ -252,23 +274,27 @@ describe('put', () => {
 
   it('fails when invalid array provided', () => {
     expect(() =>
-      putItemParams(TestEntity, {
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error
-        test_list: ['a', 2]
-      })
+      TestEntity.build(PutItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_list: ['a', 2]
+        })
+        .params()
     ).toThrow('Attribute test_list[n] should be a string')
   })
 
   it('with valid map', () => {
-    const { Item } = putItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk',
-      test_map: {
-        str: 'x'
-      }
-    })
+    const { Item } = TestEntity.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_map: {
+          str: 'x'
+        }
+      })
+      .params()
 
     expect(Item).toMatchObject({
       test_map: { str: 'x' }
@@ -277,21 +303,25 @@ describe('put', () => {
 
   it('fails when invalid map provided', () => {
     expect(() =>
-      putItemParams(TestEntity, {
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error
-        test_map: { str: 2 }
-      })
+      TestEntity.build(PutItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_map: { str: 2 }
+        })
+        .params()
     ).toThrow('Attribute test_map.str should be a string')
   })
 
   it('with valid set', () => {
-    const { Item } = putItemParams(TestEntity, {
-      email: 'test-pk',
-      sort: 'test-sk',
-      test_string_set: new Set(['a', 'b', 'c'])
-    })
+    const { Item } = TestEntity.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_string_set: new Set(['a', 'b', 'c'])
+      })
+      .params()
 
     expect(Item).toMatchObject({
       test_string_set: new Set(['a', 'b', 'c'])
@@ -300,31 +330,36 @@ describe('put', () => {
 
   it('fails when set contains different types', () => {
     expect(() =>
-      putItemParams(TestEntity, {
-        email: 'test-pk',
-        sort: 'test-sk',
-        // @ts-expect-error
-        test_string_set: new Set(['a', 'b', 3])
-      })
+      TestEntity.build(PutItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_string_set: new Set(['a', 'b', 3])
+        })
+        .params()
     ).toThrow('Attribute test_string_set[x] should be a string')
   })
 
   it('fails when missing a required field', () => {
     expect(() =>
-      putItemParams(
-        TestEntity3,
-        // @ts-expect-error
-        { email: 'test-pk', test2: 'test' }
-      )
+      TestEntity3.build(PutItemCommand)
+        .item(
+          // @ts-expect-error
+          { email: 'test-pk', test2: 'test' }
+        )
+        .params()
     ).toThrow('Attribute test is required')
   })
 
   it('puts 0 and false to required fields', () => {
-    const { Item } = putItemParams(TestEntity5, {
-      pk: 'test-pk',
-      test_required_boolean: false,
-      test_required_number: 0
-    })
+    const { Item } = TestEntity5.build(PutItemCommand)
+      .item({
+        pk: 'test-pk',
+        test_required_boolean: false,
+        test_required_number: 0
+      })
+      .params()
 
     expect(Item).toMatchObject({
       test_required_boolean: false,
@@ -333,81 +368,75 @@ describe('put', () => {
   })
 
   it('correctly aliases pks', () => {
-    const { Item } = putItemParams(TestEntity4, { id: 3, xyz: '123' })
+    const { Item } = TestEntity4.build(PutItemCommand).item({ id: 3, xyz: '123' }).params()
     expect(Item).toMatchObject({ pk: '3', sk: '3' })
   })
 
   // Options
   it('sets capacity options', () => {
-    const { ReturnConsumedCapacity } = putItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { capacity: 'NONE' }
-    )
+    const { ReturnConsumedCapacity } = TestEntity.build(PutItemCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ capacity: 'NONE' })
+      .params()
 
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
   it('fails on invalid capacity option', () => {
     const invalidCall = () =>
-      putItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(PutItemCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           capacity: 'test'
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
   })
 
   it('sets metrics options', () => {
-    const { ReturnItemCollectionMetrics } = putItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { metrics: 'SIZE' }
-    )
+    const { ReturnItemCollectionMetrics } = TestEntity.build(PutItemCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ metrics: 'SIZE' })
+      .params()
 
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
   })
 
   it('fails on invalid metrics option', () => {
     const invalidCall = () =>
-      putItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(PutItemCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           metrics: 'test'
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidMetricsOption' }))
   })
 
   it('sets returnValues options', () => {
-    const { ReturnValues } = putItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { returnValues: 'ALL_OLD' }
-    )
+    const { ReturnValues } = TestEntity.build(PutItemCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ returnValues: 'ALL_OLD' })
+      .params()
 
     expect(ReturnValues).toBe('ALL_OLD')
   })
 
   it('fails on invalid returnValues option', () => {
     const invalidCall = () =>
-      putItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(PutItemCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           returnValues: 'test'
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -417,14 +446,13 @@ describe('put', () => {
 
   it('fails on extra options', () => {
     const invalidCall = () =>
-      putItemParams(
-        TestEntity,
-        { email: 'x', sort: 'y' },
-        {
+      TestEntity.build(PutItemCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({
           // @ts-expect-error
           extra: true
-        }
-      )
+        })
+        .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
@@ -435,15 +463,21 @@ describe('put', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = putItemParams(
-      TestEntity,
-      { email: 'x', sort: 'y' },
-      { condition: { attr: 'email', gt: 'test' } }
-    )
+    } = TestEntity.build(PutItemCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ condition: { attr: 'email', gt: 'test' } })
+      .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':1': 'test' })
     expect(ConditionExpression).toBe('#1 > :1')
+  })
+
+  it('missing item', () => {
+    const invalidCall = () => TestEntity.build(PutItemCommand).params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.incompleteCommand' }))
   })
 
   // TODO Create putBatch method and move tests there
