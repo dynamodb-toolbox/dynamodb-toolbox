@@ -1,9 +1,9 @@
-import { item, string, number, anyOf, map, list } from 'v1/item'
+import { schema, string, number, anyOf, map, list } from 'v1/schema'
 import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition', () => {
   describe('savedAs attrs', () => {
-    const itemWithSavedAs = item({
+    const schemaWithSavedAs = schema({
       savedAs: string().savedAs('_s'),
       nested: map({
         savedAs: string().savedAs('_s')
@@ -16,18 +16,18 @@ describe('parseCondition', () => {
     })
 
     it('correctly parses condition (root)', () => {
-      expect(parseCondition(itemWithSavedAs, { attr: 'savedAs', beginsWith: 'foo' })).toStrictEqual(
-        {
-          ConditionExpression: 'begins_with(#1, :1)',
-          ExpressionAttributeNames: { '#1': '_s' },
-          ExpressionAttributeValues: { ':1': 'foo' }
-        }
-      )
+      expect(
+        parseCondition(schemaWithSavedAs, { attr: 'savedAs', beginsWith: 'foo' })
+      ).toStrictEqual({
+        ConditionExpression: 'begins_with(#1, :1)',
+        ExpressionAttributeNames: { '#1': '_s' },
+        ExpressionAttributeValues: { ':1': 'foo' }
+      })
     })
 
     it('correctly parses condition (nested)', () => {
       expect(
-        parseCondition(itemWithSavedAs, { attr: 'nested.savedAs', beginsWith: 'foo' })
+        parseCondition(schemaWithSavedAs, { attr: 'nested.savedAs', beginsWith: 'foo' })
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#1.#2, :1)',
         ExpressionAttributeNames: { '#1': '_n', '#2': '_s' },
@@ -37,7 +37,7 @@ describe('parseCondition', () => {
 
     it('correctly parses condition (listed)', () => {
       expect(
-        parseCondition(itemWithSavedAs, { attr: 'listed[4].savedAs', beginsWith: 'foo' })
+        parseCondition(schemaWithSavedAs, { attr: 'listed[4].savedAs', beginsWith: 'foo' })
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#1[4].#2, :1)',
         ExpressionAttributeNames: { '#1': '_l', '#2': '_s' },
@@ -47,7 +47,7 @@ describe('parseCondition', () => {
   })
 
   describe('anyOf', () => {
-    const itemWithAnyOf = item({
+    const schemaWithAnyOf = schema({
       anyOf: anyOf([
         number(),
         map({
@@ -57,7 +57,7 @@ describe('parseCondition', () => {
     })
 
     it('correctly parses condition (root)', () => {
-      expect(parseCondition(itemWithAnyOf, { attr: 'anyOf', between: [42, 43] })).toStrictEqual({
+      expect(parseCondition(schemaWithAnyOf, { attr: 'anyOf', between: [42, 43] })).toStrictEqual({
         ConditionExpression: '#1 BETWEEN :1 AND :2',
         ExpressionAttributeNames: { '#1': 'anyOf' },
         ExpressionAttributeValues: { ':1': 42, ':2': 43 }
@@ -66,7 +66,7 @@ describe('parseCondition', () => {
 
     it('correctly parses condition (nested num)', () => {
       expect(
-        parseCondition(itemWithAnyOf, { attr: 'anyOf.strOrNum', between: [42, 43] })
+        parseCondition(schemaWithAnyOf, { attr: 'anyOf.strOrNum', between: [42, 43] })
       ).toStrictEqual({
         ConditionExpression: '#1.#2 BETWEEN :1 AND :2',
         ExpressionAttributeNames: { '#1': 'anyOf', '#2': 'strOrNum' },
@@ -76,7 +76,7 @@ describe('parseCondition', () => {
 
     it('correctly parses condition (nested str)', () => {
       expect(
-        parseCondition(itemWithAnyOf, { attr: 'anyOf.strOrNum', beginsWith: 'foo' })
+        parseCondition(schemaWithAnyOf, { attr: 'anyOf.strOrNum', beginsWith: 'foo' })
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#1.#2, :1)',
         ExpressionAttributeNames: { '#1': 'anyOf', '#2': 'strOrNum' },

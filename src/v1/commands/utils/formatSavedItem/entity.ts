@@ -1,12 +1,12 @@
 import type { EntityV2, FormattedItem } from 'v1/entity'
-import type { ResolvedItem, PossiblyUndefinedResolvedItem } from 'v1/item'
+import type { ResolvedItem, PossiblyUndefinedResolvedItem } from 'v1/schema'
 import type { AnyAttributePath } from 'v1/commands/types/paths'
 
 import { parseSavedAttribute } from './attribute'
 import { matchProjection } from './utils'
 
 type FormatSavedItemOptions<ENTITY extends EntityV2> = {
-  attributes?: AnyAttributePath<ENTITY['item']>[]
+  attributes?: AnyAttributePath<ENTITY['schema']>[]
 }
 
 export const formatSavedItem = <
@@ -16,15 +16,15 @@ export const formatSavedItem = <
   entity: ENTITY,
   savedItem: ResolvedItem,
   formatSavedItemOptions: OPTIONS = {} as OPTIONS
-): OPTIONS['attributes'] extends AnyAttributePath<ENTITY['item']>[]
+): OPTIONS['attributes'] extends AnyAttributePath<ENTITY['schema']>[]
   ? FormattedItem<ENTITY, OPTIONS['attributes'][number]>
   : FormattedItem<ENTITY> => {
   const { attributes } = formatSavedItemOptions
   const formattedItem: PossiblyUndefinedResolvedItem = {}
 
-  const item = entity.item
+  const schema = entity.schema
 
-  Object.entries(item.attributes).forEach(([attributeName, attribute]) => {
+  Object.entries(schema.attributes).forEach(([attributeName, attribute]) => {
     if (attribute.hidden) {
       return
     }

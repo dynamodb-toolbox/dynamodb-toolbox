@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { TableV2, EntityV2, item, string, DynamoDBToolboxError, DeleteItemCommand } from 'v1'
+import { TableV2, EntityV2, schema, string, DynamoDBToolboxError, DeleteItemCommand } from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -22,7 +22,7 @@ const TestTable = new TableV2({
 
 const TestEntity = new EntityV2({
   name: 'TestEntity',
-  item: item({
+  schema: schema({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test: string()
@@ -32,7 +32,7 @@ const TestEntity = new EntityV2({
 
 const TestEntity2 = new EntityV2({
   name: 'TestEntity',
-  item: item({
+  schema: schema({
     pk: string().key(),
     sk: string().key(),
     test: string()

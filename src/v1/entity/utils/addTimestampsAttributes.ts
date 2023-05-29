@@ -1,4 +1,4 @@
-import type { Item, AtLeastOnce, PrimitiveAttribute } from 'v1/item'
+import type { Schema, AtLeastOnce, PrimitiveAttribute } from 'v1/schema'
 
 import { WithRootAttribute, addRootAttribute } from './addRootAttribute'
 
@@ -15,17 +15,17 @@ export type TimestampAttribute<SAVED_AS extends string> = PrimitiveAttribute<
 >
 
 export type WithTimestampAttributes<
-  ITEM extends Item,
+  SCHEMA extends Schema,
   ENTITY_NAME extends string,
   CREATED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 > = string extends ENTITY_NAME
-  ? ITEM
+  ? SCHEMA
   : WithRootAttribute<
       WithRootAttribute<
-        ITEM,
+        SCHEMA,
         CREATED_TIMESTAMP_ATTRIBUTE_NAME,
         TimestampAttribute<CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS>
       >,
@@ -34,21 +34,21 @@ export type WithTimestampAttributes<
     >
 
 type TimestampAttributesAdder = <
-  ITEM extends Item,
+  SCHEMA extends Schema,
   ENTITY_NAME extends string,
   CREATED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 >(props: {
-  item: ITEM
+  schema: SCHEMA
   entityName: ENTITY_NAME
   createdTimestampAttributeName: CREATED_TIMESTAMP_ATTRIBUTE_NAME
   createdTimestampAttributeSavedAs: CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS
   modifiedTimestampAttributeName: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
   modifiedTimestampAttributeSavedAs: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
 }) => WithTimestampAttributes<
-  ITEM,
+  SCHEMA,
   ENTITY_NAME,
   CREATED_TIMESTAMP_ATTRIBUTE_NAME,
   CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
@@ -57,20 +57,20 @@ type TimestampAttributesAdder = <
 >
 
 export const addTimestampAttributes: TimestampAttributesAdder = <
-  ITEM extends Item,
+  SCHEMA extends Schema,
   ENTITY_NAME extends string,
   CREATED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 >({
-  item,
+  schema,
   createdTimestampAttributeName,
   createdTimestampAttributeSavedAs,
   modifiedTimestampAttributeName,
   modifiedTimestampAttributeSavedAs
 }: {
-  item: ITEM
+  schema: SCHEMA
   entityName: ENTITY_NAME
   createdTimestampAttributeName: CREATED_TIMESTAMP_ATTRIBUTE_NAME
   createdTimestampAttributeSavedAs: CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS
@@ -89,7 +89,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
   }
 
   const withCreatedAttribute = addRootAttribute(
-    item,
+    schema,
     createdTimestampAttributeName,
     createdAttribute
   )
@@ -112,7 +112,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
   )
 
   return withTimestampAttributes as WithTimestampAttributes<
-    ITEM,
+    SCHEMA,
     ENTITY_NAME,
     CREATED_TIMESTAMP_ATTRIBUTE_NAME,
     CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,

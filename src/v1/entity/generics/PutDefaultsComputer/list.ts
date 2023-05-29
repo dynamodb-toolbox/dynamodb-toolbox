@@ -1,4 +1,4 @@
-import type { ComputedDefault, ListAttribute } from 'v1/item'
+import type { ComputedDefault, ListAttribute } from 'v1/schema'
 import type { OmitUndefinedProperties } from 'v1/types'
 
 import type { AttributePutItem } from '../PutItem'

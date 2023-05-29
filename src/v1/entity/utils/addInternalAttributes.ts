@@ -1,11 +1,11 @@
-import type { Item } from 'v1/item'
+import type { Schema } from 'v1/schema'
 import type { TableV2 } from 'v1/table'
 
 import { WithEntityNameAttribute, addEntityNameAttribute } from './addEntityNameAttribute'
 import { addTimestampAttributes, WithTimestampAttributes } from './addTimestampsAttributes'
 
 export type WithInternalAttributes<
-  ITEM extends Item,
+  SCHEMA extends Schema,
   TABLE extends TableV2,
   ENTITY_NAME_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
@@ -15,20 +15,20 @@ export type WithInternalAttributes<
   MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 > = string extends ENTITY_NAME
-  ? ITEM
+  ? SCHEMA
   : TIMESTAMPS extends true
   ? WithTimestampAttributes<
-      WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>,
+      WithEntityNameAttribute<SCHEMA, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>,
       ENTITY_NAME,
       CREATED_TIMESTAMP_ATTRIBUTE_NAME,
       CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
       MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
       MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
     >
-  : WithEntityNameAttribute<ITEM, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>
+  : WithEntityNameAttribute<SCHEMA, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>
 
 type InternalAttributesAdder = <
-  ITEM extends Item,
+  SCHEMA extends Schema,
   TABLE extends TableV2,
   ENTITY_NAME_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
@@ -38,7 +38,7 @@ type InternalAttributesAdder = <
   MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 >({
-  item,
+  schema,
   table,
   entityNameAttributeName,
   entityName,
@@ -47,7 +47,7 @@ type InternalAttributesAdder = <
   modifiedTimestampAttributeName,
   modifiedTimestampAttributeSavedAs
 }: {
-  item: ITEM
+  schema: SCHEMA
   table: TABLE
   entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
   entityName: ENTITY_NAME
@@ -57,7 +57,7 @@ type InternalAttributesAdder = <
   modifiedTimestampAttributeName: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
   modifiedTimestampAttributeSavedAs: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
 }) => WithInternalAttributes<
-  ITEM,
+  SCHEMA,
   TABLE,
   ENTITY_NAME_ATTRIBUTE_NAME,
   ENTITY_NAME,
@@ -69,7 +69,7 @@ type InternalAttributesAdder = <
 >
 
 export const addInternalAttributes: InternalAttributesAdder = <
-  ITEM extends Item,
+  SCHEMA extends Schema,
   TABLE extends TableV2,
   ENTITY_NAME_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
@@ -79,7 +79,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string,
   MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string
 >({
-  item,
+  schema,
   table,
   entityNameAttributeName,
   entityName,
@@ -89,7 +89,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   modifiedTimestampAttributeName,
   modifiedTimestampAttributeSavedAs
 }: {
-  item: ITEM
+  schema: SCHEMA
   table: TABLE
   entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
   entityName: ENTITY_NAME
@@ -100,7 +100,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   modifiedTimestampAttributeSavedAs: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
 }) => {
   const withEntityNameAttribute = addEntityNameAttribute({
-    item,
+    schema,
     table,
     entityNameAttributeName,
     entityName
@@ -108,7 +108,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
 
   if (timestamps === false) {
     return withEntityNameAttribute as WithInternalAttributes<
-      ITEM,
+      SCHEMA,
       TABLE,
       ENTITY_NAME_ATTRIBUTE_NAME,
       ENTITY_NAME,
@@ -121,7 +121,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   }
 
   const withTimestampAttributes = addTimestampAttributes({
-    item: withEntityNameAttribute,
+    schema: withEntityNameAttribute,
     entityName,
     createdTimestampAttributeName,
     createdTimestampAttributeSavedAs,
@@ -130,7 +130,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   })
 
   return withTimestampAttributes as WithInternalAttributes<
-    ITEM,
+    SCHEMA,
     TABLE,
     ENTITY_NAME_ATTRIBUTE_NAME,
     ENTITY_NAME,

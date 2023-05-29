@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { Attribute, RequiredOption, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { Attribute, RequiredOption, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { FormatSavedAttributeOptions } from './types'

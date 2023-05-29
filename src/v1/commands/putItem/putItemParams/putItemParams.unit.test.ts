@@ -4,7 +4,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import {
   TableV2,
   EntityV2,
-  item,
+  schema,
   any,
   binary,
   string,
@@ -37,7 +37,7 @@ const TestTable = new TableV2({
 
 const TestEntity = new EntityV2({
   name: 'TestEntity',
-  item: item({
+  schema: schema({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test_any: any().optional(),
@@ -65,7 +65,7 @@ const TestTable2 = new TableV2({
 
 const TestEntity2 = new EntityV2({
   name: 'TestEntity2',
-  item: item({
+  schema: schema({
     email: string().key().savedAs('pk'),
     sort: string().optional().savedAs('sk').default(ComputedDefault),
     test_composite: string().optional(),
@@ -80,7 +80,7 @@ const TestEntity2 = new EntityV2({
 
 const TestEntity3 = new EntityV2({
   name: 'TestEntity3',
-  item: item({
+  schema: schema({
     email: string().key().savedAs('pk'),
     test: any(),
     test2: string().optional()
@@ -97,7 +97,7 @@ const TestTable3 = new TableV2({
 
 const TestEntity4 = new EntityV2({
   name: 'TestEntity4',
-  item: item({
+  schema: schema({
     id: number().key().savedAs('pk'),
     // sk: { hidden: true, sortKey: true, default: (data: any) => data.id },
     xyz: any().optional().savedAs('test')
@@ -108,7 +108,7 @@ const TestEntity4 = new EntityV2({
 
 const TestEntity5 = new EntityV2({
   name: 'TestEntity5',
-  item: item({
+  schema: schema({
     pk: string().key(),
     test_required_boolean: boolean(),
     test_required_number: number()

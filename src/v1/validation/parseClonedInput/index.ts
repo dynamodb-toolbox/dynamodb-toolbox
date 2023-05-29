@@ -1,2 +1,2 @@
-export { parseItemClonedInput } from './item'
+export { parseSchemaClonedInput } from './schema'
 export { parseAttributeClonedInput } from './attribute'

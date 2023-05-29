@@ -1,4 +1,4 @@
-import { PrimitiveAttributeType } from 'v1/item/attributes/primitive/types'
+import { PrimitiveAttributeType } from 'v1/schema/attributes/primitive/types'
 
 import { isBinary } from './isBinary'
 import { isBoolean } from './isBoolean'

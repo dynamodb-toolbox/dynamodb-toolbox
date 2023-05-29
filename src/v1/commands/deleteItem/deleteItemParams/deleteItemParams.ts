@@ -34,7 +34,7 @@ export const deleteItemParams = <
 
   const options = parseDeleteItemOptions(entity, deleteItemOptions)
 
-  const renamedInput = renameSavedAsAttributes(entity.item, validKeyInput)
+  const renamedInput = renameSavedAsAttributes(entity.schema, validKeyInput)
 
   const primaryKey = parsePrimaryKey(entity, keyInput ?? renamedInput)
 

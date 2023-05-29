@@ -1,4 +1,4 @@
-import type { ListAttribute, PossiblyUndefinedResolvedListAttribute } from 'v1/item'
+import type { ListAttribute, PossiblyUndefinedResolvedListAttribute } from 'v1/schema'
 
 import { renameAttributeSavedAsAttributes } from './attribute'
 

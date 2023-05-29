@@ -1,4 +1,4 @@
-import type { RequiredOption } from 'v1/item'
+import type { RequiredOption } from 'v1/schema'
 
 export interface AttributeFilters {
   key?: boolean

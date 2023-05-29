@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type {
-  Item,
+  Schema,
   Attribute,
   ResolvedAttribute,
   AnyAttribute,
@@ -13,18 +13,18 @@ import type {
   AnyOfAttribute,
   Always,
   ResolvePrimitiveAttribute
-} from 'v1/item'
+} from 'v1/schema'
 
 import type { EntityV2 } from '../class'
 
 /**
- * Key input of a single item command (GET, DELETE ...) for an Entity or Item
+ * Key input of a single item command (GET, DELETE ...) for an Entity or Schema
  *
- * @param Schema Entity | Item
+ * @param Schema Entity | Schema
  * @return Object
  */
-export type KeyInput<SCHEMA extends EntityV2 | Item> = SCHEMA extends Item
-  ? // NOTE: For some obscure reason, checking that SCHEMA is not EntityV2 or Item (constraint) triggers an error
+export type KeyInput<SCHEMA extends EntityV2 | Schema> = SCHEMA extends Schema
+  ? // NOTE: For some obscure reason, checking that SCHEMA is not EntityV2 or Schema (constraint) triggers an error
     O.Required<
       O.Partial<
         {
@@ -42,7 +42,7 @@ export type KeyInput<SCHEMA extends EntityV2 | Item> = SCHEMA extends Item
       >
     >
   : SCHEMA extends EntityV2
-  ? KeyInput<SCHEMA['item']>
+  ? KeyInput<SCHEMA['schema']>
   : never
 
 /**
