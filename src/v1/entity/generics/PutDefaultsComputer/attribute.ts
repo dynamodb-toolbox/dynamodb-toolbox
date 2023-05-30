@@ -8,7 +8,7 @@ import type {
   MapAttribute,
   RecordAttribute,
   AnyOfAttribute
-} from 'v1/item'
+} from 'v1/schema'
 
 import type { AttributePutItem } from '../PutItem'
 

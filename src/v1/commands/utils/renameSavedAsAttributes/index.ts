@@ -1,2 +1,2 @@
-export { renameSavedAsAttributes } from './item'
+export { renameSavedAsAttributes } from './schema'
 export { renameAttributeSavedAsAttributes } from './attribute'

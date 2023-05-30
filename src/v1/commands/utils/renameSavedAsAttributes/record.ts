@@ -1,4 +1,4 @@
-import type { RecordAttribute, PossiblyUndefinedResolvedMapAttribute } from 'v1/item'
+import type { RecordAttribute, PossiblyUndefinedResolvedMapAttribute } from 'v1/schema'
 
 import { renameAttributeSavedAsAttributes } from './attribute'
 

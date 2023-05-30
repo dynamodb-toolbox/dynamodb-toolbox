@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type {
-  Item,
+  Schema,
   Attribute,
   ResolvedAttribute,
   ResolvedMapAttribute,
@@ -17,25 +17,25 @@ import type {
   Always,
   ComputedDefault,
   ResolvePrimitiveAttribute
-} from 'v1/item'
+} from 'v1/schema'
 
 import type { EntityV2 } from '../class'
 
 /**
- * User input of a PUT command for a given Entity or Item
+ * User input of a PUT command for a given Entity or Schema
  *
- * @param Schema Entity | Item
+ * @param Schema Entity | Schema
  * @param RequireHardDefaults Boolean
  * @return Object
  */
 export type PutItemInput<
-  SCHEMA extends EntityV2 | Item,
+  SCHEMA extends EntityV2 | Schema,
   REQUIRE_HARD_DEFAULTS extends boolean = false
 > = EntityV2 extends SCHEMA
   ? ResolvedMapAttribute
-  : Item extends SCHEMA
+  : Schema extends SCHEMA
   ? ResolvedMapAttribute
-  : SCHEMA extends Item
+  : SCHEMA extends Schema
   ? O.Required<
       O.Partial<
         {
@@ -57,11 +57,11 @@ export type PutItemInput<
           : never)
     >
   : SCHEMA extends EntityV2
-  ? PutItemInput<SCHEMA['item'], REQUIRE_HARD_DEFAULTS>
+  ? PutItemInput<SCHEMA['schema'], REQUIRE_HARD_DEFAULTS>
   : never
 
 /**
- * User input of a PUT command for a given Entity, Item or Attribute
+ * User input of a PUT command for a given Attribute
  *
  * @param Attribute Attribute
  * @param RequireHardDefaults Boolean

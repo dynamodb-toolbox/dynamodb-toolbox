@@ -31,7 +31,7 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
 
   const options = parsePutItemOptions(entity, putItemOptions)
 
-  const renamedInput = renameSavedAsAttributes(entity.item, validInput)
+  const renamedInput = renameSavedAsAttributes(entity.schema, validInput)
 
   const primaryKey = parsePrimaryKey(entity, keyInput ?? renamedInput)
 

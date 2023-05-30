@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type {
-  Item,
+  Schema,
   Attribute,
   AnyAttribute,
   PrimitiveAttribute,
@@ -14,17 +14,17 @@ import type {
   Always,
   ComputedDefault,
   ResolvePrimitiveAttribute
-} from 'v1/item'
+} from 'v1/schema'
 
 import type { EntityV2 } from '../class'
 
 /**
- * Formatted input of an UPDATE command for a given Entity, Item or Attribute
+ * Formatted input of an UPDATE command for a given Entity, Schema or Attribute
  *
- * @param Schema Entity | Item | Attribute
+ * @param Schema Entity | Schema | Attribute
  * @return Object
  */
-export type UpdateItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA extends AnyAttribute
+export type UpdateItem<SCHEMA extends EntityV2 | Schema | Attribute> = SCHEMA extends AnyAttribute
   ? unknown
   : SCHEMA extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<SCHEMA>
@@ -32,7 +32,7 @@ export type UpdateItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA exte
   ? Set<UpdateItem<SCHEMA['elements']>>
   : SCHEMA extends ListAttribute
   ? UpdateItem<SCHEMA['elements']>[]
-  : SCHEMA extends MapAttribute | Item
+  : SCHEMA extends MapAttribute | Schema
   ? O.Required<
       O.Partial<
         {
@@ -52,5 +52,5 @@ export type UpdateItem<SCHEMA extends EntityV2 | Item | Attribute> = SCHEMA exte
   : SCHEMA extends AnyOfAttribute
   ? UpdateItem<SCHEMA['elements'][number]>
   : SCHEMA extends EntityV2
-  ? UpdateItem<SCHEMA['item']>
+  ? UpdateItem<SCHEMA['schema']>
   : never

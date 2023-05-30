@@ -1,5 +1,5 @@
 import type { EntityV2 } from 'v1/entity'
-import type { PossiblyUndefinedResolvedItem, PossiblyUndefinedResolvedAttribute } from 'v1/item'
+import type { PossiblyUndefinedResolvedItem, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import type { PrimaryKey } from 'v1/table'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'

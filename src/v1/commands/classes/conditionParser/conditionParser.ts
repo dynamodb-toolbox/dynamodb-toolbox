@@ -1,6 +1,6 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Item, Attribute } from 'v1/item'
+import type { Schema, Attribute } from 'v1/schema'
 import type { Condition } from 'v1/commands/types/condition'
 
 import { appendAttributePath } from '../utils/appendAttributePath'
@@ -10,12 +10,12 @@ import { parseCondition } from './parseCondition'
 import { toCommandOptions } from './toCommandOptions'
 
 export class ConditionParser {
-  schema: Attribute | Item
+  schema: Schema | Attribute
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]
   expression: string
 
-  constructor(schema: Attribute | Item) {
+  constructor(schema: Schema | Attribute) {
     this.schema = schema
     this.expressionAttributeNames = []
     this.expressionAttributeValues = []
@@ -49,7 +49,7 @@ export class ConditionParser {
     ExpressionAttributeValues: Record<string, NativeAttributeValue>
   } => toCommandOptions(this)
 
-  clone = (schema?: Attribute | Item): ConditionParser => {
+  clone = (schema?: Schema | Attribute): ConditionParser => {
     const clonedAttributeParser = new ConditionParser(schema ?? this.schema)
 
     clonedAttributeParser.expressionAttributeNames = [...this.expressionAttributeNames]

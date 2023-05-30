@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { Attribute } from 'v1/item'
+import type { Attribute } from 'v1/schema'
 
 import type {
   Condition,
@@ -11,9 +11,9 @@ import type {
   AttrOrSize
 } from './condition'
 import type { ATTRIBUTE_PATHS } from './paths.type.test'
-import { myItem } from './fixtures.test'
+import { mySchema } from './fixtures.test'
 
-type ATTRIBUTES = typeof myItem['attributes']
+type ATTRIBUTES = typeof mySchema['attributes']
 
 type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
 const assertParentIdCondition: A.Equals<
@@ -205,7 +205,7 @@ const assertUnionCondition: A.Equals<
 > = 1
 assertUnionCondition
 
-type ENTITY_NON_LOGICAL_CONDITION = NonLogicalCondition<typeof myItem>
+type ENTITY_NON_LOGICAL_CONDITION = NonLogicalCondition<typeof mySchema>
 const assertEntityNonLogicalCondition: A.Contains<
   | PARENT_ID_CONDITION
   | CHILD_ID_CONDITION
@@ -228,6 +228,6 @@ const assertEntityCondition: A.Contains<
   | { or: ENTITY_NON_LOGICAL_CONDITION[] }
   | { and: ENTITY_NON_LOGICAL_CONDITION[] }
   | { not: ENTITY_NON_LOGICAL_CONDITION },
-  Condition<typeof myItem>
+  Condition<typeof mySchema>
 > = 1
 assertEntityCondition

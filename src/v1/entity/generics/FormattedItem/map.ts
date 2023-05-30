@@ -1,19 +1,26 @@
 import type { O } from 'ts-toolbelt'
-import type { Item, AtLeastOnce, OnlyOnce, Always, MapAttribute, ComputedDefault } from 'v1/item'
+import type {
+  Schema,
+  AtLeastOnce,
+  OnlyOnce,
+  Always,
+  MapAttribute,
+  ComputedDefault
+} from 'v1/schema'
 
 import type { FormattedAttribute } from './attribute'
 import type { MatchKeys } from './utils'
 
 export type FormattedMapAttribute<
-  MAP_ATTRIBUTE extends Item | MapAttribute,
+  SCHEMA extends Schema | MapAttribute,
   FILTERED_ATTRIBUTES extends string,
-  KEY_PREFIX extends string = MAP_ATTRIBUTE extends Item
+  KEY_PREFIX extends string = SCHEMA extends Schema
     ? ''
-    : MAP_ATTRIBUTE extends MapAttribute
+    : SCHEMA extends MapAttribute
     ? '.'
     : never,
   MATCHING_KEYS extends string = MatchKeys<
-    Extract<keyof MAP_ATTRIBUTE['attributes'], string>,
+    Extract<keyof SCHEMA['attributes'], string>,
     KEY_PREFIX,
     FILTERED_ATTRIBUTES
   >
@@ -27,10 +34,10 @@ export type FormattedMapAttribute<
             // Keep only non-hidden attributes
             [KEY in O.SelectKeys<
               // Pick only filtered keys
-              O.Pick<MAP_ATTRIBUTE['attributes'], MATCHING_KEYS>,
+              O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
               { hidden: false }
             >]: FormattedAttribute<
-              MAP_ATTRIBUTE['attributes'][KEY],
+              SCHEMA['attributes'][KEY],
               // Compute next filtered attributes
               `${KEY_PREFIX}${KEY}` extends FILTERED_ATTRIBUTES
                 ? string
@@ -41,7 +48,7 @@ export type FormattedMapAttribute<
           }
         >,
         // Enforce Required attributes
-        | O.SelectKeys<MAP_ATTRIBUTE['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+        | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
         // Enforce attributes that have defined hard default
-        | O.FilterKeys<MAP_ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
+        | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
       >

@@ -1,4 +1,4 @@
-import type { ItemErrorBlueprints } from 'v1/item/errors'
+import type { SchemaErrorBlueprints } from 'v1/schema/errors'
 import type { EntityErrorBlueprints } from 'v1/entity/errors'
 import type { CommandsErrorBlueprints } from 'v1/commands/errors'
 import type { ParsingErrorBlueprints } from 'v1/validation/errors'
@@ -6,7 +6,7 @@ import type { ParsingErrorBlueprints } from 'v1/validation/errors'
 import type { ErrorBlueprint } from './blueprint'
 
 type ErrorBlueprints =
-  | ItemErrorBlueprints
+  | SchemaErrorBlueprints
   | EntityErrorBlueprints
   | CommandsErrorBlueprints
   | ParsingErrorBlueprints

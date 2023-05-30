@@ -1,4 +1,4 @@
-import type { ListAttribute } from 'v1/item'
+import type { ListAttribute } from 'v1/schema'
 
 import type { AttributePutItem } from './attribute'
 

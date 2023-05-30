@@ -1,5 +1,5 @@
 import type {
-  Item,
+  Schema,
   Attribute,
   AnyAttribute,
   PrimitiveAttribute,
@@ -9,19 +9,19 @@ import type {
   RecordAttribute,
   AnyOfAttribute,
   ResolvePrimitiveAttribute
-} from 'v1/item'
+} from 'v1/schema'
 import type { FormattedListAttribute } from './list'
 import type { FormattedMapAttribute } from './map'
 import type { FormattedRecordAttribute } from './record'
 
 /**
- * Returned item of a fetch command (GET, QUERY ...) for a given Item or Attribute
+ * Returned item of a fetch command (GET, QUERY ...) for a given Schema or Attribute
  *
- * @param Schema Item | Attribute
+ * @param Schema Schema | Attribute
  * @return Object
  */
 export type FormattedAttribute<
-  SCHEMA extends Item | Attribute,
+  SCHEMA extends Schema | Attribute,
   FILTERED_ATTRIBUTES extends string = string
 > = SCHEMA extends AnyAttribute
   ? unknown
@@ -35,7 +35,7 @@ export type FormattedAttribute<
     : never
   : SCHEMA extends ListAttribute
   ? FormattedListAttribute<SCHEMA, FILTERED_ATTRIBUTES>
-  : SCHEMA extends Item | MapAttribute
+  : SCHEMA extends Schema | MapAttribute
   ? FormattedMapAttribute<SCHEMA, FILTERED_ATTRIBUTES>
   : SCHEMA extends RecordAttribute
   ? FormattedRecordAttribute<SCHEMA, FILTERED_ATTRIBUTES>
