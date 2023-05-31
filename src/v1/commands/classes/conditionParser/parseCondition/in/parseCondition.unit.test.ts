@@ -1,5 +1,5 @@
 import { schema, list, map, number } from 'v1/schema'
-import { parseCondition } from 'v1/commands/utils/parseCondition'
+import { parseSchemaCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - in', () => {
   const simpleSchema = schema({
@@ -9,7 +9,7 @@ describe('parseCondition - in', () => {
   })
 
   it('in (values)', () => {
-    expect(parseCondition(simpleSchema, { attr: 'num', in: [42, 43] })).toStrictEqual({
+    expect(parseSchemaCondition(simpleSchema, { attr: 'num', in: [42, 43] })).toStrictEqual({
       ConditionExpression: '#1 IN (:1, :2)',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42, ':2': 43 }
@@ -18,7 +18,7 @@ describe('parseCondition - in', () => {
 
   it('in (value + attribute)', () => {
     expect(
-      parseCondition(simpleSchema, { attr: 'num', in: [42, { attr: 'otherNum' }] })
+      parseSchemaCondition(simpleSchema, { attr: 'num', in: [42, { attr: 'otherNum' }] })
     ).toStrictEqual({
       ConditionExpression: '#1 IN (:1, #2)',
       ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
@@ -28,7 +28,7 @@ describe('parseCondition - in', () => {
 
   it('in (attributes)', () => {
     expect(
-      parseCondition(simpleSchema, {
+      parseSchemaCondition(simpleSchema, {
         attr: 'num',
         in: [{ attr: 'otherNum' }, { attr: 'yetAnotherNum' }]
       })
@@ -55,7 +55,7 @@ describe('parseCondition - in', () => {
 
   it('deep maps (values)', () => {
     expect(
-      parseCondition(nestedSchema, { attr: 'map.nestedA.nestedB', in: [42, 43] })
+      parseSchemaCondition(nestedSchema, { attr: 'map.nestedA.nestedB', in: [42, 43] })
     ).toStrictEqual({
       ConditionExpression: '#1.#2.#3 IN (:1, :2)',
       ExpressionAttributeNames: {
@@ -69,7 +69,7 @@ describe('parseCondition - in', () => {
 
   it('deep maps (attribute + value)', () => {
     expect(
-      parseCondition(nestedSchema, {
+      parseSchemaCondition(nestedSchema, {
         attr: 'map.nestedA.nestedB',
         in: [{ attr: 'nestedC.otherNum' }, 43]
       })
@@ -88,7 +88,7 @@ describe('parseCondition - in', () => {
 
   it('deep maps (attributes)', () => {
     expect(
-      parseCondition(nestedSchema, {
+      parseSchemaCondition(nestedSchema, {
         attr: 'map.nestedA.nestedB',
         in: [{ attr: 'nestedC.otherNum' }, { attr: 'nestedD.yetAnotherNum' }]
       })
@@ -133,7 +133,7 @@ describe('parseCondition - in', () => {
 
   it('deep maps and lists (values)', () => {
     expect(
-      parseCondition(mapAndList, { attr: 'listA[1].nested.listB[2].value', in: [42, 43] })
+      parseSchemaCondition(mapAndList, { attr: 'listA[1].nested.listB[2].value', in: [42, 43] })
     ).toStrictEqual({
       ConditionExpression: '#1[1].#2.#3[2].#4 IN (:1, :2)',
       ExpressionAttributeNames: {
@@ -148,7 +148,7 @@ describe('parseCondition - in', () => {
 
   it('deep maps and lists (value + attribute)', () => {
     expect(
-      parseCondition(mapAndList, {
+      parseSchemaCondition(mapAndList, {
         attr: 'listA[1].nested.listB[2].value',
         in: [42, { attr: 'listC[3].nested.listD[4].value' }]
       })
@@ -170,7 +170,7 @@ describe('parseCondition - in', () => {
 
   it('deep maps and lists (attributes)', () => {
     expect(
-      parseCondition(mapAndList, {
+      parseSchemaCondition(mapAndList, {
         attr: 'listA[1].nested.listB[2].value',
         in: [{ attr: 'listC[3].nested.listD[4].value' }, { attr: 'listE[3].nested.listF[4].value' }]
       })
@@ -201,7 +201,9 @@ describe('parseCondition - in', () => {
   })
 
   it('deep lists (values)', () => {
-    expect(parseCondition(listsSchema, { attr: 'list[1][2][3]', in: [42, 43] })).toStrictEqual({
+    expect(
+      parseSchemaCondition(listsSchema, { attr: 'list[1][2][3]', in: [42, 43] })
+    ).toStrictEqual({
       ConditionExpression: '#1[1][2][3] IN (:1, :2)',
       ExpressionAttributeNames: { '#1': 'list' },
       ExpressionAttributeValues: { ':1': 42, ':2': 43 }
@@ -210,7 +212,10 @@ describe('parseCondition - in', () => {
 
   it('deep lists (attribute + value)', () => {
     expect(
-      parseCondition(listsSchema, { attr: 'list[1][2][3]', in: [{ attr: 'listB[4][5][6]' }, 42] })
+      parseSchemaCondition(listsSchema, {
+        attr: 'list[1][2][3]',
+        in: [{ attr: 'listB[4][5][6]' }, 42]
+      })
     ).toStrictEqual({
       ConditionExpression: '#1[1][2][3] IN (#2[4][5][6], :1)',
       ExpressionAttributeNames: { '#1': 'list', '#2': 'listB' },
@@ -220,7 +225,7 @@ describe('parseCondition - in', () => {
 
   it('deep lists (attributes)', () => {
     expect(
-      parseCondition(listsSchema, {
+      parseSchemaCondition(listsSchema, {
         attr: 'list[1][2][3]',
         in: [{ attr: 'listB[4][5][6]' }, { attr: 'listC[7][8][9]' }]
       })
@@ -232,7 +237,7 @@ describe('parseCondition - in', () => {
   })
 
   it('with size', () => {
-    expect(parseCondition(simpleSchema, { size: 'num', in: [42, 43] })).toStrictEqual({
+    expect(parseSchemaCondition(simpleSchema, { size: 'num', in: [42, 43] })).toStrictEqual({
       ConditionExpression: 'size(#1) IN (:1, :2)',
       ExpressionAttributeNames: { '#1': 'num' },
       ExpressionAttributeValues: { ':1': 42, ':2': 43 }

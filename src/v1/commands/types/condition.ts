@@ -1,3 +1,4 @@
+import type { EntityV2 } from 'v1/entity'
 import type {
   Schema,
   AnyAttribute,
@@ -10,7 +11,7 @@ import type {
   ResolvedPrimitiveAttribute,
   PrimitiveAttribute
 } from 'v1/schema'
-import type { AnyAttributePath } from './paths'
+import type { SchemaAttributePath } from './paths'
 
 export type AnyAttributeCondition<
   ATTRIBUTE_PATH extends string,
@@ -152,13 +153,15 @@ export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends
     ? AttributeCondition<
         ATTRIBUTE_PATH,
         SCHEMA['attributes'][ATTRIBUTE_PATH],
-        AnyAttributePath<SCHEMA>
+        SchemaAttributePath<SCHEMA>
       >
     : never
   : never
 
-export type Condition<SCHEMA extends Schema = Schema> =
+export type SchemaCondition<SCHEMA extends Schema = Schema> =
   | NonLogicalCondition<SCHEMA>
-  | { and: Condition<SCHEMA>[] }
-  | { or: Condition<SCHEMA>[] }
-  | { not: Condition<SCHEMA> }
+  | { and: SchemaCondition<SCHEMA>[] }
+  | { or: SchemaCondition<SCHEMA>[] }
+  | { not: SchemaCondition<SCHEMA> }
+
+export type Condition<ENTITY extends EntityV2 = EntityV2> = SchemaCondition<ENTITY['schema']>

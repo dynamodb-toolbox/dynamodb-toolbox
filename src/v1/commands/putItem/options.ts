@@ -18,5 +18,5 @@ export interface PutItemOptions<ENTITY extends EntityV2 = EntityV2> {
   capacity?: CapacityOption
   metrics?: MetricsOption
   returnValues?: PutItemCommandReturnValuesOption
-  condition?: Condition<ENTITY['schema']>
+  condition?: Condition<ENTITY>
 }

@@ -6,7 +6,7 @@ import { parseSavedAttribute } from './attribute'
 import { matchProjection } from './utils'
 
 type FormatSavedItemOptions<ENTITY extends EntityV2> = {
-  attributes?: AnyAttributePath<ENTITY['schema']>[]
+  attributes?: AnyAttributePath<ENTITY>[]
 }
 
 export const formatSavedItem = <
@@ -16,7 +16,7 @@ export const formatSavedItem = <
   entity: ENTITY,
   savedItem: ResolvedItem,
   formatSavedItemOptions: OPTIONS = {} as OPTIONS
-): OPTIONS['attributes'] extends AnyAttributePath<ENTITY['schema']>[]
+): OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
   ? FormattedItem<ENTITY, OPTIONS['attributes'][number]>
   : FormattedItem<ENTITY> => {
   const { attributes } = formatSavedItemOptions

@@ -1,5 +1,5 @@
 import { schema, string, number, anyOf, map, list } from 'v1/schema'
-import { parseCondition } from 'v1/commands/utils/parseCondition'
+import { parseSchemaCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition', () => {
   describe('savedAs attrs', () => {
@@ -17,7 +17,7 @@ describe('parseCondition', () => {
 
     it('correctly parses condition (root)', () => {
       expect(
-        parseCondition(schemaWithSavedAs, { attr: 'savedAs', beginsWith: 'foo' })
+        parseSchemaCondition(schemaWithSavedAs, { attr: 'savedAs', beginsWith: 'foo' })
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#1, :1)',
         ExpressionAttributeNames: { '#1': '_s' },
@@ -27,7 +27,7 @@ describe('parseCondition', () => {
 
     it('correctly parses condition (nested)', () => {
       expect(
-        parseCondition(schemaWithSavedAs, { attr: 'nested.savedAs', beginsWith: 'foo' })
+        parseSchemaCondition(schemaWithSavedAs, { attr: 'nested.savedAs', beginsWith: 'foo' })
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#1.#2, :1)',
         ExpressionAttributeNames: { '#1': '_n', '#2': '_s' },
@@ -37,7 +37,7 @@ describe('parseCondition', () => {
 
     it('correctly parses condition (listed)', () => {
       expect(
-        parseCondition(schemaWithSavedAs, { attr: 'listed[4].savedAs', beginsWith: 'foo' })
+        parseSchemaCondition(schemaWithSavedAs, { attr: 'listed[4].savedAs', beginsWith: 'foo' })
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#1[4].#2, :1)',
         ExpressionAttributeNames: { '#1': '_l', '#2': '_s' },
@@ -57,7 +57,9 @@ describe('parseCondition', () => {
     })
 
     it('correctly parses condition (root)', () => {
-      expect(parseCondition(schemaWithAnyOf, { attr: 'anyOf', between: [42, 43] })).toStrictEqual({
+      expect(
+        parseSchemaCondition(schemaWithAnyOf, { attr: 'anyOf', between: [42, 43] })
+      ).toStrictEqual({
         ConditionExpression: '#1 BETWEEN :1 AND :2',
         ExpressionAttributeNames: { '#1': 'anyOf' },
         ExpressionAttributeValues: { ':1': 42, ':2': 43 }
@@ -66,7 +68,7 @@ describe('parseCondition', () => {
 
     it('correctly parses condition (nested num)', () => {
       expect(
-        parseCondition(schemaWithAnyOf, { attr: 'anyOf.strOrNum', between: [42, 43] })
+        parseSchemaCondition(schemaWithAnyOf, { attr: 'anyOf.strOrNum', between: [42, 43] })
       ).toStrictEqual({
         ConditionExpression: '#1.#2 BETWEEN :1 AND :2',
         ExpressionAttributeNames: { '#1': 'anyOf', '#2': 'strOrNum' },
@@ -76,7 +78,7 @@ describe('parseCondition', () => {
 
     it('correctly parses condition (nested str)', () => {
       expect(
-        parseCondition(schemaWithAnyOf, { attr: 'anyOf.strOrNum', beginsWith: 'foo' })
+        parseSchemaCondition(schemaWithAnyOf, { attr: 'anyOf.strOrNum', beginsWith: 'foo' })
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#1.#2, :1)',
         ExpressionAttributeNames: { '#1': 'anyOf', '#2': 'strOrNum' },

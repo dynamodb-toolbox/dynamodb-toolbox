@@ -3,7 +3,7 @@ import type { A } from 'ts-toolbelt'
 import type { Attribute } from 'v1/schema'
 
 import type {
-  Condition,
+  SchemaCondition,
   NonLogicalCondition,
   AttributeCondition,
   SharedAttributeCondition,
@@ -205,8 +205,8 @@ const assertUnionCondition: A.Equals<
 > = 1
 assertUnionCondition
 
-type ENTITY_NON_LOGICAL_CONDITION = NonLogicalCondition<typeof mySchema>
-const assertEntityNonLogicalCondition: A.Contains<
+type NON_LOGICAL_CONDITION = NonLogicalCondition<typeof mySchema>
+const assertNonLogicalCondition: A.Contains<
   | PARENT_ID_CONDITION
   | CHILD_ID_CONDITION
   | ANY_CONDITION
@@ -219,15 +219,15 @@ const assertEntityNonLogicalCondition: A.Contains<
   | MAP_CONDITION
   | RECORD_CONDITION
   | UNION_CONDITION,
-  ENTITY_NON_LOGICAL_CONDITION
+  NON_LOGICAL_CONDITION
 > = 1
-assertEntityNonLogicalCondition
+assertNonLogicalCondition
 
 const assertEntityCondition: A.Contains<
-  | ENTITY_NON_LOGICAL_CONDITION
-  | { or: ENTITY_NON_LOGICAL_CONDITION[] }
-  | { and: ENTITY_NON_LOGICAL_CONDITION[] }
-  | { not: ENTITY_NON_LOGICAL_CONDITION },
-  Condition<typeof mySchema>
+  | NON_LOGICAL_CONDITION
+  | { or: NON_LOGICAL_CONDITION[] }
+  | { and: NON_LOGICAL_CONDITION[] }
+  | { not: NON_LOGICAL_CONDITION },
+  SchemaCondition<typeof mySchema>
 > = 1
 assertEntityCondition

@@ -18,7 +18,7 @@ export type GetItemResponse<
     Omit<GetCommandOutput, 'Item'>,
     {
       Item?:
-        | (OPTIONS['attributes'] extends AnyAttributePath<ENTITY['schema']>[]
+        | (OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
             ? FormattedItem<ENTITY, OPTIONS['attributes'][number]>
             : FormattedItem<ENTITY>)
         | undefined
