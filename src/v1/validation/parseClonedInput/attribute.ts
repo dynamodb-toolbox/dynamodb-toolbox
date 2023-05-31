@@ -9,7 +9,7 @@ import { parseRecordAttributeClonedInput } from './record'
 import { parseAnyOfAttributeClonedInput } from './anyOf'
 import type { ParsingOptions } from './types'
 
-const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always', 'onlyOnce'])
+const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'])
 
 export const parseAttributeClonedInput = (
   attribute: Attribute,

@@ -1,3 +1,3 @@
 export { ComputedDefault } from './computedDefault'
-export { RequiredOption, Never, AtLeastOnce, OnlyOnce, Always } from './requiredOptions'
+export { RequiredOption, Never, AtLeastOnce, Always } from './requiredOptions'
 export * from './attributeOptions'

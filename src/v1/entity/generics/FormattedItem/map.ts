@@ -1,12 +1,5 @@
 import type { O } from 'ts-toolbelt'
-import type {
-  Schema,
-  AtLeastOnce,
-  OnlyOnce,
-  Always,
-  MapAttribute,
-  ComputedDefault
-} from 'v1/schema'
+import type { Schema, AtLeastOnce, Always, MapAttribute, ComputedDefault } from 'v1/schema'
 
 import type { FormattedAttribute } from './attribute'
 import type { MatchKeys } from './utils'
@@ -48,7 +41,7 @@ export type FormattedMapAttribute<
           }
         >,
         // Enforce Required attributes
-        | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+        | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always }>
         // Enforce attributes that have defined hard default
         | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
       >

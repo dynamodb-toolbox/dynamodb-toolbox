@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
+import { ComputedDefault, Never, AtLeastOnce, Always } from '../constants'
 import { string } from '../primitive'
 import {
   $type,
@@ -57,7 +57,6 @@ describe('map', () => {
 
   it('returns required map (option)', () => {
     const mappedAtLeastOnce = map({ str }, { required: 'atLeastOnce' })
-    const mappedOnlyOnce = map({ str }, { required: 'onlyOnce' })
     const mappedAlways = map({ str }, { required: 'always' })
     const mappedNever = map({ str }, { required: 'never' })
 
@@ -66,25 +65,18 @@ describe('map', () => {
       { [$required]: AtLeastOnce }
     > = 1
     assertMapAttributeAtLeastOnce
-    const assertMapAttributeOnlyOnce: A.Contains<
-      typeof mappedOnlyOnce,
-      { [$required]: OnlyOnce }
-    > = 1
-    assertMapAttributeOnlyOnce
     const assertMapAttributeAlways: A.Contains<typeof mappedAlways, { [$required]: Always }> = 1
     assertMapAttributeAlways
     const assertMapAttributeNever: A.Contains<typeof mappedNever, { [$required]: Never }> = 1
     assertMapAttributeNever
 
     expect(mappedAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(mappedOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
     expect(mappedAlways).toMatchObject({ [$required]: 'always' })
     expect(mappedNever).toMatchObject({ [$required]: 'never' })
   })
 
   it('returns required map (method)', () => {
     const mappedAtLeastOnce = map({ str }).required()
-    const mappedOnlyOnce = map({ str }).required('onlyOnce')
     const mappedAlways = map({ str }).required('always')
     const mappedNever = map({ str }).required('never')
     const mappedOpt = map({ str }).optional()
@@ -94,11 +86,6 @@ describe('map', () => {
       { [$required]: AtLeastOnce }
     > = 1
     assertMapAttributeAtLeastOnce
-    const assertMapAttributeOnlyOnce: A.Contains<
-      typeof mappedOnlyOnce,
-      { [$required]: OnlyOnce }
-    > = 1
-    assertMapAttributeOnlyOnce
     const assertMapAttributeAlways: A.Contains<typeof mappedAlways, { [$required]: Always }> = 1
     assertMapAttributeAlways
     const assertMapAttributeNever: A.Contains<typeof mappedNever, { [$required]: Never }> = 1
@@ -107,7 +94,6 @@ describe('map', () => {
     assertMapAttributeOpt
 
     expect(mappedAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(mappedOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
     expect(mappedAlways).toMatchObject({ [$required]: 'always' })
     expect(mappedNever).toMatchObject({ [$required]: 'never' })
     expect(mappedOpt).toMatchObject({ [$required]: 'never' })

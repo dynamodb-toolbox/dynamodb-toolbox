@@ -10,7 +10,6 @@ import type {
   MapAttribute,
   RecordAttribute,
   AnyOfAttribute,
-  OnlyOnce,
   Always,
   ResolvePrimitiveAttribute
 } from 'v1/schema'
@@ -37,10 +36,7 @@ export type UpdateItemInput<
   ? O.Required<
       O.Partial<
         {
-          // Filter Required OnlyOnce attributes
-          [KEY in O.FilterKeys<SCHEMA['attributes'], { required: OnlyOnce }>]: UpdateItemInput<
-            SCHEMA['attributes'][KEY]
-          >
+          [KEY in keyof SCHEMA['attributes']]: UpdateItemInput<SCHEMA['attributes'][KEY]>
         }
       >,
       Exclude<

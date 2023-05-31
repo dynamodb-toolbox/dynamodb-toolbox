@@ -1,13 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type {
-  Schema,
-  AtLeastOnce,
-  OnlyOnce,
-  Always,
-  ComputedDefault,
-  ResolvedMapAttribute
-} from 'v1/schema'
+import type { Schema, AtLeastOnce, Always, ComputedDefault, ResolvedMapAttribute } from 'v1/schema'
 
 import type { AttributePutItem } from './attribute'
 
@@ -21,7 +14,7 @@ export type SchemaPutItem<SCHEMA extends Schema> = Schema extends SCHEMA
         }
       >,
       // Enforce Required attributes
-      | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+      | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always }>
       // Enforce attributes that have hard default
       | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
     >
