@@ -8,7 +8,7 @@ type EntityPutCommandInputParser = <ENTITY extends EntityV2>(
   input: PossiblyUndefinedResolvedItem
 ) => PutItem<ENTITY>
 
-const requiringOptions = new Set<RequiredOption>(['always', 'onlyOnce', 'atLeastOnce'])
+const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
 export const parseEntityPutCommandInput: EntityPutCommandInputParser = (entity, input) => {
   const clonedInputWithDefaults = cloneSchemaInputAndAddDefaults(entity.schema, input, {
