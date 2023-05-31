@@ -1,5 +1,5 @@
 import { schema, number, string, boolean } from 'v1/schema'
-import { parseCondition } from 'v1/commands/utils/parseCondition'
+import { parseSchemaCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - Logical combination', () => {
   const mySchema = schema({
@@ -12,7 +12,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines OR children conditions (value)', () => {
     expect(
-      parseCondition(mySchema, {
+      parseSchemaCondition(mySchema, {
         or: [
           { attr: 'num', eq: 42 },
           { attr: 'str', eq: 'foo' }
@@ -27,7 +27,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines OR children conditions (attribute)', () => {
     expect(
-      parseCondition(mySchema, {
+      parseSchemaCondition(mySchema, {
         or: [
           { attr: 'num', eq: { attr: 'otherNum' } },
           { attr: 'str', eq: { attr: 'otherStr' } }
@@ -42,7 +42,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines AND children conditions (value)', () => {
     expect(
-      parseCondition(mySchema, {
+      parseSchemaCondition(mySchema, {
         and: [
           { attr: 'num', eq: 42 },
           { attr: 'str', eq: 'foo' }
@@ -57,7 +57,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines AND children conditions (attribute)', () => {
     expect(
-      parseCondition(mySchema, {
+      parseSchemaCondition(mySchema, {
         and: [
           { attr: 'num', eq: { attr: 'otherNum' } },
           { attr: 'str', eq: { attr: 'otherStr' } }
@@ -72,7 +72,7 @@ describe('parseCondition - Logical combination', () => {
 
   it('combines nested combinations', () => {
     expect(
-      parseCondition(mySchema, {
+      parseSchemaCondition(mySchema, {
         and: [
           {
             or: [

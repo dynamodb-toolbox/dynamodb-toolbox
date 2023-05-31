@@ -1,5 +1,5 @@
 import { schema, list, map, number, string } from 'v1/schema'
-import { parseCondition } from 'v1/commands/utils/parseCondition'
+import { parseSchemaCondition } from 'v1/commands/utils/parseCondition'
 
 describe('parseCondition - singleArgFn', () => {
   const simpleSchema = schema({
@@ -9,7 +9,7 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('type', () => {
-    expect(parseCondition(simpleSchema, { attr: 'list', type: 'L' })).toStrictEqual({
+    expect(parseSchemaCondition(simpleSchema, { attr: 'list', type: 'L' })).toStrictEqual({
       ConditionExpression: 'attribute_type(#1, :1)',
       ExpressionAttributeNames: { '#1': 'list' },
       ExpressionAttributeValues: { ':1': 'L' }
@@ -17,7 +17,7 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('contains (value)', () => {
-    expect(parseCondition(simpleSchema, { attr: 'str', contains: 'foo' })).toStrictEqual({
+    expect(parseSchemaCondition(simpleSchema, { attr: 'str', contains: 'foo' })).toStrictEqual({
       ConditionExpression: 'contains(#1, :1)',
       ExpressionAttributeNames: { '#1': 'str' },
       ExpressionAttributeValues: { ':1': 'foo' }
@@ -26,7 +26,7 @@ describe('parseCondition - singleArgFn', () => {
 
   it('contains (attribute)', () => {
     expect(
-      parseCondition(simpleSchema, { attr: 'str', contains: { attr: 'otherStr' } })
+      parseSchemaCondition(simpleSchema, { attr: 'str', contains: { attr: 'otherStr' } })
     ).toStrictEqual({
       ConditionExpression: 'contains(#1, #2)',
       ExpressionAttributeNames: { '#1': 'str', '#2': 'otherStr' },
@@ -35,7 +35,7 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('beginsWith (value)', () => {
-    expect(parseCondition(simpleSchema, { attr: 'str', beginsWith: 'foo' })).toStrictEqual({
+    expect(parseSchemaCondition(simpleSchema, { attr: 'str', beginsWith: 'foo' })).toStrictEqual({
       ConditionExpression: 'begins_with(#1, :1)',
       ExpressionAttributeNames: { '#1': 'str' },
       ExpressionAttributeValues: { ':1': 'foo' }
@@ -44,7 +44,7 @@ describe('parseCondition - singleArgFn', () => {
 
   it('beginsWith (attribute)', () => {
     expect(
-      parseCondition(simpleSchema, { attr: 'str', beginsWith: { attr: 'otherStr' } })
+      parseSchemaCondition(simpleSchema, { attr: 'str', beginsWith: { attr: 'otherStr' } })
     ).toStrictEqual({
       ConditionExpression: 'begins_with(#1, #2)',
       ExpressionAttributeNames: { '#1': 'str', '#2': 'otherStr' },
@@ -67,7 +67,7 @@ describe('parseCondition - singleArgFn', () => {
 
   it('deep maps (value)', () => {
     expect(
-      parseCondition(mapSchema, { attr: 'map.nestedA.nestedB', contains: 'foo' })
+      parseSchemaCondition(mapSchema, { attr: 'map.nestedA.nestedB', contains: 'foo' })
     ).toStrictEqual({
       ConditionExpression: 'contains(#1.#2.#3, :1)',
       ExpressionAttributeNames: {
@@ -81,7 +81,7 @@ describe('parseCondition - singleArgFn', () => {
 
   it('deep maps (attribute)', () => {
     expect(
-      parseCondition(mapSchema, {
+      parseSchemaCondition(mapSchema, {
         attr: 'map.nestedA.nestedB',
         contains: { attr: 'otherMap.nestedC.nestedD' }
       })
@@ -118,7 +118,7 @@ describe('parseCondition - singleArgFn', () => {
 
   it('deep maps and lists (value)', () => {
     expect(
-      parseCondition(mapAndList, { attr: 'listA[1].nested.listB[2].value', type: 'S' })
+      parseSchemaCondition(mapAndList, { attr: 'listA[1].nested.listB[2].value', type: 'S' })
     ).toStrictEqual({
       ConditionExpression: 'attribute_type(#1[1].#2.#3[2].#4, :1)',
       ExpressionAttributeNames: {
@@ -133,7 +133,7 @@ describe('parseCondition - singleArgFn', () => {
 
   it('deep maps and lists (attribute)', () => {
     expect(
-      parseCondition(mapAndList, {
+      parseSchemaCondition(mapAndList, {
         attr: 'listA[1].nested.listB[2].value',
         beginsWith: { attr: 'listC[3].nested.listD[4].value' }
       })
@@ -159,7 +159,9 @@ describe('parseCondition - singleArgFn', () => {
   })
 
   it('deep lists (value)', () => {
-    expect(parseCondition(listsSchema, { attr: 'list[1][2][3]', contains: 'foo' })).toStrictEqual({
+    expect(
+      parseSchemaCondition(listsSchema, { attr: 'list[1][2][3]', contains: 'foo' })
+    ).toStrictEqual({
       ConditionExpression: 'contains(#1[1][2][3], :1)',
       ExpressionAttributeNames: { '#1': 'list' },
       ExpressionAttributeValues: { ':1': 'foo' }
@@ -168,7 +170,10 @@ describe('parseCondition - singleArgFn', () => {
 
   it('deep lists (attribute)', () => {
     expect(
-      parseCondition(listsSchema, { attr: 'list[1][2][3]', contains: { attr: 'listB[4][5][6]' } })
+      parseSchemaCondition(listsSchema, {
+        attr: 'list[1][2][3]',
+        contains: { attr: 'listB[4][5][6]' }
+      })
     ).toStrictEqual({
       ConditionExpression: 'contains(#1[1][2][3], #2[4][5][6])',
       ExpressionAttributeNames: { '#1': 'list', '#2': 'listB' },

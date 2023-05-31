@@ -3,7 +3,7 @@ import type { A } from 'ts-toolbelt'
 import type { Attribute } from 'v1/schema'
 
 import type {
-  Condition,
+  SchemaCondition,
   NonLogicalCondition,
   AttributeCondition,
   SharedAttributeCondition,
@@ -228,6 +228,6 @@ const assertEntityCondition: A.Contains<
   | { or: ENTITY_NON_LOGICAL_CONDITION[] }
   | { and: ENTITY_NON_LOGICAL_CONDITION[] }
   | { not: ENTITY_NON_LOGICAL_CONDITION },
-  Condition<typeof mySchema>
+  SchemaCondition<typeof mySchema>
 > = 1
 assertEntityCondition
