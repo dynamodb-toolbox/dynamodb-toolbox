@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
+import { ComputedDefault, Never, AtLeastOnce, Always } from '../constants'
 import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
 
 import { freezeAnyAttribute } from './freeze'
@@ -44,36 +44,29 @@ describe('anyAttribute', () => {
 
   it('returns required any (option)', () => {
     const anyAtLeastOnce = any({ required: 'atLeastOnce' })
-    const anyOnlyOnce = any({ required: 'onlyOnce' })
     const anyAlways = any({ required: 'always' })
     const anyNever = any({ required: 'never' })
 
     const assertAtLeastOnce: A.Contains<typeof anyAtLeastOnce, { [$required]: AtLeastOnce }> = 1
     assertAtLeastOnce
-    const assertOnlyOnce: A.Contains<typeof anyOnlyOnce, { [$required]: OnlyOnce }> = 1
-    assertOnlyOnce
     const assertAlways: A.Contains<typeof anyAlways, { [$required]: Always }> = 1
     assertAlways
     const assertNever: A.Contains<typeof anyNever, { [$required]: Never }> = 1
     assertNever
 
     expect(anyAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(anyOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
     expect(anyAlways).toMatchObject({ [$required]: 'always' })
     expect(anyNever).toMatchObject({ [$required]: 'never' })
   })
 
   it('returns required any (method)', () => {
     const anyAtLeastOnce = any().required()
-    const anyOnlyOnce = any().required('onlyOnce')
     const anyAlways = any().required('always')
     const anyNever = any().required('never')
     const anyOpt = any().optional()
 
     const assertAtLeastOnce: A.Contains<typeof anyAtLeastOnce, { [$required]: AtLeastOnce }> = 1
     assertAtLeastOnce
-    const assertOnlyOnce: A.Contains<typeof anyOnlyOnce, { [$required]: OnlyOnce }> = 1
-    assertOnlyOnce
     const assertAlways: A.Contains<typeof anyAlways, { [$required]: Always }> = 1
     assertAlways
     const assertNever: A.Contains<typeof anyNever, { [$required]: Never }> = 1
@@ -82,7 +75,6 @@ describe('anyAttribute', () => {
     assertOpt
 
     expect(anyAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(anyOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
     expect(anyAlways).toMatchObject({ [$required]: 'always' })
     expect(anyNever).toMatchObject({ [$required]: 'never' })
     expect(anyOpt).toMatchObject({ [$required]: 'never' })

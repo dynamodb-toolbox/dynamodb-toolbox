@@ -31,7 +31,6 @@ export const schema: SchemaTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $MapAttrib
   const requiredAttributeNames: Record<RequiredOption, Set<string>> = {
     always: new Set(),
     atLeastOnce: new Set(),
-    onlyOnce: new Set(),
     never: new Set()
   }
 

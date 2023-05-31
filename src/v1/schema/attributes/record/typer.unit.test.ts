@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { ComputedDefault, Never, AtLeastOnce, OnlyOnce, Always } from '../constants'
+import { ComputedDefault, Never, AtLeastOnce, Always } from '../constants'
 import { string, number } from '../primitive'
 import {
   $type,
@@ -357,36 +357,29 @@ describe('record', () => {
 
   it('returns required record (option)', () => {
     const recAtLeastOnce = record(fooBar, str, { required: 'atLeastOnce' })
-    const recOnlyOnce = record(fooBar, str, { required: 'onlyOnce' })
     const recAlways = record(fooBar, str, { required: 'always' })
     const recNever = record(fooBar, str, { required: 'never' })
 
     const assertAtLeastOnce: A.Contains<typeof recAtLeastOnce, { [$required]: AtLeastOnce }> = 1
     assertAtLeastOnce
-    const assertOnlyOnce: A.Contains<typeof recOnlyOnce, { [$required]: OnlyOnce }> = 1
-    assertOnlyOnce
     const assertAlways: A.Contains<typeof recAlways, { [$required]: Always }> = 1
     assertAlways
     const assertNever: A.Contains<typeof recNever, { [$required]: Never }> = 1
     assertNever
 
     expect(recAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(recOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
     expect(recAlways).toMatchObject({ [$required]: 'always' })
     expect(recNever).toMatchObject({ [$required]: 'never' })
   })
 
   it('returns required record (method)', () => {
     const recAtLeastOnce = record(fooBar, str).required()
-    const recOnlyOnce = record(fooBar, str).required('onlyOnce')
     const recAlways = record(fooBar, str).required('always')
     const recNever = record(fooBar, str).required('never')
     const recOpt = record(fooBar, str).optional()
 
     const assertAtLeastOnce: A.Contains<typeof recAtLeastOnce, { [$required]: AtLeastOnce }> = 1
     assertAtLeastOnce
-    const assertOnlyOnce: A.Contains<typeof recOnlyOnce, { [$required]: OnlyOnce }> = 1
-    assertOnlyOnce
     const assertAlways: A.Contains<typeof recAlways, { [$required]: Always }> = 1
     assertAlways
     const assertNever: A.Contains<typeof recNever, { [$required]: Never }> = 1
@@ -395,7 +388,6 @@ describe('record', () => {
     assertOpt
 
     expect(recAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(recOnlyOnce).toMatchObject({ [$required]: 'onlyOnce' })
     expect(recAlways).toMatchObject({ [$required]: 'always' })
     expect(recNever).toMatchObject({ [$required]: 'never' })
   })

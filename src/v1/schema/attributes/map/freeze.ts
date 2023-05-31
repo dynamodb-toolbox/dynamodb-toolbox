@@ -66,7 +66,6 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
   const requiredAttributesNames: Record<RequiredOption, Set<string>> = {
     always: new Set(),
     atLeastOnce: new Set(),
-    onlyOnce: new Set(),
     never: new Set()
   }
 

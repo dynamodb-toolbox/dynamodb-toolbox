@@ -10,7 +10,6 @@ import type {
   MapAttribute,
   RecordAttribute,
   AnyOfAttribute,
-  OnlyOnce,
   Always,
   ComputedDefault,
   ResolvePrimitiveAttribute
@@ -36,10 +35,7 @@ export type UpdateItem<SCHEMA extends EntityV2 | Schema | Attribute> = SCHEMA ex
   ? O.Required<
       O.Partial<
         {
-          // Filter Required OnlyOnce attributes
-          [KEY in O.FilterKeys<SCHEMA['attributes'], { required: OnlyOnce }>]: UpdateItem<
-            SCHEMA['attributes'][KEY]
-          >
+          [KEY in keyof SCHEMA['attributes']]: UpdateItem<SCHEMA['attributes'][KEY]>
         }
       >,
       // Enforce Always Required attributes
