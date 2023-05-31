@@ -11,7 +11,7 @@ import { parseSavedMapAttribute } from './map'
 import { parseSavedAnyOfAttribute } from './anyOf'
 import { parseSavedRecordAttribute } from './record'
 
-export const requiringOptions = new Set<RequiredOption>(['always', 'onlyOnce', 'atLeastOnce'])
+export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
 export const isRequired = (attribute: Attribute): boolean =>
   requiringOptions.has(attribute.required)

@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { MapAttribute, AtLeastOnce, OnlyOnce, Always, ComputedDefault } from 'v1/schema'
+import type { MapAttribute, AtLeastOnce, Always, ComputedDefault } from 'v1/schema'
 
 import type { AttributePutItem } from './attribute'
 
@@ -19,7 +19,7 @@ export type MapAttributePutItem<MAP_ATTRIBUTE extends MapAttribute> = MAP_ATTRIB
             }
           >,
           // Enforce Required attributes
-          | O.SelectKeys<MAP_ATTRIBUTE['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+          | O.SelectKeys<MAP_ATTRIBUTE['attributes'], { required: AtLeastOnce | Always }>
           // Enforce attributes that have hard default
           | O.FilterKeys<MAP_ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
         >
@@ -33,7 +33,7 @@ export type MapAttributePutItem<MAP_ATTRIBUTE extends MapAttribute> = MAP_ATTRIB
         }
       >,
       // Enforce Required attributes
-      | O.SelectKeys<MAP_ATTRIBUTE['attributes'], { required: AtLeastOnce | OnlyOnce | Always }>
+      | O.SelectKeys<MAP_ATTRIBUTE['attributes'], { required: AtLeastOnce | Always }>
       // Enforce attributes that have hard default
       | O.FilterKeys<MAP_ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
     >

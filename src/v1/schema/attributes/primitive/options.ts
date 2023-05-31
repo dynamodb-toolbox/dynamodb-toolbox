@@ -20,7 +20,6 @@ export type PrimitiveAttributeOptions<
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
    * - `"never"`: Optional in PUTs and UPDATEs
    * - `"always"`: Required in PUTs and UPDATEs
-   * - `"onlyOnce"`: Required in PUTs, denied in UPDATEs
    */
   required: RequiredOption
   /**
