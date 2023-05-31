@@ -41,7 +41,7 @@ export const parsePutItemOptions = <ENTITY extends EntityV2>(
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = parseCondition(entity.schema, condition)
+    } = parseCondition(entity, condition)
 
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
