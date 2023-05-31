@@ -44,9 +44,6 @@ describe('shared properties validation', () => {
       validateAttributeProperties({ ...validProperties, [$required]: 'atLeastOnce' }, path)
     ).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$required]: 'onlyOnce' }, path)
-    ).not.toThrow()
-    expect(() =>
       validateAttributeProperties({ ...validProperties, [$required]: 'always' }, path)
     ).not.toThrow()
   })

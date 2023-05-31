@@ -13,7 +13,6 @@ import type {
   RecordAttribute,
   AnyOfAttribute,
   AtLeastOnce,
-  OnlyOnce,
   Always,
   ComputedDefault,
   ResolvePrimitiveAttribute
@@ -47,10 +46,7 @@ export type PutItemInput<
         }
       >,
       // Enforce Required attributes except those that have default (will be provided by the lib)
-      | O.SelectKeys<
-          SCHEMA['attributes'],
-          { required: AtLeastOnce | OnlyOnce | Always; default: undefined }
-        >
+      | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always; default: undefined }>
       // Add attributes with hard (non-computed) defaults if REQUIRE_HARD_DEFAULTS is true
       | (REQUIRE_HARD_DEFAULTS extends true
           ? O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
@@ -94,7 +90,7 @@ export type AttributePutItemInput<
       // Enforce Required attributes except those that have default (will be provided by the lib)
       | O.SelectKeys<
           ATTRIBUTE['attributes'],
-          { required: AtLeastOnce | OnlyOnce | Always; default: undefined }
+          { required: AtLeastOnce | Always; default: undefined }
         >
       // Add attributes with hard (non-computed) defaults if REQUIRE_HARD_DEFAULTS is true
       | (REQUIRE_HARD_DEFAULTS extends true
