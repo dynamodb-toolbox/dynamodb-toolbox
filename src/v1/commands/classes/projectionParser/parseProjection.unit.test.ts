@@ -1,5 +1,5 @@
 import { schema, string, number, anyOf, map, list } from 'v1/schema'
-import { parseProjection } from 'v1/commands/utils/parseProjection'
+import { parseSchemaProjection } from 'v1/commands/utils/parseProjection'
 
 describe('parseProjection', () => {
   describe('savedAs attrs', () => {
@@ -16,21 +16,25 @@ describe('parseProjection', () => {
     })
 
     it('correctly parses projection (root)', () => {
-      expect(parseProjection(schemaWithSavedAs, ['savedAs'])).toStrictEqual({
+      expect(parseSchemaProjection(schemaWithSavedAs, ['savedAs'])).toStrictEqual({
         ProjectionExpression: '#1',
         ExpressionAttributeNames: { '#1': '_s' }
       })
     })
 
     it('correctly parses projection (nested)', () => {
-      expect(parseProjection(schemaWithSavedAs, ['savedAs', 'nested.savedAs'])).toStrictEqual({
-        ProjectionExpression: '#1, #2.#3',
-        ExpressionAttributeNames: { '#1': '_s', '#2': '_n', '#3': '_s' }
-      })
+      expect(parseSchemaProjection(schemaWithSavedAs, ['savedAs', 'nested.savedAs'])).toStrictEqual(
+        {
+          ProjectionExpression: '#1, #2.#3',
+          ExpressionAttributeNames: { '#1': '_s', '#2': '_n', '#3': '_s' }
+        }
+      )
     })
 
     it('correctly parses condition (listed)', () => {
-      expect(parseProjection(schemaWithSavedAs, ['savedAs', 'listed[4].savedAs'])).toStrictEqual({
+      expect(
+        parseSchemaProjection(schemaWithSavedAs, ['savedAs', 'listed[4].savedAs'])
+      ).toStrictEqual({
         ProjectionExpression: '#1, #2[4].#3',
         ExpressionAttributeNames: { '#1': '_s', '#2': '_l', '#3': '_s' }
       })
@@ -43,21 +47,21 @@ describe('parseProjection', () => {
     })
 
     it('correctly parses projection (root)', () => {
-      expect(parseProjection(schemaWithAnyOf, ['anyOf'])).toStrictEqual({
+      expect(parseSchemaProjection(schemaWithAnyOf, ['anyOf'])).toStrictEqual({
         ProjectionExpression: '#1',
         ExpressionAttributeNames: { '#1': 'anyOf' }
       })
     })
 
     it('correctly parses projection (nested str)', () => {
-      expect(parseProjection(schemaWithAnyOf, ['anyOf.str'])).toStrictEqual({
+      expect(parseSchemaProjection(schemaWithAnyOf, ['anyOf.str'])).toStrictEqual({
         ProjectionExpression: '#1.#2',
         ExpressionAttributeNames: { '#1': 'anyOf', '#2': 'str' }
       })
     })
 
     it('correctly parses projection (nested num)', () => {
-      expect(parseProjection(schemaWithAnyOf, ['anyOf.num'])).toStrictEqual({
+      expect(parseSchemaProjection(schemaWithAnyOf, ['anyOf.num'])).toStrictEqual({
         ProjectionExpression: '#1.#2',
         ExpressionAttributeNames: { '#1': 'anyOf', '#2': '_n' }
       })

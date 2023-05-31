@@ -1,3 +1,4 @@
+import type { EntityV2 } from 'v1/entity'
 import type {
   Schema,
   AnyAttribute,
@@ -38,10 +39,12 @@ type AttributePath<ATTRIBUTE_PATH extends string, ATTRIBUTE extends Attribute> =
         : never
       : never)
 
-export type AnyAttributePath<SCHEMA extends Schema> = Schema extends SCHEMA
+export type SchemaAttributePath<SCHEMA extends Schema> = Schema extends SCHEMA
   ? string
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
   ? ATTRIBUTE_PATH extends string
     ? AttributePath<ATTRIBUTE_PATH, SCHEMA['attributes'][ATTRIBUTE_PATH]>
     : never
   : never
+
+export type AnyAttributePath<ENTITY extends EntityV2> = SchemaAttributePath<ENTITY['schema']>
