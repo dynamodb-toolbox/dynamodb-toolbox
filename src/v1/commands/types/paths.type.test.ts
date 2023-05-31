@@ -1,9 +1,9 @@
 import type { A } from 'ts-toolbelt'
 
-import { mySchema } from './fixtures.test'
-import type { AnyAttributePath } from './paths'
+import type { mySchema } from './fixtures.test'
+import type { SchemaAttributePath } from './paths'
 
-export type ATTRIBUTE_PATHS = AnyAttributePath<typeof mySchema>
+export type ATTRIBUTE_PATHS = SchemaAttributePath<typeof mySchema>
 const assertAttributePaths: A.Equals<
   | 'parentId'
   | 'childId'

@@ -38,10 +38,7 @@ export const parseGetItemOptions = <ENTITY extends EntityV2>(
   }
 
   if (attributes !== undefined) {
-    const { ExpressionAttributeNames, ProjectionExpression } = parseProjection(
-      entity.schema,
-      attributes
-    )
+    const { ExpressionAttributeNames, ProjectionExpression } = parseProjection(entity, attributes)
 
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
