@@ -14,21 +14,22 @@ import type {
   SchemaDefaultsComputer
 } from './generics'
 import {
+  TimestampsOptions,
+  TimestampsDefaultOptions,
+  NarrowTimestampsOptions,
+  doesSchemaValidateTableSchema,
   addInternalAttributes,
-  WithInternalAttributes,
-  doesSchemaValidateTableSchema
+  WithInternalAttributes
 } from './utils'
 
 export class EntityV2<
   NAME extends string = string,
   TABLE extends TableV2 = TableV2,
   SCHEMA extends Schema = Schema,
-  ENTITY_NAME_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
-  TIMESTAMPS extends boolean = string extends NAME ? boolean : true,
-  CREATED_TIMESTAMP_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'created',
-  CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string = string extends NAME ? string : '_ct',
-  MODIFIED_TIMESTAMP_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'modified',
-  MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS extends string = string extends NAME ? string : '_md',
+  ENTITY_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
+  TIMESTAMPS_OPTIONS extends TimestampsOptions = string extends NAME
+    ? TimestampsOptions
+    : TimestampsDefaultOptions,
   PUT_DEFAULTS_COMPUTER = Schema extends SCHEMA
     ? SchemaDefaultsComputer
     : SchemaPutDefaultsComputer<SCHEMA>,
@@ -40,20 +41,12 @@ export class EntityV2<
   public schema: WithInternalAttributes<
     SCHEMA,
     TABLE,
-    ENTITY_NAME_ATTRIBUTE_NAME,
+    ENTITY_ATTRIBUTE_NAME,
     NAME,
-    TIMESTAMPS,
-    CREATED_TIMESTAMP_ATTRIBUTE_NAME,
-    CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
-    MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
-    MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+    TIMESTAMPS_OPTIONS
   >
-  public entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
-  public timestamps: TIMESTAMPS
-  public createdTimestampAttributeName: CREATED_TIMESTAMP_ATTRIBUTE_NAME
-  public createdTimestampAttributeSavedAs: CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS
-  public modifiedTimestampAttributeName: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
-  public modifiedTimestampAttributeSavedAs: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+  public entityAttributeName: ENTITY_ATTRIBUTE_NAME
+  public timestamps: TIMESTAMPS_OPTIONS
   // any is needed for contravariance
   public computeKey?: (
     keyInput: Schema extends SCHEMA ? any : KeyInput<SCHEMA>
@@ -82,7 +75,7 @@ export class EntityV2<
    * @param computeKey _(optional)_ Transforms key input to primary key
    * @param computedDefaults _(optional)_ Computes computed defaults
    * @param timestamps _(optional)_ Activates internal `created` & `modified` attributes (defaults to `true`)
-   * @param entityNameAttributeName _(optional)_ Renames internal entity name string attribute (defaults to `entity`)
+   * @param entityAttributeName _(optional)_ Renames internal entity name string attribute (defaults to `entity`)
    */
   constructor({
     name,
@@ -90,25 +83,14 @@ export class EntityV2<
     schema,
     computeKey,
     computedDefaults,
-    entityNameAttributeName = 'entity' as ENTITY_NAME_ATTRIBUTE_NAME,
-    timestamps = true as TIMESTAMPS,
-    created = 'created' as CREATED_TIMESTAMP_ATTRIBUTE_NAME,
-    createdSavedAs = '_ct' as CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS,
-    modified = 'modified' as MODIFIED_TIMESTAMP_ATTRIBUTE_NAME,
-    modifiedSavedAs = '_md' as MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+    entityAttributeName = 'entity' as ENTITY_ATTRIBUTE_NAME,
+    timestamps = true as NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   }: {
     name: NAME
     table: TABLE
     schema: SCHEMA
-    entityNameAttributeName?: ENTITY_NAME_ATTRIBUTE_NAME
-    /**
-     * @debt interface "Find a way to group all of this in single attribute"
-     */
-    timestamps?: TIMESTAMPS
-    created?: CREATED_TIMESTAMP_ATTRIBUTE_NAME
-    createdSavedAs?: CREATED_TIMESTAMP_ATTRIBUTE_SAVED_AS
-    modified?: MODIFIED_TIMESTAMP_ATTRIBUTE_NAME
-    modifiedSavedAs?: MODIFIED_TIMESTAMP_ATTRIBUTE_SAVED_AS
+    entityAttributeName?: ENTITY_ATTRIBUTE_NAME
+    timestamps?: NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   } & (NeedsKeyCompute<SCHEMA, TABLE> extends true
     ? { computeKey: (keyInput: KeyInput<SCHEMA>) => PrimaryKey<TABLE> }
     : { computeKey?: undefined }) &
@@ -118,12 +100,8 @@ export class EntityV2<
     this.type = 'entity'
     this.name = name
     this.table = table
-    this.entityNameAttributeName = entityNameAttributeName
-    this.timestamps = timestamps
-    this.createdTimestampAttributeName = created
-    this.createdTimestampAttributeSavedAs = createdSavedAs
-    this.modifiedTimestampAttributeName = modified
-    this.modifiedTimestampAttributeSavedAs = modifiedSavedAs
+    this.entityAttributeName = entityAttributeName
+    this.timestamps = timestamps as TIMESTAMPS_OPTIONS
 
     if (computeKey === undefined && !doesSchemaValidateTableSchema(schema, table)) {
       throw new DynamoDBToolboxError('entity.invalidSchema', {
@@ -134,13 +112,9 @@ export class EntityV2<
     this.schema = addInternalAttributes({
       schema,
       table,
-      entityNameAttributeName,
+      entityAttributeName,
       entityName: name,
-      timestamps,
-      createdTimestampAttributeName: created,
-      createdTimestampAttributeSavedAs: createdSavedAs,
-      modifiedTimestampAttributeName: modified,
-      modifiedTimestampAttributeSavedAs: modifiedSavedAs
+      timestamps: timestamps as TIMESTAMPS_OPTIONS
     })
 
     this.computeKey = computeKey as any
