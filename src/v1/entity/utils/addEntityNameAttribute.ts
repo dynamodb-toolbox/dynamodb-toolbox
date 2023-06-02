@@ -22,49 +22,49 @@ export type EntityNameAttribute<
 export type WithEntityNameAttribute<
   SCHEMA extends Schema,
   TABLE extends TableV2,
-  ENTITY_NAME_ATTRIBUTE_NAME extends string,
+  ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string
 > = string extends ENTITY_NAME
   ? SCHEMA
-  : WithRootAttribute<SCHEMA, ENTITY_NAME_ATTRIBUTE_NAME, EntityNameAttribute<TABLE, ENTITY_NAME>>
+  : WithRootAttribute<SCHEMA, ENTITY_ATTRIBUTE_NAME, EntityNameAttribute<TABLE, ENTITY_NAME>>
 
 type EntityNameAttributeAdder = <
   SCHEMA extends Schema,
   TABLE extends TableV2,
-  ENTITY_NAME_ATTRIBUTE_NAME extends string,
+  ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string
 >(props: {
   schema: SCHEMA
   table: TABLE
-  entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
+  entityAttributeName: ENTITY_ATTRIBUTE_NAME
   entityName: ENTITY_NAME
-}) => WithEntityNameAttribute<SCHEMA, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>
+}) => WithEntityNameAttribute<SCHEMA, TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>
 
 export const addEntityNameAttribute: EntityNameAttributeAdder = <
   SCHEMA extends Schema,
   TABLE extends TableV2,
-  ENTITY_NAME_ATTRIBUTE_NAME extends string,
+  ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string
 >({
   schema,
   table,
-  entityNameAttributeName,
+  entityAttributeName,
   entityName
 }: {
   schema: SCHEMA
   table: TABLE
-  entityNameAttributeName: ENTITY_NAME_ATTRIBUTE_NAME
+  entityAttributeName: ENTITY_ATTRIBUTE_NAME
   entityName: ENTITY_NAME
 }) => {
-  if (entityNameAttributeName in schema.attributes) {
+  if (entityAttributeName in schema.attributes) {
     throw new DynamoDBToolboxError('entity.reservedAttributeName', {
-      message: `${entityNameAttributeName} is a reserved attribute name. Use a different attribute name or set a different entityNameAttributeName option in your Entity constructor.`,
-      path: entityNameAttributeName
+      message: `${entityAttributeName} is a reserved attribute name. Use a different attribute name or set a different entityAttributeName option in your Entity constructor.`,
+      path: entityAttributeName
     })
   }
 
   const entityNameAttribute: EntityNameAttribute<TABLE, ENTITY_NAME> = {
-    path: entityNameAttributeName,
+    path: entityAttributeName,
     type: 'string',
     required: 'atLeastOnce',
     hidden: true,
@@ -76,7 +76,7 @@ export const addEntityNameAttribute: EntityNameAttributeAdder = <
 
   return addRootAttribute(
     schema,
-    entityNameAttributeName,
+    entityAttributeName,
     entityNameAttribute
-  ) as WithEntityNameAttribute<SCHEMA, TABLE, ENTITY_NAME_ATTRIBUTE_NAME, ENTITY_NAME>
+  ) as WithEntityNameAttribute<SCHEMA, TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>
 }
