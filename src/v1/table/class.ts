@@ -5,13 +5,13 @@ import { Key, NarrowKey } from './types'
 export class TableV2<
   PARTITION_KEY extends Key = Key,
   SORT_KEY extends Key = Key,
-  ENTITY_NAME_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
+  ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
 > {
   public documentClient: DynamoDBDocumentClient
   public name: string
   public partitionKey: PARTITION_KEY
   public sortKey?: SORT_KEY
-  public entityNameAttributeSavedAs: ENTITY_NAME_ATTRIBUTE_SAVED_AS
+  public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS
 
   /**
    * Define a Table
@@ -20,20 +20,20 @@ export class TableV2<
    * @param name string
    * @param partitionKey Partition key
    * @param sortKey _(optional)_ Sort key
-   * @param entityNameAttributeSavedAs _(optional)_ Entity name attribute savedAs (defaults to `'_et'`)
+   * @param entityAttributeSavedAs _(optional)_ Entity name attribute savedAs (defaults to `'_et'`)
    */
   constructor({
     documentClient,
     name,
     partitionKey,
     sortKey,
-    entityNameAttributeSavedAs = '_et' as ENTITY_NAME_ATTRIBUTE_SAVED_AS
+    entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS
   }: {
     documentClient: DynamoDBDocumentClient
     name: string
     partitionKey: NarrowKey<PARTITION_KEY>
     sortKey?: NarrowKey<SORT_KEY>
-    entityNameAttributeSavedAs?: ENTITY_NAME_ATTRIBUTE_SAVED_AS
+    entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
   }) {
     this.documentClient = documentClient
     this.name = name
@@ -41,6 +41,6 @@ export class TableV2<
     if (sortKey) {
       this.sortKey = sortKey
     }
-    this.entityNameAttributeSavedAs = entityNameAttributeSavedAs
+    this.entityAttributeSavedAs = entityAttributeSavedAs
   }
 }

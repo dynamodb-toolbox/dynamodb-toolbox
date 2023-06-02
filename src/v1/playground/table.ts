@@ -2,7 +2,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { PrimaryKey, TableV2, EntityNameAttributeSavedAs } from 'v1/table'
+import { PrimaryKey, TableV2, EntityAttributeSavedAs } from 'v1/table'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -22,4 +22,4 @@ export const MyTable = new TableV2({
 })
 
 type PK = PrimaryKey<typeof MyTable>
-type EntityNameAttrSavedAs = EntityNameAttributeSavedAs<typeof MyTable>
+type EntityAttrSavedAs = EntityAttributeSavedAs<typeof MyTable>
