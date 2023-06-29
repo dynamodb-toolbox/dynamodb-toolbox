@@ -1,4 +1,8 @@
-export type TimestampObjectOptions = { name: string; savedAs: string }
+export type TimestampObjectOptions = {
+  name?: string
+  savedAs?: string
+  hidden?: boolean
+}
 
 export type TimestampsObjectOptions = {
   created: boolean | TimestampObjectOptions
