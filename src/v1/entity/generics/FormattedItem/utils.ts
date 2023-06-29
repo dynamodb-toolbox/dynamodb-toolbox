@@ -12,4 +12,4 @@ export type MatchKeys<
     : never
   : never
 
-export type FormattedItemOptions = { attributes: string }
+export type FormattedItemOptions = { attributes: string; partial: boolean }

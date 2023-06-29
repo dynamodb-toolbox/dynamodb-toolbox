@@ -24,7 +24,7 @@ type ReturnedAttributes<
   : OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
   : OPTIONS['returnValues'] extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
-  ? Partial<FormattedItem<ENTITY>> | undefined
+  ? FormattedItem<ENTITY, { partial: true }> | undefined
   : OPTIONS['returnValues'] extends AllNewReturnValuesOption | AllOldReturnValuesOption
   ? FormattedItem<ENTITY> | undefined
   : never
