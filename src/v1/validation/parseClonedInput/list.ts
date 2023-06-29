@@ -3,13 +3,13 @@ import { isArray } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributeClonedInput } from './attribute'
-import type { ParsingOptions } from './types'
+import type { ParsingOptions, ParsedListAttributeInput } from './types'
 
 export const parseListAttributeClonedInput = (
   listAttribute: ListAttribute,
   input: PossiblyUndefinedResolvedAttribute,
   parsingOptions: ParsingOptions = {}
-): PossiblyUndefinedResolvedAttribute => {
+): ParsedListAttributeInput => {
   if (!isArray(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${listAttribute.path} should be a ${listAttribute.type}`,
@@ -21,7 +21,7 @@ export const parseListAttributeClonedInput = (
     })
   }
 
-  const parsedInput: PossiblyUndefinedResolvedAttribute[] = []
+  const parsedInput: ParsedListAttributeInput = []
 
   input.forEach(element =>
     parsedInput.push(parseAttributeClonedInput(listAttribute.elements, element, parsingOptions))

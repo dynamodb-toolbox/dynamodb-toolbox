@@ -7,7 +7,7 @@ import { parseListAttributeClonedInput } from './list'
 import { parseMapAttributeClonedInput } from './map'
 import { parseRecordAttributeClonedInput } from './record'
 import { parseAnyOfAttributeClonedInput } from './anyOf'
-import type { ParsingOptions } from './types'
+import type { ParsingOptions, ParsedAttributeInput } from './types'
 
 const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'])
 
@@ -15,7 +15,7 @@ export const parseAttributeClonedInput = (
   attribute: Attribute,
   input: PossiblyUndefinedResolvedAttribute,
   parsingOptions: ParsingOptions = {}
-): PossiblyUndefinedResolvedAttribute => {
+): ParsedAttributeInput => {
   const { requiringOptions = defaultRequiringOptions } = parsingOptions
 
   if (input === undefined) {

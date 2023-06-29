@@ -1,19 +1,16 @@
 import type { AnyOfAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
-import type {
-  AnyOfAttributeClonedInputsWithDefaults,
-  ParsedAnyOfAttributeCommandInput
-} from 'v1/commands/types/intermediaryAnyOfAttributeState'
+import type { AnyOfAttributeClonedInputsWithDefaults } from 'v1/validation/cloneInputAndAddDefaults/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributeClonedInput } from './attribute'
-import type { ParsingOptions } from './types'
+import type { ParsingOptions, ParsedAttributeInput } from './types'
 
 export const parseAnyOfAttributeClonedInput = (
   anyOfAttribute: AnyOfAttribute,
   input: PossiblyUndefinedResolvedAttribute,
   parsingOptions: ParsingOptions = {}
-): ParsedAnyOfAttributeCommandInput => {
-  let parsedInput: ParsedAnyOfAttributeCommandInput | undefined = undefined
+): ParsedAttributeInput => {
+  let parsedInput: ParsedAttributeInput | undefined = undefined
 
   const {
     originalInput,
@@ -25,11 +22,7 @@ export const parseAnyOfAttributeClonedInput = (
     try {
       const element = anyOfAttribute.elements[subSchemaIndex]
       const input = clonedInputsWithDefaults[subSchemaIndex]
-      // TODO: Maybe we could use proxies instead ? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-      parsedInput = {
-        subSchemaIndex,
-        parsedInput: parseAttributeClonedInput(element, input, parsingOptions)
-      }
+      parsedInput = parseAttributeClonedInput(element, input, parsingOptions)
       break
     } catch (error) {
       subSchemaIndex += 1

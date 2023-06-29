@@ -5,3 +5,8 @@ export type ComputeDefaultsContext = {
   computeDefaults: AttributeDefaultsComputer
   contextInputs: PossiblyUndefinedResolvedAttribute[]
 }
+
+export type AnyOfAttributeClonedInputsWithDefaults = {
+  originalInput: PossiblyUndefinedResolvedAttribute
+  clonedInputsWithDefaults: PossiblyUndefinedResolvedAttribute[]
+}
