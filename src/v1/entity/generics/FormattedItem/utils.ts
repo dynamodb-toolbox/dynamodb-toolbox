@@ -11,3 +11,5 @@ export type MatchKeys<
       : never
     : never
   : never
+
+export type FormattedItemOptions = { attributes: string }

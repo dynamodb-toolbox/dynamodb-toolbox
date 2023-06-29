@@ -3,10 +3,11 @@ import type { Schema, AtLeastOnce, Always, MapAttribute, ComputedDefault } from 
 
 import type { FormattedAttribute } from './attribute'
 import type { MatchKeys } from './utils'
+import type { FormattedItemOptions } from './utils'
 
 export type FormattedMapAttribute<
   SCHEMA extends Schema | MapAttribute,
-  FILTERED_ATTRIBUTES extends string,
+  OPTIONS extends FormattedItemOptions = FormattedItemOptions,
   KEY_PREFIX extends string = SCHEMA extends Schema
     ? ''
     : SCHEMA extends MapAttribute
@@ -15,7 +16,7 @@ export type FormattedMapAttribute<
   MATCHING_KEYS extends string = MatchKeys<
     Extract<keyof SCHEMA['attributes'], string>,
     KEY_PREFIX,
-    FILTERED_ATTRIBUTES
+    OPTIONS['attributes']
   >
 > =
   // Possible in case of anyOf subSchema
@@ -31,12 +32,14 @@ export type FormattedMapAttribute<
               { hidden: false }
             >]: FormattedAttribute<
               SCHEMA['attributes'][KEY],
-              // Compute next filtered attributes
-              `${KEY_PREFIX}${KEY}` extends FILTERED_ATTRIBUTES
-                ? string
-                : FILTERED_ATTRIBUTES extends `${KEY_PREFIX}${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                ? CHILDREN_FILTERED_ATTRIBUTES
-                : never
+              {
+                // Compute next filtered attributes
+                attributes: `${KEY_PREFIX}${KEY}` extends OPTIONS['attributes']
+                  ? string
+                  : OPTIONS['attributes'] extends `${KEY_PREFIX}${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+                  ? CHILDREN_FILTERED_ATTRIBUTES
+                  : never
+              }
             >
           }
         >,
