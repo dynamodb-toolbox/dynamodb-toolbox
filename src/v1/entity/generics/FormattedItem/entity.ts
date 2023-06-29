@@ -11,5 +11,13 @@ import type { FormattedAttribute } from './attribute'
  */
 export type FormattedItem<
   ENTITY extends EntityV2,
-  FILTERED_ATTRIBUTES extends AnyAttributePath<ENTITY> = AnyAttributePath<ENTITY>
-> = FormattedAttribute<ENTITY['schema'], FILTERED_ATTRIBUTES>
+  OPTIONS extends { attributes?: AnyAttributePath<ENTITY>; partial?: boolean } = {}
+> = FormattedAttribute<
+  ENTITY['schema'],
+  {
+    attributes: OPTIONS extends { attributes: string }
+      ? OPTIONS['attributes']
+      : AnyAttributePath<ENTITY>
+    partial: OPTIONS extends { partial: boolean } ? OPTIONS['partial'] : false
+  }
+>

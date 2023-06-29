@@ -19,7 +19,7 @@ export type GetItemResponse<
     {
       Item?:
         | (OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
-            ? FormattedItem<ENTITY, OPTIONS['attributes'][number]>
+            ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'][number] }>
             : FormattedItem<ENTITY>)
         | undefined
     }
@@ -40,8 +40,6 @@ export class GetItemCommand<
     nextOptions: NEXT_OPTIONS
   ) => GetItemCommand<ENTITY, NEXT_OPTIONS>
 
-  private _cachedParams?: GetCommandInput
-
   constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     this.entity = entity
     this._key = key
@@ -52,15 +50,12 @@ export class GetItemCommand<
   }
 
   params = (): GetCommandInput => {
-    if (this._cachedParams) return this._cachedParams
-
     if (!this._key) {
       throw new DynamoDBToolboxError('commands.incompleteCommand', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
     const params = getItemParams(this.entity, this._key, this._options)
-    this._cachedParams = params
 
     return params
   }
