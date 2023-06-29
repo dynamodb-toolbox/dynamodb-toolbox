@@ -1,17 +1,18 @@
 import type { Schema, PossiblyUndefinedResolvedItem } from 'v1/schema'
-import { isObject } from 'v1/utils/validation'
+import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
+import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
 import { parseAttributeClonedInput } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
-import type { ParsingOptions } from './types'
+import type { ParsingOptions, ParsedSchemaInput } from './types'
 
 // TODO: Factorize with map
 export const parseSchemaClonedInput = (
   schema: Schema,
   input: PossiblyUndefinedResolvedItem,
   parsingOptions: ParsingOptions = {}
-): PossiblyUndefinedResolvedItem => {
+): ParsedSchemaInput => {
   const { filters } = parsingOptions
 
   if (!isObject(input)) {
@@ -24,7 +25,7 @@ export const parseSchemaClonedInput = (
     })
   }
 
-  const parsedInput: PossiblyUndefinedResolvedItem = {}
+  const parsedInput: ParsedSchemaInput = { [$savedAs]: {} }
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
@@ -41,6 +42,10 @@ export const parseSchemaClonedInput = (
 
       if (parsedAttributeInput !== undefined) {
         parsedInput[attributeName] = parsedAttributeInput
+
+        if (attribute.savedAs !== undefined) {
+          parsedInput[$savedAs][attributeName] = attribute.savedAs
+        }
       }
     }
   })
@@ -49,13 +54,17 @@ export const parseSchemaClonedInput = (
   Object.entries(schema.attributes)
     .filter(
       ([attributeName, attribute]) =>
-        doesAttributeMatchFilters(attribute, filters) && parsedInput[attributeName] === undefined
+        parsedInput[attributeName] === undefined && doesAttributeMatchFilters(attribute, filters)
     )
     .forEach(([attributeName, attribute]) => {
       const parsedAttributeInput = parseAttributeClonedInput(attribute, undefined, parsingOptions)
 
       if (parsedAttributeInput !== undefined) {
         parsedInput[attributeName] = parsedAttributeInput
+
+        if (attribute.savedAs !== undefined) {
+          parsedInput[$savedAs][attributeName] = attribute.savedAs
+        }
       }
     })
 

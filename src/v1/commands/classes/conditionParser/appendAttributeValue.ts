@@ -12,7 +12,6 @@ export const appendAttributeValue = (
 ): void => {
   const expressionAttributeValueIndex = conditionParser.expressionAttributeValues.push(
     renameAttributeSavedAsAttributes(
-      attribute,
       parseAttributeClonedInput(
         attribute,
         cloneAttributeInputAndAddDefaults(

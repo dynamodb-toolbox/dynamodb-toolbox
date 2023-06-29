@@ -72,7 +72,7 @@ export type PossiblyUndefinedResolvedAttribute =
   | ResolvedPrimitiveAttribute
   | PossiblyUndefinedResolvedAttribute[]
   | Set<PossiblyUndefinedResolvedAttribute>
-  | { [key: string]: PossiblyUndefinedResolvedAttribute }
+  | PossiblyUndefinedResolvedMapAttribute
 
 export type PossiblyUndefinedResolvedItem = {
   [key: string]: PossiblyUndefinedResolvedAttribute
