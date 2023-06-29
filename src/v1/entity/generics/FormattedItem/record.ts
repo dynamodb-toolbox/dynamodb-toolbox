@@ -1,3 +1,5 @@
+import type { O } from 'ts-toolbelt'
+
 import type { RecordAttribute, ResolvePrimitiveAttribute } from 'v1/schema'
 import type { FormattedAttribute } from './attribute'
 import type { MatchKeys } from './utils'
@@ -18,8 +20,10 @@ export type FormattedRecordAttribute<
     : {
         [KEY in MATCHING_KEYS]?: FormattedAttribute<
           RECORD_ATTRIBUTE['elements'],
-          {
-            attributes: MATCHING_KEYS extends infer FILTERED_KEY
+          O.Update<
+            OPTIONS,
+            'attributes',
+            MATCHING_KEYS extends infer FILTERED_KEY
               ? FILTERED_KEY extends string
                 ? `.${FILTERED_KEY}` extends OPTIONS['attributes']
                   ? string
@@ -28,6 +32,6 @@ export type FormattedRecordAttribute<
                   : never
                 : never
               : never
-          }
+          >
         >
       }
