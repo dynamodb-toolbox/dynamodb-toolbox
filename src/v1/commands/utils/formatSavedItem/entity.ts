@@ -7,6 +7,7 @@ import { matchProjection } from './utils'
 
 type FormatSavedItemOptions<ENTITY extends EntityV2> = {
   attributes?: AnyAttributePath<ENTITY>[]
+  partial?: boolean
 }
 
 export const formatSavedItem = <
@@ -17,7 +18,7 @@ export const formatSavedItem = <
   savedItem: ResolvedItem,
   formatSavedItemOptions: OPTIONS = {} as OPTIONS
 ): OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
-  ? FormattedItem<ENTITY, OPTIONS['attributes'][number]>
+  ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'][number] }>
   : FormattedItem<ENTITY> => {
   const { attributes } = formatSavedItemOptions
   const formattedItem: PossiblyUndefinedResolvedItem = {}

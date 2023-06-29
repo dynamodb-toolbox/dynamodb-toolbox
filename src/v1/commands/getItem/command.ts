@@ -19,7 +19,7 @@ export type GetItemResponse<
     {
       Item?:
         | (OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
-            ? FormattedItem<ENTITY, OPTIONS['attributes'][number]>
+            ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'][number] }>
             : FormattedItem<ENTITY>)
         | undefined
     }
