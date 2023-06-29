@@ -16,11 +16,10 @@ export const formatSavedItem = <
 >(
   entity: ENTITY,
   savedItem: ResolvedItem,
-  formatSavedItemOptions: OPTIONS = {} as OPTIONS
+  { attributes, partial = false }: OPTIONS = {} as OPTIONS
 ): OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
   ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'][number] }>
   : FormattedItem<ENTITY> => {
-  const { attributes } = formatSavedItemOptions
   const formattedItem: PossiblyUndefinedResolvedItem = {}
 
   const schema = entity.schema
@@ -42,7 +41,8 @@ export const formatSavedItem = <
     const attributeSavedAs = attribute.savedAs ?? attributeName
 
     const formattedAttribute = parseSavedAttribute(attribute, savedItem[attributeSavedAs], {
-      projectedAttributes: childrenAttributes
+      projectedAttributes: childrenAttributes,
+      partial
     })
 
     if (formattedAttribute !== undefined) {
