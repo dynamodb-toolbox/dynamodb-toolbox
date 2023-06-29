@@ -18,21 +18,27 @@ export type WithTimestampAttributes<
   IS_CREATED_ENABLED extends boolean = IsTimestampEnabled<TIMESTAMP_OPTIONS, 'created'>,
   CREATED_NAME extends string = TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'name'>,
   CREATED_SAVED_AS extends string = TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
+  CREATED_HIDDEN extends boolean = TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>,
   IS_MODIFIED_ENABLED extends boolean = IsTimestampEnabled<TIMESTAMP_OPTIONS, 'modified'>,
   MODIFIED_NAME extends string = TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'name'>,
-  MODIFIED_SAVED_AS extends string = TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>
+  MODIFIED_SAVED_AS extends string = TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
+  MODIFIED_HIDDEN extends boolean = TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
 > = string extends ENTITY_NAME
   ? SCHEMA
   : IS_CREATED_ENABLED extends true
   ? IS_MODIFIED_ENABLED extends true
     ? WithRootAttribute<
-        WithRootAttribute<SCHEMA, CREATED_NAME, TimestampAttribute<CREATED_SAVED_AS>>,
+        WithRootAttribute<
+          SCHEMA,
+          CREATED_NAME,
+          TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
+        >,
         MODIFIED_NAME,
-        TimestampAttribute<MODIFIED_SAVED_AS>
+        TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
       >
-    : WithRootAttribute<SCHEMA, CREATED_NAME, TimestampAttribute<CREATED_SAVED_AS>>
+    : WithRootAttribute<SCHEMA, CREATED_NAME, TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>>
   : IS_MODIFIED_ENABLED extends true
-  ? WithRootAttribute<SCHEMA, MODIFIED_NAME, TimestampAttribute<MODIFIED_SAVED_AS>>
+  ? WithRootAttribute<SCHEMA, MODIFIED_NAME, TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>>
   : SCHEMA
 
 type TimestampAttributesAdder = <
@@ -64,17 +70,17 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
   const isCreatedEnable = isTimestampEnabled(timestamps, 'created')
   if (isCreatedEnable) {
     const createdName = getTimestampOptionValue(timestamps, 'created', 'name')
-    const createdSavedAs = getTimestampOptionValue(timestamps, 'created', 'savedAs')
 
     const createdAttribute: TimestampAttribute<
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>
+      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
+      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
     > = {
       path: createdName,
       type: 'string',
       required: 'atLeastOnce',
-      hidden: false,
+      hidden: getTimestampOptionValue(timestamps, 'created', 'hidden'),
       key: false,
-      savedAs: createdSavedAs,
+      savedAs: getTimestampOptionValue(timestamps, 'created', 'savedAs'),
       enum: undefined,
       default: () => new Date().toISOString()
     }
@@ -85,17 +91,17 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
   const isModifiedEnable = isTimestampEnabled(timestamps, 'modified')
   if (isModifiedEnable) {
     const modifiedName = getTimestampOptionValue(timestamps, 'modified', 'name')
-    const modifiedSavedAs = getTimestampOptionValue(timestamps, 'modified', 'savedAs')
 
     const modifiedAttribute: TimestampAttribute<
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>
+      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
+      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
     > = {
       path: modifiedName,
       type: 'string',
       required: 'atLeastOnce',
-      hidden: false,
+      hidden: getTimestampOptionValue(timestamps, 'modified', 'hidden'),
       key: false,
-      savedAs: modifiedSavedAs,
+      savedAs: getTimestampOptionValue(timestamps, 'modified', 'savedAs'),
       enum: undefined,
       default: () => new Date().toISOString()
     }
