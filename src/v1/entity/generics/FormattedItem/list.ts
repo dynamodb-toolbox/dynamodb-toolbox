@@ -1,3 +1,5 @@
+import type { O } from 'ts-toolbelt'
+
 import type { ListAttribute } from 'v1/schema'
 
 import type { FormattedAttribute } from './attribute'
@@ -8,15 +10,17 @@ export type FormattedListAttribute<
   OPTIONS extends FormattedItemOptions = FormattedItemOptions,
   FORMATTED_ATTRIBUTE = FormattedAttribute<
     LIST_ATTRIBUTE['elements'],
-    {
-      attributes: string extends OPTIONS['attributes']
+    O.Update<
+      OPTIONS,
+      'attributes',
+      string extends OPTIONS['attributes']
         ? string
         : OPTIONS['attributes'] extends `[${number}]`
         ? string
         : OPTIONS['attributes'] extends `[${number}]${infer CHILDREN_FILTERED_ATTRIBUTES}`
         ? CHILDREN_FILTERED_ATTRIBUTES
         : never
-    }
+    >
   >
 > =
   // Possible in case of anyOf subSchema

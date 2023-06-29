@@ -32,19 +32,23 @@ export type FormattedMapAttribute<
               { hidden: false }
             >]: FormattedAttribute<
               SCHEMA['attributes'][KEY],
-              {
-                // Compute next filtered attributes
-                attributes: `${KEY_PREFIX}${KEY}` extends OPTIONS['attributes']
+              O.Update<
+                OPTIONS,
+                'attributes',
+                `${KEY_PREFIX}${KEY}` extends OPTIONS['attributes']
                   ? string
                   : OPTIONS['attributes'] extends `${KEY_PREFIX}${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
                   ? CHILDREN_FILTERED_ATTRIBUTES
                   : never
-              }
+              >
             >
           }
         >,
-        // Enforce Required attributes
-        | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always }>
-        // Enforce attributes that have defined hard default
-        | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
+        // Do not enforce any attribute if partial is true
+        OPTIONS['partial'] extends true
+          ? never
+          : // Enforce Required attributes
+            | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always }>
+              // Enforce attributes that have defined hard default
+              | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
       >
