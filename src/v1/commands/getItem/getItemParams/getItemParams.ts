@@ -9,29 +9,16 @@ import type { GetItemOptions } from '../options'
 
 import { parseGetItemOptions } from './parseGetItemOptions'
 
-/**
- * Builds a GET Item command input for a given Entity
- *
- * @param entity Entity
- * @param input Input
- * @param getItemOptions GetItemOptions
- * @return GetCommandInput
- */
 export const getItemParams = <ENTITY extends EntityV2, OPTIONS extends GetItemOptions<ENTITY>>(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
   getItemOptions: OPTIONS = {} as OPTIONS
 ): GetCommandInput => {
   const validKeyInput = parseEntityKeyInput(entity, input)
+  const renamedInput = renameSavedAsAttributes(validKeyInput)
 
-  /**
-   * @debt bug "Important to do it before renaming as validKeyInput is muted (to improve?). But will cause a bug with anyOf attributes (input is not actually the valid input)"
-   */
-  const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : undefined
-
-  const renamedInput = renameSavedAsAttributes(entity.schema, validKeyInput)
-
-  const primaryKey = parsePrimaryKey(entity, keyInput ?? renamedInput)
+  const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : renamedInput
+  const primaryKey = parsePrimaryKey(entity, keyInput)
 
   const options = parseGetItemOptions(entity, getItemOptions)
 
