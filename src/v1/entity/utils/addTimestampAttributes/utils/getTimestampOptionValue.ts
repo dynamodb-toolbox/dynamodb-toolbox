@@ -7,15 +7,15 @@ import { isTimestampObjectOptions } from './isTimestampObjectOptions'
 export type TimestampOptionValue<
   TIMESTAMP_OPTIONS extends TimestampsOptions,
   TIMESTAMP_KEY extends 'created' | 'modified',
-  OPTION_KEY extends 'name' | 'savedAs'
-> = TIMESTAMP_OPTIONS extends { [KEY in TIMESTAMP_KEY]: { [KEY in OPTION_KEY]: string } }
+  OPTION_KEY extends 'name' | 'savedAs' | 'hidden'
+> = TIMESTAMP_OPTIONS extends { [KEY in TIMESTAMP_KEY]: { [KEY in OPTION_KEY]: unknown } }
   ? TIMESTAMP_OPTIONS[TIMESTAMP_KEY][OPTION_KEY]
   : TimestampsDefaultOptions[TIMESTAMP_KEY][OPTION_KEY]
 
 export const getTimestampOptionValue = <
   TIMESTAMP_OPTIONS extends TimestampsOptions,
   TIMESTAMP_KEY extends 'created' | 'modified',
-  OPTION_KEY extends 'name' | 'savedAs'
+  OPTION_KEY extends 'name' | 'savedAs' | 'hidden'
 >(
   timestampsOptions: TIMESTAMP_OPTIONS,
   timestampKey: TIMESTAMP_KEY,

@@ -7,7 +7,7 @@ export type IsTimestampEnabled<
   TIMESTAMP extends 'created' | 'modified'
 > = TIMESTAMP_OPTIONS extends true
   ? true
-  : TIMESTAMP_OPTIONS extends { [KEY in TIMESTAMP]: true | { name: string; savedAs: string } }
+  : TIMESTAMP_OPTIONS extends { [KEY in TIMESTAMP]: true | Record<string, never> }
   ? true
   : false
 
