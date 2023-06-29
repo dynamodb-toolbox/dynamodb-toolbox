@@ -9,7 +9,7 @@ import { matchProjection } from './utils'
 export const parseSavedListAttribute = (
   listAttribute: ListAttribute,
   value: PossiblyUndefinedResolvedAttribute,
-  { projectedAttributes }: FormatSavedAttributeOptions
+  { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isArray(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
@@ -32,7 +32,8 @@ export const parseSavedListAttribute = (
   for (const valueElement of value) {
     parsedValues.push(
       parseSavedAttribute(listAttribute.elements, valueElement, {
-        projectedAttributes: childrenAttributes
+        projectedAttributes: childrenAttributes,
+        ...restOptions
       })
     )
   }
