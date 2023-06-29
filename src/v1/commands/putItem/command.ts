@@ -64,8 +64,6 @@ export class PutItemCommand<
     nextOptions: NEXT_OPTIONS
   ) => PutItemCommand<ENTITY, NEXT_OPTIONS>
 
-  private _cachedParams?: PutCommandInput
-
   constructor(
     entity: ENTITY,
     item?: PutItemInput<ENTITY, false>,
@@ -80,15 +78,12 @@ export class PutItemCommand<
   }
 
   params = (): PutCommandInput => {
-    if (this._cachedParams) return this._cachedParams
-
     if (!this._item) {
       throw new DynamoDBToolboxError('commands.incompleteCommand', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
     const params = putItemParams(this.entity, this._item, this._options)
-    this._cachedParams = params
 
     return params
   }
