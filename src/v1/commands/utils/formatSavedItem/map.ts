@@ -13,7 +13,7 @@ import { matchProjection } from './utils'
 export const parseSavedMapAttribute = (
   mapAttribute: MapAttribute,
   value: PossiblyUndefinedResolvedAttribute,
-  { projectedAttributes }: FormatSavedAttributeOptions
+  { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isObject(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
@@ -45,11 +45,12 @@ export const parseSavedMapAttribute = (
     const attributeSavedAs = attribute.savedAs ?? attributeName
 
     const formattedAttribute = parseSavedAttribute(attribute, value[attributeSavedAs], {
-      projectedAttributes: childrenAttributes
+      projectedAttributes: childrenAttributes,
+      ...restOptions
     })
 
     if (formattedAttribute !== undefined) {
-      formattedMap[attributeName] = parseSavedAttribute(attribute, value[attributeSavedAs])
+      formattedMap[attributeName] = formattedAttribute
     }
   })
 

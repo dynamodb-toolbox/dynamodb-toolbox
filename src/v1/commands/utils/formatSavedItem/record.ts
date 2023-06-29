@@ -14,7 +14,7 @@ import { matchProjection } from './utils'
 export const parseSavedRecordAttribute = (
   recordAttribute: RecordAttribute,
   value: PossiblyUndefinedResolvedAttribute,
-  { projectedAttributes }: FormatSavedAttributeOptions
+  { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
 ): PossiblyUndefinedResolvedAttribute => {
   if (!isObject(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
@@ -38,9 +38,14 @@ export const parseSavedRecordAttribute = (
       projectedAttributes
     )
 
-    formattedRecord[parsedKey] = parseSavedAttribute(recordAttribute.elements, element, {
-      projectedAttributes: childrenAttributes
+    const formattedAttribute = parseSavedAttribute(recordAttribute.elements, element, {
+      projectedAttributes: childrenAttributes,
+      ...restOptions
     })
+
+    if (formattedAttribute !== undefined) {
+      formattedRecord[parsedKey] = formattedAttribute
+    }
   })
 
   return formattedRecord
