@@ -24,7 +24,18 @@ type ReturnedAttributes<
   : OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
   : OPTIONS['returnValues'] extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
-  ? FormattedItem<ENTITY, { partial: true }> | undefined
+  ?
+      | FormattedItem<
+          ENTITY,
+          {
+            partial: OPTIONS['returnValues'] extends
+              | UpdatedOldReturnValuesOption
+              | UpdatedNewReturnValuesOption
+              ? true
+              : false
+          }
+        >
+      | undefined
   : OPTIONS['returnValues'] extends AllNewReturnValuesOption | AllOldReturnValuesOption
   ? FormattedItem<ENTITY> | undefined
   : never
@@ -93,13 +104,14 @@ export class PutItemCommand<
       return restCommandOutput
     }
 
-    // TODO: Create parseSavedAttributes util that handles partial Items (for the moment, it will throw)
-    // (returned for UpdatedOld/UpdatedNew returnValues option)
-    // (Also: is the partial flat or deep ?)
-    const formattedItem = formatSavedItem(this.entity, attributes)
+    const { returnValues } = this._options
+
+    const formattedItem = (formatSavedItem(this.entity, attributes, {
+      partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
+    }) as unknown) as ReturnedAttributes<ENTITY, OPTIONS>
 
     return {
-      Attributes: formattedItem as ReturnedAttributes<ENTITY, OPTIONS>,
+      Attributes: formattedItem,
       ...restCommandOutput
     }
   }
