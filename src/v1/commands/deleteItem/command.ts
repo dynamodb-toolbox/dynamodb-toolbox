@@ -48,8 +48,6 @@ export class DeleteItemCommand<
     nextOptions: NEXT_OPTIONS
   ) => DeleteItemCommand<ENTITY, NEXT_OPTIONS>
 
-  private _cachedParams?: DeleteCommandInput
-
   constructor(entity: ENTITY, _key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     this.entity = entity
     this._key = _key
@@ -60,15 +58,12 @@ export class DeleteItemCommand<
   }
 
   params = (): DeleteCommandInput => {
-    if (this._cachedParams) return this._cachedParams
-
     if (!this._key) {
       throw new DynamoDBToolboxError('commands.incompleteCommand', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
     const params = deleteItemParams(this.entity, this._key, this._options)
-    this._cachedParams = params
 
     return params
   }
