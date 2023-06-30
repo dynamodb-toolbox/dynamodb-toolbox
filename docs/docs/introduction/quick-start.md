@@ -1,9 +1,4 @@
 # Quick Start
-:::info
-We're using **aws-sdk v2** DynamoDB tools, the support for **aws-sdk v3** is on its way. <br />
-You can read more about the development [here](https://github.com/jeremydaly/dynamodb-toolbox/pull/174).
-
-:::
 
 ## Install DynamoDB Toolbox
 
