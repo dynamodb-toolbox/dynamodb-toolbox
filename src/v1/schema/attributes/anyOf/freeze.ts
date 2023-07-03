@@ -5,6 +5,7 @@ import { isArray } from 'v1/utils/validation'
 
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault'
 import {
   $type,
   $elements,
@@ -92,8 +93,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
       })
     }
 
-    // TODO: factorize
-    if (element[$defaults].put !== undefined || element[$defaults].update !== undefined) {
+    if (hasDefinedDefault(element)) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.defaultedElements', {
         message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot have default values`,
         path

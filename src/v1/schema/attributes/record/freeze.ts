@@ -4,6 +4,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault'
 import {
   $type,
   $keys,
@@ -93,8 +94,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  // TODO: factorize
-  if (keys[$defaults].put !== undefined || keys[$defaults].update !== undefined) {
+  if (hasDefinedDefault(keys)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedKeys', {
       message: `Invalid record keys at path ${path}: Record keys cannot have default values`,
       path
@@ -132,8 +132,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  // TODO: factorize
-  if (elements[$defaults].put !== undefined || elements[$defaults].update !== undefined) {
+  if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedElements', {
       message: `Invalid record elements at path ${path}: Records elements cannot have default values`,
       path
