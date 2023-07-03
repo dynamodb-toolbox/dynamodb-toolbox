@@ -25,9 +25,12 @@ export interface AnyAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Provide a default value for attribute, or tag attribute as having a computed default value
+   * Provide default values for attribute (or tag attribute as having computed default values)
    */
-  default: AnyAttributeDefaultValue
+  defaults: {
+    put: AnyAttributeDefaultValue
+    update: AnyAttributeDefaultValue
+  }
 }
 
 export type AnyAttributeDefaultOptions = {
@@ -35,7 +38,10 @@ export type AnyAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 }
 
 export const ANY_DEFAULT_OPTIONS: AnyAttributeDefaultOptions = {
@@ -43,5 +49,8 @@ export const ANY_DEFAULT_OPTIONS: AnyAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
-  default: undefined
+  defaults: {
+    put: undefined,
+    update: undefined
+  }
 }

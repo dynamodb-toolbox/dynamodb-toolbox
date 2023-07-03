@@ -14,7 +14,7 @@ export type RecordAttributePutDefaultsComputer<
     [AttributePutItemInput<RECORD_ATTRIBUTE['keys']>, ...CONTEXT_INPUTS]
   >,
   RECORD_ATTRIBUTE_DEFAULT_COMPUTER = OmitUndefinedProperties<{
-    _record: RECORD_ATTRIBUTE extends { default: ComputedDefault }
+    _record: RECORD_ATTRIBUTE extends { defaults: { put: ComputedDefault } }
       ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItem<RECORD_ATTRIBUTE>
       : undefined
     _elements: ELEMENTS_DEFAULT_COMPUTER extends undefined

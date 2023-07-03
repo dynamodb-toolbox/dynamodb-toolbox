@@ -4,6 +4,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault'
 import {
   $type,
   $keys,
@@ -12,7 +13,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 
 import type { $RecordAttribute, RecordAttribute } from './interface'
@@ -28,7 +29,7 @@ export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttribute> =
         hidden: $RECORD_ATTRIBUTE[$hidden]
         key: $RECORD_ATTRIBUTE[$key]
         savedAs: $RECORD_ATTRIBUTE[$savedAs]
-        default: $RECORD_ATTRIBUTE[$default]
+        defaults: $RECORD_ATTRIBUTE[$defaults]
       }
     >,
     never,
@@ -93,7 +94,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (keys[$default] !== undefined) {
+  if (hasDefinedDefault(keys)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedKeys', {
       message: `Invalid record keys at path ${path}: Record keys cannot have default values`,
       path
@@ -131,7 +132,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (elements[$default] !== undefined) {
+  if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedElements', {
       message: `Invalid record elements at path ${path}: Records elements cannot have default values`,
       path
@@ -150,6 +151,6 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     hidden: $recordAttribute[$hidden],
     key: $recordAttribute[$key],
     savedAs: $recordAttribute[$savedAs],
-    default: $recordAttribute[$default]
+    defaults: $recordAttribute[$defaults]
   }
 }

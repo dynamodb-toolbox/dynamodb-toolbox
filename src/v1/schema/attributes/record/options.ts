@@ -26,9 +26,12 @@ export interface RecordAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Tag attribute as having a computed default value
+   * Tag attribute as having computed default values
    */
-  default: ComputedDefault | undefined
+  defaults: {
+    put: ComputedDefault | undefined
+    update: ComputedDefault | undefined
+  }
 }
 
 export type RecordAttributeDefaultOptions = {
@@ -36,7 +39,10 @@ export type RecordAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 }
 
 export const RECORD_DEFAULT_OPTIONS: RecordAttributeDefaultOptions = {
@@ -44,5 +50,8 @@ export const RECORD_DEFAULT_OPTIONS: RecordAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
-  default: undefined
+  defaults: {
+    put: undefined,
+    update: undefined
+  }
 }

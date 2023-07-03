@@ -9,7 +9,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
@@ -42,7 +42,7 @@ type RecordAttributeTyper = <
  * - Displayed (hidden: false)
  * - Not key (key: false)
  * - Not renamed (savedAs: undefined)
- * - Doesn't have a default value (default: undefined)
+ * - Not defaulted (defaults: undefined)
  *
  * @param keys Keys (With constraints)
  * @param elements Attribute (With constraints)
@@ -67,7 +67,7 @@ export const record: RecordAttributeTyper = <
     [$hidden]: appliedOptions.hidden,
     [$key]: appliedOptions.key,
     [$savedAs]: appliedOptions.savedAs,
-    [$default]: appliedOptions.default,
+    [$defaults]: appliedOptions.defaults,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => record(keys, elements, { ...appliedOptions, required: nextRequired }),
@@ -75,7 +75,21 @@ export const record: RecordAttributeTyper = <
     hidden: () => record(keys, elements, { ...appliedOptions, hidden: true }),
     key: () => record(keys, elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => record(keys, elements, { ...appliedOptions, savedAs: nextSavedAs }),
-    default: nextDefault => record(keys, elements, { ...appliedOptions, default: nextDefault })
+    putDefault: nextPutDefault =>
+      record(keys, elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, put: nextPutDefault }
+      }),
+    updateDefault: nextUpdateDefault =>
+      record(keys, elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
+      }),
+    defaults: nextDefaults =>
+      record(keys, elements, {
+        ...appliedOptions,
+        defaults: { put: nextDefaults, update: nextDefaults }
+      })
   } as $RecordAttribute<
     KEYS,
     ELEMENTS,

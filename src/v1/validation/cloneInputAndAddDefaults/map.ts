@@ -20,7 +20,8 @@ export const cloneMapAttributeInputAndAddDefaults = (
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
   if (input === undefined) {
-    if (mapAttribute.default === ComputedDefault) {
+    // TODO: Use defaults from get/update etc...
+    if (mapAttribute.defaults.put === ComputedDefault) {
       if (!canComputeDefaults) {
         return undefined
       }

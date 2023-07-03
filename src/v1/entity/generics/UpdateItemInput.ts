@@ -43,7 +43,7 @@ export type UpdateItemInput<
         // Enforce Required Always attributes...
         O.SelectKeys<SCHEMA['attributes'], { required: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
+        O.FilterKeys<SCHEMA['attributes'], { defaults: { update: undefined } }>
       >
     >
   : SCHEMA extends RecordAttribute

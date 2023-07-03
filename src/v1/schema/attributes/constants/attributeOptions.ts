@@ -26,8 +26,8 @@ export type $keys = typeof $keys
 export const $key = Symbol()
 export type $key = typeof $key
 
-export const $default = Symbol()
-export type $default = typeof $default
+export const $defaults = Symbol()
+export type $defaults = typeof $defaults
 
 export const $enum = Symbol()
 export type $enum = typeof $enum
@@ -44,7 +44,7 @@ export type $AttributeOptionSymbol =
   | $required
   | $hidden
   | $key
-  | $default
+  | $defaults
   | $enum
   | $savedAs
 
@@ -57,7 +57,7 @@ export type AttributeOptionSymbolName = {
   [$required]: 'required'
   [$hidden]: 'hidden'
   [$key]: 'key'
-  [$default]: 'default'
+  [$defaults]: 'defaults'
   [$enum]: 'enum'
   [$savedAs]: 'savedAs'
 }
@@ -73,7 +73,7 @@ export type AttributeOptionNameSymbol = {
   required: $required
   hidden: $hidden
   key: $key
-  default: $default
+  defaults: $defaults
   enum: $enum
   savedAs: $savedAs
 }

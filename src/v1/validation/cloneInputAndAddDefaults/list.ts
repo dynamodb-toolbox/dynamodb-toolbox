@@ -16,7 +16,8 @@ export const cloneListAttributeInputAndAddDefaults = (
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
   if (input === undefined) {
-    if (listAttribute.default === ComputedDefault) {
+    // TODO: Use defaults from get/update etc...
+    if (listAttribute.defaults.put === ComputedDefault) {
       if (!canComputeDefaults) {
         return undefined
       }

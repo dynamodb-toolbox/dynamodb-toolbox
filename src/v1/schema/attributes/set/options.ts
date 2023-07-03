@@ -27,9 +27,12 @@ export interface SetAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Tag attribute as having a computed default value
+   * Tag attribute as having computed default values
    */
-  default: ComputedDefault | undefined
+  defaults: {
+    put: ComputedDefault | undefined
+    update: ComputedDefault | undefined
+  }
 }
 
 export type SetAttributeDefaultOptions = {
@@ -37,7 +40,10 @@ export type SetAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 }
 
 export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeDefaultOptions = {
@@ -45,5 +51,8 @@ export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
-  default: undefined
+  defaults: {
+    put: undefined,
+    update: undefined
+  }
 }

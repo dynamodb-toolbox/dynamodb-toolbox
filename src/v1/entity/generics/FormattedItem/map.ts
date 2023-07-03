@@ -50,5 +50,13 @@ export type FormattedMapAttribute<
           : // Enforce Required attributes
             | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always }>
               // Enforce attributes that have defined hard default
-              | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
+              | O.FilterKeys<
+                  SCHEMA['attributes'],
+                  {
+                    defaults: {
+                      // TODO: Use defaults from get/update etc...
+                      put: undefined | ComputedDefault
+                    }
+                  }
+                >
       >
