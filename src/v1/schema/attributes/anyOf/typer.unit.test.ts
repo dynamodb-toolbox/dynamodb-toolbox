@@ -11,7 +11,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 
 import { anyOf } from './typer'
@@ -101,42 +101,26 @@ describe('anyOf', () => {
   })
 
   it('rejects elements with default values', () => {
-    anyOf([
+    const invalidAnyOfA = anyOf([
       str,
       // @ts-expect-error
-      str.default('foo')
+      str.putDefault('foo')
     ])
 
-    const invalidCallA = () =>
-      freezeAnyOfAttribute(
-        anyOf([
-          str,
-          // @ts-expect-error
-          str.default('foo')
-        ]),
-        path
-      )
+    const invalidCallA = () => freezeAnyOfAttribute(invalidAnyOfA, path)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
       expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
     )
 
-    anyOf([
+    const invalidAnyOfB = anyOf([
       str,
       // @ts-expect-error
-      str.default(ComputedDefault)
+      str.updateDefault(ComputedDefault)
     ])
 
-    const invalidCallB = () =>
-      freezeAnyOfAttribute(
-        anyOf([
-          str,
-          // @ts-expect-error
-          str.default(ComputedDefault)
-        ]),
-        path
-      )
+    const invalidCallB = () => freezeAnyOfAttribute(invalidAnyOfB, path)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -156,7 +140,10 @@ describe('anyOf', () => {
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertAnyOf
@@ -174,7 +161,11 @@ describe('anyOf', () => {
       [$required]: 'atLeastOnce',
       [$key]: false,
       [$savedAs]: undefined,
-      [$hidden]: false
+      [$hidden]: false,
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 
@@ -270,21 +261,41 @@ describe('anyOf', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const anyOfAttr = anyOf([str], { default: ComputedDefault })
+    const anyOfAttr = anyOf([str], { defaults: { put: ComputedDefault, update: undefined } })
 
-    const assertAnyOf: A.Contains<typeof anyOfAttr, { [$default]: ComputedDefault }> = 1
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$defaults]: { put: ComputedDefault; update: undefined } }
+    > = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({ [$default]: ComputedDefault })
+    expect(anyOfAttr).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const anyOfAttr = anyOf([str]).default(ComputedDefault)
+    const anyOfAttr = anyOf([str]).updateDefault(ComputedDefault)
 
-    const assertAnyOf: A.Contains<typeof anyOfAttr, { [$default]: ComputedDefault }> = 1
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$defaults]: { put: undefined; update: ComputedDefault } }
+    > = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({ [$default]: ComputedDefault })
+    expect(anyOfAttr).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
+  })
+
+  it('accepts ComputedDefault as default values (option)', () => {
+    const anyOfAttr = anyOf([str]).defaults(ComputedDefault)
+
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+    > = 1
+    assertAnyOf
+
+    expect(anyOfAttr).toMatchObject({
+      [$defaults]: { put: ComputedDefault, update: ComputedDefault }
+    })
   })
 
   it('anyOf of anyOfs', () => {
@@ -300,7 +311,10 @@ describe('anyOf', () => {
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertAnyOf
@@ -312,7 +326,10 @@ describe('anyOf', () => {
       [$hidden]: false,
       [$key]: false,
       [$savedAs]: undefined,
-      [$default]: undefined
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 })

@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
-import type { $type, $enum, $default } from '../constants/attributeOptions'
+import type { $type, $enum, $defaults } from '../constants/attributeOptions'
 import type {
   AttributeSharedStateConstraint,
   $AttributeSharedState,
@@ -19,7 +19,10 @@ interface PrimitiveAttributeStateConstraint<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
 > extends AttributeSharedStateConstraint {
   enum: PrimitiveAttributeEnumValues<TYPE>
-  default: PrimitiveAttributeDefaultValue<TYPE>
+  defaults: {
+    put: PrimitiveAttributeDefaultValue<TYPE>
+    update: PrimitiveAttributeDefaultValue<TYPE>
+  }
 }
 
 /**
@@ -31,7 +34,7 @@ export interface $PrimitiveAttribute<
 > extends $AttributeSharedState<STATE> {
   [$type]: $TYPE
   [$enum]: STATE['enum']
-  [$default]: STATE['default']
+  [$defaults]: STATE['defaults']
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -73,7 +76,7 @@ export interface $PrimitiveAttribute<
     ...nextEnum: NEXT_ENUM
   ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', NEXT_ENUM>>
   /**
-   * Shorthand for `enum(constantValue).default(constantValue)`
+   * Shorthand for `enum(constantValue).defaults(constantValue)`
    *
    * @param constantValue Constant value
    * @example
@@ -83,21 +86,56 @@ export interface $PrimitiveAttribute<
     constant: CONSTANT
   ) => $PrimitiveAttribute<
     $TYPE,
-    O.Update<O.Update<STATE, 'enum', [CONSTANT]>, 'default', CONSTANT>
+    O.Update<O.Update<STATE, 'enum', [CONSTANT]>, 'defaults', { put: CONSTANT; update: CONSTANT }>
   >
   /**
-   * Provide a default value for attribute, or tag attribute as having a computed default value
+   * Provide a default value for attribute in PUT commands (or tag attribute as having a computed default value)
    *
-   * @param nextDefaultValue `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   * @param nextPutDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
-  default: <
-    NEXT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
+  putDefault: <
+    NEXT_PUT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
       (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
         ? STATE['enum'][number] | (() => STATE['enum'][number])
         : unknown)
   >(
-    nextDefaultValue: NEXT_DEFAULT
-  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'default', NEXT_DEFAULT>>
+    nextPutDefault: NEXT_PUT_DEFAULT
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
+  >
+  /**
+   * Provide a default value for attribute in UPDATE commands (or tag attribute as having a computed default value)
+   *
+   * @param nextUpdateDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   */
+  updateDefault: <
+    NEXT_UPDATE_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
+      (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
+        ? STATE['enum'][number] | (() => STATE['enum'][number])
+        : unknown)
+  >(
+    nextUpdateDefault: NEXT_UPDATE_DEFAULT
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
+  >
+  /**
+   * Provide a default value for attribute in all commands (or tag attribute as having a computed default value)
+   *
+   * @param nextDefaults `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   */
+  defaults: <
+    NEXT_DEFAULTS extends PrimitiveAttributeDefaultValue<$TYPE> &
+      (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
+        ? STATE['enum'][number] | (() => STATE['enum'][number])
+        : unknown)
+  >(
+    nextDefaults: NEXT_DEFAULTS
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Update<STATE, 'defaults', { put: NEXT_DEFAULTS; update: NEXT_DEFAULTS }>
+  >
 }
 
 export interface PrimitiveAttribute<
@@ -107,5 +145,5 @@ export interface PrimitiveAttribute<
   path: string
   type: TYPE
   enum: STATE['enum']
-  default: STATE['default']
+  defaults: STATE['defaults']
 }

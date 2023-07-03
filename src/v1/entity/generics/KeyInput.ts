@@ -38,7 +38,8 @@ export type KeyInput<SCHEMA extends EntityV2 | Schema> = SCHEMA extends Schema
         // Enforce Always Required attributes
         O.SelectKeys<SCHEMA['attributes'], { required: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<SCHEMA['attributes'], { default: undefined }>
+        // TODO: Use defaults from get/update etc...
+        O.FilterKeys<SCHEMA['attributes'], { defaults: { put: undefined } }>
       >
     >
   : SCHEMA extends EntityV2
@@ -75,7 +76,8 @@ export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends A
         // Enforce Always Required attributes
         O.SelectKeys<ATTRIBUTE['attributes'], { required: Always }>,
         // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined }>
+        // TODO: Use defaults from get/update etc...
+        O.FilterKeys<ATTRIBUTE['attributes'], { defaults: { put: undefined } }>
       >
     >
   : ATTRIBUTE extends RecordAttribute

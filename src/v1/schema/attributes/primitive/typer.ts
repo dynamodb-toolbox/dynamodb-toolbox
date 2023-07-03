@@ -8,7 +8,7 @@ import {
   $key,
   $savedAs,
   $enum,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 import { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
@@ -34,7 +34,7 @@ type AnyPrimitiveAttributeTyper = <
     key: OPTIONS['key']
     savedAs: OPTIONS['savedAs']
     enum: OPTIONS[$enum]
-    default: OPTIONS['default']
+    defaults: OPTIONS['defaults']
   }
 >
 
@@ -57,7 +57,7 @@ const primitive: AnyPrimitiveAttributeTyper = <
     [$key]: options.key,
     [$savedAs]: options.savedAs,
     [$enum]: options[$enum],
-    [$default]: options.default,
+    [$defaults]: options.defaults,
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired = 'atLeastOnce' as NEXT_REQUIRED
     ) => primitive(type, { ...options, required: nextRequired }),
@@ -65,9 +65,27 @@ const primitive: AnyPrimitiveAttributeTyper = <
     hidden: () => primitive(type, { ...options, hidden: true }),
     key: () => primitive(type, { ...options, key: true, required: 'always' }),
     savedAs: nextSavedAs => primitive(type, { ...options, savedAs: nextSavedAs }),
-    default: nextDefault => primitive(type, { ...options, default: nextDefault }),
+    putDefault: nextPutDefault =>
+      primitive(type, {
+        ...options,
+        // TODO Fix options.defaults whose type seems badly inferred (update optional?)
+        defaults: { update: options.defaults.update, put: nextPutDefault }
+      }),
+    updateDefault: nextUpdateDefault =>
+      primitive(type, {
+        ...options,
+        // TODO Fix options.defaults whose type seems badly inferred (put optional?)
+        defaults: { put: options.defaults.put, update: nextUpdateDefault }
+      }),
+    defaults: nextDefault =>
+      primitive(type, { ...options, defaults: { put: nextDefault, update: nextDefault } }),
     enum: (...nextEnum) => primitive(type, { ...options, [$enum]: nextEnum }),
-    const: constant => primitive(type, { ...options, [$enum]: [constant], default: constant })
+    const: constant =>
+      primitive(type, {
+        ...options,
+        [$enum]: [constant],
+        defaults: { put: constant, update: constant }
+      })
   } as $PrimitiveAttribute<
     TYPE,
     {
@@ -76,7 +94,7 @@ const primitive: AnyPrimitiveAttributeTyper = <
       key: OPTIONS['key']
       savedAs: OPTIONS['savedAs']
       enum: OPTIONS[$enum]
-      default: OPTIONS['default']
+      defaults: OPTIONS['defaults']
     }
   >)
 

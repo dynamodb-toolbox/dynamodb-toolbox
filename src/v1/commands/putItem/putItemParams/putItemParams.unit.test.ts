@@ -42,9 +42,9 @@ const TestEntity = new EntityV2({
     sort: string().key().savedAs('sk'),
     test_any: any().optional(),
     test_binary: binary().optional(),
-    test_string: string().default('test string'),
+    test_string: string().putDefault('test string'),
     count: number().optional().savedAs('test_number'),
-    test_number_default: number().default(0),
+    test_number_defaulted: number().putDefault(0),
     test_boolean: boolean().optional(),
     test_list: list(string()).optional(),
     test_map: map({
@@ -67,7 +67,7 @@ const TestEntity2 = new EntityV2({
   name: 'TestEntity2',
   schema: schema({
     email: string().key().savedAs('pk'),
-    sort: string().optional().savedAs('sk').default(ComputedDefault),
+    sort: string().optional().savedAs('sk').putDefault(ComputedDefault),
     test_composite: string().optional(),
     test_composite2: string().optional()
   }),
@@ -129,7 +129,7 @@ describe('put', () => {
       pk: 'test-pk',
       sk: 'test-sk',
       test_string: 'test string',
-      test_number_default: 0
+      test_number_defaulted: 0
     })
   })
 

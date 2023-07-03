@@ -26,9 +26,12 @@ export interface AnyOfAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Tag attribute as having a computed default value
+   * Tag attribute as having computed default values
    */
-  default: ComputedDefault | undefined
+  defaults: {
+    put: ComputedDefault | undefined
+    update: ComputedDefault | undefined
+  }
 }
 
 export type AnyOfAttributeDefaultOptions = {
@@ -36,7 +39,10 @@ export type AnyOfAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 }
 
 export const ANY_OF_DEFAULT_OPTIONS: AnyOfAttributeDefaultOptions = {
@@ -44,5 +50,8 @@ export const ANY_OF_DEFAULT_OPTIONS: AnyOfAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
-  default: undefined
+  defaults: {
+    put: undefined,
+    update: undefined
+  }
 }

@@ -26,9 +26,12 @@ export interface ListAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Tag attribute as having a computed default value
+   * Tag attribute as having computed default values
    */
-  default: ComputedDefault | undefined
+  defaults: {
+    put: ComputedDefault | undefined
+    update: ComputedDefault | undefined
+  }
 }
 
 export type ListAttributeDefaultOptions = {
@@ -36,7 +39,10 @@ export type ListAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 }
 
 export const LIST_DEFAULT_OPTIONS: ListAttributeDefaultOptions = {
@@ -44,5 +50,8 @@ export const LIST_DEFAULT_OPTIONS: ListAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
-  default: undefined
+  defaults: {
+    put: undefined,
+    update: undefined
+  }
 }

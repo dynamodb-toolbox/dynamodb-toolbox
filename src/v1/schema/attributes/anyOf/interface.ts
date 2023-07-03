@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { ComputedDefault, RequiredOption, AtLeastOnce, Never, Always } from '../constants'
-import type { $type, $elements, $default } from '../constants/attributeOptions'
+import type { $type, $elements, $defaults } from '../constants/attributeOptions'
 import type {
   AttributeSharedStateConstraint,
   $AttributeSharedState,
@@ -10,7 +10,10 @@ import type {
 import type { $Attribute, Attribute } from '../types'
 
 export interface AnyOfAttributeStateConstraint extends AttributeSharedStateConstraint {
-  default: ComputedDefault | undefined
+  defaults: {
+    put: ComputedDefault | undefined
+    update: ComputedDefault | undefined
+  }
 }
 
 /**
@@ -22,7 +25,7 @@ export interface $AnyOfAttribute<
 > extends $AttributeSharedState<STATE> {
   [$type]: 'anyOf'
   [$elements]: $ELEMENTS[]
-  [$default]: STATE['default']
+  [$defaults]: STATE['defaults']
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -53,13 +56,38 @@ export interface $AnyOfAttribute<
     nextSavedAs: NEXT_SAVED_AS
   ) => $AnyOfAttribute<$ELEMENTS, O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
   /**
-   * Tag attribute as having a computed default value
+   * Tag attribute as having a computed default value in PUT commands
+   *
+   * @param nextPutDefaultValue `ComputedDefault`
+   */
+  putDefault: <NEXT_PUT_DEFAULT extends ComputedDefault | undefined>(
+    nextPutDefaultValue: NEXT_PUT_DEFAULT
+  ) => $AnyOfAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
+  >
+  /**
+   * Tag attribute as having a computed default value in UPDATE commands
+   *
+   * @param nextUpdateDefaultValue `ComputedDefault`
+   */
+  updateDefault: <NEXT_UPDATE_DEFAULT extends ComputedDefault | undefined>(
+    nextUpdateDefaultValue: NEXT_UPDATE_DEFAULT
+  ) => $AnyOfAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
+  >
+  /**
+   * Tag attribute as having computed default values in all commands
    *
    * @param nextDefaultValue `ComputedDefault`
    */
-  default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
+  defaults: <NEXT_DEFAULT extends ComputedDefault | undefined>(
     nextDefaultValue: NEXT_DEFAULT
-  ) => $AnyOfAttribute<$ELEMENTS, O.Update<STATE, 'default', NEXT_DEFAULT>>
+  ) => $AnyOfAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', { put: NEXT_DEFAULT; update: NEXT_DEFAULT }>
+  >
 }
 
 export interface AnyOfAttribute<
@@ -69,5 +97,5 @@ export interface AnyOfAttribute<
   path: string
   type: 'anyOf'
   elements: ELEMENTS[]
-  default: STATE['default']
+  defaults: STATE['defaults']
 }

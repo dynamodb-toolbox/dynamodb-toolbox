@@ -36,9 +36,12 @@ export type PrimitiveAttributeOptions<
   savedAs: string | undefined
   [$enum]: PrimitiveAttributeEnumValues<TYPE>
   /**
-   * Provide a default value for attribute, or tag attribute as having a computed default value
+   * Provide default values for attribute (or tag attribute as having computed default values)
    */
-  default: PrimitiveAttributeDefaultValue<TYPE>
+  defaults: {
+    put: PrimitiveAttributeDefaultValue<TYPE>
+    update: PrimitiveAttributeDefaultValue<TYPE>
+  }
 }
 
 export type PrimitiveAttributeDefaultOptions = {
@@ -47,7 +50,10 @@ export type PrimitiveAttributeDefaultOptions = {
   key: false
   savedAs: undefined
   [$enum]: undefined
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 }
 
 export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
@@ -56,5 +62,8 @@ export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   [$enum]: undefined,
-  default: undefined
+  defaults: {
+    put: undefined,
+    update: undefined
+  }
 }
