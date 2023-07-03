@@ -7,7 +7,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default,
+  $defaults,
   AttributeOptionNameSymbol
 } from '../constants/attributeOptions'
 
@@ -45,6 +45,6 @@ export const freezeAnyAttribute: AnyAttributeFreezer = ($anyAttribute, path) => 
     hidden: $anyAttribute[$hidden],
     key: $anyAttribute[$key],
     savedAs: $anyAttribute[$savedAs],
-    default: $anyAttribute[$default]
+    defaults: $anyAttribute[$defaults]
   }
 }

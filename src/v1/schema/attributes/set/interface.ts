@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { ComputedDefault } from '../constants/computedDefault'
-import type { $type, $elements, $default } from '../constants/attributeOptions'
+import type { $type, $elements, $defaults } from '../constants/attributeOptions'
 import type {
   AttributeSharedStateConstraint,
   $AttributeSharedState,
@@ -12,7 +12,10 @@ import type {
 import type { $SetAttributeElements, SetAttributeElements } from './types'
 
 interface SetAttributeStateConstraint extends AttributeSharedStateConstraint {
-  default: ComputedDefault | undefined
+  defaults: {
+    put: ComputedDefault | undefined
+    update: ComputedDefault | undefined
+  }
 }
 
 /**
@@ -24,7 +27,7 @@ export interface $SetAttribute<
 > extends $AttributeSharedState<STATE> {
   [$type]: 'set'
   [$elements]: $ELEMENTS
-  [$default]: STATE['default']
+  [$defaults]: STATE['defaults']
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -55,13 +58,38 @@ export interface $SetAttribute<
     nextSavedAs: NEXT_SAVED_AS
   ) => $SetAttribute<$ELEMENTS, O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
   /**
-   * Provide a default value for attribute, or tag attribute as having a computed default value
+   * Tag attribute as having a computed default value in PUT commands
    *
-   * @param nextDefaultValue `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   * @param nextPutDefaultValue `ComputedDefault`
    */
-  default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
+  putDefault: <NEXT_PUT_DEFAULT extends ComputedDefault | undefined>(
+    nextPutDefaultValue: NEXT_PUT_DEFAULT
+  ) => $SetAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
+  >
+  /**
+   * Tag attribute as having a computed default value in UPDATE commands
+   *
+   * @param nextUpdateDefaultValue `ComputedDefault`
+   */
+  updateDefault: <NEXT_UPDATE_DEFAULT extends ComputedDefault | undefined>(
+    nextUpdateDefaultValue: NEXT_UPDATE_DEFAULT
+  ) => $SetAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
+  >
+  /**
+   * Tag attribute as having computed default values in all commands
+   *
+   * @param nextDefaultValue `ComputedDefault`
+   */
+  defaults: <NEXT_DEFAULT extends ComputedDefault | undefined>(
     nextDefaultValue: NEXT_DEFAULT
-  ) => $SetAttribute<$ELEMENTS, O.Update<STATE, 'default', NEXT_DEFAULT>>
+  ) => $SetAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', { put: NEXT_DEFAULT; update: NEXT_DEFAULT }>
+  >
 }
 
 export interface SetAttribute<
@@ -71,5 +99,5 @@ export interface SetAttribute<
   path: string
   type: 'set'
   elements: ELEMENTS
-  default: STATE['default']
+  defaults: STATE['defaults']
 }

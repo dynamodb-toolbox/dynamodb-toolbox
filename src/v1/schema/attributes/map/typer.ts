@@ -9,7 +9,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
@@ -49,7 +49,7 @@ export const map: MapAttributeTyper = <
     [$hidden]: appliedOptions.hidden,
     [$key]: appliedOptions.key,
     [$savedAs]: appliedOptions.savedAs,
-    [$default]: appliedOptions.default,
+    [$defaults]: appliedOptions.defaults,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = ('atLeastOnce' as unknown) as NEXT_IS_REQUIRED
     ) => map(attributes, { ...appliedOptions, required: nextRequired }),
@@ -57,7 +57,21 @@ export const map: MapAttributeTyper = <
     hidden: () => map(attributes, { ...appliedOptions, hidden: true }),
     key: () => map(attributes, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => map(attributes, { ...appliedOptions, savedAs: nextSavedAs }),
-    default: nextDefault => map(attributes, { ...appliedOptions, default: nextDefault })
+    putDefault: nextPutDefault =>
+      map(attributes, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, put: nextPutDefault }
+      }),
+    updateDefault: nextUpdateDefault =>
+      map(attributes, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
+      }),
+    defaults: nextDefaults =>
+      map(attributes, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, put: nextDefaults, update: nextDefaults }
+      })
   } as $MapAttribute<
     ATTRIBUTES,
     InferStateFromOptions<MapAttributeOptions, MapAttributeDefaultOptions, OPTIONS>

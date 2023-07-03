@@ -11,7 +11,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 
 import type { $ListAttribute, ListAttribute } from './interface'
@@ -26,7 +26,7 @@ export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttribute> =
         hidden: $LIST_ATTRIBUTE[$hidden]
         key: $LIST_ATTRIBUTE[$key]
         savedAs: $LIST_ATTRIBUTE[$savedAs]
-        default: $LIST_ATTRIBUTE[$default]
+        defaults: $LIST_ATTRIBUTE[$defaults]
       }
     >,
     never,
@@ -73,8 +73,8 @@ export const freezeListAttribute: ListAttributeFreezer = <$LIST_ATTRIBUTE extend
       path
     })
   }
-
-  if (elements[$default] !== undefined) {
+  // TODO: factorize
+  if (elements[$defaults].put !== undefined || elements[$defaults].update !== undefined) {
     throw new DynamoDBToolboxError('schema.listAttribute.defaultedElements', {
       message: `Invalid list elements at path ${path}: List elements cannot have default values`,
       path
@@ -91,6 +91,6 @@ export const freezeListAttribute: ListAttributeFreezer = <$LIST_ATTRIBUTE extend
     hidden: $listAttribute[$hidden],
     key: $listAttribute[$key],
     savedAs: $listAttribute[$savedAs],
-    default: $listAttribute[$default]
+    defaults: $listAttribute[$defaults]
   }
 }

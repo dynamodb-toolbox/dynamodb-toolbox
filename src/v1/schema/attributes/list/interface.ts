@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { ComputedDefault, RequiredOption, AtLeastOnce, Never, Always } from '../constants'
-import type { $type, $elements, $default } from '../constants/attributeOptions'
+import type { $type, $elements, $defaults } from '../constants/attributeOptions'
 import type {
   AttributeSharedStateConstraint,
   $AttributeSharedState,
@@ -11,7 +11,10 @@ import type {
 import type { $ListAttributeElements, ListAttributeElements } from './types'
 
 export interface ListAttributeStateConstraint extends AttributeSharedStateConstraint {
-  default: ComputedDefault | undefined
+  defaults: {
+    put: ComputedDefault | undefined
+    update: ComputedDefault | undefined
+  }
 }
 
 /**
@@ -23,7 +26,7 @@ export interface $ListAttribute<
 > extends $AttributeSharedState<STATE> {
   [$type]: 'list'
   [$elements]: $ELEMENTS
-  [$default]: STATE['default']
+  [$defaults]: STATE['defaults']
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -54,13 +57,38 @@ export interface $ListAttribute<
     nextSavedAs: NEXT_SAVED_AS
   ) => $ListAttribute<$ELEMENTS, O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
   /**
-   * Tag attribute as having a computed default value
+   * Tag attribute as having a computed default value in PUT commands
    *
-   * @param nextDefaultValue `ComputedDefault`
+   * @param nextPutDefault `ComputedDefault`
    */
-  default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
-    nextDefaultValue: NEXT_DEFAULT
-  ) => $ListAttribute<$ELEMENTS, O.Update<STATE, 'default', NEXT_DEFAULT>>
+  putDefault: <NEXT_PUT_DEFAULT extends ComputedDefault | undefined>(
+    nextPutDefault: NEXT_PUT_DEFAULT
+  ) => $ListAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
+  >
+  /**
+   * Tag attribute as having a computed default value in UPDATE commands
+   *
+   * @param nextUpdateDefault `ComputedDefault`
+   */
+  updateDefault: <NEXT_UPDATE_DEFAULT extends ComputedDefault | undefined>(
+    nextUpdateDefault: NEXT_UPDATE_DEFAULT
+  ) => $ListAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
+  >
+  /**
+   * Tag attribute as having computed default values in all commands
+   *
+   * @param nextDefaults `ComputedDefault`
+   */
+  defaults: <NEXT_DEFAULTS extends ComputedDefault | undefined>(
+    nextDefaults: NEXT_DEFAULTS
+  ) => $ListAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', { put: NEXT_DEFAULTS; update: NEXT_DEFAULTS }>
+  >
 }
 
 export interface ListAttribute<
@@ -70,5 +98,5 @@ export interface ListAttribute<
   path: string
   type: 'list'
   elements: ELEMENTS
-  default: STATE['default']
+  defaults: STATE['defaults']
 }

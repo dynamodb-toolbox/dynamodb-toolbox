@@ -11,7 +11,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 
 import { set } from './typer'
@@ -23,19 +23,12 @@ describe('set', () => {
   const strElement = string()
 
   it('rejects non-required elements', () => {
-    set(
+    const invalidSet = set(
       // @ts-expect-error
       string().optional()
     )
 
-    const invalidCall = () =>
-      freezeSetAttribute(
-        set(
-          // @ts-expect-error
-          string().optional()
-        ),
-        path
-      )
+    const invalidCall = () => freezeSetAttribute(invalidSet, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -44,19 +37,12 @@ describe('set', () => {
   })
 
   it('rejects hidden elements', () => {
-    set(
+    const invalidSet = set(
       // @ts-expect-error
       strElement.hidden()
     )
 
-    const invalidCall = () =>
-      freezeSetAttribute(
-        set(
-          // @ts-expect-error
-          strElement.hidden()
-        ),
-        path
-      )
+    const invalidCall = () => freezeSetAttribute(invalidSet, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -65,19 +51,12 @@ describe('set', () => {
   })
 
   it('rejects elements with savedAs values', () => {
-    set(
+    const invalidSet = set(
       // @ts-expect-error
       strElement.savedAs('foo')
     )
 
-    const invalidCall = () =>
-      freezeSetAttribute(
-        set(
-          // @ts-expect-error
-          strElement.savedAs('foo')
-        ),
-        path
-      )
+    const invalidCall = () => freezeSetAttribute(invalidSet, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -86,38 +65,24 @@ describe('set', () => {
   })
 
   it('rejects elements with default values', () => {
-    set(
+    const invalidSetA = set(
       // @ts-expect-error
-      strElement.default('foo')
+      strElement.defaults('foo')
     )
 
-    const invalidCallA = () =>
-      freezeSetAttribute(
-        set(
-          // @ts-expect-error
-          strElement.default('foo')
-        ),
-        path
-      )
+    const invalidCallA = () => freezeSetAttribute(invalidSetA, path)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
       expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
     )
 
-    set(
+    const invalidSetB = set(
       // @ts-expect-error
-      strElement.default(ComputedDefault)
+      strElement.defaults(ComputedDefault)
     )
 
-    const invalidCallB = () =>
-      freezeSetAttribute(
-        set(
-          // @ts-expect-error
-          strElement.default(ComputedDefault)
-        ),
-        path
-      )
+    const invalidCallB = () => freezeSetAttribute(invalidSetB, path)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
@@ -137,7 +102,10 @@ describe('set', () => {
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertSet
@@ -155,7 +123,11 @@ describe('set', () => {
       [$required]: 'atLeastOnce',
       [$key]: false,
       [$savedAs]: undefined,
-      [$hidden]: false
+      [$hidden]: false,
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 
@@ -252,20 +224,38 @@ describe('set', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const st = set(strElement, { default: ComputedDefault })
+    const st = set(strElement, { defaults: { put: ComputedDefault, update: undefined } })
 
-    const assertSet: A.Contains<typeof st, { [$default]: ComputedDefault }> = 1
+    const assertSet: A.Contains<
+      typeof st,
+      { [$defaults]: { put: ComputedDefault; update: undefined } }
+    > = 1
     assertSet
 
-    expect(st).toMatchObject({ [$default]: ComputedDefault })
+    expect(st).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const st = set(strElement).default(ComputedDefault)
+    const st = set(strElement).updateDefault(ComputedDefault)
 
-    const assertSet: A.Contains<typeof st, { [$default]: ComputedDefault }> = 1
+    const assertSet: A.Contains<
+      typeof st,
+      { [$defaults]: { put: undefined; update: ComputedDefault } }
+    > = 1
     assertSet
 
-    expect(st).toMatchObject({ [$default]: ComputedDefault })
+    expect(st).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
+  })
+
+  it('accepts ComputedDefault as default values (option)', () => {
+    const st = set(strElement).defaults(ComputedDefault)
+
+    const assertSet: A.Contains<
+      typeof st,
+      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+    > = 1
+    assertSet
+
+    expect(st).toMatchObject({ [$defaults]: { put: ComputedDefault, update: ComputedDefault } })
   })
 })

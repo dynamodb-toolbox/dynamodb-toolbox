@@ -12,7 +12,10 @@ export type EntityAttribute<TABLE extends TableV2, ENTITY_NAME extends string> =
     key: false
     savedAs: EntityAttributeSavedAs<TABLE>
     enum: [ENTITY_NAME]
-    default: ENTITY_NAME
+    defaults: {
+      put: ENTITY_NAME
+      update: undefined
+    }
   }
 >
 
@@ -68,7 +71,10 @@ export const addEntityAttribute: EntityAttributeAdder = <
     key: false,
     savedAs: table.entityAttributeSavedAs,
     enum: [entityName],
-    default: entityName
+    defaults: {
+      put: entityName,
+      update: undefined
+    }
   }
 
   return addRootAttribute(schema, entityAttributeName, entityAttribute) as WithEntityAttribute<

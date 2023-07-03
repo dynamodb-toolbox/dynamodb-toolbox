@@ -21,7 +21,7 @@ import {
 
 const playgroundSchema1 = schema({
   reqStr: string(),
-  reqStrWithDef: string().default('string'),
+  reqStrWithDef: string().putDefault('string'),
   hiddenStr: string().optional().hidden(),
   num: number().optional(),
   bool: boolean().optional(),
@@ -52,11 +52,11 @@ type PlaygroundSchema1FormattedItem = FormattedAttribute<typeof playgroundSchema
 
 const allCasesOfProps = {
   optProp: string().optional(),
-  optPropWithHardDef: string().optional().default('foo'),
-  optPropWithCompDef: string().optional().default(ComputedDefault),
+  optPropWithHardDef: string().optional().putDefault('foo'),
+  optPropWithCompDef: string().optional().putDefault(ComputedDefault),
   reqProp: string(),
-  reqPropWithHardDef: string().default('baz'),
-  reqPropWithCompDef: string().default(ComputedDefault)
+  reqPropWithHardDef: string().putDefault('baz'),
+  reqPropWithCompDef: string().putDefault(ComputedDefault)
 }
 
 const playgroundSchema2 = schema({

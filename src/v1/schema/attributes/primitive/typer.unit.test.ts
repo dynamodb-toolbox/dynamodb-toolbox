@@ -10,7 +10,7 @@ import {
   $key,
   $savedAs,
   $enum,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 
 import { string, number, boolean, binary } from './typer'
@@ -33,7 +33,10 @@ describe('primitiveAttribute', () => {
           [$savedAs]: undefined
           [$key]: false
           [$enum]: undefined
-          [$default]: undefined
+          [$defaults]: {
+            put: undefined
+            update: undefined
+          }
         }
       > = 1
       assertStr
@@ -52,7 +55,10 @@ describe('primitiveAttribute', () => {
         [$savedAs]: undefined,
         [$key]: false,
         [$enum]: undefined,
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined,
+          update: undefined
+        }
       })
     })
 
@@ -202,26 +208,22 @@ describe('primitiveAttribute', () => {
 
       const str = string().const('foo')
 
-      const assertStr: A.Contains<typeof str, { [$enum]: ['foo']; [$default]: 'foo' }> = 1
+      const assertStr: A.Contains<
+        typeof str,
+        { [$enum]: ['foo']; [$defaults]: { put: 'foo'; update: 'foo' } }
+      > = 1
       assertStr
 
-      expect(str).toMatchObject({ [$enum]: ['foo'], [$default]: 'foo' })
+      expect(str).toMatchObject({ [$enum]: ['foo'], [$defaults]: { put: 'foo', update: 'foo' } })
     })
 
     it('returns string with default value (option)', () => {
-      string({
+      const invalidStr = string({
         // @ts-expect-error
-        default: 42
+        defaults: { put: 42, update: undefined }
       })
 
-      const invalidCall = () =>
-        freezePrimitiveAttribute(
-          string({
-            // @ts-expect-error
-            default: 42
-          }),
-          path
-        )
+      const invalidCall = () => freezePrimitiveAttribute(invalidStr, path)
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
@@ -230,78 +232,77 @@ describe('primitiveAttribute', () => {
 
       string({
         // @ts-expect-error Unable to throw here (it would require executing the fn)
-        default: () => 42
+        defaults: { put: () => 42, update: undefined }
       })
 
-      const strA = string({ default: 'hello' })
+      const strA = string({ defaults: { put: 'hello', update: undefined } })
       const sayHello = () => 'hello'
-      const strB = string({ default: sayHello })
+      const strB = string({ defaults: { put: undefined, update: sayHello } })
 
-      const assertStrA: A.Contains<typeof strA, { [$default]: 'hello' }> = 1
+      const assertStrA: A.Contains<
+        typeof strA,
+        // NOTE: We could narrow more and have 'hello' instead of string here, but not high prio right now
+        { [$defaults]: { put: string; update: undefined } }
+      > = 1
       assertStrA
 
-      expect(strA).toMatchObject({ [$default]: 'hello' })
+      expect(strA).toMatchObject({ [$defaults]: { put: 'hello', update: undefined } })
 
-      const assertStrB: A.Contains<typeof strB, { [$default]: () => string }> = 1
+      const assertStrB: A.Contains<
+        typeof strB,
+        { [$defaults]: { put: undefined; update: () => string } }
+      > = 1
       assertStrB
 
-      expect(strB).toMatchObject({ [$default]: sayHello })
+      expect(strB).toMatchObject({ [$defaults]: sayHello })
     })
 
     it('returns string with default value (method)', () => {
-      string().default(
+      const invalidStrA = string().defaults(
         // @ts-expect-error
         42
       )
 
-      const invalidCall = () =>
-        freezePrimitiveAttribute(
-          string().default(
-            // @ts-expect-error
-            42
-          ),
-          path
-        )
+      const invalidCall = () => freezePrimitiveAttribute(invalidStrA, path)
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
         expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
       )
 
-      string().default(
+      string().defaults(
         // @ts-expect-error Unable to throw here (it would require executing the fn)
         () => 42
       )
 
-      const strA = string().default('hello')
+      const strA = string().putDefault('hello')
       const sayHello = () => 'hello'
-      const strB = string().default(sayHello)
+      const strB = string().updateDefault(sayHello)
 
-      const assertStrA: A.Contains<typeof strA, { [$default]: 'hello' }> = 1
+      const assertStrA: A.Contains<
+        typeof strA,
+        { [$defaults]: { put: 'hello'; update: undefined } }
+      > = 1
       assertStrA
 
-      expect(strA).toMatchObject({ [$default]: 'hello' })
+      expect(strA).toMatchObject({ [$defaults]: { put: 'hello', update: undefined } })
 
-      const assertStrB: A.Contains<typeof strB, { [$default]: () => string }> = 1
+      const assertStrB: A.Contains<
+        typeof strB,
+        { [$defaults]: { put: undefined; update: () => string } }
+      > = 1
       assertStrB
 
-      expect(strB).toMatchObject({ [$default]: sayHello })
+      expect(strB).toMatchObject({ [$defaults]: { put: undefined, update: sayHello } })
     })
 
     it('default with enum values', () => {
-      string().enum('foo', 'bar').default(
+      const invalidStr = string().enum('foo', 'bar').defaults(
         // @ts-expect-error
         'baz'
       )
 
-      const invalidCall = () =>
-        freezePrimitiveAttribute(
-          string().enum('foo', 'bar').default(
-            // @ts-expect-error
-            'baz'
-          ),
-          path
-        )
+      const invalidCall = () => freezePrimitiveAttribute(invalidStr, path)
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
@@ -311,22 +312,28 @@ describe('primitiveAttribute', () => {
         })
       )
 
-      const strA = string().enum('foo', 'bar').default('foo')
+      const strA = string().enum('foo', 'bar').defaults('foo')
       const sayFoo = (): 'foo' => 'foo'
-      const strB = string().enum('foo', 'bar').default(sayFoo)
+      const strB = string().enum('foo', 'bar').defaults(sayFoo)
 
-      const assertStrA: A.Contains<typeof strA, { [$default]: 'foo'; [$enum]: ['foo', 'bar'] }> = 1
+      const assertStrA: A.Contains<
+        typeof strA,
+        { [$defaults]: { put: 'foo'; update: 'foo' }; [$enum]: ['foo', 'bar'] }
+      > = 1
       assertStrA
 
-      expect(strA).toMatchObject({ [$default]: 'foo' })
+      expect(strA).toMatchObject({ [$defaults]: { put: 'foo', update: 'foo' } })
 
       const assertStrB: A.Contains<
         typeof strB,
-        { [$default]: () => 'foo'; [$enum]: ['foo', 'bar'] }
+        { [$defaults]: { put: () => 'foo'; update: () => 'foo' }; [$enum]: ['foo', 'bar'] }
       > = 1
       assertStrB
 
-      expect(strB).toMatchObject({ [$default]: sayFoo, [$enum]: ['foo', 'bar'] })
+      expect(strB).toMatchObject({
+        [$defaults]: { put: () => 'foo', update: () => 'foo' },
+        [$enum]: ['foo', 'bar']
+      })
     })
   })
 
@@ -365,21 +372,27 @@ describe('primitiveAttribute', () => {
 
   describe('ComputedDefault', () => {
     it('accepts ComputedDefault as default value (option)', () => {
-      const str = string({ default: ComputedDefault })
+      const str = string({ defaults: { put: ComputedDefault, update: undefined } })
 
-      const assertStr: A.Contains<typeof str, { [$default]: ComputedDefault }> = 1
+      const assertStr: A.Contains<
+        typeof str,
+        { [$defaults]: { put: ComputedDefault; update: undefined } }
+      > = 1
       assertStr
 
-      expect(str).toMatchObject({ [$default]: ComputedDefault })
+      expect(str).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
     })
 
     it('accepts ComputedDefault as default value (option)', () => {
-      const str = string().default(ComputedDefault)
+      const str = string().defaults(ComputedDefault)
 
-      const assertStr: A.Contains<typeof str, { [$default]: ComputedDefault }> = 1
+      const assertStr: A.Contains<
+        typeof str,
+        { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+      > = 1
       assertStr
 
-      expect(str).toMatchObject({ [$default]: ComputedDefault })
+      expect(str).toMatchObject({ [$defaults]: { put: ComputedDefault, update: ComputedDefault } })
     })
   })
 })
