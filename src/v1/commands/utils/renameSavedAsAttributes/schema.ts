@@ -1,23 +1,22 @@
-import type { Schema, PossiblyUndefinedResolvedItem } from 'v1/schema'
+import type { PossiblyUndefinedResolvedItem } from 'v1/schema'
+import type { ParsedSchemaInput } from 'v1/validation/parseClonedInput'
+import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
 import { renameAttributeSavedAsAttributes } from './attribute'
 
 export const renameSavedAsAttributes = (
-  schema: Schema,
-  input: PossiblyUndefinedResolvedItem
+  schemaInput: ParsedSchemaInput
 ): PossiblyUndefinedResolvedItem => {
-  Object.entries(schema.attributes).forEach(([attributeName, attribute]) => {
-    const attributeInput = input[attributeName]
+  const renamedInput: PossiblyUndefinedResolvedItem = {}
 
-    if (attributeInput !== undefined) {
-      input[attributeName] = renameAttributeSavedAsAttributes(attribute, attributeInput)
+  Object.entries(schemaInput).forEach(([attributeName, attributeInput]) => {
+    if (attributeInput === undefined) {
+      return
     }
 
-    if (attribute.savedAs !== undefined && input[attributeName] !== undefined) {
-      input[attribute.savedAs] = input[attributeName]
-      delete input[attributeName]
-    }
+    const renamedAttributeInput = renameAttributeSavedAsAttributes(attributeInput)
+    renamedInput[schemaInput[$savedAs][attributeName] ?? attributeName] = renamedAttributeInput
   })
 
-  return input
+  return renamedInput
 }
