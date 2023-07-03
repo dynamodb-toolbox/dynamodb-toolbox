@@ -41,7 +41,7 @@ export type UpdateItem<SCHEMA extends EntityV2 | Schema | Attribute> = SCHEMA ex
       // Enforce Always Required attributes
       | O.SelectKeys<SCHEMA['attributes'], { required: Always }>
       // Enforce attributes that have hard default
-      | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
+      | O.FilterKeys<SCHEMA['attributes'], { defaults: { update: undefined | ComputedDefault } }>
     >
   : SCHEMA extends RecordAttribute
   ? { [KEY in ResolvePrimitiveAttribute<SCHEMA['keys']>]?: UpdateItem<SCHEMA['elements']> }

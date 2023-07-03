@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { ComputedDefault, Never, AtLeastOnce, Always } from '../constants'
-import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
+import { $type, $required, $hidden, $key, $savedAs, $defaults } from '../constants/attributeOptions'
 
 import { freezeAnyAttribute } from './freeze'
 import type { $AnyAttribute, AnyAttribute } from './interface'
@@ -20,7 +20,10 @@ describe('anyAttribute', () => {
         [$hidden]: false
         [$savedAs]: undefined
         [$key]: false
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertAny
@@ -38,7 +41,10 @@ describe('anyAttribute', () => {
       [$hidden]: false,
       [$savedAs]: undefined,
       [$key]: false,
-      [$default]: undefined
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 
@@ -135,54 +141,89 @@ describe('anyAttribute', () => {
   })
 
   it('returns any with default value (option)', () => {
-    const strA = any({ default: 'hello' })
+    const strA = any({ defaults: { put: 'hello', update: undefined } })
     const sayHello = () => 'hello'
-    const strB = any({ default: sayHello })
+    const strB = any({ defaults: { put: undefined, update: sayHello } })
 
-    const assertAnyA: A.Contains<typeof strA, { [$default]: 'hello' }> = 1
+    const assertAnyA: A.Contains<
+      typeof strA,
+      // NOTE: We could narrow more and have 'hello' instead of string here, but not high prio right now
+      { [$defaults]: { put: string; update: undefined } }
+    > = 1
     assertAnyA
 
-    expect(strA).toMatchObject({ [$default]: 'hello' })
+    expect(strA).toMatchObject({ [$defaults]: { put: 'hello', update: undefined } })
 
-    const assertAnyB: A.Contains<typeof strB, { [$default]: () => string }> = 1
+    const assertAnyB: A.Contains<
+      typeof strB,
+      { [$defaults]: { put: undefined; update: () => string } }
+    > = 1
     assertAnyB
 
-    expect(strB).toMatchObject({ [$default]: sayHello })
+    expect(strB).toMatchObject({ [$defaults]: { put: undefined, update: sayHello } })
   })
 
   it('returns any with default value (method)', () => {
-    const strA = any().default('hello')
+    const strA = any().putDefault('hello')
     const sayHello = () => 'hello'
-    const strB = any().default(sayHello)
+    const strB = any().updateDefault(sayHello)
 
-    const assertAnyA: A.Contains<typeof strA, { [$default]: 'hello' }> = 1
+    const assertAnyA: A.Contains<
+      typeof strA,
+      { [$defaults]: { put: 'hello'; update: undefined } }
+    > = 1
     assertAnyA
 
-    expect(strA).toMatchObject({ [$default]: 'hello' })
+    expect(strA).toMatchObject({ [$defaults]: { put: 'hello', update: undefined } })
 
-    const assertAnyB: A.Contains<typeof strB, { [$default]: () => string }> = 1
+    const assertAnyB: A.Contains<
+      typeof strB,
+      { [$defaults]: { put: undefined; update: () => string } }
+    > = 1
     assertAnyB
 
-    expect(strB).toMatchObject({ [$default]: sayHello })
+    expect(strB).toMatchObject({ [$defaults]: { put: undefined, update: sayHello } })
   })
 })
 
 describe('ComputedDefault', () => {
   it('accepts ComputedDefault as default value (option)', () => {
-    const anyInstance = any({ default: ComputedDefault })
+    const anyInstance = any({ defaults: { put: ComputedDefault, update: undefined } })
 
-    const assertAny: A.Contains<typeof anyInstance, { [$default]: ComputedDefault }> = 1
+    const assertAny: A.Contains<
+      typeof anyInstance,
+      { [$defaults]: { put: ComputedDefault; update: undefined } }
+    > = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$default]: ComputedDefault })
+    expect(anyInstance).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
   })
 
-  it('accepts ComputedDefault as default value (option)', () => {
-    const anyInstance = any().default(ComputedDefault)
+  it('accepts ComputedDefault as default value (method)', () => {
+    const anyInstance = any().updateDefault(ComputedDefault)
 
-    const assertAny: A.Contains<typeof anyInstance, { [$default]: ComputedDefault }> = 1
+    const assertAny: A.Contains<
+      typeof anyInstance,
+      { [$defaults]: { put: undefined; update: ComputedDefault } }
+    > = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$default]: ComputedDefault })
+    expect(anyInstance).toMatchObject({
+      [$defaults]: { put: undefined, update: ComputedDefault }
+    })
+  })
+
+  it('accepts ComputedDefault as default values (method)', () => {
+    const anyInstance = any().defaults(ComputedDefault)
+
+    const assertAny: A.Contains<
+      typeof anyInstance,
+      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+    > = 1
+    assertAny
+
+    expect(anyInstance).toMatchObject({
+      [$defaults]: { put: ComputedDefault, update: ComputedDefault }
+    })
   })
 })

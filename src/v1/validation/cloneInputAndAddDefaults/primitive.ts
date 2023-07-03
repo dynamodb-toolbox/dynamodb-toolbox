@@ -23,7 +23,8 @@ export const clonePrimitiveAttributeInputAndAddDefaults = (
     return cloneDeep(input)
   }
 
-  if (attribute.default === ComputedDefault) {
+  // TODO: Use defaults from get/update etc...
+  if (attribute.defaults.put === ComputedDefault) {
     if (!canComputeDefaults) {
       return undefined
     }
@@ -37,5 +38,6 @@ export const clonePrimitiveAttributeInputAndAddDefaults = (
     return computeDefaults(...contextInputs)
   }
 
-  return isFunction(attribute.default) ? attribute.default() : attribute.default
+  // TODO: Use defaults from get/update etc...
+  return isFunction(attribute.defaults.put) ? attribute.defaults.put() : attribute.defaults.put
 }

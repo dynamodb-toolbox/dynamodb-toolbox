@@ -1,5 +1,5 @@
 import type { AtLeastOnce } from '../constants'
-import type { $type, $default } from '../constants/attributeOptions'
+import type { $type, $defaults } from '../constants/attributeOptions'
 import type { $AttributeSharedState, AttributeSharedState } from '../shared/interface'
 import type { $Attribute, Attribute } from '../types/attribute'
 
@@ -12,12 +12,18 @@ type RecordAttributeKeysState = {
 
 export type $RecordAttributeKeys = $Attribute & {
   [$type]: 'string'
-  [$default]: undefined
+  [$defaults]: {
+    put: undefined
+    update: undefined
+  }
 } & $AttributeSharedState<RecordAttributeKeysState>
 
 export type RecordAttributeKeys = Attribute & {
   type: 'string'
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 } & AttributeSharedState<RecordAttributeKeysState>
 
 type RecordAttributeElementsState = {
@@ -28,9 +34,15 @@ type RecordAttributeElementsState = {
 }
 
 export type $RecordAttributeElements = $Attribute & {
-  [$default]: undefined
+  [$defaults]: {
+    put: undefined
+    update: undefined
+  }
 } & $AttributeSharedState<RecordAttributeElementsState>
 
 export type RecordAttributeElements = Attribute & {
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 } & AttributeSharedState<RecordAttributeElementsState>

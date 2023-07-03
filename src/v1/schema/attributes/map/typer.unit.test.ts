@@ -9,7 +9,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 
 import { map } from './typer'
@@ -33,7 +33,10 @@ describe('map', () => {
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertMapAttribute
@@ -51,7 +54,11 @@ describe('map', () => {
       [$required]: 'atLeastOnce',
       [$key]: false,
       [$savedAs]: undefined,
-      [$hidden]: false
+      [$hidden]: false,
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 
@@ -158,21 +165,41 @@ describe('map', () => {
 
   describe('default', () => {
     it('accepts ComputedDefault as default value (option)', () => {
-      const mapped = map({ str }, { default: ComputedDefault })
+      const mapped = map({ str }, { defaults: { put: ComputedDefault, update: undefined } })
 
-      const assertMapAttribute: A.Contains<typeof mapped, { [$default]: ComputedDefault }> = 1
+      const assertMapAttribute: A.Contains<
+        typeof mapped,
+        { [$defaults]: { put: ComputedDefault; update: undefined } }
+      > = 1
       assertMapAttribute
 
-      expect(mapped).toMatchObject({ [$default]: ComputedDefault })
+      expect(mapped).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
     })
 
     it('accepts ComputedDefault as default value (method)', () => {
-      const mapped = map({ str }).default(ComputedDefault)
+      const mapped = map({ str }).updateDefault(ComputedDefault)
 
-      const assertMapAttribute: A.Contains<typeof mapped, { [$default]: ComputedDefault }> = 1
+      const assertMapAttribute: A.Contains<
+        typeof mapped,
+        { [$defaults]: { put: undefined; update: ComputedDefault } }
+      > = 1
       assertMapAttribute
 
-      expect(mapped).toMatchObject({ [$default]: ComputedDefault })
+      expect(mapped).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
+    })
+
+    it('accepts ComputedDefault as default values (method)', () => {
+      const mapped = map({ str }).defaults(ComputedDefault)
+
+      const assertMapAttribute: A.Contains<
+        typeof mapped,
+        { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+      > = 1
+      assertMapAttribute
+
+      expect(mapped).toMatchObject({
+        [$defaults]: { put: ComputedDefault, update: ComputedDefault }
+      })
     })
   })
 
@@ -202,21 +229,30 @@ describe('map', () => {
                 [$hidden]: true
                 [$key]: false
                 [$savedAs]: undefined
-                [$default]: undefined
+                [$defaults]: {
+                  put: undefined
+                  update: undefined
+                }
               }
             }
             [$required]: AtLeastOnce
             [$hidden]: false
             [$key]: false
             [$savedAs]: undefined
-            [$default]: undefined
+            [$defaults]: {
+              put: undefined
+              update: undefined
+            }
           }
         }
         [$required]: AtLeastOnce
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertMapAttribute
@@ -236,21 +272,30 @@ describe('map', () => {
               [$hidden]: true,
               [$key]: false,
               [$savedAs]: undefined,
-              [$default]: undefined
+              [$defaults]: {
+                put: undefined,
+                update: undefined
+              }
             }
           },
           [$required]: 'atLeastOnce',
           [$hidden]: false,
           [$key]: false,
           [$savedAs]: undefined,
-          [$default]: undefined
+          [$defaults]: {
+            put: undefined,
+            update: undefined
+          }
         }
       },
       [$required]: 'atLeastOnce',
       [$hidden]: false,
       [$key]: false,
       [$savedAs]: undefined,
-      [$default]: undefined
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 })

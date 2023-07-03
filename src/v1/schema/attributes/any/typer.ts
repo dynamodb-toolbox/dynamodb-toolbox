@@ -1,7 +1,7 @@
 import type { NarrowObject } from 'v1/types/narrowObject'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import { $type, $required, $hidden, $key, $savedAs, $default } from '../constants/attributeOptions'
+import { $type, $required, $hidden, $key, $savedAs, $defaults } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
 import type { $AnyAttribute } from './interface'
@@ -29,7 +29,7 @@ export const any: AnyAttributeTyper = <
     [$hidden]: appliedOptions.hidden,
     [$key]: appliedOptions.key,
     [$savedAs]: appliedOptions.savedAs,
-    [$default]: appliedOptions.default,
+    [$defaults]: appliedOptions.defaults,
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_REQUIRED = ('atLeastOnce' as unknown) as NEXT_REQUIRED
     ) => any({ ...appliedOptions, required: nextRequired }),
@@ -37,7 +37,18 @@ export const any: AnyAttributeTyper = <
     hidden: () => any({ ...appliedOptions, hidden: true }),
     key: () => any({ ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),
-    default: nextDefault => any({ ...appliedOptions, default: nextDefault })
+    putDefault: nextPutDefault =>
+      any({ ...appliedOptions, defaults: { ...appliedOptions.defaults, put: nextPutDefault } }),
+    updateDefault: nextUpdateDefault =>
+      any({
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
+      }),
+    defaults: nextDefault =>
+      any({
+        ...appliedOptions,
+        defaults: { put: nextDefault, update: nextDefault }
+      })
   } as $AnyAttribute<
     InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS>
   >

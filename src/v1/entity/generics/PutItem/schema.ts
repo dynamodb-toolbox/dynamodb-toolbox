@@ -16,5 +16,5 @@ export type SchemaPutItem<SCHEMA extends Schema> = Schema extends SCHEMA
       // Enforce Required attributes
       | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always }>
       // Enforce attributes that have hard default
-      | O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
+      | O.FilterKeys<SCHEMA['attributes'], { defaults: { put: undefined | ComputedDefault } }>
     >

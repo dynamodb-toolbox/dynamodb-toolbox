@@ -9,7 +9,7 @@ export const UserEntity = new EntityV2({
   table: MyTable,
   schema: schema({
     userId: string().key(),
-    age: number().key().enum(41, 42).default(42).savedAs('sk'),
+    age: number().key().enum(41, 42).putDefault(42).savedAs('sk'),
     constant: string().const('toto').optional(),
     firstName: string().savedAs('fn'),
     lastName: string().savedAs('ln'),
@@ -21,24 +21,24 @@ export const UserEntity = new EntityV2({
     someSet: set(string().enum('foo', 'bar')).optional(),
 
     // Primitive
-    completeName: string().default(ComputedDefault),
+    completeName: string().putDefault(ComputedDefault),
 
     // Maps
     defaultedMap: map({
       nestedCompleteName: string()
     })
       .optional()
-      .default(ComputedDefault),
+      .putDefault(ComputedDefault),
 
     defaultInMap: map({
-      nestedCompleteName: string().default(ComputedDefault)
+      nestedCompleteName: string().putDefault(ComputedDefault)
     }).optional(),
 
     bothDefaultsMap: map({
-      nestedCompleteName: string().default(ComputedDefault)
+      nestedCompleteName: string().putDefault(ComputedDefault)
     })
       .optional()
-      .default(ComputedDefault),
+      .putDefault(ComputedDefault),
 
     // List
     defaultedList: list(
@@ -47,21 +47,21 @@ export const UserEntity = new EntityV2({
       })
     )
       .optional()
-      .default(ComputedDefault),
+      .putDefault(ComputedDefault),
 
     defaultInList: list(
       map({
-        nestedCompleteName: string().default(ComputedDefault)
+        nestedCompleteName: string().putDefault(ComputedDefault)
       })
     ).optional(),
 
     bothDefaultsList: list(
       map({
-        nestedCompleteName: string().default(ComputedDefault)
+        nestedCompleteName: string().putDefault(ComputedDefault)
       })
     )
       .optional()
-      .default(ComputedDefault)
+      .putDefault(ComputedDefault)
   }),
 
   computedDefaults: {

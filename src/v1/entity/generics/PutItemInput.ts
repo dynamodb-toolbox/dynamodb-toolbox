@@ -46,10 +46,18 @@ export type PutItemInput<
         }
       >,
       // Enforce Required attributes except those that have default (will be provided by the lib)
-      | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always; default: undefined }>
+      | O.SelectKeys<
+          SCHEMA['attributes'],
+          {
+            required: AtLeastOnce | Always
+            // TODO: Use defaults from get/update etc...
+            defaults: { put: undefined }
+          }
+        >
       // Add attributes with hard (non-computed) defaults if REQUIRE_HARD_DEFAULTS is true
       | (REQUIRE_HARD_DEFAULTS extends true
-          ? O.FilterKeys<SCHEMA['attributes'], { default: undefined | ComputedDefault }>
+          ? // TODO: Use defaults from get/update etc...
+            O.FilterKeys<SCHEMA['attributes'], { defaults: { put: undefined | ComputedDefault } }>
           : never)
     >
   : SCHEMA extends EntityV2
@@ -90,11 +98,21 @@ export type AttributePutItemInput<
       // Enforce Required attributes except those that have default (will be provided by the lib)
       | O.SelectKeys<
           ATTRIBUTE['attributes'],
-          { required: AtLeastOnce | Always; default: undefined }
+          {
+            required: AtLeastOnce | Always
+            // TODO: Use defaults from get/update etc...
+            defaults: { put: undefined }
+          }
         >
       // Add attributes with hard (non-computed) defaults if REQUIRE_HARD_DEFAULTS is true
       | (REQUIRE_HARD_DEFAULTS extends true
-          ? O.FilterKeys<ATTRIBUTE['attributes'], { default: undefined | ComputedDefault }>
+          ? O.FilterKeys<
+              ATTRIBUTE['attributes'],
+              {
+                // TODO: Use defaults from get/update etc...
+                defaults: { put: undefined | ComputedDefault }
+              }
+            >
           : never)
     >
   : ATTRIBUTE extends RecordAttribute

@@ -14,7 +14,8 @@ import type {
  * @return Boolean
  */
 export type HasComputedDefaults<SCHEMA extends Schema | Attribute> = SCHEMA extends {
-  default: ComputedDefault
+  // TODO: Use defaults from get/update etc...
+  defaults: { put: ComputedDefault }
 }
   ? true
   : SCHEMA extends SetAttribute | ListAttribute

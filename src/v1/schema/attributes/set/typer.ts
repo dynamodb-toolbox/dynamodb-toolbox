@@ -8,7 +8,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
@@ -37,7 +37,7 @@ type SetAttributeTyper = <
  * - Required (required: AtLeastOnce)
  * - Displayed (hidden: false)
  * - Not renamed (savedAs: undefined)
- * - Doesn't have a default value (default: undefined)
+ * - Not defaulted (defaults: undefined)
  *
  * @param elements Attribute (With constraints)
  * @param options _(optional)_ List Options
@@ -58,7 +58,7 @@ export const set: SetAttributeTyper = <
     [$hidden]: appliedOptions.hidden,
     [$key]: appliedOptions.key,
     [$savedAs]: appliedOptions.savedAs,
-    [$default]: appliedOptions.default,
+    [$defaults]: appliedOptions.defaults,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => set(elements, { ...appliedOptions, required: nextRequired }),
@@ -66,7 +66,18 @@ export const set: SetAttributeTyper = <
     hidden: () => set(elements, { ...appliedOptions, hidden: true }),
     key: () => set(elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),
-    default: nextDefault => set(elements, { ...appliedOptions, default: nextDefault })
+    putDefault: nextPutDefault =>
+      set(elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, put: nextPutDefault }
+      }),
+    updateDefault: nextUpdateDefault =>
+      set(elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
+      }),
+    defaults: nextDefaults =>
+      set(elements, { ...appliedOptions, defaults: { put: nextDefaults, update: nextDefaults } })
   } as $SetAttribute<
     ELEMENTS,
     InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
