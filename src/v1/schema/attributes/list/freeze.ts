@@ -4,6 +4,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault'
 import {
   $type,
   $elements,
@@ -73,8 +74,8 @@ export const freezeListAttribute: ListAttributeFreezer = <$LIST_ATTRIBUTE extend
       path
     })
   }
-  // TODO: factorize
-  if (elements[$defaults].put !== undefined || elements[$defaults].update !== undefined) {
+
+  if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.listAttribute.defaultedElements', {
       message: `Invalid list elements at path ${path}: List elements cannot have default values`,
       path

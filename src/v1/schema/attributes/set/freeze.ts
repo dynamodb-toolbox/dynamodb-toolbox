@@ -4,6 +4,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import { freezeAttribute, FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault'
 import {
   $type,
   $elements,
@@ -74,8 +75,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $
     })
   }
 
-  // TODO: factorize
-  if (elements[$defaults].put !== undefined || elements[$defaults].update !== undefined) {
+  if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.setAttribute.defaultedElements', {
       message: `Invalid set elements at path ${path}: Set elements cannot have default values`,
       path
