@@ -11,7 +11,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 
 import { list } from './typer'
@@ -23,19 +23,12 @@ describe('list', () => {
   const strElement = string()
 
   it('rejects non-required elements', () => {
-    list(
+    const invalidList = list(
       // @ts-expect-error
       string().optional()
     )
 
-    const invalidCall = () =>
-      freezeListAttribute(
-        list(
-          // @ts-expect-error
-          string().optional()
-        ),
-        path
-      )
+    const invalidCall = () => freezeListAttribute(invalidList, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -44,19 +37,12 @@ describe('list', () => {
   })
 
   it('rejects hidden elements', () => {
-    list(
+    const invalidList = list(
       // @ts-expect-error
       strElement.hidden()
     )
 
-    const invalidCall = () =>
-      freezeListAttribute(
-        list(
-          // @ts-expect-error
-          strElement.hidden()
-        ),
-        path
-      )
+    const invalidCall = () => freezeListAttribute(invalidList, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -65,19 +51,12 @@ describe('list', () => {
   })
 
   it('rejects elements with savedAs values', () => {
-    list(
+    const invalidList = list(
       // @ts-expect-error
       strElement.savedAs('foo')
     )
 
-    const invalidCall = () =>
-      freezeListAttribute(
-        list(
-          // @ts-expect-error
-          strElement.savedAs('foo')
-        ),
-        path
-      )
+    const invalidCall = () => freezeListAttribute(invalidList, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -86,38 +65,24 @@ describe('list', () => {
   })
 
   it('rejects elements with default values', () => {
-    list(
+    const invalidListA = list(
       // @ts-expect-error
-      strElement.default('foo')
+      strElement.putDefault('foo')
     )
 
-    const invalidCallA = () =>
-      freezeListAttribute(
-        list(
-          // @ts-expect-error
-          strElement.default('foo')
-        ),
-        path
-      )
+    const invalidCallA = () => freezeListAttribute(invalidListA, path)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
       expect.objectContaining({ code: 'schema.listAttribute.defaultedElements', path })
     )
 
-    list(
+    const invalidListB = list(
       // @ts-expect-error
-      strElement.default(ComputedDefault)
+      strElement.putDefault(ComputedDefault)
     )
 
-    const invalidCallB = () =>
-      freezeListAttribute(
-        list(
-          // @ts-expect-error
-          strElement.default(ComputedDefault)
-        ),
-        path
-      )
+    const invalidCallB = () => freezeListAttribute(invalidListB, path)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -137,7 +102,10 @@ describe('list', () => {
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertList
@@ -155,7 +123,11 @@ describe('list', () => {
       [$required]: 'atLeastOnce',
       [$key]: false,
       [$savedAs]: undefined,
-      [$hidden]: false
+      [$hidden]: false,
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 
@@ -251,21 +223,39 @@ describe('list', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const lst = list(strElement, { default: ComputedDefault })
+    const lst = list(strElement, { defaults: { put: ComputedDefault, update: undefined } })
 
-    const assertList: A.Contains<typeof lst, { [$default]: ComputedDefault }> = 1
+    const assertList: A.Contains<
+      typeof lst,
+      { [$defaults]: { put: ComputedDefault; update: undefined } }
+    > = 1
     assertList
 
-    expect(lst).toMatchObject({ [$default]: ComputedDefault })
+    expect(lst).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
   })
 
-  it('accepts ComputedDefault as default value (option)', () => {
-    const lst = list(strElement).default(ComputedDefault)
+  it('accepts ComputedDefault as default value (method)', () => {
+    const lst = list(strElement).updateDefault(ComputedDefault)
 
-    const assertList: A.Contains<typeof lst, { [$default]: ComputedDefault }> = 1
+    const assertList: A.Contains<
+      typeof lst,
+      { [$defaults]: { put: undefined; update: ComputedDefault } }
+    > = 1
     assertList
 
-    expect(lst).toMatchObject({ [$default]: ComputedDefault })
+    expect(lst).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
+  })
+
+  it('accepts ComputedDefault as default values (method)', () => {
+    const lst = list(strElement).defaults(ComputedDefault)
+
+    const assertList: A.Contains<
+      typeof lst,
+      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+    > = 1
+    assertList
+
+    expect(lst).toMatchObject({ [$defaults]: { put: ComputedDefault, update: ComputedDefault } })
   })
 
   it('list of lists', () => {
@@ -282,13 +272,19 @@ describe('list', () => {
           [$hidden]: false
           [$key]: false
           [$savedAs]: undefined
-          [$default]: undefined
+          [$defaults]: {
+            put: undefined
+            update: undefined
+          }
         }
         [$required]: AtLeastOnce
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertList
@@ -302,13 +298,19 @@ describe('list', () => {
         [$hidden]: false,
         [$key]: false,
         [$savedAs]: undefined,
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined,
+          update: undefined
+        }
       },
       [$required]: 'atLeastOnce',
       [$hidden]: false,
       [$key]: false,
       [$savedAs]: undefined,
-      [$default]: undefined
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 })

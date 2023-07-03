@@ -12,7 +12,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 import type { MapAttributeAttributes } from '../types/attribute'
 
@@ -34,7 +34,7 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttribute> =
         hidden: $MAP_ATTRIBUTE[$hidden]
         key: $MAP_ATTRIBUTE[$key]
         savedAs: $MAP_ATTRIBUTE[$savedAs]
-        default: $MAP_ATTRIBUTE[$default]
+        defaults: $MAP_ATTRIBUTE[$defaults]
       }
     >,
     never,
@@ -106,6 +106,6 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
     hidden: $mapAttribute[$hidden],
     key: $mapAttribute[$key],
     savedAs: $mapAttribute[$savedAs],
-    default: $mapAttribute[$default]
+    defaults: $mapAttribute[$defaults]
   }
 }

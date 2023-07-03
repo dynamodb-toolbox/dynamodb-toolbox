@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
-import type { $type, $default } from '../constants/attributeOptions'
+import type { $type, $defaults } from '../constants/attributeOptions'
 import type {
   AttributeSharedStateConstraint,
   $AttributeSharedState,
@@ -11,7 +11,10 @@ import type {
 import type { AnyAttributeDefaultValue } from './types'
 
 export interface AnyAttributeStateConstraint extends AttributeSharedStateConstraint {
-  default: AnyAttributeDefaultValue
+  defaults: {
+    put: AnyAttributeDefaultValue
+    update: AnyAttributeDefaultValue
+  }
 }
 
 /**
@@ -21,7 +24,7 @@ export interface $AnyAttribute<
   STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
 > extends $AttributeSharedState<STATE> {
   [$type]: 'any'
-  [$default]: STATE['default']
+  [$defaults]: STATE['defaults']
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -52,13 +55,33 @@ export interface $AnyAttribute<
     nextSavedAs: NEXT_SAVED_AS
   ) => $AnyAttribute<O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
   /**
-   * Provide a default value for attribute, or tag attribute as having a computed default value
+   * Provide a default value for attribute in PUT commands (or tag attribute as having a computed default value)
    *
-   * @param nextDefaultValue `any`, `() => any`, `ComputedDefault`
+   * @param nextPutDefault `any`, `() => any`, `ComputedDefault`
    */
-  default: <NEXT_DEFAULT_VALUE extends AnyAttributeDefaultValue>(
-    nextDefaultValue: NEXT_DEFAULT_VALUE
-  ) => $AnyAttribute<O.Update<STATE, 'default', NEXT_DEFAULT_VALUE>>
+  putDefault: <NEXT_PUT_DEFAULT extends AnyAttributeDefaultValue>(
+    nextPutDefault: NEXT_PUT_DEFAULT
+  ) => $AnyAttribute<
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
+  >
+  /**
+   * Provide a default value for attribute in UPDATE commands (or tag attribute as having a computed default value)
+   *
+   * @param nextUpdateDefault `any`, `() => any`, `ComputedDefault`
+   */
+  updateDefault: <NEXT_UPDATE_DEFAULT extends AnyAttributeDefaultValue>(
+    nextUpdateDefault: NEXT_UPDATE_DEFAULT
+  ) => $AnyAttribute<
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
+  >
+  /**
+   * Provide a default value for attribute in all commands (or tag attribute as having a computed default value)
+   *
+   * @param nextDefaults `any`, `() => any`, `ComputedDefault`
+   */
+  defaults: <NEXT_DEFAULTS extends AnyAttributeDefaultValue>(
+    nextDefaults: NEXT_DEFAULTS
+  ) => $AnyAttribute<O.Update<STATE, 'defaults', { put: NEXT_DEFAULTS; update: NEXT_DEFAULTS }>>
 }
 
 export interface AnyAttribute<
@@ -66,5 +89,5 @@ export interface AnyAttribute<
 > extends AttributeSharedState<STATE> {
   path: string
   type: 'any'
-  default: STATE['default']
+  defaults: STATE['defaults']
 }

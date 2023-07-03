@@ -26,9 +26,12 @@ export interface MapAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Tag attribute as having a computed default value
+   * Tag attribute as having computed default values
    */
-  default: ComputedDefault | undefined
+  defaults: {
+    put: ComputedDefault | undefined
+    update: ComputedDefault | undefined
+  }
 }
 
 export type MapAttributeDefaultOptions = {
@@ -36,7 +39,10 @@ export type MapAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 }
 
 export const MAP_DEFAULT_OPTIONS: MapAttributeDefaultOptions = {
@@ -44,5 +50,8 @@ export const MAP_DEFAULT_OPTIONS: MapAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
-  default: undefined
+  defaults: {
+    put: undefined,
+    update: undefined
+  }
 }

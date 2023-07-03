@@ -17,7 +17,10 @@ const typeAttribute: PrimitiveAttribute<
     key: false
     savedAs: undefined
     enum: ['S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M']
-    default: undefined
+    defaults: {
+      put: undefined
+      update: undefined
+    }
   }
 > = {
   path: '',
@@ -27,7 +30,10 @@ const typeAttribute: PrimitiveAttribute<
   key: false,
   savedAs: undefined,
   enum: ['S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M'],
-  default: undefined
+  defaults: {
+    put: undefined,
+    update: undefined
+  }
 }
 
 export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(

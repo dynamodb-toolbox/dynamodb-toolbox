@@ -82,7 +82,10 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
       key: false,
       savedAs: getTimestampOptionValue(timestamps, 'created', 'savedAs'),
       enum: undefined,
-      default: () => new Date().toISOString()
+      defaults: {
+        put: () => new Date().toISOString(),
+        update: undefined
+      }
     }
 
     schemaWithTimestamps = addRootAttribute(schemaWithTimestamps, createdName, createdAttribute)
@@ -103,7 +106,11 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
       key: false,
       savedAs: getTimestampOptionValue(timestamps, 'modified', 'savedAs'),
       enum: undefined,
-      default: () => new Date().toISOString()
+      defaults: {
+        put: () => new Date().toISOString(),
+        // TODO: Use () => new Date().toISOString() here
+        update: undefined
+      }
     }
 
     schemaWithTimestamps = addRootAttribute(schemaWithTimestamps, modifiedName, modifiedAttribute)

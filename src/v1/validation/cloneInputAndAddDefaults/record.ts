@@ -20,7 +20,8 @@ export const cloneRecordAttributeInputAndAddDefaults = (
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
   if (input === undefined) {
-    if (recordAttribute.default === ComputedDefault) {
+    // TODO: Use defaults from get/update etc...
+    if (recordAttribute.defaults.put === ComputedDefault) {
       if (!canComputeDefaults) {
         return undefined
       }

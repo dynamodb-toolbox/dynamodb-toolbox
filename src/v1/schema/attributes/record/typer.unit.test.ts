@@ -12,7 +12,7 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $default
+  $defaults
 } from '../constants/attributeOptions'
 
 import { record } from './typer'
@@ -25,21 +25,13 @@ describe('record', () => {
   const str = string()
 
   it('rejects non-string keys', () => {
-    record(
+    const invalidRecord = record(
       // @ts-expect-error
       number(),
       str
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          // @ts-expect-error
-          number(),
-          str
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -48,21 +40,13 @@ describe('record', () => {
   })
 
   it('rejects non-required keys', () => {
-    record(
+    const invalidRecord = record(
       // @ts-expect-error
       str.optional(),
       str
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          // @ts-expect-error
-          str.optional(),
-          str
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -71,21 +55,13 @@ describe('record', () => {
   })
 
   it('rejects hidden keys', () => {
-    record(
+    const invalidRecord = record(
       // @ts-expect-error
       str.hidden(),
       str
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          // @ts-expect-error
-          str.hidden(),
-          str
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -94,21 +70,13 @@ describe('record', () => {
   })
 
   it('rejects key keys', () => {
-    record(
+    const invalidRecord = record(
       // @ts-expect-error
       str.key(),
       str
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          // @ts-expect-error
-          str.key(),
-          str
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -117,21 +85,13 @@ describe('record', () => {
   })
 
   it('rejects keys with savedAs values', () => {
-    record(
+    const invalidRecord = record(
       // @ts-expect-error
       str.savedAs('foo'),
       str
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          // @ts-expect-error
-          str.savedAs('foo'),
-          str
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -140,42 +100,26 @@ describe('record', () => {
   })
 
   it('rejects keys with default values', () => {
-    record(
+    const invalidRecordA = record(
       // @ts-expect-error
-      str.default('foo'),
+      str.putDefault('foo'),
       str
     )
 
-    const invalidCallA = () =>
-      freezeRecordAttribute(
-        record(
-          // @ts-expect-error
-          str.default('foo'),
-          str
-        ),
-        path
-      )
+    const invalidCallA = () => freezeRecordAttribute(invalidRecordA, path)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
       expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
     )
 
-    record(
+    const invalidRecordB = record(
       // @ts-expect-error
-      str.default(ComputedDefault),
+      str.putDefault(ComputedDefault),
       str
     )
 
-    const invalidCallB = () =>
-      freezeRecordAttribute(
-        record(
-          // @ts-expect-error
-          str.default(ComputedDefault),
-          str
-        ),
-        path
-      )
+    const invalidCallB = () => freezeRecordAttribute(invalidRecordB, path)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -184,21 +128,13 @@ describe('record', () => {
   })
 
   it('rejects non-required elements', () => {
-    record(
+    const invalidRecord = record(
       str,
       // @ts-expect-error
       str.optional()
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          str,
-          // @ts-expect-error
-          str.optional()
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -207,21 +143,13 @@ describe('record', () => {
   })
 
   it('rejects hidden elements', () => {
-    record(
+    const invalidRecord = record(
       str,
       // @ts-expect-error
       str.hidden()
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          str,
-          // @ts-expect-error
-          str.hidden()
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -230,21 +158,13 @@ describe('record', () => {
   })
 
   it('rejects key elements', () => {
-    record(
+    const invalidRecord = record(
       str,
       // @ts-expect-error
       str.key()
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          str,
-          // @ts-expect-error
-          str.key()
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -253,21 +173,13 @@ describe('record', () => {
   })
 
   it('rejects elements with savedAs values', () => {
-    record(
+    const invalidRecord = record(
       str,
       // @ts-expect-error
       str.savedAs('foo')
     )
 
-    const invalidCall = () =>
-      freezeRecordAttribute(
-        record(
-          str,
-          // @ts-expect-error
-          str.savedAs('foo')
-        ),
-        path
-      )
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -276,42 +188,26 @@ describe('record', () => {
   })
 
   it('rejects elements with default values', () => {
-    record(
+    const invalidRecordA = record(
       str,
       // @ts-expect-error
-      str.default('foo')
+      str.putDefault('foo')
     )
 
-    const invalidCallA = () =>
-      freezeRecordAttribute(
-        record(
-          str,
-          // @ts-expect-error
-          str.default('foo')
-        ),
-        path
-      )
+    const invalidCallA = () => freezeRecordAttribute(invalidRecordA, path)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
       expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
     )
 
-    record(
+    const invalidRecordB = record(
       str,
       // @ts-expect-error
-      str.default(ComputedDefault)
+      str.putDefault(ComputedDefault)
     )
 
-    const invalidCallB = () =>
-      freezeRecordAttribute(
-        record(
-          str,
-          // @ts-expect-error
-          str.default(ComputedDefault)
-        ),
-        path
-      )
+    const invalidCallB = () => freezeRecordAttribute(invalidRecordB, path)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -332,7 +228,10 @@ describe('record', () => {
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertRec
@@ -351,7 +250,11 @@ describe('record', () => {
       [$required]: 'atLeastOnce',
       [$key]: false,
       [$savedAs]: undefined,
-      [$hidden]: false
+      [$hidden]: false,
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 
@@ -447,21 +350,39 @@ describe('record', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const rec = record(fooBar, str, { default: ComputedDefault })
+    const rec = record(fooBar, str, { defaults: { put: ComputedDefault, update: undefined } })
 
-    const assertRec: A.Contains<typeof rec, { [$default]: ComputedDefault }> = 1
+    const assertRec: A.Contains<
+      typeof rec,
+      { [$defaults]: { put: ComputedDefault; update: undefined } }
+    > = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$default]: ComputedDefault })
+    expect(rec).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
   })
 
-  it('accepts ComputedDefault as default value (option)', () => {
-    const rec = record(fooBar, str).default(ComputedDefault)
+  it('accepts ComputedDefault as default value (method)', () => {
+    const rec = record(fooBar, str).updateDefault(ComputedDefault)
 
-    const assertRec: A.Contains<typeof rec, { [$default]: ComputedDefault }> = 1
+    const assertRec: A.Contains<
+      typeof rec,
+      { [$defaults]: { put: undefined; update: ComputedDefault } }
+    > = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$default]: ComputedDefault })
+    expect(rec).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
+  })
+
+  it('accepts ComputedDefault as default values (method)', () => {
+    const rec = record(fooBar, str).defaults(ComputedDefault)
+
+    const assertRec: A.Contains<
+      typeof rec,
+      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+    > = 1
+    assertRec
+
+    expect(rec).toMatchObject({ [$defaults]: { put: ComputedDefault, update: ComputedDefault } })
   })
 
   it('record of records', () => {
@@ -480,13 +401,19 @@ describe('record', () => {
           [$hidden]: false
           [$key]: false
           [$savedAs]: undefined
-          [$default]: undefined
+          [$defaults]: {
+            put: undefined
+            update: undefined
+          }
         }
         [$required]: AtLeastOnce
         [$hidden]: false
         [$key]: false
         [$savedAs]: undefined
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertRec
@@ -502,13 +429,19 @@ describe('record', () => {
         [$hidden]: false,
         [$key]: false,
         [$savedAs]: undefined,
-        [$default]: undefined
+        [$defaults]: {
+          put: undefined,
+          update: undefined
+        }
       },
       [$required]: 'atLeastOnce',
       [$hidden]: false,
       [$key]: false,
       [$savedAs]: undefined,
-      [$default]: undefined
+      [$defaults]: {
+        put: undefined,
+        update: undefined
+      }
     })
   })
 })

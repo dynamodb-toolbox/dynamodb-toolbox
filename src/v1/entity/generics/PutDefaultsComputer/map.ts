@@ -23,7 +23,7 @@ export type MapAttributePutDefaultsComputer<
       : {
           [KEY in keyof ATTRIBUTES_DEFAULT_COMPUTERS]: ATTRIBUTES_DEFAULT_COMPUTERS[KEY]
         }
-    _map: MAP_ATTRIBUTE extends { default: ComputedDefault }
+    _map: MAP_ATTRIBUTE extends { defaults: { put: ComputedDefault } }
       ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItem<MAP_ATTRIBUTE>
       : undefined
   }>

@@ -8,7 +8,10 @@ interface SetAttributeElementState {
   key: boolean
   savedAs: undefined
   enum: PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>
-  default: undefined
+  defaults: {
+    put: undefined
+    update: undefined
+  }
 }
 
 export type $SetAttributeElements = $PrimitiveAttribute<
