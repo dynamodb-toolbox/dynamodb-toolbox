@@ -10,3 +10,10 @@ export type AnyOfAttributeClonedInputsWithDefaults = {
   originalInput: PossiblyUndefinedResolvedAttribute
   clonedInputsWithDefaults: PossiblyUndefinedResolvedAttribute[]
 }
+
+export type CommandName = 'put' | 'update'
+
+export type CloneInputAndAddDefaultsOptions = {
+  commandName?: CommandName
+  computeDefaultsContext?: ComputeDefaultsContext
+}
