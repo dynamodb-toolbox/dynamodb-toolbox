@@ -1,30 +1,30 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import {
+import type {
   PossiblyUndefinedResolvedAttribute,
-  ComputedDefault,
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute
 } from 'v1/schema'
+import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isFunction } from 'v1/utils/validation'
 
-import { ComputeDefaultsContext } from './types'
+import type { CloneInputAndAddDefaultsOptions } from './types'
 import { canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const clonePrimitiveAttributeInputAndAddDefaults = (
   attribute: AnyAttribute | PrimitiveAttribute | SetAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  computeDefaultsContext?: ComputeDefaultsContext
+  { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
 ): PossiblyUndefinedResolvedAttribute => {
+  const commandDefault = commandName && attribute.defaults[commandName]
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
   if (input !== undefined) {
     return cloneDeep(input)
   }
 
-  // TODO: Use defaults from get/update etc...
-  if (attribute.defaults.put === ComputedDefault) {
+  if (commandDefault === ComputedDefault) {
     if (!canComputeDefaults) {
       return undefined
     }
@@ -38,6 +38,5 @@ export const clonePrimitiveAttributeInputAndAddDefaults = (
     return computeDefaults(...contextInputs)
   }
 
-  // TODO: Use defaults from get/update etc...
-  return isFunction(attribute.defaults.put) ? attribute.defaults.put() : attribute.defaults.put
+  return isFunction(commandDefault) ? commandDefault() : commandDefault
 }

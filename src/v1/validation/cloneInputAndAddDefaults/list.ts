@@ -1,23 +1,24 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import { PossiblyUndefinedResolvedAttribute, ListAttribute, ComputedDefault } from 'v1/schema'
 import type { AttributeDefaultsComputer } from 'v1/entity'
+import type { PossiblyUndefinedResolvedAttribute, ListAttribute } from 'v1/schema'
+import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isArray, isFunction, isObject } from 'v1/utils/validation'
 
+import type { CloneInputAndAddDefaultsOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
-import type { ComputeDefaultsContext } from './types'
 import { canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneListAttributeInputAndAddDefaults = (
   listAttribute: ListAttribute,
   input: PossiblyUndefinedResolvedAttribute,
-  computeDefaultsContext?: ComputeDefaultsContext
+  { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
 ): PossiblyUndefinedResolvedAttribute => {
+  const commandDefault = commandName && listAttribute.defaults[commandName]
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
   if (input === undefined) {
-    // TODO: Use defaults from get/update etc...
-    if (listAttribute.defaults.put === ComputedDefault) {
+    if (commandDefault === ComputedDefault) {
       if (!canComputeDefaults) {
         return undefined
       }
@@ -46,7 +47,7 @@ export const cloneListAttributeInputAndAddDefaults = (
 
   if (!canComputeDefaults) {
     return input.map(elementInput =>
-      cloneAttributeInputAndAddDefaults(listAttribute.elements, elementInput)
+      cloneAttributeInputAndAddDefaults(listAttribute.elements, elementInput, { commandName })
     )
   }
 
@@ -70,8 +71,11 @@ export const cloneListAttributeInputAndAddDefaults = (
 
   return input.map((elementInput, elementIndex) =>
     cloneAttributeInputAndAddDefaults(listAttribute.elements, elementInput, {
-      computeDefaults: elementsComputeDefaults,
-      contextInputs: [elementIndex, ...contextInputs]
+      commandName,
+      computeDefaultsContext: {
+        computeDefaults: elementsComputeDefaults,
+        contextInputs: [elementIndex, ...contextInputs]
+      }
     })
   )
 }
