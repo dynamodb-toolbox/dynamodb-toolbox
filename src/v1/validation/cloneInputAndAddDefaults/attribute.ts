@@ -1,16 +1,16 @@
 import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 
+import type { CloneInputAndAddDefaultsOptions } from './types'
 import { clonePrimitiveAttributeInputAndAddDefaults } from './primitive'
 import { cloneListAttributeInputAndAddDefaults } from './list'
 import { cloneMapAttributeInputAndAddDefaults } from './map'
 import { cloneRecordAttributeInputAndAddDefaults } from './record'
 import { cloneAnyOfAttributeInputAndAddDefaults } from './anyOf'
-import type { ComputeDefaultsContext } from './types'
 
 export const cloneAttributeInputAndAddDefaults = (
   attribute: Attribute,
   input: PossiblyUndefinedResolvedAttribute,
-  computeDefaultsContext?: ComputeDefaultsContext
+  options: CloneInputAndAddDefaultsOptions = {}
 ): PossiblyUndefinedResolvedAttribute => {
   switch (attribute.type) {
     case 'any':
@@ -19,14 +19,14 @@ export const cloneAttributeInputAndAddDefaults = (
     case 'binary':
     case 'boolean':
     case 'set':
-      return clonePrimitiveAttributeInputAndAddDefaults(attribute, input, computeDefaultsContext)
+      return clonePrimitiveAttributeInputAndAddDefaults(attribute, input, options)
     case 'list':
-      return cloneListAttributeInputAndAddDefaults(attribute, input, computeDefaultsContext)
+      return cloneListAttributeInputAndAddDefaults(attribute, input, options)
     case 'map':
-      return cloneMapAttributeInputAndAddDefaults(attribute, input, computeDefaultsContext)
+      return cloneMapAttributeInputAndAddDefaults(attribute, input, options)
     case 'record':
-      return cloneRecordAttributeInputAndAddDefaults(attribute, input, computeDefaultsContext)
+      return cloneRecordAttributeInputAndAddDefaults(attribute, input, options)
     case 'anyOf':
-      return cloneAnyOfAttributeInputAndAddDefaults(attribute, input, computeDefaultsContext)
+      return cloneAnyOfAttributeInputAndAddDefaults(attribute, input, options)
   }
 }

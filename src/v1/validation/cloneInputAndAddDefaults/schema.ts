@@ -8,12 +8,19 @@ import type {
 import type { SchemaDefaultsComputer } from 'v1/entity'
 import { isObject } from 'v1/utils/validation'
 
+import { CommandName } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 
 export const cloneSchemaInputAndAddDefaults = (
   schema: Schema,
   input: PossiblyUndefinedResolvedItem,
-  computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer }
+  {
+    commandName,
+    computeDefaultsContext
+  }: {
+    commandName?: CommandName
+    computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer }
+  } = {}
 ): PossiblyUndefinedResolvedItem => {
   if (!isObject(input)) {
     return cloneDeep(input)
@@ -35,14 +42,18 @@ export const cloneSchemaInputAndAddDefaults = (
         attribute,
         input[attributeName],
         {
-          computeDefaults: computeDefaults && computeDefaults[attributeName],
-          contextInputs: [input]
+          commandName,
+          computeDefaultsContext: {
+            computeDefaults: computeDefaults && computeDefaults[attributeName],
+            contextInputs: [input]
+          }
         }
       )
     } else {
       attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
         attribute,
-        input[attributeName]
+        input[attributeName],
+        { commandName }
       )
     }
 
