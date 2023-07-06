@@ -141,6 +141,7 @@ describe('anyOf', () => {
         [$key]: false
         [$savedAs]: undefined
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -163,6 +164,7 @@ describe('anyOf', () => {
       [$savedAs]: undefined,
       [$hidden]: false,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }
@@ -261,40 +263,60 @@ describe('anyOf', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const anyOfAttr = anyOf([str], { defaults: { put: ComputedDefault, update: undefined } })
+    const anyOfAttr = anyOf([str], {
+      defaults: { key: undefined, put: ComputedDefault, update: undefined }
+    })
 
     const assertAnyOf: A.Contains<
       typeof anyOfAttr,
-      { [$defaults]: { put: ComputedDefault; update: undefined } }
-    > = 1
-    assertAnyOf
-
-    expect(anyOfAttr).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
-  })
-
-  it('accepts ComputedDefault as default value (option)', () => {
-    const anyOfAttr = anyOf([str]).updateDefault(ComputedDefault)
-
-    const assertAnyOf: A.Contains<
-      typeof anyOfAttr,
-      { [$defaults]: { put: undefined; update: ComputedDefault } }
-    > = 1
-    assertAnyOf
-
-    expect(anyOfAttr).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
-  })
-
-  it('accepts ComputedDefault as default values (option)', () => {
-    const anyOfAttr = anyOf([str]).defaults(ComputedDefault)
-
-    const assertAnyOf: A.Contains<
-      typeof anyOfAttr,
-      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
     > = 1
     assertAnyOf
 
     expect(anyOfAttr).toMatchObject({
-      [$defaults]: { put: ComputedDefault, update: ComputedDefault }
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+  })
+
+  it('accepts ComputedDefault as default value (method)', () => {
+    const anyOfAttr = anyOf([str]).updateDefault(ComputedDefault)
+
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+    > = 1
+    assertAnyOf
+
+    expect(anyOfAttr).toMatchObject({
+      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+    })
+  })
+
+  it('returns anyOf with PUT default value if it is not key (default shorthand)', () => {
+    const anyOfAttr = anyOf([str]).default(ComputedDefault)
+
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+    > = 1
+    assertAnyOf
+
+    expect(anyOfAttr).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+  })
+
+  it('returns anyOf with KEY default value if it is key (default shorthand)', () => {
+    const anyOfAttr = anyOf([str]).key().default(ComputedDefault)
+
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+    > = 1
+    assertAnyOf
+
+    expect(anyOfAttr).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
     })
   })
 
@@ -312,6 +334,7 @@ describe('anyOf', () => {
         [$key]: false
         [$savedAs]: undefined
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -327,6 +350,7 @@ describe('anyOf', () => {
       [$key]: false,
       [$savedAs]: undefined,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }

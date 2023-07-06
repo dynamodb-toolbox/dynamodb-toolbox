@@ -21,6 +21,7 @@ describe('anyAttribute', () => {
         [$savedAs]: undefined
         [$key]: false
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -42,6 +43,7 @@ describe('anyAttribute', () => {
       [$savedAs]: undefined,
       [$key]: false,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }
@@ -141,62 +143,115 @@ describe('anyAttribute', () => {
   })
 
   it('returns any with default value (option)', () => {
-    const strA = any({ defaults: { put: 'hello', update: undefined } })
+    const strA = any({ defaults: { key: 'hello', put: undefined, update: undefined } })
+    const strB = any({ defaults: { key: undefined, put: 'world', update: undefined } })
     const sayHello = () => 'hello'
-    const strB = any({ defaults: { put: undefined, update: sayHello } })
+    const strC = any({ defaults: { key: undefined, put: undefined, update: sayHello } })
 
     const assertAnyA: A.Contains<
       typeof strA,
       // NOTE: We could narrow more and have 'hello' instead of string here, but not high prio right now
-      { [$defaults]: { put: string; update: undefined } }
+      { [$defaults]: { key: string; put: undefined; update: undefined } }
     > = 1
     assertAnyA
 
-    expect(strA).toMatchObject({ [$defaults]: { put: 'hello', update: undefined } })
+    expect(strA).toMatchObject({ [$defaults]: { key: 'hello', put: undefined, update: undefined } })
 
     const assertAnyB: A.Contains<
       typeof strB,
-      { [$defaults]: { put: undefined; update: () => string } }
+      // NOTE: We could narrow more and have 'world' instead of string here, but not high prio right now
+      { [$defaults]: { key: undefined; put: string; update: undefined } }
     > = 1
     assertAnyB
 
-    expect(strB).toMatchObject({ [$defaults]: { put: undefined, update: sayHello } })
+    expect(strB).toMatchObject({ [$defaults]: { key: undefined, put: 'world', update: undefined } })
+
+    const assertAnyC: A.Contains<
+      typeof strC,
+      { [$defaults]: { key: undefined; put: undefined; update: () => string } }
+    > = 1
+    assertAnyC
+
+    expect(strC).toMatchObject({
+      [$defaults]: { key: undefined, put: undefined, update: sayHello }
+    })
   })
 
   it('returns any with default value (method)', () => {
-    const strA = any().putDefault('hello')
+    const strA = any().keyDefault('hello')
+    const strB = any().putDefault('world')
     const sayHello = () => 'hello'
-    const strB = any().updateDefault(sayHello)
+    const strC = any().updateDefault(sayHello)
 
     const assertAnyA: A.Contains<
       typeof strA,
-      { [$defaults]: { put: 'hello'; update: undefined } }
+      { [$defaults]: { key: 'hello'; put: undefined; update: undefined } }
     > = 1
     assertAnyA
 
-    expect(strA).toMatchObject({ [$defaults]: { put: 'hello', update: undefined } })
+    expect(strA).toMatchObject({ [$defaults]: { key: 'hello', put: undefined, update: undefined } })
 
     const assertAnyB: A.Contains<
       typeof strB,
-      { [$defaults]: { put: undefined; update: () => string } }
+      { [$defaults]: { key: undefined; put: 'world'; update: undefined } }
     > = 1
     assertAnyB
 
-    expect(strB).toMatchObject({ [$defaults]: { put: undefined, update: sayHello } })
+    expect(strB).toMatchObject({ [$defaults]: { put: 'world', update: undefined } })
+
+    const assertAnyC: A.Contains<
+      typeof strC,
+      { [$defaults]: { key: undefined; put: undefined; update: () => string } }
+    > = 1
+    assertAnyC
+
+    expect(strC).toMatchObject({ [$defaults]: { put: undefined, update: sayHello } })
+  })
+
+  it('returns any with PUT default value if it is not key (default shorthand)', () => {
+    const str = any().default('hello')
+
+    const assertAny: A.Contains<
+      typeof str,
+      { [$defaults]: { key: undefined; put: 'hello'; update: undefined } }
+    > = 1
+    assertAny
+
+    expect(str).toMatchObject({
+      [$defaults]: { key: undefined, put: 'hello', update: undefined }
+    })
+  })
+
+  it('returns any with KEY default value if it is key (default shorthand)', () => {
+    const str = any().key().default('hello')
+
+    const assertAny: A.Contains<
+      typeof str,
+      { [$defaults]: { key: 'hello'; put: undefined; update: undefined } }
+    > = 1
+    assertAny
+
+    expect(str).toMatchObject({
+      [$defaults]: { key: 'hello', put: undefined, update: undefined }
+    })
   })
 })
 
 describe('ComputedDefault', () => {
   it('accepts ComputedDefault as default value (option)', () => {
-    const anyInstance = any({ defaults: { put: ComputedDefault, update: undefined } })
+    const anyInstance = any({
+      defaults: { key: undefined, put: ComputedDefault, update: undefined }
+    })
 
     const assertAny: A.Contains<
       typeof anyInstance,
-      { [$defaults]: { put: ComputedDefault; update: undefined } }
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
     > = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
+    expect(anyInstance).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
   })
 
   it('accepts ComputedDefault as default value (method)', () => {
@@ -204,26 +259,12 @@ describe('ComputedDefault', () => {
 
     const assertAny: A.Contains<
       typeof anyInstance,
-      { [$defaults]: { put: undefined; update: ComputedDefault } }
+      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
     > = 1
     assertAny
 
     expect(anyInstance).toMatchObject({
-      [$defaults]: { put: undefined, update: ComputedDefault }
-    })
-  })
-
-  it('accepts ComputedDefault as default values (method)', () => {
-    const anyInstance = any().defaults(ComputedDefault)
-
-    const assertAny: A.Contains<
-      typeof anyInstance,
-      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
-    > = 1
-    assertAny
-
-    expect(anyInstance).toMatchObject({
-      [$defaults]: { put: ComputedDefault, update: ComputedDefault }
+      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
     })
   })
 })

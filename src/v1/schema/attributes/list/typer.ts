@@ -45,7 +45,14 @@ export const list: ListAttributeTyper = <
   elements: ELEMENTS,
   options?: NarrowObject<OPTIONS>
 ) => {
-  const appliedOptions = { ...LIST_DEFAULT_OPTIONS, ...options }
+  const appliedOptions = {
+    ...LIST_DEFAULT_OPTIONS,
+    ...options,
+    defaults: {
+      ...LIST_DEFAULT_OPTIONS.defaults,
+      ...options?.defaults
+    }
+  }
 
   return {
     [$type]: 'list',
@@ -62,6 +69,11 @@ export const list: ListAttributeTyper = <
     hidden: () => list(elements, { ...appliedOptions, hidden: true }),
     key: () => list(elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
+    keyDefault: nextPutDefault =>
+      list(elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, key: nextPutDefault }
+      }),
     putDefault: nextPutDefault =>
       list(elements, {
         ...appliedOptions,
@@ -72,8 +84,11 @@ export const list: ListAttributeTyper = <
         ...appliedOptions,
         defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
       }),
-    defaults: nextDefaults =>
-      list(elements, { ...appliedOptions, defaults: { put: nextDefaults, update: nextDefaults } })
+    default: nextDefault =>
+      list(elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, [appliedOptions.key ? 'key' : 'put']: nextDefault }
+      })
   } as $ListAttribute<
     ELEMENTS,
     InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>

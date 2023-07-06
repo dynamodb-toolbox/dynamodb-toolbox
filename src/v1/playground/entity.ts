@@ -8,6 +8,7 @@ export const UserEntity = new EntityV2({
   name: 'User',
   table: MyTable,
   schema: schema({
+    test: string().key().default('test'),
     userId: string().key(),
     age: number().key().enum(41, 42).putDefault(42).savedAs('sk'),
     constant: string().const('toto').optional(),

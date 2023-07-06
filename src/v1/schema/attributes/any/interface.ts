@@ -12,6 +12,7 @@ import type { AnyAttributeDefaultValue } from './types'
 
 export interface AnyAttributeStateConstraint extends AttributeSharedStateConstraint {
   defaults: {
+    key: AnyAttributeDefaultValue
     put: AnyAttributeDefaultValue
     update: AnyAttributeDefaultValue
   }
@@ -55,7 +56,17 @@ export interface $AnyAttribute<
     nextSavedAs: NEXT_SAVED_AS
   ) => $AnyAttribute<O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
   /**
-   * Provide a default value for attribute in PUT commands (or tag attribute as having a computed default value)
+   * Provide a default value for attribute in Primary Key computing
+   *
+   * @param nextKeyDefault `any`, `() => any`, `ComputedDefault`
+   */
+  keyDefault: <NEXT_KEY_DEFAULT extends AnyAttributeDefaultValue>(
+    nextKeyDefault: NEXT_KEY_DEFAULT
+  ) => $AnyAttribute<
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'key', NEXT_KEY_DEFAULT>>
+  >
+  /**
+   * Provide a default value for attribute in PUT commands
    *
    * @param nextPutDefault `any`, `() => any`, `ComputedDefault`
    */
@@ -65,7 +76,7 @@ export interface $AnyAttribute<
     O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
   >
   /**
-   * Provide a default value for attribute in UPDATE commands (or tag attribute as having a computed default value)
+   * Provide a default value for attribute in UPDATE commands
    *
    * @param nextUpdateDefault `any`, `() => any`, `ComputedDefault`
    */
@@ -75,13 +86,19 @@ export interface $AnyAttribute<
     O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
   >
   /**
-   * Provide a default value for attribute in all commands (or tag attribute as having a computed default value)
+   * Provide a default value for attribute in PUT commands / Primary Key computing if attribute is tagged as key
    *
-   * @param nextDefaults `any`, `() => any`, `ComputedDefault`
+   * @param nextDefault `any`, `() => any`, `ComputedDefault`
    */
-  defaults: <NEXT_DEFAULTS extends AnyAttributeDefaultValue>(
-    nextDefaults: NEXT_DEFAULTS
-  ) => $AnyAttribute<O.Update<STATE, 'defaults', { put: NEXT_DEFAULTS; update: NEXT_DEFAULTS }>>
+  default: <NEXT_DEFAULT extends AnyAttributeDefaultValue>(
+    nextDefault: NEXT_DEFAULT
+  ) => $AnyAttribute<
+    O.Update<
+      STATE,
+      'defaults',
+      O.Update<STATE['defaults'], STATE['key'] extends true ? 'key' : 'put', NEXT_DEFAULT>
+    >
+  >
 }
 
 export interface AnyAttribute<

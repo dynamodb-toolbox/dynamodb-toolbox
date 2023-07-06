@@ -11,7 +11,8 @@ import type {
   RecordAttribute,
   AnyOfAttribute,
   Always,
-  ResolvePrimitiveAttribute
+  ResolvePrimitiveAttribute,
+  ComputedDefault
 } from 'v1/schema'
 
 import type { EntityV2 } from '../class'
@@ -23,33 +24,54 @@ import type { EntityV2 } from '../class'
  * @return Object
  */
 export type UpdateItemInput<
-  SCHEMA extends EntityV2 | Schema | Attribute
+  SCHEMA extends EntityV2 | Schema | Attribute,
+  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
 > = SCHEMA extends AnyAttribute
   ? unknown
   : SCHEMA extends PrimitiveAttribute
   ? ResolvePrimitiveAttribute<SCHEMA>
   : SCHEMA extends SetAttribute
-  ? Set<UpdateItemInput<SCHEMA['elements']>>
+  ? Set<UpdateItemInput<SCHEMA['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
   : SCHEMA extends ListAttribute
-  ? UpdateItemInput<SCHEMA['elements']>[]
+  ? UpdateItemInput<SCHEMA['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
   : SCHEMA extends MapAttribute | Schema
   ? O.Required<
       O.Partial<
         {
-          [KEY in keyof SCHEMA['attributes']]: UpdateItemInput<SCHEMA['attributes'][KEY]>
+          [KEY in keyof SCHEMA['attributes']]: UpdateItemInput<
+            SCHEMA['attributes'][KEY],
+            REQUIRE_INDEPENDENT_DEFAULTS
+          >
         }
       >,
       Exclude<
-        // Enforce Required Always attributes...
-        O.SelectKeys<SCHEMA['attributes'], { required: Always }>,
-        // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<SCHEMA['attributes'], { defaults: { update: undefined } }>
+        // Enforce Required attributes that don't have default values
+        O.SelectKeys<
+          SCHEMA['attributes'],
+          { required: Always } & (
+            | { key: true; defaults: { key: undefined } }
+            | { key: false; defaults: { update: undefined } }
+          )
+        >,
+        // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
+        REQUIRE_INDEPENDENT_DEFAULTS extends true
+          ? O.FilterKeys<
+              SCHEMA['attributes'],
+              | { key: true; defaults: { key: undefined | ComputedDefault } }
+              | { key: false; defaults: { update: undefined | ComputedDefault } }
+            >
+          : never
       >
     >
   : SCHEMA extends RecordAttribute
-  ? { [KEY in ResolvePrimitiveAttribute<SCHEMA['keys']>]?: UpdateItemInput<SCHEMA['elements']> }
+  ? {
+      [KEY in ResolvePrimitiveAttribute<SCHEMA['keys']>]?: UpdateItemInput<
+        SCHEMA['elements'],
+        REQUIRE_INDEPENDENT_DEFAULTS
+      >
+    }
   : SCHEMA extends AnyOfAttribute
-  ? UpdateItemInput<SCHEMA['elements'][number]>
+  ? UpdateItemInput<SCHEMA['elements'][number], REQUIRE_INDEPENDENT_DEFAULTS>
   : SCHEMA extends EntityV2
-  ? UpdateItemInput<SCHEMA['schema']>
+  ? UpdateItemInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
   : never
