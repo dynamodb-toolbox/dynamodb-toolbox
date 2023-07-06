@@ -15,6 +15,7 @@ import {
 import { map } from './typer'
 import type { MapAttribute, $MapAttribute } from './interface'
 import { freezeMapAttribute } from './freeze'
+import { list } from '../list/typer'
 
 describe('map', () => {
   const str = string()
@@ -34,6 +35,7 @@ describe('map', () => {
         [$key]: false
         [$savedAs]: undefined
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -56,6 +58,7 @@ describe('map', () => {
       [$savedAs]: undefined,
       [$hidden]: false,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }
@@ -165,40 +168,115 @@ describe('map', () => {
 
   describe('default', () => {
     it('accepts ComputedDefault as default value (option)', () => {
-      const mapped = map({ str }, { defaults: { put: ComputedDefault, update: undefined } })
+      const mapA = map(
+        { str },
+        { defaults: { key: ComputedDefault, put: undefined, update: undefined } }
+      )
 
       const assertMapAttribute: A.Contains<
-        typeof mapped,
-        { [$defaults]: { put: ComputedDefault; update: undefined } }
+        typeof mapA,
+        { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
       > = 1
       assertMapAttribute
 
-      expect(mapped).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
+      expect(mapA).toMatchObject({
+        [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+      })
+
+      const mapB = map(
+        { str },
+        { defaults: { key: undefined, put: ComputedDefault, update: undefined } }
+      )
+
+      const assertMapB: A.Contains<
+        typeof mapB,
+        { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      > = 1
+      assertMapB
+
+      expect(mapB).toMatchObject({
+        [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      })
+
+      const mapC = map(
+        { str },
+        { defaults: { key: undefined, put: undefined, update: ComputedDefault } }
+      )
+
+      const assertMapC: A.Contains<
+        typeof mapC,
+        { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+      > = 1
+      assertMapC
+
+      expect(mapC).toMatchObject({
+        [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+      })
     })
 
     it('accepts ComputedDefault as default value (method)', () => {
-      const mapped = map({ str }).updateDefault(ComputedDefault)
+      const mapA = map({ str }).keyDefault(ComputedDefault)
 
       const assertMapAttribute: A.Contains<
-        typeof mapped,
-        { [$defaults]: { put: undefined; update: ComputedDefault } }
+        typeof mapA,
+        { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
       > = 1
       assertMapAttribute
 
-      expect(mapped).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
+      expect(mapA).toMatchObject({
+        [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+      })
+
+      const mapB = map({ str }).putDefault(ComputedDefault)
+
+      const assertMapB: A.Contains<
+        typeof mapB,
+        { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      > = 1
+      assertMapB
+
+      expect(mapB).toMatchObject({
+        [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      })
+
+      const mapC = map({ str }).updateDefault(ComputedDefault)
+
+      const assertMapC: A.Contains<
+        typeof mapC,
+        { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+      > = 1
+      assertMapC
+
+      expect(mapC).toMatchObject({
+        [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+      })
     })
 
-    it('accepts ComputedDefault as default values (method)', () => {
-      const mapped = map({ str }).defaults(ComputedDefault)
+    it('returns map with PUT default value if it is not key (default shorthand)', () => {
+      const mapAttr = map({ str }).default(ComputedDefault)
 
-      const assertMapAttribute: A.Contains<
-        typeof mapped,
-        { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+      const assertMap: A.Contains<
+        typeof mapAttr,
+        { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
       > = 1
-      assertMapAttribute
+      assertMap
 
-      expect(mapped).toMatchObject({
-        [$defaults]: { put: ComputedDefault, update: ComputedDefault }
+      expect(mapAttr).toMatchObject({
+        [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      })
+    })
+
+    it('returns map with KEY default value if it is key (default shorthand)', () => {
+      const mapAttr = map({ str }).key().default(ComputedDefault)
+
+      const assertMap: A.Contains<
+        typeof mapAttr,
+        { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+      > = 1
+      assertMap
+
+      expect(mapAttr).toMatchObject({
+        [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
       })
     })
   })

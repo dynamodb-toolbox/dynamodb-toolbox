@@ -229,6 +229,7 @@ describe('record', () => {
         [$key]: false
         [$savedAs]: undefined
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -252,6 +253,7 @@ describe('record', () => {
       [$savedAs]: undefined,
       [$hidden]: false,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }
@@ -350,39 +352,85 @@ describe('record', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const rec = record(fooBar, str, { defaults: { put: ComputedDefault, update: undefined } })
+    const stA = record(fooBar, str, {
+      defaults: { key: ComputedDefault, put: undefined, update: undefined }
+    })
 
-    const assertRec: A.Contains<
-      typeof rec,
-      { [$defaults]: { put: ComputedDefault; update: undefined } }
+    const assertSetA: A.Contains<
+      typeof stA,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
     > = 1
-    assertRec
+    assertSetA
 
-    expect(rec).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
+    expect(stA).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+    })
+
+    const stB = record(fooBar, str, {
+      defaults: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const assertSetB: A.Contains<
+      typeof stB,
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+    > = 1
+    assertSetB
+
+    expect(stB).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const stC = record(fooBar, str, {
+      defaults: { key: undefined, put: undefined, update: ComputedDefault }
+    })
+
+    const assertSetC: A.Contains<
+      typeof stC,
+      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+    > = 1
+    assertSetC
+
+    expect(stC).toMatchObject({
+      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+    })
   })
 
   it('accepts ComputedDefault as default value (method)', () => {
-    const rec = record(fooBar, str).updateDefault(ComputedDefault)
+    const stA = record(fooBar, str).keyDefault(ComputedDefault)
 
-    const assertRec: A.Contains<
-      typeof rec,
-      { [$defaults]: { put: undefined; update: ComputedDefault } }
+    const assertSetA: A.Contains<
+      typeof stA,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
     > = 1
-    assertRec
+    assertSetA
 
-    expect(rec).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
-  })
+    expect(stA).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+    })
 
-  it('accepts ComputedDefault as default values (method)', () => {
-    const rec = record(fooBar, str).defaults(ComputedDefault)
+    const stB = record(fooBar, str).putDefault(ComputedDefault)
 
-    const assertRec: A.Contains<
-      typeof rec,
-      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+    const assertSetB: A.Contains<
+      typeof stB,
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
     > = 1
-    assertRec
+    assertSetB
 
-    expect(rec).toMatchObject({ [$defaults]: { put: ComputedDefault, update: ComputedDefault } })
+    expect(stB).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const stC = record(fooBar, str).updateDefault(ComputedDefault)
+
+    const assertSetC: A.Contains<
+      typeof stC,
+      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+    > = 1
+    assertSetC
+
+    expect(stC).toMatchObject({
+      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+    })
   })
 
   it('record of records', () => {
@@ -402,6 +450,7 @@ describe('record', () => {
           [$key]: false
           [$savedAs]: undefined
           [$defaults]: {
+            key: undefined
             put: undefined
             update: undefined
           }
@@ -411,6 +460,7 @@ describe('record', () => {
         [$key]: false
         [$savedAs]: undefined
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -430,6 +480,7 @@ describe('record', () => {
         [$key]: false,
         [$savedAs]: undefined,
         [$defaults]: {
+          key: undefined,
           put: undefined,
           update: undefined
         }
@@ -439,6 +490,7 @@ describe('record', () => {
       [$key]: false,
       [$savedAs]: undefined,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }

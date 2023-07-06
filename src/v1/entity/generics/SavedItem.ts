@@ -49,8 +49,11 @@ type RecSavedItem<
   // Enforce Required attributes
   | O.SelectKeys<SWAPPED_ATTRIBUTES, { required: AtLeastOnce | Always }>
   // Enforce attributes that have defined hard default
-  // TODO: Use defaults from get/update etc...
-  | O.FilterKeys<SWAPPED_ATTRIBUTES, { defaults: { put: undefined | ComputedDefault } }>
+  | O.FilterKeys<
+      SWAPPED_ATTRIBUTES,
+      | { key: false; defaults: { put: undefined | ComputedDefault } }
+      | { key: true; defaults: { put: undefined | ComputedDefault } }
+    >
 >
 
 /**

@@ -13,6 +13,7 @@ export type EntityAttribute<TABLE extends TableV2, ENTITY_NAME extends string> =
     savedAs: EntityAttributeSavedAs<TABLE>
     enum: [ENTITY_NAME]
     defaults: {
+      key: undefined
       put: ENTITY_NAME
       update: undefined
     }
@@ -72,6 +73,7 @@ export const addEntityAttribute: EntityAttributeAdder = <
     savedAs: table.entityAttributeSavedAs,
     enum: [entityName],
     defaults: {
+      key: undefined,
       put: entityName,
       update: undefined
     }

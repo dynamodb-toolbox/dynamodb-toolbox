@@ -12,6 +12,7 @@ import type { $ListAttributeElements, ListAttributeElements } from './types'
 
 export interface ListAttributeStateConstraint extends AttributeSharedStateConstraint {
   defaults: {
+    key: ComputedDefault | undefined
     put: ComputedDefault | undefined
     update: ComputedDefault | undefined
   }
@@ -57,7 +58,18 @@ export interface $ListAttribute<
     nextSavedAs: NEXT_SAVED_AS
   ) => $ListAttribute<$ELEMENTS, O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
   /**
-   * Tag attribute as having a computed default value in PUT commands
+   * Provide a default value for attribute in Primary Key computing
+   *
+   * @param nextKeyDefault `ComputedDefault`
+   */
+  keyDefault: <NEXT_KEY_DEFAULT extends ComputedDefault | undefined>(
+    nextKeyDefault: NEXT_KEY_DEFAULT
+  ) => $ListAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'key', NEXT_KEY_DEFAULT>>
+  >
+  /**
+   * Provide a default value for attribute in PUT commands
    *
    * @param nextPutDefault `ComputedDefault`
    */
@@ -68,7 +80,7 @@ export interface $ListAttribute<
     O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
   >
   /**
-   * Tag attribute as having a computed default value in UPDATE commands
+   * Provide a default value for attribute in UPDATE commands
    *
    * @param nextUpdateDefault `ComputedDefault`
    */
@@ -79,15 +91,19 @@ export interface $ListAttribute<
     O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
   >
   /**
-   * Tag attribute as having computed default values in all commands
+   * Provide a default value for attribute in PUT commands / Primary Key computing if attribute is tagged as key
    *
-   * @param nextDefaults `ComputedDefault`
+   * @param nextDefault `ComputedDefault`
    */
-  defaults: <NEXT_DEFAULTS extends ComputedDefault | undefined>(
-    nextDefaults: NEXT_DEFAULTS
+  default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
+    nextDefault: NEXT_DEFAULT
   ) => $ListAttribute<
     $ELEMENTS,
-    O.Update<STATE, 'defaults', { put: NEXT_DEFAULTS; update: NEXT_DEFAULTS }>
+    O.Update<
+      STATE,
+      'defaults',
+      O.Update<STATE['defaults'], STATE['key'] extends true ? 'key' : 'put', NEXT_DEFAULT>
+    >
   >
 }
 

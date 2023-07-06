@@ -43,7 +43,11 @@ export const anyOf: AnyOfAttributeTyper = <
   elements: ELEMENTS[],
   options?: NarrowObject<OPTIONS>
 ) => {
-  const appliedOptions = { ...ANY_OF_DEFAULT_OPTIONS, ...options }
+  const appliedOptions = {
+    ...ANY_OF_DEFAULT_OPTIONS,
+    ...options,
+    defaults: { ...ANY_OF_DEFAULT_OPTIONS.defaults, ...options?.defaults }
+  }
 
   return {
     [$type]: 'anyOf',
@@ -60,6 +64,11 @@ export const anyOf: AnyOfAttributeTyper = <
     hidden: () => anyOf(elements, { ...appliedOptions, hidden: true }),
     key: () => anyOf(elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => anyOf(elements, { ...appliedOptions, savedAs: nextSavedAs }),
+    keyDefault: nextKeyDefault =>
+      anyOf(elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, key: nextKeyDefault }
+      }),
     putDefault: nextPutDefault =>
       anyOf(elements, {
         ...appliedOptions,
@@ -70,8 +79,11 @@ export const anyOf: AnyOfAttributeTyper = <
         ...appliedOptions,
         defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
       }),
-    defaults: nextDefault =>
-      anyOf(elements, { ...appliedOptions, defaults: { put: nextDefault, update: nextDefault } })
+    default: nextDefault =>
+      anyOf(elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, [appliedOptions.key ? 'key' : 'put']: nextDefault }
+      })
   } as $AnyOfAttribute<
     ELEMENTS,
     InferStateFromOptions<AnyOfAttributeOptions, AnyOfAttributeDefaultOptions, OPTIONS>

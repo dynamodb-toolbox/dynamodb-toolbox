@@ -22,6 +22,7 @@ const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
     put: undefined,
     update: undefined
   }
@@ -34,6 +35,7 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
     put: undefined,
     update: undefined
   },

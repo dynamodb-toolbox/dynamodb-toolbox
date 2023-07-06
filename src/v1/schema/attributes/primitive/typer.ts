@@ -1,6 +1,7 @@
 import type { NarrowObject } from 'v1/types/narrowObject'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 import {
   $type,
   $required,
@@ -10,15 +11,14 @@ import {
   $enum,
   $defaults
 } from '../constants/attributeOptions'
-import { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
 import type { $PrimitiveAttribute } from './interface'
+import type { PrimitiveAttributeType } from './types'
 import {
   PrimitiveAttributeOptions,
   PrimitiveAttributeDefaultOptions,
   PRIMITIVE_DEFAULT_OPTIONS
 } from './options'
-import type { PrimitiveAttributeType } from './types'
 
 type AnyPrimitiveAttributeTyper = <
   TYPE extends PrimitiveAttributeType,
@@ -65,26 +65,59 @@ const primitive: AnyPrimitiveAttributeTyper = <
     hidden: () => primitive(type, { ...options, hidden: true }),
     key: () => primitive(type, { ...options, key: true, required: 'always' }),
     savedAs: nextSavedAs => primitive(type, { ...options, savedAs: nextSavedAs }),
+    keyDefault: nextKeyDefault =>
+      primitive(type, {
+        ...options,
+        defaults: {
+          // TODO Fix options.defaults whose type seems badly inferred (update optional?)
+          key: nextKeyDefault,
+          update: options.defaults.update,
+          put: options.defaults.put
+        }
+      }),
     putDefault: nextPutDefault =>
       primitive(type, {
         ...options,
-        // TODO Fix options.defaults whose type seems badly inferred (update optional?)
-        defaults: { update: options.defaults.update, put: nextPutDefault }
+        defaults: {
+          // TODO Fix options.defaults whose type seems badly inferred (update optional?)
+          key: options.defaults.key,
+          update: options.defaults.update,
+          put: nextPutDefault
+        }
       }),
     updateDefault: nextUpdateDefault =>
       primitive(type, {
         ...options,
-        // TODO Fix options.defaults whose type seems badly inferred (put optional?)
-        defaults: { put: options.defaults.put, update: nextUpdateDefault }
+        defaults: {
+          // TODO Fix options.defaults whose type seems badly inferred (put optional?)
+          key: options.defaults.key,
+          put: options.defaults.put,
+          update: nextUpdateDefault
+        }
       }),
-    defaults: nextDefault =>
-      primitive(type, { ...options, defaults: { put: nextDefault, update: nextDefault } }),
+    default: nextDefault =>
+      primitive(type, {
+        ...options,
+        defaults: {
+          // TODO Fix options.defaults whose type seems badly inferred (put optional?)
+          key: options.defaults.key,
+          put: options.defaults.put,
+          update: options.defaults.update,
+          [options.key ? 'key' : 'put']: nextDefault
+        }
+      }),
     enum: (...nextEnum) => primitive(type, { ...options, [$enum]: nextEnum }),
     const: constant =>
       primitive(type, {
         ...options,
         [$enum]: [constant],
-        defaults: { put: constant, update: constant }
+        defaults: {
+          // TODO Fix options.defaults whose type seems badly inferred (put optional?)
+          key: options.defaults.key,
+          put: options.defaults.put,
+          update: options.defaults.update,
+          [options.key ? 'key' : 'put']: constant
+        }
       })
   } as $PrimitiveAttribute<
     TYPE,
@@ -127,7 +160,11 @@ const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory = <
   ) =>
     primitive(type, {
       ...PRIMITIVE_DEFAULT_OPTIONS,
-      ...primitiveOptions
+      ...primitiveOptions,
+      defaults: {
+        ...PRIMITIVE_DEFAULT_OPTIONS.defaults,
+        ...primitiveOptions.defaults
+      }
     })) as PrimitiveAttributeTyper<TYPE>
 
 /**

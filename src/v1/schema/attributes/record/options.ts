@@ -1,6 +1,6 @@
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
-// Note: May sound like a duplicate of AnyAttributeState but actually adds JSDocs
+// Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
 /**
  * Input options of Record Attribute
@@ -26,9 +26,10 @@ export interface RecordAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Tag attribute as having computed default values
+   * Provide a default values for attribute
    */
   defaults: {
+    key: ComputedDefault | undefined
     put: ComputedDefault | undefined
     update: ComputedDefault | undefined
   }
@@ -40,6 +41,7 @@ export type RecordAttributeDefaultOptions = {
   key: false
   savedAs: undefined
   defaults: {
+    key: undefined
     put: undefined
     update: undefined
   }
@@ -51,6 +53,7 @@ export const RECORD_DEFAULT_OPTIONS: RecordAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
     put: undefined,
     update: undefined
   }

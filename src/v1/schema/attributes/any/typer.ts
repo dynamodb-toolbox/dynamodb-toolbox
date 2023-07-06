@@ -21,7 +21,11 @@ export const any: AnyAttributeTyper = <
 >(
   options?: NarrowObject<OPTIONS>
 ) => {
-  const appliedOptions = { ...ANY_DEFAULT_OPTIONS, ...options }
+  const appliedOptions = {
+    ...ANY_DEFAULT_OPTIONS,
+    ...options,
+    defaults: { ...ANY_DEFAULT_OPTIONS.defaults, ...options?.defaults }
+  }
 
   return {
     [$type]: 'any',
@@ -37,6 +41,8 @@ export const any: AnyAttributeTyper = <
     hidden: () => any({ ...appliedOptions, hidden: true }),
     key: () => any({ ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => any({ ...appliedOptions, savedAs: nextSavedAs }),
+    keyDefault: nextKeyDefault =>
+      any({ ...appliedOptions, defaults: { ...appliedOptions.defaults, key: nextKeyDefault } }),
     putDefault: nextPutDefault =>
       any({ ...appliedOptions, defaults: { ...appliedOptions.defaults, put: nextPutDefault } }),
     updateDefault: nextUpdateDefault =>
@@ -44,10 +50,10 @@ export const any: AnyAttributeTyper = <
         ...appliedOptions,
         defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
       }),
-    defaults: nextDefault =>
+    default: nextDefault =>
       any({
         ...appliedOptions,
-        defaults: { put: nextDefault, update: nextDefault }
+        defaults: { ...appliedOptions.defaults, [appliedOptions.key ? 'key' : 'put']: nextDefault }
       })
   } as $AnyAttribute<
     InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS>

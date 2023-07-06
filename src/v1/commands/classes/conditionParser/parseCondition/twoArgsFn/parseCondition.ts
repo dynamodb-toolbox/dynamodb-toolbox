@@ -18,6 +18,7 @@ const typeAttribute: PrimitiveAttribute<
     savedAs: undefined
     enum: ['S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M']
     defaults: {
+      key: undefined
       put: undefined
       update: undefined
     }
@@ -31,6 +32,7 @@ const typeAttribute: PrimitiveAttribute<
   savedAs: undefined,
   enum: ['S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M'],
   defaults: {
+    key: undefined,
     put: undefined,
     update: undefined
   }

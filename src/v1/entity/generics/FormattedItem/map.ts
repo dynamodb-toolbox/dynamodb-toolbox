@@ -53,10 +53,9 @@ export type FormattedMapAttribute<
               | O.FilterKeys<
                   SCHEMA['attributes'],
                   {
-                    defaults: {
-                      // TODO: Use defaults from get/update etc...
-                      put: undefined | ComputedDefault
-                    }
+                    defaults:
+                      | { put: undefined | ComputedDefault }
+                      | { key: undefined | ComputedDefault }
                   }
                 >
       >
