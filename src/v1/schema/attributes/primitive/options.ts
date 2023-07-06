@@ -7,7 +7,7 @@ import type {
   PrimitiveAttributeEnumValues
 } from './types'
 
-// Note: May sound like a duplicate of AnyAttributeState but actually adds JSDocs
+// Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
 /**
  * Input options of Primitive Attribute
@@ -39,6 +39,7 @@ export type PrimitiveAttributeOptions<
    * Provide default values for attribute (or tag attribute as having computed default values)
    */
   defaults: {
+    key: PrimitiveAttributeDefaultValue<TYPE>
     put: PrimitiveAttributeDefaultValue<TYPE>
     update: PrimitiveAttributeDefaultValue<TYPE>
   }
@@ -51,6 +52,7 @@ export type PrimitiveAttributeDefaultOptions = {
   savedAs: undefined
   [$enum]: undefined
   defaults: {
+    key: undefined
     put: undefined
     update: undefined
   }
@@ -63,6 +65,7 @@ export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
   savedAs: undefined,
   [$enum]: undefined,
   defaults: {
+    key: undefined,
     put: undefined,
     update: undefined
   }

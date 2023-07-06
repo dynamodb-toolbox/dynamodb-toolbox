@@ -1,6 +1,6 @@
 import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
 
-// Note: May sound like a duplicate of AnyAttributeState but actually adds JSDocs
+// Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
 /**
  * Input options of AnyOf Attribute
@@ -29,6 +29,7 @@ export interface AnyOfAttributeOptions {
    * Tag attribute as having computed default values
    */
   defaults: {
+    key: ComputedDefault | undefined
     put: ComputedDefault | undefined
     update: ComputedDefault | undefined
   }
@@ -40,6 +41,7 @@ export type AnyOfAttributeDefaultOptions = {
   key: false
   savedAs: undefined
   defaults: {
+    key: undefined
     put: undefined
     update: undefined
   }
@@ -51,6 +53,7 @@ export const ANY_OF_DEFAULT_OPTIONS: AnyOfAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
     put: undefined,
     update: undefined
   }

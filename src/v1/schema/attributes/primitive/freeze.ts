@@ -34,6 +34,10 @@ export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttr
           PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
         >
         defaults: {
+          key: Extract<
+            $PRIMITIVE_ATTRIBUTE[$defaults]['key'],
+            PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
+          >
           put: Extract<
             $PRIMITIVE_ATTRIBUTE[$defaults]['put'],
             PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
@@ -128,6 +132,10 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
       PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
     >,
     defaults: {
+      key: defaultValues.key as Extract<
+        $PRIMITIVE_ATTRIBUTE[$defaults]['key'],
+        PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
+      >,
       put: defaultValues.put as Extract<
         $PRIMITIVE_ATTRIBUTE[$defaults]['put'],
         PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>

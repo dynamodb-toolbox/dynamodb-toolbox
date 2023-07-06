@@ -1,7 +1,7 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { ComputedDefault } from '../constants/computedDefault'
 
-// Note: May sound like a duplicate of AnyAttributeState but actually adds JSDocs
+// Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
 /**
  * Input options of Set Attribute
@@ -30,6 +30,7 @@ export interface SetAttributeOptions {
    * Tag attribute as having computed default values
    */
   defaults: {
+    key: ComputedDefault | undefined
     put: ComputedDefault | undefined
     update: ComputedDefault | undefined
   }
@@ -41,6 +42,7 @@ export type SetAttributeDefaultOptions = {
   key: false
   savedAs: undefined
   defaults: {
+    key: undefined
     put: undefined
     update: undefined
   }
@@ -52,6 +54,7 @@ export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
     put: undefined,
     update: undefined
   }

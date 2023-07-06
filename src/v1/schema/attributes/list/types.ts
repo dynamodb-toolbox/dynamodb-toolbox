@@ -7,6 +7,7 @@ export type $ListAttributeElements = $Attribute & {
   [$hidden]: false
   [$savedAs]: undefined
   [$defaults]: {
+    key: undefined
     put: undefined
     update: undefined
   }
@@ -17,6 +18,7 @@ export type ListAttributeElements = Attribute & {
   hidden: false
   savedAs: undefined
   defaults: {
+    key: undefined
     put: undefined
     update: undefined
   }

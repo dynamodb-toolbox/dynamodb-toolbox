@@ -9,6 +9,7 @@ interface SetAttributeElementState {
   savedAs: undefined
   enum: PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>
   defaults: {
+    key: undefined
     put: undefined
     update: undefined
   }

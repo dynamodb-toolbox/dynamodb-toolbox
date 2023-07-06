@@ -103,6 +103,7 @@ describe('list', () => {
         [$key]: false
         [$savedAs]: undefined
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -125,6 +126,7 @@ describe('list', () => {
       [$savedAs]: undefined,
       [$hidden]: false,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }
@@ -223,39 +225,113 @@ describe('list', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const lst = list(strElement, { defaults: { put: ComputedDefault, update: undefined } })
+    const lstA = list(strElement, {
+      defaults: { key: ComputedDefault, put: undefined, update: undefined }
+    })
 
-    const assertList: A.Contains<
-      typeof lst,
-      { [$defaults]: { put: ComputedDefault; update: undefined } }
+    const assertListA: A.Contains<
+      typeof lstA,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
     > = 1
-    assertList
+    assertListA
 
-    expect(lst).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
+    expect(lstA).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+    })
+
+    const lstB = list(strElement, {
+      defaults: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const assertListB: A.Contains<
+      typeof lstB,
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+    > = 1
+    assertListB
+
+    expect(lstB).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const lstC = list(strElement, {
+      defaults: { key: undefined, put: undefined, update: ComputedDefault }
+    })
+
+    const assertListC: A.Contains<
+      typeof lstC,
+      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+    > = 1
+    assertListC
+
+    expect(lstC).toMatchObject({
+      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+    })
   })
 
   it('accepts ComputedDefault as default value (method)', () => {
-    const lst = list(strElement).updateDefault(ComputedDefault)
+    const lstA = list(strElement).keyDefault(ComputedDefault)
 
-    const assertList: A.Contains<
-      typeof lst,
-      { [$defaults]: { put: undefined; update: ComputedDefault } }
+    const assertListA: A.Contains<
+      typeof lstA,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
     > = 1
-    assertList
+    assertListA
 
-    expect(lst).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
+    expect(lstA).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+    })
+
+    const lstB = list(strElement).putDefault(ComputedDefault)
+
+    const assertListB: A.Contains<
+      typeof lstB,
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+    > = 1
+    assertListB
+
+    expect(lstB).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const lstC = list(strElement).updateDefault(ComputedDefault)
+
+    const assertListC: A.Contains<
+      typeof lstC,
+      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+    > = 1
+    assertListC
+
+    expect(lstC).toMatchObject({
+      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+    })
   })
 
-  it('accepts ComputedDefault as default values (method)', () => {
-    const lst = list(strElement).defaults(ComputedDefault)
+  it('returns list with PUT default value if it is not key (default shorthand)', () => {
+    const listAttr = list(strElement).default(ComputedDefault)
 
     const assertList: A.Contains<
-      typeof lst,
-      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+      typeof listAttr,
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
     > = 1
     assertList
 
-    expect(lst).toMatchObject({ [$defaults]: { put: ComputedDefault, update: ComputedDefault } })
+    expect(listAttr).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+  })
+
+  it('returns list with KEY default value if it is key (default shorthand)', () => {
+    const listAttr = list(strElement).key().default(ComputedDefault)
+
+    const assertList: A.Contains<
+      typeof listAttr,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+    > = 1
+    assertList
+
+    expect(listAttr).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+    })
   })
 
   it('list of lists', () => {
@@ -273,6 +349,7 @@ describe('list', () => {
           [$key]: false
           [$savedAs]: undefined
           [$defaults]: {
+            key: undefined
             put: undefined
             update: undefined
           }
@@ -282,6 +359,7 @@ describe('list', () => {
         [$key]: false
         [$savedAs]: undefined
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -299,6 +377,7 @@ describe('list', () => {
         [$key]: false,
         [$savedAs]: undefined,
         [$defaults]: {
+          key: undefined,
           put: undefined,
           update: undefined
         }
@@ -308,6 +387,7 @@ describe('list', () => {
       [$key]: false,
       [$savedAs]: undefined,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }

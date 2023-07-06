@@ -49,7 +49,11 @@ export const set: SetAttributeTyper = <
   elements: ELEMENTS,
   options?: NarrowObject<OPTIONS>
 ) => {
-  const appliedOptions = { ...SET_ATTRIBUTE_DEFAULT_OPTIONS, ...options }
+  const appliedOptions = {
+    ...SET_ATTRIBUTE_DEFAULT_OPTIONS,
+    ...options,
+    defaults: { ...SET_ATTRIBUTE_DEFAULT_OPTIONS.defaults, ...options?.defaults }
+  }
 
   return {
     [$type]: 'set',
@@ -66,6 +70,11 @@ export const set: SetAttributeTyper = <
     hidden: () => set(elements, { ...appliedOptions, hidden: true }),
     key: () => set(elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => set(elements, { ...appliedOptions, savedAs: nextSavedAs }),
+    keyDefault: nextKeyDefault =>
+      set(elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, key: nextKeyDefault }
+      }),
     putDefault: nextPutDefault =>
       set(elements, {
         ...appliedOptions,
@@ -76,8 +85,14 @@ export const set: SetAttributeTyper = <
         ...appliedOptions,
         defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
       }),
-    defaults: nextDefaults =>
-      set(elements, { ...appliedOptions, defaults: { put: nextDefaults, update: nextDefaults } })
+    default: nextDefault =>
+      set(elements, {
+        ...appliedOptions,
+        defaults: {
+          ...appliedOptions.defaults,
+          [appliedOptions.key ? 'key' : 'put']: nextDefault
+        }
+      })
   } as $SetAttribute<
     ELEMENTS,
     InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>

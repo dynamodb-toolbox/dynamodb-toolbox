@@ -12,6 +12,7 @@ export type TimestampAttribute<
     savedAs: SAVED_AS
     enum: undefined
     defaults: {
+      key: undefined
       put: () => string
       // TODO: Act differently for created & modified
       update: undefined
