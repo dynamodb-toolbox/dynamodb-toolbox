@@ -67,7 +67,7 @@ describe('set', () => {
   it('rejects elements with default values', () => {
     const invalidSetA = set(
       // @ts-expect-error
-      strElement.defaults('foo')
+      strElement.default('foo')
     )
 
     const invalidCallA = () => freezeSetAttribute(invalidSetA, path)
@@ -79,7 +79,7 @@ describe('set', () => {
 
     const invalidSetB = set(
       // @ts-expect-error
-      strElement.defaults(ComputedDefault)
+      strElement.default(ComputedDefault)
     )
 
     const invalidCallB = () => freezeSetAttribute(invalidSetB, path)
@@ -103,6 +103,7 @@ describe('set', () => {
         [$key]: false
         [$savedAs]: undefined
         [$defaults]: {
+          key: undefined
           put: undefined
           update: undefined
         }
@@ -125,6 +126,7 @@ describe('set', () => {
       [$savedAs]: undefined,
       [$hidden]: false,
       [$defaults]: {
+        key: undefined,
         put: undefined,
         update: undefined
       }
@@ -224,38 +226,112 @@ describe('set', () => {
   })
 
   it('accepts ComputedDefault as default value (option)', () => {
-    const st = set(strElement, { defaults: { put: ComputedDefault, update: undefined } })
+    const stA = set(strElement, {
+      defaults: { key: ComputedDefault, put: undefined, update: undefined }
+    })
 
-    const assertSet: A.Contains<
-      typeof st,
-      { [$defaults]: { put: ComputedDefault; update: undefined } }
+    const assertSetA: A.Contains<
+      typeof stA,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
     > = 1
-    assertSet
+    assertSetA
 
-    expect(st).toMatchObject({ [$defaults]: { put: ComputedDefault, update: undefined } })
+    expect(stA).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+    })
+
+    const stB = set(strElement, {
+      defaults: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const assertSetB: A.Contains<
+      typeof stB,
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+    > = 1
+    assertSetB
+
+    expect(stB).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const stC = set(strElement, {
+      defaults: { key: undefined, put: undefined, update: ComputedDefault }
+    })
+
+    const assertSetC: A.Contains<
+      typeof stC,
+      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+    > = 1
+    assertSetC
+
+    expect(stC).toMatchObject({
+      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+    })
   })
 
-  it('accepts ComputedDefault as default value (option)', () => {
-    const st = set(strElement).updateDefault(ComputedDefault)
+  it('accepts ComputedDefault as default value (method)', () => {
+    const stA = set(strElement).keyDefault(ComputedDefault)
 
-    const assertSet: A.Contains<
-      typeof st,
-      { [$defaults]: { put: undefined; update: ComputedDefault } }
+    const assertSetA: A.Contains<
+      typeof stA,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
     > = 1
-    assertSet
+    assertSetA
 
-    expect(st).toMatchObject({ [$defaults]: { put: undefined, update: ComputedDefault } })
+    expect(stA).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+    })
+
+    const stB = set(strElement).putDefault(ComputedDefault)
+
+    const assertSetB: A.Contains<
+      typeof stB,
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+    > = 1
+    assertSetB
+
+    expect(stB).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+
+    const stC = set(strElement).updateDefault(ComputedDefault)
+
+    const assertSetC: A.Contains<
+      typeof stC,
+      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+    > = 1
+    assertSetC
+
+    expect(stC).toMatchObject({
+      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+    })
   })
 
-  it('accepts ComputedDefault as default values (option)', () => {
-    const st = set(strElement).defaults(ComputedDefault)
+  it('returns string with PUT default value if it is not key (default shorthand)', () => {
+    const st = set(string()).default(ComputedDefault)
 
-    const assertSet: A.Contains<
+    const assertSt: A.Contains<
       typeof st,
-      { [$defaults]: { put: ComputedDefault; update: ComputedDefault } }
+      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
     > = 1
-    assertSet
+    assertSt
 
-    expect(st).toMatchObject({ [$defaults]: { put: ComputedDefault, update: ComputedDefault } })
+    expect(st).toMatchObject({
+      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+    })
+  })
+
+  it('returns string with KEY default value if it is key (default shorthand)', () => {
+    const st = set(string()).key().default(ComputedDefault)
+
+    const assertSt: A.Contains<
+      typeof st,
+      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+    > = 1
+    assertSt
+
+    expect(st).toMatchObject({
+      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+    })
   })
 })

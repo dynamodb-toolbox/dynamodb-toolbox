@@ -20,6 +20,7 @@ interface PrimitiveAttributeStateConstraint<
 > extends AttributeSharedStateConstraint {
   enum: PrimitiveAttributeEnumValues<TYPE>
   defaults: {
+    key: PrimitiveAttributeDefaultValue<TYPE>
     put: PrimitiveAttributeDefaultValue<TYPE>
     update: PrimitiveAttributeDefaultValue<TYPE>
   }
@@ -76,7 +77,7 @@ export interface $PrimitiveAttribute<
     ...nextEnum: NEXT_ENUM
   ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', NEXT_ENUM>>
   /**
-   * Shorthand for `enum(constantValue).defaults(constantValue)`
+   * Shorthand for `enum(constantValue).default(constantValue)`
    *
    * @param constantValue Constant value
    * @example
@@ -86,10 +87,30 @@ export interface $PrimitiveAttribute<
     constant: CONSTANT
   ) => $PrimitiveAttribute<
     $TYPE,
-    O.Update<O.Update<STATE, 'enum', [CONSTANT]>, 'defaults', { put: CONSTANT; update: CONSTANT }>
+    O.Update<
+      O.Update<STATE, 'enum', [CONSTANT]>,
+      'defaults',
+      O.Update<STATE['defaults'], STATE['key'] extends true ? 'key' : 'put', CONSTANT>
+    >
   >
   /**
-   * Provide a default value for attribute in PUT commands (or tag attribute as having a computed default value)
+   * Provide a default value for attribute in Primary Key computing
+   *
+   * @param nextKeyDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   */
+  keyDefault: <
+    NEXT_KEY_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
+      (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
+        ? STATE['enum'][number] | (() => STATE['enum'][number])
+        : unknown)
+  >(
+    nextKeyDefault: NEXT_KEY_DEFAULT
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'key', NEXT_KEY_DEFAULT>>
+  >
+  /**
+   * Provide a default value for attribute in PUT commands
    *
    * @param nextPutDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
@@ -105,7 +126,7 @@ export interface $PrimitiveAttribute<
     O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
   >
   /**
-   * Provide a default value for attribute in UPDATE commands (or tag attribute as having a computed default value)
+   * Provide a default value for attribute in UPDATE commands
    *
    * @param nextUpdateDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
@@ -121,20 +142,24 @@ export interface $PrimitiveAttribute<
     O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
   >
   /**
-   * Provide a default value for attribute in all commands (or tag attribute as having a computed default value)
+   * Provide a default value for attribute in PUT commands / Primary Key computing if attribute is tagged as key
    *
-   * @param nextDefaults `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   * @param nextDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
-  defaults: <
-    NEXT_DEFAULTS extends PrimitiveAttributeDefaultValue<$TYPE> &
+  default: <
+    NEXT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
       (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
         ? STATE['enum'][number] | (() => STATE['enum'][number])
         : unknown)
   >(
-    nextDefaults: NEXT_DEFAULTS
+    nextDefault: NEXT_DEFAULT
   ) => $PrimitiveAttribute<
     $TYPE,
-    O.Update<STATE, 'defaults', { put: NEXT_DEFAULTS; update: NEXT_DEFAULTS }>
+    O.Update<
+      STATE,
+      'defaults',
+      O.Update<STATE['defaults'], STATE['key'] extends true ? 'key' : 'put', NEXT_DEFAULT>
+    >
   >
 }
 

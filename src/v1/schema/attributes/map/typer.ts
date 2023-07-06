@@ -40,7 +40,11 @@ export const map: MapAttributeTyper = <
   attributes: Narrow<ATTRIBUTES>,
   options?: NarrowObject<OPTIONS>
 ) => {
-  const appliedOptions = { ...MAP_DEFAULT_OPTIONS, ...options }
+  const appliedOptions = {
+    ...MAP_DEFAULT_OPTIONS,
+    ...options,
+    defaults: { ...MAP_DEFAULT_OPTIONS.defaults, ...options?.defaults }
+  }
 
   return {
     [$type]: 'map',
@@ -57,6 +61,11 @@ export const map: MapAttributeTyper = <
     hidden: () => map(attributes, { ...appliedOptions, hidden: true }),
     key: () => map(attributes, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => map(attributes, { ...appliedOptions, savedAs: nextSavedAs }),
+    keyDefault: nextKeyDefault =>
+      map(attributes, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, key: nextKeyDefault }
+      }),
     putDefault: nextPutDefault =>
       map(attributes, {
         ...appliedOptions,
@@ -67,10 +76,10 @@ export const map: MapAttributeTyper = <
         ...appliedOptions,
         defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
       }),
-    defaults: nextDefaults =>
+    default: nextDefault =>
       map(attributes, {
         ...appliedOptions,
-        defaults: { ...appliedOptions.defaults, put: nextDefaults, update: nextDefaults }
+        defaults: { ...appliedOptions.defaults, [appliedOptions.key ? 'key' : 'put']: nextDefault }
       })
   } as $MapAttribute<
     ATTRIBUTES,

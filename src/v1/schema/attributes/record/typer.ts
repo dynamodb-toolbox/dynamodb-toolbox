@@ -57,7 +57,14 @@ export const record: RecordAttributeTyper = <
   elements: ELEMENTS,
   options?: NarrowObject<OPTIONS>
 ) => {
-  const appliedOptions = { ...RECORD_DEFAULT_OPTIONS, ...options }
+  const appliedOptions = {
+    ...RECORD_DEFAULT_OPTIONS,
+    ...options,
+    defaults: {
+      ...RECORD_DEFAULT_OPTIONS.defaults,
+      ...options?.defaults
+    }
+  }
 
   return {
     [$type]: 'record',
@@ -75,6 +82,11 @@ export const record: RecordAttributeTyper = <
     hidden: () => record(keys, elements, { ...appliedOptions, hidden: true }),
     key: () => record(keys, elements, { ...appliedOptions, key: true, required: 'always' }),
     savedAs: nextSavedAs => record(keys, elements, { ...appliedOptions, savedAs: nextSavedAs }),
+    keyDefault: nextKeyDefault =>
+      record(keys, elements, {
+        ...appliedOptions,
+        defaults: { ...appliedOptions.defaults, key: nextKeyDefault }
+      }),
     putDefault: nextPutDefault =>
       record(keys, elements, {
         ...appliedOptions,
@@ -85,10 +97,13 @@ export const record: RecordAttributeTyper = <
         ...appliedOptions,
         defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
       }),
-    defaults: nextDefaults =>
+    default: nextKeyDefault =>
       record(keys, elements, {
         ...appliedOptions,
-        defaults: { put: nextDefaults, update: nextDefaults }
+        defaults: {
+          ...appliedOptions.defaults,
+          [appliedOptions.key ? 'key' : 'put']: nextKeyDefault
+        }
       })
   } as $RecordAttribute<
     KEYS,

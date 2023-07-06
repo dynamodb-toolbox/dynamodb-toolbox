@@ -12,8 +12,7 @@ const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean =>
     keyAttribute !== undefined &&
     keyAttribute.key &&
     keyAttribute.type === key.type &&
-    // TODO: Use defaults from get/update etc...
-    (keyAttribute.required === 'always' || keyAttribute.defaults.put !== undefined)
+    (keyAttribute.required === 'always' || keyAttribute.defaults.key !== undefined)
   )
 }
 

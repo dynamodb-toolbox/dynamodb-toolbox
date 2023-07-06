@@ -13,6 +13,7 @@ import type { $SetAttributeElements, SetAttributeElements } from './types'
 
 interface SetAttributeStateConstraint extends AttributeSharedStateConstraint {
   defaults: {
+    key: ComputedDefault | undefined
     put: ComputedDefault | undefined
     update: ComputedDefault | undefined
   }
@@ -58,37 +59,52 @@ export interface $SetAttribute<
     nextSavedAs: NEXT_SAVED_AS
   ) => $SetAttribute<$ELEMENTS, O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
   /**
-   * Tag attribute as having a computed default value in PUT commands
+   * Provide a default value for attribute in Primary Key computing
    *
-   * @param nextPutDefaultValue `ComputedDefault`
+   * @param nextKeyDefault `ComputedDefault`
+   */
+  keyDefault: <NEXT_KEY_DEFAULT extends ComputedDefault | undefined>(
+    nextKeyDefault: NEXT_KEY_DEFAULT
+  ) => $SetAttribute<
+    $ELEMENTS,
+    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'key', NEXT_KEY_DEFAULT>>
+  >
+  /**
+   * Provide a default value for attribute in PUT commands
+   *
+   * @param nextPutDefault `ComputedDefault`
    */
   putDefault: <NEXT_PUT_DEFAULT extends ComputedDefault | undefined>(
-    nextPutDefaultValue: NEXT_PUT_DEFAULT
+    nextPutDefault: NEXT_PUT_DEFAULT
   ) => $SetAttribute<
     $ELEMENTS,
     O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
   >
   /**
-   * Tag attribute as having a computed default value in UPDATE commands
+   * Provide a default value for attribute in UPDATE commands
    *
-   * @param nextUpdateDefaultValue `ComputedDefault`
+   * @param nextUpdateDefault `ComputedDefault`
    */
   updateDefault: <NEXT_UPDATE_DEFAULT extends ComputedDefault | undefined>(
-    nextUpdateDefaultValue: NEXT_UPDATE_DEFAULT
+    nextUpdateDefault: NEXT_UPDATE_DEFAULT
   ) => $SetAttribute<
     $ELEMENTS,
     O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
   >
   /**
-   * Tag attribute as having computed default values in all commands
+   * Provide a default value for attribute in PUT commands / Primary Key computing if attribute is tagged as key
    *
-   * @param nextDefaultValue `ComputedDefault`
+   * @param nextDefault `ComputedDefault`
    */
-  defaults: <NEXT_DEFAULT extends ComputedDefault | undefined>(
-    nextDefaultValue: NEXT_DEFAULT
+  default: <NEXT_DEFAULT extends ComputedDefault | undefined>(
+    nextUpdateDefault: NEXT_DEFAULT
   ) => $SetAttribute<
     $ELEMENTS,
-    O.Update<STATE, 'defaults', { put: NEXT_DEFAULT; update: NEXT_DEFAULT }>
+    O.Update<
+      STATE,
+      'defaults',
+      O.Update<STATE['defaults'], STATE['key'] extends true ? 'key' : 'put', NEXT_DEFAULT>
+    >
   >
 }
 

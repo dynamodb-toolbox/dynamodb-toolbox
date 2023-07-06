@@ -83,6 +83,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
       savedAs: getTimestampOptionValue(timestamps, 'created', 'savedAs'),
       enum: undefined,
       defaults: {
+        key: undefined,
         put: () => new Date().toISOString(),
         update: undefined
       }
@@ -107,6 +108,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
       savedAs: getTimestampOptionValue(timestamps, 'modified', 'savedAs'),
       enum: undefined,
       defaults: {
+        key: undefined,
         put: () => new Date().toISOString(),
         // TODO: Use () => new Date().toISOString() here
         update: undefined
