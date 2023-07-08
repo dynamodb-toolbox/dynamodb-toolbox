@@ -128,7 +128,7 @@ const TestEntityGSI = new Entity({
 } as const)
 
 describe('update', () => {
-  it.only('creates default update', () => {
+  it('creates default update', () => {
     const {
       TableName,
       Key,
