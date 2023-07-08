@@ -25,6 +25,7 @@ import type {
   transactWriteParamsOptions,
 } from './types'
 
+import { ExpressionId } from '../../lib/expressionId'
 import { error, conditionError, If, Compute } from '../../lib/utils'
 import {
   BatchGetCommand,
@@ -515,6 +516,9 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       ..._args // capture extra arguments
     } = options
 
+    // Initialize the id generator
+    const expressionId = new ExpressionId()
+
     // Remove other valid options from options
     const args = Object.keys(_args).filter(x => !['execute', 'parse'].includes(x))
 
@@ -553,11 +557,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       select !== undefined &&
       (typeof select !== 'string' ||
         !['ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', 'COUNT'].includes(
-          select.toUpperCase(),
+          select.toUpperCase()
         ))
     ) {
       error(
-        `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`,
+        `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
       )
     }
 
@@ -583,7 +587,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
 
     // Default names and values
     let ExpressionAttributeNames: { [key: string]: any } = {
-      '#pk': (index && this.Table.indexes[index].partitionKey) || this.Table.partitionKey,
+      '#pk': (index && this.Table.indexes[index].partitionKey) || this.Table.partitionKey
     }
     let ExpressionAttributeValues: { [key: string]: any } = { ':pk': pk }
     let KeyConditionExpression = '#pk = :pk'
@@ -674,7 +678,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     // If filter expressions
     if (filters) {
       // Parse the filter
-      const { expression, names, values } = parseFilters(filters, this, entity)
+      const { expression, names, values } = parseFilters(filters, this, expressionId, entity)
 
       if (Object.keys(names).length > 0) {
         // TODO: alias attribute field names
@@ -693,7 +697,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         attributes,
         this,
         entity!,
-        true,
+        true
       )
 
       if (Object.keys(names).length > 0) {
@@ -711,7 +715,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         TableName: this.name,
         KeyConditionExpression,
         ExpressionAttributeNames,
-        ExpressionAttributeValues,
+        ExpressionAttributeValues
       },
       FilterExpression ? { FilterExpression } : null,
       ProjectionExpression ? { ProjectionExpression } : null,
@@ -722,7 +726,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       select ? { Select: select.toUpperCase() } : null,
       startKey ? { ExclusiveStartKey: startKey } : null,
-      typeof params === 'object' ? params : null,
+      typeof params === 'object' ? params : null
     )
 
     return projections ? { payload, EntityProjections, TableProjections } : payload
@@ -823,6 +827,9 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       ..._args // capture extra arguments
     } = options
 
+    // Initialize the id generator
+    const expressionId = new ExpressionId()
+
     // Remove other valid options from options
     const args = Object.keys(_args).filter(x => !['execute', 'parse'].includes(x))
 
@@ -850,11 +857,11 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       select !== undefined &&
       (typeof select !== 'string' ||
         !['ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', 'COUNT'].includes(
-          select.toUpperCase(),
+          select.toUpperCase()
         ))
     ) {
       error(
-        `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`,
+        `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
       )
     }
 
@@ -888,7 +895,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       (!Number.isInteger(segment) || segment < 0 || segment >= segments!)
     ) {
       error(
-        `'segment' must be an integer greater than or equal to 0 and less than the total number of segments`,
+        `'segment' must be an integer greater than or equal to 0 and less than the total number of segments`
       )
     }
 
@@ -910,7 +917,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     // If filter expressions
     if (filters) {
       // Parse the filter
-      const { expression, names, values } = parseFilters(filters, this, entity)
+      const { expression, names, values } = parseFilters(filters, this, expressionId, entity)
 
       if (Object.keys(names).length > 0) {
         // TODO: alias attribute field names
@@ -929,7 +936,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
         attributes,
         this,
         entity!,
-        true,
+        true
       )
 
       if (Object.keys(names).length > 0) {
@@ -944,7 +951,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
     // Generate the payload
     const payload = Object.assign(
       {
-        TableName: this.name,
+        TableName: this.name
       },
       Object.keys(ExpressionAttributeNames).length ? { ExpressionAttributeNames } : null,
       Object.keys(ExpressionAttributeValues).length ? { ExpressionAttributeValues } : null,
@@ -958,7 +965,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       select ? { Select: select.toUpperCase() } : null,
       startKey ? { ExclusiveStartKey: startKey } : null,
-      typeof params === 'object' ? params : null,
+      typeof params === 'object' ? params : null
     )
 
     return meta ? { payload, EntityProjections, TableProjections } : payload

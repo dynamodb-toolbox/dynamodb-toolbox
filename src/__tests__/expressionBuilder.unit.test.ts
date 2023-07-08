@@ -4,6 +4,7 @@ import {
   default as expressionBuilder,
   SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS
 } from '../lib/expressionBuilder'
+import { ExpressionId } from '../lib/expressionId'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -26,6 +27,12 @@ new Entity({
 } as const)
 
 describe('expressionBuilder', () => {
+  let expressionId = new ExpressionId()
+
+  beforeEach(() => {
+    expressionId = new ExpressionId()
+  })
+
   it('builds complex expression', () => {
     const nested_exp = [
       { attr: 'a', eq: 'b' },
@@ -56,7 +63,7 @@ describe('expressionBuilder', () => {
       ]
     ]
 
-    const result = expressionBuilder(nested_exp, TestTable, 'TestEntity')
+    const result = expressionBuilder(nested_exp, TestTable, expressionId, 'TestEntity')
 
     expect(result.names).toEqual({
       '#attr1': 'a',
@@ -100,234 +107,234 @@ describe('expressionBuilder', () => {
   })
 
   it('coerces expression input to array', () => {
-    const result = expressionBuilder({ attr: 'a', eq: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', eq: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it('fail with conditional operator errors', () => {
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', ne: 'b' }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', ne: 'b' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', in: ['b'] }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', in: ['b'] }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', lt: 'b' }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', lt: 'b' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', lte: 'b' }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', lte: 'b' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', gt: 'b' }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', gt: 'b' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', gte: 'b' }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', gte: 'b' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', between: ['b', 'c'] }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', between: ['b', 'c'] }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', exists: false }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', exists: false }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', contains: 'b' }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', contains: 'b' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', beginsWith: 'b' }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', beginsWith: 'b' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: 'b', type: 'string' }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', type: 'string' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`You can only supply one filter condition per query. Already using 'eq'`)
   })
 
   it('fails with unknown arguments', () => {
     expect(() =>
       // @ts-expect-error
-      expressionBuilder({ attr: 'a', eq: 'b', invalidArg: true }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: 'b', invalidArg: true }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`Invalid expression options: invalidArg`)
   })
 
   it('fails with invalid entity', () => {
-    expect(() => expressionBuilder({ attr: 'a', eq: 'b' }, TestTable, 'UnknownEntity')).toThrow(
+    expect(() => expressionBuilder({ attr: 'a', eq: 'b' }, TestTable, expressionId, 'UnknownEntity')).toThrow(
       `'entity' value of 'UnknownEntity' must be a string and a valid table Entity name`
     )
   })
 
   it('fails when no attr or size argument', () => {
-    expect(() => expressionBuilder({ eq: 'b' }, TestTable, 'TestEntity')).toThrow(
+    expect(() => expressionBuilder({ eq: 'b' }, TestTable, expressionId, 'TestEntity')).toThrow(
       `A string for 'attr' or 'size' is required for condition expressions`
     )
   })
 
   it('falls back to table attributes if no entity specified', () => {
-    const result = expressionBuilder({ attr: 'a', eq: 'b' }, TestTable)
+    const result = expressionBuilder({ attr: 'a', eq: 'b' }, TestTable, expressionId)
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it('uses size value and checks entity attribute', () => {
-    const result = expressionBuilder({ size: 'a', eq: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ size: 'a', eq: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('size(#attr1) = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it('uses size value and checks nested entity attribute', () => {
-    const result = expressionBuilder({ size: 'a.b.c', eq: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ size: 'a.b.c', eq: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('size(#attr1_0.#attr1_1.#attr1_2) = :attr1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it('uses size value and checks table attribute', () => {
-    const result = expressionBuilder({ size: 'a', eq: 'b' }, TestTable)
+    const result = expressionBuilder({ size: 'a', eq: 'b' }, TestTable, expressionId)
     expect(result.expression).toBe('size(#attr1) = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it('uses size value and checks nested table attribute', () => {
-    const result = expressionBuilder({ size: 'a.b.c', eq: 'd' }, TestTable)
+    const result = expressionBuilder({ size: 'a.b.c', eq: 'd' }, TestTable, expressionId)
     expect(result.expression).toBe('size(#attr1_0.#attr1_1.#attr1_2) = :attr1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it(`generates an 'eq' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', eq: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', eq: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`generates an 'eq' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', eq: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', eq: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 = :attr1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it(`generates an 'eq' clause with null/false values`, () => {
-    let result = expressionBuilder({ attr: 'a', eq: false }, TestTable, 'TestEntity')
+    let result = expressionBuilder({ attr: 'a', eq: false }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': false })
 
-    result = expressionBuilder({ attr: 'a', eq: null }, TestTable, 'TestEntity')
+    result = expressionBuilder({ attr: 'a', eq: null }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': null })
 
-    result = expressionBuilder({ attr: 'a', eq: '' }, TestTable, 'TestEntity')
+    result = expressionBuilder({ attr: 'a', eq: '' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 = :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': '' })
   })
 
   it(`generates a 'ne' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', ne: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', ne: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 <> :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`generates a 'ne' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', ne: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', ne: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 <> :attr1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it(`generates an 'ne' clause with null/false values`, () => {
-    let result = expressionBuilder({ attr: 'a', ne: false }, TestTable, 'TestEntity')
+    let result = expressionBuilder({ attr: 'a', ne: false }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 <> :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': false })
 
-    result = expressionBuilder({ attr: 'a', ne: null }, TestTable, 'TestEntity')
+    result = expressionBuilder({ attr: 'a', ne: null }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 <> :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': null })
 
-    result = expressionBuilder({ attr: 'a', ne: '' }, TestTable, 'TestEntity')
+    result = expressionBuilder({ attr: 'a', ne: '' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 <> :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': '' })
   })
 
   it(`generates an 'in' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', in: ['b', 'c'] }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', in: ['b', 'c'] }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 IN (:attr1_0,:attr1_1)')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1_0': 'b', ':attr1_1': 'c' })
   })
 
   it(`generates an 'in' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', in: ['d', 'e'] }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', in: ['d', 'e'] }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 IN (:attr1_0,:attr1_1)')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1_0': 'd', ':attr1_1': 'e' })
   })
 
   it(`generates a 'lt' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', lt: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', lt: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 < :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`generates a 'lt' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', lt: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', lt: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 < :attr1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it(`generates a 'lte' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', lte: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', lte: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 <= :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`generates a 'lte' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', lte: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', lte: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 <= :attr1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it(`generates a 'gt' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', gt: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', gt: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 > :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`generates a 'gt' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', gt: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', gt: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 > :attr1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it(`generates a 'gte' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', gte: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', gte: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 >= :attr1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`generates a 'gte' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', gte: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', gte: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 >= :attr1')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it(`generates a 'between' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', between: ['b', 'c'] }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', between: ['b', 'c'] }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 between :attr1_0 and :attr1_1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1_0': 'b', ':attr1_1': 'c' })
@@ -337,6 +344,7 @@ describe('expressionBuilder', () => {
     const result = expressionBuilder(
       { attr: 'a.b.c', between: ['d', 'e'] },
       TestTable,
+      expressionId,
       'TestEntity'
     )
     expect(result.expression).toBe('#attr1_0.#attr1_1.#attr1_2 between :attr1_0 and :attr1_1')
@@ -345,7 +353,7 @@ describe('expressionBuilder', () => {
   })
 
   it(`generates a 'between' clause with 'size'`, () => {
-    const result = expressionBuilder({ size: 'a', between: ['b', 'c'] }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ size: 'a', between: ['b', 'c'] }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('size(#attr1) between :attr1_0 and :attr1_1')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1_0': 'b', ':attr1_1': 'c' })
@@ -355,6 +363,7 @@ describe('expressionBuilder', () => {
     const result = expressionBuilder(
       { size: 'a.b.c', between: ['d', 'e'] },
       TestTable,
+      expressionId,
       'TestEntity'
     )
     expect(result.expression).toBe('size(#attr1_0.#attr1_1.#attr1_2) between :attr1_0 and :attr1_1')
@@ -363,65 +372,65 @@ describe('expressionBuilder', () => {
   })
 
   it(`generates an 'exists' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', exists: true }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', exists: true }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('attribute_exists(#attr1)')
     expect(result.names).toEqual({ '#attr1': 'a' })
   })
 
   it(`generates an 'exists' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', exists: true }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', exists: true }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('attribute_exists(#attr1_0.#attr1_1.#attr1_2)')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
   })
 
   it(`generates a 'not exists' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', exists: false }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', exists: false }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('attribute_not_exists(#attr1)')
     expect(result.names).toEqual({ '#attr1': 'a' })
   })
 
   it(`generates an 'not exists' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', exists: false }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', exists: false }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('attribute_not_exists(#attr1_0.#attr1_1.#attr1_2)')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
   })
 
   it(`generates a 'contains' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', contains: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', contains: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('contains(#attr1,:attr1)')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`generates a 'beginsWith' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', beginsWith: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', beginsWith: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('begins_with(#attr1,:attr1)')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`generates a 'beginsWith' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', beginsWith: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', beginsWith: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('begins_with(#attr1_0.#attr1_1.#attr1_2,:attr1)')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
   })
 
   it(`generates a 'type' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', type: 'b' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', type: 'b' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('attribute_type(#attr1,:attr1)')
     expect(result.names).toEqual({ '#attr1': 'a' })
     expect(result.values).toEqual({ ':attr1': 'b' })
   })
 
   it(`references a secondary attribute in an 'eq' clause`, () => {
-    const result = expressionBuilder({ attr: 'a', eq: { attr: 'b' } }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a', eq: { attr: 'b' } }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('#attr1 = #attr1_ref')
     expect(result.names).toEqual({ '#attr1': 'a', '#attr1_ref': 'b' })
   })
 
   it(`generates a 'type' clause for a nested attribute`, () => {
-    const result = expressionBuilder({ attr: 'a.b.c', type: 'd' }, TestTable, 'TestEntity')
+    const result = expressionBuilder({ attr: 'a.b.c', type: 'd' }, TestTable, expressionId, 'TestEntity')
     expect(result.expression).toBe('attribute_type(#attr1_0.#attr1_1.#attr1_2,:attr1)')
     expect(result.names).toEqual({ '#attr1_0': 'a', '#attr1_1': 'b', '#attr1_2': 'c' })
     expect(result.values).toEqual({ ':attr1': 'd' })
@@ -429,51 +438,51 @@ describe('expressionBuilder', () => {
 
   it(`fails when 'between' value is not an array`, () => {
     // @ts-expect-error
-    expect(() => expressionBuilder({ attr: 'a', between: 'b' }, TestTable, 'TestEntity')).toThrow(
+    expect(() => expressionBuilder({ attr: 'a', between: 'b' }, TestTable, expressionId, 'TestEntity')).toThrow(
       `'between' conditions require an array with two values.`
     )
   })
 
   it(`fails when 'in' value is not an array`, () => {
     // @ts-expect-error
-    expect(() => expressionBuilder({ attr: 'a', in: 'b' }, TestTable, 'TestEntity')).toThrow(
+    expect(() => expressionBuilder({ attr: 'a', in: 'b' }, TestTable, expressionId, 'TestEntity')).toThrow(
       `'in' conditions require an array.`
     )
   })
 
   it(`fails when 'in' clause doesn't have an attr`, () => {
-    expect(() => expressionBuilder({ size: 'a', in: ['b'] }, TestTable, 'TestEntity')).toThrow(
+    expect(() => expressionBuilder({ size: 'a', in: ['b'] }, TestTable, expressionId, 'TestEntity')).toThrow(
       `'in' conditions require an 'attr'.`
     )
   })
 
   it(`fails when 'exists' clause doesn't have an attr`, () => {
-    expect(() => expressionBuilder({ size: 'a', exists: true }, TestTable, 'TestEntity')).toThrow(
+    expect(() => expressionBuilder({ size: 'a', exists: true }, TestTable, expressionId, 'TestEntity')).toThrow(
       `'exists' conditions require an 'attr'.`
     )
   })
 
   it(`fails when 'beginsWith' clause doesn't have an attr`, () => {
     expect(() =>
-      expressionBuilder({ size: 'a', beginsWith: 'b' }, TestTable, 'TestEntity')
+      expressionBuilder({ size: 'a', beginsWith: 'b' }, TestTable, expressionId, 'TestEntity')
     ).toThrow(`'beginsWith' conditions require an 'attr'.`)
   })
 
   it(`fails when 'contains' clause doesn't have an attr`, () => {
-    expect(() => expressionBuilder({ size: 'a', contains: 'b' }, TestTable, 'TestEntity')).toThrow(
+    expect(() => expressionBuilder({ size: 'a', contains: 'b' }, TestTable, expressionId, 'TestEntity')).toThrow(
       `'contains' conditions require an 'attr'.`
     )
   })
 
   it(`fails when 'type' clause doesn't have an attr`, () => {
-    expect(() => expressionBuilder({ size: 'a', type: 'b' }, TestTable, 'TestEntity')).toThrow(
+    expect(() => expressionBuilder({ size: 'a', type: 'b' }, TestTable, expressionId, 'TestEntity')).toThrow(
       `'type' conditions require an 'attr'.`
     )
   })
 
   it(`fails when 'value' type AttrRef is used without a property name`, () => {
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: { attr: '' } }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: { attr: '' } }, TestTable, expressionId, 'TestEntity')
     ).toThrow(
       `AttrRef must have an attr field which references another attribute in the same entity.`
     )
@@ -481,14 +490,14 @@ describe('expressionBuilder', () => {
 
   it(`fails when 'value' type AttrRef is used with a non-existing property name`, () => {
     expect(() =>
-      expressionBuilder({ attr: 'a', eq: { attr: 'nonexistent' } }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', eq: { attr: 'nonexistent' } }, TestTable, expressionId, 'TestEntity')
     ).toThrow('\'nonexistent\' is not a valid attribute within the given entity/table.')
   })
 
   it(`fails when 'value' type AttrRef is used with an unsupported operator`, () => {
     expect(() =>
       // @ts-expect-error
-      expressionBuilder({ attr: 'a', beginsWith: { attr: 'some-attr' } }, TestTable, 'TestEntity')
+      expressionBuilder({ attr: 'a', beginsWith: { attr: 'some-attr' } }, TestTable, expressionId, 'TestEntity')
     ).toThrow(
       `AttrRef is only supported for the following operators: ${SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS.join(
         ', '
@@ -497,22 +506,22 @@ describe('expressionBuilder', () => {
   })
 
   it(`fails when no condition is provided`, () => {
-    expect(() => expressionBuilder({ attr: 'a' }, TestTable, 'TestEntity')).toThrow(
+    expect(() => expressionBuilder({ attr: 'a' }, TestTable, expressionId, 'TestEntity')).toThrow(
       `A condition is required`
     )
   })
 
   it('allows 0 in comparaison expression', () => {
-    expect(() => expressionBuilder({ attr: 'a', lte: 0 }, TestTable, 'TestEntity')).not.toThrow(
+    expect(() => expressionBuilder({ attr: 'a', lte: 0 }, TestTable, expressionId, 'TestEntity')).not.toThrow(
       `A condition is required`
     )
-    expect(() => expressionBuilder({ attr: 'a', lt: 0 }, TestTable, 'TestEntity')).not.toThrow(
+    expect(() => expressionBuilder({ attr: 'a', lt: 0 }, TestTable, expressionId, 'TestEntity')).not.toThrow(
       `A condition is required`
     )
-    expect(() => expressionBuilder({ attr: 'a', gte: 0 }, TestTable, 'TestEntity')).not.toThrow(
+    expect(() => expressionBuilder({ attr: 'a', gte: 0 }, TestTable, expressionId, 'TestEntity')).not.toThrow(
       `A condition is required`
     )
-    expect(() => expressionBuilder({ attr: 'a', gt: 0 }, TestTable, 'TestEntity')).not.toThrow(
+    expect(() => expressionBuilder({ attr: 'a', gt: 0 }, TestTable, expressionId, 'TestEntity')).not.toThrow(
       `A condition is required`
     )
   })
@@ -520,8 +529,8 @@ describe('expressionBuilder', () => {
   it('doesn\'t mutate input expression', () => {
     const expObj = { attr: 'a', eq: 'b' }
     const expArr = [{ attr: 'a', eq: 'b' }]
-    expressionBuilder(expObj, TestTable, 'TestEntity')
-    expressionBuilder(expArr, TestTable, 'TestEntity')
+    expressionBuilder(expObj, TestTable, expressionId, 'TestEntity')
+    expressionBuilder(expArr, TestTable, expressionId, 'TestEntity')
     expect(expObj).toEqual({ attr: 'a', eq: 'b' })
     expect(expArr).toEqual([{ attr: 'a', eq: 'b' }])
   })

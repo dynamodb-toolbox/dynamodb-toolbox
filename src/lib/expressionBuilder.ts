@@ -12,6 +12,7 @@ import { A } from 'ts-toolbelt'
 import checkAttribute from './checkAttribute'
 import { error, toDynamoBigInt } from './utils'
 import { TableDef } from '../classes/Table'
+import { ExpressionId } from './expressionId'
 
 interface AttrRef {
   attr: string
@@ -56,6 +57,7 @@ const buildExpression = <
 >(
     exp: FilterExpressions<Attr>,
     table: EntityTable,
+    expressionId: ExpressionId,
     entity?: string,
     group = 0,
     level = 0
@@ -74,7 +76,7 @@ const buildExpression = <
     // If clause is nested in an array
     if (Array.isArray(clauses[id])) {
       // Build the sub clause
-      const sub = buildExpression(clauses[id], table, entity, group, level)
+      const sub = buildExpression(clauses[id], table, expressionId, entity, group, level)
 
       // If no logic at this level, capture from sub clause
       logic = logic ? logic : sub.logic
@@ -97,7 +99,7 @@ const buildExpression = <
       if (entity && !exp.entity) exp.entity = entity
 
       // Parse the clause
-      const clause = parseClause<EntityTable>(exp, group, table)
+      const clause = parseClause<EntityTable>(exp, group, table, expressionId)
 
       // Concat to expression and merge names and values
       expression += `${id > 0 ? ` ${clause.logic} ` : ''}${clause.clause}`
@@ -129,7 +131,8 @@ const conditionError = (op?: string) =>
 const parseClause = <EntityTable extends TableDef | undefined = undefined>(
   _clause: FilterExpression,
   grp: number,
-  table: EntityTable
+  table: EntityTable,
+  expressionId: ExpressionId
 ) => {
   if (!table) {
     throw new Error(`'table' should be defined`)
@@ -184,11 +187,13 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
         : error(`A string for 'attr' or 'size' is required for condition expressions`)
 
   const pathParts = path.split('.')
+  const nameKey = expressionId.get(`#attr${grp}`)
+  const valueKey = expressionId.get(`:attr${grp}`)
 
   if (pathParts.length === 1) {
-    names[`#attr${grp}`] = pathParts[0]
+    names[nameKey] = pathParts[0]
   } else {
-    pathParts.forEach((part, i) => (names[`#attr${grp}_${i}`] = part))
+    pathParts.forEach((part, i) => (names[`${nameKey}_${i}`] = part))
   }
 
   const operand = Object.keys(names).join('.')
@@ -263,9 +268,11 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
       // Verify array input
       if (Array.isArray(value) && value.length === 2) {
         // Add values and special key condition
-        values[`:attr${grp}_0`] = toDynamoValue(value[0])
-        values[`:attr${grp}_1`] = toDynamoValue(value[1])
-        clause = `${size ? `size(${operand})` : operand} between :attr${grp}_0 and :attr${grp}_1`
+        const key0 = `${valueKey}_0`
+        const key1 = `${valueKey}_1`
+        values[key0] = toDynamoValue(value[0])
+        values[key1] = toDynamoValue(value[1])
+        clause = `${size ? `size(${operand})` : operand} between ${key0} and ${key1}`
       } else {
         error(`'between' conditions require an array with two values.`)
       }
@@ -276,8 +283,9 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
         // Add values and special key condition
         clause = `${operand} IN (${value
           .map((x, i) => {
-            values[`:attr${grp}_${i}`] = toDynamoValue(x)
-            return `:attr${grp}_${i}`
+            const key = `${valueKey}_${i}`
+            values[key] = toDynamoValue(x)
+            return key
           })
           .join(',')})`
       } else {
@@ -299,27 +307,27 @@ const parseClause = <EntityTable extends TableDef | undefined = undefined>(
           `AttrRef must have an attr field which references another attribute in the same entity.`
         )
 
-      names[`#attr${grp}_ref`] = checkAttribute(
+      names[`${nameKey}_ref`] = checkAttribute(
         ref.attr!,
         entity ? table[entity].schema.attributes : table.Table.attributes
       )
-      clause = `${operand} ${operator} #attr${grp}_ref`
+      clause = `${operand} ${operator} ${nameKey}_ref`
     } else {
       // Add value
-      values[`:attr${grp}`] = toDynamoValue(value)
+      values[valueKey] = toDynamoValue(value)
       // If begins_with, add special key condition
       if (operator === 'BEGINS_WITH') {
         if (!attr) error(`'beginsWith' conditions require an 'attr'.`)
-        clause = `begins_with(${operand},:attr${grp})`
+        clause = `begins_with(${operand},${valueKey})`
       } else if (operator === 'CONTAINS') {
         if (!attr) error(`'contains' conditions require an 'attr'.`)
-        clause = `contains(${operand},:attr${grp})`
+        clause = `contains(${operand},${valueKey})`
       } else if (operator === 'ATTRIBUTE_TYPE') {
         if (!attr) error(`'type' conditions require an 'attr'.`)
         // TODO: validate/convert types
-        clause = `attribute_type(${operand},:attr${grp})`
+        clause = `attribute_type(${operand},${valueKey})`
       } else {
-        clause = `${size ? `size(${operand})` : operand} ${operator} :attr${grp}`
+        clause = `${size ? `size(${operand})` : operand} ${operator} ${valueKey}`
       }
     }
 

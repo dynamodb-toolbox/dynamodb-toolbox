@@ -30,6 +30,7 @@ import getKey from '../../lib/getKey'
 import parseConditions from '../../lib/expressionBuilder'
 import parseProjections from '../../lib/projectionBuilder'
 import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
+import { ExpressionId } from '../../lib/expressionId'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE,
@@ -624,6 +625,9 @@ class Entity<Name extends string = string,
       true,
     )
 
+    // Initialize the id generator
+    const expressionId = new ExpressionId()
+
     const {
       conditions, // ConditionExpression
       capacity, // ReturnConsumedCapacity (none, total, or indexes)
@@ -671,7 +675,7 @@ class Entity<Name extends string = string,
     // If conditions
     if (conditions) {
       // Parse the conditions
-      const { expression, names, values } = parseConditions(conditions, this.table, this.name)
+      const { expression, names, values } = parseConditions(conditions, this.table, expressionId, this.name)
 
       if (Object.keys(names).length > 0) {
         // TODO: alias attribute field names
@@ -883,6 +887,10 @@ class Entity<Name extends string = string,
     // Initialize validateType
     const validateType = validateTypes()
 
+    // Initialize the id generator
+    // Initialize the id generator
+    const expressionId = new ExpressionId()
+
     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
     // Merge defaults
@@ -890,7 +898,7 @@ class Entity<Name extends string = string,
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
-      shouldFilterUnmappedFields,
+      shouldFilterUnmappedFields
     )
 
     // Extract valid options
@@ -931,11 +939,11 @@ class Entity<Name extends string = string,
       returnValues !== undefined &&
       (typeof returnValues !== 'string' ||
         !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(
-          returnValues.toUpperCase(),
+          returnValues.toUpperCase()
         ))
     ) {
       error(
-        `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', OR 'UPDATED_NEW'`,
+        `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', OR 'UPDATED_NEW'`
       )
     }
 
@@ -944,7 +952,12 @@ class Entity<Name extends string = string,
     // If conditions
     if (conditions) {
       // Parse the conditions
-      const { expression, names, values } = parseConditions(conditions, this.table, this.name)
+      const { expression, names, values } = parseConditions(
+        conditions,
+        this.table,
+        expressionId,
+        this.name
+      )
 
       if (Object.keys(names).length > 0) {
         // TODO: alias attribute field names
@@ -963,17 +976,12 @@ class Entity<Name extends string = string,
         error(
           `'${field}${
             this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''
-          }' is a required field`,
-        ),
+          }' is a required field`
+        )
     )
 
     // Get partition and sort keys
-    const Key = getKey()(
-      data,
-      schema.attributes,
-      schema.keys.partitionKey,
-      schema.keys.sortKey,
-    )
+    const Key = getKey()(data, schema.attributes, schema.keys.partitionKey, schema.keys.sortKey)
 
     // Init names and values
     const names: { [key: string]: any } = {}
@@ -981,6 +989,8 @@ class Entity<Name extends string = string,
 
     // Loop through valid fields and add appropriate action
     Object.keys(data).forEach(field => {
+      const nameKey = expressionId.get(`#${field}`)
+      const valueKey = expressionId.get(`:${field}`)
       const mapping = schema.attributes[field]
 
       // Remove attributes
@@ -999,7 +1009,7 @@ class Entity<Name extends string = string,
             error(
               `'${attrs[i]}' is the ${
                 schema.attributes[attrs[i]].partitionKey === true ? 'partitionKey' : 'sortKey'
-              } and cannot be removed`,
+              } and cannot be removed`
             )
           }
           // Verify attribute is not required
@@ -1014,8 +1024,9 @@ class Entity<Name extends string = string,
 
           // Grab the attribute name and add to REMOVE and names
           const attr = schema.attributes[attrs[i]].map || attrs[i]
-          REMOVE.push(`#${attr}`)
-          names[`#${attr}`] = attr
+          const key = expressionId.get(`#${attr}`)
+          REMOVE.push(key)
+          names[key] = attr
         }
       } else if (
         this._table!._removeNulls === true &&
@@ -1025,8 +1036,9 @@ class Entity<Name extends string = string,
       ) {
         // Verify attribute is not required
         if (schema.attributes[field].required) error(`'${field}' is required and cannot be removed`)
-        REMOVE.push(`#${field}`)
-        names[`#${field}`] = field
+        const key = expressionId.get(`#${field}`)
+        REMOVE.push(key)
+        names[key] = field
       } else if (
         // !mapping.partitionKey
         // && !mapping.sortKey
@@ -1041,42 +1053,42 @@ class Entity<Name extends string = string,
           data[field]?.$add !== undefined &&
           data[field]?.$add !== null
         ) {
-          ADD.push(`#${field} :${field}`)
-          values[`:${field}`] = validateType(mapping, field, data[field].$add)
+          ADD.push(`${nameKey} ${valueKey}`)
+          values[valueKey] = validateType(mapping, field, data[field].$add)
           // Add field to names
-          names[`#${field}`] = field
+          names[nameKey] = field
           // if a set and deleting items
         } else if (mapping.type === 'set' && data[field]?.$delete) {
           DELETE.push(`#${field} :${field}`)
-          values[`:${field}`] = validateType(mapping, field, data[field].$delete)
+          values[valueKey] = validateType(mapping, field, data[field].$delete)
           // Add field to names
-          names[`#${field}`] = field
+          names[nameKey] = field
           // if a list and removing items by index
         } else if (mapping.type === 'list' && Array.isArray(data[field]?.$remove)) {
           data[field].$remove.forEach((i: number) => {
             if (typeof i !== 'number') {
               error(`Remove array for '${field}' must only contain numeric indexes`)
             }
-            REMOVE.push(`#${field}[${i}]`)
+            REMOVE.push(expressionId.get(`${nameKey}[${i}]`))
           })
           // Add field to names
-          names[`#${field}`] = field
+          names[expressionId.get(`#${field}`)] = field
           // if list and appending or prepending
         } else if (mapping.type === 'list' && (data[field]?.$append || data[field]?.$prepend)) {
           if (data[field].$append) {
             SET.push(
-              `#${field} = list_append(if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:${field})`,
+              `${nameKey} = list_append(if_not_exists(${nameKey}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,${valueKey})`
             )
-            values[`:${field}`] = validateType(mapping, field, data[field].$append)
+            values[valueKey] = validateType(mapping, field, data[field].$append)
           } else {
             SET.push(
-              `#${field} = list_append(:${field}, if_not_exists(#${field}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`,
+              `${nameKey} = list_append(${valueKey}, if_not_exists(${nameKey}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
             )
-            values[`:${field}`] = validateType(mapping, field, data[field].$prepend)
+            values[valueKey] = validateType(mapping, field, data[field].$prepend)
           }
 
           // Add field to names
-          names[`#${field}`] = field
+          names[nameKey] = field
 
           values[`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
 
@@ -1086,18 +1098,20 @@ class Entity<Name extends string = string,
             if (String(parseInt(i)) !== i) {
               error(`Properties must be numeric to update specific list items in '${field}'`)
             }
-            SET.push(`#${field}[${i}] = :${field}_${i}`)
-            values[`:${field}_${i}`] = data[field][i]
+            SET.push(`${nameKey}[${i}] = ${valueKey}_${i}`)
+            values[`${valueKey}_${i}`] = data[field][i]
           })
           // Add field to names
-          names[`#${field}`] = field
+          names[nameKey] = field
           // if a map and updating by nested attribute/index
         } else if (mapping.type === 'map' && data[field]?.$set) {
           Object.keys(data[field].$set).forEach(f => {
             const props = f.split('.')
-            const acc = [`#${field}`]
+            const propKeys = props.map(expressionId.get)
+            const fieldKey = expressionId.get(field)
+            const acc = [nameKey]
             props.forEach((prop, i) => {
-              const id = `${field}_${props.slice(0, i + 1).join('_')}`
+              const id = `${fieldKey}_${propKeys.slice(0, i + 1).join('_')}`
               // Add names and values
               names[`#${id.replace(/\[(\d+)\]/, '')}`] = prop.replace(/\[(\d+)\]/, '')
               // if the final prop, add the SET and values
@@ -1114,7 +1128,7 @@ class Entity<Name extends string = string,
                   values[`:${value}`] = input.$add
                 } else if (input.$append) {
                   SET.push(
-                    `${path} = list_append(if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :${value})`,
+                    `${path} = list_append(if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :${value})`
                   )
 
                   values[`:${value}`] = input.$append
@@ -1124,7 +1138,7 @@ class Entity<Name extends string = string,
                   ] = ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
                 } else if (input.$prepend) {
                   SET.push(
-                    `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`,
+                    `${path} = list_append(:${value}, if_not_exists(${path}, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
                   )
 
                   values[`:${value}`] = input.$prepend
@@ -1150,7 +1164,7 @@ class Entity<Name extends string = string,
                   Object.keys(input.$set).forEach(i => {
                     if (String(parseInt(i)) !== i) {
                       error(
-                        `Properties must be numeric to update specific list items in '${field}'`,
+                        `Properties must be numeric to update specific list items in '${field}'`
                       )
                     }
                     SET.push(`${path}[${i}] = :${value}_${i}`)
@@ -1166,7 +1180,7 @@ class Entity<Name extends string = string,
 
           const shouldAppendFieldToExpressionNames = Object.keys(data[field].$set).length > 0
           if (shouldAppendFieldToExpressionNames) {
-            names[`#${field}`] = field
+            names[nameKey] = field
           }
           // else add to SET
         } else {
@@ -1178,13 +1192,15 @@ class Entity<Name extends string = string,
             // Push the update to SET
             SET.push(
               // @ts-ignore
-              mapping.default !== undefined && item[mapping.alias || field] === undefined && !mapping.onUpdate
-                ? `#${field} = if_not_exists(#${field},:${field})`
-                : `#${field} = :${field}`,
+              mapping.default !== undefined &&
+                item[mapping.alias || field] === undefined &&
+                !mapping.onUpdate
+                ? `${nameKey} = if_not_exists(${nameKey},${valueKey})`
+                : `${nameKey} = ${valueKey}`
             )
             // Add names and values
-            names[`#${field}`] = field
-            values[`:${field}`] = value
+            names[nameKey] = field
+            values[valueKey] = value
           }
         }
       }
@@ -1207,14 +1223,14 @@ class Entity<Name extends string = string,
         TableName: _table!.name,
         Key,
         UpdateExpression: expression,
-        ExpressionAttributeNames: Object.assign(names, ExpressionAttributeNames),
+        ExpressionAttributeNames: Object.assign(names, ExpressionAttributeNames)
       },
       typeof params === 'object' ? params : {},
       !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : {},
       ConditionExpression ? { ConditionExpression } : {},
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
-      returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
+      returnValues ? { ReturnValues: returnValues.toUpperCase() } : null
     )
 
     return payload
@@ -1395,12 +1411,16 @@ class Entity<Name extends string = string,
 
     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
+    // Initialize the id generator
+    // Initialize the id generator
+    const expressionId = new ExpressionId()
+
     // Merge defaults
     const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
-      shouldFilterUnmappedFields,
+      shouldFilterUnmappedFields
     )
 
     // Extract valid options
@@ -1441,11 +1461,11 @@ class Entity<Name extends string = string,
       returnValues !== undefined &&
       (typeof returnValues !== 'string' ||
         !['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW'].includes(
-          returnValues.toUpperCase(),
+          returnValues.toUpperCase()
         ))
     ) {
       error(
-        `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`,
+        `'returnValues' must be one of 'NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', or 'UPDATED_NEW'`
       )
     }
 
@@ -1456,7 +1476,12 @@ class Entity<Name extends string = string,
     // If conditions
     if (conditions) {
       // Parse the conditions
-      const { expression, names, values } = parseConditions(conditions, this.table, this.name)
+      const { expression, names, values } = parseConditions(
+        conditions,
+        this.table,
+        expressionId,
+        this.name
+      )
 
       if (Object.keys(names).length > 0) {
         // TODO: alias attribute field names
@@ -1475,17 +1500,12 @@ class Entity<Name extends string = string,
         error(
           `'${field}${
             this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''
-          }' is a required field`,
-        ),
+          }' is a required field`
+        )
     )
 
     // Checks for partition and sort keys
-    getKey()(
-      data,
-      schema.attributes,
-      schema.keys.partitionKey,
-      schema.keys.sortKey,
-    )
+    getKey()(data, schema.attributes, schema.keys.partitionKey, schema.keys.sortKey)
 
     // Generate the payload
     const payload = Object.assign(
@@ -1508,7 +1528,7 @@ class Entity<Name extends string = string,
             return Object.assign(acc, { [field]: value })
           }
           return acc
-        }, {}),
+        }, {})
       },
       ExpressionAttributeNames ? { ExpressionAttributeNames } : null,
       !isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : null,
@@ -1516,7 +1536,7 @@ class Entity<Name extends string = string,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
       returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
-      typeof params === 'object' ? params : {},
+      typeof params === 'object' ? params : {}
     )
 
     return payload
