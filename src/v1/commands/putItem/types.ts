@@ -14,9 +14,9 @@ import type {
   AnyOfAttribute,
   AtLeastOnce,
   Always,
+  Never,
   ComputedDefault,
-  ResolvePrimitiveAttribute,
-  Never
+  ResolvePrimitiveAttribute
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
