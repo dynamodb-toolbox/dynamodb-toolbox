@@ -24,6 +24,7 @@ jobs:
       - run: echo "RELEASE_NPM_TAG=${{ github.event.release.prerelease && 'alpha' ||  'latest' }}" >> $GITHUB_ENV
       - run: npm ci
       - run: npm version $RELEASE_VERSION --no-git-tag-version
+      - run: npm run build
       - run: npm publish --access public --tag $RELEASE_NPM_TAG
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
