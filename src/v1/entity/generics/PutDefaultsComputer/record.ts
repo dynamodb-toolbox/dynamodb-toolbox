@@ -1,7 +1,6 @@
 import type { ComputedDefault, RecordAttribute } from 'v1/schema'
 import type { OmitUndefinedProperties } from 'v1/types'
 
-import type { AttributePutItem } from '../PutItem'
 import type { AttributePutItemInput } from '../PutItemInput'
 
 import type { AttributePutDefaultsComputer } from './attribute'
@@ -15,7 +14,7 @@ export type RecordAttributePutDefaultsComputer<
   >,
   RECORD_ATTRIBUTE_DEFAULT_COMPUTER = OmitUndefinedProperties<{
     _record: RECORD_ATTRIBUTE extends { defaults: { put: ComputedDefault } }
-      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItem<RECORD_ATTRIBUTE>
+      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<RECORD_ATTRIBUTE>
       : undefined
     _elements: ELEMENTS_DEFAULT_COMPUTER extends undefined
       ? undefined

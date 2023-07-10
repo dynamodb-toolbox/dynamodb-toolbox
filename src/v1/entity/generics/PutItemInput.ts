@@ -15,10 +15,31 @@ import type {
   AtLeastOnce,
   Always,
   ComputedDefault,
-  ResolvePrimitiveAttribute
+  ResolvePrimitiveAttribute,
+  Never
 } from 'v1/schema'
+import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 
 import type { EntityV2 } from '../class'
+
+type MustBeDefined<
+  ATTRIBUTE extends Attribute,
+  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+> =
+  // Enforce Required attributes that don't have default values
+  ATTRIBUTE extends { required: AtLeastOnce | Always } & (
+    | { key: true; defaults: { key: undefined } }
+    | { key: false; defaults: { put: undefined } }
+  )
+    ? true
+    : REQUIRE_INDEPENDENT_DEFAULTS extends true
+    ? // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
+      ATTRIBUTE extends
+        | { key: true; defaults: { key: undefined | ComputedDefault } }
+        | { key: false; defaults: { put: undefined | ComputedDefault } }
+      ? false
+      : true
+    : false
 
 /**
  * User input of a PUT command for a given Entity or Schema
@@ -35,32 +56,15 @@ export type PutItemInput<
   : Schema extends SCHEMA
   ? ResolvedMapAttribute
   : SCHEMA extends Schema
-  ? O.Required<
-      O.Partial<
-        {
-          // Keep all attributes
-          [KEY in keyof SCHEMA['attributes']]: AttributePutItemInput<
-            SCHEMA['attributes'][KEY],
-            REQUIRE_INDEPENDENT_DEFAULTS
-          >
-        }
-      >,
-      // Enforce Required attributes that don't have default values
-      | O.SelectKeys<
-          SCHEMA['attributes'],
-          { required: AtLeastOnce | Always } & (
-            | { key: true; defaults: { key: undefined } }
-            | { key: false; defaults: { put: undefined } }
-          )
+  ? OptionalizeUndefinableProperties<
+      {
+        [KEY in keyof SCHEMA['attributes']]: AttributePutItemInput<
+          SCHEMA['attributes'][KEY],
+          REQUIRE_INDEPENDENT_DEFAULTS
         >
-      // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
-      | (REQUIRE_INDEPENDENT_DEFAULTS extends true
-          ? O.FilterKeys<
-              SCHEMA['attributes'],
-              | { key: true; defaults: { key: undefined | ComputedDefault } }
-              | { key: false; defaults: { put: undefined | ComputedDefault } }
-            >
-          : never)
+      },
+      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+      O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
     >
   : SCHEMA extends EntityV2
   ? PutItemInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
@@ -77,50 +81,35 @@ export type AttributePutItemInput<
   ATTRIBUTE extends Attribute,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
 > = Attribute extends ATTRIBUTE
-  ? ResolvedAttribute
-  : ATTRIBUTE extends AnyAttribute
-  ? unknown
-  : ATTRIBUTE extends PrimitiveAttribute
-  ? ResolvePrimitiveAttribute<ATTRIBUTE>
-  : ATTRIBUTE extends SetAttribute
-  ? Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
-  : ATTRIBUTE extends ListAttribute
-  ? AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
-  : ATTRIBUTE extends MapAttribute
-  ? O.Required<
-      O.Partial<
-        {
-          // Keep all attributes
-          [KEY in keyof ATTRIBUTE['attributes']]: AttributePutItemInput<
-            ATTRIBUTE['attributes'][KEY],
-            REQUIRE_INDEPENDENT_DEFAULTS
-          >
-        }
-      >,
-      // Enforce Required attributes that don't have default values (will be provided by the lib)
-      | O.SelectKeys<
-          ATTRIBUTE['attributes'],
-          { required: AtLeastOnce | Always } & (
-            | { key: true; defaults: { key: undefined } }
-            | { key: false; defaults: { put: undefined } }
-          )
-        >
-      // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
-      | (REQUIRE_INDEPENDENT_DEFAULTS extends true
-          ? O.FilterKeys<
-              ATTRIBUTE['attributes'],
-              | { key: true; defaults: { key: undefined | ComputedDefault } }
-              | { key: false; defaults: { put: undefined | ComputedDefault } }
+  ? ResolvedAttribute | undefined
+  :
+      | (MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> extends true ? never : undefined)
+      | (ATTRIBUTE extends AnyAttribute
+          ? unknown
+          : ATTRIBUTE extends PrimitiveAttribute
+          ? ResolvePrimitiveAttribute<ATTRIBUTE>
+          : ATTRIBUTE extends SetAttribute
+          ? Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
+          : ATTRIBUTE extends ListAttribute
+          ? AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+          : ATTRIBUTE extends MapAttribute
+          ? OptionalizeUndefinableProperties<
+              {
+                [KEY in keyof ATTRIBUTE['attributes']]: AttributePutItemInput<
+                  ATTRIBUTE['attributes'][KEY],
+                  REQUIRE_INDEPENDENT_DEFAULTS
+                >
+              },
+              // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+              O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
             >
+          : ATTRIBUTE extends RecordAttribute
+          ? {
+              [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributePutItemInput<
+                ATTRIBUTE['elements'],
+                REQUIRE_INDEPENDENT_DEFAULTS
+              >
+            }
+          : ATTRIBUTE extends AnyOfAttribute
+          ? AttributePutItemInput<ATTRIBUTE['elements'][number], REQUIRE_INDEPENDENT_DEFAULTS>
           : never)
-    >
-  : ATTRIBUTE extends RecordAttribute
-  ? {
-      [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributePutItemInput<
-        ATTRIBUTE['elements'],
-        REQUIRE_INDEPENDENT_DEFAULTS
-      >
-    }
-  : ATTRIBUTE extends AnyOfAttribute
-  ? AttributePutItemInput<ATTRIBUTE['elements'][number], REQUIRE_INDEPENDENT_DEFAULTS>
-  : never
