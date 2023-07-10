@@ -7,14 +7,14 @@ import { isArray, isFunction, isObject } from 'v1/utils/validation'
 
 import type { CloneInputAndAddDefaultsOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
-import { canComputeDefaults as _canComputeDefaults } from './utils'
+import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneListAttributeInputAndAddDefaults = (
   listAttribute: ListAttribute,
   input: PossiblyUndefinedResolvedAttribute,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
 ): PossiblyUndefinedResolvedAttribute => {
-  const commandDefault = commandName && listAttribute.defaults[commandName]
+  const commandDefault = getCommandDefault(listAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
   if (input === undefined) {
