@@ -1,18 +1,14 @@
 import type { HasComputedDefaults, Schema } from 'v1/schema'
 import type { TableV2, PrimaryKey } from 'v1/table'
 import type { PutItemCommand, GetItemCommand, DeleteItemCommand } from 'v1/commands'
+import type { KeyInput } from 'v1/commands/types'
 import type { PutItemCommandClass } from 'v1/commands/putItem/command'
 import type { GetItemCommandClass } from 'v1/commands/getItem/command'
 import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
 import type { CommandClass } from 'v1/commands/class'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type {
-  NeedsKeyCompute,
-  KeyInput,
-  SchemaPutDefaultsComputer,
-  SchemaDefaultsComputer
-} from './generics'
+import type { NeedsKeyCompute, SchemaPutDefaultsComputer, SchemaDefaultsComputer } from './generics'
 import {
   TimestampsOptions,
   TimestampsDefaultOptions,

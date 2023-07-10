@@ -3,9 +3,6 @@ export * from './PutDefaultsComputer'
 export type { SchemaDefaultsComputer, AttributeDefaultsComputer } from './DefaultsComputer'
 export type { NeedsKeyCompute } from './NeedsKeyCompute'
 
-export type { KeyInput, AttributeKeyInput } from './KeyInput'
-
-export type { PutItemInput, AttributePutItemInput } from './PutItemInput'
 export type { UpdateItemInput } from './UpdateItemInput'
 
 export type { FormattedItem, FormattedAttribute } from './FormattedItem'

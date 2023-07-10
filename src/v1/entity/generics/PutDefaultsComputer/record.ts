@@ -1,7 +1,6 @@
 import type { ComputedDefault, RecordAttribute } from 'v1/schema'
 import type { OmitUndefinedProperties } from 'v1/types'
-
-import type { AttributePutItemInput } from '../PutItemInput'
+import type { AttributePutItemInput } from 'v1/commands/types'
 
 import type { AttributePutDefaultsComputer } from './attribute'
 

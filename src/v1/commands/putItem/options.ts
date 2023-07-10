@@ -1,7 +1,7 @@
 import type { CapacityOption } from 'v1/commands/constants/options/capacity'
 import type { MetricsOption } from 'v1/commands/constants/options/metrics'
 import type { ReturnValuesOption } from 'v1/commands/constants/options/returnValues'
-import type { Condition } from 'v1/commands/types/condition'
+import type { Condition } from 'v1/commands/types'
 import type { EntityV2 } from 'v1/entity'
 
 export type PutItemCommandReturnValuesOption = ReturnValuesOption
