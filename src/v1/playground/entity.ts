@@ -11,7 +11,8 @@ import {
   PutItemInput,
   SavedItem,
   FormattedItem,
-  KeyInput
+  KeyInput,
+  UpdateItemInput
 } from 'v1'
 
 import { MyTable } from './table'
@@ -119,3 +120,4 @@ type UserPutItemInput = PutItemInput<typeof UserEntity>
 type SavedUser = SavedItem<typeof UserEntity>
 type UserOutput = FormattedItem<typeof UserEntity>
 type UserInputKeys = KeyInput<typeof UserEntity>
+type UserUpdateItemInput = UpdateItemInput<typeof UserEntity>
