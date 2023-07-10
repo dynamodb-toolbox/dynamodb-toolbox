@@ -43,6 +43,7 @@ export const parseGetItemOptions = <ENTITY extends EntityV2>(
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
     }
+
     commandOptions.ProjectionExpression = ProjectionExpression
   }
 
