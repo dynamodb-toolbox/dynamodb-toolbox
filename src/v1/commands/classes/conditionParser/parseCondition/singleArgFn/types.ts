@@ -1,8 +1,4 @@
-import type {
-  AnyAttributeCondition,
-  NonLogicalCondition,
-  Condition
-} from 'v1/commands/types/condition'
+import type { AnyAttributeCondition, NonLogicalCondition, Condition } from 'v1/commands/types'
 
 export type SingleArgFnCondition = NonLogicalCondition &
   Extract<AnyAttributeCondition<string, string>, { exists: unknown }>

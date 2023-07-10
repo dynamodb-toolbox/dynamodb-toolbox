@@ -9,8 +9,7 @@ import type {
   RecordAttribute,
   AnyOfAttribute
 } from 'v1/schema'
-
-import type { AttributePutItemInput } from '../PutItemInput'
+import type { AttributePutItemInput } from 'v1/commands/types'
 
 import type { ListAttributePutDefaultsComputer } from './list'
 import type { MapAttributePutDefaultsComputer } from './map'
