@@ -9,8 +9,7 @@ import type {
   RecordAttribute,
   AnyOfAttribute
 } from 'v1/schema'
-
-import type { AttributePutItem } from '../PutItem'
+import type { AttributePutItemInput } from 'v1/commands/types'
 
 import type { ListAttributePutDefaultsComputer } from './list'
 import type { MapAttributePutDefaultsComputer } from './map'
@@ -26,7 +25,7 @@ export type AttributePutDefaultsComputer<
   // TODO: Prevent nested ComputedDefaults in anyOf
   | AnyOfAttribute
 ) & { defaults: { put: ComputedDefault } }
-  ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItem<ATTRIBUTE>
+  ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<ATTRIBUTE>
   : ATTRIBUTE extends ListAttribute
   ? ListAttributePutDefaultsComputer<ATTRIBUTE, CONTEXT_INPUTS>
   : ATTRIBUTE extends MapAttribute

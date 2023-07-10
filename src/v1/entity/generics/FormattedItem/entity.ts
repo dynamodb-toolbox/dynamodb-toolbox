@@ -1,4 +1,4 @@
-import type { AnyAttributePath } from 'v1/commands/types/paths'
+import type { AnyAttributePath } from 'v1/commands/types'
 
 import type { EntityV2 } from '../../class'
 import type { FormattedAttribute } from './attribute'
