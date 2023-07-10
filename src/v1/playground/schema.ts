@@ -52,10 +52,10 @@ type PlaygroundSchema1FormattedItem = FormattedAttribute<typeof playgroundSchema
 
 const allCasesOfProps = {
   optProp: string().optional(),
-  optPropWithHardDef: string().optional().putDefault('foo'),
+  optPropWithIndepDef: string().optional().putDefault('foo'),
   optPropWithCompDef: string().optional().putDefault(ComputedDefault),
   reqProp: string(),
-  reqPropWithHardDef: string().putDefault('baz'),
+  reqPropWithIndepDef: string().putDefault('baz'),
   reqPropWithCompDef: string().putDefault(ComputedDefault)
 }
 

@@ -74,6 +74,7 @@ export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends A
       Exclude<
         // Enforce Always Required attributes
         O.SelectKeys<ATTRIBUTE['attributes'], { required: Always }>,
+        // ...Except those that have default (not required from user, can be provided by the lib)
         O.FilterKeys<ATTRIBUTE['attributes'], { defaults: { key: undefined } }>
       >
     >
