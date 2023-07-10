@@ -1,6 +1,6 @@
 import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { ResolvedItem, PossiblyUndefinedResolvedItem } from 'v1/schema'
-import type { AnyAttributePath } from 'v1/commands/types/paths'
+import type { AnyAttributePath } from 'v1/commands/types'
 
 import { parseSavedAttribute } from './attribute'
 import { matchProjection } from './utils'

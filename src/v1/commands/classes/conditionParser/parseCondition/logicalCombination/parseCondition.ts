@@ -1,4 +1,4 @@
-import type { Condition } from 'v1/commands/types/condition'
+import type { Condition } from 'v1/commands/types'
 
 import type { ConditionParser } from '../../conditionParser'
 

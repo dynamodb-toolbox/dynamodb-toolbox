@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 import { PutCommandInput, PutCommand, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2, PutItemInput, FormattedItem } from 'v1/entity'
+import type { EntityV2, FormattedItem } from 'v1/entity'
 import type {
   NoneReturnValuesOption,
   UpdatedOldReturnValuesOption,
@@ -13,6 +13,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
 import type { CommandClass } from '../class'
+import type { PutItemInput } from './types'
 import type { PutItemOptions, PutItemCommandReturnValuesOption } from './options'
 import { putItemParams } from './putItemParams'
 

@@ -1,6 +1,6 @@
 import type { EntityV2 } from 'v1/entity'
 import type { Schema } from 'v1/schema'
-import type { SchemaAttributePath, AnyAttributePath } from 'v1/commands/types/paths'
+import type { SchemaAttributePath, AnyAttributePath } from 'v1/commands/types'
 import { ProjectionParser } from 'v1/commands/classes/projectionParser'
 
 export const parseSchemaProjection = <

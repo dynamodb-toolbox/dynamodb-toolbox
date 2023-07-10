@@ -14,8 +14,7 @@ import type {
   Always,
   ResolvePrimitiveAttribute
 } from 'v1/schema'
-
-import type { EntityV2 } from '../class'
+import type { EntityV2 } from 'v1/entity'
 
 /**
  * Key input of a single item command (GET, DELETE ...) for an Entity or Schema

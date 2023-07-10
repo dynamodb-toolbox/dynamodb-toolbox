@@ -1,8 +1,4 @@
-import type {
-  AnyAttributeCondition,
-  NonLogicalCondition,
-  Condition
-} from 'v1/commands/types/condition'
+import type { AnyAttributeCondition, NonLogicalCondition, Condition } from 'v1/commands/types'
 
 export type ComparisonOperator = 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte'
 

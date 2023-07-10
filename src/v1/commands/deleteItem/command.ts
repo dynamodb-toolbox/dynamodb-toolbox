@@ -1,11 +1,12 @@
 import type { O } from 'ts-toolbelt'
 import { DeleteCommandInput, DeleteCommand, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2, KeyInput, FormattedItem } from 'v1/entity'
+import type { EntityV2, FormattedItem } from 'v1/entity'
 import type {
   NoneReturnValuesOption,
   AllOldReturnValuesOption
 } from 'v1/commands/constants/options/returnValues'
+import type { KeyInput } from 'v1/commands/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
