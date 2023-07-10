@@ -10,14 +10,14 @@ import { isObject, isFunction } from 'v1/utils/validation'
 
 import type { CloneInputAndAddDefaultsOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
-import { canComputeDefaults as _canComputeDefaults } from './utils'
+import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneMapAttributeInputAndAddDefaults = (
   mapAttribute: MapAttribute,
   input: PossiblyUndefinedResolvedAttribute,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
 ): PossiblyUndefinedResolvedAttribute => {
-  const commandDefault = commandName && mapAttribute.defaults[commandName]
+  const commandDefault = getCommandDefault(mapAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
   if (input === undefined) {
