@@ -89,9 +89,9 @@ export class PutItemCommand<
   }
 
   send = async (): PutItemResponse<ENTITY, OPTIONS> => {
-    const getItemParams = this.params()
+    const putItemParams = this.params()
 
-    const commandOutput = await this.entity.table.documentClient.send(new PutCommand(getItemParams))
+    const commandOutput = await this.entity.table.documentClient.send(new PutCommand(putItemParams))
 
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 
