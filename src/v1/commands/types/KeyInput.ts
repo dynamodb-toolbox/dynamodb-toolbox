@@ -4,6 +4,8 @@ import type {
   Schema,
   Attribute,
   ResolvedAttribute,
+  ResolvePrimitiveAttribute,
+  ResolvedMapAttribute,
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute,
@@ -12,9 +14,25 @@ import type {
   RecordAttribute,
   AnyOfAttribute,
   Always,
-  ResolvePrimitiveAttribute
+  Never,
+  ComputedDefault
 } from 'v1/schema'
+import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity'
+
+type MustBeDefined<
+  ATTRIBUTE extends Attribute,
+  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+> =
+  // Enforce Required attributes that don't have default values
+  ATTRIBUTE extends { required: Always; defaults: { key: undefined } }
+    ? true
+    : REQUIRE_INDEPENDENT_DEFAULTS extends true
+    ? // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
+      ATTRIBUTE extends { defaults: { key: undefined | ComputedDefault } }
+      ? false
+      : true
+    : false
 
 /**
  * Key input of a single item command (GET, DELETE ...) for an Entity or Schema
@@ -22,26 +40,27 @@ import type { EntityV2 } from 'v1/entity'
  * @param Schema Entity | Schema
  * @return Object
  */
-export type KeyInput<SCHEMA extends EntityV2 | Schema> = SCHEMA extends Schema
-  ? // NOTE: For some obscure reason, checking that SCHEMA is not EntityV2 or Schema (constraint) triggers an error
-    O.Required<
-      O.Partial<
-        {
-          // Keep only key attributes
-          [KEY in O.SelectKeys<SCHEMA['attributes'], { key: true }>]: AttributeKeyInput<
-            SCHEMA['attributes'][KEY]
-          >
-        }
-      >,
-      Exclude<
-        // Enforce Always Required attributes
-        O.SelectKeys<SCHEMA['attributes'], { required: Always }>,
-        // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<SCHEMA['attributes'], { defaults: { key: undefined } }>
-      >
+export type KeyInput<
+  SCHEMA extends EntityV2 | Schema,
+  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+> = EntityV2 extends SCHEMA
+  ? ResolvedMapAttribute
+  : Schema extends SCHEMA
+  ? ResolvedMapAttribute
+  : SCHEMA extends Schema
+  ? OptionalizeUndefinableProperties<
+      {
+        // Keep only key attributes
+        [KEY in O.SelectKeys<SCHEMA['attributes'], { key: true }>]: AttributeKeyInput<
+          SCHEMA['attributes'][KEY],
+          REQUIRE_INDEPENDENT_DEFAULTS
+        >
+      },
+      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+      O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { key: true; required: Never }>
     >
   : SCHEMA extends EntityV2
-  ? KeyInput<SCHEMA['schema']>
+  ? KeyInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
   : never
 
 /**
@@ -50,39 +69,40 @@ export type KeyInput<SCHEMA extends EntityV2 | Schema> = SCHEMA extends Schema
  * @param Attribute Attribute
  * @return Any
  */
-export type AttributeKeyInput<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
-  ? ResolvedAttribute
-  : ATTRIBUTE extends AnyAttribute
-  ? unknown
-  : ATTRIBUTE extends PrimitiveAttribute
-  ? ResolvePrimitiveAttribute<ATTRIBUTE>
-  : ATTRIBUTE extends SetAttribute
-  ? Set<AttributeKeyInput<ATTRIBUTE['elements']>>
-  : ATTRIBUTE extends ListAttribute
-  ? AttributeKeyInput<ATTRIBUTE['elements']>[]
-  : ATTRIBUTE extends MapAttribute
-  ? O.Required<
-      O.Partial<
-        {
-          // Keep only key attributes
-          [KEY in O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>]: AttributeKeyInput<
-            ATTRIBUTE['attributes'][KEY]
-          >
-        }
-      >,
-      Exclude<
-        // Enforce Always Required attributes
-        O.SelectKeys<ATTRIBUTE['attributes'], { required: Always }>,
-        // ...Except those that have default (not required from user, can be provided by the lib)
-        O.FilterKeys<ATTRIBUTE['attributes'], { defaults: { key: undefined } }>
-      >
-    >
-  : ATTRIBUTE extends RecordAttribute
-  ? {
-      [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributeKeyInput<
-        ATTRIBUTE['elements']
-      >
-    }
-  : ATTRIBUTE extends AnyOfAttribute
-  ? AttributeKeyInput<ATTRIBUTE['elements'][number]>
-  : never
+export type AttributeKeyInput<
+  ATTRIBUTE extends Attribute,
+  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+> = Attribute extends ATTRIBUTE
+  ? ResolvedAttribute | undefined
+  :
+      | (MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> extends true ? never : undefined)
+      | (ATTRIBUTE extends AnyAttribute
+          ? unknown
+          : ATTRIBUTE extends PrimitiveAttribute
+          ? ResolvePrimitiveAttribute<ATTRIBUTE>
+          : ATTRIBUTE extends SetAttribute
+          ? Set<AttributeKeyInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
+          : ATTRIBUTE extends ListAttribute
+          ? AttributeKeyInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+          : ATTRIBUTE extends MapAttribute
+          ? OptionalizeUndefinableProperties<
+              {
+                // Keep only key attributes
+                [KEY in O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>]: AttributeKeyInput<
+                  ATTRIBUTE['attributes'][KEY],
+                  REQUIRE_INDEPENDENT_DEFAULTS
+                >
+              },
+              // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+              O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { key: true; required: Never }>
+            >
+          : ATTRIBUTE extends RecordAttribute
+          ? {
+              [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributeKeyInput<
+                ATTRIBUTE['elements'],
+                REQUIRE_INDEPENDENT_DEFAULTS
+              >
+            }
+          : ATTRIBUTE extends AnyOfAttribute
+          ? AttributeKeyInput<ATTRIBUTE['elements'][number], REQUIRE_INDEPENDENT_DEFAULTS>
+          : never)
