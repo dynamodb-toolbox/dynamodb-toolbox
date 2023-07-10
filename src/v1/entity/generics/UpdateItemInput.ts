@@ -4,6 +4,7 @@ import type {
   Schema,
   Attribute,
   ResolvedAttribute,
+  ResolvePrimitiveAttribute,
   ResolvedMapAttribute,
   AnyAttribute,
   PrimitiveAttribute,
@@ -15,8 +16,7 @@ import type {
   AtLeastOnce,
   Always,
   Never,
-  ComputedDefault,
-  ResolvePrimitiveAttribute
+  ComputedDefault
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 
