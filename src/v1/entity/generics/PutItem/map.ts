@@ -20,7 +20,7 @@ export type MapAttributePutItem<MAP_ATTRIBUTE extends MapAttribute> = MAP_ATTRIB
           >,
           // Enforce Required attributes
           | O.SelectKeys<MAP_ATTRIBUTE['attributes'], { required: AtLeastOnce | Always }>
-          // Enforce attributes that have hard default
+          // Enforce attributes that have independent default
           | O.FilterKeys<
               MAP_ATTRIBUTE['attributes'],
               { defaults: { put: undefined | ComputedDefault } }
@@ -37,7 +37,7 @@ export type MapAttributePutItem<MAP_ATTRIBUTE extends MapAttribute> = MAP_ATTRIB
       >,
       // Enforce Required attributes
       | O.SelectKeys<MAP_ATTRIBUTE['attributes'], { required: AtLeastOnce | Always }>
-      // Enforce attributes that have hard default
+      // Enforce attributes that have independent default
       | O.FilterKeys<
           MAP_ATTRIBUTE['attributes'],
           { defaults: { put: undefined | ComputedDefault } }

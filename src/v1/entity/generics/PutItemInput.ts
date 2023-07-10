@@ -105,7 +105,7 @@ export type AttributePutItemInput<
             | { key: false; defaults: { put: undefined } }
           )
         >
-      // Add attributes with hard (non-computed) defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
+      // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
       | (REQUIRE_INDEPENDENT_DEFAULTS extends true
           ? O.FilterKeys<
               ATTRIBUTE['attributes'],
