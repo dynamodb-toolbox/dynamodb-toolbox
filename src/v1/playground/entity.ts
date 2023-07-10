@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ComputedDefault, number, string, map, set, list, schema } from 'v1/schema'
-import { EntityV2, PutItemInput, SavedItem, FormattedItem, KeyInput, PutItem } from 'v1/entity'
+import { EntityV2, PutItemInput, SavedItem, FormattedItem, KeyInput } from 'v1/entity'
 
 import { MyTable } from './table'
 
@@ -107,4 +107,3 @@ type UserPutItemInput = PutItemInput<typeof UserEntity>
 type SavedUser = SavedItem<typeof UserEntity>
 type UserOutput = FormattedItem<typeof UserEntity>
 type UserInputKeys = KeyInput<typeof UserEntity>
-type UserPutItem = PutItem<typeof UserEntity>

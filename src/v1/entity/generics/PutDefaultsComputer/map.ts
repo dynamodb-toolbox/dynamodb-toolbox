@@ -1,7 +1,6 @@
 import type { ComputedDefault, MapAttribute } from 'v1/schema'
 import type { OmitUndefinedProperties } from 'v1/types'
 
-import type { AttributePutItem } from '../PutItem'
 import type { AttributePutItemInput } from '../PutItemInput'
 
 import type { AttributePutDefaultsComputer } from './attribute'
@@ -24,7 +23,7 @@ export type MapAttributePutDefaultsComputer<
           [KEY in keyof ATTRIBUTES_DEFAULT_COMPUTERS]: ATTRIBUTES_DEFAULT_COMPUTERS[KEY]
         }
     _map: MAP_ATTRIBUTE extends { defaults: { put: ComputedDefault } }
-      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItem<MAP_ATTRIBUTE>
+      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<MAP_ATTRIBUTE>
       : undefined
   }>
 > = keyof MAP_ATTRIBUTE_DEFAULT_COMPUTER extends never
