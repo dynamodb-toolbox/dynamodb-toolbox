@@ -51,7 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "@aws-sdk/lib-dynamodb": "^3.287.0",
-    "@aws-sdk/client-dynamodb": "^3.287.0",
+    "@aws-sdk/client-dynamodb": "^3.369.0",
     "@aws-sdk/util-dynamodb": "^3.287.0",
     "coveralls": "^3.1.0",
     "eslint": "^8.2.0",
