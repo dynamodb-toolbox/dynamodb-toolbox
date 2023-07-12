@@ -19,8 +19,7 @@ import type {
   ComputedDefault
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
-
-import type { EntityV2 } from '../class'
+import type { EntityV2 } from 'v1/entity/class'
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
