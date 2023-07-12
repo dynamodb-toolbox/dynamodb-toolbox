@@ -1,10 +1,16 @@
 import type { HasComputedDefaults, Schema } from 'v1/schema'
 import type { TableV2, PrimaryKey } from 'v1/table'
-import type { PutItemCommand, GetItemCommand, DeleteItemCommand } from 'v1/commands'
+import type {
+  PutItemCommand,
+  GetItemCommand,
+  DeleteItemCommand,
+  UpdateItemCommand
+} from 'v1/commands'
 import type { KeyInput } from 'v1/commands/types'
 import type { PutItemCommandClass } from 'v1/commands/putItem/command'
 import type { GetItemCommandClass } from 'v1/commands/getItem/command'
 import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
+import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
 import type { CommandClass } from 'v1/commands/class'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -60,6 +66,8 @@ export class EntityV2<
     ? GetItemCommand<this>
     : COMMAND_CLASS extends DeleteItemCommandClass
     ? DeleteItemCommand<this>
+    : COMMAND_CLASS extends UpdateItemCommandClass
+    ? UpdateItemCommand<this>
     : never
 
   /**
