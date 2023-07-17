@@ -22,5 +22,5 @@ export const appendAttributeValue = (
     )
   )
 
-  conditionParser.appendToExpression(`:${expressionAttributeValueIndex}`)
+  conditionParser.appendToExpression(`:c${expressionAttributeValueIndex}`)
 }

@@ -19,9 +19,9 @@ describe('parseCondition - Logical combination', () => {
         ]
       })
     ).toStrictEqual({
-      ConditionExpression: '(#1 = :1) OR (#2 = :2)',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'str' },
-      ExpressionAttributeValues: { ':1': 42, ':2': 'foo' }
+      ConditionExpression: '(#c1 = :c1) OR (#c2 = :c2)',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'str' },
+      ExpressionAttributeValues: { ':c1': 42, ':c2': 'foo' }
     })
   })
 
@@ -34,8 +34,13 @@ describe('parseCondition - Logical combination', () => {
         ]
       })
     ).toStrictEqual({
-      ConditionExpression: '(#1 = #2) OR (#3 = #4)',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum', '#3': 'str', '#4': 'otherStr' },
+      ConditionExpression: '(#c1 = #c2) OR (#c3 = #c4)',
+      ExpressionAttributeNames: {
+        '#c1': 'num',
+        '#c2': 'otherNum',
+        '#c3': 'str',
+        '#c4': 'otherStr'
+      },
       ExpressionAttributeValues: {}
     })
   })
@@ -49,9 +54,9 @@ describe('parseCondition - Logical combination', () => {
         ]
       })
     ).toStrictEqual({
-      ConditionExpression: '(#1 = :1) AND (#2 = :2)',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'str' },
-      ExpressionAttributeValues: { ':1': 42, ':2': 'foo' }
+      ConditionExpression: '(#c1 = :c1) AND (#c2 = :c2)',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'str' },
+      ExpressionAttributeValues: { ':c1': 42, ':c2': 'foo' }
     })
   })
 
@@ -64,8 +69,13 @@ describe('parseCondition - Logical combination', () => {
         ]
       })
     ).toStrictEqual({
-      ConditionExpression: '(#1 = #2) AND (#3 = #4)',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum', '#3': 'str', '#4': 'otherStr' },
+      ConditionExpression: '(#c1 = #c2) AND (#c3 = #c4)',
+      ExpressionAttributeNames: {
+        '#c1': 'num',
+        '#c2': 'otherNum',
+        '#c3': 'str',
+        '#c4': 'otherStr'
+      },
       ExpressionAttributeValues: {}
     })
   })
@@ -84,9 +94,9 @@ describe('parseCondition - Logical combination', () => {
         ]
       })
     ).toStrictEqual({
-      ConditionExpression: '((#1 = :1) OR (#2 = :2)) AND (#3 = :3)',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'bool', '#3': 'str' },
-      ExpressionAttributeValues: { ':1': 42, ':2': true, ':3': 'foo' }
+      ConditionExpression: '((#c1 = :c1) OR (#c2 = :c2)) AND (#c3 = :c3)',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'bool', '#c3': 'str' },
+      ExpressionAttributeValues: { ':c1': 42, ':c2': true, ':c3': 'foo' }
     })
   })
 })

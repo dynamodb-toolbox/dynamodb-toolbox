@@ -10,9 +10,9 @@ describe('parseCondition - in', () => {
 
   it('in (values)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', in: [42, 43] })).toStrictEqual({
-      ConditionExpression: '#1 IN (:1, :2)',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42, ':2': 43 }
+      ConditionExpression: '#c1 IN (:c1, :c2)',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
     })
   })
 
@@ -20,9 +20,9 @@ describe('parseCondition - in', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'num', in: [42, { attr: 'otherNum' }] })
     ).toStrictEqual({
-      ConditionExpression: '#1 IN (:1, #2)',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1 IN (:c1, #c2)',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -33,8 +33,8 @@ describe('parseCondition - in', () => {
         in: [{ attr: 'otherNum' }, { attr: 'yetAnotherNum' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1 IN (#2, #3)',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum', '#3': 'yetAnotherNum' },
+      ConditionExpression: '#c1 IN (#c2, #c3)',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum', '#c3': 'yetAnotherNum' },
       ExpressionAttributeValues: {}
     })
   })
@@ -57,13 +57,13 @@ describe('parseCondition - in', () => {
     expect(
       parseSchemaCondition(nestedSchema, { attr: 'map.nestedA.nestedB', in: [42, 43] })
     ).toStrictEqual({
-      ConditionExpression: '#1.#2.#3 IN (:1, :2)',
+      ConditionExpression: '#c1.#c2.#c3 IN (:c1, :c2)',
       ExpressionAttributeNames: {
-        '#1': 'map',
-        '#2': 'nestedA',
-        '#3': 'nestedB'
+        '#c1': 'map',
+        '#c2': 'nestedA',
+        '#c3': 'nestedB'
       },
-      ExpressionAttributeValues: { ':1': 42, ':2': 43 }
+      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
     })
   })
 
@@ -74,15 +74,15 @@ describe('parseCondition - in', () => {
         in: [{ attr: 'nestedC.otherNum' }, 43]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1.#2.#3 IN (#4.#5, :1)',
+      ConditionExpression: '#c1.#c2.#c3 IN (#c4.#c5, :c1)',
       ExpressionAttributeNames: {
-        '#1': 'map',
-        '#2': 'nestedA',
-        '#3': 'nestedB',
-        '#4': 'nestedC',
-        '#5': 'otherNum'
+        '#c1': 'map',
+        '#c2': 'nestedA',
+        '#c3': 'nestedB',
+        '#c4': 'nestedC',
+        '#c5': 'otherNum'
       },
-      ExpressionAttributeValues: { ':1': 43 }
+      ExpressionAttributeValues: { ':c1': 43 }
     })
   })
 
@@ -93,15 +93,15 @@ describe('parseCondition - in', () => {
         in: [{ attr: 'nestedC.otherNum' }, { attr: 'nestedD.yetAnotherNum' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1.#2.#3 IN (#4.#5, #6.#7)',
+      ConditionExpression: '#c1.#c2.#c3 IN (#c4.#c5, #c6.#c7)',
       ExpressionAttributeNames: {
-        '#1': 'map',
-        '#2': 'nestedA',
-        '#3': 'nestedB',
-        '#4': 'nestedC',
-        '#5': 'otherNum',
-        '#6': 'nestedD',
-        '#7': 'yetAnotherNum'
+        '#c1': 'map',
+        '#c2': 'nestedA',
+        '#c3': 'nestedB',
+        '#c4': 'nestedC',
+        '#c5': 'otherNum',
+        '#c6': 'nestedD',
+        '#c7': 'yetAnotherNum'
       },
       ExpressionAttributeValues: {}
     })
@@ -135,14 +135,14 @@ describe('parseCondition - in', () => {
     expect(
       parseSchemaCondition(mapAndList, { attr: 'listA[1].nested.listB[2].value', in: [42, 43] })
     ).toStrictEqual({
-      ConditionExpression: '#1[1].#2.#3[2].#4 IN (:1, :2)',
+      ConditionExpression: '#c1[1].#c2.#c3[2].#c4 IN (:c1, :c2)',
       ExpressionAttributeNames: {
-        '#1': 'listA',
-        '#2': 'nested',
-        '#3': 'listB',
-        '#4': 'value'
+        '#c1': 'listA',
+        '#c2': 'nested',
+        '#c3': 'listB',
+        '#c4': 'value'
       },
-      ExpressionAttributeValues: { ':1': 42, ':2': 43 }
+      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
     })
   })
 
@@ -153,18 +153,18 @@ describe('parseCondition - in', () => {
         in: [42, { attr: 'listC[3].nested.listD[4].value' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1].#2.#3[2].#4 IN (:1, #5[3].#6.#7[4].#8)',
+      ConditionExpression: '#c1[1].#c2.#c3[2].#c4 IN (:c1, #c5[3].#c6.#c7[4].#c8)',
       ExpressionAttributeNames: {
-        '#1': 'listA',
-        '#2': 'nested',
-        '#3': 'listB',
-        '#4': 'value',
-        '#5': 'listC',
-        '#6': 'nested',
-        '#7': 'listD',
-        '#8': 'value'
+        '#c1': 'listA',
+        '#c2': 'nested',
+        '#c3': 'listB',
+        '#c4': 'value',
+        '#c5': 'listC',
+        '#c6': 'nested',
+        '#c7': 'listD',
+        '#c8': 'value'
       },
-      ExpressionAttributeValues: { ':1': 42 }
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -175,20 +175,21 @@ describe('parseCondition - in', () => {
         in: [{ attr: 'listC[3].nested.listD[4].value' }, { attr: 'listE[3].nested.listF[4].value' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1].#2.#3[2].#4 IN (#5[3].#6.#7[4].#8, #9[3].#10.#11[4].#12)',
+      ConditionExpression:
+        '#c1[1].#c2.#c3[2].#c4 IN (#c5[3].#c6.#c7[4].#c8, #c9[3].#c10.#c11[4].#c12)',
       ExpressionAttributeNames: {
-        '#1': 'listA',
-        '#2': 'nested',
-        '#3': 'listB',
-        '#4': 'value',
-        '#5': 'listC',
-        '#6': 'nested',
-        '#7': 'listD',
-        '#8': 'value',
-        '#9': 'listE',
-        '#10': 'nested',
-        '#11': 'listF',
-        '#12': 'value'
+        '#c1': 'listA',
+        '#c2': 'nested',
+        '#c3': 'listB',
+        '#c4': 'value',
+        '#c5': 'listC',
+        '#c6': 'nested',
+        '#c7': 'listD',
+        '#c8': 'value',
+        '#c9': 'listE',
+        '#c10': 'nested',
+        '#c11': 'listF',
+        '#c12': 'value'
       },
       ExpressionAttributeValues: {}
     })
@@ -204,9 +205,9 @@ describe('parseCondition - in', () => {
     expect(
       parseSchemaCondition(listsSchema, { attr: 'list[1][2][3]', in: [42, 43] })
     ).toStrictEqual({
-      ConditionExpression: '#1[1][2][3] IN (:1, :2)',
-      ExpressionAttributeNames: { '#1': 'list' },
-      ExpressionAttributeValues: { ':1': 42, ':2': 43 }
+      ConditionExpression: '#c1[1][2][3] IN (:c1, :c2)',
+      ExpressionAttributeNames: { '#c1': 'list' },
+      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
     })
   })
 
@@ -217,9 +218,9 @@ describe('parseCondition - in', () => {
         in: [{ attr: 'listB[4][5][6]' }, 42]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1][2][3] IN (#2[4][5][6], :1)',
-      ExpressionAttributeNames: { '#1': 'list', '#2': 'listB' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1[1][2][3] IN (#c2[4][5][6], :c1)',
+      ExpressionAttributeNames: { '#c1': 'list', '#c2': 'listB' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -230,17 +231,17 @@ describe('parseCondition - in', () => {
         in: [{ attr: 'listB[4][5][6]' }, { attr: 'listC[7][8][9]' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1][2][3] IN (#2[4][5][6], #3[7][8][9])',
-      ExpressionAttributeNames: { '#1': 'list', '#2': 'listB', '#3': 'listC' },
+      ConditionExpression: '#c1[1][2][3] IN (#c2[4][5][6], #c3[7][8][9])',
+      ExpressionAttributeNames: { '#c1': 'list', '#c2': 'listB', '#c3': 'listC' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('with size', () => {
     expect(parseSchemaCondition(simpleSchema, { size: 'num', in: [42, 43] })).toStrictEqual({
-      ConditionExpression: 'size(#1) IN (:1, :2)',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42, ':2': 43 }
+      ConditionExpression: 'size(#c1) IN (:c1, :c2)',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
     })
   })
 })

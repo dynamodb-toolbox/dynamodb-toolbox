@@ -11,12 +11,14 @@ import { toCommandOptions } from './toCommandOptions'
 
 export class ConditionParser {
   schema: Schema | Attribute
+  expressionAttributePrefix: 'c'
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]
   expression: string
 
   constructor(schema: Schema | Attribute) {
     this.schema = schema
+    this.expressionAttributePrefix = 'c'
     this.expressionAttributeNames = []
     this.expressionAttributeValues = []
     this.expression = ''
