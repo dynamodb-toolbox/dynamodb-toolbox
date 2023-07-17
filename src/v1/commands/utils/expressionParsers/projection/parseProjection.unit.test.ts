@@ -17,16 +17,16 @@ describe('parseProjection', () => {
 
     it('correctly parses projection (root)', () => {
       expect(parseSchemaProjection(schemaWithSavedAs, ['savedAs'])).toStrictEqual({
-        ProjectionExpression: '#1',
-        ExpressionAttributeNames: { '#1': '_s' }
+        ProjectionExpression: '#p1',
+        ExpressionAttributeNames: { '#p1': '_s' }
       })
     })
 
     it('correctly parses projection (nested)', () => {
       expect(parseSchemaProjection(schemaWithSavedAs, ['savedAs', 'nested.savedAs'])).toStrictEqual(
         {
-          ProjectionExpression: '#1, #2.#3',
-          ExpressionAttributeNames: { '#1': '_s', '#2': '_n', '#3': '_s' }
+          ProjectionExpression: '#p1, #p2.#p3',
+          ExpressionAttributeNames: { '#p1': '_s', '#p2': '_n', '#p3': '_s' }
         }
       )
     })
@@ -35,8 +35,8 @@ describe('parseProjection', () => {
       expect(
         parseSchemaProjection(schemaWithSavedAs, ['savedAs', 'listed[4].savedAs'])
       ).toStrictEqual({
-        ProjectionExpression: '#1, #2[4].#3',
-        ExpressionAttributeNames: { '#1': '_s', '#2': '_l', '#3': '_s' }
+        ProjectionExpression: '#p1, #p2[4].#p3',
+        ExpressionAttributeNames: { '#p1': '_s', '#p2': '_l', '#p3': '_s' }
       })
     })
   })
@@ -48,22 +48,22 @@ describe('parseProjection', () => {
 
     it('correctly parses projection (root)', () => {
       expect(parseSchemaProjection(schemaWithAnyOf, ['anyOf'])).toStrictEqual({
-        ProjectionExpression: '#1',
-        ExpressionAttributeNames: { '#1': 'anyOf' }
+        ProjectionExpression: '#p1',
+        ExpressionAttributeNames: { '#p1': 'anyOf' }
       })
     })
 
     it('correctly parses projection (nested str)', () => {
       expect(parseSchemaProjection(schemaWithAnyOf, ['anyOf.str'])).toStrictEqual({
-        ProjectionExpression: '#1.#2',
-        ExpressionAttributeNames: { '#1': 'anyOf', '#2': 'str' }
+        ProjectionExpression: '#p1.#p2',
+        ExpressionAttributeNames: { '#p1': 'anyOf', '#p2': 'str' }
       })
     })
 
     it('correctly parses projection (nested num)', () => {
       expect(parseSchemaProjection(schemaWithAnyOf, ['anyOf.num'])).toStrictEqual({
-        ProjectionExpression: '#1.#2',
-        ExpressionAttributeNames: { '#1': 'anyOf', '#2': '_n' }
+        ProjectionExpression: '#p1.#p2',
+        ExpressionAttributeNames: { '#p1': 'anyOf', '#p2': '_n' }
       })
     })
   })

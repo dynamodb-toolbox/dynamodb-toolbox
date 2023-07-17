@@ -7,6 +7,7 @@ import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 
 interface ExpressionParser {
   schema: Schema | Attribute
+  expressionAttributePrefix: string
   expressionAttributeNames: string[]
   clone: (schema?: Schema | Attribute) => ExpressionParser
   expression: string
@@ -61,8 +62,9 @@ export const appendAttributePath = (
   attributePath: string,
   options: { size?: boolean } = {}
 ): Attribute => {
-  let expressionPath = ''
+  const expressionAttributePrefix = parser.expressionAttributePrefix
   let parentAttribute: Schema | Attribute = parser.schema
+  let expressionPath = ''
   let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|\w+(?=(\.|$|\[))/g)]
 
   while (attributeMatches.length > 0) {
@@ -85,7 +87,7 @@ export const appendAttributePath = (
           const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
             childAttributeAccessor
           )
-          expressionPath += `.#${expressionAttributeNameIndex}`
+          expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
         }
 
         parentAttribute = {
@@ -101,7 +103,7 @@ export const appendAttributePath = (
           // We don't really need to clone / add default as it is a defined string
           parseAttributeClonedInput(parentAttribute.keys, childAttributeAccessor) as string
         )
-        expressionPath += `.#${expressionAttributeNameIndex}`
+        expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
 
         parentAttribute = parentAttribute.elements
         break
@@ -118,8 +120,8 @@ export const appendAttributePath = (
         )
         expressionPath +=
           parentAttribute.type === 'schema'
-            ? `#${expressionAttributeNameIndex}`
-            : `.#${expressionAttributeNameIndex}`
+            ? `#${expressionAttributePrefix}${expressionAttributeNameIndex}`
+            : `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
 
         parentAttribute = childAttribute
         break

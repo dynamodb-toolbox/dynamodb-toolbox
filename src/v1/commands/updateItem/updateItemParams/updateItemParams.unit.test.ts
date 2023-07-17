@@ -1105,9 +1105,9 @@ describe('update', () => {
       .options({ condition: { attr: 'email', gt: 'test' } })
       .params()
 
-    expect(ConditionExpression).toBe('#1 > :1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#1': 'pk' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':1': 'test' })
+    expect(ConditionExpression).toBe('#c1 > :c1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c1': 'pk' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c1': 'test' })
   })
 
   it('missing item', () => {
