@@ -9,7 +9,9 @@ export const toCommandOptions = (
   const ExpressionAttributeNames: Record<string, string> = {}
 
   projectionParser.expressionAttributeNames.forEach((expressionAttributeName, index) => {
-    ExpressionAttributeNames[`#${index + 1}`] = expressionAttributeName
+    ExpressionAttributeNames[
+      `#${projectionParser.expressionAttributePrefix}${index + 1}`
+    ] = expressionAttributeName
   })
 
   const ProjectionExpression = projectionParser.expression

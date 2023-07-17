@@ -10,17 +10,17 @@ describe('parseCondition - singleArgFn', () => {
 
   it('type', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'list', type: 'L' })).toStrictEqual({
-      ConditionExpression: 'attribute_type(#1, :1)',
-      ExpressionAttributeNames: { '#1': 'list' },
-      ExpressionAttributeValues: { ':1': 'L' }
+      ConditionExpression: 'attribute_type(#c1, :c1)',
+      ExpressionAttributeNames: { '#c1': 'list' },
+      ExpressionAttributeValues: { ':c1': 'L' }
     })
   })
 
   it('contains (value)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'str', contains: 'foo' })).toStrictEqual({
-      ConditionExpression: 'contains(#1, :1)',
-      ExpressionAttributeNames: { '#1': 'str' },
-      ExpressionAttributeValues: { ':1': 'foo' }
+      ConditionExpression: 'contains(#c1, :c1)',
+      ExpressionAttributeNames: { '#c1': 'str' },
+      ExpressionAttributeValues: { ':c1': 'foo' }
     })
   })
 
@@ -28,17 +28,17 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'str', contains: { attr: 'otherStr' } })
     ).toStrictEqual({
-      ConditionExpression: 'contains(#1, #2)',
-      ExpressionAttributeNames: { '#1': 'str', '#2': 'otherStr' },
+      ConditionExpression: 'contains(#c1, #c2)',
+      ExpressionAttributeNames: { '#c1': 'str', '#c2': 'otherStr' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('beginsWith (value)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'str', beginsWith: 'foo' })).toStrictEqual({
-      ConditionExpression: 'begins_with(#1, :1)',
-      ExpressionAttributeNames: { '#1': 'str' },
-      ExpressionAttributeValues: { ':1': 'foo' }
+      ConditionExpression: 'begins_with(#c1, :c1)',
+      ExpressionAttributeNames: { '#c1': 'str' },
+      ExpressionAttributeValues: { ':c1': 'foo' }
     })
   })
 
@@ -46,8 +46,8 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'str', beginsWith: { attr: 'otherStr' } })
     ).toStrictEqual({
-      ConditionExpression: 'begins_with(#1, #2)',
-      ExpressionAttributeNames: { '#1': 'str', '#2': 'otherStr' },
+      ConditionExpression: 'begins_with(#c1, #c2)',
+      ExpressionAttributeNames: { '#c1': 'str', '#c2': 'otherStr' },
       ExpressionAttributeValues: {}
     })
   })
@@ -69,13 +69,13 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseSchemaCondition(mapSchema, { attr: 'map.nestedA.nestedB', contains: 'foo' })
     ).toStrictEqual({
-      ConditionExpression: 'contains(#1.#2.#3, :1)',
+      ConditionExpression: 'contains(#c1.#c2.#c3, :c1)',
       ExpressionAttributeNames: {
-        '#1': 'map',
-        '#2': 'nestedA',
-        '#3': 'nestedB'
+        '#c1': 'map',
+        '#c2': 'nestedA',
+        '#c3': 'nestedB'
       },
-      ExpressionAttributeValues: { ':1': 'foo' }
+      ExpressionAttributeValues: { ':c1': 'foo' }
     })
   })
 
@@ -86,14 +86,14 @@ describe('parseCondition - singleArgFn', () => {
         contains: { attr: 'otherMap.nestedC.nestedD' }
       })
     ).toStrictEqual({
-      ConditionExpression: 'contains(#1.#2.#3, #4.#5.#6)',
+      ConditionExpression: 'contains(#c1.#c2.#c3, #c4.#c5.#c6)',
       ExpressionAttributeNames: {
-        '#1': 'map',
-        '#2': 'nestedA',
-        '#3': 'nestedB',
-        '#4': 'otherMap',
-        '#5': 'nestedC',
-        '#6': 'nestedD'
+        '#c1': 'map',
+        '#c2': 'nestedA',
+        '#c3': 'nestedB',
+        '#c4': 'otherMap',
+        '#c5': 'nestedC',
+        '#c6': 'nestedD'
       },
       ExpressionAttributeValues: {}
     })
@@ -120,14 +120,14 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseSchemaCondition(mapAndList, { attr: 'listA[1].nested.listB[2].value', type: 'S' })
     ).toStrictEqual({
-      ConditionExpression: 'attribute_type(#1[1].#2.#3[2].#4, :1)',
+      ConditionExpression: 'attribute_type(#c1[1].#c2.#c3[2].#c4, :c1)',
       ExpressionAttributeNames: {
-        '#1': 'listA',
-        '#2': 'nested',
-        '#3': 'listB',
-        '#4': 'value'
+        '#c1': 'listA',
+        '#c2': 'nested',
+        '#c3': 'listB',
+        '#c4': 'value'
       },
-      ExpressionAttributeValues: { ':1': 'S' }
+      ExpressionAttributeValues: { ':c1': 'S' }
     })
   })
 
@@ -138,16 +138,16 @@ describe('parseCondition - singleArgFn', () => {
         beginsWith: { attr: 'listC[3].nested.listD[4].value' }
       })
     ).toStrictEqual({
-      ConditionExpression: 'begins_with(#1[1].#2.#3[2].#4, #5[3].#6.#7[4].#8)',
+      ConditionExpression: 'begins_with(#c1[1].#c2.#c3[2].#c4, #c5[3].#c6.#c7[4].#c8)',
       ExpressionAttributeNames: {
-        '#1': 'listA',
-        '#2': 'nested',
-        '#3': 'listB',
-        '#4': 'value',
-        '#5': 'listC',
-        '#6': 'nested',
-        '#7': 'listD',
-        '#8': 'value'
+        '#c1': 'listA',
+        '#c2': 'nested',
+        '#c3': 'listB',
+        '#c4': 'value',
+        '#c5': 'listC',
+        '#c6': 'nested',
+        '#c7': 'listD',
+        '#c8': 'value'
       },
       ExpressionAttributeValues: {}
     })
@@ -162,9 +162,9 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseSchemaCondition(listsSchema, { attr: 'list[1][2][3]', contains: 'foo' })
     ).toStrictEqual({
-      ConditionExpression: 'contains(#1[1][2][3], :1)',
-      ExpressionAttributeNames: { '#1': 'list' },
-      ExpressionAttributeValues: { ':1': 'foo' }
+      ConditionExpression: 'contains(#c1[1][2][3], :c1)',
+      ExpressionAttributeNames: { '#c1': 'list' },
+      ExpressionAttributeValues: { ':c1': 'foo' }
     })
   })
 
@@ -175,8 +175,8 @@ describe('parseCondition - singleArgFn', () => {
         contains: { attr: 'listB[4][5][6]' }
       })
     ).toStrictEqual({
-      ConditionExpression: 'contains(#1[1][2][3], #2[4][5][6])',
-      ExpressionAttributeNames: { '#1': 'list', '#2': 'listB' },
+      ConditionExpression: 'contains(#c1[1][2][3], #c2[4][5][6])',
+      ExpressionAttributeNames: { '#c1': 'list', '#c2': 'listB' },
       ExpressionAttributeValues: {}
     })
   })

@@ -9,9 +9,9 @@ describe('parseCondition - comparison', () => {
 
   it('equal to (value)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', eq: 42 })).toStrictEqual({
-      ConditionExpression: '#1 = :1',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1 = :c1',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -19,17 +19,17 @@ describe('parseCondition - comparison', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'num', eq: { attr: 'otherNum' } })
     ).toStrictEqual({
-      ConditionExpression: '#1 = #2',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
+      ConditionExpression: '#c1 = #c2',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('not equal to (value)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', ne: 42 })).toStrictEqual({
-      ConditionExpression: '#1 <> :1',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1 <> :c1',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -37,17 +37,17 @@ describe('parseCondition - comparison', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'num', ne: { attr: 'otherNum' } })
     ).toStrictEqual({
-      ConditionExpression: '#1 <> #2',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
+      ConditionExpression: '#c1 <> #c2',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('greater than (value)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', gt: 42 })).toStrictEqual({
-      ConditionExpression: '#1 > :1',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1 > :c1',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -55,17 +55,17 @@ describe('parseCondition - comparison', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'num', gt: { attr: 'otherNum' } })
     ).toStrictEqual({
-      ConditionExpression: '#1 > #2',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
+      ConditionExpression: '#c1 > #c2',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('greater than or equal to (value)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', gte: 42 })).toStrictEqual({
-      ConditionExpression: '#1 >= :1',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1 >= :c1',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -73,17 +73,17 @@ describe('parseCondition - comparison', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'num', gte: { attr: 'otherNum' } })
     ).toStrictEqual({
-      ConditionExpression: '#1 >= #2',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
+      ConditionExpression: '#c1 >= #c2',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('less than (value)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', lt: 42 })).toStrictEqual({
-      ConditionExpression: '#1 < :1',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1 < :c1',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -91,17 +91,17 @@ describe('parseCondition - comparison', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'num', lt: { attr: 'otherNum' } })
     ).toStrictEqual({
-      ConditionExpression: '#1 < #2',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
+      ConditionExpression: '#c1 < #c2',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('less than or equal to (value)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', lte: 42 })).toStrictEqual({
-      ConditionExpression: '#1 <= :1',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1 <= :c1',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -109,8 +109,8 @@ describe('parseCondition - comparison', () => {
     expect(
       parseSchemaCondition(simpleSchema, { attr: 'num', lte: { attr: 'otherNum' } })
     ).toStrictEqual({
-      ConditionExpression: '#1 <= #2',
-      ExpressionAttributeNames: { '#1': 'num', '#2': 'otherNum' },
+      ConditionExpression: '#c1 <= #c2',
+      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
       ExpressionAttributeValues: {}
     })
   })
@@ -126,13 +126,13 @@ describe('parseCondition - comparison', () => {
 
   it('deep maps (value)', () => {
     expect(parseSchemaCondition(mapSchema, { attr: 'map.nestedA.nestedB', eq: 42 })).toStrictEqual({
-      ConditionExpression: '#1.#2.#3 = :1',
+      ConditionExpression: '#c1.#c2.#c3 = :c1',
       ExpressionAttributeNames: {
-        '#1': 'map',
-        '#2': 'nestedA',
-        '#3': 'nestedB'
+        '#c1': 'map',
+        '#c2': 'nestedA',
+        '#c3': 'nestedB'
       },
-      ExpressionAttributeValues: { ':1': 42 }
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -143,14 +143,14 @@ describe('parseCondition - comparison', () => {
         eq: { attr: 'other.nested.value' }
       })
     ).toStrictEqual({
-      ConditionExpression: '#1.#2.#3 = #4.#5.#6',
+      ConditionExpression: '#c1.#c2.#c3 = #c4.#c5.#c6',
       ExpressionAttributeNames: {
-        '#1': 'map',
-        '#2': 'nestedA',
-        '#3': 'nestedB',
-        '#4': 'other',
-        '#5': 'nested',
-        '#6': 'value'
+        '#c1': 'map',
+        '#c2': 'nestedA',
+        '#c3': 'nestedB',
+        '#c4': 'other',
+        '#c5': 'nested',
+        '#c6': 'value'
       },
       ExpressionAttributeValues: {}
     })
@@ -177,14 +177,14 @@ describe('parseCondition - comparison', () => {
     expect(
       parseSchemaCondition(mapAndListSchema, { attr: 'listA[1].nested.listB[2].value', eq: 42 })
     ).toStrictEqual({
-      ConditionExpression: '#1[1].#2.#3[2].#4 = :1',
+      ConditionExpression: '#c1[1].#c2.#c3[2].#c4 = :c1',
       ExpressionAttributeNames: {
-        '#1': 'listA',
-        '#2': 'nested',
-        '#3': 'listB',
-        '#4': 'value'
+        '#c1': 'listA',
+        '#c2': 'nested',
+        '#c3': 'listB',
+        '#c4': 'value'
       },
-      ExpressionAttributeValues: { ':1': 42 }
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -195,16 +195,16 @@ describe('parseCondition - comparison', () => {
         eq: { attr: 'listC[3].nested.listD[4].value' }
       })
     ).toStrictEqual({
-      ConditionExpression: '#1[1].#2.#3[2].#4 = #5[3].#6.#7[4].#8',
+      ConditionExpression: '#c1[1].#c2.#c3[2].#c4 = #c5[3].#c6.#c7[4].#c8',
       ExpressionAttributeNames: {
-        '#1': 'listA',
-        '#2': 'nested',
-        '#3': 'listB',
-        '#4': 'value',
-        '#5': 'listC',
-        '#6': 'nested',
-        '#7': 'listD',
-        '#8': 'value'
+        '#c1': 'listA',
+        '#c2': 'nested',
+        '#c3': 'listB',
+        '#c4': 'value',
+        '#c5': 'listC',
+        '#c6': 'nested',
+        '#c7': 'listD',
+        '#c8': 'value'
       },
       ExpressionAttributeValues: {}
     })
@@ -217,9 +217,9 @@ describe('parseCondition - comparison', () => {
 
   it('deep lists (value)', () => {
     expect(parseSchemaCondition(listSchema, { attr: 'listA[1][2][3]', eq: 42 })).toStrictEqual({
-      ConditionExpression: '#1[1][2][3] = :1',
-      ExpressionAttributeNames: { '#1': 'listA' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: '#c1[1][2][3] = :c1',
+      ExpressionAttributeNames: { '#c1': 'listA' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 
@@ -227,17 +227,17 @@ describe('parseCondition - comparison', () => {
     expect(
       parseSchemaCondition(listSchema, { attr: 'listA[1][2][3]', eq: { attr: 'listB[4][5][6]' } })
     ).toStrictEqual({
-      ConditionExpression: '#1[1][2][3] = #2[4][5][6]',
-      ExpressionAttributeNames: { '#1': 'listA', '#2': 'listB' },
+      ConditionExpression: '#c1[1][2][3] = #c2[4][5][6]',
+      ExpressionAttributeNames: { '#c1': 'listA', '#c2': 'listB' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('with size', () => {
     expect(parseSchemaCondition(simpleSchema, { size: 'num', eq: 42 })).toStrictEqual({
-      ConditionExpression: 'size(#1) = :1',
-      ExpressionAttributeNames: { '#1': 'num' },
-      ExpressionAttributeValues: { ':1': 42 }
+      ConditionExpression: 'size(#c1) = :c1',
+      ExpressionAttributeNames: { '#c1': 'num' },
+      ExpressionAttributeValues: { ':c1': 42 }
     })
   })
 })
