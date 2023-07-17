@@ -3,7 +3,8 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import type { Schema } from 'v1/schema'
 import type { EntityV2 } from 'v1/entity'
 import type { Condition, SchemaCondition } from 'v1/commands/types'
-import { ConditionParser } from 'v1/commands/classes/conditionParser'
+
+import { ConditionParser } from './expressionParsers/condition'
 
 export const parseSchemaCondition = <
   SCHEMA extends Schema,
