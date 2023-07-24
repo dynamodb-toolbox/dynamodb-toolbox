@@ -1,21 +1,21 @@
-import type { AnyOfAttribute, ResolvedAttribute, AdditionalResolution } from 'v1/schema'
+import type { AnyOfAttribute, ResolvedAttribute, Extension } from 'v1/schema'
 import type { AnyOfAttributeClonedInputsWithDefaults } from 'v1/validation/cloneInputAndAddDefaults/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributeClonedInput } from './attribute'
 import type { ParsingOptions, ParsedAttributeInput } from './types'
 
-export const parseAnyOfAttributeClonedInput = <ADDITIONAL_RESOLUTION extends AdditionalResolution>(
+export const parseAnyOfAttributeClonedInput = <EXTENSION extends Extension>(
   anyOfAttribute: AnyOfAttribute,
-  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
+  input: ResolvedAttribute<EXTENSION>,
   parsingOptions: ParsingOptions = {}
-): ParsedAttributeInput<ADDITIONAL_RESOLUTION> => {
-  let parsedInput: ParsedAttributeInput<ADDITIONAL_RESOLUTION> | undefined = undefined
+): ParsedAttributeInput<EXTENSION> => {
+  let parsedInput: ParsedAttributeInput<EXTENSION> | undefined = undefined
 
   const {
     originalInput,
     clonedInputsWithDefaults
-  } = input as AnyOfAttributeClonedInputsWithDefaults<ADDITIONAL_RESOLUTION>
+  } = input as AnyOfAttributeClonedInputsWithDefaults<EXTENSION>
 
   let subSchemaIndex = 0
   while (parsedInput === undefined && subSchemaIndex < anyOfAttribute.elements.length) {

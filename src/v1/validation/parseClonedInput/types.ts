@@ -2,8 +2,8 @@ import type {
   RequiredOption,
   $savedAs,
   ResolvedPrimitiveAttribute,
-  AdditionalResolution,
-  ExtractAdditionalResolution,
+  Extension,
+  ExtractExtension,
   PrimitiveAttributeType
 } from 'v1/schema'
 
@@ -19,34 +19,34 @@ export interface ParsingOptions {
 /**
  * @debt refactor "note: All those types are just to add the $savedAs secret prop to items & maps. Maybe we can update ResolvedX types to incorporate them"
  */
-export type ParsedSetAttributeInput<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> =
-  | ExtractAdditionalResolution<ADDITIONAL_RESOLUTION, 'set'>
-  | Set<ParsedAttributeInput<ADDITIONAL_RESOLUTION>>
+export type ParsedSetAttributeInput<EXTENSION extends Extension = never> =
+  | ExtractExtension<EXTENSION, 'set'>
+  | Set<ParsedAttributeInput<EXTENSION>>
 
-export type ParsedListAttributeInput<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> =
-  | ExtractAdditionalResolution<ADDITIONAL_RESOLUTION, 'list'>
-  | ParsedAttributeInput<ADDITIONAL_RESOLUTION>[]
+export type ParsedListAttributeInput<EXTENSION extends Extension = never> =
+  | ExtractExtension<EXTENSION, 'list'>
+  | ParsedAttributeInput<EXTENSION>[]
 
 // Note: Extracting not needed right now & complex to implement
-export type ParsedMapAttributeInput<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> = {
+export type ParsedMapAttributeInput<EXTENSION extends Extension = never> = {
   [$savedAs]: Record<string, string>
-  [key: string]: ParsedAttributeInput<ADDITIONAL_RESOLUTION>
+  [key: string]: ParsedAttributeInput<EXTENSION>
 }
 
 // Note: Extracting not needed right now & complex to implement
-export type ParsedRecordAttributeInput<
-  ADDITIONAL_RESOLUTION extends AdditionalResolution = never
-> = { [key: string]: ParsedAttributeInput<ADDITIONAL_RESOLUTION> }
+export type ParsedRecordAttributeInput<EXTENSION extends Extension = never> = {
+  [key: string]: ParsedAttributeInput<EXTENSION>
+}
 
-export type ParsedAttributeInput<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> =
-  | ExtractAdditionalResolution<ADDITIONAL_RESOLUTION, PrimitiveAttributeType>
+export type ParsedAttributeInput<EXTENSION extends Extension = never> =
+  | ExtractExtension<EXTENSION, PrimitiveAttributeType>
   | ResolvedPrimitiveAttribute
-  | ParsedSetAttributeInput<ADDITIONAL_RESOLUTION>
-  | ParsedListAttributeInput<ADDITIONAL_RESOLUTION>
-  | ParsedMapAttributeInput<ADDITIONAL_RESOLUTION>
-  | ParsedRecordAttributeInput<ADDITIONAL_RESOLUTION>
+  | ParsedSetAttributeInput<EXTENSION>
+  | ParsedListAttributeInput<EXTENSION>
+  | ParsedMapAttributeInput<EXTENSION>
+  | ParsedRecordAttributeInput<EXTENSION>
 
-export type ParsedSchemaInput<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> = {
+export type ParsedSchemaInput<EXTENSION extends Extension = never> = {
   [$savedAs]: Record<string, string>
-  [key: string]: ParsedAttributeInput<ADDITIONAL_RESOLUTION>
+  [key: string]: ParsedAttributeInput<EXTENSION>
 }
