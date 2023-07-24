@@ -1,4 +1,4 @@
-import type { RequiredOption, Attribute, ResolvedAttribute, Extension } from 'v1/schema'
+import type { RequiredOption, Attribute, AttributeValue, Extension } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parsePrimitiveAttributeClonedInput } from './primitive'
@@ -13,7 +13,7 @@ const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'
 
 export const parseAttributeClonedInput = <EXTENSION extends Extension>(
   attribute: Attribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeValue<EXTENSION>,
   parsingOptions: ParsingOptions = {}
 ): ParsedAttributeInput<EXTENSION> => {
   const { requiringOptions = defaultRequiringOptions } = parsingOptions

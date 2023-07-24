@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { MapAttribute, ResolvedAttribute, ResolvedMapAttribute, Extension } from 'v1/schema'
+import type { MapAttribute, AttributeValue, MapAttributeValue, Extension } from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
@@ -10,9 +10,9 @@ import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './
 
 export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   mapAttribute: MapAttribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeValue<EXTENSION>,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
-): ResolvedAttribute<EXTENSION> => {
+): AttributeValue<EXTENSION> => {
   const commandDefault = getCommandDefault(mapAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
@@ -44,12 +44,12 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
     return cloneDeep(input)
   }
 
-  const inputWithDefaults: ResolvedMapAttribute<EXTENSION> = {}
+  const inputWithDefaults: MapAttributeValue<EXTENSION> = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
-    let attributeInputWithDefaults: ResolvedAttribute<EXTENSION> | undefined = undefined
+    let attributeInputWithDefaults: AttributeValue<EXTENSION> | undefined = undefined
 
     if (!canComputeDefaults) {
       attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
@@ -83,6 +83,10 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
     }
 
     if (attributeInputWithDefaults !== undefined) {
+      /**
+       * @debt extensions "To fix by using MapAttributeBaseValue"
+       */
+      // @ts-expect-error
       inputWithDefaults[attributeName] = attributeInputWithDefaults
     }
 
@@ -90,6 +94,10 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
   })
 
   additionalAttributes.forEach(attributeName => {
+    /**
+     * @debt extensions "To fix by using MapAttributeBaseValue"
+     */
+    // @ts-expect-error
     inputWithDefaults[attributeName] = cloneDeep(input[attributeName])
   })
 

@@ -1,6 +1,6 @@
 import type {
   PrimitiveAttribute,
-  ResolvedAttribute,
+  AttributeValue,
   ResolvedPrimitiveAttribute,
   Extension
 } from 'v1/schema'
@@ -9,8 +9,8 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 export const parsePrimitiveAttributeClonedInput = <EXTENSION extends Extension>(
   primitiveAttribute: PrimitiveAttribute,
-  input: ResolvedAttribute<EXTENSION>
-): ResolvedAttribute<EXTENSION> => {
+  input: AttributeValue<EXTENSION>
+): AttributeValue<EXTENSION> => {
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {

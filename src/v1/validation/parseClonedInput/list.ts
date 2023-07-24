@@ -1,4 +1,4 @@
-import type { Extension, ListAttribute, ResolvedAttribute } from 'v1/schema'
+import type { Extension, ListAttribute, AttributeValue } from 'v1/schema'
 import { isArray } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -7,7 +7,7 @@ import type { ParsingOptions, ParsedListAttributeInput } from './types'
 
 export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
   listAttribute: ListAttribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeValue<EXTENSION>,
   parsingOptions: ParsingOptions = {}
 ): ParsedListAttributeInput => {
   if (!isArray(input)) {

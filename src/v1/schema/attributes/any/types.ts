@@ -1,5 +1,5 @@
 import type { ComputedDefault } from '../constants/computedDefault'
-import type { ResolvedAttribute } from '../types/attribute'
+import type { AttributeValue } from '../types/attribute'
 
 /**
  * Any Default values constraint
@@ -7,5 +7,5 @@ import type { ResolvedAttribute } from '../types/attribute'
 export type AnyAttributeDefaultValue =
   | undefined
   | ComputedDefault
-  | ResolvedAttribute
-  | (() => ResolvedAttribute)
+  | AttributeValue
+  | (() => AttributeValue)
