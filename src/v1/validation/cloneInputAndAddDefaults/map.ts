@@ -1,10 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type {
-  MapAttribute,
-  PossiblyUndefinedResolvedAttribute,
-  PossiblyUndefinedResolvedMapAttribute
-} from 'v1/schema'
+import type { MapAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
@@ -48,7 +44,7 @@ export const cloneMapAttributeInputAndAddDefaults = (
     return cloneDeep(input)
   }
 
-  const inputWithDefaults: PossiblyUndefinedResolvedMapAttribute = {}
+  const inputWithDefaults: PossiblyUndefinedResolvedAttribute = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
