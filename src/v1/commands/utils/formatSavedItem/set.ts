@@ -1,4 +1,4 @@
-import type { SetAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { SetAttribute, PossiblyUndefinedAttributeValue } from 'v1/schema'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -6,8 +6,8 @@ import { parseSavedAttribute } from './attribute'
 
 export const parseSavedSetAttribute = (
   setAttribute: SetAttribute,
-  value: PossiblyUndefinedResolvedAttribute
-): PossiblyUndefinedResolvedAttribute => {
+  value: PossiblyUndefinedAttributeValue
+): PossiblyUndefinedAttributeValue => {
   if (!isSet(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
       message: `Invalid attribute in saved item: ${setAttribute.path}. Should be a ${setAttribute.type}`,
@@ -19,7 +19,7 @@ export const parseSavedSetAttribute = (
     })
   }
 
-  const parsedPutItemInput: PossiblyUndefinedResolvedAttribute = new Set()
+  const parsedPutItemInput: PossiblyUndefinedAttributeValue = new Set()
 
   value.forEach(element =>
     parsedPutItemInput.add(parseSavedAttribute(setAttribute.elements, element))

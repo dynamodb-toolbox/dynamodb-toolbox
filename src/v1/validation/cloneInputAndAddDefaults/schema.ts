@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { Schema, Extension, ResolvedItem, ResolvedAttribute } from 'v1/schema'
+import type { Schema, Extension, Item, AttributeValue } from 'v1/schema'
 import type { SchemaDefaultsComputer } from 'v1/entity'
 import { isObject } from 'v1/utils/validation'
 
@@ -9,7 +9,7 @@ import { cloneAttributeInputAndAddDefaults } from './attribute'
 
 export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension>(
   schema: Schema,
-  input: ResolvedItem<EXTENSION>,
+  input: Item<EXTENSION>,
   {
     commandName,
     computeDefaultsContext
@@ -17,19 +17,19 @@ export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension>(
     commandName?: CommandName
     computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer }
   } = {}
-): ResolvedItem<EXTENSION> => {
+): Item<EXTENSION> => {
   if (!isObject(input)) {
     return cloneDeep(input)
   }
 
-  const inputWithDefaults: ResolvedItem<EXTENSION> = {}
+  const inputWithDefaults: Item<EXTENSION> = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   const canComputeDefaults = computeDefaultsContext !== undefined
 
   Object.entries(schema.attributes).forEach(([attributeName, attribute]) => {
-    let attributeInputWithDefaults: ResolvedAttribute<EXTENSION> | undefined = undefined
+    let attributeInputWithDefaults: AttributeValue<EXTENSION> | undefined = undefined
 
     if (canComputeDefaults) {
       const { computeDefaults } = computeDefaultsContext

@@ -1,4 +1,4 @@
-import type { RecordAttribute, ResolvedAttribute, Extension } from 'v1/schema'
+import type { RecordAttribute, AttributeValue, Extension } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -7,7 +7,7 @@ import type { ParsingOptions, ParsedRecordAttributeInput } from './types'
 
 export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
   recordAttribute: RecordAttribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeValue<EXTENSION>,
   parsingOptions: ParsingOptions = {}
 ): ParsedRecordAttributeInput<EXTENSION> => {
   if (!isObject(input)) {

@@ -1,4 +1,4 @@
-import type { SetAttribute, ResolvedAttribute, Extension } from 'v1/schema'
+import type { SetAttribute, AttributeValue, Extension } from 'v1/schema'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -7,7 +7,7 @@ import type { ParsingOptions, ParsedSetAttributeInput } from './types'
 
 export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(
   setAttribute: SetAttribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeValue<EXTENSION>,
   parsingOptions: ParsingOptions = {}
 ): ParsedSetAttributeInput<EXTENSION> => {
   if (!isSet(input)) {

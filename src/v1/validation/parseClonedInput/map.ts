@@ -1,4 +1,4 @@
-import type { MapAttribute, ResolvedAttribute, Extension } from 'v1'
+import type { MapAttribute, AttributeValue, Extension } from 'v1'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
@@ -9,7 +9,7 @@ import type { ParsingOptions, ParsedMapAttributeInput } from './types'
 
 export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
   mapAttribute: MapAttribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeValue<EXTENSION>,
   parsingOptions: ParsingOptions = {}
 ): ParsedMapAttributeInput<EXTENSION> => {
   const { filters } = parsingOptions

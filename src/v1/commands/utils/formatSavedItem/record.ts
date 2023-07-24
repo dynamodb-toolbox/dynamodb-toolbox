@@ -1,4 +1,4 @@
-import type { RecordAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { RecordAttribute, PossiblyUndefinedAttributeValue } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -9,9 +9,9 @@ import { matchProjection } from './utils'
 
 export const parseSavedRecordAttribute = (
   recordAttribute: RecordAttribute,
-  value: PossiblyUndefinedResolvedAttribute,
+  value: PossiblyUndefinedAttributeValue,
   { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
-): PossiblyUndefinedResolvedAttribute => {
+): PossiblyUndefinedAttributeValue => {
   if (!isObject(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
       message: `Invalid attribute in saved item: ${recordAttribute.path}. Should be a ${recordAttribute.type}`,
@@ -23,7 +23,7 @@ export const parseSavedRecordAttribute = (
     })
   }
 
-  const formattedRecord: PossiblyUndefinedResolvedAttribute = {}
+  const formattedRecord: PossiblyUndefinedAttributeValue = {}
 
   Object.entries(value).forEach(([key, element]) => {
     const parsedKey = parseSavedPrimitiveAttribute(recordAttribute.keys, key) as string

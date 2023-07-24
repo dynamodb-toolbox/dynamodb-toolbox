@@ -1,4 +1,4 @@
-import type { AnyOfAttribute, ResolvedAttribute, Extension } from 'v1/schema'
+import type { AnyOfAttribute, AttributeValue, Extension } from 'v1/schema'
 import type { AnyOfAttributeClonedInputsWithDefaults } from 'v1/validation/cloneInputAndAddDefaults/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -7,7 +7,7 @@ import type { ParsingOptions, ParsedAttributeInput } from './types'
 
 export const parseAnyOfAttributeClonedInput = <EXTENSION extends Extension>(
   anyOfAttribute: AnyOfAttribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeValue<EXTENSION>,
   parsingOptions: ParsingOptions = {}
 ): ParsedAttributeInput<EXTENSION> => {
   let parsedInput: ParsedAttributeInput<EXTENSION> | undefined = undefined

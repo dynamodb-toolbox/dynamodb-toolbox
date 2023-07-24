@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { Attribute, RequiredOption, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { Attribute, RequiredOption, PossiblyUndefinedAttributeValue } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { FormatSavedAttributeOptions } from './types'
@@ -18,9 +18,9 @@ export const isRequired = (attribute: Attribute): boolean =>
 
 export const parseSavedAttribute = (
   attribute: Attribute,
-  value: PossiblyUndefinedResolvedAttribute,
+  value: PossiblyUndefinedAttributeValue,
   options: FormatSavedAttributeOptions = {}
-): PossiblyUndefinedResolvedAttribute => {
+): PossiblyUndefinedAttributeValue => {
   if (value === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
       throw new DynamoDBToolboxError('commands.formatSavedItem.savedAttributeRequired', {

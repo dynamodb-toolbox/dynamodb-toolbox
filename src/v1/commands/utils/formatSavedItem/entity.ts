@@ -1,5 +1,5 @@
 import type { EntityV2, FormattedItem } from 'v1/entity'
-import type { ResolvedItem, PossiblyUndefinedResolvedItem } from 'v1/schema'
+import type { Item, PossiblyUndefinedItem } from 'v1/schema'
 import type { AnyAttributePath } from 'v1/commands/types'
 
 import { parseSavedAttribute } from './attribute'
@@ -15,12 +15,12 @@ export const formatSavedItem = <
   OPTIONS extends FormatSavedItemOptions<ENTITY>
 >(
   entity: ENTITY,
-  savedItem: ResolvedItem,
+  savedItem: Item,
   { attributes, partial = false }: OPTIONS = {} as OPTIONS
 ): OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
   ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'][number] }>
   : FormattedItem<ENTITY> => {
-  const formattedItem: PossiblyUndefinedResolvedItem = {}
+  const formattedItem: PossiblyUndefinedItem = {}
 
   const schema = entity.schema
 
