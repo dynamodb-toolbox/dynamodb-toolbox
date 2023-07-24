@@ -1,4 +1,4 @@
-import type { RequiredOption, Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { RequiredOption, Attribute, ResolvedAttribute, AdditionalResolution } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parsePrimitiveAttributeClonedInput } from './primitive'
@@ -11,11 +11,11 @@ import type { ParsingOptions, ParsedAttributeInput } from './types'
 
 const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'])
 
-export const parseAttributeClonedInput = (
+export const parseAttributeClonedInput = <ADDITIONAL_RESOLUTION extends AdditionalResolution>(
   attribute: Attribute,
-  input: PossiblyUndefinedResolvedAttribute,
+  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
   parsingOptions: ParsingOptions = {}
-): ParsedAttributeInput => {
+): ParsedAttributeInput<ADDITIONAL_RESOLUTION> => {
   const { requiringOptions = defaultRequiringOptions } = parsingOptions
 
   if (input === undefined) {

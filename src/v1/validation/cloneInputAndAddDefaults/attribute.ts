@@ -1,4 +1,4 @@
-import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { Attribute, AdditionalResolution, ResolvedAttribute } from 'v1/schema'
 
 import type { CloneInputAndAddDefaultsOptions } from './types'
 import { clonePrimitiveAttributeInputAndAddDefaults } from './primitive'
@@ -7,11 +7,13 @@ import { cloneMapAttributeInputAndAddDefaults } from './map'
 import { cloneRecordAttributeInputAndAddDefaults } from './record'
 import { cloneAnyOfAttributeInputAndAddDefaults } from './anyOf'
 
-export const cloneAttributeInputAndAddDefaults = (
+export const cloneAttributeInputAndAddDefaults = <
+  ADDITIONAL_RESOLUTION extends AdditionalResolution
+>(
   attribute: Attribute,
-  input: PossiblyUndefinedResolvedAttribute,
+  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
   options: CloneInputAndAddDefaultsOptions = {}
-): PossiblyUndefinedResolvedAttribute => {
+): ResolvedAttribute<ADDITIONAL_RESOLUTION> => {
   switch (attribute.type) {
     case 'any':
     case 'string':

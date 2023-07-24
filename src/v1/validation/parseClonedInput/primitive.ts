@@ -1,15 +1,18 @@
 import type {
   PrimitiveAttribute,
-  PossiblyUndefinedResolvedAttribute,
-  ResolvedPrimitiveAttribute
+  ResolvedAttribute,
+  ResolvedPrimitiveAttribute,
+  AdditionalResolution
 } from 'v1/schema'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-export const parsePrimitiveAttributeClonedInput = (
+export const parsePrimitiveAttributeClonedInput = <
+  ADDITIONAL_RESOLUTION extends AdditionalResolution
+>(
   primitiveAttribute: PrimitiveAttribute,
-  input: PossiblyUndefinedResolvedAttribute
-): PossiblyUndefinedResolvedAttribute => {
+  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>
+): ResolvedAttribute<ADDITIONAL_RESOLUTION> => {
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {

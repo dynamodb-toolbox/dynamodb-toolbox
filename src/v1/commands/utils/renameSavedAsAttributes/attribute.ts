@@ -1,4 +1,4 @@
-import type { PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { ResolvedAttribute, AdditionalResolution } from 'v1/schema'
 import type { ParsedAttributeInput, ParsedMapAttributeInput } from 'v1/validation/parseClonedInput'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
@@ -7,13 +7,15 @@ import { renameMapAttributeSavedAsAttributes } from './map'
 import { isArray } from 'v1/utils/validation/isArray'
 import { isObject } from 'v1/utils/validation/isObject'
 
-const isMapAttributeInput = (
-  attributeInput: ParsedAttributeInput & Record<string, unknown>
-): attributeInput is ParsedMapAttributeInput => $savedAs in attributeInput
+const isMapAttributeInput = <ADDITIONAL_RESOLUTION extends AdditionalResolution>(
+  attributeInput: ParsedAttributeInput<ADDITIONAL_RESOLUTION> & Record<string, unknown>
+): attributeInput is ParsedMapAttributeInput<ADDITIONAL_RESOLUTION> => $savedAs in attributeInput
 
-export const renameAttributeSavedAsAttributes = (
-  attributeInput: ParsedAttributeInput
-): PossiblyUndefinedResolvedAttribute => {
+export const renameAttributeSavedAsAttributes = <
+  ADDITIONAL_RESOLUTION extends AdditionalResolution
+>(
+  attributeInput: ParsedAttributeInput<ADDITIONAL_RESOLUTION>
+): ResolvedAttribute<ADDITIONAL_RESOLUTION> => {
   if (isArray(attributeInput)) {
     return attributeInput.map(renameAttributeSavedAsAttributes)
   }
