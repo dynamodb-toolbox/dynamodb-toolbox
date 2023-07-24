@@ -1,8 +1,4 @@
-import type {
-  MapAttribute,
-  PossiblyUndefinedResolvedAttribute,
-  PossiblyUndefinedResolvedMapAttribute
-} from 'v1/schema'
+import type { MapAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -26,7 +22,7 @@ export const parseSavedMapAttribute = (
     })
   }
 
-  const formattedMap: PossiblyUndefinedResolvedMapAttribute = {}
+  const formattedMap: PossiblyUndefinedResolvedAttribute = {}
 
   Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
     if (attribute.hidden) {

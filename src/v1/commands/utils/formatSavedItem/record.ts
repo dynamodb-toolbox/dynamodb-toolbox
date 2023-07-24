@@ -1,8 +1,4 @@
-import type {
-  RecordAttribute,
-  PossiblyUndefinedResolvedAttribute,
-  PossiblyUndefinedResolvedMapAttribute
-} from 'v1/schema'
+import type { RecordAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -27,7 +23,7 @@ export const parseSavedRecordAttribute = (
     })
   }
 
-  const formattedRecord: PossiblyUndefinedResolvedMapAttribute = {}
+  const formattedRecord: PossiblyUndefinedResolvedAttribute = {}
 
   Object.entries(value).forEach(([key, element]) => {
     const parsedKey = parseSavedPrimitiveAttribute(recordAttribute.keys, key) as string
