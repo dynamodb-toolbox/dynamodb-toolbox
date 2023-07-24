@@ -1,15 +1,15 @@
-import type { Extension, ListAttribute, AttributeValue } from 'v1/schema'
+import type { Extension, ListAttribute, AttributeBasicValue } from 'v1/schema'
 import { isArray } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { ParsingOptions, ListAttributeParsedBasicValue } from './types'
 import { parseAttributeClonedInput } from './attribute'
-import type { ParsingOptions, ParsedListAttributeInput } from './types'
 
 export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
   listAttribute: ListAttribute,
-  input: AttributeValue<EXTENSION>,
+  input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions = {}
-): ParsedListAttributeInput => {
+): ListAttributeParsedBasicValue<EXTENSION> => {
   if (!isArray(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${listAttribute.path} should be a ${listAttribute.type}`,
@@ -21,13 +21,9 @@ export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: ParsedListAttributeInput = []
+  const parsedInput: ListAttributeParsedBasicValue<EXTENSION> = []
 
   input.forEach(element =>
-    /**
-     * @debt feature "add handleExtension in options"
-     */
-    // @ts-expect-error
     parsedInput.push(parseAttributeClonedInput(listAttribute.elements, element, parsingOptions))
   )
 

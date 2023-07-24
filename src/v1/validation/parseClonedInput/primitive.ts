@@ -1,16 +1,18 @@
 import type {
   PrimitiveAttribute,
-  AttributeValue,
+  AttributeBasicValue,
   ResolvedPrimitiveAttribute,
   Extension
 } from 'v1/schema'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import { PrimitiveAttributeParsedBasicValue } from './types'
+
 export const parsePrimitiveAttributeClonedInput = <EXTENSION extends Extension>(
   primitiveAttribute: PrimitiveAttribute,
-  input: AttributeValue<EXTENSION>
-): AttributeValue<EXTENSION> => {
+  input: AttributeBasicValue<EXTENSION>
+): PrimitiveAttributeParsedBasicValue => {
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -39,5 +41,5 @@ export const parsePrimitiveAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  return input
+  return input as PrimitiveAttributeParsedBasicValue
 }

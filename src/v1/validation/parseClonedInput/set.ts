@@ -1,15 +1,15 @@
-import type { SetAttribute, AttributeValue, Extension } from 'v1/schema'
+import type { SetAttribute, AttributeBasicValue, Extension } from 'v1/schema'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { ParsingOptions, SetAttributeParsedBasicValue } from './types'
 import { parseAttributeClonedInput } from './attribute'
-import type { ParsingOptions, ParsedSetAttributeInput } from './types'
 
 export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(
   setAttribute: SetAttribute,
-  input: AttributeValue<EXTENSION>,
+  input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions = {}
-): ParsedSetAttributeInput<EXTENSION> => {
+): SetAttributeParsedBasicValue<EXTENSION> => {
   if (!isSet(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${setAttribute.path} should be a ${setAttribute.type}`,
@@ -21,13 +21,9 @@ export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: ParsedSetAttributeInput<EXTENSION> = new Set()
+  const parsedInput: SetAttributeParsedBasicValue<EXTENSION> = new Set()
 
   input.forEach(element =>
-    /**
-     * @debt feature "add handleExtension in options"
-     */
-    // @ts-expect-error
     parsedInput.add(parseAttributeClonedInput(setAttribute.elements, element, parsingOptions))
   )
 

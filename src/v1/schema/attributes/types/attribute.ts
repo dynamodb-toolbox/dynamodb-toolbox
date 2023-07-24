@@ -2,7 +2,8 @@ import type { $AnyAttribute, AnyAttribute } from '../any'
 import type {
   $PrimitiveAttribute,
   ResolvedPrimitiveAttribute,
-  PrimitiveAttribute
+  PrimitiveAttribute,
+  PrimitiveAttributeType
 } from '../primitive'
 import type { $SetAttribute, SetAttribute } from '../set'
 import type { $ListAttribute, ListAttribute } from '../list'
@@ -53,38 +54,40 @@ export type ExtendedValue<
 > = Extract<EXTENSION, { type: TYPE | '*' }>['value']
 
 export type PrimitiveAttributeValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'set'>
-  | PrimitiveAttributeBaseValue
+  | ExtendedValue<EXTENSION, PrimitiveAttributeType>
+  | PrimitiveAttributeBasicValue
 
-export type PrimitiveAttributeBaseValue = ResolvedPrimitiveAttribute
+export type PrimitiveAttributeBasicValue = ResolvedPrimitiveAttribute
 
 export type SetAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'set'>
-  | SetAttributeBaseValue<EXTENSION>
+  | SetAttributeBasicValue<EXTENSION>
 
-export type SetAttributeBaseValue<EXTENSION extends Extension = never> = Set<
+export type SetAttributeBasicValue<EXTENSION extends Extension = never> = Set<
   AttributeValue<EXTENSION>
 >
 
 export type ListAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'list'>
-  | BaseListAttribute<EXTENSION>
+  | ListAttributeBasicValue<EXTENSION>
 
-export type BaseListAttribute<EXTENSION extends Extension = never> = AttributeValue<EXTENSION>[]
+export type ListAttributeBasicValue<
+  EXTENSION extends Extension = never
+> = AttributeValue<EXTENSION>[]
 
 export type MapAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'map'>
-  | MapAttributeBaseValue<EXTENSION>
+  | MapAttributeBasicValue<EXTENSION>
 
-export type MapAttributeBaseValue<EXTENSION extends Extension = never> = {
+export type MapAttributeBasicValue<EXTENSION extends Extension = never> = {
   [key: string]: AttributeValue<EXTENSION>
 }
 
 export type RecordAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'record'>
-  | RecordAttributeBaseValue<EXTENSION>
+  | RecordAttributeBasicValue<EXTENSION>
 
-export type RecordAttributeBaseValue<EXTENSION extends Extension = never> = {
+export type RecordAttributeBasicValue<EXTENSION extends Extension = never> = {
   [key: string]: AttributeValue<EXTENSION>
 }
 
@@ -101,6 +104,13 @@ export type AttributeValue<EXTENSION extends Extension = never> =
 export type Item<EXTENSION extends Extension = never> = {
   [key: string]: AttributeValue<EXTENSION>
 }
+
+export type AttributeBasicValue<EXTENSION extends Extension = never> =
+  | PrimitiveAttributeBasicValue
+  | SetAttributeBasicValue<EXTENSION>
+  | ListAttributeBasicValue<EXTENSION>
+  | MapAttributeBasicValue<EXTENSION>
+  | RecordAttributeBasicValue<EXTENSION>
 
 export type UndefinedAttrExtension = { type: '*'; value: undefined }
 
