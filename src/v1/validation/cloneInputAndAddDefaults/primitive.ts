@@ -5,7 +5,7 @@ import type {
   PrimitiveAttribute,
   SetAttribute,
   ResolvedAttribute,
-  AdditionalResolution
+  Extension
 } from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isFunction } from 'v1/utils/validation'
@@ -13,13 +13,11 @@ import { isFunction } from 'v1/utils/validation'
 import type { CloneInputAndAddDefaultsOptions } from './types'
 import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
-export const clonePrimitiveAttributeInputAndAddDefaults = <
-  ADDITIONAL_RESOLUTION extends AdditionalResolution
->(
+export const clonePrimitiveAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   attribute: AnyAttribute | PrimitiveAttribute | SetAttribute,
-  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
+  input: ResolvedAttribute<EXTENSION>,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
-): ResolvedAttribute<ADDITIONAL_RESOLUTION> => {
+): ResolvedAttribute<EXTENSION> => {
   const commandDefault = getCommandDefault(attribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 

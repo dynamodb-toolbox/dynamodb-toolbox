@@ -1,4 +1,4 @@
-import type { RequiredOption, Attribute, ResolvedAttribute, AdditionalResolution } from 'v1/schema'
+import type { RequiredOption, Attribute, ResolvedAttribute, Extension } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parsePrimitiveAttributeClonedInput } from './primitive'
@@ -11,11 +11,11 @@ import type { ParsingOptions, ParsedAttributeInput } from './types'
 
 const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'])
 
-export const parseAttributeClonedInput = <ADDITIONAL_RESOLUTION extends AdditionalResolution>(
+export const parseAttributeClonedInput = <EXTENSION extends Extension>(
   attribute: Attribute,
-  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
+  input: ResolvedAttribute<EXTENSION>,
   parsingOptions: ParsingOptions = {}
-): ParsedAttributeInput<ADDITIONAL_RESOLUTION> => {
+): ParsedAttributeInput<EXTENSION> => {
   const { requiringOptions = defaultRequiringOptions } = parsingOptions
 
   if (input === undefined) {
@@ -49,3 +49,37 @@ export const parseAttributeClonedInput = <ADDITIONAL_RESOLUTION extends Addition
       return parseAnyOfAttributeClonedInput(attribute, input, parsingOptions)
   }
 }
+
+// if (input === $remove) {
+//   if (commandName !== 'update') {
+//     // TODO
+//     throw new Error()
+//   }
+
+//   if (attribute.required === 'never') {
+//     throw new DynamoDBToolboxError('parsing.attributeRequired', {
+//       message: `Attribute ${attribute.path} cannot be removed`,
+//       path: attribute.path
+//     })
+//   } else {
+//     return $remove
+//   }
+// }
+
+// if (isAddOperation(input)) {
+//   if (commandName !== 'update') {
+//     // TODO
+//     throw new Error()
+//   }
+
+//   return { [$add]: parseAttributeClonedInput(attribute, input[$add], parsingOptions) }
+// }
+
+// if (isDeleteOperation(input)) {
+//   if (commandName !== 'update') {
+//     // TODO
+//     throw new Error()
+//   }
+
+//   return { [$delete]: parseAttributeClonedInput(attribute, input[$delete], parsingOptions) }
+// }

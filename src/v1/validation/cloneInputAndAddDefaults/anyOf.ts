@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { AnyOfAttribute, ResolvedAttribute, AdditionalResolution } from 'v1/schema'
+import type { AnyOfAttribute, ResolvedAttribute, Extension } from 'v1/schema'
 
 import type {
   AnyOfAttributeClonedInputsWithDefaults,
@@ -8,13 +8,11 @@ import type {
 } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 
-export const cloneAnyOfAttributeInputAndAddDefaults = <
-  ADDITIONAL_RESOLUTION extends AdditionalResolution
->(
+export const cloneAnyOfAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   attribute: AnyOfAttribute,
-  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
+  input: ResolvedAttribute<EXTENSION>,
   options: CloneInputAndAddDefaultsOptions = {}
-): AnyOfAttributeClonedInputsWithDefaults<ADDITIONAL_RESOLUTION> | undefined => {
+): AnyOfAttributeClonedInputsWithDefaults<EXTENSION> | undefined => {
   const clonedInputsWithDefaults = attribute.elements.map(element =>
     cloneAttributeInputAndAddDefaults(element, input, options)
   )
