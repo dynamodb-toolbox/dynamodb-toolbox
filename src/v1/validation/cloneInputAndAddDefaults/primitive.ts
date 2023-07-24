@@ -4,7 +4,7 @@ import type {
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute,
-  AttributeValue,
+  AttributeBasicValue,
   Extension
 } from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
@@ -15,9 +15,9 @@ import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './
 
 export const clonePrimitiveAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   attribute: AnyAttribute | PrimitiveAttribute | SetAttribute,
-  input: AttributeValue<EXTENSION>,
+  input: AttributeBasicValue<EXTENSION> | undefined,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
-): AttributeValue<EXTENSION> => {
+): AttributeBasicValue<EXTENSION> | undefined => {
   const commandDefault = getCommandDefault(attribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
