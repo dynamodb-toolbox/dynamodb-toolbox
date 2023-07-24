@@ -43,12 +43,12 @@ export interface MapAttributeAttributes {
   [key: string]: Attribute
 }
 
-type AdditionalResolution = {
+export type AdditionalResolution = {
   type: Attribute['type'] | '*'
   value: unknown
 }
 
-type ExtractAdditionalResolution<
+export type ExtractAdditionalResolution<
   ADDITIONAL_RESOLUTION extends AdditionalResolution,
   TYPE extends Attribute['type'] | '*'
 > = Extract<ADDITIONAL_RESOLUTION, { type: TYPE | '*' }>['value']
@@ -61,13 +61,15 @@ export type ResolvedSetAttribute<ADDITIONAL_RESOLUTION extends AdditionalResolut
   | ExtractAdditionalResolution<ADDITIONAL_RESOLUTION, 'set'>
   | Set<ResolvedAttribute<ADDITIONAL_RESOLUTION>>
 
-export type ResolvedMapAttribute<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> =
-  | ExtractAdditionalResolution<ADDITIONAL_RESOLUTION, 'map'>
-  | { [key: string]: ResolvedAttribute<ADDITIONAL_RESOLUTION> }
+// Note: Extracting not needed right now & complex to implement
+export type ResolvedMapAttribute<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> = {
+  [key: string]: ResolvedAttribute<ADDITIONAL_RESOLUTION>
+}
 
-export type ResolvedRecordAttribute<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> =
-  | ExtractAdditionalResolution<ADDITIONAL_RESOLUTION, 'record'>
-  | { [key: string]: ResolvedAttribute<ADDITIONAL_RESOLUTION> }
+// Note: Extracting not needed right now & complex to implement
+export type ResolvedRecordAttribute<ADDITIONAL_RESOLUTION extends AdditionalResolution = never> = {
+  [key: string]: ResolvedAttribute<ADDITIONAL_RESOLUTION>
+}
 
 /**
  * Any possible resolved attribute type
@@ -84,7 +86,7 @@ export type ResolvedItem<ADDITIONAL_RESOLUTION extends AdditionalResolution = ne
   [key: string]: ResolvedAttribute<ADDITIONAL_RESOLUTION>
 }
 
-type PossiblyUndefinedAdditionalResolution = { type: '*'; value: undefined }
+export type PossiblyUndefinedAdditionalResolution = { type: '*'; value: undefined }
 
 export type PossiblyUndefinedResolvedAttribute = ResolvedAttribute<PossiblyUndefinedAdditionalResolution>
 
