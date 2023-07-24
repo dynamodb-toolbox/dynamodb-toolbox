@@ -1,4 +1,4 @@
-import type { Attribute, ResolvedAttribute, UndefinedAttrExtension } from 'v1/schema'
+import type { Attribute, AttributeValue, UndefinedAttrExtension } from 'v1/schema'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
 import { renameAttributeSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes/index'
@@ -16,7 +16,7 @@ export const appendAttributeValue = (
         attribute,
         cloneAttributeInputAndAddDefaults(
           attribute,
-          expressionAttributeValue as ResolvedAttribute<UndefinedAttrExtension>
+          expressionAttributeValue as AttributeValue<UndefinedAttrExtension>
         )
       )
     )

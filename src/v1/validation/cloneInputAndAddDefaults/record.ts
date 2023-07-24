@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { ResolvedAttribute, RecordAttribute, AttributeDefaultsComputer, Extension } from 'v1'
+import type { AttributeValue, RecordAttribute, AttributeDefaultsComputer, Extension } from 'v1'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
@@ -10,9 +10,9 @@ import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './
 
 export const cloneRecordAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   recordAttribute: RecordAttribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeValue<EXTENSION>,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
-): ResolvedAttribute<EXTENSION> => {
+): AttributeValue<EXTENSION> => {
   const commandDefault = getCommandDefault(recordAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 

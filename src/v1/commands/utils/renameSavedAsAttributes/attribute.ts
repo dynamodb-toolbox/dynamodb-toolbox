@@ -1,4 +1,4 @@
-import type { ResolvedAttribute, Extension } from 'v1/schema'
+import type { AttributeValue, Extension } from 'v1/schema'
 import type { ParsedAttributeInput, ParsedMapAttributeInput } from 'v1/validation/parseClonedInput'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
@@ -13,7 +13,7 @@ const isMapAttributeInput = <EXTENSION extends Extension>(
 
 export const renameAttributeSavedAsAttributes = <EXTENSION extends Extension>(
   attributeInput: ParsedAttributeInput<EXTENSION>
-): ResolvedAttribute<EXTENSION> => {
+): AttributeValue<EXTENSION> => {
   if (isArray(attributeInput)) {
     return attributeInput.map(renameAttributeSavedAsAttributes)
   }

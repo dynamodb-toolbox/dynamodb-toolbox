@@ -1,17 +1,17 @@
 import type { EntityV2 } from 'v1/entity'
-import type { PossiblyUndefinedResolvedItem, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { PossiblyUndefinedItem, PossiblyUndefinedAttributeValue } from 'v1/schema'
 import type { PrimaryKey } from 'v1/table'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 
 export const parsePrimaryKey = <ENTITY extends EntityV2>(
   entity: ENTITY,
-  keyInput: PossiblyUndefinedResolvedItem
+  keyInput: PossiblyUndefinedItem
 ): PrimaryKey<ENTITY['table']> => {
   const { table } = entity
   const { partitionKey, sortKey } = table
 
-  const primaryKey: Record<string, PossiblyUndefinedResolvedAttribute> = {}
+  const primaryKey: Record<string, PossiblyUndefinedAttributeValue> = {}
 
   const partitionKeyValidator = validatorsByPrimitiveType[partitionKey.type]
   const partitionKeyValue = keyInput[partitionKey.name]
