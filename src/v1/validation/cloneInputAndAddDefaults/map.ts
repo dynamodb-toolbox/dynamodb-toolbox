@@ -1,6 +1,12 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { MapAttribute, ResolvedAttribute, ResolvedMapAttribute, Extension } from 'v1/schema'
+import type {
+  MapAttribute,
+  AttributeValue,
+  AttributeBasicValue,
+  MapAttributeBasicValue,
+  Extension
+} from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
@@ -10,9 +16,9 @@ import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './
 
 export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   mapAttribute: MapAttribute,
-  input: ResolvedAttribute<EXTENSION>,
+  input: AttributeBasicValue<EXTENSION> | undefined,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
-): ResolvedAttribute<EXTENSION> => {
+): AttributeBasicValue<EXTENSION> | undefined => {
   const commandDefault = getCommandDefault(mapAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
@@ -44,12 +50,12 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
     return cloneDeep(input)
   }
 
-  const inputWithDefaults: ResolvedMapAttribute<EXTENSION> = {}
+  const inputWithDefaults: MapAttributeBasicValue<EXTENSION> = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
-    let attributeInputWithDefaults: ResolvedAttribute<EXTENSION> | undefined = undefined
+    let attributeInputWithDefaults: AttributeValue<EXTENSION> | undefined = undefined
 
     if (!canComputeDefaults) {
       attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(

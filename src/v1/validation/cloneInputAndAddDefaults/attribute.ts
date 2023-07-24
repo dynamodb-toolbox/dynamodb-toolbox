@@ -1,4 +1,4 @@
-import type { Attribute, Extension, ResolvedAttribute } from 'v1/schema'
+import type { Attribute, Extension, AttributeValue, AttributeBasicValue } from 'v1/schema'
 
 import type { CloneInputAndAddDefaultsOptions } from './types'
 import { clonePrimitiveAttributeInputAndAddDefaults } from './primitive'
@@ -9,9 +9,14 @@ import { cloneAnyOfAttributeInputAndAddDefaults } from './anyOf'
 
 export const cloneAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   attribute: Attribute,
-  input: ResolvedAttribute<EXTENSION>,
+  _input: AttributeValue<EXTENSION> | undefined,
   options: CloneInputAndAddDefaultsOptions = {}
-): ResolvedAttribute<EXTENSION> => {
+): AttributeValue<EXTENSION> | undefined => {
+  /**
+   * @debt extensions "Support extensions"
+   */
+  const input = _input as AttributeBasicValue<EXTENSION> | undefined
+
   switch (attribute.type) {
     case 'any':
     case 'string':

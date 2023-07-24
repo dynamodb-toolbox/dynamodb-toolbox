@@ -1,6 +1,6 @@
 import type {
   PrimitiveAttribute,
-  PossiblyUndefinedResolvedAttribute,
+  PossiblyUndefinedAttributeValue,
   ResolvedPrimitiveAttribute
 } from 'v1/schema'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
@@ -8,8 +8,8 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 export const parseSavedPrimitiveAttribute = (
   primitiveAttribute: PrimitiveAttribute,
-  value: PossiblyUndefinedResolvedAttribute
-): PossiblyUndefinedResolvedAttribute => {
+  value: PossiblyUndefinedAttributeValue
+): PossiblyUndefinedAttributeValue => {
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(value)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {

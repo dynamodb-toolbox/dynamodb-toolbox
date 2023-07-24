@@ -3,9 +3,9 @@ import type { O } from 'ts-toolbelt'
 import type {
   Schema,
   Attribute,
-  ResolvedAttribute,
+  AttributeValue,
   ResolvePrimitiveAttribute,
-  ResolvedMapAttribute,
+  MapAttributeValue,
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute,
@@ -51,9 +51,9 @@ export type UpdateItemInput<
   SCHEMA extends EntityV2 | Schema,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
 > = EntityV2 extends SCHEMA
-  ? ResolvedMapAttribute
+  ? MapAttributeValue
   : Schema extends SCHEMA
-  ? ResolvedMapAttribute
+  ? MapAttributeValue
   : SCHEMA extends Schema
   ? OptionalizeUndefinableProperties<
       {
@@ -80,7 +80,7 @@ export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
 > = Attribute extends ATTRIBUTE
-  ? ResolvedAttribute | undefined
+  ? AttributeValue | undefined
   :
       | (MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> extends true ? never : undefined)
       | (ATTRIBUTE extends AnyAttribute

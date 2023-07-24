@@ -1,18 +1,18 @@
-import type { Schema, ResolvedItem, Extension } from 'v1/schema'
+import type { Schema, Item, Extension } from 'v1/schema'
 import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
 import { parseAttributeClonedInput } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
-import type { ParsingOptions, ParsedSchemaInput } from './types'
+import type { ParsingOptions, ParsedItem } from './types'
 
 // TODO: Factorize with map
 export const parseSchemaClonedInput = <EXTENSION extends Extension>(
   schema: Schema,
-  input: ResolvedItem<EXTENSION>,
+  input: Item<EXTENSION>,
   parsingOptions: ParsingOptions = {}
-): ParsedSchemaInput<EXTENSION> => {
+): ParsedItem<EXTENSION> => {
   const { filters } = parsingOptions
 
   if (!isObject(input)) {
@@ -25,7 +25,7 @@ export const parseSchemaClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: ParsedSchemaInput<EXTENSION> = { [$savedAs]: {} }
+  const parsedInput: ParsedItem<EXTENSION> = { [$savedAs]: {} }
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {

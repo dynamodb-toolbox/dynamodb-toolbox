@@ -48,46 +48,72 @@ export type Extension = {
   value: unknown
 }
 
-export type ExtractExtension<
+export type ExtendedValue<
   EXTENSION extends Extension,
   TYPE extends Attribute['type'] | '*'
 > = Extract<EXTENSION, { type: TYPE | '*' }>['value']
 
-export type ResolvedListAttribute<EXTENSION extends Extension = never> =
-  | ExtractExtension<EXTENSION, 'list'>
-  | ResolvedAttribute<EXTENSION>[]
+export type PrimitiveAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, PrimitiveAttributeType>
+  | PrimitiveAttributeBasicValue
 
-export type ResolvedSetAttribute<EXTENSION extends Extension = never> =
-  | ExtractExtension<EXTENSION, 'set'>
-  | Set<ResolvedAttribute<EXTENSION>>
+export type PrimitiveAttributeBasicValue = ResolvedPrimitiveAttribute
 
-// Note: Extracting not needed right now & complex to implement
-export type ResolvedMapAttribute<EXTENSION extends Extension = never> = {
-  [key: string]: ResolvedAttribute<EXTENSION>
+export type SetAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'set'>
+  | SetAttributeBasicValue<EXTENSION>
+
+export type SetAttributeBasicValue<EXTENSION extends Extension = never> = Set<
+  AttributeValue<EXTENSION>
+>
+
+export type ListAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'list'>
+  | ListAttributeBasicValue<EXTENSION>
+
+export type ListAttributeBasicValue<
+  EXTENSION extends Extension = never
+> = AttributeValue<EXTENSION>[]
+
+export type MapAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'map'>
+  | MapAttributeBasicValue<EXTENSION>
+
+export type MapAttributeBasicValue<EXTENSION extends Extension = never> = {
+  [key: string]: AttributeValue<EXTENSION>
 }
 
-// Note: Extracting not needed right now & complex to implement
-export type ResolvedRecordAttribute<EXTENSION extends Extension = never> = {
-  [key: string]: ResolvedAttribute<EXTENSION>
+export type RecordAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'record'>
+  | RecordAttributeBasicValue<EXTENSION>
+
+export type RecordAttributeBasicValue<EXTENSION extends Extension = never> = {
+  [key: string]: AttributeValue<EXTENSION>
 }
 
 /**
  * Any possible resolved attribute type
  */
-export type ResolvedAttribute<EXTENSION extends Extension = never> =
-  | ExtractExtension<EXTENSION, PrimitiveAttributeType>
-  | ResolvedPrimitiveAttribute
-  | ResolvedListAttribute<EXTENSION>
-  | ResolvedSetAttribute<EXTENSION>
-  | ResolvedMapAttribute<EXTENSION>
-  | ResolvedRecordAttribute<EXTENSION>
+export type AttributeValue<EXTENSION extends Extension = never> =
+  | PrimitiveAttributeValue<EXTENSION>
+  | SetAttributeValue<EXTENSION>
+  | ListAttributeValue<EXTENSION>
+  | MapAttributeValue<EXTENSION>
+  | RecordAttributeValue<EXTENSION>
 
-export type ResolvedItem<EXTENSION extends Extension = never> = {
-  [key: string]: ResolvedAttribute<EXTENSION>
+export type Item<EXTENSION extends Extension = never> = {
+  [key: string]: AttributeValue<EXTENSION>
 }
+
+export type AttributeBasicValue<EXTENSION extends Extension = never> =
+  | PrimitiveAttributeBasicValue
+  | SetAttributeBasicValue<EXTENSION>
+  | ListAttributeBasicValue<EXTENSION>
+  | MapAttributeBasicValue<EXTENSION>
+  | RecordAttributeBasicValue<EXTENSION>
 
 export type UndefinedAttrExtension = { type: '*'; value: undefined }
 
-export type PossiblyUndefinedResolvedAttribute = ResolvedAttribute<UndefinedAttrExtension>
+export type PossiblyUndefinedAttributeValue = AttributeValue<UndefinedAttrExtension>
 
-export type PossiblyUndefinedResolvedItem = ResolvedItem<UndefinedAttrExtension>
+export type PossiblyUndefinedItem = Item<UndefinedAttrExtension>

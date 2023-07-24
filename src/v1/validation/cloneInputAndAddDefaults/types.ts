@@ -1,14 +1,14 @@
-import type { PossiblyUndefinedResolvedAttribute, ResolvedAttribute, Extension } from 'v1/schema'
+import type { PossiblyUndefinedAttributeValue, AttributeValue, Extension } from 'v1/schema'
 import type { AttributeDefaultsComputer } from 'v1/entity'
 
 export type ComputeDefaultsContext = {
   computeDefaults: AttributeDefaultsComputer
-  contextInputs: PossiblyUndefinedResolvedAttribute[]
+  contextInputs: PossiblyUndefinedAttributeValue[]
 }
 
 export type AnyOfAttributeClonedInputsWithDefaults<EXTENSION extends Extension = never> = {
-  originalInput: ResolvedAttribute<EXTENSION>
-  clonedInputsWithDefaults: ResolvedAttribute<EXTENSION>[]
+  originalInput: AttributeValue<EXTENSION>
+  clonedInputsWithDefaults: AttributeValue<EXTENSION>[]
 }
 
 export type CommandName = 'put' | 'update'
