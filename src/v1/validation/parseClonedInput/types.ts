@@ -1,4 +1,11 @@
-import type { RequiredOption, $savedAs, ResolvedPrimitiveAttribute } from 'v1/schema'
+import type {
+  RequiredOption,
+  $savedAs,
+  ResolvedPrimitiveAttribute,
+  Extension,
+  ExtractExtension,
+  PrimitiveAttributeType
+} from 'v1/schema'
 
 export interface AttributeFilters {
   key?: boolean
@@ -9,28 +16,37 @@ export interface ParsingOptions {
   filters?: AttributeFilters
 }
 
-export type ParsedListAttributeInput = ParsedAttributeInput[]
+/**
+ * @debt refactor "note: All those types are just to add the $savedAs secret prop to items & maps. Maybe we can update ResolvedX types to incorporate them"
+ */
+export type ParsedSetAttributeInput<EXTENSION extends Extension = never> =
+  | ExtractExtension<EXTENSION, 'set'>
+  | Set<ParsedAttributeInput<EXTENSION>>
 
-export type ParsedSetAttributeInput = Set<ParsedAttributeInput>
+export type ParsedListAttributeInput<EXTENSION extends Extension = never> =
+  | ExtractExtension<EXTENSION, 'list'>
+  | ParsedAttributeInput<EXTENSION>[]
 
-export type ParsedMapAttributeInput = {
+// Note: Extracting not needed right now & complex to implement
+export type ParsedMapAttributeInput<EXTENSION extends Extension = never> = {
   [$savedAs]: Record<string, string>
-  [key: string]: ParsedAttributeInput
+  [key: string]: ParsedAttributeInput<EXTENSION>
 }
 
-export type ParsedRecordAttributeInput = {
-  [key: string]: ParsedAttributeInput
+// Note: Extracting not needed right now & complex to implement
+export type ParsedRecordAttributeInput<EXTENSION extends Extension = never> = {
+  [key: string]: ParsedAttributeInput<EXTENSION>
 }
 
-export type ParsedAttributeInput =
-  | undefined
+export type ParsedAttributeInput<EXTENSION extends Extension = never> =
+  | ExtractExtension<EXTENSION, PrimitiveAttributeType>
   | ResolvedPrimitiveAttribute
-  | ParsedAttributeInput[]
-  | Set<ParsedAttributeInput>
-  | ParsedMapAttributeInput
-  | ParsedRecordAttributeInput
+  | ParsedSetAttributeInput<EXTENSION>
+  | ParsedListAttributeInput<EXTENSION>
+  | ParsedMapAttributeInput<EXTENSION>
+  | ParsedRecordAttributeInput<EXTENSION>
 
-export type ParsedSchemaInput = {
+export type ParsedSchemaInput<EXTENSION extends Extension = never> = {
   [$savedAs]: Record<string, string>
-  [key: string]: ParsedAttributeInput
+  [key: string]: ParsedAttributeInput<EXTENSION>
 }

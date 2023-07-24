@@ -1,10 +1,11 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type {
-  PossiblyUndefinedResolvedAttribute,
   AnyAttribute,
   PrimitiveAttribute,
-  SetAttribute
+  SetAttribute,
+  ResolvedAttribute,
+  Extension
 } from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isFunction } from 'v1/utils/validation'
@@ -12,11 +13,11 @@ import { isFunction } from 'v1/utils/validation'
 import type { CloneInputAndAddDefaultsOptions } from './types'
 import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
-export const clonePrimitiveAttributeInputAndAddDefaults = (
+export const clonePrimitiveAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   attribute: AnyAttribute | PrimitiveAttribute | SetAttribute,
-  input: PossiblyUndefinedResolvedAttribute,
+  input: ResolvedAttribute<EXTENSION>,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
-): PossiblyUndefinedResolvedAttribute => {
+): ResolvedAttribute<EXTENSION> => {
   const commandDefault = getCommandDefault(attribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 

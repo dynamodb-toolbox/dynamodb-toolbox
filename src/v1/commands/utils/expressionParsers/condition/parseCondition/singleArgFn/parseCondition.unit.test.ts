@@ -8,16 +8,16 @@ describe('parseCondition - singleArgFn', () => {
 
   it('exists', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', exists: true })).toStrictEqual({
-      ConditionExpression: 'attribute_exists(#1)',
-      ExpressionAttributeNames: { '#1': 'num' },
+      ConditionExpression: 'attribute_exists(#c1)',
+      ExpressionAttributeNames: { '#c1': 'num' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('not exists', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', exists: false })).toStrictEqual({
-      ConditionExpression: 'attribute_not_exists(#1)',
-      ExpressionAttributeNames: { '#1': 'num' },
+      ConditionExpression: 'attribute_not_exists(#c1)',
+      ExpressionAttributeNames: { '#c1': 'num' },
       ExpressionAttributeValues: {}
     })
   })
@@ -34,11 +34,11 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseSchemaCondition(mapSchema, { attr: 'map.nestedA.nestedB', exists: true })
     ).toStrictEqual({
-      ConditionExpression: 'attribute_exists(#1.#2.#3)',
+      ConditionExpression: 'attribute_exists(#c1.#c2.#c3)',
       ExpressionAttributeNames: {
-        '#1': 'map',
-        '#2': 'nestedA',
-        '#3': 'nestedB'
+        '#c1': 'map',
+        '#c2': 'nestedA',
+        '#c3': 'nestedB'
       },
       ExpressionAttributeValues: {}
     })
@@ -59,12 +59,12 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       parseSchemaCondition(listSchema, { attr: 'listA[1].nested.listB[2].value', exists: true })
     ).toStrictEqual({
-      ConditionExpression: 'attribute_exists(#1[1].#2.#3[2].#4)',
+      ConditionExpression: 'attribute_exists(#c1[1].#c2.#c3[2].#c4)',
       ExpressionAttributeNames: {
-        '#1': 'listA',
-        '#2': 'nested',
-        '#3': 'listB',
-        '#4': 'value'
+        '#c1': 'listA',
+        '#c2': 'nested',
+        '#c3': 'listB',
+        '#c4': 'value'
       },
       ExpressionAttributeValues: {}
     })
@@ -73,8 +73,8 @@ describe('parseCondition - singleArgFn', () => {
   it('deep lists', () => {
     expect(parseSchemaCondition(listSchema, { attr: 'list[1][2][3]', exists: true })).toStrictEqual(
       {
-        ConditionExpression: 'attribute_exists(#1[1][2][3])',
-        ExpressionAttributeNames: { '#1': 'list' },
+        ConditionExpression: 'attribute_exists(#c1[1][2][3])',
+        ExpressionAttributeNames: { '#c1': 'list' },
         ExpressionAttributeValues: {}
       }
     )

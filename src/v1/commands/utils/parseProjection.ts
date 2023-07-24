@@ -1,7 +1,8 @@
 import type { EntityV2 } from 'v1/entity'
 import type { Schema } from 'v1/schema'
 import type { SchemaAttributePath, AnyAttributePath } from 'v1/commands/types'
-import { ProjectionParser } from 'v1/commands/classes/projectionParser'
+
+import { ProjectionParser } from './expressionParsers/projection'
 
 export const parseSchemaProjection = <
   SCHEMA extends Schema,

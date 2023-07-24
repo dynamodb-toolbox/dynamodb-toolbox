@@ -1,4 +1,4 @@
-import type { Attribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { Attribute, Extension, ResolvedAttribute } from 'v1/schema'
 
 import type { CloneInputAndAddDefaultsOptions } from './types'
 import { clonePrimitiveAttributeInputAndAddDefaults } from './primitive'
@@ -7,11 +7,11 @@ import { cloneMapAttributeInputAndAddDefaults } from './map'
 import { cloneRecordAttributeInputAndAddDefaults } from './record'
 import { cloneAnyOfAttributeInputAndAddDefaults } from './anyOf'
 
-export const cloneAttributeInputAndAddDefaults = (
+export const cloneAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   attribute: Attribute,
-  input: PossiblyUndefinedResolvedAttribute,
+  input: ResolvedAttribute<EXTENSION>,
   options: CloneInputAndAddDefaultsOptions = {}
-): PossiblyUndefinedResolvedAttribute => {
+): ResolvedAttribute<EXTENSION> => {
   switch (attribute.type) {
     case 'any':
     case 'string':

@@ -1,14 +1,14 @@
-import type { PossiblyUndefinedResolvedMapAttribute } from 'v1/schema'
+import type { ResolvedRecordAttribute, Extension } from 'v1/schema'
 import type { ParsedRecordAttributeInput } from 'v1/validation/parseClonedInput'
 
 import { renameAttributeSavedAsAttributes } from './attribute'
 
-export const renameRecordAttributeSavedAsAttributes = (
-  mapInput: ParsedRecordAttributeInput
-): PossiblyUndefinedResolvedMapAttribute => {
-  const renamedInput: PossiblyUndefinedResolvedMapAttribute = {}
+export const renameRecordAttributeSavedAsAttributes = <EXTENSION extends Extension>(
+  recordInput: ParsedRecordAttributeInput<EXTENSION>
+): ResolvedRecordAttribute<EXTENSION> => {
+  const renamedInput: ResolvedRecordAttribute<EXTENSION> = {}
 
-  Object.entries(mapInput).forEach(([attributeName, attributeInput]) => {
+  Object.entries(recordInput).forEach(([attributeName, attributeInput]) => {
     if (attributeInput === undefined) {
       return
     }

@@ -1,15 +1,15 @@
-import type { RecordAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { RecordAttribute, ResolvedAttribute, Extension } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributeClonedInput } from './attribute'
-import type { ParsingOptions } from './types'
+import type { ParsingOptions, ParsedRecordAttributeInput } from './types'
 
-export const parseRecordAttributeClonedInput = (
+export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
   recordAttribute: RecordAttribute,
-  input: PossiblyUndefinedResolvedAttribute,
+  input: ResolvedAttribute<EXTENSION>,
   parsingOptions: ParsingOptions = {}
-): PossiblyUndefinedResolvedAttribute => {
+): ParsedRecordAttributeInput<EXTENSION> => {
   if (!isObject(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${recordAttribute.path} should be a ${recordAttribute.type}`,
@@ -21,7 +21,7 @@ export const parseRecordAttributeClonedInput = (
     })
   }
 
-  const parsedInput: PossiblyUndefinedResolvedAttribute = {}
+  const parsedInput: ParsedRecordAttributeInput<EXTENSION> = {}
 
   Object.entries(input).forEach(([key, element]) => {
     const parsedElementInput = parseAttributeClonedInput(

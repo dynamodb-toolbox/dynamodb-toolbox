@@ -1,4 +1,4 @@
-import type { MapAttribute, PossiblyUndefinedResolvedAttribute } from 'v1'
+import type { MapAttribute, ResolvedAttribute, Extension } from 'v1'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
@@ -7,11 +7,11 @@ import { parseAttributeClonedInput } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 import type { ParsingOptions, ParsedMapAttributeInput } from './types'
 
-export const parseMapAttributeClonedInput = (
+export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
   mapAttribute: MapAttribute,
-  input: PossiblyUndefinedResolvedAttribute,
+  input: ResolvedAttribute<EXTENSION>,
   parsingOptions: ParsingOptions = {}
-): ParsedMapAttributeInput => {
+): ParsedMapAttributeInput<EXTENSION> => {
   const { filters } = parsingOptions
 
   if (!isObject(input)) {
@@ -25,7 +25,7 @@ export const parseMapAttributeClonedInput = (
     })
   }
 
-  const parsedInput: ParsedMapAttributeInput = { [$savedAs]: {} }
+  const parsedInput: ParsedMapAttributeInput<EXTENSION> = { [$savedAs]: {} }
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
@@ -57,7 +57,11 @@ export const parseMapAttributeClonedInput = (
         parsedInput[attributeName] === undefined && doesAttributeMatchFilters(attribute, filters)
     )
     .forEach(([attributeName, attribute]) => {
-      const parsedAttributeInput = parseAttributeClonedInput(attribute, undefined, parsingOptions)
+      const parsedAttributeInput = parseAttributeClonedInput<EXTENSION>(
+        attribute,
+        undefined,
+        parsingOptions
+      )
 
       if (parsedAttributeInput !== undefined) {
         parsedInput[attributeName] = parsedAttributeInput

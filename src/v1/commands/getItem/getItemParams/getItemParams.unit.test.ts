@@ -186,8 +186,8 @@ describe('get', () => {
       .options({ attributes: ['email'] })
       .params()
 
-    expect(ExpressionAttributeNames).toEqual({ '#1': 'pk' })
-    expect(ProjectionExpression).toBe('#1')
+    expect(ExpressionAttributeNames).toEqual({ '#p1': 'pk' })
+    expect(ProjectionExpression).toBe('#p1')
   })
 
   it('missing key', () => {

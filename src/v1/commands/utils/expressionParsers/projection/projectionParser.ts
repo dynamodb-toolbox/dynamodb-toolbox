@@ -5,11 +5,13 @@ import { toCommandOptions } from './toCommandOptions'
 
 export class ProjectionParser {
   schema: Schema | Attribute
+  expressionAttributePrefix: 'p'
   expressionAttributeNames: string[]
   expression: string
 
   constructor(schema: Schema | Attribute) {
     this.schema = schema
+    this.expressionAttributePrefix = 'p'
     this.expressionAttributeNames = []
     this.expression = ''
   }

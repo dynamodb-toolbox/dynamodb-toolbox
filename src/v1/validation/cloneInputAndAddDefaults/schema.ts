@@ -1,19 +1,15 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type {
-  Schema,
-  PossiblyUndefinedResolvedItem,
-  PossiblyUndefinedResolvedAttribute
-} from 'v1/schema'
+import type { Schema, Extension, ResolvedItem, ResolvedAttribute } from 'v1/schema'
 import type { SchemaDefaultsComputer } from 'v1/entity'
 import { isObject } from 'v1/utils/validation'
 
 import { CommandName } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 
-export const cloneSchemaInputAndAddDefaults = (
+export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension>(
   schema: Schema,
-  input: PossiblyUndefinedResolvedItem,
+  input: ResolvedItem<EXTENSION>,
   {
     commandName,
     computeDefaultsContext
@@ -21,19 +17,19 @@ export const cloneSchemaInputAndAddDefaults = (
     commandName?: CommandName
     computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer }
   } = {}
-): PossiblyUndefinedResolvedItem => {
+): ResolvedItem<EXTENSION> => {
   if (!isObject(input)) {
     return cloneDeep(input)
   }
 
-  const inputWithDefaults: PossiblyUndefinedResolvedItem = {}
+  const inputWithDefaults: ResolvedItem<EXTENSION> = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   const canComputeDefaults = computeDefaultsContext !== undefined
 
   Object.entries(schema.attributes).forEach(([attributeName, attribute]) => {
-    let attributeInputWithDefaults: PossiblyUndefinedResolvedAttribute = undefined
+    let attributeInputWithDefaults: ResolvedAttribute<EXTENSION> | undefined = undefined
 
     if (canComputeDefaults) {
       const { computeDefaults } = computeDefaultsContext
@@ -45,6 +41,10 @@ export const cloneSchemaInputAndAddDefaults = (
           commandName,
           computeDefaultsContext: {
             computeDefaults: computeDefaults && computeDefaults[attributeName],
+            /**
+             * @debt feature "make computeDefault available for keys & updates"
+             */
+            // @ts-expect-error
             contextInputs: [input]
           }
         }
