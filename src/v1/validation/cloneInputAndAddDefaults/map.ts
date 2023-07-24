@@ -1,6 +1,11 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { MapAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type {
+  MapAttribute,
+  ResolvedAttribute,
+  ResolvedMapAttribute,
+  AdditionalResolution
+} from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
@@ -8,11 +13,13 @@ import type { CloneInputAndAddDefaultsOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
-export const cloneMapAttributeInputAndAddDefaults = (
+export const cloneMapAttributeInputAndAddDefaults = <
+  ADDITIONAL_RESOLUTION extends AdditionalResolution
+>(
   mapAttribute: MapAttribute,
-  input: PossiblyUndefinedResolvedAttribute,
+  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
-): PossiblyUndefinedResolvedAttribute => {
+): ResolvedAttribute<ADDITIONAL_RESOLUTION> => {
   const commandDefault = getCommandDefault(mapAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
@@ -44,12 +51,12 @@ export const cloneMapAttributeInputAndAddDefaults = (
     return cloneDeep(input)
   }
 
-  const inputWithDefaults: PossiblyUndefinedResolvedAttribute = {}
+  const inputWithDefaults: ResolvedMapAttribute<ADDITIONAL_RESOLUTION> = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
   Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
-    let attributeInputWithDefaults: PossiblyUndefinedResolvedAttribute = undefined
+    let attributeInputWithDefaults: ResolvedAttribute<ADDITIONAL_RESOLUTION> | undefined = undefined
 
     if (!canComputeDefaults) {
       attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
@@ -72,6 +79,10 @@ export const cloneMapAttributeInputAndAddDefaults = (
           commandName,
           computeDefaultsContext: {
             computeDefaults: attributeComputeDefaults,
+            /**
+             * @debt feature "make computeDefault available for keys & updates"
+             */
+            // @ts-expect-error
             contextInputs: [input, ...contextInputs]
           }
         }

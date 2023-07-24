@@ -1,4 +1,8 @@
-import type { PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type {
+  PossiblyUndefinedResolvedAttribute,
+  ResolvedAttribute,
+  AdditionalResolution
+} from 'v1/schema'
 import type { AttributeDefaultsComputer } from 'v1/entity'
 
 export type ComputeDefaultsContext = {
@@ -6,9 +10,11 @@ export type ComputeDefaultsContext = {
   contextInputs: PossiblyUndefinedResolvedAttribute[]
 }
 
-export type AnyOfAttributeClonedInputsWithDefaults = {
-  originalInput: PossiblyUndefinedResolvedAttribute
-  clonedInputsWithDefaults: PossiblyUndefinedResolvedAttribute[]
+export type AnyOfAttributeClonedInputsWithDefaults<
+  ADDITIONAL_RESOLUTION extends AdditionalResolution = never
+> = {
+  originalInput: ResolvedAttribute<ADDITIONAL_RESOLUTION>
+  clonedInputsWithDefaults: ResolvedAttribute<ADDITIONAL_RESOLUTION>[]
 }
 
 export type CommandName = 'put' | 'update'

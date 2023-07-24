@@ -1,15 +1,15 @@
-import type { SetAttribute, PossiblyUndefinedResolvedAttribute } from 'v1/schema'
+import type { SetAttribute, ResolvedAttribute, AdditionalResolution } from 'v1/schema'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributeClonedInput } from './attribute'
 import type { ParsingOptions, ParsedSetAttributeInput } from './types'
 
-export const parseSetAttributeClonedInput = (
+export const parseSetAttributeClonedInput = <ADDITIONAL_RESOLUTION extends AdditionalResolution>(
   setAttribute: SetAttribute,
-  input: PossiblyUndefinedResolvedAttribute,
+  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
   parsingOptions: ParsingOptions = {}
-): ParsedSetAttributeInput => {
+): ParsedSetAttributeInput<ADDITIONAL_RESOLUTION> => {
   if (!isSet(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${setAttribute.path} should be a ${setAttribute.type}`,
@@ -21,9 +21,13 @@ export const parseSetAttributeClonedInput = (
     })
   }
 
-  const parsedInput: ParsedSetAttributeInput = new Set()
+  const parsedInput: ParsedSetAttributeInput<ADDITIONAL_RESOLUTION> = new Set()
 
   input.forEach(element =>
+    /**
+     * @debt feature "add handleAdditionalResolution in options"
+     */
+    // @ts-expect-error
     parsedInput.add(parseAttributeClonedInput(setAttribute.elements, element, parsingOptions))
   )
 
