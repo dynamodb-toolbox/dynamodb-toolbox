@@ -1,13 +1,13 @@
-import type { AdditionalResolution, ListAttribute, ResolvedAttribute } from 'v1/schema'
+import type { Extension, ListAttribute, ResolvedAttribute } from 'v1/schema'
 import { isArray } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { parseAttributeClonedInput } from './attribute'
 import type { ParsingOptions, ParsedListAttributeInput } from './types'
 
-export const parseListAttributeClonedInput = <ADDITIONAL_RESOLUTION extends AdditionalResolution>(
+export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
   listAttribute: ListAttribute,
-  input: ResolvedAttribute<ADDITIONAL_RESOLUTION>,
+  input: ResolvedAttribute<EXTENSION>,
   parsingOptions: ParsingOptions = {}
 ): ParsedListAttributeInput => {
   if (!isArray(input)) {
@@ -25,7 +25,7 @@ export const parseListAttributeClonedInput = <ADDITIONAL_RESOLUTION extends Addi
 
   input.forEach(element =>
     /**
-     * @debt feature "add handleAdditionalResolution in options"
+     * @debt feature "add handleExtension in options"
      */
     // @ts-expect-error
     parsedInput.push(parseAttributeClonedInput(listAttribute.elements, element, parsingOptions))

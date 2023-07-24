@@ -1,4 +1,4 @@
-import type { Schema, ResolvedItem, AdditionalResolution } from 'v1/schema'
+import type { Schema, ResolvedItem, Extension } from 'v1/schema'
 import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
@@ -8,11 +8,11 @@ import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 import type { ParsingOptions, ParsedSchemaInput } from './types'
 
 // TODO: Factorize with map
-export const parseSchemaClonedInput = <ADDITIONAL_RESOLUTION extends AdditionalResolution>(
+export const parseSchemaClonedInput = <EXTENSION extends Extension>(
   schema: Schema,
-  input: ResolvedItem<ADDITIONAL_RESOLUTION>,
+  input: ResolvedItem<EXTENSION>,
   parsingOptions: ParsingOptions = {}
-): ParsedSchemaInput<ADDITIONAL_RESOLUTION> => {
+): ParsedSchemaInput<EXTENSION> => {
   const { filters } = parsingOptions
 
   if (!isObject(input)) {
@@ -25,7 +25,7 @@ export const parseSchemaClonedInput = <ADDITIONAL_RESOLUTION extends AdditionalR
     })
   }
 
-  const parsedInput: ParsedSchemaInput<ADDITIONAL_RESOLUTION> = { [$savedAs]: {} }
+  const parsedInput: ParsedSchemaInput<EXTENSION> = { [$savedAs]: {} }
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
@@ -57,7 +57,7 @@ export const parseSchemaClonedInput = <ADDITIONAL_RESOLUTION extends AdditionalR
         parsedInput[attributeName] === undefined && doesAttributeMatchFilters(attribute, filters)
     )
     .forEach(([attributeName, attribute]) => {
-      const parsedAttributeInput = parseAttributeClonedInput<ADDITIONAL_RESOLUTION>(
+      const parsedAttributeInput = parseAttributeClonedInput<EXTENSION>(
         attribute,
         undefined,
         parsingOptions
