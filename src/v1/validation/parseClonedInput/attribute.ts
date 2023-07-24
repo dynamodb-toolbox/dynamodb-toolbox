@@ -1,22 +1,33 @@
-import type { RequiredOption, Attribute, AttributeValue, Extension } from 'v1/schema'
+import type {
+  RequiredOption,
+  Attribute,
+  Extension,
+  AttributeValue,
+  AttributeBasicValue
+} from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { ParsingOptions, AttributeParsedValue } from './types'
 import { parsePrimitiveAttributeClonedInput } from './primitive'
 import { parseSetAttributeClonedInput } from './set'
 import { parseListAttributeClonedInput } from './list'
 import { parseMapAttributeClonedInput } from './map'
 import { parseRecordAttributeClonedInput } from './record'
 import { parseAnyOfAttributeClonedInput } from './anyOf'
-import type { ParsingOptions, ParsedAttributeInput } from './types'
 
 const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'])
 
 export const parseAttributeClonedInput = <EXTENSION extends Extension>(
   attribute: Attribute,
-  input: AttributeValue<EXTENSION>,
+  _input: AttributeValue<EXTENSION> | undefined,
   parsingOptions: ParsingOptions = {}
-): ParsedAttributeInput<EXTENSION> => {
+): AttributeParsedValue<EXTENSION> => {
   const { requiringOptions = defaultRequiringOptions } = parsingOptions
+
+  /**
+   * @debt extensions "Support extensions"
+   */
+  const input = _input as AttributeBasicValue<EXTENSION> | undefined
 
   if (input === undefined) {
     if (requiringOptions.has(attribute.required)) {
@@ -49,37 +60,3 @@ export const parseAttributeClonedInput = <EXTENSION extends Extension>(
       return parseAnyOfAttributeClonedInput(attribute, input, parsingOptions)
   }
 }
-
-// if (input === $remove) {
-//   if (commandName !== 'update') {
-//     // TODO
-//     throw new Error()
-//   }
-
-//   if (attribute.required === 'never') {
-//     throw new DynamoDBToolboxError('parsing.attributeRequired', {
-//       message: `Attribute ${attribute.path} cannot be removed`,
-//       path: attribute.path
-//     })
-//   } else {
-//     return $remove
-//   }
-// }
-
-// if (isAddOperation(input)) {
-//   if (commandName !== 'update') {
-//     // TODO
-//     throw new Error()
-//   }
-
-//   return { [$add]: parseAttributeClonedInput(attribute, input[$add], parsingOptions) }
-// }
-
-// if (isDeleteOperation(input)) {
-//   if (commandName !== 'update') {
-//     // TODO
-//     throw new Error()
-//   }
-
-//   return { [$delete]: parseAttributeClonedInput(attribute, input[$delete], parsingOptions) }
-// }

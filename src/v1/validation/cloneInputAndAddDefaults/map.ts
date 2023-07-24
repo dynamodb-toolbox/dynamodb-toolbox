@@ -1,6 +1,12 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { MapAttribute, AttributeValue, MapAttributeValue, Extension } from 'v1/schema'
+import type {
+  MapAttribute,
+  AttributeValue,
+  AttributeBasicValue,
+  MapAttributeBasicValue,
+  Extension
+} from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
@@ -10,9 +16,9 @@ import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './
 
 export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   mapAttribute: MapAttribute,
-  input: AttributeValue<EXTENSION>,
+  input: AttributeBasicValue<EXTENSION> | undefined,
   { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
-): AttributeValue<EXTENSION> => {
+): AttributeBasicValue<EXTENSION> | undefined => {
   const commandDefault = getCommandDefault(mapAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
@@ -44,7 +50,7 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
     return cloneDeep(input)
   }
 
-  const inputWithDefaults: MapAttributeValue<EXTENSION> = {}
+  const inputWithDefaults: MapAttributeBasicValue<EXTENSION> = {}
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
@@ -83,10 +89,6 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
     }
 
     if (attributeInputWithDefaults !== undefined) {
-      /**
-       * @debt extensions "To fix by using MapAttributeBaseValue"
-       */
-      // @ts-expect-error
       inputWithDefaults[attributeName] = attributeInputWithDefaults
     }
 
@@ -94,10 +96,6 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
   })
 
   additionalAttributes.forEach(attributeName => {
-    /**
-     * @debt extensions "To fix by using MapAttributeBaseValue"
-     */
-    // @ts-expect-error
     inputWithDefaults[attributeName] = cloneDeep(input[attributeName])
   })
 
