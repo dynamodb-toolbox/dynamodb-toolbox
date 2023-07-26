@@ -10,15 +10,16 @@ import type {
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
-import type { CloneInputAndAddDefaultsOptions } from './types'
+import type { AttributeOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   mapAttribute: MapAttribute,
   input: AttributeBasicValue<EXTENSION> | undefined,
-  { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
+  options: AttributeOptions<EXTENSION> = {} as AttributeOptions<EXTENSION>
 ): AttributeBasicValue<EXTENSION> | undefined => {
+  const { commandName, computeDefaultsContext } = options
   const commandDefault = getCommandDefault(mapAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
@@ -61,7 +62,7 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
       attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
         attribute,
         input[attributeName],
-        { commandName }
+        options
       )
     } else {
       const { computeDefaults, contextInputs } = computeDefaultsContext
@@ -75,13 +76,9 @@ export const cloneMapAttributeInputAndAddDefaults = <EXTENSION extends Extension
         attribute,
         input[attributeName],
         {
-          commandName,
+          ...options,
           computeDefaultsContext: {
             computeDefaults: attributeComputeDefaults,
-            /**
-             * @debt feature "make computeDefault available for keys & updates"
-             */
-            // @ts-expect-error
             contextInputs: [input, ...contextInputs]
           }
         }

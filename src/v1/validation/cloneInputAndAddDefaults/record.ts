@@ -4,15 +4,16 @@ import type { AttributeBasicValue, RecordAttribute, AttributeDefaultsComputer, E
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
-import type { CloneInputAndAddDefaultsOptions } from './types'
+import type { AttributeOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneRecordAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   recordAttribute: RecordAttribute,
   input: AttributeBasicValue<EXTENSION> | undefined,
-  { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
+  options: AttributeOptions<EXTENSION> = {} as AttributeOptions<EXTENSION>
 ): AttributeBasicValue<EXTENSION> | undefined => {
+  const { commandName, computeDefaultsContext } = options
   const commandDefault = getCommandDefault(recordAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
@@ -48,7 +49,7 @@ export const cloneRecordAttributeInputAndAddDefaults = <EXTENSION extends Extens
     return Object.fromEntries(
       Object.entries(input).map(([elementKey, elementInput]) => [
         elementKey,
-        cloneAttributeInputAndAddDefaults(recordAttribute.elements, elementInput, { commandName })
+        cloneAttributeInputAndAddDefaults(recordAttribute.elements, elementInput, options)
       ])
     )
   }
@@ -75,7 +76,7 @@ export const cloneRecordAttributeInputAndAddDefaults = <EXTENSION extends Extens
     Object.entries(input).map(([elementKey, elementInput]) => [
       elementKey,
       cloneAttributeInputAndAddDefaults(recordAttribute.elements, elementInput, {
-        commandName,
+        ...options,
         computeDefaultsContext: {
           computeDefaults: elementsComputeDefaults,
           contextInputs: [elementKey, ...contextInputs]

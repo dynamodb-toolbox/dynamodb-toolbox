@@ -5,7 +5,7 @@ import type {
   Attribute,
   AttributeValue,
   ResolvePrimitiveAttribute,
-  MapAttributeValue,
+  Item,
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute,
@@ -16,10 +16,27 @@ import type {
   AtLeastOnce,
   Always,
   Never,
-  ComputedDefault
+  ComputedDefault,
+  UndefinedAttrExtension
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
+
+import type { $add, $delete, $remove } from './constants'
+
+export type UpdateItemInputExtension =
+  | UndefinedAttrExtension
+  | { type: '*'; value: $remove }
+  | {
+      type: 'number'
+      value: { [$add]: number }
+    }
+  | {
+      type: 'set'
+      value:
+        | { [$add]: AttributeValue<UpdateItemInputExtension> }
+        | { [$delete]: AttributeValue<UpdateItemInputExtension> }
+    }
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
@@ -40,6 +57,10 @@ type MustBeDefined<
       : true
     : false
 
+type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: 'never' }
+  ? true
+  : false
+
 /**
  * User input of an UPDATE command for a given Entity or Schema
  *
@@ -51,9 +72,9 @@ export type UpdateItemInput<
   SCHEMA extends EntityV2 | Schema,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
 > = EntityV2 extends SCHEMA
-  ? MapAttributeValue
+  ? Item<UpdateItemInputExtension>
   : Schema extends SCHEMA
-  ? MapAttributeValue
+  ? Item<UpdateItemInputExtension>
   : SCHEMA extends Schema
   ? OptionalizeUndefinableProperties<
       {
@@ -83,12 +104,28 @@ export type AttributeUpdateItemInput<
   ? AttributeValue | undefined
   :
       | (MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> extends true ? never : undefined)
+      | (CanBeRemoved<ATTRIBUTE> extends true ? $remove : never)
       | (ATTRIBUTE extends AnyAttribute
           ? unknown
           : ATTRIBUTE extends PrimitiveAttribute
-          ? ResolvePrimitiveAttribute<ATTRIBUTE>
+          ?
+              | ResolvePrimitiveAttribute<ATTRIBUTE>
+              | (ATTRIBUTE extends PrimitiveAttribute<'number'>
+                  ? { [$add]: ResolvePrimitiveAttribute<ATTRIBUTE> }
+                  : never)
           : ATTRIBUTE extends SetAttribute
-          ? Set<AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
+          ?
+              | Set<AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
+              | {
+                  [$add]: Set<
+                    AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
+                  >
+                }
+              | {
+                  [$delete]: Set<
+                    AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
+                  >
+                }
           : ATTRIBUTE extends ListAttribute
           ? AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
           : ATTRIBUTE extends MapAttribute

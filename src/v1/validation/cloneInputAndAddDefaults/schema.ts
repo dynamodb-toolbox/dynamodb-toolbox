@@ -1,23 +1,23 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type { Schema, Extension, Item, AttributeValue } from 'v1/schema'
-import type { SchemaDefaultsComputer } from 'v1/entity'
+import type { If } from 'v1/types'
 import { isObject } from 'v1/utils/validation'
 
-import { CommandName } from './types'
+import { AttributeOptions, HasExtension, SchemaOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 
-export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension>(
+export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension = never>(
   schema: Schema,
   input: Item<EXTENSION>,
-  {
-    commandName,
-    computeDefaultsContext
-  }: {
-    commandName?: CommandName
-    computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer }
-  } = {}
+  ...[options = {} as SchemaOptions<EXTENSION>]: If<
+    HasExtension<EXTENSION>,
+    [options: SchemaOptions<EXTENSION>],
+    [options?: SchemaOptions<EXTENSION>]
+  >
 ): Item<EXTENSION> => {
+  const { commandName, computeDefaultsContext, handleExtension } = options
+
   if (!isObject(input)) {
     return cloneDeep(input)
   }
@@ -41,19 +41,16 @@ export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension>(
           commandName,
           computeDefaultsContext: {
             computeDefaults: computeDefaults && computeDefaults[attributeName],
-            /**
-             * @debt feature "make computeDefault available for keys & updates"
-             */
-            // @ts-expect-error
             contextInputs: [input]
-          }
-        }
+          },
+          handleExtension
+        } as AttributeOptions<EXTENSION>
       )
     } else {
       attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
         attribute,
         input[attributeName],
-        { commandName }
+        { commandName, handleExtension } as AttributeOptions<EXTENSION>
       )
     }
 
