@@ -1,23 +1,26 @@
 import type { EntityV2 } from 'v1/entity'
-import type { PossiblyUndefinedItem, PossiblyUndefinedAttributeValue } from 'v1/schema'
+import type { Item, AttributeValue, Extension } from 'v1/schema'
 import type { PrimaryKey } from 'v1/table'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 
-export const parsePrimaryKey = <ENTITY extends EntityV2>(
+export const parsePrimaryKey = <ENTITY extends EntityV2, EXTENSION extends Extension>(
   entity: ENTITY,
-  keyInput: PossiblyUndefinedItem
+  keyInput: Item<EXTENSION>
 ): PrimaryKey<ENTITY['table']> => {
   const { table } = entity
   const { partitionKey, sortKey } = table
 
-  const primaryKey: Record<string, PossiblyUndefinedAttributeValue> = {}
+  const primaryKey: Record<string, AttributeValue> = {}
 
   const partitionKeyValidator = validatorsByPrimitiveType[partitionKey.type]
   const partitionKeyValue = keyInput[partitionKey.name]
 
   if (partitionKeyValidator(partitionKeyValue)) {
-    primaryKey[partitionKey.name] = partitionKeyValue
+    /**
+     * @debt type "TODO: Make validator act as primitive typeguard"
+     */
+    primaryKey[partitionKey.name] = partitionKeyValue as number | string | Buffer
   } else {
     throw new DynamoDBToolboxError('commands.parsePrimaryKey.invalidKeyPart', {
       message: `Invalid partition key: ${partitionKey.name}`,
@@ -35,7 +38,10 @@ export const parsePrimaryKey = <ENTITY extends EntityV2>(
     const sortKeyValue = keyInput[sortKey.name]
 
     if (sortKeyValidator(sortKeyValue)) {
-      primaryKey[sortKey.name] = sortKeyValue
+      /**
+       * @debt type "TODO: Make validator act as primitive typeguard"
+       */
+      primaryKey[sortKey.name] = sortKeyValue as number | string | Buffer
     } else {
       throw new DynamoDBToolboxError('commands.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid sort key: ${sortKey.name}`,

@@ -5,15 +5,16 @@ import type { AttributeBasicValue, ListAttribute, Extension } from 'v1/schema'
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isArray, isFunction, isObject } from 'v1/utils/validation'
 
-import type { CloneInputAndAddDefaultsOptions } from './types'
+import type { AttributeOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneListAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   listAttribute: ListAttribute,
   input: AttributeBasicValue<EXTENSION> | undefined,
-  { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
+  options: AttributeOptions<EXTENSION> = {} as AttributeOptions<EXTENSION>
 ): AttributeBasicValue<EXTENSION> | undefined => {
+  const { commandName, computeDefaultsContext } = options
   const commandDefault = getCommandDefault(listAttribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 
@@ -47,7 +48,7 @@ export const cloneListAttributeInputAndAddDefaults = <EXTENSION extends Extensio
 
   if (!canComputeDefaults) {
     return input.map(elementInput =>
-      cloneAttributeInputAndAddDefaults(listAttribute.elements, elementInput, { commandName })
+      cloneAttributeInputAndAddDefaults(listAttribute.elements, elementInput, options)
     )
   }
 
@@ -71,7 +72,7 @@ export const cloneListAttributeInputAndAddDefaults = <EXTENSION extends Extensio
 
   return input.map((elementInput, elementIndex) =>
     cloneAttributeInputAndAddDefaults(listAttribute.elements, elementInput, {
-      commandName,
+      ...options,
       computeDefaultsContext: {
         computeDefaults: elementsComputeDefaults,
         contextInputs: [elementIndex, ...contextInputs]
