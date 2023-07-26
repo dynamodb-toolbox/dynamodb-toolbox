@@ -10,14 +10,15 @@ import type {
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isFunction } from 'v1/utils/validation'
 
-import type { CloneInputAndAddDefaultsOptions } from './types'
+import type { AttributeOptions } from './types'
 import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const clonePrimitiveAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   attribute: AnyAttribute | PrimitiveAttribute | SetAttribute,
   input: AttributeBasicValue<EXTENSION> | undefined,
-  { commandName, computeDefaultsContext }: CloneInputAndAddDefaultsOptions = {}
+  options: AttributeOptions<EXTENSION> = {} as AttributeOptions<EXTENSION>
 ): AttributeBasicValue<EXTENSION> | undefined => {
+  const { commandName, computeDefaultsContext } = options
   const commandDefault = getCommandDefault(attribute, { commandName })
   const canComputeDefaults = _canComputeDefaults(computeDefaultsContext)
 

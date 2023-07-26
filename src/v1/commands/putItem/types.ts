@@ -3,9 +3,9 @@ import type { O } from 'ts-toolbelt'
 import type {
   Schema,
   Attribute,
+  Item,
   AttributeValue,
   ResolvePrimitiveAttribute,
-  MapAttributeValue,
   AnyAttribute,
   PrimitiveAttribute,
   SetAttribute,
@@ -51,9 +51,9 @@ export type PutItemInput<
   SCHEMA extends EntityV2 | Schema,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
 > = EntityV2 extends SCHEMA
-  ? MapAttributeValue
+  ? Item
   : Schema extends SCHEMA
-  ? MapAttributeValue
+  ? Item
   : SCHEMA extends Schema
   ? OptionalizeUndefinableProperties<
       {
