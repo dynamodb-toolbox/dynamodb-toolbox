@@ -1,13 +1,10 @@
 import type { EntityV2 } from 'v1/entity'
-import type { Item, UndefinedAttrExtension, RequiredOption } from 'v1/schema'
+import type { Item, RequiredOption } from 'v1/schema'
 import { cloneSchemaInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
 
 import { ParsedItem, parseSchemaClonedInput } from 'v1/validation/parseClonedInput'
 
-type EntityKeyInputParser = (
-  entity: EntityV2,
-  input: Item<UndefinedAttrExtension>
-) => ParsedItem<UndefinedAttrExtension>
+type EntityKeyInputParser = (entity: EntityV2, input: Item) => ParsedItem
 
 const requiringOptions = new Set<RequiredOption>(['always'])
 

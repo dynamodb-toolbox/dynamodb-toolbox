@@ -1,10 +1,43 @@
-import type { PossiblyUndefinedAttributeValue, AttributeValue, Extension } from 'v1/schema'
-import type { AttributeDefaultsComputer } from 'v1/entity'
+import type { Attribute, AttributeBasicValue, AttributeValue, Extension, Item } from 'v1/schema'
+import type { AttributeDefaultsComputer, SchemaDefaultsComputer } from 'v1/entity'
+import type { If } from 'v1/types'
 
-export type ComputeDefaultsContext = {
+export type HasExtension<EXTENSION extends Extension> = [EXTENSION] extends [never] ? false : true
+
+export type CloningExtensionHandler<EXTENSION extends Extension> = (
+  attribute: Attribute,
+  input: AttributeValue<EXTENSION> | undefined,
+  options: AttributeOptions<EXTENSION>
+) =>
+  | { isExtension: true; parsedExtension: AttributeValue<EXTENSION>; basicInput?: never }
+  | {
+      isExtension: false
+      parsedExtension?: never
+      basicInput: AttributeBasicValue<EXTENSION> | undefined
+    }
+
+export type SchemaOptions<EXTENSION extends Extension> = {
+  commandName?: CommandName
+  computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer }
+} & If<
+  HasExtension<EXTENSION>,
+  { handleExtension: CloningExtensionHandler<EXTENSION> },
+  { handleExtension?: never }
+>
+
+export type ComputeDefaultsContext<EXTENSION extends Extension> = {
   computeDefaults: AttributeDefaultsComputer
-  contextInputs: PossiblyUndefinedAttributeValue[]
+  contextInputs: (Item<EXTENSION> | number | AttributeValue<EXTENSION>)[]
 }
+
+export type AttributeOptions<EXTENSION extends Extension> = {
+  commandName?: CommandName
+  computeDefaultsContext?: ComputeDefaultsContext<EXTENSION>
+} & If<
+  HasExtension<EXTENSION>,
+  { handleExtension: CloningExtensionHandler<EXTENSION> },
+  { handleExtension?: never }
+>
 
 export type AnyOfAttributeClonedInputsWithDefaults<EXTENSION extends Extension = never> = {
   originalInput: AttributeValue<EXTENSION>
@@ -12,8 +45,3 @@ export type AnyOfAttributeClonedInputsWithDefaults<EXTENSION extends Extension =
 }
 
 export type CommandName = 'put' | 'update'
-
-export type CloneInputAndAddDefaultsOptions = {
-  commandName?: CommandName
-  computeDefaultsContext?: ComputeDefaultsContext
-}
