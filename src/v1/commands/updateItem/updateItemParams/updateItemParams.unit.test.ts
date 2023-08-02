@@ -17,6 +17,7 @@ import {
   DynamoDBToolboxError,
   UpdateItemCommand
 } from 'v1'
+import { add, _delete, remove } from '../utils'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -43,19 +44,18 @@ const TestEntity = new EntityV2({
     test_string: string().optional().updateDefault('default string'),
     test_string_coerce: string().optional(),
     count: number().optional().savedAs('test_number'),
-    test_number_coerce: number().optional().updateDefault(0),
+    test_number_default: number().optional().updateDefault(0),
     test_boolean: boolean().optional(),
     test_boolean_coerce: boolean().optional(),
     test_boolean_default: boolean().optional().updateDefault(false),
     test_list: list(any()).optional(),
     test_list_coerce: list(any()).optional(),
     test_list_required: list(any()),
-    contents: map({ test: string() }).savedAs('test_map'),
+    contents: map({ test: string() }).savedAs('_c'),
+    test_map: map({ optional: string().optional() }),
     test_string_set: set(string()).optional(),
     test_number_set: set(number()).optional(),
     test_binary_set: set(binary()).optional(),
-    test_string_set_type_coerce: set(string()).optional(),
-    test_number_set_type_coerce: set(number()).optional(),
     test_binary: binary(),
     simple_string: string().optional()
   }),
@@ -152,7 +152,7 @@ describe('update', () => {
     expect(UpdateExpression).toBe(
       ''
       // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
     )
 
     expect(ExpressionAttributeNames).toStrictEqual({
@@ -162,7 +162,7 @@ describe('update', () => {
       // '#_md': '_md',
       // '#test_string': 'test_string',
       // '#test_boolean_default': 'test_boolean_default',
-      // '#test_number_coerce': 'test_number_coerce'
+      // '#test_number': 'test_number'
     })
 
     expect(ExpressionAttributeValues).toMatchObject({
@@ -171,7 +171,7 @@ describe('update', () => {
       // ':_ct': expect.any(String),
       // ':_md': expect.any(String),
       // ':test_string': 'test string',
-      // ':test_number_coerce': 0,
+      // ':test_number': 0,
       // ':test_boolean_default': false
     })
 
@@ -199,7 +199,7 @@ describe('update', () => {
     expect(UpdateExpression).toBe(
       ''
       // TODO
-      // 'SET #test_string = :test_string, #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
+      // 'SET #test_string = :test_string, #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
     )
 
     expect(ExpressionAttributeNames).toMatchObject({
@@ -229,7 +229,7 @@ describe('update', () => {
     expect(UpdateExpression).toBe(
       ''
       // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
     )
 
     expect(ExpressionAttributeNames).toMatchObject({
@@ -272,20 +272,11 @@ describe('update', () => {
     })
   })
 
-  // TODO: Implement removes, but actually I'm not sure this behavior is correct
-  // Shouldn't we prevent removing fields that are required rather?
-  // it('fails when removing fields with default values', () => {
-  //   expect(() =>
-  //     TestEntity.updateParams({ email: 'test-pk', sort: 'test-sk', $remove: 'test_string' })
-  //   ).toThrow(`'test_string' has a default value and cannot be removed`)
-  // })
-
   it('creates update that just removes a field', () => {
     const { UpdateExpression, ExpressionAttributeNames } = TestEntity2.build(UpdateItemCommand)
       .item({
-        email: 'test-pk'
-        // TODO: Allow remove()
-        // test: null
+        email: 'test-pk',
+        test: remove()
       })
       .params()
 
@@ -304,9 +295,8 @@ describe('update', () => {
   it('creates update that just removes a composite field', () => {
     const { UpdateExpression, ExpressionAttributeNames } = TestEntity2.build(UpdateItemCommand)
       .item({
-        email: 'test-pk'
-        // TODO: Allow remove()
-        // test_composite: null
+        email: 'test-pk',
+        test_composite: remove()
       })
       .params()
 
@@ -322,27 +312,46 @@ describe('update', () => {
     })
   })
 
-  // TODO: Allow remove()
-  // it('fails removing an invalid attribute', () => {
-  //   // @ts-expect-error
-  //   expect(() => TestEntity.updateParams({ email: 'x', sort: 'y', $remove: 'missing' })).toThrow(
-  //     `'missing' is not a valid attribute and cannot be removed`
-  //   )
-  // })
+  it('ignores removing an invalid attribute', () => {
+    const { ExpressionAttributeNames = {} } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'x',
+        sort: 'y',
+        // @ts-expect-error
+        missing: remove()
+      })
+      .params()
 
-  // it('fails when trying to remove the paritionKey', () => {
-  //   // @ts-expect-error
-  //   expect(() => TestEntity.updateParams({ email: 'x', sort: 'y', $remove: 'pk' })).toThrow(
-  //     `'pk' is the partitionKey and cannot be removed`
-  //   )
-  // })
+    expect(Object.values(ExpressionAttributeNames)).not.toContain('missing')
+  })
 
-  // it('fails when trying to remove the sortKey', () => {
-  //   // @ts-expect-error
-  //   expect(() => TestEntity.updateParams({ email: 'x', sort: 'y', $remove: ['sk'] })).toThrow(
-  //     `'sk' is the sortKey and cannot be removed`
-  //   )
-  // })
+  it('fails when trying to remove the paritionKey', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          // @ts-expect-error
+          email: remove(),
+          sort: 'y'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
+  })
+
+  it('fails when trying to remove the sortKey', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test',
+          // @ts-expect-error
+          sort: remove()
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
+  })
 
   // it('creates update that just saves a composite field', () => {
   //   const {
@@ -372,17 +381,17 @@ describe('update', () => {
   //       test_map: { a: 1, b: 2 },
   //       test_binary: Buffer.from('test'),
   //       test_boolean_default: false,
-  //       test_number_coerce: 0
+  //       test_number: 0
   //     }
   //   )
 
   //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = :test_string, #test_number_coerce = :test_number_coerce, #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_number = :test_number, #test_boolean = :test_boolean, #test_list = :test_list, #test_map = :test_map, #test_binary = :test_binary'
+  //     'SET #test_string = :test_string, #test_number = :test_number, #test_boolean_default = :test_boolean_default, #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_number = :test_number, #test_boolean = :test_boolean, #test_list = :test_list, #test_map = :test_map, #test_binary = :test_binary'
   //   )
 
   //   expect(ExpressionAttributeValues?.[':test_string']).toBe('test')
   //   expect(ExpressionAttributeValues?.[':test_number']).toBe(1)
-  //   expect(ExpressionAttributeValues?.[':test_number_coerce']).toBe(0)
+  //   expect(ExpressionAttributeValues?.[':test_number']).toBe(0)
   //   expect(ExpressionAttributeValues?.[':test_boolean']).toBe(false)
   //   expect(ExpressionAttributeValues?.[':test_boolean_default']).toBe(false)
   //   expect(ExpressionAttributeValues?.[':test_list']).toEqual(['a', 'b', 'c'])
@@ -399,7 +408,7 @@ describe('update', () => {
   //     // @ts-expect-error 💥 TODO: Support coerce keyword
   //     test_string_coerce: 1,
   //     // @ts-expect-error 💥 TODO: Support coerce keyword
-  //     test_number_coerce: '1',
+  //     test_number: '1',
   //     // @ts-expect-error 💥 TODO: Support coerce keyword
   //     test_boolean_coerce: 'true',
   //     // @ts-expect-error 💥 TODO: Support coerce keyword
@@ -408,7 +417,7 @@ describe('update', () => {
 
   //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
   //   expect(ExpressionAttributeValues?.[':test_string_coerce']).toBe('1')
-  //   expect(ExpressionAttributeValues?.[':test_number_coerce']).toBe(1)
+  //   expect(ExpressionAttributeValues?.[':test_number']).toBe(1)
   //   expect(ExpressionAttributeValues?.[':test_boolean_coerce']).toBe(true)
   //   expect(ExpressionAttributeValues?.[':test_list_coerce']).toEqual(['a', 'b', 'c'])
   //   expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
@@ -451,45 +460,66 @@ describe('update', () => {
   //   expect(TableName).toBe('test-table')
   // })
 
-  // it('performs an add operation', () => {
-  //   const {
-  //     TableName,
-  //     Key,
-  //     UpdateExpression,
-  //     ExpressionAttributeNames,
-  //     ExpressionAttributeValues
-  //   } = TestEntity.updateParams({
-  //     email: 'test-pk',
-  //     sort: 'test-sk',
-  //     test_number: { $add: 10 },
-  //     test_number_set_type: { $add: [1, 2, 3] }
-  //   })
-  //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
-  //   )
-  //   expect(ExpressionAttributeNames).toEqual({
-  //     '#_md': '_md',
-  //     '#_ct': '_ct',
-  //     '#test_string': 'test_string',
-  //     '#_et': '_et',
-  //     '#test_boolean_default': 'test_boolean_default',
-  //     '#test_number': 'test_number',
-  //     '#test_number_set_type': 'test_number_set_type',
-  //     '#test_number_coerce': 'test_number_coerce'
-  //   })
+  it('performs an add operation', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: add(10),
+        test_number_set: add(new Set([1, 2, 3]))
+      })
+      .params()
 
-  //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_md')
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_ct')
-  //   expect(ExpressionAttributeValues).not.toHaveProperty(':pk')
-  //   expect(ExpressionAttributeValues).not.toHaveProperty(':sk')
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_et')
-  //   expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
-  //   expect(ExpressionAttributeValues?.[':test_number']).toBe(10)
-  //   expect(Array.from(ExpressionAttributeValues?.[':test_number_set_type'])).toEqual([1, 2, 3])
-  //   expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
-  //   expect(TableName).toBe('test-table')
-  // })
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+
+    expect(ExpressionAttributeNames).toMatchObject({
+      // TODO
+      // '#_md': '_md',
+      // '#_ct': '_ct',
+      // '#test_string': 'test_string',
+      // '#_et': '_et',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_number': 'test_number',
+      // '#test_number_set_type': 'test_number_set_type',
+      // '#test_number': 'test_number'
+    })
+
+    expect(ExpressionAttributeValues).toMatchObject({
+      // TODO
+    })
+
+    // expect(ExpressionAttributeValues).toHaveProperty(':_md')
+    // expect(ExpressionAttributeValues).toHaveProperty(':_ct')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':pk')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':sk')
+    // expect(ExpressionAttributeValues).toHaveProperty(':_et')
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(ExpressionAttributeValues?.[':test_number']).toBe(10)
+    // expect(Array.from(ExpressionAttributeValues?.[':test_number_set_type'])).toEqual([1, 2, 3])
+  })
+
+  it('rejects an invalid add operation', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_string: add(10)
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
 
   // it('ignores fields with no value', () => {
   //   const { ExpressionAttributeValues } = TestEntity.updateParams({
@@ -511,49 +541,68 @@ describe('update', () => {
   //   expect(ExpressionAttributeValues).not.toHaveProperty(':test_map')
   // })
 
-  // it('performs a delete operation', () => {
-  //   const {
-  //     TableName,
-  //     Key,
-  //     UpdateExpression,
-  //     ExpressionAttributeNames,
-  //     ExpressionAttributeValues
-  //   } = TestEntity.updateParams({
-  //     email: 'test-pk',
-  //     sort: 'test-sk',
-  //     test_string_set_type: { $delete: ['1', '2', '3'] },
-  //     test_number_set_type: { $delete: [1, 2, 3] }
-  //   })
-  //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) DELETE #test_string_set_type :test_string_set_type, #test_number_set_type :test_number_set_type'
-  //   )
-  //   expect(ExpressionAttributeNames).toEqual({
-  //     '#test_string': 'test_string',
-  //     '#_et': '_et',
-  //     '#_ct': '_ct',
-  //     '#_md': '_md',
-  //     '#test_boolean_default': 'test_boolean_default',
-  //     '#test_string_set_type': 'test_string_set_type',
-  //     '#test_number_set_type': 'test_number_set_type',
-  //     '#test_number_coerce': 'test_number_coerce'
-  //   })
+  it('performs a delete operation', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_string_set: _delete(new Set(['1', '2', '3'])),
+        test_number_set: _delete(new Set([1, 2, 3]))
+      })
+      .params()
 
-  //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_md')
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_ct')
-  //   expect(ExpressionAttributeValues).not.toHaveProperty(':pk')
-  //   expect(ExpressionAttributeValues).not.toHaveProperty(':sk')
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_et')
-  //   expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
-  //   expect(Array.from(ExpressionAttributeValues?.[':test_string_set_type'])).toEqual([
-  //     '1',
-  //     '2',
-  //     '3'
-  //   ])
-  //   expect(Array.from(ExpressionAttributeValues?.[':test_number_set_type'])).toEqual([1, 2, 3])
-  //   expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
-  //   expect(TableName).toBe('test-table')
-  // })
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) DELETE #test_string_set_type :test_string_set_type, #test_number_set_type :test_number_set_type'
+    )
+
+    expect(ExpressionAttributeNames).toMatchObject({
+      // TODO
+      // '#test_string': 'test_string',
+      // '#_et': '_et',
+      // '#_ct': '_ct',
+      // '#_md': '_md',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_string_set_type': 'test_string_set_type',
+      // '#test_number_set_type': 'test_number_set_type',
+      // '#test_number': 'test_number'
+    })
+
+    expect(ExpressionAttributeValues).toMatchObject({
+      // TODO
+    })
+    // expect(ExpressionAttributeValues).toHaveProperty(':_ct')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':pk')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':sk')
+    // expect(ExpressionAttributeValues).toHaveProperty(':_et')
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(Array.from(ExpressionAttributeValues?.[':test_string_set_type'])).toEqual([
+    //   '1',
+    //   '2',
+    //   '3'
+    // ])
+    // expect(Array.from(ExpressionAttributeValues?.[':test_number_set_type'])).toEqual([1, 2, 3])
+  })
+
+  it('rejects an invalid delete operation', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_string: _delete(10)
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
 
   // it('removes items from a list', () => {
   //   const {
@@ -565,10 +614,10 @@ describe('update', () => {
   //   } = TestEntity.updateParams({
   //     email: 'test-pk',
   //     sort: 'test-sk',
-  //     test_list: { $remove: [2, 3, 8] }
+  //     test_list: { remove(): [2, 3, 8] }
   //   })
   //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_list[2], #test_list[3], #test_list[8]'
+  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_list[2], #test_list[3], #test_list[8]'
   //   )
 
   //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
@@ -579,7 +628,7 @@ describe('update', () => {
   //     '#_md': '_md',
   //     '#test_boolean_default': 'test_boolean_default',
   //     '#test_list': 'test_list',
-  //     '#test_number_coerce': 'test_number_coerce'
+  //     '#test_number': 'test_number'
   //   })
   //   expect(ExpressionAttributeValues).toHaveProperty(':_md')
   //   expect(ExpressionAttributeValues).toHaveProperty(':_ct')
@@ -605,7 +654,7 @@ describe('update', () => {
   //     test_list: { 2: 'Test2', 5: 'Test5' }
   //   })
   //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list[2] = :test_list_2, #test_list[5] = :test_list_5'
+  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list[2] = :test_list_2, #test_list[5] = :test_list_5'
   //   )
 
   //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
@@ -616,7 +665,7 @@ describe('update', () => {
   //     '#_md': '_md',
   //     '#test_boolean_default': 'test_boolean_default',
   //     '#test_list': 'test_list',
-  //     '#test_number_coerce': 'test_number_coerce'
+  //     '#test_number': 'test_number'
   //   })
   //   expect(ExpressionAttributeValues).toHaveProperty(':_md')
   //   expect(ExpressionAttributeValues).toHaveProperty(':_ct')
@@ -644,7 +693,7 @@ describe('update', () => {
   //     test_list_coerce: { $prepend: [1, 2, 3] }
   //   })
   //   expect(UpdateExpression).toBe(
-  //     `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+  //     `SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
   //   )
 
   //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
@@ -656,7 +705,7 @@ describe('update', () => {
   //     '#test_boolean_default': 'test_boolean_default',
   //     '#test_list': 'test_list',
   //     '#test_list_coerce': 'test_list_coerce',
-  //     '#test_number_coerce': 'test_number_coerce'
+  //     '#test_number': 'test_number'
   //   })
   //   expect(ExpressionAttributeValues).toHaveProperty(':_md')
   //   expect(ExpressionAttributeValues).toHaveProperty(':_ct')
@@ -720,7 +769,7 @@ describe('update', () => {
   //   expect(TableName).toBe('test-table')
 
   //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1'
+  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1'
   //   )
 
   //   expect(ExpressionAttributeNames).toEqual(
@@ -758,7 +807,7 @@ describe('update', () => {
   //     }
   //   })
   //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1, #test_map.#test_map_prop2[1] = :test_map_prop2_1, #test_map.#test_map_prop2[4] = :test_map_prop2_4, #test_map.#test_map_prop3.#test_map_prop3_prop4 = :test_map_prop3_prop4, #test_map.#test_map_prop5 = :test_map_prop5'
+  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1, #test_map.#test_map_prop2[1] = :test_map_prop2_1, #test_map.#test_map_prop2[4] = :test_map_prop2_4, #test_map.#test_map_prop3.#test_map_prop3_prop4 = :test_map_prop3_prop4, #test_map.#test_map_prop5 = :test_map_prop5'
   //   )
 
   //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
@@ -774,7 +823,7 @@ describe('update', () => {
   //     '#test_map_prop3_prop4': 'prop4',
   //     '#test_map_prop5': 'prop5',
   //     '#test_map': 'test_map',
-  //     '#test_number_coerce': 'test_number_coerce'
+  //     '#test_number': 'test_number'
   //   })
   //   expect(ExpressionAttributeValues).toHaveProperty(':_et')
   //   expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
@@ -817,7 +866,7 @@ describe('update', () => {
   //   expect(TableName).toBe('test-table')
 
   //   expect(UpdateExpression).toBe(
-  //     `SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(if_not_exists(#test_map.#test_map_prop1, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop1), #test_map.#test_map_prop2 = list_append(:test_map_prop2, if_not_exists(#test_map.#test_map_prop2, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY})), #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(if_not_exists(#test_map.#test_map_prop3.#test_map_prop3_prop4, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop3_prop4)`
+  //     `SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(if_not_exists(#test_map.#test_map_prop1, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop1), #test_map.#test_map_prop2 = list_append(:test_map_prop2, if_not_exists(#test_map.#test_map_prop2, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY})), #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(if_not_exists(#test_map.#test_map_prop3.#test_map_prop3_prop4, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop3_prop4)`
   //   )
 
   //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
@@ -840,85 +889,92 @@ describe('update', () => {
   //   )
   // })
 
-  // it('removes nested data in a map when set to null or undefined', () => {
-  //   const {
-  //     TableName,
-  //     Key,
-  //     UpdateExpression,
-  //     ExpressionAttributeNames,
-  //     ExpressionAttributeValues
-  //   } = TestEntity.updateParams({
-  //     email: 'test-pk',
-  //     sort: 'test-sk',
-  //     test_map: {
-  //       $set: {
-  //         prop1: null,
-  //         prop2: undefined
-  //       }
-  //     }
-  //   })
+  it('removes nested data in a map', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_map: {
+          optional: remove()
+        }
+      })
+      .params()
 
-  //   expect(ExpressionAttributeNames).toEqual({
-  //     '#_et': '_et',
-  //     '#_ct': '_ct',
-  //     '#_md': '_md',
-  //     '#test_boolean_default': 'test_boolean_default',
-  //     '#test_string': 'test_string',
-  //     '#test_map': 'test_map',
-  //     '#test_map_prop1': 'prop1',
-  //     '#test_map_prop2': 'prop2',
-  //     '#test_number_coerce': 'test_number_coerce'
-  //   })
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
+    )
 
-  //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_et')
-  //   expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
-  //   expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
-  //   expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop1')
-  //   expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      // TODO
+      // '#_et': '_et',
+      // '#_ct': '_ct',
+      // '#_md': '_md',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_string': 'test_string',
+      // '#test_map': 'test_map',
+      // '#test_map_prop1': 'prop1',
+      // '#test_map_prop2': 'prop2',
+      // '#test_number': 'test_number'
+    })
 
-  //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
-  //   )
-  //   expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
-  //   expect(TableName).toBe('test-table')
-  // })
+    expect(ExpressionAttributeValues).toMatchObject({
+      // TODO
+    })
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop1')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop2')
+  })
 
-  // it('uses an alias', async () => {
-  //   const {
-  //     TableName,
-  //     Key,
-  //     UpdateExpression,
-  //     ExpressionAttributeNames,
-  //     ExpressionAttributeValues
-  //   } = TestEntity.updateParams({
-  //     email: 'test@test.com',
-  //     sort: 'test-sk',
-  //     // @ts-expect-error 💥 TODO: Handle aliases
-  //     count: { $add: 10 },
-  //     contents: { a: 1, b: 2 }
-  //   })
-  //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map = :test_map ADD #test_number :test_number'
-  //   )
-  //   expect(ExpressionAttributeNames).toEqual({
-  //     '#_et': '_et',
-  //     '#_ct': '_ct',
-  //     '#_md': '_md',
-  //     '#test_boolean_default': 'test_boolean_default',
-  //     '#test_string': 'test_string',
-  //     '#test_number': 'test_number',
-  //     '#test_map': 'test_map',
-  //     '#test_number_coerce': 'test_number_coerce'
-  //   })
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_et')
-  //   expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
-  //   expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
-  //   expect(ExpressionAttributeValues?.[':test_number']).toBe(10)
-  //   expect(ExpressionAttributeValues?.[':test_map']).toEqual({ a: 1, b: 2 })
-  //   expect(Key).toEqual({ pk: 'test@test.com', sk: 'test-sk' })
-  //   expect(TableName).toBe('test-table')
-  // })
+  it('uses an alias', async () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test@test.com',
+        sort: 'test-sk',
+        count: add(10),
+        contents: { test: 'test' }
+      })
+      .params()
+
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map = :test_map ADD #test_number :test_number'
+    )
+
+    expect(ExpressionAttributeNames).toMatchObject({
+      // TODO
+      // '#_et': '_et',
+      // '#_ct': '_ct',
+      // '#_md': '_md',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_string': 'test_string',
+      // '#test_number': 'test_number',
+      // '#test_map': 'test_map',
+      // '#test_number': 'test_number'
+    })
+
+    expect(ExpressionAttributeValues).toMatchObject({
+      // TODO
+    })
+
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
+    // expect(ExpressionAttributeValues?.[':test_number']).toBe(10)
+    // expect(ExpressionAttributeValues?.[':test_map']).toEqual({ a: 1, b: 2 })
+    // expect(Key).toEqual({ pk: 'test@test.com', sk: 'test-sk' })
+    // expect(TableName).toBe('test-table')
+  })
 
   // it('accepts 0 as a valid value for required fields', () => {
   //   const { ExpressionAttributeValues } = TestEntity3.updateParams({
@@ -938,26 +994,6 @@ describe('update', () => {
   //     }
   //   })
   //   expect(ExpressionAttributeValues?.[':test_list_required']).toEqual([1, 2, 3])
-  // })
-
-  // it('removes unused expression values/names when using $set for a map field with an empty object', () => {
-  //   const {
-  //     ExpressionAttributeValues,
-  //     ExpressionAttributeNames,
-  //     UpdateExpression
-  //   } = TestEntity.updateParams({
-  //     email: 'test-pk',
-  //     sort: 'test-sk',
-  //     test_map: {
-  //       $set: {}
-  //     }
-  //   })
-
-  //   expect(ExpressionAttributeValues).not.toHaveProperty(':test_map')
-  //   expect(ExpressionAttributeNames).not.toHaveProperty('#test_map')
-  //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number_coerce = if_not_exists(#test_number_coerce,:test_number_coerce), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et)'
-  //   )
   // })
 
   it('ignores additional attribute', () => {
@@ -1005,7 +1041,7 @@ describe('update', () => {
   //       email: 'test-pk',
   //       sort: 'test-sk',
   //       // @ts-expect-error
-  //       test_list: { $remove: [1, 2, 'test'] }
+  //       test_list: { remove(): [1, 2, 'test'] }
   //     })
   //   ).toThrow(`Remove array for 'test_list' must only contain numeric indexes`)
   // })

@@ -5,6 +5,7 @@ import { parseSchemaClonedInput, ParsedItem } from 'v1/validation/parseClonedInp
 
 import type { UpdateItemInputExtension } from '../types'
 import { cloneExtension } from './extension/cloneExtension'
+import { parseExtension } from './extension/parseExtension'
 
 type EntityUpdateCommandInputParser = (
   entity: EntityV2,
@@ -23,5 +24,8 @@ export const parseEntityUpdateCommandInput: EntityUpdateCommandInputParser = (en
     // computeDefaultsContext: { computeDefaults: entity.computedDefaults }
   })
 
-  return parseSchemaClonedInput(entity.schema, clonedInputWithDefaults, { requiringOptions })
+  return parseSchemaClonedInput(entity.schema, clonedInputWithDefaults, {
+    requiringOptions,
+    parseExtension
+  })
 }

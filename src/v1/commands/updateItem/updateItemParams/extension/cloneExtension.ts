@@ -1,6 +1,6 @@
 import type { AttributeValue } from 'v1/schema'
 import type { ExtensionCloner } from 'v1/validation/cloneInputAndAddDefaults/types'
-import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
+import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
 
 import type { UpdateItemInputExtension } from '../../types'
 import { $add, $delete, $remove } from '../../constants'
