@@ -4,9 +4,9 @@ import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAd
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type { UpdateItemInputExtension } from '../../types'
-import { $add, $delete, $remove } from '../../constants'
+import { $add, $delete, $remove, $set } from '../../constants'
 
-import { hasAddOperation, hasDeleteOperation } from './utils'
+import { hasAddOperation, hasDeleteOperation, hasSetOperation } from './utils'
 
 export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
   attribute,
@@ -62,6 +62,15 @@ export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
     return {
       isExtension: true,
       clonedExtension
+    }
+  }
+
+  if ((attribute.type === 'map' || attribute.type === 'record') && hasSetOperation(input)) {
+    return {
+      isExtension: true,
+      clonedExtension: {
+        [$set]: cloneAttributeInputAndAddDefaults(attribute, input[$set], options)
+      }
     }
   }
 

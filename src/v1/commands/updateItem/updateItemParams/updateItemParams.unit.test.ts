@@ -13,11 +13,12 @@ import {
   set,
   list,
   map,
+  record,
   ComputedDefault,
   DynamoDBToolboxError,
   UpdateItemCommand
 } from 'v1'
-import { add, _delete, remove } from '../utils'
+import { add, _delete, remove, _set } from '../utils'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -53,12 +54,13 @@ const TestEntity = new EntityV2({
     test_list_coerce: list(any()).optional(),
     test_list_required: list(any()),
     contents: map({ test: string() }).savedAs('_c'),
-    test_map: map({ optional: string().optional() }),
+    test_map: map({ optional: number().enum(1, 2).optional() }),
     test_string_set: set(string()).optional(),
     test_number_set: set(number()).optional(),
     test_binary_set: set(binary()).optional(),
     test_binary: binary(),
-    simple_string: string().optional()
+    simple_string: string().optional(),
+    test_record: record(string(), number()).optional()
   }),
   table: TestTable
 })
@@ -865,56 +867,55 @@ describe('update', () => {
   //   expect(ExpressionAttributeValues).not.toHaveProperty(`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`)
   // })
 
-  // it('updates nested data in a map', () => {
-  //   const {
-  //     TableName,
-  //     Key,
-  //     UpdateExpression,
-  //     ExpressionAttributeNames,
-  //     ExpressionAttributeValues
-  //   } = TestEntity.updateParams({
-  //     email: 'test-pk',
-  //     sort: 'test-sk',
-  //     test_map: {
-  //       $set: {
-  //         prop1: 'some value',
-  //         'prop2[1]': 'list value',
-  //         'prop2[4]': 'list value4',
-  //         'prop3.prop4': 'nested',
-  //         prop5: [1, 2, 3]
-  //       }
-  //     }
-  //   })
-  //   expect(UpdateExpression).toBe(
-  //     'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1, #test_map.#test_map_prop2[1] = :test_map_prop2_1, #test_map.#test_map_prop2[4] = :test_map_prop2_4, #test_map.#test_map_prop3.#test_map_prop3_prop4 = :test_map_prop3_prop4, #test_map.#test_map_prop5 = :test_map_prop5'
-  //   )
+  it('updates nested data in a map', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_map: {
+          optional: 1
+        }
+      })
+      .params()
 
-  //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
-  //   expect(ExpressionAttributeNames).toEqual({
-  //     '#_et': '_et',
-  //     '#_ct': '_ct',
-  //     '#_md': '_md',
-  //     '#test_boolean_default': 'test_boolean_default',
-  //     '#test_string': 'test_string',
-  //     '#test_map_prop1': 'prop1',
-  //     '#test_map_prop2': 'prop2',
-  //     '#test_map_prop3': 'prop3',
-  //     '#test_map_prop3_prop4': 'prop4',
-  //     '#test_map_prop5': 'prop5',
-  //     '#test_map': 'test_map',
-  //     '#test_number': 'test_number'
-  //   })
-  //   expect(ExpressionAttributeValues).toHaveProperty(':_et')
-  //   expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
-  //   expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
-  //   expect(ExpressionAttributeValues?.[':test_map_prop1']).toBe('some value')
-  //   expect(ExpressionAttributeValues?.[':test_map_prop2_1']).toBe('list value')
-  //   expect(ExpressionAttributeValues?.[':test_map_prop2_4']).toBe('list value4')
-  //   expect(ExpressionAttributeValues?.[':test_map_prop3_prop4']).toBe('nested')
-  //   expect(ExpressionAttributeValues?.[':test_map_prop5']).toEqual([1, 2, 3])
-  //   expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
-  //   expect(TableName).toBe('test-table')
-  // })
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1, #test_map.#test_map_prop2[1] = :test_map_prop2_1, #test_map.#test_map_prop2[4] = :test_map_prop2_4, #test_map.#test_map_prop3.#test_map_prop3_prop4 = :test_map_prop3_prop4, #test_map.#test_map_prop5 = :test_map_prop5'
+    )
+
+    expect(ExpressionAttributeNames).toStrictEqual({
+      // TODO
+      // '#_et': '_et',
+      // '#_ct': '_ct',
+      // '#_md': '_md',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_string': 'test_string',
+      // '#test_map_prop1': 'prop1',
+      // '#test_map_prop2': 'prop2',
+      // '#test_map_prop3': 'prop3',
+      // '#test_map_prop3_prop4': 'prop4',
+      // '#test_map_prop5': 'prop5',
+      // '#test_map': 'test_map',
+      // '#test_number': 'test_number'
+    })
+
+    expect(ExpressionAttributeValues).toStrictEqual({
+      // TODO
+    })
+    // expect(ExpressionAttributeValues).toHaveProperty(':_et')
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
+    // expect(ExpressionAttributeValues?.[':test_map_prop1']).toBe('some value')
+    // expect(ExpressionAttributeValues?.[':test_map_prop2_1']).toBe('list value')
+    // expect(ExpressionAttributeValues?.[':test_map_prop2_4']).toBe('list value4')
+    // expect(ExpressionAttributeValues?.[':test_map_prop3_prop4']).toBe('nested')
+    // expect(ExpressionAttributeValues?.[':test_map_prop5']).toEqual([1, 2, 3])
+  })
 
   // it('supports appending/prepending nested lists in a map.', () => {
   //   const {
@@ -1009,6 +1010,286 @@ describe('update', () => {
     // expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
     // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop1')
     // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop2')
+  })
+
+  it('override whole map if set is used', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_map: _set({
+          optional: 1
+        })
+      })
+      .params()
+
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
+    )
+
+    expect(ExpressionAttributeNames).toMatchObject({
+      // TODO
+      // '#_et': '_et',
+      // '#_ct': '_ct',
+      // '#_md': '_md',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_string': 'test_string',
+      // '#test_map': 'test_map',
+      // '#test_map_prop1': 'prop1',
+      // '#test_map_prop2': 'prop2',
+      // '#test_number': 'test_number'
+    })
+
+    expect(ExpressionAttributeValues).toMatchObject({
+      // TODO
+    })
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop1')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop2')
+  })
+
+  it('rejects invalid set map', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_map: _set({
+            optional: add(1)
+          })
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  it('updates nested data in a record', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_record: {
+          foo: 1
+        }
+      })
+      .params()
+
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = :test_map_prop1, #test_map.#test_map_prop2[1] = :test_map_prop2_1, #test_map.#test_map_prop2[4] = :test_map_prop2_4, #test_map.#test_map_prop3.#test_map_prop3_prop4 = :test_map_prop3_prop4, #test_map.#test_map_prop5 = :test_map_prop5'
+    )
+
+    expect(ExpressionAttributeNames).toStrictEqual({
+      // TODO
+      // '#_et': '_et',
+      // '#_ct': '_ct',
+      // '#_md': '_md',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_string': 'test_string',
+      // '#test_map_prop1': 'prop1',
+      // '#test_map_prop2': 'prop2',
+      // '#test_map_prop3': 'prop3',
+      // '#test_map_prop3_prop4': 'prop4',
+      // '#test_map_prop5': 'prop5',
+      // '#test_map': 'test_map',
+      // '#test_number': 'test_number'
+    })
+
+    expect(ExpressionAttributeValues).toStrictEqual({
+      // TODO
+    })
+    // expect(ExpressionAttributeValues).toHaveProperty(':_et')
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
+    // expect(ExpressionAttributeValues?.[':test_map_prop1']).toBe('some value')
+    // expect(ExpressionAttributeValues?.[':test_map_prop2_1']).toBe('list value')
+    // expect(ExpressionAttributeValues?.[':test_map_prop2_4']).toBe('list value4')
+    // expect(ExpressionAttributeValues?.[':test_map_prop3_prop4']).toBe('nested')
+    // expect(ExpressionAttributeValues?.[':test_map_prop5']).toEqual([1, 2, 3])
+  })
+
+  // it('supports appending/prepending nested lists in a record.', () => {
+  //   const {
+  //     TableName,
+  //     Key,
+  //     UpdateExpression,
+  //     ExpressionAttributeNames,
+  //     ExpressionAttributeValues
+  //   } = TestEntity.updateParams({
+  //     email: 'test-pk',
+  //     sort: 'test-sk',
+  //     test_map: {
+  //       $set: {
+  //         prop1: {
+  //           $append: [1, 2, 3]
+  //         },
+  //         prop2: {
+  //           $prepend: [1, 2, 3]
+  //         },
+  //         'prop3.prop4': {
+  //           $append: [1, 2, 3]
+  //         }
+  //       }
+  //     }
+  //   })
+
+  //   expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
+  //   expect(TableName).toBe('test-table')
+
+  //   expect(UpdateExpression).toBe(
+  //     `SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map.#test_map_prop1 = list_append(if_not_exists(#test_map.#test_map_prop1, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop1), #test_map.#test_map_prop2 = list_append(:test_map_prop2, if_not_exists(#test_map.#test_map_prop2, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY})), #test_map.#test_map_prop3.#test_map_prop3_prop4 = list_append(if_not_exists(#test_map.#test_map_prop3.#test_map_prop3_prop4, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}), :test_map_prop3_prop4)`
+  //   )
+
+  //   assert.ok(ExpressionAttributeValues !== undefined, 'ExpressionAttributeValues is undefined')
+  //   expect(ExpressionAttributeNames).toEqual(
+  //     expect.objectContaining({
+  //       '#test_map': 'test_map',
+  //       '#test_map_prop1': 'prop1',
+  //       '#test_map_prop2': 'prop2',
+  //       '#test_map_prop3': 'prop3',
+  //       '#test_map_prop3_prop4': 'prop4'
+  //     })
+  //   )
+  //   expect(ExpressionAttributeValues).toEqual(
+  //     expect.objectContaining({
+  //       ':test_map_prop1': [1, 2, 3],
+  //       ':test_map_prop2': [1, 2, 3],
+  //       ':test_map_prop3_prop4': [1, 2, 3],
+  //       [`:${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}`]: []
+  //     })
+  //   )
+  // })
+
+  it('removes nested data in a record', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_record: {
+          foo: remove()
+        }
+      })
+      .params()
+
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
+    )
+
+    expect(ExpressionAttributeNames).toMatchObject({
+      // TODO
+      // '#_et': '_et',
+      // '#_ct': '_ct',
+      // '#_md': '_md',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_string': 'test_string',
+      // '#test_map': 'test_map',
+      // '#test_map_prop1': 'prop1',
+      // '#test_map_prop2': 'prop2',
+      // '#test_number': 'test_number'
+    })
+
+    expect(ExpressionAttributeValues).toMatchObject({
+      // TODO
+    })
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop1')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop2')
+  })
+
+  it('override whole record if set is used', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_record: _set({
+          foo: 1
+        })
+      })
+      .params()
+
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
+    )
+
+    expect(ExpressionAttributeNames).toMatchObject({
+      // TODO
+      // '#_et': '_et',
+      // '#_ct': '_ct',
+      // '#_md': '_md',
+      // '#test_boolean_default': 'test_boolean_default',
+      // '#test_string': 'test_string',
+      // '#test_map': 'test_map',
+      // '#test_map_prop1': 'prop1',
+      // '#test_map_prop2': 'prop2',
+      // '#test_number': 'test_number'
+    })
+
+    expect(ExpressionAttributeValues).toMatchObject({
+      // TODO
+    })
+    // expect(ExpressionAttributeValues?.[':_et']).toBe('TestEntity')
+    // expect(ExpressionAttributeValues?.[':test_string']).toBe('default string')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop1')
+    // expect(ExpressionAttributeValues).not.toHaveProperty(':test_map_prop2')
+  })
+
+  it('rejects invalid set record', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_record: _set({
+            foo: add(1)
+          })
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  it('rejects set on non-map or non-record attributes', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_string: _set('test')
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('uses an alias', async () => {
