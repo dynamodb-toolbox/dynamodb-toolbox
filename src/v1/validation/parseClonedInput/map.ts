@@ -10,7 +10,7 @@ import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
   mapAttribute: MapAttribute,
   input: AttributeBasicValue<EXTENSION>,
-  parsingOptions: ParsingOptions = {}
+  parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
 ): MapAttributeParsedBasicValue<EXTENSION> => {
   const { filters } = parsingOptions
 

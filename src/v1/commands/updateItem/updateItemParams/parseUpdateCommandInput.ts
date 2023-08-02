@@ -4,7 +4,8 @@ import { cloneSchemaInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDe
 import { parseSchemaClonedInput, ParsedItem } from 'v1/validation/parseClonedInput'
 
 import type { UpdateItemInputExtension } from '../types'
-import { handleExtensionCloning } from './extensionHandlers'
+import { cloneExtension } from './extension/cloneExtension'
+import { parseExtension } from './extension/parseExtension'
 
 type EntityUpdateCommandInputParser = (
   entity: EntityV2,
@@ -16,12 +17,15 @@ const requiringOptions = new Set<RequiredOption>(['always'])
 export const parseEntityUpdateCommandInput: EntityUpdateCommandInputParser = (entity, input) => {
   const clonedInputWithDefaults = cloneSchemaInputAndAddDefaults(entity.schema, input, {
     commandName: 'update',
-    handleExtension: handleExtensionCloning
+    cloneExtension
     /**
      * @debt defaults "We do not provide defaults computer for now"
      */
     // computeDefaultsContext: { computeDefaults: entity.computedDefaults }
   })
 
-  return parseSchemaClonedInput(entity.schema, clonedInputWithDefaults, { requiringOptions })
+  return parseSchemaClonedInput(entity.schema, clonedInputWithDefaults, {
+    requiringOptions,
+    parseExtension
+  })
 }

@@ -1,5 +1,6 @@
 import type { O } from 'ts-toolbelt'
 import type { Schema, AtLeastOnce, Always, MapAttribute, ComputedDefault } from 'v1/schema'
+import type { If } from 'v1/types/if'
 
 import type { FormattedAttribute } from './attribute'
 import type { MatchKeys } from './utils'
@@ -45,14 +46,16 @@ export type FormattedMapAttribute<
           }
         >,
         // Do not enforce any attribute if partial is true
-        OPTIONS['partial'] extends true
-          ? never
-          : // Enforce Required attributes
-            | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always }>
-              // Enforce attributes that have independent default
-              | O.FilterKeys<
-                  SCHEMA['attributes'],
-                  | { key: true; defaults: { key: undefined | ComputedDefault } }
-                  | { key: false; defaults: { put: undefined | ComputedDefault } }
-                >
+        If<
+          OPTIONS['partial'],
+          never,
+          // Enforce Required attributes
+          | O.SelectKeys<SCHEMA['attributes'], { required: AtLeastOnce | Always }>
+          // Enforce attributes that have independent default
+          | O.FilterKeys<
+              SCHEMA['attributes'],
+              | { key: true; defaults: { key: undefined | ComputedDefault } }
+              | { key: false; defaults: { put: undefined | ComputedDefault } }
+            >
+        >
       >

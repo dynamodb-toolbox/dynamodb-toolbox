@@ -1,6 +1,6 @@
 import type { Attribute, Extension } from 'v1/schema'
 
-import type { CloningExtensionHandler, CommandName, ComputeDefaultsContext } from './types'
+import type { ExtensionCloner, CommandName, ComputeDefaultsContext } from './types'
 
 export const getCommandDefault = (
   attribute: Attribute,
@@ -13,7 +13,7 @@ export const canComputeDefaults = <EXTENSION extends Extension>(
 ): computeDefaultsContext is ComputeDefaultsContext<EXTENSION> =>
   computeDefaultsContext !== undefined
 
-export const defaultHandleExtension: CloningExtensionHandler<never> = (_, input) => ({
+export const defaultCloneExtension: ExtensionCloner<never> = (_, input) => ({
   isExtension: false,
   basicInput: input
 })
