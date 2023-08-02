@@ -1,14 +1,14 @@
 import { AttributeValue } from 'v1/schema'
 import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
+import { parsePrimitiveAttributeClonedInput } from 'v1/validation/parseClonedInput/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
 
 import type { UpdateItemInputExtension } from '../../types'
-import { $add, $delete, $remove } from '../../constants'
-
-import { hasAddOperation, hasDeleteOperation } from './utils'
+import { $add, $delete, $remove, $set } from '../../constants'
+import { hasAddOperation, hasDeleteOperation, hasSetOperation } from './utils'
 
 export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
   attribute,
@@ -90,6 +90,45 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
           }
         })
       }
+
+      // $remove is allowed
+      if (inputValue === $remove) {
+        parsedExtension[parsedInputKey] = $remove
+      } else {
+        parsedExtension[parsedInputKey] = parseAttributeClonedInput(
+          attribute.elements,
+          inputValue,
+          options
+        )
+      }
+    }
+
+    return {
+      isExtension: true,
+      parsedExtension
+    }
+  }
+
+  if ((attribute.type === 'map' || attribute.type === 'record') && hasSetOperation(input)) {
+    // Omit parseExtension as $set means non-extended values
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { parseExtension: _, ...restOptions } = options
+
+    return {
+      isExtension: true,
+      parsedExtension: {
+        [$set]: parseAttributeClonedInput(attribute, input[$set], restOptions)
+      }
+    }
+  }
+
+  if (attribute.type === 'record' && isObject(input)) {
+    const parsedExtension: {
+      [KEY in string]: AttributeValue<UpdateItemInputExtension> | $remove
+    } = {}
+
+    for (const [inputKey, inputValue] of Object.entries(input)) {
+      const parsedInputKey = parsePrimitiveAttributeClonedInput(attribute.keys, inputKey) as string
 
       // $remove is allowed
       if (inputValue === $remove) {

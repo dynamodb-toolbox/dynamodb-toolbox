@@ -2,7 +2,11 @@ import type { AttributeValue } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 
 import type { UpdateItemInputExtension } from '../../types'
-import { $add, $delete } from '../../constants'
+import { $set, $add, $delete } from '../../constants'
+
+export const hasSetOperation = (
+  input: AttributeValue<UpdateItemInputExtension> | undefined
+): input is { [$set]: AttributeValue } => isObject(input) && $set in input
 
 export const hasAddOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined

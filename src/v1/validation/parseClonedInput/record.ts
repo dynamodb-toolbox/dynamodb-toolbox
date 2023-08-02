@@ -4,6 +4,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { ParsingOptions, RecordAttributeParsedBasicValue } from './types'
 import { parseAttributeClonedInput } from './attribute'
+import { parsePrimitiveAttributeClonedInput } from './primitive'
 
 export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
   recordAttribute: RecordAttribute,
@@ -32,7 +33,7 @@ export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
 
     if (parsedElementInput !== undefined) {
       parsedInput[
-        parseAttributeClonedInput(recordAttribute.keys, key, parsingOptions) as string
+        parsePrimitiveAttributeClonedInput(recordAttribute.keys, key) as string
       ] = parsedElementInput
     }
   })
