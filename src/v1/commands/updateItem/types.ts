@@ -23,19 +23,19 @@ import type { EntityV2 } from 'v1/entity/class'
 import type { If } from 'v1/types/if'
 import type { AttributePutItemInput } from 'v1/commands/putItem/types'
 
-import type { $partial, $set, $add, $delete, $remove } from './constants'
+import type { $PARTIAL, $SET, $ADD, $DELETE, $REMOVE } from './constants'
 
 export type UpdateItemInputExtension =
-  | { type: '*'; value: $remove }
+  | { type: '*'; value: $REMOVE }
   | {
       type: 'number'
-      value: { [$add]: number }
+      value: { [$ADD]: number }
     }
   | {
       type: 'set'
       value:
-        | { [$add]: AttributeValue<UpdateItemInputExtension> }
-        | { [$delete]: AttributeValue<UpdateItemInputExtension> }
+        | { [$ADD]: AttributeValue<UpdateItemInputExtension> }
+        | { [$DELETE]: AttributeValue<UpdateItemInputExtension> }
     }
   | {
       type: 'list'
@@ -43,14 +43,14 @@ export type UpdateItemInputExtension =
     }
   | {
       type: 'map'
-      value: { [$set]: AttributeValue<UpdateItemInputExtension> }
+      value: { [$SET]: AttributeValue<UpdateItemInputExtension> }
     }
   | {
       type: 'record'
       // Specifying { [$partial]: false } vs { [$partial]?: true } is required for type inference
       // Otherwise { [$set]: ... } can be assigned to an empty set
       // (specifying { [$set]?: never } for partial updates works but type error message is more confusing)
-      value: { [$partial]?: false } & { [$set]: AttributeValue<UpdateItemInputExtension> }
+      value: { [$PARTIAL]?: false } & { [$SET]: AttributeValue<UpdateItemInputExtension> }
     }
 
 type MustBeDefined<
@@ -119,25 +119,25 @@ export type AttributeUpdateItemInput<
   ? AttributeValue<UpdateItemInputExtension> | undefined
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>, never, undefined>
-      | If<CanBeRemoved<ATTRIBUTE>, $remove, never>
+      | If<CanBeRemoved<ATTRIBUTE>, $REMOVE, never>
       | (ATTRIBUTE extends AnyAttribute
           ? unknown
           : ATTRIBUTE extends PrimitiveAttribute
           ?
               | ResolvePrimitiveAttribute<ATTRIBUTE>
               | (ATTRIBUTE extends PrimitiveAttribute<'number'>
-                  ? { [$add]: ResolvePrimitiveAttribute<ATTRIBUTE> }
+                  ? { [$ADD]: ResolvePrimitiveAttribute<ATTRIBUTE> }
                   : never)
           : ATTRIBUTE extends SetAttribute
           ?
               | Set<AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
               | {
-                  [$add]: Set<
+                  [$ADD]: Set<
                     AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
                   >
                 }
               | {
-                  [$delete]: Set<
+                  [$DELETE]: Set<
                     AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
                   >
                 }
@@ -146,12 +146,12 @@ export type AttributeUpdateItemInput<
               | {
                   [INDEX in number]:
                     | AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
-                    | $remove
+                    | $REMOVE
                 }
               | AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
           : ATTRIBUTE extends MapAttribute
           ?
-              | { [$set]: AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> }
+              | { [$SET]: AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> }
               | OptionalizeUndefinableProperties<
                   {
                     [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
@@ -168,13 +168,13 @@ export type AttributeUpdateItemInput<
           : ATTRIBUTE extends RecordAttribute
           ?
               | {
-                  [$partial]?: false
-                  [$set]: AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
+                  [$PARTIAL]?: false
+                  [$SET]: AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
                 }
-              | ({ [$partial]?: true } & {
+              | ({ [$PARTIAL]?: true } & {
                   [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
                     | AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
-                    | $remove
+                    | $REMOVE
                 })
           : ATTRIBUTE extends AnyOfAttribute
           ? AttributeUpdateItemInput<ATTRIBUTE['elements'][number], REQUIRE_INDEPENDENT_DEFAULTS>

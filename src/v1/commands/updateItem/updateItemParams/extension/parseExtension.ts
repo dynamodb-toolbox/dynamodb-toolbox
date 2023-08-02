@@ -7,7 +7,7 @@ import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
 
 import type { UpdateItemInputExtension } from '../../types'
-import { $add, $delete, $remove, $set } from '../../constants'
+import { $ADD, $DELETE, $REMOVE, $SET } from '../../constants'
 import { hasAddOperation, hasDeleteOperation, hasSetOperation } from './utils'
 
 export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
@@ -15,7 +15,7 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
   input,
   options
 ) => {
-  if (input === $remove) {
+  if (input === $REMOVE) {
     if (attribute.required !== 'never') {
       throw new DynamoDBToolboxError('parsing.attributeRequired', {
         message: `Attribute ${attribute.path} is required and cannot be removed`,
@@ -25,7 +25,7 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
 
     return {
       isExtension: true,
-      parsedExtension: $remove
+      parsedExtension: $REMOVE
     }
   }
 
@@ -57,13 +57,13 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
 
     if (hasAdd) {
       Object.assign(parsedExtension, {
-        [$add]: parseAttributeClonedInput(attribute, input[$add], options)
+        [$ADD]: parseAttributeClonedInput(attribute, input[$ADD], options)
       })
     }
 
     if (hasDelete) {
       Object.assign(parsedExtension, {
-        [$delete]: parseAttributeClonedInput(attribute, input[$delete], options)
+        [$DELETE]: parseAttributeClonedInput(attribute, input[$DELETE], options)
       })
     }
 
@@ -75,7 +75,7 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
 
   if (attribute.type === 'list' && isObject(input)) {
     const parsedExtension: {
-      [KEY in number]: AttributeValue<UpdateItemInputExtension> | $remove
+      [KEY in number]: AttributeValue<UpdateItemInputExtension> | $REMOVE
     } = {}
 
     for (const [inputKey, inputValue] of Object.entries(input)) {
@@ -91,9 +91,9 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
         })
       }
 
-      // $remove is allowed
-      if (inputValue === $remove) {
-        parsedExtension[parsedInputKey] = $remove
+      // $REMOVE is allowed
+      if (inputValue === $REMOVE) {
+        parsedExtension[parsedInputKey] = $REMOVE
       } else {
         parsedExtension[parsedInputKey] = parseAttributeClonedInput(
           attribute.elements,
@@ -117,22 +117,22 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
     return {
       isExtension: true,
       parsedExtension: {
-        [$set]: parseAttributeClonedInput(attribute, input[$set], restOptions)
+        [$SET]: parseAttributeClonedInput(attribute, input[$SET], restOptions)
       }
     }
   }
 
   if (attribute.type === 'record' && isObject(input)) {
     const parsedExtension: {
-      [KEY in string]: AttributeValue<UpdateItemInputExtension> | $remove
+      [KEY in string]: AttributeValue<UpdateItemInputExtension> | $REMOVE
     } = {}
 
     for (const [inputKey, inputValue] of Object.entries(input)) {
       const parsedInputKey = parsePrimitiveAttributeClonedInput(attribute.keys, inputKey) as string
 
-      // $remove is allowed
-      if (inputValue === $remove) {
-        parsedExtension[parsedInputKey] = $remove
+      // $REMOVE is allowed
+      if (inputValue === $REMOVE) {
+        parsedExtension[parsedInputKey] = $REMOVE
       } else {
         parsedExtension[parsedInputKey] = parseAttributeClonedInput(
           attribute.elements,

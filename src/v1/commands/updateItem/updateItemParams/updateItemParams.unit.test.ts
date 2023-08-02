@@ -18,7 +18,7 @@ import {
   DynamoDBToolboxError,
   UpdateItemCommand
 } from 'v1'
-import { add, _delete, remove, _set } from '../utils'
+import { $add, $delete, $remove, $set } from '../utils'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -279,7 +279,7 @@ describe('update', () => {
     const { UpdateExpression, ExpressionAttributeNames } = TestEntity2.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
-        test: remove()
+        test: $remove()
       })
       .params()
 
@@ -299,7 +299,7 @@ describe('update', () => {
     const { UpdateExpression, ExpressionAttributeNames } = TestEntity2.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
-        test_composite: remove()
+        test_composite: $remove()
       })
       .params()
 
@@ -321,7 +321,7 @@ describe('update', () => {
         email: 'x',
         sort: 'y',
         // @ts-expect-error
-        missing: remove()
+        missing: $remove()
       })
       .params()
 
@@ -333,7 +333,7 @@ describe('update', () => {
       TestEntity.build(UpdateItemCommand)
         .item({
           // @ts-expect-error
-          email: remove(),
+          email: $remove(),
           sort: 'y'
         })
         .params()
@@ -348,7 +348,7 @@ describe('update', () => {
         .item({
           email: 'test',
           // @ts-expect-error
-          sort: remove()
+          sort: $remove()
         })
         .params()
 
@@ -472,8 +472,8 @@ describe('update', () => {
       .item({
         email: 'test-pk',
         sort: 'test-sk',
-        test_number_default: add(10),
-        test_number_set: add(new Set([1, 2, 3]))
+        test_number_default: $add(10),
+        test_number_set: $add(new Set([1, 2, 3]))
       })
       .params()
 
@@ -516,7 +516,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_string: add(10)
+          test_string: $add(10)
         })
         .params()
 
@@ -547,8 +547,8 @@ describe('update', () => {
       .item({
         email: 'test-pk',
         sort: 'test-sk',
-        test_string_set: _delete(new Set(['1', '2', '3'])),
-        test_number_set: _delete(new Set([1, 2, 3]))
+        test_string_set: $delete(new Set(['1', '2', '3'])),
+        test_number_set: $delete(new Set([1, 2, 3]))
       })
       .params()
 
@@ -593,7 +593,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_string: _delete(10)
+          test_string: $delete(10)
         })
         .params()
 
@@ -685,7 +685,7 @@ describe('update', () => {
       .item({
         email: 'test-pk',
         sort: 'test-sk',
-        test_list: { 2: remove(), 3: remove(), 8: remove() }
+        test_list: { 2: $remove(), 3: $remove(), 8: $remove() }
       })
       .params()
 
@@ -979,7 +979,7 @@ describe('update', () => {
         email: 'test-pk',
         sort: 'test-sk',
         test_map: {
-          optional: remove()
+          optional: $remove()
         }
       })
       .params()
@@ -1021,7 +1021,7 @@ describe('update', () => {
       .item({
         email: 'test-pk',
         sort: 'test-sk',
-        test_map: _set({
+        test_map: $set({
           optional: 1
         })
       })
@@ -1062,8 +1062,8 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_map: _set({
-            optional: add(1)
+          test_map: $set({
+            optional: $add(1)
           })
         })
         .params()
@@ -1184,7 +1184,7 @@ describe('update', () => {
         email: 'test-pk',
         sort: 'test-sk',
         test_record: {
-          foo: remove()
+          foo: $remove()
         }
       })
       .params()
@@ -1226,7 +1226,7 @@ describe('update', () => {
       .item({
         email: 'test-pk',
         sort: 'test-sk',
-        test_record: _set({
+        test_record: $set({
           foo: 1
         })
       })
@@ -1267,8 +1267,8 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_record: _set({
-            foo: add(1)
+          test_record: $set({
+            foo: $add(1)
           })
         })
         .params()
@@ -1284,7 +1284,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_string: _set('test')
+          test_string: $set('test')
         })
         .params()
 
@@ -1301,7 +1301,7 @@ describe('update', () => {
       .item({
         email: 'test@test.com',
         sort: 'test-sk',
-        count: add(10),
+        count: $add(10),
         contents: { test: 'test' }
       })
       .params()
