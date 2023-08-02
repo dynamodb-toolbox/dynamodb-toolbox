@@ -4,14 +4,14 @@ import type { AttributeBasicValue, RecordAttribute, AttributeDefaultsComputer, E
 import { ComputedDefault } from 'v1/schema/attributes/constants/computedDefault'
 import { isObject, isFunction } from 'v1/utils/validation'
 
-import type { AttributeOptions } from './types'
+import type { AttributeCloningOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 import { getCommandDefault, canComputeDefaults as _canComputeDefaults } from './utils'
 
 export const cloneRecordAttributeInputAndAddDefaults = <EXTENSION extends Extension>(
   recordAttribute: RecordAttribute,
   input: AttributeBasicValue<EXTENSION> | undefined,
-  options: AttributeOptions<EXTENSION> = {} as AttributeOptions<EXTENSION>
+  options: AttributeCloningOptions<EXTENSION> = {} as AttributeCloningOptions<EXTENSION>
 ): AttributeBasicValue<EXTENSION> | undefined => {
   const { commandName, computeDefaultsContext } = options
   const commandDefault = getCommandDefault(recordAttribute, { commandName })

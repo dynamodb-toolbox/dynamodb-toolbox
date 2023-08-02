@@ -2,27 +2,27 @@ import type { Attribute, AttributeBasicValue, AttributeValue, Extension, Item } 
 import type { AttributeDefaultsComputer, SchemaDefaultsComputer } from 'v1/entity'
 import type { If } from 'v1/types'
 
-export type HasExtension<EXTENSION extends Extension> = [EXTENSION] extends [never] ? false : true
+import type { HasExtension } from '../types'
 
-export type CloningExtensionHandler<EXTENSION extends Extension> = (
+export type ExtensionCloner<EXTENSION extends Extension> = (
   attribute: Attribute,
   input: AttributeValue<EXTENSION> | undefined,
-  options: AttributeOptions<EXTENSION>
+  options: AttributeCloningOptions<EXTENSION>
 ) =>
-  | { isExtension: true; parsedExtension: AttributeValue<EXTENSION>; basicInput?: never }
+  | { isExtension: true; clonedExtension: AttributeValue<EXTENSION>; basicInput?: never }
   | {
       isExtension: false
-      parsedExtension?: never
+      clonedExtension?: never
       basicInput: AttributeBasicValue<EXTENSION> | undefined
     }
 
-export type SchemaOptions<EXTENSION extends Extension> = {
+export type SchemaCloningOptions<EXTENSION extends Extension> = {
   commandName?: CommandName
   computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer }
 } & If<
   HasExtension<EXTENSION>,
-  { handleExtension: CloningExtensionHandler<EXTENSION> },
-  { handleExtension?: never }
+  { cloneExtension: ExtensionCloner<EXTENSION> },
+  { cloneExtension?: never }
 >
 
 export type ComputeDefaultsContext<EXTENSION extends Extension> = {
@@ -30,13 +30,13 @@ export type ComputeDefaultsContext<EXTENSION extends Extension> = {
   contextInputs: (Item<EXTENSION> | number | AttributeValue<EXTENSION>)[]
 }
 
-export type AttributeOptions<EXTENSION extends Extension> = {
+export type AttributeCloningOptions<EXTENSION extends Extension> = {
   commandName?: CommandName
   computeDefaultsContext?: ComputeDefaultsContext<EXTENSION>
 } & If<
   HasExtension<EXTENSION>,
-  { handleExtension: CloningExtensionHandler<EXTENSION> },
-  { handleExtension?: never }
+  { cloneExtension: ExtensionCloner<EXTENSION> },
+  { cloneExtension?: never }
 >
 
 export type AnyOfAttributeClonedInputsWithDefaults<EXTENSION extends Extension = never> = {
