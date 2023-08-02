@@ -1,4 +1,7 @@
 import type {
+  Attribute,
+  AttributeBasicValue,
+  AttributeValue,
   RequiredOption,
   $savedAs,
   ResolvedPrimitiveAttribute,
@@ -6,15 +9,34 @@ import type {
   ExtendedValue,
   PrimitiveAttributeType
 } from 'v1/schema'
+import type { If } from 'v1/types'
+
+import type { HasExtension } from '../types'
+
+export type ExtensionParser<EXTENSION extends Extension> = (
+  attribute: Attribute,
+  input: AttributeValue<EXTENSION> | undefined,
+  options: ParsingOptions<EXTENSION>
+) =>
+  | { isExtension: true; parsedExtension: AttributeValue<EXTENSION>; basicInput?: never }
+  | {
+      isExtension: false
+      parsedExtension?: never
+      basicInput: AttributeBasicValue<EXTENSION> | undefined
+    }
 
 export interface AttributeFilters {
   key?: boolean
 }
 
-export interface ParsingOptions {
+export type ParsingOptions<EXTENSION extends Extension> = {
   requiringOptions?: Set<RequiredOption>
   filters?: AttributeFilters
-}
+} & If<
+  HasExtension<EXTENSION>,
+  { parseExtension: ExtensionParser<EXTENSION> },
+  { parseExtension?: never }
+>
 
 /**
  * @debt refactor "note: All those types are just to add the $savedAs secret prop to items & maps. Maybe we can update ResolvedX types to incorporate them"

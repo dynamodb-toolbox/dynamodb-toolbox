@@ -8,7 +8,7 @@ import { parseAttributeClonedInput } from './attribute'
 export const parseAnyOfAttributeClonedInput = <EXTENSION extends Extension>(
   anyOfAttribute: AnyOfAttribute,
   input: AttributeBasicValue<EXTENSION>,
-  parsingOptions: ParsingOptions = {}
+  parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
 ): AttributeParsedValue<EXTENSION> => {
   let parsedInput: AttributeParsedValue<EXTENSION> | undefined = undefined
 
