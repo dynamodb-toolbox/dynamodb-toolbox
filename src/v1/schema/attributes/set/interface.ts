@@ -1,5 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
+import type { If } from 'v1/types/if'
+
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { ComputedDefault } from '../constants/computedDefault'
 import type { $type, $elements, $defaults } from '../constants/attributeOptions'
@@ -103,7 +105,7 @@ export interface $SetAttribute<
     O.Update<
       STATE,
       'defaults',
-      O.Update<STATE['defaults'], STATE['key'] extends true ? 'key' : 'put', NEXT_DEFAULT>
+      O.Update<STATE['defaults'], If<STATE['key'], 'key', 'put'>, NEXT_DEFAULT>
     >
   >
 }

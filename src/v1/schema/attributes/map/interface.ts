@@ -1,5 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
+import type { If } from 'v1/types/if'
+
 import type { $MapAttributeAttributes, MapAttributeAttributes } from '../types/attribute'
 import type { ComputedDefault, RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $attributes, $defaults } from '../constants/attributeOptions'
@@ -101,7 +103,7 @@ export interface $MapAttribute<
     O.Update<
       STATE,
       'defaults',
-      O.Update<STATE['defaults'], STATE['key'] extends true ? 'key' : 'put', NEXT_DEFAULT>
+      O.Update<STATE['defaults'], If<STATE['key'], 'key', 'put'>, NEXT_DEFAULT>
     >
   >
 }
