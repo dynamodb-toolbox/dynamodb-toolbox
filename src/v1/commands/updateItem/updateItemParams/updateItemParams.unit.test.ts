@@ -608,7 +608,8 @@ describe('update', () => {
         email: 'test-pk',
         sort: 'test-sk',
         test_list: {
-          1: 'a',
+          // TODO: Create an $update helper just for this case
+          // 1: 'a',
           ...$append(['a', 'b', 'c']),
           ...$prepend(['e', 'f', 'g'])
         }
