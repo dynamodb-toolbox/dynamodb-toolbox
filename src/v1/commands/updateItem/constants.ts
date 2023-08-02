@@ -1,14 +1,14 @@
-export const $set = Symbol()
-export type $set = typeof $set
+export const $SET = Symbol()
+export type $SET = typeof $SET
 
-export const $partial = Symbol()
-export type $partial = typeof $partial
+export const $PARTIAL = Symbol()
+export type $PARTIAL = typeof $PARTIAL
 
-export const $remove = Symbol()
-export type $remove = typeof $remove
+export const $REMOVE = Symbol()
+export type $REMOVE = typeof $REMOVE
 
-export const $add = Symbol()
-export type $add = typeof $add
+export const $ADD = Symbol()
+export type $ADD = typeof $ADD
 
-export const $delete = Symbol()
-export type $delete = typeof $delete
+export const $DELETE = Symbol()
+export type $DELETE = typeof $DELETE

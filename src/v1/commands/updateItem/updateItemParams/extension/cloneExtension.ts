@@ -4,7 +4,7 @@ import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAd
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type { UpdateItemInputExtension } from '../../types'
-import { $add, $delete, $remove, $set } from '../../constants'
+import { $ADD, $DELETE, $REMOVE, $SET } from '../../constants'
 
 import { hasAddOperation, hasDeleteOperation, hasSetOperation } from './utils'
 
@@ -13,10 +13,10 @@ export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
   input,
   options
 ) => {
-  if (input === $remove) {
+  if (input === $REMOVE) {
     return {
       isExtension: true,
-      clonedExtension: $remove
+      clonedExtension: $REMOVE
     }
   }
 
@@ -28,13 +28,13 @@ export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
 
     if (hasAdd) {
       Object.assign(clonedExtension, {
-        [$add]: cloneAttributeInputAndAddDefaults(attribute, input[$add], options)
+        [$ADD]: cloneAttributeInputAndAddDefaults(attribute, input[$ADD], options)
       })
     }
 
     if (hasDelete) {
       Object.assign(clonedExtension, {
-        [$delete]: cloneAttributeInputAndAddDefaults(attribute, input[$delete], options)
+        [$DELETE]: cloneAttributeInputAndAddDefaults(attribute, input[$DELETE], options)
       })
     }
 
@@ -69,7 +69,7 @@ export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
     return {
       isExtension: true,
       clonedExtension: {
-        [$set]: cloneAttributeInputAndAddDefaults(attribute, input[$set], options)
+        [$SET]: cloneAttributeInputAndAddDefaults(attribute, input[$SET], options)
       }
     }
   }
