@@ -1,18 +1,18 @@
-import { $set, $partial, $add, $delete, $remove } from './constants'
+import { $SET, $PARTIAL, $ADD, $DELETE, $REMOVE } from './constants'
 
-export const _set = <VALUE>(value: VALUE): { [$partial]?: false; [$set]: VALUE } => ({
-  [$set]: value
+export const $set = <VALUE>(value: VALUE): { [$PARTIAL]?: false; [$SET]: VALUE } => ({
+  [$SET]: value
 })
 
-export const add = <VALUE extends number | Set<number | string | Buffer>>(
+export const $add = <VALUE extends number | Set<number | string | Buffer>>(
   value: VALUE
-): { [$add]: VALUE } => ({ [$add]: value })
+): { [$ADD]: VALUE } => ({ [$ADD]: value })
 
 /**
  * @debt feature "TODO: find a better name as delete is a reserved keyword. Maybe use remove for both cases?"
  */
-export const _delete = <VALUE extends number | Set<number | string | Buffer>>(
+export const $delete = <VALUE extends number | Set<number | string | Buffer>>(
   value: VALUE
-): { [$delete]: VALUE } => ({ [$delete]: value })
+): { [$DELETE]: VALUE } => ({ [$DELETE]: value })
 
-export const remove = (): $remove => $remove
+export const $remove = (): $REMOVE => $REMOVE
