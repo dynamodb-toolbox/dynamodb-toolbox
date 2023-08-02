@@ -12,6 +12,7 @@ import type { GetItemCommandClass } from 'v1/commands/getItem/command'
 import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
 import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
 import type { CommandClass } from 'v1/commands/class'
+import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { NeedsKeyCompute, SchemaPutDefaultsComputer, SchemaDefaultsComputer } from './generics'
@@ -95,9 +96,12 @@ export class EntityV2<
     schema: SCHEMA
     entityAttributeName?: ENTITY_ATTRIBUTE_NAME
     timestamps?: NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
-  } & (NeedsKeyCompute<SCHEMA, TABLE> extends true
-    ? { computeKey: (keyInput: KeyInput<SCHEMA>) => PrimaryKey<TABLE> }
-    : { computeKey?: undefined }) &
+  } & If<
+    NeedsKeyCompute<SCHEMA, TABLE>,
+    { computeKey: (keyInput: KeyInput<SCHEMA>) => PrimaryKey<TABLE> },
+    { computeKey?: undefined }
+  > &
+    // Weirdly using If here triggers an infinite type recursion error
     (HasComputedDefaults<SCHEMA> extends true
       ? { computedDefaults: CONSTRUCTOR_PUT_DEFAULTS_COMPUTER }
       : { computedDefaults?: undefined })) {

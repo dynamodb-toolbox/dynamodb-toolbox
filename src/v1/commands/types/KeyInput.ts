@@ -19,6 +19,7 @@ import type {
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity'
+import type { If } from 'v1/types/if'
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
@@ -27,12 +28,12 @@ type MustBeDefined<
   // Enforce Required attributes that don't have default values
   ATTRIBUTE extends { required: Always; defaults: { key: undefined } }
     ? true
-    : REQUIRE_INDEPENDENT_DEFAULTS extends true
-    ? // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
-      ATTRIBUTE extends { defaults: { key: undefined | ComputedDefault } }
-      ? false
-      : true
-    : false
+    : // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
+      If<
+        REQUIRE_INDEPENDENT_DEFAULTS,
+        ATTRIBUTE extends { defaults: { key: undefined | ComputedDefault } } ? false : true,
+        false
+      >
 
 /**
  * Key input of a single item command (GET, DELETE ...) for an Entity or Schema
@@ -75,7 +76,7 @@ export type AttributeKeyInput<
 > = Attribute extends ATTRIBUTE
   ? AttributeValue | undefined
   :
-      | (MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> extends true ? never : undefined)
+      | If<MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>, never, undefined>
       | (ATTRIBUTE extends AnyAttribute
           ? unknown
           : ATTRIBUTE extends PrimitiveAttribute
