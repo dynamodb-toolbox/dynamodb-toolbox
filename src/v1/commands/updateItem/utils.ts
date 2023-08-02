@@ -1,4 +1,8 @@
-import { $add, $delete, $remove } from './constants'
+import { $set, $partial, $add, $delete, $remove } from './constants'
+
+export const _set = <VALUE>(value: VALUE): { [$partial]?: false; [$set]: VALUE } => ({
+  [$set]: value
+})
 
 export const add = <VALUE extends number | Set<number | string | Buffer>>(
   value: VALUE
