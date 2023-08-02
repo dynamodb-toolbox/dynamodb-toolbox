@@ -1,4 +1,5 @@
 import type { Schema } from 'v1/schema'
+import type { If } from 'v1/types/if'
 
 import { WithRootAttribute, addRootAttribute } from '../addRootAttribute'
 
@@ -25,21 +26,35 @@ export type WithTimestampAttributes<
   MODIFIED_HIDDEN extends boolean = TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
 > = string extends ENTITY_NAME
   ? SCHEMA
-  : IS_CREATED_ENABLED extends true
-  ? IS_MODIFIED_ENABLED extends true
-    ? WithRootAttribute<
+  : If<
+      IS_CREATED_ENABLED,
+      If<
+        IS_MODIFIED_ENABLED,
+        WithRootAttribute<
+          WithRootAttribute<
+            SCHEMA,
+            CREATED_NAME,
+            TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
+          >,
+          MODIFIED_NAME,
+          TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
+        >,
         WithRootAttribute<
           SCHEMA,
           CREATED_NAME,
           TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
+        >
+      >,
+      If<
+        IS_MODIFIED_ENABLED,
+        WithRootAttribute<
+          SCHEMA,
+          MODIFIED_NAME,
+          TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
         >,
-        MODIFIED_NAME,
-        TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
+        SCHEMA
       >
-    : WithRootAttribute<SCHEMA, CREATED_NAME, TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>>
-  : IS_MODIFIED_ENABLED extends true
-  ? WithRootAttribute<SCHEMA, MODIFIED_NAME, TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>>
-  : SCHEMA
+    >
 
 type TimestampAttributesAdder = <
   SCHEMA extends Schema,

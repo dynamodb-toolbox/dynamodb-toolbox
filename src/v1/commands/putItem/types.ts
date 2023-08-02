@@ -20,6 +20,7 @@ import type {
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
+import type { If } from 'v1/types/if'
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
@@ -31,14 +32,16 @@ type MustBeDefined<
     | { key: false; defaults: { put: undefined } }
   )
     ? true
-    : REQUIRE_INDEPENDENT_DEFAULTS extends true
-    ? // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
-      ATTRIBUTE extends
-        | { key: true; defaults: { key: undefined | ComputedDefault } }
-        | { key: false; defaults: { put: undefined | ComputedDefault } }
-      ? false
-      : true
-    : false
+    : If<
+        REQUIRE_INDEPENDENT_DEFAULTS,
+        // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
+        ATTRIBUTE extends
+          | { key: true; defaults: { key: undefined | ComputedDefault } }
+          | { key: false; defaults: { put: undefined | ComputedDefault } }
+          ? false
+          : true,
+        false
+      >
 
 /**
  * User input of a PUT command for a given Entity or Schema
@@ -82,7 +85,7 @@ export type AttributePutItemInput<
 > = Attribute extends ATTRIBUTE
   ? AttributeValue | undefined
   :
-      | (MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> extends true ? never : undefined)
+      | If<MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>, never, undefined>
       | (ATTRIBUTE extends AnyAttribute
           ? unknown
           : ATTRIBUTE extends PrimitiveAttribute
