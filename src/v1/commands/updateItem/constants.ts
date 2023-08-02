@@ -1,11 +1,20 @@
-export const $set = Symbol()
-export type $set = typeof $set
+export const $HAS_VERB = Symbol()
+export type $HAS_VERB = typeof $HAS_VERB
 
-export const $remove = Symbol()
-export type $remove = typeof $remove
+export const $SET = Symbol()
+export type $SET = typeof $SET
 
-export const $add = Symbol()
-export type $add = typeof $add
+export const $REMOVE = Symbol()
+export type $REMOVE = typeof $REMOVE
 
-export const $delete = Symbol()
-export type $delete = typeof $delete
+export const $ADD = Symbol()
+export type $ADD = typeof $ADD
+
+export const $DELETE = Symbol()
+export type $DELETE = typeof $DELETE
+
+export const $APPEND = Symbol()
+export type $APPEND = typeof $APPEND
+
+export const $PREPEND = Symbol()
+export type $PREPEND = typeof $PREPEND

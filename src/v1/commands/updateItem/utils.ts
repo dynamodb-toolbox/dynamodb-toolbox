@@ -1,14 +1,27 @@
-import { $add, $delete, $remove } from './constants'
+import type { SET, ADD, DELETE, APPEND, PREPEND } from './types'
+import { $HAS_VERB, $SET, $ADD, $DELETE, $REMOVE, $APPEND, $PREPEND } from './constants'
 
-export const add = <VALUE extends number | Set<number | string | Buffer>>(
+export const $set = <VALUE>(value: VALUE): SET<VALUE> => ({ [$HAS_VERB]: true, [$SET]: value })
+
+export const $add = <VALUE extends number | Set<number | string | Buffer>>(
   value: VALUE
-): { [$add]: VALUE } => ({ [$add]: value })
+): ADD<VALUE> => ({ [$HAS_VERB]: true, [$ADD]: value })
 
 /**
  * @debt feature "TODO: find a better name as delete is a reserved keyword. Maybe use remove for both cases?"
  */
-export const _delete = <VALUE extends number | Set<number | string | Buffer>>(
+export const $delete = <VALUE extends number | Set<number | string | Buffer>>(
   value: VALUE
-): { [$delete]: VALUE } => ({ [$delete]: value })
+): DELETE<VALUE> => ({ [$HAS_VERB]: true, [$DELETE]: value })
 
-export const remove = (): $remove => $remove
+export const $remove = (): $REMOVE => $REMOVE
+
+export const $append = <VALUES extends unknown[]>(values: VALUES): APPEND<VALUES> => ({
+  [$HAS_VERB]: true,
+  [$APPEND]: values
+})
+
+export const $prepend = <VALUES extends unknown[]>(values: VALUES): PREPEND<VALUES> => ({
+  [$HAS_VERB]: true,
+  [$PREPEND]: values
+})

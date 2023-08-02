@@ -16,26 +16,56 @@ import type {
   AtLeastOnce,
   Always,
   Never,
-  ComputedDefault,
-  UndefinedAttrExtension
+  ComputedDefault
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
+import type { If } from 'v1/types/if'
+import type { AttributePutItemInput } from 'v1/commands/putItem/types'
 
-import type { $add, $delete, $remove } from './constants'
+import { $HAS_VERB, $SET, $ADD, $DELETE, $REMOVE, $APPEND, $PREPEND } from './constants'
+
+// Distinguishing verbal syntax from non-verbal is necessary for type inference & better parsing
+export type Verbal<VALUE> = { [$HAS_VERB]: true } & VALUE
+
+export type ADD<VALUE> = Verbal<{ [$ADD]: VALUE }>
+export type SET<VALUE> = Verbal<{ [$SET]: VALUE }>
+export type DELETE<VALUE> = Verbal<{ [$DELETE]: VALUE }>
+export type APPEND<VALUE> = Verbal<{ [$APPEND]: VALUE }>
+export type PREPEND<VALUE> = Verbal<{ [$PREPEND]: VALUE }>
+
+export type UPDATE<VALUE> = { [$HAS_VERB]?: false } & VALUE
 
 export type UpdateItemInputExtension =
-  | UndefinedAttrExtension
-  | { type: '*'; value: $remove }
+  | { type: '*'; value: $REMOVE }
   | {
       type: 'number'
-      value: { [$add]: number }
+      value: Verbal<{ [$ADD]: number }>
     }
   | {
       type: 'set'
+      value: Verbal<
+        | { [$ADD]: AttributeValue<UpdateItemInputExtension> }
+        | { [$DELETE]: AttributeValue<UpdateItemInputExtension> }
+      >
+    }
+  | {
+      type: 'list'
       value:
-        | { [$add]: AttributeValue<UpdateItemInputExtension> }
-        | { [$delete]: AttributeValue<UpdateItemInputExtension> }
+        | UPDATE<{ [INDEX in number]: AttributeValue<UpdateItemInputExtension> }>
+        | Verbal<
+            | { [$APPEND]: AttributeValue<UpdateItemInputExtension>[] }
+            | { [$PREPEND]: AttributeValue<UpdateItemInputExtension>[] }
+            // TODO: CONCAT to join two unrelated lists
+          >
+    }
+  | {
+      type: 'map'
+      value: Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension> }>
+    }
+  | {
+      type: 'record'
+      value: Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension> }>
     }
 
 type MustBeDefined<
@@ -101,54 +131,73 @@ export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
 > = Attribute extends ATTRIBUTE
-  ? AttributeValue | undefined
+  ? AttributeValue<UpdateItemInputExtension> | undefined
   :
-      | (MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS> extends true ? never : undefined)
-      | (CanBeRemoved<ATTRIBUTE> extends true ? $remove : never)
+      | If<MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>, never, undefined>
+      | If<CanBeRemoved<ATTRIBUTE>, $REMOVE, never>
       | (ATTRIBUTE extends AnyAttribute
           ? unknown
           : ATTRIBUTE extends PrimitiveAttribute
           ?
               | ResolvePrimitiveAttribute<ATTRIBUTE>
               | (ATTRIBUTE extends PrimitiveAttribute<'number'>
-                  ? { [$add]: ResolvePrimitiveAttribute<ATTRIBUTE> }
+                  ? ADD<ResolvePrimitiveAttribute<ATTRIBUTE>>
                   : never)
           : ATTRIBUTE extends SetAttribute
           ?
-              | Set<AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
-              | {
-                  [$add]: Set<
-                    AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
-                  >
-                }
-              | {
-                  [$delete]: Set<
-                    AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
-                  >
-                }
-          : ATTRIBUTE extends ListAttribute
-          ? AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
-          : ATTRIBUTE extends MapAttribute
-          ? OptionalizeUndefinableProperties<
-              {
-                [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
-                  ATTRIBUTE['attributes'][KEY],
-                  REQUIRE_INDEPENDENT_DEFAULTS
+              | Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
+              | ADD<Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>>
+              | DELETE<
+                  Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
                 >
-              },
-              // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-              O.SelectKeys<
-                ATTRIBUTE['attributes'],
-                AnyAttribute & { required: AtLeastOnce | Never }
-              >
-            >
+          : ATTRIBUTE extends ListAttribute
+          ? // TODO: Test
+            | AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+              | UPDATE<
+                  {
+                    [INDEX in number]:
+                      | AttributeUpdateItemInput<
+                          ATTRIBUTE['elements'],
+                          REQUIRE_INDEPENDENT_DEFAULTS
+                        >
+                      | $REMOVE
+                  }
+                >
+              | APPEND<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]>
+              | PREPEND<
+                  AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+                >
+          : ATTRIBUTE extends MapAttribute
+          ?
+              | UPDATE<
+                  OptionalizeUndefinableProperties<
+                    {
+                      [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
+                        ATTRIBUTE['attributes'][KEY],
+                        REQUIRE_INDEPENDENT_DEFAULTS
+                      >
+                    },
+                    // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+                    O.SelectKeys<
+                      ATTRIBUTE['attributes'],
+                      AnyAttribute & { required: AtLeastOnce | Never }
+                    >
+                  >
+                >
+              | SET<AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>>
           : ATTRIBUTE extends RecordAttribute
-          ? {
-              [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributeUpdateItemInput<
-                ATTRIBUTE['elements'],
-                REQUIRE_INDEPENDENT_DEFAULTS
-              >
-            }
+          ?
+              | UPDATE<
+                  {
+                    [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
+                      | AttributeUpdateItemInput<
+                          ATTRIBUTE['elements'],
+                          REQUIRE_INDEPENDENT_DEFAULTS
+                        >
+                      | $REMOVE
+                  }
+                >
+              | SET<AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>>
           : ATTRIBUTE extends AnyOfAttribute
           ? AttributeUpdateItemInput<ATTRIBUTE['elements'][number], REQUIRE_INDEPENDENT_DEFAULTS>
           : never)

@@ -2,13 +2,27 @@ import type { AttributeValue } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 
 import type { UpdateItemInputExtension } from '../../types'
-import { $add, $delete } from '../../constants'
+import { $SET, $ADD, $DELETE, $APPEND, $PREPEND } from '../../constants'
+
+export const hasSetOperation = (
+  input: AttributeValue<UpdateItemInputExtension> | undefined
+): input is { [$SET]: AttributeValue } => isObject(input) && $SET in input
 
 export const hasAddOperation = (
-  input: AttributeValue<UpdateItemInputExtension>
-): input is { [$add]: AttributeValue<UpdateItemInputExtension> } => isObject(input) && $add in input
+  input: AttributeValue<UpdateItemInputExtension> | undefined
+): input is { [$ADD]: AttributeValue<UpdateItemInputExtension> } => isObject(input) && $ADD in input
 
 export const hasDeleteOperation = (
-  input: AttributeValue<UpdateItemInputExtension>
-): input is { [$delete]: AttributeValue<UpdateItemInputExtension> } =>
-  isObject(input) && $delete in input
+  input: AttributeValue<UpdateItemInputExtension> | undefined
+): input is { [$DELETE]: AttributeValue<UpdateItemInputExtension> } =>
+  isObject(input) && $DELETE in input
+
+export const hasAppendOperation = (
+  input: AttributeValue<UpdateItemInputExtension> | undefined
+): input is { [$APPEND]: AttributeValue<UpdateItemInputExtension> } =>
+  isObject(input) && $APPEND in input
+
+export const hasPrependOperation = (
+  input: AttributeValue<UpdateItemInputExtension> | undefined
+): input is { [$PREPEND]: AttributeValue<UpdateItemInputExtension> } =>
+  isObject(input) && $PREPEND in input
