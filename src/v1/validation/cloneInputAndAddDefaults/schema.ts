@@ -4,19 +4,20 @@ import type { Schema, Extension, Item, AttributeValue } from 'v1/schema'
 import type { If } from 'v1/types'
 import { isObject } from 'v1/utils/validation'
 
-import { AttributeOptions, HasExtension, SchemaOptions } from './types'
+import type { HasExtension } from '../types'
+import type { AttributeCloningOptions, SchemaCloningOptions } from './types'
 import { cloneAttributeInputAndAddDefaults } from './attribute'
 
 export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension = never>(
   schema: Schema,
   input: Item<EXTENSION>,
-  ...[options = {} as SchemaOptions<EXTENSION>]: If<
+  ...[options = {} as SchemaCloningOptions<EXTENSION>]: If<
     HasExtension<EXTENSION>,
-    [options: SchemaOptions<EXTENSION>],
-    [options?: SchemaOptions<EXTENSION>]
+    [options: SchemaCloningOptions<EXTENSION>],
+    [options?: SchemaCloningOptions<EXTENSION>]
   >
 ): Item<EXTENSION> => {
-  const { commandName, computeDefaultsContext, handleExtension } = options
+  const { commandName, computeDefaultsContext, cloneExtension } = options
 
   if (!isObject(input)) {
     return cloneDeep(input)
@@ -43,14 +44,14 @@ export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension = nev
             computeDefaults: computeDefaults && computeDefaults[attributeName],
             contextInputs: [input]
           },
-          handleExtension
-        } as AttributeOptions<EXTENSION>
+          cloneExtension
+        } as AttributeCloningOptions<EXTENSION>
       )
     } else {
       attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
         attribute,
         input[attributeName],
-        { commandName, handleExtension } as AttributeOptions<EXTENSION>
+        { commandName, cloneExtension } as AttributeCloningOptions<EXTENSION>
       )
     }
 
