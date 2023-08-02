@@ -1,14 +1,21 @@
-import { AttributeValue } from 'v1/schema'
+import type { AttributeValue } from 'v1/schema'
 import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
 import { parsePrimitiveAttributeClonedInput } from 'v1/validation/parseClonedInput/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
+import { isArray } from 'v1/utils/validation/isArray'
 
 import type { UpdateItemInputExtension } from '../../types'
-import { $ADD, $DELETE, $REMOVE, $SET } from '../../constants'
-import { hasAddOperation, hasDeleteOperation, hasSetOperation } from './utils'
+import { $ADD, $DELETE, $REMOVE, $SET, $APPEND, $PREPEND } from '../../constants'
+import {
+  hasAddOperation,
+  hasDeleteOperation,
+  hasSetOperation,
+  hasAppendOperation,
+  hasPrependOperation
+} from './utils'
 
 export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
   attribute,
@@ -101,6 +108,46 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
           options
         )
       }
+    }
+
+    // Omit parseExtension as $append/$prepend means non-extended values
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { parseExtension: _, ...restOptions } = options
+
+    if (hasAppendOperation(input)) {
+      if (!isArray(input[$APPEND])) {
+        throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
+          message: `Appended values of array attribute ${attribute.path} should be listed in an array`,
+          path: attribute.path,
+          payload: {
+            received: input[$APPEND]
+          }
+        })
+      }
+
+      Object.assign(parsedExtension, {
+        [$APPEND]: input[$APPEND].map(element =>
+          parseAttributeClonedInput(attribute.elements, element as AttributeValue, restOptions)
+        )
+      })
+    }
+
+    if (hasPrependOperation(input)) {
+      if (!isArray(input[$PREPEND])) {
+        throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
+          message: `Prepended values of array attribute ${attribute.path} should be listed in an array`,
+          path: attribute.path,
+          payload: {
+            received: input[$PREPEND]
+          }
+        })
+      }
+
+      Object.assign(parsedExtension, {
+        [$PREPEND]: input[$PREPEND].map(element =>
+          parseAttributeClonedInput(attribute.elements, element as AttributeValue, restOptions)
+        )
+      })
     }
 
     return {
