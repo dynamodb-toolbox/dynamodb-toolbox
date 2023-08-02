@@ -1,12 +1,14 @@
-import type { AttributeValue } from 'v1/schema'
+import { AttributeValue } from 'v1/schema'
 import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
+import { DynamoDBToolboxError } from 'v1/errors'
+import { isObject } from 'v1/utils/validation/isObject'
+import { isInteger } from 'v1/utils/validation/isInteger'
 
 import type { UpdateItemInputExtension } from '../../types'
 import { $add, $delete, $remove } from '../../constants'
 
 import { hasAddOperation, hasDeleteOperation } from './utils'
-import { DynamoDBToolboxError } from 'v1/errors'
 
 export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
   attribute,
@@ -63,6 +65,42 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
       Object.assign(parsedExtension, {
         [$delete]: parseAttributeClonedInput(attribute, input[$delete], options)
       })
+    }
+
+    return {
+      isExtension: true,
+      parsedExtension
+    }
+  }
+
+  if (attribute.type === 'list' && isObject(input)) {
+    const parsedExtension: {
+      [KEY in number]: AttributeValue<UpdateItemInputExtension> | $remove
+    } = {}
+
+    for (const [inputKey, inputValue] of Object.entries(input)) {
+      const parsedInputKey = parseFloat(inputKey)
+
+      if (!isInteger(parseFloat(inputKey))) {
+        throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
+          message: `Index of array attribute ${attribute.path} is not a valid integer`,
+          path: attribute.path,
+          payload: {
+            received: inputKey
+          }
+        })
+      }
+
+      // $remove is allowed
+      if (inputValue === $remove) {
+        parsedExtension[parsedInputKey] = $remove
+      } else {
+        parsedExtension[parsedInputKey] = parseAttributeClonedInput(
+          attribute.elements,
+          inputValue,
+          options
+        )
+      }
     }
 
     return {
