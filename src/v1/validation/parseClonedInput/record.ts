@@ -8,7 +8,7 @@ import { parseAttributeClonedInput } from './attribute'
 export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
   recordAttribute: RecordAttribute,
   input: AttributeBasicValue<EXTENSION>,
-  parsingOptions: ParsingOptions = {}
+  parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
 ): RecordAttributeParsedBasicValue<EXTENSION> => {
   if (!isObject(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
