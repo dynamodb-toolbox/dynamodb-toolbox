@@ -8,4 +8,8 @@ describe('isNumber', () => {
   it('returns false if input is not a number', () => {
     expect(isNumber('not a number')).toBe(false)
   })
+
+  it('returns false if input is NaN', () => {
+    expect(isNumber(NaN)).toBe(false)
+  })
 })

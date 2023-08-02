@@ -16,8 +16,7 @@ import type {
   AtLeastOnce,
   Always,
   Never,
-  ComputedDefault,
-  UndefinedAttrExtension
+  ComputedDefault
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
@@ -25,7 +24,6 @@ import type { EntityV2 } from 'v1/entity/class'
 import type { $add, $delete, $remove } from './constants'
 
 export type UpdateItemInputExtension =
-  | UndefinedAttrExtension
   | { type: '*'; value: $remove }
   | {
       type: 'number'
@@ -36,6 +34,10 @@ export type UpdateItemInputExtension =
       value:
         | { [$add]: AttributeValue<UpdateItemInputExtension> }
         | { [$delete]: AttributeValue<UpdateItemInputExtension> }
+    }
+  | {
+      type: 'list'
+      value: { [INDEX in number]: AttributeValue<UpdateItemInputExtension> }
     }
 
 type MustBeDefined<
@@ -127,7 +129,13 @@ export type AttributeUpdateItemInput<
                   >
                 }
           : ATTRIBUTE extends ListAttribute
-          ? AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+          ?
+              | {
+                  [INDEX in number]:
+                    | AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
+                    | $remove
+                }
+              | AttributeUpdateItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
           : ATTRIBUTE extends MapAttribute
           ? OptionalizeUndefinableProperties<
               {
