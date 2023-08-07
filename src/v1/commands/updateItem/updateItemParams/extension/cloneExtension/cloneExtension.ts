@@ -5,16 +5,25 @@ import type { ExtensionCloner } from 'v1/validation/cloneInputAndAddDefaults/typ
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isArray } from 'v1/utils/validation/isArray'
-
-import type { UpdateItemInputExtension } from '../../types'
-import { $ADD, $DELETE, $REMOVE, $SET, $APPEND, $PREPEND } from '../../constants'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import {
+  $SET,
+  $GET,
+  $REMOVE,
+  $ADD,
+  $DELETE,
+  $APPEND,
+  $PREPEND
+} from 'v1/commands/updateItem/constants'
+
+import {
+  hasSetOperation,
+  hasGetOperation,
   hasAddOperation,
   hasDeleteOperation,
-  hasSetOperation,
   hasAppendOperation,
   hasPrependOperation
-} from './utils'
+} from '../utils'
 
 export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
   attribute,
@@ -25,6 +34,14 @@ export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
     return {
       isExtension: true,
       clonedExtension: $REMOVE
+    }
+  }
+
+  const hasGet = hasGetOperation(input)
+  if (hasGet) {
+    return {
+      isExtension: true,
+      clonedExtension: { [$GET]: cloneDeep(input[$GET]) }
     }
   }
 
@@ -53,6 +70,19 @@ export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
   }
 
   if (attribute.type === 'list' && isObject(input)) {
+    if (hasSetOperation(input)) {
+      // Omit parseExtension as $set means non-extended values
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { cloneExtension: _, ...restOptions } = options
+
+      return {
+        isExtension: true,
+        clonedExtension: {
+          [$SET]: cloneAttributeInputAndAddDefaults(attribute, input[$SET], options)
+        }
+      }
+    }
+
     const clonedExtension: Record<string, AttributeValue<UpdateItemInputExtension>> = {}
 
     for (const [inputKey, inputValue] of Object.entries(input)) {

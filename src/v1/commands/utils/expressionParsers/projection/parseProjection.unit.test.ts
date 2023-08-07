@@ -1,6 +1,10 @@
 import { schema, string, number, anyOf, map, list } from 'v1/schema'
 import { parseSchemaProjection } from 'v1/commands/utils/parseProjection'
 
+/**
+ * @debt TODO "validate the attr value is a string"
+ */
+
 describe('parseProjection', () => {
   describe('savedAs attrs', () => {
     const schemaWithSavedAs = schema({
