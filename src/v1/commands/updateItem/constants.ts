@@ -4,6 +4,9 @@ export type $HAS_VERB = typeof $HAS_VERB
 export const $SET = Symbol()
 export type $SET = typeof $SET
 
+export const $GET = Symbol()
+export type $GET = typeof $GET
+
 export const $REMOVE = Symbol()
 export type $REMOVE = typeof $REMOVE
 

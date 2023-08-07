@@ -1,6 +1,10 @@
 import { schema, string, number, anyOf, map, list } from 'v1/schema'
 import { parseSchemaCondition } from 'v1/commands/utils/parseCondition'
 
+/**
+ * @debt TODO "validate the attr value is a string"
+ */
+
 describe('parseCondition', () => {
   describe('savedAs attrs', () => {
     const schemaWithSavedAs = schema({
