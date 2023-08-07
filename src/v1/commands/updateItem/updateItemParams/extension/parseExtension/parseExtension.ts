@@ -6,16 +6,25 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
 import { isArray } from 'v1/utils/validation/isArray'
-
-import type { UpdateItemInputExtension } from '../../types'
-import { $ADD, $DELETE, $REMOVE, $SET, $APPEND, $PREPEND } from '../../constants'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import {
+  $SET,
+  $GET,
+  $REMOVE,
+  $ADD,
+  $DELETE,
+  $APPEND,
+  $PREPEND
+} from 'v1/commands/updateItem/constants'
+
+import {
+  hasSetOperation,
+  hasGetOperation,
   hasAddOperation,
   hasDeleteOperation,
-  hasSetOperation,
   hasAppendOperation,
   hasPrependOperation
-} from './utils'
+} from '../utils'
 
 export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
   attribute,
@@ -33,6 +42,15 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
     return {
       isExtension: true,
       parsedExtension: $REMOVE
+    }
+  }
+
+  const hasGet = hasGetOperation(input)
+  if (hasGet) {
+    return {
+      isExtension: true,
+      // NOTE: Validation will be done in UpdateExpressionParser
+      parsedExtension: { [$GET]: input[$GET] }
     }
   }
 
@@ -80,7 +98,20 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
     }
   }
 
-  if (attribute.type === 'list' && isObject(input)) {
+  if (attribute.type === 'list' && (isObject(input) || isArray(input))) {
+    if (hasSetOperation(input)) {
+      // Omit parseExtension as $set means non-extended values
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { parseExtension: _, ...restOptions } = options
+
+      return {
+        isExtension: true,
+        parsedExtension: {
+          [$SET]: parseAttributeClonedInput(attribute, input[$SET], restOptions)
+        }
+      }
+    }
+
     const parsedExtension: {
       [KEY in number]: AttributeValue<UpdateItemInputExtension> | $REMOVE
     } = {}
@@ -127,6 +158,7 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
 
       Object.assign(parsedExtension, {
         [$APPEND]: input[$APPEND].map(element =>
+          // TODO: Allow refs
           parseAttributeClonedInput(attribute.elements, element as AttributeValue, restOptions)
         )
       })
@@ -145,6 +177,7 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
 
       Object.assign(parsedExtension, {
         [$PREPEND]: input[$PREPEND].map(element =>
+          // TODO: Allow refs
           parseAttributeClonedInput(attribute.elements, element as AttributeValue, restOptions)
         )
       })
