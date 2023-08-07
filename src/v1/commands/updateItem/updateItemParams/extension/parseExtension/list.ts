@@ -6,9 +6,9 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
 import { isArray } from 'v1/utils/validation/isArray'
-import { $SET, $REMOVE, $APPEND, $PREPEND } from 'v1/commands/updateItem/constants'
+import { $SET, $GET, $REMOVE, $APPEND, $PREPEND } from 'v1/commands/updateItem/constants'
 
-import { hasSetOperation, hasAppendOperation, hasPrependOperation } from '../utils'
+import { hasSetOperation, hasGetOperation, hasAppendOperation, hasPrependOperation } from '../utils'
 
 export const parseListExtension = (
   attribute: ListAttribute,
@@ -79,10 +79,17 @@ export const parseListExtension = (
       }
 
       Object.assign(parsedExtension, {
-        [$APPEND]: input[$APPEND].map(element =>
-          // TODO: Allow refs
-          parseAttributeClonedInput(attribute.elements, element as AttributeValue, restOptions)
-        )
+        [$APPEND]: input[$APPEND].map(element => {
+          if (hasGetOperation(element)) {
+            return { [$GET]: element[$GET] }
+          }
+
+          return parseAttributeClonedInput(
+            attribute.elements,
+            element as AttributeValue,
+            restOptions
+          )
+        })
       })
     }
 
@@ -98,10 +105,17 @@ export const parseListExtension = (
       }
 
       Object.assign(parsedExtension, {
-        [$PREPEND]: input[$PREPEND].map(element =>
-          // TODO: Allow refs
-          parseAttributeClonedInput(attribute.elements, element as AttributeValue, restOptions)
-        )
+        [$PREPEND]: input[$PREPEND].map(element => {
+          if (hasGetOperation(element)) {
+            return { [$GET]: element[$GET] }
+          }
+
+          return parseAttributeClonedInput(
+            attribute.elements,
+            element as AttributeValue,
+            restOptions
+          )
+        })
       })
     }
 
