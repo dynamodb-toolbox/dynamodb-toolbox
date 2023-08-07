@@ -294,7 +294,7 @@ describe('update', () => {
   })
 
   it('accepts references', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression: UpdateExpressionA } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-pk',
@@ -302,20 +302,62 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
+    expect(UpdateExpressionA).toBe(
+      ''
+      // TODO
+      // 'REMOVE #test_composite'
+    )
+
+    const { UpdateExpression: UpdateExpressionB } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-pk',
+        test_string_coerce: $get('test_string', 'foo')
+      })
+      .params()
+
+    expect(UpdateExpressionB).toBe(
+      ''
+      // TODO
+      // 'REMOVE #test_composite'
+    )
+
+    const { UpdateExpression: UpdateExpressionC } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-pk',
+        test_string_coerce: $get('test_string', $get('simple_string'))
+      })
+      .params()
+
+    expect(UpdateExpressionC).toBe(
+      ''
+      // TODO
+      // 'REMOVE #test_composite'
+    )
+
+    const { UpdateExpression: UpdateExpressionD } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-pk',
+        test_string_coerce: $get('test_string', $get('simple_string', 'bar'))
+      })
+      .params()
+
+    expect(UpdateExpressionD).toBe(
       ''
       // TODO
       // 'REMOVE #test_composite'
     )
   })
 
-  it('rejects invalid reference', () => {
-    const invalidCall = () =>
+  it('rejects invalid references', () => {
+    const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
           email: 'test-pk',
           sort: 'test-pk',
-          // @ts-expect-error
+          // @ts-expect-error invalid_attribute_name is not an existing attribute name
           test_string_coerce: $get('invalid_attribute_name')
         })
         .params()
@@ -323,8 +365,63 @@ describe('update', () => {
     /**
      * @debt TODO
      */
-    expect(invalidCall).not.toThrow(DynamoDBToolboxError)
-    expect(invalidCall).not.toThrow(expect.objectContaining({ code: 'toto' }))
+    expect(invalidCallA).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          // @ts-expect-error 42 is not assignable to test_string_coerce
+          test_string_coerce: $get('test_string', 42)
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          // @ts-expect-error $get is only available in SET operations
+          test_number_default: $get('test_string', $add(42))
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallD = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          // @ts-expect-error invalid_attribute_name is not an existing attribute name
+          test_string_coerce: $get('test_string', $get('invalid_attribute_name'))
+        })
+        .params()
+
+    /**
+     * @debt TODO
+     */
+    expect(invalidCallD).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallE = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          // @ts-expect-error 42 is not assignable to test_string_coerce
+          test_string_coerce: $get('test_string', $get('simple_string', 42))
+        })
+        .params()
+
+    expect(invalidCallE).toThrow(DynamoDBToolboxError)
+    expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('performs number and set add operations', () => {
@@ -486,13 +583,13 @@ describe('update', () => {
   })
 
   it('rejects invalid reference when udpating list element', () => {
-    const invalidCall = () =>
+    const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
           test_list: {
-            // @ts-expect-error
+            // @ts-expect-error invalid_ref is not a valid attribute
             2: $get('invalid_ref')
           }
         })
@@ -501,8 +598,71 @@ describe('update', () => {
     /**
      * @debt TODO
      */
-    expect(invalidCall).not.toThrow(DynamoDBToolboxError)
-    expect(invalidCall).not.toThrow(expect.objectContaining({ code: 'todo' }))
+    expect(invalidCallA).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_list: {
+            // @ts-expect-error 42 is not assignable to string
+            2: $get('test_string', 42)
+          }
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_list: {
+            // @ts-expect-error $get is only available in SET operations
+            2: $get('test_string', $add(42))
+          }
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallD = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_list: {
+            // @ts-expect-error invalid_attribute_name is not an existing attribute name
+            2: $get('test_string', $get('invalid_attribute_name'))
+          }
+        })
+        .params()
+
+    /**
+     * @debt TODO
+     */
+    expect(invalidCallD).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallE = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_list: {
+            // @ts-expect-error 42 is not assignable to string
+            2: $get('test_string', $get('simple_string', 42))
+          }
+        })
+        .params()
+
+    expect(invalidCallE).toThrow(DynamoDBToolboxError)
+    expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('rejects invalid key while updating list element', () => {
@@ -786,14 +946,14 @@ describe('update', () => {
   })
 
   it('rejects invalid reference', () => {
-    const invalidCall = () =>
+    const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
           test_map: {
-            // @ts-expect-error
-            optional: $get('invalid_ref')
+            // @ts-expect-error invalid_attribute_name is not an existing attribute name
+            optional: $get('invalid_attribute_name')
           }
         })
         .params()
@@ -801,8 +961,71 @@ describe('update', () => {
     /**
      * @debt TODO
      */
-    expect(invalidCall).not.toThrow(DynamoDBToolboxError)
-    expect(invalidCall).not.toThrow(expect.objectContaining({ code: 'todo' }))
+    expect(invalidCallA).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_map: {
+            // @ts-expect-error 42 is not assignable to 1 | 2
+            optional: $get('test_number_default', 42)
+          }
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_map: {
+            // @ts-expect-error $get is only available in SET operations
+            optional: $get('test_number_default', $add(42))
+          }
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallD = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_map: {
+            // @ts-expect-error invalid_attribute_name is not an existing attribute name
+            optional: $get('test_number_default', $get('invalid_attribute_name'))
+          }
+        })
+        .params()
+
+    /**
+     * @debt TODO
+     */
+    expect(invalidCallD).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallE = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_map: {
+            // @ts-expect-error 42 is not assignable to 1 | 2
+            optional: $get('test_number_default', $get('test_number_default', 42))
+          }
+        })
+        .params()
+
+    expect(invalidCallE).toThrow(DynamoDBToolboxError)
+    expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('override whole map if set is used', () => {
@@ -922,14 +1145,14 @@ describe('update', () => {
   })
 
   it('rejects invalid reference', () => {
-    const invalidCall = () =>
+    const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
           test_record: {
-            // @ts-expect-error
-            foo: $get('invalid_ref')
+            // @ts-expect-error invalid_attribute_name is not an existing attribute name
+            foo: $get('invalid_attribute_name')
           }
         })
         .params()
@@ -937,8 +1160,71 @@ describe('update', () => {
     /**
      * @debt TODO
      */
-    expect(invalidCall).not.toThrow(DynamoDBToolboxError)
-    expect(invalidCall).not.toThrow(expect.objectContaining({ code: 'todo' }))
+    expect(invalidCallA).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_record: {
+            // @ts-expect-error 'foo' is not assignable to number
+            foo: $get('test_number_default', 'foo')
+          }
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_record: {
+            // @ts-expect-error $get is only available in SET operations
+            foo: $get('test_number_default', $add(42))
+          }
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallD = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_record: {
+            // @ts-expect-error invalid_attribute_name is not an existing attribute name
+            foo: $get('test_number_default', $get('invalid_attribute_name'))
+          }
+        })
+        .params()
+
+    /**
+     * @debt TODO
+     */
+    expect(invalidCallD).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallE = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_record: {
+            // @ts-expect-error 'foo" is not assignable to number
+            foo: $get('test_number_default', $get('test_number_default', 'foo'))
+          }
+        })
+        .params()
+
+    expect(invalidCallE).toThrow(DynamoDBToolboxError)
+    expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('override whole record if set is used', () => {
