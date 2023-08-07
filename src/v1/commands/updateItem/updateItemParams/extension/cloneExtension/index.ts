@@ -1,0 +1,1 @@
+export { cloneExtension } from './attribute'

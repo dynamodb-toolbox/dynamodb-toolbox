@@ -1,0 +1,1 @@
+export { parseExtension } from './attribute'
