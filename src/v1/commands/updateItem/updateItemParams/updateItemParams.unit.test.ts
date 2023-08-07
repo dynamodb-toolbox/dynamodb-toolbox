@@ -327,7 +327,7 @@ describe('update', () => {
     expect(invalidCall).not.toThrow(expect.objectContaining({ code: 'toto' }))
   })
 
-  it('performs an add operation', () => {
+  it('performs number and set add operations', () => {
     const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -344,8 +344,8 @@ describe('update', () => {
     )
   })
 
-  it('rejects an invalid add operation', () => {
-    const invalidCall = () =>
+  it('rejects an invalid number add operation', () => {
+    const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
           email: 'test-pk',
@@ -355,8 +355,21 @@ describe('update', () => {
         })
         .params()
 
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $delete(10)
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('creates sets', () => {
@@ -376,7 +389,7 @@ describe('update', () => {
     })
   })
 
-  it('performs a delete operation', () => {
+  it('performs a delete operation on set', () => {
     const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -456,7 +469,7 @@ describe('update', () => {
     )
   })
 
-  it('accepts references', () => {
+  it('accepts references when udpating list element', () => {
     const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -472,7 +485,7 @@ describe('update', () => {
     )
   })
 
-  it('rejects invalid reference', () => {
+  it('rejects invalid reference when udpating list element', () => {
     const invalidCall = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
@@ -492,7 +505,7 @@ describe('update', () => {
     expect(invalidCall).not.toThrow(expect.objectContaining({ code: 'todo' }))
   })
 
-  it('rejects invalid update of list item', () => {
+  it('rejects invalid key while updating list element', () => {
     const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
@@ -542,7 +555,7 @@ describe('update', () => {
     )
   })
 
-  it('updates items with a list', () => {
+  it('updates elements with a list', () => {
     const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -573,8 +586,24 @@ describe('update', () => {
     )
   })
 
+  it('accepts references while appending data to a list', () => {
+    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: $append([$get('test_string'), '2', '3'])
+      })
+      .params()
+
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // `SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+    )
+  })
+
   it('rejects invalid appended values', () => {
-    const invalidCall = () =>
+    const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
           email: 'test-pk',
@@ -584,8 +613,26 @@ describe('update', () => {
         })
         .params()
 
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_list_nested: $append([{ value: 'foo' }, $get('invalid_ref')])
+        })
+        .params()
+
+    /**
+     * @debt TODO
+     */
+    expect(invalidCallB).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).not.toThrow(
+      expect.objectContaining({ code: 'parsing.invalidAttributeInput' })
+    )
   })
 
   it('prepends data to a list', () => {
@@ -604,8 +651,24 @@ describe('update', () => {
     )
   })
 
+  it('accepts references while prepending data to a list', () => {
+    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: $prepend([$get('test_string'), '2', '3'])
+      })
+      .params()
+
+    expect(UpdateExpression).toBe(
+      ''
+      // TODO
+      // `SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+    )
+  })
+
   it('rejects invalid prepended values', () => {
-    const invalidCall = () =>
+    const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({
           email: 'test-pk',
@@ -615,8 +678,26 @@ describe('update', () => {
         })
         .params()
 
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_list_nested: $prepend([{ value: 'foo' }, $get('invalid_ref')])
+        })
+        .params()
+
+    /**
+     * @debt TODO
+     */
+    expect(invalidCallB).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).not.toThrow(
+      expect.objectContaining({ code: 'parsing.invalidAttributeInput' })
+    )
   })
 
   it('update, appends & prepends data to a list simulaneously', () => {
