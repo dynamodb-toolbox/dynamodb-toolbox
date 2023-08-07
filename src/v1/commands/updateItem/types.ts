@@ -38,9 +38,14 @@ export type PREPEND<VALUE> = Verbal<{ [$PREPEND]: VALUE }>
 
 export type NonVerbal<VALUE> = { [$HAS_VERB]?: false } & VALUE
 
+export type ReferenceExtension = {
+  type: '*'
+  value: Verbal<{ [$GET]: [ref: string, fallback?: AttributeValue<ReferenceExtension>] }>
+}
+
 export type UpdateItemInputExtension =
+  | ReferenceExtension
   | { type: '*'; value: $REMOVE }
-  | { type: '*'; value: Verbal<{ [$GET]: string }> }
   | {
       type: 'number'
       value: Verbal<{ [$ADD]: number }>
@@ -125,6 +130,19 @@ export type UpdateItemInput<
   ? UpdateItemInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
   : never
 
+export type Reference<
+  ATTRIBUTE extends Attribute,
+  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false,
+  ATTRIBUTE_PATH extends string = string
+> = GET<
+  [
+    ref: ATTRIBUTE_PATH,
+    fallback?:
+      | AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
+      | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+  ]
+>
+
 /**
  * User input of an UPDATE command for a given Attribute
  *
@@ -141,7 +159,15 @@ export type AttributeUpdateItemInput<
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>, never, undefined>
       | If<CanBeRemoved<ATTRIBUTE>, $REMOVE, never>
-      | GET<ATTRIBUTE_PATH>
+      // Not using Reference<...> for improved type display
+      | GET<
+          [
+            ref: ATTRIBUTE_PATH,
+            fallback?:
+              | AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
+              | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+          ]
+        >
       | (ATTRIBUTE extends AnyAttribute
           ? unknown
           : ATTRIBUTE extends PrimitiveAttribute
@@ -158,8 +184,8 @@ export type AttributeUpdateItemInput<
                   Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
                 >
           : ATTRIBUTE extends ListAttribute
-          ? // TODO: Test
-            | NonVerbal<
+          ?
+              | NonVerbal<
                   {
                     [INDEX in number]?:
                       | AttributeUpdateItemInput<
@@ -174,21 +200,34 @@ export type AttributeUpdateItemInput<
                   AttributeUpdateItemInput<
                     ATTRIBUTE['elements'],
                     REQUIRE_INDEPENDENT_DEFAULTS,
-                    /**
-                     * @debt TODO "Test that references do not work in set lists"
-                     */
                     never
                   >[]
                 >
               | APPEND<
                   (
-                    | GET<ATTRIBUTE_PATH>
+                    | // Not using Reference<...> for improved type display
+                    GET<
+                        [
+                          ref: ATTRIBUTE_PATH,
+                          fallback?:
+                            | AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
+                            | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+                        ]
+                      >
                     | AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
                   )[]
                 >
               | PREPEND<
                   (
-                    | GET<ATTRIBUTE_PATH>
+                    | // Not using Reference<...> for improved type display
+                    GET<
+                        [
+                          ref: ATTRIBUTE_PATH,
+                          fallback?:
+                            | AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
+                            | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+                        ]
+                      >
                     | AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
                   )[]
                 >

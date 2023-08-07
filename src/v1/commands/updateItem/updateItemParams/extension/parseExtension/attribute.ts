@@ -2,7 +2,7 @@ import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import type { PrimitiveAttribute } from 'v1/schema'
 import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $GET, $REMOVE } from 'v1/commands/updateItem/constants'
+import { $REMOVE } from 'v1/commands/updateItem/constants'
 
 import { hasGetOperation } from '../utils'
 import { parseNumberExtension } from './number'
@@ -10,6 +10,7 @@ import { parseSetExtension } from './set'
 import { parseListExtension } from './list'
 import { parseMapExtension } from './map'
 import { parseRecordExtension } from './record'
+import { parseReferenceExtension } from './reference'
 
 export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
   attribute,
@@ -30,13 +31,15 @@ export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
     }
   }
 
+  /**
+   * @debt refactor "Maybe we can simply parse a super-extension here, and continue if is(Super)Extension is false. Would be neat."
+   */
   const hasGet = hasGetOperation(input)
   if (hasGet) {
-    return {
-      isExtension: true,
-      // NOTE: Validation will be done in UpdateExpressionParser
-      parsedExtension: { [$GET]: input[$GET] }
-    }
+    return parseReferenceExtension(attribute, input, {
+      ...options,
+      parseExtension: parseReferenceExtension
+    })
   }
 
   switch (attribute.type) {

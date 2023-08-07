@@ -1,9 +1,20 @@
-import type { SET, GET, ADD, DELETE, APPEND, PREPEND } from './types'
+import type { Attribute, AttributeValue } from 'v1/schema'
+
+import type { SET, GET, ADD, DELETE, APPEND, PREPEND, Reference } from './types'
 import { $HAS_VERB, $SET, $GET, $ADD, $DELETE, $REMOVE, $APPEND, $PREPEND } from './constants'
 
 export const $set = <VALUE>(value: VALUE): SET<VALUE> => ({ [$HAS_VERB]: true, [$SET]: value })
 
-export const $get = <VALUE>(value: VALUE): GET<VALUE> => ({ [$HAS_VERB]: true, [$GET]: value })
+export const $get = <
+  REFERENCE extends string,
+  FALLBACK extends undefined | AttributeValue | Reference<Attribute, boolean, string> = undefined
+>(
+  reference: REFERENCE,
+  fallback?: FALLBACK
+): GET<FALLBACK extends undefined ? [REFERENCE] : [REFERENCE, FALLBACK]> => ({
+  [$HAS_VERB]: true,
+  [$GET]: (fallback === undefined ? [reference] : [reference, fallback]) as any
+})
 
 export const $add = <VALUE>(value: VALUE): ADD<VALUE> => ({ [$HAS_VERB]: true, [$ADD]: value })
 
