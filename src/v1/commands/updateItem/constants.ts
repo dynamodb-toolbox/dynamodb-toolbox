@@ -10,6 +10,12 @@ export type $GET = typeof $GET
 export const $REMOVE = Symbol()
 export type $REMOVE = typeof $REMOVE
 
+export const $SUM = Symbol()
+export type $SUM = typeof $SUM
+
+export const $SUBTRACT = Symbol()
+export type $SUBTRACT = typeof $SUBTRACT
+
 export const $ADD = Symbol()
 export type $ADD = typeof $ADD
 

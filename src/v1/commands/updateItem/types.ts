@@ -24,14 +24,27 @@ import type { If } from 'v1/types/if'
 import type { AttributePutItemInput } from 'v1/commands/putItem/types'
 import type { SchemaAttributePath } from 'v1/commands/types'
 
-import { $HAS_VERB, $SET, $GET, $ADD, $DELETE, $REMOVE, $APPEND, $PREPEND } from './constants'
+import {
+  $HAS_VERB,
+  $SET,
+  $GET,
+  $REMOVE,
+  $SUM,
+  $SUBTRACT,
+  $ADD,
+  $DELETE,
+  $APPEND,
+  $PREPEND
+} from './constants'
 
-// Distinguishing verbal syntax from non-verbal is necessary for type inference & better parsing
+// Distinguishing verbal syntax vs non-verbal for type inference & parsing
 export type Verbal<VALUE> = { [$HAS_VERB]: true } & VALUE
 
 export type ADD<VALUE> = Verbal<{ [$ADD]: VALUE }>
 export type SET<VALUE> = Verbal<{ [$SET]: VALUE }>
 export type GET<VALUE> = Verbal<{ [$GET]: VALUE }>
+export type SUM<A, B> = Verbal<{ [$SUM]: [A, B] }>
+export type SUBTRACT<A, B> = Verbal<{ [$SUBTRACT]: [A, B] }>
 export type DELETE<VALUE> = Verbal<{ [$DELETE]: VALUE }>
 export type APPEND<VALUE> = Verbal<{ [$APPEND]: VALUE }>
 export type PREPEND<VALUE> = Verbal<{ [$PREPEND]: VALUE }>
@@ -48,7 +61,14 @@ export type UpdateItemInputExtension =
   | { type: '*'; value: $REMOVE }
   | {
       type: 'number'
-      value: Verbal<{ [$ADD]: number }>
+      value:
+        | Verbal<{ [$ADD]: number }>
+        | Verbal<{
+            [$SUM]: [AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>]
+          }>
+        | Verbal<{
+            [$SUBTRACT]: [AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>]
+          }>
     }
   | {
       type: 'set'
@@ -174,7 +194,68 @@ export type AttributeUpdateItemInput<
           ?
               | ResolvePrimitiveAttribute<ATTRIBUTE>
               | (ATTRIBUTE extends PrimitiveAttribute<'number'>
-                  ? ADD<ResolvePrimitiveAttribute<ATTRIBUTE>>
+                  ?
+                      | ADD<number>
+                      | SUM<
+                          // Not using Reference<...> for improved type display
+                          | number
+                          | GET<
+                              [
+                                ref: ATTRIBUTE_PATH,
+                                fallback?:
+                                  | number
+                                  | Reference<
+                                      ATTRIBUTE,
+                                      REQUIRE_INDEPENDENT_DEFAULTS,
+                                      ATTRIBUTE_PATH
+                                    >
+                              ]
+                            >,
+                          // Not using Reference<...> for improved type display
+                          | number
+                          | GET<
+                              [
+                                ref: ATTRIBUTE_PATH,
+                                fallback?:
+                                  | number
+                                  | Reference<
+                                      ATTRIBUTE,
+                                      REQUIRE_INDEPENDENT_DEFAULTS,
+                                      ATTRIBUTE_PATH
+                                    >
+                              ]
+                            >
+                        >
+                      | SUBTRACT<
+                          // Not using Reference<...> for improved type display
+                          | number
+                          | GET<
+                              [
+                                ref: ATTRIBUTE_PATH,
+                                fallback?:
+                                  | number
+                                  | Reference<
+                                      ATTRIBUTE,
+                                      REQUIRE_INDEPENDENT_DEFAULTS,
+                                      ATTRIBUTE_PATH
+                                    >
+                              ]
+                            >,
+                          // Not using Reference<...> for improved type display
+                          | number
+                          | GET<
+                              [
+                                ref: ATTRIBUTE_PATH,
+                                fallback?:
+                                  | number
+                                  | Reference<
+                                      ATTRIBUTE,
+                                      REQUIRE_INDEPENDENT_DEFAULTS,
+                                      ATTRIBUTE_PATH
+                                    >
+                              ]
+                            >
+                        >
                   : never)
           : ATTRIBUTE extends SetAttribute
           ?
@@ -196,13 +277,7 @@ export type AttributeUpdateItemInput<
                       | $REMOVE
                   }
                 >
-              | SET<
-                  AttributeUpdateItemInput<
-                    ATTRIBUTE['elements'],
-                    REQUIRE_INDEPENDENT_DEFAULTS,
-                    never
-                  >[]
-                >
+              | SET<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]>
               | APPEND<
                   (
                     | // Not using Reference<...> for improved type display
