@@ -285,7 +285,10 @@ export type AttributeUpdateItemInput<
                         [
                           ref: ATTRIBUTE_PATH,
                           fallback?:
-                            | AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
+                            | AttributePutItemInput<
+                                ATTRIBUTE['elements'],
+                                REQUIRE_INDEPENDENT_DEFAULTS
+                              >
                             | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
                         ]
                       >
@@ -299,7 +302,10 @@ export type AttributeUpdateItemInput<
                         [
                           ref: ATTRIBUTE_PATH,
                           fallback?:
-                            | AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
+                            | AttributePutItemInput<
+                                ATTRIBUTE['elements'],
+                                REQUIRE_INDEPENDENT_DEFAULTS
+                              >
                             | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
                         ]
                       >

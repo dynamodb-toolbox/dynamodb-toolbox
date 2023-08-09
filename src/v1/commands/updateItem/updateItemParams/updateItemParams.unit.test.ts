@@ -961,7 +961,7 @@ describe('update', () => {
   })
 
   it('appends data to a list', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression: UpdateExpressionA } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -969,10 +969,22 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
+    expect(UpdateExpressionA).toBe(
       ''
       // TODO
-      // `SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+    )
+
+    const { UpdateExpression: UpdateExpressionB } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: $append([$get('test_string', '1'), '2', '3'])
+      })
+      .params()
+
+    expect(UpdateExpressionB).toBe(
+      ''
+      // TODO
     )
   })
 
@@ -1023,6 +1035,22 @@ describe('update', () => {
     expect(invalidCallB).not.toThrow(
       expect.objectContaining({ code: 'parsing.invalidAttributeInput' })
     )
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          /**
+           * @debt type "Find a way to infer narrowly in $get"
+           */
+          // @ts-expect-error 'baz' not assignable to 'bar'
+          test_list_nested: $append([{ value: 'foo' }, $get('email', { value: 'baz' as const })])
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('prepends data to a list', () => {
@@ -1042,7 +1070,7 @@ describe('update', () => {
   })
 
   it('accepts references while prepending data to a list', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression: UpdateExpressionA } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1050,7 +1078,21 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
+    expect(UpdateExpressionA).toBe(
+      ''
+      // TODO
+      // `SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
+    )
+
+    const { UpdateExpression: UpdateExpressionB } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: $prepend([$get('test_string', '1'), '2', '3'])
+      })
+      .params()
+
+    expect(UpdateExpressionB).toBe(
       ''
       // TODO
       // `SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))`
@@ -1088,6 +1130,22 @@ describe('update', () => {
     expect(invalidCallB).not.toThrow(
       expect.objectContaining({ code: 'parsing.invalidAttributeInput' })
     )
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          /**
+           * @debt type "Find a way to infer narrowly in $get"
+           */
+          // @ts-expect-error 'baz' not assignable to 'bar'
+          test_list_nested: $prepend([{ value: 'foo' }, $get('email', { value: 'baz' as const })])
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('update, appends & prepends data to a list simulaneously', () => {
