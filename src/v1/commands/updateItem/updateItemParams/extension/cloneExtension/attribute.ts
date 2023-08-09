@@ -10,7 +10,7 @@ import { cloneListExtension } from './list'
 import { cloneNumberExtension } from './number'
 import { cloneReferenceExtension } from './reference'
 
-export const cloneExtension: ExtensionCloner<UpdateItemInputExtension> = (
+export const cloneUpdateExtension: ExtensionCloner<UpdateItemInputExtension> = (
   attribute,
   input,
   options

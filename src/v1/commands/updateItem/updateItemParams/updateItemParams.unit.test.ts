@@ -18,7 +18,7 @@ import {
   DynamoDBToolboxError,
   UpdateItemCommand
 } from 'v1'
-import { $set, $get, $remove, $add, $delete, $append, $prepend } from '../utils'
+import { $set, $get, $remove, $sum, $subtract, $add, $delete, $append, $prepend } from '../utils'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -422,6 +422,236 @@ describe('update', () => {
 
     expect(invalidCallE).toThrow(DynamoDBToolboxError)
     expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  it('performs sum operation', () => {
+    const { UpdateExpression: UpdateExpressionA } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: $sum(10, 10)
+      })
+      .params()
+
+    expect(UpdateExpressionA).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+
+    const { UpdateExpression: UpdateExpressionB } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: $sum($get('count'), 10)
+      })
+      .params()
+
+    expect(UpdateExpressionB).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+
+    const { UpdateExpression: UpdateExpressionC } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: $sum(10, $get('count', 10))
+      })
+      .params()
+
+    expect(UpdateExpressionC).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+
+    const { UpdateExpression: UpdateExpressionD } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: $sum($get('count', 5), $get('count', 10))
+      })
+      .params()
+
+    expect(UpdateExpressionD).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+  })
+
+  it('rejects invalid sum operation', () => {
+    const invalidCallA = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $sum('a', 10)
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $sum(10, '10')
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $sum($get('invalid_prop'), 10)
+        })
+        .params()
+
+    /**
+     * @debt TODO
+     */
+    expect(invalidCallC).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallD = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $sum(10, $get('count', '10'))
+        })
+        .params()
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  it('performs subtract operation', () => {
+    const { UpdateExpression: UpdateExpressionA } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: $subtract(10, 10)
+      })
+      .params()
+
+    expect(UpdateExpressionA).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+
+    const { UpdateExpression: UpdateExpressionB } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: $subtract($get('count'), 10)
+      })
+      .params()
+
+    expect(UpdateExpressionB).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+
+    const { UpdateExpression: UpdateExpressionC } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: $subtract(10, $get('count', 10))
+      })
+      .params()
+
+    expect(UpdateExpressionC).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+
+    const { UpdateExpression: UpdateExpressionD } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_number_default: $subtract($get('count', 5), $get('count', 10))
+      })
+      .params()
+
+    expect(UpdateExpressionD).toBe(
+      ''
+      // TODO
+      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
+    )
+  })
+
+  it('rejects invalid subtract operation', () => {
+    const invalidCallA = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $subtract('a', 10)
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $subtract(10, '10')
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $subtract($get('invalid_prop'), 10)
+        })
+        .params()
+
+    /**
+     * @debt TODO
+     */
+    expect(invalidCallC).not.toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).not.toThrow(expect.objectContaining({ code: 'todo' }))
+
+    const invalidCallD = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_number_default: $subtract(10, $get('count', '10'))
+        })
+        .params()
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('performs number and set add operations', () => {

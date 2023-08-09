@@ -6,9 +6,10 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
 import { isArray } from 'v1/utils/validation/isArray'
-import { $SET, $GET, $REMOVE, $APPEND, $PREPEND } from 'v1/commands/updateItem/constants'
+import { $SET, $REMOVE, $APPEND, $PREPEND } from 'v1/commands/updateItem/constants'
 
-import { hasSetOperation, hasGetOperation, hasAppendOperation, hasPrependOperation } from '../utils'
+import { hasSetOperation, hasAppendOperation, hasPrependOperation } from '../utils'
+import { parseReferenceExtension } from './reference'
 
 export const parseListExtension = (
   attribute: ListAttribute,
@@ -63,10 +64,6 @@ export const parseListExtension = (
       }
     }
 
-    // Omit parseExtension as $append/$prepend means non-extended values
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { parseExtension: _, ...restOptions } = options
-
     if (hasAppendOperation(input)) {
       if (!isArray(input[$APPEND])) {
         throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -79,17 +76,12 @@ export const parseListExtension = (
       }
 
       Object.assign(parsedExtension, {
-        [$APPEND]: input[$APPEND].map(element => {
-          if (hasGetOperation(element)) {
-            return { [$GET]: element[$GET] }
-          }
-
-          return parseAttributeClonedInput(
-            attribute.elements,
-            element as AttributeValue,
-            restOptions
-          )
-        })
+        [$APPEND]: input[$APPEND].map(element =>
+          parseAttributeClonedInput(attribute.elements, element, {
+            ...options,
+            parseExtension: parseReferenceExtension
+          })
+        )
       })
     }
 
@@ -105,17 +97,12 @@ export const parseListExtension = (
       }
 
       Object.assign(parsedExtension, {
-        [$PREPEND]: input[$PREPEND].map(element => {
-          if (hasGetOperation(element)) {
-            return { [$GET]: element[$GET] }
-          }
-
-          return parseAttributeClonedInput(
-            attribute.elements,
-            element as AttributeValue,
-            restOptions
-          )
-        })
+        [$PREPEND]: input[$PREPEND].map(element =>
+          parseAttributeClonedInput(attribute.elements, element, {
+            ...options,
+            parseExtension: parseReferenceExtension
+          })
+        )
       })
     }
 
