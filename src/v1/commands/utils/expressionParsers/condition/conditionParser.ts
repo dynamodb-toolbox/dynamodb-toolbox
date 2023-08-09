@@ -3,13 +3,13 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import type { Schema, Attribute } from 'v1/schema'
 import type { Condition } from 'v1/commands/types'
 
-import { appendAttributePath } from '../utils/appendAttributePath'
+import { ExpressionParser, appendAttributePath } from '../utils/appendAttributePath'
 import { appendAttributeValue } from './appendAttributeValue'
 import { appendAttributeValueOrPath } from './appendAttributeValueOrPath'
 import { parseCondition } from './parseCondition'
 import { toCommandOptions } from './toCommandOptions'
 
-export class ConditionParser {
+export class ConditionParser implements ExpressionParser {
   schema: Schema | Attribute
   expressionAttributePrefix: 'c'
   expressionAttributeNames: string[]
@@ -52,12 +52,12 @@ export class ConditionParser {
   } => toCommandOptions(this)
 
   clone = (schema?: Schema | Attribute): ConditionParser => {
-    const clonedAttributeParser = new ConditionParser(schema ?? this.schema)
+    const clonedParser = new ConditionParser(schema ?? this.schema)
 
-    clonedAttributeParser.expressionAttributeNames = [...this.expressionAttributeNames]
-    clonedAttributeParser.expressionAttributeValues = [...this.expressionAttributeValues]
-    clonedAttributeParser.expression = this.expression
+    clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]
+    clonedParser.expressionAttributeValues = [...this.expressionAttributeValues]
+    clonedParser.expression = this.expression
 
-    return clonedAttributeParser
+    return clonedParser
   }
 }

@@ -12,32 +12,32 @@ import {
 import { isTwoArgsFnCondition, parseTwoArgsFnCondition } from './twoArgsFn'
 import { isInCondition, parseInCondition } from './in'
 
-export const parseCondition = (state: ConditionParser, condition: Condition): void => {
+export const parseCondition = (conditionParser: ConditionParser, condition: Condition): void => {
   if (isComparisonCondition(condition)) {
-    return parseComparisonCondition(state, condition)
+    return parseComparisonCondition(conditionParser, condition)
   }
 
   if (isSingleArgFnCondition(condition)) {
-    return parseSingleArgFnCondition(state, condition)
+    return parseSingleArgFnCondition(conditionParser, condition)
   }
 
   if (isBetweenCondition(condition)) {
-    return parseBetweenCondition(state, condition)
+    return parseBetweenCondition(conditionParser, condition)
   }
 
   if (isNotCondition(condition)) {
-    return parseNotCondition(state, condition)
+    return parseNotCondition(conditionParser, condition)
   }
 
   if (isLogicalCombinationCondition(condition)) {
-    return parseLogicalCombinationCondition(state, condition)
+    return parseLogicalCombinationCondition(conditionParser, condition)
   }
 
   if (isTwoArgsFnCondition(condition)) {
-    return parseTwoArgsFnCondition(state, condition)
+    return parseTwoArgsFnCondition(conditionParser, condition)
   }
 
   if (isInCondition(condition)) {
-    return parseInCondition(state, condition)
+    return parseInCondition(conditionParser, condition)
   }
 }

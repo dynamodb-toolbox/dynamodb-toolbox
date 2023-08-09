@@ -1,9 +1,9 @@
 import type { Schema, Attribute } from 'v1/schema'
 
-import { appendAttributePath } from '../utils/appendAttributePath'
+import { appendAttributePath, ExpressionParser } from '../utils/appendAttributePath'
 import { toCommandOptions } from './toCommandOptions'
 
-export class ProjectionParser {
+export class ProjectionParser implements ExpressionParser {
   schema: Schema | Attribute
   expressionAttributePrefix: 'p'
   expressionAttributeNames: string[]
@@ -43,11 +43,11 @@ export class ProjectionParser {
   } => toCommandOptions(this)
 
   clone = (schema?: Schema | Attribute): ProjectionParser => {
-    const clonedAttributeParser = new ProjectionParser(schema ?? this.schema)
+    const clonedParser = new ProjectionParser(schema ?? this.schema)
 
-    clonedAttributeParser.expressionAttributeNames = [...this.expressionAttributeNames]
-    clonedAttributeParser.expression = this.expression
+    clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]
+    clonedParser.expression = this.expression
 
-    return clonedAttributeParser
+    return clonedParser
   }
 }
