@@ -2,6 +2,9 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import type { ConditionParser } from './conditionParser'
 
+/**
+ * @debt refactor "factorize with other expressions"
+ */
 export const toCommandOptions = (
   conditionParser: ConditionParser
 ): {

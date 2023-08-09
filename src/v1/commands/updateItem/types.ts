@@ -128,7 +128,7 @@ type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: '
  * @return Object
  */
 export type UpdateItemInput<
-  SCHEMA extends EntityV2 | Schema,
+  SCHEMA extends EntityV2 | Schema = EntityV2,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
 > = EntityV2 extends SCHEMA
   ? Item<UpdateItemInputExtension>
@@ -137,7 +137,7 @@ export type UpdateItemInput<
   : SCHEMA extends Schema
   ? OptionalizeUndefinableProperties<
       {
-        [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
+        [KEY in keyof SCHEMA['attributes']]: UpdateAttributeInput<
           SCHEMA['attributes'][KEY],
           REQUIRE_INDEPENDENT_DEFAULTS,
           SchemaAttributePath<SCHEMA>
@@ -170,8 +170,8 @@ export type Reference<
  * @param RequireIndependentDefaults Boolean
  * @return Any
  */
-export type AttributeUpdateItemInput<
-  ATTRIBUTE extends Attribute,
+export type UpdateAttributeInput<
+  ATTRIBUTE extends Attribute = Attribute,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false,
   ATTRIBUTE_PATH extends string = string
 > = Attribute extends ATTRIBUTE
@@ -269,7 +269,7 @@ export type AttributeUpdateItemInput<
               | NonVerbal<
                   {
                     [INDEX in number]?:
-                      | AttributeUpdateItemInput<
+                      | UpdateAttributeInput<
                           ATTRIBUTE['elements'],
                           REQUIRE_INDEPENDENT_DEFAULTS,
                           ATTRIBUTE_PATH
@@ -317,7 +317,7 @@ export type AttributeUpdateItemInput<
               | NonVerbal<
                   OptionalizeUndefinableProperties<
                     {
-                      [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
+                      [KEY in keyof ATTRIBUTE['attributes']]: UpdateAttributeInput<
                         ATTRIBUTE['attributes'][KEY],
                         REQUIRE_INDEPENDENT_DEFAULTS,
                         ATTRIBUTE_PATH
@@ -336,7 +336,7 @@ export type AttributeUpdateItemInput<
               | NonVerbal<
                   {
                     [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
-                      | AttributeUpdateItemInput<
+                      | UpdateAttributeInput<
                           ATTRIBUTE['elements'],
                           REQUIRE_INDEPENDENT_DEFAULTS,
                           ATTRIBUTE_PATH
@@ -346,7 +346,7 @@ export type AttributeUpdateItemInput<
                 >
               | SET<AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>>
           : ATTRIBUTE extends AnyOfAttribute
-          ? AttributeUpdateItemInput<
+          ? UpdateAttributeInput<
               ATTRIBUTE['elements'][number],
               REQUIRE_INDEPENDENT_DEFAULTS,
               ATTRIBUTE_PATH

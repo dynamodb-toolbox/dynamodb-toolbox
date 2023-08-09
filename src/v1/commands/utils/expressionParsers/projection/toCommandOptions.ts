@@ -1,5 +1,8 @@
 import type { ProjectionParser } from './projectionParser'
 
+/**
+ * @debt refactor "factorize with other expressions"
+ */
 export const toCommandOptions = (
   projectionParser: ProjectionParser
 ): {
