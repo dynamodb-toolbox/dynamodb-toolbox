@@ -12,7 +12,7 @@ import { parseMapExtension } from './map'
 import { parseRecordExtension } from './record'
 import { parseReferenceExtension } from './reference'
 
-export const parseExtension: ExtensionParser<UpdateItemInputExtension> = (
+export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   attribute,
   input,
   options

@@ -1,1 +1,1 @@
-export { cloneExtension } from './attribute'
+export { cloneUpdateExtension } from './attribute'
