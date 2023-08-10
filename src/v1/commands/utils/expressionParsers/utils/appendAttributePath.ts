@@ -5,7 +5,7 @@ import { isString } from 'v1/utils/validation/isString'
 
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 
-interface ExpressionParser {
+export interface ExpressionParser {
   schema: Schema | Attribute
   expressionAttributePrefix: string
   expressionAttributeNames: string[]
