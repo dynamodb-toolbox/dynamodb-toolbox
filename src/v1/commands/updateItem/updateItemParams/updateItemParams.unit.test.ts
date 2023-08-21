@@ -655,7 +655,11 @@ describe('update', () => {
   })
 
   it('performs number and set add operations', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -664,11 +668,15 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
-    )
+    expect(UpdateExpression).toContain('ADD #a1 :a1, #a2 :a2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#a1': 'test_number_default',
+      '#a2': 'test_number_set'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':a1': 10,
+      ':a2': new Set([1, 2, 3])
+    })
   })
 
   it('rejects an invalid number add operation', () => {
@@ -1595,7 +1603,7 @@ describe('update', () => {
    */
 
   it('uses an alias', async () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test@test.com',
         sort: 'test-sk',
@@ -1604,11 +1612,12 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map = :test_map ADD #test_number :test_number'
-    )
+    // TODO
+    expect(UpdateExpression).not.toContain('SET')
+    expect(ExpressionAttributeNames).not.toMatchObject({ '#s1': '_c' })
+
+    expect(UpdateExpression).toContain('ADD #a1 :a1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#a1': 'test_number' })
   })
 
   it('ignores additional attribute', () => {
