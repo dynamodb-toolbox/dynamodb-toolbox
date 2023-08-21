@@ -38,6 +38,10 @@ export const parseUpdate = (
 
   if (isArray(input)) {
     input.forEach((element, index) => {
+      if (element === undefined) {
+        return
+      }
+
       parser.parseUpdate(element, [...currentPath, index])
     })
   }

@@ -208,28 +208,20 @@ describe('update', () => {
     )
   })
 
-  it('removes a field', () => {
+  it('removes fields', () => {
     const { UpdateExpression, ExpressionAttributeNames } = TestEntity2.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
-        test: $remove()
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('REMOVE #r1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#r1': 'test' })
-  })
-
-  it('removes a composite field', () => {
-    const { UpdateExpression, ExpressionAttributeNames } = TestEntity2.build(UpdateItemCommand)
-      .item({
-        email: 'test-pk',
+        test: $remove(),
         test_composite: $remove()
       })
       .params()
 
-    expect(UpdateExpression).toContain('REMOVE #r1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#r1': 'test_composite' })
+    expect(UpdateExpression).toContain('REMOVE #r1, #r2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#r1': 'test',
+      '#r2': 'test_composite'
+    })
   })
 
   it('ignores removing an invalid attribute', () => {
@@ -938,7 +930,7 @@ describe('update', () => {
   })
 
   it('removes items from a list', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -948,8 +940,8 @@ describe('update', () => {
       })
       .params()
 
-    // TODO: Support lists!!!
-    expect(UpdateExpression).not.toContain('REMOVE #r1[2]')
+    expect(UpdateExpression).toContain('REMOVE #r1[2]')
+    expect(ExpressionAttributeNames).toMatchObject({ '#r1': 'test_list' })
   })
 
   it('updates elements with a list', () => {
@@ -964,8 +956,7 @@ describe('update', () => {
     // TODO
     expect(UpdateExpression).not.toContain('SET')
 
-    // TODO: Support lists!!
-    expect(UpdateExpression).not.toContain('REMOVE #r1[1]')
+    expect(UpdateExpression).toContain('REMOVE #r1[1]')
     expect(ExpressionAttributeNames).toMatchObject({ '#r1': 'test_list' })
   })
 
