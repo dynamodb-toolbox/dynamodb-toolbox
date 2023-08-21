@@ -2,7 +2,8 @@ import type { RecordAttribute, AttributeBasicValue, Extension } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { ParsingOptions, RecordAttributeParsedBasicValue } from './types'
+import type { RecordAttributeParsedBasicValue } from '../types'
+import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 import { parsePrimitiveAttributeClonedInput } from './primitive'
 

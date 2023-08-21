@@ -1,10 +1,10 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
+import type { KeyInput } from 'v1/commands/types'
 import { parseEntityKeyInput } from 'v1/commands/utils/parseKeyInput'
 import { parsePrimaryKey } from 'v1/commands/utils/parsePrimaryKey'
-import type { KeyInput } from 'v1/commands/types'
-import { renameSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes'
+import { renameSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
 
 import type { DeleteItemOptions } from '../options'
 
