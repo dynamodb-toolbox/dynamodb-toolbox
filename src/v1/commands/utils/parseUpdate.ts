@@ -1,13 +1,11 @@
 import type { Schema } from 'v1/schema'
-import type { EntityV2 } from 'v1/entity'
 import type { UpdateItemInput } from 'v1/commands/updateItem/types'
 
 import { UpdateParser, ParsedUpdate } from './expressionParsers/update'
 
 export const parseSchemaUpdate = <
   SCHEMA extends Schema,
-  // TODO: Set REQUIRE_INDEPENDENT_DEFAULTS to true
-  INPUT extends UpdateItemInput<SCHEMA, false>
+  INPUT extends UpdateItemInput<SCHEMA, true>
 >(
   schema: SCHEMA,
   input: INPUT
@@ -19,11 +17,3 @@ export const parseSchemaUpdate = <
   updateParser.parseUpdate(input as UpdateItemInput)
   return updateParser.toCommandOptions()
 }
-
-export const parseCondition = <
-  ENTITY extends EntityV2,
-  INPUT extends UpdateItemInput<ENTITY, false>
->(
-  entity: ENTITY,
-  input: INPUT
-): ParsedUpdate => parseSchemaUpdate(entity.schema, input)
