@@ -3,7 +3,7 @@ import {
   hasAddOperation,
   hasDeleteOperation
 } from 'v1/commands/updateItem/updateItemParams/extension/utils'
-import { $ADD, $DELETE } from 'v1/commands/updateItem/constants'
+import { $REMOVE, $ADD, $DELETE } from 'v1/commands/updateItem/constants'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isArray } from 'v1/utils/validation/isArray'
 
@@ -14,6 +14,10 @@ export const parseUpdate = (
   input: UpdateItemInput | UpdateAttributeInput,
   currentPath: (string | number)[] = []
 ): void => {
+  if (input === $REMOVE) {
+    parser.remove.appendValidAttributePath(currentPath)
+  }
+
   if (hasAddOperation(input)) {
     parser.add.appendValidAttributePath(currentPath)
     parser.add.appendToExpression(' ')
