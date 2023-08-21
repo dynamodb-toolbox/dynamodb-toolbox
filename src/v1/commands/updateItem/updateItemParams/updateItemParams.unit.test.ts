@@ -694,7 +694,7 @@ describe('update', () => {
   })
 
   it('creates sets', () => {
-    const { ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -704,10 +704,9 @@ describe('update', () => {
       })
       .params()
 
-    expect(ExpressionAttributeNames).toMatchObject({
-      // TODO
-      // '#test_boolean_default': 'test_boolean_default'
-    })
+    expect(UpdateExpression).toBe(
+      '' // TODO
+    )
   })
 
   it('performs a delete operation on set', () => {

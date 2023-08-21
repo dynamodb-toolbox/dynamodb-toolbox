@@ -1,4 +1,5 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
+import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
 import { renameSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
@@ -26,29 +27,36 @@ export const updateItemParams = <
   })
 
   const {
-    UpdateExpression,
-    ExpressionAttributeNames,
-    ExpressionAttributeValues
+    ExpressionAttributeNames: updateExpressionAttributeNames,
+    ExpressionAttributeValues: updateExpressionAttributeValues,
+    ...update
   } = parseSchemaUpdate(entity.schema, renamedInput)
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : renamedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
 
-  const options = parseUpdateItemOptions(entity, updateItemOptions)
+  const {
+    ExpressionAttributeNames: optionsExpressionAttributeNames,
+    ExpressionAttributeValues: optionsExpressionAttributeValues,
+    ...options
+  } = parseUpdateItemOptions(entity, updateItemOptions)
+
+  const ExpressionAttributeNames = {
+    ...optionsExpressionAttributeNames,
+    ...updateExpressionAttributeNames
+  }
+
+  const ExpressionAttributeValues = {
+    ...optionsExpressionAttributeValues,
+    ...updateExpressionAttributeValues
+  }
 
   return {
     TableName: entity.table.name,
-    Key: { ...primaryKey },
-    UpdateExpression,
+    Key: primaryKey,
+    ...update,
     ...options,
-    // TODO: Omit if empty
-    ExpressionAttributeNames: {
-      ...options.ExpressionAttributeNames,
-      ...ExpressionAttributeNames
-    },
-    ExpressionAttributeValues: {
-      ...options.ExpressionAttributeValues,
-      ...ExpressionAttributeValues
-    }
+    ...(!isEmpty(ExpressionAttributeNames) ? { ExpressionAttributeNames } : {}),
+    ...(!isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : {})
   }
 }
