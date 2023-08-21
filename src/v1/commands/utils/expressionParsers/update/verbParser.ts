@@ -1,4 +1,5 @@
 import type { Schema, Attribute } from 'v1/schema'
+import { isNumber, isString } from 'v1/utils/validation'
 
 import { ExpressionParser, appendAttributePath } from '../utils/appendAttributePath'
 import type { ParsedUpdate } from './type'
@@ -22,13 +23,45 @@ export class UpdateVerbParser implements ExpressionParser {
     this.expression = initialStr
   }
 
-  appendAttributePath = (attributePath: string, options: { size?: boolean } = {}): Attribute =>
-    appendAttributePath(this, attributePath, options)
+  appendAttributePath = (attributePath: string): Attribute =>
+    appendAttributePath(this, attributePath)
 
-  appendAttributeValue = (attribute: Attribute, expressionAttributeValue: unknown): void => {
-    const expressionAttributeValueIndex = this.expressionAttributeValues.push(
-      expressionAttributeValue
-    )
+  appendAttributeValue = (_: Attribute, attributeValue: unknown): void => {
+    const expressionAttributeValueIndex = this.expressionAttributeValues.push(attributeValue)
+
+    this.appendToExpression(`:${this.expressionAttributePrefix}${expressionAttributeValueIndex}`)
+  }
+
+  appendValidAttributePath = (validAttributePath: (string | number)[]): void => {
+    if (this.expression !== '') {
+      this.appendToExpression(', ')
+    }
+
+    validAttributePath.forEach((pathPart, index) => {
+      if (isString(pathPart)) {
+        let pathPartIndex = this.expressionAttributeNames.findIndex(value => value === pathPart)
+
+        if (pathPartIndex !== -1) {
+          pathPartIndex += 1
+        } else {
+          pathPartIndex = this.expressionAttributeNames.push(pathPart)
+        }
+
+        if (index > 0) {
+          this.appendToExpression('.')
+        }
+
+        this.appendToExpression(`#${this.expressionAttributePrefix}${pathPartIndex}`)
+      }
+
+      if (isNumber(pathPart)) {
+        this.appendToExpression(`[${pathPart}]`)
+      }
+    })
+  }
+
+  appendValidAttributeValue = (validAttributeValue: unknown): void => {
+    const expressionAttributeValueIndex = this.expressionAttributeValues.push(validAttributeValue)
 
     this.appendToExpression(`:${this.expressionAttributePrefix}${expressionAttributeValueIndex}`)
   }

@@ -8,20 +8,23 @@ import { parseUpdate } from './parseUpdate'
 
 export class UpdateParser {
   schema: Schema | Attribute
-  setParser: UpdateVerbParser
-  removeParser: UpdateVerbParser
-  addParser: UpdateVerbParser
-  deleteParser: UpdateVerbParser
+  set: UpdateVerbParser
+  remove: UpdateVerbParser
+  add: UpdateVerbParser
+  delete: UpdateVerbParser
 
   constructor(schema: Schema | Attribute) {
     this.schema = schema
-    this.setParser = new UpdateVerbParser(schema, 's')
-    this.removeParser = new UpdateVerbParser(schema, 'r')
-    this.addParser = new UpdateVerbParser(schema, 'a')
-    this.deleteParser = new UpdateVerbParser(schema, 'd')
+    this.set = new UpdateVerbParser(schema, 's')
+    this.remove = new UpdateVerbParser(schema, 'r')
+    this.add = new UpdateVerbParser(schema, 'a')
+    this.delete = new UpdateVerbParser(schema, 'd')
   }
 
-  parseUpdate = (input: UpdateItemInput | UpdateAttributeInput): void => parseUpdate(this, input)
+  parseUpdate = (
+    input: UpdateItemInput | UpdateAttributeInput,
+    currentPath: (string | number)[] = []
+  ): void => parseUpdate(this, input, currentPath)
 
   toCommandOptions = (): ParsedUpdate => {
     let UpdateExpression = ''
@@ -29,10 +32,10 @@ export class UpdateParser {
     const ExpressionAttributeValues: Record<string, NativeAttributeValue> = {}
 
     for (const [verb, parser] of [
-      ['SET', this.setParser],
-      ['REMOVE', this.removeParser],
-      ['ADD', this.addParser],
-      ['DELETE', this.deleteParser]
+      ['SET', this.set],
+      ['REMOVE', this.remove],
+      ['ADD', this.add],
+      ['DELETE', this.delete]
     ] as const) {
       const verbCommandOptions = parser.toCommandOptions()
 
