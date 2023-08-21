@@ -2,7 +2,8 @@ import type { SetAttribute, AttributeBasicValue, Extension } from 'v1/schema'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { ParsingOptions, SetAttributeParsedBasicValue } from './types'
+import type { SetAttributeParsedBasicValue } from '../types'
+import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 
 export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(

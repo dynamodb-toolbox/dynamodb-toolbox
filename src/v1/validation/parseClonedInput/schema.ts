@@ -4,8 +4,8 @@ import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions, ParsedItem } from './types'
+import type { HasExtension, ParsedItem } from '../types'
+import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 

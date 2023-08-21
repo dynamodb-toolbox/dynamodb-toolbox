@@ -2,7 +2,8 @@ import type { Extension, ListAttribute, AttributeBasicValue } from 'v1/schema'
 import { isArray } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { ParsingOptions, ListAttributeParsedBasicValue } from './types'
+import type { ListAttributeParsedBasicValue } from '../types'
+import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 
 export const parseListAttributeClonedInput = <EXTENSION extends Extension>(

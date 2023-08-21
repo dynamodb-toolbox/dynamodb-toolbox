@@ -1,11 +1,13 @@
 import type { MapAttributeBasicValue, Extension } from 'v1/schema'
-import type { MapAttributeParsedBasicValue } from 'v1/validation/parseClonedInput'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
+import type { MapAttributeParsedBasicValue } from '../types'
+import type { RenamingOptions } from './types'
 import { renameAttributeSavedAsAttributes } from './attribute'
 
 export const renameMapAttributeSavedAsAttributes = <EXTENSION extends Extension>(
-  mapInput: MapAttributeParsedBasicValue<EXTENSION>
+  mapInput: MapAttributeParsedBasicValue<EXTENSION>,
+  renamingOptions = {} as RenamingOptions<EXTENSION>
 ): MapAttributeBasicValue<EXTENSION> => {
   const renamedInput: MapAttributeBasicValue<EXTENSION> = {}
 
@@ -14,7 +16,7 @@ export const renameMapAttributeSavedAsAttributes = <EXTENSION extends Extension>
       return
     }
 
-    const renamedAttributeInput = renameAttributeSavedAsAttributes(attributeInput)
+    const renamedAttributeInput = renameAttributeSavedAsAttributes(attributeInput, renamingOptions)
     renamedInput[mapInput[$savedAs][attributeName] ?? attributeName] = renamedAttributeInput
   })
 

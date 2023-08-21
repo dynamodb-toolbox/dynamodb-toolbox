@@ -1,0 +1,1 @@
+export { renameUpdateExtension } from './attribute'

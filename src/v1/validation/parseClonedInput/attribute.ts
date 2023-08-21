@@ -2,8 +2,8 @@ import type { RequiredOption, Attribute, Extension, AttributeValue } from 'v1/sc
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions, AttributeParsedValue, ExtensionParser } from './types'
+import type { AttributeParsedValue, HasExtension } from '../types'
+import type { ParsingOptions, ExtensionParser } from './types'
 import { parsePrimitiveAttributeClonedInput } from './primitive'
 import { parseSetAttributeClonedInput } from './set'
 import { parseListAttributeClonedInput } from './list'
