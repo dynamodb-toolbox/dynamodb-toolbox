@@ -1,7 +1,11 @@
 import type { UpdateItemInput, UpdateAttributeInput } from 'v1/commands/updateItem/types'
-import { hasDeleteOperation } from 'v1/commands/updateItem/updateItemParams/extension/utils'
-import { $DELETE } from 'v1/commands/updateItem/constants'
-import { isObject } from 'v1/utils/validation'
+import {
+  hasAddOperation,
+  hasDeleteOperation
+} from 'v1/commands/updateItem/updateItemParams/extension/utils'
+import { $ADD, $DELETE } from 'v1/commands/updateItem/constants'
+import { isObject } from 'v1/utils/validation/isObject'
+import { isArray } from 'v1/utils/validation/isArray'
 
 import type { UpdateParser } from '../updateParser'
 
@@ -10,6 +14,12 @@ export const parseUpdate = (
   input: UpdateItemInput | UpdateAttributeInput,
   currentPath: (string | number)[] = []
 ): void => {
+  if (hasAddOperation(input)) {
+    parser.add.appendValidAttributePath(currentPath)
+    parser.add.appendToExpression(' ')
+    parser.add.appendValidAttributeValue(input[$ADD])
+  }
+
   if (hasDeleteOperation(input)) {
     parser.delete.appendValidAttributePath(currentPath)
     parser.delete.appendToExpression(' ')
@@ -20,5 +30,11 @@ export const parseUpdate = (
     for (const [key, value] of Object.entries(input)) {
       parser.parseUpdate(value, [...currentPath, key])
     }
+  }
+
+  if (isArray(input)) {
+    input.forEach((element, index) => {
+      parser.parseUpdate(element, [...currentPath, index])
+    })
   }
 }
