@@ -1,10 +1,12 @@
 import type { Extension } from 'v1/schema'
-import type { RecordAttributeParsedBasicValue } from 'v1/validation/parseClonedInput'
 
+import type { RecordAttributeParsedBasicValue } from '../types'
+import type { RenamingOptions } from './types'
 import { renameAttributeSavedAsAttributes } from './attribute'
 
 export const renameRecordAttributeSavedAsAttributes = <EXTENSION extends Extension>(
-  recordInput: RecordAttributeParsedBasicValue<EXTENSION>
+  recordInput: RecordAttributeParsedBasicValue<EXTENSION>,
+  renamingOptions = {} as RenamingOptions<EXTENSION>
 ): RecordAttributeParsedBasicValue<EXTENSION> => {
   const renamedInput: RecordAttributeParsedBasicValue<EXTENSION> = {}
 
@@ -13,7 +15,7 @@ export const renameRecordAttributeSavedAsAttributes = <EXTENSION extends Extensi
       return
     }
 
-    renamedInput[attributeName] = renameAttributeSavedAsAttributes(attributeInput)
+    renamedInput[attributeName] = renameAttributeSavedAsAttributes(attributeInput, renamingOptions)
   })
 
   return renamedInput

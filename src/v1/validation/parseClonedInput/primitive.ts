@@ -7,7 +7,7 @@ import type {
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { PrimitiveAttributeParsedBasicValue } from './types'
+import { PrimitiveAttributeParsedBasicValue } from '../types'
 
 export const parsePrimitiveAttributeClonedInput = <EXTENSION extends Extension>(
   primitiveAttribute: PrimitiveAttribute,

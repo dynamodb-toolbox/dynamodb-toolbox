@@ -208,34 +208,20 @@ describe('update', () => {
     )
   })
 
-  it('removes a field', () => {
-    const { UpdateExpression } = TestEntity2.build(UpdateItemCommand)
+  it('removes fields', () => {
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity2.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
-        test: $remove()
-      })
-      .params()
-
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'REMOVE #test'
-    )
-  })
-
-  it('removes a composite field', () => {
-    const { UpdateExpression } = TestEntity2.build(UpdateItemCommand)
-      .item({
-        email: 'test-pk',
+        test: $remove(),
         test_composite: $remove()
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'REMOVE #test_composite'
-    )
+    expect(UpdateExpression).toContain('REMOVE #r1, #r2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#r1': 'test',
+      '#r2': 'test_composite'
+    })
   })
 
   it('ignores removing an invalid attribute', () => {
@@ -655,7 +641,11 @@ describe('update', () => {
   })
 
   it('performs number and set add operations', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -664,11 +654,15 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) ADD #test_number :test_number, #test_number_set_type :test_number_set_type'
-    )
+    expect(UpdateExpression).toContain('ADD #a1 :a1, #a2 :a2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#a1': 'test_number_default',
+      '#a2': 'test_number_set'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':a1': 10,
+      ':a2': new Set([1, 2, 3])
+    })
   })
 
   it('rejects an invalid number add operation', () => {
@@ -700,7 +694,7 @@ describe('update', () => {
   })
 
   it('creates sets', () => {
-    const { ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -710,14 +704,17 @@ describe('update', () => {
       })
       .params()
 
-    expect(ExpressionAttributeNames).toMatchObject({
-      // TODO
-      // '#test_boolean_default': 'test_boolean_default'
-    })
+    expect(UpdateExpression).toBe(
+      '' // TODO
+    )
   })
 
   it('performs a delete operation on set', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -726,11 +723,15 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) DELETE #test_string_set_type :test_string_set_type, #test_number_set_type :test_number_set_type'
-    )
+    expect(UpdateExpression).toContain('DELETE #d1 :d1, #d2 :d2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#d1': 'test_string_set',
+      '#d2': 'test_number_set'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':d1': new Set(['1', '2', '3']),
+      ':d2': new Set([1, 2, 3])
+    })
   })
 
   it('rejects an invalid delete operation', () => {
@@ -928,7 +929,7 @@ describe('update', () => {
   })
 
   it('removes items from a list', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -938,15 +939,12 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_list[2], #test_list[3], #test_list[8]'
-    )
+    expect(UpdateExpression).toContain('REMOVE #r1[2]')
+    expect(ExpressionAttributeNames).toMatchObject({ '#r1': 'test_list' })
   })
 
   it('updates elements with a list', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -954,10 +952,11 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-    )
+    // TODO
+    expect(UpdateExpression).not.toContain('SET')
+
+    expect(UpdateExpression).toContain('REMOVE #r1[1]')
+    expect(ExpressionAttributeNames).toMatchObject({ '#r1': 'test_list' })
   })
 
   it('appends data to a list', () => {
@@ -1186,7 +1185,7 @@ describe('update', () => {
   })
 
   it('removes nested data in a map', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1194,11 +1193,11 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
-    )
+    expect(UpdateExpression).toContain('REMOVE #r1.#r2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#r1': 'test_map',
+      '#r2': 'optional'
+    })
   })
 
   it('ignores undefined values', () => {
@@ -1385,7 +1384,7 @@ describe('update', () => {
   })
 
   it('removes nested data in a record', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1393,11 +1392,11 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
-    )
+    expect(UpdateExpression).toContain('REMOVE #r1.#r2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#r1': 'test_record',
+      '#r2': 'foo'
+    })
   })
 
   it('ignores undefined values', () => {
@@ -1587,7 +1586,7 @@ describe('update', () => {
    */
 
   it('uses an alias', async () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test@test.com',
         sort: 'test-sk',
@@ -1596,11 +1595,12 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_map = :test_map ADD #test_number :test_number'
-    )
+    // TODO
+    expect(UpdateExpression).not.toContain('SET')
+    expect(ExpressionAttributeNames).not.toMatchObject({ '#s1': '_c' })
+
+    expect(UpdateExpression).toContain('ADD #a1 :a1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#a1': 'test_number' })
   })
 
   it('ignores additional attribute', () => {

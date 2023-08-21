@@ -34,8 +34,7 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   /**
    * @debt refactor "Maybe we can simply parse a super-extension here, and continue if is(Super)Extension is false. Would be neat."
    */
-  const hasGet = hasGetOperation(input)
-  if (hasGet) {
+  if (hasGetOperation(input)) {
     return parseReferenceExtension(attribute, input, {
       ...options,
       parseExtension: parseReferenceExtension
