@@ -1,8 +1,8 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
+import { renameSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
 import { parsePrimaryKey } from 'v1/commands/utils/parsePrimaryKey'
-import { renameSavedAsAttributes } from 'v1/commands/utils/renameSavedAsAttributes'
 
 import type { PutItemInput } from '../types'
 import type { PutItemOptions } from '../options'

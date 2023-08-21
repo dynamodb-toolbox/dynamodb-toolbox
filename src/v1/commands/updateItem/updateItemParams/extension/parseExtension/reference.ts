@@ -35,7 +35,7 @@ export const parseReferenceExtension: ExtensionParser<ReferenceExtension> = (
     isExtension: true,
     parsedExtension: {
       [$GET]: [
-        // NOTE: Validation will be done in UpdateExpressionParser
+        // NOTE: Reference validation will be done in UpdateExpressionParser
         reference,
         ...(fallback !== undefined ? [parseAttributeClonedInput(attribute, fallback, options)] : [])
       ]

@@ -3,7 +3,8 @@ import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
-import type { ParsingOptions, MapAttributeParsedBasicValue } from './types'
+import type { MapAttributeParsedBasicValue } from '../types'
+import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 
