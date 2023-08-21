@@ -1,4 +1,3 @@
-import type { AttributeValue } from 'v1/schema'
 import type { ExtensionRenamer } from 'v1/validation/renameSavedAsAttributes/types'
 import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { renameAttributeSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
@@ -55,52 +54,42 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
   }
 
   if (hasSumOperation(input)) {
-    const renamedExtension: AttributeValue<UpdateItemInputExtension> = {}
-    Object.assign(renamedExtension, {
-      [$SUM]: input[$SUM].map(element =>
-        renameAttributeSavedAsAttributes<ReferenceExtension>(element, {
-          ...options,
-          renameExtension: renameReferenceExtension
-        })
-      )
-    })
-
     return {
       isExtension: true,
-      renamedExtension
+      renamedExtension: {
+        [$SUM]: input[$SUM].map(element =>
+          renameAttributeSavedAsAttributes<ReferenceExtension>(element, {
+            ...options,
+            renameExtension: renameReferenceExtension
+          })
+        )
+      }
     }
   }
 
   if (hasSubtractOperation(input)) {
-    const renamedExtension: AttributeValue<UpdateItemInputExtension> = {}
-    Object.assign(renamedExtension, {
-      [$SUBTRACT]: input[$SUBTRACT].map(element =>
-        renameAttributeSavedAsAttributes<ReferenceExtension>(element, {
-          ...options,
-          renameExtension: renameReferenceExtension
-        })
-      )
-    })
-
     return {
       isExtension: true,
-      renamedExtension
+      renamedExtension: {
+        [$SUBTRACT]: input[$SUBTRACT].map(element =>
+          renameAttributeSavedAsAttributes<ReferenceExtension>(element, {
+            ...options,
+            renameExtension: renameReferenceExtension
+          })
+        )
+      }
     }
   }
 
   if (hasAddOperation<ReferenceExtension>(input)) {
-    const renamedExtension: AttributeValue<UpdateItemInputExtension> = {}
-
-    Object.assign(renamedExtension, {
-      [$ADD]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$ADD], {
-        ...options,
-        renameExtension: renameReferenceExtension
-      })
-    })
-
     return {
       isExtension: true,
-      renamedExtension
+      renamedExtension: {
+        [$ADD]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$ADD], {
+          ...options,
+          renameExtension: renameReferenceExtension
+        })
+      }
     }
   }
 
@@ -109,44 +98,35 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { renameExtension: _, ...restOptions } = options
 
-    const renamedExtension: AttributeValue<UpdateItemInputExtension> = {}
-    Object.assign(renamedExtension, {
-      [$DELETE]: renameAttributeSavedAsAttributes(input[$DELETE], restOptions)
-    })
-
     return {
       isExtension: true,
-      renamedExtension
+      renamedExtension: {
+        [$DELETE]: renameAttributeSavedAsAttributes<never>(input[$DELETE], restOptions)
+      }
     }
   }
 
   if (hasAppendOperation(input)) {
-    const renamedExtension: AttributeValue<UpdateItemInputExtension> = {}
-    Object.assign(renamedExtension, {
-      [$APPEND]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$APPEND], {
-        ...options,
-        renameExtension: renameReferenceExtension
-      })
-    })
-
     return {
       isExtension: true,
-      renamedExtension
+      renamedExtension: {
+        [$APPEND]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$APPEND], {
+          ...options,
+          renameExtension: renameReferenceExtension
+        })
+      }
     }
   }
 
   if (hasPrependOperation(input)) {
-    const renamedExtension: AttributeValue<UpdateItemInputExtension> = {}
-    Object.assign(renamedExtension, {
-      [$PREPEND]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$PREPEND], {
-        ...options,
-        renameExtension: renameReferenceExtension
-      })
-    })
-
     return {
       isExtension: true,
-      renamedExtension
+      renamedExtension: {
+        [$PREPEND]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$PREPEND], {
+          ...options,
+          renameExtension: renameReferenceExtension
+        })
+      }
     }
   }
 

@@ -15,7 +15,6 @@ import {
 import { map } from './typer'
 import type { MapAttribute, $MapAttribute } from './interface'
 import { freezeMapAttribute } from './freeze'
-import { list } from '../list/typer'
 
 describe('map', () => {
   const str = string()
