@@ -30,6 +30,55 @@ export const parseListExtension = (
   }
 
   if (isObject(input) || isArray(input)) {
+    if (hasAppendOperation(input)) {
+      if (!isArray(input[$APPEND])) {
+        throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
+          message: `Appended values of array attribute ${attribute.path} should be listed in an array`,
+          path: attribute.path,
+          payload: {
+            received: input[$APPEND]
+          }
+        })
+      }
+
+      return {
+        isExtension: true,
+        parsedExtension: {
+          [$APPEND]: input[$APPEND].map(element =>
+            parseAttributeClonedInput(attribute.elements, element, {
+              ...options,
+              parseExtension: parseReferenceExtension
+            })
+          )
+        }
+      }
+    }
+
+    if (hasPrependOperation(input)) {
+      if (!isArray(input[$PREPEND])) {
+        throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
+          message: `Prepended values of array attribute ${attribute.path} should be listed in an array`,
+          path: attribute.path,
+          payload: {
+            received: input[$PREPEND]
+          }
+        })
+      }
+
+      return {
+        isExtension: true,
+        parsedExtension: {
+          [$PREPEND]: input[$PREPEND].map(element =>
+            parseAttributeClonedInput(attribute.elements, element, {
+              ...options,
+              parseExtension: parseReferenceExtension
+            })
+          )
+        }
+      }
+    }
+
+    let maxUpdatedIndex = 0
     const parsedExtension: {
       [KEY in number]: AttributeValue<UpdateItemInputExtension> | $REMOVE
     } = {}
@@ -37,7 +86,7 @@ export const parseListExtension = (
     for (const [inputKey, inputValue] of Object.entries(input)) {
       const parsedInputKey = parseFloat(inputKey)
 
-      if (!isInteger(parseFloat(inputKey))) {
+      if (!isInteger(parsedInputKey)) {
         throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
           message: `Index of array attribute ${attribute.path} is not a valid integer`,
           path: attribute.path,
@@ -46,6 +95,8 @@ export const parseListExtension = (
           }
         })
       }
+
+      maxUpdatedIndex = Math.max(maxUpdatedIndex, parsedInputKey)
 
       // undefined is allowed
       if (inputValue === undefined) {
@@ -64,51 +115,9 @@ export const parseListExtension = (
       }
     }
 
-    if (hasAppendOperation(input)) {
-      if (!isArray(input[$APPEND])) {
-        throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-          message: `Appended values of array attribute ${attribute.path} should be listed in an array`,
-          path: attribute.path,
-          payload: {
-            received: input[$APPEND]
-          }
-        })
-      }
-
-      Object.assign(parsedExtension, {
-        [$APPEND]: input[$APPEND].map(element =>
-          parseAttributeClonedInput(attribute.elements, element, {
-            ...options,
-            parseExtension: parseReferenceExtension
-          })
-        )
-      })
-    }
-
-    if (hasPrependOperation(input)) {
-      if (!isArray(input[$PREPEND])) {
-        throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-          message: `Prepended values of array attribute ${attribute.path} should be listed in an array`,
-          path: attribute.path,
-          payload: {
-            received: input[$PREPEND]
-          }
-        })
-      }
-
-      Object.assign(parsedExtension, {
-        [$PREPEND]: input[$PREPEND].map(element =>
-          parseAttributeClonedInput(attribute.elements, element, {
-            ...options,
-            parseExtension: parseReferenceExtension
-          })
-        )
-      })
-    }
-
     return {
       isExtension: true,
-      parsedExtension
+      parsedExtension: [...Array(maxUpdatedIndex + 1).keys()].map(index => parsedExtension[index])
     }
   }
 
