@@ -717,7 +717,11 @@ describe('update', () => {
   })
 
   it('performs a delete operation on set', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -726,11 +730,15 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) DELETE #test_string_set_type :test_string_set_type, #test_number_set_type :test_number_set_type'
-    )
+    expect(UpdateExpression).toContain('DELETE #d1 :d1, #d2 :d2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#d1': 'test_string_set',
+      '#d2': 'test_number_set'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':d1': new Set(['1', '2', '3']),
+      ':d2': new Set([1, 2, 3])
+    })
   })
 
   it('rejects an invalid delete operation', () => {
