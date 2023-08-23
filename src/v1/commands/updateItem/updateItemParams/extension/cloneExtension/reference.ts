@@ -3,10 +3,10 @@ import cloneDeep from 'lodash.clonedeep'
 import type { ExtensionCloner } from 'v1/validation/cloneInputAndAddDefaults/types'
 import type { ReferenceExtension } from 'v1/commands/types'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
-import { $GET } from 'v1/commands/updateItem/constants'
 import { isArray } from 'v1/utils/validation/isArray'
 
-import { hasGetOperation } from '../utils'
+import { $GET } from 'v1/commands/updateItem/constants'
+import { hasGetOperation } from 'v1/commands/updateItem/utils'
 
 export const cloneReferenceExtension: ExtensionCloner<ReferenceExtension> = (
   attribute,

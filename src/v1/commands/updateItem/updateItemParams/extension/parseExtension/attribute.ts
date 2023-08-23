@@ -1,10 +1,11 @@
 import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import type { PrimitiveAttribute } from 'v1/schema'
-import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $REMOVE } from 'v1/commands/updateItem/constants'
 
-import { hasGetOperation } from '../utils'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $REMOVE } from 'v1/commands/updateItem/constants'
+import { hasGetOperation } from 'v1/commands/updateItem/utils'
+
 import { parseNumberExtension } from './number'
 import { parseSetExtension } from './set'
 import { parseListExtension } from './list'

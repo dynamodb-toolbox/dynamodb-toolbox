@@ -2,11 +2,11 @@ import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
+import { parseCondition } from 'v1/commands/expression/condition/parse'
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
 import { parseMetricsOption } from 'v1/commands/utils/parseOptions/parseMetricsOption'
 import { parseReturnValuesOption } from 'v1/commands/utils/parseOptions/parseReturnValuesOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
-import { parseCondition } from 'v1/commands/utils/parseCondition'
 
 import { putItemCommandReturnValuesOptionsSet, PutItemOptions } from '../options'
 

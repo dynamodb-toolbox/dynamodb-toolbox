@@ -5,12 +5,16 @@ import type {
   AttributeCloningOptions,
   ExtensionCloner
 } from 'v1/validation/cloneInputAndAddDefaults/types'
-import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
-import { $SUM, $SUBTRACT, $ADD } from 'v1/commands/updateItem/constants'
 import { isArray } from 'v1/utils/validation/isArray'
 
-import { hasSumOperation, hasSubtractOperation, hasAddOperation } from '../utils'
+import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $SUM, $SUBTRACT, $ADD } from 'v1/commands/updateItem/constants'
+import {
+  hasSumOperation,
+  hasSubtractOperation,
+  hasAddOperation
+} from 'v1/commands/updateItem/utils'
 
 export const cloneNumberExtension = (
   attribute: PrimitiveAttribute<'number'>,

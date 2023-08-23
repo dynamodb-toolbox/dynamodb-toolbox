@@ -1,6 +1,7 @@
 import type { ExtensionRenamer } from 'v1/validation/renameSavedAsAttributes/types'
-import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { renameAttributeSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
+
+import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import {
   $SET,
   $REMOVE,
@@ -11,7 +12,6 @@ import {
   $APPEND,
   $PREPEND
 } from 'v1/commands/updateItem/constants'
-
 import {
   hasSetOperation,
   hasGetOperation,
@@ -21,7 +21,8 @@ import {
   hasDeleteOperation,
   hasAppendOperation,
   hasPrependOperation
-} from '../utils'
+} from 'v1/commands/updateItem/utils'
+
 import { renameReferenceExtension } from './reference'
 
 export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> = (
