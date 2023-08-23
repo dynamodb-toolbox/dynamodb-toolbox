@@ -8,7 +8,7 @@ import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOp
 import type { EntityV2 } from 'v1/entity'
 
 import { deleteItemCommandReturnValuesOptionsSet, DeleteItemOptions } from '../options'
-import { parseCondition } from 'v1/commands/utils/parseCondition'
+import { parseCondition } from 'v1/commands/expression/condition/parse'
 
 type CommandOptions = Omit<DeleteCommandInput, 'TableName' | 'Key'>
 

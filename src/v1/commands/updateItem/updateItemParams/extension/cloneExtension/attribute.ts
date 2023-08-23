@@ -1,10 +1,11 @@
 import type { PrimitiveAttribute } from 'v1/schema'
 import type { ExtensionCloner } from 'v1/validation/cloneInputAndAddDefaults/types'
-import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
-import { $SET, $REMOVE } from 'v1/commands/updateItem/constants'
 
-import { hasSetOperation, hasGetOperation } from '../utils'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $SET, $REMOVE } from 'v1/commands/updateItem/constants'
+import { hasSetOperation, hasGetOperation } from 'v1/commands/updateItem/utils'
+
 import { cloneSetExtension } from './set'
 import { cloneListExtension } from './list'
 import { cloneNumberExtension } from './number'

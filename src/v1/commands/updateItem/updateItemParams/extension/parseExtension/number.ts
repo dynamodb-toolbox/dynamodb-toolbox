@@ -1,12 +1,17 @@
 import type { AttributeBasicValue, AttributeValue, PrimitiveAttribute } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
-import { $SUM, $SUBTRACT, $ADD } from 'v1/commands/updateItem/constants'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { hasSumOperation, hasSubtractOperation, hasAddOperation } from '../utils'
+import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $SUM, $SUBTRACT, $ADD } from 'v1/commands/updateItem/constants'
+import {
+  hasSumOperation,
+  hasSubtractOperation,
+  hasAddOperation
+} from 'v1/commands/updateItem/utils'
+
 import { parseReferenceExtension } from './reference'
 
 const ACCEPTABLE_LENGTH_SET = new Set<number>([1, 2])

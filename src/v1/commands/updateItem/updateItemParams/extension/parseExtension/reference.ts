@@ -1,11 +1,11 @@
-import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import type { ReferenceExtension } from 'v1/commands/types'
-import { $GET } from 'v1/commands/updateItem/constants'
+import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import { isArray } from 'v1/utils/validation/isArray'
-import { DynamoDBToolboxError } from 'v1/errors'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
+import { DynamoDBToolboxError } from 'v1/errors'
 
-import { hasGetOperation } from '../utils'
+import { $GET } from 'v1/commands/updateItem/constants'
+import { hasGetOperation } from 'v1/commands/updateItem/utils'
 
 export const parseReferenceExtension: ExtensionParser<ReferenceExtension> = (
   attribute,

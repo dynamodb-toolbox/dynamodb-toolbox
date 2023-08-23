@@ -5,13 +5,13 @@ import type {
   AttributeCloningOptions,
   ExtensionCloner
 } from 'v1/validation/cloneInputAndAddDefaults/types'
-import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
-import { $APPEND, $PREPEND } from 'v1/commands/updateItem/constants'
 import { isArray } from 'v1/utils/validation/isArray'
 import { isObject } from 'v1/utils/validation/isObject'
 
-import { hasAppendOperation, hasPrependOperation } from '../utils'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $APPEND, $PREPEND } from 'v1/commands/updateItem/constants'
+import { hasAppendOperation, hasPrependOperation } from 'v1/commands/updateItem/utils'
 
 export const cloneListExtension = (
   attribute: ListAttribute,

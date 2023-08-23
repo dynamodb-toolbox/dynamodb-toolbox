@@ -1,12 +1,12 @@
 import type { AttributeBasicValue, AttributeValue, RecordAttribute } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { parsePrimitiveAttributeClonedInput } from 'v1/validation/parseClonedInput/primitive'
-import { $SET, $REMOVE } from 'v1/commands/updateItem/constants'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 import { isObject } from 'v1/utils/validation/isObject'
 
-import { hasSetOperation } from '../utils'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $SET, $REMOVE } from 'v1/commands/updateItem/constants'
+import { hasSetOperation } from 'v1/commands/updateItem/utils'
 
 export const parseRecordExtension = (
   attribute: RecordAttribute,
