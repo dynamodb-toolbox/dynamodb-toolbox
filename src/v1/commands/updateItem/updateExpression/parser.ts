@@ -5,8 +5,8 @@ import { isObject } from 'v1/utils/validation/isObject'
 import { isArray } from 'v1/utils/validation/isArray'
 
 import type { UpdateItemInput, UpdateAttributeInput } from '../types'
-import { $REMOVE, $ADD, $DELETE } from '../constants'
-import { hasAddOperation, hasDeleteOperation } from '../utils'
+import { $SET, $REMOVE, $ADD, $DELETE } from '../constants'
+import { hasSetOperation, hasAddOperation, hasDeleteOperation } from '../utils'
 
 import type { ParsedUpdate } from './type'
 import { UpdateExpressionVerbParser } from './verbParser'
@@ -30,6 +30,12 @@ export class UpdateExpressionParser {
     input: UpdateItemInput | UpdateAttributeInput,
     currentPath: (string | number)[] = []
   ): void => {
+    if (hasSetOperation(input)) {
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(' = ')
+      this.set.appendValidAttributeValue(input[$SET])
+    }
+
     if (input === $REMOVE) {
       this.remove.appendValidAttributePath(currentPath)
     }
