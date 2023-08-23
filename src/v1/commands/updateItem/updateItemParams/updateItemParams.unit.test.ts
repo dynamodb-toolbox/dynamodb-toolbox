@@ -42,13 +42,10 @@ const TestEntity = new EntityV2({
   schema: schema({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
-    test_string: string().optional().updateDefault('default string'),
     test_string_coerce: string().optional(),
     count: number().optional().savedAs('test_number'),
-    test_number_default: number().optional().updateDefault(0),
     test_boolean: boolean().optional(),
     test_boolean_coerce: boolean().optional(),
-    test_boolean_default: boolean().optional().updateDefault(false),
     test_list: list(string()).optional(),
     test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
     test_list_coerce: list(any()).optional(),
@@ -60,7 +57,11 @@ const TestEntity = new EntityV2({
     test_binary_set: set(binary()).optional(),
     test_binary: binary(),
     simple_string: string().optional(),
-    test_record: record(string(), number()).optional()
+    test_record: record(string(), number()).optional(),
+    // Put updateDefaulted attributes last to have simpler, ordered assertions
+    test_string: string().optional().updateDefault('default string'),
+    test_number_default: number().optional().updateDefault(0),
+    test_boolean_default: boolean().optional().updateDefault(false)
   }),
   table: TestTable
 })
@@ -762,12 +763,12 @@ describe('update', () => {
 
     expect(UpdateExpression).toContain('ADD #a1 :a1, #a2 :a2')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#a1': 'test_number_default',
-      '#a2': 'test_number_set'
+      '#a1': 'test_number_set',
+      '#a2': 'test_number_default'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':a1': 10,
-      ':a2': new Set([1, 2, 3])
+      ':a1': new Set([1, 2, 3]),
+      ':a2': 10
     })
   })
 
@@ -814,21 +815,16 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4, #s5 = :s5, #s6 = :s6'
-    )
+    expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#s4': 'test_string_set',
-      '#s5': 'test_number_set',
-      '#s6': 'test_binary_set'
+      '#s1': 'test_string_set',
+      '#s2': 'test_number_set',
+      '#s3': 'test_binary_set'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':s4': new Set(['1', '2', '3']),
-      ':s5': new Set([1, 2, 3]),
-      ':s6': new Set([Buffer.from('1'), Buffer.from('2'), Buffer.from('3')])
+      ':s1': new Set(['1', '2', '3']),
+      ':s2': new Set([1, 2, 3]),
+      ':s3': new Set([Buffer.from('1'), Buffer.from('2'), Buffer.from('3')])
     })
   })
 
@@ -885,12 +881,9 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4')
-    expect(ExpressionAttributeNames).toMatchObject({ '#s4': 'test_list' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s4': ['test1', 'test2'] })
+    expect(UpdateExpression).toContain('SET #s1 = :s1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s1': 'test_list' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': ['test1', 'test2'] })
   })
 
   it('rejects references when setting whole list', () => {
@@ -922,20 +915,15 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4[2] = :s4, #s5[1].#s6 = :s5'
-    )
+    expect(UpdateExpression).toContain('SET #s1[2] = :s1, #s2[1].#s3 = :s2')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#s4': 'test_list',
-      '#s5': 'test_list_nested',
-      '#s6': 'value'
+      '#s1': 'test_list',
+      '#s2': 'test_list_nested',
+      '#s3': 'value'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':s4': 'Test2',
-      ':s5': 'foo'
+      ':s1': 'Test2',
+      ':s2': 'foo'
     })
   })
 
@@ -1102,12 +1090,9 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4[2] = :s4')
-    expect(ExpressionAttributeNames).toMatchObject({ '#s4': 'test_list' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s4': 'test' })
+    expect(UpdateExpression).toContain('SET #s1[2] = :s1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s1': 'test_list' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': 'test' })
 
     expect(UpdateExpression).toContain('REMOVE #r1[1]')
     expect(ExpressionAttributeNames).toMatchObject({ '#r1': 'test_list' })
@@ -1360,15 +1345,12 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4.#s5 = :s4')
+    expect(UpdateExpression).toContain('SET #s1.#s2 = :s1')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#s4': 'test_map',
-      '#s5': 'optional'
+      '#s1': 'test_map',
+      '#s2': 'optional'
     })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s4': 1 })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': 1 })
   })
 
   it('removes nested data in a map', () => {
@@ -1516,12 +1498,9 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4')
-    expect(ExpressionAttributeNames).toMatchObject({ '#s4': 'test_map' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s4': { optional: 1 } })
+    expect(UpdateExpression).toContain('SET #s1 = :s1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s1': 'test_map' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': { optional: 1 } })
   })
 
   it('rejects references when setting whole map', () => {
@@ -1571,15 +1550,12 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4.#s5 = :s4')
+    expect(UpdateExpression).toContain('SET #s1.#s2 = :s1')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#s4': 'test_record',
-      '#s5': 'foo'
+      '#s1': 'test_record',
+      '#s2': 'foo'
     })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s4': 1 })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': 1 })
   })
 
   it('removes nested data in a record', () => {
@@ -1727,12 +1703,9 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4')
-    expect(ExpressionAttributeNames).toMatchObject({ '#s4': 'test_record' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s4': { foo: 1 } })
+    expect(UpdateExpression).toContain('SET #s1 = :s1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s1': 'test_record' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': { foo: 1 } })
   })
 
   it('rejects references when setting whole record', () => {
@@ -1798,11 +1771,8 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4.#s5 = :s4')
-    expect(ExpressionAttributeNames).toMatchObject({ '#s4': '_c' })
+    expect(UpdateExpression).toContain('SET #s1.#s2 = :s1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s1': '_c' })
 
     expect(UpdateExpression).toContain('ADD #a1 :a1')
     expect(ExpressionAttributeNames).toMatchObject({ '#a1': 'test_number' })
