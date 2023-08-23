@@ -1,10 +1,10 @@
 import type { ExtensionRenamer } from 'v1/validation/renameSavedAsAttributes/types'
 import type { ReferenceExtension } from 'v1/commands/types'
 import type { AttributeValue } from 'v1/schema'
-import { $GET } from 'v1/commands/updateItem/constants'
 import { renameAttributeSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes/attribute'
 
-import { hasGetOperation } from '../utils'
+import { $GET } from 'v1/commands/updateItem/constants'
+import { hasGetOperation } from 'v1/commands/updateItem/utils'
 
 export const renameReferenceExtension: ExtensionRenamer<ReferenceExtension> = (input, options) => {
   if (!hasGetOperation(input)) {

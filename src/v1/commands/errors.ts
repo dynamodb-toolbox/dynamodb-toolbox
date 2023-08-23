@@ -2,6 +2,7 @@ import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
 import type { GetItemCommandErrorBlueprints } from './getItem/errors'
 import type { CommandUtilsErrorBlueprints } from './utils/errors'
+import type { ExpressionParsersErrorBlueprints } from './expression/errors'
 
 type IncompleteCommandErrorBlueprint = ErrorBlueprint<{
   code: 'commands.incompleteCommand'
@@ -41,3 +42,4 @@ export type CommandsErrorBlueprints =
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
+  | ExpressionParsersErrorBlueprints

@@ -1,14 +1,19 @@
 import type { AttributeBasicValue, AttributeValue, ListAttribute } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
 import { isArray } from 'v1/utils/validation/isArray'
-import { $SET, $REMOVE, $APPEND, $PREPEND } from 'v1/commands/updateItem/constants'
 
-import { hasSetOperation, hasAppendOperation, hasPrependOperation } from '../utils'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $SET, $REMOVE, $APPEND, $PREPEND } from 'v1/commands/updateItem/constants'
+import {
+  hasSetOperation,
+  hasAppendOperation,
+  hasPrependOperation
+} from 'v1/commands/updateItem/utils'
+
 import { parseReferenceExtension } from './reference'
 
 export const parseListExtension = (

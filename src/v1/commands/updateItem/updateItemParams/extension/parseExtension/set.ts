@@ -1,10 +1,10 @@
 import type { AttributeBasicValue, AttributeValue, SetAttribute } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
-import { $ADD, $DELETE } from 'v1/commands/updateItem/constants'
 
-import { hasAddOperation, hasDeleteOperation } from '../utils'
+import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $ADD, $DELETE } from 'v1/commands/updateItem/constants'
+import { hasAddOperation, hasDeleteOperation } from 'v1/commands/updateItem/utils'
 
 export const parseSetExtension = (
   attribute: SetAttribute,
