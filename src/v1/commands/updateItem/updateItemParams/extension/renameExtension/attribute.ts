@@ -43,7 +43,9 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
 
     return {
       isExtension: true,
-      renamedExtension: renameAttributeSavedAsAttributes<never>(input[$SET], restOptions)
+      renamedExtension: {
+        [$SET]: renameAttributeSavedAsAttributes<never>(input[$SET], restOptions)
+      }
     }
   }
 

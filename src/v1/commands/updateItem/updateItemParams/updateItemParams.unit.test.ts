@@ -750,7 +750,11 @@ describe('update', () => {
   })
 
   it('overrides existing list', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -758,11 +762,9 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list[2] = :test_list_2, #test_list[5] = :test_list_5'
-    )
+    expect(UpdateExpression).toContain('SET #s1 = :s1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s1': 'test_list' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': ['test1', 'test2'] })
   })
 
   it('rejects references when setting whole list', () => {
@@ -1316,21 +1318,21 @@ describe('update', () => {
   })
 
   it('override whole map if set is used', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
-        test_map: $set({
-          optional: 1
-        })
+        test_map: $set({ optional: 1 })
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
-    )
+    expect(UpdateExpression).toContain('SET #s1 = :s1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s1': 'test_map' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': { optional: 1 } })
   })
 
   it('rejects references when setting whole map', () => {
@@ -1515,21 +1517,21 @@ describe('update', () => {
   })
 
   it('override whole record if set is used', () => {
-    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
-        test_record: $set({
-          foo: 1
-        })
+        test_record: $set({ foo: 1 })
       })
       .params()
 
-    expect(UpdateExpression).toBe(
-      ''
-      // TODO
-      // 'SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et) REMOVE #test_map.#test_map_prop1, #test_map.#test_map_prop2'
-    )
+    expect(UpdateExpression).toContain('SET #s1 = :s1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s1': 'test_record' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s1': { foo: 1 } })
   })
 
   it('rejects references when setting whole record', () => {
