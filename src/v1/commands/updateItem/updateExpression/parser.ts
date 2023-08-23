@@ -34,28 +34,33 @@ export class UpdateExpressionParser {
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
       this.set.appendValidAttributeValue(input[$SET])
+      return
     }
 
     if (input === $REMOVE) {
       this.remove.appendValidAttributePath(currentPath)
+      return
     }
 
     if (hasAddOperation(input)) {
       this.add.appendValidAttributePath(currentPath)
       this.add.appendToExpression(' ')
       this.add.appendValidAttributeValue(input[$ADD])
+      return
     }
 
     if (hasDeleteOperation(input)) {
       this.delete.appendValidAttributePath(currentPath)
       this.delete.appendToExpression(' ')
       this.delete.appendValidAttributeValue(input[$DELETE])
+      return
     }
 
     if (isObject(input)) {
       for (const [key, value] of Object.entries(input)) {
         this.parseUpdate(value, [...currentPath, key])
       }
+      return
     }
 
     if (isArray(input)) {
@@ -66,7 +71,12 @@ export class UpdateExpressionParser {
 
         this.parseUpdate(element, [...currentPath, index])
       })
+      return
     }
+
+    this.set.appendValidAttributePath(currentPath)
+    this.set.appendToExpression(' = ')
+    this.set.appendValidAttributeValue(input)
   }
 
   toCommandOptions = (): ParsedUpdate => {
