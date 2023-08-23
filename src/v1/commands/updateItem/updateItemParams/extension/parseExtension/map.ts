@@ -1,10 +1,10 @@
 import type { AttributeBasicValue, AttributeValue, MapAttribute } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
-import { $SET } from 'v1/commands/updateItem/constants'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 
-import { hasSetOperation } from '../utils'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $SET } from 'v1/commands/updateItem/constants'
+import { hasSetOperation } from 'v1/commands/updateItem/utils'
 
 export const parseMapExtension = (
   attribute: MapAttribute,

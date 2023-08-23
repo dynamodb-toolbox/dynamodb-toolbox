@@ -4,10 +4,10 @@ import isEmpty from 'lodash.isempty'
 import type { EntityV2 } from 'v1/entity'
 import { renameSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
 import { parsePrimaryKey } from 'v1/commands/utils/parsePrimaryKey'
-import { parseSchemaUpdate } from 'v1/commands/utils/parseUpdate'
 
 import type { UpdateItemInput } from '../types'
 import type { UpdateItemOptions } from '../options'
+import { parseUpdate } from '../updateExpression'
 
 import { parseEntityUpdateCommandInput } from './parseUpdateCommandInput'
 import { parseUpdateItemOptions } from './parseUpdateItemOptions'
@@ -30,7 +30,7 @@ export const updateItemParams = <
     ExpressionAttributeNames: updateExpressionAttributeNames,
     ExpressionAttributeValues: updateExpressionAttributeValues,
     ...update
-  } = parseSchemaUpdate(entity.schema, renamedInput)
+  } = parseUpdate(entity, renamedInput)
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : renamedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)

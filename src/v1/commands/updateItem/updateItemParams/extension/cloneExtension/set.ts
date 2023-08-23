@@ -3,11 +3,11 @@ import type {
   AttributeCloningOptions,
   ExtensionCloner
 } from 'v1/validation/cloneInputAndAddDefaults/types'
-import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
-import { $ADD, $DELETE } from 'v1/commands/updateItem/constants'
 
-import { hasAddOperation, hasDeleteOperation } from '../utils'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import { $ADD, $DELETE } from 'v1/commands/updateItem/constants'
+import { hasAddOperation, hasDeleteOperation } from 'v1/commands/updateItem/utils'
 
 export const cloneSetExtension = (
   attribute: SetAttribute,
