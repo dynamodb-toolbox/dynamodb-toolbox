@@ -1,5 +1,5 @@
 import type { AttributeBasicValue, AttributeValue, SetAttribute } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
+import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
 
 import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
@@ -8,8 +8,7 @@ import { hasAddOperation, hasDeleteOperation } from 'v1/commands/updateItem/util
 
 export const parseSetExtension = (
   attribute: SetAttribute,
-  input: AttributeValue<UpdateItemInputExtension> | undefined,
-  options: ParsingOptions<UpdateItemInputExtension>
+  input: AttributeValue<UpdateItemInputExtension> | undefined
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const hasAdd = hasAddOperation(input)
   const hasDelete = hasDeleteOperation(input)
@@ -17,19 +16,15 @@ export const parseSetExtension = (
   if (hasAdd || hasDelete) {
     const parsedExtension: AttributeValue<ReferenceExtension> = {}
 
-    // Omit parseExtension as $add/$delete means non-extended values
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { parseExtension: _, ...restOptions } = options
-
     if (hasAdd) {
       Object.assign(parsedExtension, {
-        [$ADD]: parseAttributeClonedInput(attribute, input[$ADD], restOptions)
+        [$ADD]: parseAttributeClonedInput(attribute, input[$ADD])
       })
     }
 
     if (hasDelete) {
       Object.assign(parsedExtension, {
-        [$DELETE]: parseAttributeClonedInput(attribute, input[$DELETE], restOptions)
+        [$DELETE]: parseAttributeClonedInput(attribute, input[$DELETE])
       })
     }
 
