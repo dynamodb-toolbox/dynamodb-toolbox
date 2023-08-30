@@ -1,12 +1,9 @@
-import cloneDeep from 'lodash.clonedeep'
-
 import type { AttributeBasicValue, AttributeValue, ListAttribute } from 'v1/schema'
 import type {
   AttributeCloningOptions,
   ExtensionCloner
 } from 'v1/validation/cloneInputAndAddDefaults/types'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
-import { isArray } from 'v1/utils/validation/isArray'
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
@@ -35,21 +32,13 @@ export const cloneListExtension = (
 
     if (hasAppendOperation(input)) {
       Object.assign(clonedExtension, {
-        [$APPEND]: isArray(input[$APPEND])
-          ? input[$APPEND].map(element =>
-              cloneAttributeInputAndAddDefaults(attribute.elements, element, options)
-            )
-          : cloneDeep(input[$APPEND])
+        [$APPEND]: cloneAttributeInputAndAddDefaults(attribute, input[$APPEND], options)
       })
     }
 
     if (hasPrependOperation(input)) {
       Object.assign(clonedExtension, {
-        [$PREPEND]: isArray(input[$PREPEND])
-          ? input[$PREPEND].map(element =>
-              cloneAttributeInputAndAddDefaults(attribute.elements, element, options)
-            )
-          : cloneDeep(input[$PREPEND])
+        [$PREPEND]: cloneAttributeInputAndAddDefaults(attribute, input[$PREPEND], options)
       })
     }
 

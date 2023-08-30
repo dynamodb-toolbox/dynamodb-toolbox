@@ -37,6 +37,7 @@ export const parseAttributeClonedInput = <EXTENSION extends Extension = never>(
     input,
     parsingOptions
   )
+
   if (isExtension) {
     return parsedExtension
   }
