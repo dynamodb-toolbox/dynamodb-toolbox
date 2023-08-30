@@ -453,10 +453,9 @@ describe('update', () => {
     /**
      * @debt test "We get some noise due to update defaults. Use case specific Entity."
      */
-    // TODO
-    expect(UpdateExpressionA).not.toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3 + :s4')
-    expect(ExpressionAttributeNamesA).not.toMatchObject({ '#s3': 'test_number_default' })
-    expect(ExpressionAttributeValuesA).not.toMatchObject({ ':s3': 10, ':s4': 10 })
+    expect(UpdateExpressionA).toContain('SET #s1 = :s1, #s2 = :s2 + :s3')
+    expect(ExpressionAttributeNamesA).toMatchObject({ '#s2': 'test_number_default' })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':s2': 10, ':s3': 10 })
 
     const {
       UpdateExpression: UpdateExpressionB,
@@ -470,17 +469,14 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
     // TODO
-    expect(UpdateExpressionB).not.toContain('SET #s1 = :s1, #s2 = :s2, #s3 = #s4 + :s3')
+    expect(UpdateExpressionB).not.toContain('SET #s1 = :s1, #s2 = #s3 + :s2')
     expect(ExpressionAttributeNamesB).not.toMatchObject({
-      '#s3': 'test_number_default',
+      '#s2': 'test_number_default',
       // TODO: Use a non re-mapped property
-      '#s4': 'test_number'
+      '#s3': 'test_number'
     })
-    expect(ExpressionAttributeValuesB).not.toMatchObject({ ':s3': 10 })
+    expect(ExpressionAttributeValuesB).not.toMatchObject({ ':s2': 10 })
 
     const {
       UpdateExpression: UpdateExpressionC,
@@ -494,19 +490,14 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
     // TODO + Validate that it works
-    expect(UpdateExpressionC).not.toContain(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3 + if_not_exists(#s4, :s4)'
-    )
+    expect(UpdateExpressionC).not.toContain('SET #s1 = :s1, #s2 = :s2 + if_not_exists(#s3, :s3)')
     expect(ExpressionAttributeNamesC).not.toMatchObject({
-      '#s3': 'test_number_default',
+      '#s2': 'test_number_default',
       // TODO: Use a non re-mapped property
-      '#s4': 'test_number'
+      '#s3': 'test_number'
     })
-    expect(ExpressionAttributeValuesC).not.toMatchObject({ ':s4': 10 })
+    expect(ExpressionAttributeValuesC).not.toMatchObject({ ':s2': 10, ':s3': 10 })
 
     const {
       UpdateExpression: UpdateExpressionD,
@@ -520,19 +511,16 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
     // TODO + Validate that it works
     expect(UpdateExpressionD).not.toContain(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = if_not_exists(#s4, :s3) + if_not_exists(#s4, :s4)'
+      'SET #s1 = :s1, #s2 = if_not_exists(#s3, :s2) + if_not_exists(#s3, :s3)'
     )
     expect(ExpressionAttributeNamesD).not.toMatchObject({
-      '#s3': 'test_number_default',
+      '#s2': 'test_number_default',
       // TODO: Use a non re-mapped property
-      '#s4': 'test_number'
+      '#s3': 'test_number'
     })
-    expect(ExpressionAttributeValuesD).not.toMatchObject({ ':s3': 5, ':s4': 10 })
+    expect(ExpressionAttributeValuesD).not.toMatchObject({ ':s2': 5, ':s3': 10 })
   })
 
   it('rejects invalid sum operation', () => {
@@ -608,10 +596,9 @@ describe('update', () => {
     /**
      * @debt test "We get some noise due to update defaults. Use case specific Entity."
      */
-    // TODO
-    expect(UpdateExpressionA).not.toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3 - :s4')
-    expect(ExpressionAttributeNamesA).not.toMatchObject({ '#s3': 'test_number_default' })
-    expect(ExpressionAttributeValuesA).not.toMatchObject({ ':s3': 10, ':s4': 10 })
+    expect(UpdateExpressionA).toContain('SET #s1 = :s1, #s2 = :s2 - :s3')
+    expect(ExpressionAttributeNamesA).toMatchObject({ '#s2': 'test_number_default' })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':s2': 10, ':s3': 10 })
 
     const {
       UpdateExpression: UpdateExpressionB,
@@ -625,17 +612,14 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
     // TODO
-    expect(UpdateExpressionB).not.toContain('SET #s1 = :s1, #s2 = :s2, #s3 = #s4 - :s3')
+    expect(UpdateExpressionB).not.toContain('SET #s1 = :s1, #s2 = #s3 - :s2')
     expect(ExpressionAttributeNamesB).not.toMatchObject({
-      '#s3': 'test_number_default',
+      '#s2': 'test_number_default',
       // TODO: Use a non re-mapped property
-      '#s4': 'test_number'
+      '#s3': 'test_number'
     })
-    expect(ExpressionAttributeValuesB).not.toMatchObject({ ':s3': 10 })
+    expect(ExpressionAttributeValuesB).not.toMatchObject({ ':s2': 10 })
 
     const {
       UpdateExpression: UpdateExpressionC,
@@ -649,19 +633,14 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
     // TODO + Validate that it works
-    expect(UpdateExpressionC).not.toContain(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3 - if_not_exists(#s4, :s4)'
-    )
+    expect(UpdateExpressionC).not.toContain('SET #s1 = :s1, #s2 = :s2 - if_not_exists(#s3, :s3)')
     expect(ExpressionAttributeNamesC).not.toMatchObject({
-      '#s3': 'test_number_default',
+      '#s2': 'test_number_default',
       // TODO: Use a non re-mapped property
-      '#s4': 'test_number'
+      '#s3': 'test_number'
     })
-    expect(ExpressionAttributeValuesC).not.toMatchObject({ ':s4': 10 })
+    expect(ExpressionAttributeValuesC).not.toMatchObject({ ':s3': 10 })
 
     const {
       UpdateExpression: UpdateExpressionD,
@@ -680,14 +659,14 @@ describe('update', () => {
      */
     // TODO + Validate that it works
     expect(UpdateExpressionD).not.toContain(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = if_not_exists(#s4, :s3) - if_not_exists(#s4, :s4)'
+      'SET #s1 = :s1, #s2 = if_not_exists(#s3, :s2) - if_not_exists(#s3, :s3)'
     )
     expect(ExpressionAttributeNamesD).not.toMatchObject({
-      '#s3': 'test_number_default',
+      '#s2': 'test_number_default',
       // TODO: Use a non re-mapped property
-      '#s4': 'test_number'
+      '#s3': 'test_number'
     })
-    expect(ExpressionAttributeValuesD).not.toMatchObject({ ':s3': 5, ':s4': 10 })
+    expect(ExpressionAttributeValuesD).not.toMatchObject({ ':s2': 5, ':s3': 10 })
   })
 
   it('rejects invalid subtract operation', () => {
@@ -1100,9 +1079,9 @@ describe('update', () => {
 
   it('appends data to a list', () => {
     const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
     } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -1111,29 +1090,41 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
+    expect(UpdateExpressionA).toContain('SET #s1 = list_append(#s1, :s1)')
+    expect(ExpressionAttributeNamesA).toMatchObject({ '#s1': 'test_list' })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':s1': ['1', '2', '3'] })
+
+    const {
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: $append($get('test_string'))
+      })
+      .params()
+
     // TODO
-    expect(UpdateExpression).not.toContain(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = list_append(#s4, :s4)'
-    )
-    expect(ExpressionAttributeNames).not.toMatchObject({ '#s4': 'test_list' })
-    expect(ExpressionAttributeValues).not.toMatchObject({ ':s4': ['1', '2', '3'] })
+    expect(UpdateExpressionB).not.toContain('SET #s1 = list_append(#s1, #s2)')
+    expect(ExpressionAttributeNamesB).toMatchObject({ '#s1': 'test_list', '#s2': 'test_string' })
 
-    // TODO: with only one reference
-    // const { UpdateExpression: UpdateExpressionB } = TestEntity.build(UpdateItemCommand)
-    //   .item({
-    //     email: 'test-pk',
-    //     sort: 'test-sk',
-    //     test_list: $append([$get('test_string', '1'), '2', '3'])
-    //   })
-    //   .params()
+    const {
+      UpdateExpression: UpdateExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: $append($get('test_string', ['1', '2', '3']))
+      })
+      .params()
 
-    // expect(UpdateExpressionB).toBe(
-    //   ''
-    //   // TODO
-    // )
+    // TODO
+    expect(UpdateExpressionC).not.toContain('SET #s1 = list_append(#s1, if_not_exists(#s2, :s1))')
+    expect(ExpressionAttributeNamesC).toMatchObject({ '#s1': 'test_list', '#s2': 'test_string' })
+    expect(ExpressionAttributeValuesC).not.toMatchObject({ ':s1': ['1', '2', '3'] })
   })
 
   // TODO I think this case is not possible: To confirm
@@ -1173,7 +1164,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $append([{ value: 'foo' }, $get('invalid_ref')])
+          test_list_nested: $append($get('invalid_ref'))
         })
         .params()
 
@@ -1184,29 +1175,13 @@ describe('update', () => {
     expect(invalidCallB).not.toThrow(
       expect.objectContaining({ code: 'parsing.invalidAttributeInput' })
     )
-
-    const invalidCallC = () =>
-      TestEntity.build(UpdateItemCommand)
-        .item({
-          email: 'test-pk',
-          sort: 'test-sk',
-          /**
-           * @debt type "Find a way to infer narrowly in $get"
-           */
-          // @ts-expect-error 'baz' not assignable to 'bar'
-          test_list_nested: $append([{ value: 'foo' }, $get('email', { value: 'baz' as const })])
-        })
-        .params()
-
-    expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   it('prepends data to a list', () => {
     const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
     } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -1215,24 +1190,41 @@ describe('update', () => {
       })
       .params()
 
-    /**
-     * @debt test "We get some noise due to update defaults. Use case specific Entity."
-     */
-    // TODO
-    expect(UpdateExpression).not.toContain(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = list_append(:s4, #s4)'
-    )
-    expect(ExpressionAttributeNames).not.toMatchObject({ '#s4': 'test_list' })
-    expect(ExpressionAttributeValues).not.toMatchObject({ ':s4': ['a', 'b', 'c'] })
+    expect(UpdateExpressionA).toContain('SET #s1 = list_append(:s1, #s1)')
+    expect(ExpressionAttributeNamesA).toMatchObject({ '#s1': 'test_list' })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':s1': ['a', 'b', 'c'] })
 
-    // TODO: with only one reference
-    // const { UpdateExpression: UpdateExpressionB } = TestEntity.build(UpdateItemCommand)
-    //   .item({
-    //     email: 'test-pk',
-    //     sort: 'test-sk',
-    //     test_list: $prepend([$get('test_string', '1'), '2', '3'])
-    //   })
-    //   .params()
+    const {
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: $prepend($get('test_string'))
+      })
+      .params()
+
+    // TODO
+    expect(UpdateExpressionB).not.toContain('SET #s1 = list_append(#s2, #s1)')
+    expect(ExpressionAttributeNamesB).toMatchObject({ '#s1': 'test_list', '#s2': 'test_string' })
+
+    const {
+      UpdateExpression: UpdateExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_list: $append($get('test_string', ['1', '2', '3']))
+      })
+      .params()
+
+    // TODO
+    expect(UpdateExpressionC).not.toContain('SET #s1 = list_append(if_not_exists(#s2, :s1), #s1)')
+    expect(ExpressionAttributeNamesC).toMatchObject({ '#s1': 'test_list', '#s2': 'test_string' })
+    expect(ExpressionAttributeValuesC).not.toMatchObject({ ':s1': ['1', '2', '3'] })
   })
 
   // TODO I think this case is not possible: To confirm
@@ -1286,7 +1278,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $prepend([{ value: 'foo' }, $get('invalid_ref')])
+          test_list_nested: $prepend($get('invalid_ref'))
         })
         .params()
 
@@ -1297,23 +1289,8 @@ describe('update', () => {
     expect(invalidCallB).not.toThrow(
       expect.objectContaining({ code: 'parsing.invalidAttributeInput' })
     )
-
-    const invalidCallC = () =>
-      TestEntity.build(UpdateItemCommand)
-        .item({
-          email: 'test-pk',
-          sort: 'test-sk',
-          /**
-           * @debt type "Find a way to infer narrowly in $get"
-           */
-          // @ts-expect-error 'baz' not assignable to 'bar'
-          test_list_nested: $prepend([{ value: 'foo' }, $get('email', { value: 'baz' as const })])
-        })
-        .params()
-
-    expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
+
   // TODO: Confirm that this case is possible before going any further
   // it('update, appends & prepends data to a list simulaneously', () => {
   //   const { UpdateExpression } = TestEntity.build(UpdateItemCommand)

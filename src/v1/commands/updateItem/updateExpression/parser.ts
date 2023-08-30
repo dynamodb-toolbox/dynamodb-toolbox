@@ -5,8 +5,16 @@ import { isObject } from 'v1/utils/validation/isObject'
 import { isArray } from 'v1/utils/validation/isArray'
 
 import type { UpdateItemInput, UpdateAttributeInput } from '../types'
-import { $SET, $REMOVE, $ADD, $DELETE } from '../constants'
-import { hasSetOperation, hasAddOperation, hasDeleteOperation } from '../utils'
+import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants'
+import {
+  hasSetOperation,
+  hasSumOperation,
+  hasSubtractOperation,
+  hasAddOperation,
+  hasDeleteOperation,
+  hasAppendOperation,
+  hasPrependOperation
+} from '../utils'
 
 import type { ParsedUpdate } from './type'
 import { UpdateExpressionVerbParser } from './verbParser'
@@ -31,6 +39,7 @@ export class UpdateExpressionParser {
     currentPath: (string | number)[] = []
   ): void => {
     if (hasSetOperation(input)) {
+      this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
       this.set.appendValidAttributeValue(input[$SET])
@@ -38,11 +47,35 @@ export class UpdateExpressionParser {
     }
 
     if (input === $REMOVE) {
+      this.remove.beginNewInstruction()
       this.remove.appendValidAttributePath(currentPath)
       return
     }
 
+    if (hasSumOperation(input)) {
+      const [a, b] = input[$SUM]
+      this.set.beginNewInstruction()
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(' = ')
+      this.set.appendValidAttributeValue(a)
+      this.set.appendToExpression(' + ')
+      this.set.appendValidAttributeValue(b)
+      return
+    }
+
+    if (hasSubtractOperation(input)) {
+      const [a, b] = input[$SUBTRACT]
+      this.set.beginNewInstruction()
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(' = ')
+      this.set.appendValidAttributeValue(a)
+      this.set.appendToExpression(' - ')
+      this.set.appendValidAttributeValue(b)
+      return
+    }
+
     if (hasAddOperation(input)) {
+      this.add.beginNewInstruction()
       this.add.appendValidAttributePath(currentPath)
       this.add.appendToExpression(' ')
       this.add.appendValidAttributeValue(input[$ADD])
@@ -50,9 +83,32 @@ export class UpdateExpressionParser {
     }
 
     if (hasDeleteOperation(input)) {
+      this.delete.beginNewInstruction()
       this.delete.appendValidAttributePath(currentPath)
       this.delete.appendToExpression(' ')
       this.delete.appendValidAttributeValue(input[$DELETE])
+      return
+    }
+
+    if (hasAppendOperation(input)) {
+      this.set.beginNewInstruction()
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(' = list_append(')
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(', ')
+      this.set.appendValidAttributeValue(input[$APPEND])
+      this.set.appendToExpression(')')
+      return
+    }
+
+    if (hasPrependOperation(input)) {
+      this.set.beginNewInstruction()
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(' = list_append(')
+      this.set.appendValidAttributeValue(input[$PREPEND])
+      this.set.appendToExpression(', ')
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(')')
       return
     }
 
@@ -74,6 +130,7 @@ export class UpdateExpressionParser {
       return
     }
 
+    this.set.beginNewInstruction()
     this.set.appendValidAttributePath(currentPath)
     this.set.appendToExpression(' = ')
     this.set.appendValidAttributeValue(input)

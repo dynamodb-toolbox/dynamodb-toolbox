@@ -83,8 +83,8 @@ export type UpdateItemInputExtension =
         | NonVerbal<{ [INDEX in number]: AttributeValue<UpdateItemInputExtension> }>
         | Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension>[] }>
         | Verbal<
-            | { [$APPEND]: AttributeValue<UpdateItemInputExtension>[] }
-            | { [$PREPEND]: AttributeValue<UpdateItemInputExtension>[] }
+            | { [$APPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
+            | { [$PREPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
             // TODO: CONCAT to join two unrelated lists
           >
     }
@@ -279,38 +279,33 @@ export type UpdateAttributeInput<
                 >
               | SET<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]>
               | APPEND<
-                  (
-                    | // Not using Reference<...> for improved type display
-                    GET<
-                        [
-                          ref: ATTRIBUTE_PATH,
-                          fallback?:
-                            | AttributePutItemInput<
-                                ATTRIBUTE['elements'],
-                                REQUIRE_INDEPENDENT_DEFAULTS
-                              >
-                            | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
-                        ]
-                      >
-                    | AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
-                  )[]
+                  // Not using Reference<...> for improved type display
+                  | GET<
+                      [
+                        ref: ATTRIBUTE_PATH,
+                        fallback?:
+                          | AttributePutItemInput<
+                              ATTRIBUTE['elements'],
+                              REQUIRE_INDEPENDENT_DEFAULTS
+                            >[]
+                          | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+                      ]
+                    >
+                  | AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
                 >
               | PREPEND<
-                  (
-                    | // Not using Reference<...> for improved type display
-                    GET<
-                        [
-                          ref: ATTRIBUTE_PATH,
-                          fallback?:
-                            | AttributePutItemInput<
-                                ATTRIBUTE['elements'],
-                                REQUIRE_INDEPENDENT_DEFAULTS
-                              >
-                            | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
-                        ]
-                      >
-                    | AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>
-                  )[]
+                  | GET<
+                      [
+                        ref: ATTRIBUTE_PATH,
+                        fallback?:
+                          | AttributePutItemInput<
+                              ATTRIBUTE['elements'],
+                              REQUIRE_INDEPENDENT_DEFAULTS
+                            >[]
+                          | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+                      ]
+                    >
+                  | AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
                 >
           : ATTRIBUTE extends MapAttribute
           ?
