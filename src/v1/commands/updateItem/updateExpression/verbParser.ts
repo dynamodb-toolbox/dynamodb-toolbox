@@ -33,11 +33,13 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     this.appendToExpression(`:${this.expressionAttributePrefix}${expressionAttributeValueIndex}`)
   }
 
-  appendValidAttributePath = (validAttributePath: (string | number)[]): void => {
+  beginNewInstruction = () => {
     if (this.expression !== '') {
       this.appendToExpression(', ')
     }
+  }
 
+  appendValidAttributePath = (validAttributePath: (string | number)[]): void => {
     validAttributePath.forEach((pathPart, index) => {
       if (isString(pathPart)) {
         let pathPartIndex = this.expressionAttributeNames.findIndex(value => value === pathPart)

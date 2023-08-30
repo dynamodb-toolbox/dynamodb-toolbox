@@ -36,8 +36,12 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
    * @debt refactor "Maybe we can simply parse a super-extension here, and continue if is(Super)Extension is false. Would be neat."
    */
   if (hasGetOperation(input)) {
+    // Omit parseExtension & requiringOptions for non-extended values
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { parseExtension: _, requiringOptions: __, ...restOptions } = options
+
     return parseReferenceExtension(attribute, input, {
-      ...options,
+      ...restOptions,
       parseExtension: parseReferenceExtension
     })
   }
@@ -47,13 +51,13 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
       /**
        * @debt type "fix this cast"
        */
-      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input, options)
+      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input)
     case 'set':
-      return parseSetExtension(attribute, input, options)
+      return parseSetExtension(attribute, input)
     case 'list':
       return parseListExtension(attribute, input, options)
     case 'map':
-      return parseMapExtension(attribute, input, options)
+      return parseMapExtension(attribute, input)
     case 'record':
       return parseRecordExtension(attribute, input, options)
     default:

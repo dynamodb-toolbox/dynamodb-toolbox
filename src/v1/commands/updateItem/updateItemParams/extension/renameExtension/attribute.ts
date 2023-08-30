@@ -37,7 +37,7 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
   }
 
   if (hasSetOperation(input)) {
-    // Omit parseExtension as $set means non-extended values
+    // Omit renameExtension for non-extended values
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { renameExtension: _, ...restOptions } = options
 
@@ -97,7 +97,7 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
   }
 
   if (hasDeleteOperation(input)) {
-    // Omit parseExtension as $delete means non-extended values
+    // Omit renameExtension for non-extended values
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { renameExtension: _, ...restOptions } = options
 
