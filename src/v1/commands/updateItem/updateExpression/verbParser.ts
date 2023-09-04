@@ -1,8 +1,11 @@
-import type { Schema, Attribute } from 'v1/schema'
+import type { Schema, Attribute, AttributeValue } from 'v1/schema'
 import { isNumber, isString } from 'v1/utils/validation'
 
 import { ExpressionParser, appendAttributePath } from 'v1/commands/expression/expressionParser'
 
+import type { UpdateItemInputExtension } from '../types'
+import { hasGetOperation } from '../utils'
+import { $GET } from '../constants'
 import type { ParsedUpdate } from './type'
 
 export class UpdateExpressionVerbParser implements ExpressionParser {
@@ -63,7 +66,27 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     })
   }
 
-  appendValidAttributeValue = (validAttributeValue: unknown): void => {
+  appendValidAttributeValue = (
+    validAttributeValue: AttributeValue<UpdateItemInputExtension>
+  ): void => {
+    if (hasGetOperation(validAttributeValue)) {
+      const [expression, fallback] = validAttributeValue[$GET]
+
+      if (fallback === undefined) {
+        this.appendAttributePath(expression)
+        return
+      }
+
+      if (fallback !== undefined) {
+        this.appendToExpression('if_not_exists(')
+        this.appendAttributePath(expression)
+        this.appendToExpression(', ')
+        this.appendValidAttributeValue(fallback)
+        this.appendToExpression(')')
+        return
+      }
+    }
+
     const expressionAttributeValueIndex = this.expressionAttributeValues.push(validAttributeValue)
 
     this.appendToExpression(`:${this.expressionAttributePrefix}${expressionAttributeValueIndex}`)

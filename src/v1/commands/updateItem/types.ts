@@ -8,10 +8,15 @@ import type {
   Item,
   AnyAttribute,
   PrimitiveAttribute,
+  PrimitiveAttributeValue,
   SetAttribute,
+  SetAttributeValue,
   ListAttribute,
+  ListAttributeValue,
   MapAttribute,
+  MapAttributeValue,
   RecordAttribute,
+  RecordAttributeValue,
   AnyOfAttribute,
   AtLeastOnce,
   Always,
@@ -64,24 +69,27 @@ export type UpdateItemInputExtension =
       value:
         | Verbal<{ [$ADD]: number }>
         | Verbal<{
-            [$SUM]: [AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>]
+            [$SUM]: [
+              PrimitiveAttributeValue<ReferenceExtension>,
+              PrimitiveAttributeValue<ReferenceExtension>
+            ]
           }>
         | Verbal<{
-            [$SUBTRACT]: [AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>]
+            [$SUBTRACT]: [
+              PrimitiveAttributeValue<ReferenceExtension>,
+              PrimitiveAttributeValue<ReferenceExtension>
+            ]
           }>
     }
   | {
       type: 'set'
-      value: Verbal<
-        | { [$ADD]: AttributeValue<UpdateItemInputExtension> }
-        | { [$DELETE]: AttributeValue<UpdateItemInputExtension> }
-      >
+      value: Verbal<{ [$ADD]: SetAttributeValue } | { [$DELETE]: SetAttributeValue }>
     }
   | {
       type: 'list'
       value:
         | NonVerbal<{ [INDEX in number]: AttributeValue<UpdateItemInputExtension> }>
-        | Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension>[] }>
+        | Verbal<{ [$SET]: ListAttributeValue }>
         | Verbal<
             | { [$APPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
             | { [$PREPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
@@ -90,11 +98,11 @@ export type UpdateItemInputExtension =
     }
   | {
       type: 'map'
-      value: Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension> }>
+      value: Verbal<{ [$SET]: MapAttributeValue }>
     }
   | {
       type: 'record'
-      value: Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension> }>
+      value: Verbal<{ [$SET]: RecordAttributeValue }>
     }
 
 type MustBeDefined<
