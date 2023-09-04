@@ -8,6 +8,7 @@ import type { UpdateItemInput, UpdateAttributeInput } from '../types'
 import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants'
 import {
   hasSetOperation,
+  hasGetOperation,
   hasSumOperation,
   hasSubtractOperation,
   hasAddOperation,
@@ -38,11 +39,23 @@ export class UpdateExpressionParser {
     input: UpdateItemInput | UpdateAttributeInput,
     currentPath: (string | number)[] = []
   ): void => {
+    if (input === undefined) {
+      return
+    }
+
     if (hasSetOperation(input)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
       this.set.appendValidAttributeValue(input[$SET])
+      return
+    }
+
+    if (hasGetOperation(input)) {
+      this.set.beginNewInstruction()
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(' = ')
+      this.set.appendValidAttributeValue(input)
       return
     }
 
@@ -127,6 +140,7 @@ export class UpdateExpressionParser {
 
         this.parseUpdate(element, [...currentPath, index])
       })
+
       return
     }
 
