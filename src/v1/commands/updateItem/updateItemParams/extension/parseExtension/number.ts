@@ -34,7 +34,9 @@ export const parseNumberExtension = (
     const parsedExtension: AttributeValue<UpdateItemInputExtension> = {}
     Object.assign(parsedExtension, {
       [$SUM]: input[$SUM].map(element =>
-        parseAttributeClonedInput(attribute, element, { parseExtension: parseReferenceExtension })
+        parseAttributeClonedInput<ReferenceExtension>(attribute, element, {
+          parseExtension: parseReferenceExtension
+        })
       )
     })
 
@@ -58,7 +60,9 @@ export const parseNumberExtension = (
     const parsedExtension: AttributeValue<UpdateItemInputExtension> = {}
     Object.assign(parsedExtension, {
       [$SUBTRACT]: input[$SUBTRACT].map(element =>
-        parseAttributeClonedInput(attribute, element, { parseExtension: parseReferenceExtension })
+        parseAttributeClonedInput<ReferenceExtension>(attribute, element, {
+          parseExtension: parseReferenceExtension
+        })
       )
     })
 
@@ -68,7 +72,7 @@ export const parseNumberExtension = (
     }
   }
 
-  if (hasAddOperation<ReferenceExtension>(input)) {
+  if (hasAddOperation(input)) {
     const parsedExtension: AttributeValue<UpdateItemInputExtension> = {}
 
     Object.assign(parsedExtension, {

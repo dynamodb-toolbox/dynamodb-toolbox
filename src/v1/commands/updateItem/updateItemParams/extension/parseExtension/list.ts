@@ -1,4 +1,9 @@
-import type { AttributeBasicValue, AttributeValue, ListAttribute } from 'v1/schema'
+import type {
+  AttributeBasicValue,
+  AttributeValue,
+  ListAttribute,
+  ListAttributeBasicValue
+} from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -25,7 +30,10 @@ export const parseListExtension = (
     return {
       isExtension: true,
       parsedExtension: {
-        [$SET]: parseAttributeClonedInput(attribute, input[$SET])
+        /**
+         * @debt type "Maybe this cast can be omitted by clever typing of parseAttributeClonedInput"
+         */
+        [$SET]: parseAttributeClonedInput(attribute, input[$SET]) as ListAttributeBasicValue
       }
     }
   }

@@ -1,4 +1,9 @@
-import type { AttributeBasicValue, AttributeValue, RecordAttribute } from 'v1/schema'
+import type {
+  AttributeBasicValue,
+  AttributeValue,
+  RecordAttribute,
+  RecordAttributeBasicValue
+} from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
 import { parsePrimitiveAttributeClonedInput } from 'v1/validation/parseClonedInput/primitive'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
@@ -17,7 +22,10 @@ export const parseRecordExtension = (
     return {
       isExtension: true,
       parsedExtension: {
-        [$SET]: parseAttributeClonedInput(attribute, input[$SET])
+        /**
+         * @debt type "Maybe this cast can be omitted by clever typing of parseAttributeClonedInput"
+         */
+        [$SET]: parseAttributeClonedInput(attribute, input[$SET]) as RecordAttributeBasicValue
       }
     }
   }

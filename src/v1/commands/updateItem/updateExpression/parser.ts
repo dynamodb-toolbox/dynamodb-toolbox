@@ -4,10 +4,11 @@ import type { Schema, Attribute } from 'v1/schema'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isArray } from 'v1/utils/validation/isArray'
 
-import type { UpdateItemInput, UpdateAttributeInput } from '../types'
+import type { UpdateItemInput, AttributeUpdateItemInput } from '../types'
 import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants'
 import {
   hasSetOperation,
+  hasGetOperation,
   hasSumOperation,
   hasSubtractOperation,
   hasAddOperation,
@@ -35,14 +36,26 @@ export class UpdateExpressionParser {
   }
 
   parseUpdate = (
-    input: UpdateItemInput | UpdateAttributeInput,
+    input: UpdateItemInput | AttributeUpdateItemInput,
     currentPath: (string | number)[] = []
   ): void => {
+    if (input === undefined) {
+      return
+    }
+
     if (hasSetOperation(input)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
       this.set.appendValidAttributeValue(input[$SET])
+      return
+    }
+
+    if (hasGetOperation(input)) {
+      this.set.beginNewInstruction()
+      this.set.appendValidAttributePath(currentPath)
+      this.set.appendToExpression(' = ')
+      this.set.appendValidAttributeValue(input)
       return
     }
 
@@ -127,6 +140,7 @@ export class UpdateExpressionParser {
 
         this.parseUpdate(element, [...currentPath, index])
       })
+
       return
     }
 

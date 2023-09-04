@@ -8,10 +8,15 @@ import type {
   Item,
   AnyAttribute,
   PrimitiveAttribute,
+  PrimitiveAttributeValue,
   SetAttribute,
+  SetAttributeValue,
   ListAttribute,
+  ListAttributeValue,
   MapAttribute,
+  MapAttributeValue,
   RecordAttribute,
+  RecordAttributeValue,
   AnyOfAttribute,
   AtLeastOnce,
   Always,
@@ -21,7 +26,6 @@ import type {
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
 import type { If } from 'v1/types/if'
-import type { AttributePutItemInput } from 'v1/commands/putItem/types'
 import type { SchemaAttributePath } from 'v1/commands/types'
 
 import {
@@ -64,24 +68,27 @@ export type UpdateItemInputExtension =
       value:
         | Verbal<{ [$ADD]: number }>
         | Verbal<{
-            [$SUM]: [AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>]
+            [$SUM]: [
+              PrimitiveAttributeValue<ReferenceExtension>,
+              PrimitiveAttributeValue<ReferenceExtension>
+            ]
           }>
         | Verbal<{
-            [$SUBTRACT]: [AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>]
+            [$SUBTRACT]: [
+              PrimitiveAttributeValue<ReferenceExtension>,
+              PrimitiveAttributeValue<ReferenceExtension>
+            ]
           }>
     }
   | {
       type: 'set'
-      value: Verbal<
-        | { [$ADD]: AttributeValue<UpdateItemInputExtension> }
-        | { [$DELETE]: AttributeValue<UpdateItemInputExtension> }
-      >
+      value: Verbal<{ [$ADD]: SetAttributeValue } | { [$DELETE]: SetAttributeValue }>
     }
   | {
       type: 'list'
       value:
         | NonVerbal<{ [INDEX in number]: AttributeValue<UpdateItemInputExtension> }>
-        | Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension>[] }>
+        | Verbal<{ [$SET]: ListAttributeValue }>
         | Verbal<
             | { [$APPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
             | { [$PREPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
@@ -90,11 +97,11 @@ export type UpdateItemInputExtension =
     }
   | {
       type: 'map'
-      value: Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension> }>
+      value: Verbal<{ [$SET]: MapAttributeValue }>
     }
   | {
       type: 'record'
-      value: Verbal<{ [$SET]: AttributeValue<UpdateItemInputExtension> }>
+      value: Verbal<{ [$SET]: RecordAttributeValue }>
     }
 
 type MustBeDefined<
@@ -137,7 +144,7 @@ export type UpdateItemInput<
   : SCHEMA extends Schema
   ? OptionalizeUndefinableProperties<
       {
-        [KEY in keyof SCHEMA['attributes']]: UpdateAttributeInput<
+        [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
           SCHEMA['attributes'][KEY],
           REQUIRE_INDEPENDENT_DEFAULTS,
           SchemaAttributePath<SCHEMA>
@@ -150,18 +157,44 @@ export type UpdateItemInput<
   ? UpdateItemInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
   : never
 
-export type Reference<
-  ATTRIBUTE extends Attribute,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false,
-  ATTRIBUTE_PATH extends string = string
-> = GET<
+export type Reference<ATTRIBUTE extends Attribute, ATTRIBUTE_PATH extends string = string> = GET<
   [
     ref: ATTRIBUTE_PATH,
-    fallback?:
-      | AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
-      | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+    fallback?: AttributeUpdateItemCompleteInput<ATTRIBUTE> | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
   ]
 >
+
+type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
+  ? AttributeValue | undefined
+  :
+      | (ATTRIBUTE extends { required: Never } ? undefined : never)
+      | (ATTRIBUTE extends AnyAttribute
+          ? unknown
+          : ATTRIBUTE extends PrimitiveAttribute
+          ? ResolvePrimitiveAttribute<ATTRIBUTE>
+          : ATTRIBUTE extends SetAttribute
+          ? Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>
+          : ATTRIBUTE extends ListAttribute
+          ? AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+          : ATTRIBUTE extends MapAttribute
+          ? OptionalizeUndefinableProperties<
+              {
+                [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemCompleteInput<
+                  ATTRIBUTE['attributes'][KEY]
+                >
+              },
+              // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+              O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+            >
+          : ATTRIBUTE extends RecordAttribute
+          ? {
+              [KEY in ResolvePrimitiveAttribute<
+                ATTRIBUTE['keys']
+              >]?: AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>
+            }
+          : ATTRIBUTE extends AnyOfAttribute
+          ? AttributeUpdateItemCompleteInput<ATTRIBUTE['elements'][number]>
+          : never)
 
 /**
  * User input of an UPDATE command for a given Attribute
@@ -170,7 +203,7 @@ export type Reference<
  * @param RequireIndependentDefaults Boolean
  * @return Any
  */
-export type UpdateAttributeInput<
+export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute = Attribute,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false,
   ATTRIBUTE_PATH extends string = string
@@ -184,8 +217,8 @@ export type UpdateAttributeInput<
           [
             ref: ATTRIBUTE_PATH,
             fallback?:
-              | AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>
-              | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+              | AttributeUpdateItemCompleteInput<ATTRIBUTE>
+              | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
           ]
         >
       | (ATTRIBUTE extends AnyAttribute
@@ -202,13 +235,7 @@ export type UpdateAttributeInput<
                           | GET<
                               [
                                 ref: ATTRIBUTE_PATH,
-                                fallback?:
-                                  | number
-                                  | Reference<
-                                      ATTRIBUTE,
-                                      REQUIRE_INDEPENDENT_DEFAULTS,
-                                      ATTRIBUTE_PATH
-                                    >
+                                fallback?: number | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
                               ]
                             >,
                           // Not using Reference<...> for improved type display
@@ -216,13 +243,7 @@ export type UpdateAttributeInput<
                           | GET<
                               [
                                 ref: ATTRIBUTE_PATH,
-                                fallback?:
-                                  | number
-                                  | Reference<
-                                      ATTRIBUTE,
-                                      REQUIRE_INDEPENDENT_DEFAULTS,
-                                      ATTRIBUTE_PATH
-                                    >
+                                fallback?: number | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
                               ]
                             >
                         >
@@ -232,13 +253,7 @@ export type UpdateAttributeInput<
                           | GET<
                               [
                                 ref: ATTRIBUTE_PATH,
-                                fallback?:
-                                  | number
-                                  | Reference<
-                                      ATTRIBUTE,
-                                      REQUIRE_INDEPENDENT_DEFAULTS,
-                                      ATTRIBUTE_PATH
-                                    >
+                                fallback?: number | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
                               ]
                             >,
                           // Not using Reference<...> for improved type display
@@ -246,30 +261,22 @@ export type UpdateAttributeInput<
                           | GET<
                               [
                                 ref: ATTRIBUTE_PATH,
-                                fallback?:
-                                  | number
-                                  | Reference<
-                                      ATTRIBUTE,
-                                      REQUIRE_INDEPENDENT_DEFAULTS,
-                                      ATTRIBUTE_PATH
-                                    >
+                                fallback?: number | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
                               ]
                             >
                         >
                   : never)
           : ATTRIBUTE extends SetAttribute
           ?
-              | Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
-              | ADD<Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>>
-              | DELETE<
-                  Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
-                >
+              | Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>
+              | ADD<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
+              | DELETE<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
           : ATTRIBUTE extends ListAttribute
           ?
               | NonVerbal<
                   {
                     [INDEX in number]?:
-                      | UpdateAttributeInput<
+                      | AttributeUpdateItemInput<
                           ATTRIBUTE['elements'],
                           REQUIRE_INDEPENDENT_DEFAULTS,
                           ATTRIBUTE_PATH
@@ -277,42 +284,36 @@ export type UpdateAttributeInput<
                       | $REMOVE
                   }
                 >
-              | SET<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]>
+              | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]>
               | APPEND<
                   // Not using Reference<...> for improved type display
                   | GET<
                       [
                         ref: ATTRIBUTE_PATH,
                         fallback?:
-                          | AttributePutItemInput<
-                              ATTRIBUTE['elements'],
-                              REQUIRE_INDEPENDENT_DEFAULTS
-                            >[]
-                          | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+                          | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                          | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
                       ]
                     >
-                  | AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+                  | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
                 >
               | PREPEND<
                   | GET<
                       [
                         ref: ATTRIBUTE_PATH,
                         fallback?:
-                          | AttributePutItemInput<
-                              ATTRIBUTE['elements'],
-                              REQUIRE_INDEPENDENT_DEFAULTS
-                            >[]
-                          | Reference<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS, ATTRIBUTE_PATH>
+                          | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                          | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
                       ]
                     >
-                  | AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+                  | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
                 >
           : ATTRIBUTE extends MapAttribute
           ?
               | NonVerbal<
                   OptionalizeUndefinableProperties<
                     {
-                      [KEY in keyof ATTRIBUTE['attributes']]: UpdateAttributeInput<
+                      [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
                         ATTRIBUTE['attributes'][KEY],
                         REQUIRE_INDEPENDENT_DEFAULTS,
                         ATTRIBUTE_PATH
@@ -325,13 +326,13 @@ export type UpdateAttributeInput<
                     >
                   >
                 >
-              | SET<AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>>
+              | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
           : ATTRIBUTE extends RecordAttribute
           ?
               | NonVerbal<
                   {
                     [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
-                      | UpdateAttributeInput<
+                      | AttributeUpdateItemInput<
                           ATTRIBUTE['elements'],
                           REQUIRE_INDEPENDENT_DEFAULTS,
                           ATTRIBUTE_PATH
@@ -339,9 +340,9 @@ export type UpdateAttributeInput<
                       | $REMOVE
                   }
                 >
-              | SET<AttributePutItemInput<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>>
+              | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
           : ATTRIBUTE extends AnyOfAttribute
-          ? UpdateAttributeInput<
+          ? AttributeUpdateItemInput<
               ATTRIBUTE['elements'][number],
               REQUIRE_INDEPENDENT_DEFAULTS,
               ATTRIBUTE_PATH

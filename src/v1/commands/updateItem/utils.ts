@@ -1,4 +1,4 @@
-import type { Attribute, AttributeValue, Extension } from 'v1/schema'
+import type { Attribute, AttributeValue } from 'v1/schema'
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type {
@@ -11,7 +11,6 @@ import type {
   APPEND,
   PREPEND,
   Reference,
-  ReferenceExtension,
   UpdateItemInputExtension
 } from './types'
 import {
@@ -31,11 +30,13 @@ export const $set = <VALUE>(value: VALUE): SET<VALUE> => ({ [$HAS_VERB]: true, [
 
 export const hasSetOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$SET]: AttributeValue } => isObject(input) && $SET in input
+): input is {
+  [$SET]: Extract<AttributeValue<UpdateItemInputExtension>, { [$SET]: unknown }>[$SET]
+} => isObject(input) && $SET in input
 
 export const $get = <
   REFERENCE extends string,
-  FALLBACK extends undefined | AttributeValue | Reference<Attribute, boolean, string> = undefined
+  FALLBACK extends undefined | AttributeValue | Reference<Attribute, string> = undefined
 >(
   reference: REFERENCE,
   fallback?: FALLBACK
@@ -46,7 +47,9 @@ export const $get = <
 
 export const hasGetOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$GET]: AttributeValue<ReferenceExtension> } => isObject(input) && $GET in input
+): input is {
+  [$GET]: Extract<AttributeValue<UpdateItemInputExtension>, { [$GET]: unknown }>[$GET]
+} => isObject(input) && $GET in input
 
 export const $remove = (): $REMOVE => $REMOVE
 
@@ -54,8 +57,9 @@ export const $sum = <A, B>(a: A, b: B): SUM<A, B> => ({ [$HAS_VERB]: true, [$SUM
 
 export const hasSumOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$SUM]: [AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>] } =>
-  isObject(input) && $SUM in input
+): input is {
+  [$SUM]: Extract<AttributeValue<UpdateItemInputExtension>, { [$SUM]: unknown }>[$SUM]
+} => isObject(input) && $SUM in input
 
 export const $subtract = <A, B>(a: A, b: B): SUBTRACT<A, B> => ({
   [$HAS_VERB]: true,
@@ -65,15 +69,19 @@ export const $subtract = <A, B>(a: A, b: B): SUBTRACT<A, B> => ({
 export const hasSubtractOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
 ): input is {
-  [$SUBTRACT]: [AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>]
+  [$SUBTRACT]: Extract<
+    AttributeValue<UpdateItemInputExtension>,
+    { [$SUBTRACT]: unknown }
+  >[$SUBTRACT]
 } => isObject(input) && $SUBTRACT in input
 
 export const $add = <VALUE>(value: VALUE): ADD<VALUE> => ({ [$HAS_VERB]: true, [$ADD]: value })
 
-// Generic needed for divergence between number and set ADDs
-export const hasAddOperation = <EXTENSION extends Extension = never>(
+export const hasAddOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$ADD]: AttributeValue<EXTENSION> } => isObject(input) && $ADD in input
+): input is {
+  [$ADD]: Extract<AttributeValue<UpdateItemInputExtension>, { [$ADD]: unknown }>[$ADD]
+} => isObject(input) && $ADD in input
 
 export const $delete = <VALUE>(value: VALUE): DELETE<VALUE> => ({
   [$HAS_VERB]: true,
@@ -82,7 +90,9 @@ export const $delete = <VALUE>(value: VALUE): DELETE<VALUE> => ({
 
 export const hasDeleteOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$DELETE]: AttributeValue } => isObject(input) && $DELETE in input
+): input is {
+  [$DELETE]: Extract<AttributeValue<UpdateItemInputExtension>, { [$DELETE]: unknown }>[$DELETE]
+} => isObject(input) && $DELETE in input
 
 export const $append = <VALUE>(value: VALUE): APPEND<VALUE> => ({
   [$HAS_VERB]: true,
@@ -91,7 +101,9 @@ export const $append = <VALUE>(value: VALUE): APPEND<VALUE> => ({
 
 export const hasAppendOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$APPEND]: AttributeValue<ReferenceExtension> } => isObject(input) && $APPEND in input
+): input is {
+  [$APPEND]: Extract<AttributeValue<UpdateItemInputExtension>, { [$APPEND]: unknown }>[$APPEND]
+} => isObject(input) && $APPEND in input
 
 export const $prepend = <VALUE>(value: VALUE): PREPEND<VALUE> => ({
   [$HAS_VERB]: true,
@@ -100,5 +112,6 @@ export const $prepend = <VALUE>(value: VALUE): PREPEND<VALUE> => ({
 
 export const hasPrependOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$PREPEND]: AttributeValue<ReferenceExtension> } =>
-  isObject(input) && $PREPEND in input
+): input is {
+  [$PREPEND]: Extract<AttributeValue<UpdateItemInputExtension>, { [$PREPEND]: unknown }>[$PREPEND]
+} => isObject(input) && $PREPEND in input
