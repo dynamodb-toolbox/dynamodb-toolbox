@@ -2,37 +2,37 @@ import { ResolvedPrimitiveAttribute } from '../primitive'
 
 import { RequiredOption } from './requiredOptions'
 
-export const $type = Symbol()
+export const $type = Symbol('$type')
 export type $type = typeof $type
 
-export const $elements = Symbol()
+export const $elements = Symbol('$elements')
 export type $elements = typeof $elements
 
-export const $attributes = Symbol()
+export const $attributes = Symbol('$attributes')
 export type $attributes = typeof $attributes
 
-export const $value = Symbol()
+export const $value = Symbol('$value')
 export type $value = typeof $value
 
-export const $required = Symbol()
+export const $required = Symbol('$required')
 export type $required = typeof $required
 
-export const $hidden = Symbol()
+export const $hidden = Symbol('$hidden')
 export type $hidden = typeof $hidden
 
-export const $keys = Symbol()
+export const $keys = Symbol('$keys')
 export type $keys = typeof $keys
 
-export const $key = Symbol()
+export const $key = Symbol('$key')
 export type $key = typeof $key
 
-export const $defaults = Symbol()
+export const $defaults = Symbol('$defaults')
 export type $defaults = typeof $defaults
 
-export const $enum = Symbol()
+export const $enum = Symbol('$enum')
 export type $enum = typeof $enum
 
-export const $savedAs = Symbol()
+export const $savedAs = Symbol('$savedAs')
 export type $savedAs = typeof $savedAs
 
 export type $AttributeOptionSymbol =
