@@ -1,4 +1,9 @@
-import type { AttributeBasicValue, AttributeValue, MapAttribute } from 'v1/schema'
+import type {
+  AttributeValue,
+  AttributeBasicValue,
+  MapAttribute,
+  MapAttributeBasicValue
+} from 'v1/schema'
 import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 
@@ -14,7 +19,10 @@ export const parseMapExtension = (
     return {
       isExtension: true,
       parsedExtension: {
-        [$SET]: parseAttributeClonedInput(attribute, input[$SET])
+        /**
+         * @debt type "Maybe this cast can be omitted by clever typing of parseAttributeClonedInput"
+         */
+        [$SET]: parseAttributeClonedInput<never>(attribute, input[$SET]) as MapAttributeBasicValue
       }
     }
   }

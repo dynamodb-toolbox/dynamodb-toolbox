@@ -42,6 +42,7 @@ export const renameAttributeSavedAsAttributes = <EXTENSION extends Extension = n
     parsedInput,
     renamingOptions
   )
+
   if (isExtension) {
     return renamedExtension
   }
@@ -54,8 +55,8 @@ export const renameAttributeSavedAsAttributes = <EXTENSION extends Extension = n
 
   if (isObject(basicInput)) {
     return isMapAttributeInput(basicInput)
-      ? renameMapAttributeSavedAsAttributes(basicInput)
-      : renameRecordAttributeSavedAsAttributes(basicInput)
+      ? renameMapAttributeSavedAsAttributes(basicInput, renamingOptions)
+      : renameRecordAttributeSavedAsAttributes(basicInput, renamingOptions)
   }
 
   return basicInput
