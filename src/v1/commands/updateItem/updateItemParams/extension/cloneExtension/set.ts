@@ -14,7 +14,7 @@ export const cloneSetExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: AttributeCloningOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionCloner<UpdateItemInputExtension>> => {
-  const hasAdd = hasAddOperation<never>(input)
+  const hasAdd = hasAddOperation(input)
   const hasDelete = hasDeleteOperation(input)
 
   if (hasAdd || hasDelete) {

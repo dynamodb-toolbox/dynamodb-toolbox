@@ -72,7 +72,7 @@ export const parseNumberExtension = (
     }
   }
 
-  if (hasAddOperation<ReferenceExtension>(input)) {
+  if (hasAddOperation(input)) {
     const parsedExtension: AttributeValue<UpdateItemInputExtension> = {}
 
     Object.assign(parsedExtension, {

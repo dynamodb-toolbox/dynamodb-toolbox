@@ -8,7 +8,7 @@ import type {
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
 import { isArray } from 'v1/utils/validation/isArray'
 
-import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/updateItem/types'
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { $SUM, $SUBTRACT, $ADD } from 'v1/commands/updateItem/constants'
 import {
   hasSumOperation,
@@ -55,7 +55,7 @@ export const cloneNumberExtension = (
     }
   }
 
-  if (hasAddOperation<ReferenceExtension>(input)) {
+  if (hasAddOperation(input)) {
     const clonedExtension: AttributeValue<UpdateItemInputExtension> = {}
 
     Object.assign(clonedExtension, {
