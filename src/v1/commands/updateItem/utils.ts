@@ -35,7 +35,7 @@ export const hasSetOperation = (
 
 export const $get = <
   REFERENCE extends string,
-  FALLBACK extends undefined | AttributeValue | Reference<Attribute, boolean, string> = undefined
+  FALLBACK extends undefined | AttributeValue | Reference<Attribute, string> = undefined
 >(
   reference: REFERENCE,
   fallback?: FALLBACK
