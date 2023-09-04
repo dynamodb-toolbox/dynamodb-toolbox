@@ -31,7 +31,7 @@ export const $set = <VALUE>(value: VALUE): SET<VALUE> => ({ [$HAS_VERB]: true, [
 
 export const hasSetOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$SET]: unknown } => isObject(input) && $SET in input
+): input is { [$SET]: AttributeValue } => isObject(input) && $SET in input
 
 export const $get = <
   REFERENCE extends string,
@@ -46,7 +46,8 @@ export const $get = <
 
 export const hasGetOperation = (
   input: AttributeValue<UpdateItemInputExtension> | undefined
-): input is { [$GET]: unknown } => isObject(input) && $GET in input
+): input is { [$GET]: [string] | [string, AttributeValue<ReferenceExtension>] } =>
+  isObject(input) && $GET in input
 
 export const $remove = (): $REMOVE => $REMOVE
 
