@@ -84,7 +84,7 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
     }
   }
 
-  if (hasAddOperation<ReferenceExtension>(input)) {
+  if (hasAddOperation(input)) {
     return {
       isExtension: true,
       renamedExtension: {
