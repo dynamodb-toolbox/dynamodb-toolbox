@@ -113,7 +113,8 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
 
     const modifiedAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
+      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>,
+      () => string
     > = {
       path: modifiedName,
       type: 'string',
@@ -125,8 +126,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
       defaults: {
         key: undefined,
         put: () => new Date().toISOString(),
-        // TODO: Use () => new Date().toISOString() here
-        update: undefined
+        update: () => new Date().toISOString()
       }
     }
 
