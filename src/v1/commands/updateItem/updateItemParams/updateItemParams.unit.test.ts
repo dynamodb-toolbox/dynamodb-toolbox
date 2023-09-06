@@ -149,16 +149,18 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
 
-    expect(UpdateExpression).toStrictEqual('SET #s1 = :s1, #s2 = :s2, #s3 = :s3')
+    expect(UpdateExpression).toStrictEqual('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4')
     expect(ExpressionAttributeNames).toStrictEqual({
       '#s1': 'test_string',
       '#s2': 'test_number_default',
-      '#s3': 'test_boolean_default'
+      '#s3': 'test_boolean_default',
+      '#s4': '_md'
     })
     expect(ExpressionAttributeValues).toStrictEqual({
       ':s1': 'default string',
       ':s2': 0,
-      ':s3': false
+      ':s3': false,
+      ':s4': expect.any(String)
     })
   })
 
@@ -175,7 +177,7 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpression).toBe('SET #s1 = :s1, #s2 = :s2, #s3 = :s3')
+    expect(UpdateExpression).toContain('SET #s1 = :s1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s1': 'test_string' })
     expect(ExpressionAttributeValues).toMatchObject({ ':s1': 'test string' })
   })
@@ -462,7 +464,6 @@ describe('update', () => {
       })
       .params()
 
-    // TODO: Validate that it works
     expect(UpdateExpressionC).toContain('SET #s1 = :s1, #s2 = :s2 + if_not_exists(#s3, :s3)')
     expect(ExpressionAttributeNamesC).toMatchObject({
       '#s2': 'test_number_default',
@@ -483,7 +484,6 @@ describe('update', () => {
       })
       .params()
 
-    // TODO: Validate that it works
     expect(UpdateExpressionD).toContain(
       'SET #s1 = :s1, #s2 = if_not_exists(#s3, :s2) + if_not_exists(#s4, :s3)'
     )
@@ -603,7 +603,6 @@ describe('update', () => {
       })
       .params()
 
-    // TODO: Validate that it works
     expect(UpdateExpressionC).toContain('SET #s1 = :s1, #s2 = :s2 - if_not_exists(#s3, :s3)')
     expect(ExpressionAttributeNamesC).toMatchObject({
       '#s2': 'test_number_default',
@@ -624,7 +623,6 @@ describe('update', () => {
       })
       .params()
 
-    // TODO: Validate that it works
     expect(UpdateExpressionD).toContain(
       'SET #s1 = :s1, #s2 = if_not_exists(#s3, :s2) - if_not_exists(#s4, :s3)'
     )
@@ -1085,23 +1083,6 @@ describe('update', () => {
     expect(ExpressionAttributeValuesC).toMatchObject({ ':s1': ['1', '2', '3'] })
   })
 
-  // TODO I think this case is not possible: To confirm
-  // it('accepts references while appending data to a list', () => {
-  //   const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
-  //     .item({
-  //       email: 'test-pk',
-  //       sort: 'test-sk',
-  //       test_list: $append([$get('test_string'), '2', '3'])
-  //     })
-  //     .params()
-
-  //   expect(UpdateExpression).toBe(
-  //     ''
-  //     // TODO
-  //     // "SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))"
-  //   )
-  // })
-
   it('rejects invalid appended values', () => {
     const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
@@ -1180,37 +1161,6 @@ describe('update', () => {
     expect(ExpressionAttributeValuesC).toMatchObject({ ':s1': ['1', '2', '3'] })
   })
 
-  // TODO I think this case is not possible: To confirm
-  // it('accepts references while prepending data to a list', () => {
-  //   const { UpdateExpression: UpdateExpressionA } = TestEntity.build(UpdateItemCommand)
-  //     .item({
-  //       email: 'test-pk',
-  //       sort: 'test-sk',
-  //       test_list: $prepend([$get('test_string'), '2', '3'])
-  //     })
-  //     .params()
-
-  //   expect(UpdateExpressionA).toBe(
-  //     ''
-  //     // TODO
-  //     // "SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))"
-  //   )
-
-  //   const { UpdateExpression: UpdateExpressionB } = TestEntity.build(UpdateItemCommand)
-  //     .item({
-  //       email: 'test-pk',
-  //       sort: 'test-sk',
-  //       test_list: $prepend([$get('test_string', '1'), '2', '3'])
-  //     })
-  //     .params()
-
-  //   expect(UpdateExpressionB).toBe(
-  //     ''
-  //     // TODO
-  //     // "SET #test_string = if_not_exists(#test_string,:test_string), #test_number = if_not_exists(#test_number,:test_number), #test_boolean_default = if_not_exists(#test_boolean_default,:test_boolean_default), #_ct = if_not_exists(#_ct,:_ct), #_md = :_md, #_et = if_not_exists(#_et,:_et), #test_list = list_append(if_not_exists(#test_list, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}) ,:test_list), #test_list_coerce = list_append(:test_list_coerce, if_not_exists(#test_list_coerce, :${ATTRIBUTE_VALUES_LIST_DEFAULT_KEY}))"
-  //   )
-  // })
-
   it('rejects invalid prepended values', () => {
     const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
@@ -1240,24 +1190,6 @@ describe('update', () => {
       expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
     )
   })
-
-  // TODO: Confirm that this case is possible before going any further
-  // it('update, appends & prepends data to a list simulaneously', () => {
-  //   const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
-  //     .item({
-  //       email: 'test-pk',
-  //       sort: 'test-sk',
-  //       test_list: {
-  //         // TODO: Create an $update helper just for this case
-  //         // 1: 'a',
-  //         ...$append(['a', 'b', 'c']),
-  //         ...$prepend(['e', 'f', 'g'])
-  //       }
-  //     })
-  //     .params()
-
-  //   expect(UpdateExpression).toContain('SET #s1 = :s1, #s2 = :s2, #s3 = :s3')
-  // })
 
   it('updates nested data in a map', () => {
     const {
