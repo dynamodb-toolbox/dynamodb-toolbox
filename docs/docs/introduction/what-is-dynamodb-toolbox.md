@@ -79,8 +79,7 @@ This library **DOES NOT** create DynamoDB Tables for you. You must create the ta
 ```typescript
 
 // >=v0.8.0
-import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDB, DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 const marshallOptions = {
