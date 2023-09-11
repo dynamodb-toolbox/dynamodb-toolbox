@@ -24,7 +24,7 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
   const options = parsePutItemOptions(entity, putItemOptions)
 
   return {
-    TableName: entity.table.name,
+    TableName: entity.table.getName(),
     Item: { ...renamedInput, ...primaryKey },
     ...options
   }
