@@ -24,7 +24,7 @@ export const getItemParams = <ENTITY extends EntityV2, OPTIONS extends GetItemOp
   const options = parseGetItemOptions(entity, getItemOptions)
 
   return {
-    TableName: entity.table.name,
+    TableName: entity.table.getName(),
     Key: primaryKey,
     ...options
   }

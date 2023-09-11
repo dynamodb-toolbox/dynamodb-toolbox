@@ -1,5 +1,7 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
+import { isString } from 'v1/utils/validation/isString'
+
 import { Key, NarrowKey } from './types'
 
 export class TableV2<
@@ -8,10 +10,12 @@ export class TableV2<
   ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
 > {
   public documentClient: DynamoDBDocumentClient
-  public name: string
+  public name: string | (() => string)
   public partitionKey: PARTITION_KEY
   public sortKey?: SORT_KEY
   public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS
+
+  public getName: () => string
 
   /**
    * Define a Table
@@ -30,7 +34,7 @@ export class TableV2<
     entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS
   }: {
     documentClient: DynamoDBDocumentClient
-    name: string
+    name: string | (() => string)
     partitionKey: NarrowKey<PARTITION_KEY>
     sortKey?: NarrowKey<SORT_KEY>
     entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
@@ -42,5 +46,13 @@ export class TableV2<
       this.sortKey = sortKey
     }
     this.entityAttributeSavedAs = entityAttributeSavedAs
+
+    this.getName = () => {
+      if (isString(this.name)) {
+        return this.name
+      } else {
+        return this.name()
+      }
+    }
   }
 }
