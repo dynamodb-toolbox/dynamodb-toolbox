@@ -44,11 +44,9 @@ type ReturnedAttributes<
 export type PutItemResponse<
   ENTITY extends EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
-> = Promise<
-  O.Merge<
-    Omit<PutCommandOutput, 'Attributes'>,
-    { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
-  >
+> = O.Merge<
+  Omit<PutCommandOutput, 'Attributes'>,
+  { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
 >
 
 export class PutItemCommand<
@@ -89,7 +87,7 @@ export class PutItemCommand<
     return params
   }
 
-  send = async (): PutItemResponse<ENTITY, OPTIONS> => {
+  send = async (): Promise<PutItemResponse<ENTITY, OPTIONS>> => {
     const putItemParams = this.params()
 
     const commandOutput = await this.entity.table.documentClient.send(new PutCommand(putItemParams))
