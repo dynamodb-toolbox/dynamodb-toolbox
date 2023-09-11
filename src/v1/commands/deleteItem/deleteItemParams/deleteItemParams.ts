@@ -27,7 +27,7 @@ export const deleteItemParams = <
   const options = parseDeleteItemOptions(entity, deleteItemOptions)
 
   return {
-    TableName: entity.table.name,
+    TableName: entity.table.getName(),
     Key: primaryKey,
     ...options
   }

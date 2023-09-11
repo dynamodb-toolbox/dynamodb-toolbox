@@ -53,7 +53,7 @@ export const updateItemParams = <
   }
 
   return {
-    TableName: entity.table.name,
+    TableName: entity.table.getName(),
     Key: primaryKey,
     ...update,
     ...options,
