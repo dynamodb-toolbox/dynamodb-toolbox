@@ -44,11 +44,9 @@ type ReturnedAttributes<
 export type UpdateItemResponse<
   ENTITY extends EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
-> = Promise<
-  O.Merge<
-    Omit<UpdateCommandOutput, 'Attributes'>,
-    { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
-  >
+> = O.Merge<
+  Omit<UpdateCommandOutput, 'Attributes'>,
+  { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
 >
 
 export class UpdateItemCommand<
@@ -89,7 +87,7 @@ export class UpdateItemCommand<
     return params
   }
 
-  send = async (): UpdateItemResponse<ENTITY, OPTIONS> => {
+  send = async (): Promise<UpdateItemResponse<ENTITY, OPTIONS>> => {
     const getItemParams = this.params()
 
     const commandOutput = await this.entity.table.documentClient.send(

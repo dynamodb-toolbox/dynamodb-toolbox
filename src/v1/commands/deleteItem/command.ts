@@ -28,11 +28,9 @@ type ReturnedAttributes<
 export type DeleteItemResponse<
   ENTITY extends EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
-> = Promise<
-  O.Merge<
-    Omit<DeleteCommandOutput, 'Attributes'>,
-    { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> | undefined }
-  >
+> = O.Merge<
+  Omit<DeleteCommandOutput, 'Attributes'>,
+  { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> | undefined }
 >
 
 export class DeleteItemCommand<
@@ -69,7 +67,7 @@ export class DeleteItemCommand<
     return params
   }
 
-  send = async (): DeleteItemResponse<ENTITY, OPTIONS> => {
+  send = async (): Promise<DeleteItemResponse<ENTITY, OPTIONS>> => {
     const deleteItemParams = this.params()
 
     const commandOutput = await this.entity.table.documentClient.send(
