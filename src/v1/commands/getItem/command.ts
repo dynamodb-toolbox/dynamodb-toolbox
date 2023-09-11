@@ -13,17 +13,15 @@ import { getItemParams } from './getItemParams'
 export type GetItemResponse<
   ENTITY extends EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
-> = Promise<
-  O.Merge<
-    Omit<GetCommandOutput, 'Item'>,
-    {
-      Item?:
-        | (OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
-            ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'][number] }>
-            : FormattedItem<ENTITY>)
-        | undefined
-    }
-  >
+> = O.Merge<
+  Omit<GetCommandOutput, 'Item'>,
+  {
+    Item?:
+      | (OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
+          ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'][number] }>
+          : FormattedItem<ENTITY>)
+      | undefined
+  }
 >
 
 export class GetItemCommand<
@@ -60,7 +58,7 @@ export class GetItemCommand<
     return params
   }
 
-  send = async (): GetItemResponse<ENTITY, OPTIONS> => {
+  send = async (): Promise<GetItemResponse<ENTITY, OPTIONS>> => {
     const getItemParams = this.params()
 
     const commandOutput = await this.entity.table.documentClient.send(new GetCommand(getItemParams))
