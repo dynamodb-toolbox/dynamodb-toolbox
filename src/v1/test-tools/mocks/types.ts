@@ -1,6 +1,7 @@
 import type { GetItemCommandMock } from './getItemCommand'
 import type { PutItemCommandMock } from './putItemCommand'
 import type { DeleteItemCommandMock } from './deleteItemCommand'
+import type { UpdateItemCommandMock } from './updateItemCommand'
 import type { $commandType } from './constants'
 
 type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
@@ -17,5 +18,6 @@ type CommandMock =
   | typeof GetItemCommandMock
   | typeof PutItemCommandMock
   | typeof DeleteItemCommandMock
+  | typeof UpdateItemCommandMock
 
 export type CommandType = ClassStaticProperties<CommandMock>[$commandType]
