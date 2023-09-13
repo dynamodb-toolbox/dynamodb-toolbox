@@ -14,6 +14,7 @@ import {
 } from 'v1/commands/updateItem'
 import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
 
+import type { CommandClassMocker, CommandClassResults, CommandType } from './types'
 import { GetItemCommandMock } from './getItemCommand'
 import { PutItemCommandMock } from './putItemCommand'
 import { DeleteItemCommandMock } from './deleteItemCommand'
@@ -84,68 +85,11 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
       | UpdateItemCommandClass
   >(
     command: COMMAND_CLASS
-  ): COMMAND_CLASS extends GetItemCommandClass
-    ? CommandMocker<
-        'get',
-        KeyInput<ENTITY>,
-        GetItemOptions<ENTITY>,
-        Partial<GetItemResponse<ENTITY>>
-      >
-    : COMMAND_CLASS extends PutItemCommandClass
-    ? CommandMocker<
-        'put',
-        PutItemInput<ENTITY>,
-        PutItemOptions<ENTITY>,
-        Partial<PutItemResponse<ENTITY>>
-      >
-    : COMMAND_CLASS extends DeleteItemCommandClass
-    ? CommandMocker<
-        'delete',
-        KeyInput<ENTITY>,
-        DeleteItemOptions<ENTITY>,
-        Partial<DeleteItemResponse<ENTITY>>
-      >
-    : COMMAND_CLASS extends UpdateItemCommandClass
-    ? CommandMocker<
-        'update',
-        UpdateItemInput<ENTITY>,
-        UpdateItemOptions<ENTITY>,
-        Partial<UpdateItemResponse<ENTITY>>
-      >
-    : never => {
-    switch (command) {
-      case GetItemCommand:
-        return new CommandMocker<
-          'get',
-          KeyInput<ENTITY>,
-          GetItemOptions<ENTITY>,
-          Partial<GetItemResponse<ENTITY>>
-        >('get', this) as any
-      case PutItemCommand:
-        return new CommandMocker<
-          'put',
-          PutItemInput<ENTITY>,
-          PutItemOptions<ENTITY>,
-          Partial<PutItemResponse<ENTITY>>
-        >('put', this) as any
-      case DeleteItemCommand:
-        return new CommandMocker<
-          'delete',
-          KeyInput<ENTITY>,
-          DeleteItemOptions<ENTITY>,
-          Partial<DeleteItemResponse<ENTITY>>
-        >('delete', this) as any
-      case UpdateItemCommand:
-        return new CommandMocker<
-          'update',
-          UpdateItemInput<ENTITY>,
-          UpdateItemOptions<ENTITY>,
-          Partial<UpdateItemResponse<ENTITY>>
-        >('update', this) as any
-      default:
-        throw new Error(`Unable to mock entity command: ${String(command)}`)
-    }
-  }
+  ): CommandClassMocker<ENTITY, COMMAND_CLASS> =>
+    new CommandMocker<CommandType, any, any, any>(command.commandType, this) as CommandClassMocker<
+      ENTITY,
+      COMMAND_CLASS
+    >
 
   received = <
     COMMAND_CLASS extends
@@ -155,38 +99,8 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
       | UpdateItemCommandClass
   >(
     command: COMMAND_CLASS
-  ): COMMAND_CLASS extends GetItemCommandClass
-    ? CommandResults<'get', KeyInput<ENTITY>, GetItemOptions<ENTITY>>
-    : COMMAND_CLASS extends PutItemCommandClass
-    ? CommandResults<'put', PutItemInput<ENTITY>, PutItemOptions<ENTITY>>
-    : COMMAND_CLASS extends DeleteItemCommandClass
-    ? CommandResults<'delete', KeyInput<ENTITY>, DeleteItemOptions<ENTITY>>
-    : COMMAND_CLASS extends UpdateItemCommandClass
-    ? CommandResults<'update', UpdateItemInput<ENTITY>, UpdateItemOptions<ENTITY>>
-    : never => {
-    switch (command) {
-      case GetItemCommand:
-        return new CommandResults<'get', KeyInput<ENTITY>, GetItemOptions<ENTITY>>(
-          'get',
-          this
-        ) as any
-      case PutItemCommand:
-        return new CommandResults<'put', PutItemInput<ENTITY>, PutItemOptions<ENTITY>>(
-          'put',
-          this
-        ) as any
-      case DeleteItemCommand:
-        return new CommandResults<'delete', KeyInput<ENTITY>, DeleteItemOptions<ENTITY>>(
-          'delete',
-          this
-        ) as any
-      case UpdateItemCommand:
-        return new CommandResults<'update', UpdateItemInput<ENTITY>, UpdateItemOptions<ENTITY>>(
-          'update',
-          this
-        ) as any
-      default:
-        throw new Error(`Unable to mock entity command: ${String(command)}`)
-    }
-  }
+  ): CommandClassResults<ENTITY, COMMAND_CLASS> =>
+    new CommandResults<unknown, unknown>(
+      this[$receivedCommands][command.commandType]
+    ) as CommandClassResults<ENTITY, COMMAND_CLASS>
 }
