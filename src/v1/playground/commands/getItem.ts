@@ -1,13 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { GetItemCommand } from 'v1/commands'
 import { mockEntity } from 'v1/test-tools'
 
 import { UserEntity } from '../entity'
-
-const test = async () => {
-  const test = await UserEntity.build(GetItemCommand).key({ userId: 'foo', age: 41 }).send()
-  console.log('TEST', test)
-}
 
 const mockedEntity = mockEntity(UserEntity)
 
@@ -26,5 +20,23 @@ mockedEntity.on(GetItemCommand).resolve({
   }
 })
 
-test()
-console.log(mockedEntity)
+const test = async () => {
+  const test = await UserEntity.build(GetItemCommand).key({ userId: 'foo', age: 41 }).send()
+  console.log('TEST', test)
+}
+
+const run = async () => {
+  console.log(mockedEntity.received(GetItemCommand).count())
+  console.log(mockedEntity.received(GetItemCommand).allArgs())
+  console.log(mockedEntity.received(GetItemCommand).args(0) ?? '-')
+  await test()
+  console.log(mockedEntity.received(GetItemCommand).count())
+  console.log(mockedEntity.received(GetItemCommand).allArgs())
+  console.log(mockedEntity.received(GetItemCommand).args(0) ?? '-')
+  mockedEntity.reset()
+  console.log(mockedEntity.received(GetItemCommand).count())
+  console.log(mockedEntity.received(GetItemCommand).allArgs())
+  console.log(mockedEntity.received(GetItemCommand).args(0) ?? '-')
+}
+
+void run()
