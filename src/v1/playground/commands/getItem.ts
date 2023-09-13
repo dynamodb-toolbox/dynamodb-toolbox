@@ -10,7 +10,6 @@ const test = async () => {
 }
 
 const mockedEntity = mockEntity(UserEntity)
-console.log(mockedEntity._receivedCommands.get)
 
 mockedEntity.on(GetItemCommand).resolve({
   Item: {
@@ -24,10 +23,8 @@ mockedEntity.on(GetItemCommand).resolve({
       father: 'yo',
       mother: 'ya'
     }
-  },
-  // TODO: Omit $metadata
-  $metadata: {}
+  }
 })
 
 test()
-console.log(mockedEntity._receivedCommands.get)
+console.log(mockedEntity)

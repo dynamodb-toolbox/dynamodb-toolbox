@@ -7,15 +7,22 @@ import type { KeyInput } from 'v1/commands/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
+import {
+  $commandType,
+  $entity,
+  $mockedEntity,
+  $mockedImplementations,
+  $receivedCommands
+} from './constants'
 
 export class GetItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > implements GetItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'get' as const
+  static [$commandType] = 'get' as const
 
-  public entity: ENTITY
-  public mockedEntity: MockedEntity<ENTITY>
+  entity: ENTITY;
+  [$mockedEntity]: MockedEntity<ENTITY>
   _key?: KeyInput<ENTITY>
   key: (nextKey: KeyInput<ENTITY>) => GetItemCommandMock<ENTITY, OPTIONS>
   _options: OPTIONS
@@ -28,13 +35,14 @@ export class GetItemCommandMock<
     key?: KeyInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this.entity = mockedEntity.entity
-    this.mockedEntity = mockedEntity
+    this.entity = mockedEntity[$entity]
+    this[$mockedEntity] = mockedEntity
     this._key = key
     this._options = options
 
-    this.key = nextKey => new GetItemCommandMock(this.mockedEntity, nextKey, this._options)
-    this.options = nextOptions => new GetItemCommandMock(this.mockedEntity, this._key, nextOptions)
+    this.key = nextKey => new GetItemCommandMock(this[$mockedEntity], nextKey, this._options)
+    this.options = nextOptions =>
+      new GetItemCommandMock(this[$mockedEntity], this._key, nextOptions)
   }
 
   params = (): GetCommandInput => {
@@ -49,9 +57,9 @@ export class GetItemCommandMock<
   }
 
   send = async (): Promise<GetItemResponse<ENTITY, OPTIONS>> => {
-    this.mockedEntity._receivedCommands.get.push([this._key, this._options])
+    this[$mockedEntity][$receivedCommands].get.push([this._key, this._options])
 
-    const implementation = this.mockedEntity._mockedImplementations.get
+    const implementation = this[$mockedEntity][$mockedImplementations].get
 
     if (implementation !== undefined) {
       if (!this._key) {
