@@ -1,6 +1,7 @@
 import { isString } from 'v1/utils/validation/isString'
 
 import type { CommandType } from './types'
+import { $commandType, $mockedEntity, $mockedImplementations } from './constants'
 
 // NOTE: Those types come from @aws-sdk
 interface Error {
@@ -30,10 +31,9 @@ interface AwsError
 }
 
 export class CommandMocker<COMMAND_TYPE extends CommandType, INPUT, OPTIONS, RESPONSE> {
-  // TODO: Use symbols for private properties
-  public commandType: COMMAND_TYPE
-  public mockedEntity: {
-    _mockedImplementations: Partial<
+  [$commandType]: COMMAND_TYPE;
+  [$mockedEntity]: {
+    [$mockedImplementations]: Partial<
       Record<COMMAND_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
     >
   }
@@ -49,21 +49,21 @@ export class CommandMocker<COMMAND_TYPE extends CommandType, INPUT, OPTIONS, RES
   constructor(
     commandType: COMMAND_TYPE,
     mockedEntity: {
-      _mockedImplementations: Partial<
+      [$mockedImplementations]: Partial<
         Record<COMMAND_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
       >
     }
   ) {
-    this.commandType = commandType
-    this.mockedEntity = mockedEntity
+    this[$commandType] = commandType
+    this[$mockedEntity] = mockedEntity
 
     this.resolve = response => {
-      this.mockedEntity._mockedImplementations[this.commandType] = () => response
+      this[$mockedEntity][$mockedImplementations][this[$commandType]] = () => response
       return this
     }
 
     this.reject = error => {
-      this.mockedEntity._mockedImplementations[this.commandType] = () => {
+      this[$mockedEntity][$mockedImplementations][this[$commandType]] = () => {
         if (error === undefined || isString(error)) {
           throw new Error(error)
         } else {
@@ -75,7 +75,7 @@ export class CommandMocker<COMMAND_TYPE extends CommandType, INPUT, OPTIONS, RES
     }
 
     this.mockImplementation = implementation => {
-      this.mockedEntity._mockedImplementations[this.commandType] = implementation
+      this[$mockedEntity][$mockedImplementations][this[$commandType]] = implementation
 
       return this
     }

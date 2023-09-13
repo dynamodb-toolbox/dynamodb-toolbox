@@ -1,5 +1,6 @@
 import type { GetItemCommandMock } from './getItemCommand'
 import type { PutItemCommandMock } from './putItemCommand'
+import type { $commandType } from './constants'
 
 type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
   ? {
@@ -13,4 +14,4 @@ type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
 
 type CommandMock = typeof GetItemCommandMock | typeof PutItemCommandMock
 
-export type CommandType = ClassStaticProperties<CommandMock>['commandType']
+export type CommandType = ClassStaticProperties<CommandMock>[$commandType]

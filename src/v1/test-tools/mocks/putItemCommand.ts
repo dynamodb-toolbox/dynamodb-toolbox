@@ -6,15 +6,22 @@ import { putItemParams } from 'v1/commands/putItem/putItemParams'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
+import {
+  $commandType,
+  $entity,
+  $mockedEntity,
+  $mockedImplementations,
+  $receivedCommands
+} from './constants'
 
 export class PutItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > implements PutItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'put' as const
+  static [$commandType] = 'put' as const
 
-  public entity: ENTITY
-  public mockedEntity: MockedEntity<ENTITY>
+  entity: ENTITY;
+  [$mockedEntity]: MockedEntity<ENTITY>
   _item?: PutItemInput<ENTITY, false>
   item: (nextItem: PutItemInput<ENTITY, false>) => PutItemCommandMock<ENTITY, OPTIONS>
   _options: OPTIONS
@@ -27,13 +34,14 @@ export class PutItemCommandMock<
     item?: PutItemInput<ENTITY, false>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this.entity = mockedEntity.entity
-    this.mockedEntity = mockedEntity
+    this.entity = mockedEntity[$entity]
+    this[$mockedEntity] = mockedEntity
     this._item = item
     this._options = options
 
-    this.item = nextItem => new PutItemCommandMock(this.mockedEntity, nextItem, this._options)
-    this.options = nextOptions => new PutItemCommandMock(this.mockedEntity, this._item, nextOptions)
+    this.item = nextItem => new PutItemCommandMock(this[$mockedEntity], nextItem, this._options)
+    this.options = nextOptions =>
+      new PutItemCommandMock(this[$mockedEntity], this._item, nextOptions)
   }
 
   params = (): PutCommandInput => {
@@ -48,9 +56,9 @@ export class PutItemCommandMock<
   }
 
   send = async (): Promise<PutItemResponse<ENTITY, OPTIONS>> => {
-    this.mockedEntity._receivedCommands.put.push([this._item, this._options])
+    this[$mockedEntity][$receivedCommands].put.push([this._item, this._options])
 
-    const implementation = this.mockedEntity._mockedImplementations.put
+    const implementation = this[$mockedEntity][$mockedImplementations].put
 
     if (implementation !== undefined) {
       if (!this._item) {
