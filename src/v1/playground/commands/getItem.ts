@@ -1,16 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { GetItemCommand } from 'v1/commands'
 import { mockEntity } from 'v1/test-tools'
 
 import { UserEntity } from '../entity'
 
-const test = async () => {
-  const test = await UserEntity.build(GetItemCommand).key({ userId: 'foo', age: 41 }).send()
-  console.log('TEST', test)
-}
-
 const mockedEntity = mockEntity(UserEntity)
-console.log(mockedEntity._receivedCommands.get)
 
 mockedEntity.on(GetItemCommand).resolve({
   Item: {
@@ -24,10 +17,26 @@ mockedEntity.on(GetItemCommand).resolve({
       father: 'yo',
       mother: 'ya'
     }
-  },
-  // TODO: Omit $metadata
-  $metadata: {}
+  }
 })
 
-test()
-console.log(mockedEntity._receivedCommands.get)
+const test = async () => {
+  const test = await UserEntity.build(GetItemCommand).key({ userId: 'foo', age: 41 }).send()
+  console.log('TEST', test)
+}
+
+const run = async () => {
+  console.log(mockedEntity.received(GetItemCommand).count())
+  console.log(mockedEntity.received(GetItemCommand).allArgs())
+  console.log(mockedEntity.received(GetItemCommand).args(0) ?? '-')
+  await test()
+  console.log(mockedEntity.received(GetItemCommand).count())
+  console.log(mockedEntity.received(GetItemCommand).allArgs())
+  console.log(mockedEntity.received(GetItemCommand).args(0) ?? '-')
+  mockedEntity.reset()
+  console.log(mockedEntity.received(GetItemCommand).count())
+  console.log(mockedEntity.received(GetItemCommand).allArgs())
+  console.log(mockedEntity.received(GetItemCommand).args(0) ?? '-')
+}
+
+void run()

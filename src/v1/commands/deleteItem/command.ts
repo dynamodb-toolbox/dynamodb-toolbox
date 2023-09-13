@@ -59,7 +59,7 @@ export class DeleteItemCommand<
   params = (): DeleteCommandInput => {
     if (!this._key) {
       throw new DynamoDBToolboxError('commands.incompleteCommand', {
-        message: 'GetItemCommand incomplete: Missing "key" property'
+        message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }
     const params = deleteItemParams(this.entity, this._key, this._options)
