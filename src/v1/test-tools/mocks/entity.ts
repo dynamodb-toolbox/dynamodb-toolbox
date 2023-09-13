@@ -5,11 +5,12 @@ import type { GetItemCommandClass } from 'v1/commands/getItem/command'
 import { PutItemCommand, PutItemInput, PutItemOptions, PutItemResponse } from 'v1/commands/putItem'
 import type { PutItemCommandClass } from 'v1/commands/putItem/command'
 
-import type { CommandType } from './types'
 import { GetItemCommandMock } from './getItemCommand'
 import { PutItemCommandMock } from './putItemCommand'
 import { CommandMocker } from './commandMocker'
+import { CommandResults } from './commandResults'
 import { $entity, $mockedImplementations, $receivedCommands } from './constants'
+
 export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
   [$entity]: ENTITY;
 
@@ -17,7 +18,10 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
     get: (key: KeyInput<ENTITY>, options?: GetItemOptions<ENTITY>) => GetItemResponse<ENTITY>
     put: (item: PutItemInput<ENTITY>, options?: PutItemOptions<ENTITY>) => PutItemResponse<ENTITY>
   }>;
-  [$receivedCommands]: Record<CommandType, unknown[][]>
+  [$receivedCommands]: {
+    get: [input?: KeyInput<ENTITY>, options?: GetItemOptions<ENTITY>][]
+    put: [input?: PutItemInput<ENTITY>, options?: PutItemOptions<ENTITY>][]
+  }
   reset: () => void
 
   constructor(entity: ENTITY) {
@@ -77,6 +81,29 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
           PutItemOptions<ENTITY>,
           Partial<PutItemResponse<ENTITY>>
         >('put', this) as any
+      default:
+        throw new Error(`Unable to mock entity command: ${String(command)}`)
+    }
+  }
+
+  received = <COMMAND_CLASS extends GetItemCommandClass | PutItemCommandClass>(
+    command: COMMAND_CLASS
+  ): COMMAND_CLASS extends GetItemCommandClass
+    ? CommandResults<'get', KeyInput<ENTITY>, GetItemOptions<ENTITY>>
+    : COMMAND_CLASS extends PutItemCommandClass
+    ? CommandResults<'put', PutItemInput<ENTITY>, PutItemOptions<ENTITY>>
+    : never => {
+    switch (command) {
+      case GetItemCommand:
+        return new CommandResults<'get', KeyInput<ENTITY>, GetItemOptions<ENTITY>>(
+          'get',
+          this
+        ) as any
+      case PutItemCommand:
+        return new CommandResults<'put', PutItemInput<ENTITY>, PutItemOptions<ENTITY>>(
+          'put',
+          this
+        ) as any
       default:
         throw new Error(`Unable to mock entity command: ${String(command)}`)
     }
