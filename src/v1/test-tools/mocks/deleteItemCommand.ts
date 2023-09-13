@@ -68,7 +68,10 @@ export class DeleteItemCommandMock<
         })
       }
 
-      return implementation(this._key, this._options)
+      return (implementation(this._key, this._options) as unknown) as DeleteItemResponse<
+        ENTITY,
+        OPTIONS
+      >
     }
 
     return new DeleteItemCommand(this.entity, this._key, this._options).send()
