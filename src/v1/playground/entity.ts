@@ -34,7 +34,7 @@ export const UserEntity = new EntityV2({
     someSet: set(string().enum('foo', 'bar')).optional(),
 
     // Primitive
-    completeName: string().putDefault(ComputedDefault),
+    completeName: string().putDefault(ComputedDefault).updateDefault(ComputedDefault),
 
     // Maps
     defaultedMap: map({
@@ -77,7 +77,14 @@ export const UserEntity = new EntityV2({
       .putDefault(ComputedDefault)
   }),
 
-  computedDefaults: {
+  updateDefaults: {
+    completeName: ({ firstName, lastName }) =>
+      typeof firstName === 'string' && typeof lastName === 'string'
+        ? `${firstName} ${lastName}`
+        : undefined
+  },
+
+  putDefaults: {
     completeName: item => item.firstName + item.lastName,
 
     // MAPS

@@ -18,7 +18,7 @@ export type ExtensionCloner<EXTENSION extends Extension> = (
 
 export type SchemaCloningOptions<EXTENSION extends Extension> = {
   commandName?: CommandName
-  computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer }
+  computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer<EXTENSION> }
 } & If<
   HasExtension<EXTENSION>,
   { cloneExtension: ExtensionCloner<EXTENSION> },
