@@ -1,6 +1,8 @@
 import type { AttributeValue, Extension, UndefinedAttrExtension } from 'v1/schema'
 
-export type SchemaDefaultsComputer = undefined | Record<string, AttributeDefaultsComputer>
+export type SchemaDefaultsComputer<EXTENSION extends Extension = never> =
+  | undefined
+  | Record<string, AttributeDefaultsComputer<EXTENSION>>
 
 export type AttributeDefaultsComputer<EXTENSION extends Extension = never> =
   | undefined

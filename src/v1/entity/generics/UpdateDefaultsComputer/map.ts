@@ -1,17 +1,19 @@
 import type { ComputedDefault, MapAttribute } from 'v1/schema'
 import type { OmitUndefinedProperties } from 'v1/types'
-import type { AttributePutItemInput } from 'v1/commands/putItem/types'
+import type { AttributeUpdateItemInput } from 'v1/commands/updateItem/types'
 
-import type { AttributePutDefaultsComputer } from './attribute'
+import type { AttributeUpdateDefaultsComputer } from './attribute'
 
-export type MapAttributePutDefaultsComputer<
+export type MapAttributeUpdateDefaultsComputer<
   MAP_ATTRIBUTE extends MapAttribute,
   CONTEXT_INPUTS extends any[],
+  SCHEMA_ATTRIBUTE_PATHS extends string,
   ATTRIBUTES_DEFAULT_COMPUTERS = OmitUndefinedProperties<
     {
-      [KEY in keyof MAP_ATTRIBUTE['attributes']]: AttributePutDefaultsComputer<
+      [KEY in keyof MAP_ATTRIBUTE['attributes']]: AttributeUpdateDefaultsComputer<
         MAP_ATTRIBUTE['attributes'][KEY],
-        [AttributePutItemInput<MAP_ATTRIBUTE, true>, ...CONTEXT_INPUTS]
+        [AttributeUpdateItemInput<MAP_ATTRIBUTE, true, SCHEMA_ATTRIBUTE_PATHS>, ...CONTEXT_INPUTS],
+        SCHEMA_ATTRIBUTE_PATHS
       >
     }
   >,
@@ -21,8 +23,10 @@ export type MapAttributePutDefaultsComputer<
       : {
           [KEY in keyof ATTRIBUTES_DEFAULT_COMPUTERS]: ATTRIBUTES_DEFAULT_COMPUTERS[KEY]
         }
-    _map: MAP_ATTRIBUTE extends { defaults: { put: ComputedDefault } }
-      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<MAP_ATTRIBUTE>
+    _map: MAP_ATTRIBUTE extends { defaults: { update: ComputedDefault } }
+      ? (
+          ...contextInputs: CONTEXT_INPUTS
+        ) => AttributeUpdateItemInput<MAP_ATTRIBUTE, false, SCHEMA_ATTRIBUTE_PATHS>
       : undefined
   }>
 > = keyof MAP_ATTRIBUTE_DEFAULT_COMPUTER extends never
