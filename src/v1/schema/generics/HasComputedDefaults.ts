@@ -8,22 +8,27 @@ import type {
 } from '../attributes'
 
 /**
- * Wether an Item or Attribute has a default value that needs to be computed (recursive)
+ * Wether an Schema or Attribute has a default value that needs to be computed (recursive)
  *
- * @param Schema Item | Attribute
+ * @param SCHEMA Schema | Attribute
+ * @param VERB "put" | "update"
  * @return Boolean
  */
-export type HasComputedDefaults<SCHEMA extends Schema | Attribute> = SCHEMA extends {
+export type HasComputedDefaults<
+  SCHEMA extends Schema | Attribute,
+  VERB extends 'put' | 'update'
+> = SCHEMA extends {
   // TODO: Use defaults from get/update etc...
-  defaults: { put: ComputedDefault }
+  defaults: { [verb in VERB]: ComputedDefault }
 }
   ? true
   : SCHEMA extends SetAttribute | ListAttribute
-  ? HasComputedDefaults<SCHEMA['elements']>
+  ? HasComputedDefaults<SCHEMA['elements'], VERB>
   : SCHEMA extends MapAttribute | Schema
   ? true extends {
       [ATTRIBUTE_NAME in keyof SCHEMA['attributes']]: HasComputedDefaults<
-        SCHEMA['attributes'][ATTRIBUTE_NAME]
+        SCHEMA['attributes'][ATTRIBUTE_NAME],
+        VERB
       >
     }[keyof SCHEMA['attributes']]
     ? true

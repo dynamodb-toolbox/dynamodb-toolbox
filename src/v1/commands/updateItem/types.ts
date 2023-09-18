@@ -157,10 +157,15 @@ export type UpdateItemInput<
   ? UpdateItemInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
   : never
 
-export type Reference<ATTRIBUTE extends Attribute, ATTRIBUTE_PATH extends string = string> = GET<
+export type Reference<
+  ATTRIBUTE extends Attribute,
+  SCHEMA_ATTRIBUTE_PATHS extends string = string
+> = GET<
   [
-    ref: ATTRIBUTE_PATH,
-    fallback?: AttributeUpdateItemCompleteInput<ATTRIBUTE> | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
+    ref: SCHEMA_ATTRIBUTE_PATHS,
+    fallback?:
+      | AttributeUpdateItemCompleteInput<ATTRIBUTE>
+      | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
   ]
 >
 
@@ -206,7 +211,7 @@ type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute e
 export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute = Attribute,
   REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false,
-  ATTRIBUTE_PATH extends string = string
+  SCHEMA_ATTRIBUTE_PATHS extends string = string
 > = Attribute extends ATTRIBUTE
   ? AttributeValue<UpdateItemInputExtension> | undefined
   :
@@ -215,10 +220,10 @@ export type AttributeUpdateItemInput<
       // Not using Reference<...> for improved type display
       | GET<
           [
-            ref: ATTRIBUTE_PATH,
+            ref: SCHEMA_ATTRIBUTE_PATHS,
             fallback?:
               | AttributeUpdateItemCompleteInput<ATTRIBUTE>
-              | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
+              | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
           ]
         >
       | (ATTRIBUTE extends AnyAttribute
@@ -234,16 +239,16 @@ export type AttributeUpdateItemInput<
                           | number
                           | GET<
                               [
-                                ref: ATTRIBUTE_PATH,
-                                fallback?: number | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
+                                ref: SCHEMA_ATTRIBUTE_PATHS,
+                                fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                               ]
                             >,
                           // Not using Reference<...> for improved type display
                           | number
                           | GET<
                               [
-                                ref: ATTRIBUTE_PATH,
-                                fallback?: number | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
+                                ref: SCHEMA_ATTRIBUTE_PATHS,
+                                fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                               ]
                             >
                         >
@@ -252,16 +257,16 @@ export type AttributeUpdateItemInput<
                           | number
                           | GET<
                               [
-                                ref: ATTRIBUTE_PATH,
-                                fallback?: number | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
+                                ref: SCHEMA_ATTRIBUTE_PATHS,
+                                fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                               ]
                             >,
                           // Not using Reference<...> for improved type display
                           | number
                           | GET<
                               [
-                                ref: ATTRIBUTE_PATH,
-                                fallback?: number | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
+                                ref: SCHEMA_ATTRIBUTE_PATHS,
+                                fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                               ]
                             >
                         >
@@ -279,7 +284,7 @@ export type AttributeUpdateItemInput<
                       | AttributeUpdateItemInput<
                           ATTRIBUTE['elements'],
                           REQUIRE_INDEPENDENT_DEFAULTS,
-                          ATTRIBUTE_PATH
+                          SCHEMA_ATTRIBUTE_PATHS
                         >
                       | $REMOVE
                   }
@@ -289,10 +294,10 @@ export type AttributeUpdateItemInput<
                   // Not using Reference<...> for improved type display
                   | GET<
                       [
-                        ref: ATTRIBUTE_PATH,
+                        ref: SCHEMA_ATTRIBUTE_PATHS,
                         fallback?:
                           | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
-                          | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
+                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >
                   | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
@@ -300,10 +305,10 @@ export type AttributeUpdateItemInput<
               | PREPEND<
                   | GET<
                       [
-                        ref: ATTRIBUTE_PATH,
+                        ref: SCHEMA_ATTRIBUTE_PATHS,
                         fallback?:
                           | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
-                          | Reference<ATTRIBUTE, ATTRIBUTE_PATH>
+                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >
                   | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
@@ -316,7 +321,7 @@ export type AttributeUpdateItemInput<
                       [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
                         ATTRIBUTE['attributes'][KEY],
                         REQUIRE_INDEPENDENT_DEFAULTS,
-                        ATTRIBUTE_PATH
+                        SCHEMA_ATTRIBUTE_PATHS
                       >
                     },
                     // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
@@ -335,7 +340,7 @@ export type AttributeUpdateItemInput<
                       | AttributeUpdateItemInput<
                           ATTRIBUTE['elements'],
                           REQUIRE_INDEPENDENT_DEFAULTS,
-                          ATTRIBUTE_PATH
+                          SCHEMA_ATTRIBUTE_PATHS
                         >
                       | $REMOVE
                   }
@@ -345,6 +350,6 @@ export type AttributeUpdateItemInput<
           ? AttributeUpdateItemInput<
               ATTRIBUTE['elements'][number],
               REQUIRE_INDEPENDENT_DEFAULTS,
-              ATTRIBUTE_PATH
+              SCHEMA_ATTRIBUTE_PATHS
             >
           : never)

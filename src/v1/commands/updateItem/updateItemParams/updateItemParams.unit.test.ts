@@ -61,8 +61,12 @@ const TestEntity = new EntityV2({
     // Put updateDefaulted attributes last to have simpler, ordered assertions
     test_string: string().optional().updateDefault('default string'),
     test_number_default: number().optional().updateDefault(0),
-    test_boolean_default: boolean().optional().updateDefault(false)
+    test_boolean_default: boolean().optional().updateDefault(false),
+    simple_string_copy: string().optional().updateDefault(ComputedDefault)
   }),
+  updateDefaults: {
+    simple_string_copy: ({ simple_string }) => simple_string ?? 'NOTHING_TO_COPY'
+  },
   table: TestTable
 })
 
@@ -88,7 +92,7 @@ const TestEntity2 = new EntityV2({
       // TODO: use unknown
       .default(() => '')
   }),
-  computedDefaults: {
+  putDefaults: {
     sort: ({ test_composite, test_composite2 }) =>
       test_composite && test_composite2 && [test_composite, test_composite2].join('#')
   },
@@ -149,18 +153,22 @@ describe('update', () => {
     expect(TableName).toBe('test-table')
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
 
-    expect(UpdateExpression).toStrictEqual('SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4')
+    expect(UpdateExpression).toStrictEqual(
+      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4, #s5 = :s5'
+    )
     expect(ExpressionAttributeNames).toStrictEqual({
       '#s1': 'test_string',
       '#s2': 'test_number_default',
       '#s3': 'test_boolean_default',
-      '#s4': '_md'
+      '#s4': 'simple_string_copy',
+      '#s5': '_md'
     })
     expect(ExpressionAttributeValues).toStrictEqual({
       ':s1': 'default string',
       ':s2': 0,
       ':s3': false,
-      ':s4': expect.any(String)
+      ':s4': 'NOTHING_TO_COPY',
+      ':s5': expect.any(String)
     })
   })
 

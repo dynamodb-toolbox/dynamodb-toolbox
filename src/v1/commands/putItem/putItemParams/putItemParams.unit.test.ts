@@ -71,7 +71,7 @@ const TestEntity2 = new EntityV2({
     test_composite: string().optional(),
     test_composite2: string().optional()
   }),
-  computedDefaults: {
+  putDefaults: {
     sort: ({ test_composite, test_composite2 }) =>
       test_composite && test_composite2 && [test_composite, test_composite2].join('#')
   },
