@@ -11,7 +11,7 @@ const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 export const parseEntityPutCommandInput: EntityPutCommandInputParser = (entity, input) => {
   const clonedInputWithDefaults = cloneSchemaInputAndAddDefaults(entity.schema, input, {
     commandName: 'put',
-    computeDefaultsContext: { computeDefaults: entity.computedDefaults }
+    computeDefaultsContext: { computeDefaults: entity.putDefaults }
   })
 
   return parseSchemaClonedInput(entity.schema, clonedInputWithDefaults, { requiringOptions })

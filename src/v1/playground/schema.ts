@@ -66,7 +66,7 @@ const playgroundSchema2 = schema({
 })
 
 type PlaygroundSchema2FormattedItem = FormattedAttribute<typeof playgroundSchema2>
-type PlaygroundSchema2HasComputedDefault = HasComputedDefaults<typeof playgroundSchema3>
+type PlaygroundSchema2HasComputedDefault = HasComputedDefaults<typeof playgroundSchema3, 'put'>
 type PlaygroundSchema2PutItemInput = PutItemInput<typeof playgroundSchema2>
 type PlaygroundSchema2PutItemInputWithDefaults = PutItemInput<typeof playgroundSchema2, true>
 
@@ -83,4 +83,4 @@ const playgroundSchema3 = schema({
 
 type PlaygroundSchema3SavedItem = SavedItem<typeof playgroundSchema3>
 type PlaygroundSchema3KeyInput = KeyInput<typeof playgroundSchema3>
-type PlaygroundSchema3HasComputedDefault = HasComputedDefaults<typeof playgroundSchema3>
+type PlaygroundSchema3HasComputedDefault = HasComputedDefaults<typeof playgroundSchema3, 'put'>

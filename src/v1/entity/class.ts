@@ -6,7 +6,7 @@ import type {
   DeleteItemCommand,
   UpdateItemCommand
 } from 'v1/commands'
-import type { KeyInput } from 'v1/commands/types'
+import type { KeyInput, UpdateItemInputExtension } from 'v1/commands/types'
 import type { PutItemCommandClass } from 'v1/commands/putItem/command'
 import type { GetItemCommandClass } from 'v1/commands/getItem/command'
 import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
@@ -15,7 +15,12 @@ import type { CommandClass } from 'v1/commands/class'
 import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { NeedsKeyCompute, SchemaPutDefaultsComputer, SchemaDefaultsComputer } from './generics'
+import type {
+  NeedsKeyCompute,
+  SchemaDefaultsComputer,
+  SchemaPutDefaultsComputer,
+  SchemaUpdateDefaultsComputer
+} from './generics'
 import {
   TimestampsOptions,
   TimestampsDefaultOptions,
@@ -33,10 +38,14 @@ export class EntityV2<
   TIMESTAMPS_OPTIONS extends TimestampsOptions = string extends NAME
     ? TimestampsOptions
     : TimestampsDefaultOptions,
-  PUT_DEFAULTS_COMPUTER = Schema extends SCHEMA
+  PUT_DEFAULTS_COMPUTER = string extends NAME
     ? SchemaDefaultsComputer
     : SchemaPutDefaultsComputer<SCHEMA>,
-  CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER
+  CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER,
+  UPDATE_DEFAULTS_COMPUTER = string extends NAME
+    ? SchemaDefaultsComputer<UpdateItemInputExtension>
+    : SchemaUpdateDefaultsComputer<SCHEMA>,
+  CONSTRUCTOR_UPDATE_DEFAULTS_COMPUTER extends UPDATE_DEFAULTS_COMPUTER = UPDATE_DEFAULTS_COMPUTER
 > {
   public type: 'entity'
   public name: NAME
@@ -54,7 +63,8 @@ export class EntityV2<
   public computeKey?: (
     keyInput: Schema extends SCHEMA ? any : KeyInput<SCHEMA>
   ) => PrimaryKey<TABLE>
-  public computedDefaults?: SchemaDefaultsComputer
+  public putDefaults?: SchemaDefaultsComputer
+  public updateDefaults?: SchemaDefaultsComputer<UpdateItemInputExtension>
   // TODO: Maybe there's a way not to have to list all commands here
   // (use COMMAND_CLASS somehow) but I haven't found it yet
   public build: <COMMAND_CLASS extends typeof CommandClass = typeof CommandClass>(
@@ -78,7 +88,7 @@ export class EntityV2<
    * @param table Table
    * @param schema Schema
    * @param computeKey _(optional)_ Transforms key input to primary key
-   * @param computedDefaults _(optional)_ Computes computed defaults
+   * @param putDefaults _(optional)_ Computes computed defaults
    * @param timestamps _(optional)_ Activates internal `created` & `modified` attributes (defaults to `true`)
    * @param entityAttributeName _(optional)_ Renames internal entity name string attribute (defaults to `entity`)
    */
@@ -87,7 +97,8 @@ export class EntityV2<
     table,
     schema,
     computeKey,
-    computedDefaults,
+    putDefaults,
+    updateDefaults,
     entityAttributeName = 'entity' as ENTITY_ATTRIBUTE_NAME,
     timestamps = true as NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   }: {
@@ -102,9 +113,12 @@ export class EntityV2<
     { computeKey?: undefined }
   > &
     // Weirdly using If here triggers an infinite type recursion error
-    (HasComputedDefaults<SCHEMA> extends true
-      ? { computedDefaults: CONSTRUCTOR_PUT_DEFAULTS_COMPUTER }
-      : { computedDefaults?: undefined })) {
+    (HasComputedDefaults<SCHEMA, 'put'> extends true
+      ? { putDefaults: CONSTRUCTOR_PUT_DEFAULTS_COMPUTER }
+      : { putDefaults?: undefined }) &
+    (HasComputedDefaults<SCHEMA, 'update'> extends true
+      ? { updateDefaults: CONSTRUCTOR_UPDATE_DEFAULTS_COMPUTER }
+      : { updateDefaults?: undefined })) {
     this.type = 'entity'
     this.name = name
     this.table = table
@@ -126,7 +140,8 @@ export class EntityV2<
     })
 
     this.computeKey = computeKey as any
-    this.computedDefaults = computedDefaults as SchemaDefaultsComputer
+    this.putDefaults = putDefaults as any
+    this.updateDefaults = updateDefaults as any
     this.build = commandClass => new commandClass(this) as any
   }
 }
