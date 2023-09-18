@@ -1,4 +1,4 @@
-import type { MapAttribute, PossiblyUndefinedAttributeValue } from 'v1/schema'
+import type { MapAttribute, AttributeValue, MapAttributeValue } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -8,21 +8,21 @@ import { matchProjection } from './utils'
 
 export const parseSavedMapAttribute = (
   mapAttribute: MapAttribute,
-  value: PossiblyUndefinedAttributeValue,
+  savedMap: AttributeValue,
   { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
-): PossiblyUndefinedAttributeValue => {
-  if (!isObject(value)) {
+): MapAttributeValue => {
+  if (!isObject(savedMap)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
       message: `Invalid attribute in saved item: ${mapAttribute.path}. Should be a ${mapAttribute.type}`,
       path: mapAttribute.path,
       payload: {
-        received: value,
+        received: savedMap,
         expected: mapAttribute.type
       }
     })
   }
 
-  const formattedMap: PossiblyUndefinedAttributeValue = {}
+  const formattedMap: MapAttributeValue = {}
 
   Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
     if (attribute.hidden) {
@@ -40,7 +40,7 @@ export const parseSavedMapAttribute = (
 
     const attributeSavedAs = attribute.savedAs ?? attributeName
 
-    const formattedAttribute = parseSavedAttribute(attribute, value[attributeSavedAs], {
+    const formattedAttribute = parseSavedAttribute(attribute, savedMap[attributeSavedAs], {
       projectedAttributes: childrenAttributes,
       ...restOptions
     })

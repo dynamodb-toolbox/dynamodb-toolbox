@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { Attribute, RequiredOption, PossiblyUndefinedAttributeValue } from 'v1/schema'
+import type { Attribute, RequiredOption, AttributeValue } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { FormatSavedAttributeOptions } from './types'
@@ -18,10 +18,10 @@ export const isRequired = (attribute: Attribute): boolean =>
 
 export const parseSavedAttribute = (
   attribute: Attribute,
-  value: PossiblyUndefinedAttributeValue,
+  savedValue: AttributeValue | undefined,
   options: FormatSavedAttributeOptions = {}
-): PossiblyUndefinedAttributeValue => {
-  if (value === undefined) {
+): AttributeValue | undefined => {
+  if (savedValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
       throw new DynamoDBToolboxError('commands.formatSavedItem.savedAttributeRequired', {
         message: `Missing required attribute in saved item: ${attribute.path}`,
@@ -34,21 +34,21 @@ export const parseSavedAttribute = (
 
   switch (attribute.type) {
     case 'any':
-      return cloneDeep(value)
+      return cloneDeep(savedValue) as AttributeValue
     case 'string':
     case 'binary':
     case 'boolean':
     case 'number':
-      return parseSavedPrimitiveAttribute(attribute, value)
+      return parseSavedPrimitiveAttribute(attribute, savedValue)
     case 'set':
-      return parseSavedSetAttribute(attribute, value)
+      return parseSavedSetAttribute(attribute, savedValue)
     case 'list':
-      return parseSavedListAttribute(attribute, value, options)
+      return parseSavedListAttribute(attribute, savedValue, options)
     case 'map':
-      return parseSavedMapAttribute(attribute, value, options)
+      return parseSavedMapAttribute(attribute, savedValue, options)
     case 'record':
-      return parseSavedRecordAttribute(attribute, value, options)
+      return parseSavedRecordAttribute(attribute, savedValue, options)
     case 'anyOf':
-      return parseSavedAnyOfAttribute(attribute, value, options)
+      return parseSavedAnyOfAttribute(attribute, savedValue, options)
   }
 }

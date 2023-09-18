@@ -1,4 +1,4 @@
-import type { PossiblyUndefinedAttributeValue, ListAttribute } from 'v1/schema'
+import type { ListAttribute, AttributeValue, ListAttributeValue } from 'v1/schema'
 import { isArray } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -8,15 +8,15 @@ import { matchProjection } from './utils'
 
 export const parseSavedListAttribute = (
   listAttribute: ListAttribute,
-  value: PossiblyUndefinedAttributeValue,
+  savedList: AttributeValue,
   { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
-): PossiblyUndefinedAttributeValue => {
-  if (!isArray(value)) {
+): ListAttributeValue => {
+  if (!isArray(savedList)) {
     throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
       message: `Invalid attribute in saved item: ${listAttribute.path}. Should be a ${listAttribute.type}`,
       path: listAttribute.path,
       payload: {
-        received: value,
+        received: savedList,
         expected: listAttribute.type
       }
     })
@@ -28,14 +28,16 @@ export const parseSavedListAttribute = (
   // - Either projection is nested => childrenAttributes defined
   const { childrenAttributes } = matchProjection(/\[\d+\]/, projectedAttributes)
 
-  const parsedValues: PossiblyUndefinedAttributeValue = []
-  for (const valueElement of value) {
-    parsedValues.push(
-      parseSavedAttribute(listAttribute.elements, valueElement, {
-        projectedAttributes: childrenAttributes,
-        ...restOptions
-      })
-    )
+  const parsedValues: ListAttributeValue = []
+  for (const savedElement of savedList) {
+    const parsedElement = parseSavedAttribute(listAttribute.elements, savedElement, {
+      projectedAttributes: childrenAttributes,
+      ...restOptions
+    })
+
+    if (parsedElement !== undefined) {
+      parsedValues.push(parsedElement)
+    }
   }
 
   return parsedValues
