@@ -113,7 +113,3 @@ export type AttributeBasicValue<EXTENSION extends Extension = never> =
   | RecordAttributeBasicValue<EXTENSION>
 
 export type UndefinedAttrExtension = { type: '*'; value: undefined }
-
-export type PossiblyUndefinedAttributeValue = AttributeValue<UndefinedAttrExtension>
-
-export type PossiblyUndefinedItem = Item<UndefinedAttrExtension>
