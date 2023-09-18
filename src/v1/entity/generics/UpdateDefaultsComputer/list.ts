@@ -1,19 +1,23 @@
 import type { ComputedDefault, ListAttribute } from 'v1/schema'
 import type { OmitUndefinedProperties } from 'v1/types'
-import type { AttributePutItemInput } from 'v1/commands/putItem/types'
+import type { AttributeUpdateItemInput } from 'v1/commands/updateItem/types'
 
-import type { AttributePutDefaultsComputer } from './attribute'
+import type { AttributeUpdateDefaultsComputer } from './attribute'
 
-export type ListAttributePutDefaultsComputer<
+export type ListAttributeUpdateDefaultsComputer<
   LIST_ATTRIBUTE extends ListAttribute,
   CONTEXT_INPUTS extends any[],
-  ELEMENTS_DEFAULT_COMPUTER = AttributePutDefaultsComputer<
+  SCHEMA_ATTRIBUTE_PATHS extends string = string,
+  ELEMENTS_DEFAULT_COMPUTER = AttributeUpdateDefaultsComputer<
     LIST_ATTRIBUTE['elements'],
-    [number, ...CONTEXT_INPUTS]
+    [number, ...CONTEXT_INPUTS],
+    SCHEMA_ATTRIBUTE_PATHS
   >,
   LIST_ATTRIBUTE_DEFAULT_COMPUTER = OmitUndefinedProperties<{
-    _list: LIST_ATTRIBUTE extends { defaults: { put: ComputedDefault } }
-      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<LIST_ATTRIBUTE>
+    _list: LIST_ATTRIBUTE extends { defaults: { update: ComputedDefault } }
+      ? (
+          ...contextInputs: CONTEXT_INPUTS
+        ) => AttributeUpdateItemInput<LIST_ATTRIBUTE, false, SCHEMA_ATTRIBUTE_PATHS>
       : undefined
     _elements: ELEMENTS_DEFAULT_COMPUTER extends undefined
       ? undefined

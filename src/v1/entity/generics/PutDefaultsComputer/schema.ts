@@ -1,6 +1,6 @@
 import type { Schema } from 'v1/schema'
 import type { OmitUndefinedProperties } from 'v1/types'
-import type { PutItemInput } from 'v1/commands/types'
+import type { PutItemInput } from 'v1/commands/putItem/types'
 
 import type { AttributePutDefaultsComputer } from './attribute'
 
