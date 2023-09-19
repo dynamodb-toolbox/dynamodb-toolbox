@@ -226,13 +226,13 @@ describe('parse', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'bigint',
-      test_bigint: { value: '90071992547409911234' },
+      test_bigint: { value: '99999999999999999999999999999999999999' },
       test_bigint_coerce: '12345'
     })
     expect(item).toMatchInlineSnapshot(`
       {
         "email": "test@test.com",
-        "test_bigint": 90071992547409911234n,
+        "test_bigint": 99999999999999999999999999999999999999n,
         "test_bigint_coerce": 12345n,
         "test_type": "bigint",
       }
