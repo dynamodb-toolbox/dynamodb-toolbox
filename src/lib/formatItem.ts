@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-import type { NativeAttributeValue, NumberValue } from '@aws-sdk/util-dynamodb'
+import type { NativeAttributeValue, NativeScalarAttributeValue, NumberValue } from '@aws-sdk/util-dynamodb'
 import type { PureAttributeDefinition } from '../classes/Entity'
 import validateTypes from './validateTypes'
 import type { Linked } from './parseEntity'
@@ -19,9 +19,9 @@ const convertDynamoValues = (value: NativeAttributeValue, attr?: PureAttributeDe
   // Unwrap bigint/number sets to regular numbers/bigints
   if (attr && attr.type === 'set') {
     if (attr.setType === 'bigint') {
-      value = Array.from(value as Set<bigint>).map((n: any) => BigInt(unwrapNumberValue(n)))
+      value = Array.from(value as Set<bigint>).map((n: any) => BigInt(unwrapAttributeValue(n)))
     } else if (attr.setType === 'number') {
-      value = Array.from(value as Set<number>).map((n: any) => Number(unwrapNumberValue(n)))
+      value = Array.from(value as Set<number>).map((n: any) => Number(unwrapAttributeValue(n)))
     } else {
       value = Array.from(value as Set<unknown>)
     }
@@ -29,21 +29,21 @@ const convertDynamoValues = (value: NativeAttributeValue, attr?: PureAttributeDe
 
   // Convert non wrapped number values to bigints
   if (attr && attr.type === 'bigint') {
-    value = BigInt(unwrapNumberValue(value))
+    value = BigInt(unwrapAttributeValue(value))
   }
   if (attr && attr.type === 'number') {
-    value = Number(unwrapNumberValue(value))
+    value = Number(unwrapAttributeValue(value))
   }
 
   return value
 }
 
-const unwrapNumberValue = (value: number | NumberValue): number => {
-  if (typeof value === 'number') {
-    return value
+const unwrapAttributeValue = (value: NativeAttributeValue):  boolean | number | bigint | string => {
+  if( value?.value !== undefined ) {
+    return value.value
   }
 
-  return Number(value.value)
+  return value
 }
 
 // Format item based on attribute defnition

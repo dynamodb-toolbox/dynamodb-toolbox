@@ -206,7 +206,8 @@ describe('parse', () => {
 
   it('parses wrapped numbers', () => {
     const wrap = (value: number) =>
-      unmarshall({ valueToUnmarshall: {N: value.toString()} }, { wrapNumbers: true }).valueToUnmarshall.value
+      unmarshall({ valueToUnmarshall: { N: value.toString() } }, { wrapNumbers: true })
+        .valueToUnmarshall.value
 
     const item = TestEntity.parse({
       pk: 'test@test.com',
@@ -226,15 +227,17 @@ describe('parse', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'bigint',
-      test_bigint: {value:'90071992547409911234'},
+      test_bigint: { value: '90071992547409911234' },
       test_bigint_coerce: '12345'
     })
-    expect(item).toEqual({
-      email: 'test@test.com',
-      test_type: 'bigint',
-      test_bigint: BigInt('90071992547409911234'),
-      test_bigint_coerce: BigInt('12345')
-    })
+    expect(item).toMatchInlineSnapshot(`
+      {
+        "email": "test@test.com",
+        "test_bigint": 90071992547409911234n,
+        "test_bigint_coerce": 12345n,
+        "test_type": "bigint",
+      }
+    `)
   })
 
   it('parses bigint sets', () => {
@@ -242,17 +245,21 @@ describe('parse', () => {
       pk: 'test@test.com',
       sk: 'bigint',
       test_bigint_set_type: new Set([
-        {value: '90071992547409911234'},
-        {value: '-90071992547409911234'},
+        { value: '90071992547409911234' },
+        { value: '-90071992547409911234' },
         1234
-      ]),
+      ])
     })
-    expect(item).toEqual({
-      email: 'test@test.com',
-      test_type: 'bigint',
-      test_bigint_set_type: [
-
-      ]
-    })
+    expect(item).toMatchInlineSnapshot(`
+      {
+        "email": "test@test.com",
+        "test_bigint_set_type": [
+          90071992547409911234n,
+          -90071992547409911234n,
+          1234n,
+        ],
+        "test_type": "bigint",
+      }
+    `)
   })
 })
