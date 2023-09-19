@@ -4,10 +4,10 @@
  * @license MIT
  */
 
-import { PureAttributeDefinition } from '../classes/Entity'
+import type { NumberValue } from '@aws-sdk/util-dynamodb'
+import type { PureAttributeDefinition } from '../classes/Entity'
 import validateTypes from './validateTypes'
-import { Linked } from './parseEntity'
-import { NumberValue } from '@aws-sdk/util-dynamodb'
+import type { Linked } from './parseEntity'
 
 // Convert from DocumentClient values, which may be wrapped sets or numbers,
 // into normal TS values.
