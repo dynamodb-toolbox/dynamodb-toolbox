@@ -226,7 +226,7 @@ describe('parse', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'bigint',
-      test_bigint: toDynamoBigInt(BigInt('90071992547409911234')),
+      test_bigint: {value:'90071992547409911234'},
       test_bigint_coerce: '12345'
     })
     expect(item).toEqual({
@@ -242,8 +242,8 @@ describe('parse', () => {
       pk: 'test@test.com',
       sk: 'bigint',
       test_bigint_set_type: new Set([
-        toDynamoBigInt(BigInt('90071992547409911234')),
-        toDynamoBigInt(BigInt('-90071992547409911234')),
+        {value: '90071992547409911234'},
+        {value: '-90071992547409911234'},
         1234
       ]),
     })
