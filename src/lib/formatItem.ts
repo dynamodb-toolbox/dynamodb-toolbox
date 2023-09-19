@@ -4,14 +4,14 @@
  * @license MIT
  */
 
-import type { NumberValue } from '@aws-sdk/util-dynamodb'
+import type { NativeAttributeValue, NumberValue } from '@aws-sdk/util-dynamodb'
 import type { PureAttributeDefinition } from '../classes/Entity'
 import validateTypes from './validateTypes'
 import type { Linked } from './parseEntity'
 
 // Convert from DocumentClient values, which may be wrapped sets or numbers,
 // into normal TS values.
-const convertDynamoValues = (value: unknown, attr?: PureAttributeDefinition): unknown => {
+const convertDynamoValues = (value: NativeAttributeValue, attr?: PureAttributeDefinition): unknown => {
   if (value === null) {
     return value
   }
@@ -29,10 +29,10 @@ const convertDynamoValues = (value: unknown, attr?: PureAttributeDefinition): un
 
   // Convert non wrapped number values to bigints
   if (attr && attr.type === 'bigint') {
-    value = BigInt(unwrapNumberValue(value as number | NumberValue))
+    value = BigInt(unwrapNumberValue(value))
   }
   if (attr && attr.type === 'number') {
-    value = Number(unwrapNumberValue(value as number | NumberValue))
+    value = Number(unwrapNumberValue(value))
   }
 
   return value
