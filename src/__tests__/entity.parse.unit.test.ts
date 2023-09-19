@@ -2,7 +2,6 @@ import { DocumentClientWithWrappedNumbers } from './bootstrap.test'
 
 import Table from '../classes/Table'
 import Entity from '../classes/Entity'
-import { toDynamoBigInt } from '../lib/utils'
 import { unmarshall } from '@aws-sdk/util-dynamodb'
 
 const TestTable = new Table({
