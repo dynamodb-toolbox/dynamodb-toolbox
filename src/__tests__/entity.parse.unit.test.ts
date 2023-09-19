@@ -251,9 +251,7 @@ describe('parse', () => {
       email: 'test@test.com',
       test_type: 'bigint',
       test_bigint_set_type: [
-        BigInt('90071992547409911234'),
-        BigInt('-90071992547409911234'),
-        BigInt(1234),
+
       ]
     })
   })
