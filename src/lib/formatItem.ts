@@ -7,6 +7,7 @@
 import { PureAttributeDefinition } from '../classes/Entity'
 import validateTypes from './validateTypes'
 import { Linked } from './parseEntity'
+import { NumberValue } from '@aws-sdk/util-dynamodb'
 
 // Convert from DocumentClient values, which may be wrapped sets or numbers,
 // into normal TS values.
@@ -18,23 +19,31 @@ const convertDynamoValues = (value: unknown, attr?: PureAttributeDefinition): un
   // Unwrap bigint/number sets to regular numbers/bigints
   if (attr && attr.type === 'set') {
     if (attr.setType === 'bigint') {
-      value = Array.from(value as Set<bigint>).map((n: any) => BigInt(n))
+      value = Array.from(value as Set<bigint>).map((n: any) => BigInt(unwrapNumberValue(n)))
     } else if (attr.setType === 'number') {
-      value = Array.from(value as Set<number>).map((n: any) => Number(n))
+      value = Array.from(value as Set<number>).map((n: any) => Number(unwrapNumberValue(n)))
     } else {
       value = Array.from(value as Set<unknown>)
     }
   }
 
-  // Convert wrapped number values to bigints
+  // Convert non wrapped number values to bigints
   if (attr && attr.type === 'bigint') {
-    value = BigInt(value as number)
+    value = BigInt(unwrapNumberValue(value as number | NumberValue))
   }
   if (attr && attr.type === 'number') {
-    value = Number(value as number)
+    value = Number(unwrapNumberValue(value as number | NumberValue))
   }
 
   return value
+}
+
+const unwrapNumberValue = (value: number | NumberValue): number => {
+  if (typeof value === 'number') {
+    return value
+  }
+
+  return Number(value.value)
 }
 
 // Format item based on attribute defnition
