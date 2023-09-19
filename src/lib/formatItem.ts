@@ -27,10 +27,10 @@ const convertDynamoValues = (value: NativeAttributeValue, attr?: PureAttributeDe
     }
   }
 
-  // Convert non wrapped number values to bigints
   if (attr && attr.type === 'bigint') {
     value = BigInt(unwrapAttributeValue(value))
   }
+
   if (attr && attr.type === 'number') {
     value = Number(unwrapAttributeValue(value))
   }
