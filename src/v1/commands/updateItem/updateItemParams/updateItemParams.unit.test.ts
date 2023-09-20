@@ -37,38 +37,36 @@ const TestTable = new TableV2({
   documentClient
 })
 
-const entSchema = schema({
-  email: string().key().savedAs('pk'),
-  sort: string().key().savedAs('sk'),
-  test_string_coerce: string().optional(),
-  count: number().optional().savedAs('test_number'),
-  test_boolean: boolean().optional(),
-  test_boolean_coerce: boolean().optional(),
-  test_list: list(string()).optional(),
-  test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
-  test_list_coerce: list(any()).optional(),
-  test_list_required: list(any()),
-  contents: map({ test: string() }).savedAs('_c'),
-  test_map: map({ optional: number().enum(1, 2).optional() }),
-  test_string_set: set(string()).optional(),
-  test_number_set: set(number()).optional(),
-  test_binary_set: set(binary()).optional(),
-  test_binary: binary(),
-  simple_string: string().optional(),
-  test_record: record(string(), number()).optional(),
-  // Put updateDefaulted attributes last to have simpler, ordered assertions
-  test_string: string().optional().updateDefault('default string'),
-  test_number_default: number().optional().updateDefault(0),
-  test_boolean_default: boolean().optional().updateDefault(false),
-  simple_string_copy: string().optional().updateDefault(ComputedDefault),
-  operationsCount: number()
-    .putDefault(1)
-    .updateDefault(() => $add(1))
-})
-
 const TestEntity = new EntityV2({
   name: 'TestEntity',
-  schema: entSchema,
+  schema: schema({
+    email: string().key().savedAs('pk'),
+    sort: string().key().savedAs('sk'),
+    test_string_coerce: string().optional(),
+    count: number().optional().savedAs('test_number'),
+    test_boolean: boolean().optional(),
+    test_boolean_coerce: boolean().optional(),
+    test_list: list(string()).optional(),
+    test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
+    test_list_coerce: list(any()).optional(),
+    test_list_required: list(any()),
+    contents: map({ test: string() }).savedAs('_c'),
+    test_map: map({ optional: number().enum(1, 2).optional() }),
+    test_string_set: set(string()).optional(),
+    test_number_set: set(number()).optional(),
+    test_binary_set: set(binary()).optional(),
+    test_binary: binary(),
+    simple_string: string().optional(),
+    test_record: record(string(), number()).optional(),
+    // Put updateDefaulted attributes last to have simpler, ordered assertions
+    test_string: string().optional().updateDefault('default string'),
+    test_number_default: number().optional().updateDefault(0),
+    test_boolean_default: boolean().optional().updateDefault(false),
+    simple_string_copy: string().optional().updateDefault(ComputedDefault),
+    operationsCount: number()
+      .putDefault(1)
+      .updateDefault(() => $add(1))
+  }),
   updateDefaults: {
     simple_string_copy: ({ simple_string }) => simple_string ?? 'NOTHING_TO_COPY'
   },
