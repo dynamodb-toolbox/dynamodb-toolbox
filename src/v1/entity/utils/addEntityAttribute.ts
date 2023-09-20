@@ -1,10 +1,16 @@
 import type { Schema, AtLeastOnce, PrimitiveAttribute } from 'v1/schema'
 import type { EntityAttributeSavedAs, TableV2 } from 'v1/table'
+import type { GET } from 'v1/commands/updateItem/types'
 import { DynamoDBToolboxError } from 'v1/errors'
+import { $get } from 'v1/commands/updateItem/utils'
 
 import { WithRootAttribute, addRootAttribute } from './addRootAttribute'
 
-export type EntityAttribute<TABLE extends TableV2, ENTITY_NAME extends string> = PrimitiveAttribute<
+export type EntityAttribute<
+  TABLE extends TableV2,
+  ENTITY_ATTRIBUTE_NAME extends string,
+  ENTITY_NAME extends string
+> = PrimitiveAttribute<
   'string',
   {
     required: AtLeastOnce
@@ -15,7 +21,11 @@ export type EntityAttribute<TABLE extends TableV2, ENTITY_NAME extends string> =
     defaults: {
       key: undefined
       put: ENTITY_NAME
-      update: undefined
+      update: () => GET<
+        ENTITY_NAME extends undefined
+          ? [ENTITY_ATTRIBUTE_NAME]
+          : [ENTITY_ATTRIBUTE_NAME, ENTITY_NAME]
+      >
     }
   }
 >
@@ -27,7 +37,11 @@ export type WithEntityAttribute<
   ENTITY_NAME extends string
 > = string extends ENTITY_NAME
   ? SCHEMA
-  : WithRootAttribute<SCHEMA, ENTITY_ATTRIBUTE_NAME, EntityAttribute<TABLE, ENTITY_NAME>>
+  : WithRootAttribute<
+      SCHEMA,
+      ENTITY_ATTRIBUTE_NAME,
+      EntityAttribute<TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>
+    >
 
 type EntityAttributeAdder = <
   SCHEMA extends Schema,
@@ -64,7 +78,7 @@ export const addEntityAttribute: EntityAttributeAdder = <
     })
   }
 
-  const entityAttribute: EntityAttribute<TABLE, ENTITY_NAME> = {
+  const entityAttribute: EntityAttribute<TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME> = {
     path: entityAttributeName,
     type: 'string',
     required: 'atLeastOnce',
@@ -75,7 +89,7 @@ export const addEntityAttribute: EntityAttributeAdder = <
     defaults: {
       key: undefined,
       put: entityName,
-      update: undefined
+      update: () => $get(entityAttributeName, entityName)
     }
   }
 
