@@ -159,14 +159,20 @@ describe('update', () => {
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
 
     expect(UpdateExpression).toStrictEqual(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4, #s5 = :s5 ADD #a1 :a1'
+      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4, #s5 = if_not_exists(#s6, :s5), #s7 = if_not_exists(#s8, :s6), #s9 = :s7 ADD #a1 :a1'
     )
     expect(ExpressionAttributeNames).toStrictEqual({
       '#s1': 'test_string',
       '#s2': 'test_number_default',
       '#s3': 'test_boolean_default',
       '#s4': 'simple_string_copy',
-      '#s5': '_md',
+      // TODO: Re-use s5
+      '#s5': '_et',
+      '#s6': '_et',
+      // TODO: Re-use s7
+      '#s7': '_ct',
+      '#s8': '_ct',
+      '#s9': '_md',
       '#a1': 'operationsCount'
     })
     expect(ExpressionAttributeValues).toStrictEqual({
@@ -174,7 +180,9 @@ describe('update', () => {
       ':s2': 0,
       ':s3': false,
       ':s4': 'NOTHING_TO_COPY',
-      ':s5': expect.any(String),
+      ':s5': TestEntity.name,
+      ':s6': expect.any(String),
+      ':s7': expect.any(String),
       ':a1': 1
     })
   })
