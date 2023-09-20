@@ -1,6 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If } from 'v1/types/if'
+import type { UpdateItemInputExtension } from 'v1/commands'
 
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { $type, $enum, $defaults } from '../constants/attributeOptions'
@@ -24,7 +25,11 @@ interface PrimitiveAttributeStateConstraint<
   defaults: {
     key: PrimitiveAttributeDefaultValue<TYPE>
     put: PrimitiveAttributeDefaultValue<TYPE>
-    update: PrimitiveAttributeDefaultValue<TYPE>
+    update: PrimitiveAttributeDefaultValue<
+      TYPE,
+      PrimitiveAttributeEnumValues<TYPE>,
+      UpdateItemInputExtension
+    >
   }
 }
 
@@ -100,12 +105,7 @@ export interface $PrimitiveAttribute<
    *
    * @param nextKeyDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
-  keyDefault: <
-    NEXT_KEY_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
-      (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
-        ? STATE['enum'][number] | (() => STATE['enum'][number])
-        : unknown)
-  >(
+  keyDefault: <NEXT_KEY_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE, STATE['enum']>>(
     nextKeyDefault: NEXT_KEY_DEFAULT
   ) => $PrimitiveAttribute<
     $TYPE,
@@ -116,12 +116,7 @@ export interface $PrimitiveAttribute<
    *
    * @param nextPutDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
-  putDefault: <
-    NEXT_PUT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
-      (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
-        ? STATE['enum'][number] | (() => STATE['enum'][number])
-        : unknown)
-  >(
+  putDefault: <NEXT_PUT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE, STATE['enum']>>(
     nextPutDefault: NEXT_PUT_DEFAULT
   ) => $PrimitiveAttribute<
     $TYPE,
@@ -133,10 +128,11 @@ export interface $PrimitiveAttribute<
    * @param nextUpdateDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
   updateDefault: <
-    NEXT_UPDATE_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
-      (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
-        ? STATE['enum'][number] | (() => STATE['enum'][number])
-        : unknown)
+    NEXT_UPDATE_DEFAULT extends PrimitiveAttributeDefaultValue<
+      $TYPE,
+      STATE['enum'],
+      UpdateItemInputExtension
+    >
   >(
     nextUpdateDefault: NEXT_UPDATE_DEFAULT
   ) => $PrimitiveAttribute<
@@ -148,12 +144,7 @@ export interface $PrimitiveAttribute<
    *
    * @param nextDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
    */
-  default: <
-    NEXT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE> &
-      (STATE['enum'] extends ResolvePrimitiveAttributeType<$TYPE>[]
-        ? STATE['enum'][number] | (() => STATE['enum'][number])
-        : unknown)
-  >(
+  default: <NEXT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE, STATE['enum']>>(
     nextDefault: NEXT_DEFAULT
   ) => $PrimitiveAttribute<
     $TYPE,

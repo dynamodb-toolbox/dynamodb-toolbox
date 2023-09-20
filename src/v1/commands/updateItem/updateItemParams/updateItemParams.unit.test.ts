@@ -37,33 +37,38 @@ const TestTable = new TableV2({
   documentClient
 })
 
+const entSchema = schema({
+  email: string().key().savedAs('pk'),
+  sort: string().key().savedAs('sk'),
+  test_string_coerce: string().optional(),
+  count: number().optional().savedAs('test_number'),
+  test_boolean: boolean().optional(),
+  test_boolean_coerce: boolean().optional(),
+  test_list: list(string()).optional(),
+  test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
+  test_list_coerce: list(any()).optional(),
+  test_list_required: list(any()),
+  contents: map({ test: string() }).savedAs('_c'),
+  test_map: map({ optional: number().enum(1, 2).optional() }),
+  test_string_set: set(string()).optional(),
+  test_number_set: set(number()).optional(),
+  test_binary_set: set(binary()).optional(),
+  test_binary: binary(),
+  simple_string: string().optional(),
+  test_record: record(string(), number()).optional(),
+  // Put updateDefaulted attributes last to have simpler, ordered assertions
+  test_string: string().optional().updateDefault('default string'),
+  test_number_default: number().optional().updateDefault(0),
+  test_boolean_default: boolean().optional().updateDefault(false),
+  simple_string_copy: string().optional().updateDefault(ComputedDefault),
+  operationsCount: number()
+    .putDefault(1)
+    .updateDefault(() => $add(1))
+})
+
 const TestEntity = new EntityV2({
   name: 'TestEntity',
-  schema: schema({
-    email: string().key().savedAs('pk'),
-    sort: string().key().savedAs('sk'),
-    test_string_coerce: string().optional(),
-    count: number().optional().savedAs('test_number'),
-    test_boolean: boolean().optional(),
-    test_boolean_coerce: boolean().optional(),
-    test_list: list(string()).optional(),
-    test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
-    test_list_coerce: list(any()).optional(),
-    test_list_required: list(any()),
-    contents: map({ test: string() }).savedAs('_c'),
-    test_map: map({ optional: number().enum(1, 2).optional() }),
-    test_string_set: set(string()).optional(),
-    test_number_set: set(number()).optional(),
-    test_binary_set: set(binary()).optional(),
-    test_binary: binary(),
-    simple_string: string().optional(),
-    test_record: record(string(), number()).optional(),
-    // Put updateDefaulted attributes last to have simpler, ordered assertions
-    test_string: string().optional().updateDefault('default string'),
-    test_number_default: number().optional().updateDefault(0),
-    test_boolean_default: boolean().optional().updateDefault(false),
-    simple_string_copy: string().optional().updateDefault(ComputedDefault)
-  }),
+  schema: entSchema,
   updateDefaults: {
     simple_string_copy: ({ simple_string }) => simple_string ?? 'NOTHING_TO_COPY'
   },
@@ -154,21 +159,23 @@ describe('update', () => {
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
 
     expect(UpdateExpression).toStrictEqual(
-      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4, #s5 = :s5'
+      'SET #s1 = :s1, #s2 = :s2, #s3 = :s3, #s4 = :s4, #s5 = :s5 ADD #a1 :a1'
     )
     expect(ExpressionAttributeNames).toStrictEqual({
       '#s1': 'test_string',
       '#s2': 'test_number_default',
       '#s3': 'test_boolean_default',
       '#s4': 'simple_string_copy',
-      '#s5': '_md'
+      '#s5': '_md',
+      '#a1': 'operationsCount'
     })
     expect(ExpressionAttributeValues).toStrictEqual({
       ':s1': 'default string',
       ':s2': 0,
       ':s3': false,
       ':s4': 'NOTHING_TO_COPY',
-      ':s5': expect.any(String)
+      ':s5': expect.any(String),
+      ':a1': 1
     })
   })
 
