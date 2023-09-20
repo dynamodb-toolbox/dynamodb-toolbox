@@ -1,5 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
+import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isComputedDefault } from 'v1/schema/utils/isComputedDefault'
 import { isStaticDefault } from 'v1/schema/utils/isStaticDefault'
@@ -44,7 +45,11 @@ export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttr
           >
           update: Extract<
             $PRIMITIVE_ATTRIBUTE[$defaults]['update'],
-            PrimitiveAttributeDefaultValue<$PRIMITIVE_ATTRIBUTE[$type]>
+            PrimitiveAttributeDefaultValue<
+              $PRIMITIVE_ATTRIBUTE[$type],
+              PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>,
+              UpdateItemInputExtension
+            >
           >
         }
       }
