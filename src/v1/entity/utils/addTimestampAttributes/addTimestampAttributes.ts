@@ -1,5 +1,7 @@
 import type { Schema } from 'v1/schema'
 import type { If } from 'v1/types/if'
+import type { GET } from 'v1/commands/updateItem/types'
+import { $get } from 'v1/commands/updateItem/utils'
 
 import { WithRootAttribute, addRootAttribute } from '../addRootAttribute'
 
@@ -88,7 +90,8 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
 
     const createdAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
+      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>,
+      () => GET<[TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'name'>, string]>
     > = {
       path: createdName,
       type: 'string',
@@ -100,7 +103,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
       defaults: {
         key: undefined,
         put: () => new Date().toISOString(),
-        update: undefined
+        update: () => $get(createdName, new Date().toISOString())
       }
     }
 

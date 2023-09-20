@@ -40,5 +40,7 @@ export const clonePrimitiveAttributeInputAndAddDefaults = <EXTENSION extends Ext
     return computeDefaults(...contextInputs)
   }
 
-  return isFunction(commandDefault) ? commandDefault() : commandDefault
+  return isFunction(commandDefault)
+    ? (commandDefault() as AttributeBasicValue<EXTENSION>)
+    : commandDefault
 }

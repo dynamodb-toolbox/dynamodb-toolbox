@@ -14,5 +14,5 @@ export type TimestampsOptions = boolean | TimestampsObjectOptions
 export type NarrowTimestampsOptions<TIMESTAMP_OPTIONS> =
   | (TIMESTAMP_OPTIONS extends boolean | string ? TIMESTAMP_OPTIONS : never)
   | {
-      [K in keyof TIMESTAMP_OPTIONS]: NarrowTimestampsOptions<TIMESTAMP_OPTIONS[K]>
+      [KEY in keyof TIMESTAMP_OPTIONS]: NarrowTimestampsOptions<TIMESTAMP_OPTIONS[KEY]>
     }

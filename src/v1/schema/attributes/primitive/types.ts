@@ -1,4 +1,5 @@
 import type { ComputedDefault } from '../constants/computedDefault'
+import type { ExtendedValue, Extension } from '../types'
 
 /**
  * Possible Primitive Attribute type
@@ -34,11 +35,23 @@ export type PrimitiveAttributeEnumValues<TYPE extends PrimitiveAttributeType> =
   | ResolvePrimitiveAttributeType<TYPE>[]
   | undefined
 
+type ValueOrGetter<VALUE> = VALUE | (() => VALUE)
+
 /**
  * Primitive Default values constraint
  */
-export type PrimitiveAttributeDefaultValue<TYPE extends PrimitiveAttributeType> =
+export type PrimitiveAttributeDefaultValue<
+  TYPES extends PrimitiveAttributeType,
+  ENUM extends PrimitiveAttributeEnumValues<TYPES> = PrimitiveAttributeEnumValues<TYPES>,
+  EXTENSION extends Extension = never
+> =
   | undefined
   | ComputedDefault
-  | ResolvePrimitiveAttributeType<TYPE>
-  | (() => ResolvePrimitiveAttributeType<TYPE>)
+  | (ENUM extends ResolvePrimitiveAttributeType<TYPES>[]
+      ? ValueOrGetter<ENUM[number]>
+      : ValueOrGetter<ResolvePrimitiveAttributeType<TYPES>>)
+  | (() => TYPES extends infer TYPE
+      ? TYPE extends PrimitiveAttributeType
+        ? ExtendedValue<EXTENSION, TYPE>
+        : never
+      : never)
