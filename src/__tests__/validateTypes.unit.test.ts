@@ -169,7 +169,8 @@ describe('validateTypes', () => {
   })
 
   it('converts arrays of bigints to sets', async () => {
-    const result = validateTypes()({ type: 'set', setType: 'bigint' }, 'attr', [
+    const attr = { type: 'set', setType: 'bigint' }
+    const result = validateTypes()(attr, 'attr', [
       BigInt(-1234),
       BigInt('123000000000000000000001')
     ])
@@ -177,5 +178,7 @@ describe('validateTypes', () => {
       toDynamoBigInt(BigInt(-1234)),
       toDynamoBigInt(BigInt('123000000000000000000001'))
     ]))
+    // Should not mutate the attribute
+    expect(attr.setType).toEqual('bigint')
   })
 })

@@ -1,5 +1,5 @@
 import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient, DocumentClientWithWrappedNumbers } from './bootstrap.test'
 import assert from 'assert'
 
 const TestTable = new Table({
