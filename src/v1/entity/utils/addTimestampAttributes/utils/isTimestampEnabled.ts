@@ -5,9 +5,7 @@ import { isTimestampsObjectOptions } from './isTimestampsObjectOptions'
 export type IsTimestampEnabled<
   TIMESTAMP_OPTIONS extends TimestampsOptions,
   TIMESTAMP extends 'created' | 'modified'
-> = TIMESTAMP_OPTIONS extends true
-  ? true
-  : TIMESTAMP_OPTIONS extends { [KEY in TIMESTAMP]: true | Record<string, never> }
+> = TIMESTAMP_OPTIONS extends true | { [KEY in TIMESTAMP]: true | Record<string, unknown> }
   ? true
   : false
 
