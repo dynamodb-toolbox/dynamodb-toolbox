@@ -7,6 +7,8 @@ const mockedEntity = mockEntity(UserEntity)
 
 mockedEntity.on(GetItemCommand).resolve({
   Item: {
+    created: '2020-01-01T00:00:00.000Z',
+    modified: '2021-01-01T00:00:00.000Z',
     userId: 'foo',
     age: 42,
     constant: 'toto',
