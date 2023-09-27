@@ -27,8 +27,8 @@ export class UpdateItemCommandMock<
 
   entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
-  _item?: UpdateItemInput<ENTITY, false>
-  item: (nextItem: UpdateItemInput<ENTITY, false>) => UpdateItemCommandMock<ENTITY, OPTIONS>
+  _item?: UpdateItemInput<ENTITY>
+  item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemCommandMock<ENTITY, OPTIONS>
   _options: OPTIONS
   options: <NEXT_OPTIONS extends UpdateItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
@@ -36,7 +36,7 @@ export class UpdateItemCommandMock<
 
   constructor(
     mockedEntity: MockedEntity<ENTITY>,
-    item?: UpdateItemInput<ENTITY, false>,
+    item?: UpdateItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
     this.entity = mockedEntity[$entity]

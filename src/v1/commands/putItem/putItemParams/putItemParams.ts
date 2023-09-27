@@ -12,7 +12,7 @@ import { parsePutItemOptions } from './parsePutItemOptions'
 
 export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOptions<ENTITY>>(
   entity: ENTITY,
-  input: PutItemInput<ENTITY, false>,
+  input: PutItemInput<ENTITY>,
   putItemOptions: OPTIONS = {} as OPTIONS
 ): PutCommandInput => {
   const validInput = parseEntityPutCommandInput(entity, input)

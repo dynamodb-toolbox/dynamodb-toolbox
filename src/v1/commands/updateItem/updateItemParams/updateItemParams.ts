@@ -19,7 +19,7 @@ export const updateItemParams = <
   OPTIONS extends UpdateItemOptions<ENTITY>
 >(
   entity: ENTITY,
-  input: UpdateItemInput<ENTITY, false>,
+  input: UpdateItemInput<ENTITY>,
   updateItemOptions: OPTIONS = {} as OPTIONS
 ): UpdateCommandInput => {
   const validInput = parseEntityUpdateCommandInput(entity, input)

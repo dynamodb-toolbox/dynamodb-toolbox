@@ -56,18 +56,14 @@ export class UpdateItemCommand<
   static commandType = 'put' as const
 
   public entity: ENTITY
-  public _item?: UpdateItemInput<ENTITY, false>
+  public _item?: UpdateItemInput<ENTITY>
   public item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemCommand<ENTITY, OPTIONS>
   public _options: OPTIONS
   public options: <NEXT_OPTIONS extends UpdateItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => UpdateItemCommand<ENTITY, NEXT_OPTIONS>
 
-  constructor(
-    entity: ENTITY,
-    item?: UpdateItemInput<ENTITY, false>,
-    options: OPTIONS = {} as OPTIONS
-  ) {
+  constructor(entity: ENTITY, item?: UpdateItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     this.entity = entity
     this._item = item
     this._options = options

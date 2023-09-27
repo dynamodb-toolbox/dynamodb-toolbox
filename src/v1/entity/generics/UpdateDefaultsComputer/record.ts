@@ -11,7 +11,7 @@ export type RecordAttributeUpdateDefaultsComputer<
   ELEMENTS_DEFAULT_COMPUTER = AttributeUpdateDefaultsComputer<
     RECORD_ATTRIBUTE['elements'],
     [
-      AttributeUpdateItemInput<RECORD_ATTRIBUTE['keys'], true, SCHEMA_ATTRIBUTE_PATHS>,
+      AttributeUpdateItemInput<RECORD_ATTRIBUTE['keys'], 'independent', SCHEMA_ATTRIBUTE_PATHS>,
       ...CONTEXT_INPUTS
     ],
     SCHEMA_ATTRIBUTE_PATHS
@@ -20,7 +20,7 @@ export type RecordAttributeUpdateDefaultsComputer<
     _record: RECORD_ATTRIBUTE extends { defaults: { update: ComputedDefault } }
       ? (
           ...contextInputs: CONTEXT_INPUTS
-        ) => AttributeUpdateItemInput<RECORD_ATTRIBUTE['keys'], false, SCHEMA_ATTRIBUTE_PATHS>
+        ) => AttributeUpdateItemInput<RECORD_ATTRIBUTE['keys'], 'all', SCHEMA_ATTRIBUTE_PATHS>
       : undefined
     _elements: ELEMENTS_DEFAULT_COMPUTER extends undefined
       ? undefined
