@@ -22,9 +22,9 @@ import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndef
 import type { EntityV2 } from 'v1/entity/class'
 import type { If } from 'v1/types/if'
 
-type MustBeDefined<
+export type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
 > =
   // Enforce Required attributes that don't have default values
   ATTRIBUTE extends { required: AtLeastOnce | Always } & (
@@ -32,16 +32,23 @@ type MustBeDefined<
     | { key: false; defaults: { put: undefined } }
   )
     ? true
-    : If<
-        REQUIRE_INDEPENDENT_DEFAULTS,
-        // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
-        ATTRIBUTE extends
+    : // Add attributes with independent defaults if REQUIRED_DEFAULTS is 'independent'
+    REQUIRED_DEFAULTS extends 'independent'
+    ? ATTRIBUTE extends
+        | { key: true; defaults: { key: undefined | ComputedDefault } }
+        | { key: false; defaults: { put: undefined | ComputedDefault } }
+      ? false
+      : true
+    : // Add all required attributes and those with independent defaults if REQUIRED_DEFAULTS is 'all'
+    REQUIRED_DEFAULTS extends 'all'
+    ? ATTRIBUTE extends { required: AtLeastOnce | Always }
+      ? true
+      : ATTRIBUTE extends
           | { key: true; defaults: { key: undefined | ComputedDefault } }
           | { key: false; defaults: { put: undefined | ComputedDefault } }
-          ? false
-          : true,
-        false
-      >
+      ? false
+      : true
+    : false
 
 /**
  * User input of a PUT command for a given Entity or Schema
@@ -52,7 +59,7 @@ type MustBeDefined<
  */
 export type PutItemInput<
   SCHEMA extends EntityV2 | Schema,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
 > = EntityV2 extends SCHEMA
   ? Item
   : Schema extends SCHEMA
@@ -62,14 +69,14 @@ export type PutItemInput<
       {
         [KEY in keyof SCHEMA['attributes']]: AttributePutItemInput<
           SCHEMA['attributes'][KEY],
-          REQUIRE_INDEPENDENT_DEFAULTS
+          REQUIRED_DEFAULTS
         >
       },
       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
       O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
     >
   : SCHEMA extends EntityV2
-  ? PutItemInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
+  ? PutItemInput<SCHEMA['schema'], REQUIRED_DEFAULTS>
   : never
 
 /**
@@ -81,25 +88,25 @@ export type PutItemInput<
  */
 export type AttributePutItemInput<
   ATTRIBUTE extends Attribute,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
 > = Attribute extends ATTRIBUTE
   ? AttributeValue | undefined
   :
-      | If<MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>, never, undefined>
+      | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
       | (ATTRIBUTE extends AnyAttribute
           ? unknown
           : ATTRIBUTE extends PrimitiveAttribute
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
           : ATTRIBUTE extends SetAttribute
-          ? Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
+          ? Set<AttributePutItemInput<ATTRIBUTE['elements'], REQUIRED_DEFAULTS>>
           : ATTRIBUTE extends ListAttribute
-          ? AttributePutItemInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+          ? AttributePutItemInput<ATTRIBUTE['elements'], REQUIRED_DEFAULTS>[]
           : ATTRIBUTE extends MapAttribute
           ? OptionalizeUndefinableProperties<
               {
                 [KEY in keyof ATTRIBUTE['attributes']]: AttributePutItemInput<
                   ATTRIBUTE['attributes'][KEY],
-                  REQUIRE_INDEPENDENT_DEFAULTS
+                  REQUIRED_DEFAULTS
                 >
               },
               // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
@@ -109,9 +116,9 @@ export type AttributePutItemInput<
           ? {
               [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributePutItemInput<
                 ATTRIBUTE['elements'],
-                REQUIRE_INDEPENDENT_DEFAULTS
+                REQUIRED_DEFAULTS
               >
             }
           : ATTRIBUTE extends AnyOfAttribute
-          ? AttributePutItemInput<ATTRIBUTE['elements'][number], REQUIRE_INDEPENDENT_DEFAULTS>
+          ? AttributePutItemInput<ATTRIBUTE['elements'][number], REQUIRED_DEFAULTS>
           : never)

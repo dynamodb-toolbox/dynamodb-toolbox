@@ -12,7 +12,10 @@ export type MapAttributeUpdateDefaultsComputer<
     {
       [KEY in keyof MAP_ATTRIBUTE['attributes']]: AttributeUpdateDefaultsComputer<
         MAP_ATTRIBUTE['attributes'][KEY],
-        [AttributeUpdateItemInput<MAP_ATTRIBUTE, true, SCHEMA_ATTRIBUTE_PATHS>, ...CONTEXT_INPUTS],
+        [
+          AttributeUpdateItemInput<MAP_ATTRIBUTE, 'independent', SCHEMA_ATTRIBUTE_PATHS>,
+          ...CONTEXT_INPUTS
+        ],
         SCHEMA_ATTRIBUTE_PATHS
       >
     }
@@ -26,7 +29,7 @@ export type MapAttributeUpdateDefaultsComputer<
     _map: MAP_ATTRIBUTE extends { defaults: { update: ComputedDefault } }
       ? (
           ...contextInputs: CONTEXT_INPUTS
-        ) => AttributeUpdateItemInput<MAP_ATTRIBUTE, false, SCHEMA_ATTRIBUTE_PATHS>
+        ) => AttributeUpdateItemInput<MAP_ATTRIBUTE, 'all', SCHEMA_ATTRIBUTE_PATHS>
       : undefined
   }>
 > = keyof MAP_ATTRIBUTE_DEFAULT_COMPUTER extends never

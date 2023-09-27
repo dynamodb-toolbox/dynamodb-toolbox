@@ -11,7 +11,7 @@ export type MapAttributePutDefaultsComputer<
     {
       [KEY in keyof MAP_ATTRIBUTE['attributes']]: AttributePutDefaultsComputer<
         MAP_ATTRIBUTE['attributes'][KEY],
-        [AttributePutItemInput<MAP_ATTRIBUTE, true>, ...CONTEXT_INPUTS]
+        [AttributePutItemInput<MAP_ATTRIBUTE, 'independent'>, ...CONTEXT_INPUTS]
       >
     }
   >,
@@ -22,7 +22,7 @@ export type MapAttributePutDefaultsComputer<
           [KEY in keyof ATTRIBUTES_DEFAULT_COMPUTERS]: ATTRIBUTES_DEFAULT_COMPUTERS[KEY]
         }
     _map: MAP_ATTRIBUTE extends { defaults: { put: ComputedDefault } }
-      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<MAP_ATTRIBUTE>
+      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<MAP_ATTRIBUTE, 'all'>
       : undefined
   }>
 > = keyof MAP_ATTRIBUTE_DEFAULT_COMPUTER extends never

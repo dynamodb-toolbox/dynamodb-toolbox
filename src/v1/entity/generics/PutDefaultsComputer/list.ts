@@ -13,7 +13,7 @@ export type ListAttributePutDefaultsComputer<
   >,
   LIST_ATTRIBUTE_DEFAULT_COMPUTER = OmitUndefinedProperties<{
     _list: LIST_ATTRIBUTE extends { defaults: { put: ComputedDefault } }
-      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<LIST_ATTRIBUTE>
+      ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<LIST_ATTRIBUTE, 'all'>
       : undefined
     _elements: ELEMENTS_DEFAULT_COMPUTER extends undefined
       ? undefined
