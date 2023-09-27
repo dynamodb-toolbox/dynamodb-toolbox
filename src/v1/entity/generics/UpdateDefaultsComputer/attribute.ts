@@ -28,7 +28,7 @@ export type AttributeUpdateDefaultsComputer<
 ) & { defaults: { update: ComputedDefault } }
   ? (
       ...contextInputs: CONTEXT_INPUTS
-    ) => AttributeUpdateItemInput<ATTRIBUTE, false, SCHEMA_ATTRIBUTE_PATHS>
+    ) => AttributeUpdateItemInput<ATTRIBUTE, 'all', SCHEMA_ATTRIBUTE_PATHS>
   : ATTRIBUTE extends ListAttribute
   ? ListAttributeUpdateDefaultsComputer<ATTRIBUTE, CONTEXT_INPUTS, SCHEMA_ATTRIBUTE_PATHS>
   : ATTRIBUTE extends MapAttribute

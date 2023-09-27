@@ -17,7 +17,7 @@ export type ListAttributeUpdateDefaultsComputer<
     _list: LIST_ATTRIBUTE extends { defaults: { update: ComputedDefault } }
       ? (
           ...contextInputs: CONTEXT_INPUTS
-        ) => AttributeUpdateItemInput<LIST_ATTRIBUTE, false, SCHEMA_ATTRIBUTE_PATHS>
+        ) => AttributeUpdateItemInput<LIST_ATTRIBUTE, 'all', SCHEMA_ATTRIBUTE_PATHS>
       : undefined
     _elements: ELEMENTS_DEFAULT_COMPUTER extends undefined
       ? undefined

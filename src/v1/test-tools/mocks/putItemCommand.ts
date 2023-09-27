@@ -22,8 +22,8 @@ export class PutItemCommandMock<
 
   entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
-  _item?: PutItemInput<ENTITY, false>
-  item: (nextItem: PutItemInput<ENTITY, false>) => PutItemCommandMock<ENTITY, OPTIONS>
+  _item?: PutItemInput<ENTITY>
+  item: (nextItem: PutItemInput<ENTITY>) => PutItemCommandMock<ENTITY, OPTIONS>
   _options: OPTIONS
   options: <NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
@@ -31,7 +31,7 @@ export class PutItemCommandMock<
 
   constructor(
     mockedEntity: MockedEntity<ENTITY>,
-    item?: PutItemInput<ENTITY, false>,
+    item?: PutItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
     this.entity = mockedEntity[$entity]

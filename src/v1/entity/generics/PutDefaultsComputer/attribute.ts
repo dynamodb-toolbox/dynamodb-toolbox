@@ -25,7 +25,7 @@ export type AttributePutDefaultsComputer<
   // TODO: Prevent nested ComputedDefaults in anyOf
   | AnyOfAttribute
 ) & { defaults: { put: ComputedDefault } }
-  ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<ATTRIBUTE>
+  ? (...contextInputs: CONTEXT_INPUTS) => AttributePutItemInput<ATTRIBUTE, 'all'>
   : ATTRIBUTE extends ListAttribute
   ? ListAttributePutDefaultsComputer<ATTRIBUTE, CONTEXT_INPUTS>
   : ATTRIBUTE extends MapAttribute

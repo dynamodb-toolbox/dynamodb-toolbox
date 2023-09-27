@@ -11,7 +11,7 @@ export type SchemaUpdateDefaultsComputer<
     {
       [KEY in keyof SCHEMA['attributes']]: AttributeUpdateDefaultsComputer<
         SCHEMA['attributes'][KEY],
-        [UpdateItemInput<SCHEMA, true>],
+        [UpdateItemInput<SCHEMA, 'independent'>],
         SchemaAttributePath<SCHEMA>
       >
     }
