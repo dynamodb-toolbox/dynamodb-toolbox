@@ -13,7 +13,7 @@ export type MapAttributeUpdateDefaultsComputer<
       [KEY in keyof MAP_ATTRIBUTE['attributes']]: AttributeUpdateDefaultsComputer<
         MAP_ATTRIBUTE['attributes'][KEY],
         [
-          AttributeUpdateItemInput<MAP_ATTRIBUTE, 'independent', SCHEMA_ATTRIBUTE_PATHS>,
+          AttributeUpdateItemInput<MAP_ATTRIBUTE, 'none', SCHEMA_ATTRIBUTE_PATHS>,
           ...CONTEXT_INPUTS
         ],
         SCHEMA_ATTRIBUTE_PATHS
