@@ -106,7 +106,7 @@ export type UpdateItemInputExtension =
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
 > =
   // Enforce Required attributes that don't have default values
   ATTRIBUTE extends { required: Always } & (
@@ -114,16 +114,25 @@ type MustBeDefined<
     | { key: false; defaults: { update: undefined } }
   )
     ? true
-    : REQUIRE_INDEPENDENT_DEFAULTS extends true
-    ? // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
-      ATTRIBUTE extends
+    : // Add attributes with independent defaults if REQUIRED_DEFAULTS is 'independent'
+    REQUIRED_DEFAULTS extends 'independent'
+    ? ATTRIBUTE extends
         | { key: true; defaults: { key: undefined | ComputedDefault } }
         | { key: false; defaults: { update: undefined | ComputedDefault } }
       ? false
       : true
+    : // Add all required attributes and those with independent defaults if REQUIRED_DEFAULTS is 'all'
+    REQUIRED_DEFAULTS extends 'all'
+    ? ATTRIBUTE extends { required: Always }
+      ? true
+      : ATTRIBUTE extends
+          | { key: true; defaults: { key: undefined | ComputedDefault } }
+          | { key: false; defaults: { update: undefined | ComputedDefault } }
+      ? false
+      : true
     : false
 
-type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: 'never' }
+type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: Never }
   ? true
   : false
 
@@ -136,7 +145,7 @@ type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: '
  */
 export type UpdateItemInput<
   SCHEMA extends EntityV2 | Schema = EntityV2,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
 > = EntityV2 extends SCHEMA
   ? Item<UpdateItemInputExtension>
   : Schema extends SCHEMA
@@ -146,7 +155,7 @@ export type UpdateItemInput<
       {
         [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
           SCHEMA['attributes'][KEY],
-          REQUIRE_INDEPENDENT_DEFAULTS,
+          REQUIRED_DEFAULTS,
           SchemaAttributePath<SCHEMA>
         >
       },
@@ -154,7 +163,7 @@ export type UpdateItemInput<
       O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
     >
   : SCHEMA extends EntityV2
-  ? UpdateItemInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
+  ? UpdateItemInput<SCHEMA['schema'], REQUIRED_DEFAULTS>
   : never
 
 export type Reference<
@@ -210,12 +219,12 @@ type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute e
  */
 export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute = Attribute,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false,
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none',
   SCHEMA_ATTRIBUTE_PATHS extends string = string
 > = Attribute extends ATTRIBUTE
   ? AttributeValue<UpdateItemInputExtension> | undefined
   :
-      | If<MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>, never, undefined>
+      | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
       | If<CanBeRemoved<ATTRIBUTE>, $REMOVE, never>
       // Not using Reference<...> for improved type display
       | GET<
@@ -283,7 +292,7 @@ export type AttributeUpdateItemInput<
                     [INDEX in number]?:
                       | AttributeUpdateItemInput<
                           ATTRIBUTE['elements'],
-                          REQUIRE_INDEPENDENT_DEFAULTS,
+                          REQUIRED_DEFAULTS,
                           SCHEMA_ATTRIBUTE_PATHS
                         >
                       | $REMOVE
@@ -320,7 +329,7 @@ export type AttributeUpdateItemInput<
                     {
                       [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
                         ATTRIBUTE['attributes'][KEY],
-                        REQUIRE_INDEPENDENT_DEFAULTS,
+                        REQUIRED_DEFAULTS,
                         SCHEMA_ATTRIBUTE_PATHS
                       >
                     },
@@ -339,7 +348,7 @@ export type AttributeUpdateItemInput<
                     [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
                       | AttributeUpdateItemInput<
                           ATTRIBUTE['elements'],
-                          REQUIRE_INDEPENDENT_DEFAULTS,
+                          REQUIRED_DEFAULTS,
                           SCHEMA_ATTRIBUTE_PATHS
                         >
                       | $REMOVE
@@ -349,7 +358,7 @@ export type AttributeUpdateItemInput<
           : ATTRIBUTE extends AnyOfAttribute
           ? AttributeUpdateItemInput<
               ATTRIBUTE['elements'][number],
-              REQUIRE_INDEPENDENT_DEFAULTS,
+              REQUIRED_DEFAULTS,
               SCHEMA_ATTRIBUTE_PATHS
             >
           : never)
