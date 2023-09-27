@@ -9,7 +9,7 @@ export type RecordAttributePutDefaultsComputer<
   CONTEXT_INPUTS extends any[],
   ELEMENTS_DEFAULT_COMPUTER = AttributePutDefaultsComputer<
     RECORD_ATTRIBUTE['elements'],
-    [AttributePutItemInput<RECORD_ATTRIBUTE['keys'], 'independent'>, ...CONTEXT_INPUTS]
+    [AttributePutItemInput<RECORD_ATTRIBUTE['keys']>, ...CONTEXT_INPUTS]
   >,
   RECORD_ATTRIBUTE_DEFAULT_COMPUTER = OmitUndefinedProperties<{
     _record: RECORD_ATTRIBUTE extends { defaults: { put: ComputedDefault } }

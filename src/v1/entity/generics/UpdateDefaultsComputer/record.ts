@@ -11,7 +11,7 @@ export type RecordAttributeUpdateDefaultsComputer<
   ELEMENTS_DEFAULT_COMPUTER = AttributeUpdateDefaultsComputer<
     RECORD_ATTRIBUTE['elements'],
     [
-      AttributeUpdateItemInput<RECORD_ATTRIBUTE['keys'], 'independent', SCHEMA_ATTRIBUTE_PATHS>,
+      AttributeUpdateItemInput<RECORD_ATTRIBUTE['keys'], 'none', SCHEMA_ATTRIBUTE_PATHS>,
       ...CONTEXT_INPUTS
     ],
     SCHEMA_ATTRIBUTE_PATHS

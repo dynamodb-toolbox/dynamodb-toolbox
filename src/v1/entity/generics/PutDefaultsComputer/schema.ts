@@ -10,7 +10,7 @@ export type SchemaPutDefaultsComputer<
     {
       [KEY in keyof SCHEMA['attributes']]: AttributePutDefaultsComputer<
         SCHEMA['attributes'][KEY],
-        [PutItemInput<SCHEMA, 'independent'>]
+        [PutItemInput<SCHEMA>]
       >
     }
   >
