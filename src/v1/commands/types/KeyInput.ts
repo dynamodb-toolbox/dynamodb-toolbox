@@ -23,17 +23,24 @@ import type { If } from 'v1/types/if'
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
 > =
   // Enforce Required attributes that don't have default values
   ATTRIBUTE extends { required: Always; defaults: { key: undefined } }
     ? true
-    : // Add attributes with independent defaults if REQUIRE_INDEPENDENT_DEFAULTS is true
-      If<
-        REQUIRE_INDEPENDENT_DEFAULTS,
-        ATTRIBUTE extends { defaults: { key: undefined | ComputedDefault } } ? false : true,
-        false
-      >
+    : // Add attributes with independent defaults if REQUIRED_DEFAULTS is 'independent'
+    REQUIRED_DEFAULTS extends 'independent'
+    ? ATTRIBUTE extends { defaults: { key: undefined | ComputedDefault } }
+      ? false
+      : true
+    : // Add all required attributes and those with independent defaults if REQUIRED_DEFAULTS is 'all'
+    REQUIRED_DEFAULTS extends 'all'
+    ? ATTRIBUTE extends { required: Always }
+      ? true
+      : ATTRIBUTE extends { defaults: { key: undefined | ComputedDefault } }
+      ? false
+      : true
+    : false
 
 /**
  * Key input of a single item command (GET, DELETE ...) for an Entity or Schema
@@ -43,7 +50,7 @@ type MustBeDefined<
  */
 export type KeyInput<
   SCHEMA extends EntityV2 | Schema,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
 > = EntityV2 extends SCHEMA
   ? MapAttributeValue
   : Schema extends SCHEMA
@@ -54,14 +61,14 @@ export type KeyInput<
         // Keep only key attributes
         [KEY in O.SelectKeys<SCHEMA['attributes'], { key: true }>]: AttributeKeyInput<
           SCHEMA['attributes'][KEY],
-          REQUIRE_INDEPENDENT_DEFAULTS
+          REQUIRED_DEFAULTS
         >
       },
       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
       O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { key: true; required: Never }>
     >
   : SCHEMA extends EntityV2
-  ? KeyInput<SCHEMA['schema'], REQUIRE_INDEPENDENT_DEFAULTS>
+  ? KeyInput<SCHEMA['schema'], REQUIRED_DEFAULTS>
   : never
 
 /**
@@ -72,26 +79,26 @@ export type KeyInput<
  */
 export type AttributeKeyInput<
   ATTRIBUTE extends Attribute,
-  REQUIRE_INDEPENDENT_DEFAULTS extends boolean = false
+  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
 > = Attribute extends ATTRIBUTE
   ? AttributeValue | undefined
   :
-      | If<MustBeDefined<ATTRIBUTE, REQUIRE_INDEPENDENT_DEFAULTS>, never, undefined>
+      | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
       | (ATTRIBUTE extends AnyAttribute
           ? unknown
           : ATTRIBUTE extends PrimitiveAttribute
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
           : ATTRIBUTE extends SetAttribute
-          ? Set<AttributeKeyInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>>
+          ? Set<AttributeKeyInput<ATTRIBUTE['elements'], REQUIRED_DEFAULTS>>
           : ATTRIBUTE extends ListAttribute
-          ? AttributeKeyInput<ATTRIBUTE['elements'], REQUIRE_INDEPENDENT_DEFAULTS>[]
+          ? AttributeKeyInput<ATTRIBUTE['elements'], REQUIRED_DEFAULTS>[]
           : ATTRIBUTE extends MapAttribute
           ? OptionalizeUndefinableProperties<
               {
                 // Keep only key attributes
                 [KEY in O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>]: AttributeKeyInput<
                   ATTRIBUTE['attributes'][KEY],
-                  REQUIRE_INDEPENDENT_DEFAULTS
+                  REQUIRED_DEFAULTS
                 >
               },
               // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
@@ -101,9 +108,9 @@ export type AttributeKeyInput<
           ? {
               [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttributeKeyInput<
                 ATTRIBUTE['elements'],
-                REQUIRE_INDEPENDENT_DEFAULTS
+                REQUIRED_DEFAULTS
               >
             }
           : ATTRIBUTE extends AnyOfAttribute
-          ? AttributeKeyInput<ATTRIBUTE['elements'][number], REQUIRE_INDEPENDENT_DEFAULTS>
+          ? AttributeKeyInput<ATTRIBUTE['elements'][number], REQUIRED_DEFAULTS>
           : never)
