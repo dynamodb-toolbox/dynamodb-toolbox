@@ -109,7 +109,7 @@ export class EntityV2<
     timestamps?: NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   } & If<
     NeedsKeyCompute<SCHEMA, TABLE>,
-    { computeKey: (keyInput: KeyInput<SCHEMA>) => PrimaryKey<TABLE> },
+    { computeKey: (keyInput: KeyInput<SCHEMA, 'all'>) => PrimaryKey<TABLE> },
     { computeKey?: undefined }
   > &
     // Weirdly using If here triggers an infinite type recursion error
