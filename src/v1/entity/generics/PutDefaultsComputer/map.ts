@@ -11,7 +11,7 @@ export type MapAttributePutDefaultsComputer<
     {
       [KEY in keyof MAP_ATTRIBUTE['attributes']]: AttributePutDefaultsComputer<
         MAP_ATTRIBUTE['attributes'][KEY],
-        [AttributePutItemInput<MAP_ATTRIBUTE, 'independent'>, ...CONTEXT_INPUTS]
+        [AttributePutItemInput<MAP_ATTRIBUTE>, ...CONTEXT_INPUTS]
       >
     }
   >,
