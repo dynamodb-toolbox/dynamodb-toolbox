@@ -61,7 +61,6 @@ export default () => (mapping: any, field: any, value: any) => {
       if (value instanceof Set) {
 
         if (mapping.setType === 'bigint') {
-          mapping.setType = 'number'
           value = Array.from(value).map((n) => toDynamoBigInt(n))
         }
 
@@ -78,7 +77,6 @@ export default () => (mapping: any, field: any, value: any) => {
         const actualSetType = typeOf(value[0])?.toLowerCase?.()
 
         if (mapping.setType === 'bigint') {
-          mapping.setType = 'number'
           value = value.map((n) => toDynamoBigInt(n))
         }
 
