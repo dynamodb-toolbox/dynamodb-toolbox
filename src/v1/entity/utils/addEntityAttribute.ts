@@ -4,7 +4,7 @@ import type { GET } from 'v1/commands/updateItem/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $get } from 'v1/commands/updateItem/utils'
 
-import { WithRootAttribute, addRootAttribute } from './addRootAttribute'
+import { WithInternalAttribute, addInternalAttribute } from './addInternalAttribute'
 
 export type EntityAttribute<
   TABLE extends TableV2,
@@ -37,7 +37,7 @@ export type WithEntityAttribute<
   ENTITY_NAME extends string
 > = string extends ENTITY_NAME
   ? SCHEMA
-  : WithRootAttribute<
+  : WithInternalAttribute<
       SCHEMA,
       ENTITY_ATTRIBUTE_NAME,
       EntityAttribute<TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>
@@ -93,7 +93,7 @@ export const addEntityAttribute: EntityAttributeAdder = <
     }
   }
 
-  return addRootAttribute(schema, entityAttributeName, entityAttribute) as WithEntityAttribute<
+  return addInternalAttribute(schema, entityAttributeName, entityAttribute) as WithEntityAttribute<
     SCHEMA,
     TABLE,
     ENTITY_ATTRIBUTE_NAME,

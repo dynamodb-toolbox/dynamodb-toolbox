@@ -3,7 +3,7 @@ import type { If } from 'v1/types/if'
 import type { GET } from 'v1/commands/updateItem/types'
 import { $get } from 'v1/commands/updateItem/utils'
 
-import { WithRootAttribute, addRootAttribute } from '../addRootAttribute'
+import { WithInternalAttribute, addInternalAttribute } from '../addInternalAttribute'
 
 import type { TimestampsOptions } from './timestampOptions'
 import type { TimestampAttribute } from './timestampAttribute'
@@ -32,8 +32,8 @@ export type WithTimestampAttributes<
       IS_CREATED_ENABLED,
       If<
         IS_MODIFIED_ENABLED,
-        WithRootAttribute<
-          WithRootAttribute<
+        WithInternalAttribute<
+          WithInternalAttribute<
             SCHEMA,
             CREATED_NAME,
             TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
@@ -41,7 +41,7 @@ export type WithTimestampAttributes<
           MODIFIED_NAME,
           TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
         >,
-        WithRootAttribute<
+        WithInternalAttribute<
           SCHEMA,
           CREATED_NAME,
           TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
@@ -49,7 +49,7 @@ export type WithTimestampAttributes<
       >,
       If<
         IS_MODIFIED_ENABLED,
-        WithRootAttribute<
+        WithInternalAttribute<
           SCHEMA,
           MODIFIED_NAME,
           TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
@@ -107,7 +107,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
       }
     }
 
-    schemaWithTimestamps = addRootAttribute(schemaWithTimestamps, createdName, createdAttribute)
+    schemaWithTimestamps = addInternalAttribute(schemaWithTimestamps, createdName, createdAttribute)
   }
 
   const isModifiedEnable = isTimestampEnabled(timestamps, 'modified')
@@ -133,7 +133,11 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
       }
     }
 
-    schemaWithTimestamps = addRootAttribute(schemaWithTimestamps, modifiedName, modifiedAttribute)
+    schemaWithTimestamps = addInternalAttribute(
+      schemaWithTimestamps,
+      modifiedName,
+      modifiedAttribute
+    )
   }
 
   return schemaWithTimestamps as WithTimestampAttributes<SCHEMA, ENTITY_NAME, TIMESTAMP_OPTIONS>

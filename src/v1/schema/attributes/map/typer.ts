@@ -1,7 +1,7 @@
 import type { NarrowObject } from 'v1/types/narrowObject'
 
 import type { RequiredOption, AtLeastOnce } from '../constants'
-import type { $MapAttributeAttributes, Narrow } from '../types'
+import type { $MapAttributeAttributes, $Narrow } from '../types'
 import {
   $type,
   $attributes,
@@ -20,7 +20,7 @@ type MapAttributeTyper = <
   ATTRIBUTES extends $MapAttributeAttributes,
   OPTIONS extends Partial<MapAttributeOptions> = MapAttributeOptions
 >(
-  attributes: Narrow<ATTRIBUTES>,
+  attributes: $Narrow<ATTRIBUTES>,
   options?: NarrowObject<OPTIONS>
 ) => $MapAttribute<
   ATTRIBUTES,
@@ -37,7 +37,7 @@ export const map: MapAttributeTyper = <
   ATTRIBUTES extends $MapAttributeAttributes,
   OPTIONS extends Partial<MapAttributeOptions> = MapAttributeOptions
 >(
-  attributes: Narrow<ATTRIBUTES>,
+  attributes: $Narrow<ATTRIBUTES>,
   options?: NarrowObject<OPTIONS>
 ) => {
   const appliedOptions = {

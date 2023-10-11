@@ -2,13 +2,13 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import type { Schema, Attribute } from 'v1/schema'
 import { addProperty } from 'v1/utils/addProperty'
 
-export type WithRootAttribute<
+export type WithInternalAttribute<
   SCHEMA extends Schema,
   ATTRIBUTE_NAME extends string,
   ATTRIBUTE extends Attribute
 > = Schema<Omit<SCHEMA['attributes'], ATTRIBUTE_NAME> & Record<ATTRIBUTE_NAME, ATTRIBUTE>>
 
-export const addRootAttribute = <
+export const addInternalAttribute = <
   SCHEMA extends Schema,
   ATTRIBUTE_NAME extends string,
   ATTRIBUTE extends Attribute
@@ -16,7 +16,7 @@ export const addRootAttribute = <
   schema: SCHEMA,
   attributeName: ATTRIBUTE_NAME,
   attribute: ATTRIBUTE
-): WithRootAttribute<SCHEMA, ATTRIBUTE_NAME, ATTRIBUTE> => {
+): WithInternalAttribute<SCHEMA, ATTRIBUTE_NAME, ATTRIBUTE> => {
   if (attributeName in schema.attributes) {
     throw new DynamoDBToolboxError('entity.reservedAttributeName', {
       message: `'${attributeName}' is a reserved attribute name.`,
@@ -31,22 +31,22 @@ export const addRootAttribute = <
     })
   }
 
-  return {
-    type: schema.type,
-    savedAttributeNames:
-      attribute.savedAs !== undefined
-        ? new Set([...schema.savedAttributeNames, attribute.savedAs])
-        : schema.savedAttributeNames,
-    keyAttributeNames: attribute.key
-      ? new Set([...schema.keyAttributeNames, attributeName])
-      : schema.keyAttributeNames,
-    requiredAttributeNames: {
-      ...schema.requiredAttributeNames,
-      [attribute.required]: new Set([
-        ...schema.requiredAttributeNames[attribute.required],
-        attributeName
-      ])
-    },
-    attributes: addProperty(schema.attributes, attributeName, attribute)
+  schema.attributes = addProperty<SCHEMA['attributes'], ATTRIBUTE_NAME, ATTRIBUTE>(
+    schema.attributes,
+    attributeName,
+    attribute
+  )
+
+  if (attribute.savedAs !== undefined) {
+    schema.savedAttributeNames.add(attribute.savedAs)
   }
+
+  if (attribute.key) {
+    schema.keyAttributeNames.add(attributeName)
+  }
+
+  schema.requiredAttributeNames[attribute.required].add(attributeName)
+
+  // schema is actually muted but TS doesn't recognize it
+  return (schema as unknown) as WithInternalAttribute<SCHEMA, ATTRIBUTE_NAME, ATTRIBUTE>
 }
