@@ -7,8 +7,8 @@
 
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import validateTypes from './validateTypes'
-import { error, transformAttr } from './utils'
+import validateTypes from './validateTypes.js'
+import { error, transformAttr } from './utils.js'
 
 // Normalize Data
 export default () => (

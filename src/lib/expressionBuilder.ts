@@ -9,9 +9,9 @@
 
 import { A } from 'ts-toolbelt'
 
-import checkAttribute from './checkAttribute'
-import { error, toDynamoBigInt } from './utils'
-import { TableDef } from '../classes/Table'
+import checkAttribute from './checkAttribute.js'
+import { error, toDynamoBigInt } from './utils.js'
+import { TableDef } from '../classes/Table/types.js'
 
 interface AttrRef {
   attr: string

@@ -1,15 +1,16 @@
 import type { A, O } from 'ts-toolbelt'
 
-import { parseTable, ParsedTable } from '../../lib/parseTable'
-import parseFilters from '../../lib/expressionBuilder'
-import validateTypes from '../../lib/validateTypes'
-import Entity, { AttributeMap } from '../Entity'
+import { parseTable, ParsedTable } from '../../lib/parseTable.js'
+import parseFilters from '../../lib/expressionBuilder.js'
+import validateTypes from '../../lib/validateTypes.js'
+import Entity from '../Entity/Entity.js'
+import { AttributeMap } from '../Entity/types.js'
 import {
   default as parseProjections,
   ProjectionAttributes,
   ProjectionAttributesTable,
-} from '../../lib/projectionBuilder'
-import type { ParsedEntity } from '../../lib/parseEntity'
+} from '../../lib/projectionBuilder.js'
+import type { ParsedEntity } from '../../lib/parseEntity.js'
 import type {
   BatchGetOptions,
   BatchGetParamsMeta,
@@ -23,9 +24,9 @@ import type {
   transactGetParamsOptions,
   TransactWriteOptions,
   transactWriteParamsOptions,
-} from './types'
+} from './types.js'
 
-import { error, conditionError, If, Compute } from '../../lib/utils'
+import { error, conditionError, If, Compute } from '../../lib/utils.js'
 import {
   BatchGetCommand,
   BatchGetCommandInput, BatchWriteCommand,

@@ -8,9 +8,9 @@
 
 import { A } from 'ts-toolbelt'
 
-import { TableDef } from '../classes/Table'
-import { error } from './utils'
-import checkAttribute from './checkAttribute'
+import { TableDef } from '../classes/Table/types.js'
+import { error } from './utils.js'
+import checkAttribute from './checkAttribute.js'
 
 // This should be able to parse an array with values,
 // or an object that uses the name of the entity plus an array of values

@@ -4,8 +4,8 @@
  * @license MIT
  */
 
-import validateTypes from './validateTypes'
-import { error, transformAttr } from './utils'
+import validateTypes from './validateTypes.js'
+import { error, transformAttr } from './utils.js'
 
 // Get partitionKey/sortKey
 export default () => (

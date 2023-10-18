@@ -1,12 +1,12 @@
-import parseEntityAttributes from './parseEntityAttributes'
-import type { TableDef } from '../classes/Table'
+import parseEntityAttributes from './parseEntityAttributes.js'
+import type { TableDef } from '../classes/Table/types.js'
 import type {
   AttributeDefinitions,
   EntityConstructor,
   PureAttributeDefinition,
   Readonly
-} from '../classes/Entity'
-import { error } from './utils'
+} from '../classes/Entity/types.js'
+import { error } from './utils.js'
 
 export interface TrackingInfo {
   fields: string[]

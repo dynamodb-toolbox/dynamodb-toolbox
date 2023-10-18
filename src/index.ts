@@ -1,5 +1,5 @@
-import Table from './classes/Table'
-import Entity from './classes/Entity'
+import Table from './classes/Table/Table.js'
+import Entity from './classes/Entity/Entity.js'
 import type {
   GetOptions,
   QueryOptions,
@@ -8,7 +8,7 @@ import type {
   UpdateOptions,
   EntityItem,
   InferEntityItem
-} from './classes/Entity'
+} from './classes/Entity/types.js'
 
 export {
   Table,

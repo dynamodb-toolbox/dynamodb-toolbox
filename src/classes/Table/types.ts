@@ -2,10 +2,10 @@ import { ReturnConsumedCapacity, ReturnItemCollectionMetrics, Select } from '@aw
 import { DynamoDBDocumentClient, ScanCommandInput, TransactGetCommandInput } from '@aws-sdk/lib-dynamodb'
 import type { A, O } from 'ts-toolbelt'
 
-import type { ProjectionAttributes } from '../../lib/projectionBuilder'
-import type { FilterExpressions } from '../../lib/expressionBuilder'
-import type { $ReadOptions, ConditionsOrFilters } from '../Entity'
-import type Table from './Table'
+import type { ProjectionAttributes } from '../../lib/projectionBuilder.js'
+import type { FilterExpressions } from '../../lib/expressionBuilder.js'
+import type { $ReadOptions, ConditionsOrFilters } from '../Entity/types.js'
+import type Table from './Table.js'
 
 export interface TableConstructor<
   Name extends string,
