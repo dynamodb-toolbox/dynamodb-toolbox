@@ -2,8 +2,21 @@
   "name": "dynamodb-toolbox",
   "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/esm/index.js",
+        "types": "./dist/esm/index.d.ts"
+      },
+      "require": {
+        "default": "./dist/cjs/index.js",
+        "types": "./dist/cjs/index.d.ts"
+      }
+    }
+  },
+  "type": "module",
   "scripts": {
     "test": "jest unit",
     "test-cov": "jest unit --coverage",
@@ -11,7 +24,10 @@
     "test-types": "tsd",
     "check-types": "tsc --noEmit",
     "lint": "eslint .",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build:cjs": "tsc -p tsconfig.build.json && echo '{ \"type\": \"commonjs\" }' > dist/cjs/package.json",
+    "build:esm": "tsc -p tsconfig.esm.json && echo '{ \"type\": \"module\" }' > dist/esm/package.json",
+    "build": "npm run build:cjs & npm run build:esm",
+    "prebuild": "rm -rf dist",
     "prepublishOnly": "npm test && npm run lint && npm run test-types",
     "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
   },

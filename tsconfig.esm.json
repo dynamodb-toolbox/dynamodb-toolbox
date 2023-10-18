@@ -1,7 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist/cjs"
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmitHelpers": true,
+    "outDir": "dist/esm"
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test-d.ts"]
 }
