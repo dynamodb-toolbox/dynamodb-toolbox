@@ -78,9 +78,13 @@
     "typescript": "^4.1.3"
   },
   "files": [
-    "dist/index.*",
-    "dist/constants.*",
-    "dist/classes/",
-    "dist/lib/"
+    "dist/cjs/index.*",
+    "dist/cjs/constants.*",
+    "dist/cjs/classes/",
+    "dist/cjs/lib/",
+    "dist/esm/index.*",
+    "dist/esm/constants.*",
+    "dist/esm/classes/",
+    "dist/esm/lib/"
   ]
 }
