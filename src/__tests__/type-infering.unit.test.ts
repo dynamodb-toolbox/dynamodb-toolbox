@@ -8,9 +8,9 @@ import {
   DeleteOptions,
   UpdateOptions,
   ConditionsOrFilters, AttributeMap,
-} from 'classes/Entity'
+} from 'classes/Entity/types.js'
 
-import { Table, Entity } from '../index'
+import { Table, Entity } from '../index.js'
 import { ReturnConsumedCapacity, ReturnItemCollectionMetrics, Select } from '@aws-sdk/client-dynamodb'
 import {
   DeleteCommandInput,
