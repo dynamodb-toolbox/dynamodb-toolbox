@@ -19,7 +19,8 @@ import type {
   ScanInput,
   TransactGetItem
 } from '@aws-sdk/client-dynamodb'
-import cloneDeep from 'deep-copy'
+import * as cloneDeep from 'deep-copy'
+
 import type { A, B, O } from 'ts-toolbelt'
 
 import parseEntity from '../../lib/parseEntity.js'
@@ -149,7 +150,7 @@ class Entity<Name extends string = string,
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
-      ...cloneDeep(entitySchemaWithoutTable),
+      ...cloneDeep.default(entitySchemaWithoutTable),
       ...(table ? { table } : {}),
     }
 
