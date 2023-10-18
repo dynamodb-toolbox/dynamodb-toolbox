@@ -1,7 +1,7 @@
-import projectionBuilder from '../lib/projectionBuilder'
+import projectionBuilder from '../lib/projectionBuilder.js'
 
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
 
 const DefaultTable = new Table({
   name: 'test-table',

@@ -1,4 +1,4 @@
-import { shouldExecute, shouldParse } from '../classes/Entity'
+import { shouldExecute, shouldParse } from '../classes/Entity/Entity.js'
 
 describe('Entity - utils', () => {
   it('should execute', () => {

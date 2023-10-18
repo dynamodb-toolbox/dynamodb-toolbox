@@ -20,7 +20,7 @@ import {
   PutCommandInput, PutCommandOutput, QueryCommandInput, ScanCommandInput,
   UpdateCommandInput, UpdateCommandOutput,
 } from '@aws-sdk/lib-dynamodb'
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient } from './bootstrap.test.js'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
   obj: O,

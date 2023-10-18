@@ -1,4 +1,4 @@
-import parseEntity from '../lib/parseEntity'
+import parseEntity from '../lib/parseEntity.js'
 
 // Simulate Entity config
 const entity = {

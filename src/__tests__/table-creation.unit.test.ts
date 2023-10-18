@@ -1,5 +1,5 @@
-import Table from '../classes/Table'
-import { DocumentClient, DocumentClientWithoutConfig } from './bootstrap.test'
+import Table from '../classes/Table/Table.js'
+import { DocumentClient, DocumentClientWithoutConfig } from './bootstrap.test.js'
 
 describe('Table creation', () => {
   it('creates table w/ minimum options', async () => {

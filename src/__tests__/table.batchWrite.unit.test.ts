@@ -1,6 +1,6 @@
 import { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
-import { Entity, Table } from '../index'
-import { DocumentClient as docClient } from './bootstrap.test'
+import { Entity, Table } from '../index.js'
+import { DocumentClient as docClient } from './bootstrap.test.js'
 import assert from 'assert'
 
 const TestTable = new Table({

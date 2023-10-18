@@ -1,5 +1,5 @@
 import { Entity, Table } from '..'
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient } from './bootstrap.test.js'
 
 const TestTable = new Table({
   name: 'test-table',

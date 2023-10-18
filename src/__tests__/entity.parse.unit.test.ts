@@ -1,7 +1,7 @@
-import { DocumentClientWithWrappedNumbers } from './bootstrap.test'
+import { DocumentClientWithWrappedNumbers } from './bootstrap.test.js'
 
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
 import { unmarshall } from '@aws-sdk/util-dynamodb'
 
 const TestTable = new Table({

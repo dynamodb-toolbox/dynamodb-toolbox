@@ -1,5 +1,5 @@
-import { TrackingInfo } from '../lib/parseEntity'
-import parseCompositeKey from '../lib/parseCompositeKey'
+import { TrackingInfo } from '../lib/parseEntity.js'
+import parseCompositeKey from '../lib/parseCompositeKey.js'
 
 // Simulate attributes
 const attributes = {

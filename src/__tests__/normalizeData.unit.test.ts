@@ -1,9 +1,9 @@
-import normalizeData from '../lib/normalizeData'
+import normalizeData from '../lib/normalizeData.js'
 
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient } from './bootstrap.test.js'
 
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
 
 const DefaultTable = new Table({
   name: 'test-table',
