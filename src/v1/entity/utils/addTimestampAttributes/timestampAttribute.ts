@@ -1,15 +1,8 @@
-import type { UpdateItemInputExtension } from 'v1/commands/updateItem/types'
 import type { AtLeastOnce, PrimitiveAttribute } from 'v1/schema'
-import type { PrimitiveAttributeDefaultValue } from 'v1/schema/attributes/primitive/types'
 
 export type TimestampAttribute<
   SAVED_AS extends string,
-  HIDDEN extends boolean,
-  UPDATE_DEFAULT extends PrimitiveAttributeDefaultValue<
-    'string',
-    undefined,
-    UpdateItemInputExtension
-  > = undefined
+  HIDDEN extends boolean
 > = PrimitiveAttribute<
   'string',
   {
@@ -20,8 +13,8 @@ export type TimestampAttribute<
     enum: undefined
     defaults: {
       key: undefined
-      put: () => string
-      update: UPDATE_DEFAULT
+      put: unknown
+      update: unknown
     }
   }
 >

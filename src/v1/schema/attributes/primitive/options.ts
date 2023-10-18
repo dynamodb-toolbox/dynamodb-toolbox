@@ -1,20 +1,11 @@
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import { $enum } from '../constants/attributeOptions'
-
-import type {
-  PrimitiveAttributeType,
-  PrimitiveAttributeDefaultValue,
-  PrimitiveAttributeEnumValues
-} from './types'
 
 // Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
 /**
  * Input options of Primitive Attribute
  */
-export type PrimitiveAttributeOptions<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
-> = {
+export type PrimitiveAttributeOptions = {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -34,14 +25,13 @@ export type PrimitiveAttributeOptions<
    * Rename attribute before save commands
    */
   savedAs: string | undefined
-  [$enum]: PrimitiveAttributeEnumValues<TYPE>
   /**
-   * Provide default values for attribute (or tag attribute as having computed default values)
+   * Provide default values for attribute
    */
   defaults: {
-    key: PrimitiveAttributeDefaultValue<TYPE>
-    put: PrimitiveAttributeDefaultValue<TYPE>
-    update: PrimitiveAttributeDefaultValue<TYPE>
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
   }
 }
 
@@ -50,7 +40,6 @@ export type PrimitiveAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
-  [$enum]: undefined
   defaults: {
     key: undefined
     put: undefined
@@ -63,7 +52,6 @@ export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
-  [$enum]: undefined,
   defaults: {
     key: undefined,
     put: undefined,

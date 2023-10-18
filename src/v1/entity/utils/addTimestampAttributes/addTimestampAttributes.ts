@@ -1,6 +1,5 @@
 import type { Schema } from 'v1/schema'
 import type { If } from 'v1/types/if'
-import type { GET } from 'v1/commands/updateItem/types'
 import { $get } from 'v1/commands/updateItem/utils'
 
 import { WithInternalAttribute, addInternalAttribute } from '../addInternalAttribute'
@@ -90,8 +89,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
 
     const createdAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>,
-      () => GET<[TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'name'>, string]>
+      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
     > = {
       path: createdName,
       type: 'string',
@@ -116,8 +114,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
 
     const modifiedAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>,
-      () => string
+      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
     > = {
       path: modifiedName,
       type: 'string',

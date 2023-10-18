@@ -1,7 +1,7 @@
 import { $defaults } from '../constants/attributeOptions'
-import type { $Attribute } from '../types'
+import type { $AttributeState } from '../types'
 
-export const hasDefinedDefault = (attribute: $Attribute): boolean =>
+export const hasDefinedDefault = (attribute: $AttributeState): boolean =>
   (['key', 'put', 'update'] as const).some(
     operation => attribute[$defaults][operation] !== undefined
   )

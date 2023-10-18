@@ -1,31 +1,27 @@
-import type { $MapAttributeAttributes, MapAttributeAttributes, $Narrow, Narrow } from './attributes'
-import { $key, $savedAs, $required } from './attributes/constants/attributeOptions'
 import { DynamoDBToolboxError } from 'v1/errors'
+import type { NarrowObject } from 'v1/types'
+
+import type { SchemaAttributes, $SchemaAttributeStates } from './attributes'
+import { $key, $savedAs, $required } from './attributes/constants/attributeOptions'
 
 import type { Schema } from './interface'
 import type { RequiredOption } from './attributes/constants/requiredOptions'
 import { FreezeAttribute, freezeAttribute } from './attributes/freeze'
 
-type SchemaTyper = <$ATTRIBUTES extends $MapAttributeAttributes = {}>(
-  attributes: $Narrow<$ATTRIBUTES>
-) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
-
-type _SchemaTyper = <ATTRIBUTES extends MapAttributeAttributes = {}>(arg: {
-  attributes: Narrow<ATTRIBUTES>
+type $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = {}>(arg: {
+  attributes: NarrowObject<ATTRIBUTES>
   savedAttributeNames: Set<string>
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<RequiredOption, Set<string>>
 }) => Schema<ATTRIBUTES>
 
-export const _schema: _SchemaTyper = <
-  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
->({
+const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttributes>({
   attributes,
   savedAttributeNames,
   keyAttributeNames,
   requiredAttributeNames
 }: {
-  attributes: Narrow<ATTRIBUTES>
+  attributes: NarrowObject<ATTRIBUTES>
   savedAttributeNames: Set<string>
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<RequiredOption, Set<string>>
@@ -37,9 +33,13 @@ export const _schema: _SchemaTyper = <
     keyAttributeNames,
     requiredAttributeNames,
     and: $additionalAttr => {
-      const $additionalAttributes = $additionalAttr as $MapAttributeAttributes
+      const $additionalAttributes = (typeof $additionalAttr === 'function'
+        ? $additionalAttr(
+            $schema({ attributes, savedAttributeNames, keyAttributeNames, requiredAttributeNames })
+          )
+        : $additionalAttr) as $SchemaAttributeStates
 
-      const nextAttributes = { ...attributes } as MapAttributeAttributes
+      const nextAttributes = { ...attributes } as SchemaAttributes
       const nextSavedAttributeNames = new Set(savedAttributeNames)
       const nextKeyAttributeNames = new Set(keyAttributeNames)
       const nextRequiredAttributeNames: Record<RequiredOption, Set<string>> = {
@@ -76,7 +76,7 @@ export const _schema: _SchemaTyper = <
         nextAttributes[attributeName] = freezeAttribute(attribute, attributeName)
       }
 
-      return _schema({
+      return $schema({
         attributes: nextAttributes,
         savedAttributeNames: nextSavedAttributeNames,
         keyAttributeNames: nextKeyAttributeNames,
@@ -85,18 +85,22 @@ export const _schema: _SchemaTyper = <
     }
   } as Schema<ATTRIBUTES>)
 
+type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeStates = {}>(
+  attributes: NarrowObject<$ATTRIBUTES>
+) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
+
 /**
  * Defines an Entity schema
  *
  * @param $schemaAttr Object of attributes
  * @return Schema
  */
-export const schema: SchemaTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $MapAttributeAttributes = {}>(
-  $schemaAttr: $Narrow<$MAP_ATTRIBUTE_ATTRIBUTES>
+export const schema: SchemaTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $SchemaAttributeStates = {}>(
+  $schemaAttr: NarrowObject<$MAP_ATTRIBUTE_ATTRIBUTES>
 ): Schema<
   { [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]> }
 > =>
-  _schema({
+  $schema({
     attributes: {},
     savedAttributeNames: new Set(),
     keyAttributeNames: new Set(),

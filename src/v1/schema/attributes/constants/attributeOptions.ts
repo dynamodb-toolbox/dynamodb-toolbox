@@ -83,5 +83,10 @@ export type AttributeOptionsConstraints = {
   hidden: boolean
   key: boolean
   savedAs: string | undefined
+  defaults: {
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
+  }
   enum: ResolvedPrimitiveAttribute[] | undefined
 }
