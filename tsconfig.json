@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "baseUrl": "src",
     "target": "es2019",
     "rootDir": "src",
-    "moduleResolution": "node",
-    "module": "commonjs",
     "declaration": true,
     "inlineSourceMap": false,
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
