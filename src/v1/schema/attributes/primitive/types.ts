@@ -1,5 +1,10 @@
-import type { ComputedDefault } from '../constants/computedDefault'
-import type { ExtendedValue, Extension } from '../types'
+import type { SharedAttributeStateConstraint } from '../shared/interface'
+
+export interface PrimitiveAttributeStateConstraint<
+  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
+> extends SharedAttributeStateConstraint {
+  enum: PrimitiveAttributeEnumValues<TYPE>
+}
 
 /**
  * Possible Primitive Attribute type
@@ -34,24 +39,3 @@ export type ResolvedPrimitiveAttribute = ResolvePrimitiveAttributeType<Primitive
 export type PrimitiveAttributeEnumValues<TYPE extends PrimitiveAttributeType> =
   | ResolvePrimitiveAttributeType<TYPE>[]
   | undefined
-
-type ValueOrGetter<VALUE> = VALUE | (() => VALUE)
-
-/**
- * Primitive Default values constraint
- */
-export type PrimitiveAttributeDefaultValue<
-  TYPES extends PrimitiveAttributeType,
-  ENUM extends PrimitiveAttributeEnumValues<TYPES> = PrimitiveAttributeEnumValues<TYPES>,
-  EXTENSION extends Extension = never
-> =
-  | undefined
-  | ComputedDefault
-  | (ENUM extends ResolvePrimitiveAttributeType<TYPES>[]
-      ? ValueOrGetter<ENUM[number]>
-      : ValueOrGetter<ResolvePrimitiveAttributeType<TYPES>>)
-  | (() => TYPES extends infer TYPE
-      ? TYPE extends PrimitiveAttributeType
-        ? ExtendedValue<EXTENSION, TYPE>
-        : never
-      : never)

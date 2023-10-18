@@ -3,7 +3,6 @@ import type { ErrorBlueprint } from 'v1/errors/blueprint'
 import type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
-  PrimitiveAttributeDefaultValue,
   PrimitiveAttributeEnumValues
 } from './types'
 
@@ -21,7 +20,7 @@ type InvalidDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
   hasPath: true
   payload: {
     expectedType: PrimitiveAttributeType
-    defaultValue: NonNullable<PrimitiveAttributeDefaultValue<PrimitiveAttributeType>>
+    defaultValue: unknown
   }
 }>
 
@@ -30,7 +29,7 @@ type InvalidDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
   hasPath: true
   payload: {
     enumValues: NonNullable<PrimitiveAttributeEnumValues<PrimitiveAttributeType>>
-    defaultValue: NonNullable<PrimitiveAttributeDefaultValue<PrimitiveAttributeType>>
+    defaultValue: unknown
   }
 }>
 

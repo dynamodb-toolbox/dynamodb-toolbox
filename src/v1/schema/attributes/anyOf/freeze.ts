@@ -16,26 +16,30 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import type { $AnyOfAttribute, AnyOfAttribute } from './interface'
+import type { $AnyOfAttributeState, AnyOfAttribute } from './interface'
+import type { $AttributeState } from '../types'
 
-export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTES extends $AnyOfAttribute> =
+export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
     AnyOfAttribute<
-      FreezeAttribute<$ANY_OF_ATTRIBUTES[$elements][number]>,
+      // We have to cast as $AnyOfAttributeElements is not technically assignable to $AttributeState
+      $ANY_OF_ATTRIBUTE[$elements][number] extends $AttributeState
+        ? FreezeAttribute<$ANY_OF_ATTRIBUTE[$elements][number]>
+        : never,
       {
-        required: $ANY_OF_ATTRIBUTES[$required]
-        hidden: $ANY_OF_ATTRIBUTES[$hidden]
-        key: $ANY_OF_ATTRIBUTES[$key]
-        savedAs: $ANY_OF_ATTRIBUTES[$savedAs]
-        defaults: $ANY_OF_ATTRIBUTES[$defaults]
+        required: $ANY_OF_ATTRIBUTE[$required]
+        hidden: $ANY_OF_ATTRIBUTE[$hidden]
+        key: $ANY_OF_ATTRIBUTE[$key]
+        savedAs: $ANY_OF_ATTRIBUTE[$savedAs]
+        defaults: $ANY_OF_ATTRIBUTE[$defaults]
       }
     >,
     never,
     never
   >
 
-type AnyOfAttributeFreezer = <$ANY_OF_ATTRIBUTES extends $AnyOfAttribute>(
+type AnyOfAttributeFreezer = <$ANY_OF_ATTRIBUTES extends $AnyOfAttributeState>(
   $anyOfAttribute: $ANY_OF_ATTRIBUTES,
   path: string
 ) => FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTES>
@@ -48,14 +52,16 @@ type AnyOfAttributeFreezer = <$ANY_OF_ATTRIBUTES extends $AnyOfAttribute>(
  * @return void
  */
 export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
-  $ANY_OF_ATTRIBUTES extends $AnyOfAttribute
+  $ANY_OF_ATTRIBUTE extends $AnyOfAttributeState
 >(
-  $anyOfAttribute: $ANY_OF_ATTRIBUTES,
+  $anyOfAttribute: $ANY_OF_ATTRIBUTE,
   path: string
-): FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTES> => {
+): FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE> => {
   validateAttributeProperties($anyOfAttribute, path)
 
-  const frozenElements: FreezeAttribute<$ANY_OF_ATTRIBUTES[$elements][number]>[] = []
+  const frozenElements: ($ANY_OF_ATTRIBUTE[$elements][number] extends $AttributeState
+    ? FreezeAttribute<$ANY_OF_ATTRIBUTE[$elements][number]>
+    : never)[] = []
 
   if (!isArray($anyOfAttribute[$elements])) {
     throw new DynamoDBToolboxError('schema.anyOfAttribute.invalidElements', {
@@ -71,7 +77,9 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
     })
   }
 
-  $anyOfAttribute[$elements].forEach(element => {
+  $anyOfAttribute[$elements].forEach(_element => {
+    const element = _element as $AttributeState
+
     if (element[$required] !== 'atLeastOnce' && element[$required] !== 'always') {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.optionalElements', {
         message: `Invalid anyOf elements at path ${path}: AnyOf elements must be required`,
@@ -101,7 +109,9 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
     }
 
     frozenElements.push(
-      freezeAttribute(element, path) as FreezeAttribute<$ANY_OF_ATTRIBUTES[$elements][number]>
+      freezeAttribute(element, path) as $ANY_OF_ATTRIBUTE[$elements][number] extends $AttributeState
+        ? FreezeAttribute<$ANY_OF_ATTRIBUTE[$elements][number]>
+        : never
     )
   })
 

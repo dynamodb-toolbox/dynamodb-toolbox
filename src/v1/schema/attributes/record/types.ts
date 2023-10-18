@@ -1,48 +1,41 @@
 import type { AtLeastOnce } from '../constants'
-import type { $type, $defaults } from '../constants/attributeOptions'
-import type { $AttributeSharedState, AttributeSharedState } from '../shared/interface'
-import type { $Attribute, Attribute } from '../types/attribute'
+import type { $PrimitiveAttributeState } from '../primitive'
+import type { PrimitiveAttributeEnumValues } from '../primitive/types'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
+import type { $AttributeState, Attribute } from '../types/attribute'
 
 type RecordAttributeKeysState = {
   required: AtLeastOnce
   hidden: false
   key: false
   savedAs: undefined
-}
-
-export type $RecordAttributeKeys = $Attribute & {
-  [$type]: 'string'
-  [$defaults]: {
+  enum: PrimitiveAttributeEnumValues<'string'>
+  defaults: {
+    key: undefined
     put: undefined
     update: undefined
   }
-} & $AttributeSharedState<RecordAttributeKeysState>
+}
+
+export type $RecordAttributeKeys = $PrimitiveAttributeState<'string', RecordAttributeKeysState>
 
 export type RecordAttributeKeys = Attribute & {
   type: 'string'
-  defaults: {
-    put: undefined
-    update: undefined
-  }
-} & AttributeSharedState<RecordAttributeKeysState>
+} & SharedAttributeState<RecordAttributeKeysState>
 
 type RecordAttributeElementsState = {
   required: AtLeastOnce
   hidden: false
   key: false
   savedAs: undefined
+  defaults: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
-export type $RecordAttributeElements = $Attribute & {
-  [$defaults]: {
-    put: undefined
-    update: undefined
-  }
-} & $AttributeSharedState<RecordAttributeElementsState>
+export type $RecordAttributeElements = $AttributeState &
+  $SharedAttributeState<RecordAttributeElementsState>
 
-export type RecordAttributeElements = Attribute & {
-  defaults: {
-    put: undefined
-    update: undefined
-  }
-} & AttributeSharedState<RecordAttributeElementsState>
+export type RecordAttributeElements = Attribute & SharedAttributeState<RecordAttributeElementsState>

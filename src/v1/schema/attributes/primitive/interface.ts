@@ -1,36 +1,33 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If } from 'v1/types/if'
-import type { UpdateItemInputExtension } from 'v1/commands'
-
-import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
-import type { $type, $enum, $defaults } from '../constants/attributeOptions'
+import type { If, ValueOrGetter } from 'v1/types'
 import type {
-  AttributeSharedStateConstraint,
-  $AttributeSharedState,
-  AttributeSharedState
-} from '../shared/interface'
+  AttributeKeyInput,
+  AttributePutItemInput,
+  AttributeUpdateItemInput,
+  KeyInput,
+  PutItemInput,
+  UpdateItemInput
+} from 'v1/commands'
+
+import type { Schema } from '../../interface'
+import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
+import type { $type, $enum } from '../constants/attributeOptions'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 
 import type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
-  PrimitiveAttributeEnumValues,
-  PrimitiveAttributeDefaultValue
+  PrimitiveAttributeStateConstraint
 } from './types'
+import type { FreezePrimitiveAttribute } from './freeze'
 
-interface PrimitiveAttributeStateConstraint<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
-> extends AttributeSharedStateConstraint {
-  enum: PrimitiveAttributeEnumValues<TYPE>
-  defaults: {
-    key: PrimitiveAttributeDefaultValue<TYPE>
-    put: PrimitiveAttributeDefaultValue<TYPE>
-    update: PrimitiveAttributeDefaultValue<
-      TYPE,
-      PrimitiveAttributeEnumValues<TYPE>,
-      UpdateItemInputExtension
-    >
-  }
+export interface $PrimitiveAttributeState<
+  $TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
+  STATE extends PrimitiveAttributeStateConstraint<$TYPE> = PrimitiveAttributeStateConstraint<$TYPE>
+> extends $SharedAttributeState<STATE> {
+  [$type]: $TYPE
+  [$enum]: STATE['enum']
 }
 
 /**
@@ -39,10 +36,7 @@ interface PrimitiveAttributeStateConstraint<
 export interface $PrimitiveAttribute<
   $TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   STATE extends PrimitiveAttributeStateConstraint<$TYPE> = PrimitiveAttributeStateConstraint<$TYPE>
-> extends $AttributeSharedState<STATE> {
-  [$type]: $TYPE
-  [$enum]: STATE['enum']
-  [$defaults]: STATE['defaults']
+> extends $PrimitiveAttributeState<$TYPE, STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -53,25 +47,25 @@ export interface $PrimitiveAttribute<
    */
   required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_IS_REQUIRED
-  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'required', NEXT_IS_REQUIRED>>
+  ) => $PrimitiveAttribute<$TYPE, O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>>
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'required', Never>>
+  optional: () => $PrimitiveAttribute<$TYPE, O.Overwrite<STATE, { required: Never }>>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'hidden', true>>
+  hidden: () => $PrimitiveAttribute<$TYPE, O.Overwrite<STATE, { hidden: true }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $PrimitiveAttribute<$TYPE, O.Update<O.Update<STATE, 'key', true>, 'required', Always>>
+  key: () => $PrimitiveAttribute<$TYPE, O.Overwrite<STATE, { required: Always; key: true }>>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
+  ) => $PrimitiveAttribute<$TYPE, O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>>
   /**
    * Provide a finite list of possible values for attribute
    * (For typing reasons, enums are only available as attribute methods, not as input options)
@@ -82,7 +76,7 @@ export interface $PrimitiveAttribute<
    */
   enum: <NEXT_ENUM extends ResolvePrimitiveAttributeType<$TYPE>[]>(
     ...nextEnum: NEXT_ENUM
-  ) => $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', NEXT_ENUM>>
+  ) => $PrimitiveAttribute<$TYPE, O.Overwrite<STATE, { enum: NEXT_ENUM }>>
   /**
    * Shorthand for `enum(constantValue).default(constantValue)`
    *
@@ -94,64 +88,240 @@ export interface $PrimitiveAttribute<
     constant: CONSTANT
   ) => $PrimitiveAttribute<
     $TYPE,
-    O.Update<
-      O.Update<STATE, 'enum', [CONSTANT]>,
-      'defaults',
-      O.Update<STATE['defaults'], If<STATE['key'], 'key', 'put'>, CONSTANT>
+    O.Overwrite<
+      STATE,
+      {
+        enum: [CONSTANT]
+        defaults: If<
+          STATE['key'],
+          {
+            key: unknown
+            put: STATE['defaults']['put']
+            update: STATE['defaults']['update']
+          },
+          {
+            key: STATE['defaults']['key']
+            put: unknown
+            update: STATE['defaults']['update']
+          }
+        >
+      }
     >
   >
   /**
    * Provide a default value for attribute in Primary Key computing
    *
-   * @param nextKeyDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
-  keyDefault: <NEXT_KEY_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE, STATE['enum']>>(
-    nextKeyDefault: NEXT_KEY_DEFAULT
+  keyDefault: (
+    nextKeyDefault: ValueOrGetter<
+      AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>, true>
+    >
   ) => $PrimitiveAttribute<
     $TYPE,
-    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'key', NEXT_KEY_DEFAULT>>
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: unknown
+          put: STATE['defaults']['put']
+          update: STATE['defaults']['update']
+        }
+      }
+    >
   >
   /**
    * Provide a default value for attribute in PUT commands
    *
-   * @param nextPutDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
-  putDefault: <NEXT_PUT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE, STATE['enum']>>(
-    nextPutDefault: NEXT_PUT_DEFAULT
+  putDefault: (
+    nextPutDefault: ValueOrGetter<
+      AttributePutItemInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>, true>
+    >
   ) => $PrimitiveAttribute<
     $TYPE,
-    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: STATE['defaults']['key']
+          put: unknown
+          update: STATE['defaults']['update']
+        }
+      }
+    >
   >
   /**
    * Provide a default value for attribute in UPDATE commands
    *
-   * @param nextUpdateDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
-  updateDefault: <
-    NEXT_UPDATE_DEFAULT extends PrimitiveAttributeDefaultValue<
-      $TYPE,
-      STATE['enum'],
-      UpdateItemInputExtension
+  updateDefault: (
+    nextUpdateDefault: ValueOrGetter<
+      AttributeUpdateItemInput<
+        FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>,
+        true
+      >
     >
-  >(
-    nextUpdateDefault: NEXT_UPDATE_DEFAULT
   ) => $PrimitiveAttribute<
     $TYPE,
-    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: STATE['defaults']['key']
+          put: STATE['defaults']['put']
+          update: unknown
+        }
+      }
+    >
   >
   /**
-   * Provide a default value for attribute in PUT commands / Primary Key computing if attribute is tagged as key
+   * Provide a default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
-   * @param nextDefault `Attribute type`, `() => Attribute type`, `ComputedDefault`
+   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  default: <NEXT_DEFAULT extends PrimitiveAttributeDefaultValue<$TYPE, STATE['enum']>>(
-    nextDefault: NEXT_DEFAULT
+  default: (
+    nextDefault: ValueOrGetter<
+      If<
+        STATE['key'],
+        AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>, true>,
+        AttributePutItemInput<
+          FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>,
+          true
+        >
+      >
+    >
   ) => $PrimitiveAttribute<
     $TYPE,
-    O.Update<
+    O.Overwrite<
       STATE,
-      'defaults',
-      O.Update<STATE['defaults'], If<STATE['key'], 'key', 'put'>, NEXT_DEFAULT>
+      {
+        defaults: If<
+          STATE['key'],
+          {
+            key: unknown
+            put: STATE['defaults']['put']
+            update: STATE['defaults']['update']
+          },
+          {
+            key: STATE['defaults']['key']
+            put: unknown
+            update: STATE['defaults']['update']
+          }
+        >
+      }
+    >
+  >
+  /**
+   * Provide a **linked** default value for attribute in Primary Key computing
+   *
+   * @param nextKeyDefault `keyAttributeInput | ((keyInput) => keyAttributeInput)`
+   */
+  keyLink: <SCHEMA extends Schema>(
+    nextKeyDefault: ValueOrGetter<
+      AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>, true>,
+      [KeyInput<SCHEMA, true>]
+    >
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: unknown
+          put: STATE['defaults']['put']
+          update: STATE['defaults']['update']
+        }
+      }
+    >
+  >
+  /**
+   * Provide a **linked** default value for attribute in PUT commands
+   *
+   * @param nextPutDefault `putAttributeInput | ((putItemInput) => putAttributeInput)`
+   */
+  putLink: <SCHEMA extends Schema>(
+    nextPutDefault: ValueOrGetter<
+      AttributePutItemInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>, true>,
+      [PutItemInput<SCHEMA, true>]
+    >
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: STATE['defaults']['key']
+          put: unknown
+          update: STATE['defaults']['update']
+        }
+      }
+    >
+  >
+  /**
+   * Provide a **linked** default value for attribute in UPDATE commands
+   *
+   * @param nextUpdateDefault `unknown | ((updateItemInput) => updateAttributeInput)`
+   */
+  updateLink: <SCHEMA extends Schema>(
+    nextUpdateDefault: ValueOrGetter<
+      AttributeUpdateItemInput<
+        FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>,
+        true
+      >,
+      [UpdateItemInput<SCHEMA, true>]
+    >
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: STATE['defaults']['key']
+          put: STATE['defaults']['put']
+          update: unknown
+        }
+      }
+    >
+  >
+  /**
+   * Provide a **linked** default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
+   */
+  link: <SCHEMA extends Schema>(
+    nextDefault: ValueOrGetter<
+      If<
+        STATE['key'],
+        AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>, true>,
+        AttributePutItemInput<
+          FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>,
+          true
+        >
+      >,
+      [If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>]
+    >
+  ) => $PrimitiveAttribute<
+    $TYPE,
+    O.Overwrite<
+      STATE,
+      {
+        defaults: If<
+          STATE['key'],
+          {
+            key: unknown
+            put: STATE['defaults']['put']
+            update: STATE['defaults']['update']
+          },
+          {
+            key: STATE['defaults']['key']
+            put: unknown
+            update: STATE['defaults']['update']
+          }
+        >
+      }
     >
   >
 }
@@ -159,9 +329,8 @@ export interface $PrimitiveAttribute<
 export interface PrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   STATE extends PrimitiveAttributeStateConstraint<TYPE> = PrimitiveAttributeStateConstraint<TYPE>
-> extends AttributeSharedState<STATE> {
+> extends SharedAttributeState<STATE> {
   path: string
   type: TYPE
   enum: STATE['enum']
-  defaults: STATE['defaults']
 }

@@ -4,6 +4,6 @@ export type {
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute
 } from './types'
-export type { $PrimitiveAttribute, PrimitiveAttribute } from './interface'
+export type { $PrimitiveAttributeState, $PrimitiveAttribute, PrimitiveAttribute } from './interface'
 export { FreezePrimitiveAttribute, freezePrimitiveAttribute } from './freeze'
 export type { $ResolvePrimitiveAttribute, ResolvePrimitiveAttribute } from './resolve'

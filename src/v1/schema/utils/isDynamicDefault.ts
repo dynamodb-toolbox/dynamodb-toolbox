@@ -1,7 +1,7 @@
 import { isFunction } from 'v1/utils/validation'
 
-import type { ComputedDefault, AttributeValue } from '../attributes'
+import type { AttributeValue } from '../attributes'
 
 export const isDynamicDefault = (
-  defaultValue: AttributeValue | ComputedDefault | (() => unknown)
-): defaultValue is () => AttributeValue => isFunction(defaultValue)
+  defaultValue: unknown
+): defaultValue is (input?: unknown) => AttributeValue => isFunction(defaultValue)

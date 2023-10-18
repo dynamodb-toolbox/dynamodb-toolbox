@@ -1,5 +1,5 @@
 import type { AtLeastOnce } from '../constants'
-import type { PrimitiveAttribute, $PrimitiveAttribute } from '../primitive/interface'
+import type { $PrimitiveAttributeState, PrimitiveAttribute } from '../primitive/interface'
 import type { PrimitiveAttributeEnumValues } from '../primitive/types'
 
 interface SetAttributeElementState {
@@ -15,7 +15,7 @@ interface SetAttributeElementState {
   }
 }
 
-export type $SetAttributeElements = $PrimitiveAttribute<
+export type $SetAttributeElements = $PrimitiveAttributeState<
   'string' | 'number' | 'binary',
   SetAttributeElementState
 >

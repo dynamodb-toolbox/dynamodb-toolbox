@@ -1,7 +1,5 @@
 import { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 
-import type { AnyAttributeDefaultValue } from './types'
-
 // Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
 export interface AnyAttributeOptions {
@@ -25,12 +23,12 @@ export interface AnyAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Provide default values for attribute (or tag attribute as having computed default values)
+   * Provide default values for attribute
    */
   defaults: {
-    key: AnyAttributeDefaultValue
-    put: AnyAttributeDefaultValue
-    update: AnyAttributeDefaultValue
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
   }
 }
 

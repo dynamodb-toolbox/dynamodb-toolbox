@@ -1,30 +1,26 @@
 import type { O } from 'ts-toolbelt'
 
 import { validateAttributeProperties } from '../shared/validate'
-import {
-  $type,
-  $required,
-  $hidden,
-  $key,
-  $savedAs,
-  $defaults,
-  AttributeOptionNameSymbol
-} from '../constants/attributeOptions'
+import { $type, $required, $hidden, $key, $savedAs, $defaults } from '../constants/attributeOptions'
 
-import type { $AnyAttribute, AnyAttributeStateConstraint, AnyAttribute } from './interface'
+import type { $AnyAttributeState, AnyAttribute } from './interface'
 
-export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttribute> =
+export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
-    AnyAttribute<
-      { [KEY in keyof AnyAttributeStateConstraint]: $ANY_ATTRIBUTE[AttributeOptionNameSymbol[KEY]] }
-    >,
+    AnyAttribute<{
+      required: $ANY_ATTRIBUTE[$required]
+      hidden: $ANY_ATTRIBUTE[$hidden]
+      key: $ANY_ATTRIBUTE[$key]
+      savedAs: $ANY_ATTRIBUTE[$savedAs]
+      defaults: $ANY_ATTRIBUTE[$defaults]
+    }>,
     never,
     never
   >
 
-type AnyAttributeFreezer = <$ANY_ATTRIBUTE extends $AnyAttribute>(
-  _anyAttribute: $ANY_ATTRIBUTE,
+type AnyAttributeFreezer = <$ANY_ATTRIBUTE extends $AnyAttributeState>(
+  $anyAttribute: $ANY_ATTRIBUTE,
   path: string
 ) => FreezeAnyAttribute<$ANY_ATTRIBUTE>
 
@@ -35,7 +31,10 @@ type AnyAttributeFreezer = <$ANY_ATTRIBUTE extends $AnyAttribute>(
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezeAnyAttribute: AnyAttributeFreezer = ($anyAttribute, path) => {
+export const freezeAnyAttribute: AnyAttributeFreezer = <$ANY_ATTRIBUTE extends $AnyAttributeState>(
+  $anyAttribute: $ANY_ATTRIBUTE,
+  path: string
+) => {
   validateAttributeProperties($anyAttribute, path)
 
   return {

@@ -1,4 +1,4 @@
-import type { ComputedDefault, RequiredOption, AtLeastOnce } from '../constants'
+import type { RequiredOption, AtLeastOnce } from '../constants'
 
 // Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
@@ -26,12 +26,12 @@ export interface RecordAttributeOptions {
    */
   savedAs: string | undefined
   /**
-   * Provide a default values for attribute
+   * Provide default values for attribute
    */
   defaults: {
-    key: ComputedDefault | undefined
-    put: ComputedDefault | undefined
-    update: ComputedDefault | undefined
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
   }
 }
 

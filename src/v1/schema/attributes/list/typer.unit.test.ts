@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { ComputedDefault, Never, AtLeastOnce, Always } from '../constants'
+import { Never, AtLeastOnce, Always } from '../constants'
 import { string } from '../primitive'
 import {
   $type,
@@ -16,7 +16,7 @@ import {
 
 import { list } from './typer'
 import { freezeListAttribute } from './freeze'
-import type { ListAttribute, $ListAttribute } from './interface'
+import type { ListAttribute, $ListAttributeState } from './interface'
 
 describe('list', () => {
   const path = 'some.path'
@@ -111,7 +111,7 @@ describe('list', () => {
     > = 1
     assertList
 
-    const assertExtends: A.Extends<typeof lst, $ListAttribute> = 1
+    const assertExtends: A.Extends<typeof lst, $ListAttributeState> = 1
     assertExtends
 
     const frozenList = freezeListAttribute(lst, path)
@@ -224,113 +224,116 @@ describe('list', () => {
     expect(lst).toMatchObject({ [$savedAs]: 'foo' })
   })
 
-  it('accepts ComputedDefault as default value (option)', () => {
+  it('returns defaulted list (option)', () => {
     const lstA = list(strElement, {
-      defaults: { key: ComputedDefault, put: undefined, update: undefined }
+      // TOIMPROVE: Add type constraints here
+      defaults: { key: ['foo'], put: undefined, update: undefined }
     })
 
     const assertListA: A.Contains<
       typeof lstA,
-      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+      { [$defaults]: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertListA
 
     expect(lstA).toMatchObject({
-      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+      [$defaults]: { key: ['foo'], put: undefined, update: undefined }
     })
 
     const lstB = list(strElement, {
-      defaults: { key: undefined, put: ComputedDefault, update: undefined }
+      // TOIMPROVE: Add type constraints here
+      defaults: { key: undefined, put: ['bar'], update: undefined }
     })
 
     const assertListB: A.Contains<
       typeof lstB,
-      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertListB
 
     expect(lstB).toMatchObject({
-      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      [$defaults]: { key: undefined, put: ['bar'], update: undefined }
     })
 
     const lstC = list(strElement, {
-      defaults: { key: undefined, put: undefined, update: ComputedDefault }
+      // TOIMPROVE: Add type constraints here
+      defaults: { key: undefined, put: undefined, update: ['baz'] }
     })
 
     const assertListC: A.Contains<
       typeof lstC,
-      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+      { [$defaults]: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertListC
 
     expect(lstC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+      [$defaults]: { key: undefined, put: undefined, update: ['baz'] }
     })
   })
 
-  it('accepts ComputedDefault as default value (method)', () => {
-    const lstA = list(strElement).keyDefault(ComputedDefault)
+  it('returns defaulted list (method)', () => {
+    const lstA = list(strElement).keyDefault(['foo'])
 
     const assertListA: A.Contains<
       typeof lstA,
-      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+      { [$defaults]: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertListA
 
     expect(lstA).toMatchObject({
-      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+      [$defaults]: { key: ['foo'], put: undefined, update: undefined }
     })
 
-    const lstB = list(strElement).putDefault(ComputedDefault)
+    const lstB = list(strElement).putDefault(['bar'])
 
     const assertListB: A.Contains<
       typeof lstB,
-      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertListB
 
     expect(lstB).toMatchObject({
-      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      [$defaults]: { key: undefined, put: ['bar'], update: undefined }
     })
 
-    const lstC = list(strElement).updateDefault(ComputedDefault)
+    const lstC = list(strElement).updateDefault(['baz'])
 
     const assertListC: A.Contains<
       typeof lstC,
-      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+      { [$defaults]: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertListC
 
     expect(lstC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+      [$defaults]: { key: undefined, put: undefined, update: ['baz'] }
     })
   })
 
   it('returns list with PUT default value if it is not key (default shorthand)', () => {
-    const listAttr = list(strElement).default(ComputedDefault)
+    const listAttr = list(strElement).default(['foo'])
 
     const assertList: A.Contains<
       typeof listAttr,
-      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertList
 
     expect(listAttr).toMatchObject({
-      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      [$defaults]: { key: undefined, put: ['foo'], update: undefined }
     })
   })
 
   it('returns list with KEY default value if it is key (default shorthand)', () => {
-    const listAttr = list(strElement).key().default(ComputedDefault)
+    const listAttr = list(strElement).key().default(['bar'])
 
     const assertList: A.Contains<
       typeof listAttr,
-      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+      { [$defaults]: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertList
 
     expect(listAttr).toMatchObject({
-      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+      [$defaults]: { key: ['bar'], put: undefined, update: undefined }
     })
   })
 
