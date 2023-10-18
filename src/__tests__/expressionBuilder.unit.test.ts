@@ -1,9 +1,9 @@
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
 import {
   default as expressionBuilder,
   SUPPORTED_FILTER_EXP_ATTR_REF_OPERATORS
-} from '../lib/expressionBuilder'
+} from '../lib/expressionBuilder.js'
 
 const TestTable = new Table({
   name: 'test-table',

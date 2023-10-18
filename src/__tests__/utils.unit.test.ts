@@ -1,4 +1,4 @@
-import { toBool, hasValue, error } from '../lib/utils'
+import { toBool, hasValue, error } from '../lib/utils.js'
 
 describe('utility functions', () => {
   test('toBool', () => {

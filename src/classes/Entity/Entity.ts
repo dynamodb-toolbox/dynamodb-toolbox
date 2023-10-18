@@ -19,22 +19,23 @@ import type {
   ScanInput,
   TransactGetItem
 } from '@aws-sdk/client-dynamodb'
-import cloneDeep from 'deep-copy'
+import * as cloneDeep from 'deep-copy'
+
 import type { A, B, O } from 'ts-toolbelt'
 
-import parseEntity from '../../lib/parseEntity'
-import validateTypes from '../../lib/validateTypes'
-import normalizeData from '../../lib/normalizeData'
-import formatItem from '../../lib/formatItem'
-import getKey from '../../lib/getKey'
-import parseConditions from '../../lib/expressionBuilder'
-import parseProjections from '../../lib/projectionBuilder'
-import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
+import parseEntity from '../../lib/parseEntity.js'
+import validateTypes from '../../lib/validateTypes.js'
+import normalizeData from '../../lib/normalizeData.js'
+import formatItem from '../../lib/formatItem.js'
+import getKey from '../../lib/getKey.js'
+import parseConditions from '../../lib/expressionBuilder.js'
+import parseProjections from '../../lib/projectionBuilder.js'
+import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils.js'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE,
-} from '../../constants'
-import type { ScanOptions, TableDef } from '../Table'
+} from '../../constants.js'
+import type { ScanOptions, TableDef } from '../Table/types.js'
 import type {
   $GetOptions,
   $PutOptions,
@@ -61,7 +62,7 @@ import type {
   Writable,
   Readonly,
   $PutBatchOptions, AttributeMap,
-} from './types'
+} from './types.js'
 
 class Entity<Name extends string = string,
   // Name is used to detect Entity instances (new Entity(...)) vs Entity type (const e: Entity = ...)
@@ -149,7 +150,7 @@ class Entity<Name extends string = string,
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
-      ...cloneDeep(entitySchemaWithoutTable),
+      ...cloneDeep.default(entitySchemaWithoutTable),
       ...(table ? { table } : {}),
     }
 

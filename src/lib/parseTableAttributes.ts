@@ -4,8 +4,8 @@
  * @license MIT
  */
 
-import { TableAttributes, TableAttributeConfig, ParsedTableAttribute } from '../classes/Table'
-import { error, typeError, keyTypeError, isDynamoDbType, isDynamoDbKeyType } from './utils'
+import { TableAttributes, TableAttributeConfig, ParsedTableAttribute } from '../classes/Table/types.js'
+import { error, typeError, keyTypeError, isDynamoDbType, isDynamoDbKeyType } from './utils.js'
 
 // Parse the attributes and verify valid types
 export default (attrs: TableAttributes, partitionKey: string, sortKey: string | null) =>

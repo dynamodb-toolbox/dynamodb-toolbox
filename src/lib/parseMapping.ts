@@ -10,9 +10,9 @@ import {
   SortKeyDefinition,
   GSISortKeyDefinition,
   PureAttributeDefinition
-} from '../classes/Entity'
-import { TrackingInfo } from './parseEntity'
-import { error } from './utils'
+} from '../classes/Entity/types.js'
+import { TrackingInfo } from './parseEntity.js'
+import { error } from './utils.js'
 
 // Parse and validate mapping config
 export default (

@@ -1,9 +1,9 @@
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE
-} from '../constants'
-import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap.test'
+} from '../constants.js'
+import { Table, Entity } from '../index.js'
+import { DocumentClient } from './bootstrap.test.js'
 import assert from 'assert'
 
 const TestTable = new Table({

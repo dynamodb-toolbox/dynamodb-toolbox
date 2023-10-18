@@ -5,14 +5,14 @@
  */
 import { A, O } from 'ts-toolbelt'
 
-import { error } from './utils'
-import parseMapping from './parseMapping'
+import { error } from './utils.js'
+import parseMapping from './parseMapping.js'
 import {
   CompositeAttributeDefinition,
   PureAttributeDefinition,
   AttributeDefinitions
-} from '../classes/Entity'
-import { TrackingInfo } from './parseEntity'
+} from '../classes/Entity/types.js'
+import { TrackingInfo } from './parseEntity.js'
 
 const parseCompositeKey = <
   ReadonlyAttributeDefinitions extends

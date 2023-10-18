@@ -8,9 +8,9 @@ import {
   DeleteOptions,
   UpdateOptions,
   ConditionsOrFilters, AttributeMap,
-} from 'classes/Entity'
+} from 'classes/Entity/types.js'
 
-import { Table, Entity } from '../index'
+import { Table, Entity } from '../index.js'
 import { ReturnConsumedCapacity, ReturnItemCollectionMetrics, Select } from '@aws-sdk/client-dynamodb'
 import {
   DeleteCommandInput,
@@ -20,7 +20,7 @@ import {
   PutCommandInput, PutCommandOutput, QueryCommandInput, ScanCommandInput,
   UpdateCommandInput, UpdateCommandOutput,
 } from '@aws-sdk/lib-dynamodb'
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient } from './bootstrap.test.js'
 
 const omit = <O extends Record<string, unknown>, K extends (keyof O)[]>(
   obj: O,

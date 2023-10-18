@@ -2,9 +2,9 @@ import type { A, B, O, F } from 'ts-toolbelt'
 import { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import { ReturnConsumedCapacity, ReturnItemCollectionMetrics } from '@aws-sdk/client-dynamodb'
 
-import type { Compute, FirstDefined, If } from '../../lib/utils'
-import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table'
-import Entity from './Entity'
+import type { Compute, FirstDefined, If } from '../../lib/utils.js'
+import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table/types.js'
+import Entity from './Entity.js'
 import { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
 export interface EntityConstructor<

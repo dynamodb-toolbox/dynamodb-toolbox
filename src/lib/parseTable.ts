@@ -1,8 +1,8 @@
 import { A } from 'ts-toolbelt'
 
-import parseAttributes from './parseTableAttributes'
-import { error, hasValue } from './utils'
-import { TableConstructor, TableIndexes } from '../classes/Table'
+import parseAttributes from './parseTableAttributes.js'
+import { error, hasValue } from './utils.js'
+import { TableConstructor, TableIndexes } from '../classes/Table/types.js'
 
 export type ParsedTable = ReturnType<typeof parseTable>
 

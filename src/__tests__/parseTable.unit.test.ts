@@ -1,7 +1,7 @@
-import parseTable from '../lib/parseTable'
+import parseTable from '../lib/parseTable.js'
 
 // Require Table and Entity classes
-import { TableConstructor } from '../classes/Table'
+import { TableConstructor } from '../classes/Table/types.js'
 
 const table: TableConstructor<'test-table', 'pk', 'sk'> = {
   name: 'test-table',

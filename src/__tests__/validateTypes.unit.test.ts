@@ -1,5 +1,5 @@
-import { toDynamoBigInt } from '../lib/utils'
-import validateTypes from '../lib/validateTypes'
+import { toDynamoBigInt } from '../lib/utils.js'
+import validateTypes from '../lib/validateTypes.js'
 
 describe('validateTypes', () => {
   it('validates string', async () => {

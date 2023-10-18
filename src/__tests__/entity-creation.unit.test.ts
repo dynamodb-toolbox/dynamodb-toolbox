@@ -1,6 +1,6 @@
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
-import { DocumentClient, DocumentClientWithWrappedNumbers } from './bootstrap.test'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
+import { DocumentClient, DocumentClientWithWrappedNumbers } from './bootstrap.test.js'
 
 const tableAddEntity = jest.spyOn(Table.prototype, 'addEntity').mockReturnValue()
 

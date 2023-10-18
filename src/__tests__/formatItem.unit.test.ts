@@ -1,9 +1,9 @@
-import formatItem from '../lib/formatItem'
+import formatItem from '../lib/formatItem.js'
 
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient } from './bootstrap.test.js'
 
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
 
 // Create basic table
 const DefaultTable = new Table({

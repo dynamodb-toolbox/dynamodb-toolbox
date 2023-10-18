@@ -9,11 +9,11 @@ import {
   AttributeDefinitions,
   PureAttributeDefinition,
   CompositeAttributeDefinition
-} from '../classes/Entity'
-import { TrackingInfo } from './parseEntity'
-import parseMapping from './parseMapping'
-import parseCompositeKey from './parseCompositeKey'
-import { error, typeError, validTypes, isDynamoDbType } from './utils'
+} from '../classes/Entity/types.js'
+import { TrackingInfo } from './parseEntity.js'
+import parseMapping from './parseMapping.js'
+import parseCompositeKey from './parseCompositeKey.js'
+import { error, typeError, validTypes, isDynamoDbType } from './utils.js'
 
 const parseEntityAttributes = <
   ReadonlyAttributeDefinitions extends

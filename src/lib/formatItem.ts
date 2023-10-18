@@ -5,9 +5,9 @@
  */
 
 import type { NativeAttributeValue, NativeScalarAttributeValue, NumberValue } from '@aws-sdk/util-dynamodb'
-import type { PureAttributeDefinition } from '../classes/Entity'
-import validateTypes from './validateTypes'
-import type { Linked } from './parseEntity'
+import type { PureAttributeDefinition } from '../classes/Entity/types.js'
+import validateTypes from './validateTypes.js'
+import type { Linked } from './parseEntity.js'
 
 // Convert from DocumentClient values, which may be wrapped sets or numbers,
 // into normal TS values.

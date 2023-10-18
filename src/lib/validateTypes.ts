@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-import { toBool, hasValue, error, toDynamoBigInt, typeOf, isArrayOfSameType } from './utils'
+import { toBool, hasValue, error, toDynamoBigInt, typeOf, isArrayOfSameType } from './utils.js'
 
 // Performs type validation/coercion
 export default () => (mapping: any, field: any, value: any) => {

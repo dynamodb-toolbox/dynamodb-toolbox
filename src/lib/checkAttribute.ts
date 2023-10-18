@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-import { error } from './utils'
+import { error } from './utils.js'
 
 // Check attribute against attribute set
 export default (attr: string, attrs: any): string => {

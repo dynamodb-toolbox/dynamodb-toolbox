@@ -1,7 +1,7 @@
 import { A, L } from 'ts-toolbelt'
 
-import { PureAttributeDefinition } from '../classes/Entity'
-import { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table'
+import { PureAttributeDefinition } from '../classes/Entity/types.js'
+import { DynamoDBTypes, DynamoDBKeyTypes } from '../classes/Table/types.js'
 import { unmarshall } from '@aws-sdk/util-dynamodb'
 
 export const validTypes: DynamoDBTypes[] = [
