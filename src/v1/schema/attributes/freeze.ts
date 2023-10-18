@@ -1,30 +1,32 @@
 import { $type } from './constants/attributeOptions'
-import { freezeAnyAttribute, $AnyAttribute, FreezeAnyAttribute } from './any'
+import { freezeAnyAttribute, $AnyAttributeState, FreezeAnyAttribute } from './any'
 import {
   freezePrimitiveAttribute,
-  $PrimitiveAttribute,
+  $PrimitiveAttributeState,
   FreezePrimitiveAttribute
 } from './primitive'
-import { freezeSetAttribute, $SetAttribute, FreezeSetAttribute } from './set'
-import { freezeListAttribute, $ListAttribute, FreezeListAttribute } from './list'
-import { freezeMapAttribute, $MapAttribute, FreezeMapAttribute } from './map'
-import { freezeRecordAttribute, $RecordAttribute, FreezeRecordAttribute } from './record'
-import { freezeAnyOfAttribute, $AnyOfAttribute, FreezeAnyOfAttribute } from './anyOf'
-import type { $Attribute } from './types/attribute'
+import { freezeSetAttribute, $SetAttributeState, FreezeSetAttribute } from './set'
+import { freezeListAttribute, $ListAttributeState, FreezeListAttribute } from './list'
+import { freezeMapAttribute, $MapAttributeState, FreezeMapAttribute } from './map'
+import { freezeRecordAttribute, $RecordAttributeState, FreezeRecordAttribute } from './record'
+import { freezeAnyOfAttribute, $AnyOfAttributeState, FreezeAnyOfAttribute } from './anyOf'
+import type { $AttributeState } from './types/attribute'
 
-export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends $AnyAttribute
+export type FreezeAttribute<
+  $ATTRIBUTE extends $AttributeState
+> = $ATTRIBUTE extends $AnyAttributeState
   ? FreezeAnyAttribute<$ATTRIBUTE>
-  : $ATTRIBUTE extends $PrimitiveAttribute
+  : $ATTRIBUTE extends $PrimitiveAttributeState
   ? FreezePrimitiveAttribute<$ATTRIBUTE>
-  : $ATTRIBUTE extends $SetAttribute
+  : $ATTRIBUTE extends $SetAttributeState
   ? FreezeSetAttribute<$ATTRIBUTE>
-  : $ATTRIBUTE extends $ListAttribute
+  : $ATTRIBUTE extends $ListAttributeState
   ? FreezeListAttribute<$ATTRIBUTE>
-  : $ATTRIBUTE extends $MapAttribute
+  : $ATTRIBUTE extends $MapAttributeState
   ? FreezeMapAttribute<$ATTRIBUTE>
-  : $ATTRIBUTE extends $RecordAttribute
+  : $ATTRIBUTE extends $RecordAttributeState
   ? FreezeRecordAttribute<$ATTRIBUTE>
-  : $ATTRIBUTE extends $AnyOfAttribute
+  : $ATTRIBUTE extends $AnyOfAttributeState
   ? FreezeAnyOfAttribute<$ATTRIBUTE>
   : never
 
@@ -35,7 +37,7 @@ export type FreezeAttribute<$ATTRIBUTE extends $Attribute> = $ATTRIBUTE extends 
  * @param path _(optional)_ Path of the attribute in the related schema (string)
  * @return Attribute
  */
-export const freezeAttribute = <$ATTRIBUTE extends $Attribute>(
+export const freezeAttribute = <$ATTRIBUTE extends $AttributeState>(
   attribute: $ATTRIBUTE,
   path: string
 ): FreezeAttribute<$ATTRIBUTE> => {

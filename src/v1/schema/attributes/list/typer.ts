@@ -1,4 +1,5 @@
 import type { NarrowObject } from 'v1/types/narrowObject'
+import { overwrite } from 'v1/utils/overwrite'
 
 import type { RequiredOption, AtLeastOnce } from '../constants'
 import {
@@ -11,19 +12,139 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
+import type { SharedAttributeStateConstraint } from '../shared/interface'
 
 import type { $ListAttributeElements } from './types'
 import type { $ListAttribute } from './interface'
 import { ListAttributeOptions, ListAttributeDefaultOptions, LIST_DEFAULT_OPTIONS } from './options'
 
+type $ListAttributeTyper = <
+  $ELEMENTS extends $ListAttributeElements,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+>(
+  elements: $ELEMENTS,
+  state: STATE
+) => $ListAttribute<$ELEMENTS, STATE>
+
+const $list: $ListAttributeTyper = <
+  $ELEMENTS extends $ListAttributeElements,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+>(
+  elements: $ELEMENTS,
+  state: STATE
+) => {
+  const $listAttribute: $ListAttribute<$ELEMENTS, STATE> = {
+    [$type]: 'list',
+    [$elements]: elements,
+    [$required]: state.required,
+    [$hidden]: state.hidden,
+    [$key]: state.key,
+    [$savedAs]: state.savedAs,
+    [$defaults]: state.defaults,
+    required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+      nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
+    ) => $list(elements, overwrite(state, { required: nextRequired })),
+    optional: () => $list(elements, overwrite(state, { required: 'never' })),
+    hidden: () => $list(elements, overwrite(state, { hidden: true })),
+    key: () => $list(elements, overwrite(state, { key: true, required: 'always' })),
+    savedAs: nextSavedAs => $list(elements, overwrite(state, { savedAs: nextSavedAs })),
+    keyDefault: nextKeyDefault =>
+      $list(
+        elements,
+        overwrite(state, {
+          defaults: {
+            key: nextKeyDefault,
+            put: state.defaults.put,
+            update: state.defaults.update
+          }
+        })
+      ),
+    putDefault: nextPutDefault =>
+      $list(
+        elements,
+        overwrite(state, {
+          defaults: {
+            key: state.defaults.key,
+            put: nextPutDefault,
+            update: state.defaults.update
+          }
+        })
+      ),
+    updateDefault: nextUpdateDefault =>
+      $list(
+        elements,
+        overwrite(state, {
+          defaults: {
+            key: state.defaults.key,
+            put: state.defaults.put,
+            update: nextUpdateDefault
+          }
+        })
+      ),
+    default: nextDefault =>
+      $list(
+        elements,
+        overwrite(state, {
+          defaults: state.key
+            ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
+            : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
+        })
+      ),
+    keyLink: nextKeyDefault =>
+      $list(
+        elements,
+        overwrite(state, {
+          defaults: {
+            key: nextKeyDefault,
+            put: state.defaults.put,
+            update: state.defaults.update
+          }
+        })
+      ),
+    putLink: nextPutDefault =>
+      $list(
+        elements,
+        overwrite(state, {
+          defaults: {
+            key: state.defaults.key,
+            put: nextPutDefault,
+            update: state.defaults.update
+          }
+        })
+      ),
+    updateLink: nextUpdateDefault =>
+      $list(
+        elements,
+        overwrite(state, {
+          defaults: {
+            key: state.defaults.key,
+            put: state.defaults.put,
+            update: nextUpdateDefault
+          }
+        })
+      ),
+    link: nextDefault =>
+      $list(
+        elements,
+        overwrite(state, {
+          defaults: state.key
+            ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
+            : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
+        })
+      )
+  }
+
+  return $listAttribute
+}
+
 type ListAttributeTyper = <
-  ELEMENTS extends $ListAttributeElements,
+  $ELEMENTS extends $ListAttributeElements,
   OPTIONS extends Partial<ListAttributeOptions> = ListAttributeOptions
 >(
-  elements: ELEMENTS,
+  elements: $ELEMENTS,
   options?: NarrowObject<OPTIONS>
 ) => $ListAttribute<
-  ELEMENTS,
+  $ELEMENTS,
   InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
 >
 
@@ -39,58 +160,23 @@ type ListAttributeTyper = <
  * @param options _(optional)_ List Options
  */
 export const list: ListAttributeTyper = <
-  ELEMENTS extends $ListAttributeElements,
+  $ELEMENTS extends $ListAttributeElements,
   OPTIONS extends Partial<ListAttributeOptions> = ListAttributeOptions
 >(
-  elements: ELEMENTS,
+  elements: $ELEMENTS,
   options?: NarrowObject<OPTIONS>
-) => {
-  const appliedOptions = {
+): $ListAttribute<
+  $ELEMENTS,
+  InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
+> => {
+  const state = {
     ...LIST_DEFAULT_OPTIONS,
     ...options,
     defaults: {
       ...LIST_DEFAULT_OPTIONS.defaults,
       ...options?.defaults
     }
-  }
+  } as InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
 
-  return {
-    [$type]: 'list',
-    [$elements]: elements,
-    [$required]: appliedOptions.required,
-    [$hidden]: appliedOptions.hidden,
-    [$key]: appliedOptions.key,
-    [$savedAs]: appliedOptions.savedAs,
-    [$defaults]: appliedOptions.defaults,
-    required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
-      nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-    ) => list(elements, { ...appliedOptions, required: nextRequired }),
-    optional: () => list(elements, { ...appliedOptions, required: 'never' }),
-    hidden: () => list(elements, { ...appliedOptions, hidden: true }),
-    key: () => list(elements, { ...appliedOptions, key: true, required: 'always' }),
-    savedAs: nextSavedAs => list(elements, { ...appliedOptions, savedAs: nextSavedAs }),
-    keyDefault: nextPutDefault =>
-      list(elements, {
-        ...appliedOptions,
-        defaults: { ...appliedOptions.defaults, key: nextPutDefault }
-      }),
-    putDefault: nextPutDefault =>
-      list(elements, {
-        ...appliedOptions,
-        defaults: { ...appliedOptions.defaults, put: nextPutDefault }
-      }),
-    updateDefault: nextUpdateDefault =>
-      list(elements, {
-        ...appliedOptions,
-        defaults: { ...appliedOptions.defaults, update: nextUpdateDefault }
-      }),
-    default: nextDefault =>
-      list(elements, {
-        ...appliedOptions,
-        defaults: { ...appliedOptions.defaults, [appliedOptions.key ? 'key' : 'put']: nextDefault }
-      })
-  } as $ListAttribute<
-    ELEMENTS,
-    InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
-  >
+  return $list(elements, state)
 }

@@ -1,19 +1,29 @@
-import type { $AnyAttribute, AnyAttribute } from '../any'
+import type { $AnyAttributeState, $AnyAttribute, AnyAttribute } from '../any'
 import type {
+  $PrimitiveAttributeState,
   $PrimitiveAttribute,
   ResolvedPrimitiveAttribute,
   PrimitiveAttribute,
   PrimitiveAttributeType
 } from '../primitive'
-import type { $SetAttribute, SetAttribute } from '../set'
-import type { $ListAttribute, ListAttribute } from '../list'
-import type { $MapAttribute, MapAttribute } from '../map'
-import type { $RecordAttribute, RecordAttribute } from '../record'
-import type { $AnyOfAttribute, AnyOfAttribute } from '../anyOf'
+import type { $SetAttributeState, $SetAttribute, SetAttribute } from '../set'
+import type { $ListAttributeState, $ListAttribute, ListAttribute } from '../list'
+import type { $MapAttributeState, $MapAttribute, MapAttribute } from '../map'
+import type { $RecordAttributeState, $RecordAttribute, RecordAttribute } from '../record'
+import type { $AnyOfAttributeState, $AnyOfAttribute, AnyOfAttribute } from '../anyOf'
 
 /**
  * Possible attributes types
  */
+export type $AttributeState =
+  | $AnyAttributeState
+  | $PrimitiveAttributeState
+  | $SetAttributeState
+  | $ListAttributeState
+  | $MapAttributeState
+  | $RecordAttributeState
+  | $AnyOfAttributeState
+
 export type $Attribute =
   | $AnyAttribute
   | $PrimitiveAttribute
@@ -35,11 +45,11 @@ export type Attribute =
 /**
  * Dictionary of attributes
  */
-export interface $MapAttributeAttributes {
-  [key: string]: $Attribute
+export interface $SchemaAttributeStates {
+  [key: string]: $AttributeState
 }
 
-export interface MapAttributeAttributes {
+export interface SchemaAttributes {
   [key: string]: Attribute
 }
 

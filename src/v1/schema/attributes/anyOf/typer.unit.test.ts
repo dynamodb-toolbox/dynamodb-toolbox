@@ -3,7 +3,7 @@ import type { A } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { string } from '../primitive'
-import { ComputedDefault, Never, AtLeastOnce, Always } from '../constants'
+import { Never, AtLeastOnce, Always } from '../constants'
 import {
   $type,
   $elements,
@@ -16,7 +16,7 @@ import {
 
 import { anyOf } from './typer'
 import { freezeAnyOfAttribute } from './freeze'
-import type { AnyOfAttribute, $AnyOfAttribute } from './interface'
+import type { AnyOfAttribute, $AnyOfAttributeState } from './interface'
 
 describe('anyOf', () => {
   const path = 'some.path'
@@ -101,29 +101,16 @@ describe('anyOf', () => {
   })
 
   it('rejects elements with default values', () => {
-    const invalidAnyOfA = anyOf([
+    const invalidAnyOf = anyOf([
       str,
       // @ts-expect-error
       str.putDefault('foo')
     ])
 
-    const invalidCallA = () => freezeAnyOfAttribute(invalidAnyOfA, path)
+    const invalidCall = () => freezeAnyOfAttribute(invalidAnyOf, path)
 
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
-    )
-
-    const invalidAnyOfB = anyOf([
-      str,
-      // @ts-expect-error
-      str.updateDefault(ComputedDefault)
-    ])
-
-    const invalidCallB = () => freezeAnyOfAttribute(invalidAnyOfB, path)
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
     )
   })
@@ -149,7 +136,7 @@ describe('anyOf', () => {
     > = 1
     assertAnyOf
 
-    const assertExtends: A.Extends<typeof anyOfAttr, $AnyOfAttribute> = 1
+    const assertExtends: A.Extends<typeof anyOfAttr, $AnyOfAttributeState> = 1
     assertExtends
 
     const frozenList = freezeAnyOfAttribute(anyOfAttr, path)
@@ -262,61 +249,62 @@ describe('anyOf', () => {
     expect(anyOfAttr).toMatchObject({ [$savedAs]: 'foo' })
   })
 
-  it('accepts ComputedDefault as default value (option)', () => {
+  it('returns defaulted anyOf (option)', () => {
     const anyOfAttr = anyOf([str], {
-      defaults: { key: undefined, put: ComputedDefault, update: undefined }
+      // TOIMPROVE: Add type constraints here
+      defaults: { key: undefined, put: 'foo', update: undefined }
     })
 
     const assertAnyOf: A.Contains<
       typeof anyOfAttr,
-      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAnyOf
 
     expect(anyOfAttr).toMatchObject({
-      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      [$defaults]: { key: undefined, put: 'foo', update: undefined }
     })
   })
 
-  it('accepts ComputedDefault as default value (method)', () => {
-    const anyOfAttr = anyOf([str]).updateDefault(ComputedDefault)
+  it('returns defaulted anyOf (method)', () => {
+    const anyOfAttr = anyOf([str]).updateDefault('bar')
 
     const assertAnyOf: A.Contains<
       typeof anyOfAttr,
-      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+      { [$defaults]: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertAnyOf
 
     expect(anyOfAttr).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+      [$defaults]: { key: undefined, put: undefined, update: 'bar' }
     })
   })
 
   it('returns anyOf with PUT default value if it is not key (default shorthand)', () => {
-    const anyOfAttr = anyOf([str]).default(ComputedDefault)
+    const anyOfAttr = anyOf([str]).default('foo')
 
     const assertAnyOf: A.Contains<
       typeof anyOfAttr,
-      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAnyOf
 
     expect(anyOfAttr).toMatchObject({
-      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      [$defaults]: { key: undefined, put: 'foo', update: undefined }
     })
   })
 
   it('returns anyOf with KEY default value if it is key (default shorthand)', () => {
-    const anyOfAttr = anyOf([str]).key().default(ComputedDefault)
+    const anyOfAttr = anyOf([str]).key().default('foo')
 
     const assertAnyOf: A.Contains<
       typeof anyOfAttr,
-      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+      { [$defaults]: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAnyOf
 
     expect(anyOfAttr).toMatchObject({
-      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+      [$defaults]: { key: 'foo', put: undefined, update: undefined }
     })
   })
 

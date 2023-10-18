@@ -15,9 +15,9 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import type { $SetAttribute, SetAttribute } from './interface'
+import type { $SetAttributeState, SetAttribute } from './interface'
 
-export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttribute> =
+export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
     SetAttribute<
@@ -34,7 +34,7 @@ export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttribute> =
     never
   >
 
-type SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
+type SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttributeState>(
   $setAttribute: $SET_ATTRIBUTE,
   path: string
 ) => FreezeSetAttribute<$SET_ATTRIBUTE>
@@ -46,7 +46,7 @@ type SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttribute>(
+export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttributeState>(
   $setAttribute: $SET_ATTRIBUTE,
   path: string
 ): FreezeSetAttribute<$SET_ATTRIBUTE> => {

@@ -1,16 +1,11 @@
 import type { Schema, AtLeastOnce, PrimitiveAttribute } from 'v1/schema'
 import type { EntityAttributeSavedAs, TableV2 } from 'v1/table'
-import type { GET } from 'v1/commands/updateItem/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $get } from 'v1/commands/updateItem/utils'
 
 import { WithInternalAttribute, addInternalAttribute } from './addInternalAttribute'
 
-export type EntityAttribute<
-  TABLE extends TableV2,
-  ENTITY_ATTRIBUTE_NAME extends string,
-  ENTITY_NAME extends string
-> = PrimitiveAttribute<
+export type EntityAttribute<TABLE extends TableV2, ENTITY_NAME extends string> = PrimitiveAttribute<
   'string',
   {
     required: AtLeastOnce
@@ -20,12 +15,8 @@ export type EntityAttribute<
     enum: [ENTITY_NAME]
     defaults: {
       key: undefined
-      put: ENTITY_NAME
-      update: () => GET<
-        ENTITY_NAME extends undefined
-          ? [ENTITY_ATTRIBUTE_NAME]
-          : [ENTITY_ATTRIBUTE_NAME, ENTITY_NAME]
-      >
+      put: unknown
+      update: unknown
     }
   }
 >
@@ -37,11 +28,7 @@ export type WithEntityAttribute<
   ENTITY_NAME extends string
 > = string extends ENTITY_NAME
   ? SCHEMA
-  : WithInternalAttribute<
-      SCHEMA,
-      ENTITY_ATTRIBUTE_NAME,
-      EntityAttribute<TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>
-    >
+  : WithInternalAttribute<SCHEMA, ENTITY_ATTRIBUTE_NAME, EntityAttribute<TABLE, ENTITY_NAME>>
 
 type EntityAttributeAdder = <
   SCHEMA extends Schema,
@@ -78,7 +65,7 @@ export const addEntityAttribute: EntityAttributeAdder = <
     })
   }
 
-  const entityAttribute: EntityAttribute<TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME> = {
+  const entityAttribute: EntityAttribute<TABLE, ENTITY_NAME> = {
     path: entityAttributeName,
     type: 'string',
     required: 'atLeastOnce',
