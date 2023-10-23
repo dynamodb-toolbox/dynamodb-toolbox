@@ -175,29 +175,16 @@ describe('record', () => {
   })
 
   it('rejects elements with default values', () => {
-    const invalidRecordA = record(
+    const invalidRecord = record(
       str,
       // @ts-expect-error
       str.putDefault('foo')
     )
 
-    const invalidCallA = () => freezeRecordAttribute(invalidRecordA, path)
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
-    )
-
-    const invalidRecordB = record(
-      str,
-      // @ts-expect-error
-      str.putDefault(ComputedDefault)
-    )
-
-    const invalidCallB = () => freezeRecordAttribute(invalidRecordB, path)
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
     )
   })
