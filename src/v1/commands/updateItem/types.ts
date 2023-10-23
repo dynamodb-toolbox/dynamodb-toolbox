@@ -20,8 +20,7 @@ import type {
   AnyOfAttribute,
   AtLeastOnce,
   Always,
-  Never,
-  ComputedDefault
+  Never
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
@@ -106,31 +105,17 @@ export type UpdateItemInputExtension =
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
-> =
-  // Enforce Required attributes that don't have default values
-  ATTRIBUTE extends { required: Always } & (
-    | { key: true; defaults: { key: undefined } }
-    | { key: false; defaults: { update: undefined } }
-  )
+  REQUIRED_DEFAULTS extends boolean = false
+> = REQUIRED_DEFAULTS extends false
+  ? ATTRIBUTE extends { required: Always } & (
+      | { key: true; defaults: { key: undefined } }
+      | { key: false; defaults: { update: undefined } }
+    )
     ? true
-    : // Add attributes with independent defaults if REQUIRED_DEFAULTS is 'independent'
-    REQUIRED_DEFAULTS extends 'independent'
-    ? ATTRIBUTE extends
-        | { key: true; defaults: { key: undefined | ComputedDefault } }
-        | { key: false; defaults: { update: undefined | ComputedDefault } }
-      ? false
-      : true
-    : // Add all required attributes and those with independent defaults if REQUIRED_DEFAULTS is 'all'
-    REQUIRED_DEFAULTS extends 'all'
-    ? ATTRIBUTE extends { required: Always }
-      ? true
-      : ATTRIBUTE extends
-          | { key: true; defaults: { key: undefined | ComputedDefault } }
-          | { key: false; defaults: { update: undefined | ComputedDefault } }
-      ? false
-      : true
     : false
+  : ATTRIBUTE extends { required: Always }
+  ? true
+  : false
 
 type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: Never }
   ? true
@@ -145,7 +130,7 @@ type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: N
  */
 export type UpdateItemInput<
   SCHEMA extends EntityV2 | Schema = EntityV2,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
+  REQUIRED_DEFAULTS extends boolean = false
 > = EntityV2 extends SCHEMA
   ? Item<UpdateItemInputExtension>
   : Schema extends SCHEMA
@@ -219,7 +204,7 @@ type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute e
  */
 export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute = Attribute,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none',
+  REQUIRED_DEFAULTS extends boolean = false,
   SCHEMA_ATTRIBUTE_PATHS extends string = string
 > = Attribute extends ATTRIBUTE
   ? AttributeValue<UpdateItemInputExtension> | undefined

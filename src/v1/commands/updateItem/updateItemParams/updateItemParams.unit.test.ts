@@ -14,7 +14,6 @@ import {
   list,
   map,
   record,
-  ComputedDefault,
   DynamoDBToolboxError,
   UpdateItemCommand
 } from 'v1'
@@ -62,14 +61,14 @@ const TestEntity = new EntityV2({
     test_string: string().optional().updateDefault('default string'),
     test_number_default: number().optional().updateDefault(0),
     test_boolean_default: boolean().optional().updateDefault(false),
-    simple_string_copy: string().optional().updateDefault(ComputedDefault),
     operationsCount: number()
       .putDefault(1)
       .updateDefault(() => $add(1))
-  }),
-  updateDefaults: {
-    simple_string_copy: ({ simple_string }) => simple_string ?? 'NOTHING_TO_COPY'
-  },
+  }).and(schema => ({
+    simple_string_copy: string()
+      .optional()
+      .updateLink<typeof schema>(({ simple_string }) => simple_string ?? 'NOTHING_TO_COPY')
+  })),
   table: TestTable
 })
 
@@ -86,19 +85,22 @@ const TestEntity2 = new EntityV2({
   name: 'TestEntity2',
   schema: schema({
     email: string().key().savedAs('pk'),
-    sort: string().savedAs('sk').optional().default(ComputedDefault),
     test: string().optional(), // TODO: prefix with test---
     test_composite: string().optional(),
     test_composite2: string().optional(),
     test_undefined: any()
       .optional()
       // TODO: use unknown
-      .default(() => '')
-  }),
-  putDefaults: {
-    sort: ({ test_composite, test_composite2 }) =>
-      test_composite && test_composite2 && [test_composite, test_composite2].join('#')
-  },
+      .putDefault(() => '')
+  }).and(schema => ({
+    sort: string()
+      .savedAs('sk')
+      .optional()
+      .link<typeof schema>(
+        ({ test_composite, test_composite2 }) =>
+          test_composite && test_composite2 && [test_composite, test_composite2].join('#')
+      )
+  })),
   timestamps: false,
   table: TestTable2
 })
