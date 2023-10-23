@@ -17,7 +17,7 @@ export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension = nev
     [options?: SchemaCloningOptions<EXTENSION>]
   >
 ): Item<EXTENSION> => {
-  const { commandName, computeDefaultsContext, cloneExtension } = options
+  const { commandName, cloneExtension } = options
 
   if (!isObject(input)) {
     return cloneDeep(input)
@@ -27,33 +27,18 @@ export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension = nev
 
   const additionalAttributes: Set<string> = new Set(Object.keys(input))
 
-  const canComputeDefaults = computeDefaultsContext !== undefined
-
   Object.entries(schema.attributes).forEach(([attributeName, attribute]) => {
     let attributeInputWithDefaults: AttributeValue<EXTENSION> | undefined = undefined
 
-    if (canComputeDefaults) {
-      const { computeDefaults } = computeDefaultsContext
-
-      attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
-        attribute,
-        input[attributeName],
-        {
-          commandName,
-          computeDefaultsContext: {
-            computeDefaults: computeDefaults && computeDefaults[attributeName],
-            contextInputs: [input]
-          },
-          cloneExtension
-        } as AttributeCloningOptions<EXTENSION>
-      )
-    } else {
-      attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
-        attribute,
-        input[attributeName],
-        { commandName, cloneExtension } as AttributeCloningOptions<EXTENSION>
-      )
-    }
+    attributeInputWithDefaults = cloneAttributeInputAndAddDefaults(
+      attribute,
+      input[attributeName],
+      {
+        commandName,
+        originalInput: input,
+        cloneExtension
+      } as AttributeCloningOptions<EXTENSION>
+    )
 
     if (attributeInputWithDefaults !== undefined) {
       inputWithDefaults[attributeName] = attributeInputWithDefaults

@@ -23,19 +23,10 @@ export const cloneUpdateExtension: ExtensionCloner<UpdateItemInputExtension> = (
     }
   }
 
-  /**
-   * @debt refactor "Maybe we can simply clone a super-extension here, and continue if is(Super)Extension is false. Would be neat."
-   */
   const hasGet = hasGetOperation(input)
   if (hasGet) {
-    /**
-     * @debt refactor "TODO: Improve types if super-extensions happen: It's possible that computeDefaultsContext carries larger extension than currently checked."
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { computeDefaultsContext: _, ...restOptions } = options
-
     return cloneReferenceExtension(attribute, input, {
-      ...restOptions,
+      ...options,
       cloneExtension: cloneReferenceExtension
     })
   }
