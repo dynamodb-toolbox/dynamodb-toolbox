@@ -8,13 +8,12 @@ import type {
   SetAttribute,
   ListAttribute,
   MapAttribute,
-  MapAttributeAttributes,
+  SchemaAttributes,
   RecordAttribute,
   AnyOfAttribute,
   AtLeastOnce,
   Always,
-  ResolvePrimitiveAttribute,
-  ComputedDefault
+  ResolvePrimitiveAttribute
 } from 'v1/schema'
 import type { PrimaryKey } from 'v1/table'
 
@@ -30,7 +29,7 @@ import type { EntityV2 } from '../class'
  * SwapWithSavedAs<{ keyA: { ...attribute, savedAs: "keyB" }}>
  * => { keyB: { ...attribute, savedAs: "keyB"  }}
  */
-type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = {
+type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends SchemaAttributes> = {
   [ATTRIBUTE_NAME in keyof MAP_ATTRIBUTE_ATTRIBUTES as MAP_ATTRIBUTE_ATTRIBUTES[ATTRIBUTE_NAME]['savedAs'] extends string
     ? MAP_ATTRIBUTE_ATTRIBUTES[ATTRIBUTE_NAME]['savedAs']
     : ATTRIBUTE_NAME]: MAP_ATTRIBUTE_ATTRIBUTES[ATTRIBUTE_NAME]
@@ -38,7 +37,7 @@ type SwapWithSavedAs<MAP_ATTRIBUTE_ATTRIBUTES extends MapAttributeAttributes> = 
 
 type RecSavedItem<
   SCHEMA extends Schema | MapAttribute,
-  SWAPPED_ATTRIBUTES extends MapAttributeAttributes = SwapWithSavedAs<SCHEMA['attributes']>
+  SWAPPED_ATTRIBUTES extends SchemaAttributes = SwapWithSavedAs<SCHEMA['attributes']>
 > = O.Required<
   O.Partial<
     {
@@ -47,13 +46,7 @@ type RecSavedItem<
     }
   >,
   // Enforce Required attributes
-  | O.SelectKeys<SWAPPED_ATTRIBUTES, { required: AtLeastOnce | Always }>
-  // Enforce attributes that have independent default
-  | O.FilterKeys<
-      SWAPPED_ATTRIBUTES,
-      | { key: true; defaults: { key: undefined | ComputedDefault } }
-      | { key: false; defaults: { put: undefined | ComputedDefault } }
-    >
+  O.SelectKeys<SWAPPED_ATTRIBUTES, { required: AtLeastOnce | Always }>
 >
 
 /**

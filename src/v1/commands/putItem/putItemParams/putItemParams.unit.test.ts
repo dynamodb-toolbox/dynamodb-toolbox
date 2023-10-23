@@ -13,7 +13,6 @@ import {
   set,
   list,
   map,
-  ComputedDefault,
   DynamoDBToolboxError,
   PutItemCommand
 } from 'v1'
@@ -67,14 +66,18 @@ const TestEntity2 = new EntityV2({
   name: 'TestEntity2',
   schema: schema({
     email: string().key().savedAs('pk'),
-    sort: string().optional().savedAs('sk').putDefault(ComputedDefault),
+    sort: string().optional().savedAs('sk'),
     test_composite: string().optional(),
     test_composite2: string().optional()
-  }),
-  putDefaults: {
-    sort: ({ test_composite, test_composite2 }) =>
-      test_composite && test_composite2 && [test_composite, test_composite2].join('#')
-  },
+  }).and(schema => ({
+    sort: string()
+      .optional()
+      .savedAs('sk')
+      .putLink<typeof schema>(
+        ({ test_composite, test_composite2 }) =>
+          test_composite && test_composite2 && [test_composite, test_composite2].join('#')
+      )
+  })),
   table: TestTable2
 })
 

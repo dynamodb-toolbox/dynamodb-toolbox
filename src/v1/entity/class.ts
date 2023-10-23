@@ -1,4 +1,4 @@
-import type { HasComputedDefaults, Schema } from 'v1/schema'
+import type { Schema } from 'v1/schema'
 import type { TableV2, PrimaryKey } from 'v1/table'
 import type {
   PutItemCommand,
@@ -6,7 +6,7 @@ import type {
   DeleteItemCommand,
   UpdateItemCommand
 } from 'v1/commands'
-import type { KeyInput, UpdateItemInputExtension } from 'v1/commands/types'
+import type { KeyInput } from 'v1/commands/types'
 import type { PutItemCommandClass } from 'v1/commands/putItem/command'
 import type { GetItemCommandClass } from 'v1/commands/getItem/command'
 import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
@@ -15,12 +15,7 @@ import type { CommandClass } from 'v1/commands/class'
 import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type {
-  NeedsKeyCompute,
-  SchemaDefaultsComputer,
-  SchemaPutDefaultsComputer,
-  SchemaUpdateDefaultsComputer
-} from './generics'
+import type { NeedsKeyCompute } from './generics'
 import {
   TimestampsOptions,
   TimestampsDefaultOptions,
@@ -37,15 +32,7 @@ export class EntityV2<
   ENTITY_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
   TIMESTAMPS_OPTIONS extends TimestampsOptions = string extends NAME
     ? TimestampsOptions
-    : TimestampsDefaultOptions,
-  PUT_DEFAULTS_COMPUTER = string extends NAME
-    ? SchemaDefaultsComputer
-    : SchemaPutDefaultsComputer<SCHEMA>,
-  CONSTRUCTOR_PUT_DEFAULTS_COMPUTER extends PUT_DEFAULTS_COMPUTER = PUT_DEFAULTS_COMPUTER,
-  UPDATE_DEFAULTS_COMPUTER = string extends NAME
-    ? SchemaDefaultsComputer<UpdateItemInputExtension>
-    : SchemaUpdateDefaultsComputer<SCHEMA>,
-  CONSTRUCTOR_UPDATE_DEFAULTS_COMPUTER extends UPDATE_DEFAULTS_COMPUTER = UPDATE_DEFAULTS_COMPUTER
+    : TimestampsDefaultOptions
 > {
   public type: 'entity'
   public name: NAME
@@ -63,8 +50,6 @@ export class EntityV2<
   public computeKey?: (
     keyInput: Schema extends SCHEMA ? any : KeyInput<SCHEMA>
   ) => PrimaryKey<TABLE>
-  public putDefaults?: SchemaDefaultsComputer
-  public updateDefaults?: SchemaDefaultsComputer<UpdateItemInputExtension>
   // TODO: Maybe there's a way not to have to list all commands here
   // (use COMMAND_CLASS somehow) but I haven't found it yet
   public build: <COMMAND_CLASS extends typeof CommandClass = typeof CommandClass>(
@@ -97,8 +82,6 @@ export class EntityV2<
     table,
     schema,
     computeKey,
-    putDefaults,
-    updateDefaults,
     entityAttributeName = 'entity' as ENTITY_ATTRIBUTE_NAME,
     timestamps = true as NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   }: {
@@ -109,16 +92,9 @@ export class EntityV2<
     timestamps?: NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   } & If<
     NeedsKeyCompute<SCHEMA, TABLE>,
-    { computeKey: (keyInput: KeyInput<SCHEMA, 'all'>) => PrimaryKey<TABLE> },
+    { computeKey: (keyInput: KeyInput<SCHEMA, true>) => PrimaryKey<TABLE> },
     { computeKey?: undefined }
-  > &
-    // Weirdly using If here triggers an infinite type recursion error
-    (HasComputedDefaults<SCHEMA, 'put'> extends true
-      ? { putDefaults: CONSTRUCTOR_PUT_DEFAULTS_COMPUTER }
-      : { putDefaults?: undefined }) &
-    (HasComputedDefaults<SCHEMA, 'update'> extends true
-      ? { updateDefaults: CONSTRUCTOR_UPDATE_DEFAULTS_COMPUTER }
-      : { updateDefaults?: undefined })) {
+  >) {
     this.type = 'entity'
     this.name = name
     this.table = table
@@ -140,8 +116,6 @@ export class EntityV2<
     })
 
     this.computeKey = computeKey as any
-    this.putDefaults = putDefaults as any
-    this.updateDefaults = updateDefaults as any
     this.build = commandClass => new commandClass(this) as any
   }
 }
