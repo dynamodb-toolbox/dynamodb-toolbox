@@ -9,10 +9,9 @@ type EntityKeyInputParser = (entity: EntityV2, input: Item) => ParsedItem
 const requiringOptions = new Set<RequiredOption>(['always'])
 
 export const parseEntityKeyInput: EntityKeyInputParser = (entity, input) => {
-  /**
-   * @debt defaults "We do not provide defaults computer for now"
-   */
-  const clonedInputWithDefaults = cloneSchemaInputAndAddDefaults(entity.schema, input)
+  const clonedInputWithDefaults = cloneSchemaInputAndAddDefaults(entity.schema, input, {
+    commandName: 'key'
+  })
 
   return parseSchemaClonedInput(entity.schema, clonedInputWithDefaults, {
     requiringOptions,
