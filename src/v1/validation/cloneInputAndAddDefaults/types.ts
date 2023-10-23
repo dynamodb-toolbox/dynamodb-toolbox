@@ -43,4 +43,4 @@ export type AnyOfAttributeClonedInputsWithDefaults<EXTENSION extends Extension =
   clonedInputsWithDefaults: AttributeValue<EXTENSION>[]
 }
 
-export type CommandName = 'put' | 'update'
+export type CommandName = 'key' | 'put' | 'update'
