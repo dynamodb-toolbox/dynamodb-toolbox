@@ -76,7 +76,10 @@ export interface $PrimitiveAttribute<
    */
   enum: <NEXT_ENUM extends ResolvePrimitiveAttributeType<$TYPE>[]>(
     ...nextEnum: NEXT_ENUM
-  ) => $PrimitiveAttribute<$TYPE, O.Overwrite<STATE, { enum: NEXT_ENUM }>>
+  ) => /**
+   * @debt type "O.Overwrite widens NEXT_ENUM type to its type constraint for some reason"
+   */
+  $PrimitiveAttribute<$TYPE, O.Update<STATE, 'enum', NEXT_ENUM>>
   /**
    * Shorthand for `enum(constantValue).default(constantValue)`
    *
