@@ -14,21 +14,18 @@ import {
   $savedAs,
   $defaults
 } from '../constants/attributeOptions'
-import type { MapAttributeAttributes } from '../types/attribute'
 
-import type { $MapAttribute, MapAttribute } from './interface'
+import type { $MapAttributeState, MapAttribute } from './interface'
 
-export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttribute> =
+export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
     MapAttribute<
-      $MapAttribute extends $MAP_ATTRIBUTE
-        ? MapAttributeAttributes
-        : {
-            [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
-              $MAP_ATTRIBUTE[$attributes][KEY]
-            >
-          },
+      {
+        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
+          $MAP_ATTRIBUTE[$attributes][KEY]
+        >
+      },
       {
         required: $MAP_ATTRIBUTE[$required]
         hidden: $MAP_ATTRIBUTE[$hidden]
@@ -41,7 +38,7 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttribute> =
     never
   >
 
-type MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
+type MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttributeState>(
   $mapAttribute: $MAP_ATTRIBUTE,
   path: string
 ) => FreezeMapAttribute<$MAP_ATTRIBUTE>
@@ -53,10 +50,10 @@ type MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttribute>(
+export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttributeState>(
   $mapAttribute: $MAP_ATTRIBUTE,
   path: string
-) => {
+): FreezeMapAttribute<$MAP_ATTRIBUTE> => {
   validateAttributeProperties($mapAttribute, path)
 
   const attributesSavedAs = new Set<string>()

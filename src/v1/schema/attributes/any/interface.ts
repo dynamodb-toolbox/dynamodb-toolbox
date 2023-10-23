@@ -1,33 +1,38 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If } from 'v1/types/if'
-
-import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
-import type { $type, $defaults } from '../constants/attributeOptions'
+import type { If, ValueOrGetter } from 'v1/types'
 import type {
-  AttributeSharedStateConstraint,
-  $AttributeSharedState,
-  AttributeSharedState
+  AttributeKeyInput,
+  AttributePutItemInput,
+  AttributeUpdateItemInput,
+  KeyInput,
+  PutItemInput,
+  UpdateItemInput
+} from 'v1/commands'
+
+import type { Schema } from '../../interface'
+import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
+import type { $type } from '../constants/attributeOptions'
+import type {
+  $SharedAttributeState,
+  SharedAttributeState,
+  SharedAttributeStateConstraint
 } from '../shared/interface'
 
-import type { AnyAttributeDefaultValue } from './types'
+import type { FreezeAnyAttribute } from './freeze'
 
-export interface AnyAttributeStateConstraint extends AttributeSharedStateConstraint {
-  defaults: {
-    key: AnyAttributeDefaultValue
-    put: AnyAttributeDefaultValue
-    update: AnyAttributeDefaultValue
-  }
+export interface $AnyAttributeState<
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> extends $SharedAttributeState<STATE> {
+  [$type]: 'any'
 }
 
 /**
  * Any attribute interface
  */
 export interface $AnyAttribute<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> extends $AttributeSharedState<STATE> {
-  [$type]: 'any'
-  [$defaults]: STATE['defaults']
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> extends $AnyAttributeState<STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -38,75 +43,226 @@ export interface $AnyAttribute<
    */
   required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired?: NEXT_IS_REQUIRED
-  ) => $AnyAttribute<O.Update<STATE, 'required', NEXT_IS_REQUIRED>>
+  ) => $AnyAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>>
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $AnyAttribute<O.Update<STATE, 'required', Never>>
+  optional: () => $AnyAttribute<O.Overwrite<STATE, { required: Never }>>
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $AnyAttribute<O.Update<STATE, 'hidden', true>>
+  hidden: () => $AnyAttribute<O.Overwrite<STATE, { hidden: true }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $AnyAttribute<O.Update<O.Update<STATE, 'key', true>, 'required', Always>>
+  key: () => $AnyAttribute<O.Overwrite<STATE, { required: Always; key: true }>>
   /**
    * Rename attribute before save commands
    */
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => $AnyAttribute<O.Update<STATE, 'savedAs', NEXT_SAVED_AS>>
+  ) => $AnyAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>>
   /**
    * Provide a default value for attribute in Primary Key computing
    *
-   * @param nextKeyDefault `any`, `() => any`, `ComputedDefault`
+   * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
-  keyDefault: <NEXT_KEY_DEFAULT extends AnyAttributeDefaultValue>(
-    nextKeyDefault: NEXT_KEY_DEFAULT
+  keyDefault: (
+    nextKeyDefault: ValueOrGetter<
+      AttributeKeyInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+    >
   ) => $AnyAttribute<
-    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'key', NEXT_KEY_DEFAULT>>
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: unknown
+          put: STATE['defaults']['put']
+          update: STATE['defaults']['update']
+        }
+      }
+    >
   >
   /**
    * Provide a default value for attribute in PUT commands
    *
-   * @param nextPutDefault `any`, `() => any`, `ComputedDefault`
+   * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
-  putDefault: <NEXT_PUT_DEFAULT extends AnyAttributeDefaultValue>(
-    nextPutDefault: NEXT_PUT_DEFAULT
+  putDefault: (
+    nextPutDefault: ValueOrGetter<
+      AttributePutItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+    >
   ) => $AnyAttribute<
-    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'put', NEXT_PUT_DEFAULT>>
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: STATE['defaults']['key']
+          put: unknown
+          update: STATE['defaults']['update']
+        }
+      }
+    >
   >
   /**
    * Provide a default value for attribute in UPDATE commands
    *
-   * @param nextUpdateDefault `any`, `() => any`, `ComputedDefault`
+   * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
-  updateDefault: <NEXT_UPDATE_DEFAULT extends AnyAttributeDefaultValue>(
-    nextUpdateDefault: NEXT_UPDATE_DEFAULT
+  updateDefault: (
+    nextUpdateDefault: ValueOrGetter<
+      AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+    >
   ) => $AnyAttribute<
-    O.Update<STATE, 'defaults', O.Update<STATE['defaults'], 'update', NEXT_UPDATE_DEFAULT>>
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: STATE['defaults']['key']
+          put: STATE['defaults']['put']
+          update: unknown
+        }
+      }
+    >
   >
   /**
-   * Provide a default value for attribute in PUT commands / Primary Key computing if attribute is tagged as key
+   * Provide a default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
-   * @param nextDefault `any`, `() => any`, `ComputedDefault`
+   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  default: <NEXT_DEFAULT extends AnyAttributeDefaultValue>(
-    nextDefault: NEXT_DEFAULT
+  default: (
+    nextDefault: ValueOrGetter<
+      If<
+        STATE['key'],
+        AttributeKeyInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
+        AttributePutItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+      >
+    >
   ) => $AnyAttribute<
-    O.Update<
+    O.Overwrite<
       STATE,
-      'defaults',
-      O.Update<STATE['defaults'], If<STATE['key'], 'key', 'put'>, NEXT_DEFAULT>
+      {
+        defaults: If<
+          STATE['key'],
+          {
+            key: unknown
+            put: STATE['defaults']['put']
+            update: STATE['defaults']['update']
+          },
+          {
+            key: STATE['defaults']['key']
+            put: unknown
+            update: STATE['defaults']['update']
+          }
+        >
+      }
+    >
+  >
+  /**
+   * Provide a **linked** default value for attribute in Primary Key computing
+   *
+   * @param nextKeyDefault `keyAttributeInput | ((keyInput) => keyAttributeInput)`
+   */
+  keyLink: <SCHEMA extends Schema>(
+    nextKeyDefault: ValueOrGetter<
+      AttributeKeyInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
+      [KeyInput<SCHEMA, true>]
+    >
+  ) => $AnyAttribute<
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: unknown
+          put: STATE['defaults']['put']
+          update: STATE['defaults']['update']
+        }
+      }
+    >
+  >
+  /**
+   * Provide a **linked** default value for attribute in PUT commands
+   *
+   * @param nextPutDefault `putAttributeInput | ((putItemInput) => putAttributeInput)`
+   */
+  putLink: <SCHEMA extends Schema>(
+    nextPutDefault: ValueOrGetter<
+      AttributePutItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
+      [PutItemInput<SCHEMA, true>]
+    >
+  ) => $AnyAttribute<
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: STATE['defaults']['key']
+          put: unknown
+          update: STATE['defaults']['update']
+        }
+      }
+    >
+  >
+  /**
+   * Provide a **linked** default value for attribute in UPDATE commands
+   *
+   * @param nextUpdateDefault `unknown | ((updateItemInput) => updateAttributeInput)`
+   */
+  updateLink: <SCHEMA extends Schema>(
+    nextUpdateDefault: ValueOrGetter<
+      AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
+      [UpdateItemInput<SCHEMA, true>]
+    >
+  ) => $AnyAttribute<
+    O.Overwrite<
+      STATE,
+      {
+        defaults: {
+          key: STATE['defaults']['key']
+          put: STATE['defaults']['put']
+          update: unknown
+        }
+      }
+    >
+  >
+  /**
+   * Provide a **linked** default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
+   */
+  link: <SCHEMA extends Schema>(
+    nextDefault: ValueOrGetter<
+      If<
+        STATE['key'],
+        AttributeKeyInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
+        AttributePutItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+      >,
+      [If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>]
+    >
+  ) => $AnyAttribute<
+    O.Overwrite<
+      STATE,
+      {
+        defaults: If<
+          STATE['key'],
+          {
+            key: unknown
+            put: STATE['defaults']['put']
+            update: STATE['defaults']['update']
+          },
+          {
+            key: STATE['defaults']['key']
+            put: unknown
+            update: STATE['defaults']['update']
+          }
+        >
+      }
     >
   >
 }
 
 export interface AnyAttribute<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> extends AttributeSharedState<STATE> {
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> extends SharedAttributeState<STATE> {
   path: string
   type: 'any'
-  defaults: STATE['defaults']
 }

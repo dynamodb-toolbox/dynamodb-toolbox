@@ -18,7 +18,6 @@ const requiringOptions = new Set<RequiredOption>(['always'])
 export const parseEntityUpdateCommandInput: EntityUpdateCommandInputParser = (entity, input) => {
   const clonedInputWithDefaults = cloneSchemaInputAndAddDefaults(entity.schema, input, {
     commandName: 'update',
-    computeDefaultsContext: { computeDefaults: entity.updateDefaults },
     cloneExtension: cloneUpdateExtension
   })
 

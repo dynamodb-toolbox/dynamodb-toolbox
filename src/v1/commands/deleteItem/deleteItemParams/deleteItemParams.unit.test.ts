@@ -28,7 +28,7 @@ const TestEntity = new EntityV2({
     test: string()
   }),
   table: TestTable
-} as const)
+})
 
 const TestEntity2 = new EntityV2({
   name: 'TestEntity',

@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { ComputedDefault, Never, AtLeastOnce, Always } from '../constants'
+import { Never, AtLeastOnce, Always } from '../constants'
 import { string, number } from '../primitive'
 import {
   $type,
@@ -17,7 +17,7 @@ import {
 
 import { record } from './typer'
 import { freezeRecordAttribute } from './freeze'
-import type { RecordAttribute, $RecordAttribute } from './interface'
+import type { RecordAttribute, $RecordAttributeState } from './interface'
 
 describe('record', () => {
   const path = 'some.path'
@@ -100,29 +100,16 @@ describe('record', () => {
   })
 
   it('rejects keys with default values', () => {
-    const invalidRecordA = record(
+    const invalidRecord = record(
       // @ts-expect-error
       str.putDefault('foo'),
       str
     )
 
-    const invalidCallA = () => freezeRecordAttribute(invalidRecordA, path)
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
-    )
-
-    const invalidRecordB = record(
-      // @ts-expect-error
-      str.putDefault(ComputedDefault),
-      str
-    )
-
-    const invalidCallB = () => freezeRecordAttribute(invalidRecordB, path)
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
     )
   })
@@ -188,29 +175,16 @@ describe('record', () => {
   })
 
   it('rejects elements with default values', () => {
-    const invalidRecordA = record(
+    const invalidRecord = record(
       str,
       // @ts-expect-error
       str.putDefault('foo')
     )
 
-    const invalidCallA = () => freezeRecordAttribute(invalidRecordA, path)
+    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
 
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
-    )
-
-    const invalidRecordB = record(
-      str,
-      // @ts-expect-error
-      str.putDefault(ComputedDefault)
-    )
-
-    const invalidCallB = () => freezeRecordAttribute(invalidRecordB, path)
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
     )
   })
@@ -237,7 +211,7 @@ describe('record', () => {
     > = 1
     assertRec
 
-    const assertExtends: A.Extends<typeof rec, $RecordAttribute> = 1
+    const assertExtends: A.Extends<typeof rec, $RecordAttributeState> = 1
     assertExtends
 
     const frozenRecord = freezeRecordAttribute(rec, path)
@@ -351,85 +325,88 @@ describe('record', () => {
     expect(rec).toMatchObject({ [$savedAs]: 'foo' })
   })
 
-  it('accepts ComputedDefault as default value (option)', () => {
+  it('returns defaulted record (option)', () => {
     const stA = record(fooBar, str, {
-      defaults: { key: ComputedDefault, put: undefined, update: undefined }
+      // TOIMPROVE: Reintroduce type constraints here
+      defaults: { key: { foo: 'foo' }, put: undefined, update: undefined }
     })
 
     const assertSetA: A.Contains<
       typeof stA,
-      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+      { [$defaults]: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertSetA
 
     expect(stA).toMatchObject({
-      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+      [$defaults]: { key: { foo: 'foo' }, put: undefined, update: undefined }
     })
 
     const stB = record(fooBar, str, {
-      defaults: { key: undefined, put: ComputedDefault, update: undefined }
+      // TOIMPROVE: Reintroduce type constraints here
+      defaults: { key: undefined, put: { bar: 'bar' }, update: undefined }
     })
 
     const assertSetB: A.Contains<
       typeof stB,
-      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertSetB
 
     expect(stB).toMatchObject({
-      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      [$defaults]: { key: undefined, put: { bar: 'bar' }, update: undefined }
     })
 
     const stC = record(fooBar, str, {
-      defaults: { key: undefined, put: undefined, update: ComputedDefault }
+      // TOIMPROVE: Reintroduce type constraints here
+      defaults: { key: undefined, put: undefined, update: { foo: 'bar' } }
     })
 
     const assertSetC: A.Contains<
       typeof stC,
-      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+      { [$defaults]: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertSetC
 
     expect(stC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+      [$defaults]: { key: undefined, put: undefined, update: { foo: 'bar' } }
     })
   })
 
-  it('accepts ComputedDefault as default value (method)', () => {
-    const stA = record(fooBar, str).keyDefault(ComputedDefault)
+  it('returns defaulted record (method)', () => {
+    const stA = record(fooBar, str).key().keyDefault({ foo: 'foo' })
 
     const assertSetA: A.Contains<
       typeof stA,
-      { [$defaults]: { key: ComputedDefault; put: undefined; update: undefined } }
+      { [$defaults]: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertSetA
 
     expect(stA).toMatchObject({
-      [$defaults]: { key: ComputedDefault, put: undefined, update: undefined }
+      [$defaults]: { key: { foo: 'foo' }, put: undefined, update: undefined }
     })
 
-    const stB = record(fooBar, str).putDefault(ComputedDefault)
+    const stB = record(fooBar, str).putDefault({ bar: 'bar' })
 
     const assertSetB: A.Contains<
       typeof stB,
-      { [$defaults]: { key: undefined; put: ComputedDefault; update: undefined } }
+      { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertSetB
 
     expect(stB).toMatchObject({
-      [$defaults]: { key: undefined, put: ComputedDefault, update: undefined }
+      [$defaults]: { key: undefined, put: { bar: 'bar' }, update: undefined }
     })
 
-    const stC = record(fooBar, str).updateDefault(ComputedDefault)
+    const stC = record(fooBar, str).updateDefault({ foo: 'bar' })
 
     const assertSetC: A.Contains<
       typeof stC,
-      { [$defaults]: { key: undefined; put: undefined; update: ComputedDefault } }
+      { [$defaults]: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertSetC
 
     expect(stC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: ComputedDefault }
+      [$defaults]: { key: undefined, put: undefined, update: { foo: 'bar' } }
     })
   })
 

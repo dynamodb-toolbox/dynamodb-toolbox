@@ -14,8 +14,7 @@ import type {
   RecordAttribute,
   AnyOfAttribute,
   Always,
-  Never,
-  ComputedDefault
+  Never
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity'
@@ -23,24 +22,14 @@ import type { If } from 'v1/types/if'
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
-> =
-  // Enforce Required attributes that don't have default values
-  ATTRIBUTE extends { required: Always; defaults: { key: undefined } }
+  REQUIRED_DEFAULTS extends boolean = false
+> = REQUIRED_DEFAULTS extends false
+  ? ATTRIBUTE extends { required: Always; defaults: { key: undefined } }
     ? true
-    : // Add attributes with independent defaults if REQUIRED_DEFAULTS is 'independent'
-    REQUIRED_DEFAULTS extends 'independent'
-    ? ATTRIBUTE extends { defaults: { key: undefined | ComputedDefault } }
-      ? false
-      : true
-    : // Add all required attributes and those with independent defaults if REQUIRED_DEFAULTS is 'all'
-    REQUIRED_DEFAULTS extends 'all'
-    ? ATTRIBUTE extends { required: Always }
-      ? true
-      : ATTRIBUTE extends { defaults: { key: undefined | ComputedDefault } }
-      ? false
-      : true
     : false
+  : ATTRIBUTE extends { required: Always }
+  ? true
+  : false
 
 /**
  * Key input of a single item command (GET, DELETE ...) for an Entity or Schema
@@ -50,7 +39,7 @@ type MustBeDefined<
  */
 export type KeyInput<
   SCHEMA extends EntityV2 | Schema,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
+  REQUIRED_DEFAULTS extends boolean = false
 > = EntityV2 extends SCHEMA
   ? MapAttributeValue
   : Schema extends SCHEMA
@@ -79,7 +68,7 @@ export type KeyInput<
  */
 export type AttributeKeyInput<
   ATTRIBUTE extends Attribute,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
+  REQUIRED_DEFAULTS extends boolean = false
 > = Attribute extends ATTRIBUTE
   ? AttributeValue | undefined
   :

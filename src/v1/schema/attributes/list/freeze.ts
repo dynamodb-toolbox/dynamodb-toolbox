@@ -15,9 +15,9 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import type { $ListAttribute, ListAttribute } from './interface'
+import type { $ListAttributeState, ListAttribute } from './interface'
 
-export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttribute> =
+export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
     ListAttribute<
@@ -34,7 +34,7 @@ export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttribute> =
     never
   >
 
-type ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttribute>(
+type ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttributeState>(
   $listAttribute: $LIST_ATTRIBUTE,
   path: string
 ) => FreezeListAttribute<$LIST_ATTRIBUTE>
@@ -46,7 +46,9 @@ type ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttribute>(
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezeListAttribute: ListAttributeFreezer = <$LIST_ATTRIBUTE extends $ListAttribute>(
+export const freezeListAttribute: ListAttributeFreezer = <
+  $LIST_ATTRIBUTE extends $ListAttributeState
+>(
   $listAttribute: $LIST_ATTRIBUTE,
   path: string
 ): FreezeListAttribute<$LIST_ATTRIBUTE> => {

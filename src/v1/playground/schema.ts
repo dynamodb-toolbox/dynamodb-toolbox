@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  // typers
   binary,
   boolean,
   number,
@@ -9,14 +8,10 @@ import {
   list,
   any,
   schema,
-  // constants
-  ComputedDefault,
-  // generics
   PutItemInput,
   FormattedAttribute,
   SavedItem,
-  KeyInput,
-  HasComputedDefaults
+  KeyInput
 } from 'v1'
 
 const playgroundSchema1 = schema({
@@ -53,26 +48,24 @@ type PlaygroundSchema1FormattedItem = FormattedAttribute<typeof playgroundSchema
 const allCasesOfProps = {
   optProp: string().optional(),
   optPropWithIndepDef: string().optional().putDefault('foo'),
-  optPropWithCompDef: string().optional().putDefault(ComputedDefault),
   reqProp: string(),
-  reqPropWithIndepDef: string().putDefault('baz'),
-  reqPropWithCompDef: string().putDefault(ComputedDefault)
+  reqPropWithIndepDef: string().putDefault('baz')
 }
 
 const playgroundSchema2 = schema({
   ...allCasesOfProps,
   map: map(allCasesOfProps),
   list: list(map(allCasesOfProps))
-})
+}).and(schema => ({
+  optLink: string()
+    .optional()
+    .putLink<typeof schema>(({ optPropWithIndepDef }) => optPropWithIndepDef),
+  reqLink: string().putLink<typeof schema>(({ reqPropWithIndepDef }) => reqPropWithIndepDef)
+}))
 
 type PlaygroundSchema2FormattedItem = FormattedAttribute<typeof playgroundSchema2>
-type PlaygroundSchema2HasComputedDefault = HasComputedDefaults<typeof playgroundSchema3, 'put'>
 type PlaygroundSchema2PutItemInput = PutItemInput<typeof playgroundSchema2>
-type PlaygroundSchema2PutItemInputWithDefaults = PutItemInput<
-  typeof playgroundSchema2,
-  'independent'
->
-type PlaygroundSchema2PutItemInputWithLinks = PutItemInput<typeof playgroundSchema2, 'all'>
+type PlaygroundSchema2PutItemInputWithDefaults = PutItemInput<typeof playgroundSchema2, true>
 
 const playgroundSchema3 = schema({
   keyEl: string().key(),
@@ -87,4 +80,3 @@ const playgroundSchema3 = schema({
 
 type PlaygroundSchema3SavedItem = SavedItem<typeof playgroundSchema3>
 type PlaygroundSchema3KeyInput = KeyInput<typeof playgroundSchema3>
-type PlaygroundSchema3HasComputedDefault = HasComputedDefaults<typeof playgroundSchema3, 'put'>

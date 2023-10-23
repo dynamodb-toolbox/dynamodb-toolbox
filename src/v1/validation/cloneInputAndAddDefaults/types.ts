@@ -1,41 +1,40 @@
 import type { Attribute, AttributeBasicValue, AttributeValue, Extension, Item } from 'v1/schema'
-import type { AttributeDefaultsComputer, SchemaDefaultsComputer } from 'v1/entity'
 import type { If } from 'v1/types'
 
 import type { HasExtension } from '../types'
 
-export type ExtensionCloner<EXTENSION extends Extension> = (
+export type ExtensionCloner<
+  ATTRIBUTE_EXTENSION extends Extension,
+  COMMAND_EXTENSION extends Extension = ATTRIBUTE_EXTENSION
+> = (
   attribute: Attribute,
-  input: AttributeValue<EXTENSION> | undefined,
-  options: AttributeCloningOptions<EXTENSION>
+  input: AttributeValue<ATTRIBUTE_EXTENSION> | undefined,
+  options: AttributeCloningOptions<ATTRIBUTE_EXTENSION, COMMAND_EXTENSION>
 ) =>
-  | { isExtension: true; clonedExtension: AttributeValue<EXTENSION>; basicInput?: never }
+  | { isExtension: true; clonedExtension: AttributeValue<ATTRIBUTE_EXTENSION>; basicInput?: never }
   | {
       isExtension: false
       clonedExtension?: never
-      basicInput: AttributeBasicValue<EXTENSION> | undefined
+      basicInput: AttributeBasicValue<ATTRIBUTE_EXTENSION> | undefined
     }
 
 export type SchemaCloningOptions<EXTENSION extends Extension> = {
   commandName?: CommandName
-  computeDefaultsContext?: { computeDefaults: SchemaDefaultsComputer<EXTENSION> }
 } & If<
   HasExtension<EXTENSION>,
   { cloneExtension: ExtensionCloner<EXTENSION> },
   { cloneExtension?: never }
 >
 
-export type ComputeDefaultsContext<EXTENSION extends Extension> = {
-  computeDefaults: AttributeDefaultsComputer
-  contextInputs: (Item<EXTENSION> | number | AttributeValue<EXTENSION>)[]
-}
-
-export type AttributeCloningOptions<EXTENSION extends Extension> = {
+export type AttributeCloningOptions<
+  EXTENSION extends Extension,
+  CONTEXT_EXTENSION extends Extension = EXTENSION
+> = {
   commandName?: CommandName
-  computeDefaultsContext?: ComputeDefaultsContext<EXTENSION>
+  originalInput: Item<CONTEXT_EXTENSION>
 } & If<
   HasExtension<EXTENSION>,
-  { cloneExtension: ExtensionCloner<EXTENSION> },
+  { cloneExtension: ExtensionCloner<EXTENSION, CONTEXT_EXTENSION> },
   { cloneExtension?: never }
 >
 
@@ -44,4 +43,4 @@ export type AnyOfAttributeClonedInputsWithDefaults<EXTENSION extends Extension =
   clonedInputsWithDefaults: AttributeValue<EXTENSION>[]
 }
 
-export type CommandName = 'put' | 'update'
+export type CommandName = 'key' | 'put' | 'update'

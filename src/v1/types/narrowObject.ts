@@ -1,3 +1,3 @@
-export type NarrowObject<OPTIONS extends Record<string | number | symbol, unknown>> = {
-  [KEY in keyof OPTIONS]: OPTIONS[KEY]
+export type NarrowObject<OBJECT extends object> = {
+  [KEY in keyof OBJECT]: OBJECT[KEY]
 }

@@ -16,9 +16,9 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import type { $RecordAttribute, RecordAttribute } from './interface'
+import type { $RecordAttributeState, RecordAttribute } from './interface'
 
-export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttribute> =
+export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
     RecordAttribute<
@@ -36,7 +36,7 @@ export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttribute> =
     never
   >
 
-type RecordAttributeFreezer = <$RECORD_ATTRIBUTE extends $RecordAttribute>(
+type RecordAttributeFreezer = <$RECORD_ATTRIBUTE extends $RecordAttributeState>(
   $recordAttribute: $RECORD_ATTRIBUTE,
   path: string
 ) => FreezeRecordAttribute<$RECORD_ATTRIBUTE>
@@ -49,7 +49,7 @@ type RecordAttributeFreezer = <$RECORD_ATTRIBUTE extends $RecordAttribute>(
  * @return void
  */
 export const freezeRecordAttribute: RecordAttributeFreezer = <
-  $RECORD_ATTRIBUTE extends $RecordAttribute
+  $RECORD_ATTRIBUTE extends $RecordAttributeState
 >(
   $recordAttribute: $RECORD_ATTRIBUTE,
   path: string

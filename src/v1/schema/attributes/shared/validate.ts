@@ -4,7 +4,7 @@ import { isBoolean, isString } from 'v1/utils/validation'
 import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
 import { requiredOptionsSet } from '../constants/requiredOptions'
 
-import type { $AttributeSharedState, AttributeSharedStateConstraint } from './interface'
+import type { $SharedAttributeState, SharedAttributeStateConstraint } from './interface'
 
 /**
  * Validates an attribute shared properties
@@ -14,7 +14,7 @@ import type { $AttributeSharedState, AttributeSharedStateConstraint } from './in
  * @return void
  */
 export const validateAttributeProperties = (
-  $attribute: $AttributeSharedState<AttributeSharedStateConstraint>,
+  $attribute: $SharedAttributeState<SharedAttributeStateConstraint>,
   path: string
 ): void => {
   const attributeRequired = $attribute[$required]
