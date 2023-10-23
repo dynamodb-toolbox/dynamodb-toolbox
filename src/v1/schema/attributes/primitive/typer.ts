@@ -1,5 +1,6 @@
 import type { NarrowObject } from 'v1/types/narrowObject'
 import { overwrite } from 'v1/utils/overwrite'
+import { update } from 'v1/utils/update'
 
 import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
@@ -140,7 +141,7 @@ const $primitive: $PrimitiveAttributeTyper = <
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
         })
       ),
-    enum: (...nextEnum) => $primitive(type, overwrite(state, { enum: nextEnum })),
+    enum: (...nextEnum) => $primitive(type, update(state, 'enum', nextEnum)),
     const: constant =>
       $primitive(
         type,
