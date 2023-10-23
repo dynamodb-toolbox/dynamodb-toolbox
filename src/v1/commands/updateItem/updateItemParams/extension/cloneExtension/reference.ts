@@ -1,18 +1,17 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type { ExtensionCloner } from 'v1/validation/cloneInputAndAddDefaults/types'
-import type { ReferenceExtension } from 'v1/commands/types'
+import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/commands/types'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults/attribute'
 import { isArray } from 'v1/utils/validation/isArray'
 
 import { $GET } from 'v1/commands/updateItem/constants'
 import { hasGetOperation } from 'v1/commands/updateItem/utils'
 
-export const cloneReferenceExtension: ExtensionCloner<ReferenceExtension> = (
-  attribute,
-  input,
-  options
-) => {
+export const cloneReferenceExtension: ExtensionCloner<
+  ReferenceExtension,
+  UpdateItemInputExtension
+> = (attribute, input, options) => {
   if (!hasGetOperation(input)) {
     return {
       isExtension: false,

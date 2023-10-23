@@ -66,7 +66,6 @@ const TestEntity2 = new EntityV2({
   name: 'TestEntity2',
   schema: schema({
     email: string().key().savedAs('pk'),
-    sort: string().optional().savedAs('sk'),
     test_composite: string().optional(),
     test_composite2: string().optional()
   }).and(schema => ({

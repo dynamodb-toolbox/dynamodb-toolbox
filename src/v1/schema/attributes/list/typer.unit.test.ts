@@ -65,27 +65,15 @@ describe('list', () => {
   })
 
   it('rejects elements with default values', () => {
-    const invalidListA = list(
+    const invalidList = list(
       // @ts-expect-error
       strElement.putDefault('foo')
     )
 
-    const invalidCallA = () => freezeListAttribute(invalidListA, path)
+    const invalidCall = () => freezeListAttribute(invalidList, path)
 
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.defaultedElements', path })
-    )
-
-    const invalidListB = list(
-      // @ts-expect-error
-      strElement.putDefault(ComputedDefault)
-    )
-
-    const invalidCallB = () => freezeListAttribute(invalidListB, path)
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.listAttribute.defaultedElements', path })
     )
   })
