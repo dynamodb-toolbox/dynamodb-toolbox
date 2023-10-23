@@ -15,8 +15,7 @@ import type {
   AnyOfAttribute,
   AtLeastOnce,
   Always,
-  Never,
-  ComputedDefault
+  Never
 } from 'v1/schema'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
@@ -24,31 +23,17 @@ import type { If } from 'v1/types/if'
 
 export type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
-> =
-  // Enforce Required attributes that don't have default values
-  ATTRIBUTE extends { required: AtLeastOnce | Always } & (
-    | { key: true; defaults: { key: undefined } }
-    | { key: false; defaults: { put: undefined } }
-  )
+  REQUIRED_DEFAULTS extends boolean = false
+> = REQUIRED_DEFAULTS extends false
+  ? ATTRIBUTE extends { required: AtLeastOnce | Always } & (
+      | { key: true; defaults: { key: undefined } }
+      | { key: false; defaults: { put: undefined } }
+    )
     ? true
-    : // Add attributes with independent defaults if REQUIRED_DEFAULTS is 'independent'
-    REQUIRED_DEFAULTS extends 'independent'
-    ? ATTRIBUTE extends
-        | { key: true; defaults: { key: undefined | ComputedDefault } }
-        | { key: false; defaults: { put: undefined | ComputedDefault } }
-      ? false
-      : true
-    : // Add all required attributes and those with independent defaults if REQUIRED_DEFAULTS is 'all'
-    REQUIRED_DEFAULTS extends 'all'
-    ? ATTRIBUTE extends { required: AtLeastOnce | Always }
-      ? true
-      : ATTRIBUTE extends
-          | { key: true; defaults: { key: undefined | ComputedDefault } }
-          | { key: false; defaults: { put: undefined | ComputedDefault } }
-      ? false
-      : true
     : false
+  : ATTRIBUTE extends { required: AtLeastOnce | Always }
+  ? true
+  : false
 
 /**
  * User input of a PUT command for a given Entity or Schema
@@ -59,7 +44,7 @@ export type MustBeDefined<
  */
 export type PutItemInput<
   SCHEMA extends EntityV2 | Schema,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
+  REQUIRED_DEFAULTS extends boolean = false
 > = EntityV2 extends SCHEMA
   ? Item
   : Schema extends SCHEMA
@@ -88,7 +73,7 @@ export type PutItemInput<
  */
 export type AttributePutItemInput<
   ATTRIBUTE extends Attribute,
-  REQUIRED_DEFAULTS extends 'none' | 'independent' | 'all' = 'none'
+  REQUIRED_DEFAULTS extends boolean = false
 > = Attribute extends ATTRIBUTE
   ? AttributeValue | undefined
   :

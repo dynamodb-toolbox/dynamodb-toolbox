@@ -1,6 +1,3 @@
-export * from './PutDefaultsComputer'
-export * from './UpdateDefaultsComputer'
-
 export type { SchemaDefaultsComputer, AttributeDefaultsComputer } from './DefaultsComputer'
 export type { NeedsKeyCompute } from './NeedsKeyCompute'
 
