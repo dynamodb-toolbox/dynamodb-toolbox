@@ -28,7 +28,7 @@ const TestEntity = new EntityV2({
     test: string()
   }),
   table: TestTable
-} as const)
+})
 
 const TestTable2 = new TableV2({
   name: 'test-table',
@@ -141,7 +141,7 @@ describe('get', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
   })
 
-  it('sets consistent and capacity options', () => {
+  it('sets consistent option', () => {
     const { ConsistentRead } = TestEntity.build(GetItemCommand)
       .key({ email: 'x', sort: 'y' })
       .options({ consistent: true })
@@ -162,7 +162,7 @@ describe('get', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'getItemCommand.invalidConsistentOption' })
+      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
     )
   })
 
