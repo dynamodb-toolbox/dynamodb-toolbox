@@ -1,6 +1,6 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-import type { GetItemCommandErrorBlueprints } from './getItem/errors'
+import type { ScanCommandErrorBlueprints } from './scan/errors'
 import type { CommandUtilsErrorBlueprints } from './utils/errors'
 import type { ExpressionParsersErrorBlueprints } from './expression/errors'
 
@@ -14,6 +14,24 @@ type InvalidCapacityOptionErrorBlueprint = ErrorBlueprint<{
   code: 'commands.invalidCapacityOption'
   hasPath: false
   payload: { capacity: unknown }
+}>
+
+type InvalidConsistentOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidConsistentOption'
+  hasPath: false
+  payload: { consistent: unknown }
+}>
+
+type InvalidIndexNameOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidIndexNameOption'
+  hasPath: false
+  payload: { indexName: unknown }
+}>
+
+type InvalidLimitOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidLimitOption'
+  hasPath: false
+  payload: { limit: unknown }
 }>
 
 type InvalidMetricsOptionErrorBlueprint = ErrorBlueprint<{
@@ -35,10 +53,13 @@ type UnknownOptionErrorBlueprint = ErrorBlueprint<{
 }>
 
 export type CommandsErrorBlueprints =
-  | GetItemCommandErrorBlueprints
+  | ScanCommandErrorBlueprints
   | CommandUtilsErrorBlueprints
   | IncompleteCommandErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
+  | InvalidConsistentOptionErrorBlueprint
+  | InvalidIndexNameOptionErrorBlueprint
+  | InvalidLimitOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
