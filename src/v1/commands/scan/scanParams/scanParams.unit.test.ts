@@ -1,7 +1,18 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { A } from 'ts-toolbelt'
 
-import { TableV2, DynamoDBToolboxError, ScanCommand } from 'v1'
+import {
+  TableV2,
+  DynamoDBToolboxError,
+  ScanCommand,
+  EntityV2,
+  schema,
+  string,
+  number,
+  Item,
+  FormattedItem
+} from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -20,11 +31,40 @@ const TestTable = new TableV2({
   documentClient
 })
 
+const Entity1 = new EntityV2({
+  name: 'entity1',
+  schema: schema({
+    userPoolId: string().key().savedAs('pk'),
+    userId: string().key().savedAs('sk'),
+    name: string(),
+    age: number()
+  }),
+  table: TestTable
+})
+
+const Entity2 = new EntityV2({
+  name: 'entity2',
+  schema: schema({
+    productGroupId: string().key().savedAs('pk'),
+    productId: string().key().savedAs('sk'),
+    launchDate: string(),
+    price: number()
+  }),
+  table: TestTable
+})
+
 describe('scan', () => {
   it('gets the tableName', async () => {
-    const { TableName } = TestTable.build(ScanCommand).params()
+    const command = TestTable.build(ScanCommand)
+    const { TableName } = command.params()
 
     expect(TableName).toBe('test-table')
+
+    const assertReturnedItems: A.Equals<
+      Awaited<ReturnType<typeof command.send>>['Items'],
+      Item[] | undefined
+    > = 1
+    assertReturnedItems
   })
 
   // Options
@@ -229,6 +269,109 @@ describe('scan', () => {
     expect(invalidCallH).toThrow(
       expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
     )
+  })
+
+  it('applies entity _et filter', () => {
+    const command = TestTable.build(ScanCommand).entities(Entity1)
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = command.params()
+
+    expect(FilterExpression).toBe('#c0_1 = :c0_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c0_1': TestTable.entityAttributeSavedAs })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c0_1': Entity1.name })
+
+    const assertReturnedItems: A.Equals<
+      Awaited<ReturnType<typeof command.send>>['Items'],
+      FormattedItem<typeof Entity1>[] | undefined
+    > = 1
+    assertReturnedItems
+  })
+
+  it('applies entity _et AND additional filter', () => {
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestTable.build(ScanCommand)
+      .entities(Entity1)
+      .options({
+        filters: {
+          entity1: { attr: 'age', gte: 40 },
+          // @ts-expect-error
+          entity2: { attr: 'price', gte: 100 }
+        }
+      })
+      .params()
+
+    expect(FilterExpression).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#c0_1': TestTable.entityAttributeSavedAs,
+      '#c0_2': 'age'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':c0_1': Entity1.name,
+      ':c0_2': 40
+    })
+  })
+
+  it('applies two entity filters', () => {
+    const command = TestTable.build(ScanCommand).entities(Entity1, Entity2)
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = command.params()
+
+    expect(FilterExpression).toBe('(#c0_1 = :c0_1) OR (#c1_1 = :c1_1)')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#c0_1': TestTable.entityAttributeSavedAs,
+      '#c1_1': TestTable.entityAttributeSavedAs
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':c0_1': Entity1.name,
+      ':c1_1': Entity2.name
+    })
+
+    const assertReturnedItems: A.Equals<
+      Awaited<ReturnType<typeof command.send>>['Items'],
+      (FormattedItem<typeof Entity1> | FormattedItem<typeof Entity2>)[] | undefined
+    > = 1
+    assertReturnedItems
+  })
+
+  it('applies two entity filters AND additional filters', () => {
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestTable.build(ScanCommand)
+      .entities(Entity1, Entity2)
+      .options({
+        filters: {
+          entity1: { attr: 'age', gte: 40 },
+          entity2: { attr: 'price', gte: 100 }
+        }
+      })
+      .params()
+
+    expect(FilterExpression).toBe(
+      '((#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)) OR ((#c1_1 = :c1_1) AND (#c1_2 >= :c1_2))'
+    )
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#c0_1': TestTable.entityAttributeSavedAs,
+      '#c0_2': 'age',
+      '#c1_1': TestTable.entityAttributeSavedAs,
+      '#c1_2': 'price'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':c0_1': Entity1.name,
+      ':c0_2': 40,
+      ':c1_1': Entity2.name,
+      ':c1_2': 100
+    })
   })
 
   it('fails on extra options', () => {
