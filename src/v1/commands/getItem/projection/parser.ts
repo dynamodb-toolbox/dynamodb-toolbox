@@ -4,15 +4,17 @@ import { appendAttributePath, ExpressionParser } from 'v1/commands/expression/ex
 
 export class ProjectionParser implements ExpressionParser {
   schema: Schema | Attribute
-  expressionAttributePrefix: 'p'
+  expressionAttributePrefix: `p${string}_`
   expressionAttributeNames: string[]
   expression: string
+  id: string
 
-  constructor(schema: Schema | Attribute) {
+  constructor(schema: Schema | Attribute, id = '') {
     this.schema = schema
-    this.expressionAttributePrefix = 'p'
+    this.expressionAttributePrefix = `p${id}_`
     this.expressionAttributeNames = []
     this.expression = ''
+    this.id = id
   }
 
   resetExpression = (initialStr = '') => {
@@ -60,7 +62,7 @@ export class ProjectionParser implements ExpressionParser {
   }
 
   clone = (schema?: Schema | Attribute): ProjectionParser => {
-    const clonedParser = new ProjectionParser(schema ?? this.schema)
+    const clonedParser = new ProjectionParser(schema ?? this.schema, this.id)
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]
     clonedParser.expression = this.expression

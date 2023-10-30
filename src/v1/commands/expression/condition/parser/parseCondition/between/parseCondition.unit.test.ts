@@ -11,9 +11,9 @@ describe('parseCondition - between', () => {
 
   it('between (values)', () => {
     expect(parseSchemaCondition(simpleSchema, { attr: 'num', between: [42, 43] })).toStrictEqual({
-      ConditionExpression: '#c1 BETWEEN :c1 AND :c2',
-      ExpressionAttributeNames: { '#c1': 'num' },
-      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
+      ConditionExpression: '#c_1 BETWEEN :c_1 AND :c_2',
+      ExpressionAttributeNames: { '#c_1': 'num' },
+      ExpressionAttributeValues: { ':c_1': 42, ':c_2': 43 }
     })
   })
 
@@ -24,9 +24,9 @@ describe('parseCondition - between', () => {
         between: [42, { attr: 'otherNum' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#c1 BETWEEN :c1 AND #c2',
-      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
-      ExpressionAttributeValues: { ':c1': 42 }
+      ConditionExpression: '#c_1 BETWEEN :c_1 AND #c_2',
+      ExpressionAttributeNames: { '#c_1': 'num', '#c_2': 'otherNum' },
+      ExpressionAttributeValues: { ':c_1': 42 }
     })
   })
 
@@ -37,8 +37,8 @@ describe('parseCondition - between', () => {
         between: [{ attr: 'otherNum' }, { attr: 'yetAnotherNum' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#c1 BETWEEN #c2 AND #c3',
-      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum', '#c3': 'yetAnotherNum' },
+      ConditionExpression: '#c_1 BETWEEN #c_2 AND #c_3',
+      ExpressionAttributeNames: { '#c_1': 'num', '#c_2': 'otherNum', '#c_3': 'yetAnotherNum' },
       ExpressionAttributeValues: {}
     })
   })
@@ -59,13 +59,13 @@ describe('parseCondition - between', () => {
         }
       )
     ).toStrictEqual({
-      ConditionExpression: '#c1.#c2.#c3 BETWEEN :c1 AND :c2',
+      ConditionExpression: '#c_1.#c_2.#c_3 BETWEEN :c_1 AND :c_2',
       ExpressionAttributeNames: {
-        '#c1': 'map',
-        '#c2': 'nestedA',
-        '#c3': 'nestedB'
+        '#c_1': 'map',
+        '#c_2': 'nestedA',
+        '#c_3': 'nestedB'
       },
-      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
+      ExpressionAttributeValues: { ':c_1': 42, ':c_2': 43 }
     })
   })
 
@@ -90,15 +90,15 @@ describe('parseCondition - between', () => {
         between: [{ attr: 'nestedC.otherNum' }, 43]
       })
     ).toStrictEqual({
-      ConditionExpression: '#c1.#c2.#c3 BETWEEN #c4.#c5 AND :c1',
+      ConditionExpression: '#c_1.#c_2.#c_3 BETWEEN #c_4.#c_5 AND :c_1',
       ExpressionAttributeNames: {
-        '#c1': 'map',
-        '#c2': 'nestedA',
-        '#c3': 'nestedB',
-        '#c4': 'nestedC',
-        '#c5': 'otherNum'
+        '#c_1': 'map',
+        '#c_2': 'nestedA',
+        '#c_3': 'nestedB',
+        '#c_4': 'nestedC',
+        '#c_5': 'otherNum'
       },
-      ExpressionAttributeValues: { ':c1': 43 }
+      ExpressionAttributeValues: { ':c_1': 43 }
     })
   })
 
@@ -109,15 +109,15 @@ describe('parseCondition - between', () => {
         between: [{ attr: 'nestedC.otherNum' }, { attr: 'nestedD.yetAnotherNum' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#c1.#c2.#c3 BETWEEN #c4.#c5 AND #c6.#c7',
+      ConditionExpression: '#c_1.#c_2.#c_3 BETWEEN #c_4.#c_5 AND #c_6.#c_7',
       ExpressionAttributeNames: {
-        '#c1': 'map',
-        '#c2': 'nestedA',
-        '#c3': 'nestedB',
-        '#c4': 'nestedC',
-        '#c5': 'otherNum',
-        '#c6': 'nestedD',
-        '#c7': 'yetAnotherNum'
+        '#c_1': 'map',
+        '#c_2': 'nestedA',
+        '#c_3': 'nestedB',
+        '#c_4': 'nestedC',
+        '#c_5': 'otherNum',
+        '#c_6': 'nestedD',
+        '#c_7': 'yetAnotherNum'
       },
       ExpressionAttributeValues: {}
     })
@@ -154,14 +154,14 @@ describe('parseCondition - between', () => {
         between: [42, 43]
       })
     ).toStrictEqual({
-      ConditionExpression: '#c1[1].#c2.#c3[2].#c4 BETWEEN :c1 AND :c2',
+      ConditionExpression: '#c_1[1].#c_2.#c_3[2].#c_4 BETWEEN :c_1 AND :c_2',
       ExpressionAttributeNames: {
-        '#c1': 'listA',
-        '#c2': 'nested',
-        '#c3': 'listB',
-        '#c4': 'value'
+        '#c_1': 'listA',
+        '#c_2': 'nested',
+        '#c_3': 'listB',
+        '#c_4': 'value'
       },
-      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
+      ExpressionAttributeValues: { ':c_1': 42, ':c_2': 43 }
     })
   })
 
@@ -172,18 +172,18 @@ describe('parseCondition - between', () => {
         between: [42, { attr: 'listC[3].nested.listD[4].value' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#c1[1].#c2.#c3[2].#c4 BETWEEN :c1 AND #c5[3].#c6.#c7[4].#c8',
+      ConditionExpression: '#c_1[1].#c_2.#c_3[2].#c_4 BETWEEN :c_1 AND #c_5[3].#c_6.#c_7[4].#c_8',
       ExpressionAttributeNames: {
-        '#c1': 'listA',
-        '#c2': 'nested',
-        '#c3': 'listB',
-        '#c4': 'value',
-        '#c5': 'listC',
-        '#c6': 'nested',
-        '#c7': 'listD',
-        '#c8': 'value'
+        '#c_1': 'listA',
+        '#c_2': 'nested',
+        '#c_3': 'listB',
+        '#c_4': 'value',
+        '#c_5': 'listC',
+        '#c_6': 'nested',
+        '#c_7': 'listD',
+        '#c_8': 'value'
       },
-      ExpressionAttributeValues: { ':c1': 42 }
+      ExpressionAttributeValues: { ':c_1': 42 }
     })
   })
 
@@ -198,20 +198,20 @@ describe('parseCondition - between', () => {
       })
     ).toStrictEqual({
       ConditionExpression:
-        '#c1[1].#c2.#c3[2].#c4 BETWEEN #c5[3].#c6.#c7[4].#c8 AND #c9[3].#c10.#c11[4].#c12',
+        '#c_1[1].#c_2.#c_3[2].#c_4 BETWEEN #c_5[3].#c_6.#c_7[4].#c_8 AND #c_9[3].#c_10.#c_11[4].#c_12',
       ExpressionAttributeNames: {
-        '#c1': 'listA',
-        '#c2': 'nested',
-        '#c3': 'listB',
-        '#c4': 'value',
-        '#c5': 'listC',
-        '#c6': 'nested',
-        '#c7': 'listD',
-        '#c8': 'value',
-        '#c9': 'listE',
-        '#c10': 'nested',
-        '#c11': 'listF',
-        '#c12': 'value'
+        '#c_1': 'listA',
+        '#c_2': 'nested',
+        '#c_3': 'listB',
+        '#c_4': 'value',
+        '#c_5': 'listC',
+        '#c_6': 'nested',
+        '#c_7': 'listD',
+        '#c_8': 'value',
+        '#c_9': 'listE',
+        '#c_10': 'nested',
+        '#c_11': 'listF',
+        '#c_12': 'value'
       },
       ExpressionAttributeValues: {}
     })
@@ -227,9 +227,9 @@ describe('parseCondition - between', () => {
     expect(
       parseSchemaCondition(deepListsSchema, { attr: 'list[1][2][3]', between: [42, 43] })
     ).toStrictEqual({
-      ConditionExpression: '#c1[1][2][3] BETWEEN :c1 AND :c2',
-      ExpressionAttributeNames: { '#c1': 'list' },
-      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
+      ConditionExpression: '#c_1[1][2][3] BETWEEN :c_1 AND :c_2',
+      ExpressionAttributeNames: { '#c_1': 'list' },
+      ExpressionAttributeValues: { ':c_1': 42, ':c_2': 43 }
     })
   })
 
@@ -240,9 +240,9 @@ describe('parseCondition - between', () => {
         between: [{ attr: 'listB[4][5][6]' }, 42]
       })
     ).toStrictEqual({
-      ConditionExpression: '#c1[1][2][3] BETWEEN #c2[4][5][6] AND :c1',
-      ExpressionAttributeNames: { '#c1': 'list', '#c2': 'listB' },
-      ExpressionAttributeValues: { ':c1': 42 }
+      ConditionExpression: '#c_1[1][2][3] BETWEEN #c_2[4][5][6] AND :c_1',
+      ExpressionAttributeNames: { '#c_1': 'list', '#c_2': 'listB' },
+      ExpressionAttributeValues: { ':c_1': 42 }
     })
   })
 
@@ -253,17 +253,17 @@ describe('parseCondition - between', () => {
         between: [{ attr: 'listB[4][5][6]' }, { attr: 'listC[7][8][9]' }]
       })
     ).toStrictEqual({
-      ConditionExpression: '#c1[1][2][3] BETWEEN #c2[4][5][6] AND #c3[7][8][9]',
-      ExpressionAttributeNames: { '#c1': 'list', '#c2': 'listB', '#c3': 'listC' },
+      ConditionExpression: '#c_1[1][2][3] BETWEEN #c_2[4][5][6] AND #c_3[7][8][9]',
+      ExpressionAttributeNames: { '#c_1': 'list', '#c_2': 'listB', '#c_3': 'listC' },
       ExpressionAttributeValues: {}
     })
   })
 
   it('with size', () => {
     expect(parseSchemaCondition(simpleSchema, { size: 'num', between: [42, 43] })).toStrictEqual({
-      ConditionExpression: 'size(#c1) BETWEEN :c1 AND :c2',
-      ExpressionAttributeNames: { '#c1': 'num' },
-      ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
+      ConditionExpression: 'size(#c_1) BETWEEN :c_1 AND :c_2',
+      ExpressionAttributeNames: { '#c_1': 'num' },
+      ExpressionAttributeValues: { ':c_1': 42, ':c_2': 43 }
     })
   })
 })
