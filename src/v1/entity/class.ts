@@ -55,7 +55,7 @@ export class EntityV2<
   public build: <COMMAND_CLASS extends typeof CommandClass = typeof CommandClass>(
     commandClass: COMMAND_CLASS
   ) => string extends NAME
-    ? unknown
+    ? any
     : COMMAND_CLASS extends PutItemCommandClass
     ? PutItemCommand<this>
     : COMMAND_CLASS extends GetItemCommandClass
@@ -64,7 +64,7 @@ export class EntityV2<
     ? DeleteItemCommand<this>
     : COMMAND_CLASS extends UpdateItemCommandClass
     ? UpdateItemCommand<this>
-    : never
+    : CommandClass<this>
 
   /**
    * Define an Entity for a given table

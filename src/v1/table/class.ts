@@ -23,7 +23,11 @@ export class TableV2<
   // (use TABLE_COMMAND_CLASS somehow) but I haven't found it yet
   public build: <TABLE_COMMAND_CLASS extends typeof TableCommandClass = typeof TableCommandClass>(
     tableCommandClass: TABLE_COMMAND_CLASS
-  ) => TABLE_COMMAND_CLASS extends ScanCommandClass ? ScanCommand<this> : TableCommandClass<this>
+  ) => Key extends PARTITION_KEY
+    ? any
+    : TABLE_COMMAND_CLASS extends ScanCommandClass
+    ? ScanCommand<this>
+    : TableCommandClass<this>
 
   /**
    * Define a Table
@@ -63,6 +67,6 @@ export class TableV2<
       }
     }
 
-    this.build = commandClass => new commandClass(this) as any
+    this.build = commandClass => new commandClass({ table: this }) as any
   }
 }
