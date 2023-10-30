@@ -5,10 +5,10 @@ import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacit
 import { parseMetricsOption } from 'v1/commands/utils/parseOptions/parseMetricsOption'
 import { parseReturnValuesOption } from 'v1/commands/utils/parseOptions/parseReturnValuesOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
+import { parseCondition } from 'v1/commands/expression/condition/parse'
 import type { EntityV2 } from 'v1/entity'
 
 import { deleteItemCommandReturnValuesOptionsSet, DeleteItemOptions } from '../options'
-import { parseCondition } from 'v1/commands/expression/condition/parse'
 
 type CommandOptions = Omit<DeleteCommandInput, 'TableName' | 'Key'>
 

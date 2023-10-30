@@ -10,9 +10,9 @@ describe('parseCondition - Not', () => {
 
   it('negates child condition (value)', () => {
     expect(parseSchemaCondition(mySchema, { not: { attr: 'num', eq: 42 } })).toStrictEqual({
-      ConditionExpression: 'NOT (#c1 = :c1)',
-      ExpressionAttributeNames: { '#c1': 'num' },
-      ExpressionAttributeValues: { ':c1': 42 }
+      ConditionExpression: 'NOT (#c_1 = :c_1)',
+      ExpressionAttributeNames: { '#c_1': 'num' },
+      ExpressionAttributeValues: { ':c_1': 42 }
     })
   })
 
@@ -20,8 +20,8 @@ describe('parseCondition - Not', () => {
     expect(
       parseSchemaCondition(mySchema, { not: { attr: 'num', eq: { attr: 'otherNum' } } })
     ).toStrictEqual({
-      ConditionExpression: 'NOT (#c1 = #c2)',
-      ExpressionAttributeNames: { '#c1': 'num', '#c2': 'otherNum' },
+      ConditionExpression: 'NOT (#c_1 = #c_2)',
+      ExpressionAttributeNames: { '#c_1': 'num', '#c_2': 'otherNum' },
       ExpressionAttributeValues: {}
     })
   })

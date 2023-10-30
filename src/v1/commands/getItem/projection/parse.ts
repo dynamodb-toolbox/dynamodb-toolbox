@@ -9,12 +9,13 @@ export const parseSchemaProjection = <
   ATTRIBUTE_PATHS extends SchemaAttributePath<SCHEMA>[]
 >(
   schema: SCHEMA,
-  attributes: ATTRIBUTE_PATHS
+  attributes: ATTRIBUTE_PATHS,
+  id?: string
 ): {
   ProjectionExpression: string
   ExpressionAttributeNames: Record<string, string>
 } => {
-  const projectionExpression = new ProjectionParser(schema)
+  const projectionExpression = new ProjectionParser(schema, id)
   projectionExpression.parseProjection(attributes)
   return projectionExpression.toCommandOptions()
 }
@@ -24,5 +25,6 @@ export const parseProjection = <
   ATTRIBUTE_PATHS extends AnyAttributePath<ENTITY>[]
 >(
   entity: ENTITY,
-  attributes: ATTRIBUTE_PATHS
-) => parseSchemaProjection(entity.schema, attributes)
+  attributes: ATTRIBUTE_PATHS,
+  id?: string
+) => parseSchemaProjection(entity.schema, attributes, id)
