@@ -24,9 +24,9 @@ describe('parseCondition', () => {
       expect(
         parseSchemaCondition(schemaWithSavedAs, { attr: 'savedAs', beginsWith: 'foo' })
       ).toStrictEqual({
-        ConditionExpression: 'begins_with(#c1, :c1)',
-        ExpressionAttributeNames: { '#c1': '_s' },
-        ExpressionAttributeValues: { ':c1': 'foo' }
+        ConditionExpression: 'begins_with(#c_1, :c_1)',
+        ExpressionAttributeNames: { '#c_1': '_s' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
       })
     })
 
@@ -34,9 +34,19 @@ describe('parseCondition', () => {
       expect(
         parseSchemaCondition(schemaWithSavedAs, { attr: 'nested.savedAs', beginsWith: 'foo' })
       ).toStrictEqual({
-        ConditionExpression: 'begins_with(#c1.#c2, :c1)',
-        ExpressionAttributeNames: { '#c1': '_n', '#c2': '_s' },
-        ExpressionAttributeValues: { ':c1': 'foo' }
+        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': '_n', '#c_2': '_s' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
+      })
+    })
+
+    it('correctly parses condition (with id)', () => {
+      expect(
+        parseSchemaCondition(schemaWithSavedAs, { attr: 'savedAs', beginsWith: 'foo' }, '1')
+      ).toStrictEqual({
+        ConditionExpression: 'begins_with(#c1_1, :c1_1)',
+        ExpressionAttributeNames: { '#c1_1': '_s' },
+        ExpressionAttributeValues: { ':c1_1': 'foo' }
       })
     })
 
@@ -44,9 +54,9 @@ describe('parseCondition', () => {
       expect(
         parseSchemaCondition(schemaWithSavedAs, { attr: 'listed[4].savedAs', beginsWith: 'foo' })
       ).toStrictEqual({
-        ConditionExpression: 'begins_with(#c1[4].#c2, :c1)',
-        ExpressionAttributeNames: { '#c1': '_l', '#c2': '_s' },
-        ExpressionAttributeValues: { ':c1': 'foo' }
+        ConditionExpression: 'begins_with(#c_1[4].#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': '_l', '#c_2': '_s' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
       })
     })
   })
@@ -65,9 +75,9 @@ describe('parseCondition', () => {
       expect(
         parseSchemaCondition(schemaWithAnyOf, { attr: 'anyOf', between: [42, 43] })
       ).toStrictEqual({
-        ConditionExpression: '#c1 BETWEEN :c1 AND :c2',
-        ExpressionAttributeNames: { '#c1': 'anyOf' },
-        ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
+        ConditionExpression: '#c_1 BETWEEN :c_1 AND :c_2',
+        ExpressionAttributeNames: { '#c_1': 'anyOf' },
+        ExpressionAttributeValues: { ':c_1': 42, ':c_2': 43 }
       })
     })
 
@@ -75,9 +85,9 @@ describe('parseCondition', () => {
       expect(
         parseSchemaCondition(schemaWithAnyOf, { attr: 'anyOf.strOrNum', between: [42, 43] })
       ).toStrictEqual({
-        ConditionExpression: '#c1.#c2 BETWEEN :c1 AND :c2',
-        ExpressionAttributeNames: { '#c1': 'anyOf', '#c2': 'strOrNum' },
-        ExpressionAttributeValues: { ':c1': 42, ':c2': 43 }
+        ConditionExpression: '#c_1.#c_2 BETWEEN :c_1 AND :c_2',
+        ExpressionAttributeNames: { '#c_1': 'anyOf', '#c_2': 'strOrNum' },
+        ExpressionAttributeValues: { ':c_1': 42, ':c_2': 43 }
       })
     })
 
@@ -85,9 +95,9 @@ describe('parseCondition', () => {
       expect(
         parseSchemaCondition(schemaWithAnyOf, { attr: 'anyOf.strOrNum', beginsWith: 'foo' })
       ).toStrictEqual({
-        ConditionExpression: 'begins_with(#c1.#c2, :c1)',
-        ExpressionAttributeNames: { '#c1': 'anyOf', '#c2': 'strOrNum' },
-        ExpressionAttributeValues: { ':c1': 'foo' }
+        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': 'anyOf', '#c_2': 'strOrNum' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
       })
     })
   })

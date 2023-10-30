@@ -11,22 +11,24 @@ export const parseSchemaCondition = <
   CONDITION extends SchemaCondition<SCHEMA>
 >(
   schema: SCHEMA,
-  condition: CONDITION
+  condition: CONDITION,
+  id?: string
 ): {
   ConditionExpression: string
   ExpressionAttributeNames: Record<string, string>
   ExpressionAttributeValues: Record<string, NativeAttributeValue>
 } => {
-  const conditionParser = new ConditionParser(schema)
+  const conditionParser = new ConditionParser(schema, id)
   conditionParser.parseCondition(condition)
   return conditionParser.toCommandOptions()
 }
 
 export const parseCondition = <ENTITY extends EntityV2, CONDITION extends Condition<ENTITY>>(
   entity: ENTITY,
-  condition: CONDITION
+  condition: CONDITION,
+  id?: string
 ): {
   ConditionExpression: string
   ExpressionAttributeNames: Record<string, string>
   ExpressionAttributeValues: Record<string, NativeAttributeValue>
-} => parseSchemaCondition(entity.schema, condition)
+} => parseSchemaCondition(entity.schema, condition, id)

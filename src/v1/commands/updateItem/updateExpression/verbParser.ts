@@ -10,17 +10,21 @@ import type { ParsedUpdate } from './type'
 
 export class UpdateExpressionVerbParser implements ExpressionParser {
   schema: Schema | Attribute
-  expressionAttributePrefix: 's' | 'r' | 'a' | 'd'
+  verbPrefix: 's' | 'r' | 'a' | 'd'
+  expressionAttributePrefix: `${'s' | 'r' | 'a' | 'd'}${string}_`
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]
   expression: string
+  id: string
 
-  constructor(schema: Schema | Attribute, expressionAttributePrefix: 's' | 'r' | 'a' | 'd') {
+  constructor(schema: Schema | Attribute, verbPrefix: 's' | 'r' | 'a' | 'd', id = '') {
     this.schema = schema
-    this.expressionAttributePrefix = expressionAttributePrefix
+    this.verbPrefix = verbPrefix
+    this.expressionAttributePrefix = `${verbPrefix}${id}_`
     this.expressionAttributeNames = []
     this.expressionAttributeValues = []
     this.expression = ''
+    this.id = id
   }
 
   resetExpression = (initialStr = '') => {
@@ -127,7 +131,8 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
   clone = (schema?: Schema | Attribute): UpdateExpressionVerbParser => {
     const clonedParser = new UpdateExpressionVerbParser(
       schema ?? this.schema,
-      this.expressionAttributePrefix
+      this.verbPrefix,
+      this.id
     )
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]

@@ -470,9 +470,9 @@ describe('put', () => {
       .options({ condition: { attr: 'email', gt: 'test' } })
       .params()
 
-    expect(ExpressionAttributeNames).toEqual({ '#c1': 'pk' })
-    expect(ExpressionAttributeValues).toEqual({ ':c1': 'test' })
-    expect(ConditionExpression).toBe('#c1 > :c1')
+    expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
+    expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })
+    expect(ConditionExpression).toBe('#c_1 > :c_1')
   })
 
   it('missing item', () => {

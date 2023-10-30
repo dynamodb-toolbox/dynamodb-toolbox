@@ -11,17 +11,19 @@ import { toCommandOptions } from './toCommandOptions'
 
 export class ConditionParser implements ExpressionParser {
   schema: Schema | Attribute
-  expressionAttributePrefix: 'c'
+  expressionAttributePrefix: `c${string}_`
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]
   expression: string
+  id: string
 
-  constructor(schema: Schema | Attribute) {
+  constructor(schema: Schema | Attribute, id = '') {
     this.schema = schema
-    this.expressionAttributePrefix = 'c'
+    this.expressionAttributePrefix = `c${id}_`
     this.expressionAttributeNames = []
     this.expressionAttributeValues = []
     this.expression = ''
+    this.id = id
   }
 
   resetExpression = (initialStr = '') => {
@@ -52,7 +54,7 @@ export class ConditionParser implements ExpressionParser {
   } => toCommandOptions(this)
 
   clone = (schema?: Schema | Attribute): ConditionParser => {
-    const clonedParser = new ConditionParser(schema ?? this.schema)
+    const clonedParser = new ConditionParser(schema ?? this.schema, this.id)
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]
     clonedParser.expressionAttributeValues = [...this.expressionAttributeValues]
