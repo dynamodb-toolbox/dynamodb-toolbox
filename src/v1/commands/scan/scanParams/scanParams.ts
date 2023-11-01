@@ -12,6 +12,7 @@ import { parseLimitOption } from 'v1/commands/utils/parseOptions/parseLimitOptio
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
 import { isInteger } from 'v1/utils/validation/isInteger'
 import { parseCondition } from 'v1/commands/expression/condition/parse'
+import { parseProjection } from 'v1/commands/expression/projection/parse'
 
 import type { ScanOptions } from '../options'
 
@@ -131,24 +132,43 @@ export const scanParams = <
     const expressionAttributeNames: Record<string, string> = {}
     const expressionAttributeValues: Record<string, any> = {}
     const filterExpressions: string[] = []
+    const projectionExpressions: string[] = []
 
     entities.forEach((entity, index) => {
       const entityNameFilter = { attr: entity.entityAttributeName, eq: entity.name }
       const entityFilter = filters[entity.name]
 
       const {
-        ExpressionAttributeNames,
-        ExpressionAttributeValues,
-        ConditionExpression
+        ExpressionAttributeNames: filterExpressionAttributeNames,
+        ExpressionAttributeValues: filterExpressionAttributeValues,
+        ConditionExpression: filterExpression
       } = parseCondition<EntityV2, Condition<EntityV2>>(
         entity,
         entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter,
         index.toString()
       )
 
-      Object.assign(expressionAttributeNames, ExpressionAttributeNames)
-      Object.assign(expressionAttributeValues, ExpressionAttributeValues)
-      filterExpressions.push(ConditionExpression)
+      Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
+      Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
+      filterExpressions.push(filterExpression)
+
+      const entityAttributes = attributes[entity.name]
+      if (entityAttributes !== undefined) {
+        /**
+         * @debt refactor "Would be better to have a single attribute list for all entities (typed as the intersection of all entities AnyAttributePath) but parseProjection is designed to work with entities so it's a big rework. Will do that later."
+         */
+        const {
+          ExpressionAttributeNames: projectionExpressionAttributeNames,
+          ProjectionExpression: projectionExpression
+        } = parseProjection<EntityV2, AnyAttributePath[]>(
+          entity,
+          entityAttributes,
+          index.toString()
+        )
+
+        Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
+        projectionExpressions.push(projectionExpression)
+      }
     })
 
     if (!isEmpty(expressionAttributeNames)) {
@@ -164,6 +184,10 @@ export const scanParams = <
         filterExpressions.length === 1
           ? filterExpressions[0]
           : `(${filterExpressions.filter(Boolean).join(') OR (')})`
+    }
+
+    if (projectionExpressions.length > 0) {
+      commandOptions.ProjectionExpression = projectionExpressions.filter(Boolean).join(', ')
     }
   }
 

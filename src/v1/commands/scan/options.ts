@@ -15,7 +15,7 @@ export type ScanOptions<ENTITIES extends EntityV2 = EntityV2> = {
   limit?: number
   filters?: EntityV2 extends ENTITIES
     ? Record<string, Condition>
-    : { [ENTITY in ENTITIES as ENTITY['name']]: Condition<ENTITY> }
+    : { [ENTITY in ENTITIES as ENTITY['name']]?: Condition<ENTITY> }
 } & (
   | { segment?: never; totalSegments?: never }
   // Either both segment & totalSegments are set, either none
@@ -32,7 +32,7 @@ export type ScanOptions<ENTITIES extends EntityV2 = EntityV2> = {
     | {
         attributes: EntityV2 extends ENTITIES
           ? Record<string, Condition>
-          : { [ENTITY in ENTITIES as ENTITY['name']]: AnyAttributePath<ENTITY>[] }
+          : { [ENTITY in ENTITIES as ENTITY['name']]?: AnyAttributePath<ENTITY>[] }
         select?: SpecificAttributesSelectOption
       }
   )

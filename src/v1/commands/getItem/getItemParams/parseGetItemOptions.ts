@@ -4,10 +4,10 @@ import isEmpty from 'lodash.isempty'
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
 import { parseConsistentOption } from 'v1/commands/utils/parseOptions/parseConsistentOption'
+import { parseProjection } from 'v1/commands/expression/projection/parse'
 import { EntityV2 } from 'v1/entity'
 
 import type { GetItemOptions } from '../options'
-import { parseProjection } from '../projection'
 
 type CommandOptions = Omit<GetCommandInput, 'TableName' | 'Key'>
 

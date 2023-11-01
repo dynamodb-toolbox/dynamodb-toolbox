@@ -437,6 +437,39 @@ describe('scan', () => {
     })
   })
 
+  it('applies entity projection expression', () => {
+    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
+      .entities(Entity1)
+      .options({ attributes: { entity1: ['age', 'name'] } })
+      .params()
+
+    expect(ProjectionExpression).toBe('#p0_1, #p0_2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#p0_1': 'age',
+      '#p0_2': 'name'
+    })
+  })
+
+  it('applies two entity projection expressions', () => {
+    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
+      .entities(Entity1, Entity2)
+      .options({
+        attributes: {
+          entity1: ['age', 'name'],
+          entity2: ['price', 'launchDate']
+        }
+      })
+      .params()
+
+    expect(ProjectionExpression).toBe('#p0_1, #p0_2, #p1_1, #p1_2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#p0_1': 'age',
+      '#p0_2': 'name',
+      '#p1_1': 'price',
+      '#p1_2': 'launchDate'
+    })
+  })
+
   it('fails on extra options', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
