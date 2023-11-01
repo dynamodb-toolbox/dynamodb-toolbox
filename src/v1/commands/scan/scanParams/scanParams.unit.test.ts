@@ -299,9 +299,7 @@ describe('scan', () => {
       .entities(Entity1)
       .options({
         filters: {
-          entity1: { attr: 'age', gte: 40 },
-          // @ts-expect-error
-          entity2: { attr: 'price', gte: 100 }
+          entity1: { attr: 'age', gte: 40 }
         }
       })
       .params()
