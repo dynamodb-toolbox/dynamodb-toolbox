@@ -2,7 +2,7 @@ import type { ScanCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
 import type { TableV2 } from 'v1/table'
-import type { Condition } from 'v1/commands/types'
+import type { AnyAttributePath, Condition } from 'v1/commands/types'
 import { EntityV2 } from 'v1/entity'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
@@ -17,9 +17,13 @@ import type { ScanOptions } from '../options'
 
 import { selectOptionsSet } from '../constants'
 
-export const scanParams = <TABLE extends TableV2, ENTITIES extends EntityV2>(
+export const scanParams = <
+  TABLE extends TableV2,
+  ENTITIES extends EntityV2,
+  OPTIONS extends ScanOptions<ENTITIES>
+>(
   { table, entities = [] }: { table: TABLE; entities?: ENTITIES[] },
-  scanOptions: ScanOptions = {}
+  scanOptions: OPTIONS = {} as OPTIONS
 ): ScanCommandInput => {
   const {
     capacity,
@@ -30,9 +34,13 @@ export const scanParams = <TABLE extends TableV2, ENTITIES extends EntityV2>(
     select,
     totalSegments,
     segment,
-    filters = {},
+    filters: _filters,
+    attributes: _attributes,
     ...extraOptions
   } = scanOptions
+
+  const filters = (_filters ?? {}) as Record<string, Condition>
+  const attributes = (_attributes ?? {}) as Record<string, AnyAttributePath[]>
 
   const commandOptions: ScanCommandInput = {
     TableName: table.getName()
@@ -64,6 +72,24 @@ export const scanParams = <TABLE extends TableV2, ENTITIES extends EntityV2>(
         message: `Invalid select option: '${String(select)}'. 'select' must be one of: ${[
           ...selectOptionsSet
         ].join(', ')}.`,
+        payload: { select }
+      })
+    }
+
+    if (select === 'ALL_PROJECTED_ATTRIBUTES' && indexName === undefined) {
+      throw new DynamoDBToolboxError('scanCommand.invalidSelectOption', {
+        message: `Invalid select option: '${String(
+          select
+        )}'. Please provide an 'indexName' option.`,
+        payload: { select }
+      })
+    }
+
+    if (!isEmpty(attributes) && select !== 'SPECIFIC_ATTRIBUTES') {
+      throw new DynamoDBToolboxError('scanCommand.invalidSelectOption', {
+        message: `Invalid select option: '${String(
+          select
+        )}'. Select must be 'SPECIFIC_ATTRIBUTES' if a filter expression has been provided.`,
         payload: { select }
       })
     }
