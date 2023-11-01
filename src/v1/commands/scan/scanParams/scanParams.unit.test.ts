@@ -139,6 +139,71 @@ describe('scan', () => {
     )
   })
 
+  it('sets select option', () => {
+    const { Select } = TestTable.build(ScanCommand).options({ select: 'COUNT' }).params()
+
+    expect(Select).toBe('COUNT')
+  })
+
+  it('fails on invalid select option', () => {
+    const invalidCall = () =>
+      TestTable.build(ScanCommand)
+        .options({
+          // @ts-expect-error
+          select: 'foobar'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'scanCommand.invalidSelectOption' })
+    )
+  })
+
+  it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
+    const { Select } = TestTable.build(ScanCommand)
+      .options({ select: 'ALL_PROJECTED_ATTRIBUTES', indexName: 'my-index' })
+      .params()
+
+    expect(Select).toBe('ALL_PROJECTED_ATTRIBUTES')
+  })
+
+  it('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
+    const invalidCall = () =>
+      TestTable.build(ScanCommand)
+        // @ts-expect-error
+        .options({ select: 'ALL_PROJECTED_ATTRIBUTES' })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'scanCommand.invalidSelectOption' })
+    )
+  })
+
+  it('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
+    const { Select } = TestTable.build(ScanCommand)
+      .entities(Entity1)
+      .options({ attributes: { entity1: ['age'] }, select: 'SPECIFIC_ATTRIBUTES' })
+      .params()
+
+    expect(Select).toBe('SPECIFIC_ATTRIBUTES')
+  })
+
+  it('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
+    const invalidCall = () =>
+      TestTable.build(ScanCommand)
+        .entities(Entity1)
+        // @ts-expect-error
+        .options({ attributes: { entity1: ['age'] }, select: 'ALL_ATTRIBUTES' })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'scanCommand.invalidSelectOption' })
+    )
+  })
+
   it('sets limit option', () => {
     const { Limit } = TestTable.build(ScanCommand).options({ limit: 3 }).params()
 
@@ -299,9 +364,7 @@ describe('scan', () => {
       .entities(Entity1)
       .options({
         filters: {
-          entity1: { attr: 'age', gte: 40 },
-          // @ts-expect-error
-          entity2: { attr: 'price', gte: 100 }
+          entity1: { attr: 'age', gte: 40 }
         }
       })
       .params()
@@ -371,6 +434,39 @@ describe('scan', () => {
       ':c0_2': 40,
       ':c1_1': Entity2.name,
       ':c1_2': 100
+    })
+  })
+
+  it('applies entity projection expression', () => {
+    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
+      .entities(Entity1)
+      .options({ attributes: { entity1: ['age', 'name'] } })
+      .params()
+
+    expect(ProjectionExpression).toBe('#p0_1, #p0_2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#p0_1': 'age',
+      '#p0_2': 'name'
+    })
+  })
+
+  it('applies two entity projection expressions', () => {
+    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
+      .entities(Entity1, Entity2)
+      .options({
+        attributes: {
+          entity1: ['age', 'name'],
+          entity2: ['price', 'launchDate']
+        }
+      })
+      .params()
+
+    expect(ProjectionExpression).toBe('#p0_1, #p0_2, #p1_1, #p1_2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#p0_1': 'age',
+      '#p0_2': 'name',
+      '#p1_1': 'price',
+      '#p1_2': 'launchDate'
     })
   })
 

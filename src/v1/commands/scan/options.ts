@@ -1,18 +1,38 @@
 import type { CapacityOption } from 'v1/commands/constants/options/capacity'
-import type { Condition } from 'v1/commands/types/condition'
+import type { AnyAttributePath, Condition } from 'v1/commands/types'
 import type { EntityV2 } from 'v1/entity'
 
-import type { SelectOption } from './constants'
+import type {
+  SelectOption,
+  AllProjectedAttributesSelectOption,
+  SpecificAttributesSelectOption
+} from './constants'
 
 export type ScanOptions<ENTITIES extends EntityV2 = EntityV2> = {
   capacity?: CapacityOption
   consistent?: boolean
   exclusiveStartKey?: Record<string, unknown>
-  indexName?: string
   limit?: number
-  select?: SelectOption
   filters?: EntityV2 extends ENTITIES
     ? Record<string, Condition>
-    : { [ENTITY in ENTITIES as ENTITY['name']]: Condition<ENTITY> }
+    : { [ENTITY in ENTITIES as ENTITY['name']]?: Condition<ENTITY> }
+} & (
+  | { segment?: never; totalSegments?: never }
   // Either both segment & totalSegments are set, either none
-} & ({ segment?: never; totalSegments?: never } | { segment: number; totalSegments: number })
+  | { segment: number; totalSegments: number }
+) &
+  (
+    | { select?: Exclude<SelectOption, AllProjectedAttributesSelectOption>; indexName?: string }
+    // "ALL_PROJECTED_ATTRIBUTES" is only available if indexName is present
+    | { select?: SelectOption; indexName: string }
+  ) &
+  (
+    | { attributes?: undefined; select?: SelectOption }
+    //  "SPECIFIC_ATTRIBUTES" is the only valid option if projectionExpression is present
+    | {
+        attributes: EntityV2 extends ENTITIES
+          ? Record<string, Condition>
+          : { [ENTITY in ENTITIES as ENTITY['name']]?: AnyAttributePath<ENTITY>[] }
+        select?: SpecificAttributesSelectOption
+      }
+  )
