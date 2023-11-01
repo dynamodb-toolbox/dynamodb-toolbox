@@ -79,10 +79,12 @@
   },
   "files": [
     "dist/cjs/index.*",
+    "dist/cjs/package.json",
     "dist/cjs/constants.*",
     "dist/cjs/classes/",
     "dist/cjs/lib/",
     "dist/esm/index.*",
+    "dist/esm/package.json",
     "dist/esm/constants.*",
     "dist/esm/classes/",
     "dist/esm/lib/"
