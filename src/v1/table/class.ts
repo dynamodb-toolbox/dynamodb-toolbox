@@ -1,6 +1,6 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import type { TableCommandClass } from 'v1/commands/class'
+import type { TableCommand } from 'v1/commands/class'
 import type { ScanCommand } from 'v1/commands'
 import type { ScanCommandClass } from 'v1/commands/scan/command'
 import { isString } from 'v1/utils/validation/isString'
@@ -21,13 +21,13 @@ export class TableV2<
   public getName: () => string
   // TODO: Maybe there's a way not to have to list all commands here
   // (use TABLE_COMMAND_CLASS somehow) but I haven't found it yet
-  public build: <TABLE_COMMAND_CLASS extends typeof TableCommandClass = typeof TableCommandClass>(
+  public build: <TABLE_COMMAND_CLASS extends typeof TableCommand = typeof TableCommand>(
     tableCommandClass: TABLE_COMMAND_CLASS
   ) => Key extends PARTITION_KEY
     ? any
     : TABLE_COMMAND_CLASS extends ScanCommandClass
     ? ScanCommand<this>
-    : TableCommandClass<this>
+    : TableCommand<this>
 
   /**
    * Define a Table

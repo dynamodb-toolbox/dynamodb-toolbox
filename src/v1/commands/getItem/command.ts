@@ -6,7 +6,7 @@ import type { AnyAttributePath, KeyInput } from 'v1/commands/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
-import type { CommandClass } from '../class'
+import { EntityCommand } from '../class'
 import type { GetItemOptions } from './options'
 import { getItemParams } from './getItemParams'
 
@@ -27,10 +27,9 @@ export type GetItemResponse<
 export class GetItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
-> implements CommandClass<ENTITY> {
-  static commandType = 'get' as const
+> extends EntityCommand<ENTITY> {
+  static commandName = 'get' as const
 
-  public entity: ENTITY
   public _key?: KeyInput<ENTITY>
   public key: (key: KeyInput<ENTITY>) => GetItemCommand<ENTITY, OPTIONS>
   public _options: OPTIONS
@@ -39,12 +38,12 @@ export class GetItemCommand<
   ) => GetItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
-    this.entity = entity
+    super(entity)
     this._key = key
     this._options = options
 
-    this.key = nextKey => new GetItemCommand(this.entity, nextKey, this._options)
-    this.options = nextOptions => new GetItemCommand(this.entity, this._key, nextOptions)
+    this.key = nextKey => new GetItemCommand(this._entity, nextKey, this._options)
+    this.options = nextOptions => new GetItemCommand(this._entity, this._key, nextOptions)
   }
 
   params = (): GetCommandInput => {
@@ -53,7 +52,7 @@ export class GetItemCommand<
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
-    const params = getItemParams(this.entity, this._key, this._options)
+    const params = getItemParams(this._entity, this._key, this._options)
 
     return params
   }
@@ -61,7 +60,9 @@ export class GetItemCommand<
   send = async (): Promise<GetItemResponse<ENTITY, OPTIONS>> => {
     const getItemParams = this.params()
 
-    const commandOutput = await this.entity.table.documentClient.send(new GetCommand(getItemParams))
+    const commandOutput = await this._entity.table.documentClient.send(
+      new GetCommand(getItemParams)
+    )
 
     const { Item: item, ...restCommandOutput } = commandOutput
 
@@ -70,7 +71,7 @@ export class GetItemCommand<
     }
 
     const { attributes } = this._options
-    const formattedItem = formatSavedItem(this.entity, item, { attributes })
+    const formattedItem = formatSavedItem(this._entity, item, { attributes })
 
     return {
       Item: formattedItem,

@@ -13,7 +13,7 @@ import type { GetItemCommandMock } from './getItemCommand'
 import type { PutItemCommandMock } from './putItemCommand'
 import type { DeleteItemCommandMock } from './deleteItemCommand'
 import type { UpdateItemCommandMock } from './updateItemCommand'
-import type { $commandType } from './constants'
+import type { $commandName } from './constants'
 import type { CommandResults } from './commandResults'
 import type { CommandMocker } from './commandMocker'
 
@@ -33,7 +33,7 @@ type CommandMock =
   | typeof DeleteItemCommandMock
   | typeof UpdateItemCommandMock
 
-export type CommandType = ClassStaticProperties<CommandMock>[$commandType]
+export type CommandName = ClassStaticProperties<CommandMock>[$commandName]
 
 export type CommandClassResults<
   ENTITY extends EntityV2,

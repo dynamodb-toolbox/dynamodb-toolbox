@@ -12,7 +12,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandType,
+  $commandName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -23,9 +23,11 @@ export class UpdateItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > implements UpdateItemCommand<ENTITY, OPTIONS> {
-  static [$commandType] = 'update' as const
+  static commandType = 'entity' as const
+  static commandName = 'update' as const
+  static [$commandName] = 'update' as const
 
-  entity: ENTITY;
+  _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
   _item?: UpdateItemInput<ENTITY>
   item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemCommandMock<ENTITY, OPTIONS>
@@ -39,7 +41,7 @@ export class UpdateItemCommandMock<
     item?: UpdateItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this.entity = mockedEntity[$entity]
+    this._entity = mockedEntity[$entity]
     this[$mockedEntity] = mockedEntity
     this._item = item
     this._options = options
@@ -55,7 +57,7 @@ export class UpdateItemCommandMock<
         message: 'UpdateItemCommand incomplete: Missing "item" property'
       })
     }
-    const params = updateItemParams(this.entity, this._item, this._options)
+    const params = updateItemParams(this._entity, this._item, this._options)
 
     return params
   }
@@ -78,6 +80,6 @@ export class UpdateItemCommandMock<
       >
     }
 
-    return new UpdateItemCommand(this.entity, this._item, this._options).send()
+    return new UpdateItemCommand(this._entity, this._item, this._options).send()
   }
 }

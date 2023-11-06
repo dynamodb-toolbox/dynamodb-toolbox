@@ -8,7 +8,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandType,
+  $commandName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -19,9 +19,11 @@ export class GetItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > implements GetItemCommand<ENTITY, OPTIONS> {
-  static [$commandType] = 'get' as const
+  static commandType = 'entity' as const
+  static commandName = 'get' as const
+  static [$commandName] = 'get' as const
 
-  entity: ENTITY;
+  _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
   _key?: KeyInput<ENTITY>
   key: (nextKey: KeyInput<ENTITY>) => GetItemCommandMock<ENTITY, OPTIONS>
@@ -35,7 +37,7 @@ export class GetItemCommandMock<
     key?: KeyInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this.entity = mockedEntity[$entity]
+    this._entity = mockedEntity[$entity]
     this[$mockedEntity] = mockedEntity
     this._key = key
     this._options = options
@@ -51,7 +53,7 @@ export class GetItemCommandMock<
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
-    const params = getItemParams(this.entity, this._key, this._options)
+    const params = getItemParams(this._entity, this._key, this._options)
 
     return params
   }
@@ -71,6 +73,6 @@ export class GetItemCommandMock<
       return implementation(this._key, this._options)
     }
 
-    return new GetItemCommand(this.entity, this._key, this._options).send()
+    return new GetItemCommand(this._entity, this._key, this._options).send()
   }
 }
