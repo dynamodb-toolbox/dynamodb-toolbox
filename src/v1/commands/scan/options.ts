@@ -1,3 +1,4 @@
+import type { U } from 'ts-toolbelt'
 import type { CapacityOption } from 'v1/commands/constants/options/capacity'
 import type { AnyAttributePath, Condition } from 'v1/commands/types'
 import type { EntityV2 } from 'v1/entity'
@@ -28,11 +29,17 @@ export type ScanOptions<ENTITIES extends EntityV2 = EntityV2> = {
   ) &
   (
     | { attributes?: undefined; select?: SelectOption }
-    //  "SPECIFIC_ATTRIBUTES" is the only valid option if projectionExpression is present
     | {
         attributes: EntityV2 extends ENTITIES
-          ? Record<string, Condition>
-          : { [ENTITY in ENTITIES as ENTITY['name']]?: AnyAttributePath<ENTITY>[] }
+          ? Condition
+          : U.IntersectOf<
+              ENTITIES extends infer ENTITY
+                ? ENTITY extends EntityV2
+                  ? AnyAttributePath<ENTITY>[]
+                  : never
+                : never
+            >
+        //  "SPECIFIC_ATTRIBUTES" is the only valid option if projectionExpression is present
         select?: SpecificAttributesSelectOption
       }
   )

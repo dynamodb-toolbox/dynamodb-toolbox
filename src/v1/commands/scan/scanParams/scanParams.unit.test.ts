@@ -184,7 +184,7 @@ describe('scan', () => {
   it('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
     const { Select } = TestTable.build(ScanCommand)
       .entities(Entity1)
-      .options({ attributes: { entity1: ['age'] }, select: 'SPECIFIC_ATTRIBUTES' })
+      .options({ attributes: ['age'], select: 'SPECIFIC_ATTRIBUTES' })
       .params()
 
     expect(Select).toBe('SPECIFIC_ATTRIBUTES')
@@ -440,13 +440,13 @@ describe('scan', () => {
   it('applies entity projection expression', () => {
     const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
       .entities(Entity1)
-      .options({ attributes: { entity1: ['age', 'name'] } })
+      .options({ attributes: ['age', 'name'] })
       .params()
 
-    expect(ProjectionExpression).toBe('#p0_1, #p0_2')
+    expect(ProjectionExpression).toBe('#p_1, #p_2')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#p0_1': 'age',
-      '#p0_2': 'name'
+      '#p_1': 'age',
+      '#p_2': 'name'
     })
   })
 
@@ -454,20 +454,12 @@ describe('scan', () => {
     const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
       .entities(Entity1, Entity2)
       .options({
-        attributes: {
-          entity1: ['age', 'name'],
-          entity2: ['price', 'launchDate']
-        }
+        attributes: ['created', 'modified']
       })
       .params()
 
-    expect(ProjectionExpression).toBe('#p0_1, #p0_2, #p1_1, #p1_2')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#p0_1': 'age',
-      '#p0_2': 'name',
-      '#p1_1': 'price',
-      '#p1_2': 'launchDate'
-    })
+    expect(ProjectionExpression).toBe('#p_1, #p_2')
+    expect(ExpressionAttributeNames).toMatchObject({ '#p_1': '_ct', '#p_2': '_md' })
   })
 
   it('fails on extra options', () => {
