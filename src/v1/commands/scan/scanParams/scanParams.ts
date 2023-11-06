@@ -41,7 +41,7 @@ export const scanParams = <
   } = scanOptions
 
   const filters = (_filters ?? {}) as Record<string, Condition>
-  const attributes = (_attributes ?? {}) as Record<string, AnyAttributePath[]>
+  const attributes = _attributes as AnyAttributePath[] | undefined
 
   const commandOptions: ScanCommandInput = {
     TableName: table.getName()
@@ -132,7 +132,7 @@ export const scanParams = <
     const expressionAttributeNames: Record<string, string> = {}
     const expressionAttributeValues: Record<string, any> = {}
     const filterExpressions: string[] = []
-    const projectionExpressions: string[] = []
+    let projectionExpression: string | undefined = undefined
 
     entities.forEach((entity, index) => {
       const entityNameFilter = { attr: entity.entityAttributeName, eq: entity.name }
@@ -152,22 +152,15 @@ export const scanParams = <
       Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
       filterExpressions.push(filterExpression)
 
-      const entityAttributes = attributes[entity.name]
-      if (entityAttributes !== undefined) {
-        /**
-         * @debt refactor "Would be better to have a single attribute list for all entities (typed as the intersection of all entities AnyAttributePath) but parseProjection is designed to work with entities so it's a big rework. Will do that later."
-         */
+      // TODO: For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist.
+      if (projectionExpression === undefined && attributes !== undefined) {
         const {
           ExpressionAttributeNames: projectionExpressionAttributeNames,
-          ProjectionExpression: projectionExpression
-        } = parseProjection<EntityV2, AnyAttributePath[]>(
-          entity,
-          entityAttributes,
-          index.toString()
-        )
+          ProjectionExpression
+        } = parseProjection<EntityV2, AnyAttributePath[]>(entity, attributes)
 
         Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
-        projectionExpressions.push(projectionExpression)
+        projectionExpression = ProjectionExpression
       }
     })
 
@@ -186,8 +179,8 @@ export const scanParams = <
           : `(${filterExpressions.filter(Boolean).join(') OR (')})`
     }
 
-    if (projectionExpressions.length > 0) {
-      commandOptions.ProjectionExpression = projectionExpressions.filter(Boolean).join(', ')
+    if (projectionExpression !== undefined) {
+      commandOptions.ProjectionExpression = projectionExpression
     }
   }
 
