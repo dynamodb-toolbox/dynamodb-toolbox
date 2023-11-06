@@ -7,7 +7,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandType,
+  $commandName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -18,9 +18,11 @@ export class PutItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > implements PutItemCommand<ENTITY, OPTIONS> {
-  static [$commandType] = 'put' as const
+  static commandType = 'entity' as const
+  static commandName = 'put' as const
+  static [$commandName] = 'put' as const
 
-  entity: ENTITY;
+  _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
   _item?: PutItemInput<ENTITY>
   item: (nextItem: PutItemInput<ENTITY>) => PutItemCommandMock<ENTITY, OPTIONS>
@@ -34,7 +36,7 @@ export class PutItemCommandMock<
     item?: PutItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this.entity = mockedEntity[$entity]
+    this._entity = mockedEntity[$entity]
     this[$mockedEntity] = mockedEntity
     this._item = item
     this._options = options
@@ -50,7 +52,7 @@ export class PutItemCommandMock<
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
-    const params = putItemParams(this.entity, this._item, this._options)
+    const params = putItemParams(this._entity, this._item, this._options)
 
     return params
   }
@@ -73,6 +75,6 @@ export class PutItemCommandMock<
       >
     }
 
-    return new PutItemCommand(this.entity, this._item, this._options).send()
+    return new PutItemCommand(this._entity, this._item, this._options).send()
   }
 }

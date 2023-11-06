@@ -12,7 +12,7 @@ import type {
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
-import type { CommandClass } from '../class'
+import { EntityCommand } from '../class'
 import type { UpdateItemInput } from './types'
 import type { UpdateItemOptions, UpdateItemCommandReturnValuesOption } from './options'
 import { updateItemParams } from './updateItemParams'
@@ -52,10 +52,9 @@ export type UpdateItemResponse<
 export class UpdateItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
-> implements CommandClass<ENTITY> {
-  static commandType = 'put' as const
+> extends EntityCommand<ENTITY> {
+  static commandName = 'put' as const
 
-  public entity: ENTITY
   public _item?: UpdateItemInput<ENTITY>
   public item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemCommand<ENTITY, OPTIONS>
   public _options: OPTIONS
@@ -64,12 +63,12 @@ export class UpdateItemCommand<
   ) => UpdateItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, item?: UpdateItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
-    this.entity = entity
+    super(entity)
     this._item = item
     this._options = options
 
-    this.item = nextItem => new UpdateItemCommand(this.entity, nextItem, this._options)
-    this.options = nextOptions => new UpdateItemCommand(this.entity, this._item, nextOptions)
+    this.item = nextItem => new UpdateItemCommand(this._entity, nextItem, this._options)
+    this.options = nextOptions => new UpdateItemCommand(this._entity, this._item, nextOptions)
   }
 
   params = (): UpdateCommandInput => {
@@ -78,7 +77,7 @@ export class UpdateItemCommand<
         message: 'UpdateItemCommand incomplete: Missing "item" property'
       })
     }
-    const params = updateItemParams(this.entity, this._item, this._options)
+    const params = updateItemParams(this._entity, this._item, this._options)
 
     return params
   }
@@ -86,7 +85,7 @@ export class UpdateItemCommand<
   send = async (): Promise<UpdateItemResponse<ENTITY, OPTIONS>> => {
     const getItemParams = this.params()
 
-    const commandOutput = await this.entity.table.documentClient.send(
+    const commandOutput = await this._entity.table.documentClient.send(
       new UpdateCommand(getItemParams)
     )
 
@@ -98,7 +97,7 @@ export class UpdateItemCommand<
 
     const { returnValues } = this._options
 
-    const formattedItem = (formatSavedItem(this.entity, attributes, {
+    const formattedItem = (formatSavedItem(this._entity, attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
     }) as unknown) as ReturnedAttributes<ENTITY, OPTIONS>
 

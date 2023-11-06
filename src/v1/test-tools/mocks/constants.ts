@@ -1,5 +1,5 @@
-export const $commandType = Symbol('$commandType')
-export type $commandType = typeof $commandType
+export const $commandName = Symbol('$commandName')
+export type $commandName = typeof $commandName
 
 export const $entity = Symbol('$entity')
 export type $entity = typeof $entity

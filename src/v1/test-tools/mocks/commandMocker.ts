@@ -1,7 +1,7 @@
 import { isString } from 'v1/utils/validation/isString'
 
-import type { CommandType } from './types'
-import { $commandType, $mockedEntity, $mockedImplementations } from './constants'
+import type { CommandName } from './types'
+import { $commandName, $mockedEntity, $mockedImplementations } from './constants'
 
 // NOTE: Those types come from @aws-sdk
 interface Error {
@@ -30,8 +30,8 @@ interface AwsError
   $service?: string
 }
 
-export class CommandMocker<COMMAND_TYPE extends CommandType, INPUT, OPTIONS, RESPONSE> {
-  [$commandType]: COMMAND_TYPE;
+export class CommandMocker<COMMAND_TYPE extends CommandName, INPUT, OPTIONS, RESPONSE> {
+  [$commandName]: COMMAND_TYPE;
   [$mockedEntity]: {
     [$mockedImplementations]: Partial<
       Record<COMMAND_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
@@ -47,23 +47,23 @@ export class CommandMocker<COMMAND_TYPE extends CommandType, INPUT, OPTIONS, RES
   ) => CommandMocker<COMMAND_TYPE, INPUT, OPTIONS, RESPONSE>
 
   constructor(
-    commandType: COMMAND_TYPE,
+    commandName: COMMAND_TYPE,
     mockedEntity: {
       [$mockedImplementations]: Partial<
         Record<COMMAND_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
       >
     }
   ) {
-    this[$commandType] = commandType
+    this[$commandName] = commandName
     this[$mockedEntity] = mockedEntity
 
     this.resolve = response => {
-      this[$mockedEntity][$mockedImplementations][this[$commandType]] = () => response
+      this[$mockedEntity][$mockedImplementations][this[$commandName]] = () => response
       return this
     }
 
     this.reject = error => {
-      this[$mockedEntity][$mockedImplementations][this[$commandType]] = () => {
+      this[$mockedEntity][$mockedImplementations][this[$commandName]] = () => {
         if (error === undefined || isString(error)) {
           throw new Error(error)
         } else {
@@ -75,7 +75,7 @@ export class CommandMocker<COMMAND_TYPE extends CommandType, INPUT, OPTIONS, RES
     }
 
     this.mockImplementation = implementation => {
-      this[$mockedEntity][$mockedImplementations][this[$commandType]] = implementation
+      this[$mockedEntity][$mockedImplementations][this[$commandName]] = implementation
 
       return this
     }

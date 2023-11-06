@@ -12,7 +12,7 @@ import type {
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
-import type { CommandClass } from '../class'
+import { EntityCommand } from '../class'
 import type { PutItemInput } from './types'
 import type { PutItemOptions, PutItemCommandReturnValuesOption } from './options'
 import { putItemParams } from './putItemParams'
@@ -52,10 +52,9 @@ export type PutItemResponse<
 export class PutItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
-> implements CommandClass<ENTITY> {
-  static commandType = 'put' as const
+> extends EntityCommand<ENTITY> {
+  static commandName = 'put' as const
 
-  public entity: ENTITY
   public _item?: PutItemInput<ENTITY>
   public item: (nextItem: PutItemInput<ENTITY>) => PutItemCommand<ENTITY, OPTIONS>
   public _options: OPTIONS
@@ -64,12 +63,12 @@ export class PutItemCommand<
   ) => PutItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, item?: PutItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
-    this.entity = entity
+    super(entity)
     this._item = item
     this._options = options
 
-    this.item = nextItem => new PutItemCommand(this.entity, nextItem, this._options)
-    this.options = nextOptions => new PutItemCommand(this.entity, this._item, nextOptions)
+    this.item = nextItem => new PutItemCommand(this._entity, nextItem, this._options)
+    this.options = nextOptions => new PutItemCommand(this._entity, this._item, nextOptions)
   }
 
   params = (): PutCommandInput => {
@@ -78,7 +77,7 @@ export class PutItemCommand<
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
-    const params = putItemParams(this.entity, this._item, this._options)
+    const params = putItemParams(this._entity, this._item, this._options)
 
     return params
   }
@@ -86,7 +85,9 @@ export class PutItemCommand<
   send = async (): Promise<PutItemResponse<ENTITY, OPTIONS>> => {
     const putItemParams = this.params()
 
-    const commandOutput = await this.entity.table.documentClient.send(new PutCommand(putItemParams))
+    const commandOutput = await this._entity.table.documentClient.send(
+      new PutCommand(putItemParams)
+    )
 
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 
@@ -96,7 +97,7 @@ export class PutItemCommand<
 
     const { returnValues } = this._options
 
-    const formattedItem = (formatSavedItem(this.entity, attributes, {
+    const formattedItem = (formatSavedItem(this._entity, attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
     }) as unknown) as ReturnedAttributes<ENTITY, OPTIONS>
 
