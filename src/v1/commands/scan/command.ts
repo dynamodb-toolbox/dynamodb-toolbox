@@ -11,7 +11,7 @@ import type { Item } from 'v1/schema'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 import { isString } from 'v1/utils/validation'
 
-import type { TableCommandClass } from '../class'
+import { TableCommand } from '../class'
 import type { ScanOptions } from './options'
 import type { CountSelectOption } from './constants'
 import { scanParams } from './scanParams'
@@ -38,11 +38,9 @@ export class ScanCommand<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2 = EntityV2,
   OPTIONS extends ScanOptions<ENTITIES> = ScanOptions<ENTITIES>
-> implements TableCommandClass<TABLE, ENTITIES> {
-  static commandType = 'scan' as const
+> extends TableCommand<TABLE, ENTITIES> {
+  static commandName = 'scan' as const
 
-  public _table: TABLE
-  public _entities: ENTITIES[]
   public entities: <NEXT_ENTITIES extends EntityV2[]>(
     ...nextEntities: NEXT_ENTITIES
   ) => ScanCommand<
@@ -57,12 +55,8 @@ export class ScanCommand<
     nextOptions: NEXT_OPTIONS
   ) => ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS>
 
-  constructor(
-    { table, entities = [] }: { table: TABLE; entities?: ENTITIES[] },
-    options: OPTIONS = {} as OPTIONS
-  ) {
-    this._table = table
-    this._entities = entities
+  constructor(args: { table: TABLE; entities?: ENTITIES[] }, options: OPTIONS = {} as OPTIONS) {
+    super(args)
     this._options = options
 
     this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>

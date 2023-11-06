@@ -8,7 +8,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandType,
+  $commandName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -19,9 +19,11 @@ export class DeleteItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
 > implements DeleteItemCommand<ENTITY, OPTIONS> {
-  static [$commandType] = 'delete' as const
+  static commandType = 'entity' as const
+  static commandName = 'delete' as const
+  static [$commandName] = 'delete' as const
 
-  entity: ENTITY;
+  _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
   _key?: KeyInput<ENTITY>
   key: (nextKey: KeyInput<ENTITY>) => DeleteItemCommandMock<ENTITY, OPTIONS>
@@ -35,7 +37,7 @@ export class DeleteItemCommandMock<
     key?: KeyInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this.entity = mockedEntity[$entity]
+    this._entity = mockedEntity[$entity]
     this[$mockedEntity] = mockedEntity
     this._key = key
     this._options = options
@@ -51,7 +53,7 @@ export class DeleteItemCommandMock<
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }
-    const params = deleteItemParams(this.entity, this._key, this._options)
+    const params = deleteItemParams(this._entity, this._key, this._options)
 
     return params
   }
@@ -74,6 +76,6 @@ export class DeleteItemCommandMock<
       >
     }
 
-    return new DeleteItemCommand(this.entity, this._key, this._options).send()
+    return new DeleteItemCommand(this._entity, this._key, this._options).send()
   }
 }
