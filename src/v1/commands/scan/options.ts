@@ -1,6 +1,7 @@
 import type { U } from 'ts-toolbelt'
 import type { CapacityOption } from 'v1/commands/constants/options/capacity'
 import type { AnyAttributePath, Condition } from 'v1/commands/types'
+import type { TableV2, IndexNames } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 
 import type {
@@ -9,9 +10,8 @@ import type {
   SpecificAttributesSelectOption
 } from './constants'
 
-export type ScanOptions<ENTITIES extends EntityV2 = EntityV2> = {
+export type ScanOptions<TABLE extends TableV2 = TableV2, ENTITIES extends EntityV2 = EntityV2> = {
   capacity?: CapacityOption
-  consistent?: boolean
   exclusiveStartKey?: Record<string, unknown>
   limit?: number
   filters?: EntityV2 extends ENTITIES
@@ -23,9 +23,18 @@ export type ScanOptions<ENTITIES extends EntityV2 = EntityV2> = {
   | { segment: number; totalSegments: number }
 ) &
   (
-    | { select?: Exclude<SelectOption, AllProjectedAttributesSelectOption>; indexName?: string }
-    // "ALL_PROJECTED_ATTRIBUTES" is only available if indexName is present
-    | { select?: SelectOption; indexName: string }
+    | {
+        consistent?: boolean
+        // "ALL_PROJECTED_ATTRIBUTES" is only available if indexName is present
+        select?: Exclude<SelectOption, AllProjectedAttributesSelectOption>
+        indexName?: undefined
+      }
+    | {
+        // consistent must be false if an indexName is present
+        consistent?: false
+        select?: SelectOption
+        indexName: IndexNames<TABLE>
+      }
   ) &
   (
     | { attributes?: undefined; select?: SelectOption }

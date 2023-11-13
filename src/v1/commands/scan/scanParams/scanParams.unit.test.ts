@@ -28,6 +28,19 @@ const TestTable = new TableV2({
     type: 'string',
     name: 'sk'
   },
+  indexes: {
+    gsi: {
+      type: 'global',
+      partitionKey: {
+        name: 'gsi_pk',
+        type: 'string'
+      },
+      sortKey: {
+        name: 'gsi_sk',
+        type: 'string'
+      }
+    }
+  },
   documentClient
 })
 
@@ -96,7 +109,7 @@ describe('scan', () => {
   })
 
   it('fails on invalid consistent option', () => {
-    const invalidCall = () =>
+    const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
           // @ts-expect-error
@@ -104,8 +117,22 @@ describe('scan', () => {
         })
         .params()
 
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
+    )
+
+    const invalidCallB = () =>
+      TestTable.build(ScanCommand)
+        // @ts-expect-error
+        .options({
+          indexName: 'gsi',
+          consistent: true
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'commands.invalidConsistentOption' })
     )
   })
@@ -119,13 +146,13 @@ describe('scan', () => {
   })
 
   it('sets indexName option', () => {
-    const { IndexName } = TestTable.build(ScanCommand).options({ indexName: 'GSI1' }).params()
+    const { IndexName } = TestTable.build(ScanCommand).options({ indexName: 'gsi' }).params()
 
-    expect(IndexName).toBe('GSI1')
+    expect(IndexName).toBe('gsi')
   })
 
   it('fails on invalid indexName option', () => {
-    const invalidCall = () =>
+    const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
           // @ts-expect-error
@@ -133,8 +160,21 @@ describe('scan', () => {
         })
         .params()
 
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'commands.invalidIndexNameOption' })
+    )
+
+    const invalidCallB = () =>
+      TestTable.build(ScanCommand)
+        .options({
+          // @ts-expect-error
+          indexName: 'unexisting-index'
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'commands.invalidIndexNameOption' })
     )
   })
@@ -162,7 +202,7 @@ describe('scan', () => {
 
   it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
     const { Select } = TestTable.build(ScanCommand)
-      .options({ select: 'ALL_PROJECTED_ATTRIBUTES', indexName: 'my-index' })
+      .options({ select: 'ALL_PROJECTED_ATTRIBUTES', indexName: 'gsi' })
       .params()
 
     expect(Select).toBe('ALL_PROJECTED_ATTRIBUTES')
