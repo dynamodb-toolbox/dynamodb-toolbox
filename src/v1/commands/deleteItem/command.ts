@@ -10,7 +10,7 @@ import type { KeyInput } from 'v1/commands/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
-import type { CommandClass } from '../class'
+import { EntityCommand } from '../class'
 import type { DeleteItemOptions, DeleteItemCommandReturnValuesOption } from './options'
 import { deleteItemParams } from './deleteItemParams'
 
@@ -36,10 +36,9 @@ export type DeleteItemResponse<
 export class DeleteItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
-> implements CommandClass<ENTITY> {
-  static commandType = 'delete' as const
+> extends EntityCommand<ENTITY> {
+  static commandName = 'delete' as const
 
-  public entity: ENTITY
   public _key?: KeyInput<ENTITY>
   public key: (keyInput: KeyInput<ENTITY>) => DeleteItemCommand<ENTITY, OPTIONS>
   public _options?: OPTIONS
@@ -47,13 +46,13 @@ export class DeleteItemCommand<
     nextOptions: NEXT_OPTIONS
   ) => DeleteItemCommand<ENTITY, NEXT_OPTIONS>
 
-  constructor(entity: ENTITY, _key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
-    this.entity = entity
-    this._key = _key
+  constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
+    super(entity)
+    this._key = key
     this._options = options
 
-    this.key = nextKey => new DeleteItemCommand(this.entity, nextKey, this._options)
-    this.options = nextOptions => new DeleteItemCommand(this.entity, this._key, nextOptions)
+    this.key = nextKey => new DeleteItemCommand(this._entity, nextKey, this._options)
+    this.options = nextOptions => new DeleteItemCommand(this._entity, this._key, nextOptions)
   }
 
   params = (): DeleteCommandInput => {
@@ -62,7 +61,7 @@ export class DeleteItemCommand<
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }
-    const params = deleteItemParams(this.entity, this._key, this._options)
+    const params = deleteItemParams(this._entity, this._key, this._options)
 
     return params
   }
@@ -70,7 +69,7 @@ export class DeleteItemCommand<
   send = async (): Promise<DeleteItemResponse<ENTITY, OPTIONS>> => {
     const deleteItemParams = this.params()
 
-    const commandOutput = await this.entity.table.documentClient.send(
+    const commandOutput = await this._entity.table.documentClient.send(
       new DeleteCommand(deleteItemParams)
     )
 
@@ -80,7 +79,7 @@ export class DeleteItemCommand<
       return restCommandOutput
     }
 
-    const formattedItem = formatSavedItem(this.entity, attributes)
+    const formattedItem = formatSavedItem(this._entity, attributes)
 
     return {
       Attributes: formattedItem as ReturnedAttributes<ENTITY, OPTIONS>,
