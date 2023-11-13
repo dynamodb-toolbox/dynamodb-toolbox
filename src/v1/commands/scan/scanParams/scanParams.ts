@@ -21,7 +21,7 @@ import { selectOptionsSet } from '../constants'
 export const scanParams = <
   TABLE extends TableV2,
   ENTITIES extends EntityV2,
-  OPTIONS extends ScanOptions<ENTITIES>
+  OPTIONS extends ScanOptions<TABLE, ENTITIES>
 >(
   { table, entities = [] }: { table: TABLE; entities?: ENTITIES[] },
   scanOptions: OPTIONS = {} as OPTIONS
@@ -52,7 +52,7 @@ export const scanParams = <
   }
 
   if (consistent !== undefined) {
-    commandOptions.ConsistentRead = parseConsistentOption(consistent)
+    commandOptions.ConsistentRead = parseConsistentOption(consistent, indexName)
   }
 
   if (exclusiveStartKey !== undefined) {
@@ -60,7 +60,7 @@ export const scanParams = <
   }
 
   if (indexName !== undefined) {
-    commandOptions.IndexName = parseIndexNameOption(indexName)
+    commandOptions.IndexName = parseIndexNameOption(table, indexName)
   }
 
   if (limit !== undefined) {
