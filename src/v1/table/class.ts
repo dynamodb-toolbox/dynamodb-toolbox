@@ -3,19 +3,22 @@ import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import type { TableCommand } from 'v1/commands/class'
 import type { ScanCommand } from 'v1/commands'
 import type { ScanCommandClass } from 'v1/commands/scan/command'
+import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject'
 import { isString } from 'v1/utils/validation/isString'
 
-import type { Key, NarrowKey } from './types'
+import type { Index, Key } from './types'
 
 export class TableV2<
   PARTITION_KEY extends Key = Key,
   SORT_KEY extends Key = Key,
+  INDEXES extends Record<string, Index> = Record<string, Index>,
   ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
 > {
   public documentClient: DynamoDBDocumentClient
   public name: string | (() => string)
   public partitionKey: PARTITION_KEY
   public sortKey?: SORT_KEY
+  public indexes: INDEXES
   public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS
 
   public getName: () => string
@@ -43,12 +46,14 @@ export class TableV2<
     name,
     partitionKey,
     sortKey,
+    indexes = {} as INDEXES,
     entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS
   }: {
     documentClient: DynamoDBDocumentClient
     name: string | (() => string)
-    partitionKey: NarrowKey<PARTITION_KEY>
-    sortKey?: NarrowKey<SORT_KEY>
+    partitionKey: NarrowObject<PARTITION_KEY>
+    sortKey?: NarrowObject<SORT_KEY>
+    indexes?: NarrowObjectRec<INDEXES>
     entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
   }) {
     this.documentClient = documentClient
@@ -57,6 +62,7 @@ export class TableV2<
     if (sortKey) {
       this.sortKey = sortKey
     }
+    this.indexes = indexes as INDEXES
     this.entityAttributeSavedAs = entityAttributeSavedAs
 
     this.getName = () => {
