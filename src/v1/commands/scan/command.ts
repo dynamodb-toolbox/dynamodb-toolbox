@@ -17,8 +17,9 @@ import type { CountSelectOption } from './constants'
 import { scanParams } from './scanParams'
 
 type ReturnedItems<
+  TABLE extends TableV2,
   ENTITIES extends EntityV2,
-  OPTIONS extends ScanOptions<ENTITIES>
+  OPTIONS extends ScanOptions<TABLE, ENTITIES>
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
   : (EntityV2 extends ENTITIES
@@ -30,14 +31,15 @@ type ReturnedItems<
       : never)[]
 
 export type ScanResponse<
+  TABLE extends TableV2,
   ENTITIES extends EntityV2,
-  OPTIONS extends ScanOptions<ENTITIES>
-> = O.Merge<Omit<ScanCommandOutput, 'Items'>, { Items?: ReturnedItems<ENTITIES, OPTIONS> }>
+  OPTIONS extends ScanOptions<TABLE, ENTITIES>
+> = O.Merge<Omit<ScanCommandOutput, 'Items'>, { Items?: ReturnedItems<TABLE, ENTITIES, OPTIONS> }>
 
 export class ScanCommand<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2 = EntityV2,
-  OPTIONS extends ScanOptions<ENTITIES> = ScanOptions<ENTITIES>
+  OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
 > extends TableCommand<TABLE, ENTITIES> {
   static commandName = 'scan' as const
 
@@ -46,12 +48,12 @@ export class ScanCommand<
   ) => ScanCommand<
     TABLE,
     NEXT_ENTITIES[number],
-    OPTIONS extends ScanOptions<NEXT_ENTITIES[number]>
+    OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
       ? OPTIONS
-      : ScanOptions<NEXT_ENTITIES[number]>
+      : ScanOptions<TABLE, NEXT_ENTITIES[number]>
   >
   public _options: OPTIONS
-  public options: <NEXT_OPTIONS extends ScanOptions<ENTITIES>>(
+  public options: <NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
     nextOptions: NEXT_OPTIONS
   ) => ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS>
 
@@ -63,17 +65,17 @@ export class ScanCommand<
       new ScanCommand<
         TABLE,
         NEXT_ENTITIES[number],
-        OPTIONS extends ScanOptions<NEXT_ENTITIES[number]>
+        OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
           ? OPTIONS
-          : ScanOptions<NEXT_ENTITIES[number]>
+          : ScanOptions<TABLE, NEXT_ENTITIES[number]>
       >(
         {
           table: this._table,
           entities: nextEntities
         },
-        this._options as OPTIONS extends ScanOptions<NEXT_ENTITIES[number]>
+        this._options as OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
           ? OPTIONS
-          : ScanOptions<NEXT_ENTITIES[number]>
+          : ScanOptions<TABLE, NEXT_ENTITIES[number]>
       )
     this.options = nextOptions =>
       new ScanCommand({ table: this._table, entities: this._entities }, nextOptions)
@@ -85,7 +87,7 @@ export class ScanCommand<
     return params
   }
 
-  send = async (): Promise<ScanResponse<ENTITIES, OPTIONS>> => {
+  send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()
 
     const commandOutput = await this._table.documentClient.send(new _ScanCommand(scanParams))
@@ -121,7 +123,7 @@ export class ScanCommand<
     }
 
     return {
-      Items: formattedItems as ScanResponse<ENTITIES, OPTIONS>['Items'],
+      Items: formattedItems as ScanResponse<TABLE, ENTITIES, OPTIONS>['Items'],
       ...restCommandOutput
     }
   }

@@ -4,7 +4,7 @@ import type { IndexableKeyType, ResolveIndexableKeyType, Key } from '../types'
 /**
  * Returns the TS type of a Table Primary Key
  *
- * @param TableInput Table
+ * @param TABLE Table
  * @return Object
  */
 export type PrimaryKey<TABLE extends TableV2 = TableV2> = TableV2 extends TABLE
