@@ -11,7 +11,7 @@ import type { Index, Key } from './types'
 export class TableV2<
   PARTITION_KEY extends Key = Key,
   SORT_KEY extends Key = Key,
-  INDEXES extends Record<string, Index> = Record<string, Index>,
+  INDEXES extends Record<string, Index> = Key extends PARTITION_KEY ? Record<string, Index> : {},
   ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
 > {
   public documentClient: DynamoDBDocumentClient
