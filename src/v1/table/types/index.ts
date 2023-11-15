@@ -1,4 +1,4 @@
 export type { Key } from './key'
 export type { IndexableKeyType, ResolveIndexableKeyType } from './keyType'
 export type { EntityAttributeSavedAs } from './entityAttributeSavedAs'
-export type { Index } from './indexes'
+export type { Index, LocalIndex, GlobalIndex } from './indexes'

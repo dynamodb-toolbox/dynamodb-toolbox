@@ -1,5 +1,3 @@
-export * from '../putItem/types'
-export * from '../updateItem/types'
 export type {
   Condition,
   SchemaCondition,
