@@ -1,5 +1,17 @@
 import type { Key } from './key'
 
+export interface LocalIndex {
+  type: 'local'
+  partitionKey?: undefined
+  sortKey: Key
+}
+
+export interface GlobalIndex {
+  type: 'global'
+  partitionKey: Key
+  sortKey: Key
+}
+
 /**
  * Define an index of a Table
  *
@@ -7,6 +19,4 @@ import type { Key } from './key'
  * @param KEY_TYPE Key value type
  * @return Key
  */
-export type Index =
-  | { type: 'local'; partitionKey?: undefined; sortKey: Key }
-  | { type: 'global'; partitionKey: Key; sortKey: Key }
+export type Index = LocalIndex | GlobalIndex
