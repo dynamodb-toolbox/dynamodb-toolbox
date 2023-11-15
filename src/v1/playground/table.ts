@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { Query } from 'v1/commands'
 
 import { PrimaryKey, TableV2, EntityAttributeSavedAs, IndexNames, IndexSchema } from 'v1/table'
 
@@ -46,3 +47,4 @@ type EntityAttrSavedAs = EntityAttributeSavedAs<typeof MyTable>
 type AllIndexes = IndexNames<typeof MyTable>
 type LSI = IndexSchema<typeof MyTable, 'lsi'>
 type GSI = IndexSchema<typeof MyTable, 'gsi'>
+type AnyQuery = Query<typeof MyTable>

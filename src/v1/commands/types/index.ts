@@ -1,3 +1,5 @@
+export * from '../putItem/types'
+export * from '../updateItem/types'
 export type {
   Condition,
   SchemaCondition,
@@ -6,3 +8,4 @@ export type {
 } from './condition'
 export type { AnyAttributePath, SchemaAttributePath } from './paths'
 export type { KeyInput, AttributeKeyInput } from './KeyInput'
+export type { Query } from './query'
