@@ -5,7 +5,7 @@ import type { A } from 'ts-toolbelt'
 import {
   TableV2,
   DynamoDBToolboxError,
-  ScanCommand,
+  QueryCommand,
   EntityV2,
   schema,
   string,
@@ -68,7 +68,7 @@ const Entity2 = new EntityV2({
 
 describe('scan', () => {
   it('gets the tableName', async () => {
-    const command = TestTable.build(ScanCommand)
+    const command = TestTable.build(QueryCommand)
     const { TableName } = command.params()
 
     expect(TableName).toBe('test-table')
@@ -82,7 +82,7 @@ describe('scan', () => {
 
   // Options
   it('sets capacity options', () => {
-    const { ReturnConsumedCapacity } = TestTable.build(ScanCommand)
+    const { ReturnConsumedCapacity } = TestTable.build(QueryCommand)
       .options({ capacity: 'NONE' })
       .params()
 
@@ -91,7 +91,7 @@ describe('scan', () => {
 
   it('fails on invalid capacity option', () => {
     const invalidCall = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         .options({
           // @ts-expect-error
           capacity: 'test'
@@ -103,14 +103,14 @@ describe('scan', () => {
   })
 
   it('sets consistent option', () => {
-    const { ConsistentRead } = TestTable.build(ScanCommand).options({ consistent: true }).params()
+    const { ConsistentRead } = TestTable.build(QueryCommand).options({ consistent: true }).params()
 
     expect(ConsistentRead).toBe(true)
   })
 
   it('fails on invalid consistent option', () => {
     const invalidCallA = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         .options({
           // @ts-expect-error
           consistent: 'true'
@@ -123,7 +123,7 @@ describe('scan', () => {
     )
 
     const invalidCallB = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         // @ts-expect-error
         .options({
           indexName: 'gsi',
@@ -138,7 +138,7 @@ describe('scan', () => {
   })
 
   it('sets exclusiveStartKey option', () => {
-    const { ExclusiveStartKey } = TestTable.build(ScanCommand)
+    const { ExclusiveStartKey } = TestTable.build(QueryCommand)
       .options({ exclusiveStartKey: { foo: 'bar' } })
       .params()
 
@@ -146,14 +146,14 @@ describe('scan', () => {
   })
 
   it('sets indexName option', () => {
-    const { IndexName } = TestTable.build(ScanCommand).options({ indexName: 'gsi' }).params()
+    const { IndexName } = TestTable.build(QueryCommand).options({ indexName: 'gsi' }).params()
 
     expect(IndexName).toBe('gsi')
   })
 
   it('fails on invalid indexName option', () => {
     const invalidCallA = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         .options({
           // @ts-expect-error
           indexName: { foo: 'bar' }
@@ -166,7 +166,7 @@ describe('scan', () => {
     )
 
     const invalidCallB = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         .options({
           // @ts-expect-error
           indexName: 'unexisting-index'
@@ -180,14 +180,14 @@ describe('scan', () => {
   })
 
   it('sets select option', () => {
-    const { Select } = TestTable.build(ScanCommand).options({ select: 'COUNT' }).params()
+    const { Select } = TestTable.build(QueryCommand).options({ select: 'COUNT' }).params()
 
     expect(Select).toBe('COUNT')
   })
 
   it('fails on invalid select option', () => {
     const invalidCall = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         .options({
           // @ts-expect-error
           select: 'foobar'
@@ -199,7 +199,7 @@ describe('scan', () => {
   })
 
   it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
-    const { Select } = TestTable.build(ScanCommand)
+    const { Select } = TestTable.build(QueryCommand)
       .options({ select: 'ALL_PROJECTED_ATTRIBUTES', indexName: 'gsi' })
       .params()
 
@@ -208,7 +208,7 @@ describe('scan', () => {
 
   it('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
     const invalidCall = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         // @ts-expect-error
         .options({ select: 'ALL_PROJECTED_ATTRIBUTES' })
         .params()
@@ -218,7 +218,7 @@ describe('scan', () => {
   })
 
   it('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
-    const { Select } = TestTable.build(ScanCommand)
+    const { Select } = TestTable.build(QueryCommand)
       .entities(Entity1)
       .options({ attributes: ['age'], select: 'SPECIFIC_ATTRIBUTES' })
       .params()
@@ -228,7 +228,7 @@ describe('scan', () => {
 
   it('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
     const invalidCall = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         .entities(Entity1)
         // @ts-expect-error
         .options({ attributes: { entity1: ['age'] }, select: 'ALL_ATTRIBUTES' })
@@ -239,14 +239,14 @@ describe('scan', () => {
   })
 
   it('sets limit option', () => {
-    const { Limit } = TestTable.build(ScanCommand).options({ limit: 3 }).params()
+    const { Limit } = TestTable.build(QueryCommand).options({ limit: 3 }).params()
 
     expect(Limit).toBe(3)
   })
 
   it('fails on invalid limit option', () => {
     const invalidCall = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         .options({
           // @ts-expect-error
           limit: '3'
@@ -257,121 +257,27 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidLimitOption' }))
   })
 
-  it('sets segment and totalSegments options', () => {
-    const { Segment, TotalSegments } = TestTable.build(ScanCommand)
-      .options({ segment: 3, totalSegments: 4 })
-      .params()
-
-    expect(Segment).toBe(3)
-    expect(TotalSegments).toBe(4)
+  it('sets reverse option', () => {
+    const { ScanIndexForward } = TestTable.build(QueryCommand).options({ reverse: true }).params()
+    expect(ScanIndexForward).toBe(false)
   })
 
-  it('fails on invalid segment and/or totalSegments options', () => {
+  it('fails on invalid reverse option', () => {
     // segment without totalSegment option
-    const invalidCallA = () =>
-      TestTable.build(ScanCommand)
+    const invalidCall = () =>
+      TestTable.build(QueryCommand)
         // @ts-expect-error
-        .options({ segment: 3 })
+        .options({ reverse: 'true' })
         .params()
 
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
-    )
-
-    // invalid totalSegments (non number)
-    const invalidCallB = () =>
-      TestTable.build(ScanCommand)
-        .options({
-          segment: 3,
-          // @ts-expect-error
-          totalSegments: 'foo'
-        })
-        .params()
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
-    )
-
-    // invalid totalSegments (non-integer)
-    const invalidCallC = () =>
-      TestTable.build(ScanCommand)
-        // Impossible to raise type error here
-        .options({ segment: 3, totalSegments: 3.5 })
-        .params()
-
-    expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(
-      expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
-    )
-
-    // invalid totalSegments (negative integer)
-    const invalidCallD = () =>
-      TestTable.build(ScanCommand)
-        // Impossible to raise type error here
-        .options({ segment: 3, totalSegments: -1 })
-        .params()
-
-    expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
-    )
-
-    // invalid segment (non-number)
-    const invalidCallE = () =>
-      TestTable.build(ScanCommand)
-        .options({
-          // @ts-expect-error
-          segment: 'foo',
-          totalSegments: 4
-        })
-        .params()
-
-    expect(invalidCallE).toThrow(DynamoDBToolboxError)
-    expect(invalidCallE).toThrow(
-      expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
-    )
-
-    // invalid segment (non-integer)
-    const invalidCallF = () =>
-      TestTable.build(ScanCommand)
-        // Impossible to raise type error here
-        .options({ segment: 2.5, totalSegments: 4 })
-        .params()
-
-    expect(invalidCallF).toThrow(DynamoDBToolboxError)
-    expect(invalidCallF).toThrow(
-      expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
-    )
-
-    // invalid segment (negative integer)
-    const invalidCallG = () =>
-      TestTable.build(ScanCommand)
-        // Impossible to raise type error here
-        .options({ segment: -1, totalSegments: 4 })
-        .params()
-
-    expect(invalidCallG).toThrow(DynamoDBToolboxError)
-    expect(invalidCallG).toThrow(
-      expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
-    )
-
-    // invalid segment (above totalSegments)
-    const invalidCallH = () =>
-      TestTable.build(ScanCommand)
-        // Impossible to raise type error here
-        .options({ segment: 3, totalSegments: 3 })
-        .params()
-
-    expect(invalidCallH).toThrow(DynamoDBToolboxError)
-    expect(invalidCallH).toThrow(
-      expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'queryCommand.invalidReverseOption' })
     )
   })
 
   it('applies entity _et filter', () => {
-    const command = TestTable.build(ScanCommand).entities(Entity1)
+    const command = TestTable.build(QueryCommand).entities(Entity1)
     const {
       FilterExpression,
       ExpressionAttributeNames,
@@ -394,7 +300,7 @@ describe('scan', () => {
       FilterExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues
-    } = TestTable.build(ScanCommand)
+    } = TestTable.build(QueryCommand)
       .entities(Entity1)
       .options({
         filters: {
@@ -415,7 +321,7 @@ describe('scan', () => {
   })
 
   it('applies two entity filters', () => {
-    const command = TestTable.build(ScanCommand).entities(Entity1, Entity2)
+    const command = TestTable.build(QueryCommand).entities(Entity1, Entity2)
     const {
       FilterExpression,
       ExpressionAttributeNames,
@@ -444,7 +350,7 @@ describe('scan', () => {
       FilterExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues
-    } = TestTable.build(ScanCommand)
+    } = TestTable.build(QueryCommand)
       .entities(Entity1, Entity2)
       .options({
         filters: {
@@ -472,7 +378,7 @@ describe('scan', () => {
   })
 
   it('applies entity projection expression', () => {
-    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
+    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(QueryCommand)
       .entities(Entity1)
       .options({ attributes: ['age', 'name'] })
       .params()
@@ -485,7 +391,7 @@ describe('scan', () => {
   })
 
   it('applies two entity projection expressions', () => {
-    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
+    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(QueryCommand)
       .entities(Entity1, Entity2)
       .options({
         attributes: ['created', 'modified']
@@ -498,7 +404,7 @@ describe('scan', () => {
 
   it('fails on extra options', () => {
     const invalidCall = () =>
-      TestTable.build(ScanCommand)
+      TestTable.build(QueryCommand)
         .options({
           // @ts-expect-error
           extra: true

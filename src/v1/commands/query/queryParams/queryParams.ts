@@ -1,4 +1,4 @@
-import type { ScanCommandInput } from '@aws-sdk/lib-dynamodb'
+import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
 import type { TableV2 } from 'v1/table'
@@ -11,29 +11,28 @@ import { parseConsistentOption } from 'v1/commands/utils/parseOptions/parseConsi
 import { parseLimitOption } from 'v1/commands/utils/parseOptions/parseLimitOption'
 import { parseSelectOption } from 'v1/commands/utils/parseOptions/parseSelectOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
-import { isInteger } from 'v1/utils/validation/isInteger'
 import { parseCondition } from 'v1/commands/expression/condition/parse'
 import { parseProjection } from 'v1/commands/expression/projection/parse'
 
-import type { ScanOptions } from '../options'
+import type { QueryOptions } from '../options'
+import { isBoolean } from 'v1/utils/validation'
 
-export const scanParams = <
+export const queryParams = <
   TABLE extends TableV2,
   ENTITIES extends EntityV2,
-  OPTIONS extends ScanOptions<TABLE, ENTITIES>
+  OPTIONS extends QueryOptions<TABLE, ENTITIES>
 >(
   { table, entities = [] }: { table: TABLE; entities?: ENTITIES[] },
   scanOptions: OPTIONS = {} as OPTIONS
-): ScanCommandInput => {
+): QueryCommandInput => {
   const {
     capacity,
     consistent,
     exclusiveStartKey,
     indexName,
     limit,
+    reverse,
     select,
-    totalSegments,
-    segment,
     filters: _filters,
     attributes: _attributes,
     ...extraOptions
@@ -42,7 +41,7 @@ export const scanParams = <
   const filters = (_filters ?? {}) as Record<string, Condition>
   const attributes = _attributes as AnyAttributePath[] | undefined
 
-  const commandOptions: ScanCommandInput = {
+  const commandOptions: QueryCommandInput = {
     TableName: table.getName()
   }
 
@@ -66,38 +65,19 @@ export const scanParams = <
     commandOptions.Limit = parseLimitOption(limit)
   }
 
-  if (select !== undefined) {
-    commandOptions.Select = parseSelectOption(select, { indexName, attributes })
+  if (reverse !== undefined) {
+    if (!isBoolean(reverse)) {
+      throw new DynamoDBToolboxError('queryCommand.invalidReverseOption', {
+        message: 'Invalid "reverse" options: Must be a boolean',
+        payload: { reverse }
+      })
+    }
+
+    commandOptions.ScanIndexForward = !reverse
   }
 
-  if (segment !== undefined) {
-    if (totalSegments === undefined) {
-      throw new DynamoDBToolboxError('scanCommand.invalidSegmentOption', {
-        message: 'If a segment option has been provided, totalSegments must also be defined',
-        payload: {}
-      })
-    }
-
-    if (!isInteger(totalSegments) || totalSegments < 1) {
-      throw new DynamoDBToolboxError('scanCommand.invalidSegmentOption', {
-        message: `Invalid totalSegments option: '${String(
-          totalSegments
-        )}'. 'totalSegments' must be a strictly positive integer.`,
-        payload: { totalSegments }
-      })
-    }
-
-    if (!isInteger(segment) || segment < 0 || segment >= totalSegments) {
-      throw new DynamoDBToolboxError('scanCommand.invalidSegmentOption', {
-        message: `Invalid segment option: '${String(
-          segment
-        )}'. 'segment' must be a positive integer strictly lower than 'totalSegments'.`,
-        payload: { segment, totalSegments }
-      })
-    }
-
-    commandOptions.TotalSegments = totalSegments
-    commandOptions.Segment = segment
+  if (select !== undefined) {
+    commandOptions.Select = parseSelectOption(select, { indexName, attributes })
   }
 
   if (entities.length > 0) {
