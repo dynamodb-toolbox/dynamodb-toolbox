@@ -1,6 +1,7 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
 import type { ScanCommandErrorBlueprints } from './scan/errors'
+import type { QueryCommandErrorBlueprints } from './query/errors'
 import type { CommandUtilsErrorBlueprints } from './utils/errors'
 import type { ExpressionParsersErrorBlueprints } from './expression/errors'
 
@@ -46,6 +47,12 @@ type InvalidReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
   payload: { returnValues: unknown }
 }>
 
+type InvalidSelectOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidSelectOption'
+  hasPath: false
+  payload: { select: unknown }
+}>
+
 type UnknownOptionErrorBlueprint = ErrorBlueprint<{
   code: 'commands.unknownOption'
   hasPath: false
@@ -54,6 +61,7 @@ type UnknownOptionErrorBlueprint = ErrorBlueprint<{
 
 export type CommandsErrorBlueprints =
   | ScanCommandErrorBlueprints
+  | QueryCommandErrorBlueprints
   | CommandUtilsErrorBlueprints
   | IncompleteCommandErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
@@ -62,5 +70,6 @@ export type CommandsErrorBlueprints =
   | InvalidLimitOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint
+  | InvalidSelectOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
   | ExpressionParsersErrorBlueprints

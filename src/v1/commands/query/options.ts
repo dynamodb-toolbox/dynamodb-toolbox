@@ -10,32 +10,28 @@ import type { AnyAttributePath, Condition } from 'v1/commands/types'
 import type { TableV2, IndexNames } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 
-export type ScanOptions<TABLE extends TableV2 = TableV2, ENTITIES extends EntityV2 = EntityV2> = {
+export type QueryOptions<TABLE extends TableV2 = TableV2, ENTITIES extends EntityV2 = EntityV2> = {
   capacity?: CapacityOption
   exclusiveStartKey?: Record<string, unknown>
   limit?: number
+  reverse?: boolean
   filters?: EntityV2 extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES as ENTITY['name']]?: Condition<ENTITY> }
 } & (
-  | { segment?: never; totalSegments?: never }
-  // Either both segment & totalSegments are set, either none
-  | { segment: number; totalSegments: number }
+  | {
+      consistent?: boolean
+      // "ALL_PROJECTED_ATTRIBUTES" is only available if indexName is present
+      select?: Exclude<SelectOption, AllProjectedAttributesSelectOption>
+      indexName?: undefined
+    }
+  | {
+      // consistent must be false if an indexName is present
+      consistent?: false
+      select?: SelectOption
+      indexName: IndexNames<TABLE>
+    }
 ) &
-  (
-    | {
-        consistent?: boolean
-        // "ALL_PROJECTED_ATTRIBUTES" is only available if indexName is present
-        select?: Exclude<SelectOption, AllProjectedAttributesSelectOption>
-        indexName?: undefined
-      }
-    | {
-        // consistent must be false if an indexName is present
-        consistent?: false
-        select?: SelectOption
-        indexName: IndexNames<TABLE>
-      }
-  ) &
   (
     | { attributes?: undefined; select?: SelectOption }
     | {

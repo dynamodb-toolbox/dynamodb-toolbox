@@ -1,8 +1,8 @@
 import type { O } from 'ts-toolbelt'
 import {
-  ScanCommandInput,
-  ScanCommand as _ScanCommand,
-  ScanCommandOutput
+  QueryCommandInput,
+  QueryCommand as _QueryCommand,
+  QueryCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 
 import type { TableV2 } from 'v1/table'
@@ -13,13 +13,13 @@ import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 import { isString } from 'v1/utils/validation'
 
 import { TableCommand } from '../class'
-import type { ScanOptions } from './options'
-import { scanParams } from './scanParams'
+import type { QueryOptions } from './options'
+import { queryParams } from './queryParams'
 
 type ReturnedItems<
   TABLE extends TableV2,
   ENTITIES extends EntityV2,
-  OPTIONS extends ScanOptions<TABLE, ENTITIES>
+  OPTIONS extends QueryOptions<TABLE, ENTITIES>
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
   : (EntityV2 extends ENTITIES
@@ -30,67 +30,67 @@ type ReturnedItems<
         : never
       : never)[]
 
-export type ScanResponse<
+export type QueryResponse<
   TABLE extends TableV2,
   ENTITIES extends EntityV2,
-  OPTIONS extends ScanOptions<TABLE, ENTITIES>
-> = O.Merge<Omit<ScanCommandOutput, 'Items'>, { Items?: ReturnedItems<TABLE, ENTITIES, OPTIONS> }>
+  OPTIONS extends QueryOptions<TABLE, ENTITIES>
+> = O.Merge<Omit<QueryCommandOutput, 'Items'>, { Items?: ReturnedItems<TABLE, ENTITIES, OPTIONS> }>
 
-export class ScanCommand<
+export class QueryCommand<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2 = EntityV2,
-  OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
+  OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
 > extends TableCommand<TABLE, ENTITIES> {
-  static commandName = 'scan' as const
+  static commandName = 'query' as const
 
   public entities: <NEXT_ENTITIES extends EntityV2[]>(
     ...nextEntities: NEXT_ENTITIES
-  ) => ScanCommand<
+  ) => QueryCommand<
     TABLE,
     NEXT_ENTITIES[number],
-    OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
+    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES[number]>
       ? OPTIONS
-      : ScanOptions<TABLE, NEXT_ENTITIES[number]>
+      : QueryOptions<TABLE, NEXT_ENTITIES[number]>
   >
   public _options: OPTIONS
-  public options: <NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
+  public options: <NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES>>(
     nextOptions: NEXT_OPTIONS
-  ) => ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS>
+  ) => QueryCommand<TABLE, ENTITIES, NEXT_OPTIONS>
 
   constructor(args: { table: TABLE; entities?: ENTITIES[] }, options: OPTIONS = {} as OPTIONS) {
     super(args)
     this._options = options
 
     this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>
-      new ScanCommand<
+      new QueryCommand<
         TABLE,
         NEXT_ENTITIES[number],
-        OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
+        OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES[number]>
           ? OPTIONS
-          : ScanOptions<TABLE, NEXT_ENTITIES[number]>
+          : QueryOptions<TABLE, NEXT_ENTITIES[number]>
       >(
         {
           table: this._table,
           entities: nextEntities
         },
-        this._options as OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
+        this._options as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES[number]>
           ? OPTIONS
-          : ScanOptions<TABLE, NEXT_ENTITIES[number]>
+          : QueryOptions<TABLE, NEXT_ENTITIES[number]>
       )
     this.options = nextOptions =>
-      new ScanCommand({ table: this._table, entities: this._entities }, nextOptions)
+      new QueryCommand({ table: this._table, entities: this._entities }, nextOptions)
   }
 
-  params = (): ScanCommandInput => {
-    const params = scanParams({ table: this._table, entities: this._entities }, this._options)
+  params = (): QueryCommandInput => {
+    const params = queryParams({ table: this._table, entities: this._entities }, this._options)
 
     return params
   }
 
-  send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
-    const scanParams = this.params()
+  send = async (): Promise<QueryResponse<TABLE, ENTITIES, OPTIONS>> => {
+    const queryParams = this.params()
 
-    const commandOutput = await this._table.documentClient.send(new _ScanCommand(scanParams))
+    const commandOutput = await this._table.documentClient.send(new _QueryCommand(queryParams))
 
     const { Items: items, ...restCommandOutput } = commandOutput
 
@@ -123,10 +123,10 @@ export class ScanCommand<
     }
 
     return {
-      Items: formattedItems as ScanResponse<TABLE, ENTITIES, OPTIONS>['Items'],
+      Items: formattedItems as QueryResponse<TABLE, ENTITIES, OPTIONS>['Items'],
       ...restCommandOutput
     }
   }
 }
 
-export type ScanCommandClass = typeof ScanCommand
+export type QueryCommandClass = typeof QueryCommand
