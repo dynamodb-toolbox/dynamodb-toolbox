@@ -3,6 +3,8 @@ import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import type { TableCommand } from 'v1/commands/class'
 import type { ScanCommand } from 'v1/commands'
 import type { ScanCommandClass } from 'v1/commands/scan/command'
+import type { QueryCommand } from 'v1/commands'
+import type { QueryCommandClass } from 'v1/commands/query/command'
 import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject'
 import { isString } from 'v1/utils/validation/isString'
 
@@ -30,6 +32,8 @@ export class TableV2<
     ? any
     : TABLE_COMMAND_CLASS extends ScanCommandClass
     ? ScanCommand<this>
+    : TABLE_COMMAND_CLASS extends QueryCommandClass
+    ? QueryCommand<this>
     : TableCommand<this>
 
   /**
