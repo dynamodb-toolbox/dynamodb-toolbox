@@ -23,10 +23,10 @@ type InvalidConsistentOptionErrorBlueprint = ErrorBlueprint<{
   payload: { consistent: unknown }
 }>
 
-type InvalidIndexNameOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'commands.invalidIndexNameOption'
+type InvalidIndexOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidIndexOption'
   hasPath: false
-  payload: { indexName: unknown }
+  payload: { index: unknown }
 }>
 
 type InvalidLimitOptionErrorBlueprint = ErrorBlueprint<{
@@ -66,7 +66,7 @@ export type CommandsErrorBlueprints =
   | IncompleteCommandErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
   | InvalidConsistentOptionErrorBlueprint
-  | InvalidIndexNameOptionErrorBlueprint
+  | InvalidIndexOptionErrorBlueprint
   | InvalidLimitOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint

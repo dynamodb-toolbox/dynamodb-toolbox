@@ -1,20 +1,45 @@
 import type { A } from 'ts-toolbelt'
-import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema'
-import type { IndexableKeyType, TableV2 } from 'v1/table'
-import type { LocalIndex, GlobalIndex, IndexNames, IndexSchema, Key } from 'v1/table'
 
-// TODO: Factorize with Condition
+import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema'
+import type {
+  IndexableKeyType,
+  TableV2,
+  LocalIndex,
+  GlobalIndex,
+  IndexNames,
+  IndexSchema,
+  Key
+} from 'v1/table'
+import type { RangeOperator } from 'v1/commands/expression/condition/parser/parseCondition/comparison/types'
+import type { BeginsWithOperator } from 'v1/commands/expression/condition/parser/parseCondition/twoArgsFn/types'
+import type { BetweenOperator } from 'v1/commands/expression/condition/parser/parseCondition/between/types'
+
+type QueryOperator = RangeOperator | BeginsWithOperator | BetweenOperator
+export const queryOperatorSet = new Set<QueryOperator>([
+  'gt',
+  'gte',
+  'lt',
+  'lte',
+  'between',
+  'beginsWith'
+])
+
+/**
+ * @debt refactor "Factorize with Condition types"
+ */
 type QueryRange<
   KEY_TYPE extends IndexableKeyType,
   ATTRIBUTE_VALUE extends ResolvePrimitiveAttribute<
     PrimitiveAttribute<KEY_TYPE>
   > = ResolvePrimitiveAttribute<PrimitiveAttribute<KEY_TYPE>>
 > =
-  | { lt: ATTRIBUTE_VALUE }
-  | { lte: ATTRIBUTE_VALUE }
-  | { gt: ATTRIBUTE_VALUE }
-  | { gte: ATTRIBUTE_VALUE }
-  | { between: [ATTRIBUTE_VALUE, ATTRIBUTE_VALUE] }
+  | (RangeOperator extends infer COMPARISON_OPERATOR
+      ? COMPARISON_OPERATOR extends RangeOperator
+        ? Record<COMPARISON_OPERATOR, ATTRIBUTE_VALUE>
+        : never
+      : never)
+  | Record<BetweenOperator, [ATTRIBUTE_VALUE, ATTRIBUTE_VALUE]>
+  | (KEY_TYPE extends 'string' ? Record<BeginsWithOperator, ATTRIBUTE_VALUE> : never)
 
 type SecondaryIndexQuery<
   TABLE extends TableV2,
@@ -26,12 +51,12 @@ type SecondaryIndexQuery<
         partition: ResolvePrimitiveAttribute<
           PrimitiveAttribute<INDEX_SCHEMA['partitionKey']['type']>
         >
-        range: QueryRange<INDEX_SCHEMA['sortKey']['type']>
+        range?: QueryRange<INDEX_SCHEMA['sortKey']['type']>
       }
     : INDEX_SCHEMA extends LocalIndex
     ? {
         partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
-        range: QueryRange<INDEX_SCHEMA['sortKey']['type']>
+        range?: QueryRange<INDEX_SCHEMA['sortKey']['type']>
       }
     : never)
 >
@@ -53,7 +78,7 @@ type PrimaryIndexQuery<TABLE extends TableV2> = A.Compute<
     : NonNullable<TABLE['sortKey']> extends Key
     ? {
         partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
-        range: QueryRange<NonNullable<TABLE['sortKey']>['type']>
+        range?: QueryRange<NonNullable<TABLE['sortKey']>['type']>
       }
     : never)
 >

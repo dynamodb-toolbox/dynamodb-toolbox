@@ -53,9 +53,8 @@ export class GetItemCommandMock<
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
-    const params = getItemParams(this._entity, this._key, this._options)
 
-    return params
+    return getItemParams(this._entity, this._key, this._options)
   }
 
   send = async (): Promise<GetItemResponse<ENTITY, OPTIONS>> => {

@@ -53,9 +53,8 @@ export class DeleteItemCommandMock<
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }
-    const params = deleteItemParams(this._entity, this._key, this._options)
 
-    return params
+    return deleteItemParams(this._entity, this._key, this._options)
   }
 
   send = async (): Promise<DeleteItemResponse<ENTITY, OPTIONS>> => {
