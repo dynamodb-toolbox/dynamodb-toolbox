@@ -1,4 +1,5 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
+import type { ConditionParserErrorBlueprints } from './condition/errors'
 
 type InvalidExpressionAttributePathErrorBlueprint = ErrorBlueprint<{
   code: 'commands.invalidExpressionAttributePath'
@@ -8,4 +9,6 @@ type InvalidExpressionAttributePathErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-export type ExpressionParsersErrorBlueprints = InvalidExpressionAttributePathErrorBlueprint
+export type ExpressionParsersErrorBlueprints =
+  | ConditionParserErrorBlueprints
+  | InvalidExpressionAttributePathErrorBlueprint

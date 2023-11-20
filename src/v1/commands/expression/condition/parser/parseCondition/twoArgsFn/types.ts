@@ -1,6 +1,7 @@
 import type { AnyAttributeCondition, NonLogicalCondition, Condition } from 'v1/commands/types'
 
-export type TwoArgsFnOperator = 'contains' | 'beginsWith' | 'type'
+export type BeginsWithOperator = 'beginsWith'
+export type TwoArgsFnOperator = 'contains' | 'type' | BeginsWithOperator
 
 const twoArgsFnOperatorSet = new Set<TwoArgsFnOperator>(['contains', 'beginsWith', 'type'])
 

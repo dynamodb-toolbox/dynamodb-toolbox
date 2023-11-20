@@ -29,6 +29,13 @@ const TestTable = new TableV2({
     name: 'sk'
   },
   indexes: {
+    lsi: {
+      type: 'local',
+      sortKey: {
+        name: 'lsi_sk',
+        type: 'number'
+      }
+    },
     gsi: {
       type: 'global',
       partitionKey: {
@@ -66,9 +73,9 @@ const Entity2 = new EntityV2({
   table: TestTable
 })
 
-describe('scan', () => {
+describe('query', () => {
   it('gets the tableName', async () => {
-    const command = TestTable.build(QueryCommand)
+    const command = TestTable.build(QueryCommand).query({ partition: 'foo' })
     const { TableName } = command.params()
 
     expect(TableName).toBe('test-table')
@@ -80,9 +87,309 @@ describe('scan', () => {
     assertReturnedItems
   })
 
+  it('creates simple query', () => {
+    const {
+      KeyConditionExpression: KeyConditionExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestTable.build(QueryCommand).query({ partition: 'foo' }).params()
+
+    expect(KeyConditionExpressionA).toBe('#c0_1 = :c0_1')
+    expect(ExpressionAttributeNamesA).toMatchObject({ '#c0_1': TestTable.partitionKey.name })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':c0_1': 'foo' })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo', range: { gte: 'bar' } })
+      .params()
+
+    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
+    expect(ExpressionAttributeNamesB).toMatchObject({
+      '#c0_1': TestTable.partitionKey.name,
+      '#c0_2': TestTable.sortKey?.name
+    })
+    expect(ExpressionAttributeValuesB).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 'bar'
+    })
+  })
+
+  it('throws on invalid simple query', () => {
+    const invalidCallA = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          // @ts-expect-error
+          partition: 42
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestTable.build(QueryCommand)
+        // @ts-expect-error
+        .query({
+          partition: 'foo',
+          range: {
+            gt: 42
+          }
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          partition: 'foo',
+          range: {
+            // @ts-expect-error
+            gt: { foo: 'bar' }
+          }
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallD = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          partition: 'foo',
+          range: {
+            // @ts-expect-error
+            eq: 'bar'
+          }
+        })
+        .params()
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'commands.invalidCondition' }))
+  })
+
+  it('creates query on LSI', () => {
+    const {
+      IndexName,
+      KeyConditionExpression: KeyConditionExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestTable.build(QueryCommand).query({ index: 'lsi', partition: 'foo' }).params()
+
+    expect(IndexName).toBe('lsi')
+    expect(KeyConditionExpressionA).toBe('#c0_1 = :c0_1')
+    expect(ExpressionAttributeNamesA).toMatchObject({ '#c0_1': TestTable.partitionKey.name })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':c0_1': 'foo' })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'lsi', partition: 'foo', range: { gte: 42 } })
+      .params()
+
+    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
+    expect(ExpressionAttributeNamesB).toMatchObject({
+      '#c0_1': TestTable.partitionKey.name,
+      '#c0_2': TestTable.indexes.lsi.sortKey.name
+    })
+    expect(ExpressionAttributeValuesB).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 42
+    })
+  })
+
+  it('throws on invalid LSI query', () => {
+    const invalidCallA = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'lsi',
+          // @ts-expect-error
+          partition: 42
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestTable.build(QueryCommand)
+        // @ts-expect-error
+        .query({
+          index: 'lsi',
+          partition: 'foo',
+          range: { gt: 'bar' }
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'lsi',
+          partition: 'foo',
+          range: {
+            // @ts-expect-error
+            gt: { foo: 'bar' }
+          }
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallD = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'lsi',
+          partition: 'foo',
+          range: {
+            // @ts-expect-error
+            eq: 42
+          }
+        })
+        .params()
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'commands.invalidCondition' }))
+
+    const invalidCallE = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'lsi',
+          partition: 'foo',
+          range: { gt: 42 }
+        })
+        .options({
+          // @ts-expect-error
+          consistent: true
+        })
+        .params()
+
+    expect(invalidCallE).toThrow(DynamoDBToolboxError)
+    expect(invalidCallE).toThrow(
+      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
+    )
+  })
+
+  it('creates query on GSI', () => {
+    const {
+      IndexName,
+      KeyConditionExpression: KeyConditionExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestTable.build(QueryCommand).query({ index: 'gsi', partition: 'foo' }).params()
+
+    expect(IndexName).toBe('gsi')
+    expect(KeyConditionExpressionA).toBe('#c0_1 = :c0_1')
+    expect(ExpressionAttributeNamesA).toMatchObject({ '#c0_1': 'gsi_pk' })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':c0_1': 'foo' })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'gsi', partition: 'foo', range: { beginsWith: 'bar' } })
+      .params()
+
+    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (begins_with(#c0_2, :c0_2))')
+    expect(ExpressionAttributeNamesB).toMatchObject({
+      '#c0_1': TestTable.indexes.gsi.partitionKey.name,
+      '#c0_2': TestTable.indexes.gsi.sortKey.name
+    })
+    expect(ExpressionAttributeValuesB).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 'bar'
+    })
+  })
+
+  it('throws on invalid GSI query', () => {
+    const invalidCallA = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'gsi',
+          // @ts-expect-error
+          partition: 42
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestTable.build(QueryCommand)
+        // @ts-expect-error
+        .query({
+          index: 'gsi',
+          partition: 'foo',
+          range: { gt: 42 }
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'gsi',
+          partition: 'foo',
+          range: {
+            // @ts-expect-error
+            gt: { foo: 'bar' }
+          }
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallD = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'gsi',
+          partition: 'foo',
+          range: {
+            // @ts-expect-error
+            eq: 'foo'
+          }
+        })
+        .params()
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'commands.invalidCondition' }))
+
+    const invalidCallE = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'gsi',
+          partition: 'foo',
+          range: { gt: 'bar' }
+        })
+        .options({
+          // @ts-expect-error
+          consistent: true
+        })
+        .params()
+
+    expect(invalidCallE).toThrow(DynamoDBToolboxError)
+    expect(invalidCallE).toThrow(
+      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
+    )
+  })
+
   // Options
   it('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
       .options({ capacity: 'NONE' })
       .params()
 
@@ -92,6 +399,7 @@ describe('scan', () => {
   it('fails on invalid capacity option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
         .options({
           // @ts-expect-error
           capacity: 'test'
@@ -103,84 +411,64 @@ describe('scan', () => {
   })
 
   it('sets consistent option', () => {
-    const { ConsistentRead } = TestTable.build(QueryCommand).options({ consistent: true }).params()
+    const { ConsistentRead } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .options({ consistent: true })
+      .params()
 
     expect(ConsistentRead).toBe(true)
   })
 
-  it('fails on invalid consistent option', () => {
-    const invalidCallA = () =>
-      TestTable.build(QueryCommand)
-        .options({
-          // @ts-expect-error
-          consistent: 'true'
-        })
-        .params()
-
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
-    )
-
-    const invalidCallB = () =>
-      TestTable.build(QueryCommand)
-        // @ts-expect-error
-        .options({
-          indexName: 'gsi',
-          consistent: true
-        })
-        .params()
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
-    )
-  })
-
   it('sets exclusiveStartKey option', () => {
     const { ExclusiveStartKey } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
       .options({ exclusiveStartKey: { foo: 'bar' } })
       .params()
 
     expect(ExclusiveStartKey).toStrictEqual({ foo: 'bar' })
   })
 
-  it('sets indexName option', () => {
-    const { IndexName } = TestTable.build(QueryCommand).options({ indexName: 'gsi' }).params()
+  // TO MOVE IN QUERY TEST?
+  it('sets index in query', () => {
+    const { IndexName } = TestTable.build(QueryCommand)
+      .query({ index: 'gsi', partition: 'foo' })
+      .params()
 
     expect(IndexName).toBe('gsi')
   })
 
-  it('fails on invalid indexName option', () => {
+  // TO MOVE IN QUERY TEST?
+  it('fails on invalid index', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
-        .options({
+        .query({
           // @ts-expect-error
-          indexName: { foo: 'bar' }
+          index: { foo: 'bar' },
+          partition: 'baz'
         })
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidIndexNameOption' })
-    )
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'commands.invalidIndexOption' }))
 
     const invalidCallB = () =>
       TestTable.build(QueryCommand)
-        .options({
+        .query({
           // @ts-expect-error
-          indexName: 'unexisting-index'
+          index: 'foo',
+          partition: 'bar'
         })
         .params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'commands.invalidIndexNameOption' })
-    )
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'commands.invalidIndexOption' }))
   })
 
   it('sets select option', () => {
-    const { Select } = TestTable.build(QueryCommand).options({ select: 'COUNT' }).params()
+    const { Select } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .options({ select: 'COUNT' })
+      .params()
 
     expect(Select).toBe('COUNT')
   })
@@ -188,6 +476,7 @@ describe('scan', () => {
   it('fails on invalid select option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
         .options({
           // @ts-expect-error
           select: 'foobar'
@@ -200,7 +489,8 @@ describe('scan', () => {
 
   it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
     const { Select } = TestTable.build(QueryCommand)
-      .options({ select: 'ALL_PROJECTED_ATTRIBUTES', indexName: 'gsi' })
+      .query({ index: 'gsi', partition: 'foo' })
+      .options({ select: 'ALL_PROJECTED_ATTRIBUTES' })
       .params()
 
     expect(Select).toBe('ALL_PROJECTED_ATTRIBUTES')
@@ -209,6 +499,7 @@ describe('scan', () => {
   it('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
         // @ts-expect-error
         .options({ select: 'ALL_PROJECTED_ATTRIBUTES' })
         .params()
@@ -219,6 +510,7 @@ describe('scan', () => {
 
   it('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
     const { Select } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
       .entities(Entity1)
       .options({ attributes: ['age'], select: 'SPECIFIC_ATTRIBUTES' })
       .params()
@@ -229,6 +521,7 @@ describe('scan', () => {
   it('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
         .entities(Entity1)
         // @ts-expect-error
         .options({ attributes: { entity1: ['age'] }, select: 'ALL_ATTRIBUTES' })
@@ -239,7 +532,10 @@ describe('scan', () => {
   })
 
   it('sets limit option', () => {
-    const { Limit } = TestTable.build(QueryCommand).options({ limit: 3 }).params()
+    const { Limit } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .options({ limit: 3 })
+      .params()
 
     expect(Limit).toBe(3)
   })
@@ -247,6 +543,7 @@ describe('scan', () => {
   it('fails on invalid limit option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
         .options({
           // @ts-expect-error
           limit: '3'
@@ -258,7 +555,10 @@ describe('scan', () => {
   })
 
   it('sets reverse option', () => {
-    const { ScanIndexForward } = TestTable.build(QueryCommand).options({ reverse: true }).params()
+    const { ScanIndexForward } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .options({ reverse: true })
+      .params()
     expect(ScanIndexForward).toBe(false)
   })
 
@@ -266,6 +566,7 @@ describe('scan', () => {
     // segment without totalSegment option
     const invalidCall = () =>
       TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
         // @ts-expect-error
         .options({ reverse: 'true' })
         .params()
@@ -277,16 +578,16 @@ describe('scan', () => {
   })
 
   it('applies entity _et filter', () => {
-    const command = TestTable.build(QueryCommand).entities(Entity1)
+    const command = TestTable.build(QueryCommand).query({ partition: 'foo' }).entities(Entity1)
     const {
       FilterExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues
     } = command.params()
 
-    expect(FilterExpression).toBe('#c0_1 = :c0_1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#c0_1': TestTable.entityAttributeSavedAs })
-    expect(ExpressionAttributeValues).toMatchObject({ ':c0_1': Entity1.name })
+    expect(FilterExpression).toBe('#c1_1 = :c1_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c1_1': TestTable.entityAttributeSavedAs })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c1_1': Entity1.name })
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
@@ -301,6 +602,7 @@ describe('scan', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues
     } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
       .entities(Entity1)
       .options({
         filters: {
@@ -309,33 +611,35 @@ describe('scan', () => {
       })
       .params()
 
-    expect(FilterExpression).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
+    expect(FilterExpression).toBe('(#c1_1 = :c1_1) AND (#c1_2 >= :c1_2)')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#c0_1': TestTable.entityAttributeSavedAs,
-      '#c0_2': 'age'
+      '#c1_1': TestTable.entityAttributeSavedAs,
+      '#c1_2': 'age'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':c0_1': Entity1.name,
-      ':c0_2': 40
+      ':c1_1': Entity1.name,
+      ':c1_2': 40
     })
   })
 
   it('applies two entity filters', () => {
-    const command = TestTable.build(QueryCommand).entities(Entity1, Entity2)
+    const command = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .entities(Entity1, Entity2)
     const {
       FilterExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues
     } = command.params()
 
-    expect(FilterExpression).toBe('(#c0_1 = :c0_1) OR (#c1_1 = :c1_1)')
+    expect(FilterExpression).toBe('(#c1_1 = :c1_1) OR (#c2_1 = :c2_1)')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#c0_1': TestTable.entityAttributeSavedAs,
-      '#c1_1': TestTable.entityAttributeSavedAs
+      '#c1_1': TestTable.entityAttributeSavedAs,
+      '#c2_1': TestTable.entityAttributeSavedAs
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':c0_1': Entity1.name,
-      ':c1_1': Entity2.name
+      ':c1_1': Entity1.name,
+      ':c2_1': Entity2.name
     })
 
     const assertReturnedItems: A.Equals<
@@ -351,6 +655,7 @@ describe('scan', () => {
       ExpressionAttributeNames,
       ExpressionAttributeValues
     } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
       .entities(Entity1, Entity2)
       .options({
         filters: {
@@ -361,24 +666,25 @@ describe('scan', () => {
       .params()
 
     expect(FilterExpression).toBe(
-      '((#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)) OR ((#c1_1 = :c1_1) AND (#c1_2 >= :c1_2))'
+      '((#c1_1 = :c1_1) AND (#c1_2 >= :c1_2)) OR ((#c2_1 = :c2_1) AND (#c2_2 >= :c2_2))'
     )
     expect(ExpressionAttributeNames).toMatchObject({
-      '#c0_1': TestTable.entityAttributeSavedAs,
-      '#c0_2': 'age',
       '#c1_1': TestTable.entityAttributeSavedAs,
-      '#c1_2': 'price'
+      '#c1_2': 'age',
+      '#c2_1': TestTable.entityAttributeSavedAs,
+      '#c2_2': 'price'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':c0_1': Entity1.name,
-      ':c0_2': 40,
-      ':c1_1': Entity2.name,
-      ':c1_2': 100
+      ':c1_1': Entity1.name,
+      ':c1_2': 40,
+      ':c2_1': Entity2.name,
+      ':c2_2': 100
     })
   })
 
   it('applies entity projection expression', () => {
     const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
       .entities(Entity1)
       .options({ attributes: ['age', 'name'] })
       .params()
@@ -392,6 +698,7 @@ describe('scan', () => {
 
   it('applies two entity projection expressions', () => {
     const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
       .entities(Entity1, Entity2)
       .options({
         attributes: ['created', 'modified']
@@ -405,6 +712,7 @@ describe('scan', () => {
   it('fails on extra options', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
         .options({
           // @ts-expect-error
           extra: true

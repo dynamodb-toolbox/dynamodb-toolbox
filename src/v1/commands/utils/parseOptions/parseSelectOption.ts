@@ -5,7 +5,7 @@ import { SelectOption, selectOptionsSet } from 'v1/commands/constants/options/se
 
 export const parseSelectOption = (
   select: SelectOption,
-  { indexName, attributes }: { indexName?: string; attributes?: string[] | undefined } = {}
+  { index, attributes }: { index?: string; attributes?: string[] | undefined } = {}
 ): SelectOption => {
   if (!selectOptionsSet.has(select)) {
     throw new DynamoDBToolboxError('commands.invalidSelectOption', {
@@ -16,9 +16,9 @@ export const parseSelectOption = (
     })
   }
 
-  if (select === 'ALL_PROJECTED_ATTRIBUTES' && indexName === undefined) {
+  if (select === 'ALL_PROJECTED_ATTRIBUTES' && index === undefined) {
     throw new DynamoDBToolboxError('commands.invalidSelectOption', {
-      message: `Invalid select option: '${String(select)}'. Please provide an 'indexName' option.`,
+      message: `Invalid select option: '${String(select)}'. Please provide an 'index' option.`,
       payload: { select }
     })
   }

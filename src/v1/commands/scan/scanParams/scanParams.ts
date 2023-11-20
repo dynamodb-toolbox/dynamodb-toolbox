@@ -6,7 +6,7 @@ import type { AnyAttributePath, Condition } from 'v1/commands/types'
 import type { EntityV2 } from 'v1/entity'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
-import { parseIndexNameOption } from 'v1/commands/utils/parseOptions/parseIndexNameOption'
+import { parseIndexOption } from 'v1/commands/utils/parseOptions/parseIndexOption'
 import { parseConsistentOption } from 'v1/commands/utils/parseOptions/parseConsistentOption'
 import { parseLimitOption } from 'v1/commands/utils/parseOptions/parseLimitOption'
 import { parseSelectOption } from 'v1/commands/utils/parseOptions/parseSelectOption'
@@ -29,7 +29,7 @@ export const scanParams = <
     capacity,
     consistent,
     exclusiveStartKey,
-    indexName,
+    index,
     limit,
     select,
     totalSegments,
@@ -51,15 +51,15 @@ export const scanParams = <
   }
 
   if (consistent !== undefined) {
-    commandOptions.ConsistentRead = parseConsistentOption(consistent, indexName)
+    commandOptions.ConsistentRead = parseConsistentOption(consistent, index)
   }
 
   if (exclusiveStartKey !== undefined) {
     commandOptions.ExclusiveStartKey = exclusiveStartKey
   }
 
-  if (indexName !== undefined) {
-    commandOptions.IndexName = parseIndexNameOption(table, indexName)
+  if (index !== undefined) {
+    commandOptions.IndexName = parseIndexOption(table, index)
   }
 
   if (limit !== undefined) {
@@ -67,7 +67,7 @@ export const scanParams = <
   }
 
   if (select !== undefined) {
-    commandOptions.Select = parseSelectOption(select, { indexName, attributes })
+    commandOptions.Select = parseSelectOption(select, { index, attributes })
   }
 
   if (segment !== undefined) {
