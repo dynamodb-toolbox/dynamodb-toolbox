@@ -1,7 +1,7 @@
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 import { isBoolean } from 'v1/utils/validation/isBoolean'
 
-export const parseConsistentOption = (consistent: boolean, indexName?: string): boolean => {
+export const parseConsistentOption = (consistent: boolean, index?: string): boolean => {
   if (!isBoolean(consistent)) {
     throw new DynamoDBToolboxError('commands.invalidConsistentOption', {
       message: `Invalid consistent option: '${String(consistent)}'. 'consistent' must be boolean.`,
@@ -9,7 +9,7 @@ export const parseConsistentOption = (consistent: boolean, indexName?: string): 
     })
   }
 
-  if (consistent && indexName !== undefined) {
+  if (consistent && index !== undefined) {
     throw new DynamoDBToolboxError('commands.invalidConsistentOption', {
       message: `Invalid consistent option: '${String(
         consistent

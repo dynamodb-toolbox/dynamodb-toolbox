@@ -77,9 +77,8 @@ export class PutItemCommand<
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
-    const params = putItemParams(this._entity, this._item, this._options)
 
-    return params
+    return putItemParams(this._entity, this._item, this._options)
   }
 
   send = async (): Promise<PutItemResponse<ENTITY, OPTIONS>> => {

@@ -25,15 +25,15 @@ export type ScanOptions<TABLE extends TableV2 = TableV2, ENTITIES extends Entity
   (
     | {
         consistent?: boolean
-        // "ALL_PROJECTED_ATTRIBUTES" is only available if indexName is present
+        // "ALL_PROJECTED_ATTRIBUTES" is only available if index is present
         select?: Exclude<SelectOption, AllProjectedAttributesSelectOption>
-        indexName?: undefined
+        index?: undefined
       }
     | {
-        // consistent must be false if an indexName is present
+        // consistent must be false if an index is present
         consistent?: false
         select?: SelectOption
-        indexName: IndexNames<TABLE>
+        index: IndexNames<TABLE>
       }
   ) &
   (
