@@ -81,11 +81,8 @@ export class ScanCommand<
       new ScanCommand({ table: this._table, entities: this._entities }, nextOptions)
   }
 
-  params = (): ScanCommandInput => {
-    const params = scanParams({ table: this._table, entities: this._entities }, this._options)
-
-    return params
-  }
+  params = (): ScanCommandInput =>
+    scanParams({ table: this._table, entities: this._entities }, this._options)
 
   send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()

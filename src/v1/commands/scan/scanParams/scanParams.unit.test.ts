@@ -126,7 +126,7 @@ describe('scan', () => {
       TestTable.build(ScanCommand)
         // @ts-expect-error
         .options({
-          indexName: 'gsi',
+          index: 'gsi',
           consistent: true
         })
         .params()
@@ -145,38 +145,34 @@ describe('scan', () => {
     expect(ExclusiveStartKey).toStrictEqual({ foo: 'bar' })
   })
 
-  it('sets indexName option', () => {
-    const { IndexName } = TestTable.build(ScanCommand).options({ indexName: 'gsi' }).params()
+  it('sets index option', () => {
+    const { IndexName } = TestTable.build(ScanCommand).options({ index: 'gsi' }).params()
 
     expect(IndexName).toBe('gsi')
   })
 
-  it('fails on invalid indexName option', () => {
+  it('fails on invalid index option', () => {
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
           // @ts-expect-error
-          indexName: { foo: 'bar' }
+          index: { foo: 'bar' }
         })
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidIndexNameOption' })
-    )
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'commands.invalidIndexOption' }))
 
     const invalidCallB = () =>
       TestTable.build(ScanCommand)
         .options({
           // @ts-expect-error
-          indexName: 'unexisting-index'
+          index: 'unexisting-index'
         })
         .params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'commands.invalidIndexNameOption' })
-    )
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'commands.invalidIndexOption' }))
   })
 
   it('sets select option', () => {
@@ -200,7 +196,7 @@ describe('scan', () => {
 
   it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
     const { Select } = TestTable.build(ScanCommand)
-      .options({ select: 'ALL_PROJECTED_ATTRIBUTES', indexName: 'gsi' })
+      .options({ select: 'ALL_PROJECTED_ATTRIBUTES', index: 'gsi' })
       .params()
 
     expect(Select).toBe('ALL_PROJECTED_ATTRIBUTES')

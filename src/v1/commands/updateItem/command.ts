@@ -77,9 +77,8 @@ export class UpdateItemCommand<
         message: 'UpdateItemCommand incomplete: Missing "item" property'
       })
     }
-    const params = updateItemParams(this._entity, this._item, this._options)
 
-    return params
+    return updateItemParams(this._entity, this._item, this._options)
   }
 
   send = async (): Promise<UpdateItemResponse<ENTITY, OPTIONS>> => {

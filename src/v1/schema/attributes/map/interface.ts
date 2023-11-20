@@ -279,6 +279,6 @@ export interface MapAttribute<
   path: string
   type: 'map'
   attributes: ATTRIBUTES
-  keyAttributesNames: Set<string>
-  requiredAttributesNames: Record<RequiredOption, Set<string>>
+  keyAttributeNames: Set<string>
+  requiredAttributeNames: Record<RequiredOption, Set<string>>
 }

@@ -9,7 +9,9 @@ import type { TableV2 } from 'v1/table'
 import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { Item } from 'v1/schema'
 import type { CountSelectOption } from 'v1/commands/constants/options/select'
+import type { Query } from 'v1/commands/types'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
+import { DynamoDBToolboxError } from 'v1/errors'
 import { isString } from 'v1/utils/validation'
 
 import { TableCommand } from '../class'
@@ -19,7 +21,8 @@ import { queryParams } from './queryParams'
 type ReturnedItems<
   TABLE extends TableV2,
   ENTITIES extends EntityV2,
-  OPTIONS extends QueryOptions<TABLE, ENTITIES>
+  QUERY extends Query<TABLE>,
+  OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
   : (EntityV2 extends ENTITIES
@@ -33,13 +36,18 @@ type ReturnedItems<
 export type QueryResponse<
   TABLE extends TableV2,
   ENTITIES extends EntityV2,
+  QUERY extends Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES>
-> = O.Merge<Omit<QueryCommandOutput, 'Items'>, { Items?: ReturnedItems<TABLE, ENTITIES, OPTIONS> }>
+> = O.Merge<
+  Omit<QueryCommandOutput, 'Items'>,
+  { Items?: ReturnedItems<TABLE, ENTITIES, QUERY, OPTIONS> }
+>
 
 export class QueryCommand<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2 = EntityV2,
-  OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
+  QUERY extends Query<TABLE> = Query<TABLE>,
+  OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
 > extends TableCommand<TABLE, ENTITIES> {
   static commandName = 'query' as const
 
@@ -48,23 +56,35 @@ export class QueryCommand<
   ) => QueryCommand<
     TABLE,
     NEXT_ENTITIES[number],
+    QUERY,
     OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES[number]>
       ? OPTIONS
       : QueryOptions<TABLE, NEXT_ENTITIES[number]>
   >
-  public _options: OPTIONS
-  public options: <NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES>>(
-    nextOptions: NEXT_OPTIONS
-  ) => QueryCommand<TABLE, ENTITIES, NEXT_OPTIONS>
 
-  constructor(args: { table: TABLE; entities?: ENTITIES[] }, options: OPTIONS = {} as OPTIONS) {
+  public _query?: QUERY
+  public query: <NEXT_QUERY extends Query<TABLE>>(
+    query: NEXT_QUERY
+  ) => QueryCommand<TABLE, ENTITIES, NEXT_QUERY, OPTIONS>
+  public _options: OPTIONS
+  public options: <NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
+    nextOptions: NEXT_OPTIONS
+  ) => QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS>
+
+  constructor(
+    args: { table: TABLE; entities?: ENTITIES[] },
+    query?: QUERY,
+    options: OPTIONS = {} as OPTIONS
+  ) {
     super(args)
+    this._query = query
     this._options = options
 
     this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>
       new QueryCommand<
         TABLE,
         NEXT_ENTITIES[number],
+        QUERY,
         OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES[number]>
           ? OPTIONS
           : QueryOptions<TABLE, NEXT_ENTITIES[number]>
@@ -73,21 +93,28 @@ export class QueryCommand<
           table: this._table,
           entities: nextEntities
         },
+        this._query,
         this._options as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES[number]>
           ? OPTIONS
           : QueryOptions<TABLE, NEXT_ENTITIES[number]>
       )
+    this.query = nextQuery =>
+      new QueryCommand({ table: this._table, entities: this._entities }, nextQuery, this._options)
     this.options = nextOptions =>
-      new QueryCommand({ table: this._table, entities: this._entities }, nextOptions)
+      new QueryCommand({ table: this._table, entities: this._entities }, this._query, nextOptions)
   }
 
   params = (): QueryCommandInput => {
-    const params = queryParams({ table: this._table, entities: this._entities }, this._options)
+    if (!this._query) {
+      throw new DynamoDBToolboxError('commands.incompleteCommand', {
+        message: 'QueryCommand incomplete: Missing "query" property'
+      })
+    }
 
-    return params
+    return queryParams({ table: this._table, entities: this._entities }, this._query, this._options)
   }
 
-  send = async (): Promise<QueryResponse<TABLE, ENTITIES, OPTIONS>> => {
+  send = async (): Promise<QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>> => {
     const queryParams = this.params()
 
     const commandOutput = await this._table.documentClient.send(new _QueryCommand(queryParams))
@@ -123,7 +150,7 @@ export class QueryCommand<
     }
 
     return {
-      Items: formattedItems as QueryResponse<TABLE, ENTITIES, OPTIONS>['Items'],
+      Items: formattedItems as QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>['Items'],
       ...restCommandOutput
     }
   }

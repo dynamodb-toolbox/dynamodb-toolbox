@@ -2,11 +2,11 @@ import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
 import type { TableV2 } from 'v1/table'
-import type { AnyAttributePath, Condition } from 'v1/commands/types'
+import type { AnyAttributePath, Condition, Query } from 'v1/commands/types'
 import type { EntityV2 } from 'v1/entity'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacityOption'
-import { parseIndexNameOption } from 'v1/commands/utils/parseOptions/parseIndexNameOption'
+import { parseIndexOption } from 'v1/commands/utils/parseOptions/parseIndexOption'
 import { parseConsistentOption } from 'v1/commands/utils/parseOptions/parseConsistentOption'
 import { parseLimitOption } from 'v1/commands/utils/parseOptions/parseLimitOption'
 import { parseSelectOption } from 'v1/commands/utils/parseOptions/parseSelectOption'
@@ -16,20 +16,23 @@ import { parseProjection } from 'v1/commands/expression/projection/parse'
 
 import type { QueryOptions } from '../options'
 import { isBoolean } from 'v1/utils/validation'
+import { parseQuery } from './parseQuery'
 
 export const queryParams = <
   TABLE extends TableV2,
   ENTITIES extends EntityV2,
-  OPTIONS extends QueryOptions<TABLE, ENTITIES>
+  QUERY extends Query<TABLE>,
+  OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
 >(
   { table, entities = [] }: { table: TABLE; entities?: ENTITIES[] },
+  query: QUERY,
   scanOptions: OPTIONS = {} as OPTIONS
 ): QueryCommandInput => {
+  const { index } = query
   const {
     capacity,
     consistent,
     exclusiveStartKey,
-    indexName,
     limit,
     reverse,
     select,
@@ -50,15 +53,15 @@ export const queryParams = <
   }
 
   if (consistent !== undefined) {
-    commandOptions.ConsistentRead = parseConsistentOption(consistent, indexName)
+    commandOptions.ConsistentRead = parseConsistentOption(consistent, index)
   }
 
   if (exclusiveStartKey !== undefined) {
     commandOptions.ExclusiveStartKey = exclusiveStartKey
   }
 
-  if (indexName !== undefined) {
-    commandOptions.IndexName = parseIndexNameOption(table, indexName)
+  if (index !== undefined) {
+    commandOptions.IndexName = parseIndexOption(table, index)
   }
 
   if (limit !== undefined) {
@@ -77,12 +80,23 @@ export const queryParams = <
   }
 
   if (select !== undefined) {
-    commandOptions.Select = parseSelectOption(select, { indexName, attributes })
+    commandOptions.Select = parseSelectOption(select, { index, attributes })
   }
 
+  const expressionAttributeNames: Record<string, string> = {}
+  const expressionAttributeValues: Record<string, any> = {}
+
+  const {
+    KeyConditionExpression,
+    ExpressionAttributeNames: keyConditionExpressionAttributeNames,
+    ExpressionAttributeValues: keyConditionExpressionAttributeValues
+  } = parseQuery(table, query)
+
+  commandOptions.KeyConditionExpression = KeyConditionExpression
+  Object.assign(expressionAttributeNames, keyConditionExpressionAttributeNames)
+  Object.assign(expressionAttributeValues, keyConditionExpressionAttributeValues)
+
   if (entities.length > 0) {
-    const expressionAttributeNames: Record<string, string> = {}
-    const expressionAttributeValues: Record<string, any> = {}
     const filterExpressions: string[] = []
     let projectionExpression: string | undefined = undefined
 
@@ -97,7 +111,8 @@ export const queryParams = <
       } = parseCondition<EntityV2, Condition<EntityV2>>(
         entity,
         entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter,
-        index.toString()
+        // Need to add +1 to take KeyConditionExpression into account
+        (index + 1).toString()
       )
 
       Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
@@ -116,14 +131,6 @@ export const queryParams = <
       }
     })
 
-    if (!isEmpty(expressionAttributeNames)) {
-      commandOptions.ExpressionAttributeNames = expressionAttributeNames
-    }
-
-    if (!isEmpty(expressionAttributeValues)) {
-      commandOptions.ExpressionAttributeValues = expressionAttributeValues
-    }
-
     if (filterExpressions.length > 0) {
       commandOptions.FilterExpression =
         filterExpressions.length === 1
@@ -134,6 +141,14 @@ export const queryParams = <
     if (projectionExpression !== undefined) {
       commandOptions.ProjectionExpression = projectionExpression
     }
+  }
+
+  if (!isEmpty(expressionAttributeNames)) {
+    commandOptions.ExpressionAttributeNames = expressionAttributeNames
+  }
+
+  if (!isEmpty(expressionAttributeValues)) {
+    commandOptions.ExpressionAttributeValues = expressionAttributeValues
   }
 
   rejectExtraOptions(extraOptions)

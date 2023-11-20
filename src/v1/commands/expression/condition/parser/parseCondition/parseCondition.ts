@@ -1,4 +1,5 @@
 import type { Condition } from 'v1/commands/types'
+import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { ConditionParser } from '../parser'
 import { isComparisonCondition, parseComparisonCondition } from './comparison'
@@ -40,4 +41,8 @@ export const parseCondition = (conditionParser: ConditionParser, condition: Cond
   if (isInCondition(condition)) {
     return parseInCondition(conditionParser, condition)
   }
+
+  throw new DynamoDBToolboxError('commands.invalidCondition', {
+    message: 'Invalid condition: Unable to detect valid condition type.'
+  })
 }

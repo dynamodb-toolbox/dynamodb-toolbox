@@ -1,6 +1,7 @@
 import type { AnyAttributeCondition, NonLogicalCondition, Condition } from 'v1/commands/types'
 
-export type ComparisonOperator = 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte'
+export type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte'
+export type ComparisonOperator = 'eq' | 'ne' | RangeOperator
 
 const comparisonOperatorSet = new Set<ComparisonOperator>(['eq', 'ne', 'gt', 'gte', 'lt', 'lte'])
 
