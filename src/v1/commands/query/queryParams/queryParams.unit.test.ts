@@ -554,6 +554,44 @@ describe('query', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidLimitOption' }))
   })
 
+  it('ignores valid maxPages option', () => {
+    const validCallA = () =>
+      TestTable.build(QueryCommand).query({ partition: 'foo' }).options({ maxPages: 3 }).params()
+    expect(validCallA).not.toThrow()
+
+    const validCallB = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        .options({ maxPages: Infinity })
+        .params()
+    expect(validCallB).not.toThrow()
+  })
+
+  it('fails on invalid maxPages option', () => {
+    const invalidCallA = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        .options({
+          // @ts-expect-error
+          maxPages: '3'
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'commands.invalidMaxPagesOption' })
+    )
+
+    // Unable to ts-expect-error here
+    const invalidCallB = () =>
+      TestTable.build(QueryCommand).query({ partition: 'foo' }).options({ maxPages: 0 }).params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'commands.invalidMaxPagesOption' })
+    )
+  })
+
   it('sets reverse option', () => {
     const { ScanIndexForward } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })

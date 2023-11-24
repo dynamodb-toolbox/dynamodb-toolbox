@@ -4,6 +4,8 @@ import {
   ScanCommand as _ScanCommand,
   ScanCommandOutput
 } from '@aws-sdk/lib-dynamodb'
+import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
+import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import type { TableV2 } from 'v1/table'
 import type { EntityV2, FormattedItem } from 'v1/entity'
@@ -34,7 +36,14 @@ export type ScanResponse<
   TABLE extends TableV2,
   ENTITIES extends EntityV2,
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
-> = O.Merge<Omit<ScanCommandOutput, 'Items'>, { Items?: ReturnedItems<TABLE, ENTITIES, OPTIONS> }>
+> = O.Merge<
+  Omit<ScanCommandOutput, 'Items' | '$metadata'>,
+  {
+    Items?: ReturnedItems<TABLE, ENTITIES, OPTIONS>
+    // $metadata is not returned on multiple page queries
+    $metadata?: ScanCommandOutput['$metadata']
+  }
+>
 
 export class ScanCommand<
   TABLE extends TableV2 = TableV2,
@@ -87,14 +96,6 @@ export class ScanCommand<
   send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()
 
-    const commandOutput = await this._table.documentClient.send(new _ScanCommand(scanParams))
-
-    const { Items: items, ...restCommandOutput } = commandOutput
-
-    if (items === undefined) {
-      return restCommandOutput
-    }
-
     const entities = this._entities ?? []
     const entitiesByName: Record<string, EntityV2> = {}
     entities.forEach(entity => {
@@ -102,26 +103,75 @@ export class ScanCommand<
     })
 
     const formattedItems: Item[] = []
+    let lastEvaluatedKey: Record<string, NativeAttributeValue> | undefined = undefined
+    let count: number | undefined = 0
+    let scannedCount: number | undefined = 0
+    let consumedCapacity: ConsumedCapacity | undefined = undefined
+    let responseMetadata: ScanCommandOutput['$metadata'] | undefined = undefined
 
-    for (const item of items) {
-      const itemEntityName = item[this._table.entityAttributeSavedAs]
+    // NOTE: maxPages has been validated by this.params()
+    const { maxPages = 1 } = this._options
+    let pageIndex = 0
+    do {
+      pageIndex += 1
 
-      if (!isString(itemEntityName)) {
-        continue
+      const pageScanParams: ScanCommandInput = {
+        ...scanParams,
+        // NOTE: Important NOT to override initial exclusiveStartKey on first page
+        ...(lastEvaluatedKey !== undefined ? { ExclusiveStartKey: lastEvaluatedKey } : {})
       }
 
-      const itemEntity = entitiesByName[itemEntityName]
+      const {
+        Items: items = [],
+        LastEvaluatedKey: pageLastEvaluatedKey,
+        Count: pageCount,
+        ScannedCount: pageScannedCount,
+        ConsumedCapacity: pageConsumedCapacity,
+        $metadata: pageMetadata
+      } = await this._table.documentClient.send(new _ScanCommand(pageScanParams))
 
-      if (itemEntity === undefined) {
-        continue
+      for (const item of items) {
+        const itemEntityName = item[this._table.entityAttributeSavedAs]
+
+        if (!isString(itemEntityName)) {
+          continue
+        }
+
+        const itemEntity = entitiesByName[itemEntityName]
+
+        if (itemEntity === undefined) {
+          continue
+        }
+
+        formattedItems.push(formatSavedItem<EntityV2, {}>(itemEntity, item))
       }
 
-      formattedItems.push(formatSavedItem<EntityV2, {}>(itemEntity, item))
-    }
+      lastEvaluatedKey = pageLastEvaluatedKey
+
+      if (count !== undefined) {
+        count = pageCount !== undefined ? count + pageCount : undefined
+      }
+
+      if (scannedCount !== undefined) {
+        scannedCount = pageScannedCount !== undefined ? scannedCount + pageScannedCount : undefined
+      }
+
+      consumedCapacity = pageConsumedCapacity
+      responseMetadata = pageMetadata
+    } while (pageIndex < maxPages && lastEvaluatedKey !== undefined)
 
     return {
       Items: formattedItems as ScanResponse<TABLE, ENTITIES, OPTIONS>['Items'],
-      ...restCommandOutput
+      ...(lastEvaluatedKey !== undefined ? { LastEvaluatedKey: lastEvaluatedKey } : {}),
+      ...(count !== undefined ? { Count: count } : {}),
+      ...(scannedCount !== undefined ? { ScannedCount: scannedCount } : {}),
+      // return ConsumedCapacity & $metadata only if one page has been fetched
+      ...(pageIndex === 1
+        ? {
+            ...(consumedCapacity !== undefined ? { ConsumedCapacity: consumedCapacity } : {}),
+            ...(responseMetadata !== undefined ? { $metadata: responseMetadata } : {})
+          }
+        : {})
     }
   }
 }
