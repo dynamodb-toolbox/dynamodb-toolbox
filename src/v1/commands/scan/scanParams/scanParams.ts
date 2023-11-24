@@ -9,6 +9,7 @@ import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacit
 import { parseIndexOption } from 'v1/commands/utils/parseOptions/parseIndexOption'
 import { parseConsistentOption } from 'v1/commands/utils/parseOptions/parseConsistentOption'
 import { parseLimitOption } from 'v1/commands/utils/parseOptions/parseLimitOption'
+import { parseMaxPagesOption } from 'v1/commands/utils/parseOptions/parseMaxPagesOption'
 import { parseSelectOption } from 'v1/commands/utils/parseOptions/parseSelectOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
 import { isInteger } from 'v1/utils/validation/isInteger'
@@ -31,6 +32,7 @@ export const scanParams = <
     exclusiveStartKey,
     index,
     limit,
+    maxPages,
     select,
     totalSegments,
     segment,
@@ -64,6 +66,11 @@ export const scanParams = <
 
   if (limit !== undefined) {
     commandOptions.Limit = parseLimitOption(limit)
+  }
+
+  if (maxPages !== undefined) {
+    // maxPages is a meta-option, validated but not used here
+    parseMaxPagesOption(maxPages)
   }
 
   if (select !== undefined) {

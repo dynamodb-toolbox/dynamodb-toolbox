@@ -9,6 +9,7 @@ import { parseCapacityOption } from 'v1/commands/utils/parseOptions/parseCapacit
 import { parseIndexOption } from 'v1/commands/utils/parseOptions/parseIndexOption'
 import { parseConsistentOption } from 'v1/commands/utils/parseOptions/parseConsistentOption'
 import { parseLimitOption } from 'v1/commands/utils/parseOptions/parseLimitOption'
+import { parseMaxPagesOption } from 'v1/commands/utils/parseOptions/parseMaxPagesOption'
 import { parseSelectOption } from 'v1/commands/utils/parseOptions/parseSelectOption'
 import { rejectExtraOptions } from 'v1/commands/utils/parseOptions/rejectExtraOptions'
 import { parseCondition } from 'v1/commands/expression/condition/parse'
@@ -34,6 +35,7 @@ export const queryParams = <
     consistent,
     exclusiveStartKey,
     limit,
+    maxPages,
     reverse,
     select,
     filters: _filters,
@@ -66,6 +68,11 @@ export const queryParams = <
 
   if (limit !== undefined) {
     commandOptions.Limit = parseLimitOption(limit)
+  }
+
+  if (maxPages !== undefined) {
+    // maxPages is a meta-option, validated but not used here
+    parseMaxPagesOption(maxPages)
   }
 
   if (reverse !== undefined) {
