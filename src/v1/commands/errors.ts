@@ -35,6 +35,12 @@ type InvalidLimitOptionErrorBlueprint = ErrorBlueprint<{
   payload: { limit: unknown }
 }>
 
+type InvalidMaxPagesOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'commands.invalidMaxPagesOption'
+  hasPath: false
+  payload: { maxPages: unknown }
+}>
+
 type InvalidMetricsOptionErrorBlueprint = ErrorBlueprint<{
   code: 'commands.invalidMetricsOption'
   hasPath: false
@@ -68,6 +74,7 @@ export type CommandsErrorBlueprints =
   | InvalidConsistentOptionErrorBlueprint
   | InvalidIndexOptionErrorBlueprint
   | InvalidLimitOptionErrorBlueprint
+  | InvalidMaxPagesOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint
   | InvalidSelectOptionErrorBlueprint

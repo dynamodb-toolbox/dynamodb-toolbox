@@ -14,6 +14,7 @@ export type ScanOptions<TABLE extends TableV2 = TableV2, ENTITIES extends Entity
   capacity?: CapacityOption
   exclusiveStartKey?: Record<string, unknown>
   limit?: number
+  maxPages?: number
   filters?: EntityV2 extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES as ENTITY['name']]?: Condition<ENTITY> }
