@@ -18,6 +18,7 @@ export type QueryOptions<
   capacity?: CapacityOption
   exclusiveStartKey?: Record<string, unknown>
   limit?: number
+  maxPages?: number
   reverse?: boolean
   filters?: EntityV2 extends ENTITIES
     ? Record<string, Condition>

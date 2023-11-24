@@ -253,6 +253,37 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidLimitOption' }))
   })
 
+  it('ignores valid maxPages option', () => {
+    const validCallA = () => TestTable.build(ScanCommand).options({ maxPages: 3 }).params()
+    expect(validCallA).not.toThrow()
+
+    const validCallB = () => TestTable.build(ScanCommand).options({ maxPages: Infinity }).params()
+    expect(validCallB).not.toThrow()
+  })
+
+  it('fails on invalid maxPages option', () => {
+    const invalidCallA = () =>
+      TestTable.build(ScanCommand)
+        .options({
+          // @ts-expect-error
+          maxPages: '3'
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'commands.invalidMaxPagesOption' })
+    )
+
+    // Unable to ts-expect-error here
+    const invalidCallB = () => TestTable.build(ScanCommand).options({ maxPages: 0 }).params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'commands.invalidMaxPagesOption' })
+    )
+  })
+
   it('sets segment and totalSegments options', () => {
     const { Segment, TotalSegments } = TestTable.build(ScanCommand)
       .options({ segment: 3, totalSegments: 4 })
@@ -364,6 +395,19 @@ describe('scan', () => {
     expect(invalidCallH).toThrow(
       expect.objectContaining({ code: 'scanCommand.invalidSegmentOption' })
     )
+  })
+
+  it('fails on extra options', () => {
+    const invalidCall = () =>
+      TestTable.build(ScanCommand)
+        .options({
+          // @ts-expect-error
+          extra: true
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
   })
 
   it('applies entity _et filter', () => {
@@ -490,18 +534,5 @@ describe('scan', () => {
 
     expect(ProjectionExpression).toBe('#p_1, #p_2')
     expect(ExpressionAttributeNames).toMatchObject({ '#p_1': '_ct', '#p_2': '_md' })
-  })
-
-  it('fails on extra options', () => {
-    const invalidCall = () =>
-      TestTable.build(ScanCommand)
-        .options({
-          // @ts-expect-error
-          extra: true
-        })
-        .params()
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
   })
 })
