@@ -14,7 +14,7 @@ export type PrimitiveAttributeType = 'string' | 'boolean' | 'number' | 'binary'
 /**
  * Returns the corresponding TS type of a Primitive Attribute type
  *
- * @param T Primitive Type
+ * @param TYPE Primitive Type
  */
 export type ResolvePrimitiveAttributeType<
   TYPE extends PrimitiveAttributeType
