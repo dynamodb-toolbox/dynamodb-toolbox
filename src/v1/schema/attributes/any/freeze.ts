@@ -1,7 +1,15 @@
 import type { O } from 'ts-toolbelt'
 
 import { validateAttributeProperties } from '../shared/validate'
-import { $type, $required, $hidden, $key, $savedAs, $defaults } from '../constants/attributeOptions'
+import {
+  $type,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $defaults,
+  $castAs
+} from '../constants/attributeOptions'
 
 import type { $AnyAttributeState, AnyAttribute } from './interface'
 
@@ -14,6 +22,7 @@ export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
       key: $ANY_ATTRIBUTE[$key]
       savedAs: $ANY_ATTRIBUTE[$savedAs]
       defaults: $ANY_ATTRIBUTE[$defaults]
+      castAs: $ANY_ATTRIBUTE[$castAs]
     }>,
     never,
     never
@@ -44,6 +53,7 @@ export const freezeAnyAttribute: AnyAttributeFreezer = <$ANY_ATTRIBUTE extends $
     hidden: $anyAttribute[$hidden],
     key: $anyAttribute[$key],
     savedAs: $anyAttribute[$savedAs],
-    defaults: $anyAttribute[$defaults]
+    defaults: $anyAttribute[$defaults],
+    castAs: $anyAttribute[$castAs]
   }
 }

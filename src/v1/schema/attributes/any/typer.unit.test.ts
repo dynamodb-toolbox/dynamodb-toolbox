@@ -1,7 +1,15 @@
 import type { A } from 'ts-toolbelt'
 
 import { Never, AtLeastOnce, Always } from '../constants'
-import { $type, $required, $hidden, $key, $savedAs, $defaults } from '../constants/attributeOptions'
+import {
+  $type,
+  $required,
+  $hidden,
+  $key,
+  $savedAs,
+  $defaults,
+  $castAs
+} from '../constants/attributeOptions'
 
 import { freezeAnyAttribute } from './freeze'
 import type { $AnyAttributeState, AnyAttribute } from './interface'
@@ -25,6 +33,7 @@ describe('anyAttribute', () => {
           put: undefined
           update: undefined
         }
+        [$castAs]: unknown
       }
     > = 1
     assertAny
@@ -140,6 +149,16 @@ describe('anyAttribute', () => {
     assertAny
 
     expect(anyInstance).toMatchObject({ [$savedAs]: 'foo' })
+  })
+
+  it('returns castAs any (method)', () => {
+    const anyInstance = any().castAs<'foo' | 'bar'>()
+
+    const assertAny: A.Contains<typeof anyInstance, { [$castAs]: 'foo' | 'bar' }> = 1
+    assertAny
+
+    // Keeps cast type at type level only
+    expect(anyInstance[$castAs]).toBeUndefined()
   })
 
   it('returns any with default value (option)', () => {
