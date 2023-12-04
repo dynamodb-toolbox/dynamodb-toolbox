@@ -163,9 +163,12 @@ type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
   primitiveOptions?: NarrowObject<OPTIONS>
 ) => $PrimitiveAttribute<
   TYPE,
-  InferStateFromOptions<PrimitiveAttributeOptions, PrimitiveAttributeDefaultOptions, OPTIONS> & {
-    enum: undefined
-  }
+  InferStateFromOptions<
+    PrimitiveAttributeOptions,
+    PrimitiveAttributeDefaultOptions,
+    OPTIONS,
+    { enum: undefined }
+  >
 >
 
 type PrimitiveAttributeTyperFactory = <TYPE extends PrimitiveAttributeType>(
@@ -190,8 +193,9 @@ const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory = <
   } as InferStateFromOptions<
     PrimitiveAttributeOptions,
     PrimitiveAttributeDefaultOptions,
-    OPTIONS
-  > & { enum: undefined }
+    OPTIONS,
+    { enum: undefined }
+  >
 
   return $primitive(type, state)
 }
