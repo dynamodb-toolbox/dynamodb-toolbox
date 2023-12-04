@@ -5,6 +5,7 @@ import type {
   Attribute,
   Item,
   AttributeValue,
+  ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   AnyAttribute,
   PrimitiveAttribute,
@@ -79,7 +80,7 @@ export type AttributePutItemInput<
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
       | (ATTRIBUTE extends AnyAttribute
-          ? unknown
+          ? ResolveAnyAttribute<ATTRIBUTE>
           : ATTRIBUTE extends PrimitiveAttribute
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
           : ATTRIBUTE extends SetAttribute

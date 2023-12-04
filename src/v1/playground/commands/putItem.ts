@@ -14,7 +14,8 @@ const test = async () => {
         father: 'dark vador',
         mother: 'toto'
       },
-      someSet: new Set(['foo', 'bar'])
+      someSet: new Set(['foo', 'bar']),
+      castedStr: 'foo'
     })
     .options({ returnValues: 'ALL_OLD' })
     .send()

@@ -18,7 +18,8 @@ mockedEntity.on(GetItemCommand).resolve({
     parents: {
       father: 'yo',
       mother: 'ya'
-    }
+    },
+    castedStr: 'bar'
   }
 })
 
