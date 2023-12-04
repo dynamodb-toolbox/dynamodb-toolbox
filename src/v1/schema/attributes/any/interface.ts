@@ -12,26 +12,24 @@ import type {
 
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
-import type { $type } from '../constants/attributeOptions'
-import type {
-  $SharedAttributeState,
-  SharedAttributeState,
-  SharedAttributeStateConstraint
-} from '../shared/interface'
+import type { $type, $castAs } from '../constants/attributeOptions'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 
 import type { FreezeAnyAttribute } from './freeze'
+import type { AnyAttributeStateConstraint } from './types'
 
 export interface $AnyAttributeState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
 > extends $SharedAttributeState<STATE> {
   [$type]: 'any'
+  [$castAs]: STATE['castAs']
 }
 
 /**
  * Any attribute interface
  */
 export interface $AnyAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
 > extends $AnyAttributeState<STATE> {
   /**
    * Tag attribute as required. Possible values are:
@@ -62,6 +60,12 @@ export interface $AnyAttribute<
   savedAs: <NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
   ) => $AnyAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>>
+  /**
+   * Cast attribute TS type
+   */
+  castAs: <NEXT_CAST_AS>(
+    nextCastAs?: NEXT_CAST_AS
+  ) => $AnyAttribute<O.Overwrite<STATE, { castAs: NEXT_CAST_AS }>>
   /**
    * Provide a default value for attribute in Primary Key computing
    *
@@ -261,8 +265,9 @@ export interface $AnyAttribute<
 }
 
 export interface AnyAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
 > extends SharedAttributeState<STATE> {
   path: string
   type: 'any'
+  castAs: STATE['castAs']
 }
