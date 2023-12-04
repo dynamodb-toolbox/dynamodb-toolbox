@@ -46,39 +46,67 @@ const $any: $AnyAttributeTyper = <
     keyDefault: nextKeyDefault =>
       $any(
         overwrite(state, {
-          defaults: { key: nextKeyDefault, put: state.defaults.put, update: state.defaults.update }
+          defaults: {
+            key: nextKeyDefault as unknown,
+            put: state.defaults.put,
+            update: state.defaults.update
+          }
         })
       ),
     putDefault: nextPutDefault =>
       $any(
         overwrite(state, {
-          defaults: { key: state.defaults.key, put: nextPutDefault, update: state.defaults.update }
+          defaults: {
+            key: state.defaults.key,
+            put: nextPutDefault as unknown,
+            update: state.defaults.update
+          }
         })
       ),
     updateDefault: nextUpdateDefault =>
       $any(
         overwrite(state, {
-          defaults: { key: state.defaults.key, put: state.defaults.put, update: nextUpdateDefault }
+          defaults: {
+            key: state.defaults.key,
+            put: state.defaults.put,
+            update: nextUpdateDefault as unknown
+          }
         })
       ),
     default: nextDefault =>
       $any(
         overwrite(state, {
           defaults: state.key
-            ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
-            : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
+            ? {
+                key: nextDefault as unknown,
+                put: state.defaults.put,
+                update: state.defaults.update
+              }
+            : {
+                key: state.defaults.key,
+                put: nextDefault as unknown,
+                update: state.defaults.update
+              }
         })
       ),
     keyLink: nextKeyDefault =>
       $any(
         overwrite(state, {
-          defaults: { key: nextKeyDefault, put: state.defaults.put, update: state.defaults.update }
+          defaults: {
+            key: nextKeyDefault as unknown,
+            put: state.defaults.put,
+            update: state.defaults.update
+          }
         })
       ),
     putLink: nextPutDefault =>
       $any(
         overwrite(state, {
-          defaults: { key: state.defaults.key, put: nextPutDefault, update: state.defaults.update }
+          defaults: {
+            key: state.defaults.key,
+            put: nextPutDefault as unknown,
+            update: state.defaults.update
+          }
         })
       ),
     updateLink: nextUpdateDefault =>
@@ -87,7 +115,7 @@ const $any: $AnyAttributeTyper = <
           defaults: {
             key: state.defaults.key,
             put: state.defaults.put,
-            update: nextUpdateDefault
+            update: nextUpdateDefault as unknown
           }
         })
       ),
@@ -95,8 +123,16 @@ const $any: $AnyAttributeTyper = <
       $any(
         overwrite(state, {
           defaults: state.key
-            ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
-            : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
+            ? {
+                key: nextDefault as unknown,
+                put: state.defaults.put,
+                update: state.defaults.update
+              }
+            : {
+                key: state.defaults.key,
+                put: nextDefault as unknown,
+                update: state.defaults.update
+              }
         })
       )
   }

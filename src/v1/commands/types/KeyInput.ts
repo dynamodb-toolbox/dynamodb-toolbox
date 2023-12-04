@@ -4,6 +4,7 @@ import type {
   Schema,
   Attribute,
   AttributeValue,
+  ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   MapAttributeValue,
   AnyAttribute,
@@ -74,7 +75,7 @@ export type AttributeKeyInput<
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
       | (ATTRIBUTE extends AnyAttribute
-          ? unknown
+          ? ResolveAnyAttribute<AnyAttribute>
           : ATTRIBUTE extends PrimitiveAttribute
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
           : ATTRIBUTE extends SetAttribute
