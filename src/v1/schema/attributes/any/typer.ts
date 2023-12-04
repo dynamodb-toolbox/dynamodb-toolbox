@@ -143,9 +143,12 @@ const $any: $AnyAttributeTyper = <
 type AnyAttributeTyper = <OPTIONS extends Partial<AnyAttributeOptions> = AnyAttributeOptions>(
   options?: NarrowObject<OPTIONS>
 ) => $AnyAttribute<
-  InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS> & {
-    castAs: unknown
-  }
+  InferStateFromOptions<
+    AnyAttributeOptions,
+    AnyAttributeDefaultOptions,
+    OPTIONS,
+    { castAs: unknown }
+  >
 >
 
 /**
@@ -163,9 +166,12 @@ export const any: AnyAttributeTyper = <
     ...options,
     castAs: undefined,
     defaults: { ...ANY_DEFAULT_OPTIONS.defaults, ...options?.defaults }
-  } as InferStateFromOptions<AnyAttributeOptions, AnyAttributeDefaultOptions, OPTIONS> & {
-    castAs: unknown
-  }
+  } as InferStateFromOptions<
+    AnyAttributeOptions,
+    AnyAttributeDefaultOptions,
+    OPTIONS,
+    { castAs: unknown }
+  >
 
   return $any(state)
 }
