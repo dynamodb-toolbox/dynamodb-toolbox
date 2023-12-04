@@ -4,7 +4,7 @@ import {
   string,
   map,
   set,
-  list,
+  any,
   schema,
   EntityV2,
   PutItemInput,
@@ -29,7 +29,8 @@ export const UserEntity = new EntityV2({
       father: string(),
       mother: string()
     }),
-    someSet: set(string().enum('foo', 'bar')).optional()
+    someSet: set(string().enum('foo', 'bar')).optional(),
+    castedStr: any().castAs<'foo' | 'bar'>()
   }).and(prevSchema => ({
     completeName: string().putLink<typeof prevSchema>(
       ({ firstName, lastName }) => firstName + ' ' + lastName

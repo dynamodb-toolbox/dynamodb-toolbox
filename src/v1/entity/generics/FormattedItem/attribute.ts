@@ -25,7 +25,7 @@ export type FormattedAttribute<
   SCHEMA extends Schema | Attribute,
   OPTIONS extends FormattedItemOptions = FormattedItemOptions
 > = SCHEMA extends AnyAttribute
-  ? unknown
+  ? SCHEMA['castAs']
   : SCHEMA extends PrimitiveAttribute
   ? string extends OPTIONS['attributes']
     ? ResolvePrimitiveAttribute<SCHEMA>

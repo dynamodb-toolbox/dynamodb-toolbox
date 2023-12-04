@@ -25,7 +25,8 @@ const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
     key: undefined,
     put: undefined,
     update: undefined
-  }
+  },
+  castAs: undefined
 }
 
 const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
