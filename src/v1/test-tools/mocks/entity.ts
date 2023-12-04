@@ -61,16 +61,16 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
       switch (command) {
         // @ts-expect-error impossible to fix
         case GetItemCommand:
-          return new GetItemCommandMock(this)
+          return new GetItemCommandMock(this) as any
         // @ts-expect-error impossible to fix
         case PutItemCommand:
-          return new PutItemCommandMock(this)
+          return new PutItemCommandMock(this) as any
         // @ts-expect-error impossible to fix
         case DeleteItemCommand:
-          return new DeleteItemCommandMock(this)
+          return new DeleteItemCommandMock(this) as any
         // @ts-expect-error impossible to fix
         case UpdateItemCommand:
-          return new UpdateItemCommandMock(this)
+          return new UpdateItemCommandMock(this) as any
         default:
           throw new Error(`Unable to mock entity command: ${String(command)}`)
       }
