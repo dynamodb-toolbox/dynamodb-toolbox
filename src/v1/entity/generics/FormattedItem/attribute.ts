@@ -8,6 +8,7 @@ import type {
   MapAttribute,
   RecordAttribute,
   AnyOfAttribute,
+  ResolveAnyAttribute,
   ResolvePrimitiveAttribute
 } from 'v1/schema'
 import type { FormattedListAttribute } from './list'
@@ -25,7 +26,7 @@ export type FormattedAttribute<
   SCHEMA extends Schema | Attribute,
   OPTIONS extends FormattedItemOptions = FormattedItemOptions
 > = SCHEMA extends AnyAttribute
-  ? unknown
+  ? ResolveAnyAttribute<SCHEMA>
   : SCHEMA extends PrimitiveAttribute
   ? string extends OPTIONS['attributes']
     ? ResolvePrimitiveAttribute<SCHEMA>

@@ -20,7 +20,8 @@ type InferStateValueFromOption<
 export type InferStateFromOptions<
   OPTIONS_CONSTRAINTS extends Partial<AttributeOptionsConstraints>,
   DEFAULT_OPTIONS extends OPTIONS_CONSTRAINTS,
-  OPTIONS extends Partial<OPTIONS_CONSTRAINTS>
+  OPTIONS extends Partial<OPTIONS_CONSTRAINTS>,
+  ADDITIONAL_OPTIONS extends object = {}
 > =
   // Applying void O.Update improves type display
   O.Update<
@@ -31,7 +32,8 @@ export type InferStateFromOptions<
         OPTIONS,
         KEY
       >
-    },
+    } &
+      ADDITIONAL_OPTIONS,
     never,
     never
   >

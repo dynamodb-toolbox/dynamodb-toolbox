@@ -35,6 +35,9 @@ export type $enum = typeof $enum
 export const $savedAs = Symbol('$savedAs')
 export type $savedAs = typeof $savedAs
 
+export const $castAs = Symbol('$castAs')
+export type $castAs = typeof $castAs
+
 export type $AttributeOptionSymbol =
   | $type
   | $keys
@@ -47,6 +50,7 @@ export type $AttributeOptionSymbol =
   | $defaults
   | $enum
   | $savedAs
+  | $castAs
 
 export type AttributeOptionSymbolName = {
   [$type]: 'type'
@@ -60,6 +64,7 @@ export type AttributeOptionSymbolName = {
   [$defaults]: 'defaults'
   [$enum]: 'enum'
   [$savedAs]: 'savedAs'
+  [$castAs]: 'castAs'
 }
 
 export type AttributeOptionName = AttributeOptionSymbolName[$AttributeOptionSymbol]
@@ -76,6 +81,7 @@ export type AttributeOptionNameSymbol = {
   defaults: $defaults
   enum: $enum
   savedAs: $savedAs
+  castAs: $castAs
 }
 
 export type AttributeOptionsConstraints = {

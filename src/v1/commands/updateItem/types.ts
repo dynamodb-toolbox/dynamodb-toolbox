@@ -4,6 +4,7 @@ import type {
   Schema,
   Attribute,
   AttributeValue,
+  ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   Item,
   AnyAttribute,
@@ -168,7 +169,7 @@ type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute e
   :
       | (ATTRIBUTE extends { required: Never } ? undefined : never)
       | (ATTRIBUTE extends AnyAttribute
-          ? unknown
+          ? ResolveAnyAttribute<ATTRIBUTE> | unknown
           : ATTRIBUTE extends PrimitiveAttribute
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
           : ATTRIBUTE extends SetAttribute
@@ -221,7 +222,7 @@ export type AttributeUpdateItemInput<
           ]
         >
       | (ATTRIBUTE extends AnyAttribute
-          ? unknown
+          ? ResolveAnyAttribute<ATTRIBUTE> | unknown
           : ATTRIBUTE extends PrimitiveAttribute
           ?
               | ResolvePrimitiveAttribute<ATTRIBUTE>
