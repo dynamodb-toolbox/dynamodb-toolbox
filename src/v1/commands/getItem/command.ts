@@ -30,9 +30,9 @@ export class GetItemCommand<
 > extends EntityCommand<ENTITY> {
   static commandName = 'get' as const
 
-  public _key?: KeyInput<ENTITY>
+  private _key?: KeyInput<ENTITY>
   public key: (key: KeyInput<ENTITY>) => GetItemCommand<ENTITY, OPTIONS>
-  public _options: OPTIONS
+  private _options: OPTIONS
   public options: <NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => GetItemCommand<ENTITY, NEXT_OPTIONS>

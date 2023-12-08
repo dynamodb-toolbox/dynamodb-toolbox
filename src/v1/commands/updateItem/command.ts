@@ -55,9 +55,9 @@ export class UpdateItemCommand<
 > extends EntityCommand<ENTITY> {
   static commandName = 'put' as const
 
-  public _item?: UpdateItemInput<ENTITY>
+  private _item?: UpdateItemInput<ENTITY>
   public item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemCommand<ENTITY, OPTIONS>
-  public _options: OPTIONS
+  private _options: OPTIONS
   public options: <NEXT_OPTIONS extends UpdateItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => UpdateItemCommand<ENTITY, NEXT_OPTIONS>

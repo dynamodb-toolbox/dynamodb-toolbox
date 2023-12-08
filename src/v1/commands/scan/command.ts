@@ -61,7 +61,7 @@ export class ScanCommand<
       ? OPTIONS
       : ScanOptions<TABLE, NEXT_ENTITIES[number]>
   >
-  public _options: OPTIONS
+  private _options: OPTIONS
   public options: <NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
     nextOptions: NEXT_OPTIONS
   ) => ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS>

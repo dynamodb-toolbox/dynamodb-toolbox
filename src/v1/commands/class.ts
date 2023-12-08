@@ -5,7 +5,7 @@ export class EntityCommand<ENTITY extends EntityV2 = EntityV2> {
   static commandType = 'entity'
   static commandName: string
 
-  public _entity: ENTITY
+  protected _entity: ENTITY
 
   constructor(entity: ENTITY) {
     this._entity = entity
@@ -16,8 +16,8 @@ export class TableCommand<TABLE extends TableV2 = TableV2, ENTITIES extends Enti
   static commandType = 'table'
   static commandName: string
 
-  public _table: TABLE
-  public _entities: ENTITIES[]
+  protected _table: TABLE
+  protected _entities: ENTITIES[]
 
   constructor({ table, entities = [] }: { table: TABLE; entities?: ENTITIES[] }) {
     this._table = table

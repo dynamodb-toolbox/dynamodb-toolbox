@@ -68,11 +68,11 @@ export class QueryCommand<
       : QueryOptions<TABLE, NEXT_ENTITIES[number]>
   >
 
-  public _query?: QUERY
+  private _query?: QUERY
   public query: <NEXT_QUERY extends Query<TABLE>>(
     query: NEXT_QUERY
   ) => QueryCommand<TABLE, ENTITIES, NEXT_QUERY, OPTIONS>
-  public _options: OPTIONS
+  private _options: OPTIONS
   public options: <NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
     nextOptions: NEXT_OPTIONS
   ) => QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS>

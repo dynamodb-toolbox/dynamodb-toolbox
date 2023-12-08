@@ -39,9 +39,9 @@ export class DeleteItemCommand<
 > extends EntityCommand<ENTITY> {
   static commandName = 'delete' as const
 
-  public _key?: KeyInput<ENTITY>
+  private _key?: KeyInput<ENTITY>
   public key: (keyInput: KeyInput<ENTITY>) => DeleteItemCommand<ENTITY, OPTIONS>
-  public _options?: OPTIONS
+  private _options?: OPTIONS
   public options: <NEXT_OPTIONS extends DeleteItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => DeleteItemCommand<ENTITY, NEXT_OPTIONS>
