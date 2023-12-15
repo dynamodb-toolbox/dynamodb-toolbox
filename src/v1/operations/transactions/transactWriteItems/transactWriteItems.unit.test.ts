@@ -10,9 +10,10 @@ import {
   number,
   schema,
   set,
-  string
+  string,
+  DynamoDBToolboxError
 } from 'v1'
-import { transactWriteItems, generateTransactWriteCommandInput } from './transactWriteItems'
+import { transactWriteItems, getTransactWriteCommandInput } from './transactWriteItems'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 
@@ -80,6 +81,14 @@ const TestEntity2 = new EntityV2({
 })
 
 describe('transactWriteItems', () => {
+  beforeAll(() => {
+    jest.spyOn(documentClient, 'send').mockImplementation(jest.fn())
+  })
+
+  afterAll(() => {
+    jest.restoreAllMocks()
+  })
+
   it('should throw an error if dynamoDBDocumentClient is not found', async () => {
     const commands: PutItemTransaction[] = []
     const options = {}
@@ -97,19 +106,43 @@ describe('transactWriteItems', () => {
     ]
     const options = { dynamoDBDocumentClient: documentClient }
 
-    jest.spyOn(documentClient, 'send').mockImplementation(jest.fn())
-
     await transactWriteItems(commands, options)
 
     expect(documentClient.send).toHaveBeenCalledTimes(1)
   })
 })
 
-describe('generateTransactWriteCommandInput', () => {
-  it('should generate a transaction with the correct parameters', async () => {
-    const mockDate = '2023-12-15T16:22:49.834Z'
-    jest.useFakeTimers().setSystemTime(new Date(mockDate))
+const mockDate = '2023-12-15T16:22:49.834Z'
 
+describe('generateTransactWriteCommandInput', () => {
+  beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date(mockDate))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
+  it('should throw an error if an invalid option is set', async () => {
+    const transactions = [
+      TestEntity.build(PutItemTransaction).item({
+        email: 'titi@example.com',
+        sort: 'titi'
+      })
+    ]
+
+    const invalidTransactWriteCommandInputGeneration = () =>
+      getTransactWriteCommandInput(transactions, {
+        // @ts-expect-error
+        extra: true
+      })
+
+    expect(invalidTransactWriteCommandInputGeneration).toThrow(DynamoDBToolboxError)
+    expect(invalidTransactWriteCommandInputGeneration).toThrow(
+      expect.objectContaining({ code: 'operations.unknownOption' })
+    )
+  })
+  it('should generate a transaction with the correct parameters', async () => {
     const transactions = [
       TestEntity.build(PutItemTransaction).item({
         email: 'titi@example.com',
@@ -132,9 +165,16 @@ describe('generateTransactWriteCommandInput', () => {
       })
     ]
 
-    const transactWriteCommandInput = generateTransactWriteCommandInput(transactions)
+    const transactWriteCommandInput = getTransactWriteCommandInput(transactions, {
+      clientRequestToken: 'string',
+      capacity: 'NONE',
+      metrics: 'SIZE'
+    })
 
     expect(transactWriteCommandInput).toEqual({
+      ClientRequestToken: 'string',
+      ReturnConsumedCapacity: 'NONE',
+      ReturnItemCollectionMetrics: 'SIZE',
       TransactItems: [
         {
           Put: {

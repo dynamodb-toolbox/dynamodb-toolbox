@@ -374,6 +374,36 @@ describe('put transaction', () => {
     expect(Item).toMatchObject({ pk: '3', sk: '3' })
   })
 
+  // Options
+  it('fails on extra options', () => {
+    const invalidCall = () =>
+      TestEntity.build(PutItemTransaction)
+        .item({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          extra: true
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
+  })
+
+  it('sets condition', () => {
+    const {
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    } = TestEntity.build(PutItemTransaction)
+      .item({ email: 'x', sort: 'y' })
+      .options({ condition: { attr: 'email', gt: 'test' } })
+      .params()
+
+    expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
+    expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })
+    expect(ConditionExpression).toBe('#c_1 > :c_1')
+  })
+
   it('missing item', () => {
     const invalidCall = () => TestEntity.build(PutItemTransaction).params()
 
