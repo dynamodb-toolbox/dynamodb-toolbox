@@ -166,3 +166,8 @@ export type SchemaCondition<SCHEMA extends Schema = Schema> =
   | { not: SchemaCondition<SCHEMA> }
 
 export type Condition<ENTITY extends EntityV2 = EntityV2> = SchemaCondition<ENTITY['schema']>
+
+export interface ConditionOptions<ENTITY extends EntityV2 = EntityV2> {
+  /** Optional condition to apply to the operation */
+  condition?: Condition<ENTITY>
+}

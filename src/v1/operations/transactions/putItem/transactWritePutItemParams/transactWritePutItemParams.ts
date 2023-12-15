@@ -5,14 +5,21 @@ import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
 
 import type { PutItemInput } from '../../../putItem'
 import { parseEntityPutTransactionInput } from './parsePutTransactionInput'
+import type { PutItemTransactionOptions } from '../options'
+
+import { parsePutItemTransactionOptions } from './parsePutItemOptions'
 
 export type TransactWritePutItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Put']
 >
 
-export const transactWritePutItemParams = <ENTITY extends EntityV2>(
+export const transactWritePutItemParams = <
+  ENTITY extends EntityV2,
+  OPTIONS extends PutItemTransactionOptions<ENTITY>
+>(
   entity: ENTITY,
-  input: PutItemInput<ENTITY>
+  input: PutItemInput<ENTITY>,
+  putItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactWritePutItemParams => {
   const validInputParser = parseEntityPutTransactionInput(entity, input)
   const validInput = validInputParser.next().value
@@ -21,8 +28,11 @@ export const transactWritePutItemParams = <ENTITY extends EntityV2>(
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : collapsedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
 
+  const options = parsePutItemTransactionOptions(entity, putItemTransactionOptions)
+
   return {
     TableName: entity.table.getName(),
-    Item: { ...collapsedInput, ...primaryKey }
+    Item: { ...collapsedInput, ...primaryKey },
+    ...options
   }
 }

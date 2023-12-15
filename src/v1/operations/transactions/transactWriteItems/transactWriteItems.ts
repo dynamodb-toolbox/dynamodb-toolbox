@@ -3,12 +3,21 @@ import {
   TransactWriteCommand,
   TransactWriteCommandOutput
 } from '@aws-sdk/lib-dynamodb'
+import { TransactWriteItemsInput } from '@aws-sdk/client-dynamodb'
+
 import { WriteItemTransaction } from 'v1/operations/transactions/types'
 import { DynamoDBToolboxError } from 'v1/errors'
+import { TransactWriteOptions } from './options'
+import { parseTransactWriteOptions } from './parseTransactWriteOptions'
 
-export const generateTransactWriteCommandInput = (commands: WriteItemTransaction[]) => {
+export const getTransactWriteCommandInput = (
+  commands: WriteItemTransaction[],
+  transactWriteOptions: TransactWriteOptions = {}
+): TransactWriteItemsInput => {
+  const options = parseTransactWriteOptions(transactWriteOptions ?? {})
+
   return {
-    // TODO: handle options
+    ...options,
     TransactItems: commands
       .map(command => command.get())
       .map(({ params, type }) => ({
@@ -25,10 +34,15 @@ export const generateTransactWriteCommandInput = (commands: WriteItemTransaction
 export const transactWriteItems = async <TRANSACTIONS extends WriteItemTransaction[]>(
   /** Array of Write Item transactions */
   transactions: TRANSACTIONS,
-  options: { dynamoDBDocumentClient?: DynamoDBDocumentClient }
+  options?: {
+    /** Optional DynamoDB client. If not provided, the client linked to the first transaction is used. */
+    dynamoDBDocumentClient?: DynamoDBDocumentClient
+    /** Options passed to top-level  TransactWriteItems */
+    transactWriteOptions?: TransactWriteOptions
+  }
 ): Promise<TransactWriteCommandOutput> => {
   const dynamoDBDocumentClient =
-    options.dynamoDBDocumentClient || transactions?.[0]?.get()?.documentClient
+    options?.dynamoDBDocumentClient || transactions?.[0]?.get()?.documentClient
 
   if (!dynamoDBDocumentClient) {
     throw new DynamoDBToolboxError('operations.incompleteCommand', {
@@ -37,7 +51,9 @@ export const transactWriteItems = async <TRANSACTIONS extends WriteItemTransacti
   }
 
   const response = await dynamoDBDocumentClient.send(
-    new TransactWriteCommand(generateTransactWriteCommandInput(transactions))
+    new TransactWriteCommand(
+      getTransactWriteCommandInput(transactions, options?.transactWriteOptions ?? {})
+    )
   )
 
   return response
