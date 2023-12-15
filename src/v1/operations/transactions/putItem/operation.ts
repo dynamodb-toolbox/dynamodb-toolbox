@@ -10,23 +10,36 @@ import {
   TransactWritePutItemParams
 } from './transactWritePutItemParams'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { PutItemTransactionOptions } from './options'
 
 export const $item = Symbol('$item')
 export type $item = typeof $item
 
-export class PutItemTransaction<ENTITY extends EntityV2 = EntityV2>
+export const $options = Symbol('$options')
+export type $options = typeof $options
+
+export class PutItemTransaction<
+    ENTITY extends EntityV2 = EntityV2,
+    OPTIONS extends PutItemTransactionOptions<ENTITY> = PutItemTransactionOptions<ENTITY>
+  >
   extends EntityOperation<ENTITY>
   implements WriteItemTransaction<ENTITY, 'Put'> {
   static operationName = 'transactPut' as const
 
   private [$item]?: PutItemInput<ENTITY>
   public item: (nextItem: PutItemInput<ENTITY>) => PutItemTransaction<ENTITY>
+  public [$options]: OPTIONS
+  public options: <NEXT_OPTIONS extends PutItemTransactionOptions<ENTITY>>(
+    nextOptions: NEXT_OPTIONS
+  ) => PutItemTransaction<ENTITY, NEXT_OPTIONS>
 
-  constructor(entity: ENTITY, item?: PutItemInput<ENTITY>) {
+  constructor(entity: ENTITY, item?: PutItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$item] = item
+    this[$options] = options
 
-    this.item = nextItem => new PutItemTransaction(this[$entity], nextItem)
+    this.item = nextItem => new PutItemTransaction(this[$entity], nextItem, this[$options])
+    this.options = nextOptions => new PutItemTransaction(this[$entity], this[$item], nextOptions)
   }
 
   params = (): TransactWritePutItemParams => {
@@ -36,7 +49,7 @@ export class PutItemTransaction<ENTITY extends EntityV2 = EntityV2>
       })
     }
 
-    return transactWritePutItemParams(this[$entity], this[$item])
+    return transactWritePutItemParams(this[$entity], this[$item], this[$options])
   }
 
   get = (): {
