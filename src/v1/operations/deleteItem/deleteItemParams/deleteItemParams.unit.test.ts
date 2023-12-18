@@ -256,15 +256,4 @@ describe('delete', () => {
 
     expect(ExpressionAttributeValues2).toEqual({ ':c_1': 'EMAIL#test' })
   })
-
-  // TODO Create deleteBatch method and move tests there
-  // it('formats a batch delete response', async () => {
-  //   let result = TestEntity.deleteBatch({ email: 'x', sort: 'y' })
-  //   expect(result).toEqual({ 'test-table': { DeleteRequest: { Key: { pk: 'x', sk: 'y' } } } })
-  // })
-
-  // it('fails if no value is provided to the deleteBatch method', () => {
-  //   // @ts-expect-error
-  //   expect(() => TestEntity.deleteBatch()).toThrow(`'pk' or 'email' is required`)
-  // })
 })
