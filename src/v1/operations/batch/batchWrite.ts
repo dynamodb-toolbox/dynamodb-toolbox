@@ -3,10 +3,13 @@ import { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { BatchWriteItemRequest } from './BatchWriteItemRequest'
+import type { BatchWriteOptions } from './options'
+import { parseBatchWriteOptions } from './parseBatchWriteOptions'
 import { $entity } from '../class'
 
 export const getBatchWriteCommandInput = (
-  requests: BatchWriteItemRequest[]
+  requests: BatchWriteItemRequest[],
+  batchWriteOptions: BatchWriteOptions = {}
 ): BatchWriteCommandInput => {
   const RequestItems: NonNullable<BatchWriteCommandInput>['RequestItems'] = {}
 
@@ -25,5 +28,8 @@ export const getBatchWriteCommandInput = (
       [request.requestType]: request.params()
     })
   }
-  return { RequestItems }
+
+  const options = parseBatchWriteOptions(batchWriteOptions)
+
+  return { RequestItems, ...options }
 }
