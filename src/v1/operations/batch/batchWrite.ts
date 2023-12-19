@@ -1,9 +1,13 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { BatchWriteRequestInterface } from './BatchWriteRequestInterface'
+import type { BatchWriteOptions } from './options'
+import { parseBatchWriteOptions } from './parseBatchWriteOptions'
+import { $entity } from '../class'
 
 export const buildBatchWriteCommandInput = (
-  commands: BatchWriteRequestInterface[]
+  commands: BatchWriteRequestInterface[],
+  batchWriteOptions: BatchWriteOptions = {}
 ): BatchWriteCommandInput => {
   const RequestItems: NonNullable<BatchWriteCommandInput>['RequestItems'] = {}
 
@@ -22,5 +26,8 @@ export const buildBatchWriteCommandInput = (
       [command.requestType]: command.params()
     })
   }
-  return { RequestItems }
+
+  const options = parseBatchWriteOptions(batchWriteOptions)
+
+  return { RequestItems, ...options }
 }

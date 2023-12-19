@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, TableV2, schema, string } from 'v1'
+import { DynamoDBToolboxError, EntityV2, TableV2, schema, string } from 'v1'
 import { PutBatchItemRequest } from './putBatchItem/operation'
 import { DeleteBatchItemRequest } from './deleteBatchItem/operation'
 import { buildBatchWriteCommandInput } from './batchWrite'
@@ -79,6 +79,92 @@ describe('buildBatchWriteCommandInput', () => {
         'test-table': [{ PutRequest: { Item: { pk: 'test', sk: 'testsk', test: 'test' } } }]
       }
     })
+  })
+
+  it('fails when extra options', () => {
+    const invalidCall = () =>
+      buildBatchWriteCommandInput(
+        [
+          TestEntity.build(PutBatchItemRequest).item({
+            email: 'test',
+            sort: 'testsk',
+            test: 'test'
+          })
+        ],
+        // @ts-expect-error
+        { extra: true }
+      )
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
+  })
+
+  it('sets capacity options', () => {
+    const { ReturnConsumedCapacity } = buildBatchWriteCommandInput(
+      [
+        TestEntity.build(PutBatchItemRequest).item({
+          email: 'test',
+          sort: 'testsk',
+          test: 'test'
+        })
+      ],
+      { capacity: 'TOTAL' }
+    )
+
+    expect(ReturnConsumedCapacity).toBe('TOTAL')
+  })
+
+  it('fails on invalid capacity option', () => {
+    const invalidCall = () =>
+      buildBatchWriteCommandInput(
+        [
+          TestEntity.build(PutBatchItemRequest).item({
+            email: 'test',
+            sort: 'testsk',
+            test: 'test'
+          })
+        ],
+        // @ts-expect-error
+        { capacity: 'test' }
+      )
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
+    )
+  })
+
+  it('sets metrics options', () => {
+    const { ReturnItemCollectionMetrics } = buildBatchWriteCommandInput(
+      [
+        TestEntity.build(PutBatchItemRequest).item({
+          email: 'test',
+          sort: 'testsk',
+          test: 'test'
+        })
+      ],
+      { metrics: 'SIZE' }
+    )
+
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
+  })
+
+  it('fails on invalid metrics setting', () => {
+    const invalidCall = () =>
+      buildBatchWriteCommandInput(
+        [
+          TestEntity.build(PutBatchItemRequest).item({
+            email: 'test',
+            sort: 'testsk',
+            test: 'test'
+          })
+        ],
+        // @ts-expect-error
+        { metrics: 'test' }
+      )
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidMetricsOption' })
+    )
   })
 
   it('batchWrites data to a single table with multiple items', () => {
