@@ -1,10 +1,6 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import type { TableCommand } from 'v1/commands/class'
-import type { ScanCommand } from 'v1/commands'
-import type { ScanCommandClass } from 'v1/commands/scan/command'
-import type { QueryCommand } from 'v1/commands'
-import type { QueryCommandClass } from 'v1/commands/query/command'
 import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject'
 import { isString } from 'v1/utils/validation/isString'
 
@@ -24,17 +20,9 @@ export class TableV2<
   public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS
 
   public getName: () => string
-  // TODO: Maybe there's a way not to have to list all commands here
-  // (use TABLE_COMMAND_CLASS somehow) but I haven't found it yet
   public build: <TABLE_COMMAND_CLASS extends typeof TableCommand = typeof TableCommand>(
     tableCommandClass: TABLE_COMMAND_CLASS
-  ) => Key extends PARTITION_KEY
-    ? any
-    : TABLE_COMMAND_CLASS extends ScanCommandClass
-    ? ScanCommand<this>
-    : TABLE_COMMAND_CLASS extends QueryCommandClass
-    ? QueryCommand<this>
-    : TableCommand<this>
+  ) => InstanceType<TABLE_COMMAND_CLASS>
 
   /**
    * Define a Table

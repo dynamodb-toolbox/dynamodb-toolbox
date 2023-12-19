@@ -1,16 +1,6 @@
 import type { Schema } from 'v1/schema'
 import type { TableV2, PrimaryKey } from 'v1/table'
-import type {
-  PutItemCommand,
-  GetItemCommand,
-  DeleteItemCommand,
-  UpdateItemCommand
-} from 'v1/commands'
 import type { KeyInput } from 'v1/commands/types'
-import type { PutItemCommandClass } from 'v1/commands/putItem/command'
-import type { GetItemCommandClass } from 'v1/commands/getItem/command'
-import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
-import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
 import type { EntityCommand } from 'v1/commands/class'
 import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -50,21 +40,9 @@ export class EntityV2<
   public computeKey?: (
     keyInput: Schema extends SCHEMA ? any : KeyInput<SCHEMA>
   ) => PrimaryKey<TABLE>
-  // TODO: Maybe there's a way not to have to list all commands here
-  // (use COMMAND_CLASS somehow) but I haven't found it yet
   public build: <COMMAND_CLASS extends typeof EntityCommand = typeof EntityCommand>(
     commandClass: COMMAND_CLASS
-  ) => string extends NAME
-    ? any
-    : COMMAND_CLASS extends PutItemCommandClass
-    ? PutItemCommand<this>
-    : COMMAND_CLASS extends GetItemCommandClass
-    ? GetItemCommand<this>
-    : COMMAND_CLASS extends DeleteItemCommandClass
-    ? DeleteItemCommand<this>
-    : COMMAND_CLASS extends UpdateItemCommandClass
-    ? UpdateItemCommand<this>
-    : EntityCommand<this>
+  ) => InstanceType<COMMAND_CLASS>
 
   /**
    * Define an Entity for a given table
