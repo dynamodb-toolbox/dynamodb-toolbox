@@ -20,10 +20,10 @@ import type { ScanOptions } from '../options'
 
 export const scanParams = <
   TABLE extends TableV2,
-  ENTITIES extends EntityV2,
+  ENTITIES extends EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
 >(
-  { table, entities = [] }: { table: TABLE; entities?: ENTITIES[] },
+  { table, entities = ([] as unknown) as ENTITIES }: { table: TABLE; entities?: ENTITIES },
   scanOptions: OPTIONS = {} as OPTIONS
 ): ScanCommandInput => {
   const {
@@ -136,7 +136,11 @@ export const scanParams = <
         const {
           ExpressionAttributeNames: projectionExpressionAttributeNames,
           ProjectionExpression
-        } = parseProjection<EntityV2, AnyAttributePath[]>(entity, attributes)
+        } = parseProjection<EntityV2, AnyAttributePath[]>(entity, [
+          // entityAttributeName is required at all times for formatting
+          ...(attributes.includes(entity.entityAttributeName) ? [] : [entity.entityAttributeName]),
+          ...attributes
+        ])
 
         Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
         projectionExpression = ProjectionExpression

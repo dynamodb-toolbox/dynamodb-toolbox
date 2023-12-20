@@ -512,27 +512,50 @@ describe('scan', () => {
   })
 
   it('applies entity projection expression', () => {
-    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
+    const command = TestTable.build(ScanCommand)
       .entities(Entity1)
       .options({ attributes: ['age', 'name'] })
-      .params()
 
-    expect(ProjectionExpression).toBe('#p_1, #p_2')
+    const { ProjectionExpression, ExpressionAttributeNames } = command.params()
+
+    const assertReturnedItems: A.Equals<
+      Awaited<ReturnType<typeof command.send>>['Items'],
+      FormattedItem<typeof Entity1, { attributes: 'age' | 'name' }>[] | undefined
+    > = 1
+    assertReturnedItems
+
+    expect(ProjectionExpression).toBe('#p_1, #p_2, #p_3')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#p_1': 'age',
-      '#p_2': 'name'
+      '#p_1': '_et',
+      '#p_2': 'age',
+      '#p_3': 'name'
     })
   })
 
   it('applies two entity projection expressions', () => {
-    const { ProjectionExpression, ExpressionAttributeNames } = TestTable.build(ScanCommand)
+    const command = TestTable.build(ScanCommand)
       .entities(Entity1, Entity2)
       .options({
         attributes: ['created', 'modified']
       })
-      .params()
 
-    expect(ProjectionExpression).toBe('#p_1, #p_2')
-    expect(ExpressionAttributeNames).toMatchObject({ '#p_1': '_ct', '#p_2': '_md' })
+    const { ProjectionExpression, ExpressionAttributeNames } = command.params()
+
+    const assertReturnedItems: A.Equals<
+      Awaited<ReturnType<typeof command.send>>['Items'],
+      | (
+          | FormattedItem<typeof Entity1, { attributes: 'created' | 'modified' }>
+          | FormattedItem<typeof Entity2, { attributes: 'created' | 'modified' }>
+        )[]
+      | undefined
+    > = 1
+    assertReturnedItems
+
+    expect(ProjectionExpression).toBe('#p_1, #p_2, #p_3')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#p_1': '_et',
+      '#p_2': '_ct',
+      '#p_3': '_md'
+    })
   })
 })

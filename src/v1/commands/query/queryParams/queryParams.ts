@@ -21,11 +21,11 @@ import { parseQuery } from './parseQuery'
 
 export const queryParams = <
   TABLE extends TableV2,
-  ENTITIES extends EntityV2,
+  ENTITIES extends EntityV2[],
   QUERY extends Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
 >(
-  { table, entities = [] }: { table: TABLE; entities?: ENTITIES[] },
+  { table, entities = ([] as unknown) as ENTITIES }: { table: TABLE; entities?: ENTITIES },
   query: QUERY,
   scanOptions: OPTIONS = {} as OPTIONS
 ): QueryCommandInput => {
@@ -131,7 +131,11 @@ export const queryParams = <
         const {
           ExpressionAttributeNames: projectionExpressionAttributeNames,
           ProjectionExpression
-        } = parseProjection<EntityV2, AnyAttributePath[]>(entity, attributes)
+        } = parseProjection<EntityV2, AnyAttributePath[]>(entity, [
+          // entityAttributeName is required at all times for formatting
+          ...(attributes.includes(entity.entityAttributeName) ? [] : [entity.entityAttributeName]),
+          ...attributes
+        ])
 
         Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
         projectionExpression = ProjectionExpression
