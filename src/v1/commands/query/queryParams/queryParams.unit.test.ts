@@ -617,8 +617,11 @@ describe('query', () => {
 
   it('applies entity _et filter', () => {
     const command = TestTable.build(QueryCommand).query({ partition: 'foo' }).entities(Entity1)
-    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      command.params()
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = command.params()
 
     expect(FilterExpression).toBe('#c1_1 = :c1_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#c1_1': TestTable.entityAttributeSavedAs })
@@ -632,16 +635,19 @@ describe('query', () => {
   })
 
   it('applies entity _et AND additional filter', () => {
-    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestTable.build(QueryCommand)
-        .query({ partition: 'foo' })
-        .entities(Entity1)
-        .options({
-          filters: {
-            entity1: { attr: 'age', gte: 40 }
-          }
-        })
-        .params()
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .entities(Entity1)
+      .options({
+        filters: {
+          entity1: { attr: 'age', gte: 40 }
+        }
+      })
+      .params()
 
     expect(FilterExpression).toBe('(#c1_1 = :c1_1) AND (#c1_2 >= :c1_2)')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -658,8 +664,11 @@ describe('query', () => {
     const command = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .entities(Entity1, Entity2)
-    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      command.params()
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = command.params()
 
     expect(FilterExpression).toBe('(#c1_1 = :c1_1) OR (#c2_1 = :c2_1)')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -679,17 +688,20 @@ describe('query', () => {
   })
 
   it('applies two entity filters AND additional filters', () => {
-    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestTable.build(QueryCommand)
-        .query({ partition: 'foo' })
-        .entities(Entity1, Entity2)
-        .options({
-          filters: {
-            entity1: { attr: 'age', gte: 40 },
-            entity2: { attr: 'price', gte: 100 }
-          }
-        })
-        .params()
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .entities(Entity1, Entity2)
+      .options({
+        filters: {
+          entity1: { attr: 'age', gte: 40 },
+          entity2: { attr: 'price', gte: 100 }
+        }
+      })
+      .params()
 
     expect(FilterExpression).toBe(
       '((#c1_1 = :c1_1) AND (#c1_2 >= :c1_2)) OR ((#c2_1 = :c2_1) AND (#c2_2 >= :c2_2))'

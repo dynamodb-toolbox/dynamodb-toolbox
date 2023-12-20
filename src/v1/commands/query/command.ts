@@ -30,17 +30,17 @@ type ReturnedItems<
   : (EntityV2[] extends ENTITIES
       ? Item
       : ENTITIES[number] extends infer ENTITY
-        ? ENTITY extends EntityV2
-          ? FormattedItem<
-              ENTITY,
-              {
-                attributes: OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
-                  ? OPTIONS['attributes'][number]
-                  : undefined
-              }
-            >
-          : never
-        : never)[]
+      ? ENTITY extends EntityV2
+        ? FormattedItem<
+            ENTITY,
+            {
+              attributes: OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
+                ? OPTIONS['attributes'][number]
+                : undefined
+            }
+          >
+        : never
+      : never)[]
 
 export type QueryResponse<
   TABLE extends TableV2,
@@ -177,7 +177,9 @@ export class QueryCommand<
           continue
         }
 
-        formattedItems.push(formatSavedItem<EntityV2, {}>(itemEntity, item, { attributes }))
+        formattedItems.push(
+          formatSavedItem<EntityV2, {}>(itemEntity, item, { attributes })
+        )
       }
 
       lastEvaluatedKey = pageLastEvaluatedKey
