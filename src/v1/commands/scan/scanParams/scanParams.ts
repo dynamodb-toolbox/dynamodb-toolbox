@@ -23,7 +23,7 @@ export const scanParams = <
   ENTITIES extends EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
 >(
-  { table, entities = [] as unknown as ENTITIES }: { table: TABLE; entities?: ENTITIES },
+  { table, entities = ([] as unknown) as ENTITIES }: { table: TABLE; entities?: ENTITIES },
   scanOptions: OPTIONS = {} as OPTIONS
 ): ScanCommandInput => {
   const {
