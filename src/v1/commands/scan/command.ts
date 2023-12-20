@@ -11,6 +11,7 @@ import type { TableV2 } from 'v1/table'
 import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { Item } from 'v1/schema'
 import type { CountSelectOption } from 'v1/commands/constants/options/select'
+import type { AnyAttributePath } from 'v1/commands/types'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 import { isString } from 'v1/utils/validation'
 
@@ -20,21 +21,28 @@ import { scanParams } from './scanParams'
 
 type ReturnedItems<
   TABLE extends TableV2,
-  ENTITIES extends EntityV2,
+  ENTITIES extends EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
-  : (EntityV2 extends ENTITIES
+  : (EntityV2[] extends ENTITIES
       ? Item
-      : ENTITIES extends infer ENTITY
-      ? ENTITY extends EntityV2
-        ? FormattedItem<ENTITY>
-        : never
-      : never)[]
+      : ENTITIES[number] extends infer ENTITY
+        ? ENTITY extends EntityV2
+          ? FormattedItem<
+              ENTITY,
+              {
+                attributes: OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
+                  ? OPTIONS['attributes'][number]
+                  : undefined
+              }
+            >
+          : never
+        : never)[]
 
 export type ScanResponse<
   TABLE extends TableV2,
-  ENTITIES extends EntityV2,
+  ENTITIES extends EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
 > = O.Merge<
   Omit<ScanCommandOutput, 'Items' | '$metadata'>,
@@ -47,44 +55,31 @@ export type ScanResponse<
 
 export class ScanCommand<
   TABLE extends TableV2 = TableV2,
-  ENTITIES extends EntityV2 = EntityV2,
+  ENTITIES extends EntityV2[] = EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
 > extends TableCommand<TABLE, ENTITIES> {
   static commandName = 'scan' as const
 
   public entities: <NEXT_ENTITIES extends EntityV2[]>(
     ...nextEntities: NEXT_ENTITIES
-  ) => ScanCommand<
-    TABLE,
-    NEXT_ENTITIES[number],
-    OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
-      ? OPTIONS
-      : ScanOptions<TABLE, NEXT_ENTITIES[number]>
-  >
+  ) => ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>
   public _options: OPTIONS
   public options: <NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
     nextOptions: NEXT_OPTIONS
   ) => ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS>
 
-  constructor(args: { table: TABLE; entities?: ENTITIES[] }, options: OPTIONS = {} as OPTIONS) {
+  constructor(args: { table: TABLE; entities?: ENTITIES }, options: OPTIONS = {} as OPTIONS) {
     super(args)
     this._options = options
 
     this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>
-      new ScanCommand<
-        TABLE,
-        NEXT_ENTITIES[number],
-        OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
-          ? OPTIONS
-          : ScanOptions<TABLE, NEXT_ENTITIES[number]>
-      >(
+      new ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>(
         {
           table: this._table,
           entities: nextEntities
         },
-        this._options as OPTIONS extends ScanOptions<TABLE, NEXT_ENTITIES[number]>
-          ? OPTIONS
-          : ScanOptions<TABLE, NEXT_ENTITIES[number]>
+        // For some reason we can't do the same as Query (cast OPTIONS) as it triggers an infinite type compute
+        this._options as ScanOptions<TABLE, NEXT_ENTITIES>
       )
     this.options = nextOptions =>
       new ScanCommand({ table: this._table, entities: this._entities }, nextOptions)
@@ -110,7 +105,7 @@ export class ScanCommand<
     let responseMetadata: ScanCommandOutput['$metadata'] | undefined = undefined
 
     // NOTE: maxPages has been validated by this.params()
-    const { maxPages = 1 } = this._options
+    const { attributes, maxPages = 1 } = this._options
     let pageIndex = 0
     do {
       pageIndex += 1
@@ -143,7 +138,7 @@ export class ScanCommand<
           continue
         }
 
-        formattedItems.push(formatSavedItem<EntityV2, {}>(itemEntity, item))
+        formattedItems.push(formatSavedItem<EntityV2, {}>(itemEntity, item, { attributes }))
       }
 
       lastEvaluatedKey = pageLastEvaluatedKey

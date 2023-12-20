@@ -42,11 +42,22 @@ type AttributePath<ATTRIBUTE_PATH extends string, ATTRIBUTE extends Attribute> =
 export type SchemaAttributePath<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
   ? string
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
-  ? ATTRIBUTE_PATH extends string
-    ? AttributePath<ATTRIBUTE_PATH, SCHEMA['attributes'][ATTRIBUTE_PATH]>
+    ? ATTRIBUTE_PATH extends string
+      ? AttributePath<ATTRIBUTE_PATH, SCHEMA['attributes'][ATTRIBUTE_PATH]>
+      : never
     : never
-  : never
 
 export type AnyAttributePath<ENTITY extends EntityV2 = EntityV2> = SchemaAttributePath<
   ENTITY['schema']
 >
+
+export type AnyCommonAttributePath<
+  ENTITIES extends EntityV2[] = EntityV2[],
+  RESULTS extends string = string
+> = ENTITIES extends [infer ENTITIES_HEAD, ...infer ENTITIES_TAIL]
+  ? ENTITIES_HEAD extends EntityV2
+    ? ENTITIES_TAIL extends EntityV2[]
+      ? AnyCommonAttributePath<ENTITIES_TAIL, RESULTS & AnyAttributePath<ENTITIES_HEAD>>
+      : never
+    : never
+  : RESULTS
