@@ -85,11 +85,12 @@ export class QueryCommand<
   ) => QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS>
 
   constructor(
-    args: { table: TABLE; entities?: ENTITIES },
+    table: TABLE,
+    entities = ([] as unknown) as ENTITIES,
     query?: QUERY,
     options: OPTIONS = {} as OPTIONS
   ) {
-    super(args)
+    super(table, entities)
     this._query = query
     this._options = options
 
@@ -102,19 +103,17 @@ export class QueryCommand<
           ? OPTIONS
           : QueryOptions<TABLE, NEXT_ENTITIES>
       >(
-        {
-          table: this._table,
-          entities: nextEntities
-        },
+        this._table,
+        nextEntities,
         this._query,
         this._options as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
           ? OPTIONS
           : QueryOptions<TABLE, NEXT_ENTITIES>
       )
     this.query = nextQuery =>
-      new QueryCommand({ table: this._table, entities: this._entities }, nextQuery, this._options)
+      new QueryCommand(this._table, this._entities, nextQuery, this._options)
     this.options = nextOptions =>
-      new QueryCommand({ table: this._table, entities: this._entities }, this._query, nextOptions)
+      new QueryCommand(this._table, this._entities, this._query, nextOptions)
   }
 
   params = (): QueryCommandInput => {
@@ -124,7 +123,7 @@ export class QueryCommand<
       })
     }
 
-    return queryParams({ table: this._table, entities: this._entities }, this._query, this._options)
+    return queryParams(this._table, this._entities, this._query, this._options)
   }
 
   send = async (): Promise<QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>> => {

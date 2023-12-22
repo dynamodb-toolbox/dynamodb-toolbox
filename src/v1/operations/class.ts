@@ -22,13 +22,7 @@ export class TableCommand<
   public _table: TABLE
   public _entities: ENTITIES
 
-  constructor({
-    table,
-    entities = ([] as unknown) as ENTITIES
-  }: {
-    table: TABLE
-    entities?: ENTITIES
-  }) {
+  constructor(table: TABLE, entities = ([] as unknown) as ENTITIES) {
     this._table = table
     this._entities = entities
   }

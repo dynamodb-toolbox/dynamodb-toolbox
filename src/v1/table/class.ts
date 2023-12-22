@@ -77,6 +77,6 @@ export class TableV2<
       }
     }
 
-    this.build = commandClass => new commandClass({ table: this }) as any
+    this.build = commandClass => new commandClass(this) as any
   }
 }
