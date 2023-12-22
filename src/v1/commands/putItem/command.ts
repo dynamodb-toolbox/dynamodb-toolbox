@@ -12,7 +12,7 @@ import type {
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
-import { EntityCommand } from '../class'
+import { EntityOperation } from '../class'
 import type { PutItemInput } from './types'
 import type { PutItemOptions, PutItemCommandReturnValuesOption } from './options'
 import { putItemParams } from './putItemParams'
@@ -52,8 +52,8 @@ export type PutItemResponse<
 export class PutItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
-> extends EntityCommand<ENTITY> {
-  static commandName = 'put' as const
+> extends EntityOperation<ENTITY> {
+  static operationName = 'put' as const
 
   public _item?: PutItemInput<ENTITY>
   public item: (nextItem: PutItemInput<ENTITY>) => PutItemCommand<ENTITY, OPTIONS>

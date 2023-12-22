@@ -12,7 +12,7 @@ import type {
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
-import { EntityCommand } from '../class'
+import { EntityOperation } from '../class'
 import type { UpdateItemInput } from './types'
 import type { UpdateItemOptions, UpdateItemCommandReturnValuesOption } from './options'
 import { updateItemParams } from './updateItemParams'
@@ -52,8 +52,8 @@ export type UpdateItemResponse<
 export class UpdateItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
-> extends EntityCommand<ENTITY> {
-  static commandName = 'update' as const
+> extends EntityOperation<ENTITY> {
+  static operationName = 'update' as const
 
   public _item?: UpdateItemInput<ENTITY>
   public item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemCommand<ENTITY, OPTIONS>
