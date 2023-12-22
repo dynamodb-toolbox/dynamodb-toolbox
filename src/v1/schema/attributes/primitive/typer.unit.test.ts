@@ -1,6 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from 'v1/errors'
+import { prefix } from 'v1/transformers'
 
 import { Never, AtLeastOnce, Always } from '../constants'
 import {
@@ -10,7 +11,8 @@ import {
   $key,
   $savedAs,
   $enum,
-  $defaults
+  $defaults,
+  $transform
 } from '../constants/attributeOptions'
 
 import { string, number, boolean, binary } from './typer'
@@ -38,6 +40,7 @@ describe('primitiveAttribute', () => {
             put: undefined
             update: undefined
           }
+          [$transform]: undefined
         }
       > = 1
       assertStr
@@ -401,6 +404,26 @@ describe('primitiveAttribute', () => {
       assertStrB
 
       expect(strB).toMatchObject({ [$defaults]: { put: sayFoo }, [$enum]: ['foo', 'bar'] })
+    })
+
+    it('returns transformed string (option)', () => {
+      const transformer = prefix('test')
+      const str = string({ transform: transformer })
+
+      const assertStr: A.Contains<typeof str, { [$transform]: unknown }> = 1
+      assertStr
+
+      expect(str).toMatchObject({ [$transform]: transformer })
+    })
+
+    it('returns transformed string (method)', () => {
+      const transformer = prefix('test')
+      const str = string().transform(transformer)
+
+      const assertStr: A.Contains<typeof str, { [$transform]: unknown }> = 1
+      assertStr
+
+      expect(str).toMatchObject({ [$transform]: transformer })
     })
   })
 
