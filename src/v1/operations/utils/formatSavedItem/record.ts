@@ -13,7 +13,7 @@ export const parseSavedRecordAttribute = (
   { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
 ): RecordAttributeValue => {
   if (!isObject(savedRecord)) {
-    throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
+    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
       message: `Invalid attribute in saved item: ${recordAttribute.path}. Should be a ${recordAttribute.type}`,
       path: recordAttribute.path,
       payload: {

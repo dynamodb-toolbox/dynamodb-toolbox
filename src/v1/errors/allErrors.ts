@@ -1,6 +1,6 @@
 import type { SchemaErrorBlueprints } from 'v1/schema/errors'
 import type { EntityErrorBlueprints } from 'v1/entity/errors'
-import type { CommandsErrorBlueprints } from 'v1/operations/errors'
+import type { OperationsErrorBlueprints } from 'v1/operations/errors'
 import type { ParsingErrorBlueprints } from 'v1/validation/errors'
 
 import type { ErrorBlueprint } from './blueprint'
@@ -8,7 +8,7 @@ import type { ErrorBlueprint } from './blueprint'
 type ErrorBlueprints =
   | SchemaErrorBlueprints
   | EntityErrorBlueprints
-  | CommandsErrorBlueprints
+  | OperationsErrorBlueprints
   | ParsingErrorBlueprints
 
 type IndexErrors<ERROR_BLUEPRINTS extends ErrorBlueprint> = {

@@ -99,7 +99,9 @@ describe('scan', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
+    )
   })
 
   it('sets consistent option', () => {
@@ -119,7 +121,7 @@ describe('scan', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
+      expect.objectContaining({ code: 'operations.invalidConsistentOption' })
     )
 
     const invalidCallB = () =>
@@ -133,7 +135,7 @@ describe('scan', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
+      expect.objectContaining({ code: 'operations.invalidConsistentOption' })
     )
   })
 
@@ -161,7 +163,7 @@ describe('scan', () => {
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'commands.invalidIndexOption' }))
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'operations.invalidIndexOption' }))
 
     const invalidCallB = () =>
       TestTable.build(ScanCommand)
@@ -172,7 +174,7 @@ describe('scan', () => {
         .params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'commands.invalidIndexOption' }))
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'operations.invalidIndexOption' }))
   })
 
   it('sets select option', () => {
@@ -191,7 +193,7 @@ describe('scan', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidSelectOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidSelectOption' }))
   })
 
   it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
@@ -210,7 +212,7 @@ describe('scan', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidSelectOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidSelectOption' }))
   })
 
   it('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
@@ -231,7 +233,7 @@ describe('scan', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidSelectOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidSelectOption' }))
   })
 
   it('sets limit option', () => {
@@ -250,7 +252,7 @@ describe('scan', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidLimitOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidLimitOption' }))
   })
 
   it('ignores valid maxPages option', () => {
@@ -272,7 +274,7 @@ describe('scan', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidMaxPagesOption' })
+      expect.objectContaining({ code: 'operations.invalidMaxPagesOption' })
     )
 
     // Unable to ts-expect-error here
@@ -280,7 +282,7 @@ describe('scan', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'commands.invalidMaxPagesOption' })
+      expect.objectContaining({ code: 'operations.invalidMaxPagesOption' })
     )
   })
 
@@ -407,7 +409,7 @@ describe('scan', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
   })
 
   it('applies entity _et filter', () => {

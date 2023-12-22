@@ -377,7 +377,7 @@ describe('update', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallB = () =>
@@ -418,7 +418,7 @@ describe('update', () => {
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
     expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallE = () =>
@@ -557,7 +557,7 @@ describe('update', () => {
 
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
     expect(invalidCallC).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallD = () =>
@@ -696,7 +696,7 @@ describe('update', () => {
 
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
     expect(invalidCallC).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallD = () =>
@@ -924,7 +924,7 @@ describe('update', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallB = () =>
@@ -971,7 +971,7 @@ describe('update', () => {
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
     expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallE = () =>
@@ -1132,7 +1132,7 @@ describe('update', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
   })
 
@@ -1210,7 +1210,7 @@ describe('update', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
   })
 
@@ -1295,7 +1295,7 @@ describe('update', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallB = () =>
@@ -1342,7 +1342,7 @@ describe('update', () => {
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
     expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallE = () =>
@@ -1494,7 +1494,7 @@ describe('update', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallB = () =>
@@ -1541,7 +1541,7 @@ describe('update', () => {
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
     expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'commands.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
     )
 
     const invalidCallE = () =>
@@ -1712,7 +1712,9 @@ describe('update', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
+    )
   })
 
   it('fails on invalid metrics option', () => {
@@ -1726,7 +1728,9 @@ describe('update', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidMetricsOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidMetricsOption' })
+    )
   })
 
   it('fails on invalid returnValues option', () => {
@@ -1741,7 +1745,7 @@ describe('update', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'commands.invalidReturnValuesOption' })
+      expect.objectContaining({ code: 'operations.invalidReturnValuesOption' })
     )
   })
 
@@ -1756,7 +1760,7 @@ describe('update', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
   })
 
   it('sets conditions', () => {
@@ -1778,6 +1782,6 @@ describe('update', () => {
     const invalidCall = () => TestEntity.build(UpdateItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.incompleteCommand' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
   })
 })

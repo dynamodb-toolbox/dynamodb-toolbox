@@ -395,7 +395,9 @@ describe('put', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
+    )
   })
 
   it('sets metrics options', () => {
@@ -418,7 +420,9 @@ describe('put', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidMetricsOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidMetricsOption' })
+    )
   })
 
   it('sets returnValues options', () => {
@@ -442,7 +446,7 @@ describe('put', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'commands.invalidReturnValuesOption' })
+      expect.objectContaining({ code: 'operations.invalidReturnValuesOption' })
     )
   })
 
@@ -457,7 +461,7 @@ describe('put', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
   })
 
   it('sets condition', () => {
@@ -479,7 +483,7 @@ describe('put', () => {
     const invalidCall = () => TestEntity.build(PutItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.incompleteCommand' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
   })
 
   // TODO Create putBatch method and move tests there

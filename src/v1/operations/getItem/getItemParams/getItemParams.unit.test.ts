@@ -138,7 +138,9 @@ describe('get', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
+    )
   })
 
   it('sets consistent option', () => {
@@ -162,7 +164,7 @@ describe('get', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
+      expect.objectContaining({ code: 'operations.invalidConsistentOption' })
     )
   })
 
@@ -177,7 +179,7 @@ describe('get', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
   })
 
   it('parses attribute projections', () => {
@@ -194,7 +196,7 @@ describe('get', () => {
     const invalidCall = () => TestEntity.build(GetItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.incompleteCommand' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
   })
 
   // TODO Create getBatch method and move tests there

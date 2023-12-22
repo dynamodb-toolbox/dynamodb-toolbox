@@ -22,7 +22,7 @@ export const parsePrimaryKey = <ENTITY extends EntityV2, EXTENSION extends Exten
      */
     primaryKey[partitionKey.name] = partitionKeyValue as number | string | Buffer
   } else {
-    throw new DynamoDBToolboxError('commands.parsePrimaryKey.invalidKeyPart', {
+    throw new DynamoDBToolboxError('operations.parsePrimaryKey.invalidKeyPart', {
       message: `Invalid partition key: ${partitionKey.name}`,
       path: partitionKey.name,
       payload: {
@@ -43,7 +43,7 @@ export const parsePrimaryKey = <ENTITY extends EntityV2, EXTENSION extends Exten
        */
       primaryKey[sortKey.name] = sortKeyValue as number | string | Buffer
     } else {
-      throw new DynamoDBToolboxError('commands.parsePrimaryKey.invalidKeyPart', {
+      throw new DynamoDBToolboxError('operations.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid sort key: ${sortKey.name}`,
         path: sortKey.name,
         payload: {

@@ -12,7 +12,7 @@ export const parseSavedMapAttribute = (
   { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
 ): MapAttributeValue => {
   if (!isObject(savedMap)) {
-    throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
+    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
       message: `Invalid attribute in saved item: ${mapAttribute.path}. Should be a ${mapAttribute.type}`,
       path: mapAttribute.path,
       payload: {
