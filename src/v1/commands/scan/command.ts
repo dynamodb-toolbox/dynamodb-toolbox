@@ -58,7 +58,7 @@ export class ScanCommand<
   ENTITIES extends EntityV2[] = EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
 > extends TableCommand<TABLE, ENTITIES> {
-  static commandName = 'scan' as const
+  static operationName = 'scan' as const
 
   public entities: <NEXT_ENTITIES extends EntityV2[]>(
     ...nextEntities: NEXT_ENTITIES

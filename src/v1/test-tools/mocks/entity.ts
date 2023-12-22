@@ -14,7 +14,7 @@ import {
 } from 'v1/commands/updateItem'
 import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
 
-import type { CommandClassMocker, CommandClassResults, CommandName } from './types'
+import type { CommandClassMocker, CommandClassResults, operationName } from './types'
 import { GetItemCommandMock } from './getItemCommand'
 import { PutItemCommandMock } from './putItemCommand'
 import { DeleteItemCommandMock } from './deleteItemCommand'
@@ -86,10 +86,10 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
   >(
     command: COMMAND_CLASS
   ): CommandClassMocker<ENTITY, COMMAND_CLASS> =>
-    new CommandMocker<CommandName, any, any, any>(command.commandName, this) as CommandClassMocker<
-      ENTITY,
-      COMMAND_CLASS
-    >
+    new CommandMocker<operationName, any, any, any>(
+      command.operationName,
+      this
+    ) as CommandClassMocker<ENTITY, COMMAND_CLASS>
 
   received = <
     COMMAND_CLASS extends
@@ -101,6 +101,6 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
     command: COMMAND_CLASS
   ): CommandClassResults<ENTITY, COMMAND_CLASS> =>
     new CommandResults<unknown, unknown>(
-      this[$receivedCommands][command.commandName]
+      this[$receivedCommands][command.operationName]
     ) as CommandClassResults<ENTITY, COMMAND_CLASS>
 }

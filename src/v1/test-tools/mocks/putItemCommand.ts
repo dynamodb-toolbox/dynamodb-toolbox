@@ -7,7 +7,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandName,
+  $operationName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -18,9 +18,9 @@ export class PutItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > implements PutItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'entity' as const
-  static commandName = 'put' as const
-  static [$commandName] = 'put' as const
+  static operationType = 'entity' as const
+  static operationName = 'put' as const
+  static [$operationName] = 'put' as const
 
   _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>

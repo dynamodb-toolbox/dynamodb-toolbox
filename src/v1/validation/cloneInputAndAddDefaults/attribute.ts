@@ -40,8 +40,8 @@ export const cloneAttributeInputAndAddDefaults = <
   }
 
   if (basicInput === undefined) {
-    const { commandName, originalInput } = options
-    const commandDefault = getCommandDefault(attribute, { commandName })
+    const { operationName, originalInput } = options
+    const commandDefault = getCommandDefault(attribute, { operationName })
 
     return isFunction(commandDefault)
       ? (commandDefault(originalInput) as AttributeValue<EXTENSION> | undefined)

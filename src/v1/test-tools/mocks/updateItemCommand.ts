@@ -12,7 +12,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandName,
+  $operationName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -23,9 +23,9 @@ export class UpdateItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > implements UpdateItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'entity' as const
-  static commandName = 'update' as const
-  static [$commandName] = 'update' as const
+  static operationType = 'entity' as const
+  static operationName = 'update' as const
+  static [$operationName] = 'update' as const
 
   _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>

@@ -62,7 +62,7 @@ export class QueryCommand<
   QUERY extends Query<TABLE> = Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
 > extends TableCommand<TABLE, ENTITIES> {
-  static commandName = 'query' as const
+  static operationName = 'query' as const
 
   public entities: <NEXT_ENTITIES extends EntityV2[]>(
     ...nextEntities: NEXT_ENTITIES
