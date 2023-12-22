@@ -16,5 +16,6 @@ export type TimestampAttribute<
       put: unknown
       update: unknown
     }
+    transform: undefined
   }
 >

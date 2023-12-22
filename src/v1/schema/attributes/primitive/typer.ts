@@ -10,8 +10,9 @@ import {
   $hidden,
   $key,
   $savedAs,
+  $enum,
   $defaults,
-  $enum
+  $transform
 } from '../constants/attributeOptions'
 
 import type { $PrimitiveAttribute } from './interface'
@@ -48,8 +49,9 @@ const $primitive: $PrimitiveAttributeTyper = <
     [$hidden]: state.hidden,
     [$key]: state.key,
     [$savedAs]: state.savedAs,
-    [$defaults]: state.defaults,
     [$enum]: state.enum,
+    [$defaults]: state.defaults,
+    [$transform]: state.transform,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => $primitive(type, overwrite(state, { required: nextRequired })),
@@ -57,6 +59,18 @@ const $primitive: $PrimitiveAttributeTyper = <
     hidden: () => $primitive(type, overwrite(state, { hidden: true })),
     key: () => $primitive(type, overwrite(state, { key: true, required: 'always' })),
     savedAs: nextSavedAs => $primitive(type, overwrite(state, { savedAs: nextSavedAs })),
+    enum: (...nextEnum) => $primitive(type, update(state, 'enum', nextEnum)),
+    const: constant =>
+      $primitive(
+        type,
+        overwrite(state, {
+          enum: [constant],
+          defaults: state.key
+            ? { key: constant, put: state.defaults.put, update: state.defaults.update }
+            : { key: state.defaults.key, put: constant, update: state.defaults.update }
+        })
+      ),
+    transform: transformer => $primitive(type, overwrite(state, { transform: transformer })),
     keyDefault: nextKeyDefault =>
       $primitive(
         type,
@@ -139,17 +153,6 @@ const $primitive: $PrimitiveAttributeTyper = <
           defaults: state.key
             ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
-        })
-      ),
-    enum: (...nextEnum) => $primitive(type, update(state, 'enum', nextEnum)),
-    const: constant =>
-      $primitive(
-        type,
-        overwrite(state, {
-          enum: [constant],
-          defaults: state.key
-            ? { key: constant, put: state.defaults.put, update: state.defaults.update }
-            : { key: state.defaults.key, put: constant, update: state.defaults.update }
         })
       )
   }

@@ -18,6 +18,7 @@ export type EntityAttribute<TABLE extends TableV2, ENTITY_NAME extends string> =
       put: unknown
       update: unknown
     }
+    transform: undefined
   }
 >
 
@@ -77,7 +78,8 @@ export const addEntityAttribute: EntityAttributeAdder = <
       key: undefined,
       put: entityName,
       update: () => $get(entityAttributeName, entityName)
-    }
+    },
+    transform: undefined
   }
 
   return addInternalAttribute(schema, entityAttributeName, entityAttribute) as WithEntityAttribute<
