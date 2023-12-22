@@ -1,12 +1,12 @@
 import type { Attribute } from 'v1/schema'
 
-import type { ExtensionCloner, CommandName } from './types'
+import type { ExtensionCloner, operationName } from './types'
 
 export const getCommandDefault = (
   attribute: Attribute,
-  { commandName }: { commandName?: CommandName }
-): Attribute['defaults']['key' | CommandName] =>
-  attribute.key ? attribute.defaults.key : commandName && attribute.defaults[commandName]
+  { operationName }: { operationName?: operationName }
+): Attribute['defaults']['key' | operationName] =>
+  attribute.key ? attribute.defaults.key : operationName && attribute.defaults[operationName]
 
 export const defaultCloneExtension: ExtensionCloner<never, never> = (_, input) => ({
   isExtension: false,

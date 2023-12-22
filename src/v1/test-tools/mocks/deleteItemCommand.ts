@@ -8,7 +8,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandName,
+  $operationName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -19,9 +19,9 @@ export class DeleteItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
 > implements DeleteItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'entity' as const
-  static commandName = 'delete' as const
-  static [$commandName] = 'delete' as const
+  static operationType = 'entity' as const
+  static operationName = 'delete' as const
+  static [$operationName] = 'delete' as const
 
   _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>

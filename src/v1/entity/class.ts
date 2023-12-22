@@ -11,7 +11,7 @@ import type { PutItemCommandClass } from 'v1/commands/putItem/command'
 import type { GetItemCommandClass } from 'v1/commands/getItem/command'
 import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
 import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
-import type { EntityCommand } from 'v1/commands/class'
+import type { EntityOperation } from 'v1/commands/class'
 import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -52,7 +52,7 @@ export class EntityV2<
   ) => PrimaryKey<TABLE>
   // TODO: Maybe there's a way not to have to list all commands here
   // (use COMMAND_CLASS somehow) but I haven't found it yet
-  public build: <COMMAND_CLASS extends typeof EntityCommand = typeof EntityCommand>(
+  public build: <COMMAND_CLASS extends typeof EntityOperation = typeof EntityOperation>(
     commandClass: COMMAND_CLASS
   ) => string extends NAME
     ? any
@@ -64,7 +64,7 @@ export class EntityV2<
     ? DeleteItemCommand<this>
     : COMMAND_CLASS extends UpdateItemCommandClass
     ? UpdateItemCommand<this>
-    : EntityCommand<this>
+    : EntityOperation<this>
 
   /**
    * Define an Entity for a given table

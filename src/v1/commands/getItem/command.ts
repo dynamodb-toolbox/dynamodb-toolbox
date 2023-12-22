@@ -6,7 +6,7 @@ import type { AnyAttributePath, KeyInput } from 'v1/commands/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
-import { EntityCommand } from '../class'
+import { EntityOperation } from '../class'
 import type { GetItemOptions } from './options'
 import { getItemParams } from './getItemParams'
 
@@ -27,8 +27,8 @@ export type GetItemResponse<
 export class GetItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
-> extends EntityCommand<ENTITY> {
-  static commandName = 'get' as const
+> extends EntityOperation<ENTITY> {
+  static operationName = 'get' as const
 
   public _key?: KeyInput<ENTITY>
   public key: (key: KeyInput<ENTITY>) => GetItemCommand<ENTITY, OPTIONS>

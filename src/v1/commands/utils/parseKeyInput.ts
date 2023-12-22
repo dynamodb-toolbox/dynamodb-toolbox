@@ -10,7 +10,7 @@ const requiringOptions = new Set<RequiredOption>(['always'])
 
 export const parseEntityKeyInput: EntityKeyInputParser = (entity, input) => {
   const clonedInputWithDefaults = cloneSchemaInputAndAddDefaults(entity.schema, input, {
-    commandName: 'key'
+    operationName: 'key'
   })
 
   return parseSchemaClonedInput(entity.schema, clonedInputWithDefaults, {

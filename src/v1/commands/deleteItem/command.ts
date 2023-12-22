@@ -10,7 +10,7 @@ import type { KeyInput } from 'v1/commands/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/commands/utils/formatSavedItem'
 
-import { EntityCommand } from '../class'
+import { EntityOperation } from '../class'
 import type { DeleteItemOptions, DeleteItemCommandReturnValuesOption } from './options'
 import { deleteItemParams } from './deleteItemParams'
 
@@ -36,8 +36,8 @@ export type DeleteItemResponse<
 export class DeleteItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
-> extends EntityCommand<ENTITY> {
-  static commandName = 'delete' as const
+> extends EntityOperation<ENTITY> {
+  static operationName = 'delete' as const
 
   public _key?: KeyInput<ENTITY>
   public key: (keyInput: KeyInput<ENTITY>) => DeleteItemCommand<ENTITY, OPTIONS>
