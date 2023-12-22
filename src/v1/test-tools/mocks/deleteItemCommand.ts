@@ -1,9 +1,9 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
-import { DeleteItemCommand, DeleteItemOptions, DeleteItemResponse } from 'v1/commands/deleteItem'
-import { deleteItemParams } from 'v1/commands/deleteItem/deleteItemParams'
-import type { KeyInput } from 'v1/commands/types'
+import { DeleteItemCommand, DeleteItemOptions, DeleteItemResponse } from 'v1/operations/deleteItem'
+import { deleteItemParams } from 'v1/operations/deleteItem/deleteItemParams'
+import type { KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'

@@ -6,8 +6,8 @@ import {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from 'v1/commands/updateItem'
-import { updateItemParams } from 'v1/commands/updateItem/updateItemParams'
+} from 'v1/operations/updateItem'
+import { updateItemParams } from 'v1/operations/updateItem/updateItemParams'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'

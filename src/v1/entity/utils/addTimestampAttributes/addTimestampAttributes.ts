@@ -1,6 +1,6 @@
 import type { Schema } from 'v1/schema'
 import type { If } from 'v1/types/if'
-import { $get } from 'v1/commands/updateItem/utils'
+import { $get } from 'v1/operations/updateItem/utils'
 
 import { WithInternalAttribute, addInternalAttribute } from '../addInternalAttribute'
 

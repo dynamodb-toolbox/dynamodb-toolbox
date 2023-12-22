@@ -5,13 +5,13 @@ import type {
   GetItemCommand,
   DeleteItemCommand,
   UpdateItemCommand
-} from 'v1/commands'
-import type { KeyInput } from 'v1/commands/types'
-import type { PutItemCommandClass } from 'v1/commands/putItem/command'
-import type { GetItemCommandClass } from 'v1/commands/getItem/command'
-import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
-import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
-import type { EntityOperation } from 'v1/commands/class'
+} from 'v1/operations'
+import type { KeyInput } from 'v1/operations/types'
+import type { PutItemCommandClass } from 'v1/operations/putItem/command'
+import type { GetItemCommandClass } from 'v1/operations/getItem/command'
+import type { DeleteItemCommandClass } from 'v1/operations/deleteItem/command'
+import type { UpdateItemCommandClass } from 'v1/operations/updateItem/command'
+import type { EntityOperation } from 'v1/operations/class'
 import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
 
