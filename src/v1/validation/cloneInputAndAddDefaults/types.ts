@@ -5,11 +5,11 @@ import type { HasExtension } from '../types'
 
 export type ExtensionCloner<
   ATTRIBUTE_EXTENSION extends Extension,
-  COMMAND_EXTENSION extends Extension = ATTRIBUTE_EXTENSION
+  EXTENSION extends Extension = ATTRIBUTE_EXTENSION
 > = (
   attribute: Attribute,
   input: AttributeValue<ATTRIBUTE_EXTENSION> | undefined,
-  options: AttributeCloningOptions<ATTRIBUTE_EXTENSION, COMMAND_EXTENSION>
+  options: AttributeCloningOptions<ATTRIBUTE_EXTENSION, EXTENSION>
 ) =>
   | { isExtension: true; clonedExtension: AttributeValue<ATTRIBUTE_EXTENSION>; basicInput?: never }
   | {

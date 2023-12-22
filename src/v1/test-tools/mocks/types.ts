@@ -19,7 +19,7 @@ import type { DeleteItemCommandMock } from './deleteItemCommand'
 import type { UpdateItemCommandMock } from './updateItemCommand'
 import type { $operationName } from './constants'
 import type { CommandResults } from './commandResults'
-import type { CommandMocker } from './commandMocker'
+import type { OperationMocker } from './commandMocker'
 
 type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
   ? {
@@ -31,56 +31,61 @@ type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
     }
   : never
 
-type CommandMock =
+type OperationMock =
   | typeof GetItemCommandMock
   | typeof PutItemCommandMock
   | typeof DeleteItemCommandMock
   | typeof UpdateItemCommandMock
 
-export type operationName = ClassStaticProperties<CommandMock>[$operationName]
+export type operationName = ClassStaticProperties<OperationMock>[$operationName]
 
-export type CommandClassResults<
+export type OperationClassResults<
   ENTITY extends EntityV2,
-  COMMAND_CLASS extends
+  OPERATION_CLASS extends
     | GetItemCommandClass
     | PutItemCommandClass
     | DeleteItemCommandClass
     | UpdateItemCommandClass
-> = COMMAND_CLASS extends GetItemCommandClass
+> = OPERATION_CLASS extends GetItemCommandClass
   ? CommandResults<KeyInput<ENTITY>, GetItemOptions<ENTITY>>
-  : COMMAND_CLASS extends PutItemCommandClass
+  : OPERATION_CLASS extends PutItemCommandClass
   ? CommandResults<PutItemInput<ENTITY>, PutItemOptions<ENTITY>>
-  : COMMAND_CLASS extends DeleteItemCommandClass
+  : OPERATION_CLASS extends DeleteItemCommandClass
   ? CommandResults<KeyInput<ENTITY>, DeleteItemOptions<ENTITY>>
-  : COMMAND_CLASS extends UpdateItemCommandClass
+  : OPERATION_CLASS extends UpdateItemCommandClass
   ? CommandResults<UpdateItemInput<ENTITY>, UpdateItemOptions<ENTITY>>
   : never
 
-export type CommandClassMocker<
+export type OperationClassMocker<
   ENTITY extends EntityV2,
-  COMMAND_CLASS extends
+  OPERATION_CLASS extends
     | GetItemCommandClass
     | PutItemCommandClass
     | DeleteItemCommandClass
     | UpdateItemCommandClass
-> = COMMAND_CLASS extends GetItemCommandClass
-  ? CommandMocker<'get', KeyInput<ENTITY>, GetItemOptions<ENTITY>, Partial<GetItemResponse<ENTITY>>>
-  : COMMAND_CLASS extends PutItemCommandClass
-  ? CommandMocker<
+> = OPERATION_CLASS extends GetItemCommandClass
+  ? OperationMocker<
+      'get',
+      KeyInput<ENTITY>,
+      GetItemOptions<ENTITY>,
+      Partial<GetItemResponse<ENTITY>>
+    >
+  : OPERATION_CLASS extends PutItemCommandClass
+  ? OperationMocker<
       'put',
       PutItemInput<ENTITY>,
       PutItemOptions<ENTITY>,
       Partial<PutItemResponse<ENTITY>>
     >
-  : COMMAND_CLASS extends DeleteItemCommandClass
-  ? CommandMocker<
+  : OPERATION_CLASS extends DeleteItemCommandClass
+  ? OperationMocker<
       'delete',
       KeyInput<ENTITY>,
       DeleteItemOptions<ENTITY>,
       Partial<DeleteItemResponse<ENTITY>>
     >
-  : COMMAND_CLASS extends UpdateItemCommandClass
-  ? CommandMocker<
+  : OPERATION_CLASS extends UpdateItemCommandClass
+  ? OperationMocker<
       'update',
       UpdateItemInput<ENTITY>,
       UpdateItemOptions<ENTITY>,
