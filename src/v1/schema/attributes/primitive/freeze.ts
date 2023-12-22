@@ -12,7 +12,8 @@ import {
   $key,
   $savedAs,
   $enum,
-  $defaults
+  $defaults,
+  $transform
 } from '../constants/attributeOptions'
 
 import type { $PrimitiveAttributeState, PrimitiveAttribute } from './interface'
@@ -33,6 +34,7 @@ export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttr
           PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
         >
         defaults: $PRIMITIVE_ATTRIBUTE[$defaults]
+        transform: $PRIMITIVE_ATTRIBUTE[$transform]
       }
     >,
     never,
@@ -113,6 +115,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
       $PRIMITIVE_ATTRIBUTE[$enum],
       PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
     >,
-    defaults
+    defaults,
+    transform: $primitiveAttribute[$transform]
   }
 }

@@ -33,6 +33,7 @@ export type PrimitiveAttributeOptions = {
     put: undefined | unknown
     update: undefined | unknown
   }
+  transform: undefined | unknown
 }
 
 export type PrimitiveAttributeDefaultOptions = {
@@ -45,6 +46,7 @@ export type PrimitiveAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
+  transform: undefined
 }
 
 export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
@@ -56,5 +58,6 @@ export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
     key: undefined,
     put: undefined,
     update: undefined
-  }
+  },
+  transform: undefined
 }

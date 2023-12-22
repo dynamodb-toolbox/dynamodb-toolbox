@@ -64,7 +64,8 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
     ...defaultAttribute,
     path: partitionKey.name,
     type: partitionKey.type,
-    enum: undefined
+    enum: undefined,
+    transform: undefined
   }
 
   let condition: Condition = {
@@ -77,7 +78,8 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
       ...defaultAttribute,
       path: sortKey.name,
       type: sortKey.type,
-      enum: undefined
+      enum: undefined,
+      transform: undefined
     }
 
     const sortKeyCondition = ({

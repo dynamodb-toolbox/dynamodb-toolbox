@@ -11,7 +11,8 @@ import {
   SavedItem,
   FormattedItem,
   KeyInput,
-  UpdateItemInput
+  UpdateItemInput,
+  prefix
 } from 'v1'
 
 import { MyTable } from './table'
@@ -30,7 +31,8 @@ export const UserEntity = new EntityV2({
       mother: string()
     }),
     someSet: set(string().enum('foo', 'bar')).optional(),
-    castedStr: any().castAs<'foo' | 'bar'>()
+    castedStr: any().castAs<'foo' | 'bar'>(),
+    transformedStr: string().optional().enum('foo', 'bar').transform(prefix('toto'))
   }).and(prevSchema => ({
     completeName: string().putLink<typeof prevSchema>(
       ({ firstName, lastName }) => firstName + ' ' + lastName
