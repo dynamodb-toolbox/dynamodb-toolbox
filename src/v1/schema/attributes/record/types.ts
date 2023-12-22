@@ -15,6 +15,7 @@ type RecordAttributeKeysState = {
     put: undefined
     update: undefined
   }
+  transform: undefined | unknown
 }
 
 export type $RecordAttributeKeys = $PrimitiveAttributeState<'string', RecordAttributeKeysState>

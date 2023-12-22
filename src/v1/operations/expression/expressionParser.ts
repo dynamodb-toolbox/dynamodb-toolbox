@@ -40,7 +40,8 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
     put: undefined,
     update: undefined
   },
-  enum: undefined
+  enum: undefined,
+  transform: undefined
 }
 
 class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'operations.invalidExpressionAttributePath'> {

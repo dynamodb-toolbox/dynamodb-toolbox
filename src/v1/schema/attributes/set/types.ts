@@ -13,6 +13,7 @@ interface SetAttributeElementState {
     put: undefined
     update: undefined
   }
+  transform: undefined | unknown
 }
 
 export type $SetAttributeElements = $PrimitiveAttributeState<
