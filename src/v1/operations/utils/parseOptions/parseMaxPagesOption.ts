@@ -7,7 +7,7 @@ export const parseMaxPagesOption = (maxPages: number): number => {
   }
 
   if (!isInteger(maxPages) || maxPages <= 0) {
-    throw new DynamoDBToolboxError('commands.invalidMaxPagesOption', {
+    throw new DynamoDBToolboxError('operations.invalidMaxPagesOption', {
       message: `Invalid limit option: '${String(
         maxPages
       )}'. 'limit' must be Infinity or an integer > 0.`,

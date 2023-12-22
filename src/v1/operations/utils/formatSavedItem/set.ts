@@ -9,7 +9,7 @@ export const parseSavedSetAttribute = (
   savedSet: AttributeValue
 ): SetAttributeValue => {
   if (!isSet(savedSet)) {
-    throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
+    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
       message: `Invalid attribute in saved item: ${setAttribute.path}. Should be a ${setAttribute.type}`,
       path: setAttribute.path,
       payload: {

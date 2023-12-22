@@ -169,7 +169,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'commands.invalidCondition' }))
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'operations.invalidCondition' }))
   })
 
   it('creates query on LSI', () => {
@@ -258,7 +258,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'commands.invalidCondition' }))
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'operations.invalidCondition' }))
 
     const invalidCallE = () =>
       TestTable.build(QueryCommand)
@@ -275,7 +275,7 @@ describe('query', () => {
 
     expect(invalidCallE).toThrow(DynamoDBToolboxError)
     expect(invalidCallE).toThrow(
-      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
+      expect.objectContaining({ code: 'operations.invalidConsistentOption' })
     )
   })
 
@@ -365,7 +365,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'commands.invalidCondition' }))
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'operations.invalidCondition' }))
 
     const invalidCallE = () =>
       TestTable.build(QueryCommand)
@@ -382,7 +382,7 @@ describe('query', () => {
 
     expect(invalidCallE).toThrow(DynamoDBToolboxError)
     expect(invalidCallE).toThrow(
-      expect.objectContaining({ code: 'commands.invalidConsistentOption' })
+      expect.objectContaining({ code: 'operations.invalidConsistentOption' })
     )
   })
 
@@ -407,7 +407,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidCapacityOption' }))
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
+    )
   })
 
   it('sets consistent option', () => {
@@ -449,7 +451,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'commands.invalidIndexOption' }))
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'operations.invalidIndexOption' }))
 
     const invalidCallB = () =>
       TestTable.build(QueryCommand)
@@ -461,7 +463,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'commands.invalidIndexOption' }))
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'operations.invalidIndexOption' }))
   })
 
   it('sets select option', () => {
@@ -484,7 +486,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidSelectOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidSelectOption' }))
   })
 
   it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
@@ -505,7 +507,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidSelectOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidSelectOption' }))
   })
 
   it('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
@@ -528,7 +530,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidSelectOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidSelectOption' }))
   })
 
   it('sets limit option', () => {
@@ -551,7 +553,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.invalidLimitOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidLimitOption' }))
   })
 
   it('ignores valid maxPages option', () => {
@@ -579,7 +581,7 @@ describe('query', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'commands.invalidMaxPagesOption' })
+      expect.objectContaining({ code: 'operations.invalidMaxPagesOption' })
     )
 
     // Unable to ts-expect-error here
@@ -588,7 +590,7 @@ describe('query', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'commands.invalidMaxPagesOption' })
+      expect.objectContaining({ code: 'operations.invalidMaxPagesOption' })
     )
   })
 
@@ -781,6 +783,6 @@ describe('query', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'commands.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
   })
 })

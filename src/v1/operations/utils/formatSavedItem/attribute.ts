@@ -23,7 +23,7 @@ export const parseSavedAttribute = (
 ): AttributeValue | undefined => {
   if (savedValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
-      throw new DynamoDBToolboxError('commands.formatSavedItem.savedAttributeRequired', {
+      throw new DynamoDBToolboxError('operations.formatSavedItem.savedAttributeRequired', {
         message: `Missing required attribute in saved item: ${attribute.path}`,
         path: attribute.path
       })
