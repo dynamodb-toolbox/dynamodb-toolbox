@@ -6,13 +6,13 @@ import {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from 'v1/commands/updateItem'
-import { updateItemParams } from 'v1/commands/updateItem/updateItemParams'
+} from 'v1/operations/updateItem'
+import { updateItemParams } from 'v1/operations/updateItem/updateItemParams'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandName,
+  $operationName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -23,9 +23,9 @@ export class UpdateItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > implements UpdateItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'entity' as const
-  static commandName = 'update' as const
-  static [$commandName] = 'update' as const
+  static operationType = 'entity' as const
+  static operationName = 'update' as const
+  static [$operationName] = 'update' as const
 
   _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
@@ -53,7 +53,7 @@ export class UpdateItemCommandMock<
 
   params = (): UpdateCommandInput => {
     if (!this._item) {
-      throw new DynamoDBToolboxError('commands.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'UpdateItemCommand incomplete: Missing "item" property'
       })
     }
@@ -68,7 +68,7 @@ export class UpdateItemCommandMock<
 
     if (implementation !== undefined) {
       if (!this._item) {
-        throw new DynamoDBToolboxError('commands.incompleteCommand', {
+        throw new DynamoDBToolboxError('operations.incompleteCommand', {
           message: 'UpdateItemCommand incomplete: Missing "item" property'
         })
       }

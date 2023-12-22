@@ -5,11 +5,11 @@ import type { HasExtension } from '../types'
 
 export type ExtensionCloner<
   ATTRIBUTE_EXTENSION extends Extension,
-  COMMAND_EXTENSION extends Extension = ATTRIBUTE_EXTENSION
+  EXTENSION extends Extension = ATTRIBUTE_EXTENSION
 > = (
   attribute: Attribute,
   input: AttributeValue<ATTRIBUTE_EXTENSION> | undefined,
-  options: AttributeCloningOptions<ATTRIBUTE_EXTENSION, COMMAND_EXTENSION>
+  options: AttributeCloningOptions<ATTRIBUTE_EXTENSION, EXTENSION>
 ) =>
   | { isExtension: true; clonedExtension: AttributeValue<ATTRIBUTE_EXTENSION>; basicInput?: never }
   | {
@@ -19,7 +19,7 @@ export type ExtensionCloner<
     }
 
 export type SchemaCloningOptions<EXTENSION extends Extension> = {
-  commandName?: CommandName
+  operationName?: operationName
 } & If<
   HasExtension<EXTENSION>,
   { cloneExtension: ExtensionCloner<EXTENSION> },
@@ -30,7 +30,7 @@ export type AttributeCloningOptions<
   EXTENSION extends Extension,
   CONTEXT_EXTENSION extends Extension = EXTENSION
 > = {
-  commandName?: CommandName
+  operationName?: operationName
   originalInput: Item<CONTEXT_EXTENSION>
 } & If<
   HasExtension<EXTENSION>,
@@ -43,4 +43,4 @@ export type AnyOfAttributeClonedInputsWithDefaults<EXTENSION extends Extension =
   clonedInputsWithDefaults: AttributeValue<EXTENSION>[]
 }
 
-export type CommandName = 'key' | 'put' | 'update'
+export type operationName = 'key' | 'put' | 'update'

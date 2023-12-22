@@ -1,25 +1,30 @@
 import type { EntityV2 } from 'v1/entity'
-import type { KeyInput } from 'v1/commands'
-import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/commands/getItem'
-import type { GetItemCommandClass } from 'v1/commands/getItem/command'
-import { PutItemCommand, PutItemInput, PutItemOptions, PutItemResponse } from 'v1/commands/putItem'
-import type { PutItemCommandClass } from 'v1/commands/putItem/command'
-import { DeleteItemCommand, DeleteItemOptions, DeleteItemResponse } from 'v1/commands/deleteItem'
-import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
+import type { KeyInput } from 'v1/operations'
+import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/operations/getItem'
+import type { GetItemCommandClass } from 'v1/operations/getItem/command'
+import {
+  PutItemCommand,
+  PutItemInput,
+  PutItemOptions,
+  PutItemResponse
+} from 'v1/operations/putItem'
+import type { PutItemCommandClass } from 'v1/operations/putItem/command'
+import { DeleteItemCommand, DeleteItemOptions, DeleteItemResponse } from 'v1/operations/deleteItem'
+import type { DeleteItemCommandClass } from 'v1/operations/deleteItem/command'
 import {
   UpdateItemCommand,
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from 'v1/commands/updateItem'
-import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
+} from 'v1/operations/updateItem'
+import type { UpdateItemCommandClass } from 'v1/operations/updateItem/command'
 
-import type { CommandClassMocker, CommandClassResults, CommandName } from './types'
+import type { OperationClassMocker, OperationClassResults, operationName } from './types'
 import { GetItemCommandMock } from './getItemCommand'
 import { PutItemCommandMock } from './putItemCommand'
 import { DeleteItemCommandMock } from './deleteItemCommand'
 import { UpdateItemCommandMock } from './updateItemCommand'
-import { CommandMocker } from './commandMocker'
+import { OperationMocker } from './commandMocker'
 import { CommandResults } from './commandResults'
 import { $entity, $mockedImplementations, $receivedCommands } from './constants'
 
@@ -78,29 +83,29 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
   }
 
   on = <
-    COMMAND_CLASS extends
+    OPERATION_CLASS extends
       | GetItemCommandClass
       | PutItemCommandClass
       | DeleteItemCommandClass
       | UpdateItemCommandClass
   >(
-    command: COMMAND_CLASS
-  ): CommandClassMocker<ENTITY, COMMAND_CLASS> =>
-    new CommandMocker<CommandName, any, any, any>(command.commandName, this) as CommandClassMocker<
-      ENTITY,
-      COMMAND_CLASS
-    >
+    operation: OPERATION_CLASS
+  ): OperationClassMocker<ENTITY, OPERATION_CLASS> =>
+    new OperationMocker<operationName, any, any, any>(
+      operation.operationName,
+      this
+    ) as OperationClassMocker<ENTITY, OPERATION_CLASS>
 
   received = <
-    COMMAND_CLASS extends
+    OPERATION_CLASS extends
       | GetItemCommandClass
       | PutItemCommandClass
       | DeleteItemCommandClass
       | UpdateItemCommandClass
   >(
-    command: COMMAND_CLASS
-  ): CommandClassResults<ENTITY, COMMAND_CLASS> =>
+    operation: OPERATION_CLASS
+  ): OperationClassResults<ENTITY, OPERATION_CLASS> =>
     new CommandResults<unknown, unknown>(
-      this[$receivedCommands][command.commandName]
-    ) as CommandClassResults<ENTITY, COMMAND_CLASS>
+      this[$receivedCommands][operation.operationName]
+    ) as OperationClassResults<ENTITY, OPERATION_CLASS>
 }

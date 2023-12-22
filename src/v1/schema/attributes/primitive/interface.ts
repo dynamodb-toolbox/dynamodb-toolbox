@@ -8,7 +8,7 @@ import type {
   KeyInput,
   PutItemInput,
   UpdateItemInput
-} from 'v1/commands'
+} from 'v1/operations'
 
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'

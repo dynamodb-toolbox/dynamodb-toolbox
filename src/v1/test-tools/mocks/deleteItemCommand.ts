@@ -1,14 +1,14 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
-import { DeleteItemCommand, DeleteItemOptions, DeleteItemResponse } from 'v1/commands/deleteItem'
-import { deleteItemParams } from 'v1/commands/deleteItem/deleteItemParams'
-import type { KeyInput } from 'v1/commands/types'
+import { DeleteItemCommand, DeleteItemOptions, DeleteItemResponse } from 'v1/operations/deleteItem'
+import { deleteItemParams } from 'v1/operations/deleteItem/deleteItemParams'
+import type { KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandName,
+  $operationName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -19,9 +19,9 @@ export class DeleteItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
 > implements DeleteItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'entity' as const
-  static commandName = 'delete' as const
-  static [$commandName] = 'delete' as const
+  static operationType = 'entity' as const
+  static operationName = 'delete' as const
+  static [$operationName] = 'delete' as const
 
   _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
@@ -49,7 +49,7 @@ export class DeleteItemCommandMock<
 
   params = (): DeleteCommandInput => {
     if (!this._key) {
-      throw new DynamoDBToolboxError('commands.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }
@@ -64,7 +64,7 @@ export class DeleteItemCommandMock<
 
     if (implementation !== undefined) {
       if (!this._key) {
-        throw new DynamoDBToolboxError('commands.incompleteCommand', {
+        throw new DynamoDBToolboxError('operations.incompleteCommand', {
           message: 'DeleteItemCommand incomplete: Missing "key" property'
         })
       }

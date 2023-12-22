@@ -1,10 +1,10 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import type { TableCommand } from 'v1/commands/class'
-import type { ScanCommand } from 'v1/commands'
-import type { ScanCommandClass } from 'v1/commands/scan/command'
-import type { QueryCommand } from 'v1/commands'
-import type { QueryCommandClass } from 'v1/commands/query/command'
+import type { TableCommand } from 'v1/operations/class'
+import type { ScanCommand } from 'v1/operations'
+import type { ScanCommandClass } from 'v1/operations/scan/command'
+import type { QueryCommand } from 'v1/operations'
+import type { QueryCommandClass } from 'v1/operations/query/command'
 import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject'
 import { isString } from 'v1/utils/validation/isString'
 

@@ -1,14 +1,14 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
-import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/commands/getItem'
-import { getItemParams } from 'v1/commands/getItem/getItemParams'
-import type { KeyInput } from 'v1/commands/types'
+import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/operations/getItem'
+import { getItemParams } from 'v1/operations/getItem/getItemParams'
+import type { KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandName,
+  $operationName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -19,9 +19,9 @@ export class GetItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > implements GetItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'entity' as const
-  static commandName = 'get' as const
-  static [$commandName] = 'get' as const
+  static operationType = 'entity' as const
+  static operationName = 'get' as const
+  static [$operationName] = 'get' as const
 
   _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
@@ -49,7 +49,7 @@ export class GetItemCommandMock<
 
   params = (): GetCommandInput => {
     if (!this._key) {
-      throw new DynamoDBToolboxError('commands.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
@@ -64,7 +64,7 @@ export class GetItemCommandMock<
 
     if (implementation !== undefined) {
       if (!this._key) {
-        throw new DynamoDBToolboxError('commands.incompleteCommand', {
+        throw new DynamoDBToolboxError('operations.incompleteCommand', {
           message: 'GetItemCommand incomplete: Missing "key" property'
         })
       }

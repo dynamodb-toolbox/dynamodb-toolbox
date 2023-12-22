@@ -5,13 +5,13 @@ import type {
   GetItemCommand,
   DeleteItemCommand,
   UpdateItemCommand
-} from 'v1/commands'
-import type { KeyInput } from 'v1/commands/types'
-import type { PutItemCommandClass } from 'v1/commands/putItem/command'
-import type { GetItemCommandClass } from 'v1/commands/getItem/command'
-import type { DeleteItemCommandClass } from 'v1/commands/deleteItem/command'
-import type { UpdateItemCommandClass } from 'v1/commands/updateItem/command'
-import type { EntityCommand } from 'v1/commands/class'
+} from 'v1/operations'
+import type { KeyInput } from 'v1/operations/types'
+import type { PutItemCommandClass } from 'v1/operations/putItem/command'
+import type { GetItemCommandClass } from 'v1/operations/getItem/command'
+import type { DeleteItemCommandClass } from 'v1/operations/deleteItem/command'
+import type { UpdateItemCommandClass } from 'v1/operations/updateItem/command'
+import type { EntityOperation } from 'v1/operations/class'
 import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -50,21 +50,21 @@ export class EntityV2<
   public computeKey?: (
     keyInput: Schema extends SCHEMA ? any : KeyInput<SCHEMA>
   ) => PrimaryKey<TABLE>
-  // TODO: Maybe there's a way not to have to list all commands here
-  // (use COMMAND_CLASS somehow) but I haven't found it yet
-  public build: <COMMAND_CLASS extends typeof EntityCommand = typeof EntityCommand>(
-    commandClass: COMMAND_CLASS
+  // TODO: Maybe there's a way not to have to list all operations here
+  // (use OPERATION_CLASS somehow) but I haven't found it yet
+  public build: <OPERATION_CLASS extends typeof EntityOperation = typeof EntityOperation>(
+    operationClass: OPERATION_CLASS
   ) => string extends NAME
     ? any
-    : COMMAND_CLASS extends PutItemCommandClass
+    : OPERATION_CLASS extends PutItemCommandClass
     ? PutItemCommand<this>
-    : COMMAND_CLASS extends GetItemCommandClass
+    : OPERATION_CLASS extends GetItemCommandClass
     ? GetItemCommand<this>
-    : COMMAND_CLASS extends DeleteItemCommandClass
+    : OPERATION_CLASS extends DeleteItemCommandClass
     ? DeleteItemCommand<this>
-    : COMMAND_CLASS extends UpdateItemCommandClass
+    : OPERATION_CLASS extends UpdateItemCommandClass
     ? UpdateItemCommand<this>
-    : EntityCommand<this>
+    : EntityOperation<this>
 
   /**
    * Define an Entity for a given table
@@ -117,6 +117,6 @@ export class EntityV2<
     })
 
     this.computeKey = computeKey as any
-    this.build = commandClass => new commandClass(this) as any
+    this.build = operationClass => new operationClass(this) as any
   }
 }

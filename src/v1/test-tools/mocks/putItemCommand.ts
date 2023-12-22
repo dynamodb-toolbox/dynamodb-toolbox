@@ -1,13 +1,18 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
-import { PutItemCommand, PutItemInput, PutItemOptions, PutItemResponse } from 'v1/commands/putItem'
-import { putItemParams } from 'v1/commands/putItem/putItemParams'
+import {
+  PutItemCommand,
+  PutItemInput,
+  PutItemOptions,
+  PutItemResponse
+} from 'v1/operations/putItem'
+import { putItemParams } from 'v1/operations/putItem/putItemParams'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $commandName,
+  $operationName,
   $entity,
   $mockedEntity,
   $mockedImplementations,
@@ -18,9 +23,9 @@ export class PutItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > implements PutItemCommand<ENTITY, OPTIONS> {
-  static commandType = 'entity' as const
-  static commandName = 'put' as const
-  static [$commandName] = 'put' as const
+  static operationType = 'entity' as const
+  static operationName = 'put' as const
+  static [$operationName] = 'put' as const
 
   _entity: ENTITY;
   [$mockedEntity]: MockedEntity<ENTITY>
@@ -48,7 +53,7 @@ export class PutItemCommandMock<
 
   params = (): PutCommandInput => {
     if (!this._item) {
-      throw new DynamoDBToolboxError('commands.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
@@ -63,7 +68,7 @@ export class PutItemCommandMock<
 
     if (implementation !== undefined) {
       if (!this._item) {
-        throw new DynamoDBToolboxError('commands.incompleteCommand', {
+        throw new DynamoDBToolboxError('operations.incompleteCommand', {
           message: 'PutItemCommand incomplete: Missing "item" property'
         })
       }

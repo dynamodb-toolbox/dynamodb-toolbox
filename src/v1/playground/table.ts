@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-import type { Query } from 'v1/commands'
+import type { Query } from 'v1/operations'
 
 import { PrimaryKey, TableV2, EntityAttributeSavedAs, IndexNames, IndexSchema } from 'v1/table'
 

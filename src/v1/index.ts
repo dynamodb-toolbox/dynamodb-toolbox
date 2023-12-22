@@ -1,5 +1,5 @@
 export * from './schema'
-export * from './commands'
+export * from './operations'
 export * from './table'
 export * from './entity'
 export * from './errors'

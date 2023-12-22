@@ -17,7 +17,7 @@ export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension = nev
     [options?: SchemaCloningOptions<EXTENSION>]
   >
 ): Item<EXTENSION> => {
-  const { commandName, cloneExtension } = options
+  const { operationName, cloneExtension } = options
 
   if (!isObject(input)) {
     return cloneDeep(input)
@@ -34,7 +34,7 @@ export const cloneSchemaInputAndAddDefaults = <EXTENSION extends Extension = nev
       attribute,
       input[attributeName],
       {
-        commandName,
+        operationName,
         originalInput: input,
         cloneExtension
       } as AttributeCloningOptions<EXTENSION>
