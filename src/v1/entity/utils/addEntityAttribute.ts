@@ -1,7 +1,7 @@
 import type { Schema, AtLeastOnce, PrimitiveAttribute } from 'v1/schema'
 import type { EntityAttributeSavedAs, TableV2 } from 'v1/table'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $get } from 'v1/commands/updateItem/utils'
+import { $get } from 'v1/operations/updateItem/utils'
 
 import { WithInternalAttribute, addInternalAttribute } from './addInternalAttribute'
 

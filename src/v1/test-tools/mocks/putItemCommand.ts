@@ -1,8 +1,13 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
-import { PutItemCommand, PutItemInput, PutItemOptions, PutItemResponse } from 'v1/commands/putItem'
-import { putItemParams } from 'v1/commands/putItem/putItemParams'
+import {
+  PutItemCommand,
+  PutItemInput,
+  PutItemOptions,
+  PutItemResponse
+} from 'v1/operations/putItem'
+import { putItemParams } from 'v1/operations/putItem/putItemParams'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
