@@ -21,7 +21,7 @@ export const parseSavedAnyOfAttribute = (
   }
 
   if (parsedAttribute === undefined) {
-    throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
+    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
       message: `Saved item attribute does not match any of the possible sub-types: ${anyOfAttribute.path}`,
       path: anyOfAttribute.path,
       payload: {

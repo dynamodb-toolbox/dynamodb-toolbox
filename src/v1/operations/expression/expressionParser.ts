@@ -43,9 +43,9 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
   enum: undefined
 }
 
-class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'commands.invalidExpressionAttributePath'> {
+class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'operations.invalidExpressionAttributePath'> {
   constructor(attributePath: string) {
-    super('commands.invalidExpressionAttributePath', {
+    super('operations.invalidExpressionAttributePath', {
       message: `Unable to match expression attribute path with schema: ${attributePath}`,
       payload: { attributePath }
     })

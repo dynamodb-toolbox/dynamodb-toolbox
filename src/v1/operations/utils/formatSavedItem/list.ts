@@ -12,7 +12,7 @@ export const parseSavedListAttribute = (
   { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
 ): ListAttributeValue => {
   if (!isArray(savedList)) {
-    throw new DynamoDBToolboxError('commands.formatSavedItem.invalidSavedAttribute', {
+    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
       message: `Invalid attribute in saved item: ${listAttribute.path}. Should be a ${listAttribute.type}`,
       path: listAttribute.path,
       payload: {

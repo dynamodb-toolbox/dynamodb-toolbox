@@ -49,7 +49,7 @@ export class GetItemCommandMock<
 
   params = (): GetCommandInput => {
     if (!this._key) {
-      throw new DynamoDBToolboxError('commands.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
@@ -64,7 +64,7 @@ export class GetItemCommandMock<
 
     if (implementation !== undefined) {
       if (!this._key) {
-        throw new DynamoDBToolboxError('commands.incompleteCommand', {
+        throw new DynamoDBToolboxError('operations.incompleteCommand', {
           message: 'GetItemCommand incomplete: Missing "key" property'
         })
       }

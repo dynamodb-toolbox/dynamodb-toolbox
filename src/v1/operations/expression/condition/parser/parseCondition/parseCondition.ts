@@ -42,7 +42,7 @@ export const parseCondition = (conditionParser: ConditionParser, condition: Cond
     return parseInCondition(conditionParser, condition)
   }
 
-  throw new DynamoDBToolboxError('commands.invalidCondition', {
+  throw new DynamoDBToolboxError('operations.invalidCondition', {
     message: 'Invalid condition: Unable to detect valid condition type.'
   })
 }

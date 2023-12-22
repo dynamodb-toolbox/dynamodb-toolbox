@@ -3,7 +3,7 @@ import { CapacityOption, capacityOptionsSet } from 'v1/operations/constants/opti
 
 export const parseCapacityOption = (capacity: CapacityOption): CapacityOption => {
   if (!capacityOptionsSet.has(capacity)) {
-    throw new DynamoDBToolboxError('commands.invalidCapacityOption', {
+    throw new DynamoDBToolboxError('operations.invalidCapacityOption', {
       message: `Invalid capacity option: '${String(capacity)}'. 'capacity' must be one of: ${[
         ...capacityOptionsSet
       ].join(', ')}.`,

@@ -53,7 +53,7 @@ export class UpdateItemCommandMock<
 
   params = (): UpdateCommandInput => {
     if (!this._item) {
-      throw new DynamoDBToolboxError('commands.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'UpdateItemCommand incomplete: Missing "item" property'
       })
     }
@@ -68,7 +68,7 @@ export class UpdateItemCommandMock<
 
     if (implementation !== undefined) {
       if (!this._item) {
-        throw new DynamoDBToolboxError('commands.incompleteCommand', {
+        throw new DynamoDBToolboxError('operations.incompleteCommand', {
           message: 'UpdateItemCommand incomplete: Missing "item" property'
         })
       }
