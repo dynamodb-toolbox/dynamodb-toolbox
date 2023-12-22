@@ -19,12 +19,12 @@ import {
 } from 'v1/operations/updateItem'
 import type { UpdateItemCommandClass } from 'v1/operations/updateItem/command'
 
-import type { CommandClassMocker, CommandClassResults, operationName } from './types'
+import type { OperationClassMocker, OperationClassResults, operationName } from './types'
 import { GetItemCommandMock } from './getItemCommand'
 import { PutItemCommandMock } from './putItemCommand'
 import { DeleteItemCommandMock } from './deleteItemCommand'
 import { UpdateItemCommandMock } from './updateItemCommand'
-import { CommandMocker } from './commandMocker'
+import { OperationMocker } from './commandMocker'
 import { CommandResults } from './commandResults'
 import { $entity, $mockedImplementations, $receivedCommands } from './constants'
 
@@ -83,29 +83,29 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
   }
 
   on = <
-    COMMAND_CLASS extends
+    OPERATION_CLASS extends
       | GetItemCommandClass
       | PutItemCommandClass
       | DeleteItemCommandClass
       | UpdateItemCommandClass
   >(
-    command: COMMAND_CLASS
-  ): CommandClassMocker<ENTITY, COMMAND_CLASS> =>
-    new CommandMocker<operationName, any, any, any>(
-      command.operationName,
+    operation: OPERATION_CLASS
+  ): OperationClassMocker<ENTITY, OPERATION_CLASS> =>
+    new OperationMocker<operationName, any, any, any>(
+      operation.operationName,
       this
-    ) as CommandClassMocker<ENTITY, COMMAND_CLASS>
+    ) as OperationClassMocker<ENTITY, OPERATION_CLASS>
 
   received = <
-    COMMAND_CLASS extends
+    OPERATION_CLASS extends
       | GetItemCommandClass
       | PutItemCommandClass
       | DeleteItemCommandClass
       | UpdateItemCommandClass
   >(
-    command: COMMAND_CLASS
-  ): CommandClassResults<ENTITY, COMMAND_CLASS> =>
+    operation: OPERATION_CLASS
+  ): OperationClassResults<ENTITY, OPERATION_CLASS> =>
     new CommandResults<unknown, unknown>(
-      this[$receivedCommands][command.operationName]
-    ) as CommandClassResults<ENTITY, COMMAND_CLASS>
+      this[$receivedCommands][operation.operationName]
+    ) as OperationClassResults<ENTITY, OPERATION_CLASS>
 }
