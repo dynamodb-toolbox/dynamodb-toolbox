@@ -30,27 +30,27 @@ interface AwsError
   $service?: string
 }
 
-export class CommandMocker<COMMAND_TYPE extends operationName, INPUT, OPTIONS, RESPONSE> {
-  [$operationName]: COMMAND_TYPE;
+export class OperationMocker<OPERATION_TYPE extends operationName, INPUT, OPTIONS, RESPONSE> {
+  [$operationName]: OPERATION_TYPE;
   [$mockedEntity]: {
     [$mockedImplementations]: Partial<
-      Record<COMMAND_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
+      Record<OPERATION_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
     >
   }
 
-  resolve: (response: RESPONSE) => CommandMocker<COMMAND_TYPE, INPUT, OPTIONS, RESPONSE>
+  resolve: (response: RESPONSE) => OperationMocker<OPERATION_TYPE, INPUT, OPTIONS, RESPONSE>
   reject: (
     error?: string | Error | AwsError
-  ) => CommandMocker<COMMAND_TYPE, INPUT, OPTIONS, RESPONSE>
+  ) => OperationMocker<OPERATION_TYPE, INPUT, OPTIONS, RESPONSE>
   mockImplementation: (
     implementation: (key: INPUT, options?: OPTIONS) => RESPONSE
-  ) => CommandMocker<COMMAND_TYPE, INPUT, OPTIONS, RESPONSE>
+  ) => OperationMocker<OPERATION_TYPE, INPUT, OPTIONS, RESPONSE>
 
   constructor(
-    operationName: COMMAND_TYPE,
+    operationName: OPERATION_TYPE,
     mockedEntity: {
       [$mockedImplementations]: Partial<
-        Record<COMMAND_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
+        Record<OPERATION_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
       >
     }
   ) {
