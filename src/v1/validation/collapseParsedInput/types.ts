@@ -3,19 +3,19 @@ import type { If } from 'v1/types'
 
 import type { AttributeParsedValue, AttributeParsedBasicValue, HasExtension } from '../types'
 
-export type ExtensionRenamer<EXTENSION extends Extension> = (
+export type ExtensionCollapser<EXTENSION extends Extension> = (
   input: AttributeParsedValue<EXTENSION> | undefined,
-  options: RenamingOptions<EXTENSION>
+  options: CollapsingOptions<EXTENSION>
 ) =>
-  | { isExtension: true; renamedExtension: AttributeValue<EXTENSION>; basicInput?: never }
+  | { isExtension: true; collapsedExtension: AttributeValue<EXTENSION>; basicInput?: never }
   | {
       isExtension: false
-      renamedExtension?: never
+      collapsedExtension?: never
       basicInput: AttributeParsedBasicValue<EXTENSION> | undefined
     }
 
-export type RenamingOptions<EXTENSION extends Extension> = If<
+export type CollapsingOptions<EXTENSION extends Extension> = If<
   HasExtension<EXTENSION>,
-  { renameExtension: ExtensionRenamer<EXTENSION> },
-  { renameExtension?: never }
+  { collapseExtension: ExtensionCollapser<EXTENSION> },
+  { collapseExtension?: never }
 >
