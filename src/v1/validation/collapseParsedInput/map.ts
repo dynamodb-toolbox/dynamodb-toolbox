@@ -7,7 +7,7 @@ import { collapseAttributeParsedInput } from './attribute'
 
 export const collapseMapAttributeParsedInput = <EXTENSION extends Extension>(
   mapInput: MapAttributeParsedBasicValue<EXTENSION>,
-  renamingOptions = {} as CollapsingOptions<EXTENSION>
+  collapsingOptions = {} as CollapsingOptions<EXTENSION>
 ): MapAttributeBasicValue<EXTENSION> => {
   const collapsedInput: MapAttributeBasicValue<EXTENSION> = {}
 
@@ -16,7 +16,7 @@ export const collapseMapAttributeParsedInput = <EXTENSION extends Extension>(
       return
     }
 
-    const collapsedAttributeInput = collapseAttributeParsedInput(attributeInput, renamingOptions)
+    const collapsedAttributeInput = collapseAttributeParsedInput(attributeInput, collapsingOptions)
     collapsedInput[mapInput[$savedAs]?.[attributeName] ?? attributeName] = collapsedAttributeInput
   })
 

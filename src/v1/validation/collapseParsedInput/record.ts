@@ -6,7 +6,7 @@ import { collapseAttributeParsedInput } from './attribute'
 
 export const collapseRecordAttributeParsedInput = <EXTENSION extends Extension>(
   recordInput: RecordAttributeParsedBasicValue<EXTENSION>,
-  renamingOptions = {} as CollapsingOptions<EXTENSION>
+  collapsingOptions = {} as CollapsingOptions<EXTENSION>
 ): RecordAttributeParsedBasicValue<EXTENSION> => {
   const collapsedInput: RecordAttributeParsedBasicValue<EXTENSION> = {}
 
@@ -15,7 +15,7 @@ export const collapseRecordAttributeParsedInput = <EXTENSION extends Extension>(
       return
     }
 
-    collapsedInput[attributeName] = collapseAttributeParsedInput(attributeInput, renamingOptions)
+    collapsedInput[attributeName] = collapseAttributeParsedInput(attributeInput, collapsingOptions)
   })
 
   return collapsedInput
