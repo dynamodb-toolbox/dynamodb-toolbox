@@ -1,34 +1,25 @@
 import type { AttributeValue, Extension } from 'v1/schema'
 
 import type { If } from 'v1/types'
-import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
-import { isArray } from 'v1/utils/validation/isArray'
-import { isObject } from 'v1/utils/validation/isObject'
+import { $type } from 'v1/schema/attributes/constants/attributeOptions'
 
-import type {
-  HasExtension,
-  AttributeParsedValue,
-  MapAttributeParsedBasicValue,
-  RecordAttributeParsedBasicValue
-} from '../types'
-import { collapseRecordAttributeParsedInput } from './record'
+import type { HasExtension, AttributeParsedValue, AttributeParsedBasicValue } from '../types'
+import { collapseSetAttributeParsedInput } from './set'
+import { collapseListAttributeParsedInput } from './list'
 import { collapseMapAttributeParsedInput } from './map'
+import { collapseRecordAttributeParsedInput } from './record'
 import { defaultCollapseExtension } from './utils'
 
 import type { ExtensionCollapser, CollapsingOptions } from './types'
 
-/**
- * @debt bug "This is not ideal. TODO: add $type symbol to parsed attributes."
- */
-const isMapAttributeParsedInput = <EXTENSION extends Extension>(
-  attributeInput:
-    | MapAttributeParsedBasicValue<EXTENSION>
-    | RecordAttributeParsedBasicValue<EXTENSION>
-): attributeInput is MapAttributeParsedBasicValue<EXTENSION> => $savedAs in attributeInput
+const isExplicitelyTyped = <EXTENSION extends Extension = never>(
+  parsedInput: AttributeParsedBasicValue<EXTENSION>
+): parsedInput is Extract<AttributeParsedBasicValue<EXTENSION>, { [$type]?: unknown }> =>
+  (parsedInput as { [$type]?: unknown })[$type] !== undefined
 
 export const collapseAttributeParsedInput = <EXTENSION extends Extension = never>(
   parsedInput: AttributeParsedValue<EXTENSION>,
-  ...[renamingOptions = {} as CollapsingOptions<EXTENSION>]: If<
+  ...[collapsingOptions = {} as CollapsingOptions<EXTENSION>]: If<
     HasExtension<EXTENSION>,
     [options: CollapsingOptions<EXTENSION>],
     [options?: CollapsingOptions<EXTENSION>]
@@ -39,27 +30,37 @@ export const collapseAttributeParsedInput = <EXTENSION extends Extension = never
      * @debt type "Maybe there's a way not to have to cast here"
      */
     collapseExtension = (defaultCollapseExtension as unknown) as ExtensionCollapser<EXTENSION>
-  } = renamingOptions
+  } = collapsingOptions
 
   const { isExtension, collapsedExtension, basicInput } = collapseExtension(
     parsedInput,
-    renamingOptions
+    collapsingOptions
   )
 
   if (isExtension) {
     return collapsedExtension
   }
 
-  if (isArray(basicInput)) {
-    return basicInput.map(elementInput =>
-      collapseAttributeParsedInput(elementInput, renamingOptions)
-    )
+  if (basicInput === undefined) {
+    return undefined
   }
 
-  if (isObject(basicInput)) {
-    return isMapAttributeParsedInput(basicInput)
-      ? collapseMapAttributeParsedInput(basicInput, renamingOptions)
-      : collapseRecordAttributeParsedInput(basicInput, renamingOptions)
+  if (isExplicitelyTyped(basicInput)) {
+    if (basicInput[$type] === 'set') {
+      return collapseSetAttributeParsedInput(basicInput)
+    }
+
+    if (basicInput[$type] === 'list') {
+      return collapseListAttributeParsedInput(basicInput, collapsingOptions)
+    }
+
+    if (basicInput[$type] === 'map') {
+      return collapseMapAttributeParsedInput(basicInput, collapsingOptions)
+    }
+
+    if (basicInput[$type] === 'record') {
+      return collapseRecordAttributeParsedInput(basicInput, collapsingOptions)
+    }
   }
 
   return basicInput
