@@ -1,7 +1,8 @@
-import type { MapAttribute, AttributeBasicValue, Extension } from 'v1'
-import { isObject } from 'v1/utils/validation'
+import type { MapAttribute, AttributeBasicValue, Extension, Transformer } from 'v1/schema'
+import { isPrimitiveAttribute } from 'v1/schema/utils/isPrimitiveAttribute'
+import { $savedAs, $transform } from 'v1/schema/attributes/constants/attributeOptions'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
+import { isObject } from 'v1/utils/validation/isObject'
 
 import type { MapAttributeParsedBasicValue } from '../types'
 import type { ParsingOptions } from './types'
@@ -26,7 +27,7 @@ export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: MapAttributeParsedBasicValue<EXTENSION> = { [$savedAs]: {} }
+  const parsedInput: MapAttributeParsedBasicValue<EXTENSION> = {}
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
@@ -45,7 +46,19 @@ export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
         parsedInput[attributeName] = parsedAttributeInput
 
         if (attribute.savedAs !== undefined) {
-          parsedInput[$savedAs][attributeName] = attribute.savedAs
+          if (parsedInput[$savedAs] === undefined) {
+            parsedInput[$savedAs] = { [attributeName]: attribute.savedAs }
+          } else {
+            parsedInput[$savedAs][attributeName] = attribute.savedAs
+          }
+        }
+
+        if (isPrimitiveAttribute(attribute) && attribute.transform !== undefined) {
+          if (parsedInput[$transform] === undefined) {
+            parsedInput[$transform] = { [attributeName]: attribute.transform as Transformer }
+          } else {
+            parsedInput[$transform][attributeName] = attribute.transform as Transformer
+          }
         }
       }
     }
@@ -68,7 +81,19 @@ export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
         parsedInput[attributeName] = parsedAttributeInput
 
         if (attribute.savedAs !== undefined) {
-          parsedInput[$savedAs][attributeName] = attribute.savedAs
+          if (parsedInput[$savedAs] === undefined) {
+            parsedInput[$savedAs] = { [attributeName]: attribute.savedAs }
+          } else {
+            parsedInput[$savedAs][attributeName] = attribute.savedAs
+          }
+        }
+
+        if (isPrimitiveAttribute(attribute) && attribute.transform !== undefined) {
+          if (parsedInput[$transform] === undefined) {
+            parsedInput[$transform] = { [attributeName]: attribute.transform as Transformer }
+          } else {
+            parsedInput[$transform][attributeName] = attribute.transform as Transformer
+          }
         }
       }
     })

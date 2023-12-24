@@ -17,7 +17,7 @@ export const renameMapAttributeSavedAsAttributes = <EXTENSION extends Extension>
     }
 
     const renamedAttributeInput = renameAttributeSavedAsAttributes(attributeInput, renamingOptions)
-    renamedInput[mapInput[$savedAs][attributeName] ?? attributeName] = renamedAttributeInput
+    renamedInput[mapInput[$savedAs]?.[attributeName] ?? attributeName] = renamedAttributeInput
   })
 
   return renamedInput

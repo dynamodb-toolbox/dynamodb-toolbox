@@ -1,8 +1,9 @@
-import type { Schema, Item, Extension } from 'v1/schema'
+import type { Schema, Item, Extension, Transformer } from 'v1/schema'
+import { $transform, $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
+import { isPrimitiveAttribute } from 'v1/schema/utils/isPrimitiveAttribute'
 import type { If } from 'v1/types'
 import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 
 import type { HasExtension, ParsedItem } from '../types'
 import type { ParsingOptions } from './types'
@@ -30,7 +31,7 @@ export const parseSchemaClonedInput = <EXTENSION extends Extension = never>(
     })
   }
 
-  const parsedInput: ParsedItem<EXTENSION> = { [$savedAs]: {} }
+  const parsedInput: ParsedItem<EXTENSION> = {}
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
@@ -49,7 +50,19 @@ export const parseSchemaClonedInput = <EXTENSION extends Extension = never>(
         parsedInput[attributeName] = parsedAttributeInput
 
         if (attribute.savedAs !== undefined) {
-          parsedInput[$savedAs][attributeName] = attribute.savedAs
+          if (parsedInput[$savedAs] === undefined) {
+            parsedInput[$savedAs] = { [attributeName]: attribute.savedAs }
+          } else {
+            parsedInput[$savedAs][attributeName] = attribute.savedAs
+          }
+        }
+
+        if (isPrimitiveAttribute(attribute) && attribute.transform !== undefined) {
+          if (parsedInput[$transform] === undefined) {
+            parsedInput[$transform] = { [attributeName]: attribute.transform as Transformer }
+          } else {
+            parsedInput[$transform][attributeName] = attribute.transform as Transformer
+          }
         }
       }
     }
@@ -68,7 +81,19 @@ export const parseSchemaClonedInput = <EXTENSION extends Extension = never>(
         parsedInput[attributeName] = parsedAttributeInput
 
         if (attribute.savedAs !== undefined) {
-          parsedInput[$savedAs][attributeName] = attribute.savedAs
+          if (parsedInput[$savedAs] === undefined) {
+            parsedInput[$savedAs] = { [attributeName]: attribute.savedAs }
+          } else {
+            parsedInput[$savedAs][attributeName] = attribute.savedAs
+          }
+        }
+
+        if (isPrimitiveAttribute(attribute) && attribute.transform !== undefined) {
+          if (parsedInput[$transform] === undefined) {
+            parsedInput[$transform] = { [attributeName]: attribute.transform as Transformer }
+          } else {
+            parsedInput[$transform][attributeName] = attribute.transform as Transformer
+          }
         }
       }
     })
