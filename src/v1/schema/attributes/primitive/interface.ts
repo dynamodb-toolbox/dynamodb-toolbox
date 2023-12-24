@@ -12,13 +12,14 @@ import type {
 
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
-import type { $type, $enum } from '../constants/attributeOptions'
+import type { $type, $enum, $transform } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 
 import type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
-  PrimitiveAttributeStateConstraint
+  PrimitiveAttributeStateConstraint,
+  Transformer
 } from './types'
 import type { FreezePrimitiveAttribute } from './freeze'
 
@@ -28,6 +29,7 @@ export interface $PrimitiveAttributeState<
 > extends $SharedAttributeState<STATE> {
   [$type]: $TYPE
   [$enum]: STATE['enum']
+  [$transform]: STATE['transform']
 }
 
 /**
@@ -218,6 +220,27 @@ export interface $PrimitiveAttribute<
     >
   >
   /**
+   * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
+   */
+  transform: (
+    transformer: Transformer<
+      Exclude<
+        If<
+          STATE['key'],
+          AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>, true>,
+          AttributePutItemInput<
+            FreezePrimitiveAttribute<$PrimitiveAttributeState<$TYPE, STATE>>,
+            true
+          >
+        >,
+        undefined
+      >,
+      ResolvePrimitiveAttributeType<$TYPE>
+    >
+  ) => $PrimitiveAttribute<$TYPE, O.Overwrite<STATE, { transform: unknown }>>
+  /**
    * Provide a **linked** default value for attribute in Primary Key computing
    *
    * @param nextKeyDefault `keyAttributeInput | ((keyInput) => keyAttributeInput)`
@@ -336,4 +359,5 @@ export interface PrimitiveAttribute<
   path: string
   type: TYPE
   enum: STATE['enum']
+  transform: STATE['transform']
 }

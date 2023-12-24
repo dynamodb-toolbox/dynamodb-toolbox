@@ -4,6 +4,7 @@ export interface PrimitiveAttributeStateConstraint<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
 > extends SharedAttributeStateConstraint {
   enum: PrimitiveAttributeEnumValues<TYPE>
+  transform: undefined | unknown
 }
 
 /**
@@ -39,3 +40,12 @@ export type ResolvedPrimitiveAttribute = ResolvePrimitiveAttributeType<Primitive
 export type PrimitiveAttributeEnumValues<TYPE extends PrimitiveAttributeType> =
   | ResolvePrimitiveAttributeType<TYPE>[]
   | undefined
+
+export interface Transformer<
+  INPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,
+  OUTPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,
+  PARSED_OUTPUT extends ResolvedPrimitiveAttribute = OUTPUT
+> {
+  parse: (inputValue: INPUT) => OUTPUT
+  format: (savedValue: OUTPUT) => PARSED_OUTPUT
+}

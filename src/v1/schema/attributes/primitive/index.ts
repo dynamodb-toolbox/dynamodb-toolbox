@@ -2,7 +2,8 @@ export { string, boolean, binary, number } from './typer'
 export type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
-  ResolvedPrimitiveAttribute
+  ResolvedPrimitiveAttribute,
+  Transformer
 } from './types'
 export type { $PrimitiveAttributeState, $PrimitiveAttribute, PrimitiveAttribute } from './interface'
 export { FreezePrimitiveAttribute, freezePrimitiveAttribute } from './freeze'

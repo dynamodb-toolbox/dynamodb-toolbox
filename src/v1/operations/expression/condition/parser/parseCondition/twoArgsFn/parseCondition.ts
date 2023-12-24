@@ -22,6 +22,7 @@ const typeAttribute: PrimitiveAttribute<
       put: undefined
       update: undefined
     }
+    transform: undefined
   }
 > = {
   path: '',
@@ -35,7 +36,8 @@ const typeAttribute: PrimitiveAttribute<
     key: undefined,
     put: undefined,
     update: undefined
-  }
+  },
+  transform: undefined
 }
 
 export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(

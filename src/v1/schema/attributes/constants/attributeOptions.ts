@@ -38,6 +38,9 @@ export type $savedAs = typeof $savedAs
 export const $castAs = Symbol('$castAs')
 export type $castAs = typeof $castAs
 
+export const $transform = Symbol('$transform')
+export type $transform = typeof $transform
+
 export type $AttributeOptionSymbol =
   | $type
   | $keys
@@ -51,6 +54,7 @@ export type $AttributeOptionSymbol =
   | $enum
   | $savedAs
   | $castAs
+  | $transform
 
 export type AttributeOptionSymbolName = {
   [$type]: 'type'
@@ -65,24 +69,10 @@ export type AttributeOptionSymbolName = {
   [$enum]: 'enum'
   [$savedAs]: 'savedAs'
   [$castAs]: 'castAs'
+  [$transform]: 'transform'
 }
 
 export type AttributeOptionName = AttributeOptionSymbolName[$AttributeOptionSymbol]
-
-export type AttributeOptionNameSymbol = {
-  type: $type
-  keys: $keys
-  elements: $elements
-  attributes: $attributes
-  value: $value
-  required: $required
-  hidden: $hidden
-  key: $key
-  defaults: $defaults
-  enum: $enum
-  savedAs: $savedAs
-  castAs: $castAs
-}
 
 export type AttributeOptionsConstraints = {
   required: RequiredOption

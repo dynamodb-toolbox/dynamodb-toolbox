@@ -1,0 +1,1 @@
+export { collapseUpdateExtension } from './attribute'

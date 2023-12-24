@@ -102,7 +102,8 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
         key: undefined,
         put: () => new Date().toISOString(),
         update: () => $get(createdName, new Date().toISOString())
-      }
+      },
+      transform: undefined
     }
 
     schemaWithTimestamps = addInternalAttribute(schemaWithTimestamps, createdName, createdAttribute)
@@ -127,7 +128,8 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
         key: undefined,
         put: () => new Date().toISOString(),
         update: () => new Date().toISOString()
-      }
+      },
+      transform: undefined
     }
 
     schemaWithTimestamps = addInternalAttribute(
