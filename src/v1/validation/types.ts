@@ -57,7 +57,7 @@ export type RecordAttributeParsedValue<EXTENSION extends Extension = never> =
 
 export type RecordAttributeParsedBasicValue<EXTENSION extends Extension = never> = {
   [$type]?: 'record'
-  [$transform]?: Partial<Record<$keys | $elements, Transformer>>
+  [$transform]?: Partial<{ [$keys]?: Transformer<string, string>; [$elements]?: Transformer }>
   [key: string]: AttributeParsedValue<EXTENSION>
 }
 

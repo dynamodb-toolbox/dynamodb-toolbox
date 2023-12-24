@@ -47,7 +47,9 @@ export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
   })
 
   if (recordAttribute.keys.transform !== undefined) {
-    parsedInput[$transform] = { [$keys]: recordAttribute.keys.transform as Transformer }
+    parsedInput[$transform] = {
+      [$keys]: recordAttribute.keys.transform as Transformer<string, string>
+    }
   }
 
   if (
