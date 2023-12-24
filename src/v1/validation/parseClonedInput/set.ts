@@ -1,5 +1,5 @@
 import type { SetAttribute, AttributeBasicValue, Extension, Transformer } from 'v1/schema'
-import { $transform } from 'v1/schema/attributes/constants/attributeOptions'
+import { $type, $transform } from 'v1/schema/attributes/constants/attributeOptions'
 import { isSet } from 'v1/utils/validation/isSet'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -24,6 +24,7 @@ export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(
   }
 
   const parsedInput: SetAttributeParsedBasicValue<EXTENSION> = new Set()
+  parsedInput[$type] = 'set'
 
   input.forEach(element =>
     parsedInput.add(parseAttributeClonedInput(setAttribute.elements, element, parsingOptions))

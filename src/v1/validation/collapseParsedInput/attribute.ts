@@ -1,30 +1,19 @@
 import type { AttributeValue, Extension } from 'v1/schema'
 
 import type { If } from 'v1/types'
-import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
-import { isArray } from 'v1/utils/validation/isArray'
-import { isObject } from 'v1/utils/validation/isObject'
+import { $type } from 'v1/schema/attributes/constants/attributeOptions'
 
-import type {
-  HasExtension,
-  AttributeParsedValue,
-  MapAttributeParsedBasicValue,
-  RecordAttributeParsedBasicValue
-} from '../types'
+import type { HasExtension, AttributeParsedValue, AttributeParsedBasicValue } from '../types'
 import { collapseRecordAttributeParsedInput } from './record'
 import { collapseMapAttributeParsedInput } from './map'
 import { defaultCollapseExtension } from './utils'
 
 import type { ExtensionCollapser, CollapsingOptions } from './types'
 
-/**
- * @debt bug "This is not ideal. TODO: add $type symbol to parsed attributes."
- */
-const isMapAttributeParsedInput = <EXTENSION extends Extension>(
-  attributeInput:
-    | MapAttributeParsedBasicValue<EXTENSION>
-    | RecordAttributeParsedBasicValue<EXTENSION>
-): attributeInput is MapAttributeParsedBasicValue<EXTENSION> => $savedAs in attributeInput
+const isExplicitelyTyped = <EXTENSION extends Extension = never>(
+  parsedInput: AttributeParsedBasicValue<EXTENSION>
+): parsedInput is Extract<AttributeParsedBasicValue<EXTENSION>, { [$type]?: unknown }> =>
+  (parsedInput as { [$type]?: unknown })[$type] !== undefined
 
 export const collapseAttributeParsedInput = <EXTENSION extends Extension = never>(
   parsedInput: AttributeParsedValue<EXTENSION>,
@@ -50,16 +39,28 @@ export const collapseAttributeParsedInput = <EXTENSION extends Extension = never
     return collapsedExtension
   }
 
-  if (isArray(basicInput)) {
-    return basicInput.map(elementInput =>
-      collapseAttributeParsedInput(elementInput, renamingOptions)
-    )
+  if (basicInput === undefined) {
+    return undefined
   }
 
-  if (isObject(basicInput)) {
-    return isMapAttributeParsedInput(basicInput)
-      ? collapseMapAttributeParsedInput(basicInput, renamingOptions)
-      : collapseRecordAttributeParsedInput(basicInput, renamingOptions)
+  if (isExplicitelyTyped(basicInput)) {
+    if (basicInput[$type] === 'set') {
+      return new Set(basicInput)
+    }
+
+    if (basicInput[$type] === 'list') {
+      return basicInput.map(elementInput =>
+        collapseAttributeParsedInput(elementInput, renamingOptions)
+      )
+    }
+
+    if (basicInput[$type] === 'map') {
+      return collapseMapAttributeParsedInput(basicInput, renamingOptions)
+    }
+
+    if (basicInput[$type] === 'record') {
+      return collapseRecordAttributeParsedInput(basicInput, renamingOptions)
+    }
   }
 
   return basicInput

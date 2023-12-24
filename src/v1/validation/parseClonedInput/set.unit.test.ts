@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $transform, freezeSetAttribute, set, string } from 'v1/schema'
+import { $type, $transform, freezeSetAttribute, set, string } from 'v1/schema'
 import { prefix } from 'v1/transformers'
 
 import { parseSetAttributeClonedInput } from './set'
@@ -33,7 +33,8 @@ describe('parseSetAttributeClonedInput', () => {
       options
     )
 
-    expect(parsedValues).toStrictEqual(new Set(['foo', 'bar']))
+    expect(new Set(parsedValues)).toStrictEqual(new Set(['foo', 'bar']))
+    expect(parsedValues[$type]).toBe('set')
     expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(setAttr.elements, 'foo', options)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(setAttr.elements, 'bar', options)
