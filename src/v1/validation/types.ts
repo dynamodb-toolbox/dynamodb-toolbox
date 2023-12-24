@@ -1,4 +1,5 @@
 import type {
+  $type,
   $savedAs,
   $transform,
   $keys,
@@ -26,6 +27,7 @@ export type SetAttributeParsedValue<EXTENSION extends Extension = never> =
   | SetAttributeParsedBasicValue<EXTENSION>
 
 export type SetAttributeParsedBasicValue<EXTENSION extends Extension = never> = {
+  [$type]?: 'set'
   [$transform]?: Transformer
 } & Set<AttributeParsedValue<EXTENSION>>
 
@@ -34,6 +36,7 @@ export type ListAttributeParsedValue<EXTENSION extends Extension = never> =
   | ListAttributeParsedBasicValue<EXTENSION>
 
 export type ListAttributeParsedBasicValue<EXTENSION extends Extension = never> = {
+  [$type]?: 'list'
   [$transform]?: Transformer
 } & AttributeParsedValue<EXTENSION>[]
 
@@ -42,6 +45,7 @@ export type MapAttributeParsedValue<EXTENSION extends Extension = never> =
   | MapAttributeParsedBasicValue<EXTENSION>
 
 export type MapAttributeParsedBasicValue<EXTENSION extends Extension = never> = {
+  [$type]?: 'map'
   [$savedAs]?: Record<string, string>
   [$transform]?: Record<string, Transformer>
   [key: string]: AttributeParsedValue<EXTENSION>
@@ -52,6 +56,7 @@ export type RecordAttributeParsedValue<EXTENSION extends Extension = never> =
   | RecordAttributeParsedBasicValue<EXTENSION>
 
 export type RecordAttributeParsedBasicValue<EXTENSION extends Extension = never> = {
+  [$type]?: 'record'
   [$transform]?: Partial<Record<$keys | $elements, Transformer>>
   [key: string]: AttributeParsedValue<EXTENSION>
 }

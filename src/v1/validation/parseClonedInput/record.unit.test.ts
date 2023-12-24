@@ -1,5 +1,13 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $keys, $elements, $transform, freezeRecordAttribute, record, string } from 'v1/schema'
+import {
+  $keys,
+  $elements,
+  $transform,
+  freezeRecordAttribute,
+  record,
+  string,
+  $type
+} from 'v1/schema'
 import { prefix } from 'v1/transformers'
 
 import { parseRecordAttributeClonedInput } from './record'
@@ -39,7 +47,7 @@ describe('parseRecordAttributeClonedInput', () => {
       options
     )
 
-    expect(parsedValues).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
+    expect(parsedValues).toStrictEqual({ [$type]: 'record', foo: 'foo1', bar: 'bar1' })
     expect(parsePrimitiveClonedInputMock).toHaveBeenCalledTimes(2)
     expect(parsePrimitiveClonedInputMock).toHaveBeenCalledWith(recordAttr.keys, 'foo')
     expect(parsePrimitiveClonedInputMock).toHaveBeenCalledWith(recordAttr.keys, 'bar')
@@ -58,6 +66,7 @@ describe('parseRecordAttributeClonedInput', () => {
     const parsedValues = parseRecordAttributeClonedInput(recordAttr2, { foo: 'foo' })
 
     expect(parsedValues).toStrictEqual({
+      [$type]: 'record',
       [$transform]: { [$keys]: transformer },
       foo: 'foo'
     })
@@ -73,6 +82,7 @@ describe('parseRecordAttributeClonedInput', () => {
     const parsedValues = parseRecordAttributeClonedInput(recordAttr2, { foo: 'foo' })
 
     expect(parsedValues).toStrictEqual({
+      [$type]: 'record',
       [$transform]: { [$elements]: transformer },
       foo: 'foo'
     })
