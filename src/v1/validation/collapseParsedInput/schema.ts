@@ -1,6 +1,7 @@
 import type { Item, Extension } from 'v1/schema'
 import type { If } from 'v1/types'
-import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
+import { $savedAs, $transform } from 'v1/schema/attributes/constants/attributeOptions'
+import { isPrimitive } from 'v1/utils/validation/isPrimitive'
 
 import type { ParsedItem, HasExtension } from '../types'
 import type { CollapsingOptions } from './types'
@@ -14,16 +15,21 @@ export const collapseSchemaParsedInput = <EXTENSION extends Extension = never>(
     [options?: CollapsingOptions<EXTENSION>]
   >
 ): Item<EXTENSION> => {
-  const collapsedInput: Item<EXTENSION> = {}
+  const collapsedItem: Item<EXTENSION> = {}
 
   Object.entries(parsedItem).forEach(([attributeName, attributeInput]) => {
     if (attributeInput === undefined) {
       return
     }
 
-    const collapsedAttributeInput = collapseAttributeParsedInput(attributeInput, collapseOptions)
-    collapsedInput[parsedItem[$savedAs]?.[attributeName] ?? attributeName] = collapsedAttributeInput
+    const collapsedAttributeValue = collapseAttributeParsedInput(attributeInput, collapseOptions)
+
+    const attributeTransformer = parsedItem[$transform]?.[attributeName]
+    collapsedItem[parsedItem[$savedAs]?.[attributeName] ?? attributeName] =
+      attributeTransformer !== undefined && isPrimitive(collapsedAttributeValue)
+        ? attributeTransformer.parse(collapsedAttributeValue)
+        : collapsedAttributeValue
   })
 
-  return collapsedInput
+  return collapsedItem
 }
