@@ -3,7 +3,7 @@ import isEmpty from 'lodash.isempty'
 import omit from 'lodash.omit'
 
 import type { EntityV2 } from 'v1/entity'
-import { renameSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
+import { collapseSchemaParsedInput } from 'v1/validation/collapseParsedInput'
 import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
 
 import type { UpdateItemInput } from '../types'
@@ -12,7 +12,7 @@ import { parseUpdate } from '../updateExpression'
 
 import { parseEntityUpdateCommandInput } from './parseUpdateCommandInput'
 import { parseUpdateItemOptions } from './parseUpdateItemOptions'
-import { renameUpdateExtension } from './extension/renameExtension'
+import { collapseUpdateExtension } from './extension/collapseExtension'
 
 export const updateItemParams = <
   ENTITY extends EntityV2,
@@ -23,18 +23,18 @@ export const updateItemParams = <
   updateItemOptions: OPTIONS = {} as OPTIONS
 ): UpdateCommandInput => {
   const validInput = parseEntityUpdateCommandInput(entity, input)
-  const renamedInput = renameSavedAsAttributes(validInput, {
-    renameExtension: renameUpdateExtension
+  const collapsedInput = collapseSchemaParsedInput(validInput, {
+    collapseExtension: collapseUpdateExtension
   })
 
-  const keyInput = entity.computeKey ? entity.computeKey(validInput) : renamedInput
+  const keyInput = entity.computeKey ? entity.computeKey(validInput) : collapsedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
 
   const {
     ExpressionAttributeNames: updateExpressionAttributeNames,
     ExpressionAttributeValues: updateExpressionAttributeValues,
     ...update
-  } = parseUpdate(entity, omit(renamedInput, Object.keys(primaryKey)))
+  } = parseUpdate(entity, omit(collapsedInput, Object.keys(primaryKey)))
 
   const {
     ExpressionAttributeNames: optionsExpressionAttributeNames,

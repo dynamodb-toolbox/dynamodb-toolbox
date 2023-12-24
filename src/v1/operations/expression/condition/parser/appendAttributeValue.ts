@@ -1,7 +1,7 @@
 import type { Attribute, AttributeValue } from 'v1/schema'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 import { cloneAttributeInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
-import { renameAttributeSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
+import { collapseAttributeParsedInput } from 'v1/validation/collapseParsedInput'
 
 import type { ConditionParser } from './parser'
 
@@ -11,7 +11,7 @@ export const appendAttributeValue = (
   expressionAttributeValue: unknown
 ): void => {
   const expressionAttributeValueIndex = conditionParser.expressionAttributeValues.push(
-    renameAttributeSavedAsAttributes(
+    collapseAttributeParsedInput(
       parseAttributeClonedInput(
         attribute,
         cloneAttributeInputAndAddDefaults(attribute, expressionAttributeValue as AttributeValue)

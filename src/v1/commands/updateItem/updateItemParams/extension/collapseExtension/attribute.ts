@@ -1,5 +1,5 @@
-import type { ExtensionRenamer } from 'v1/validation/renameSavedAsAttributes/types'
-import { renameAttributeSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
+import type { ExtensionCollapser } from 'v1/validation/collapseParsedInput/types'
+import { collapseAttributeParsedInput } from 'v1/validation/collapseParsedInput'
 
 import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import {
@@ -23,47 +23,47 @@ import {
   hasPrependOperation
 } from 'v1/operations/updateItem/utils'
 
-import { renameReferenceExtension } from './reference'
+import { collapseReferenceExtension } from './reference'
 
-export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> = (
+export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtension> = (
   input,
   options
 ) => {
   if (input === $REMOVE) {
     return {
       isExtension: true,
-      renamedExtension: $REMOVE
+      collapsedExtension: $REMOVE
     }
   }
 
   if (hasSetOperation(input)) {
-    // Omit renameExtension for non-extended values
+    // Omit collapseExtension for non-extended values
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { renameExtension: _, ...restOptions } = options
+    const { collapseExtension: _, ...restOptions } = options
 
     return {
       isExtension: true,
-      renamedExtension: {
-        [$SET]: renameAttributeSavedAsAttributes<never>(input[$SET], restOptions)
+      collapsedExtension: {
+        [$SET]: collapseAttributeParsedInput<never>(input[$SET], restOptions)
       }
     }
   }
 
   if (hasGetOperation(input)) {
-    return renameReferenceExtension(input, {
+    return collapseReferenceExtension(input, {
       ...options,
-      renameExtension: renameReferenceExtension
+      collapseExtension: collapseReferenceExtension
     })
   }
 
   if (hasSumOperation(input)) {
     return {
       isExtension: true,
-      renamedExtension: {
+      collapsedExtension: {
         [$SUM]: input[$SUM].map(element =>
-          renameAttributeSavedAsAttributes<ReferenceExtension>(element, {
+          collapseAttributeParsedInput<ReferenceExtension>(element, {
             ...options,
-            renameExtension: renameReferenceExtension
+            collapseExtension: collapseReferenceExtension
           })
         )
       }
@@ -73,11 +73,11 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
   if (hasSubtractOperation(input)) {
     return {
       isExtension: true,
-      renamedExtension: {
+      collapsedExtension: {
         [$SUBTRACT]: input[$SUBTRACT].map(element =>
-          renameAttributeSavedAsAttributes<ReferenceExtension>(element, {
+          collapseAttributeParsedInput<ReferenceExtension>(element, {
             ...options,
-            renameExtension: renameReferenceExtension
+            collapseExtension: collapseReferenceExtension
           })
         )
       }
@@ -87,24 +87,24 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
   if (hasAddOperation(input)) {
     return {
       isExtension: true,
-      renamedExtension: {
-        [$ADD]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$ADD], {
+      collapsedExtension: {
+        [$ADD]: collapseAttributeParsedInput<ReferenceExtension>(input[$ADD], {
           ...options,
-          renameExtension: renameReferenceExtension
+          collapseExtension: collapseReferenceExtension
         })
       }
     }
   }
 
   if (hasDeleteOperation(input)) {
-    // Omit renameExtension for non-extended values
+    // Omit collapseExtension for non-extended values
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { renameExtension: _, ...restOptions } = options
+    const { collapseExtension: _, ...restOptions } = options
 
     return {
       isExtension: true,
-      renamedExtension: {
-        [$DELETE]: renameAttributeSavedAsAttributes<never>(input[$DELETE], restOptions)
+      collapsedExtension: {
+        [$DELETE]: collapseAttributeParsedInput<never>(input[$DELETE], restOptions)
       }
     }
   }
@@ -112,10 +112,10 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
   if (hasAppendOperation(input)) {
     return {
       isExtension: true,
-      renamedExtension: {
-        [$APPEND]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$APPEND], {
+      collapsedExtension: {
+        [$APPEND]: collapseAttributeParsedInput<ReferenceExtension>(input[$APPEND], {
           ...options,
-          renameExtension: renameReferenceExtension
+          collapseExtension: collapseReferenceExtension
         })
       }
     }
@@ -124,10 +124,10 @@ export const renameUpdateExtension: ExtensionRenamer<UpdateItemInputExtension> =
   if (hasPrependOperation(input)) {
     return {
       isExtension: true,
-      renamedExtension: {
-        [$PREPEND]: renameAttributeSavedAsAttributes<ReferenceExtension>(input[$PREPEND], {
+      collapsedExtension: {
+        [$PREPEND]: collapseAttributeParsedInput<ReferenceExtension>(input[$PREPEND], {
           ...options,
-          renameExtension: renameReferenceExtension
+          collapseExtension: collapseReferenceExtension
         })
       }
     }

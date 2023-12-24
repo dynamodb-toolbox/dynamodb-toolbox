@@ -33,7 +33,7 @@ describe('parseMapAttributeClonedInput', () => {
       options
     )
 
-    expect(parsedValues).toStrictEqual({ foo: 'foo', bar: 'bar' })
+    expect(parsedValues).toStrictEqual({ [$savedAs]: {}, foo: 'foo', bar: 'bar' })
     expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(
       mapAttr.attributes.foo,
@@ -68,8 +68,8 @@ describe('parseMapAttributeClonedInput', () => {
 
     const parsedValues = parseMapAttributeClonedInput(mapAttr2, { foo: 'foo', bar: 'bar' })
 
-    expect(parsedValues).toMatchObject({ [$transform]: { foo: transformer } })
     expect(parsedValues).toStrictEqual({
+      [$savedAs]: {},
       [$transform]: { foo: transformer },
       foo: 'foo',
       bar: 'bar'
