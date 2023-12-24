@@ -22,7 +22,7 @@ export const renameSavedAsAttributes = <EXTENSION extends Extension = never>(
     }
 
     const renamedAttributeInput = renameAttributeSavedAsAttributes(attributeInput, renamingOptions)
-    renamedInput[schemaInput[$savedAs][attributeName] ?? attributeName] = renamedAttributeInput
+    renamedInput[schemaInput[$savedAs]?.[attributeName] ?? attributeName] = renamedAttributeInput
   })
 
   return renamedInput
