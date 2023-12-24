@@ -1,12 +1,15 @@
-import type { ExtensionRenamer } from 'v1/validation/renameSavedAsAttributes/types'
+import type { ExtensionCollapser } from 'v1/validation/collapseParsedInput/types'
 import type { ReferenceExtension } from 'v1/operations/types'
 import type { AttributeValue } from 'v1/schema'
-import { renameAttributeSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes/attribute'
+import { collapseAttributeParsedInput } from 'v1/validation/collapseParsedInput/attribute'
 
 import { $GET } from 'v1/operations/updateItem/constants'
 import { hasGetOperation } from 'v1/operations/updateItem/utils'
 
-export const renameReferenceExtension: ExtensionRenamer<ReferenceExtension> = (input, options) => {
+export const collapseReferenceExtension: ExtensionCollapser<ReferenceExtension> = (
+  input,
+  options
+) => {
   if (!hasGetOperation(input)) {
     return {
       isExtension: false,
@@ -21,11 +24,11 @@ export const renameReferenceExtension: ExtensionRenamer<ReferenceExtension> = (i
 
   return {
     isExtension: true,
-    renamedExtension: {
+    collapsedExtension: {
       [$GET]: [
         reference,
         ...(fallback !== undefined
-          ? [renameAttributeSavedAsAttributes<ReferenceExtension>(fallback, options)]
+          ? [collapseAttributeParsedInput<ReferenceExtension>(fallback, options)]
           : [])
       ]
     }

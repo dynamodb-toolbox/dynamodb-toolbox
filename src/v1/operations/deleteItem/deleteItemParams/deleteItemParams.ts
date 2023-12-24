@@ -4,7 +4,7 @@ import type { EntityV2 } from 'v1/entity'
 import type { KeyInput } from 'v1/operations/types'
 import { parseEntityKeyInput } from 'v1/operations/utils/parseKeyInput'
 import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
-import { renameSavedAsAttributes } from 'v1/validation/renameSavedAsAttributes'
+import { collapseSchemaParsedInput } from 'v1/validation/collapseParsedInput'
 
 import type { DeleteItemOptions } from '../options'
 
@@ -19,9 +19,9 @@ export const deleteItemParams = <
   deleteItemOptions: OPTIONS = {} as OPTIONS
 ): DeleteCommandInput => {
   const validKeyInput = parseEntityKeyInput(entity, input)
-  const renamedInput = renameSavedAsAttributes(validKeyInput)
+  const collapsedInput = collapseSchemaParsedInput(validKeyInput)
 
-  const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : renamedInput
+  const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : collapsedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
 
   const options = parseDeleteItemOptions(entity, deleteItemOptions)

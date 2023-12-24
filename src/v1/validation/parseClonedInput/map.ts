@@ -27,7 +27,8 @@ export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: MapAttributeParsedBasicValue<EXTENSION> = {}
+  // NOTE: We need to keep $savedAs to distinguish maps from records at transform time
+  const parsedInput: MapAttributeParsedBasicValue<EXTENSION> = { [$savedAs]: {} }
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
