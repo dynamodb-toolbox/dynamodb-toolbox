@@ -1,6 +1,6 @@
 import type { MapAttribute, AttributeBasicValue, Extension, Transformer } from 'v1/schema'
 import { isPrimitiveAttribute } from 'v1/schema/utils/isPrimitiveAttribute'
-import { $savedAs, $transform } from 'v1/schema/attributes/constants/attributeOptions'
+import { $type, $savedAs, $transform } from 'v1/schema/attributes/constants/attributeOptions'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 
@@ -27,8 +27,7 @@ export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  // NOTE: We need to keep $savedAs to distinguish maps from records at transform time
-  const parsedInput: MapAttributeParsedBasicValue<EXTENSION> = { [$savedAs]: {} }
+  const parsedInput: MapAttributeParsedBasicValue<EXTENSION> = { [$type]: 'map' }
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {

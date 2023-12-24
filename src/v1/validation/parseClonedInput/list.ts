@@ -1,5 +1,5 @@
 import type { Extension, ListAttribute, AttributeBasicValue, Transformer } from 'v1/schema'
-import { $transform } from 'v1/schema/attributes/constants/attributeOptions'
+import { $type, $transform } from 'v1/schema/attributes/constants/attributeOptions'
 import { isPrimitiveAttribute } from 'v1/schema/utils/isPrimitiveAttribute'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -25,6 +25,7 @@ export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
   }
 
   const parsedInput: ListAttributeParsedBasicValue<EXTENSION> = []
+  parsedInput[$type] = 'list'
 
   input.forEach(element =>
     parsedInput.push(parseAttributeClonedInput(listAttribute.elements, element, parsingOptions))

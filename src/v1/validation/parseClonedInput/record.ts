@@ -1,5 +1,10 @@
 import type { RecordAttribute, AttributeBasicValue, Extension, Transformer } from 'v1/schema'
-import { $keys, $elements, $transform } from 'v1/schema/attributes/constants/attributeOptions'
+import {
+  $type,
+  $keys,
+  $elements,
+  $transform
+} from 'v1/schema/attributes/constants/attributeOptions'
 import { isPrimitiveAttribute } from 'v1/schema/utils/isPrimitiveAttribute'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
@@ -25,7 +30,7 @@ export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: RecordAttributeParsedBasicValue<EXTENSION> = {}
+  const parsedInput: RecordAttributeParsedBasicValue<EXTENSION> = { [$type]: 'record' }
 
   Object.entries(input).forEach(([key, element]) => {
     const parsedElementInput = parseAttributeClonedInput(
