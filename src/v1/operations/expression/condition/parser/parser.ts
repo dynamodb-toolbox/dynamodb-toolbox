@@ -3,8 +3,12 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import type { Schema, Attribute } from 'v1/schema'
 import type { Condition } from 'v1/operations/types'
 
-import { ExpressionParser, appendAttributePath } from '../../expressionParser'
-import { appendAttributeValue } from './appendAttributeValue'
+import {
+  ExpressionParser,
+  appendAttributePath,
+  AppendAttributePathOptions
+} from '../../expressionParser'
+import { appendAttributeValue, AppendAttributeValueOptions } from './appendAttributeValue'
 import { appendAttributeValueOrPath } from './appendAttributeValueOrPath'
 import { parseCondition } from './parseCondition'
 import { toCommandOptions } from './toCommandOptions'
@@ -30,16 +34,22 @@ export class ConditionParser implements ExpressionParser {
     this.expression = initialStr
   }
 
-  appendAttributePath = (attributePath: string, options: { size?: boolean } = {}): Attribute =>
-    appendAttributePath(this, attributePath, options)
+  appendAttributePath = (
+    attributePath: string,
+    options: AppendAttributePathOptions = {}
+  ): Attribute => appendAttributePath(this, attributePath, options)
 
-  appendAttributeValue = (attribute: Attribute, expressionAttributeValue: unknown): void =>
-    appendAttributeValue(this, attribute, expressionAttributeValue)
+  appendAttributeValue = (
+    attribute: Attribute,
+    expressionAttributeValue: unknown,
+    options: AppendAttributeValueOptions = {}
+  ): void => appendAttributeValue(this, attribute, expressionAttributeValue, options)
 
   appendAttributeValueOrPath = (
     attribute: Attribute,
-    expressionAttributeValueOrPath: unknown
-  ): void => appendAttributeValueOrPath(this, attribute, expressionAttributeValueOrPath)
+    expressionAttributeValueOrPath: unknown,
+    options: AppendAttributePathOptions & AppendAttributeValueOptions = {}
+  ): void => appendAttributeValueOrPath(this, attribute, expressionAttributeValueOrPath, options)
 
   appendToExpression = (conditionExpressionPart: string) => {
     this.expression += conditionExpressionPart

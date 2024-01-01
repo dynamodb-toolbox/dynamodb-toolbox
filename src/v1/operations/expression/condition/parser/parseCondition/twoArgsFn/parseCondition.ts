@@ -50,6 +50,7 @@ export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   // TOIMPROVE: It doesn't make sense to use size in two args fns
   const attributePath = condition.size ?? condition.attr
   const expressionAttributeValue = condition[comparisonOperator]
+  const { transform = true } = condition as { transform?: boolean }
 
   conditionParser.resetExpression(`${twoArgsFnOperatorExpression[comparisonOperator]}(`)
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
@@ -59,6 +60,6 @@ export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
         { ...typeAttribute, path: attributePath },
         expressionAttributeValue
       )
-    : conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue)
+    : conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue, { transform })
   conditionParser.appendToExpression(')')
 }

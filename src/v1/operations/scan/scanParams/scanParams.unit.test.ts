@@ -533,14 +533,25 @@ describe('scan', () => {
       .entities(TestEntity3)
       .options({
         filters: {
-          entity3: { attr: 'transformedStr', gte: 'bar' }
+          entity3: { attr: 'transformedStr', gte: 'bar', transform: false }
         }
       })
       .params()
 
     expect(FilterExpression).toContain('#c0_2 >= :c0_2')
     expect(ExpressionAttributeNames).toMatchObject({ '#c0_2': 'transformedStr' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':c0_2': 'foo#bar' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c0_2': 'bar' })
+
+    const { ExpressionAttributeValues: ExpressionAttributeValues2 } = TestTable.build(ScanCommand)
+      .entities(TestEntity3)
+      .options({
+        filters: {
+          entity3: { attr: 'transformedStr', gte: 'bar' }
+        }
+      })
+      .params()
+
+    expect(ExpressionAttributeValues2).toMatchObject({ ':c0_2': 'foo#bar' })
   })
 
   it('applies entity projection expression', () => {

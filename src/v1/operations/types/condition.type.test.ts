@@ -20,17 +20,19 @@ const assertParentIdCondition: A.Equals<
   AttrOrSize<'parentId'> &
     (
       | SharedAttributeCondition<'parentId'>
-      | { eq: string | { attr: ATTRIBUTE_PATHS } }
-      | { ne: string | { attr: ATTRIBUTE_PATHS } }
-      | { in: (string | { attr: ATTRIBUTE_PATHS })[] }
-      | { lt: string | { attr: ATTRIBUTE_PATHS } }
-      | { lte: string | { attr: ATTRIBUTE_PATHS } }
-      | { gt: string | { attr: ATTRIBUTE_PATHS } }
-      | { gte: string | { attr: ATTRIBUTE_PATHS } }
-      | { between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }] }
-      | { contains: string | { attr: ATTRIBUTE_PATHS } }
-      | { notContains: string | { attr: ATTRIBUTE_PATHS } }
-      | { beginsWith: string | { attr: ATTRIBUTE_PATHS } }
+      | ({ transform?: boolean } & (
+          | { eq: string | { attr: ATTRIBUTE_PATHS } }
+          | { ne: string | { attr: ATTRIBUTE_PATHS } }
+          | { in: (string | { attr: ATTRIBUTE_PATHS })[] }
+          | { lt: string | { attr: ATTRIBUTE_PATHS } }
+          | { lte: string | { attr: ATTRIBUTE_PATHS } }
+          | { gt: string | { attr: ATTRIBUTE_PATHS } }
+          | { gte: string | { attr: ATTRIBUTE_PATHS } }
+          | { between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }] }
+          | { contains: string | { attr: ATTRIBUTE_PATHS } }
+          | { notContains: string | { attr: ATTRIBUTE_PATHS } }
+          | { beginsWith: string | { attr: ATTRIBUTE_PATHS } }
+        ))
     ),
   PARENT_ID_CONDITION
 > = 1
@@ -80,14 +82,16 @@ const assertNumCondition: A.Equals<
   AttrOrSize<'num'> &
     (
       | SharedAttributeCondition<'num'>
-      | { eq: number | { attr: ATTRIBUTE_PATHS } }
-      | { ne: number | { attr: ATTRIBUTE_PATHS } }
-      | { in: (number | { attr: ATTRIBUTE_PATHS })[] }
-      | { lt: number | { attr: ATTRIBUTE_PATHS } }
-      | { lte: number | { attr: ATTRIBUTE_PATHS } }
-      | { gt: number | { attr: ATTRIBUTE_PATHS } }
-      | { gte: number | { attr: ATTRIBUTE_PATHS } }
-      | { between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }] }
+      | ({ transform?: boolean } & (
+          | { eq: number | { attr: ATTRIBUTE_PATHS } }
+          | { ne: number | { attr: ATTRIBUTE_PATHS } }
+          | { in: (number | { attr: ATTRIBUTE_PATHS })[] }
+          | { lt: number | { attr: ATTRIBUTE_PATHS } }
+          | { lte: number | { attr: ATTRIBUTE_PATHS } }
+          | { gt: number | { attr: ATTRIBUTE_PATHS } }
+          | { gte: number | { attr: ATTRIBUTE_PATHS } }
+          | { between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }] }
+        ))
     ),
   NUM_CONDITION
 > = 1
@@ -98,9 +102,11 @@ const assertBoolCondition: A.Equals<
   AttrOrSize<'bool'> &
     (
       | SharedAttributeCondition<'bool'>
-      | { eq: boolean | { attr: ATTRIBUTE_PATHS } }
-      | { ne: boolean | { attr: ATTRIBUTE_PATHS } }
-      | { in: (boolean | { attr: ATTRIBUTE_PATHS })[] }
+      | ({ transform?: boolean } & (
+          | { eq: boolean | { attr: ATTRIBUTE_PATHS } }
+          | { ne: boolean | { attr: ATTRIBUTE_PATHS } }
+          | { in: (boolean | { attr: ATTRIBUTE_PATHS })[] }
+        ))
     ),
   BOOL_CONDITION
 > = 1
@@ -111,17 +117,19 @@ const assertBinCondition: A.Equals<
   AttrOrSize<'bin'> &
     (
       | SharedAttributeCondition<'bin'>
-      | { eq: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { ne: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { in: (Buffer | { attr: ATTRIBUTE_PATHS })[] }
-      | { lt: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { lte: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { gt: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { gte: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }] }
-      | { contains: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } }
+      | ({ transform?: boolean } & (
+          | { eq: Buffer | { attr: ATTRIBUTE_PATHS } }
+          | { ne: Buffer | { attr: ATTRIBUTE_PATHS } }
+          | { in: (Buffer | { attr: ATTRIBUTE_PATHS })[] }
+          | { lt: Buffer | { attr: ATTRIBUTE_PATHS } }
+          | { lte: Buffer | { attr: ATTRIBUTE_PATHS } }
+          | { gt: Buffer | { attr: ATTRIBUTE_PATHS } }
+          | { gte: Buffer | { attr: ATTRIBUTE_PATHS } }
+          | { between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }] }
+          | { contains: Buffer | { attr: ATTRIBUTE_PATHS } }
+          | { notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
+          | { beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } }
+        ))
     ),
   BIN_CONDITION
 > = 1
