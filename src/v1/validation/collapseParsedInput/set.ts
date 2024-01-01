@@ -1,21 +1,15 @@
-import type { SetAttributeBasicValue, Extension } from 'v1/schema'
-import { $transform } from 'v1/schema/attributes/constants/attributeOptions'
-import { isPrimitive } from 'v1/utils/validation/isPrimitive'
+import type { SetAttribute, SetAttributeBasicValue, Extension } from 'v1/schema'
 
-import type { SetAttributeParsedBasicValue } from '../types'
+import type { CollapsingOptions } from './types'
+import { collapseAttributeParsedInput } from './attribute'
 
 export const collapseSetAttributeParsedInput = <EXTENSION extends Extension>(
-  setInput: SetAttributeParsedBasicValue<EXTENSION>
-): SetAttributeBasicValue<EXTENSION> => {
-  const elementsTransformer = setInput[$transform]
-
-  if (elementsTransformer !== undefined) {
-    return new Set(
-      [...setInput.values()].map(element =>
-        isPrimitive(element) ? elementsTransformer.parse(element) : element
-      )
+  setAttribute: SetAttribute,
+  setInput: SetAttributeBasicValue<EXTENSION>,
+  collapsingOptions = {} as CollapsingOptions<EXTENSION>
+): SetAttributeBasicValue<EXTENSION> =>
+  new Set(
+    [...setInput.values()].map(element =>
+      collapseAttributeParsedInput(setAttribute.elements, element, collapsingOptions)
     )
-  }
-
-  return new Set(setInput)
-}
+  )

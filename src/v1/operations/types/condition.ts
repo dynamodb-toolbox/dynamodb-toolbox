@@ -54,7 +54,9 @@ export type AttributeCondition<
   | (ATTRIBUTE extends PrimitiveAttribute
       ? PrimitiveAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
-  // TO VERIFY: Can you apply clauses to Set attributes like Contains ?
+  /**
+   * @debt feature "Can you apply Contains clauses to Set attributes?"
+   */
   | (ATTRIBUTE extends ListAttribute
       ? AttributeCondition<
           `${ATTRIBUTE_PATH}[${number}]`,

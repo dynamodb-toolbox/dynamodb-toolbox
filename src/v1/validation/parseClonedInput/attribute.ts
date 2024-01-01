@@ -2,7 +2,7 @@ import type { RequiredOption, Attribute, Extension, AttributeValue } from 'v1/sc
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { AttributeParsedValue, HasExtension } from '../types'
+import type { HasExtension } from '../types'
 import type { ParsingOptions, ExtensionParser } from './types'
 import { parsePrimitiveAttributeClonedInput } from './primitive'
 import { parseSetAttributeClonedInput } from './set'
@@ -22,7 +22,7 @@ export const parseAttributeClonedInput = <EXTENSION extends Extension = never>(
     [options: ParsingOptions<EXTENSION>],
     [options?: ParsingOptions<EXTENSION>]
   >
-): AttributeParsedValue<EXTENSION> => {
+): AttributeValue<EXTENSION> => {
   const { requiringOptions = defaultRequiringOptions } = parsingOptions
 
   const {
