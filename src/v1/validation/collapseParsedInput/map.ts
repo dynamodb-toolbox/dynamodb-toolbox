@@ -1,13 +1,11 @@
-import type { MapAttributeBasicValue, Extension } from 'v1/schema'
-import { $savedAs, $transform } from 'v1/schema/attributes/constants/attributeOptions'
-import { isPrimitive } from 'v1/utils/validation/isPrimitive'
+import type { MapAttribute, MapAttributeBasicValue, Extension } from 'v1/schema'
 
-import type { MapAttributeParsedBasicValue } from '../types'
 import type { CollapsingOptions } from './types'
 import { collapseAttributeParsedInput } from './attribute'
 
 export const collapseMapAttributeParsedInput = <EXTENSION extends Extension>(
-  mapInput: MapAttributeParsedBasicValue<EXTENSION>,
+  mapAttribute: MapAttribute,
+  mapInput: MapAttributeBasicValue<EXTENSION>,
   collapsingOptions = {} as CollapsingOptions<EXTENSION>
 ): MapAttributeBasicValue<EXTENSION> => {
   const collapsedInput: MapAttributeBasicValue<EXTENSION> = {}
@@ -17,13 +15,15 @@ export const collapseMapAttributeParsedInput = <EXTENSION extends Extension>(
       return
     }
 
-    const collapsedAttributeValue = collapseAttributeParsedInput(attributeInput, collapsingOptions)
+    const attribute = mapAttribute.attributes[attributeName]
 
-    const attributeTransformer = mapInput[$transform]?.[attributeName]
-    collapsedInput[mapInput[$savedAs]?.[attributeName] ?? attributeName] =
-      attributeTransformer !== undefined && isPrimitive(collapsedAttributeValue)
-        ? attributeTransformer.parse(collapsedAttributeValue)
-        : collapsedAttributeValue
+    const collapsedAttributeValue = collapseAttributeParsedInput(
+      attribute,
+      attributeInput,
+      collapsingOptions
+    )
+
+    collapsedInput[attribute.savedAs ?? attributeName] = collapsedAttributeValue
   })
 
   return collapsedInput

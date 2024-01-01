@@ -7,6 +7,7 @@ import { $GET } from 'v1/operations/updateItem/constants'
 import { hasGetOperation } from 'v1/operations/updateItem/utils'
 
 export const collapseReferenceExtension: ExtensionCollapser<ReferenceExtension> = (
+  attribute,
   input,
   options
 ) => {
@@ -28,7 +29,7 @@ export const collapseReferenceExtension: ExtensionCollapser<ReferenceExtension> 
       [$GET]: [
         reference,
         ...(fallback !== undefined
-          ? [collapseAttributeParsedInput<ReferenceExtension>(fallback, options)]
+          ? [collapseAttributeParsedInput<ReferenceExtension>(attribute, fallback, options)]
           : [])
       ]
     }

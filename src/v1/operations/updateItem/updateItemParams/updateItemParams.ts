@@ -23,7 +23,7 @@ export const updateItemParams = <
   updateItemOptions: OPTIONS = {} as OPTIONS
 ): UpdateCommandInput => {
   const validInput = parseEntityUpdateCommandInput(entity, input)
-  const collapsedInput = collapseSchemaParsedInput(validInput, {
+  const collapsedInput = collapseSchemaParsedInput(entity.schema, validInput, {
     collapseExtension: collapseUpdateExtension
   })
 

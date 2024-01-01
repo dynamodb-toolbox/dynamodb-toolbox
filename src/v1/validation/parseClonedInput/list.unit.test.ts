@@ -1,6 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $type, $transform, freezeListAttribute, list, string } from 'v1/schema'
-import { prefix } from 'v1/transformers'
+import { freezeListAttribute, list, string } from 'v1/schema'
 
 import { parseListAttributeClonedInput } from './list'
 import * as parseAttributeClonedInputModule from './attribute'
@@ -34,19 +33,8 @@ describe('parseListAttributeClonedInput', () => {
     )
 
     expect([...parsedValues]).toStrictEqual(['foo', 'bar'])
-    expect(parsedValues[$type]).toBe('list')
     expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
-  })
-
-  it('keeps transformer if one is present', () => {
-    const transformer = prefix('foo')
-    const listAttr2 = freezeListAttribute(list(string().transform(transformer)), 'path')
-
-    const parsedValues = parseListAttributeClonedInput(listAttr2, ['foo', 'bar'])
-
-    expect([...parsedValues]).toStrictEqual(['foo', 'bar'])
-    expect(parsedValues[$transform]).toStrictEqual(transformer)
   })
 })

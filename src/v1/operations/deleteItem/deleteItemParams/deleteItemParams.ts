@@ -19,7 +19,7 @@ export const deleteItemParams = <
   deleteItemOptions: OPTIONS = {} as OPTIONS
 ): DeleteCommandInput => {
   const validKeyInput = parseEntityKeyInput(entity, input)
-  const collapsedInput = collapseSchemaParsedInput(validKeyInput)
+  const collapsedInput = collapseSchemaParsedInput(entity.schema, validKeyInput)
 
   const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : collapsedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)

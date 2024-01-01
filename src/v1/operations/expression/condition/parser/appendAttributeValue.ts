@@ -10,13 +10,15 @@ export const appendAttributeValue = (
   attribute: Attribute,
   expressionAttributeValue: unknown
 ): void => {
+  const clonedInput = cloneAttributeInputAndAddDefaults(
+    attribute,
+    expressionAttributeValue as AttributeValue
+  )
+  const parsedInput = parseAttributeClonedInput(attribute, clonedInput)
+  const collapsedInput = collapseAttributeParsedInput(attribute, parsedInput)
+
   const expressionAttributeValueIndex = conditionParser.expressionAttributeValues.push(
-    collapseAttributeParsedInput(
-      parseAttributeClonedInput(
-        attribute,
-        cloneAttributeInputAndAddDefaults(attribute, expressionAttributeValue as AttributeValue)
-      )
-    )
+    collapsedInput
   )
 
   conditionParser.appendToExpression(
