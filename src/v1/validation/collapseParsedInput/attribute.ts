@@ -58,7 +58,8 @@ export const collapseAttributeParsedInput = <EXTENSION extends Extension = never
     case 'binary':
       return collapsePrimitiveAttributeParsedInput(
         attribute,
-        basicInput as PrimitiveAttributeBasicValue
+        basicInput as PrimitiveAttributeBasicValue,
+        collapsingOptions
       )
     case 'set':
       return collapseSetAttributeParsedInput(

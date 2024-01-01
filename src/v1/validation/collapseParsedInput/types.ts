@@ -15,7 +15,7 @@ export type ExtensionCollapser<EXTENSION extends Extension> = (
       basicInput: AttributeBasicValue<EXTENSION> | undefined
     }
 
-export type CollapsingOptions<EXTENSION extends Extension> = If<
+export type CollapsingOptions<EXTENSION extends Extension> = { transform?: boolean } & If<
   HasExtension<EXTENSION>,
   { collapseExtension: ExtensionCollapser<EXTENSION> },
   { collapseExtension?: never }

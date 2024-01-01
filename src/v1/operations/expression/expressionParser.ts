@@ -5,6 +5,8 @@ import { isString } from 'v1/utils/validation/isString'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 import { collapseAttributeParsedInput } from 'v1/validation/collapseParsedInput'
 
+export type AppendAttributePathOptions = { size?: boolean }
+
 export interface ExpressionParser {
   schema: Schema | Attribute
   expressionAttributePrefix: string
@@ -13,7 +15,7 @@ export interface ExpressionParser {
   expression: string
   resetExpression: (str?: string) => void
   appendToExpression: (str: string) => void
-  appendAttributePath: (path: string) => Attribute
+  appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Attribute
 }
 
 const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
@@ -62,8 +64,10 @@ export const isAttributePath = (candidate: unknown): candidate is { attr: string
 export const appendAttributePath = (
   parser: ExpressionParser,
   attributePath: string,
-  options: { size?: boolean } = {}
+  options: AppendAttributePathOptions = {}
 ): Attribute => {
+  const { size = false } = options
+
   const expressionAttributePrefix = parser.expressionAttributePrefix
   let parentAttribute: Schema | Attribute = parser.schema
   let expressionPath = ''
@@ -74,12 +78,6 @@ export const appendAttributePath = (
     const childAttributeAccessor = attributeMatch[0]
 
     switch (parentAttribute.type) {
-      case 'binary':
-      case 'boolean':
-      case 'number':
-      case 'string':
-      case 'set':
-        throw new InvalidExpressionAttributePathError(attributePath)
       case 'any': {
         const isChildAttributeInList = isListAccessor(childAttributeAccessor)
 
@@ -100,6 +98,13 @@ export const appendAttributePath = (
         }
         break
       }
+      case 'binary':
+      case 'boolean':
+      case 'number':
+      case 'string':
+      case 'set':
+        throw new InvalidExpressionAttributePathError(attributePath)
+
       case 'record': {
         const keyAttribute = parentAttribute.keys
         const parsedKey = parseAttributeClonedInput(keyAttribute, childAttributeAccessor)
@@ -148,7 +153,7 @@ export const appendAttributePath = (
             parentAttribute = element
             const elementExpressionParser = parser.clone(element)
             elementExpressionParser.resetExpression()
-            parentAttribute = elementExpressionParser.appendAttributePath(subPath)
+            parentAttribute = elementExpressionParser.appendAttributePath(subPath, options)
             validElementExpressionParser = elementExpressionParser
             /* eslint-disable no-empty */
           } catch {}
@@ -172,9 +177,9 @@ export const appendAttributePath = (
     throw new InvalidExpressionAttributePathError(attributePath)
   }
 
-  parser.appendToExpression(options.size ? `size(${expressionPath})` : expressionPath)
+  parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
-  return options.size
+  return size
     ? {
         path: parentAttribute.path,
         ...defaultNumberAttribute
