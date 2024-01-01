@@ -1,9 +1,18 @@
-import type { AttributeValue, Extension } from 'v1/schema'
+import type {
+  Attribute,
+  AttributeValue,
+  Extension,
+  ListAttributeBasicValue,
+  MapAttributeBasicValue,
+  PrimitiveAttributeBasicValue,
+  RecordAttributeBasicValue,
+  SetAttributeBasicValue
+} from 'v1/schema'
 
 import type { If } from 'v1/types'
-import { $type } from 'v1/schema/attributes/constants/attributeOptions'
 
-import type { HasExtension, AttributeParsedValue, AttributeParsedBasicValue } from '../types'
+import type { HasExtension } from '../types'
+import { collapsePrimitiveAttributeParsedInput } from './primitive'
 import { collapseSetAttributeParsedInput } from './set'
 import { collapseListAttributeParsedInput } from './list'
 import { collapseMapAttributeParsedInput } from './map'
@@ -12,13 +21,9 @@ import { defaultCollapseExtension } from './utils'
 
 import type { ExtensionCollapser, CollapsingOptions } from './types'
 
-const isExplicitelyTyped = <EXTENSION extends Extension = never>(
-  parsedInput: AttributeParsedBasicValue<EXTENSION>
-): parsedInput is Extract<AttributeParsedBasicValue<EXTENSION>, { [$type]?: unknown }> =>
-  (parsedInput as { [$type]?: unknown })[$type] !== undefined
-
 export const collapseAttributeParsedInput = <EXTENSION extends Extension = never>(
-  parsedInput: AttributeParsedValue<EXTENSION>,
+  attribute: Attribute,
+  parsedInput: AttributeValue<EXTENSION>,
   ...[collapsingOptions = {} as CollapsingOptions<EXTENSION>]: If<
     HasExtension<EXTENSION>,
     [options: CollapsingOptions<EXTENSION>],
@@ -33,6 +38,7 @@ export const collapseAttributeParsedInput = <EXTENSION extends Extension = never
   } = collapsingOptions
 
   const { isExtension, collapsedExtension, basicInput } = collapseExtension(
+    attribute,
     parsedInput,
     collapsingOptions
   )
@@ -45,23 +51,41 @@ export const collapseAttributeParsedInput = <EXTENSION extends Extension = never
     return undefined
   }
 
-  if (isExplicitelyTyped(basicInput)) {
-    if (basicInput[$type] === 'set') {
-      return collapseSetAttributeParsedInput(basicInput)
-    }
-
-    if (basicInput[$type] === 'list') {
-      return collapseListAttributeParsedInput(basicInput, collapsingOptions)
-    }
-
-    if (basicInput[$type] === 'map') {
-      return collapseMapAttributeParsedInput(basicInput, collapsingOptions)
-    }
-
-    if (basicInput[$type] === 'record') {
-      return collapseRecordAttributeParsedInput(basicInput, collapsingOptions)
-    }
+  switch (attribute.type) {
+    case 'boolean':
+    case 'number':
+    case 'string':
+    case 'binary':
+      return collapsePrimitiveAttributeParsedInput(
+        attribute,
+        basicInput as PrimitiveAttributeBasicValue
+      )
+    case 'set':
+      return collapseSetAttributeParsedInput(
+        attribute,
+        basicInput as SetAttributeBasicValue<EXTENSION>,
+        collapsingOptions
+      )
+    case 'list':
+      return collapseListAttributeParsedInput(
+        attribute,
+        basicInput as ListAttributeBasicValue<EXTENSION>,
+        collapsingOptions
+      )
+    case 'map':
+      return collapseMapAttributeParsedInput(
+        attribute,
+        basicInput as MapAttributeBasicValue<EXTENSION>,
+        collapsingOptions
+      )
+    case 'record':
+      return collapseRecordAttributeParsedInput(
+        attribute,
+        basicInput as RecordAttributeBasicValue<EXTENSION>,
+        collapsingOptions
+      )
+    // TODO: anyOf
+    default:
+      return basicInput
   }
-
-  return basicInput
 }

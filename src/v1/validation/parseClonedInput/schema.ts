@@ -1,11 +1,9 @@
-import type { Schema, Item, Extension, Transformer } from 'v1/schema'
-import { $transform, $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
-import { isPrimitiveAttribute } from 'v1/schema/utils/isPrimitiveAttribute'
+import type { Schema, Item, Extension } from 'v1/schema'
 import type { If } from 'v1/types'
 import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { HasExtension, ParsedItem } from '../types'
+import type { HasExtension } from '../types'
 import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
@@ -18,7 +16,7 @@ export const parseSchemaClonedInput = <EXTENSION extends Extension = never>(
     [options: ParsingOptions<EXTENSION>],
     [options?: ParsingOptions<EXTENSION>]
   >
-): ParsedItem<EXTENSION> => {
+): Item<EXTENSION> => {
   const { filters } = parsingOptions
 
   if (!isObject(input)) {
@@ -31,7 +29,7 @@ export const parseSchemaClonedInput = <EXTENSION extends Extension = never>(
     })
   }
 
-  const parsedInput: ParsedItem<EXTENSION> = {}
+  const parsedInput: Item<EXTENSION> = {}
 
   // Check that entries match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
@@ -48,22 +46,6 @@ export const parseSchemaClonedInput = <EXTENSION extends Extension = never>(
 
       if (parsedAttributeInput !== undefined) {
         parsedInput[attributeName] = parsedAttributeInput
-
-        if (attribute.savedAs !== undefined) {
-          if (parsedInput[$savedAs] === undefined) {
-            parsedInput[$savedAs] = { [attributeName]: attribute.savedAs }
-          } else {
-            parsedInput[$savedAs][attributeName] = attribute.savedAs
-          }
-        }
-
-        if (isPrimitiveAttribute(attribute) && attribute.transform !== undefined) {
-          if (parsedInput[$transform] === undefined) {
-            parsedInput[$transform] = { [attributeName]: attribute.transform as Transformer }
-          } else {
-            parsedInput[$transform][attributeName] = attribute.transform as Transformer
-          }
-        }
       }
     }
   })
@@ -79,22 +61,6 @@ export const parseSchemaClonedInput = <EXTENSION extends Extension = never>(
 
       if (parsedAttributeInput !== undefined) {
         parsedInput[attributeName] = parsedAttributeInput
-
-        if (attribute.savedAs !== undefined) {
-          if (parsedInput[$savedAs] === undefined) {
-            parsedInput[$savedAs] = { [attributeName]: attribute.savedAs }
-          } else {
-            parsedInput[$savedAs][attributeName] = attribute.savedAs
-          }
-        }
-
-        if (isPrimitiveAttribute(attribute) && attribute.transform !== undefined) {
-          if (parsedInput[$transform] === undefined) {
-            parsedInput[$transform] = { [attributeName]: attribute.transform as Transformer }
-          } else {
-            parsedInput[$transform][attributeName] = attribute.transform as Transformer
-          }
-        }
       }
     })
 

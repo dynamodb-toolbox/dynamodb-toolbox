@@ -1,6 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $type, $savedAs, $transform, freezeMapAttribute, map, string } from 'v1/schema'
-import { prefix } from 'v1/transformers'
+import { freezeMapAttribute, map, string } from 'v1/schema'
 
 import { parseMapAttributeClonedInput } from './map'
 import * as parseAttributeClonedInputModule from './attribute'
@@ -33,7 +32,7 @@ describe('parseMapAttributeClonedInput', () => {
       options
     )
 
-    expect(parsedValues).toStrictEqual({ [$type]: 'map', foo: 'foo', bar: 'bar' })
+    expect(parsedValues).toStrictEqual({ foo: 'foo', bar: 'bar' })
     expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(
       mapAttr.attributes.foo,
@@ -45,35 +44,5 @@ describe('parseMapAttributeClonedInput', () => {
       'bar',
       options
     )
-  })
-
-  it('keeps savedAs if one is present', () => {
-    const mapAttr2 = freezeMapAttribute(map({ foo: string().savedAs('f'), bar: string() }), 'path')
-
-    const parsedValues = parseMapAttributeClonedInput(mapAttr2, { foo: 'foo', bar: 'bar' })
-
-    expect(parsedValues).toStrictEqual({
-      [$type]: 'map',
-      [$savedAs]: { foo: 'f' },
-      foo: 'foo',
-      bar: 'bar'
-    })
-  })
-
-  it('keeps transformer if one is present', () => {
-    const transformer = prefix('foo')
-    const mapAttr2 = freezeMapAttribute(
-      map({ foo: string().transform(transformer), bar: string() }),
-      'path'
-    )
-
-    const parsedValues = parseMapAttributeClonedInput(mapAttr2, { foo: 'foo', bar: 'bar' })
-
-    expect(parsedValues).toStrictEqual({
-      [$type]: 'map',
-      [$transform]: { foo: transformer },
-      foo: 'foo',
-      bar: 'bar'
-    })
   })
 })

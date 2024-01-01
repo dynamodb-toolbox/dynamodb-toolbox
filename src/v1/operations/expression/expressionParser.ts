@@ -3,6 +3,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
+import { collapseAttributeParsedInput } from 'v1/validation/collapseParsedInput'
 
 export interface ExpressionParser {
   schema: Schema | Attribute
@@ -100,10 +101,11 @@ export const appendAttributePath = (
         break
       }
       case 'record': {
-        const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
-          // We don't really need to clone / add default as it is a defined string
-          parseAttributeClonedInput(parentAttribute.keys, childAttributeAccessor) as string
-        )
+        const keyAttribute = parentAttribute.keys
+        const parsedKey = parseAttributeClonedInput(keyAttribute, childAttributeAccessor)
+        const collapsedKey = collapseAttributeParsedInput(keyAttribute, parsedKey) as string
+
+        const expressionAttributeNameIndex = parser.expressionAttributeNames.push(collapsedKey)
         expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
 
         parentAttribute = parentAttribute.elements

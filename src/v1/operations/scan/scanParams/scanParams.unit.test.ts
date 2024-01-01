@@ -11,7 +11,8 @@ import {
   string,
   number,
   Item,
-  FormattedItem
+  FormattedItem,
+  prefix
 } from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
@@ -511,6 +512,35 @@ describe('scan', () => {
       ':c1_1': Entity2.name,
       ':c1_2': 100
     })
+  })
+
+  it('transforms attributes when applying filters', () => {
+    const TestEntity3 = new EntityV2({
+      name: 'entity3',
+      schema: schema({
+        email: string().key().savedAs('pk'),
+        sort: string().key().savedAs('sk'),
+        transformedStr: string().transform(prefix('foo'))
+      }),
+      table: TestTable
+    })
+
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestTable.build(ScanCommand)
+      .entities(TestEntity3)
+      .options({
+        filters: {
+          entity3: { attr: 'transformedStr', gte: 'bar' }
+        }
+      })
+      .params()
+
+    expect(FilterExpression).toContain('#c0_2 >= :c0_2')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c0_2': 'transformedStr' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c0_2': 'foo#bar' })
   })
 
   it('applies entity projection expression', () => {

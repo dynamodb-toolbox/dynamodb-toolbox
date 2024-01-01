@@ -26,6 +26,7 @@ import {
 import { collapseReferenceExtension } from './reference'
 
 export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtension> = (
+  attribute,
   input,
   options
 ) => {
@@ -44,13 +45,13 @@ export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtensio
     return {
       isExtension: true,
       collapsedExtension: {
-        [$SET]: collapseAttributeParsedInput<never>(input[$SET], restOptions)
+        [$SET]: collapseAttributeParsedInput<never>(attribute, input[$SET], restOptions)
       }
     }
   }
 
   if (hasGetOperation(input)) {
-    return collapseReferenceExtension(input, {
+    return collapseReferenceExtension(attribute, input, {
       ...options,
       collapseExtension: collapseReferenceExtension
     })
@@ -61,7 +62,7 @@ export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtensio
       isExtension: true,
       collapsedExtension: {
         [$SUM]: input[$SUM].map(element =>
-          collapseAttributeParsedInput<ReferenceExtension>(element, {
+          collapseAttributeParsedInput<ReferenceExtension>(attribute, element, {
             ...options,
             collapseExtension: collapseReferenceExtension
           })
@@ -75,7 +76,7 @@ export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtensio
       isExtension: true,
       collapsedExtension: {
         [$SUBTRACT]: input[$SUBTRACT].map(element =>
-          collapseAttributeParsedInput<ReferenceExtension>(element, {
+          collapseAttributeParsedInput<ReferenceExtension>(attribute, element, {
             ...options,
             collapseExtension: collapseReferenceExtension
           })
@@ -88,7 +89,7 @@ export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtensio
     return {
       isExtension: true,
       collapsedExtension: {
-        [$ADD]: collapseAttributeParsedInput<ReferenceExtension>(input[$ADD], {
+        [$ADD]: collapseAttributeParsedInput<ReferenceExtension>(attribute, input[$ADD], {
           ...options,
           collapseExtension: collapseReferenceExtension
         })
@@ -104,7 +105,7 @@ export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtensio
     return {
       isExtension: true,
       collapsedExtension: {
-        [$DELETE]: collapseAttributeParsedInput<never>(input[$DELETE], restOptions)
+        [$DELETE]: collapseAttributeParsedInput<never>(attribute, input[$DELETE], restOptions)
       }
     }
   }
@@ -113,7 +114,7 @@ export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtensio
     return {
       isExtension: true,
       collapsedExtension: {
-        [$APPEND]: collapseAttributeParsedInput<ReferenceExtension>(input[$APPEND], {
+        [$APPEND]: collapseAttributeParsedInput<ReferenceExtension>(attribute, input[$APPEND], {
           ...options,
           collapseExtension: collapseReferenceExtension
         })
@@ -125,7 +126,7 @@ export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtensio
     return {
       isExtension: true,
       collapsedExtension: {
-        [$PREPEND]: collapseAttributeParsedInput<ReferenceExtension>(input[$PREPEND], {
+        [$PREPEND]: collapseAttributeParsedInput<ReferenceExtension>(attribute, input[$PREPEND], {
           ...options,
           collapseExtension: collapseReferenceExtension
         })

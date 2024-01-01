@@ -16,7 +16,7 @@ export const getItemParams = <ENTITY extends EntityV2, OPTIONS extends GetItemOp
   getItemOptions: OPTIONS = {} as OPTIONS
 ): GetCommandInput => {
   const validKeyInput = parseEntityKeyInput(entity, input)
-  const collapsedInput = collapseSchemaParsedInput(validKeyInput)
+  const collapsedInput = collapseSchemaParsedInput(entity.schema, validKeyInput)
 
   const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : collapsedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
