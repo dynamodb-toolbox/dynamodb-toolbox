@@ -1,9 +1,17 @@
-import type { PrimitiveAttribute, PrimitiveAttributeBasicValue, Transformer } from 'v1/schema'
+import type {
+  PrimitiveAttribute,
+  PrimitiveAttributeBasicValue,
+  Transformer,
+  Extension
+} from 'v1/schema'
 
-export const collapsePrimitiveAttributeParsedInput = (
+import type { CollapsingOptions } from './types'
+
+export const collapsePrimitiveAttributeParsedInput = <EXTENSION extends Extension = never>(
   primitiveAttribute: PrimitiveAttribute,
-  primitiveInput: PrimitiveAttributeBasicValue
+  primitiveInput: PrimitiveAttributeBasicValue,
+  { transform = true } = {} as CollapsingOptions<EXTENSION>
 ): PrimitiveAttributeBasicValue =>
-  primitiveAttribute.transform !== undefined
+  transform && primitiveAttribute.transform !== undefined
     ? (primitiveAttribute.transform as Transformer).parse(primitiveInput)
     : primitiveInput

@@ -8,11 +8,12 @@ export const parseBetweenCondition = (
 ): void => {
   const attributePath = condition.size ?? condition.attr
   const [lowerRange, higherRange] = condition.between
+  const { transform = true } = condition
 
   conditionParser.resetExpression()
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
   conditionParser.appendToExpression(' BETWEEN ')
-  conditionParser.appendAttributeValueOrPath(attribute, lowerRange)
+  conditionParser.appendAttributeValueOrPath(attribute, lowerRange, { transform })
   conditionParser.appendToExpression(' AND ')
-  conditionParser.appendAttributeValueOrPath(attribute, higherRange)
+  conditionParser.appendAttributeValueOrPath(attribute, higherRange, { transform })
 }

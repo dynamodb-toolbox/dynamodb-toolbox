@@ -240,12 +240,21 @@ describe('delete', () => {
       DeleteItemCommand
     )
       .key({ email: 'foo@bar.mail', sort: 'y' })
-      .options({ condition: { attr: 'email', gt: 'test' } })
+      .options({ condition: { attr: 'email', gt: 'test', transform: false } })
       .params()
 
     expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
     expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
-    expect(ExpressionAttributeValues).toEqual({ ':c_1': 'EMAIL#test' })
+    expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })
+
+    const { ExpressionAttributeValues: ExpressionAttributeValues2 } = TestEntity3.build(
+      DeleteItemCommand
+    )
+      .key({ email: 'foo@bar.mail', sort: 'y' })
+      .options({ condition: { attr: 'email', gt: 'test' } })
+      .params()
+
+    expect(ExpressionAttributeValues2).toEqual({ ':c_1': 'EMAIL#test' })
   })
 
   // TODO Create deleteBatch method and move tests there

@@ -524,14 +524,14 @@ describe('put', () => {
       .options({
         condition: {
           and: [
-            { attr: 'email', eq: 'test' },
-            { attr: 'transformedStr', eq: 'str' },
+            { attr: 'email', eq: 'test', transform: false },
+            { attr: 'transformedStr', eq: 'str', transform: false },
             /**
              * @debt feature "Can you apply Contains clauses to Set attributes?"
              */
             // { attr: 'transformedSet', contains: 'SET' }
-            { attr: 'transformedMap.str', eq: 'map' },
-            { attr: 'transformedRecord.key', eq: 'value' }
+            { attr: 'transformedMap.str', eq: 'map', transform: false },
+            { attr: 'transformedRecord.key', eq: 'value', transform: false }
           ]
         }
       })
@@ -548,9 +548,45 @@ describe('put', () => {
     expect(ConditionExpression).toContain('#c_5.#c_6 = :c_4')
     expect(ExpressionAttributeNames).toMatchObject({
       '#c_5': 'transformedRecord',
+      // transform is only applied to values, not to paths
       '#c_6': 'RECORD_KEY#key'
     })
     expect(ExpressionAttributeValues).toMatchObject({
+      ':c_1': 'test',
+      ':c_2': 'str',
+      ':c_3': 'map',
+      ':c_4': 'value'
+    })
+
+    const { ExpressionAttributeValues: ExpressionAttributeValues2 } = TestEntity3.build(
+      PutItemCommand
+    )
+      .item({
+        email: 'foo@bar.mail',
+        sort: 'y',
+        transformedStr: 'str',
+        transformedSet: new Set(['set']),
+        transformedList: ['list'],
+        transformedMap: { str: 'map' },
+        transformedRecord: { recordKey: 'recordValue' }
+      })
+      .options({
+        condition: {
+          and: [
+            { attr: 'email', eq: 'test' },
+            { attr: 'transformedStr', eq: 'str' },
+            /**
+             * @debt feature "Can you apply Contains clauses to Set attributes?"
+             */
+            // { attr: 'transformedSet', contains: 'SET' }
+            { attr: 'transformedMap.str', eq: 'map' },
+            { attr: 'transformedRecord.key', eq: 'value' }
+          ]
+        }
+      })
+      .params()
+
+    expect(ExpressionAttributeValues2).toMatchObject({
       ':c_1': 'EMAIL#test',
       ':c_2': 'STR#str',
       ':c_3': 'MAP#map',
