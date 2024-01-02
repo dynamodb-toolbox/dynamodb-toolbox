@@ -7,7 +7,7 @@ import * as parseAttributeClonedInputModule from './attribute'
 const parseAttributeClonedInputMock = jest
   .spyOn(parseAttributeClonedInputModule, 'parseAttributeClonedInput')
   // @ts-expect-error
-  .mockImplementation((_, input) => input)
+  .mockImplementation((_, input) => ({ next: () => ({ value: input, done: true }) }))
 
 const mapAttr = freezeMapAttribute(map({ foo: string(), bar: string() }), 'path')
 
@@ -17,7 +17,7 @@ describe('parseMapAttributeClonedInput', () => {
   })
 
   it('throws an error if input is not a map', () => {
-    const invalidCall = () => parseMapAttributeClonedInput(mapAttr, ['foo', 'bar'])
+    const invalidCall = () => parseMapAttributeClonedInput(mapAttr, ['foo', 'bar']).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -30,7 +30,7 @@ describe('parseMapAttributeClonedInput', () => {
       { foo: 'foo', bar: 'bar' },
       // @ts-expect-error we don't really care about the type here
       options
-    )
+    ).next().value
 
     expect(parsedValues).toStrictEqual({ foo: 'foo', bar: 'bar' })
     expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)

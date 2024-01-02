@@ -1,8 +1,9 @@
-import type {
+import {
   MapAttribute,
   MapAttributeBasicValue,
   AttributeBasicValue,
-  Extension
+  Extension,
+  AttributeValue
 } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
@@ -11,11 +12,11 @@ import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 
-export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
+export function* parseMapAttributeClonedInput<EXTENSION extends Extension>(
   mapAttribute: MapAttribute,
   input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
-): MapAttributeBasicValue<EXTENSION> => {
+): Generator<MapAttributeBasicValue<EXTENSION>, MapAttributeBasicValue<EXTENSION>> {
   const { filters } = parsingOptions
 
   if (!isObject(input)) {
@@ -29,44 +30,41 @@ export const parseMapAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: MapAttributeBasicValue<EXTENSION> = {}
+  const parsers: Record<string, Generator<AttributeValue<EXTENSION>>> = {}
 
-  // Check that entries match filtered schema
+  // Keep attributes that match filtered schema
   Object.entries(input).forEach(([attributeName, attributeInput]) => {
     const attribute = mapAttribute.attributes[attributeName]
 
     if (attribute === undefined) return
 
     if (doesAttributeMatchFilters(attribute, filters)) {
-      const parsedAttributeInput = parseAttributeClonedInput(
-        attribute,
-        attributeInput,
-        parsingOptions
-      )
-
-      if (parsedAttributeInput !== undefined) {
-        parsedInput[attributeName] = parsedAttributeInput
-      }
+      parsers[attributeName] = parseAttributeClonedInput(attribute, attributeInput, parsingOptions)
     }
   })
 
-  // Check that rest of filtered schema attributes are matched by input
+  // Add other attributes
   Object.entries(mapAttribute.attributes)
     .filter(
       ([attributeName, attribute]) =>
-        parsedInput[attributeName] === undefined && doesAttributeMatchFilters(attribute, filters)
+        parsers[attributeName] === undefined && doesAttributeMatchFilters(attribute, filters)
     )
     .forEach(([attributeName, attribute]) => {
-      const parsedAttributeInput = parseAttributeClonedInput<EXTENSION>(
-        attribute,
-        undefined,
-        parsingOptions
-      )
-
-      if (parsedAttributeInput !== undefined) {
-        parsedInput[attributeName] = parsedAttributeInput
-      }
+      parsers[attributeName] = parseAttributeClonedInput(attribute, undefined, parsingOptions)
     })
 
-  return parsedInput
+  yield Object.fromEntries(
+    Object.entries(parsers)
+      .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
+      .filter(([, attributeValue]) => attributeValue !== undefined)
+  )
+
+  return Object.fromEntries(
+    Object.entries(parsers)
+      .map(([attributeName, attribute]) => [
+        mapAttribute.attributes[attributeName].savedAs ?? attributeName,
+        attribute.next().value
+      ])
+      .filter(([, attributeValue]) => attributeValue !== undefined)
+  )
 }

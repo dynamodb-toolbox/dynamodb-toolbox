@@ -14,7 +14,8 @@ import { defaultParseExtension } from './utils'
 
 const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'])
 
-export const parseAttributeClonedInput = <EXTENSION extends Extension = never>(
+// eslint-disable-next-line require-yield
+export function* parseAttributeClonedInput<EXTENSION extends Extension = never>(
   attribute: Attribute,
   input: AttributeValue<EXTENSION> | undefined,
   ...[parsingOptions = {} as ParsingOptions<EXTENSION>]: If<
@@ -22,7 +23,7 @@ export const parseAttributeClonedInput = <EXTENSION extends Extension = never>(
     [options: ParsingOptions<EXTENSION>],
     [options?: ParsingOptions<EXTENSION>]
   >
-): AttributeValue<EXTENSION> => {
+): Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>> {
   const { requiringOptions = defaultRequiringOptions } = parsingOptions
 
   const {
@@ -32,14 +33,14 @@ export const parseAttributeClonedInput = <EXTENSION extends Extension = never>(
     parseExtension = (defaultParseExtension as unknown) as ExtensionParser<EXTENSION>
   } = parsingOptions
 
-  const { isExtension, parsedExtension, basicInput } = parseExtension(
+  const { isExtension, extensionParser, basicInput } = parseExtension(
     attribute,
     input,
     parsingOptions
   )
 
   if (isExtension) {
-    return parsedExtension
+    return yield* extensionParser()
   }
 
   if (basicInput === undefined) {
@@ -49,6 +50,7 @@ export const parseAttributeClonedInput = <EXTENSION extends Extension = never>(
         path: attribute.path
       })
     } else {
+      yield undefined
       return undefined
     }
   }
@@ -60,16 +62,16 @@ export const parseAttributeClonedInput = <EXTENSION extends Extension = never>(
     case 'binary':
     case 'number':
     case 'string':
-      return parsePrimitiveAttributeClonedInput(attribute, basicInput)
+      return yield* parsePrimitiveAttributeClonedInput(attribute, basicInput, parsingOptions)
     case 'set':
-      return parseSetAttributeClonedInput(attribute, basicInput, parsingOptions)
+      return yield* parseSetAttributeClonedInput(attribute, basicInput, parsingOptions)
     case 'list':
-      return parseListAttributeClonedInput(attribute, basicInput, parsingOptions)
+      return yield* parseListAttributeClonedInput(attribute, basicInput, parsingOptions)
     case 'map':
-      return parseMapAttributeClonedInput(attribute, basicInput, parsingOptions)
+      return yield* parseMapAttributeClonedInput(attribute, basicInput, parsingOptions)
     case 'record':
-      return parseRecordAttributeClonedInput(attribute, basicInput, parsingOptions)
+      return yield* parseRecordAttributeClonedInput(attribute, basicInput, parsingOptions)
     case 'anyOf':
-      return parseAnyOfAttributeClonedInput(attribute, basicInput, parsingOptions)
+      return yield* parseAnyOfAttributeClonedInput(attribute, basicInput, parsingOptions)
   }
 }

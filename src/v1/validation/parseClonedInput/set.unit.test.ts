@@ -7,7 +7,7 @@ import * as parseAttributeClonedInputModule from './attribute'
 const parseAttributeClonedInputMock = jest
   .spyOn(parseAttributeClonedInputModule, 'parseAttributeClonedInput')
   // @ts-expect-error
-  .mockImplementation((_, input) => input)
+  .mockImplementation((_, input) => ({ next: () => ({ value: input, done: true }) }))
 
 const setAttr = freezeSetAttribute(set(string()), 'path')
 
@@ -17,7 +17,7 @@ describe('parseSetAttributeClonedInput', () => {
   })
 
   it('throws an error if input is not a set', () => {
-    const invalidCall = () => parseSetAttributeClonedInput(setAttr, { foo: 'bar' })
+    const invalidCall = () => parseSetAttributeClonedInput(setAttr, { foo: 'bar' }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -30,7 +30,7 @@ describe('parseSetAttributeClonedInput', () => {
       new Set(['foo', 'bar']),
       // @ts-expect-error we don't really care about the type here
       options
-    )
+    ).next().value
 
     expect(new Set(parsedValues)).toStrictEqual(new Set(['foo', 'bar']))
     expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)

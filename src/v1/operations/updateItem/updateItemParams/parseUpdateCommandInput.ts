@@ -10,7 +10,7 @@ import { parseUpdateExtension } from './extension/parseExtension'
 type EntityUpdateCommandInputParser = (
   entity: EntityV2,
   input: Item<UpdateItemInputExtension>
-) => Item<UpdateItemInputExtension>
+) => Generator<Item<UpdateItemInputExtension>, Item<UpdateItemInputExtension>>
 
 const requiringOptions = new Set<RequiredOption>(['always'])
 

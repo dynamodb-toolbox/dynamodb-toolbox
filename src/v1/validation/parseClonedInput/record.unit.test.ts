@@ -1,6 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import { freezeRecordAttribute, record, string } from 'v1/schema'
-import { prefix } from 'v1/transformers'
 
 import { parseRecordAttributeClonedInput } from './record'
 import * as parseAttributeClonedInputModule from './attribute'
@@ -9,11 +8,11 @@ import * as parsePrimitiveClonedInputModule from './primitive'
 const parsePrimitiveClonedInputMock = jest
   .spyOn(parsePrimitiveClonedInputModule, 'parsePrimitiveAttributeClonedInput')
   // @ts-expect-error
-  .mockImplementation((_, input) => input)
+  .mockImplementation((_, input) => ({ next: () => ({ value: input, done: true }) }))
 const parseAttributeClonedInputMock = jest
   .spyOn(parseAttributeClonedInputModule, 'parseAttributeClonedInput')
   // @ts-expect-error
-  .mockImplementation((_, input) => input)
+  .mockImplementation((_, input) => ({ next: () => ({ value: input, done: true }) }))
 
 const recordAttr = freezeRecordAttribute(record(string(), string()), 'path')
 
@@ -24,7 +23,7 @@ describe('parseRecordAttributeClonedInput', () => {
   })
 
   it('throws an error if input is not a record', () => {
-    const invalidCall = () => parseRecordAttributeClonedInput(recordAttr, ['foo', 'bar'])
+    const invalidCall = () => parseRecordAttributeClonedInput(recordAttr, ['foo', 'bar']).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -37,26 +36,14 @@ describe('parseRecordAttributeClonedInput', () => {
       { foo: 'foo1', bar: 'bar1' },
       // @ts-expect-error we don't really care about the type here
       options
-    )
+    ).next().value
 
     expect(parsedValues).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
     expect(parsePrimitiveClonedInputMock).toHaveBeenCalledTimes(2)
-    expect(parsePrimitiveClonedInputMock).toHaveBeenCalledWith(recordAttr.keys, 'foo')
-    expect(parsePrimitiveClonedInputMock).toHaveBeenCalledWith(recordAttr.keys, 'bar')
+    expect(parsePrimitiveClonedInputMock).toHaveBeenCalledWith(recordAttr.keys, 'foo', options)
+    expect(parsePrimitiveClonedInputMock).toHaveBeenCalledWith(recordAttr.keys, 'bar', options)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(recordAttr.elements, 'foo1', options)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(recordAttr.elements, 'bar1', options)
-  })
-
-  it('keeps transformer if one is present (keys)', () => {
-    const transformer = prefix('foo')
-    const recordAttr2 = freezeRecordAttribute(
-      record(string().transform(transformer), string()),
-      'path'
-    )
-
-    const parsedValues = parseRecordAttributeClonedInput(recordAttr2, { foo: 'foo' })
-
-    expect(parsedValues).toStrictEqual({ foo: 'foo' })
   })
 })

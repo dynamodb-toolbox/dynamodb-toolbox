@@ -3,7 +3,7 @@ import type { Item, RequiredOption } from 'v1/schema'
 import { cloneSchemaInputAndAddDefaults } from 'v1/validation/cloneInputAndAddDefaults'
 import { parseSchemaClonedInput } from 'v1/validation/parseClonedInput'
 
-type EntityKeyInputParser = (entity: EntityV2, input: Item) => Item
+type EntityKeyInputParser = (entity: EntityV2, input: Item) => Generator<Item, Item>
 
 const requiringOptions = new Set<RequiredOption>(['always'])
 
