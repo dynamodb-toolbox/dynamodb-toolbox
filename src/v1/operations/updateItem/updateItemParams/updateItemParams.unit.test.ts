@@ -1803,7 +1803,7 @@ describe('update', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
   })
 
-  fit('transformed key/attribute (partial - 1)', () => {
+  it('transformed key/attribute (partial - 1)', () => {
     const {
       Key,
       UpdateExpression,

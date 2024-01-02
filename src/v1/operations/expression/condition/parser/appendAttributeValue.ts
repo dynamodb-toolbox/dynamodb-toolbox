@@ -19,7 +19,7 @@ export const appendAttributeValue = (
     attribute,
     expressionAttributeValue as AttributeValue
   )
-  const parsedInput = parseAttributeClonedInput(attribute, clonedInput)
+  const parsedInput = parseAttributeClonedInput(attribute, clonedInput).next().value
   const collapsedInput = collapseAttributeParsedInput(attribute, parsedInput, { transform })
 
   const expressionAttributeValueIndex = conditionParser.expressionAttributeValues.push(

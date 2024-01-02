@@ -98,7 +98,7 @@ export type RecordAttributeValue<EXTENSION extends Extension = never> =
   | RecordAttributeBasicValue<EXTENSION>
 
 export type RecordAttributeBasicValue<EXTENSION extends Extension = never> = {
-  [key: string]: AttributeValue<EXTENSION>
+  [key: string]: AttributeValue<EXTENSION> | undefined
 }
 
 /**

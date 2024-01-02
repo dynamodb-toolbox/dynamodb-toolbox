@@ -15,7 +15,8 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
   input: PutItemInput<ENTITY>,
   putItemOptions: OPTIONS = {} as OPTIONS
 ): PutCommandInput => {
-  const validInput = parseEntityPutCommandInput(entity, input)
+  const validInputParser = parseEntityPutCommandInput(entity, input)
+  const validInput = validInputParser.next().value
   const collapsedInput = collapseSchemaParsedInput(entity.schema, validInput)
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : collapsedInput
