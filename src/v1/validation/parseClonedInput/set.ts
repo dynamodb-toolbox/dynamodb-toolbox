@@ -1,5 +1,6 @@
 import type {
   SetAttribute,
+  AttributeValue,
   AttributeBasicValue,
   SetAttributeBasicValue,
   Extension
@@ -10,11 +11,11 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 
-export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(
+export function* parseSetAttributeClonedInput<EXTENSION extends Extension>(
   setAttribute: SetAttribute,
   input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
-): SetAttributeBasicValue<EXTENSION> => {
+): Generator<SetAttributeBasicValue<EXTENSION>, SetAttributeBasicValue<EXTENSION>> {
   if (!isSet(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${setAttribute.path} should be a ${setAttribute.type}`,
@@ -26,11 +27,13 @@ export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: SetAttributeBasicValue<EXTENSION> = new Set()
+  const parsers: Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>>[] = []
 
-  input.forEach(element =>
-    parsedInput.add(parseAttributeClonedInput(setAttribute.elements, element, parsingOptions))
-  )
+  for (const element of input.values()) {
+    parsers.push(parseAttributeClonedInput(setAttribute.elements, element, parsingOptions))
+  }
 
-  return parsedInput
+  yield new Set(parsers.map(parser => parser.next().value))
+
+  return new Set(parsers.map(parser => parser.next().value))
 }

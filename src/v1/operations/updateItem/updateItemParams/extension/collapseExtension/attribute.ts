@@ -1,6 +1,7 @@
 import type { ExtensionCollapser } from 'v1/validation/collapseParsedInput/types'
 import { collapseAttributeParsedInput } from 'v1/validation/collapseParsedInput'
 
+import type { AttributeValue } from 'v1/schema'
 import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import {
   $SET,
@@ -22,6 +23,7 @@ import {
   hasAppendOperation,
   hasPrependOperation
 } from 'v1/operations/updateItem/utils'
+import { isObject } from 'v1/utils/validation/isObject'
 
 import { collapseReferenceExtension } from './reference'
 
@@ -131,6 +133,23 @@ export const collapseUpdateExtension: ExtensionCollapser<UpdateItemInputExtensio
           collapseExtension: collapseReferenceExtension
         })
       }
+    }
+  }
+
+  if (attribute.type === 'list' && isObject(input)) {
+    const maxUpdatedIndex = Math.max(...Object.keys(input).map(parseFloat))
+
+    return {
+      isExtension: true,
+      collapsedExtension: [...Array(maxUpdatedIndex + 1).keys()].map(index => {
+        // @ts-expect-error we dont care for now
+        const elementInput = input[index] as AttributeValue<UpdateItemInputExtension> | undefined
+
+        return elementInput === undefined
+          ? undefined
+          : // @ts-expect-error
+            collapseAttributeParsedInput(attribute.elements, input[index], options)
+      })
     }
   }
 

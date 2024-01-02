@@ -87,7 +87,7 @@ export type UpdateItemInputExtension =
   | {
       type: 'list'
       value:
-        | NonVerbal<{ [INDEX in number]: AttributeValue<UpdateItemInputExtension> }>
+        | NonVerbal<{ [INDEX in number]: AttributeValue<UpdateItemInputExtension> | undefined }>
         | Verbal<{ [$SET]: ListAttributeValue }>
         | Verbal<
             | { [$APPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }

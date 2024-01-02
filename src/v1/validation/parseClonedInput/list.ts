@@ -1,5 +1,6 @@
 import type {
   Extension,
+  AttributeValue,
   ListAttribute,
   ListAttributeBasicValue,
   AttributeBasicValue
@@ -10,11 +11,11 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 
-export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
+export function* parseListAttributeClonedInput<EXTENSION extends Extension>(
   listAttribute: ListAttribute,
   input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
-): ListAttributeBasicValue<EXTENSION> => {
+): Generator<ListAttributeBasicValue<EXTENSION>, ListAttributeBasicValue<EXTENSION>> {
   if (!isArray(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${listAttribute.path} should be a ${listAttribute.type}`,
@@ -26,11 +27,13 @@ export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: ListAttributeBasicValue<EXTENSION> = []
+  const parsers: Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>>[] = []
 
-  input.forEach(element =>
-    parsedInput.push(parseAttributeClonedInput(listAttribute.elements, element, parsingOptions))
-  )
+  for (const element of input.values()) {
+    parsers.push(parseAttributeClonedInput(listAttribute.elements, element, parsingOptions))
+  }
 
-  return parsedInput
+  yield parsers.map(parser => parser.next().value)
+
+  return parsers.map(parser => parser.next().value)
 }

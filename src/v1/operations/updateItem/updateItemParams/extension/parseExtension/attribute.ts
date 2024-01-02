@@ -28,7 +28,10 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
 
     return {
       isExtension: true,
-      parsedExtension: $REMOVE
+      *extensionParser() {
+        yield $REMOVE
+        return $REMOVE
+      }
     }
   }
 
@@ -51,13 +54,13 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
       /**
        * @debt type "fix this cast"
        */
-      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input)
+      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input, options)
     case 'set':
-      return parseSetExtension(attribute, input)
+      return parseSetExtension(attribute, input, options)
     case 'list':
       return parseListExtension(attribute, input, options)
     case 'map':
-      return parseMapExtension(attribute, input)
+      return parseMapExtension(attribute, input, options)
     case 'record':
       return parseRecordExtension(attribute, input, options)
     default:
