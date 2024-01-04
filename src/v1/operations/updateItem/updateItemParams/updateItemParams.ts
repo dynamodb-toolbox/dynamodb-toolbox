@@ -3,7 +3,6 @@ import isEmpty from 'lodash.isempty'
 import omit from 'lodash.omit'
 
 import type { EntityV2 } from 'v1/entity'
-import { collapseSchemaParsedInput } from 'v1/validation/collapseParsedInput'
 import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
 
 import type { UpdateItemInput } from '../types'
@@ -12,7 +11,6 @@ import { parseUpdate } from '../updateExpression'
 
 import { parseEntityUpdateCommandInput } from './parseUpdateCommandInput'
 import { parseUpdateItemOptions } from './parseUpdateItemOptions'
-import { collapseUpdateExtension } from './extension/collapseExtension'
 
 export const updateItemParams = <
   ENTITY extends EntityV2,
@@ -24,9 +22,7 @@ export const updateItemParams = <
 ): UpdateCommandInput => {
   const validInputParser = parseEntityUpdateCommandInput(entity, input)
   const validInput = validInputParser.next().value
-  const collapsedInput = collapseSchemaParsedInput(entity.schema, validInput, {
-    collapseExtension: collapseUpdateExtension
-  })
+  const collapsedInput = validInputParser.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : collapsedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)

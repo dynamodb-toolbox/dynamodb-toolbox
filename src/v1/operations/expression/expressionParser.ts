@@ -3,7 +3,6 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
-import { collapseAttributeParsedInput } from 'v1/validation/collapseParsedInput'
 
 export type AppendAttributePathOptions = { size?: boolean }
 
@@ -107,9 +106,9 @@ export const appendAttributePath = (
 
       case 'record': {
         const keyAttribute = parentAttribute.keys
-        const parsedKey = parseAttributeClonedInput(keyAttribute, childAttributeAccessor).next()
-          .value
-        const collapsedKey = collapseAttributeParsedInput(keyAttribute, parsedKey) as string
+        const keyParser = parseAttributeClonedInput(keyAttribute, childAttributeAccessor)
+        keyParser.next()
+        const collapsedKey = keyParser.next().value as string
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(collapsedKey)
         expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
