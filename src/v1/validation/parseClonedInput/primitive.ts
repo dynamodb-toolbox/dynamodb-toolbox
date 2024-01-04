@@ -1,18 +1,30 @@
 import type {
   PrimitiveAttribute,
+  PrimitiveAttributeBasicValue,
   AttributeBasicValue,
   ResolvedPrimitiveAttribute,
-  Extension
+  Extension,
+  Transformer
 } from 'v1/schema'
+import type { If } from 'v1/types'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { PrimitiveAttributeParsedBasicValue } from '../types'
+import type { HasExtension } from '../types'
+import type { ParsingOptions } from './types'
 
-export const parsePrimitiveAttributeClonedInput = <EXTENSION extends Extension>(
+// eslint-disable-next-line require-yield
+export function* parsePrimitiveAttributeClonedInput<EXTENSION extends Extension>(
   primitiveAttribute: PrimitiveAttribute,
-  input: AttributeBasicValue<EXTENSION>
-): PrimitiveAttributeParsedBasicValue => {
+  input: AttributeBasicValue<EXTENSION>,
+  ...[parsingOptions = {} as ParsingOptions<EXTENSION>]: If<
+    HasExtension<EXTENSION>,
+    [options: ParsingOptions<EXTENSION>],
+    [options?: ParsingOptions<EXTENSION>]
+  >
+): Generator<PrimitiveAttributeBasicValue, PrimitiveAttributeBasicValue> {
+  const { transform = true } = parsingOptions
+
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -41,5 +53,14 @@ export const parsePrimitiveAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  return input as PrimitiveAttributeParsedBasicValue
+  /**
+   * @debt type "validator should act as typeguard"
+   */
+  const parsedInput = input as PrimitiveAttributeBasicValue
+
+  yield parsedInput as PrimitiveAttributeBasicValue
+
+  return transform && primitiveAttribute.transform !== undefined
+    ? (primitiveAttribute.transform as Transformer).parse(parsedInput)
+    : parsedInput
 }

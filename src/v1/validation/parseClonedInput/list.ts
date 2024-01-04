@@ -1,18 +1,21 @@
-import type { Extension, ListAttribute, AttributeBasicValue, Transformer } from 'v1/schema'
-import { $type, $transform } from 'v1/schema/attributes/constants/attributeOptions'
-import { isPrimitiveAttribute } from 'v1/schema/utils/isPrimitiveAttribute'
+import type {
+  Extension,
+  AttributeValue,
+  ListAttribute,
+  ListAttributeBasicValue,
+  AttributeBasicValue
+} from 'v1/schema'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { ListAttributeParsedBasicValue } from '../types'
 import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 
-export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
+export function* parseListAttributeClonedInput<EXTENSION extends Extension>(
   listAttribute: ListAttribute,
   input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
-): ListAttributeParsedBasicValue<EXTENSION> => {
+): Generator<ListAttributeBasicValue<EXTENSION>, ListAttributeBasicValue<EXTENSION>> {
   if (!isArray(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${listAttribute.path} should be a ${listAttribute.type}`,
@@ -24,19 +27,13 @@ export const parseListAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: ListAttributeParsedBasicValue<EXTENSION> = []
-  parsedInput[$type] = 'list'
+  const parsers: Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>>[] = []
 
-  input.forEach(element =>
-    parsedInput.push(parseAttributeClonedInput(listAttribute.elements, element, parsingOptions))
-  )
-
-  if (
-    isPrimitiveAttribute(listAttribute.elements) &&
-    listAttribute.elements.transform !== undefined
-  ) {
-    parsedInput[$transform] = listAttribute.elements.transform as Transformer
+  for (const element of input.values()) {
+    parsers.push(parseAttributeClonedInput(listAttribute.elements, element, parsingOptions))
   }
 
-  return parsedInput
+  yield parsers.map(parser => parser.next().value)
+
+  return parsers.map(parser => parser.next().value)
 }

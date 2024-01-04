@@ -1,7 +1,15 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { TableV2, EntityV2, schema, string, DynamoDBToolboxError, DeleteItemCommand } from 'v1'
+import {
+  TableV2,
+  EntityV2,
+  schema,
+  string,
+  DynamoDBToolboxError,
+  DeleteItemCommand,
+  prefix
+} from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -216,6 +224,37 @@ describe('delete', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+  })
+
+  it('transformed key', () => {
+    const TestEntity3 = new EntityV2({
+      name: 'TestEntity',
+      schema: schema({
+        email: string().key().savedAs('pk').transform(prefix('EMAIL')),
+        sort: string().key().savedAs('sk')
+      }),
+      table: TestTable
+    })
+
+    const { Key, ExpressionAttributeNames, ExpressionAttributeValues } = TestEntity3.build(
+      DeleteItemCommand
+    )
+      .key({ email: 'foo@bar.mail', sort: 'y' })
+      .options({ condition: { attr: 'email', gt: 'test', transform: false } })
+      .params()
+
+    expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
+    expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
+    expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })
+
+    const { ExpressionAttributeValues: ExpressionAttributeValues2 } = TestEntity3.build(
+      DeleteItemCommand
+    )
+      .key({ email: 'foo@bar.mail', sort: 'y' })
+      .options({ condition: { attr: 'email', gt: 'test' } })
+      .params()
+
+    expect(ExpressionAttributeValues2).toEqual({ ':c_1': 'EMAIL#test' })
   })
 
   // TODO Create deleteBatch method and move tests there

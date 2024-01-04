@@ -1,24 +1,22 @@
-import type { RecordAttribute, AttributeBasicValue, Extension, Transformer } from 'v1/schema'
-import {
-  $type,
-  $keys,
-  $elements,
-  $transform
-} from 'v1/schema/attributes/constants/attributeOptions'
-import { isPrimitiveAttribute } from 'v1/schema/utils/isPrimitiveAttribute'
+import type {
+  RecordAttribute,
+  RecordAttributeBasicValue,
+  AttributeBasicValue,
+  Extension,
+  AttributeValue
+} from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 
-import type { RecordAttributeParsedBasicValue } from '../types'
 import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 import { parsePrimitiveAttributeClonedInput } from './primitive'
 
-export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
+export function* parseRecordAttributeClonedInput<EXTENSION extends Extension>(
   recordAttribute: RecordAttribute,
   input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
-): RecordAttributeParsedBasicValue<EXTENSION> => {
+): Generator<RecordAttributeBasicValue<EXTENSION>, RecordAttributeBasicValue<EXTENSION>> {
   if (!isObject(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${recordAttribute.path} should be a ${recordAttribute.type}`,
@@ -30,38 +28,23 @@ export const parseRecordAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: RecordAttributeParsedBasicValue<EXTENSION> = { [$type]: 'record' }
+  const parsers: [
+    Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>>,
+    Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>>
+  ][] = Object.entries(input).map(([key, element]) => [
+    parsePrimitiveAttributeClonedInput(recordAttribute.keys, key, parsingOptions),
+    parseAttributeClonedInput(recordAttribute.elements, element, parsingOptions)
+  ])
 
-  Object.entries(input).forEach(([key, element]) => {
-    const parsedElementInput = parseAttributeClonedInput(
-      recordAttribute.elements,
-      element,
-      parsingOptions
-    )
+  yield Object.fromEntries(
+    parsers
+      .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
+      .filter(([, element]) => element !== undefined)
+  )
 
-    if (parsedElementInput !== undefined) {
-      parsedInput[
-        parsePrimitiveAttributeClonedInput(recordAttribute.keys, key) as string
-      ] = parsedElementInput
-    }
-  })
-
-  if (recordAttribute.keys.transform !== undefined) {
-    parsedInput[$transform] = {
-      [$keys]: recordAttribute.keys.transform as Transformer<string, string>
-    }
-  }
-
-  if (
-    isPrimitiveAttribute(recordAttribute.elements) &&
-    recordAttribute.elements.transform !== undefined
-  ) {
-    if (parsedInput[$transform] === undefined) {
-      parsedInput[$transform] = { [$elements]: recordAttribute.elements.transform as Transformer }
-    } else {
-      parsedInput[$transform][$elements] = recordAttribute.elements.transform as Transformer
-    }
-  }
-
-  return parsedInput
+  return Object.fromEntries(
+    parsers
+      .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
+      .filter(([, element]) => element !== undefined)
+  )
 }

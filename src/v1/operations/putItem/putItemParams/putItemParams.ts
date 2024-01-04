@@ -1,7 +1,6 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
-import { collapseSchemaParsedInput } from 'v1/validation/collapseParsedInput'
 import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
 
 import type { PutItemInput } from '../types'
@@ -15,8 +14,9 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
   input: PutItemInput<ENTITY>,
   putItemOptions: OPTIONS = {} as OPTIONS
 ): PutCommandInput => {
-  const validInput = parseEntityPutCommandInput(entity, input)
-  const collapsedInput = collapseSchemaParsedInput(validInput)
+  const validInputParser = parseEntityPutCommandInput(entity, input)
+  const validInput = validInputParser.next().value
+  const collapsedInput = validInputParser.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : collapsedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)

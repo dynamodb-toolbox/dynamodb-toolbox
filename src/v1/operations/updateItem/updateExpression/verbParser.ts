@@ -1,7 +1,11 @@
 import type { Schema, Attribute, AttributeValue } from 'v1/schema'
 import { isNumber, isString } from 'v1/utils/validation'
 
-import { ExpressionParser, appendAttributePath } from 'v1/operations/expression/expressionParser'
+import {
+  ExpressionParser,
+  appendAttributePath,
+  AppendAttributePathOptions
+} from 'v1/operations/expression/expressionParser'
 
 import type { UpdateItemInputExtension } from '../types'
 import { hasGetOperation } from '../utils'
@@ -31,8 +35,10 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     this.expression = initialStr
   }
 
-  appendAttributePath = (attributePath: string): Attribute =>
-    appendAttributePath(this, attributePath)
+  appendAttributePath = (
+    attributePath: string,
+    options: AppendAttributePathOptions = {}
+  ): Attribute => appendAttributePath(this, attributePath, options)
 
   appendAttributeValue = (_: Attribute, attributeValue: unknown): void => {
     const expressionAttributeValueIndex = this.expressionAttributeValues.push(attributeValue)

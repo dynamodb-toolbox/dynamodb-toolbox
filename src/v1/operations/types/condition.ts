@@ -54,7 +54,9 @@ export type AttributeCondition<
   | (ATTRIBUTE extends PrimitiveAttribute
       ? PrimitiveAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
-  // TO VERIFY: Can you apply clauses to Set attributes like Contains ?
+  /**
+   * @debt feature "Can you apply Contains clauses to Set attributes?"
+   */
   | (ATTRIBUTE extends ListAttribute
       ? AttributeCondition<
           `${ATTRIBUTE_PATH}[${number}]`,
@@ -125,8 +127,7 @@ export type PrimitiveAttributeExtraCondition<
   ATTRIBUTE extends PrimitiveAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
-> = AttrOrSize<ATTRIBUTE_PATH> &
-  (
+> = AttrOrSize<ATTRIBUTE_PATH> & { transform?: boolean } & (
     | // TO VERIFY: Are EQ | NE | IN applyable to other types than Primitives?
     { eq: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
     | { ne: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }

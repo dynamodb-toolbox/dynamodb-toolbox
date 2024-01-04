@@ -11,7 +11,8 @@ import {
   string,
   number,
   Item,
-  FormattedItem
+  FormattedItem,
+  prefix
 } from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
@@ -720,6 +721,48 @@ describe('query', () => {
       ':c2_1': Entity2.name,
       ':c2_2': 100
     })
+  })
+
+  it('transforms attributes when applying filters', () => {
+    const TestEntity3 = new EntityV2({
+      name: 'entity3',
+      schema: schema({
+        email: string().key().savedAs('pk'),
+        sort: string().key().savedAs('sk'),
+        transformedStr: string().transform(prefix('foo'))
+      }),
+      table: TestTable
+    })
+
+    const {
+      FilterExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .entities(TestEntity3)
+      .options({
+        filters: {
+          entity3: { attr: 'transformedStr', gte: 'bar', transform: false }
+        }
+      })
+      .params()
+
+    expect(FilterExpression).toContain('#c1_2 >= :c1_2')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c1_2': 'transformedStr' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c1_2': 'bar' })
+
+    const { ExpressionAttributeValues: ExpressionAttributeValues2 } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .entities(TestEntity3)
+      .options({
+        filters: {
+          entity3: { attr: 'transformedStr', gte: 'bar' }
+        }
+      })
+      .params()
+
+    expect(ExpressionAttributeValues2).toMatchObject({ ':c1_2': 'foo#bar' })
   })
 
   it('applies entity projection expression', () => {

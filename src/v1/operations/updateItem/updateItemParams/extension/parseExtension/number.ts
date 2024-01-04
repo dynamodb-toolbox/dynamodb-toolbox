@@ -1,5 +1,5 @@
 import type { AttributeBasicValue, AttributeValue, PrimitiveAttribute } from 'v1/schema'
-import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
+import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -18,7 +18,8 @@ const ACCEPTABLE_LENGTH_SET = new Set<number>([1, 2])
 
 export const parseNumberExtension = (
   attribute: PrimitiveAttribute<'number'>,
-  input: AttributeValue<UpdateItemInputExtension> | undefined
+  input: AttributeValue<UpdateItemInputExtension> | undefined,
+  options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   if (hasSumOperation(input)) {
     if (!isArray(input[$SUM]) || !ACCEPTABLE_LENGTH_SET.has(input[$SUM].length)) {
@@ -31,18 +32,20 @@ export const parseNumberExtension = (
       })
     }
 
-    const parsedExtension: AttributeValue<UpdateItemInputExtension> = {}
-    Object.assign(parsedExtension, {
-      [$SUM]: input[$SUM].map(element =>
-        parseAttributeClonedInput<ReferenceExtension>(attribute, element, {
-          parseExtension: parseReferenceExtension
-        })
-      )
-    })
+    const parsers = input[$SUM].map(element =>
+      parseAttributeClonedInput<ReferenceExtension>(attribute, element, {
+        ...options,
+        // References are allowed in sums
+        parseExtension: parseReferenceExtension
+      })
+    )
 
     return {
       isExtension: true,
-      parsedExtension
+      *extensionParser() {
+        yield { [$SUM]: parsers.map(parser => parser.next().value) }
+        return { [$SUM]: parsers.map(parser => parser.next().value) }
+      }
     }
   }
 
@@ -57,33 +60,36 @@ export const parseNumberExtension = (
       })
     }
 
-    const parsedExtension: AttributeValue<UpdateItemInputExtension> = {}
-    Object.assign(parsedExtension, {
-      [$SUBTRACT]: input[$SUBTRACT].map(element =>
-        parseAttributeClonedInput<ReferenceExtension>(attribute, element, {
-          parseExtension: parseReferenceExtension
-        })
-      )
-    })
+    const parsers = input[$SUBTRACT].map(element =>
+      parseAttributeClonedInput<ReferenceExtension>(attribute, element, {
+        ...options,
+        // References are allowed in subtractions
+        parseExtension: parseReferenceExtension
+      })
+    )
 
     return {
       isExtension: true,
-      parsedExtension
+      *extensionParser() {
+        yield { [$SUBTRACT]: parsers.map(parser => parser.next().value) }
+        return { [$SUBTRACT]: parsers.map(parser => parser.next().value) }
+      }
     }
   }
 
   if (hasAddOperation(input)) {
-    const parsedExtension: AttributeValue<UpdateItemInputExtension> = {}
-
-    Object.assign(parsedExtension, {
-      [$ADD]: parseAttributeClonedInput<ReferenceExtension>(attribute, input[$ADD], {
-        parseExtension: parseReferenceExtension
-      })
+    const parser = parseAttributeClonedInput<ReferenceExtension>(attribute, input[$ADD], {
+      ...options,
+      // References are allowed in additions
+      parseExtension: parseReferenceExtension
     })
 
     return {
       isExtension: true,
-      parsedExtension
+      *extensionParser() {
+        yield { [$ADD]: parser.next().value }
+        return { [$ADD]: parser.next().value }
+      }
     }
   }
 

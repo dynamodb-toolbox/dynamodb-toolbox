@@ -1,17 +1,21 @@
-import type { SetAttribute, AttributeBasicValue, Extension, Transformer } from 'v1/schema'
-import { $type, $transform } from 'v1/schema/attributes/constants/attributeOptions'
+import type {
+  SetAttribute,
+  AttributeValue,
+  AttributeBasicValue,
+  SetAttributeBasicValue,
+  Extension
+} from 'v1/schema'
 import { isSet } from 'v1/utils/validation/isSet'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { SetAttributeParsedBasicValue } from '../types'
 import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 
-export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(
+export function* parseSetAttributeClonedInput<EXTENSION extends Extension>(
   setAttribute: SetAttribute,
   input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
-): SetAttributeParsedBasicValue<EXTENSION> => {
+): Generator<SetAttributeBasicValue<EXTENSION>, SetAttributeBasicValue<EXTENSION>> {
   if (!isSet(input)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${setAttribute.path} should be a ${setAttribute.type}`,
@@ -23,16 +27,13 @@ export const parseSetAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  const parsedInput: SetAttributeParsedBasicValue<EXTENSION> = new Set()
-  parsedInput[$type] = 'set'
+  const parsers: Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>>[] = []
 
-  input.forEach(element =>
-    parsedInput.add(parseAttributeClonedInput(setAttribute.elements, element, parsingOptions))
-  )
-
-  if (setAttribute.elements.transform) {
-    parsedInput[$transform] = setAttribute.elements.transform as Transformer
+  for (const element of input.values()) {
+    parsers.push(parseAttributeClonedInput(setAttribute.elements, element, parsingOptions))
   }
 
-  return parsedInput
+  yield new Set(parsers.map(parser => parser.next().value))
+
+  return new Set(parsers.map(parser => parser.next().value))
 }

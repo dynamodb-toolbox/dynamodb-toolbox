@@ -15,7 +15,8 @@ import {
   map,
   record,
   DynamoDBToolboxError,
-  UpdateItemCommand
+  UpdateItemCommand,
+  prefix
 } from 'v1'
 import { $set, $get, $remove, $sum, $subtract, $add, $delete, $append, $prepend } from '../utils'
 
@@ -143,6 +144,23 @@ const TestEntity4 = new EntityV2({
   }),
   timestamps: false,
   table: TestTable4
+})
+
+const TestEntity5 = new EntityV2({
+  name: 'TestEntity',
+  schema: schema({
+    email: string().key().savedAs('pk').transform(prefix('EMAIL')),
+    sort: string().key().savedAs('sk'),
+    transformedStr: string().transform(prefix('STR')),
+    transformedSet: set(string().transform(prefix('SET'))),
+    transformedList: list(string().transform(prefix('LIST'))),
+    transformedMap: map({ str: string().transform(prefix('MAP')) }),
+    transformedRecord: record(
+      string().transform(prefix('RECORD_KEY')),
+      string().transform(prefix('RECORD_VALUE'))
+    )
+  }),
+  table: TestTable
 })
 
 describe('update', () => {
@@ -1783,5 +1801,140 @@ describe('update', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+  })
+
+  it('transformed key/attribute (partial - 1)', () => {
+    const {
+      Key,
+      UpdateExpression,
+      ConditionExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity5.build(UpdateItemCommand)
+      .item({
+        email: 'foo@bar.mail',
+        sort: 'y',
+        transformedSet: $add(new Set(['set'])),
+        transformedList: ['list'],
+        transformedMap: { str: 'map' },
+        transformedRecord: { recordKey: 'recordValue' }
+      })
+      .options({
+        condition: {
+          and: [
+            { attr: 'email', eq: 'test' },
+            { attr: 'transformedStr', eq: 'str' },
+            /**
+             * @debt feature "Can you apply Contains clauses to Set attributes?"
+             */
+            // { attr: 'transformedSet', contains: 'SET' }
+            { attr: 'transformedMap.str', eq: 'map' },
+            { attr: 'transformedRecord.key', eq: 'value' }
+          ]
+        }
+      })
+      .params()
+
+    expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
+    expect(UpdateExpression).toContain('SET #s_1[0] = :s_1, #s_2.#s_3 = :s_2, #s_4.#s_5 = :s_3')
+    expect(UpdateExpression).toContain('ADD #a_1 :a_1')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#s_1': 'transformedList',
+      '#s_2': 'transformedMap',
+      '#s_3': 'str',
+      '#s_4': 'transformedRecord',
+      '#s_5': 'RECORD_KEY#recordKey',
+      '#a_1': 'transformedSet'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':s_1': 'LIST#list',
+      ':s_2': 'MAP#map',
+      ':s_3': 'RECORD_VALUE#recordValue',
+      ':a_1': new Set(['SET#set'])
+    })
+
+    expect(ConditionExpression).toBe(
+      '(#c_1 = :c_1) AND (#c_2 = :c_2) AND (#c_3.#c_4 = :c_3) AND (#c_5.#c_6 = :c_4)'
+    )
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#c_1': 'pk',
+      '#c_2': 'transformedStr',
+      '#c_3': 'transformedMap',
+      '#c_4': 'str',
+      '#c_5': 'transformedRecord',
+      '#c_6': 'RECORD_KEY#key'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':a_1': new Set(['SET#set']),
+      ':c_1': 'EMAIL#test',
+      ':c_2': 'STR#str',
+      ':c_3': 'MAP#map',
+      ':c_4': 'RECORD_VALUE#value'
+    })
+  })
+
+  it('transformed key/attribute (partial - 2)', () => {
+    const {
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity5.build(UpdateItemCommand)
+      .item({
+        email: 'foo@bar.mail',
+        sort: 'y',
+        transformedSet: $delete(new Set(['set'])),
+        transformedList: $append(['list'])
+      })
+      .params()
+
+    expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
+    expect(UpdateExpression).toContain('SET #s_1 = list_append(#s_1, :s_1)')
+    expect(UpdateExpression).toContain('DELETE #d_1 :d_1')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#d_1': 'transformedSet',
+      '#s_1': 'transformedList'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':d_1': new Set(['SET#set']),
+      ':s_1': ['LIST#list']
+    })
+  })
+
+  it('transformed key/attribute (complete)', () => {
+    const {
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity5.build(UpdateItemCommand)
+      .item({
+        email: 'foo@bar.mail',
+        sort: 'y',
+        transformedSet: new Set(['set']),
+        transformedList: $set(['list']),
+        transformedMap: $set({ str: 'map' }),
+        transformedRecord: $set({ recordKey: 'recordValue' })
+      })
+      .params()
+
+    expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
+    expect(UpdateExpression).toContain('SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3, #s_4 = :s_4')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#s_1': 'transformedSet',
+      '#s_2': 'transformedList',
+      '#s_3': 'transformedMap',
+      '#s_4': 'transformedRecord'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':s_1': new Set(['SET#set']),
+      ':s_2': ['LIST#list'],
+      ':s_3': {
+        str: 'MAP#map'
+      },
+      ':s_4': {
+        'RECORD_KEY#recordKey': 'RECORD_VALUE#recordValue'
+      }
+    })
   })
 })

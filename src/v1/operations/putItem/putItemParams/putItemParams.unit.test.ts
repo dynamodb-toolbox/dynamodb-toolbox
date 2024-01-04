@@ -13,8 +13,10 @@ import {
   set,
   list,
   map,
+  record,
   DynamoDBToolboxError,
-  PutItemCommand
+  PutItemCommand,
+  prefix
 } from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
@@ -484,6 +486,112 @@ describe('put', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+  })
+
+  it('transformed key/attribute', () => {
+    const TestEntity3 = new EntityV2({
+      name: 'TestEntity',
+      schema: schema({
+        email: string().key().savedAs('pk').transform(prefix('EMAIL')),
+        sort: string().key().savedAs('sk'),
+        transformedStr: string().transform(prefix('STR')),
+        transformedSet: set(string().transform(prefix('SET'))),
+        transformedList: list(string().transform(prefix('LIST'))),
+        transformedMap: map({ str: string().transform(prefix('MAP')) }),
+        transformedRecord: record(
+          string().transform(prefix('RECORD_KEY')),
+          string().transform(prefix('RECORD_VALUE'))
+        )
+      }),
+      table: TestTable
+    })
+
+    const {
+      Item,
+      ConditionExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity3.build(PutItemCommand)
+      .item({
+        email: 'foo@bar.mail',
+        sort: 'y',
+        transformedStr: 'str',
+        transformedSet: new Set(['set']),
+        transformedList: ['list'],
+        transformedMap: { str: 'map' },
+        transformedRecord: { recordKey: 'recordValue' }
+      })
+      .options({
+        condition: {
+          and: [
+            { attr: 'email', eq: 'test', transform: false },
+            { attr: 'transformedStr', eq: 'str', transform: false },
+            /**
+             * @debt feature "Can you apply Contains clauses to Set attributes?"
+             */
+            // { attr: 'transformedSet', contains: 'SET' }
+            { attr: 'transformedMap.str', eq: 'map', transform: false },
+            { attr: 'transformedRecord.key', eq: 'value', transform: false }
+          ]
+        }
+      })
+      .params()
+
+    expect(Item).toMatchObject({
+      pk: 'EMAIL#foo@bar.mail',
+      transformedStr: 'STR#str',
+      transformedSet: new Set(['SET#set']),
+      transformedList: ['LIST#list'],
+      transformedMap: { str: 'MAP#map' },
+      transformedRecord: { 'RECORD_KEY#recordKey': 'RECORD_VALUE#recordValue' }
+    })
+    expect(ConditionExpression).toContain('#c_5.#c_6 = :c_4')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#c_5': 'transformedRecord',
+      // transform is only applied to values, not to paths
+      '#c_6': 'RECORD_KEY#key'
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':c_1': 'test',
+      ':c_2': 'str',
+      ':c_3': 'map',
+      ':c_4': 'value'
+    })
+
+    const { ExpressionAttributeValues: ExpressionAttributeValues2 } = TestEntity3.build(
+      PutItemCommand
+    )
+      .item({
+        email: 'foo@bar.mail',
+        sort: 'y',
+        transformedStr: 'str',
+        transformedSet: new Set(['set']),
+        transformedList: ['list'],
+        transformedMap: { str: 'map' },
+        transformedRecord: { recordKey: 'recordValue' }
+      })
+      .options({
+        condition: {
+          and: [
+            { attr: 'email', eq: 'test' },
+            { attr: 'transformedStr', eq: 'str' },
+            /**
+             * @debt feature "Can you apply Contains clauses to Set attributes?"
+             */
+            // { attr: 'transformedSet', contains: 'SET' }
+            { attr: 'transformedMap.str', eq: 'map' },
+            { attr: 'transformedRecord.key', eq: 'value' }
+          ]
+        }
+      })
+      .params()
+
+    expect(ExpressionAttributeValues2).toMatchObject({
+      ':c_1': 'EMAIL#test',
+      ':c_2': 'STR#str',
+      ':c_3': 'MAP#map',
+      ':c_4': 'RECORD_VALUE#value'
+    })
   })
 
   // TODO Create putBatch method and move tests there

@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { TableV2, EntityV2, schema, string, DynamoDBToolboxError, GetItemCommand } from 'v1'
+import { TableV2, EntityV2, schema, string, DynamoDBToolboxError, GetItemCommand, prefix } from 'v1'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -197,6 +197,23 @@ describe('get', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+  })
+
+  it('transformed key', () => {
+    const TestEntity3 = new EntityV2({
+      name: 'TestEntity',
+      schema: schema({
+        email: string().key().savedAs('pk').transform(prefix('EMAIL')),
+        sort: string().key().savedAs('sk')
+      }),
+      table: TestTable
+    })
+
+    const { Key } = TestEntity3.build(GetItemCommand)
+      .key({ email: 'foo@bar.mail', sort: 'y' })
+      .params()
+
+    expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
   })
 
   // TODO Create getBatch method and move tests there

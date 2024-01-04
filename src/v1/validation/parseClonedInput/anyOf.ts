@@ -1,17 +1,17 @@
-import type { AnyOfAttribute, AttributeBasicValue, Extension } from 'v1/schema'
+import type { AnyOfAttribute, AttributeBasicValue, Extension, AttributeValue } from 'v1/schema'
 import type { AnyOfAttributeClonedInputsWithDefaults } from 'v1/validation/cloneInputAndAddDefaults/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { AttributeParsedValue } from '../types'
 import type { ParsingOptions } from './types'
 import { parseAttributeClonedInput } from './attribute'
 
-export const parseAnyOfAttributeClonedInput = <EXTENSION extends Extension>(
+export function* parseAnyOfAttributeClonedInput<EXTENSION extends Extension>(
   anyOfAttribute: AnyOfAttribute,
   input: AttributeBasicValue<EXTENSION>,
   parsingOptions: ParsingOptions<EXTENSION> = {} as ParsingOptions<EXTENSION>
-): AttributeParsedValue<EXTENSION> => {
-  let parsedInput: AttributeParsedValue<EXTENSION> | undefined = undefined
+): Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>> {
+  let parsedInput: AttributeValue<EXTENSION> | undefined = undefined
+  let parser: Generator<AttributeValue<EXTENSION>> | undefined = undefined
 
   const {
     originalInput,
@@ -23,7 +23,8 @@ export const parseAnyOfAttributeClonedInput = <EXTENSION extends Extension>(
     try {
       const element = anyOfAttribute.elements[subSchemaIndex]
       const input = clonedInputsWithDefaults[subSchemaIndex]
-      parsedInput = parseAttributeClonedInput(element, input, parsingOptions)
+      parser = parseAttributeClonedInput(element, input, parsingOptions)
+      parsedInput = parser.next().value
       break
     } catch (error) {
       subSchemaIndex += 1
@@ -31,7 +32,7 @@ export const parseAnyOfAttributeClonedInput = <EXTENSION extends Extension>(
     }
   }
 
-  if (parsedInput === undefined) {
+  if (parser === undefined || parsedInput === undefined) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${anyOfAttribute.path} does not match any of the possible sub-types`,
       path: anyOfAttribute.path,
@@ -41,5 +42,7 @@ export const parseAnyOfAttributeClonedInput = <EXTENSION extends Extension>(
     })
   }
 
-  return parsedInput
+  yield parsedInput
+
+  return parser.next().value
 }

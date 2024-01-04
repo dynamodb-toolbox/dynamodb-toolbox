@@ -14,10 +14,14 @@ export type ExtensionParser<EXTENSION extends Extension> = (
   input: AttributeValue<EXTENSION> | undefined,
   options: ParsingOptions<EXTENSION>
 ) =>
-  | { isExtension: true; parsedExtension: AttributeValue<EXTENSION>; basicInput?: never }
+  | {
+      isExtension: true
+      extensionParser: () => Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>>
+      basicInput?: never
+    }
   | {
       isExtension: false
-      parsedExtension?: never
+      extensionParser?: never
       basicInput: AttributeBasicValue<EXTENSION> | undefined
     }
 
@@ -28,6 +32,7 @@ export interface AttributeFilters {
 export type ParsingOptions<EXTENSION extends Extension> = {
   requiringOptions?: Set<RequiredOption>
   filters?: AttributeFilters
+  transform?: boolean
 } & If<
   HasExtension<EXTENSION>,
   { parseExtension: ExtensionParser<EXTENSION> },

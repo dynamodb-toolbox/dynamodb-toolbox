@@ -1,6 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { $type, $transform, freezeListAttribute, list, string } from 'v1/schema'
-import { prefix } from 'v1/transformers'
+import { freezeListAttribute, list, string } from 'v1/schema'
 
 import { parseListAttributeClonedInput } from './list'
 import * as parseAttributeClonedInputModule from './attribute'
@@ -8,7 +7,7 @@ import * as parseAttributeClonedInputModule from './attribute'
 const parseAttributeClonedInputMock = jest
   .spyOn(parseAttributeClonedInputModule, 'parseAttributeClonedInput')
   // @ts-expect-error
-  .mockImplementation((_, input) => input)
+  .mockImplementation((_, input) => ({ next: () => ({ value: input, done: true }) }))
 
 const listAttr = freezeListAttribute(list(string()), 'path')
 
@@ -18,7 +17,7 @@ describe('parseListAttributeClonedInput', () => {
   })
 
   it('throws an error if input is not a list', () => {
-    const invalidCall = () => parseListAttributeClonedInput(listAttr, { foo: 'bar' })
+    const invalidCall = () => parseListAttributeClonedInput(listAttr, { foo: 'bar' }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -31,22 +30,11 @@ describe('parseListAttributeClonedInput', () => {
       ['foo', 'bar'],
       // @ts-expect-error we don't really care about the type here
       options
-    )
+    ).next().value
 
     expect([...parsedValues]).toStrictEqual(['foo', 'bar'])
-    expect(parsedValues[$type]).toBe('list')
     expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
     expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
-  })
-
-  it('keeps transformer if one is present', () => {
-    const transformer = prefix('foo')
-    const listAttr2 = freezeListAttribute(list(string().transform(transformer)), 'path')
-
-    const parsedValues = parseListAttributeClonedInput(listAttr2, ['foo', 'bar'])
-
-    expect([...parsedValues]).toStrictEqual(['foo', 'bar'])
-    expect(parsedValues[$transform]).toStrictEqual(transformer)
   })
 })
