@@ -1,6 +1,5 @@
 import type { AttributeBasicValue, AttributeValue, RecordAttribute } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import { parsePrimitiveAttributeClonedInput } from 'v1/validation/parseClonedInput/primitive'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
 import { isObject } from 'v1/utils/validation/isObject'
 
@@ -15,8 +14,14 @@ function* parseRecordElementClonedInput(
 ): Generator<AttributeValue<UpdateItemInputExtension>, AttributeValue<UpdateItemInputExtension>> {
   // $REMOVE is allowed (we need this as elements 'required' prop is defaulted to "atLeastOnce")
   if (inputValue === $REMOVE) {
-    yield $REMOVE
-    return $REMOVE
+    const clonedValue: typeof $REMOVE = $REMOVE
+    yield clonedValue
+
+    const parsedValue: typeof $REMOVE = clonedValue
+    yield parsedValue
+
+    const collapsedValue: typeof $REMOVE = parsedValue
+    return collapsedValue
   }
 
   return yield* parseAttributeClonedInput(attribute.elements, inputValue, options)
@@ -28,56 +33,59 @@ export const parseRecordExtension = (
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   if (hasSetOperation(input)) {
-    const parser = parseAttributeClonedInput(attribute, input[$SET], {
-      ...options,
-      // Should a simple record of valid elements (not extended)
-      parseExtension: undefined
-    })
-
     return {
       isExtension: true,
       *extensionParser() {
-        yield { [$SET]: parser.next().value }
-        return { [$SET]: parser.next().value }
+        const parser = parseAttributeClonedInput(attribute, input[$SET], {
+          ...options,
+          // Should a simple record of valid elements (not extended)
+          parseExtension: undefined
+        })
+
+        const clonedValue = { [$SET]: parser.next().value }
+        yield clonedValue
+
+        const parsedValue = { [$SET]: parser.next().value }
+        yield parsedValue
+
+        const collapsedValue = { [$SET]: parser.next().value }
+        return collapsedValue
       }
     }
   }
 
   if (isObject(input)) {
-    const parsers: [
-      Generator<AttributeValue<UpdateItemInputExtension>, AttributeValue<UpdateItemInputExtension>>,
-      Generator<AttributeValue<UpdateItemInputExtension>, AttributeValue<UpdateItemInputExtension>>
-    ][] = Object.entries(input)
-      .filter(([, inputValue]) => inputValue !== undefined)
-      .map(([inputKey, inputValue]) => [
-        parsePrimitiveAttributeClonedInput<never>(attribute.keys, inputKey, {
-          ...options,
-          // Should a simple string (not extended)
-          parseExtension: undefined
-        }),
-        parseRecordElementClonedInput(
-          attribute,
-          /**
-           * @debt type "TODO: Fix this cast"
-           */
-          inputValue as AttributeValue<UpdateItemInputExtension>,
-          options
-        )
-      ])
-
     return {
       isExtension: true,
       *extensionParser() {
-        yield Object.fromEntries(
-          parsers
-            .map(([keyParser, elementParser]) => [
-              keyParser.next().value,
-              elementParser.next().value
-            ])
-            .filter(([, element]) => element !== undefined)
-        )
+        const parsers: [
+          Generator<
+            AttributeValue<UpdateItemInputExtension>,
+            AttributeValue<UpdateItemInputExtension>
+          >,
+          Generator<
+            AttributeValue<UpdateItemInputExtension>,
+            AttributeValue<UpdateItemInputExtension>
+          >
+        ][] = Object.entries(input)
+          .filter(([, inputValue]) => inputValue !== undefined)
+          .map(([inputKey, inputValue]) => [
+            parseAttributeClonedInput<never, UpdateItemInputExtension>(attribute.keys, inputKey, {
+              ...options,
+              // Should a simple string (not extended)
+              parseExtension: undefined
+            }),
+            parseRecordElementClonedInput(
+              attribute,
+              /**
+               * @debt type "TODO: Fix this cast"
+               */
+              inputValue as AttributeValue<UpdateItemInputExtension>,
+              options
+            )
+          ])
 
-        return Object.fromEntries(
+        const clonedValue = Object.fromEntries(
           parsers
             .map(([keyParser, elementParser]) => [
               keyParser.next().value,
@@ -85,6 +93,27 @@ export const parseRecordExtension = (
             ])
             .filter(([, element]) => element !== undefined)
         )
+        yield clonedValue
+
+        const parsedValue = Object.fromEntries(
+          parsers
+            .map(([keyParser, elementParser]) => [
+              keyParser.next().value,
+              elementParser.next().value
+            ])
+            .filter(([, element]) => element !== undefined)
+        )
+        yield parsedValue
+
+        const collapsedValue = Object.fromEntries(
+          parsers
+            .map(([keyParser, elementParser]) => [
+              keyParser.next().value,
+              elementParser.next().value
+            ])
+            .filter(([, element]) => element !== undefined)
+        )
+        return collapsedValue
       }
     }
   }

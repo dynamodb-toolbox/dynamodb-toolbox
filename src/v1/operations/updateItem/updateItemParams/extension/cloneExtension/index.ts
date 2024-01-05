@@ -1,1 +1,0 @@
-export { cloneUpdateExtension } from './attribute'
