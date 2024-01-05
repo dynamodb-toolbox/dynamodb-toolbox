@@ -2,6 +2,7 @@ import {
   EntityV2,
   TableV2,
   PutItemTransaction,
+  DeleteItemTransaction,
   any,
   binary,
   boolean,
@@ -158,6 +159,7 @@ describe('generateTransactWriteCommandInput', () => {
         test_number_set: new Set([1, 2, 3]),
         test_binary_set: new Set([Buffer.from('a'), Buffer.from('b')])
       }),
+      TestEntity.build(DeleteItemTransaction).key({ email: 'tata@example.com', sort: 'tata' }),
       TestEntity2.build(PutItemTransaction).item({
         email: 'toto@example.com',
         test_composite: 'hey',
@@ -197,6 +199,15 @@ describe('generateTransactWriteCommandInput', () => {
               test_number_set: new Set([1, 2, 3]),
               test_string: 'test string',
               test_string_set: new Set(['titi', 'tata'])
+            },
+            TableName: 'test-table'
+          }
+        },
+        {
+          Delete: {
+            Key: {
+              pk: 'tata@example.com',
+              sk: 'tata'
             },
             TableName: 'test-table'
           }
