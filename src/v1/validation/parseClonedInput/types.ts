@@ -3,38 +3,52 @@ import type {
   AttributeBasicValue,
   AttributeValue,
   RequiredOption,
-  Extension
+  Extension,
+  Item
 } from 'v1/schema'
 import type { If } from 'v1/types'
 
 import type { HasExtension } from '../types'
 
-export type ExtensionParser<EXTENSION extends Extension> = (
+export type ExtensionParser<
+  INPUT_EXTENSION extends Extension,
+  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
+> = (
   attribute: Attribute,
-  input: AttributeValue<EXTENSION> | undefined,
-  options: ParsingOptions<EXTENSION>
+  input: AttributeValue<INPUT_EXTENSION> | undefined,
+  options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>
 ) =>
   | {
       isExtension: true
-      extensionParser: () => Generator<AttributeValue<EXTENSION>, AttributeValue<EXTENSION>>
+      extensionParser: () => Generator<
+        AttributeValue<INPUT_EXTENSION>,
+        AttributeValue<INPUT_EXTENSION>
+      >
       basicInput?: never
     }
   | {
       isExtension: false
       extensionParser?: never
-      basicInput: AttributeBasicValue<EXTENSION> | undefined
+      basicInput: AttributeBasicValue<INPUT_EXTENSION> | undefined
     }
 
 export interface AttributeFilters {
   key?: boolean
 }
 
-export type ParsingOptions<EXTENSION extends Extension> = {
+export type OperationName = 'key' | 'put' | 'update'
+
+export type ParsingOptions<
+  INPUT_EXTENSION extends Extension,
+  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
+> = {
+  operationName?: OperationName
   requiringOptions?: Set<RequiredOption>
   filters?: AttributeFilters
   transform?: boolean
+  schemaInput?: Item<SCHEMA_EXTENSION>
 } & If<
-  HasExtension<EXTENSION>,
-  { parseExtension: ExtensionParser<EXTENSION> },
+  HasExtension<INPUT_EXTENSION>,
+  { parseExtension: ExtensionParser<INPUT_EXTENSION, SCHEMA_EXTENSION> },
   { parseExtension?: never }
 >

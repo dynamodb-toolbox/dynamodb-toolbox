@@ -1,3 +1,5 @@
+import cloneDeep from 'lodash.clonedeep'
+
 import type {
   PrimitiveAttribute,
   PrimitiveAttributeBasicValue,
@@ -13,25 +15,30 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import type { HasExtension } from '../types'
 import type { ParsingOptions } from './types'
 
-// eslint-disable-next-line require-yield
-export function* parsePrimitiveAttributeClonedInput<EXTENSION extends Extension>(
+export function* parsePrimitiveAttributeClonedInput<
+  INPUT_EXTENSION extends Extension = never,
+  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
+>(
   primitiveAttribute: PrimitiveAttribute,
-  input: AttributeBasicValue<EXTENSION>,
-  ...[parsingOptions = {} as ParsingOptions<EXTENSION>]: If<
-    HasExtension<EXTENSION>,
-    [options: ParsingOptions<EXTENSION>],
-    [options?: ParsingOptions<EXTENSION>]
+  inputValue: AttributeBasicValue<INPUT_EXTENSION>,
+  ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
+    HasExtension<INPUT_EXTENSION>,
+    [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
+    [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<PrimitiveAttributeBasicValue, PrimitiveAttributeBasicValue> {
-  const { transform = true } = parsingOptions
+  const clonedValue = cloneDeep(inputValue)
+  yield clonedValue as PrimitiveAttributeBasicValue
+
+  const { transform = true } = options
 
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
-  if (!validator(input)) {
+  if (!validator(clonedValue)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${primitiveAttribute.path} should be a ${primitiveAttribute.type}`,
       path: primitiveAttribute.path,
       payload: {
-        received: input,
+        received: clonedValue,
         expected: primitiveAttribute.type
       }
     })
@@ -39,7 +46,7 @@ export function* parsePrimitiveAttributeClonedInput<EXTENSION extends Extension>
 
   if (
     primitiveAttribute.enum !== undefined &&
-    !primitiveAttribute.enum.includes(input as ResolvedPrimitiveAttribute)
+    !primitiveAttribute.enum.includes(clonedValue as ResolvedPrimitiveAttribute)
   ) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${
@@ -47,7 +54,7 @@ export function* parsePrimitiveAttributeClonedInput<EXTENSION extends Extension>
       } should be one of: ${primitiveAttribute.enum.map(String).join(', ')}`,
       path: primitiveAttribute.path,
       payload: {
-        received: input,
+        received: clonedValue,
         expected: primitiveAttribute.enum
       }
     })
@@ -56,11 +63,13 @@ export function* parsePrimitiveAttributeClonedInput<EXTENSION extends Extension>
   /**
    * @debt type "validator should act as typeguard"
    */
-  const parsedInput = input as PrimitiveAttributeBasicValue
+  const parsedValue = clonedValue as PrimitiveAttributeBasicValue
+  yield parsedValue
 
-  yield parsedInput as PrimitiveAttributeBasicValue
+  const collapsedValue =
+    transform && primitiveAttribute.transform !== undefined
+      ? (primitiveAttribute.transform as Transformer).parse(parsedValue)
+      : parsedValue
 
-  return transform && primitiveAttribute.transform !== undefined
-    ? (primitiveAttribute.transform as Transformer).parse(parsedInput)
-    : parsedInput
+  return collapsedValue
 }
