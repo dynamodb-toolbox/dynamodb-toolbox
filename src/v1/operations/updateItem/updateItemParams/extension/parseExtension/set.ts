@@ -11,39 +11,46 @@ export const parseSetExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const hasAdd = hasAddOperation(input)
-  const hasDelete = hasDeleteOperation(input)
+  if (hasAddOperation(input)) {
+    return {
+      isExtension: true,
+      *extensionParser() {
+        const parser = parseAttributeClonedInput(attribute, input[$ADD], {
+          ...options,
+          // Should a simple set of valid elements (not extended)
+          parseExtension: undefined
+        })
 
-  if (hasAdd || hasDelete) {
-    if (hasAdd) {
-      const parser = parseAttributeClonedInput(attribute, input[$ADD], {
-        ...options,
-        // Should a simple set of valid elements (not extended)
-        parseExtension: undefined
-      })
+        const clonedValue = { [$ADD]: parser.next().value }
+        yield clonedValue
 
-      return {
-        isExtension: true,
-        *extensionParser() {
-          yield { [$ADD]: parser.next().value }
-          return { [$ADD]: parser.next().value }
-        }
+        const parsedValue = { [$ADD]: parser.next().value }
+        yield parsedValue
+
+        const collapsedValue = { [$ADD]: parser.next().value }
+        return collapsedValue
       }
     }
+  }
 
-    if (hasDelete) {
-      const parser = parseAttributeClonedInput(attribute, input[$DELETE], {
-        ...options,
-        // Should a simple set of valid elements (not extended)
-        parseExtension: undefined
-      })
+  if (hasDeleteOperation(input)) {
+    return {
+      isExtension: true,
+      *extensionParser() {
+        const parser = parseAttributeClonedInput(attribute, input[$DELETE], {
+          ...options,
+          // Should a simple set of valid elements (not extended)
+          parseExtension: undefined
+        })
 
-      return {
-        isExtension: true,
-        *extensionParser() {
-          yield { [$DELETE]: parser.next().value }
-          return { [$DELETE]: parser.next().value }
-        }
+        const clonedValue = { [$DELETE]: parser.next().value }
+        yield clonedValue
+
+        const parsedValue = { [$DELETE]: parser.next().value }
+        yield parsedValue
+
+        const collapsedValue = { [$DELETE]: parser.next().value }
+        return collapsedValue
       }
     }
   }

@@ -4,20 +4,30 @@ import { freezeSetAttribute, set, string } from 'v1/schema'
 import { parseSetAttributeClonedInput } from './set'
 import * as parseAttributeClonedInputModule from './attribute'
 
-const parseAttributeClonedInputMock = jest
-  .spyOn(parseAttributeClonedInputModule, 'parseAttributeClonedInput')
-  // @ts-expect-error
-  .mockImplementation((_, input) => ({ next: () => ({ value: input, done: true }) }))
+const parseAttributeClonedInput = jest.spyOn(
+  parseAttributeClonedInputModule,
+  'parseAttributeClonedInput'
+)
 
 const setAttr = freezeSetAttribute(set(string()), 'path')
 
 describe('parseSetAttributeClonedInput', () => {
   beforeEach(() => {
-    parseAttributeClonedInputMock.mockClear()
+    parseAttributeClonedInput.mockClear()
   })
 
   it('throws an error if input is not a set', () => {
-    const invalidCall = () => parseSetAttributeClonedInput(setAttr, { foo: 'bar' }).next()
+    const parser = parseSetAttributeClonedInput(setAttr, { foo: 'bar' })
+
+    const clonedState = parser.next()
+    expect(clonedState.done).toBe(false)
+    expect(clonedState.value).toStrictEqual({ foo: 'bar' })
+
+    const invalidCall = () => {
+      const parser = parseSetAttributeClonedInput(setAttr, { foo: 'bar' })
+      parser.next()
+      parser.next()
+    }
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -25,16 +35,27 @@ describe('parseSetAttributeClonedInput', () => {
 
   it('applies parseAttributeClonesInput on input elements otherwise (and pass options)', () => {
     const options = { some: 'options' }
-    const parsedValues = parseSetAttributeClonedInput(
+    const parser = parseSetAttributeClonedInput(
       setAttr,
       new Set(['foo', 'bar']),
       // @ts-expect-error we don't really care about the type here
       options
-    ).next().value
+    )
 
-    expect(new Set(parsedValues)).toStrictEqual(new Set(['foo', 'bar']))
-    expect(parseAttributeClonedInputMock).toHaveBeenCalledTimes(2)
-    expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(setAttr.elements, 'foo', options)
-    expect(parseAttributeClonedInputMock).toHaveBeenCalledWith(setAttr.elements, 'bar', options)
+    const clonedState = parser.next()
+    expect(clonedState.done).toBe(false)
+    expect(clonedState.value).toStrictEqual(new Set(['foo', 'bar']))
+
+    expect(parseAttributeClonedInput).toHaveBeenCalledTimes(2)
+    expect(parseAttributeClonedInput).toHaveBeenCalledWith(setAttr.elements, 'foo', options)
+    expect(parseAttributeClonedInput).toHaveBeenCalledWith(setAttr.elements, 'bar', options)
+
+    const parsedState = parser.next()
+    expect(parsedState.done).toBe(false)
+    expect(parsedState.value).toStrictEqual(new Set(['foo', 'bar']))
+
+    const collapsedState = parser.next()
+    expect(collapsedState.done).toBe(true)
+    expect(collapsedState.value).toStrictEqual(new Set(['foo', 'bar']))
   })
 })

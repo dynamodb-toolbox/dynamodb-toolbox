@@ -12,17 +12,24 @@ export const parseMapExtension = (
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   if (hasSetOperation(input)) {
-    const parser = parseAttributeClonedInput<never>(attribute, input[$SET], {
-      ...options,
-      // Should a simple map of valid elements (not extended)
-      parseExtension: undefined
-    })
-
     return {
       isExtension: true,
       *extensionParser() {
-        yield { [$SET]: parser.next().value }
-        return { [$SET]: parser.next().value }
+        const parser = parseAttributeClonedInput<never, UpdateItemInputExtension>(
+          attribute,
+          input[$SET],
+          // Should a simple map of valid elements (not extended)
+          { ...options, parseExtension: undefined }
+        )
+
+        const clonedValue = { [$SET]: parser.next().value }
+        yield clonedValue
+
+        const parsedValue = { [$SET]: parser.next().value }
+        yield parsedValue
+
+        const collapsedValue = { [$SET]: parser.next().value }
+        return collapsedValue
       }
     }
   }
