@@ -19,18 +19,24 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   options
 ) => {
   if (input === $REMOVE) {
-    if (attribute.required !== 'never') {
-      throw new DynamoDBToolboxError('parsing.attributeRequired', {
-        message: `Attribute ${attribute.path} is required and cannot be removed`,
-        path: attribute.path
-      })
-    }
-
     return {
       isExtension: true,
       *extensionParser() {
-        yield $REMOVE
-        return $REMOVE
+        const clonedValue: typeof $REMOVE = input
+        yield clonedValue
+
+        if (attribute.required !== 'never') {
+          throw new DynamoDBToolboxError('parsing.attributeRequired', {
+            message: `Attribute ${attribute.path} is required and cannot be removed`,
+            path: attribute.path
+          })
+        }
+
+        const parsedValue: typeof $REMOVE = clonedValue
+        yield parsedValue
+
+        const collapsedValue: typeof $REMOVE = parsedValue
+        return collapsedValue
       }
     }
   }
@@ -39,12 +45,9 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
    * @debt refactor "Maybe we can simply parse a super-extension here, and continue if is(Super)Extension is false. Would be neat."
    */
   if (hasGetOperation(input)) {
-    // Omit parseExtension & requiringOptions for non-extended values
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { parseExtension: _, requiringOptions: __, ...restOptions } = options
-
     return parseReferenceExtension(attribute, input, {
-      ...restOptions,
+      ...options,
+      // Can be a reference
       parseExtension: parseReferenceExtension
     })
   }
