@@ -68,25 +68,25 @@ export class ScanCommand<
     nextOptions: NEXT_OPTIONS
   ) => ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS>
 
-  constructor(args: { table: TABLE; entities?: ENTITIES }, options: OPTIONS = {} as OPTIONS) {
-    super(args)
+  constructor(
+    table: TABLE,
+    entities = ([] as unknown) as ENTITIES,
+    options: OPTIONS = {} as OPTIONS
+  ) {
+    super(table, entities)
     this._options = options
 
     this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>
       new ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>(
-        {
-          table: this._table,
-          entities: nextEntities
-        },
+        this._table,
+        nextEntities,
         // For some reason we can't do the same as Query (cast OPTIONS) as it triggers an infinite type compute
         this._options as ScanOptions<TABLE, NEXT_ENTITIES>
       )
-    this.options = nextOptions =>
-      new ScanCommand({ table: this._table, entities: this._entities }, nextOptions)
+    this.options = nextOptions => new ScanCommand(this._table, this._entities, nextOptions)
   }
 
-  params = (): ScanCommandInput =>
-    scanParams({ table: this._table, entities: this._entities }, this._options)
+  params = (): ScanCommandInput => scanParams(this._table, this._entities, this._options)
 
   send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()

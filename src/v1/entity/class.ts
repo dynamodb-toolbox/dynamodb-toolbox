@@ -1,16 +1,6 @@
 import type { Schema } from 'v1/schema'
 import type { TableV2, PrimaryKey } from 'v1/table'
-import type {
-  PutItemCommand,
-  GetItemCommand,
-  DeleteItemCommand,
-  UpdateItemCommand
-} from 'v1/operations'
 import type { KeyInput } from 'v1/operations/types'
-import type { PutItemCommandClass } from 'v1/operations/putItem/command'
-import type { GetItemCommandClass } from 'v1/operations/getItem/command'
-import type { DeleteItemCommandClass } from 'v1/operations/deleteItem/command'
-import type { UpdateItemCommandClass } from 'v1/operations/updateItem/command'
 import type { EntityOperation } from 'v1/operations/class'
 import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -50,21 +40,9 @@ export class EntityV2<
   public computeKey?: (
     keyInput: Schema extends SCHEMA ? any : KeyInput<SCHEMA>
   ) => PrimaryKey<TABLE>
-  // TODO: Maybe there's a way not to have to list all operations here
-  // (use OPERATION_CLASS somehow) but I haven't found it yet
-  public build: <OPERATION_CLASS extends typeof EntityOperation = typeof EntityOperation>(
-    operationClass: OPERATION_CLASS
-  ) => string extends NAME
-    ? any
-    : OPERATION_CLASS extends PutItemCommandClass
-    ? PutItemCommand<this>
-    : OPERATION_CLASS extends GetItemCommandClass
-    ? GetItemCommand<this>
-    : OPERATION_CLASS extends DeleteItemCommandClass
-    ? DeleteItemCommand<this>
-    : OPERATION_CLASS extends UpdateItemCommandClass
-    ? UpdateItemCommand<this>
-    : EntityOperation<this>
+  public build: <OPERATION_CLASS extends EntityOperation<this> = EntityOperation<this>>(
+    operationClass: new (entity: this) => OPERATION_CLASS
+  ) => OPERATION_CLASS
 
   /**
    * Define an Entity for a given table
