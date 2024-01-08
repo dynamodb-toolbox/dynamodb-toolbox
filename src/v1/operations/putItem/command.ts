@@ -12,10 +12,16 @@ import type {
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
 
-import { EntityOperation } from '../class'
+import { EntityOperation, $entity } from '../class'
 import type { PutItemInput } from './types'
 import type { PutItemOptions, PutItemCommandReturnValuesOption } from './options'
 import { putItemParams } from './putItemParams'
+
+export const $item = Symbol('$item')
+export type $item = typeof $item
+
+export const $options = Symbol('$options')
+export type $options = typeof $options
 
 type ReturnedAttributes<
   ENTITY extends EntityV2,
@@ -53,38 +59,38 @@ export class PutItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > extends EntityOperation<ENTITY> {
-  static operationName = 'put' as const
+  static operationName = 'put' as const;
 
-  public _item?: PutItemInput<ENTITY>
-  public item: (nextItem: PutItemInput<ENTITY>) => PutItemCommand<ENTITY, OPTIONS>
-  public _options: OPTIONS
-  public options: <NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
+  [$item]?: PutItemInput<ENTITY>
+  item: (nextItem: PutItemInput<ENTITY>) => PutItemCommand<ENTITY, OPTIONS>;
+  [$options]: OPTIONS
+  options: <NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => PutItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, item?: PutItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
-    this._item = item
-    this._options = options
+    this[$item] = item
+    this[$options] = options
 
-    this.item = nextItem => new PutItemCommand(this._entity, nextItem, this._options)
-    this.options = nextOptions => new PutItemCommand(this._entity, this._item, nextOptions)
+    this.item = nextItem => new PutItemCommand(this[$entity], nextItem, this[$options])
+    this.options = nextOptions => new PutItemCommand(this[$entity], this[$item], nextOptions)
   }
 
   params = (): PutCommandInput => {
-    if (!this._item) {
+    if (!this[$item]) {
       throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
 
-    return putItemParams(this._entity, this._item, this._options)
+    return putItemParams(this[$entity], this[$item], this[$options])
   }
 
   send = async (): Promise<PutItemResponse<ENTITY, OPTIONS>> => {
     const putItemParams = this.params()
 
-    const commandOutput = await this._entity.table.documentClient.send(
+    const commandOutput = await this[$entity].table.documentClient.send(
       new PutCommand(putItemParams)
     )
 
@@ -94,9 +100,9 @@ export class PutItemCommand<
       return restCommandOutput
     }
 
-    const { returnValues } = this._options
+    const { returnValues } = this[$options]
 
-    const formattedItem = (formatSavedItem(this._entity, attributes, {
+    const formattedItem = (formatSavedItem(this[$entity], attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
     }) as unknown) as ReturnedAttributes<ENTITY, OPTIONS>
 
