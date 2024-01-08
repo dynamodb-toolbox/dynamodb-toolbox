@@ -3,21 +3,30 @@ import { isArray } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { FormatSavedAttributeOptions } from './types'
-import { parseSavedAttribute } from './attribute'
-import { matchProjection } from './utils'
+import { formatSavedAttribute } from './attribute'
+import { matchProjection, getItemKey } from './utils'
 
-export const parseSavedListAttribute = (
+export const formatSavedListAttribute = (
   listAttribute: ListAttribute,
-  savedList: AttributeValue,
-  { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
+  savedValue: AttributeValue,
+  { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions = {}
 ): ListAttributeValue => {
-  if (!isArray(savedList)) {
+  if (!isArray(savedValue)) {
+    const { partitionKey, sortKey } = restOptions
+
     throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
-      message: `Invalid attribute in saved item: ${listAttribute.path}. Should be a ${listAttribute.type}`,
+      message: [
+        `Invalid attribute in saved item: ${listAttribute.path}. Should be a ${listAttribute.type}.`,
+        getItemKey({ partitionKey, sortKey })
+      ]
+        .filter(Boolean)
+        .join(' '),
       path: listAttribute.path,
       payload: {
-        received: savedList,
-        expected: listAttribute.type
+        received: savedValue,
+        expected: listAttribute.type,
+        partitionKey,
+        sortKey
       }
     })
   }
@@ -29,8 +38,8 @@ export const parseSavedListAttribute = (
   const { childrenAttributes } = matchProjection(/\[\d+\]/, projectedAttributes)
 
   const parsedValues: ListAttributeValue = []
-  for (const savedElement of savedList) {
-    const parsedElement = parseSavedAttribute(listAttribute.elements, savedElement, {
+  for (const savedElement of savedValue) {
+    const parsedElement = formatSavedAttribute(listAttribute.elements, savedElement, {
       projectedAttributes: childrenAttributes,
       ...restOptions
     })
