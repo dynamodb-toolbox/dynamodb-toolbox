@@ -1,3 +1,8 @@
-export type { $MapAttributeState, $MapAttribute, MapAttribute } from './interface'
 export { map } from './typer'
-export { FreezeMapAttribute, freezeMapAttribute } from './freeze'
+export type {
+  $MapAttributeState,
+  $MapAttributeNestedState,
+  $MapAttribute,
+  MapAttribute
+} from './interface'
+export type { FreezeMapAttribute } from './freeze'

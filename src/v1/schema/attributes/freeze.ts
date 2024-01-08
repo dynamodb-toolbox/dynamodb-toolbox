@@ -1,16 +1,11 @@
-import { $type } from './constants/attributeOptions'
-import { freezeAnyAttribute, $AnyAttributeState, FreezeAnyAttribute } from './any'
-import {
-  freezePrimitiveAttribute,
-  $PrimitiveAttributeState,
-  FreezePrimitiveAttribute
-} from './primitive'
-import { freezeSetAttribute, $SetAttributeState, FreezeSetAttribute } from './set'
-import { freezeListAttribute, $ListAttributeState, FreezeListAttribute } from './list'
-import { freezeMapAttribute, $MapAttributeState, FreezeMapAttribute } from './map'
-import { freezeRecordAttribute, $RecordAttributeState, FreezeRecordAttribute } from './record'
-import { freezeAnyOfAttribute, $AnyOfAttributeState, FreezeAnyOfAttribute } from './anyOf'
-import type { $AttributeState } from './types/attribute'
+import type { $AnyAttributeState, FreezeAnyAttribute } from './any'
+import type { $PrimitiveAttributeState, FreezePrimitiveAttribute } from './primitive'
+import type { $SetAttributeState, FreezeSetAttribute } from './set'
+import type { $ListAttributeState, FreezeListAttribute } from './list'
+import type { $MapAttributeState, FreezeMapAttribute } from './map'
+import type { $RecordAttributeState, FreezeRecordAttribute } from './record'
+import type { $AnyOfAttributeState, FreezeAnyOfAttribute } from './anyOf'
+import type { $AttributeState } from './types'
 
 export type FreezeAttribute<
   $ATTRIBUTE extends $AttributeState
@@ -29,35 +24,3 @@ export type FreezeAttribute<
   : $ATTRIBUTE extends $AnyOfAttributeState
   ? FreezeAnyOfAttribute<$ATTRIBUTE>
   : never
-
-/**
- * Validates an attribute definition
- *
- * @param attribute Attribute
- * @param path _(optional)_ Path of the attribute in the related schema (string)
- * @return Attribute
- */
-export const freezeAttribute = <$ATTRIBUTE extends $AttributeState>(
-  attribute: $ATTRIBUTE,
-  path: string
-): FreezeAttribute<$ATTRIBUTE> => {
-  switch (attribute[$type]) {
-    case 'any':
-      return freezeAnyAttribute(attribute, path) as any
-    case 'boolean':
-    case 'binary':
-    case 'number':
-    case 'string':
-      return freezePrimitiveAttribute(attribute, path) as any
-    case 'set':
-      return freezeSetAttribute(attribute, path) as any
-    case 'list':
-      return freezeListAttribute(attribute, path) as any
-    case 'map':
-      return freezeMapAttribute(attribute, path) as any
-    case 'record':
-      return freezeRecordAttribute(attribute, path) as any
-    case 'anyOf':
-      return freezeAnyOfAttribute(attribute, path) as any
-  }
-}

@@ -30,13 +30,20 @@ export interface $MapAttributeState<
   [$attributes]: $ATTRIBUTES
 }
 
+export interface $MapAttributeNestedState<
+  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> extends $MapAttributeState<$ATTRIBUTES, STATE> {
+  freeze: (path: string) => FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>
+}
+
 /**
  * MapAttribute attribute interface
  */
 export interface $MapAttribute<
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
   STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
-> extends $MapAttributeState<$ATTRIBUTES, STATE> {
+> extends $MapAttributeNestedState<$ATTRIBUTES, STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs

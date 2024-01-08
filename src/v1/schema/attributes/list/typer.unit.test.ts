@@ -14,9 +14,8 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import { list } from './typer'
-import { freezeListAttribute } from './freeze'
 import type { ListAttribute, $ListAttributeState } from './interface'
+import { list } from './typer'
 
 describe('list', () => {
   const path = 'some.path'
@@ -28,7 +27,7 @@ describe('list', () => {
       string().optional()
     )
 
-    const invalidCall = () => freezeListAttribute(invalidList, path)
+    const invalidCall = () => invalidList.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -42,7 +41,7 @@ describe('list', () => {
       strElement.hidden()
     )
 
-    const invalidCall = () => freezeListAttribute(invalidList, path)
+    const invalidCall = () => invalidList.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -56,7 +55,7 @@ describe('list', () => {
       strElement.savedAs('foo')
     )
 
-    const invalidCall = () => freezeListAttribute(invalidList, path)
+    const invalidCall = () => invalidList.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -70,7 +69,7 @@ describe('list', () => {
       strElement.putDefault('foo')
     )
 
-    const invalidCall = () => freezeListAttribute(invalidList, path)
+    const invalidCall = () => invalidList.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -102,7 +101,7 @@ describe('list', () => {
     const assertExtends: A.Extends<typeof lst, $ListAttributeState> = 1
     assertExtends
 
-    const frozenList = freezeListAttribute(lst, path)
+    const frozenList = lst.freeze(path)
     const assertFrozen: A.Extends<typeof frozenList, ListAttribute> = 1
     assertFrozen
 

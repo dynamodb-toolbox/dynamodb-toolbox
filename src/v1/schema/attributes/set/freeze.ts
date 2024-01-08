@@ -2,11 +2,10 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { freezeAttribute, FreezeAttribute } from '../freeze'
+import type { FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault'
 import {
-  $type,
   $elements,
   $required,
   $hidden,
@@ -15,7 +14,9 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
+import type { SharedAttributeStateConstraint } from '../shared/interface'
 import type { $SetAttributeState, SetAttribute } from './interface'
+import type { $SetAttributeElements } from './types'
 
 export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
   // Applying void O.Update improves type display
@@ -34,25 +35,32 @@ export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
     never
   >
 
-type SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttributeState>(
-  $setAttribute: $SET_ATTRIBUTE,
+type SetAttributeFreezer = <
+  $ELEMENTS extends $SetAttributeElements,
+  STATE extends SharedAttributeStateConstraint
+>(
+  $elements: $ELEMENTS,
+  state: STATE,
   path: string
-) => FreezeSetAttribute<$SET_ATTRIBUTE>
+) => FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>
 
 /**
  * Validates a set instance
  *
- * @param $setAttribute SetAttribute
+ * @param elements Attribute elements
+ * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $SetAttributeState>(
-  $setAttribute: $SET_ATTRIBUTE,
+export const freezeSetAttribute: SetAttributeFreezer = <
+  $ELEMENTS extends $SetAttributeElements,
+  STATE extends SharedAttributeStateConstraint
+>(
+  elements: $ELEMENTS,
+  state: STATE,
   path: string
-): FreezeSetAttribute<$SET_ATTRIBUTE> => {
-  validateAttributeProperties($setAttribute, path)
-
-  const elements: $SET_ATTRIBUTE[$elements] = $setAttribute[$elements]
+): FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>> => {
+  validateAttributeProperties(state, path)
 
   if (elements[$required] !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.setAttribute.optionalElements', {
@@ -82,16 +90,12 @@ export const freezeSetAttribute: SetAttributeFreezer = <$SET_ATTRIBUTE extends $
     })
   }
 
-  const frozenElements = freezeAttribute(elements, `${path}[x]`)
+  const frozenElements = elements.freeze(`${path}[x]`) as FreezeAttribute<$ELEMENTS>
 
   return {
     path,
-    type: $setAttribute[$type],
+    type: 'set',
     elements: frozenElements,
-    required: $setAttribute[$required],
-    hidden: $setAttribute[$hidden],
-    key: $setAttribute[$key],
-    savedAs: $setAttribute[$savedAs],
-    defaults: $setAttribute[$defaults]
+    ...state
   }
 }

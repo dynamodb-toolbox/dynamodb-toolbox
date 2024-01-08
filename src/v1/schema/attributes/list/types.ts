@@ -1,8 +1,8 @@
 import type { AtLeastOnce } from '../constants'
 import type { $required, $hidden, $savedAs, $defaults } from '../constants/attributeOptions'
-import type { $AttributeState, Attribute } from '../types/attribute'
+import type { $AttributeNestedState, Attribute } from '../types'
 
-export type $ListAttributeElements = $AttributeState & {
+export type $ListAttributeElements = $AttributeNestedState & {
   [$required]: AtLeastOnce
   [$hidden]: false
   [$savedAs]: undefined

@@ -1,3 +1,8 @@
 export { anyOf } from './typer'
-export type { $AnyOfAttributeState, $AnyOfAttribute, AnyOfAttribute } from './interface'
-export { FreezeAnyOfAttribute, freezeAnyOfAttribute } from './freeze'
+export type {
+  $AnyOfAttributeState,
+  $AnyOfAttributeNestedState,
+  $AnyOfAttribute,
+  AnyOfAttribute
+} from './interface'
+export type { FreezeAnyOfAttribute } from './freeze'

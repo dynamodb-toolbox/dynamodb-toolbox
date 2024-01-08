@@ -2,10 +2,9 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import { string } from '../primitive'
 import { validateAttributeProperties } from '../shared/validate'
-import * as freezeAttributeModule from '../freeze'
 
-import { freezeMapAttribute } from './freeze'
 import { map } from './typer'
+import { $attributes } from '../constants'
 
 jest.mock('../shared/validate', () => ({
   ...jest.requireActual<Record<string, unknown>>('../shared/validate'),
@@ -15,12 +14,6 @@ jest.mock('../shared/validate', () => ({
 const validateAttributePropertiesMock = validateAttributeProperties as jest.MockedFunction<
   typeof validateAttributeProperties
 >
-
-// We have to do a module mock here: requireActual doesn't work due to circular dependency with freezeMap
-// @ts-ignore
-const freezeAttributeMock = jest
-  .spyOn(freezeAttributeModule, 'freezeAttribute')
-  .mockImplementation()
 
 describe('map properties freeze', () => {
   const pathMock = 'some.path'
@@ -32,27 +25,34 @@ describe('map properties freeze', () => {
 
   beforeEach(() => {
     validateAttributePropertiesMock.mockClear()
-    freezeAttributeMock.mockClear()
   })
 
   it('applies validateAttributeProperties on mapInstance', () => {
-    freezeMapAttribute(mapInstance, pathMock)
+    mapInstance.freeze(pathMock)
 
-    expect(validateAttributePropertiesMock).toHaveBeenCalledTimes(1)
-    expect(validateAttributePropertiesMock).toHaveBeenCalledWith(mapInstance, pathMock)
+    // Once + 2 attributes
+    expect(validateAttributePropertiesMock).toHaveBeenCalledTimes(3)
   })
 
   it('applies freezeAttribute on attributes', () => {
-    freezeMapAttribute(mapInstance, pathMock)
+    mapInstance[$attributes][string1Name].freeze = jest.fn(
+      mapInstance[$attributes][string1Name].freeze
+    )
+    mapInstance[$attributes][string2Name].freeze = jest.fn(
+      mapInstance[$attributes][string2Name].freeze
+    )
+    mapInstance.freeze(pathMock)
 
-    expect(freezeAttributeMock).toHaveBeenCalledTimes(2)
-    expect(freezeAttributeMock).toHaveBeenCalledWith(stringAttr, [pathMock, string1Name].join('.'))
-    expect(freezeAttributeMock).toHaveBeenCalledWith(stringAttr, [pathMock, string2Name].join('.'))
+    expect(mapInstance[$attributes][string1Name].freeze).toHaveBeenCalledWith(
+      [pathMock, string1Name].join('.')
+    )
+    expect(mapInstance[$attributes][string2Name].freeze).toHaveBeenCalledWith(
+      [pathMock, string2Name].join('.')
+    )
   })
 
   it('throws if map attribute has duplicate savedAs', () => {
-    const invalidCallA = () =>
-      freezeMapAttribute(map({ a: stringAttr, b: stringAttr.savedAs('a') }), pathMock)
+    const invalidCallA = () => map({ a: stringAttr, b: stringAttr.savedAs('a') }).freeze(pathMock)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -60,7 +60,7 @@ describe('map properties freeze', () => {
     )
 
     const invalidCallB = () =>
-      freezeMapAttribute(map({ a: stringAttr.savedAs('c'), b: stringAttr.savedAs('c') }), pathMock)
+      map({ a: stringAttr.savedAs('c'), b: stringAttr.savedAs('c') }).freeze(pathMock)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
