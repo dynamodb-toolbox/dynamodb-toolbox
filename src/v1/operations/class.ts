@@ -1,14 +1,23 @@
 import type { EntityV2 } from '../entity/class'
 import type { TableV2 } from '../table/class'
 
+export const $entity = Symbol('$entity')
+export type $entity = typeof $entity
+
+export const $entities = Symbol('$entities')
+export type $entities = typeof $entities
+
+export const $table = Symbol('$table')
+export type $table = typeof $table
+
 export class EntityOperation<ENTITY extends EntityV2 = EntityV2> {
   static operationType = 'entity'
-  static operationName: string
+  static operationName: string;
 
-  public _entity: ENTITY
+  [$entity]: ENTITY
 
   constructor(entity: ENTITY) {
-    this._entity = entity
+    this[$entity] = entity
   }
 }
 
@@ -17,13 +26,13 @@ export class TableCommand<
   ENTITIES extends EntityV2[] = EntityV2[]
 > {
   static operationType = 'table'
-  static operationName: string
+  static operationName: string;
 
-  public _table: TABLE
-  public _entities: ENTITIES
+  [$table]: TABLE;
+  [$entities]: ENTITIES
 
   constructor(table: TABLE, entities = ([] as unknown) as ENTITIES) {
-    this._table = table
-    this._entities = entities
+    this[$table] = table
+    this[$entities] = entities
   }
 }

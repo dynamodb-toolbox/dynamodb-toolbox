@@ -10,9 +10,15 @@ import type { KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
 
-import { EntityOperation } from '../class'
+import { EntityOperation, $entity } from '../class'
 import type { DeleteItemOptions, DeleteItemCommandReturnValuesOption } from './options'
 import { deleteItemParams } from './deleteItemParams'
+
+export const $key = Symbol('$key')
+export type $key = typeof $key
+
+export const $options = Symbol('$options')
+export type $options = typeof $options
 
 type ReturnedAttributes<
   ENTITY extends EntityV2,
@@ -37,38 +43,38 @@ export class DeleteItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
 > extends EntityOperation<ENTITY> {
-  static operationName = 'delete' as const
+  static operationName = 'delete' as const;
 
-  public _key?: KeyInput<ENTITY>
-  public key: (keyInput: KeyInput<ENTITY>) => DeleteItemCommand<ENTITY, OPTIONS>
-  public _options?: OPTIONS
-  public options: <NEXT_OPTIONS extends DeleteItemOptions<ENTITY>>(
+  [$key]?: KeyInput<ENTITY>
+  key: (keyInput: KeyInput<ENTITY>) => DeleteItemCommand<ENTITY, OPTIONS>;
+  [$options]?: OPTIONS
+  options: <NEXT_OPTIONS extends DeleteItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => DeleteItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
-    this._key = key
-    this._options = options
+    this[$key] = key
+    this[$options] = options
 
-    this.key = nextKey => new DeleteItemCommand(this._entity, nextKey, this._options)
-    this.options = nextOptions => new DeleteItemCommand(this._entity, this._key, nextOptions)
+    this.key = nextKey => new DeleteItemCommand(this[$entity], nextKey, this[$options])
+    this.options = nextOptions => new DeleteItemCommand(this[$entity], this[$key], nextOptions)
   }
 
   params = (): DeleteCommandInput => {
-    if (!this._key) {
+    if (!this[$key]) {
       throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }
 
-    return deleteItemParams(this._entity, this._key, this._options)
+    return deleteItemParams(this[$entity], this[$key], this[$options])
   }
 
   send = async (): Promise<DeleteItemResponse<ENTITY, OPTIONS>> => {
     const deleteItemParams = this.params()
 
-    const commandOutput = await this._entity.table.documentClient.send(
+    const commandOutput = await this[$entity].table.documentClient.send(
       new DeleteCommand(deleteItemParams)
     )
 
@@ -78,7 +84,7 @@ export class DeleteItemCommand<
       return restCommandOutput
     }
 
-    const formattedItem = formatSavedItem(this._entity, attributes)
+    const formattedItem = formatSavedItem(this[$entity], attributes)
 
     return {
       Attributes: formattedItem as ReturnedAttributes<ENTITY, OPTIONS>,

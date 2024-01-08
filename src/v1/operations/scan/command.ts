@@ -15,9 +15,12 @@ import type { AnyAttributePath } from 'v1/operations/types'
 import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
 import { isString } from 'v1/utils/validation'
 
-import { TableCommand } from '../class'
+import { TableCommand, $table, $entities } from '../class'
 import type { ScanOptions } from './options'
 import { scanParams } from './scanParams'
+
+const $options = Symbol('$options')
+type $options = typeof $options
 
 type ReturnedItems<
   TABLE extends TableV2,
@@ -60,11 +63,12 @@ export class ScanCommand<
 > extends TableCommand<TABLE, ENTITIES> {
   static operationName = 'scan' as const
 
-  public entities: <NEXT_ENTITIES extends EntityV2[]>(
+  entities: <NEXT_ENTITIES extends EntityV2[]>(
     ...nextEntities: NEXT_ENTITIES
-  ) => ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>
-  public _options: OPTIONS
-  public options: <NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
+  ) => ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>;
+
+  [$options]: OPTIONS
+  options: <NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
     nextOptions: NEXT_OPTIONS
   ) => ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS>
 
@@ -74,24 +78,24 @@ export class ScanCommand<
     options: OPTIONS = {} as OPTIONS
   ) {
     super(table, entities)
-    this._options = options
+    this[$options] = options
 
     this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>
       new ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>(
-        this._table,
+        this[$table],
         nextEntities,
         // For some reason we can't do the same as Query (cast OPTIONS) as it triggers an infinite type compute
-        this._options as ScanOptions<TABLE, NEXT_ENTITIES>
+        this[$options] as ScanOptions<TABLE, NEXT_ENTITIES>
       )
-    this.options = nextOptions => new ScanCommand(this._table, this._entities, nextOptions)
+    this.options = nextOptions => new ScanCommand(this[$table], this[$entities], nextOptions)
   }
 
-  params = (): ScanCommandInput => scanParams(this._table, this._entities, this._options)
+  params = (): ScanCommandInput => scanParams(this[$table], this[$entities], this[$options])
 
   send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()
 
-    const entities = this._entities ?? []
+    const entities = this[$entities] ?? []
     const entitiesByName: Record<string, EntityV2> = {}
     entities.forEach(entity => {
       entitiesByName[entity.name] = entity
@@ -105,7 +109,7 @@ export class ScanCommand<
     let responseMetadata: ScanCommandOutput['$metadata'] | undefined = undefined
 
     // NOTE: maxPages has been validated by this.params()
-    const { attributes, maxPages = 1 } = this._options
+    const { attributes, maxPages = 1 } = this[$options]
     let pageIndex = 0
     do {
       pageIndex += 1
@@ -123,10 +127,10 @@ export class ScanCommand<
         ScannedCount: pageScannedCount,
         ConsumedCapacity: pageConsumedCapacity,
         $metadata: pageMetadata
-      } = await this._table.documentClient.send(new _ScanCommand(pageScanParams))
+      } = await this[$table].documentClient.send(new _ScanCommand(pageScanParams))
 
       for (const item of items) {
-        const itemEntityName = item[this._table.entityAttributeSavedAs]
+        const itemEntityName = item[this[$table].entityAttributeSavedAs]
 
         if (!isString(itemEntityName)) {
           continue
