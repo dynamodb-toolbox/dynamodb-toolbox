@@ -1,7 +1,7 @@
 import type { RequiredOption } from '../constants/requiredOptions'
 import type { $required, $hidden, $key, $savedAs, $defaults } from '../constants/attributeOptions'
 
-export interface SharedAttributeStateConstraint {
+interface SharedAttributeStateConstraint {
   required: RequiredOption
   hidden: boolean
   key: boolean
@@ -13,7 +13,9 @@ export interface SharedAttributeStateConstraint {
   }
 }
 
-export interface $SharedAttributeState<STATE extends SharedAttributeStateConstraint> {
+export interface $SharedAttributeState<
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> {
   [$required]: STATE['required']
   [$hidden]: STATE['hidden']
   [$key]: STATE['key']
@@ -21,7 +23,9 @@ export interface $SharedAttributeState<STATE extends SharedAttributeStateConstra
   [$defaults]: STATE['defaults']
 }
 
-export interface SharedAttributeState<STATE extends SharedAttributeStateConstraint> {
+export interface SharedAttributeState<
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> {
   required: STATE['required']
   hidden: STATE['hidden']
   key: STATE['key']

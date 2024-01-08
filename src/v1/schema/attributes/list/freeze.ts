@@ -14,7 +14,7 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 import type { $ListAttributeState, ListAttribute } from './interface'
 import type { $ListAttributeElements } from './types'
 
@@ -37,7 +37,7 @@ export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
 
 type ListAttributeFreezer = <
   $ELEMENTS extends $ListAttributeElements,
-  STATE extends SharedAttributeStateConstraint
+  STATE extends SharedAttributeState
 >(
   $elements: $ELEMENTS,
   state: STATE,
@@ -54,7 +54,7 @@ type ListAttributeFreezer = <
  */
 export const freezeListAttribute: ListAttributeFreezer = <
   $ELEMENTS extends $ListAttributeElements,
-  STATE extends SharedAttributeStateConstraint
+  STATE extends SharedAttributeState
 >(
   elements: $ELEMENTS,
   state: STATE,

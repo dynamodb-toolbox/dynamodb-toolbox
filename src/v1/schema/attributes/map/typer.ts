@@ -12,7 +12,7 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 
 import type { $MapAttribute } from './interface'
 import type { $MapAttributeAttributeStates } from './types'
@@ -21,7 +21,7 @@ import { freezeMapAttribute } from './freeze'
 
 type $MapAttributeTyper = <
   $ATTRIBUTES extends $MapAttributeAttributeStates,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   attributes: NarrowObject<$ATTRIBUTES>,
   state: STATE
@@ -29,7 +29,7 @@ type $MapAttributeTyper = <
 
 const $map: $MapAttributeTyper = <
   $ATTRIBUTES extends $MapAttributeAttributeStates,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   attributes: NarrowObject<$ATTRIBUTES>,
   state: STATE

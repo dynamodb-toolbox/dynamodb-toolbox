@@ -13,11 +13,7 @@ import type {
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $elements, $keys } from '../constants/attributeOptions'
-import type {
-  SharedAttributeStateConstraint,
-  $SharedAttributeState,
-  SharedAttributeState
-} from '../shared/interface'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 import type {
   $RecordAttributeKeys,
   RecordAttributeKeys,
@@ -29,7 +25,7 @@ import type { FreezeRecordAttribute } from './freeze'
 export interface $RecordAttributeState<
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $SharedAttributeState<STATE> {
   [$type]: 'record'
   [$keys]: $KEYS
@@ -39,7 +35,7 @@ export interface $RecordAttributeState<
 export interface $RecordAttributeNestedState<
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $RecordAttributeState<$KEYS, $ELEMENTS, STATE> {
   freeze: (path: string) => FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>
 }
@@ -50,7 +46,7 @@ export interface $RecordAttributeNestedState<
 export interface $RecordAttribute<
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $RecordAttributeNestedState<$KEYS, $ELEMENTS, STATE> {
   /**
    * Tag attribute as required. Possible values are:
@@ -325,7 +321,7 @@ export interface $RecordAttribute<
 export interface RecordAttribute<
   KEYS extends RecordAttributeKeys = RecordAttributeKeys,
   ELEMENTS extends RecordAttributeElements = RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends SharedAttributeState<STATE> {
   path: string
   type: 'record'

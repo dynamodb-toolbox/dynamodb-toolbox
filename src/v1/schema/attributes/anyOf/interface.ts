@@ -13,11 +13,7 @@ import type {
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $elements } from '../constants/attributeOptions'
-import type {
-  $SharedAttributeState,
-  SharedAttributeState,
-  SharedAttributeStateConstraint
-} from '../shared/interface'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 import type { Attribute } from '../types'
 
 import type { FreezeAnyOfAttribute } from './freeze'
@@ -25,7 +21,7 @@ import type { $AnyOfAttributeElements } from './types'
 
 export interface $AnyOfAttributeState<
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[],
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $SharedAttributeState<STATE> {
   [$type]: 'anyOf'
   [$elements]: $ELEMENTS
@@ -33,7 +29,7 @@ export interface $AnyOfAttributeState<
 
 export interface $AnyOfAttributeNestedState<
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[],
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $AnyOfAttributeState<$ELEMENTS, STATE> {
   freeze: (path: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>
 }
@@ -43,7 +39,7 @@ export interface $AnyOfAttributeNestedState<
  */
 export interface $AnyOfAttribute<
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[],
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $AnyOfAttributeNestedState<$ELEMENTS, STATE> {
   /**
    * Tag attribute as required. Possible values are:
@@ -282,7 +278,7 @@ export interface $AnyOfAttribute<
 
 export interface AnyOfAttribute<
   ELEMENTS extends Attribute[] = Attribute[],
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends SharedAttributeState<STATE> {
   path: string
   type: 'anyOf'

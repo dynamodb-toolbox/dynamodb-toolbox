@@ -3,7 +3,7 @@ import { isBoolean, isString } from 'v1/utils/validation'
 
 import { requiredOptionsSet } from '../constants/requiredOptions'
 
-import type { SharedAttributeState, SharedAttributeStateConstraint } from './interface'
+import type { SharedAttributeState } from './interface'
 
 /**
  * Validates an attribute shared properties
@@ -13,7 +13,7 @@ import type { SharedAttributeState, SharedAttributeStateConstraint } from './int
  * @return void
  */
 export const validateAttributeProperties = (
-  attribute: SharedAttributeState<SharedAttributeStateConstraint>,
+  attribute: SharedAttributeState,
   path: string
 ): void => {
   const attributeRequired = attribute.required
