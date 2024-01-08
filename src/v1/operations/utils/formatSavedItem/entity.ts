@@ -2,7 +2,7 @@ import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { Item } from 'v1/schema'
 import type { AnyAttributePath } from 'v1/operations/types'
 
-import { parseSavedAttribute } from './attribute'
+import { formatSavedAttribute } from './attribute'
 import { matchProjection } from './utils'
 
 type FormatSavedItemOptions<ENTITY extends EntityV2> = {
@@ -24,6 +24,9 @@ export const formatSavedItem = <
 
   const schema = entity.schema
 
+  const partitionKey = savedItem[entity.table.partitionKey.name]
+  const sortKey = entity.table.sortKey && savedItem[entity.table.sortKey.name]
+
   Object.entries(schema.attributes).forEach(([attributeName, attribute]) => {
     if (attribute.hidden) {
       return
@@ -40,9 +43,11 @@ export const formatSavedItem = <
 
     const attributeSavedAs = attribute.savedAs ?? attributeName
 
-    const formattedAttribute = parseSavedAttribute(attribute, savedItem[attributeSavedAs], {
+    const formattedAttribute = formatSavedAttribute(attribute, savedItem[attributeSavedAs], {
       projectedAttributes: childrenAttributes,
-      partial
+      partial,
+      ...(partitionKey !== undefined ? { partitionKey } : {}),
+      ...(sortKey !== undefined ? { sortKey } : {})
     })
 
     if (formattedAttribute !== undefined) {

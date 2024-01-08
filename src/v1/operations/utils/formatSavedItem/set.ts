@@ -2,27 +2,39 @@ import type { SetAttribute, AttributeValue, SetAttributeValue } from 'v1/schema'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { parseSavedAttribute } from './attribute'
+import type { FormatSavedAttributeOptions } from './types'
+import { formatSavedAttribute } from './attribute'
+import { getItemKey } from './utils'
 
-export const parseSavedSetAttribute = (
+export const formatSavedSetAttribute = (
   setAttribute: SetAttribute,
-  savedSet: AttributeValue
+  savedValue: AttributeValue,
+  options: FormatSavedAttributeOptions = {}
 ): SetAttributeValue => {
-  if (!isSet(savedSet)) {
+  if (!isSet(savedValue)) {
+    const { partitionKey, sortKey } = options
+
     throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
-      message: `Invalid attribute in saved item: ${setAttribute.path}. Should be a ${setAttribute.type}`,
+      message: [
+        `Invalid attribute in saved item: ${setAttribute.path}. Should be a ${setAttribute.type}.`,
+        getItemKey({ partitionKey, sortKey })
+      ]
+        .filter(Boolean)
+        .join(' '),
       path: setAttribute.path,
       payload: {
-        received: savedSet,
-        expected: setAttribute.type
+        received: savedValue,
+        expected: setAttribute.type,
+        partitionKey,
+        sortKey
       }
     })
   }
 
   const parsedPutItemInput: SetAttributeValue = new Set()
 
-  for (const savedElement of savedSet) {
-    const parsedElement = parseSavedAttribute(setAttribute.elements, savedElement)
+  for (const savedElement of savedValue) {
+    const parsedElement = formatSavedAttribute(setAttribute.elements, savedElement, options)
 
     if (parsedElement !== undefined) {
       parsedPutItemInput.add(parsedElement)

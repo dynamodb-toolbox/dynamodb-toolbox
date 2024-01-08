@@ -4,28 +4,40 @@ import type { Attribute, RequiredOption, AttributeValue } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { FormatSavedAttributeOptions } from './types'
-import { parseSavedPrimitiveAttribute } from './primitive'
-import { parseSavedSetAttribute } from './set'
-import { parseSavedListAttribute } from './list'
-import { parseSavedMapAttribute } from './map'
-import { parseSavedAnyOfAttribute } from './anyOf'
-import { parseSavedRecordAttribute } from './record'
+import { formatSavedPrimitiveAttribute } from './primitive'
+import { formatSavedSetAttribute } from './set'
+import { formatSavedListAttribute } from './list'
+import { formatSavedMapAttribute } from './map'
+import { formatSavedAnyOfAttribute } from './anyOf'
+import { formatSavedRecordAttribute } from './record'
+import { getItemKey } from './utils'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
 export const isRequired = (attribute: Attribute): boolean =>
   requiringOptions.has(attribute.required)
 
-export const parseSavedAttribute = (
+export const formatSavedAttribute = (
   attribute: Attribute,
   savedValue: AttributeValue | undefined,
   options: FormatSavedAttributeOptions = {}
 ): AttributeValue | undefined => {
   if (savedValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
+      const { partitionKey, sortKey } = options
+
       throw new DynamoDBToolboxError('operations.formatSavedItem.savedAttributeRequired', {
-        message: `Missing required attribute in saved item: ${attribute.path}`,
-        path: attribute.path
+        message: [
+          `Missing required attribute in saved item: ${attribute.path}.`,
+          getItemKey({ partitionKey, sortKey })
+        ]
+          .filter(Boolean)
+          .join(' '),
+        path: attribute.path,
+        payload: {
+          partitionKey,
+          sortKey
+        }
       })
     } else {
       return undefined
@@ -39,16 +51,16 @@ export const parseSavedAttribute = (
     case 'binary':
     case 'boolean':
     case 'number':
-      return parseSavedPrimitiveAttribute(attribute, savedValue)
+      return formatSavedPrimitiveAttribute(attribute, savedValue, options)
     case 'set':
-      return parseSavedSetAttribute(attribute, savedValue)
+      return formatSavedSetAttribute(attribute, savedValue, options)
     case 'list':
-      return parseSavedListAttribute(attribute, savedValue, options)
+      return formatSavedListAttribute(attribute, savedValue, options)
     case 'map':
-      return parseSavedMapAttribute(attribute, savedValue, options)
+      return formatSavedMapAttribute(attribute, savedValue, options)
     case 'record':
-      return parseSavedRecordAttribute(attribute, savedValue, options)
+      return formatSavedRecordAttribute(attribute, savedValue, options)
     case 'anyOf':
-      return parseSavedAnyOfAttribute(attribute, savedValue, options)
+      return formatSavedAnyOfAttribute(attribute, savedValue, options)
   }
 }
