@@ -3,21 +3,30 @@ import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { FormatSavedAttributeOptions } from './types'
-import { parseSavedAttribute } from './attribute'
-import { matchProjection } from './utils'
+import { formatSavedAttribute } from './attribute'
+import { matchProjection, getItemKey } from './utils'
 
-export const parseSavedMapAttribute = (
+export const formatSavedMapAttribute = (
   mapAttribute: MapAttribute,
-  savedMap: AttributeValue,
-  { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions
+  savedValue: AttributeValue,
+  { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions = {}
 ): MapAttributeValue => {
-  if (!isObject(savedMap)) {
+  if (!isObject(savedValue)) {
+    const { partitionKey, sortKey } = restOptions
+
     throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
-      message: `Invalid attribute in saved item: ${mapAttribute.path}. Should be a ${mapAttribute.type}`,
+      message: [
+        `Invalid attribute in saved item: ${mapAttribute.path}. Should be a ${mapAttribute.type}.`,
+        getItemKey({ partitionKey, sortKey })
+      ]
+        .filter(Boolean)
+        .join(' '),
       path: mapAttribute.path,
       payload: {
-        received: savedMap,
-        expected: mapAttribute.type
+        received: savedValue,
+        expected: mapAttribute.type,
+        partitionKey,
+        sortKey
       }
     })
   }
@@ -40,7 +49,7 @@ export const parseSavedMapAttribute = (
 
     const attributeSavedAs = attribute.savedAs ?? attributeName
 
-    const formattedAttribute = parseSavedAttribute(attribute, savedMap[attributeSavedAs], {
+    const formattedAttribute = formatSavedAttribute(attribute, savedValue[attributeSavedAs], {
       projectedAttributes: childrenAttributes,
       ...restOptions
     })
