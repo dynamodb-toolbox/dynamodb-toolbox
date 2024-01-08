@@ -1,8 +1,8 @@
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 
-export interface PrimitiveAttributeStateConstraint<
+export interface PrimitiveAttributeState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
-> extends SharedAttributeStateConstraint {
+> extends SharedAttributeState {
   enum: PrimitiveAttributeEnumValues<TYPE>
   transform: undefined | unknown
 }

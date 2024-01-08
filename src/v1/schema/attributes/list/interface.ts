@@ -13,18 +13,14 @@ import type {
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $elements } from '../constants/attributeOptions'
-import type {
-  $SharedAttributeState,
-  SharedAttributeState,
-  SharedAttributeStateConstraint
-} from '../shared/interface'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 
 import type { FreezeListAttribute } from './freeze'
 import type { $ListAttributeElements, ListAttributeElements } from './types'
 
 export interface $ListAttributeState<
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $SharedAttributeState<STATE> {
   [$type]: 'list'
   [$elements]: $ELEMENTS
@@ -32,7 +28,7 @@ export interface $ListAttributeState<
 
 export interface $ListAttributeNestedState<
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $ListAttributeState<$ELEMENTS, STATE> {
   freeze: (path: string) => FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>
 }
@@ -42,7 +38,7 @@ export interface $ListAttributeNestedState<
  */
 export interface $ListAttribute<
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $ListAttributeNestedState<$ELEMENTS, STATE> {
   /**
    * Tag attribute as required. Possible values are:
@@ -281,7 +277,7 @@ export interface $ListAttribute<
 
 export interface ListAttribute<
   ELEMENTS extends ListAttributeElements = ListAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends SharedAttributeState<STATE> {
   path: string
   type: 'list'

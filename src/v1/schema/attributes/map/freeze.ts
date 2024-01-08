@@ -14,7 +14,7 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 import type { $MapAttributeState, MapAttribute } from './interface'
 import type { $MapAttributeAttributeStates } from './types'
 
@@ -41,7 +41,7 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
 
 type MapAttributeFreezer = <
   $ATTRIBUTES extends $MapAttributeAttributeStates,
-  STATE extends SharedAttributeStateConstraint
+  STATE extends SharedAttributeState
 >(
   attribute: $ATTRIBUTES,
   state: STATE,
@@ -58,7 +58,7 @@ type MapAttributeFreezer = <
  */
 export const freezeMapAttribute: MapAttributeFreezer = <
   $ATTRIBUTES extends $MapAttributeAttributeStates,
-  STATE extends SharedAttributeStateConstraint
+  STATE extends SharedAttributeState
 >(
   attributes: $ATTRIBUTES,
   state: STATE,

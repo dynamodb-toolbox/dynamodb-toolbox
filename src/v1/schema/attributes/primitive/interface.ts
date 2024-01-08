@@ -18,14 +18,14 @@ import type { $SharedAttributeState, SharedAttributeState } from '../shared/inte
 import type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
-  PrimitiveAttributeStateConstraint,
+  PrimitiveAttributeState,
   Transformer
 } from './types'
 import type { FreezePrimitiveAttribute } from './freeze'
 
 export interface $PrimitiveAttributeState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeStateConstraint<TYPE> = PrimitiveAttributeStateConstraint<TYPE>
+  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
 > extends $SharedAttributeState<STATE> {
   [$type]: TYPE
   [$enum]: STATE['enum']
@@ -34,7 +34,7 @@ export interface $PrimitiveAttributeState<
 
 export interface $PrimitiveAttributeNestedState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeStateConstraint<TYPE> = PrimitiveAttributeStateConstraint<TYPE>
+  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
 > extends $PrimitiveAttributeState<TYPE, STATE> {
   freeze: (path: string) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
 }
@@ -44,7 +44,7 @@ export interface $PrimitiveAttributeNestedState<
  */
 export interface $PrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeStateConstraint<TYPE> = PrimitiveAttributeStateConstraint<TYPE>
+  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
 > extends $PrimitiveAttributeNestedState<TYPE, STATE> {
   /**
    * Tag attribute as required. Possible values are:
@@ -355,7 +355,7 @@ export interface $PrimitiveAttribute<
 
 export interface PrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeStateConstraint<TYPE> = PrimitiveAttributeStateConstraint<TYPE>
+  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
 > extends SharedAttributeState<STATE> {
   path: string
   type: TYPE

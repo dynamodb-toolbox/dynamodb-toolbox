@@ -19,7 +19,7 @@ import {
 import type { $PrimitiveAttributeState, PrimitiveAttribute } from './interface'
 import type {
   PrimitiveAttributeEnumValues,
-  PrimitiveAttributeStateConstraint,
+  PrimitiveAttributeState,
   PrimitiveAttributeType
 } from './types'
 
@@ -47,7 +47,7 @@ export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttr
 
 type PrimitiveAttributeFreezer = <
   TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeStateConstraint<TYPE>
+  STATE extends PrimitiveAttributeState<TYPE>
 >(
   type: TYPE,
   primitiveAttribute: STATE,
@@ -64,7 +64,7 @@ type PrimitiveAttributeFreezer = <
  */
 export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
   TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeStateConstraint
+  STATE extends PrimitiveAttributeState
 >(
   type: TYPE,
   state: STATE,

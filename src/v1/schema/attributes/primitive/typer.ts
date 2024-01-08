@@ -16,7 +16,7 @@ import {
 } from '../constants/attributeOptions'
 
 import type { $PrimitiveAttribute } from './interface'
-import type { PrimitiveAttributeStateConstraint, PrimitiveAttributeType } from './types'
+import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types'
 import {
   PrimitiveAttributeOptions,
   PrimitiveAttributeDefaultOptions,
@@ -26,7 +26,7 @@ import { freezePrimitiveAttribute } from './freeze'
 
 type $PrimitiveAttributeTyper = <
   $TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeStateConstraint<$TYPE> = PrimitiveAttributeStateConstraint<$TYPE>
+  STATE extends PrimitiveAttributeState<$TYPE> = PrimitiveAttributeState<$TYPE>
 >(
   type: $TYPE,
   state: STATE
@@ -39,7 +39,7 @@ type $PrimitiveAttributeTyper = <
  */
 const $primitive: $PrimitiveAttributeTyper = <
   $TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeStateConstraint<$TYPE> = PrimitiveAttributeStateConstraint<$TYPE>
+  STATE extends PrimitiveAttributeState<$TYPE> = PrimitiveAttributeState<$TYPE>
 >(
   type: $TYPE,
   state: STATE

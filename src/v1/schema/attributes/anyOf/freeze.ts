@@ -15,7 +15,7 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 import type { $AttributeState } from '../types'
 import type { $AnyOfAttributeState, AnyOfAttribute } from './interface'
 import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types'
@@ -54,7 +54,7 @@ export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState>
 
 type AnyOfAttributeFreezer = <
   $ELEMENTS extends $AnyOfAttributeElements[],
-  STATE extends SharedAttributeStateConstraint
+  STATE extends SharedAttributeState
 >(
   elements: $ELEMENTS,
   state: STATE,
@@ -71,7 +71,7 @@ type AnyOfAttributeFreezer = <
  */
 export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
   $ELEMENTS extends $AnyOfAttributeElements[],
-  STATE extends SharedAttributeStateConstraint
+  STATE extends SharedAttributeState
 >(
   elements: $ELEMENTS,
   state: STATE,
