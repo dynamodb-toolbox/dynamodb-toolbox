@@ -13,21 +13,24 @@ import type {
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $attributes } from '../constants/attributeOptions'
-import type {
-  SharedAttributeStateConstraint,
-  $SharedAttributeState,
-  SharedAttributeState
-} from '../shared/interface'
+import type { SharedAttributeState, $SharedAttributeState } from '../shared/interface'
 
 import type { FreezeMapAttribute } from './freeze'
 import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types'
 
 export interface $MapAttributeState<
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $SharedAttributeState<STATE> {
   [$type]: 'map'
   [$attributes]: $ATTRIBUTES
+}
+
+export interface $MapAttributeNestedState<
+  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends $MapAttributeState<$ATTRIBUTES, STATE> {
+  freeze: (path: string) => FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>
 }
 
 /**
@@ -35,8 +38,8 @@ export interface $MapAttributeState<
  */
 export interface $MapAttribute<
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
-> extends $MapAttributeState<$ATTRIBUTES, STATE> {
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends $MapAttributeNestedState<$ATTRIBUTES, STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -274,7 +277,7 @@ export interface $MapAttribute<
 
 export interface MapAttribute<
   ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends SharedAttributeState<STATE> {
   path: string
   type: 'map'

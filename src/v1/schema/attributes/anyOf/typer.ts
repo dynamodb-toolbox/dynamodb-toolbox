@@ -1,4 +1,3 @@
-import type { NarrowObject } from 'v1/types/narrowObject'
 import { overwrite } from 'v1/utils/overwrite'
 
 import type { RequiredOption, AtLeastOnce } from '../constants'
@@ -11,31 +10,27 @@ import {
   $savedAs,
   $defaults
 } from '../constants/attributeOptions'
-import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 
 import type { $AnyOfAttribute } from './interface'
-import {
-  AnyOfAttributeOptions,
-  AnyOfAttributeDefaultOptions,
-  ANY_OF_DEFAULT_OPTIONS
-} from './options'
 import type { $AnyOfAttributeElements } from './types'
+import { AnyOfAttributeDefaultOptions, ANY_OF_DEFAULT_OPTIONS } from './options'
+import { freezeAnyOfAttribute } from './freeze'
 
 type $AnyOfAttributeTyper = <
-  $ELEMENTS extends $AnyOfAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  $ELEMENTS extends $AnyOfAttributeElements[],
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
-  elements: $ELEMENTS[],
-  state: STATE
+  state: STATE,
+  ...elements: $ELEMENTS
 ) => $AnyOfAttribute<$ELEMENTS, STATE>
 
 const $anyOf: $AnyOfAttributeTyper = <
-  $ELEMENTS extends $AnyOfAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  $ELEMENTS extends $AnyOfAttributeElements[],
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
-  elements: $ELEMENTS[],
-  state: STATE
+  state: STATE,
+  ...elements: $ELEMENTS
 ) => {
   const $anyOfAttribute: $AnyOfAttribute<$ELEMENTS, STATE> = {
     [$type]: 'anyOf',
@@ -47,128 +42,110 @@ const $anyOf: $AnyOfAttributeTyper = <
     [$defaults]: state.defaults,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-    ) => $anyOf(elements, overwrite(state, { required: nextRequired })),
-    optional: () => $anyOf(elements, overwrite(state, { required: 'never' })),
-    hidden: () => $anyOf(elements, overwrite(state, { hidden: true })),
-    key: () => $anyOf(elements, overwrite(state, { key: true, required: 'always' })),
-    savedAs: nextSavedAs => $anyOf(elements, overwrite(state, { savedAs: nextSavedAs })),
+    ) => $anyOf(overwrite(state, { required: nextRequired }), ...elements),
+    optional: () => $anyOf(overwrite(state, { required: 'never' }), ...elements),
+    hidden: () => $anyOf(overwrite(state, { hidden: true }), ...elements),
+    key: () => $anyOf(overwrite(state, { key: true, required: 'always' }), ...elements),
+    savedAs: nextSavedAs => $anyOf(overwrite(state, { savedAs: nextSavedAs }), ...elements),
     keyDefault: nextKeyDefault =>
       $anyOf(
-        elements,
         overwrite(state, {
           defaults: {
             key: nextKeyDefault,
             put: state.defaults.put,
             update: state.defaults.update
           }
-        })
+        }),
+        ...elements
       ),
     putDefault: nextPutDefault =>
       $anyOf(
-        elements,
         overwrite(state, {
           defaults: {
             key: state.defaults.key,
             put: nextPutDefault,
             update: state.defaults.update
           }
-        })
+        }),
+        ...elements
       ),
     updateDefault: nextUpdateDefault =>
       $anyOf(
-        elements,
         overwrite(state, {
           defaults: {
             key: state.defaults.key,
             put: state.defaults.put,
             update: nextUpdateDefault
           }
-        })
+        }),
+        ...elements
       ),
     default: nextDefault =>
       $anyOf(
-        elements,
         overwrite(state, {
           defaults: state.key
             ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
-        })
+        }),
+        ...elements
       ),
     keyLink: nextKeyDefault =>
       $anyOf(
-        elements,
         overwrite(state, {
           defaults: {
             key: nextKeyDefault,
             put: state.defaults.put,
             update: state.defaults.update
           }
-        })
+        }),
+        ...elements
       ),
     putLink: nextPutDefault =>
       $anyOf(
-        elements,
         overwrite(state, {
           defaults: {
             key: state.defaults.key,
             put: nextPutDefault,
             update: state.defaults.update
           }
-        })
+        }),
+        ...elements
       ),
     updateLink: nextUpdateDefault =>
       $anyOf(
-        elements,
         overwrite(state, {
           defaults: {
             key: state.defaults.key,
             put: state.defaults.put,
             update: nextUpdateDefault
           }
-        })
+        }),
+        ...elements
       ),
     link: nextDefault =>
       $anyOf(
-        elements,
         overwrite(state, {
           defaults: state.key
             ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
-        })
-      )
+        }),
+        ...elements
+      ),
+    freeze: path => freezeAnyOfAttribute(elements, state, path)
   }
 
   return $anyOfAttribute
 }
 
-type AnyOfAttributeTyper = <
-  ELEMENTS extends $AnyOfAttributeElements,
-  OPTIONS extends Partial<AnyOfAttributeOptions> = AnyOfAttributeOptions
->(
-  elements: ELEMENTS[],
-  options?: NarrowObject<OPTIONS>
-) => $AnyOfAttribute<
-  ELEMENTS,
-  InferStateFromOptions<AnyOfAttributeOptions, AnyOfAttributeDefaultOptions, OPTIONS>
->
+type AnyOfAttributeTyper = <ELEMENTS extends $AnyOfAttributeElements[]>(
+  ...elements: ELEMENTS
+) => $AnyOfAttribute<ELEMENTS, AnyOfAttributeDefaultOptions>
 
 /**
  * Define a new anyOf attribute
  * @param elements Attribute[]
  * @param options _(optional)_ AnyOf Options
  */
-export const anyOf: AnyOfAttributeTyper = <
-  $ELEMENTS extends $AnyOfAttributeElements,
-  OPTIONS extends Partial<AnyOfAttributeOptions> = AnyOfAttributeOptions
->(
-  elements: $ELEMENTS[],
-  options?: NarrowObject<OPTIONS>
-) => {
-  const state = {
-    ...ANY_OF_DEFAULT_OPTIONS,
-    ...options,
-    defaults: { ...ANY_OF_DEFAULT_OPTIONS.defaults, ...options?.defaults }
-  } as InferStateFromOptions<AnyOfAttributeOptions, AnyOfAttributeDefaultOptions, OPTIONS>
-
-  return $anyOf(elements, state)
-}
+export const anyOf: AnyOfAttributeTyper = <$ELEMENTS extends $AnyOfAttributeElements[]>(
+  ...elements: $ELEMENTS
+) => $anyOf(ANY_OF_DEFAULT_OPTIONS, ...elements)

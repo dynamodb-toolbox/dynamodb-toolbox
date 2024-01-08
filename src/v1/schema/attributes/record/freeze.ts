@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import { freezeAttribute, FreezeAttribute } from '../freeze'
+import type { FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault'
 import {
@@ -16,7 +16,9 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
+import type { SharedAttributeState } from '../shared/interface'
 import type { $RecordAttributeState, RecordAttribute } from './interface'
+import type { $RecordAttributeElements, $RecordAttributeKeys } from './types'
 
 export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =
   // Applying void O.Update improves type display
@@ -36,27 +38,37 @@ export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeStat
     never
   >
 
-type RecordAttributeFreezer = <$RECORD_ATTRIBUTE extends $RecordAttributeState>(
-  $recordAttribute: $RECORD_ATTRIBUTE,
+type RecordAttributeFreezer = <
+  $KEYS extends $RecordAttributeKeys,
+  $ELEMENTS extends $RecordAttributeElements,
+  STATE extends SharedAttributeState
+>(
+  keys: $KEYS,
+  elements: $ELEMENTS,
+  state: STATE,
   path: string
-) => FreezeRecordAttribute<$RECORD_ATTRIBUTE>
+) => FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>
 
 /**
- * Freezes a list instance
+ * Freezes a warm `record` attribute
  *
- * @param $recordAttribute List
+ * @param keys Attribute keys
+ * @param elements Attribute elements
+ * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
 export const freezeRecordAttribute: RecordAttributeFreezer = <
-  $RECORD_ATTRIBUTE extends $RecordAttributeState
+  $KEYS extends $RecordAttributeKeys,
+  $ELEMENTS extends $RecordAttributeElements,
+  STATE extends SharedAttributeState
 >(
-  $recordAttribute: $RECORD_ATTRIBUTE,
+  keys: $KEYS,
+  elements: $ELEMENTS,
+  state: STATE,
   path: string
-): FreezeRecordAttribute<$RECORD_ATTRIBUTE> => {
-  validateAttributeProperties($recordAttribute, path)
-
-  const keys: $RECORD_ATTRIBUTE[$keys] = $recordAttribute[$keys]
+): FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>> => {
+  validateAttributeProperties(state, path)
 
   if (keys[$type] !== 'string') {
     throw new DynamoDBToolboxError('schema.recordAttribute.invalidKeys', {
@@ -101,8 +113,6 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  const elements: $RECORD_ATTRIBUTE[$elements] = $recordAttribute[$elements]
-
   // Checking $key before $required as $key implies attribute is always $required
   if (elements[$key] !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.keyElements', {
@@ -139,18 +149,14 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  const frozenKeys = freezeAttribute(keys, `${path} (KEY)`)
-  const frozenElements = freezeAttribute(elements, `${path}[string]`)
+  const frozenKeys = keys.freeze(`${path} (KEY)`) as FreezeAttribute<$KEYS>
+  const frozenElements = elements.freeze(`${path}[string]`) as FreezeAttribute<$ELEMENTS>
 
   return {
     path,
-    type: $recordAttribute[$type],
+    type: 'record',
     keys: frozenKeys,
     elements: frozenElements,
-    required: $recordAttribute[$required],
-    hidden: $recordAttribute[$hidden],
-    key: $recordAttribute[$key],
-    savedAs: $recordAttribute[$savedAs],
-    defaults: $recordAttribute[$defaults]
+    ...state
   }
 }

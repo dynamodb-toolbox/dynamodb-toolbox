@@ -63,12 +63,12 @@ describe('parseCondition', () => {
 
   describe('anyOf', () => {
     const schemaWithAnyOf = schema({
-      anyOf: anyOf([
+      anyOf: anyOf(
         number(),
         map({
-          strOrNum: anyOf([string(), number()])
+          strOrNum: anyOf(string(), number())
         })
-      ])
+      )
     })
 
     it('correctly parses condition (root)', () => {

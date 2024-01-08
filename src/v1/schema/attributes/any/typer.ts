@@ -14,16 +14,15 @@ import {
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 
 import type { $AnyAttribute } from './interface'
-import type { AnyAttributeStateConstraint } from './types'
+import type { AnyAttributeState } from './types'
 import { AnyAttributeOptions, AnyAttributeDefaultOptions, ANY_DEFAULT_OPTIONS } from './options'
+import { freezeAnyAttribute } from './freeze'
 
-type $AnyAttributeTyper = <STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint>(
+type $AnyAttributeTyper = <STATE extends AnyAttributeState = AnyAttributeState>(
   state: STATE
 ) => $AnyAttribute<STATE>
 
-const $any: $AnyAttributeTyper = <
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
->(
+const $any: $AnyAttributeTyper = <STATE extends AnyAttributeState = AnyAttributeState>(
   state: STATE
 ) => {
   const $anyAttribute: $AnyAttribute<STATE> = {
@@ -134,7 +133,8 @@ const $any: $AnyAttributeTyper = <
                 update: state.defaults.update
               }
         })
-      )
+      ),
+    freeze: path => freezeAnyAttribute(state, path)
   }
 
   return $anyAttribute
@@ -154,7 +154,7 @@ type AnyAttributeTyper = <OPTIONS extends Partial<AnyAttributeOptions> = AnyAttr
 /**
  * Define a new attribute of any type
  *
- * @param options _(optional)_ Boolean Options
+ * @param options _(optional)_ Attribute Options
  */
 export const any: AnyAttributeTyper = <
   OPTIONS extends Partial<AnyAttributeOptions> = AnyAttributeOptions

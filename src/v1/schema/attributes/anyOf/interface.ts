@@ -13,31 +13,34 @@ import type {
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $elements } from '../constants/attributeOptions'
-import type {
-  $SharedAttributeState,
-  SharedAttributeState,
-  SharedAttributeStateConstraint
-} from '../shared/interface'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 import type { Attribute } from '../types'
 
 import type { FreezeAnyOfAttribute } from './freeze'
 import type { $AnyOfAttributeElements } from './types'
 
 export interface $AnyOfAttributeState<
-  $ELEMENTS extends $AnyOfAttributeElements = $AnyOfAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[],
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $SharedAttributeState<STATE> {
   [$type]: 'anyOf'
-  [$elements]: $ELEMENTS[]
+  [$elements]: $ELEMENTS
+}
+
+export interface $AnyOfAttributeNestedState<
+  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[],
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends $AnyOfAttributeState<$ELEMENTS, STATE> {
+  freeze: (path: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>
 }
 
 /**
  * AnyOf attribute interface
  */
 export interface $AnyOfAttribute<
-  $ELEMENTS extends $AnyOfAttributeElements = $AnyOfAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
-> extends $AnyOfAttributeState<$ELEMENTS, STATE> {
+  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[],
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends $AnyOfAttributeNestedState<$ELEMENTS, STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -274,10 +277,10 @@ export interface $AnyOfAttribute<
 }
 
 export interface AnyOfAttribute<
-  ELEMENTS extends Attribute = Attribute,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  ELEMENTS extends Attribute[] = Attribute[],
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends SharedAttributeState<STATE> {
   path: string
   type: 'anyOf'
-  elements: ELEMENTS[]
+  elements: ELEMENTS
 }

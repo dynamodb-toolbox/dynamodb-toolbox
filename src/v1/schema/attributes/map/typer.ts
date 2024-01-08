@@ -12,15 +12,16 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 
 import type { $MapAttribute } from './interface'
-import { MapAttributeOptions, MapAttributeDefaultOptions, MAP_DEFAULT_OPTIONS } from './options'
 import type { $MapAttributeAttributeStates } from './types'
+import { MapAttributeOptions, MapAttributeDefaultOptions, MAP_DEFAULT_OPTIONS } from './options'
+import { freezeMapAttribute } from './freeze'
 
 type $MapAttributeTyper = <
   $ATTRIBUTES extends $MapAttributeAttributeStates,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   attributes: NarrowObject<$ATTRIBUTES>,
   state: STATE
@@ -28,7 +29,7 @@ type $MapAttributeTyper = <
 
 const $map: $MapAttributeTyper = <
   $ATTRIBUTES extends $MapAttributeAttributeStates,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   attributes: NarrowObject<$ATTRIBUTES>,
   state: STATE
@@ -108,7 +109,8 @@ const $map: $MapAttributeTyper = <
             ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
         })
-      )
+      ),
+    freeze: path => freezeMapAttribute(attributes, state, path)
   }
 
   return $mapAttribute

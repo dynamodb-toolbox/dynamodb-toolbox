@@ -1,18 +1,17 @@
 import type { AtLeastOnce } from '../constants'
-import type { $SharedAttributeState } from '../shared/interface'
-import type { Attribute } from '../types/attribute'
+import type { $required, $hidden, $savedAs, $defaults } from '../constants/attributeOptions'
+import type { $AttributeNestedState, Attribute } from '../types'
 
-export type $AnyOfAttributeElements = $SharedAttributeState<{
-  required: AtLeastOnce
-  hidden: false
-  key: boolean
-  savedAs: undefined
-  defaults: {
+export type $AnyOfAttributeElements = $AttributeNestedState & {
+  [$required]: AtLeastOnce
+  [$hidden]: false
+  [$savedAs]: undefined
+  [$defaults]: {
     key: undefined
     put: undefined
     update: undefined
   }
-}>
+}
 
 export type AnyOfAttributeElements = Attribute & {
   required: AtLeastOnce

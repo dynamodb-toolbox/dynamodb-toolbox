@@ -1,8 +1,8 @@
 import type { AtLeastOnce } from '../constants'
-import type { $PrimitiveAttributeState } from '../primitive'
+import type { $PrimitiveAttributeNestedState } from '../primitive'
 import type { PrimitiveAttributeEnumValues } from '../primitive/types'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
-import type { $AttributeState, Attribute } from '../types/attribute'
+import type { $AttributeNestedState, Attribute } from '../types'
 
 type RecordAttributeKeysState = {
   required: AtLeastOnce
@@ -18,7 +18,10 @@ type RecordAttributeKeysState = {
   transform: undefined | unknown
 }
 
-export type $RecordAttributeKeys = $PrimitiveAttributeState<'string', RecordAttributeKeysState>
+export type $RecordAttributeKeys = $PrimitiveAttributeNestedState<
+  'string',
+  RecordAttributeKeysState
+>
 
 export type RecordAttributeKeys = Attribute & {
   type: 'string'
@@ -36,7 +39,7 @@ type RecordAttributeElementsState = {
   }
 }
 
-export type $RecordAttributeElements = $AttributeState &
+export type $RecordAttributeElements = $AttributeNestedState &
   $SharedAttributeState<RecordAttributeElementsState>
 
 export type RecordAttributeElements = Attribute & SharedAttributeState<RecordAttributeElementsState>

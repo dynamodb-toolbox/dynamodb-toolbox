@@ -11,7 +11,6 @@ import {
   $castAs
 } from '../constants/attributeOptions'
 
-import { freezeAnyAttribute } from './freeze'
 import type { $AnyAttributeState, AnyAttribute } from './interface'
 
 import { any } from './typer'
@@ -41,7 +40,7 @@ describe('anyAttribute', () => {
     const assertExtends: A.Extends<typeof anyInstance, $AnyAttributeState> = 1
     assertExtends
 
-    const frozenAny = freezeAnyAttribute(anyInstance, 'some.path')
+    const frozenAny = anyInstance.freeze('some.path')
     const assertFrozenExtends: A.Extends<typeof frozenAny, AnyAttribute> = 1
     assertFrozenExtends
 

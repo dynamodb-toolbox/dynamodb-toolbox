@@ -1,3 +1,8 @@
 export { list } from './typer'
-export type { $ListAttributeState, $ListAttribute, ListAttribute } from './interface'
-export { FreezeListAttribute, freezeListAttribute } from './freeze'
+export type {
+  $ListAttributeState,
+  $ListAttributeNestedState,
+  $ListAttribute,
+  ListAttribute
+} from './interface'
+export type { FreezeListAttribute } from './freeze'

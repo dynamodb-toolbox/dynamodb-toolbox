@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { schema } from './typer'
 import { boolean, binary, number, string, set, list, map } from './attributes'
-import { freezeAttribute, FreezeAttribute } from './attributes/freeze'
+import type { FreezeAttribute } from './attributes/freeze'
 
 describe('schema', () => {
   it('primitives', () => {
@@ -40,12 +40,12 @@ describe('schema', () => {
 
     expect(sch).toMatchObject({
       attributes: {
-        reqStr: freezeAttribute(reqStr, 'reqStr'),
-        hidBool: freezeAttribute(hidBool, 'hidBool'),
-        defNum: freezeAttribute(defNum, 'defNum'),
-        savedAsBin: freezeAttribute(savedAsBin, 'savedAsBin'),
-        keyStr: freezeAttribute(keyStr, 'keyStr'),
-        enumStr: freezeAttribute(enumStr, 'enumStr')
+        reqStr: reqStr.freeze('reqStr'),
+        hidBool: hidBool.freeze('hidBool'),
+        defNum: defNum.freeze('defNum'),
+        savedAsBin: savedAsBin.freeze('savedAsBin'),
+        keyStr: keyStr.freeze('keyStr'),
+        enumStr: enumStr.freeze('enumStr')
       }
     })
   })
@@ -76,10 +76,10 @@ describe('schema', () => {
 
     expect(sch).toMatchObject({
       attributes: {
-        flatMap: freezeAttribute(flatMap, 'flatMap'),
-        nestedMap: freezeAttribute(nestedMap, 'nestedMap'),
-        reqMap: freezeAttribute(reqMap, 'reqMap'),
-        hiddenMap: freezeAttribute(hiddenMap, 'hiddenMap')
+        flatMap: flatMap.freeze('flatMap'),
+        nestedMap: nestedMap.freeze('nestedMap'),
+        reqMap: reqMap.freeze('reqMap'),
+        hiddenMap: hiddenMap.freeze('hiddenMap')
       }
     })
   })
@@ -113,10 +113,10 @@ describe('schema', () => {
 
     expect(sch).toMatchObject({
       attributes: {
-        optList: freezeAttribute(optList, 'optList'),
-        nestedList: freezeAttribute(nestedList, 'nestedList'),
-        reqList: freezeAttribute(reqList, 'reqList'),
-        hiddenList: freezeAttribute(hiddenList, 'hiddenList')
+        optList: optList.freeze('optList'),
+        nestedList: nestedList.freeze('nestedList'),
+        reqList: reqList.freeze('reqList'),
+        hiddenList: hiddenList.freeze('hiddenList')
       }
     })
   })
@@ -147,9 +147,9 @@ describe('schema', () => {
 
     expect(sch).toMatchObject({
       attributes: {
-        optSet: freezeAttribute(optSet, 'optSet'),
-        reqSet: freezeAttribute(reqSet, 'reqSet'),
-        hiddenSet: freezeAttribute(hiddenSet, 'hiddenSet')
+        optSet: optSet.freeze('optSet'),
+        reqSet: reqSet.freeze('reqSet'),
+        hiddenSet: hiddenSet.freeze('hiddenSet')
       }
     })
   })

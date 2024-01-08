@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { freezeMapAttribute, map, string } from 'v1/schema'
+import { map, string } from 'v1/schema'
 
 import { parseMapAttributeClonedInput } from './map'
 import * as parseAttributeClonedInputModule from './attribute'
@@ -9,7 +9,7 @@ const parseAttributeClonedInput = jest.spyOn(
   'parseAttributeClonedInput'
 )
 
-const mapAttr = freezeMapAttribute(map({ foo: string(), bar: string() }), 'path')
+const mapAttr = map({ foo: string(), bar: string() }).freeze('path')
 
 describe('parseMapAttributeClonedInput', () => {
   beforeEach(() => {

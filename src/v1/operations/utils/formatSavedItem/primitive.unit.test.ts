@@ -1,12 +1,12 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { freezePrimitiveAttribute, string } from 'v1/schema'
+import { string } from 'v1/schema'
 import { prefix } from 'v1/transformers'
 
 import { parseSavedPrimitiveAttribute } from './primitive'
 
 describe('parseSavedPrimitiveAttribute', () => {
   it('throws an error if saved value type does not match', () => {
-    const str = freezePrimitiveAttribute(string(), 'path')
+    const str = string().freeze('path')
 
     const invalidCall = () => parseSavedPrimitiveAttribute(str, 42)
 
@@ -17,7 +17,7 @@ describe('parseSavedPrimitiveAttribute', () => {
   })
 
   it('uses formatter if transformer has been provided', () => {
-    const str = freezePrimitiveAttribute(string().transform(prefix('TEST')), 'path')
+    const str = string().transform(prefix('TEST')).freeze('path')
 
     const parsedValue = parseSavedPrimitiveAttribute(str, 'TEST#bar')
 
@@ -25,10 +25,7 @@ describe('parseSavedPrimitiveAttribute', () => {
   })
 
   it('throws if value is not part of enum', () => {
-    const str = freezePrimitiveAttribute(
-      string().enum('foo', 'bar').transform(prefix('TEST')),
-      'path'
-    )
+    const str = string().enum('foo', 'bar').transform(prefix('TEST')).freeze('path')
 
     const parsedValue = parseSavedPrimitiveAttribute(str, 'TEST#bar')
     expect(parsedValue).toBe('bar')

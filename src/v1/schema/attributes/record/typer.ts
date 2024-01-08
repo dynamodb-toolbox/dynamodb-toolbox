@@ -13,7 +13,7 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 
 import type { $RecordAttributeKeys, $RecordAttributeElements } from './types'
 import type { $RecordAttribute } from './interface'
@@ -22,11 +22,12 @@ import {
   RecordAttributeDefaultOptions,
   RECORD_DEFAULT_OPTIONS
 } from './options'
+import { freezeRecordAttribute } from './freeze'
 
 type $RecordAttributeTyper = <
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   keys: $KEYS,
   elements: $ELEMENTS,
@@ -36,7 +37,7 @@ type $RecordAttributeTyper = <
 const $record: $RecordAttributeTyper = <
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   keys: $KEYS,
   elements: $ELEMENTS,
@@ -149,7 +150,8 @@ const $record: $RecordAttributeTyper = <
             ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
         })
-      )
+      ),
+    freeze: path => freezeRecordAttribute(keys, elements, state, path)
   }
 
   return $recordAttribute

@@ -1,12 +1,9 @@
 import type { O } from 'ts-toolbelt'
 
-import type {
-  AttributeOptionsConstraints,
-  AttributeOptionName
-} from '../constants/attributeOptions'
+import type { AttributeOptions, AttributeOptionName } from '../constants/attributeOptions'
 
 type InferStateValueFromOption<
-  OPTIONS_CONSTRAINTS extends Partial<AttributeOptionsConstraints>,
+  OPTIONS_CONSTRAINTS extends Partial<AttributeOptions>,
   DEFAULT_OPTIONS extends OPTIONS_CONSTRAINTS,
   OPTIONS extends Partial<OPTIONS_CONSTRAINTS>,
   OPTION_NAME extends keyof OPTIONS_CONSTRAINTS,
@@ -18,7 +15,7 @@ type InferStateValueFromOption<
   : OPTION_VALUE
 
 export type InferStateFromOptions<
-  OPTIONS_CONSTRAINTS extends Partial<AttributeOptionsConstraints>,
+  OPTIONS_CONSTRAINTS extends Partial<AttributeOptions>,
   DEFAULT_OPTIONS extends OPTIONS_CONSTRAINTS,
   OPTIONS extends Partial<OPTIONS_CONSTRAINTS>,
   ADDITIONAL_OPTIONS extends object = {}

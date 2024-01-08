@@ -1,10 +1,9 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isBoolean, isString } from 'v1/utils/validation'
 
-import { $required, $hidden, $key, $savedAs } from '../constants/attributeOptions'
 import { requiredOptionsSet } from '../constants/requiredOptions'
 
-import type { $SharedAttributeState, SharedAttributeStateConstraint } from './interface'
+import type { SharedAttributeState } from './interface'
 
 /**
  * Validates an attribute shared properties
@@ -14,10 +13,10 @@ import type { $SharedAttributeState, SharedAttributeStateConstraint } from './in
  * @return void
  */
 export const validateAttributeProperties = (
-  $attribute: $SharedAttributeState<SharedAttributeStateConstraint>,
+  attribute: SharedAttributeState,
   path: string
 ): void => {
-  const attributeRequired = $attribute[$required]
+  const attributeRequired = attribute.required
   if (!requiredOptionsSet.has(attributeRequired)) {
     throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
       message: `Invalid option value type at path ${path}. Property: 'required'. Expected: ${[
@@ -32,7 +31,7 @@ export const validateAttributeProperties = (
     })
   }
 
-  const attributeHidden = $attribute[$hidden]
+  const attributeHidden = attribute.hidden
   if (!isBoolean(attributeHidden)) {
     throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
       message: `Invalid option value type at path ${path}. Property: 'hidden'. Expected: boolean. Received: ${String(
@@ -46,7 +45,7 @@ export const validateAttributeProperties = (
     })
   }
 
-  const attributeKey = $attribute[$key]
+  const attributeKey = attribute.key
   if (!isBoolean(attributeKey)) {
     throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
       message: `Invalid option value type at path ${path}. Property: 'key'. Expected: boolean. Received: ${String(
@@ -60,7 +59,7 @@ export const validateAttributeProperties = (
     })
   }
 
-  const attributeSavedAs = $attribute[$savedAs]
+  const attributeSavedAs = attribute.savedAs
   if (attributeSavedAs !== undefined && !isString(attributeSavedAs)) {
     throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
       message: `Invalid option value type at path ${path}. Property: 'savedAs'. Expected: string. Received: ${String(

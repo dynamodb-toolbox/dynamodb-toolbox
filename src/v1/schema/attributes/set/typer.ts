@@ -12,19 +12,20 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 
 import type { $SetAttribute } from './interface'
+import type { $SetAttributeElements } from './types'
 import {
   SetAttributeOptions,
   SetAttributeDefaultOptions,
   SET_ATTRIBUTE_DEFAULT_OPTIONS
 } from './options'
-import type { $SetAttributeElements } from './types'
+import { freezeSetAttribute } from './freeze'
 
 type $SetAttributeTyper = <
   $ELEMENTS extends $SetAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   elements: $ELEMENTS,
   state: STATE
@@ -32,7 +33,7 @@ type $SetAttributeTyper = <
 
 const $set: $SetAttributeTyper = <
   $ELEMENTS extends $SetAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   elements: $ELEMENTS,
   state: STATE
@@ -135,7 +136,8 @@ const $set: $SetAttributeTyper = <
             ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
         })
-      )
+      ),
+    freeze: path => freezeSetAttribute(elements, state, path)
   }
 
   return $setAttribute

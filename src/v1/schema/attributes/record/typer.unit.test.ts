@@ -16,7 +16,6 @@ import {
 } from '../constants/attributeOptions'
 
 import { record } from './typer'
-import { freezeRecordAttribute } from './freeze'
 import type { RecordAttribute, $RecordAttributeState } from './interface'
 
 describe('record', () => {
@@ -31,7 +30,7 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -46,7 +45,7 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -61,7 +60,7 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -76,7 +75,7 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -91,7 +90,7 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -106,7 +105,7 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -121,7 +120,7 @@ describe('record', () => {
       str.optional()
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -136,7 +135,7 @@ describe('record', () => {
       str.hidden()
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -151,7 +150,7 @@ describe('record', () => {
       str.key()
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -166,7 +165,7 @@ describe('record', () => {
       str.savedAs('foo')
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -181,7 +180,7 @@ describe('record', () => {
       str.putDefault('foo')
     )
 
-    const invalidCall = () => freezeRecordAttribute(invalidRecord, path)
+    const invalidCall = () => invalidRecord.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -214,7 +213,7 @@ describe('record', () => {
     const assertExtends: A.Extends<typeof rec, $RecordAttributeState> = 1
     assertExtends
 
-    const frozenRecord = freezeRecordAttribute(rec, path)
+    const frozenRecord = rec.freeze(path)
     const assertFrozen: A.Extends<typeof frozenRecord, RecordAttribute> = 1
     assertFrozen
 

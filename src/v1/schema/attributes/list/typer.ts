@@ -12,15 +12,16 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 
 import type { $ListAttributeElements } from './types'
 import type { $ListAttribute } from './interface'
 import { ListAttributeOptions, ListAttributeDefaultOptions, LIST_DEFAULT_OPTIONS } from './options'
+import { freezeListAttribute } from './freeze'
 
 type $ListAttributeTyper = <
   $ELEMENTS extends $ListAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   elements: $ELEMENTS,
   state: STATE
@@ -28,7 +29,7 @@ type $ListAttributeTyper = <
 
 const $list: $ListAttributeTyper = <
   $ELEMENTS extends $ListAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 >(
   elements: $ELEMENTS,
   state: STATE
@@ -131,7 +132,8 @@ const $list: $ListAttributeTyper = <
             ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
         })
-      )
+      ),
+    freeze: path => freezeListAttribute(elements, state, path)
   }
 
   return $listAttribute

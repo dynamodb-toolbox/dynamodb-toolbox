@@ -17,7 +17,11 @@ import {
 } from '../constants/attributeOptions'
 
 import type { $PrimitiveAttributeState, PrimitiveAttribute } from './interface'
-import type { PrimitiveAttributeEnumValues } from './types'
+import type {
+  PrimitiveAttributeEnumValues,
+  PrimitiveAttributeState,
+  PrimitiveAttributeType
+} from './types'
 
 export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
   // Applying void O.Update improves type display
@@ -41,54 +45,58 @@ export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttr
     never
   >
 
-type PrimitiveAttributeFreezer = <$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState>(
-  $primitiveAttribute: $PRIMITIVE_ATTRIBUTE,
+type PrimitiveAttributeFreezer = <
+  TYPE extends PrimitiveAttributeType,
+  STATE extends PrimitiveAttributeState<TYPE>
+>(
+  type: TYPE,
+  primitiveAttribute: STATE,
   path: string
-) => FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE>
+) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
 
 /**
- * Validates a primitive instance
+ * Freezes a warm `boolean`, `number`,  `string` or `binary` attribute
  *
- * @param $primitiveAttribute Primitive
+ * @param type Attribute type
+ * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
 export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
-  $PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState
+  TYPE extends PrimitiveAttributeType,
+  STATE extends PrimitiveAttributeState
 >(
-  $primitiveAttribute: $PRIMITIVE_ATTRIBUTE,
+  type: TYPE,
+  state: STATE,
   path: string
-): FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE> => {
-  validateAttributeProperties($primitiveAttribute, path)
+): FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>> => {
+  validateAttributeProperties(state, path)
 
-  const primitiveType = $primitiveAttribute[$type]
-  const typeValidator = validatorsByPrimitiveType[primitiveType]
+  const typeValidator = validatorsByPrimitiveType[type]
 
-  const enumValues = $primitiveAttribute[$enum]
+  const { enum: enumValues, ...restState } = state
   enumValues?.forEach(enumValue => {
     const isEnumValueValid = typeValidator(enumValue)
     if (!isEnumValueValid) {
       throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidEnumValueType', {
-        message: `Invalid enum value type at path ${path}. Expected: ${primitiveType}. Received: ${String(
+        message: `Invalid enum value type at path ${path}. Expected: ${type}. Received: ${String(
           enumValue
         )}.`,
         path,
-        payload: { expectedType: primitiveType, enumValue }
+        payload: { expectedType: type, enumValue }
       })
     }
   })
 
-  const defaults = $primitiveAttribute[$defaults]
-
-  for (const defaultValue of Object.values(defaults)) {
+  for (const defaultValue of Object.values(state.defaults)) {
     if (defaultValue !== undefined && isStaticDefault(defaultValue)) {
       if (!typeValidator(defaultValue)) {
         throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueType', {
-          message: `Invalid default value type at path ${path}: Expected: ${primitiveType}. Received: ${String(
+          message: `Invalid default value type at path ${path}: Expected: ${type}. Received: ${String(
             defaultValue
           )}.`,
           path,
-          payload: { expectedType: primitiveType, defaultValue }
+          payload: { expectedType: type, defaultValue }
         })
       }
 
@@ -106,16 +114,8 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
 
   return {
     path,
-    type: primitiveType,
-    required: $primitiveAttribute[$required],
-    hidden: $primitiveAttribute[$hidden],
-    key: $primitiveAttribute[$key],
-    savedAs: $primitiveAttribute[$savedAs],
-    enum: enumValues as Extract<
-      $PRIMITIVE_ATTRIBUTE[$enum],
-      PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
-    >,
-    defaults,
-    transform: $primitiveAttribute[$transform]
+    type,
+    enum: state.enum as Extract<STATE['enum'], PrimitiveAttributeEnumValues<TYPE>>,
+    ...restState
   }
 }

@@ -1,3 +1,8 @@
 export { set } from './typer'
-export type { $SetAttributeState, $SetAttribute, SetAttribute } from './interface'
-export { FreezeSetAttribute, freezeSetAttribute } from './freeze'
+export type {
+  $SetAttributeState,
+  $SetAttributeNestedState,
+  $SetAttribute,
+  SetAttribute
+} from './interface'
+export type { FreezeSetAttribute } from './freeze'

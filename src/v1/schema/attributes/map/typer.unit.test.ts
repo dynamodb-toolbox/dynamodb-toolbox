@@ -14,7 +14,6 @@ import {
 
 import { map } from './typer'
 import type { MapAttribute, $MapAttributeState } from './interface'
-import { freezeMapAttribute } from './freeze'
 
 describe('map', () => {
   const str = string()
@@ -45,7 +44,7 @@ describe('map', () => {
     const assertExtends: A.Extends<typeof mapped, $MapAttributeState> = 1
     assertExtends
 
-    const frozenMap = freezeMapAttribute(mapped, 'some.path')
+    const frozenMap = mapped.freeze('some.path')
     const assertFrozenExtends: A.Extends<typeof frozenMap, MapAttribute> = 1
     assertFrozenExtends
 

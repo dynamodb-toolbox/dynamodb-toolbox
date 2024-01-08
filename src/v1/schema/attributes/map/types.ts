@@ -1,11 +1,7 @@
-import type { $Attribute, $AttributeState, Attribute } from '../types/attribute'
-
-export interface $MapAttributeAttributes {
-  [key: string]: $Attribute
-}
+import type { $AttributeNestedState, Attribute } from '../types'
 
 export interface $MapAttributeAttributeStates {
-  [key: string]: $AttributeState
+  [key: string]: $AttributeNestedState
 }
 
 export interface MapAttributeAttributes {

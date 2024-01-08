@@ -5,6 +5,11 @@ export type {
   ResolvedPrimitiveAttribute,
   Transformer
 } from './types'
-export type { $PrimitiveAttributeState, $PrimitiveAttribute, PrimitiveAttribute } from './interface'
-export { FreezePrimitiveAttribute, freezePrimitiveAttribute } from './freeze'
+export type {
+  $PrimitiveAttributeState,
+  $PrimitiveAttributeNestedState,
+  $PrimitiveAttribute,
+  PrimitiveAttribute
+} from './interface'
+export type { FreezePrimitiveAttribute } from './freeze'
 export type { ResolvePrimitiveAttribute } from './resolve'
