@@ -13,18 +13,14 @@ import type {
 import type { Schema } from '../../interface'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { $type, $elements } from '../constants/attributeOptions'
-import type {
-  SharedAttributeStateConstraint,
-  $SharedAttributeState,
-  SharedAttributeState
-} from '../shared/interface'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 
 import type { $SetAttributeElements, SetAttributeElements } from './types'
 import type { FreezeSetAttribute } from './freeze'
 
 export interface $SetAttributeState<
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $SharedAttributeState<STATE> {
   [$type]: 'set'
   [$elements]: $ELEMENTS
@@ -32,7 +28,7 @@ export interface $SetAttributeState<
 
 export interface $SetAttributeNestedState<
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $SetAttributeState<$ELEMENTS, STATE> {
   freeze: (path: string) => FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>
 }
@@ -42,7 +38,7 @@ export interface $SetAttributeNestedState<
  */
 export interface $SetAttribute<
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends $SetAttributeNestedState<$ELEMENTS, STATE> {
   [$type]: 'set'
   [$elements]: $ELEMENTS
@@ -283,7 +279,7 @@ export interface $SetAttribute<
 
 export interface SetAttribute<
   ELEMENTS extends SetAttributeElements = SetAttributeElements,
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+  STATE extends SharedAttributeState = SharedAttributeState
 > extends SharedAttributeState<STATE> {
   path: string
   type: 'set'

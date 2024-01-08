@@ -16,7 +16,7 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 import type { $RecordAttributeState, RecordAttribute } from './interface'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types'
 
@@ -41,7 +41,7 @@ export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeStat
 type RecordAttributeFreezer = <
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint
+  STATE extends SharedAttributeState
 >(
   keys: $KEYS,
   elements: $ELEMENTS,
@@ -61,7 +61,7 @@ type RecordAttributeFreezer = <
 export const freezeRecordAttribute: RecordAttributeFreezer = <
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint
+  STATE extends SharedAttributeState
 >(
   keys: $KEYS,
   elements: $ELEMENTS,

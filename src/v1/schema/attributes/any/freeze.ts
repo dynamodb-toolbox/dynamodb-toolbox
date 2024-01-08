@@ -11,7 +11,7 @@ import {
 } from '../constants/attributeOptions'
 
 import type { $AnyAttributeState, AnyAttribute } from './interface'
-import type { AnyAttributeStateConstraint } from './types'
+import type { AnyAttributeState } from './types'
 
 export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
   // Applying void O.Update improves type display
@@ -28,7 +28,7 @@ export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
     never
   >
 
-type AnyAttributeFreezer = <STATE extends AnyAttributeStateConstraint>(
+type AnyAttributeFreezer = <STATE extends AnyAttributeState>(
   anyAttribute: STATE,
   path: string
 ) => FreezeAnyAttribute<$AnyAttributeState<STATE>>
@@ -40,7 +40,7 @@ type AnyAttributeFreezer = <STATE extends AnyAttributeStateConstraint>(
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezeAnyAttribute: AnyAttributeFreezer = <STATE extends AnyAttributeStateConstraint>(
+export const freezeAnyAttribute: AnyAttributeFreezer = <STATE extends AnyAttributeState>(
   state: STATE,
   path: string
 ) => {

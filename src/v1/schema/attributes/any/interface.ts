@@ -16,27 +16,24 @@ import type { $type, $castAs } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
 
 import type { FreezeAnyAttribute } from './freeze'
-import type { AnyAttributeStateConstraint } from './types'
+import type { AnyAttributeState } from './types'
 
-export interface $AnyAttributeState<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> extends $SharedAttributeState<STATE> {
+export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState>
+  extends $SharedAttributeState<STATE> {
   [$type]: 'any'
   [$castAs]: STATE['castAs']
 }
 
-export interface $AnyAttributeNestedState<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> extends $AnyAttributeState<STATE> {
+export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
+  extends $AnyAttributeState<STATE> {
   freeze: (path: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>>
 }
 
 /**
  * Any attribute interface
  */
-export interface $AnyAttribute<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> extends $AnyAttributeNestedState<STATE> {
+export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
+  extends $AnyAttributeNestedState<STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -270,9 +267,8 @@ export interface $AnyAttribute<
   >
 }
 
-export interface AnyAttribute<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> extends SharedAttributeState<STATE> {
+export interface AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
+  extends SharedAttributeState<STATE> {
   path: string
   type: 'any'
   castAs: STATE['castAs']

@@ -1,5 +1,5 @@
-import type { SharedAttributeStateConstraint } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface'
 
-export interface AnyAttributeStateConstraint extends SharedAttributeStateConstraint {
+export interface AnyAttributeState extends SharedAttributeState {
   castAs: unknown
 }

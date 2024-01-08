@@ -74,7 +74,7 @@ export type AttributeOptionSymbolName = {
 
 export type AttributeOptionName = AttributeOptionSymbolName[$AttributeOptionSymbol]
 
-export type AttributeOptionsConstraints = {
+export type AttributeOptions = {
   required: RequiredOption
   hidden: boolean
   key: boolean
