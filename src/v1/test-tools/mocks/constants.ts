@@ -1,8 +1,8 @@
 export const $operationName = Symbol('$operationName')
 export type $operationName = typeof $operationName
 
-export const $entity = Symbol('$entity')
-export type $entity = typeof $entity
+export const $originalEntity = Symbol('$originalEntity')
+export type $originalEntity = typeof $originalEntity
 
 export const $mockedEntity = Symbol('$mockedEntity')
 export type $mockedEntity = typeof $mockedEntity
