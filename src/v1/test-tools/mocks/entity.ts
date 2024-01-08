@@ -26,10 +26,10 @@ import { DeleteItemCommandMock } from './deleteItemCommand'
 import { UpdateItemCommandMock } from './updateItemCommand'
 import { OperationMocker } from './commandMocker'
 import { CommandResults } from './commandResults'
-import { $entity, $mockedImplementations, $receivedCommands } from './constants'
+import { $originalEntity, $mockedImplementations, $receivedCommands } from './constants'
 
 export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
-  [$entity]: ENTITY;
+  [$originalEntity]: ENTITY;
 
   [$mockedImplementations]: Partial<{
     get: (input: KeyInput<ENTITY>, options?: GetItemOptions<ENTITY>) => GetItemResponse<ENTITY>
@@ -52,7 +52,7 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
   reset: () => void
 
   constructor(entity: ENTITY) {
-    this[$entity] = entity
+    this[$originalEntity] = entity
 
     this[$mockedImplementations] = {}
     this[$receivedCommands] = { get: [], put: [], delete: [], update: [] }

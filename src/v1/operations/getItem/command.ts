@@ -6,9 +6,15 @@ import type { AnyAttributePath, KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
 
-import { EntityOperation } from '../class'
+import { EntityOperation, $entity } from '../class'
 import type { GetItemOptions } from './options'
 import { getItemParams } from './getItemParams'
+
+export const $key = Symbol('$key')
+export type $key = typeof $key
+
+export const $options = Symbol('$options')
+export type $options = typeof $options
 
 export type GetItemResponse<
   ENTITY extends EntityV2,
@@ -28,38 +34,38 @@ export class GetItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > extends EntityOperation<ENTITY> {
-  static operationName = 'get' as const
+  static operationName = 'get' as const;
 
-  public _key?: KeyInput<ENTITY>
-  public key: (key: KeyInput<ENTITY>) => GetItemCommand<ENTITY, OPTIONS>
-  public _options: OPTIONS
-  public options: <NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
+  [$key]?: KeyInput<ENTITY>
+  key: (key: KeyInput<ENTITY>) => GetItemCommand<ENTITY, OPTIONS>;
+  [$options]: OPTIONS
+  options: <NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => GetItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
-    this._key = key
-    this._options = options
+    this[$key] = key
+    this[$options] = options
 
-    this.key = nextKey => new GetItemCommand(this._entity, nextKey, this._options)
-    this.options = nextOptions => new GetItemCommand(this._entity, this._key, nextOptions)
+    this.key = nextKey => new GetItemCommand(this[$entity], nextKey, this[$options])
+    this.options = nextOptions => new GetItemCommand(this[$entity], this[$key], nextOptions)
   }
 
   params = (): GetCommandInput => {
-    if (!this._key) {
+    if (!this[$key]) {
       throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
 
-    return getItemParams(this._entity, this._key, this._options)
+    return getItemParams(this[$entity], this[$key], this[$options])
   }
 
   send = async (): Promise<GetItemResponse<ENTITY, OPTIONS>> => {
     const getItemParams = this.params()
 
-    const commandOutput = await this._entity.table.documentClient.send(
+    const commandOutput = await this[$entity].table.documentClient.send(
       new GetCommand(getItemParams)
     )
 
@@ -69,8 +75,8 @@ export class GetItemCommand<
       return restCommandOutput
     }
 
-    const { attributes } = this._options
-    const formattedItem = formatSavedItem(this._entity, item, { attributes })
+    const { attributes } = this[$options]
+    const formattedItem = formatSavedItem(this[$entity], item, { attributes })
 
     return {
       Item: formattedItem,

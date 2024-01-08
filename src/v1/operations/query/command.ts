@@ -16,9 +16,15 @@ import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isString } from 'v1/utils/validation'
 
-import { TableCommand } from '../class'
+import { $entities, $table, TableCommand } from '../class'
 import type { QueryOptions } from './options'
 import { queryParams } from './queryParams'
+
+const $query = Symbol('$query')
+type $query = typeof $query
+
+const $options = Symbol('$options')
+type $options = typeof $options
 
 type ReturnedItems<
   TABLE extends TableV2,
@@ -64,7 +70,7 @@ export class QueryCommand<
 > extends TableCommand<TABLE, ENTITIES> {
   static operationName = 'query' as const
 
-  public entities: <NEXT_ENTITIES extends EntityV2[]>(
+  entities: <NEXT_ENTITIES extends EntityV2[]>(
     ...nextEntities: NEXT_ENTITIES
   ) => QueryCommand<
     TABLE,
@@ -73,14 +79,14 @@ export class QueryCommand<
     OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
       ? OPTIONS
       : QueryOptions<TABLE, NEXT_ENTITIES>
-  >
+  >;
 
-  public _query?: QUERY
-  public query: <NEXT_QUERY extends Query<TABLE>>(
+  [$query]?: QUERY
+  query: <NEXT_QUERY extends Query<TABLE>>(
     query: NEXT_QUERY
-  ) => QueryCommand<TABLE, ENTITIES, NEXT_QUERY, OPTIONS>
-  public _options: OPTIONS
-  public options: <NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
+  ) => QueryCommand<TABLE, ENTITIES, NEXT_QUERY, OPTIONS>;
+  [$options]: OPTIONS
+  options: <NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
     nextOptions: NEXT_OPTIONS
   ) => QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS>
 
@@ -91,8 +97,8 @@ export class QueryCommand<
     options: OPTIONS = {} as OPTIONS
   ) {
     super(table, entities)
-    this._query = query
-    this._options = options
+    this[$query] = query
+    this[$options] = options
 
     this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>
       new QueryCommand<
@@ -103,33 +109,33 @@ export class QueryCommand<
           ? OPTIONS
           : QueryOptions<TABLE, NEXT_ENTITIES>
       >(
-        this._table,
+        this[$table],
         nextEntities,
-        this._query,
-        this._options as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
+        this[$query],
+        this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
           ? OPTIONS
           : QueryOptions<TABLE, NEXT_ENTITIES>
       )
     this.query = nextQuery =>
-      new QueryCommand(this._table, this._entities, nextQuery, this._options)
+      new QueryCommand(this[$table], this[$entities], nextQuery, this[$options])
     this.options = nextOptions =>
-      new QueryCommand(this._table, this._entities, this._query, nextOptions)
+      new QueryCommand(this[$table], this[$entities], this[$query], nextOptions)
   }
 
   params = (): QueryCommandInput => {
-    if (!this._query) {
+    if (!this[$query]) {
       throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'QueryCommand incomplete: Missing "query" property'
       })
     }
 
-    return queryParams(this._table, this._entities, this._query, this._options)
+    return queryParams(this[$table], this[$entities], this[$query], this[$options])
   }
 
   send = async (): Promise<QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>> => {
     const queryParams = this.params()
 
-    const entities = this._entities ?? []
+    const entities = this[$entities] ?? []
     const entitiesByName: Record<string, EntityV2> = {}
     entities.forEach(entity => {
       entitiesByName[entity.name] = entity
@@ -143,7 +149,7 @@ export class QueryCommand<
     let responseMetadata: QueryCommandOutput['$metadata'] | undefined = undefined
 
     // NOTE: maxPages has been validated by this.params()
-    const { attributes, maxPages = 1 } = this._options
+    const { attributes, maxPages = 1 } = this[$options]
     let pageIndex = 0
     do {
       pageIndex += 1
@@ -161,10 +167,10 @@ export class QueryCommand<
         ScannedCount: pageScannedCount,
         ConsumedCapacity: pageConsumedCapacity,
         $metadata: pageMetadata
-      } = await this._table.documentClient.send(new _QueryCommand(pageQueryParams))
+      } = await this[$table].documentClient.send(new _QueryCommand(pageQueryParams))
 
       for (const item of items) {
-        const itemEntityName = item[this._table.entityAttributeSavedAs]
+        const itemEntityName = item[this[$table].entityAttributeSavedAs]
 
         if (!isString(itemEntityName)) {
           continue

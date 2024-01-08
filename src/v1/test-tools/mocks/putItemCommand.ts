@@ -8,12 +8,14 @@ import {
   PutItemResponse
 } from 'v1/operations/putItem'
 import { putItemParams } from 'v1/operations/putItem/putItemParams'
+import { $item, $options } from 'v1/operations/putItem/command'
+import { $entity } from 'v1/operations/class'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
   $operationName,
-  $entity,
+  $originalEntity,
   $mockedEntity,
   $mockedImplementations,
   $receivedCommands
@@ -25,60 +27,61 @@ export class PutItemCommandMock<
 > implements PutItemCommand<ENTITY, OPTIONS> {
   static operationType = 'entity' as const
   static operationName = 'put' as const
-  static [$operationName] = 'put' as const
+  static [$operationName] = 'put' as const;
 
-  _entity: ENTITY;
-  [$mockedEntity]: MockedEntity<ENTITY>
-  _item?: PutItemInput<ENTITY>
-  item: (nextItem: PutItemInput<ENTITY>) => PutItemCommandMock<ENTITY, OPTIONS>
-  _options: OPTIONS
+  [$entity]: ENTITY;
+  [$item]?: PutItemInput<ENTITY>
+  item: (nextItem: PutItemInput<ENTITY>) => PutItemCommandMock<ENTITY, OPTIONS>;
+  [$options]: OPTIONS
   options: <NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
-  ) => PutItemCommandMock<ENTITY, NEXT_OPTIONS>
+  ) => PutItemCommandMock<ENTITY, NEXT_OPTIONS>;
+
+  [$mockedEntity]: MockedEntity<ENTITY>
 
   constructor(
     mockedEntity: MockedEntity<ENTITY>,
     item?: PutItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this._entity = mockedEntity[$entity]
+    this[$entity] = mockedEntity[$originalEntity]
     this[$mockedEntity] = mockedEntity
-    this._item = item
-    this._options = options
+    this[$item] = item
+    this[$options] = options
 
-    this.item = nextItem => new PutItemCommandMock(this[$mockedEntity], nextItem, this._options)
+    this.item = nextItem => new PutItemCommandMock(this[$mockedEntity], nextItem, this[$options])
     this.options = nextOptions =>
-      new PutItemCommandMock(this[$mockedEntity], this._item, nextOptions)
+      new PutItemCommandMock(this[$mockedEntity], this[$item], nextOptions)
   }
 
   params = (): PutCommandInput => {
-    if (!this._item) {
+    if (!this[$item]) {
       throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
 
-    return putItemParams(this._entity, this._item, this._options)
+    return putItemParams(this[$entity], this[$item], this[$options])
   }
 
   send = async (): Promise<PutItemResponse<ENTITY, OPTIONS>> => {
-    this[$mockedEntity][$receivedCommands].put.push([this._item, this._options])
+    this[$mockedEntity][$receivedCommands].put.push([this[$item], this[$options]])
 
     const implementation = this[$mockedEntity][$mockedImplementations].put
 
     if (implementation !== undefined) {
-      if (!this._item) {
+      if (!this[$item]) {
         throw new DynamoDBToolboxError('operations.incompleteCommand', {
           message: 'PutItemCommand incomplete: Missing "item" property'
         })
       }
 
-      return (implementation(this._item, this._options) as unknown) as PutItemResponse<
+      return (implementation(this[$item], this[$options]) as unknown) as PutItemResponse<
         ENTITY,
         OPTIONS
       >
     }
 
-    return new PutItemCommand(this._entity, this._item, this._options).send()
+    return new PutItemCommand(this[$entity], this[$item], this[$options]).send()
   }
 }
