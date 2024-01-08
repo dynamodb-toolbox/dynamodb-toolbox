@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { freezeSetAttribute, set, string } from 'v1/schema'
+import { set, string } from 'v1/schema'
 
 import { parseSetAttributeClonedInput } from './set'
 import * as parseAttributeClonedInputModule from './attribute'
@@ -9,7 +9,7 @@ const parseAttributeClonedInput = jest.spyOn(
   'parseAttributeClonedInput'
 )
 
-const setAttr = freezeSetAttribute(set(string()), 'path')
+const setAttr = set(string()).freeze('path')
 
 describe('parseSetAttributeClonedInput', () => {
   beforeEach(() => {

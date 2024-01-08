@@ -8,7 +8,6 @@ export * from './anyOf'
 
 export * from './constants'
 export * from './types'
-export { freezeAttribute } from './freeze'
 
 import { any } from './any'
 import { binary, boolean, number, string } from './primitive'

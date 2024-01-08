@@ -30,13 +30,20 @@ export interface $SetAttributeState<
   [$elements]: $ELEMENTS
 }
 
+export interface $SetAttributeNestedState<
+  $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> extends $SetAttributeState<$ELEMENTS, STATE> {
+  freeze: (path: string) => FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>
+}
+
 /**
  * Set attribute interface
  */
 export interface $SetAttribute<
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
   STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
-> extends $SetAttributeState<$ELEMENTS, STATE> {
+> extends $SetAttributeNestedState<$ELEMENTS, STATE> {
   [$type]: 'set'
   [$elements]: $ELEMENTS
   /**

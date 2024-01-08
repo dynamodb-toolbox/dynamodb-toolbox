@@ -30,13 +30,20 @@ export interface $ListAttributeState<
   [$elements]: $ELEMENTS
 }
 
+export interface $ListAttributeNestedState<
+  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> extends $ListAttributeState<$ELEMENTS, STATE> {
+  freeze: (path: string) => FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>
+}
+
 /**
  * List attribute interface
  */
 export interface $ListAttribute<
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
   STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
-> extends $ListAttributeState<$ELEMENTS, STATE> {
+> extends $ListAttributeNestedState<$ELEMENTS, STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs

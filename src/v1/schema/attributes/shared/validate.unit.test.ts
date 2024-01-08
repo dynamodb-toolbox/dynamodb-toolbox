@@ -1,15 +1,14 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { Never } from '../constants/requiredOptions'
-import { $required, $hidden, $key, $savedAs, $defaults } from '../constants/attributeOptions'
 
-import type { $SharedAttributeState } from './interface'
+import type { SharedAttributeState } from './interface'
 import { validateAttributeProperties } from './validate'
 
 describe('shared properties validation', () => {
   const path = 'some/path'
 
-  const validProperties: $SharedAttributeState<{
+  const validProperties: SharedAttributeState<{
     required: Never
     hidden: false
     key: false
@@ -20,11 +19,11 @@ describe('shared properties validation', () => {
       update: undefined
     }
   }> = {
-    [$required]: 'never',
-    [$hidden]: false,
-    [$key]: false,
-    [$savedAs]: undefined,
-    [$defaults]: {
+    required: 'never',
+    hidden: false,
+    key: false,
+    savedAs: undefined,
+    defaults: {
       key: undefined,
       put: undefined,
       update: undefined
@@ -39,7 +38,7 @@ describe('shared properties validation', () => {
         {
           ...validProperties,
           // @ts-expect-error
-          [$required]: invalidRequiredOption
+          required: invalidRequiredOption
         },
         path
       )
@@ -51,10 +50,10 @@ describe('shared properties validation', () => {
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$required]: 'atLeastOnce' }, path)
+      validateAttributeProperties({ ...validProperties, required: 'atLeastOnce' }, path)
     ).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$required]: 'always' }, path)
+      validateAttributeProperties({ ...validProperties, required: 'always' }, path)
     ).not.toThrow()
   })
 
@@ -66,7 +65,7 @@ describe('shared properties validation', () => {
         {
           ...validProperties,
           // @ts-expect-error
-          [$hidden]: invalidKeyOption
+          hidden: invalidKeyOption
         },
         path
       )
@@ -78,7 +77,7 @@ describe('shared properties validation', () => {
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$hidden]: true }, path)
+      validateAttributeProperties({ ...validProperties, hidden: true }, path)
     ).not.toThrow()
   })
 
@@ -90,7 +89,7 @@ describe('shared properties validation', () => {
         {
           ...validProperties,
           // @ts-expect-error
-          [$key]: invalidKeyOption
+          key: invalidKeyOption
         },
         path
       )
@@ -101,9 +100,7 @@ describe('shared properties validation', () => {
     )
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
-    expect(() =>
-      validateAttributeProperties({ ...validProperties, [$key]: true }, path)
-    ).not.toThrow()
+    expect(() => validateAttributeProperties({ ...validProperties, key: true }, path)).not.toThrow()
   })
 
   it('throws if savedAs option is invalid', () => {
@@ -114,7 +111,7 @@ describe('shared properties validation', () => {
         {
           ...validProperties,
           // @ts-expect-error
-          [$savedAs]: invalidSavedAsOption
+          savedAs: invalidSavedAsOption
         },
         path
       )
@@ -126,7 +123,7 @@ describe('shared properties validation', () => {
 
     expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, [$savedAs]: 'foo' }, path)
+      validateAttributeProperties({ ...validProperties, savedAs: 'foo' }, path)
     ).not.toThrow()
   })
 })

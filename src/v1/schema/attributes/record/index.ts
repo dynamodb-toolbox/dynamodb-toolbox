@@ -1,3 +1,8 @@
 export { record } from './typer'
-export type { $RecordAttributeState, $RecordAttribute, RecordAttribute } from './interface'
-export { FreezeRecordAttribute, freezeRecordAttribute } from './freeze'
+export type {
+  $RecordAttributeState,
+  $RecordAttributeNestedState,
+  $RecordAttribute,
+  RecordAttribute
+} from './interface'
+export type { FreezeRecordAttribute } from './freeze'
