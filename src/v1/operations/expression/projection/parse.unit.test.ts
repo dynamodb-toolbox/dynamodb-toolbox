@@ -55,7 +55,7 @@ describe('parseProjection', () => {
 
   describe('anyOf', () => {
     const schemaWithAnyOf = schema({
-      anyOf: anyOf([number(), map({ str: string() }), map({ num: number().savedAs('_n') })])
+      anyOf: anyOf(number(), map({ str: string() }), map({ num: number().savedAs('_n') }))
     })
 
     it('correctly parses projection (root)', () => {

@@ -18,7 +18,6 @@ import type {
   $SharedAttributeState,
   SharedAttributeState
 } from '../shared/interface'
-
 import type {
   $RecordAttributeKeys,
   RecordAttributeKeys,
@@ -37,6 +36,14 @@ export interface $RecordAttributeState<
   [$elements]: $ELEMENTS
 }
 
+export interface $RecordAttributeNestedState<
+  $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
+  $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
+> extends $RecordAttributeState<$KEYS, $ELEMENTS, STATE> {
+  freeze: (path: string) => FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>
+}
+
 /**
  * Record attribute interface
  */
@@ -44,7 +51,7 @@ export interface $RecordAttribute<
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements,
   STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
-> extends $RecordAttributeState<$KEYS, $ELEMENTS, STATE> {
+> extends $RecordAttributeNestedState<$KEYS, $ELEMENTS, STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs

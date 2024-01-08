@@ -16,7 +16,6 @@ import {
 } from '../constants/attributeOptions'
 
 import { string, number, boolean, binary } from './typer'
-import { freezePrimitiveAttribute } from './freeze'
 import type { PrimitiveAttribute, $PrimitiveAttribute } from './interface'
 
 describe('primitiveAttribute', () => {
@@ -48,7 +47,7 @@ describe('primitiveAttribute', () => {
       const assertExtends: A.Extends<typeof str, $PrimitiveAttribute> = 1
       assertExtends
 
-      const frozenStr = freezePrimitiveAttribute(str, path)
+      const frozenStr = str.freeze(path)
       const assertFrozenExtends: A.Extends<typeof frozenStr, PrimitiveAttribute> = 1
       assertFrozenExtends
 
@@ -160,23 +159,14 @@ describe('primitiveAttribute', () => {
     })
 
     it('returns string with enum values (method)', () => {
-      string().enum(
+      const invalidStr = string().enum(
         // @ts-expect-error
         42,
         'foo',
         'bar'
       )
 
-      const invalidCall = () =>
-        freezePrimitiveAttribute(
-          string().enum(
-            // @ts-expect-error
-            42,
-            'foo',
-            'bar'
-          ),
-          path
-        )
+      const invalidCall = () => invalidStr.freeze(path)
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
@@ -197,7 +187,7 @@ describe('primitiveAttribute', () => {
         defaults: { put: 42, update: undefined, key: undefined }
       })
 
-      const invalidCall = () => freezePrimitiveAttribute(invalidStr, path)
+      const invalidCall = () => invalidStr.freeze(path)
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
@@ -254,7 +244,7 @@ describe('primitiveAttribute', () => {
         // @ts-expect-error
         .putDefault(42)
 
-      const invalidCall = () => freezePrimitiveAttribute(invalidStr, path)
+      const invalidCall = () => invalidStr.freeze(path)
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
@@ -307,7 +297,7 @@ describe('primitiveAttribute', () => {
         42
       )
 
-      const invalidCall = () => freezePrimitiveAttribute(invalidStr, path)
+      const invalidCall = () => invalidStr.freeze(path)
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(
@@ -375,7 +365,7 @@ describe('primitiveAttribute', () => {
         'baz'
       )
 
-      const invalidCall = () => freezePrimitiveAttribute(invalidStr, path)
+      const invalidCall = () => invalidStr.freeze(path)
 
       expect(invalidCall).toThrow(DynamoDBToolboxError)
       expect(invalidCall).toThrow(

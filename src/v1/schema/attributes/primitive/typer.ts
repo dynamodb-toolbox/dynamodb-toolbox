@@ -22,6 +22,7 @@ import {
   PrimitiveAttributeDefaultOptions,
   PRIMITIVE_DEFAULT_OPTIONS
 } from './options'
+import { freezePrimitiveAttribute } from './freeze'
 
 type $PrimitiveAttributeTyper = <
   $TYPE extends PrimitiveAttributeType,
@@ -154,7 +155,8 @@ const $primitive: $PrimitiveAttributeTyper = <
             ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
         })
-      )
+      ),
+    freeze: path => freezePrimitiveAttribute(type, state, path)
   }
 
   return $primitiveAttribute

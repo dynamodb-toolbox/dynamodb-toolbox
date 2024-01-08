@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { freezeListAttribute, list, string } from 'v1/schema'
+import { list, string } from 'v1/schema'
 
 import { parseListAttributeClonedInput } from './list'
 import * as parseAttributeClonedInputModule from './attribute'
@@ -9,7 +9,7 @@ const parseAttributeClonedInput = jest.spyOn(
   'parseAttributeClonedInput'
 )
 
-const listAttr = freezeListAttribute(list(string()), 'path')
+const listAttr = list(string()).freeze('path')
 
 describe('parseListAttributeClonedInput', () => {
   beforeEach(() => {

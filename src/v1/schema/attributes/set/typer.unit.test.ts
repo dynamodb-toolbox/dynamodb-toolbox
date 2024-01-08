@@ -15,7 +15,6 @@ import {
 } from '../constants/attributeOptions'
 
 import { set } from './typer'
-import { freezeSetAttribute } from './freeze'
 import { SetAttribute, $SetAttributeState } from './interface'
 
 describe('set', () => {
@@ -28,7 +27,7 @@ describe('set', () => {
       string().optional()
     )
 
-    const invalidCall = () => freezeSetAttribute(invalidSet, path)
+    const invalidCall = () => invalidSet.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -42,7 +41,7 @@ describe('set', () => {
       strElement.hidden()
     )
 
-    const invalidCall = () => freezeSetAttribute(invalidSet, path)
+    const invalidCall = () => invalidSet.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -56,7 +55,7 @@ describe('set', () => {
       strElement.savedAs('foo')
     )
 
-    const invalidCall = () => freezeSetAttribute(invalidSet, path)
+    const invalidCall = () => invalidSet.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -70,7 +69,7 @@ describe('set', () => {
       strElement.default('foo')
     )
 
-    const invalidCall = () => freezeSetAttribute(invalidSet, path)
+    const invalidCall = () => invalidSet.freeze(path)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
@@ -102,7 +101,7 @@ describe('set', () => {
     const assertExtends: A.Extends<typeof st, $SetAttributeState> = 1
     assertExtends
 
-    const frozenSet = freezeSetAttribute(st, path)
+    const frozenSet = st.freeze(path)
     const assertFrozenExtends: A.Extends<typeof frozenSet, SetAttribute> = 1
     assertFrozenExtends
 

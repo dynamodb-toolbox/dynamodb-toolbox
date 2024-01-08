@@ -3,10 +3,9 @@ import type { O } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { RequiredOption } from '../constants/requiredOptions'
+import type { FreezeAttribute } from '../freeze'
 import { validateAttributeProperties } from '../shared/validate'
-import { freezeAttribute, FreezeAttribute } from '../freeze'
 import {
-  $type,
   $attributes,
   $required,
   $hidden,
@@ -15,7 +14,9 @@ import {
   $defaults
 } from '../constants/attributeOptions'
 
+import type { SharedAttributeStateConstraint } from '../shared/interface'
 import type { $MapAttributeState, MapAttribute } from './interface'
+import type { $MapAttributeAttributeStates } from './types'
 
 export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
   // Applying void O.Update improves type display
@@ -38,23 +39,32 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
     never
   >
 
-type MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttributeState>(
-  $mapAttribute: $MAP_ATTRIBUTE,
+type MapAttributeFreezer = <
+  $ATTRIBUTES extends $MapAttributeAttributeStates,
+  STATE extends SharedAttributeStateConstraint
+>(
+  attribute: $ATTRIBUTES,
+  state: STATE,
   path: string
-) => FreezeMapAttribute<$MAP_ATTRIBUTE>
+) => FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>
 
 /**
- * Freezes a map instance
+ * Freezes a warm `map` attribute
  *
- * @param $mapAttribute MapAttribute
+ * @param attributes Attribute elements
+ * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $MapAttributeState>(
-  $mapAttribute: $MAP_ATTRIBUTE,
+export const freezeMapAttribute: MapAttributeFreezer = <
+  $ATTRIBUTES extends $MapAttributeAttributeStates,
+  STATE extends SharedAttributeStateConstraint
+>(
+  attributes: $ATTRIBUTES,
+  state: STATE,
   path: string
-): FreezeMapAttribute<$MAP_ATTRIBUTE> => {
-  validateAttributeProperties($mapAttribute, path)
+): FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>> => {
+  validateAttributeProperties(state, path)
 
   const attributesSavedAs = new Set<string>()
 
@@ -66,9 +76,8 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
     never: new Set()
   }
 
-  const attributes: $MAP_ATTRIBUTE[$attributes] = $mapAttribute[$attributes]
   const frozenAttributes: {
-    [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<$MAP_ATTRIBUTE[$attributes][KEY]>
+    [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]>
   } = {} as any
 
   for (const attributeName in attributes) {
@@ -90,19 +99,17 @@ export const freezeMapAttribute: MapAttributeFreezer = <$MAP_ATTRIBUTE extends $
 
     requiredAttributeNames[attribute[$required]].add(attributeName)
 
-    frozenAttributes[attributeName] = freezeAttribute(attribute, [path, attributeName].join('.'))
+    frozenAttributes[attributeName] = attribute.freeze(
+      [path, attributeName].join('.')
+    ) as FreezeAttribute<$ATTRIBUTES[Extract<keyof $ATTRIBUTES, string>]>
   }
 
   return {
     path,
-    type: $mapAttribute[$type],
+    type: 'map',
     attributes: frozenAttributes,
     keyAttributeNames,
     requiredAttributeNames,
-    required: $mapAttribute[$required],
-    hidden: $mapAttribute[$hidden],
-    key: $mapAttribute[$key],
-    savedAs: $mapAttribute[$savedAs],
-    defaults: $mapAttribute[$defaults]
+    ...state
   }
 }

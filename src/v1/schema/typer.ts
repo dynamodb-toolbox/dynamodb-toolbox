@@ -1,12 +1,12 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { NarrowObject } from 'v1/types'
 
-import type { SchemaAttributes, $SchemaAttributeStates } from './attributes'
+import type { SchemaAttributes, $SchemaAttributeNestedStates } from './attributes'
 import { $key, $savedAs, $required } from './attributes/constants/attributeOptions'
 
 import type { Schema } from './interface'
 import type { RequiredOption } from './attributes/constants/requiredOptions'
-import { FreezeAttribute, freezeAttribute } from './attributes/freeze'
+import type { FreezeAttribute } from './attributes/freeze'
 
 type $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = {}>(arg: {
   attributes: NarrowObject<ATTRIBUTES>
@@ -32,12 +32,12 @@ const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttri
     savedAttributeNames,
     keyAttributeNames,
     requiredAttributeNames,
-    and: $additionalAttr => {
-      const $additionalAttributes = (typeof $additionalAttr === 'function'
-        ? $additionalAttr(
+    and: additionalAttr => {
+      const additionalAttributes = (typeof additionalAttr === 'function'
+        ? additionalAttr(
             $schema({ attributes, savedAttributeNames, keyAttributeNames, requiredAttributeNames })
           )
-        : $additionalAttr) as $SchemaAttributeStates
+        : additionalAttr) as $SchemaAttributeNestedStates
 
       const nextAttributes = { ...attributes } as SchemaAttributes
       const nextSavedAttributeNames = new Set(savedAttributeNames)
@@ -48,7 +48,7 @@ const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttri
         never: new Set(requiredAttributeNames.never)
       }
 
-      for (const attributeName in $additionalAttributes) {
+      for (const attributeName in additionalAttributes) {
         if (nextSavedAttributeNames.has(attributeName)) {
           throw new DynamoDBToolboxError('schema.duplicateAttributeNames', {
             message: `Invalid schema: More than two attributes are named '${attributeName}'`,
@@ -56,7 +56,7 @@ const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttri
           })
         }
 
-        const attribute = $additionalAttributes[attributeName]
+        const attribute = additionalAttributes[attributeName]
 
         const attributeSavedAs = attribute[$savedAs] ?? attributeName
         if (nextSavedAttributeNames.has(attributeSavedAs)) {
@@ -73,7 +73,7 @@ const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttri
 
         nextRequiredAttributeNames[attribute[$required]].add(attributeName)
 
-        nextAttributes[attributeName] = freezeAttribute(attribute, attributeName)
+        nextAttributes[attributeName] = attribute.freeze(attributeName)
       }
 
       return $schema({
@@ -85,18 +85,20 @@ const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttri
     }
   } as Schema<ATTRIBUTES>)
 
-type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeStates = {}>(
+type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeNestedStates = {}>(
   attributes: NarrowObject<$ATTRIBUTES>
 ) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
 
 /**
  * Defines an Entity schema
  *
- * @param $schemaAttr Object of attributes
+ * @param attributes Dictionary of warm attributes
  * @return Schema
  */
-export const schema: SchemaTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $SchemaAttributeStates = {}>(
-  $schemaAttr: NarrowObject<$MAP_ATTRIBUTE_ATTRIBUTES>
+export const schema: SchemaTyper = <
+  $MAP_ATTRIBUTE_ATTRIBUTES extends $SchemaAttributeNestedStates = {}
+>(
+  attributes: NarrowObject<$MAP_ATTRIBUTE_ATTRIBUTES>
 ): Schema<
   { [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]> }
 > =>
@@ -109,4 +111,4 @@ export const schema: SchemaTyper = <$MAP_ATTRIBUTE_ATTRIBUTES extends $SchemaAtt
       atLeastOnce: new Set(),
       never: new Set()
     }
-  }).and($schemaAttr)
+  }).and(attributes)

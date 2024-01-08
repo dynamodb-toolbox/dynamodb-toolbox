@@ -31,5 +31,5 @@ export const mySchema = schema({
     })
   }),
   record: record(string().enum('foo', 'bar'), map({ num: number() })),
-  union: anyOf([map({ str: string() }), map({ num: number() })])
+  union: anyOf(map({ str: string() }), map({ num: number() }))
 })

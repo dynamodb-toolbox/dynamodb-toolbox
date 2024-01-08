@@ -25,12 +25,18 @@ export interface $AnyAttributeState<
   [$castAs]: STATE['castAs']
 }
 
+export interface $AnyAttributeNestedState<
+  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
+> extends $AnyAttributeState<STATE> {
+  freeze: (path: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>>
+}
+
 /**
  * Any attribute interface
  */
 export interface $AnyAttribute<
   STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> extends $AnyAttributeState<STATE> {
+> extends $AnyAttributeNestedState<STATE> {
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
