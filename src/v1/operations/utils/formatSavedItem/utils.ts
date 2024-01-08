@@ -29,3 +29,18 @@ export const matchProjection = (
 
   return { isProjected: true, childrenAttributes }
 }
+
+export const getItemKey = ({
+  partitionKey,
+  sortKey
+}: {
+  partitionKey?: unknown
+  sortKey?: unknown
+}) =>
+  partitionKey &&
+  [
+    partitionKey && `Partition key: ${String(partitionKey)}`,
+    sortKey && `Sort key: ${String(sortKey)}`
+  ]
+    .filter(Boolean)
+    .join(' / ')

@@ -1,18 +1,12 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-type InvalidItemErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.parseKeyInput.invalidItem'
-  hasPath: false
-  payload: {
-    received: unknown
-    expected?: unknown
-  }
-}>
-
 type SavedAttributeRequiredErrorBlueprint = ErrorBlueprint<{
   code: 'operations.formatSavedItem.savedAttributeRequired'
   hasPath: true
-  payload: undefined
+  payload: {
+    partitionKey?: unknown
+    sortKey?: unknown
+  }
 }>
 
 type InvalidSavedAttributeErrorBlueprint = ErrorBlueprint<{
@@ -21,10 +15,11 @@ type InvalidSavedAttributeErrorBlueprint = ErrorBlueprint<{
   payload: {
     received: unknown
     expected?: unknown
+    partitionKey?: unknown
+    sortKey?: unknown
   }
 }>
 
 export type FormatSavedItemErrorBlueprints =
-  | InvalidItemErrorBlueprint
   | SavedAttributeRequiredErrorBlueprint
   | InvalidSavedAttributeErrorBlueprint
