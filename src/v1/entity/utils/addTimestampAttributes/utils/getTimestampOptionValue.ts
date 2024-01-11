@@ -21,21 +21,21 @@ export const getTimestampOptionValue = <
   timestampKey: TIMESTAMP_KEY,
   optionKey: OPTION_KEY
 ): TimestampOptionValue<TIMESTAMP_OPTIONS, TIMESTAMP_KEY, OPTION_KEY> => {
+  const defaultOptions = TIMESTAMPS_DEFAULTS_OPTIONS[timestampKey][
+    optionKey
+  ] as TimestampOptionValue<TIMESTAMP_OPTIONS, TIMESTAMP_KEY, OPTION_KEY>
+
   if (isTimestampsObjectOptions(timestampsOptions)) {
     const timestampOptions = timestampsOptions[timestampKey]
 
-    return (isTimestampObjectOptions(timestampOptions)
-      ? timestampOptions[optionKey]
-      : TIMESTAMPS_DEFAULTS_OPTIONS[timestampKey][optionKey]) as TimestampOptionValue<
-      TIMESTAMP_OPTIONS,
-      TIMESTAMP_KEY,
-      OPTION_KEY
-    >
+    return isTimestampObjectOptions(timestampOptions)
+      ? (timestampOptions[optionKey] as TimestampOptionValue<
+          TIMESTAMP_OPTIONS,
+          TIMESTAMP_KEY,
+          OPTION_KEY
+        >) ?? defaultOptions
+      : defaultOptions
   }
 
-  return TIMESTAMPS_DEFAULTS_OPTIONS[timestampKey][optionKey] as TimestampOptionValue<
-    TIMESTAMP_OPTIONS,
-    TIMESTAMP_KEY,
-    OPTION_KEY
-  >
+  return defaultOptions
 }
