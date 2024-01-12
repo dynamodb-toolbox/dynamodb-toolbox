@@ -8,6 +8,7 @@ import {
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { BatchWriteItemRequest } from './BatchWriteItemRequest'
+import { $requestType } from './BatchWriteItemRequest'
 import type { BatchWriteOptions } from './options'
 import { parseBatchWriteOptions } from './parseBatchWriteOptions'
 import { $entity } from '../class'
@@ -52,7 +53,7 @@ export const getBatchWriteCommandInput = (
     if (RequestItems[tableName] === undefined) RequestItems[tableName] = []
 
     RequestItems[tableName].push({
-      [request.requestType]: request.params()
+      [request[$requestType]]: request.params()
     })
   }
 
