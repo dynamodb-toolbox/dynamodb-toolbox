@@ -17,6 +17,12 @@ type InvalidCapacityOptionErrorBlueprint = ErrorBlueprint<{
   payload: { capacity: unknown }
 }>
 
+type InvalidClientRequestTokenOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'operations.invalidClientRequestTokenOption'
+  hasPath: false
+  payload: { clientRequestToken: unknown }
+}>
+
 type InvalidConsistentOptionErrorBlueprint = ErrorBlueprint<{
   code: 'operations.invalidConsistentOption'
   hasPath: false
@@ -71,6 +77,7 @@ export type OperationsErrorBlueprints =
   | OperationUtilsErrorBlueprints
   | IncompleteOperationErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
+  | InvalidClientRequestTokenOptionErrorBlueprint
   | InvalidConsistentOptionErrorBlueprint
   | InvalidIndexOptionErrorBlueprint
   | InvalidLimitOptionErrorBlueprint
