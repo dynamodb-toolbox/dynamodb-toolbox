@@ -9,18 +9,18 @@ import { parseDeleteItemTransactionOptions } from './parseDeleteItemOptions'
 import { KeyInput } from 'v1/operations/types'
 import { parseEntityKeyInput } from 'v1/operations/utils/parseKeyInput'
 
-export type TransactWriteDeleteItemParams = NonNullable<
+export type TransactDeleteItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Delete']
 >
 
-export const transactWriteDeleteItemParams = <
+export const transactDeleteItemParams = <
   ENTITY extends EntityV2,
   OPTIONS extends DeleteItemTransactionOptions<ENTITY>
 >(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
   deleteItemTransactionOptions: OPTIONS = {} as OPTIONS
-): TransactWriteDeleteItemParams => {
+): TransactDeleteItemParams => {
   const validKeyInputParser = parseEntityKeyInput(entity, input)
   const validKeyInput = validKeyInputParser.next().value
   const collapsedInput = validKeyInputParser.next().value

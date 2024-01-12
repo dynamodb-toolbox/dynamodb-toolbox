@@ -9,18 +9,18 @@ import type { PutItemTransactionOptions } from '../options'
 
 import { parsePutItemTransactionOptions } from './parsePutItemOptions'
 
-export type TransactWritePutItemParams = NonNullable<
+export type TransactPutItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Put']
 >
 
-export const transactWritePutItemParams = <
+export const transactPutItemParams = <
   ENTITY extends EntityV2,
   OPTIONS extends PutItemTransactionOptions<ENTITY>
 >(
   entity: ENTITY,
   input: PutItemInput<ENTITY>,
   putItemTransactionOptions: OPTIONS = {} as OPTIONS
-): TransactWritePutItemParams => {
+): TransactPutItemParams => {
   const validInputParser = parseEntityPutTransactionInput(entity, input)
   const validInput = validInputParser.next().value
   const collapsedInput = validInputParser.next().value

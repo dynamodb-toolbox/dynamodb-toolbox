@@ -5,10 +5,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { $entity, EntityOperation } from '../../class'
 import type { PutItemInput } from '../../putItem/types'
 import { WriteItemTransaction } from '../types'
-import {
-  transactWritePutItemParams,
-  TransactWritePutItemParams
-} from './transactWritePutItemParams'
+import { transactPutItemParams, TransactPutItemParams } from './transactPutItemParams'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import type { PutItemTransactionOptions } from './options'
 
@@ -42,20 +39,20 @@ export class PutItemTransaction<
     this.options = nextOptions => new PutItemTransaction(this[$entity], this[$item], nextOptions)
   }
 
-  params = (): TransactWritePutItemParams => {
+  params = (): TransactPutItemParams => {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'PutItemTransaction incomplete: Missing "item" property'
       })
     }
 
-    return transactWritePutItemParams(this[$entity], this[$item], this[$options])
+    return transactPutItemParams(this[$entity], this[$item], this[$options])
   }
 
   get = (): {
     documentClient: DynamoDBDocumentClient
     type: 'Put'
-    params: TransactWritePutItemParams
+    params: TransactPutItemParams
   } => ({
     documentClient: this[$entity].table.documentClient,
     type: 'Put',

@@ -6,10 +6,7 @@ import { KeyInput } from 'v1/operations/types'
 
 import { $entity, EntityOperation } from '../../class'
 import type { DeleteItemTransactionOptions } from './options'
-import {
-  transactWriteDeleteItemParams,
-  TransactWriteDeleteItemParams
-} from './transactWriteDeleteItemParams'
+import { transactDeleteItemParams, TransactDeleteItemParams } from './transactDeleteItemParams'
 import { WriteItemTransaction } from '../types'
 
 export const $key = Symbol('$key')
@@ -42,20 +39,20 @@ export class DeleteItemTransaction<
     this.options = nextOptions => new DeleteItemTransaction(this[$entity], this[$key], nextOptions)
   }
 
-  params = (): TransactWriteDeleteItemParams => {
+  params = (): TransactDeleteItemParams => {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('operations.incompleteCommand', {
         message: 'DeleteItemTransaction incomplete: Missing "key" property'
       })
     }
 
-    return transactWriteDeleteItemParams(this[$entity], this[$key], this[$options])
+    return transactDeleteItemParams(this[$entity], this[$key], this[$options])
   }
 
   get = (): {
     documentClient: DynamoDBDocumentClient
     type: 'Delete'
-    params: TransactWriteDeleteItemParams
+    params: TransactDeleteItemParams
   } => {
     return {
       documentClient: this[$entity].table.documentClient,
