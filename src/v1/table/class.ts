@@ -1,6 +1,6 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import type { TableCommand } from 'v1/operations/class'
+import type { TableOperation } from 'v1/operations/class'
 import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject'
 import { isString } from 'v1/utils/validation/isString'
 
@@ -20,9 +20,9 @@ export class TableV2<
   public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS
 
   public getName: () => string
-  public build: <TABLE_COMMAND_CLASS extends TableCommand<this> = TableCommand<this>>(
-    tableCommandClass: new (table: this) => TABLE_COMMAND_CLASS
-  ) => TABLE_COMMAND_CLASS
+  public build: <TABLE_OPERATION_CLASS extends TableOperation<this> = TableOperation<this>>(
+    tableOperationClass: new (table: this) => TABLE_OPERATION_CLASS
+  ) => TABLE_OPERATION_CLASS
 
   /**
    * Define a Table

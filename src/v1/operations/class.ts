@@ -21,7 +21,7 @@ export class EntityOperation<ENTITY extends EntityV2 = EntityV2> {
   }
 }
 
-export class TableCommand<
+export class TableOperation<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2[] = EntityV2[]
 > {

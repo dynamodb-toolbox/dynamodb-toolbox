@@ -16,7 +16,7 @@ import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isString } from 'v1/utils/validation'
 
-import { $entities, $table, TableCommand } from '../class'
+import { $entities, $table, TableOperation } from '../class'
 import type { QueryOptions } from './options'
 import { queryParams } from './queryParams'
 
@@ -67,7 +67,7 @@ export class QueryCommand<
   ENTITIES extends EntityV2[] = EntityV2[],
   QUERY extends Query<TABLE> = Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
-> extends TableCommand<TABLE, ENTITIES> {
+> extends TableOperation<TABLE, ENTITIES> {
   static operationName = 'query' as const
 
   entities: <NEXT_ENTITIES extends EntityV2[]>(

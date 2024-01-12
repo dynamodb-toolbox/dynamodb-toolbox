@@ -15,7 +15,7 @@ import type { AnyAttributePath } from 'v1/operations/types'
 import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
 import { isString } from 'v1/utils/validation'
 
-import { TableCommand, $table, $entities } from '../class'
+import { TableOperation, $table, $entities } from '../class'
 import type { ScanOptions } from './options'
 import { scanParams } from './scanParams'
 
@@ -60,7 +60,7 @@ export class ScanCommand<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2[] = EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
-> extends TableCommand<TABLE, ENTITIES> {
+> extends TableOperation<TABLE, ENTITIES> {
   static operationName = 'scan' as const
 
   entities: <NEXT_ENTITIES extends EntityV2[]>(
