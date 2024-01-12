@@ -13,10 +13,12 @@ export type BatchWriteItemRequestInput<REQUEST_TYPE extends RequestTypes> = NonN
   BatchWriteRequestInputRecord[REQUEST_TYPE]
 >
 
+export const $requestType = Symbol('$requestType')
+
 export interface BatchWriteRequestInterface<
   ENTITY extends EntityV2 = EntityV2,
   REQUEST_TYPE extends RequestTypes = RequestTypes
 > extends EntityOperation<ENTITY> {
   params: () => BatchWriteItemRequestInput<REQUEST_TYPE>
-  requestType: REQUEST_TYPE
+  [$requestType]: REQUEST_TYPE
 }

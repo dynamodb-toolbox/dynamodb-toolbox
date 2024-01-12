@@ -5,6 +5,7 @@ import { putItemParams } from 'v1/operations/putItem/putItemParams'
 
 import { $entity, EntityOperation } from '../../class'
 import type { BatchWriteRequestInterface } from '../BatchWriteRequestInterface'
+import { $requestType } from '../BatchWriteRequestInterface'
 
 export const $item = Symbol('$item')
 
@@ -31,7 +32,7 @@ export class PutBatchItemRequest<ENTITY extends EntityV2 = EntityV2>
     }
 
     return putItemParams(this[$entity], this[$item])
-  }
+  };
 
-  requestType = 'PutRequest' as const
+  [$requestType] = 'PutRequest' as const
 }

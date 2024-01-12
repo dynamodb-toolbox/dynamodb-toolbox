@@ -5,6 +5,7 @@ import type { KeyInput } from 'v1/operations/types/KeyInput'
 
 import { $entity, EntityOperation } from '../../class'
 import type { BatchWriteRequestInterface } from '../BatchWriteRequestInterface'
+import { $requestType } from '../BatchWriteRequestInterface'
 
 export const $key = Symbol('$key')
 
@@ -31,7 +32,7 @@ export class DeleteBatchItemRequest<ENTITY extends EntityV2 = EntityV2>
     }
 
     return deleteItemParams(this[$entity], this[$key])
-  }
+  };
 
-  requestType = 'DeleteRequest' as const
+  [$requestType] = 'DeleteRequest' as const
 }
