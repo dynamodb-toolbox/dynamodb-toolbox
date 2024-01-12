@@ -12,7 +12,11 @@ import {
   schema,
   set,
   string,
-  DynamoDBToolboxError
+  DynamoDBToolboxError,
+  UpdateItemTransaction,
+  $append,
+  $set,
+  $add
 } from 'v1'
 import { transactWriteItems, getTransactWriteCommandInput } from './transactWriteItems'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
@@ -160,6 +164,13 @@ describe('generateTransactWriteCommandInput', () => {
         test_binary_set: new Set([Buffer.from('a'), Buffer.from('b')])
       }),
       TestEntity.build(DeleteItemTransaction).key({ email: 'tata@example.com', sort: 'tata' }),
+      TestEntity.build(UpdateItemTransaction).item({
+        email: 'titi@example.com',
+        sort: 'titi',
+        count: $add(3),
+        test_map: $set({ str: 'B' }),
+        test_list: $append(['toutou'])
+      }),
       TestEntity2.build(PutItemTransaction).item({
         email: 'toto@example.com',
         test_composite: 'hey',
@@ -208,6 +219,37 @@ describe('generateTransactWriteCommandInput', () => {
             Key: {
               pk: 'tata@example.com',
               sk: 'tata'
+            },
+            TableName: 'test-table'
+          }
+        },
+        {
+          Update: {
+            Key: {
+              pk: 'titi@example.com',
+              sk: 'titi'
+            },
+            UpdateExpression:
+              'SET #s_1 = list_append(#s_1, :s_1), #s_2 = :s_2, #s_3 = if_not_exists(#s_4, :s_3), #s_5 = if_not_exists(#s_6, :s_4), #s_7 = :s_5 ADD #a_1 :a_1',
+            ExpressionAttributeNames: {
+              '#a_1': 'test_number',
+              '#s_1': 'test_list',
+              '#s_2': 'test_map',
+              '#s_3': '_et',
+              '#s_4': '_et',
+              '#s_5': '_ct',
+              '#s_6': '_ct',
+              '#s_7': '_md'
+            },
+            ExpressionAttributeValues: {
+              ':a_1': 3,
+              ':s_1': ['toutou'],
+              ':s_2': {
+                str: 'B'
+              },
+              ':s_3': 'TestEntity',
+              ':s_4': mockDate,
+              ':s_5': mockDate
             },
             TableName: 'test-table'
           }
