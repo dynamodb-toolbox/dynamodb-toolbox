@@ -6,9 +6,9 @@ import { parseCondition } from 'v1/operations/expression/condition/parse'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
 
 import { PutItemTransactionOptions } from '../options'
-import type { TransactWritePutItemParams } from './transactWritePutItemParams'
+import type { TransactPutItemParams } from './transactPutItemParams'
 
-type TransactionOptions = Omit<TransactWritePutItemParams, 'TableName' | 'Item'>
+type TransactionOptions = Omit<TransactPutItemParams, 'TableName' | 'Item'>
 
 export const parsePutItemTransactionOptions = <ENTITY extends EntityV2>(
   entity: ENTITY,

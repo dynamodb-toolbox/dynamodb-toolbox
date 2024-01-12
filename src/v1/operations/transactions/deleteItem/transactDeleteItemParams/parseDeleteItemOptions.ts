@@ -6,9 +6,9 @@ import { parseCondition } from 'v1/operations/expression/condition/parse'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
 
 import { DeleteItemTransactionOptions } from '../options'
-import type { TransactWriteDeleteItemParams } from './transactWriteDeleteItemParams'
+import type { TransactDeleteItemParams } from './transactDeleteItemParams'
 
-type TransactionOptions = Omit<TransactWriteDeleteItemParams, 'TableName' | 'Key'>
+type TransactionOptions = Omit<TransactDeleteItemParams, 'TableName' | 'Key'>
 
 export const parseDeleteItemTransactionOptions = <ENTITY extends EntityV2>(
   entity: ENTITY,
