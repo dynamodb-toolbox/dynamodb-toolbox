@@ -53,13 +53,11 @@ export class DeleteItemTransaction<
     documentClient: DynamoDBDocumentClient
     type: 'Delete'
     params: TransactDeleteItemParams
-  } => {
-    return {
-      documentClient: this[$entity].table.documentClient,
-      type: 'Delete',
-      params: this.params()
-    }
-  }
+  } => ({
+    documentClient: this[$entity].table.documentClient,
+    type: 'Delete',
+    params: this.params()
+  })
 }
 
 export type DeleteItemTransactionClass = typeof DeleteItemTransaction
