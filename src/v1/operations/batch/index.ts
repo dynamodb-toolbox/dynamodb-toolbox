@@ -1,0 +1,5 @@
+export type { BatchWriteRequestInterface } from './BatchWriteRequestInterface'
+export type { BatchWriteOptions } from './options'
+export { batchWrite } from './batchWrite'
+export { DeleteBatchItemRequest } from './deleteBatchItem'
+export { PutBatchItemRequest } from './putBatchItem'

@@ -1,9 +1,24 @@
+import {
+  BatchWriteCommand,
+  BatchWriteCommandInput,
+  BatchWriteCommandOutput
+} from '@aws-sdk/lib-dynamodb'
+
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { BatchWriteRequestInterface } from './BatchWriteRequestInterface'
 import type { BatchWriteOptions } from './options'
 import { parseBatchWriteOptions } from './parseBatchWriteOptions'
 import { $entity } from '../class'
+
+export const batchWrite = async (
+  commands: BatchWriteRequestInterface[],
+  options: BatchWriteOptions = {}
+): Promise<BatchWriteCommandOutput> => {
+  const commandInput = buildBatchWriteCommandInput(commands, options)
+
+  return commands[0][$entity].table.documentClient.send(new BatchWriteCommand(commandInput))
+}
 
 export const buildBatchWriteCommandInput = (
   commands: BatchWriteRequestInterface[],
