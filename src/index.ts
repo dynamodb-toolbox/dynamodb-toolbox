@@ -7,17 +7,19 @@ import type {
   DeleteOptions,
   UpdateOptions,
   EntityItem,
-  InferEntityItem
+  InferEntityItem,
+  ParseAttributes
 } from './classes/Entity/types.js'
 
-export {
-  Table,
-  Entity,
+export { Table, Entity }
+
+export type {
   GetOptions,
   QueryOptions,
   PutOptions,
   DeleteOptions,
   UpdateOptions,
   EntityItem,
-  InferEntityItem
+  InferEntityItem,
+  ParseAttributes
 }
