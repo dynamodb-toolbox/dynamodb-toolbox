@@ -13,6 +13,7 @@ import {
   $savedAs,
   $enum,
   $defaults,
+  $links,
   $transform
 } from '../constants/attributeOptions'
 
@@ -38,6 +39,7 @@ export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttr
           PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
         >
         defaults: $PRIMITIVE_ATTRIBUTE[$defaults]
+        links: $PRIMITIVE_ATTRIBUTE[$links]
         transform: $PRIMITIVE_ATTRIBUTE[$transform]
       }
     >,

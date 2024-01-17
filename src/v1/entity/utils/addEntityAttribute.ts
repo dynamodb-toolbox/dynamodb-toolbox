@@ -18,6 +18,11 @@ export type EntityAttribute<TABLE extends TableV2, ENTITY_NAME extends string> =
       put: unknown
       update: unknown
     }
+    links: {
+      key: undefined
+      put: undefined
+      update: undefined
+    }
     transform: undefined
   }
 >
@@ -78,6 +83,11 @@ export const addEntityAttribute: EntityAttributeAdder = <
       key: undefined,
       put: entityName,
       update: () => $get(entityAttributeName, entityName)
+    },
+    links: {
+      key: undefined,
+      put: undefined,
+      update: undefined
     },
     transform: undefined
   }

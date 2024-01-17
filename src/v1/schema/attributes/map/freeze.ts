@@ -11,7 +11,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
@@ -33,6 +34,7 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
         key: $MAP_ATTRIBUTE[$key]
         savedAs: $MAP_ATTRIBUTE[$savedAs]
         defaults: $MAP_ATTRIBUTE[$defaults]
+        links: $MAP_ATTRIBUTE[$links]
       }
     >,
     never,

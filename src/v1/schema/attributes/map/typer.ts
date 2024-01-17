@@ -9,7 +9,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
 import type { SharedAttributeState } from '../shared/interface'
@@ -42,6 +43,7 @@ const $map: $MapAttributeTyper = <
     [$key]: state.key,
     [$savedAs]: state.savedAs,
     [$defaults]: state.defaults,
+    [$links]: state.links,
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_REQUIRED = ('atLeastOnce' as unknown) as NEXT_REQUIRED
     ) => $map(attributes, overwrite(state, { required: nextRequired })),
@@ -80,34 +82,34 @@ const $map: $MapAttributeTyper = <
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
         })
       ),
-    keyLink: nextKeyDefault =>
+    keyLink: nextKeyLink =>
       $map(
         attributes,
         overwrite(state, {
-          defaults: { key: nextKeyDefault, put: state.defaults.put, update: state.defaults.update }
+          links: { key: nextKeyLink, put: state.links.put, update: state.links.update }
         })
       ),
-    putLink: nextPutDefault =>
+    putLink: nextPutLink =>
       $map(
         attributes,
         overwrite(state, {
-          defaults: { key: state.defaults.key, put: nextPutDefault, update: state.defaults.update }
+          links: { key: state.links.key, put: nextPutLink, update: state.links.update }
         })
       ),
-    updateLink: nextUpdateDefault =>
+    updateLink: nextUpdateLink =>
       $map(
         attributes,
         overwrite(state, {
-          defaults: { key: state.defaults.key, put: state.defaults.put, update: nextUpdateDefault }
+          links: { key: state.links.key, put: state.links.put, update: nextUpdateLink }
         })
       ),
-    link: nextDefault =>
+    link: nextLink =>
       $map(
         attributes,
         overwrite(state, {
-          defaults: state.key
-            ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
-            : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
+          links: state.key
+            ? { key: nextLink, put: state.links.put, update: state.links.update }
+            : { key: state.links.key, put: nextLink, update: state.links.update }
         })
       ),
     freeze: path => freezeMapAttribute(attributes, state, path)
@@ -146,7 +148,8 @@ export const map: MapAttributeTyper = <
   const state = {
     ...MAP_DEFAULT_OPTIONS,
     ...options,
-    defaults: { ...MAP_DEFAULT_OPTIONS.defaults, ...options?.defaults }
+    defaults: { ...MAP_DEFAULT_OPTIONS.defaults, ...options?.defaults },
+    links: { ...MAP_DEFAULT_OPTIONS.links, ...options?.links }
   } as InferStateFromOptions<MapAttributeOptions, MapAttributeDefaultOptions, OPTIONS>
 
   return $map(attributes, state)

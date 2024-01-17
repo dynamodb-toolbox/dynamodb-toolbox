@@ -16,6 +16,11 @@ export type TimestampAttribute<
       put: unknown
       update: unknown
     }
+    links: {
+      key: undefined
+      put: undefined
+      update: undefined
+    }
     transform: undefined
   }
 >

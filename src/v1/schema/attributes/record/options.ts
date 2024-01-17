@@ -33,6 +33,14 @@ export interface RecordAttributeOptions {
     put: undefined | unknown
     update: undefined | unknown
   }
+  /**
+   * Provide **linked** default values for attribute
+   */
+  links: {
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
+  }
 }
 
 export type RecordAttributeDefaultOptions = {
@@ -45,6 +53,11 @@ export type RecordAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
 export const RECORD_DEFAULT_OPTIONS: RecordAttributeDefaultOptions = {
@@ -53,6 +66,11 @@ export const RECORD_DEFAULT_OPTIONS: RecordAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  links: {
     key: undefined,
     put: undefined,
     update: undefined

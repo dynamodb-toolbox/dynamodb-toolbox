@@ -103,6 +103,11 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
         put: () => new Date().toISOString(),
         update: () => $get(createdName, new Date().toISOString())
       },
+      links: {
+        key: undefined,
+        put: undefined,
+        update: undefined
+      },
       transform: undefined
     }
 
@@ -128,6 +133,11 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
         key: undefined,
         put: () => new Date().toISOString(),
         update: () => new Date().toISOString()
+      },
+      links: {
+        key: undefined,
+        put: undefined,
+        update: undefined
       },
       transform: undefined
     }

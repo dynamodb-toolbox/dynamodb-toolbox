@@ -173,22 +173,21 @@ export interface $AnyOfAttribute<
   /**
    * Provide a **linked** default value for attribute in Primary Key computing
    *
-   * @param nextKeyDefault `keyAttributeInput | ((keyInput) => keyAttributeInput)`
+   * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
   keyLink: <SCHEMA extends Schema>(
-    nextKeyDefault: ValueOrGetter<
-      AttributeKeyInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>,
-      [KeyInput<SCHEMA, true>]
-    >
+    nextKeyLink: (
+      keyInput: KeyInput<SCHEMA, true>
+    ) => AttributeKeyInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>
   ) => $AnyOfAttribute<
     $ELEMENTS,
     O.Overwrite<
       STATE,
       {
-        defaults: {
+        links: {
           key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
+          put: STATE['links']['put']
+          update: STATE['links']['update']
         }
       }
     >
@@ -196,22 +195,21 @@ export interface $AnyOfAttribute<
   /**
    * Provide a **linked** default value for attribute in PUT commands
    *
-   * @param nextPutDefault `putAttributeInput | ((putItemInput) => putAttributeInput)`
+   * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
   putLink: <SCHEMA extends Schema>(
-    nextPutDefault: ValueOrGetter<
-      AttributePutItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>,
-      [PutItemInput<SCHEMA, true>]
-    >
+    nextPutLink: (
+      putItemInput: PutItemInput<SCHEMA, true>
+    ) => AttributePutItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>
   ) => $AnyOfAttribute<
     $ELEMENTS,
     O.Overwrite<
       STATE,
       {
-        defaults: {
-          key: STATE['defaults']['key']
+        links: {
+          key: STATE['links']['key']
           put: unknown
-          update: STATE['defaults']['update']
+          update: STATE['links']['update']
         }
       }
     >
@@ -219,21 +217,23 @@ export interface $AnyOfAttribute<
   /**
    * Provide a **linked** default value for attribute in UPDATE commands
    *
-   * @param nextUpdateDefault `unknown | ((updateItemInput) => updateAttributeInput)`
+   * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
   updateLink: <SCHEMA extends Schema>(
-    nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>,
-      [UpdateItemInput<SCHEMA, true>]
+    nextUpdateLink: (
+      updateItemInput: UpdateItemInput<SCHEMA, true>
+    ) => AttributeUpdateItemInput<
+      FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>,
+      true
     >
   ) => $AnyOfAttribute<
     $ELEMENTS,
     O.Overwrite<
       STATE,
       {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
+        links: {
+          key: STATE['links']['key']
+          put: STATE['links']['put']
           update: unknown
         }
       }
@@ -242,33 +242,32 @@ export interface $AnyOfAttribute<
   /**
    * Provide a **linked** default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
-   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
+   * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
   link: <SCHEMA extends Schema>(
-    nextDefault: ValueOrGetter<
-      If<
-        STATE['key'],
-        AttributeKeyInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>,
-        AttributePutItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>
-      >,
-      [If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>]
+    nextLink: (
+      keyOrPutItemInput: If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>
+    ) => If<
+      STATE['key'],
+      AttributeKeyInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>,
+      AttributePutItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>
     >
   ) => $AnyOfAttribute<
     $ELEMENTS,
     O.Overwrite<
       STATE,
       {
-        defaults: If<
+        links: If<
           STATE['key'],
           {
             key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
+            put: STATE['links']['put']
+            update: STATE['links']['update']
           },
           {
-            key: STATE['defaults']['key']
+            key: STATE['links']['key']
             put: unknown
-            update: STATE['defaults']['update']
+            update: STATE['links']['update']
           }
         >
       }

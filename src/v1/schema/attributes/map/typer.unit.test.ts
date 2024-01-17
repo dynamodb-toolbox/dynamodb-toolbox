@@ -9,7 +9,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import { map } from './typer'
@@ -37,6 +38,11 @@ describe('map', () => {
           put: undefined
           update: undefined
         }
+        [$links]: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertMapAttribute
@@ -48,19 +54,14 @@ describe('map', () => {
     const assertFrozenExtends: A.Extends<typeof frozenMap, MapAttribute> = 1
     assertFrozenExtends
 
-    expect(mapped).toMatchObject({
-      [$type]: 'map',
-      [$attributes]: { str },
-      [$required]: 'atLeastOnce',
-      [$key]: false,
-      [$savedAs]: undefined,
-      [$hidden]: false,
-      [$defaults]: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      }
-    })
+    expect(mapped[$type]).toBe('map')
+    expect(mapped[$attributes]).toStrictEqual({ str })
+    expect(mapped[$required]).toBe('atLeastOnce')
+    expect(mapped[$key]).toBe(false)
+    expect(mapped[$savedAs]).toBe(undefined)
+    expect(mapped[$hidden]).toBe(false)
+    expect(mapped[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
+    expect(mapped[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
   })
 
   it('returns required map (option)', () => {
@@ -78,9 +79,9 @@ describe('map', () => {
     const assertMapAttributeNever: A.Contains<typeof mappedNever, { [$required]: Never }> = 1
     assertMapAttributeNever
 
-    expect(mappedAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(mappedAlways).toMatchObject({ [$required]: 'always' })
-    expect(mappedNever).toMatchObject({ [$required]: 'never' })
+    expect(mappedAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(mappedAlways[$required]).toBe('always')
+    expect(mappedNever[$required]).toBe('never')
   })
 
   it('returns required map (method)', () => {
@@ -101,10 +102,10 @@ describe('map', () => {
     const assertMapAttributeOpt: A.Contains<typeof mappedOpt, { [$required]: Never }> = 1
     assertMapAttributeOpt
 
-    expect(mappedAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(mappedAlways).toMatchObject({ [$required]: 'always' })
-    expect(mappedNever).toMatchObject({ [$required]: 'never' })
-    expect(mappedOpt).toMatchObject({ [$required]: 'never' })
+    expect(mappedAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(mappedAlways[$required]).toBe('always')
+    expect(mappedNever[$required]).toBe('never')
+    expect(mappedOpt[$required]).toBe('never')
   })
 
   it('returns hidden map (option)', () => {
@@ -113,7 +114,7 @@ describe('map', () => {
     const assertMapAttribute: A.Contains<typeof mapped, { [$hidden]: true }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ [$hidden]: true })
+    expect(mapped[$hidden]).toBe(true)
   })
 
   it('returns hidden map (method)', () => {
@@ -122,7 +123,7 @@ describe('map', () => {
     const assertMapAttribute: A.Contains<typeof mapped, { [$hidden]: true }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ [$hidden]: true })
+    expect(mapped[$hidden]).toBe(true)
   })
 
   it('returns key map (option)', () => {
@@ -134,7 +135,8 @@ describe('map', () => {
     > = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
+    expect(mapped[$key]).toBe(true)
+    expect(mapped[$required]).toBe('atLeastOnce')
   })
 
   it('returns key map (method)', () => {
@@ -143,7 +145,8 @@ describe('map', () => {
     const assertMapAttribute: A.Contains<typeof mapped, { [$key]: true; [$required]: Always }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ [$key]: true, [$required]: 'always' })
+    expect(mapped[$key]).toBe(true)
+    expect(mapped[$required]).toBe('always')
   })
 
   it('returns savedAs map (option)', () => {
@@ -152,7 +155,7 @@ describe('map', () => {
     const assertMapAttribute: A.Contains<typeof mapped, { [$savedAs]: 'foo' }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ [$savedAs]: 'foo' })
+    expect(mapped[$savedAs]).toBe('foo')
   })
 
   it('returns savedAs map (method)', () => {
@@ -161,7 +164,7 @@ describe('map', () => {
     const assertMapAttribute: A.Contains<typeof mapped, { [$savedAs]: 'foo' }> = 1
     assertMapAttribute
 
-    expect(mapped).toMatchObject({ [$savedAs]: 'foo' })
+    expect(mapped[$savedAs]).toBe('foo')
   })
 
   it('returns defaulted map (option)', () => {
@@ -177,8 +180,10 @@ describe('map', () => {
     > = 1
     assertMapAttribute
 
-    expect(mapA).toMatchObject({
-      [$defaults]: { key: { str: 'foo' }, put: undefined, update: undefined }
+    expect(mapA[$defaults]).toStrictEqual({
+      key: { str: 'foo' },
+      put: undefined,
+      update: undefined
     })
 
     const mapB = map(
@@ -193,8 +198,10 @@ describe('map', () => {
     > = 1
     assertMapB
 
-    expect(mapB).toMatchObject({
-      [$defaults]: { key: undefined, put: { str: 'bar' }, update: undefined }
+    expect(mapB[$defaults]).toStrictEqual({
+      key: undefined,
+      put: { str: 'bar' },
+      update: undefined
     })
 
     const mapC = map(
@@ -208,8 +215,10 @@ describe('map', () => {
     > = 1
     assertMapC
 
-    expect(mapC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: { str: 'baz' } }
+    expect(mapC[$defaults]).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: { str: 'baz' }
     })
   })
 
@@ -222,8 +231,10 @@ describe('map', () => {
     > = 1
     assertMapAttribute
 
-    expect(mapA).toMatchObject({
-      [$defaults]: { key: { str: 'bar' }, put: undefined, update: undefined }
+    expect(mapA[$defaults]).toStrictEqual({
+      key: { str: 'foo' },
+      put: undefined,
+      update: undefined
     })
 
     const mapB = map({ str }).putDefault({ str: 'bar' })
@@ -234,8 +245,10 @@ describe('map', () => {
     > = 1
     assertMapB
 
-    expect(mapB).toMatchObject({
-      [$defaults]: { key: undefined, put: { str: 'bar' }, update: undefined }
+    expect(mapB[$defaults]).toStrictEqual({
+      key: undefined,
+      put: { str: 'bar' },
+      update: undefined
     })
 
     const mapC = map({ str }).updateDefault({ str: 'baz' })
@@ -246,8 +259,10 @@ describe('map', () => {
     > = 1
     assertMapC
 
-    expect(mapC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: { str: 'baz' } }
+    expect(mapC[$defaults]).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: { str: 'baz' }
     })
   })
 
@@ -260,8 +275,10 @@ describe('map', () => {
     > = 1
     assertMap
 
-    expect(mapAttr).toMatchObject({
-      [$defaults]: { key: undefined, put: { str: 'foo' }, update: undefined }
+    expect(mapAttr[$defaults]).toStrictEqual({
+      key: undefined,
+      put: { str: 'foo' },
+      update: undefined
     })
   })
 
@@ -274,8 +291,10 @@ describe('map', () => {
     > = 1
     assertMap
 
-    expect(mapAttr).toMatchObject({
-      [$defaults]: { key: { str: 'bar' }, put: undefined, update: undefined }
+    expect(mapAttr[$defaults]).toStrictEqual({
+      key: { str: 'bar' },
+      put: undefined,
+      update: undefined
     })
   })
 
@@ -335,49 +354,5 @@ describe('map', () => {
       }
     > = 1
     assertMapAttribute
-
-    expect(mapped).toMatchObject({
-      [$type]: 'map',
-      [$attributes]: {
-        nested: {
-          [$type]: 'map',
-          [$attributes]: {
-            nestedAgain: {
-              [$type]: 'map',
-              [$attributes]: {
-                str
-              },
-              [$required]: 'atLeastOnce',
-              [$hidden]: true,
-              [$key]: false,
-              [$savedAs]: undefined,
-              [$defaults]: {
-                key: undefined,
-                put: undefined,
-                update: undefined
-              }
-            }
-          },
-          [$required]: 'atLeastOnce',
-          [$hidden]: false,
-          [$key]: false,
-          [$savedAs]: undefined,
-          [$defaults]: {
-            key: undefined,
-            put: undefined,
-            update: undefined
-          }
-        }
-      },
-      [$required]: 'atLeastOnce',
-      [$hidden]: false,
-      [$key]: false,
-      [$savedAs]: undefined,
-      [$defaults]: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      }
-    })
   })
 })

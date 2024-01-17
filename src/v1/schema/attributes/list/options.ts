@@ -33,6 +33,14 @@ export interface ListAttributeOptions {
     put: undefined | unknown
     update: undefined | unknown
   }
+  /**
+   * Provide **linked** default values for attribute
+   */
+  links: {
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
+  }
 }
 
 export type ListAttributeDefaultOptions = {
@@ -45,6 +53,11 @@ export type ListAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
 export const LIST_DEFAULT_OPTIONS: ListAttributeDefaultOptions = {
@@ -53,6 +66,11 @@ export const LIST_DEFAULT_OPTIONS: ListAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  links: {
     key: undefined,
     put: undefined,
     update: undefined

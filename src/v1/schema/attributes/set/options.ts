@@ -33,6 +33,14 @@ export interface SetAttributeOptions {
     put: undefined | unknown
     update: undefined | unknown
   }
+  /**
+   * Provide **linked** default values for attribute
+   */
+  links: {
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
+  }
 }
 
 export type SetAttributeDefaultOptions = {
@@ -45,6 +53,11 @@ export type SetAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
 export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeDefaultOptions = {
@@ -53,6 +66,11 @@ export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  links: {
     key: undefined,
     put: undefined,
     update: undefined
