@@ -8,6 +8,7 @@ import {
   $key,
   $savedAs,
   $defaults,
+  $links,
   $castAs
 } from '../constants/attributeOptions'
 
@@ -32,6 +33,11 @@ describe('anyAttribute', () => {
           put: undefined
           update: undefined
         }
+        [$links]: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
         [$castAs]: unknown
       }
     > = 1
@@ -44,17 +50,20 @@ describe('anyAttribute', () => {
     const assertFrozenExtends: A.Extends<typeof frozenAny, AnyAttribute> = 1
     assertFrozenExtends
 
-    expect(anyInstance).toMatchObject({
-      [$type]: 'any',
-      [$required]: 'atLeastOnce',
-      [$hidden]: false,
-      [$savedAs]: undefined,
-      [$key]: false,
-      [$defaults]: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      }
+    expect(anyInstance[$type]).toBe('any')
+    expect(anyInstance[$required]).toBe('atLeastOnce')
+    expect(anyInstance[$hidden]).toBe(false)
+    expect(anyInstance[$savedAs]).toBe(undefined)
+    expect(anyInstance[$key]).toBe(false)
+    expect(anyInstance[$defaults]).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: undefined
+    })
+    expect(anyInstance[$links]).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: undefined
     })
   })
 
@@ -70,9 +79,9 @@ describe('anyAttribute', () => {
     const assertNever: A.Contains<typeof anyNever, { [$required]: Never }> = 1
     assertNever
 
-    expect(anyAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(anyAlways).toMatchObject({ [$required]: 'always' })
-    expect(anyNever).toMatchObject({ [$required]: 'never' })
+    expect(anyAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(anyAlways[$required]).toBe('always')
+    expect(anyNever[$required]).toBe('never')
   })
 
   it('returns required any (method)', () => {
@@ -90,10 +99,10 @@ describe('anyAttribute', () => {
     const assertOpt: A.Contains<typeof anyOpt, { [$required]: Never }> = 1
     assertOpt
 
-    expect(anyAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(anyAlways).toMatchObject({ [$required]: 'always' })
-    expect(anyNever).toMatchObject({ [$required]: 'never' })
-    expect(anyOpt).toMatchObject({ [$required]: 'never' })
+    expect(anyAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(anyAlways[$required]).toBe('always')
+    expect(anyNever[$required]).toBe('never')
+    expect(anyOpt[$required]).toBe('never')
   })
 
   it('returns hidden any (option)', () => {
@@ -102,7 +111,7 @@ describe('anyAttribute', () => {
     const assertAny: A.Contains<typeof anyInstance, { [$hidden]: true }> = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$hidden]: true })
+    expect(anyInstance[$hidden]).toBe(true)
   })
 
   it('returns hidden any (method)', () => {
@@ -111,7 +120,7 @@ describe('anyAttribute', () => {
     const assertAny: A.Contains<typeof anyInstance, { [$hidden]: true }> = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$hidden]: true })
+    expect(anyInstance[$hidden]).toBe(true)
   })
 
   it('returns key any (option)', () => {
@@ -120,7 +129,8 @@ describe('anyAttribute', () => {
     const assertAny: A.Contains<typeof anyInstance, { [$key]: true; [$required]: AtLeastOnce }> = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
+    expect(anyInstance[$key]).toBe(true)
+    expect(anyInstance[$required]).toBe('atLeastOnce')
   })
 
   it('returns key any (method)', () => {
@@ -129,7 +139,8 @@ describe('anyAttribute', () => {
     const assertAny: A.Contains<typeof anyInstance, { [$key]: true; [$required]: Always }> = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$key]: true, [$required]: 'always' })
+    expect(anyInstance[$key]).toBe(true)
+    expect(anyInstance[$required]).toBe('always')
   })
 
   it('returns savedAs any (option)', () => {
@@ -138,7 +149,7 @@ describe('anyAttribute', () => {
     const assertAny: A.Contains<typeof anyInstance, { [$savedAs]: 'foo' }> = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$savedAs]: 'foo' })
+    expect(anyInstance[$savedAs]).toBe('foo')
   })
 
   it('returns savedAs any (method)', () => {
@@ -147,7 +158,7 @@ describe('anyAttribute', () => {
     const assertAny: A.Contains<typeof anyInstance, { [$savedAs]: 'foo' }> = 1
     assertAny
 
-    expect(anyInstance).toMatchObject({ [$savedAs]: 'foo' })
+    expect(anyInstance[$savedAs]).toBe('foo')
   })
 
   it('returns castAs any (method)', () => {
@@ -173,7 +184,7 @@ describe('anyAttribute', () => {
     > = 1
     assertAnyA
 
-    expect(strA).toMatchObject({ [$defaults]: { key: 'hello', put: undefined, update: undefined } })
+    expect(strA[$defaults]).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
 
     const assertAnyB: A.Contains<
       typeof strB,
@@ -181,7 +192,7 @@ describe('anyAttribute', () => {
     > = 1
     assertAnyB
 
-    expect(strB).toMatchObject({ [$defaults]: { key: undefined, put: 'world', update: undefined } })
+    expect(strB[$defaults]).toStrictEqual({ key: undefined, put: 'world', update: undefined })
 
     const assertAnyC: A.Contains<
       typeof strC,
@@ -189,9 +200,7 @@ describe('anyAttribute', () => {
     > = 1
     assertAnyC
 
-    expect(strC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: sayHello }
-    })
+    expect(strC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
   it('returns any with default value (method)', () => {
@@ -206,7 +215,7 @@ describe('anyAttribute', () => {
     > = 1
     assertAnyA
 
-    expect(strA).toMatchObject({ [$defaults]: { key: 'hello', put: undefined, update: undefined } })
+    expect(strA[$defaults]).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
 
     const assertAnyB: A.Contains<
       typeof strB,
@@ -214,7 +223,7 @@ describe('anyAttribute', () => {
     > = 1
     assertAnyB
 
-    expect(strB).toMatchObject({ [$defaults]: { put: 'world', update: undefined } })
+    expect(strB[$defaults]).toStrictEqual({ key: undefined, put: 'world', update: undefined })
 
     const assertAnyC: A.Contains<
       typeof strC,
@@ -222,7 +231,7 @@ describe('anyAttribute', () => {
     > = 1
     assertAnyC
 
-    expect(strC).toMatchObject({ [$defaults]: { put: undefined, update: sayHello } })
+    expect(strC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
   it('returns any with PUT default value if it is not key (default shorthand)', () => {
@@ -234,9 +243,7 @@ describe('anyAttribute', () => {
     > = 1
     assertAny
 
-    expect(str).toMatchObject({
-      [$defaults]: { key: undefined, put: 'hello', update: undefined }
-    })
+    expect(str[$defaults]).toStrictEqual({ key: undefined, put: 'hello', update: undefined })
   })
 
   it('returns any with KEY default value if it is key (default shorthand)', () => {
@@ -248,8 +255,100 @@ describe('anyAttribute', () => {
     > = 1
     assertAny
 
-    expect(str).toMatchObject({
-      [$defaults]: { key: 'hello', put: undefined, update: undefined }
-    })
+    expect(str[$defaults]).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
+  })
+
+  it('returns any with linked value (option)', () => {
+    // TOIMPROVE: Add type constraints here
+    const sayHello = () => 'hello'
+    const say42 = () => 42
+    const sayTrue = () => true
+    const strA = any({ links: { key: sayHello, put: undefined, update: undefined } })
+    const strB = any({ links: { key: undefined, put: say42, update: undefined } })
+    const strC = any({ links: { key: undefined, put: undefined, update: sayTrue } })
+
+    const assertAnyA: A.Contains<
+      typeof strA,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertAnyA
+
+    expect(strA[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+
+    const assertAnyB: A.Contains<
+      typeof strB,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertAnyB
+
+    expect(strB[$links]).toStrictEqual({ key: undefined, put: say42, update: undefined })
+
+    const assertAnyC: A.Contains<
+      typeof strC,
+      { [$links]: { key: undefined; put: undefined; update: unknown } }
+    > = 1
+    assertAnyC
+
+    expect(strC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayTrue })
+  })
+
+  it('returns any with linked value (method)', () => {
+    const sayHello = () => 'hello'
+    const say42 = () => 42
+    const sayTrue = () => true
+
+    const strA = any().keyLink(sayHello)
+    const strB = any().putLink(say42)
+    const strC = any().updateLink(sayTrue)
+
+    const assertAnyA: A.Contains<
+      typeof strA,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertAnyA
+
+    expect(strA[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+
+    const assertAnyB: A.Contains<
+      typeof strB,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertAnyB
+
+    expect(strB[$links]).toStrictEqual({ key: undefined, put: say42, update: undefined })
+
+    const assertAnyC: A.Contains<
+      typeof strC,
+      { [$links]: { key: undefined; put: undefined; update: unknown } }
+    > = 1
+    assertAnyC
+
+    expect(strC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayTrue })
+  })
+
+  it('returns any with PUT linked value if it is not key (link shorthand)', () => {
+    const sayHello = () => 'hello'
+    const str = any().link(sayHello)
+
+    const assertAny: A.Contains<
+      typeof str,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertAny
+
+    expect(str[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+  })
+
+  it('returns any with KEY link value if it is key (link shorthand)', () => {
+    const sayHello = () => 'hello'
+    const str = any().key().link(sayHello)
+
+    const assertAny: A.Contains<
+      typeof str,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertAny
+
+    expect(str[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
   })
 })

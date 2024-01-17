@@ -9,6 +9,7 @@ import {
   $key,
   $savedAs,
   $defaults,
+  $links,
   $castAs
 } from '../constants/attributeOptions'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
@@ -32,6 +33,7 @@ const $any: $AnyAttributeTyper = <STATE extends AnyAttributeState = AnyAttribute
     [$key]: state.key,
     [$savedAs]: state.savedAs,
     [$defaults]: state.defaults,
+    [$links]: state.links,
     [$castAs]: state.castAs,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
@@ -88,49 +90,49 @@ const $any: $AnyAttributeTyper = <STATE extends AnyAttributeState = AnyAttribute
               }
         })
       ),
-    keyLink: nextKeyDefault =>
+    keyLink: nextKeyLink =>
       $any(
         overwrite(state, {
-          defaults: {
-            key: nextKeyDefault as unknown,
-            put: state.defaults.put,
-            update: state.defaults.update
+          links: {
+            key: nextKeyLink as unknown,
+            put: state.links.put,
+            update: state.links.update
           }
         })
       ),
-    putLink: nextPutDefault =>
+    putLink: nextPutLink =>
       $any(
         overwrite(state, {
-          defaults: {
-            key: state.defaults.key,
-            put: nextPutDefault as unknown,
-            update: state.defaults.update
+          links: {
+            key: state.links.key,
+            put: nextPutLink as unknown,
+            update: state.links.update
           }
         })
       ),
-    updateLink: nextUpdateDefault =>
+    updateLink: nextUpdateLink =>
       $any(
         overwrite(state, {
-          defaults: {
-            key: state.defaults.key,
-            put: state.defaults.put,
-            update: nextUpdateDefault as unknown
+          links: {
+            key: state.links.key,
+            put: state.links.put,
+            update: nextUpdateLink as unknown
           }
         })
       ),
-    link: nextDefault =>
+    link: nextLink =>
       $any(
         overwrite(state, {
-          defaults: state.key
+          links: state.key
             ? {
-                key: nextDefault as unknown,
-                put: state.defaults.put,
-                update: state.defaults.update
+                key: nextLink as unknown,
+                put: state.links.put,
+                update: state.links.update
               }
             : {
-                key: state.defaults.key,
-                put: nextDefault as unknown,
-                update: state.defaults.update
+                key: state.links.key,
+                put: nextLink as unknown,
+                update: state.links.update
               }
         })
       ),
@@ -165,7 +167,8 @@ export const any: AnyAttributeTyper = <
     ...ANY_DEFAULT_OPTIONS,
     ...options,
     castAs: undefined,
-    defaults: { ...ANY_DEFAULT_OPTIONS.defaults, ...options?.defaults }
+    defaults: { ...ANY_DEFAULT_OPTIONS.defaults, ...options?.defaults },
+    links: { ...ANY_DEFAULT_OPTIONS.links, ...options?.links }
   } as InferStateFromOptions<
     AnyAttributeOptions,
     AnyAttributeDefaultOptions,

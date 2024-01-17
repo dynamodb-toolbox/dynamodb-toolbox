@@ -13,7 +13,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
@@ -32,6 +33,7 @@ export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeStat
         key: $RECORD_ATTRIBUTE[$key]
         savedAs: $RECORD_ATTRIBUTE[$savedAs]
         defaults: $RECORD_ATTRIBUTE[$defaults]
+        links: $RECORD_ATTRIBUTE[$links]
       }
     >,
     never,

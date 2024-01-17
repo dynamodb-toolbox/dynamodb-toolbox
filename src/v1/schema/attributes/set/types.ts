@@ -13,6 +13,11 @@ interface SetAttributeElementState {
     put: undefined
     update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
   transform: undefined | unknown
 }
 

@@ -38,15 +38,13 @@ describe('schema', () => {
     > = 1
     assertSch
 
-    expect(sch).toMatchObject({
-      attributes: {
-        reqStr: reqStr.freeze('reqStr'),
-        hidBool: hidBool.freeze('hidBool'),
-        defNum: defNum.freeze('defNum'),
-        savedAsBin: savedAsBin.freeze('savedAsBin'),
-        keyStr: keyStr.freeze('keyStr'),
-        enumStr: enumStr.freeze('enumStr')
-      }
+    expect(sch.attributes).toMatchObject({
+      reqStr: reqStr.freeze('reqStr'),
+      hidBool: hidBool.freeze('hidBool'),
+      defNum: defNum.freeze('defNum'),
+      savedAsBin: savedAsBin.freeze('savedAsBin'),
+      keyStr: keyStr.freeze('keyStr'),
+      enumStr: enumStr.freeze('enumStr')
     })
   })
 

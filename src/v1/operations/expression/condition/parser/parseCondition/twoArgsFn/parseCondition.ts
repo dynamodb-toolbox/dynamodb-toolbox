@@ -22,6 +22,11 @@ const typeAttribute: PrimitiveAttribute<
       put: undefined
       update: undefined
     }
+    links: {
+      key: undefined
+      put: undefined
+      update: undefined
+    }
     transform: undefined
   }
 > = {
@@ -33,6 +38,11 @@ const typeAttribute: PrimitiveAttribute<
   savedAs: undefined,
   enum: ['S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M'],
   defaults: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  links: {
     key: undefined,
     put: undefined,
     update: undefined
