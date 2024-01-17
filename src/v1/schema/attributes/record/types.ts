@@ -15,6 +15,11 @@ type RecordAttributeKeysState = {
     put: undefined
     update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
   transform: undefined | unknown
 }
 
@@ -33,6 +38,11 @@ type RecordAttributeElementsState = {
   key: false
   savedAs: undefined
   defaults: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
+  links: {
     key: undefined
     put: undefined
     update: undefined

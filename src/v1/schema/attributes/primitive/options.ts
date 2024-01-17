@@ -33,6 +33,14 @@ export type PrimitiveAttributeOptions = {
     put: undefined | unknown
     update: undefined | unknown
   }
+  /**
+   * Provide **linked** default values for attribute
+   */
+  links: {
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
+  }
   transform: undefined | unknown
 }
 
@@ -46,6 +54,11 @@ export type PrimitiveAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
   transform: undefined
 }
 
@@ -55,6 +68,11 @@ export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  links: {
     key: undefined,
     put: undefined,
     update: undefined

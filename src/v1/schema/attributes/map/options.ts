@@ -33,6 +33,14 @@ export interface MapAttributeOptions {
     put: undefined | unknown
     update: undefined | unknown
   }
+  /**
+   * Provide **linked** default values for attribute
+   */
+  links: {
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
+  }
 }
 
 export type MapAttributeDefaultOptions = {
@@ -45,6 +53,11 @@ export type MapAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
 export const MAP_DEFAULT_OPTIONS: MapAttributeDefaultOptions = {
@@ -53,6 +66,11 @@ export const MAP_DEFAULT_OPTIONS: MapAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  links: {
     key: undefined,
     put: undefined,
     update: undefined

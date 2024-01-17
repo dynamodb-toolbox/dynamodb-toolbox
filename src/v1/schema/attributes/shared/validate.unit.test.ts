@@ -18,12 +18,22 @@ describe('shared properties validation', () => {
       put: undefined
       update: undefined
     }
+    links: {
+      key: undefined
+      put: undefined
+      update: undefined
+    }
   }> = {
     required: 'never',
     hidden: false,
     key: false,
     savedAs: undefined,
     defaults: {
+      key: undefined,
+      put: undefined,
+      update: undefined
+    },
+    links: {
       key: undefined,
       put: undefined,
       update: undefined

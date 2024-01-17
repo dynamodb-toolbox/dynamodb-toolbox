@@ -8,7 +8,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 import type { SharedAttributeState } from '../shared/interface'
 
@@ -40,6 +41,7 @@ const $anyOf: $AnyOfAttributeTyper = <
     [$key]: state.key,
     [$savedAs]: state.savedAs,
     [$defaults]: state.defaults,
+    [$links]: state.links,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => $anyOf(overwrite(state, { required: nextRequired }), ...elements),
@@ -89,45 +91,45 @@ const $anyOf: $AnyOfAttributeTyper = <
         }),
         ...elements
       ),
-    keyLink: nextKeyDefault =>
+    keyLink: nextKeyLink =>
       $anyOf(
         overwrite(state, {
-          defaults: {
-            key: nextKeyDefault,
-            put: state.defaults.put,
-            update: state.defaults.update
+          links: {
+            key: nextKeyLink,
+            put: state.links.put,
+            update: state.links.update
           }
         }),
         ...elements
       ),
-    putLink: nextPutDefault =>
+    putLink: nextPutLink =>
       $anyOf(
         overwrite(state, {
-          defaults: {
-            key: state.defaults.key,
-            put: nextPutDefault,
-            update: state.defaults.update
+          links: {
+            key: state.links.key,
+            put: nextPutLink,
+            update: state.links.update
           }
         }),
         ...elements
       ),
-    updateLink: nextUpdateDefault =>
+    updateLink: nextUpdateLink =>
       $anyOf(
         overwrite(state, {
-          defaults: {
-            key: state.defaults.key,
-            put: state.defaults.put,
-            update: nextUpdateDefault
+          links: {
+            key: state.links.key,
+            put: state.links.put,
+            update: nextUpdateLink
           }
         }),
         ...elements
       ),
-    link: nextDefault =>
+    link: nextLink =>
       $anyOf(
         overwrite(state, {
-          defaults: state.key
-            ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
-            : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
+          links: state.key
+            ? { key: nextLink, put: state.links.put, update: state.links.update }
+            : { key: state.links.key, put: nextLink, update: state.links.update }
         }),
         ...elements
       ),
