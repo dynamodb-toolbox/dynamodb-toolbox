@@ -1800,7 +1800,7 @@ describe('update', () => {
     const invalidCall = () => TestEntity.build(UpdateItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
   })
 
   it('transformed key/attribute (partial - 1)', () => {

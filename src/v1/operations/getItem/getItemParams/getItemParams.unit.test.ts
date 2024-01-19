@@ -196,7 +196,7 @@ describe('get', () => {
     const invalidCall = () => TestEntity.build(GetItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
   })
 
   it('transformed key', () => {

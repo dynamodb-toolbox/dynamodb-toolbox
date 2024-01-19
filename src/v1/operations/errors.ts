@@ -6,7 +6,7 @@ import type { OperationUtilsErrorBlueprints } from './utils/errors'
 import type { ExpressionParsersErrorBlueprints } from './expression/errors'
 
 type IncompleteOperationErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.incompleteCommand'
+  code: 'operations.incompleteOperation'
   hasPath: false
   payload: undefined
 }>
