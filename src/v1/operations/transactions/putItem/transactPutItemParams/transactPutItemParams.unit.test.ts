@@ -408,6 +408,6 @@ describe('put transaction', () => {
     const invalidCall = () => TestEntity.build(PutItemTransaction).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
   })
 })

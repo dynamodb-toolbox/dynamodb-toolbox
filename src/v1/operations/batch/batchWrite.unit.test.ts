@@ -66,7 +66,7 @@ describe('buildBatchWriteCommandInput', () => {
     const invalidCall = () => getBatchWriteCommandInput([])
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
   })
 
   it('batchWrites data to a single table', () => {

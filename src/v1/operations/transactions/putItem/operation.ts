@@ -41,7 +41,7 @@ export class PutItemTransaction<
 
   params = (): TransactPutItemParams => {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'PutItemTransaction incomplete: Missing "item" property'
       })
     }

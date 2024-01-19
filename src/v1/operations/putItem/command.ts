@@ -79,7 +79,7 @@ export class PutItemCommand<
 
   params = (): PutCommandInput => {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
