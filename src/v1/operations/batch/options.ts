@@ -5,3 +5,8 @@ export interface BatchWriteOptions {
   capacity?: CapacityOption
   metrics?: MetricsOption
 }
+
+export interface BatchGetOptions {
+  capacity?: CapacityOption
+  metrics?: MetricsOption
+}
