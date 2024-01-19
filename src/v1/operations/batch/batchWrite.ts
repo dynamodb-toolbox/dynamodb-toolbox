@@ -42,7 +42,7 @@ export const getBatchWriteCommandInput = (
   const RequestItems: NonNullable<BatchWriteCommandInput>['RequestItems'] = {}
 
   if (requests.length === 0) {
-    throw new DynamoDBToolboxError('operations.incompleteCommand', {
+    throw new DynamoDBToolboxError('operations.incompleteOperation', {
       message: 'BatchWrite command incomplete: No items supplied'
     })
   }
