@@ -5,7 +5,8 @@ import type {
   AttributeValue,
   ListAttribute,
   ListAttributeBasicValue,
-  AttributeBasicValue
+  AttributeBasicValue,
+  Item
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { isArray } from 'v1/utils/validation/isArray'
@@ -26,7 +27,13 @@ export function* parseListAttributeClonedInput<
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
-): Generator<ListAttributeBasicValue<INPUT_EXTENSION>, ListAttributeBasicValue<INPUT_EXTENSION>> {
+): Generator<
+  ListAttributeBasicValue<INPUT_EXTENSION>,
+  ListAttributeBasicValue<INPUT_EXTENSION>,
+  Item<SCHEMA_EXTENSION> | undefined
+> {
+  const { clone = true } = options
+
   const parsers: Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>[] = []
 
   const isInputValueArray = isArray(inputValue)
@@ -36,10 +43,23 @@ export function* parseListAttributeClonedInput<
     }
   }
 
-  const clonedValue = isInputValueArray
-    ? parsers.map(parser => parser.next().value)
-    : cloneDeep(inputValue)
-  yield clonedValue as ListAttributeBasicValue<INPUT_EXTENSION>
+  if (clone) {
+    if (isInputValueArray) {
+      const clonedValue = parsers.map(parser => parser.next().value)
+      const itemInput = yield clonedValue
+
+      const linkedValue = parsers.map(parser => parser.next(itemInput).value)
+      yield linkedValue
+    } else {
+      const clonedValue = (cloneDeep(
+        inputValue
+      ) as unknown) as ListAttributeBasicValue<INPUT_EXTENSION>
+      yield clonedValue
+
+      const linkedValue = clonedValue
+      yield linkedValue
+    }
+  }
 
   if (!isInputValueArray) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {

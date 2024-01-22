@@ -19,52 +19,58 @@ export function* parseSchemaClonedInput<SCHEMA_EXTENSION extends Extension = nev
     [options?: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<Item<SCHEMA_EXTENSION>, Item<SCHEMA_EXTENSION>> {
-  const { filters } = options
+  const { filters, clone = true } = options
   const parsers: Record<string, Generator<AttributeValue<SCHEMA_EXTENSION>>> = {}
-  let additionalAttributeNames: Set<string> = new Set()
+  let clonedRestEntries: [string, AttributeValue<SCHEMA_EXTENSION>][] = []
 
   const isInputValueObject = isObject(inputValue)
+
   if (isInputValueObject) {
-    additionalAttributeNames = new Set(Object.keys(inputValue))
+    const additionalAttributeNames = new Set(Object.keys(inputValue))
 
     Object.entries(schema.attributes)
       .filter(([, attribute]) => doesAttributeMatchFilters(attribute, filters))
       .forEach(([attributeName, attribute]) => {
-        parsers[attributeName] = parseAttributeClonedInput(attribute, inputValue[attributeName], {
-          ...options,
-          schemaInput: inputValue
-        })
+        parsers[attributeName] = parseAttributeClonedInput(
+          attribute,
+          inputValue[attributeName],
+          options
+        )
 
         additionalAttributeNames.delete(attributeName)
       })
+
+    clonedRestEntries = [...additionalAttributeNames.values()].map(attributeName => [
+      attributeName,
+      cloneDeep(inputValue[attributeName])
+    ])
   }
 
-  const clonedValue = isInputValueObject
-    ? {
-        ...Object.fromEntries(
-          [...additionalAttributeNames.values()].map(attributeName => {
-            const additionalAttribute = schema.attributes[attributeName]
+  if (clone) {
+    if (isInputValueObject) {
+      const clonedValue = Object.fromEntries([
+        ...Object.entries(parsers)
+          .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
+          .filter(([, clonedAttributeValue]) => clonedAttributeValue !== undefined),
+        ...clonedRestEntries
+      ])
+      yield clonedValue
 
-            const clonedAttributeValue =
-              additionalAttribute !== undefined
-                ? parseAttributeClonedInput(
-                    additionalAttribute,
-                    inputValue[attributeName],
-                    options
-                  ).next().value
-                : cloneDeep(inputValue[attributeName])
+      const linkedValue = Object.fromEntries([
+        ...Object.entries(parsers)
+          .map(([attributeName, parser]) => [attributeName, parser.next(clonedValue).value])
+          .filter(([, linkedAttributeValue]) => linkedAttributeValue !== undefined),
+        ...clonedRestEntries
+      ])
+      yield linkedValue
+    } else {
+      const clonedValue = cloneDeep(inputValue)
+      yield clonedValue
 
-            return [attributeName, clonedAttributeValue]
-          })
-        ),
-        ...Object.fromEntries(
-          Object.entries(parsers)
-            .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
-            .filter(([, attributeValue]) => attributeValue !== undefined)
-        )
-      }
-    : cloneDeep(inputValue)
-  yield clonedValue
+      const linkedValue = clonedValue
+      yield linkedValue
+    }
+  }
 
   if (!isInputValueObject) {
     throw new DynamoDBToolboxError('parsing.invalidItem', {

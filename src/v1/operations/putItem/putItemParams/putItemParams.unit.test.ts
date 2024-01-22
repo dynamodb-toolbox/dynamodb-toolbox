@@ -54,7 +54,9 @@ const TestEntity = new EntityV2({
     test_string_set: set(string()).optional(),
     test_number_set: set(number()).optional(),
     test_binary_set: set(binary()).optional()
-  }),
+  }).and(baseSchema => ({
+    test_string_2: string().putLink<typeof baseSchema>(({ test_string }) => test_string)
+  })),
   table: TestTable
 })
 
@@ -133,6 +135,8 @@ describe('put', () => {
       pk: 'test-pk',
       sk: 'test-sk',
       test_string: 'test string',
+      // Defaults are filled before links
+      test_string_2: 'test string',
       test_number_defaulted: 0
     })
   })

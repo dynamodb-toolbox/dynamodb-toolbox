@@ -1,4 +1,4 @@
-import type { AttributeBasicValue, AttributeValue, ListAttribute } from 'v1/schema'
+import type { AttributeBasicValue, AttributeValue, ListAttribute, Item } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
 import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -22,28 +22,40 @@ function* parseListElementClonedInput(
   options: ParsingOptions<UpdateItemInputExtension>
 ): Generator<
   AttributeValue<UpdateItemInputExtension> | undefined,
-  AttributeValue<UpdateItemInputExtension> | undefined
+  AttributeValue<UpdateItemInputExtension> | undefined,
+  Item<UpdateItemInputExtension> | undefined
 > {
-  // $REMOVE is allowed (we need this as elements 'required' prop is defaulted to "atLeastOnce")
-  if (inputValue === $REMOVE) {
-    const clonedValue: typeof $REMOVE = $REMOVE
-    yield clonedValue
+  const { clone = true } = options
 
-    const parsedValue: typeof $REMOVE = clonedValue
+  if (inputValue === $REMOVE) {
+    if (clone) {
+      const clonedValue: typeof $REMOVE = $REMOVE
+      yield clonedValue
+
+      const linkedValue: typeof $REMOVE = clonedValue
+      yield linkedValue
+    }
+
+    const parsedValue: typeof $REMOVE = $REMOVE
     yield parsedValue
 
-    const collapsedValue: typeof $REMOVE = parsedValue
+    const collapsedValue: typeof $REMOVE = $REMOVE
     return collapsedValue
   }
 
   if (inputValue === undefined) {
-    const clonedValue = undefined
-    yield clonedValue
+    if (clone) {
+      const clonedValue = undefined
+      yield clonedValue
 
-    const parsedValue = clonedValue
+      const linkedValue = undefined
+      yield linkedValue
+    }
+
+    const parsedValue = undefined
     yield parsedValue
 
-    const collapsedValue = parsedValue
+    const collapsedValue = undefined
     return collapsedValue
   }
 
@@ -55,6 +67,8 @@ export const parseListExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
+  const { clone = true } = options
+
   if (hasSetOperation(input)) {
     return {
       isExtension: true,
@@ -65,8 +79,13 @@ export const parseListExtension = (
           parseExtension: undefined
         })
 
-        const clonedValue = { [$SET]: parser.next().value }
-        yield clonedValue
+        if (clone) {
+          const clonedValue = { [$SET]: parser.next().value }
+          yield clonedValue
+
+          const linkedValue = { [$SET]: parser.next().value }
+          yield linkedValue
+        }
 
         const parsedValue = { [$SET]: parser.next().value }
         yield parsedValue
@@ -97,8 +116,13 @@ export const parseListExtension = (
               )
             )
 
-            const clonedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
-            yield clonedValue
+            if (clone) {
+              const clonedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
+              yield clonedValue
+
+              const linkedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
+              yield linkedValue
+            }
 
             const parsedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
             yield parsedValue
@@ -119,8 +143,13 @@ export const parseListExtension = (
             { ...options, parseExtension: parseReferenceExtension }
           )
 
-          const clonedValue = { [$APPEND]: parser.next().value }
-          yield clonedValue
+          if (clone) {
+            const clonedValue = { [$APPEND]: parser.next().value }
+            yield clonedValue
+
+            const linkedValue = { [$APPEND]: parser.next().value }
+            yield linkedValue
+          }
 
           const parsedValue = { [$APPEND]: parser.next().value }
           yield parsedValue
@@ -150,8 +179,13 @@ export const parseListExtension = (
               )
             )
 
-            const clonedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
-            yield clonedValue
+            if (clone) {
+              const clonedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
+              yield clonedValue
+
+              const linkedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
+              yield linkedValue
+            }
 
             const parsedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
             yield parsedValue
@@ -172,8 +206,13 @@ export const parseListExtension = (
             { ...options, parseExtension: parseReferenceExtension }
           )
 
-          const clonedValue = { [$PREPEND]: parser.next().value }
-          yield clonedValue
+          if (clone) {
+            const clonedValue = { [$PREPEND]: parser.next().value }
+            yield clonedValue
+
+            const linkedValue = { [$PREPEND]: parser.next().value }
+            yield linkedValue
+          }
 
           const parsedValue = { [$PREPEND]: parser.next().value }
           yield parsedValue
@@ -202,12 +241,21 @@ export const parseListExtension = (
             .filter(([, element]) => element !== undefined)
         )
 
-        const clonedValue = Object.fromEntries(
-          Object.entries(parsers)
-            .map(([index, parser]) => [index, parser.next().value])
-            .filter(([, element]) => element !== undefined)
-        )
-        yield clonedValue
+        if (clone) {
+          const clonedValue = Object.fromEntries(
+            Object.entries(parsers)
+              .map(([index, parser]) => [index, parser.next().value])
+              .filter(([, element]) => element !== undefined)
+          )
+          yield clonedValue
+
+          const linkedValue = Object.fromEntries(
+            Object.entries(parsers)
+              .map(([index, parser]) => [index, parser.next().value])
+              .filter(([, element]) => element !== undefined)
+          )
+          yield linkedValue
+        }
 
         for (const inputKey of Object.keys(parsers)) {
           const parsedInputKey = parseFloat(inputKey)

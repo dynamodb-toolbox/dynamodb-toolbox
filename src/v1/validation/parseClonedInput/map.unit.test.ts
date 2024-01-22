@@ -17,17 +17,8 @@ describe('parseMapAttributeClonedInput', () => {
   })
 
   it('throws an error if input is not a map', () => {
-    const parser = parseMapAttributeClonedInput(mapAttr, ['foo', 'bar'])
-
-    const clonedState = parser.next()
-    expect(clonedState.done).toBe(false)
-    expect(clonedState.value).toStrictEqual(['foo', 'bar'])
-
-    const invalidCall = () => {
-      const parser = parseMapAttributeClonedInput(mapAttr, ['foo', 'bar'])
-      parser.next()
-      parser.next()
-    }
+    const invalidCall = () =>
+      parseMapAttributeClonedInput(mapAttr, ['foo', 'bar'], { clone: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -49,6 +40,10 @@ describe('parseMapAttributeClonedInput', () => {
     expect(parseAttributeClonedInput).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInput).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
     expect(parseAttributeClonedInput).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', options)
+
+    const linkedState = parser.next()
+    expect(linkedState.done).toBe(false)
+    expect(linkedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
     const parsedState = parser.next()
     expect(parsedState.done).toBe(false)

@@ -114,6 +114,21 @@ describe('record', () => {
     )
   })
 
+  it('rejects keys with linked values', () => {
+    const invalidRecord = record(
+      // @ts-expect-error
+      str.putLink(() => 'foo'),
+      str
+    )
+
+    const invalidCall = () => invalidRecord.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
+    )
+  })
+
   it('rejects non-required elements', () => {
     const invalidRecord = record(
       str,
@@ -179,6 +194,21 @@ describe('record', () => {
       str,
       // @ts-expect-error
       str.putDefault('foo')
+    )
+
+    const invalidCall = () => invalidRecord.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
+    )
+  })
+
+  it('rejects elements with linked values', () => {
+    const invalidRecord = record(
+      str,
+      // @ts-expect-error
+      str.putLink(() => 'foo')
     )
 
     const invalidCall = () => invalidRecord.freeze(path)

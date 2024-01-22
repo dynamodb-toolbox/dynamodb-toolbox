@@ -1,11 +1,12 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type {
-  MapAttribute,
-  MapAttributeBasicValue,
-  AttributeBasicValue,
   Extension,
-  AttributeValue
+  Item,
+  AttributeValue,
+  MapAttribute,
+  AttributeBasicValue,
+  MapAttributeBasicValue
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -27,14 +28,18 @@ export function* parseMapAttributeClonedInput<
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
-): Generator<MapAttributeBasicValue<INPUT_EXTENSION>, MapAttributeBasicValue<INPUT_EXTENSION>> {
-  const { filters } = options
+): Generator<
+  MapAttributeBasicValue<INPUT_EXTENSION>,
+  MapAttributeBasicValue<INPUT_EXTENSION>,
+  Item<SCHEMA_EXTENSION> | undefined
+> {
+  const { filters, clone = true } = options
   const parsers: Record<string, Generator<AttributeValue<INPUT_EXTENSION>>> = {}
-  let additionalAttributeNames: Set<string> = new Set()
+  let clonedRestEntries: [string, AttributeValue<INPUT_EXTENSION>][] = []
 
   const isInputValueObject = isObject(inputValue)
   if (isInputValueObject) {
-    additionalAttributeNames = new Set(Object.keys(inputValue))
+    const additionalAttributeNames = new Set(Object.keys(inputValue))
 
     Object.entries(mapAttribute.attributes)
       .filter(([, attribute]) => doesAttributeMatchFilters(attribute, filters))
@@ -47,34 +52,40 @@ export function* parseMapAttributeClonedInput<
 
         additionalAttributeNames.delete(attributeName)
       })
+
+    clonedRestEntries = [...additionalAttributeNames.values()].map(attributeName => [
+      attributeName,
+      cloneDeep(inputValue[attributeName])
+    ])
   }
 
-  const clonedValue = isInputValueObject
-    ? {
-        ...Object.fromEntries(
-          [...additionalAttributeNames.values()].map(attributeName => {
-            const additionalAttribute = mapAttribute.attributes[attributeName]
+  if (clone) {
+    if (isInputValueObject) {
+      const clonedValue = Object.fromEntries([
+        ...Object.entries(parsers)
+          .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
+          .filter(([, clonedAttributeValue]) => clonedAttributeValue !== undefined),
+        ...clonedRestEntries
+      ])
+      const itemInput = yield clonedValue
 
-            const clonedAttributeValue =
-              additionalAttribute !== undefined
-                ? parseAttributeClonedInput(
-                    additionalAttribute,
-                    inputValue[attributeName],
-                    options
-                  ).next().value
-                : cloneDeep(inputValue[attributeName])
+      const linkedValue = Object.fromEntries([
+        ...Object.entries(parsers)
+          .map(([attributeName, parser]) => [attributeName, parser.next(itemInput).value])
+          .filter(([, linkedAttributeValue]) => linkedAttributeValue !== undefined),
+        ...clonedRestEntries
+      ])
+      yield linkedValue
+    } else {
+      const clonedValue = (cloneDeep(
+        inputValue
+      ) as unknown) as MapAttributeBasicValue<INPUT_EXTENSION>
+      yield clonedValue
 
-            return [attributeName, clonedAttributeValue]
-          })
-        ),
-        ...Object.fromEntries(
-          Object.entries(parsers)
-            .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
-            .filter(([, attributeValue]) => attributeValue !== undefined)
-        )
-      }
-    : cloneDeep(inputValue)
-  yield clonedValue
+      const linkedValue = clonedValue
+      yield linkedValue
+    }
+  }
 
   if (!isInputValueObject) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {

@@ -78,6 +78,20 @@ describe('list', () => {
     )
   })
 
+  it('rejects elements with linked values', () => {
+    const invalidList = list(
+      // @ts-expect-error
+      strElement.putLink(() => 'foo')
+    )
+
+    const invalidCall = () => invalidList.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.listAttribute.defaultedElements', path })
+    )
+  })
+
   it('returns default list', () => {
     const lst = list(strElement)
 

@@ -5,7 +5,8 @@ import type {
   RecordAttributeBasicValue,
   AttributeBasicValue,
   Extension,
-  AttributeValue
+  AttributeValue,
+  Item
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -28,8 +29,11 @@ export function* parseRecordAttributeClonedInput<
   >
 ): Generator<
   RecordAttributeBasicValue<INPUT_EXTENSION>,
-  RecordAttributeBasicValue<INPUT_EXTENSION>
+  RecordAttributeBasicValue<INPUT_EXTENSION>,
+  Item<SCHEMA_EXTENSION> | undefined
 > {
+  const { clone = true } = options
+
   const parsers: [
     Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>,
     Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>
@@ -45,14 +49,34 @@ export function* parseRecordAttributeClonedInput<
     }
   }
 
-  const clonedValue = isInputValueObject
-    ? Object.fromEntries(
+  if (clone) {
+    if (isInputValueObject) {
+      const clonedValue = Object.fromEntries(
         parsers
           .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
           .filter(([, element]) => element !== undefined)
       )
-    : cloneDeep(inputValue)
-  yield clonedValue
+      const itemInput = yield clonedValue
+
+      const linkedValue = Object.fromEntries(
+        parsers
+          .map(([keyParser, elementParser]) => [
+            keyParser.next().value,
+            elementParser.next(itemInput).value
+          ])
+          .filter(([, element]) => element !== undefined)
+      )
+      yield linkedValue
+    } else {
+      const clonedValue = (cloneDeep(
+        inputValue
+      ) as unknown) as RecordAttributeBasicValue<INPUT_EXTENSION>
+      yield clonedValue
+
+      const linkedValue = clonedValue
+      yield linkedValue
+    }
+  }
 
   if (!isInputValueObject) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {

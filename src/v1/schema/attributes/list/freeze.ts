@@ -87,7 +87,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.listAttribute.defaultedElements', {
-      message: `Invalid list elements at path ${path}: List elements cannot have default values`,
+      message: `Invalid list elements at path ${path}: List elements cannot have default or linked values`,
       path
     })
   }
