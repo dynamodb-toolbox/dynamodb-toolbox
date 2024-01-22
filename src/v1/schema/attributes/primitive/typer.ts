@@ -12,6 +12,7 @@ import {
   $savedAs,
   $enum,
   $defaults,
+  $links,
   $transform
 } from '../constants/attributeOptions'
 
@@ -52,6 +53,7 @@ const $primitive: $PrimitiveAttributeTyper = <
     [$savedAs]: state.savedAs,
     [$enum]: state.enum,
     [$defaults]: state.defaults,
+    [$links]: state.links,
     [$transform]: state.transform,
     required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
@@ -114,46 +116,46 @@ const $primitive: $PrimitiveAttributeTyper = <
             : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
         })
       ),
-    keyLink: nextKeyDefault =>
+    keyLink: nextKeyLink =>
       $primitive(
         type,
         overwrite(state, {
-          defaults: {
-            key: nextKeyDefault,
-            put: state.defaults.put,
-            update: state.defaults.update
+          links: {
+            key: nextKeyLink,
+            put: state.links.put,
+            update: state.links.update
           }
         })
       ),
-    putLink: nextPutDefault =>
+    putLink: nextPutLink =>
       $primitive(
         type,
         overwrite(state, {
-          defaults: {
-            key: state.defaults.key,
-            put: nextPutDefault,
-            update: state.defaults.update
+          links: {
+            key: state.links.key,
+            put: nextPutLink,
+            update: state.links.update
           }
         })
       ),
-    updateLink: nextUpdateDefault =>
+    updateLink: nextUpdateLink =>
       $primitive(
         type,
         overwrite(state, {
-          defaults: {
-            key: state.defaults.key,
-            put: state.defaults.put,
-            update: nextUpdateDefault
+          links: {
+            key: state.links.key,
+            put: state.links.put,
+            update: nextUpdateLink
           }
         })
       ),
-    link: nextDefault =>
+    link: nextLink =>
       $primitive(
         type,
         overwrite(state, {
-          defaults: state.key
-            ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
-            : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
+          links: state.key
+            ? { key: nextLink, put: state.links.put, update: state.links.update }
+            : { key: state.links.key, put: nextLink, update: state.links.update }
         })
       ),
     freeze: path => freezePrimitiveAttribute(type, state, path)
@@ -193,6 +195,10 @@ const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory = <
     defaults: {
       ...PRIMITIVE_DEFAULT_OPTIONS.defaults,
       ...primitiveOptions.defaults
+    },
+    links: {
+      ...PRIMITIVE_DEFAULT_OPTIONS.links,
+      ...primitiveOptions.links
     },
     enum: undefined
   } as InferStateFromOptions<

@@ -11,7 +11,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
@@ -29,6 +30,7 @@ export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
         key: $SET_ATTRIBUTE[$key]
         savedAs: $SET_ATTRIBUTE[$savedAs]
         defaults: $SET_ATTRIBUTE[$defaults]
+        links: $SET_ATTRIBUTE[$links]
       }
     >,
     never,
@@ -85,7 +87,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.setAttribute.defaultedElements', {
-      message: `Invalid set elements at path ${path}: Set elements cannot have default values`,
+      message: `Invalid set elements at path ${path}: Set elements cannot have default or linked values`,
       path
     })
   }

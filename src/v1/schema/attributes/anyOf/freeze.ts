@@ -12,7 +12,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
@@ -46,6 +47,7 @@ export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState>
         key: $ANY_OF_ATTRIBUTE[$key]
         savedAs: $ANY_OF_ATTRIBUTE[$savedAs]
         defaults: $ANY_OF_ATTRIBUTE[$defaults]
+        links: $ANY_OF_ATTRIBUTE[$links]
       }
     >,
     never,
@@ -117,7 +119,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
 
     if (hasDefinedDefault(element)) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.defaultedElements', {
-        message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot have default values`,
+        message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot have default or linked values`,
         path
       })
     }

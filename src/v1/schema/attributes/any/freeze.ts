@@ -7,6 +7,7 @@ import {
   $key,
   $savedAs,
   $defaults,
+  $links,
   $castAs
 } from '../constants/attributeOptions'
 
@@ -22,6 +23,7 @@ export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
       key: $ANY_ATTRIBUTE[$key]
       savedAs: $ANY_ATTRIBUTE[$savedAs]
       defaults: $ANY_ATTRIBUTE[$defaults]
+      links: $ANY_ATTRIBUTE[$links]
       castAs: $ANY_ATTRIBUTE[$castAs]
     }>,
     never,

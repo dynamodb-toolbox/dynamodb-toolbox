@@ -11,6 +11,8 @@ export const parseSetExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
+  const { clone = true } = options
+
   if (hasAddOperation(input)) {
     return {
       isExtension: true,
@@ -21,8 +23,13 @@ export const parseSetExtension = (
           parseExtension: undefined
         })
 
-        const clonedValue = { [$ADD]: parser.next().value }
-        yield clonedValue
+        if (clone) {
+          const clonedValue = { [$ADD]: parser.next().value }
+          yield clonedValue
+
+          const linkedValue = { [$ADD]: parser.next().value }
+          yield linkedValue
+        }
 
         const parsedValue = { [$ADD]: parser.next().value }
         yield parsedValue
@@ -43,8 +50,13 @@ export const parseSetExtension = (
           parseExtension: undefined
         })
 
-        const clonedValue = { [$DELETE]: parser.next().value }
-        yield clonedValue
+        if (clone) {
+          const clonedValue = { [$DELETE]: parser.next().value }
+          yield clonedValue
+
+          const linkedValue = { [$DELETE]: parser.next().value }
+          yield linkedValue
+        }
 
         const parsedValue = { [$DELETE]: parser.next().value }
         yield parsedValue

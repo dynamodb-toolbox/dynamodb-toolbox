@@ -11,7 +11,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import { set } from './typer'
@@ -77,6 +78,20 @@ describe('set', () => {
     )
   })
 
+  it('rejects elements with linked values', () => {
+    const invalidSet = set(
+      // @ts-expect-error
+      strElement.link(() => 'foo')
+    )
+
+    const invalidCall = () => invalidSet.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
+    )
+  })
+
   it('returns default set', () => {
     const st = set(strElement)
 
@@ -94,6 +109,11 @@ describe('set', () => {
           put: undefined
           update: undefined
         }
+        [$links]: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertSet
@@ -105,19 +125,14 @@ describe('set', () => {
     const assertFrozenExtends: A.Extends<typeof frozenSet, SetAttribute> = 1
     assertFrozenExtends
 
-    expect(st).toMatchObject({
-      [$type]: 'set',
-      [$elements]: strElement,
-      [$required]: 'atLeastOnce',
-      [$key]: false,
-      [$savedAs]: undefined,
-      [$hidden]: false,
-      [$defaults]: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      }
-    })
+    expect(st[$type]).toBe('set')
+    expect(st[$elements]).toBe(strElement)
+    expect(st[$required]).toBe('atLeastOnce')
+    expect(st[$key]).toBe(false)
+    expect(st[$savedAs]).toBe(undefined)
+    expect(st[$hidden]).toBe(false)
+    expect(st[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
+    expect(st[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
   })
 
   it('returns required set (option)', () => {
@@ -132,9 +147,9 @@ describe('set', () => {
     const assertNever: A.Contains<typeof stNever, { [$required]: Never }> = 1
     assertNever
 
-    expect(stAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(stAlways).toMatchObject({ [$required]: 'always' })
-    expect(stNever).toMatchObject({ [$required]: 'never' })
+    expect(stAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(stAlways[$required]).toBe('always')
+    expect(stNever[$required]).toBe('never')
   })
 
   it('returns required set (method)', () => {
@@ -152,10 +167,10 @@ describe('set', () => {
     const assertOpt: A.Contains<typeof stOpt, { [$required]: Never }> = 1
     assertOpt
 
-    expect(stAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(stAlways).toMatchObject({ [$required]: 'always' })
-    expect(stNever).toMatchObject({ [$required]: 'never' })
-    expect(stOpt).toMatchObject({ [$required]: 'never' })
+    expect(stAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(stAlways[$required]).toBe('always')
+    expect(stNever[$required]).toBe('never')
+    expect(stOpt[$required]).toBe('never')
   })
 
   it('returns hidden set (option)', () => {
@@ -164,7 +179,7 @@ describe('set', () => {
     const assertSet: A.Contains<typeof st, { [$hidden]: true }> = 1
     assertSet
 
-    expect(st).toMatchObject({ [$hidden]: true })
+    expect(st[$hidden]).toBe(true)
   })
 
   it('returns hidden set (method)', () => {
@@ -173,7 +188,7 @@ describe('set', () => {
     const assertSet: A.Contains<typeof st, { [$hidden]: true }> = 1
     assertSet
 
-    expect(st).toMatchObject({ [$hidden]: true })
+    expect(st[$hidden]).toBe(true)
   })
 
   it('returns key set (option)', () => {
@@ -182,7 +197,8 @@ describe('set', () => {
     const assertSet: A.Contains<typeof st, { [$key]: true; [$required]: AtLeastOnce }> = 1
     assertSet
 
-    expect(st).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
+    expect(st[$key]).toBe(true)
+    expect(st[$required]).toBe('atLeastOnce')
   })
 
   it('returns key set (method)', () => {
@@ -191,7 +207,8 @@ describe('set', () => {
     const assertSet: A.Contains<typeof st, { [$key]: true; [$required]: Always }> = 1
     assertSet
 
-    expect(st).toMatchObject({ [$key]: true, [$required]: 'always' })
+    expect(st[$key]).toBe(true)
+    expect(st[$required]).toBe('always')
   })
 
   it('returns savedAs set (option)', () => {
@@ -200,7 +217,7 @@ describe('set', () => {
     const assertSet: A.Contains<typeof st, { [$savedAs]: 'foo' }> = 1
     assertSet
 
-    expect(st).toMatchObject({ [$savedAs]: 'foo' })
+    expect(st[$savedAs]).toBe('foo')
   })
 
   it('returns savedAs set (method)', () => {
@@ -209,7 +226,7 @@ describe('set', () => {
     const assertSet: A.Contains<typeof st, { [$savedAs]: 'foo' }> = 1
     assertSet
 
-    expect(st).toMatchObject({ [$savedAs]: 'foo' })
+    expect(st[$savedAs]).toBe('foo')
   })
 
   it('returns defaulted set (option)', () => {
@@ -223,8 +240,10 @@ describe('set', () => {
     > = 1
     assertSetA
 
-    expect(stA).toMatchObject({
-      [$defaults]: { key: new Set(['foo']), put: undefined, update: undefined }
+    expect(stA[$defaults]).toStrictEqual({
+      key: new Set(['foo']),
+      put: undefined,
+      update: undefined
     })
 
     const stB = set(strElement, {
@@ -237,8 +256,10 @@ describe('set', () => {
     > = 1
     assertSetB
 
-    expect(stB).toMatchObject({
-      [$defaults]: { key: undefined, put: new Set(['bar']), update: undefined }
+    expect(stB[$defaults]).toStrictEqual({
+      key: undefined,
+      put: new Set(['bar']),
+      update: undefined
     })
 
     const stC = set(strElement, {
@@ -251,13 +272,15 @@ describe('set', () => {
     > = 1
     assertSetC
 
-    expect(stC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: new Set(['baz']) }
+    expect(stC[$defaults]).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: new Set(['baz'])
     })
   })
 
-  it('accepts ComputedDefault as default value (method)', () => {
-    const stA = set(strElement).keyDefault(new Set('foo'))
+  it('returns defaulted set (method)', () => {
+    const stA = set(strElement).keyDefault(new Set(['foo']))
 
     const assertSetA: A.Contains<
       typeof stA,
@@ -265,11 +288,13 @@ describe('set', () => {
     > = 1
     assertSetA
 
-    expect(stA).toMatchObject({
-      [$defaults]: { key: new Set('foo'), put: undefined, update: undefined }
+    expect(stA[$defaults]).toStrictEqual({
+      key: new Set(['foo']),
+      put: undefined,
+      update: undefined
     })
 
-    const stB = set(strElement).putDefault(new Set('bar'))
+    const stB = set(strElement).putDefault(new Set(['bar']))
 
     const assertSetB: A.Contains<
       typeof stB,
@@ -277,11 +302,13 @@ describe('set', () => {
     > = 1
     assertSetB
 
-    expect(stB).toMatchObject({
-      [$defaults]: { key: undefined, put: new Set('bar'), update: undefined }
+    expect(stB[$defaults]).toStrictEqual({
+      key: undefined,
+      put: new Set(['bar']),
+      update: undefined
     })
 
-    const stC = set(strElement).updateDefault(new Set('baz'))
+    const stC = set(strElement).updateDefault(new Set(['baz']))
 
     const assertSetC: A.Contains<
       typeof stC,
@@ -289,13 +316,15 @@ describe('set', () => {
     > = 1
     assertSetC
 
-    expect(stC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: new Set('baz') }
+    expect(stC[$defaults]).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: new Set(['baz'])
     })
   })
 
   it('returns set with PUT default value if it is not key (default shorthand)', () => {
-    const st = set(string()).default(new Set('foo'))
+    const st = set(string()).default(new Set(['foo']))
 
     const assertSt: A.Contains<
       typeof st,
@@ -303,13 +332,17 @@ describe('set', () => {
     > = 1
     assertSt
 
-    expect(st).toMatchObject({
-      [$defaults]: { key: undefined, put: new Set('foo'), update: undefined }
+    expect(st[$defaults]).toStrictEqual({
+      key: undefined,
+      put: new Set(['foo']),
+      update: undefined
     })
   })
 
   it('returns set with KEY default value if it is key (default shorthand)', () => {
-    const st = set(string()).key().default(new Set('foo'))
+    const st = set(string())
+      .key()
+      .default(new Set(['foo']))
 
     const assertSt: A.Contains<
       typeof st,
@@ -317,8 +350,109 @@ describe('set', () => {
     > = 1
     assertSt
 
-    expect(st).toMatchObject({
-      [$defaults]: { key: new Set('foo'), put: undefined, update: undefined }
+    expect(st[$defaults]).toStrictEqual({
+      key: new Set(['foo']),
+      put: undefined,
+      update: undefined
     })
+  })
+
+  it('returns linked set (option)', () => {
+    const sayHello = () => new Set(['hello'])
+
+    const stA = set(strElement, {
+      links: { key: sayHello, put: undefined, update: undefined }
+    })
+
+    const assertSetA: A.Contains<
+      typeof stA,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertSetA
+
+    expect(stA[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+
+    const stB = set(strElement, {
+      links: { key: undefined, put: sayHello, update: undefined }
+    })
+
+    const assertSetB: A.Contains<
+      typeof stB,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertSetB
+
+    expect(stB[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+
+    const stC = set(strElement, {
+      links: { key: undefined, put: undefined, update: sayHello }
+    })
+
+    const assertSetC: A.Contains<
+      typeof stC,
+      { [$links]: { key: undefined; put: undefined; update: unknown } }
+    > = 1
+    assertSetC
+
+    expect(stC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+  })
+
+  it('returns linked set (method)', () => {
+    const sayHello = () => new Set(['hello'])
+    const stA = set(strElement).keyLink(sayHello)
+
+    const assertSetA: A.Contains<
+      typeof stA,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertSetA
+
+    expect(stA[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+
+    const stB = set(strElement).putLink(sayHello)
+
+    const assertSetB: A.Contains<
+      typeof stB,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertSetB
+
+    expect(stB[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+
+    const stC = set(strElement).updateLink(sayHello)
+
+    const assertSetC: A.Contains<
+      typeof stC,
+      { [$links]: { key: undefined; put: undefined; update: unknown } }
+    > = 1
+    assertSetC
+
+    expect(stC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+  })
+
+  it('returns set with PUT linked value if it is not key (link shorthand)', () => {
+    const sayHello = () => new Set(['hello'])
+    const st = set(string()).link(sayHello)
+
+    const assertSt: A.Contains<
+      typeof st,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertSt
+
+    expect(st[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+  })
+
+  it('returns set with KEY linked value if it is key (link shorthand)', () => {
+    const sayHello = () => new Set(['hello'])
+    const st = set(string()).key().link(sayHello)
+
+    const assertSt: A.Contains<
+      typeof st,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertSt
+
+    expect(st[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
   })
 })

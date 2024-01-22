@@ -1,4 +1,6 @@
-import type { RequiredOption, Attribute, Extension, AttributeValue } from 'v1/schema'
+import cloneDeep from 'lodash.clonedeep'
+
+import type { RequiredOption, Attribute, Extension, AttributeValue, Item } from 'v1/schema'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isFunction } from 'v1/utils/validation'
@@ -27,11 +29,15 @@ export function* parseAttributeClonedInput<
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
-): Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>> {
+): Generator<
+  AttributeValue<INPUT_EXTENSION>,
+  AttributeValue<INPUT_EXTENSION>,
+  Item<SCHEMA_EXTENSION> | undefined
+> {
   const {
     operationName,
-    schemaInput,
     requiringOptions = defaultRequiringOptions,
+    clone = true,
     /**
      * @debt type "Maybe there's a way not to have to cast here"
      */
@@ -41,22 +47,36 @@ export function* parseAttributeClonedInput<
     >
   } = options
 
-  let defaultedValue = inputValue
+  let filledValue: AttributeValue<INPUT_EXTENSION> | undefined = inputValue
+  let shouldStillClone = clone
 
-  if (defaultedValue === undefined) {
-    const operationDefault = attribute.key
-      ? attribute.defaults.key
-      : operationName && attribute.defaults[operationName]
+  if (shouldStillClone === true && filledValue === undefined) {
+    let clonedValue: AttributeValue<INPUT_EXTENSION> | undefined = undefined
 
-    defaultedValue = isFunction(operationDefault)
-      ? (operationDefault(schemaInput) as AttributeValue<INPUT_EXTENSION> | undefined)
-      : (operationDefault as AttributeValue<INPUT_EXTENSION> | undefined)
+    if (operationName !== undefined) {
+      const operationDefault = attribute.defaults[attribute.key ? 'key' : operationName]
+      clonedValue = isFunction(operationDefault) ? operationDefault() : cloneDeep(operationDefault)
+    }
+
+    const itemInput = yield clonedValue
+
+    let linkedValue: AttributeValue<INPUT_EXTENSION> | undefined = clonedValue
+    if (operationName !== undefined && linkedValue === undefined && itemInput !== undefined) {
+      const operationLink = attribute.links[attribute.key ? 'key' : operationName]
+      linkedValue = isFunction(operationLink) ? operationLink(itemInput) : linkedValue
+    }
+    yield linkedValue
+
+    filledValue = linkedValue
+    shouldStillClone = false
   }
+
+  const nextOpts = { ...options, clone: shouldStillClone }
 
   const { isExtension, extensionParser, basicInput } = parseExtension(
     attribute,
-    defaultedValue,
-    options
+    filledValue,
+    nextOpts
   )
 
   if (isExtension) {
@@ -64,9 +84,7 @@ export function* parseAttributeClonedInput<
   }
 
   if (basicInput === undefined) {
-    const clonedValue = undefined
-    yield clonedValue
-
+    // We don't need to clone
     if (requiringOptions.has(attribute.required)) {
       throw new DynamoDBToolboxError('parsing.attributeRequired', {
         message: `Attribute ${attribute.path} is required`,
@@ -74,7 +92,7 @@ export function* parseAttributeClonedInput<
       })
     }
 
-    const parsedValue = clonedValue
+    const parsedValue = basicInput
     yield parsedValue
 
     const collapsedValue = parsedValue
@@ -83,21 +101,21 @@ export function* parseAttributeClonedInput<
 
   switch (attribute.type) {
     case 'any':
-      return yield* parseAnyAttributeClonedInput(basicInput)
+      return yield* parseAnyAttributeClonedInput(basicInput, nextOpts)
     case 'boolean':
     case 'binary':
     case 'number':
     case 'string':
-      return yield* parsePrimitiveAttributeClonedInput(attribute, basicInput, options)
+      return yield* parsePrimitiveAttributeClonedInput(attribute, basicInput, nextOpts)
     case 'set':
-      return yield* parseSetAttributeClonedInput(attribute, basicInput, options)
+      return yield* parseSetAttributeClonedInput(attribute, basicInput, nextOpts)
     case 'list':
-      return yield* parseListAttributeClonedInput(attribute, basicInput, options)
+      return yield* parseListAttributeClonedInput(attribute, basicInput, nextOpts)
     case 'map':
-      return yield* parseMapAttributeClonedInput(attribute, basicInput, options)
+      return yield* parseMapAttributeClonedInput(attribute, basicInput, nextOpts)
     case 'record':
-      return yield* parseRecordAttributeClonedInput(attribute, basicInput, options)
+      return yield* parseRecordAttributeClonedInput(attribute, basicInput, nextOpts)
     case 'anyOf':
-      return yield* parseAnyOfAttributeClonedInput(attribute, basicInput, options)
+      return yield* parseAnyOfAttributeClonedInput(attribute, basicInput, nextOpts)
   }
 }

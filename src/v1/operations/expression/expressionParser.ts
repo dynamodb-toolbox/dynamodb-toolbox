@@ -28,6 +28,11 @@ const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
     put: undefined,
     update: undefined
   },
+  links: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
   castAs: undefined
 }
 
@@ -38,6 +43,11 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  links: {
     key: undefined,
     put: undefined,
     update: undefined
@@ -106,8 +116,9 @@ export const appendAttributePath = (
 
       case 'record': {
         const keyAttribute = parentAttribute.keys
-        const keyParser = parseAttributeClonedInput(keyAttribute, childAttributeAccessor)
-        keyParser.next() // cloned
+        const keyParser = parseAttributeClonedInput(keyAttribute, childAttributeAccessor, {
+          clone: false
+        })
         keyParser.next() // parsed
         const collapsedKey = keyParser.next().value as string
 

@@ -11,7 +11,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
@@ -29,6 +30,7 @@ export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
         key: $LIST_ATTRIBUTE[$key]
         savedAs: $LIST_ATTRIBUTE[$savedAs]
         defaults: $LIST_ATTRIBUTE[$defaults]
+        links: $LIST_ATTRIBUTE[$links]
       }
     >,
     never,
@@ -85,7 +87,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.listAttribute.defaultedElements', {
-      message: `Invalid list elements at path ${path}: List elements cannot have default values`,
+      message: `Invalid list elements at path ${path}: List elements cannot have default or linked values`,
       path
     })
   }

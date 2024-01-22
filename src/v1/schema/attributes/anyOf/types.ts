@@ -1,5 +1,5 @@
 import type { AtLeastOnce } from '../constants'
-import type { $required, $hidden, $savedAs, $defaults } from '../constants/attributeOptions'
+import type { $required, $hidden, $savedAs, $defaults, $links } from '../constants/attributeOptions'
 import type { $AttributeNestedState, Attribute } from '../types'
 
 export type $AnyOfAttributeElements = $AttributeNestedState & {
@@ -11,6 +11,11 @@ export type $AnyOfAttributeElements = $AttributeNestedState & {
     put: undefined
     update: undefined
   }
+  [$links]: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
 export type AnyOfAttributeElements = Attribute & {
@@ -18,6 +23,11 @@ export type AnyOfAttributeElements = Attribute & {
   hidden: false
   savedAs: undefined
   defaults: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
+  links: {
     key: undefined
     put: undefined
     update: undefined

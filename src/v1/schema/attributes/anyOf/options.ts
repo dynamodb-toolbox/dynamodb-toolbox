@@ -33,6 +33,14 @@ export interface AnyOfAttributeOptions {
     put: undefined | unknown
     update: undefined | unknown
   }
+  /**
+   * Provide **linked** default values for attribute
+   */
+  links: {
+    key: undefined | unknown
+    put: undefined | unknown
+    update: undefined | unknown
+  }
 }
 
 export type AnyOfAttributeDefaultOptions = {
@@ -45,6 +53,11 @@ export type AnyOfAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
 export const ANY_OF_DEFAULT_OPTIONS: AnyOfAttributeDefaultOptions = {
@@ -53,6 +66,11 @@ export const ANY_OF_DEFAULT_OPTIONS: AnyOfAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   defaults: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  links: {
     key: undefined,
     put: undefined,
     update: undefined

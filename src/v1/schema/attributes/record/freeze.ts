@@ -13,7 +13,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
@@ -32,6 +33,7 @@ export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeStat
         key: $RECORD_ATTRIBUTE[$key]
         savedAs: $RECORD_ATTRIBUTE[$savedAs]
         defaults: $RECORD_ATTRIBUTE[$defaults]
+        links: $RECORD_ATTRIBUTE[$links]
       }
     >,
     never,
@@ -108,7 +110,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 
   if (hasDefinedDefault(keys)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedKeys', {
-      message: `Invalid record keys at path ${path}: Record keys cannot have default values`,
+      message: `Invalid record keys at path ${path}: Record keys cannot have default or linked values`,
       path
     })
   }
@@ -144,7 +146,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedElements', {
-      message: `Invalid record elements at path ${path}: Records elements cannot have default values`,
+      message: `Invalid record elements at path ${path}: Records elements cannot have default or linked values`,
       path
     })
   }

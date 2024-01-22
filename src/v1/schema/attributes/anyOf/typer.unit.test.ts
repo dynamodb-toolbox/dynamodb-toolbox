@@ -11,7 +11,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import type { AnyOfAttribute, $AnyOfAttributeState } from './interface'
@@ -92,6 +93,21 @@ describe('anyOf', () => {
     )
   })
 
+  it('rejects elements with linked values', () => {
+    const invalidAnyOf = anyOf(
+      str,
+      // @ts-expect-error
+      str.putLink(() => 'foo')
+    )
+
+    const invalidCall = () => invalidAnyOf.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
+    )
+  })
+
   it('returns default anyOf', () => {
     const anyOfAttr = anyOf(str)
 
@@ -109,6 +125,11 @@ describe('anyOf', () => {
           put: undefined
           update: undefined
         }
+        [$links]: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertAnyOf
@@ -120,39 +141,25 @@ describe('anyOf', () => {
     const assertFrozen: A.Extends<typeof frozenList, AnyOfAttribute> = 1
     assertFrozen
 
-    expect(anyOfAttr).toMatchObject({
-      [$type]: 'anyOf',
-      [$elements]: [str],
-      [$required]: 'atLeastOnce',
-      [$key]: false,
-      [$savedAs]: undefined,
-      [$hidden]: false,
-      [$defaults]: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      }
+    expect(anyOfAttr[$type]).toBe('anyOf')
+    expect(anyOfAttr[$elements]).toStrictEqual([str])
+    expect(anyOfAttr[$required]).toBe('atLeastOnce')
+    expect(anyOfAttr[$key]).toBe(false)
+    expect(anyOfAttr[$savedAs]).toBe(undefined)
+    expect(anyOfAttr[$hidden]).toBe(false)
+    expect(anyOfAttr[$defaults]).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: undefined
+    })
+    expect(anyOfAttr[$links]).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: undefined
     })
   })
 
   // TODO: Reimplement options as potential first argument
-  // it('returns required anyOf (option)', () => {
-  //   const anyOfAtLeastOnce = anyOf({ required: 'atLeastOnce' }, str)
-  //   const anyOfAlways = anyOf({ required: 'always' }, str)
-  //   const anyOfNever = anyOf({ required: 'never' }, str)
-
-  //   const assertAtLeastOnce: A.Contains<typeof anyOfAtLeastOnce, { [$required]: AtLeastOnce }> = 1
-  //   assertAtLeastOnce
-  //   const assertAlways: A.Contains<typeof anyOfAlways, { [$required]: Always }> = 1
-  //   assertAlways
-  //   const assertNever: A.Contains<typeof anyOfNever, { [$required]: Never }> = 1
-  //   assertNever
-
-  //   expect(anyOfAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-  //   expect(anyOfAlways).toMatchObject({ [$required]: 'always' })
-  //   expect(anyOfNever).toMatchObject({ [$required]: 'never' })
-  // })
-
   it('returns required anyOf (method)', () => {
     const anyOfAtLeastOnce = anyOf(str).required()
     const anyOfAlways = anyOf(str).required('always')
@@ -168,87 +175,43 @@ describe('anyOf', () => {
     const assertOpt: A.Contains<typeof anyOfOpt, { [$required]: Never }> = 1
     assertOpt
 
-    expect(anyOfAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(anyOfAlways).toMatchObject({ [$required]: 'always' })
-    expect(anyOfNever).toMatchObject({ [$required]: 'never' })
+    expect(anyOfAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(anyOfAlways[$required]).toBe('always')
+    expect(anyOfNever[$required]).toBe('never')
   })
 
   // TODO: Reimplement options as potential first argument
-  // it('returns hidden anyOf (option)', () => {
-  //   const anyOfAttr = anyOf({ hidden: true }, str)
-
-  //   const assertAnyOf: A.Contains<typeof anyOfAttr, { [$hidden]: true }> = 1
-  //   assertAnyOf
-
-  //   expect(anyOfAttr).toMatchObject({ [$hidden]: true })
-  // })
-
   it('returns hidden anyOf (method)', () => {
     const anyOfAttr = anyOf(str).hidden()
 
     const assertAnyOf: A.Contains<typeof anyOfAttr, { [$hidden]: true }> = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({ [$hidden]: true })
+    expect(anyOfAttr[$hidden]).toBe(true)
   })
 
   // TODO: Reimplement options as potential first argument
-  // it('returns key anyOf (option)', () => {
-  //   const anyOfAttr = anyOf({ key: true }, str)
-
-  //   const assertAnyOf: A.Contains<typeof anyOfAttr, { [$key]: true; [$required]: AtLeastOnce }> = 1
-  //   assertAnyOf
-
-  //   expect(anyOfAttr).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
-  // })
-
   it('returns key anyOf (method)', () => {
     const anyOfAttr = anyOf(str).key()
 
     const assertAnyOf: A.Contains<typeof anyOfAttr, { [$key]: true; [$required]: Always }> = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({ [$key]: true, [$required]: 'always' })
+    expect(anyOfAttr[$key]).toBe(true)
+    expect(anyOfAttr[$required]).toBe('always')
   })
 
   // TODO: Reimplement options as potential first argument
-  // it('returns savedAs anyOf (option)', () => {
-  //   const anyOfAttr = anyOf({ savedAs: 'foo' }, str)
-
-  //   const assertAnyOf: A.Contains<typeof anyOfAttr, { [$savedAs]: 'foo' }> = 1
-  //   assertAnyOf
-
-  //   expect(anyOfAttr).toMatchObject({ [$savedAs]: 'foo' })
-  // })
-
   it('returns savedAs anyOf (method)', () => {
     const anyOfAttr = anyOf(str).savedAs('foo')
 
     const assertAnyOf: A.Contains<typeof anyOfAttr, { [$savedAs]: 'foo' }> = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({ [$savedAs]: 'foo' })
+    expect(anyOfAttr[$savedAs]).toBe('foo')
   })
 
   // TODO: Reimplement options as potential first argument
-  // it('returns defaulted anyOf (option)', () => {
-  //   const anyOfAttr = anyOf(
-  //     // TOIMPROVE: Add type constraints here
-  //     { defaults: { key: undefined, put: 'foo', update: undefined } },
-  //     str
-  //   )
-
-  //   const assertAnyOf: A.Contains<
-  //     typeof anyOfAttr,
-  //     { [$defaults]: { key: undefined; put: unknown; update: undefined } }
-  //   > = 1
-  //   assertAnyOf
-
-  //   expect(anyOfAttr).toMatchObject({
-  //     [$defaults]: { key: undefined, put: 'foo', update: undefined }
-  //   })
-  // })
-
   it('returns defaulted anyOf (method)', () => {
     const anyOfAttr = anyOf(str).updateDefault('bar')
 
@@ -258,9 +221,7 @@ describe('anyOf', () => {
     > = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: 'bar' }
-    })
+    expect(anyOfAttr[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: 'bar' })
   })
 
   it('returns anyOf with PUT default value if it is not key (default shorthand)', () => {
@@ -272,9 +233,7 @@ describe('anyOf', () => {
     > = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({
-      [$defaults]: { key: undefined, put: 'foo', update: undefined }
-    })
+    expect(anyOfAttr[$defaults]).toStrictEqual({ key: undefined, put: 'foo', update: undefined })
   })
 
   it('returns anyOf with KEY default value if it is key (default shorthand)', () => {
@@ -286,9 +245,47 @@ describe('anyOf', () => {
     > = 1
     assertAnyOf
 
-    expect(anyOfAttr).toMatchObject({
-      [$defaults]: { key: 'foo', put: undefined, update: undefined }
-    })
+    expect(anyOfAttr[$defaults]).toStrictEqual({ key: 'foo', put: undefined, update: undefined })
+  })
+
+  // TODO: Reimplement options as potential first argument
+  it('returns linked anyOf (method)', () => {
+    const sayHello = () => 'hello'
+    const anyOfAttr = anyOf(str).updateLink(sayHello)
+
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$links]: { key: undefined; put: undefined; update: unknown } }
+    > = 1
+    assertAnyOf
+
+    expect(anyOfAttr[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+  })
+
+  it('returns anyOf with PUT linked value if it is not key (link shorthand)', () => {
+    const sayHello = () => 'hello'
+    const anyOfAttr = anyOf(str).link(sayHello)
+
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertAnyOf
+
+    expect(anyOfAttr[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+  })
+
+  it('returns anyOf with KEY linked value if it is key (link shorthand)', () => {
+    const sayHello = () => 'hello'
+    const anyOfAttr = anyOf(str).key().link(sayHello)
+
+    const assertAnyOf: A.Contains<
+      typeof anyOfAttr,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertAnyOf
+
+    expect(anyOfAttr[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
   })
 
   it('anyOf of anyOfs', () => {
@@ -312,19 +309,5 @@ describe('anyOf', () => {
       }
     > = 1
     assertAnyOf
-
-    expect(anyOfAttr).toMatchObject({
-      [$type]: 'anyOf',
-      [$elements]: [nestedAnyOff],
-      [$required]: 'atLeastOnce',
-      [$hidden]: false,
-      [$key]: false,
-      [$savedAs]: undefined,
-      [$defaults]: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      }
-    })
   })
 })

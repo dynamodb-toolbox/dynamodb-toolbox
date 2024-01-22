@@ -12,7 +12,8 @@ import {
   $hidden,
   $key,
   $savedAs,
-  $defaults
+  $defaults,
+  $links
 } from '../constants/attributeOptions'
 
 import { record } from './typer'
@@ -113,6 +114,21 @@ describe('record', () => {
     )
   })
 
+  it('rejects keys with linked values', () => {
+    const invalidRecord = record(
+      // @ts-expect-error
+      str.putLink(() => 'foo'),
+      str
+    )
+
+    const invalidCall = () => invalidRecord.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
+    )
+  })
+
   it('rejects non-required elements', () => {
     const invalidRecord = record(
       str,
@@ -188,6 +204,21 @@ describe('record', () => {
     )
   })
 
+  it('rejects elements with linked values', () => {
+    const invalidRecord = record(
+      str,
+      // @ts-expect-error
+      str.putLink(() => 'foo')
+    )
+
+    const invalidCall = () => invalidRecord.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
+    )
+  })
+
   it('returns default record', () => {
     const rec = record(fooBar, str)
 
@@ -206,6 +237,11 @@ describe('record', () => {
           put: undefined
           update: undefined
         }
+        [$links]: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertRec
@@ -217,20 +253,15 @@ describe('record', () => {
     const assertFrozen: A.Extends<typeof frozenRecord, RecordAttribute> = 1
     assertFrozen
 
-    expect(rec).toMatchObject({
-      [$type]: 'record',
-      [$keys]: str,
-      [$elements]: str,
-      [$required]: 'atLeastOnce',
-      [$key]: false,
-      [$savedAs]: undefined,
-      [$hidden]: false,
-      [$defaults]: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      }
-    })
+    expect(rec[$type]).toBe('record')
+    expect(rec[$keys]).toBe(fooBar)
+    expect(rec[$elements]).toBe(str)
+    expect(rec[$required]).toBe('atLeastOnce')
+    expect(rec[$key]).toBe(false)
+    expect(rec[$savedAs]).toBe(undefined)
+    expect(rec[$hidden]).toBe(false)
+    expect(rec[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
+    expect(rec[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
   })
 
   it('returns required record (option)', () => {
@@ -245,9 +276,9 @@ describe('record', () => {
     const assertNever: A.Contains<typeof recNever, { [$required]: Never }> = 1
     assertNever
 
-    expect(recAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(recAlways).toMatchObject({ [$required]: 'always' })
-    expect(recNever).toMatchObject({ [$required]: 'never' })
+    expect(recAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(recAlways[$required]).toBe('always')
+    expect(recNever[$required]).toBe('never')
   })
 
   it('returns required record (method)', () => {
@@ -265,9 +296,9 @@ describe('record', () => {
     const assertOpt: A.Contains<typeof recOpt, { [$required]: Never }> = 1
     assertOpt
 
-    expect(recAtLeastOnce).toMatchObject({ [$required]: 'atLeastOnce' })
-    expect(recAlways).toMatchObject({ [$required]: 'always' })
-    expect(recNever).toMatchObject({ [$required]: 'never' })
+    expect(recAtLeastOnce[$required]).toBe('atLeastOnce')
+    expect(recAlways[$required]).toBe('always')
+    expect(recNever[$required]).toBe('never')
   })
 
   it('returns hidden record (option)', () => {
@@ -276,7 +307,7 @@ describe('record', () => {
     const assertRec: A.Contains<typeof rec, { [$hidden]: true }> = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$hidden]: true })
+    expect(rec[$hidden]).toBe(true)
   })
 
   it('returns hidden record (method)', () => {
@@ -285,7 +316,7 @@ describe('record', () => {
     const assertRec: A.Contains<typeof rec, { [$hidden]: true }> = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$hidden]: true })
+    expect(rec[$hidden]).toBe(true)
   })
 
   it('returns key record (option)', () => {
@@ -294,7 +325,8 @@ describe('record', () => {
     const assertRec: A.Contains<typeof rec, { [$key]: true; [$required]: AtLeastOnce }> = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$key]: true, [$required]: 'atLeastOnce' })
+    expect(rec[$key]).toBe(true)
+    expect(rec[$required]).toBe('atLeastOnce')
   })
 
   it('returns key record (method)', () => {
@@ -303,7 +335,8 @@ describe('record', () => {
     const assertRec: A.Contains<typeof rec, { [$key]: true; [$required]: Always }> = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$key]: true, [$required]: 'always' })
+    expect(rec[$key]).toBe(true)
+    expect(rec[$required]).toBe('always')
   })
 
   it('returns savedAs record (option)', () => {
@@ -312,7 +345,7 @@ describe('record', () => {
     const assertRec: A.Contains<typeof rec, { [$savedAs]: 'foo' }> = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$savedAs]: 'foo' })
+    expect(rec[$savedAs]).toBe('foo')
   })
 
   it('returns savedAs record (method)', () => {
@@ -321,92 +354,205 @@ describe('record', () => {
     const assertRec: A.Contains<typeof rec, { [$savedAs]: 'foo' }> = 1
     assertRec
 
-    expect(rec).toMatchObject({ [$savedAs]: 'foo' })
+    expect(rec[$savedAs]).toBe('foo')
   })
 
   it('returns defaulted record (option)', () => {
-    const stA = record(fooBar, str, {
+    const rcA = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
       defaults: { key: { foo: 'foo' }, put: undefined, update: undefined }
     })
 
-    const assertSetA: A.Contains<
-      typeof stA,
+    const assertRecA: A.Contains<
+      typeof rcA,
       { [$defaults]: { key: unknown; put: undefined; update: undefined } }
     > = 1
-    assertSetA
+    assertRecA
 
-    expect(stA).toMatchObject({
-      [$defaults]: { key: { foo: 'foo' }, put: undefined, update: undefined }
-    })
+    expect(rcA[$defaults]).toStrictEqual({ key: { foo: 'foo' }, put: undefined, update: undefined })
 
-    const stB = record(fooBar, str, {
+    const rcB = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
       defaults: { key: undefined, put: { bar: 'bar' }, update: undefined }
     })
 
-    const assertSetB: A.Contains<
-      typeof stB,
+    const assertRecB: A.Contains<
+      typeof rcB,
       { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
-    assertSetB
+    assertRecB
 
-    expect(stB).toMatchObject({
-      [$defaults]: { key: undefined, put: { bar: 'bar' }, update: undefined }
-    })
+    expect(rcB[$defaults]).toStrictEqual({ key: undefined, put: { bar: 'bar' }, update: undefined })
 
-    const stC = record(fooBar, str, {
+    const rcC = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
       defaults: { key: undefined, put: undefined, update: { foo: 'bar' } }
     })
 
-    const assertSetC: A.Contains<
-      typeof stC,
+    const assertRecC: A.Contains<
+      typeof rcC,
       { [$defaults]: { key: undefined; put: undefined; update: unknown } }
     > = 1
-    assertSetC
+    assertRecC
 
-    expect(stC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: { foo: 'bar' } }
-    })
+    expect(rcC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: { foo: 'bar' } })
   })
 
   it('returns defaulted record (method)', () => {
-    const stA = record(fooBar, str).key().keyDefault({ foo: 'foo' })
+    const rcA = record(fooBar, str).key().keyDefault({ foo: 'foo' })
 
-    const assertSetA: A.Contains<
-      typeof stA,
+    const assertRecA: A.Contains<
+      typeof rcA,
       { [$defaults]: { key: unknown; put: undefined; update: undefined } }
     > = 1
-    assertSetA
+    assertRecA
 
-    expect(stA).toMatchObject({
-      [$defaults]: { key: { foo: 'foo' }, put: undefined, update: undefined }
-    })
+    expect(rcA[$defaults]).toStrictEqual({ key: { foo: 'foo' }, put: undefined, update: undefined })
 
-    const stB = record(fooBar, str).putDefault({ bar: 'bar' })
+    const rcB = record(fooBar, str).putDefault({ bar: 'bar' })
 
-    const assertSetB: A.Contains<
-      typeof stB,
+    const assertRecB: A.Contains<
+      typeof rcB,
       { [$defaults]: { key: undefined; put: unknown; update: undefined } }
     > = 1
-    assertSetB
+    assertRecB
 
-    expect(stB).toMatchObject({
-      [$defaults]: { key: undefined, put: { bar: 'bar' }, update: undefined }
-    })
+    expect(rcB[$defaults]).toStrictEqual({ key: undefined, put: { bar: 'bar' }, update: undefined })
 
-    const stC = record(fooBar, str).updateDefault({ foo: 'bar' })
+    const rcC = record(fooBar, str).updateDefault({ foo: 'bar' })
 
-    const assertSetC: A.Contains<
-      typeof stC,
+    const assertRecC: A.Contains<
+      typeof rcC,
       { [$defaults]: { key: undefined; put: undefined; update: unknown } }
     > = 1
-    assertSetC
+    assertRecC
 
-    expect(stC).toMatchObject({
-      [$defaults]: { key: undefined, put: undefined, update: { foo: 'bar' } }
+    expect(rcC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: { foo: 'bar' } })
+  })
+
+  it('returns record with PUT default value if it is not key (default shorthand)', () => {
+    const rec = record(fooBar, str).default({ foo: 'foo' })
+
+    const assertRec: A.Contains<
+      typeof rec,
+      { [$defaults]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertRec
+
+    expect(rec[$defaults]).toStrictEqual({ key: undefined, put: { foo: 'foo' }, update: undefined })
+  })
+
+  it('returns record with KEY default value if it is key (default shorthand)', () => {
+    const rec = record(fooBar, str).key().default({ foo: 'foo' })
+
+    const assertRec: A.Contains<
+      typeof rec,
+      { [$defaults]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertRec
+
+    expect(rec[$defaults]).toStrictEqual({ key: { foo: 'foo' }, put: undefined, update: undefined })
+  })
+
+  it('returns linked record (option)', () => {
+    const sayHello = () => ({ hello: 'world' })
+    const rcA = record(fooBar, str, {
+      // TOIMPROVE: Reintroduce type constraints here
+      links: { key: sayHello, put: undefined, update: undefined }
     })
+
+    const assertRecA: A.Contains<
+      typeof rcA,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertRecA
+
+    expect(rcA[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+
+    const rcB = record(fooBar, str, {
+      // TOIMPROVE: Reintroduce type constraints here
+      links: { key: undefined, put: sayHello, update: undefined }
+    })
+
+    const assertRecB: A.Contains<
+      typeof rcB,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertRecB
+
+    expect(rcB[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+
+    const rcC = record(fooBar, str, {
+      // TOIMPROVE: Reintroduce type constraints here
+      links: { key: undefined, put: undefined, update: sayHello }
+    })
+
+    const assertRecC: A.Contains<
+      typeof rcC,
+      { [$links]: { key: undefined; put: undefined; update: unknown } }
+    > = 1
+    assertRecC
+
+    expect(rcC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+  })
+
+  it('returns linked record (method)', () => {
+    const sayHello = () => ({ foo: 'hello' })
+    const rcA = record(fooBar, str).key().keyLink(sayHello)
+
+    const assertRecA: A.Contains<
+      typeof rcA,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertRecA
+
+    expect(rcA[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+
+    const rcB = record(fooBar, str).putLink(sayHello)
+
+    const assertRecB: A.Contains<
+      typeof rcB,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertRecB
+
+    expect(rcB[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+
+    const rcC = record(fooBar, str).updateLink(sayHello)
+
+    const assertRecC: A.Contains<
+      typeof rcC,
+      { [$links]: { key: undefined; put: undefined; update: unknown } }
+    > = 1
+    assertRecC
+
+    expect(rcC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+  })
+
+  it('returns record with PUT linked value if it is not key (link shorthand)', () => {
+    const sayHello = () => ({ foo: 'hello' })
+    const rec = record(fooBar, str).link(sayHello)
+
+    const assertRec: A.Contains<
+      typeof rec,
+      { [$links]: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertRec
+
+    expect(rec[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+  })
+
+  it('returns record with KEY linked value if it is key (link shorthand)', () => {
+    const sayHello = () => ({ foo: 'hello' })
+    const rec = record(fooBar, str).key().link(sayHello)
+
+    const assertRec: A.Contains<
+      typeof rec,
+      { [$links]: { key: unknown; put: undefined; update: undefined } }
+    > = 1
+    assertRec
+
+    expect(rec[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
   })
 
   it('record of records', () => {
@@ -443,33 +589,5 @@ describe('record', () => {
       }
     > = 1
     assertRec
-
-    expect(rec).toMatchObject({
-      [$type]: 'record',
-      [$keys]: fooBar,
-      [$elements]: {
-        [$type]: 'record',
-        [$keys]: fooBar,
-        [$elements]: str,
-        [$required]: 'atLeastOnce',
-        [$hidden]: false,
-        [$key]: false,
-        [$savedAs]: undefined,
-        [$defaults]: {
-          key: undefined,
-          put: undefined,
-          update: undefined
-        }
-      },
-      [$required]: 'atLeastOnce',
-      [$hidden]: false,
-      [$key]: false,
-      [$savedAs]: undefined,
-      [$defaults]: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      }
-    })
   })
 })
