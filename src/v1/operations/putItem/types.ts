@@ -27,8 +27,16 @@ export type MustBeDefined<
   REQUIRED_DEFAULTS extends boolean = false
 > = REQUIRED_DEFAULTS extends false
   ? ATTRIBUTE extends { required: AtLeastOnce | Always } & (
-      | { key: true; defaults: { key: undefined } }
-      | { key: false; defaults: { put: undefined } }
+      | {
+          key: true
+          defaults: { key: undefined }
+          links: { key: undefined }
+        }
+      | {
+          key: false
+          defaults: { put: undefined }
+          links: { put: undefined }
+        }
     )
     ? true
     : false

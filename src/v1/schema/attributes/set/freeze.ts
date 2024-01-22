@@ -87,7 +87,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.setAttribute.defaultedElements', {
-      message: `Invalid set elements at path ${path}: Set elements cannot have default values`,
+      message: `Invalid set elements at path ${path}: Set elements cannot have default or linked values`,
       path
     })
   }

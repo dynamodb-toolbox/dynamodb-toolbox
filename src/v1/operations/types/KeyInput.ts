@@ -25,7 +25,11 @@ type MustBeDefined<
   ATTRIBUTE extends Attribute,
   REQUIRED_DEFAULTS extends boolean = false
 > = REQUIRED_DEFAULTS extends false
-  ? ATTRIBUTE extends { required: Always; defaults: { key: undefined } }
+  ? ATTRIBUTE extends {
+      required: Always
+      defaults: { key: undefined }
+      links: { key: undefined }
+    }
     ? true
     : false
   : ATTRIBUTE extends { required: Always }

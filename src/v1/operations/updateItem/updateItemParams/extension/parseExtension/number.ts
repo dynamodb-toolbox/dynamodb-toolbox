@@ -23,6 +23,8 @@ export const parseNumberExtension = (
   inputValue: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
+  const { clone = true } = options
+
   if (hasSumOperation(inputValue)) {
     return {
       isExtension: true,
@@ -46,12 +48,27 @@ export const parseNumberExtension = (
           }
         }
 
-        const clonedValue = {
-          [$SUM]: isInputValueArray
-            ? parsers.map(parser => parser.next().value)
-            : cloneDeep(inputValue[$SUM])
+        if (clone) {
+          if (isInputValueArray) {
+            const clonedValue = {
+              [$SUM]: parsers.map(parser => parser.next().value)
+            }
+            yield clonedValue
+
+            const linkedValue = {
+              [$SUM]: parsers.map(parser => parser.next().value)
+            }
+            yield linkedValue
+          } else {
+            const inputClone = { [$SUM]: cloneDeep(inputValue[$SUM]) }
+
+            const clonedValue = inputClone
+            yield clonedValue
+
+            const linkedValue = clonedValue
+            yield linkedValue
+          }
         }
-        yield clonedValue
 
         if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(inputValue[$SUM].length)) {
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -83,24 +100,39 @@ export const parseNumberExtension = (
 
         const isInputValueArray = isArray(inputValue[$SUBTRACT])
         if (isInputValueArray) {
-          for (const sumElement of inputValue[$SUBTRACT]) {
+          for (const subtractElement of inputValue[$SUBTRACT]) {
             parsers.push(
               parseAttributeClonedInput<ReferenceExtension, UpdateItemInputExtension>(
                 attribute,
-                sumElement,
-                // References are allowed in sums
+                subtractElement,
+                // References are allowed in subtractions
                 { ...options, parseExtension: parseReferenceExtension }
               )
             )
           }
         }
 
-        const clonedValue = {
-          [$SUBTRACT]: isInputValueArray
-            ? parsers.map(parser => parser.next().value)
-            : cloneDeep(inputValue[$SUBTRACT])
+        if (clone) {
+          if (isInputValueArray) {
+            const clonedValue = {
+              [$SUBTRACT]: parsers.map(parser => parser.next().value)
+            }
+            yield clonedValue
+
+            const linkedValue = {
+              [$SUBTRACT]: parsers.map(parser => parser.next().value)
+            }
+            yield linkedValue
+          } else {
+            const inputClone = { [$SUBTRACT]: cloneDeep(inputValue[$SUBTRACT]) }
+
+            const clonedValue = inputClone
+            yield clonedValue
+
+            const linkedValue = clonedValue
+            yield linkedValue
+          }
         }
-        yield clonedValue
 
         if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(inputValue[$SUBTRACT].length)) {
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -132,8 +164,13 @@ export const parseNumberExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const clonedValue = { [$ADD]: parser.next().value }
-        yield clonedValue
+        if (clone) {
+          const clonedValue = { [$ADD]: parser.next().value }
+          yield clonedValue
+
+          const linkedValue = { [$ADD]: parser.next().value }
+          yield linkedValue
+        }
 
         const parsedValue = { [$ADD]: parser.next().value }
         yield parsedValue

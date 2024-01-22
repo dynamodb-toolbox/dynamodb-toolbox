@@ -110,7 +110,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 
   if (hasDefinedDefault(keys)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedKeys', {
-      message: `Invalid record keys at path ${path}: Record keys cannot have default values`,
+      message: `Invalid record keys at path ${path}: Record keys cannot have default or linked values`,
       path
     })
   }
@@ -146,7 +146,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedElements', {
-      message: `Invalid record elements at path ${path}: Records elements cannot have default values`,
+      message: `Invalid record elements at path ${path}: Records elements cannot have default or linked values`,
       path
     })
   }

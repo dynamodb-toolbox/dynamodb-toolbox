@@ -93,6 +93,21 @@ describe('anyOf', () => {
     )
   })
 
+  it('rejects elements with linked values', () => {
+    const invalidAnyOf = anyOf(
+      str,
+      // @ts-expect-error
+      str.putLink(() => 'foo')
+    )
+
+    const invalidCall = () => invalidAnyOf.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
+    )
+  })
+
   it('returns default anyOf', () => {
     const anyOfAttr = anyOf(str)
 

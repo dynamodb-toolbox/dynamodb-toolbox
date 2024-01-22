@@ -18,12 +18,21 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   input,
   options
 ) => {
+  const { clone = true } = options
+  // We don't want to fill any default or link while parsing update extension
+  const nextOpts = { ...options, operationName: undefined }
+
   if (input === $REMOVE) {
     return {
       isExtension: true,
       *extensionParser() {
-        const clonedValue: typeof $REMOVE = input
-        yield clonedValue
+        if (clone) {
+          const clonedValue: typeof $REMOVE = $REMOVE
+          yield clonedValue
+
+          const linkedValue: typeof $REMOVE = $REMOVE
+          yield linkedValue
+        }
 
         if (attribute.required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {
@@ -32,10 +41,10 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
           })
         }
 
-        const parsedValue: typeof $REMOVE = clonedValue
+        const parsedValue: typeof $REMOVE = $REMOVE
         yield parsedValue
 
-        const collapsedValue: typeof $REMOVE = parsedValue
+        const collapsedValue: typeof $REMOVE = $REMOVE
         return collapsedValue
       }
     }
@@ -46,7 +55,7 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
    */
   if (hasGetOperation(input)) {
     return parseReferenceExtension(attribute, input, {
-      ...options,
+      ...nextOpts,
       // Can be a reference
       parseExtension: parseReferenceExtension
     })
@@ -57,15 +66,15 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
       /**
        * @debt type "fix this cast"
        */
-      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input, options)
+      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input, nextOpts)
     case 'set':
-      return parseSetExtension(attribute, input, options)
+      return parseSetExtension(attribute, input, nextOpts)
     case 'list':
-      return parseListExtension(attribute, input, options)
+      return parseListExtension(attribute, input, nextOpts)
     case 'map':
-      return parseMapExtension(attribute, input, options)
+      return parseMapExtension(attribute, input, nextOpts)
     case 'record':
-      return parseRecordExtension(attribute, input, options)
+      return parseRecordExtension(attribute, input, nextOpts)
     default:
       return { isExtension: false, basicInput: input }
   }
