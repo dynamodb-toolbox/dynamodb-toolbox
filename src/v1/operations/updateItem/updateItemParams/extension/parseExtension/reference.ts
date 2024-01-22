@@ -1,4 +1,6 @@
-import type { Attribute, AttributeValue } from 'v1/schema'
+import cloneDeep from 'lodash.clonedeep'
+
+import type { AttributeValue } from 'v1/schema'
 import type { ReferenceExtension } from 'v1/operations/types'
 import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
 import { isArray } from 'v1/utils/validation/isArray'
@@ -8,13 +10,14 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $GET } from 'v1/operations/updateItem/constants'
 import { hasGetOperation } from 'v1/operations/updateItem/utils'
-import cloneDeep from 'lodash.clonedeep'
 import { isString } from 'v1/utils/validation'
 
 export const parseReferenceExtension: ExtensionParser<
   ReferenceExtension,
   UpdateItemInputExtension
 > = (attribute, inputValue, options) => {
+  const { clone = true } = options
+
   if (hasGetOperation(inputValue)) {
     return {
       isExtension: true,
@@ -24,32 +27,57 @@ export const parseReferenceExtension: ExtensionParser<
         let fallbackParser:
           | Generator<AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>>
           | undefined = undefined
+        let rest: AttributeValue<ReferenceExtension>[] = []
 
         if (isInputValueArray) {
-          const [_reference, fallback, ...rest] = inputValue[$GET]
+          const [_reference, fallback, ..._rest] = inputValue[$GET]
           reference = _reference
 
           if (fallback !== undefined) {
             fallbackParser = parseAttributeClonedInput(attribute, fallback, options)
           }
 
-          const clonedValue = {
-            [$GET]: [
-              cloneDeep(reference),
-              ...[
-                fallbackParser !== undefined
-                  ? [fallbackParser.next().value]
-                  : rest.length === 0
-                  ? []
-                  : [undefined]
-              ],
-              ...cloneDeep(rest)
-            ]
+          rest = _rest
+        }
+
+        if (clone) {
+          if (isInputValueArray) {
+            const clonedValue = {
+              [$GET]: [
+                cloneDeep(reference),
+                ...[
+                  fallbackParser !== undefined
+                    ? [fallbackParser.next().value]
+                    : rest.length === 0
+                    ? []
+                    : [undefined]
+                ],
+                ...cloneDeep(rest)
+              ]
+            }
+            yield clonedValue
+
+            const linkedValue = {
+              [$GET]: [
+                cloneDeep(reference),
+                ...[
+                  fallbackParser !== undefined
+                    ? [fallbackParser.next().value]
+                    : rest.length === 0
+                    ? []
+                    : [undefined]
+                ],
+                ...cloneDeep(rest)
+              ]
+            }
+            yield linkedValue
+          } else {
+            const clonedValue = { [$GET]: cloneDeep(inputValue[$GET]) }
+            yield clonedValue
+
+            const linkedValue = clonedValue
+            yield linkedValue
           }
-          yield clonedValue
-        } else {
-          const clonedValue = { [$GET]: cloneDeep(inputValue[$GET]) }
-          yield clonedValue
         }
 
         if (!isInputValueArray) {

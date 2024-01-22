@@ -20,6 +20,7 @@ export const parseEntityUpdateCommandInput: EntityUpdateCommandInputParser = (en
   })
 
   parser.next() // cloned
+  parser.next() // linked
 
   return parser
 }

@@ -22,7 +22,8 @@ export type ExtensionParser<
       isExtension: true
       extensionParser: () => Generator<
         AttributeValue<INPUT_EXTENSION>,
-        AttributeValue<INPUT_EXTENSION>
+        AttributeValue<INPUT_EXTENSION>,
+        Item<SCHEMA_EXTENSION> | undefined
       >
       basicInput?: never
     }
@@ -42,11 +43,12 @@ export type ParsingOptions<
   INPUT_EXTENSION extends Extension,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 > = {
+  // TODO: Merge clone & operationName to a boolean or string "fill" option
+  clone?: boolean
   operationName?: OperationName
   requiringOptions?: Set<RequiredOption>
   filters?: AttributeFilters
   transform?: boolean
-  schemaInput?: Item<SCHEMA_EXTENSION>
 } & If<
   HasExtension<INPUT_EXTENSION>,
   { parseExtension: ExtensionParser<INPUT_EXTENSION, SCHEMA_EXTENSION> },

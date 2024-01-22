@@ -109,8 +109,16 @@ type MustBeDefined<
   REQUIRED_DEFAULTS extends boolean = false
 > = REQUIRED_DEFAULTS extends false
   ? ATTRIBUTE extends { required: Always } & (
-      | { key: true; defaults: { key: undefined } }
-      | { key: false; defaults: { update: undefined } }
+      | {
+          key: true
+          defaults: { key: undefined }
+          links: { key: undefined }
+        }
+      | {
+          key: false
+          defaults: { update: undefined }
+          links: { update: undefined }
+        }
     )
     ? true
     : false

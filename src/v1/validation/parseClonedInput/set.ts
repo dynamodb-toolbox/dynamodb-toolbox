@@ -5,7 +5,8 @@ import type {
   AttributeValue,
   AttributeBasicValue,
   SetAttributeBasicValue,
-  Extension
+  Extension,
+  Item
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { isSet } from 'v1/utils/validation/isSet'
@@ -26,7 +27,13 @@ export function* parseSetAttributeClonedInput<
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
-): Generator<SetAttributeBasicValue<INPUT_EXTENSION>, SetAttributeBasicValue<INPUT_EXTENSION>> {
+): Generator<
+  SetAttributeBasicValue<INPUT_EXTENSION>,
+  SetAttributeBasicValue<INPUT_EXTENSION>,
+  Item<SCHEMA_EXTENSION> | undefined
+> {
+  const { clone = true } = options
+
   const parsers: Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>[] = []
 
   const isInputValueSet = isSet(inputValue)
@@ -36,10 +43,23 @@ export function* parseSetAttributeClonedInput<
     }
   }
 
-  const clonedValue = isInputValueSet
-    ? new Set(parsers.map(parser => parser.next().value))
-    : cloneDeep(inputValue)
-  yield clonedValue as SetAttributeBasicValue<INPUT_EXTENSION>
+  if (clone) {
+    if (isInputValueSet) {
+      const clonedValue = new Set(parsers.map(parser => parser.next().value))
+      yield clonedValue as SetAttributeBasicValue<INPUT_EXTENSION>
+
+      const linkedValue = new Set(parsers.map(parser => parser.next().value))
+      yield linkedValue
+    } else {
+      const clonedValue = (cloneDeep(
+        inputValue
+      ) as unknown) as SetAttributeBasicValue<INPUT_EXTENSION>
+      yield clonedValue
+
+      const linkedValue = clonedValue
+      yield linkedValue
+    }
+  }
 
   if (!isInputValueSet) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {

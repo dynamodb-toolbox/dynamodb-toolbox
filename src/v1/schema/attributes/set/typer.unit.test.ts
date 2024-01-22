@@ -78,6 +78,20 @@ describe('set', () => {
     )
   })
 
+  it('rejects elements with linked values', () => {
+    const invalidSet = set(
+      // @ts-expect-error
+      strElement.link(() => 'foo')
+    )
+
+    const invalidCall = () => invalidSet.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
+    )
+  })
+
   it('returns default set', () => {
     const st = set(strElement)
 

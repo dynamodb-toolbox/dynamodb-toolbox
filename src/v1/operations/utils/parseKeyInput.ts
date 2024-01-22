@@ -14,6 +14,7 @@ export const parseEntityKeyInput: EntityKeyInputParser = (entity, input) => {
   })
 
   parser.next() // cloned
+  parser.next() // linked
 
   return parser
 }

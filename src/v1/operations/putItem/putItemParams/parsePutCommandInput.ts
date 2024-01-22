@@ -13,6 +13,7 @@ export const parseEntityPutCommandInput: EntityPutCommandInputParser = (entity, 
   })
 
   parser.next() // cloned
+  parser.next() // linked
 
   return parser
 }

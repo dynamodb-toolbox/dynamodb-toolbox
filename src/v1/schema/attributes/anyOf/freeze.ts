@@ -119,7 +119,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
 
     if (hasDefinedDefault(element)) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.defaultedElements', {
-        message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot have default values`,
+        message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot have default or linked values`,
         path
       })
     }
