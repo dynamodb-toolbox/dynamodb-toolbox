@@ -4,9 +4,9 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import { $entity, EntityOperation } from '../../class'
 import type { UpdateItemInput } from '../../updateItem/types'
-import { WriteItemTransaction } from '../types'
+import type { WriteItemTransaction } from '../types'
 import { transactUpdateItemParams, TransactUpdateItemParams } from './transactUpdateItemParams'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import type { UpdateItemTransactionOptions } from './options'
 
 export const $item = Symbol('$item')
@@ -21,12 +21,12 @@ export class UpdateItemTransaction<
   >
   extends EntityOperation<ENTITY>
   implements WriteItemTransaction<ENTITY, 'Update'> {
-  static operationName = 'transactUpdate' as const
+  static operationName = 'transactUpdate' as const;
 
-  private [$item]?: UpdateItemInput<ENTITY>
-  public item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemTransaction<ENTITY>
-  public [$options]: OPTIONS
-  public options: <NEXT_OPTIONS extends UpdateItemTransactionOptions<ENTITY>>(
+  [$item]?: UpdateItemInput<ENTITY>
+  item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemTransaction<ENTITY>;
+  [$options]: OPTIONS
+  options: <NEXT_OPTIONS extends UpdateItemTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => UpdateItemTransaction<ENTITY, NEXT_OPTIONS>
 
@@ -41,7 +41,7 @@ export class UpdateItemTransaction<
 
   params = (): TransactUpdateItemParams => {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'UpdateItemTransaction incomplete: Missing "item" property'
       })
     }
