@@ -1,6 +1,6 @@
 import type { AttributeBasicValue, AttributeValue, ListAttribute, Item } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
+import type { ExtensionParser, ParsingOptions } from 'v1/parsing/types'
+import { attributeParser } from 'v1/parsing/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
@@ -39,8 +39,8 @@ function* parseListElementClonedInput(
     const parsedValue: typeof $REMOVE = $REMOVE
     yield parsedValue
 
-    const collapsedValue: typeof $REMOVE = $REMOVE
-    return collapsedValue
+    const transformedValue: typeof $REMOVE = $REMOVE
+    return transformedValue
   }
 
   if (inputValue === undefined) {
@@ -55,11 +55,11 @@ function* parseListElementClonedInput(
     const parsedValue = undefined
     yield parsedValue
 
-    const collapsedValue = undefined
-    return collapsedValue
+    const transformedValue = undefined
+    return transformedValue
   }
 
-  return yield* parseAttributeClonedInput(attribute.elements, inputValue, options)
+  return yield* attributeParser(attribute.elements, inputValue, options)
 }
 
 export const parseListExtension = (
@@ -73,7 +73,7 @@ export const parseListExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = parseAttributeClonedInput(attribute, input[$SET], {
+        const parser = attributeParser(attribute, input[$SET], {
           ...options,
           // Should a simple list of valid elements (not extended)
           parseExtension: undefined
@@ -90,8 +90,8 @@ export const parseListExtension = (
         const parsedValue = { [$SET]: parser.next().value }
         yield parsedValue
 
-        const collapsedValue = { [$SET]: parser.next().value }
-        return collapsedValue
+        const transformedValue = { [$SET]: parser.next().value }
+        return transformedValue
       }
     }
   }
@@ -108,7 +108,7 @@ export const parseListExtension = (
              * @debt type "TODO: fix this cast"
              */
             const parsers = (appendedValue as AttributeValue<never>[]).map(element =>
-              parseAttributeClonedInput<never, UpdateItemInputExtension>(
+              attributeParser<never, UpdateItemInputExtension>(
                 attribute.elements,
                 element,
                 // Should a simple list of valid elements (not extended)
@@ -127,8 +127,8 @@ export const parseListExtension = (
             const parsedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
             yield parsedValue
 
-            const collapsedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
-            return collapsedValue
+            const transformedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
+            return transformedValue
           }
         }
       }
@@ -136,7 +136,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = parseAttributeClonedInput<ReferenceExtension, UpdateItemInputExtension>(
+          const parser = attributeParser<ReferenceExtension, UpdateItemInputExtension>(
             attribute,
             appendedValue,
             // Can be a reference
@@ -154,8 +154,8 @@ export const parseListExtension = (
           const parsedValue = { [$APPEND]: parser.next().value }
           yield parsedValue
 
-          const collapsedValue = { [$APPEND]: parser.next().value }
-          return collapsedValue
+          const transformedValue = { [$APPEND]: parser.next().value }
+          return transformedValue
         }
       }
     }
@@ -171,7 +171,7 @@ export const parseListExtension = (
              * @debt type "TODO: fix this cast"
              */
             const parsers = (prependedValue as AttributeValue<never>[]).map(element =>
-              parseAttributeClonedInput<never, UpdateItemInputExtension>(
+              attributeParser<never, UpdateItemInputExtension>(
                 attribute.elements,
                 element,
                 // Should a simple list of valid elements (not extended)
@@ -190,8 +190,8 @@ export const parseListExtension = (
             const parsedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
             yield parsedValue
 
-            const collapsedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
-            return collapsedValue
+            const transformedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
+            return transformedValue
           }
         }
       }
@@ -199,7 +199,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = parseAttributeClonedInput<ReferenceExtension, UpdateItemInputExtension>(
+          const parser = attributeParser<ReferenceExtension, UpdateItemInputExtension>(
             attribute,
             prependedValue,
             // Can be a reference
@@ -217,8 +217,8 @@ export const parseListExtension = (
           const parsedValue = { [$PREPEND]: parser.next().value }
           yield parsedValue
 
-          const collapsedValue = { [$PREPEND]: parser.next().value }
-          return collapsedValue
+          const transformedValue = { [$PREPEND]: parser.next().value }
+          return transformedValue
         }
       }
     }
@@ -280,12 +280,12 @@ export const parseListExtension = (
         )
         yield parsedValue
 
-        const collapsedValue = [...Array(maxUpdatedIndex + 1).keys()].map(index => {
+        const transformedValue = [...Array(maxUpdatedIndex + 1).keys()].map(index => {
           const parser = parsers[index]
 
           return parser === undefined ? undefined : parser.next().value
         })
-        return collapsedValue
+        return transformedValue
       }
     }
   }

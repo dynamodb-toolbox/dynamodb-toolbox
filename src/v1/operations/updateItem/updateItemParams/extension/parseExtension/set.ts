@@ -1,6 +1,6 @@
 import type { AttributeBasicValue, AttributeValue, SetAttribute } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
+import type { ExtensionParser, ParsingOptions } from 'v1/parsing/types'
+import { attributeParser } from 'v1/parsing/attribute'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $ADD, $DELETE } from 'v1/operations/updateItem/constants'
@@ -17,7 +17,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = parseAttributeClonedInput(attribute, input[$ADD], {
+        const parser = attributeParser(attribute, input[$ADD], {
           ...options,
           // Should a simple set of valid elements (not extended)
           parseExtension: undefined
@@ -34,8 +34,8 @@ export const parseSetExtension = (
         const parsedValue = { [$ADD]: parser.next().value }
         yield parsedValue
 
-        const collapsedValue = { [$ADD]: parser.next().value }
-        return collapsedValue
+        const transformedValue = { [$ADD]: parser.next().value }
+        return transformedValue
       }
     }
   }
@@ -44,7 +44,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = parseAttributeClonedInput(attribute, input[$DELETE], {
+        const parser = attributeParser(attribute, input[$DELETE], {
           ...options,
           // Should a simple set of valid elements (not extended)
           parseExtension: undefined
@@ -61,8 +61,8 @@ export const parseSetExtension = (
         const parsedValue = { [$DELETE]: parser.next().value }
         yield parsedValue
 
-        const collapsedValue = { [$DELETE]: parser.next().value }
-        return collapsedValue
+        const transformedValue = { [$DELETE]: parser.next().value }
+        return transformedValue
       }
     }
   }

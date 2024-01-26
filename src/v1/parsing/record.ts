@@ -12,15 +12,14 @@ import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions } from './types'
-import { parseAttributeClonedInput } from './attribute'
+import type { HasExtension, ParsingOptions } from './types'
+import { attributeParser } from './attribute'
 
-export function* parseRecordAttributeClonedInput<
+export function* recordAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
-  recordAttribute: RecordAttribute,
+  attribute: RecordAttribute,
   inputValue: AttributeBasicValue<INPUT_EXTENSION>,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
@@ -43,8 +42,8 @@ export function* parseRecordAttributeClonedInput<
   if (isInputValueObject) {
     for (const [key, element] of Object.entries(inputValue)) {
       parsers.push([
-        parseAttributeClonedInput(recordAttribute.keys, key, options),
-        parseAttributeClonedInput(recordAttribute.elements, element, options)
+        attributeParser(attribute.keys, key, options),
+        attributeParser(attribute.elements, element, options)
       ])
     }
   }
@@ -80,11 +79,11 @@ export function* parseRecordAttributeClonedInput<
 
   if (!isInputValueObject) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${recordAttribute.path} should be a ${recordAttribute.type}`,
-      path: recordAttribute.path,
+      message: `Attribute ${attribute.path} should be a ${attribute.type}`,
+      path: attribute.path,
       payload: {
         received: inputValue,
-        expected: recordAttribute.type
+        expected: attribute.type
       }
     })
   }

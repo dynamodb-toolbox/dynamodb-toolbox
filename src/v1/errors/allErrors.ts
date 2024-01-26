@@ -1,7 +1,7 @@
 import type { SchemaErrorBlueprints } from 'v1/schema/errors'
 import type { EntityErrorBlueprints } from 'v1/entity/errors'
 import type { OperationsErrorBlueprints } from 'v1/operations/errors'
-import type { ParsingErrorBlueprints } from 'v1/validation/errors'
+import type { ParsingErrorBlueprints } from 'v1/parsing/errors'
 
 import type { ErrorBlueprint } from './blueprint'
 

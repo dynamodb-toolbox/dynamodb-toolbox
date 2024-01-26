@@ -23,16 +23,16 @@ export const transactPutItemParams = <
 ): TransactPutItemParams => {
   const validInputParser = parseEntityPutTransactionInput(entity, input)
   const validInput = validInputParser.next().value
-  const collapsedInput = validInputParser.next().value
+  const transformedInput = validInputParser.next().value
 
-  const keyInput = entity.computeKey ? entity.computeKey(validInput) : collapsedInput
+  const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
 
   const options = parsePutItemTransactionOptions(entity, putItemTransactionOptions)
 
   return {
     TableName: entity.table.getName(),
-    Item: { ...collapsedInput, ...primaryKey },
+    Item: { ...transformedInput, ...primaryKey },
     ...options
   }
 }

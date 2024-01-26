@@ -1,6 +1,6 @@
 import type { EntityV2 } from 'v1/entity'
 import type { Item, RequiredOption } from 'v1/schema'
-import { parseSchemaClonedInput } from 'v1/validation/parseClonedInput'
+import { schemaParser } from 'v1/parsing'
 
 import type { UpdateItemInputExtension } from '../types'
 import { parseUpdateExtension } from './extension/parseExtension'
@@ -13,7 +13,7 @@ type EntityUpdateCommandInputParser = (
 const requiringOptions = new Set<RequiredOption>(['always'])
 
 export const parseEntityUpdateCommandInput: EntityUpdateCommandInputParser = (entity, input) => {
-  const parser = parseSchemaClonedInput(entity.schema, input, {
+  const parser = schemaParser(entity.schema, input, {
     fill: 'update',
     requiringOptions,
     parseExtension: parseUpdateExtension

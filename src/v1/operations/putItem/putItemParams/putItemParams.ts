@@ -16,16 +16,16 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
 ): PutCommandInput => {
   const validInputParser = parseEntityPutCommandInput(entity, input)
   const validInput = validInputParser.next().value
-  const collapsedInput = validInputParser.next().value
+  const transformedInput = validInputParser.next().value
 
-  const keyInput = entity.computeKey ? entity.computeKey(validInput) : collapsedInput
+  const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
 
   const options = parsePutItemOptions(entity, putItemOptions)
 
   return {
     TableName: entity.table.getName(),
-    Item: { ...collapsedInput, ...primaryKey },
+    Item: { ...transformedInput, ...primaryKey },
     ...options
   }
 }
