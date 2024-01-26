@@ -1,5 +1,3 @@
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import type { A } from 'ts-toolbelt'
 
 import {
@@ -13,10 +11,6 @@ import {
   FormattedItem,
   prefix
 } from 'v1'
-
-const dynamoDbClient = new DynamoDBClient({})
-
-const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
 const TestTable = new TableV2({
   name: 'test-table',
@@ -47,8 +41,7 @@ const TestTable = new TableV2({
         type: 'string'
       }
     }
-  },
-  documentClient
+  }
 })
 
 const Entity1 = new EntityV2({
