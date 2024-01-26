@@ -54,7 +54,7 @@ export class GetItemCommand<
 
   params = (): GetCommandInput => {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }

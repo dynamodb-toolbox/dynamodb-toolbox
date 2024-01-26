@@ -56,7 +56,7 @@ export class PutItemCommandMock<
 
   params = (): PutCommandInput => {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteCommand', {
+      throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
@@ -71,7 +71,7 @@ export class PutItemCommandMock<
 
     if (implementation !== undefined) {
       if (!this[$item]) {
-        throw new DynamoDBToolboxError('operations.incompleteCommand', {
+        throw new DynamoDBToolboxError('operations.incompleteOperation', {
           message: 'PutItemCommand incomplete: Missing "item" property'
         })
       }

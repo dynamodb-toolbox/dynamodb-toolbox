@@ -489,7 +489,7 @@ describe('put', () => {
     const invalidCall = () => TestEntity.build(PutItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteCommand' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
   })
 
   it('transformed key/attribute', () => {
@@ -597,22 +597,4 @@ describe('put', () => {
       ':c_4': 'RECORD_VALUE#value'
     })
   })
-
-  // TODO Create putBatch method and move tests there
-  // it('formats a batch put response', async () => {
-  //   const result = TestEntity.putBatch({ email: 'x', sort: 'y' })
-
-  //   expect(result).toHaveProperty('test-table.PutRequest')
-  //   expect(result['test-table'].PutRequest!.Item).toHaveProperty('_ct')
-  //   expect(result['test-table'].PutRequest!.Item).toHaveProperty('_md')
-  //   expect(result['test-table'].PutRequest!.Item).toHaveProperty('_et')
-  //   expect(result['test-table'].PutRequest!.Item).toHaveProperty('pk')
-  //   expect(result['test-table'].PutRequest!.Item).toHaveProperty('sk')
-  //   expect(result['test-table'].PutRequest!.Item).toHaveProperty('test_string')
-  // })
-
-  // it('fails if no value is provided to the putBatch method', () => {
-  //   // @ts-expect-error
-  //   expect(() => TestEntity.putBatch()).toThrow(`'pk' or 'email' is required`)
-  // })
 })
