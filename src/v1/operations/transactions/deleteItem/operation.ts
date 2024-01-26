@@ -1,13 +1,13 @@
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { KeyInput } from 'v1/operations/types'
+import type { KeyInput } from 'v1/operations/types'
 
 import { $entity, EntityOperation } from '../../class'
 import type { DeleteItemTransactionOptions } from './options'
 import { transactDeleteItemParams, TransactDeleteItemParams } from './transactDeleteItemParams'
-import { WriteItemTransaction } from '../types'
+import type { WriteItemTransaction } from '../types'
 
 export const $key = Symbol('$key')
 export type $key = typeof $key
@@ -21,12 +21,12 @@ export class DeleteItemTransaction<
   >
   extends EntityOperation<ENTITY>
   implements WriteItemTransaction<ENTITY, 'Delete'> {
-  static operationName = 'transactDelete' as const
+  static operationName = 'transactDelete' as const;
 
-  private [$key]?: KeyInput<ENTITY>
-  public key: (keyInput: KeyInput<ENTITY>) => DeleteItemTransaction<ENTITY>
-  public [$options]: OPTIONS
-  public options: <NEXT_OPTIONS extends DeleteItemTransactionOptions<ENTITY>>(
+  [$key]?: KeyInput<ENTITY>
+  key: (keyInput: KeyInput<ENTITY>) => DeleteItemTransaction<ENTITY>;
+  [$options]: OPTIONS
+  options: <NEXT_OPTIONS extends DeleteItemTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => DeleteItemTransaction<ENTITY, NEXT_OPTIONS>
 

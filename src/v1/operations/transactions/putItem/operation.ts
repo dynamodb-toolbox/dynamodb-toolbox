@@ -4,9 +4,9 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import { $entity, EntityOperation } from '../../class'
 import type { PutItemInput } from '../../putItem/types'
-import { WriteItemTransaction } from '../types'
+import type { WriteItemTransaction } from '../types'
 import { transactPutItemParams, TransactPutItemParams } from './transactPutItemParams'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import type { PutItemTransactionOptions } from './options'
 
 export const $item = Symbol('$item')
@@ -21,12 +21,12 @@ export class PutItemTransaction<
   >
   extends EntityOperation<ENTITY>
   implements WriteItemTransaction<ENTITY, 'Put'> {
-  static operationName = 'transactPut' as const
+  static operationName = 'transactPut' as const;
 
-  private [$item]?: PutItemInput<ENTITY>
-  public item: (nextItem: PutItemInput<ENTITY>) => PutItemTransaction<ENTITY>
-  public [$options]: OPTIONS
-  public options: <NEXT_OPTIONS extends PutItemTransactionOptions<ENTITY>>(
+  [$item]?: PutItemInput<ENTITY>
+  item: (nextItem: PutItemInput<ENTITY>) => PutItemTransaction<ENTITY>;
+  [$options]: OPTIONS
+  options: <NEXT_OPTIONS extends PutItemTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ) => PutItemTransaction<ENTITY, NEXT_OPTIONS>
 
