@@ -1,24 +1,20 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import { list, string } from 'v1/schema'
 
-import { parseListAttributeClonedInput } from './list'
-import * as parseAttributeClonedInputModule from './attribute'
+import { listAttributeParser } from './list'
+import * as attributeParserModule from './attribute'
 
-const parseAttributeClonedInput = jest.spyOn(
-  parseAttributeClonedInputModule,
-  'parseAttributeClonedInput'
-)
+const attributeParser = jest.spyOn(attributeParserModule, 'attributeParser')
 
 const listAttr = list(string()).freeze('path')
 
 describe('parseListAttributeClonedInput', () => {
   beforeEach(() => {
-    parseAttributeClonedInput.mockClear()
+    attributeParser.mockClear()
   })
 
   it('throws an error if input is not a list', () => {
-    const invalidCall = () =>
-      parseListAttributeClonedInput(listAttr, { foo: 'bar' }, { fill: false }).next()
+    const invalidCall = () => listAttributeParser(listAttr, { foo: 'bar' }, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -26,7 +22,7 @@ describe('parseListAttributeClonedInput', () => {
 
   it('applies parseAttributeClonesInput on input elements otherwise (and pass options)', () => {
     const options = { some: 'options' }
-    const parser = parseListAttributeClonedInput(
+    const parser = listAttributeParser(
       listAttr,
       ['foo', 'bar'],
       // @ts-expect-error we don't really care about the type here
@@ -37,9 +33,9 @@ describe('parseListAttributeClonedInput', () => {
     expect(defaultedState.done).toBe(false)
     expect(defaultedState.value).toStrictEqual(['foo', 'bar'])
 
-    expect(parseAttributeClonedInput).toHaveBeenCalledTimes(2)
-    expect(parseAttributeClonedInput).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
-    expect(parseAttributeClonedInput).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
+    expect(attributeParser).toHaveBeenCalledTimes(2)
+    expect(attributeParser).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
+    expect(attributeParser).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)
@@ -49,8 +45,8 @@ describe('parseListAttributeClonedInput', () => {
     expect(parsedState.done).toBe(false)
     expect(parsedState.value).toStrictEqual(['foo', 'bar'])
 
-    const collapsedState = parser.next()
-    expect(collapsedState.done).toBe(true)
-    expect(collapsedState.value).toStrictEqual(['foo', 'bar'])
+    const transformedState = parser.next()
+    expect(transformedState.done).toBe(true)
+    expect(transformedState.value).toStrictEqual(['foo', 'bar'])
   })
 })

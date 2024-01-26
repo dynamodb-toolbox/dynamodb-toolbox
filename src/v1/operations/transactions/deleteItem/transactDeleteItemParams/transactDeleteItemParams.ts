@@ -23,9 +23,9 @@ export const transactDeleteItemParams = <
 ): TransactDeleteItemParams => {
   const validKeyInputParser = parseEntityKeyInput(entity, input)
   const validKeyInput = validKeyInputParser.next().value
-  const collapsedInput = validKeyInputParser.next().value
+  const transformedInput = validKeyInputParser.next().value
 
-  const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : collapsedInput
+  const keyInput = entity.computeKey ? entity.computeKey(validKeyInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
 
   const options = parseDeleteItemTransactionOptions(entity, deleteItemTransactionOptions)

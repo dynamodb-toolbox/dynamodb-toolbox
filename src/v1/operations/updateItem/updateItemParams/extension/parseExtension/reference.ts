@@ -2,9 +2,9 @@ import cloneDeep from 'lodash.clonedeep'
 
 import type { AttributeValue } from 'v1/schema'
 import type { ReferenceExtension } from 'v1/operations/types'
-import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
+import type { ExtensionParser } from 'v1/parsing/types'
 import { isArray } from 'v1/utils/validation/isArray'
-import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput/attribute'
+import { attributeParser } from 'v1/parsing/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
@@ -34,7 +34,7 @@ export const parseReferenceExtension: ExtensionParser<
           reference = _reference
 
           if (fallback !== undefined) {
-            fallbackParser = parseAttributeClonedInput(attribute, fallback, options)
+            fallbackParser = attributeParser(attribute, fallback, options)
           }
 
           rest = _rest
@@ -109,14 +109,14 @@ export const parseReferenceExtension: ExtensionParser<
         }
         yield parsedValue
 
-        const collapsedValue = {
+        const transformedValue = {
           [$GET]: [
             // NOTE: Reference validation will be done in UpdateExpressionParser
             reference,
             ...(fallbackParser !== undefined ? [fallbackParser.next().value] : [])
           ]
         }
-        return collapsedValue
+        return transformedValue
       }
     }
   }

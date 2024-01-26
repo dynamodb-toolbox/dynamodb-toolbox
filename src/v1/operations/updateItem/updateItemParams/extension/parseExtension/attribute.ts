@@ -1,4 +1,4 @@
-import type { ExtensionParser } from 'v1/validation/parseClonedInput/types'
+import type { ExtensionParser } from 'v1/parsing/types'
 import type { PrimitiveAttribute } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -44,8 +44,8 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
         const parsedValue: typeof $REMOVE = $REMOVE
         yield parsedValue
 
-        const collapsedValue: typeof $REMOVE = $REMOVE
-        return collapsedValue
+        const transformedValue: typeof $REMOVE = $REMOVE
+        return transformedValue
       }
     }
   }

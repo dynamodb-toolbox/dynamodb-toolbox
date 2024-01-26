@@ -3,10 +3,9 @@ import cloneDeep from 'lodash.clonedeep'
 import type { AttributeBasicValue, Extension, Item } from 'v1/schema'
 import type { If } from 'v1/types'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions } from './types'
+import type { HasExtension, ParsingOptions } from './types'
 
-export function* parseAnyAttributeClonedInput<
+export function* anyAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
@@ -35,6 +34,6 @@ export function* parseAnyAttributeClonedInput<
   const parsedValue = linkedValue ?? cloneDeep(inputValue)
   yield parsedValue
 
-  const collapsedValue = parsedValue
-  return collapsedValue
+  const transformedValue = parsedValue
+  return transformedValue
 }

@@ -5,12 +5,11 @@ import type { If } from 'v1/types'
 import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions } from './types'
-import { parseAttributeClonedInput } from './attribute'
+import type { HasExtension, ParsingOptions } from './types'
+import { attributeParser } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 
-export function* parseSchemaClonedInput<SCHEMA_EXTENSION extends Extension = never>(
+export function* schemaParser<SCHEMA_EXTENSION extends Extension = never>(
   schema: Schema,
   inputValue: Item<SCHEMA_EXTENSION>,
   ...[options = {} as ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]: If<
@@ -29,15 +28,11 @@ export function* parseSchemaClonedInput<SCHEMA_EXTENSION extends Extension = nev
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
     Object.entries(schema.attributes)
-      .filter(([, attribute]) => doesAttributeMatchFilters(attribute, filters))
-      .forEach(([attributeName, attribute]) => {
-        parsers[attributeName] = parseAttributeClonedInput(
-          attribute,
-          inputValue[attributeName],
-          options
-        )
+      .filter(([, attr]) => doesAttributeMatchFilters(attr, filters))
+      .forEach(([attrName, attr]) => {
+        parsers[attrName] = attributeParser(attr, inputValue[attrName], options)
 
-        additionalAttributeNames.delete(attributeName)
+        additionalAttributeNames.delete(attrName)
       })
 
     restEntries = [...additionalAttributeNames.values()].map(attributeName => [
@@ -50,16 +45,16 @@ export function* parseSchemaClonedInput<SCHEMA_EXTENSION extends Extension = nev
     if (isInputValueObject) {
       const defaultedValue = Object.fromEntries([
         ...Object.entries(parsers)
-          .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
-          .filter(([, defaultedAttributeValue]) => defaultedAttributeValue !== undefined),
+          .map(([attrName, attr]) => [attrName, attr.next().value])
+          .filter(([, defaultedAttrValue]) => defaultedAttrValue !== undefined),
         ...restEntries
       ])
       yield defaultedValue
 
       const linkedValue = Object.fromEntries([
         ...Object.entries(parsers)
-          .map(([attributeName, parser]) => [attributeName, parser.next(defaultedValue).value])
-          .filter(([, linkedAttributeValue]) => linkedAttributeValue !== undefined),
+          .map(([attrName, parser]) => [attrName, parser.next(defaultedValue).value])
+          .filter(([, linkedAttrValue]) => linkedAttrValue !== undefined),
         ...restEntries
       ])
       yield linkedValue
@@ -84,18 +79,18 @@ export function* parseSchemaClonedInput<SCHEMA_EXTENSION extends Extension = nev
 
   const parsedValue = Object.fromEntries(
     Object.entries(parsers)
-      .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
-      .filter(([, attributeValue]) => attributeValue !== undefined)
+      .map(([attrName, attr]) => [attrName, attr.next().value])
+      .filter(([, attrValue]) => attrValue !== undefined)
   )
   yield parsedValue
 
-  const collapsedValue = Object.fromEntries(
+  const transformedValue = Object.fromEntries(
     Object.entries(parsers)
-      .map(([attributeName, attribute]) => [
-        schema.attributes[attributeName].savedAs ?? attributeName,
-        attribute.next().value
+      .map(([attrName, attr]) => [
+        schema.attributes[attrName].savedAs ?? attrName,
+        attr.next().value
       ])
-      .filter(([, attributeValue]) => attributeValue !== undefined)
+      .filter(([, attrValue]) => attrValue !== undefined)
   )
-  return collapsedValue
+  return transformedValue
 }

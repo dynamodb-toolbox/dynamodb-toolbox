@@ -1,6 +1,6 @@
 import type { AttributeBasicValue, AttributeValue, RecordAttribute, Item } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
+import type { ExtensionParser, ParsingOptions } from 'v1/parsing/types'
+import { attributeParser } from 'v1/parsing'
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
@@ -30,11 +30,11 @@ function* parseRecordElementClonedInput(
     const parsedValue: typeof $REMOVE = $REMOVE
     yield parsedValue
 
-    const collapsedValue: typeof $REMOVE = $REMOVE
-    return collapsedValue
+    const transformedValue: typeof $REMOVE = $REMOVE
+    return transformedValue
   }
 
-  return yield* parseAttributeClonedInput(attribute.elements, inputValue, options)
+  return yield* attributeParser(attribute.elements, inputValue, options)
 }
 
 export const parseRecordExtension = (
@@ -48,7 +48,7 @@ export const parseRecordExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = parseAttributeClonedInput(attribute, input[$SET], {
+        const parser = attributeParser(attribute, input[$SET], {
           ...options,
           // Should a simple record of valid elements (not extended)
           parseExtension: undefined
@@ -65,8 +65,8 @@ export const parseRecordExtension = (
         const parsedValue = { [$SET]: parser.next().value }
         yield parsedValue
 
-        const collapsedValue = { [$SET]: parser.next().value }
-        return collapsedValue
+        const transformedValue = { [$SET]: parser.next().value }
+        return transformedValue
       }
     }
   }
@@ -87,7 +87,7 @@ export const parseRecordExtension = (
         ][] = Object.entries(input)
           .filter(([, inputValue]) => inputValue !== undefined)
           .map(([inputKey, inputValue]) => [
-            parseAttributeClonedInput<never, UpdateItemInputExtension>(attribute.keys, inputKey, {
+            attributeParser<never, UpdateItemInputExtension>(attribute.keys, inputKey, {
               ...options,
               // Should a simple string (not extended)
               parseExtension: undefined
@@ -134,7 +134,7 @@ export const parseRecordExtension = (
         )
         yield parsedValue
 
-        const collapsedValue = Object.fromEntries(
+        const transformedValue = Object.fromEntries(
           parsers
             .map(([keyParser, elementParser]) => [
               keyParser.next().value,
@@ -142,7 +142,7 @@ export const parseRecordExtension = (
             ])
             .filter(([, element]) => element !== undefined)
         )
-        return collapsedValue
+        return transformedValue
       }
     }
   }
