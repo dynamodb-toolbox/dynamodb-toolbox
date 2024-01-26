@@ -1,6 +1,6 @@
 import { isString } from 'v1/utils/validation/isString'
 
-import type { operationName } from './types'
+import type { OperationName } from './types'
 import { $operationName, $mockedEntity, $mockedImplementations } from './constants'
 
 // NOTE: Those types come from @aws-sdk
@@ -30,27 +30,27 @@ interface AwsError
   $service?: string
 }
 
-export class OperationMocker<OPERATION_TYPE extends operationName, INPUT, OPTIONS, RESPONSE> {
-  [$operationName]: OPERATION_TYPE;
+export class OperationMocker<OPERATION_NAME extends OperationName, INPUT, OPTIONS, RESPONSE> {
+  [$operationName]: OPERATION_NAME;
   [$mockedEntity]: {
     [$mockedImplementations]: Partial<
-      Record<OPERATION_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
+      Record<OPERATION_NAME, (input: INPUT, options?: OPTIONS) => RESPONSE>
     >
   }
 
-  resolve: (response: RESPONSE) => OperationMocker<OPERATION_TYPE, INPUT, OPTIONS, RESPONSE>
+  resolve: (response: RESPONSE) => OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE>
   reject: (
     error?: string | Error | AwsError
-  ) => OperationMocker<OPERATION_TYPE, INPUT, OPTIONS, RESPONSE>
+  ) => OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE>
   mockImplementation: (
     implementation: (key: INPUT, options?: OPTIONS) => RESPONSE
-  ) => OperationMocker<OPERATION_TYPE, INPUT, OPTIONS, RESPONSE>
+  ) => OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE>
 
   constructor(
-    operationName: OPERATION_TYPE,
+    operationName: OPERATION_NAME,
     mockedEntity: {
       [$mockedImplementations]: Partial<
-        Record<OPERATION_TYPE, (input: INPUT, options?: OPTIONS) => RESPONSE>
+        Record<OPERATION_NAME, (input: INPUT, options?: OPTIONS) => RESPONSE>
       >
     }
   ) {

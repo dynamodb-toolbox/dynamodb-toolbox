@@ -11,7 +11,7 @@ export const parseMapExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { clone = true } = options
+  const { fill = true } = options
 
   if (hasSetOperation(input)) {
     return {
@@ -24,9 +24,9 @@ export const parseMapExtension = (
           { ...options, parseExtension: undefined }
         )
 
-        if (clone) {
-          const clonedValue = { [$SET]: parser.next().value }
-          yield clonedValue
+        if (fill) {
+          const defaultedValue = { [$SET]: parser.next().value }
+          yield defaultedValue
 
           const linkedValue = { [$SET]: parser.next().value }
           yield linkedValue

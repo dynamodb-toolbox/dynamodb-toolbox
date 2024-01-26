@@ -18,7 +18,7 @@ describe('parseMapAttributeClonedInput', () => {
 
   it('throws an error if input is not a map', () => {
     const invalidCall = () =>
-      parseMapAttributeClonedInput(mapAttr, ['foo', 'bar'], { clone: false }).next()
+      parseMapAttributeClonedInput(mapAttr, ['foo', 'bar'], { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -33,9 +33,9 @@ describe('parseMapAttributeClonedInput', () => {
       options
     )
 
-    const clonedState = parser.next()
-    expect(clonedState.done).toBe(false)
-    expect(clonedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
+    const defaultedState = parser.next()
+    expect(defaultedState.done).toBe(false)
+    expect(defaultedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
     expect(parseAttributeClonedInput).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInput).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)

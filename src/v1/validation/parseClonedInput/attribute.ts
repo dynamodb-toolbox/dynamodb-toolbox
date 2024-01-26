@@ -3,7 +3,7 @@ import cloneDeep from 'lodash.clonedeep'
 import type { RequiredOption, Attribute, Extension, AttributeValue, Item } from 'v1/schema'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { isFunction } from 'v1/utils/validation'
+import { isFunction, isString } from 'v1/utils/validation'
 
 import type { HasExtension } from '../types'
 import type { ParsingOptions, ExtensionParser } from './types'
@@ -35,9 +35,8 @@ export function* parseAttributeClonedInput<
   Item<SCHEMA_EXTENSION> | undefined
 > {
   const {
-    operationName,
     requiringOptions = defaultRequiringOptions,
-    clone = true,
+    fill = true,
     /**
      * @debt type "Maybe there's a way not to have to cast here"
      */
@@ -48,30 +47,33 @@ export function* parseAttributeClonedInput<
   } = options
 
   let filledValue: AttributeValue<INPUT_EXTENSION> | undefined = inputValue
-  let shouldStillClone = clone
+  let nextFill = fill
 
-  if (shouldStillClone === true && filledValue === undefined) {
-    let clonedValue: AttributeValue<INPUT_EXTENSION> | undefined = undefined
+  if (nextFill && filledValue === undefined) {
+    let defaultedValue: AttributeValue<INPUT_EXTENSION> | undefined = undefined
+    const isFillString = isString(fill)
 
-    if (operationName !== undefined) {
-      const operationDefault = attribute.defaults[attribute.key ? 'key' : operationName]
-      clonedValue = isFunction(operationDefault) ? operationDefault() : cloneDeep(operationDefault)
+    if (isFillString) {
+      const operationDefault = attribute.defaults[attribute.key ? 'key' : fill]
+      defaultedValue = isFunction(operationDefault)
+        ? operationDefault()
+        : cloneDeep(operationDefault)
     }
 
-    const itemInput = yield clonedValue
+    const itemInput = yield defaultedValue
 
-    let linkedValue: AttributeValue<INPUT_EXTENSION> | undefined = clonedValue
-    if (operationName !== undefined && linkedValue === undefined && itemInput !== undefined) {
-      const operationLink = attribute.links[attribute.key ? 'key' : operationName]
+    let linkedValue: AttributeValue<INPUT_EXTENSION> | undefined = defaultedValue
+    if (isFillString && linkedValue === undefined && itemInput !== undefined) {
+      const operationLink = attribute.links[attribute.key ? 'key' : fill]
       linkedValue = isFunction(operationLink) ? operationLink(itemInput) : linkedValue
     }
     yield linkedValue
 
     filledValue = linkedValue
-    shouldStillClone = false
+    nextFill = false
   }
 
-  const nextOpts = { ...options, clone: shouldStillClone }
+  const nextOpts = { ...options, fill: nextFill }
 
   const { isExtension, extensionParser, basicInput } = parseExtension(
     attribute,
@@ -84,7 +86,7 @@ export function* parseAttributeClonedInput<
   }
 
   if (basicInput === undefined) {
-    // We don't need to clone
+    // We don't need to fill
     if (requiringOptions.has(attribute.required)) {
       throw new DynamoDBToolboxError('parsing.attributeRequired', {
         message: `Attribute ${attribute.path} is required`,

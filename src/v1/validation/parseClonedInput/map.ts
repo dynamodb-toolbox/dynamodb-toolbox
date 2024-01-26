@@ -33,9 +33,9 @@ export function* parseMapAttributeClonedInput<
   MapAttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { filters, clone = true } = options
+  const { filters, fill = true } = options
   const parsers: Record<string, Generator<AttributeValue<INPUT_EXTENSION>>> = {}
-  let clonedRestEntries: [string, AttributeValue<INPUT_EXTENSION>][] = []
+  let restEntries: [string, AttributeValue<INPUT_EXTENSION>][] = []
 
   const isInputValueObject = isObject(inputValue)
   if (isInputValueObject) {
@@ -53,36 +53,36 @@ export function* parseMapAttributeClonedInput<
         additionalAttributeNames.delete(attributeName)
       })
 
-    clonedRestEntries = [...additionalAttributeNames.values()].map(attributeName => [
+    restEntries = [...additionalAttributeNames.values()].map(attributeName => [
       attributeName,
       cloneDeep(inputValue[attributeName])
     ])
   }
 
-  if (clone) {
+  if (fill) {
     if (isInputValueObject) {
-      const clonedValue = Object.fromEntries([
+      const defaultedValue = Object.fromEntries([
         ...Object.entries(parsers)
           .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
-          .filter(([, clonedAttributeValue]) => clonedAttributeValue !== undefined),
-        ...clonedRestEntries
+          .filter(([, filledAttributeValue]) => filledAttributeValue !== undefined),
+        ...restEntries
       ])
-      const itemInput = yield clonedValue
+      const itemInput = yield defaultedValue
 
       const linkedValue = Object.fromEntries([
         ...Object.entries(parsers)
           .map(([attributeName, parser]) => [attributeName, parser.next(itemInput).value])
           .filter(([, linkedAttributeValue]) => linkedAttributeValue !== undefined),
-        ...clonedRestEntries
+        ...restEntries
       ])
       yield linkedValue
     } else {
-      const clonedValue = (cloneDeep(
+      const defaultedValue = (cloneDeep(
         inputValue
       ) as unknown) as MapAttributeBasicValue<INPUT_EXTENSION>
-      yield clonedValue
+      yield defaultedValue
 
-      const linkedValue = clonedValue
+      const linkedValue = defaultedValue
       yield linkedValue
     }
   }

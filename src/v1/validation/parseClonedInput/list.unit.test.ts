@@ -18,7 +18,7 @@ describe('parseListAttributeClonedInput', () => {
 
   it('throws an error if input is not a list', () => {
     const invalidCall = () =>
-      parseListAttributeClonedInput(listAttr, { foo: 'bar' }, { clone: false }).next()
+      parseListAttributeClonedInput(listAttr, { foo: 'bar' }, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -33,9 +33,9 @@ describe('parseListAttributeClonedInput', () => {
       options
     )
 
-    const clonedState = parser.next()
-    expect(clonedState.done).toBe(false)
-    expect(clonedState.value).toStrictEqual(['foo', 'bar'])
+    const defaultedState = parser.next()
+    expect(defaultedState.done).toBe(false)
+    expect(defaultedState.value).toStrictEqual(['foo', 'bar'])
 
     expect(parseAttributeClonedInput).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInput).toHaveBeenCalledWith(listAttr.elements, 'foo', options)

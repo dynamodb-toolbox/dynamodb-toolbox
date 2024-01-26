@@ -32,7 +32,7 @@ export function* parseRecordAttributeClonedInput<
   RecordAttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { clone = true } = options
+  const { fill = true } = options
 
   const parsers: [
     Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>,
@@ -49,14 +49,14 @@ export function* parseRecordAttributeClonedInput<
     }
   }
 
-  if (clone) {
+  if (fill) {
     if (isInputValueObject) {
-      const clonedValue = Object.fromEntries(
+      const defaultedValue = Object.fromEntries(
         parsers
           .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
           .filter(([, element]) => element !== undefined)
       )
-      const itemInput = yield clonedValue
+      const itemInput = yield defaultedValue
 
       const linkedValue = Object.fromEntries(
         parsers
@@ -68,12 +68,12 @@ export function* parseRecordAttributeClonedInput<
       )
       yield linkedValue
     } else {
-      const clonedValue = (cloneDeep(
+      const defaultedValue = (cloneDeep(
         inputValue
       ) as unknown) as RecordAttributeBasicValue<INPUT_EXTENSION>
-      yield clonedValue
+      yield defaultedValue
 
-      const linkedValue = clonedValue
+      const linkedValue = defaultedValue
       yield linkedValue
     }
   }

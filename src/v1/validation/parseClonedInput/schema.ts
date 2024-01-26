@@ -19,9 +19,9 @@ export function* parseSchemaClonedInput<SCHEMA_EXTENSION extends Extension = nev
     [options?: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<Item<SCHEMA_EXTENSION>, Item<SCHEMA_EXTENSION>> {
-  const { filters, clone = true } = options
+  const { filters, fill = true } = options
   const parsers: Record<string, Generator<AttributeValue<SCHEMA_EXTENSION>>> = {}
-  let clonedRestEntries: [string, AttributeValue<SCHEMA_EXTENSION>][] = []
+  let restEntries: [string, AttributeValue<SCHEMA_EXTENSION>][] = []
 
   const isInputValueObject = isObject(inputValue)
 
@@ -40,34 +40,34 @@ export function* parseSchemaClonedInput<SCHEMA_EXTENSION extends Extension = nev
         additionalAttributeNames.delete(attributeName)
       })
 
-    clonedRestEntries = [...additionalAttributeNames.values()].map(attributeName => [
+    restEntries = [...additionalAttributeNames.values()].map(attributeName => [
       attributeName,
       cloneDeep(inputValue[attributeName])
     ])
   }
 
-  if (clone) {
+  if (fill) {
     if (isInputValueObject) {
-      const clonedValue = Object.fromEntries([
+      const defaultedValue = Object.fromEntries([
         ...Object.entries(parsers)
           .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
-          .filter(([, clonedAttributeValue]) => clonedAttributeValue !== undefined),
-        ...clonedRestEntries
+          .filter(([, defaultedAttributeValue]) => defaultedAttributeValue !== undefined),
+        ...restEntries
       ])
-      yield clonedValue
+      yield defaultedValue
 
       const linkedValue = Object.fromEntries([
         ...Object.entries(parsers)
-          .map(([attributeName, parser]) => [attributeName, parser.next(clonedValue).value])
+          .map(([attributeName, parser]) => [attributeName, parser.next(defaultedValue).value])
           .filter(([, linkedAttributeValue]) => linkedAttributeValue !== undefined),
-        ...clonedRestEntries
+        ...restEntries
       ])
       yield linkedValue
     } else {
-      const clonedValue = cloneDeep(inputValue)
-      yield clonedValue
+      const defaultedValue = cloneDeep(inputValue)
+      yield defaultedValue
 
-      const linkedValue = clonedValue
+      const linkedValue = defaultedValue
       yield linkedValue
     }
   }
