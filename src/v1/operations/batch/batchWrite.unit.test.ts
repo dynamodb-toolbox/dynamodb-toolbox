@@ -1,14 +1,7 @@
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-
 import { DynamoDBToolboxError, EntityV2, TableV2, schema, string } from 'v1'
 import { BatchPutItemRequest } from './putItem/operation'
 import { BatchDeleteItemRequest } from './deleteItem/operation'
 import { getBatchWriteCommandInput } from './batchWrite'
-
-const dynamoDbClient = new DynamoDBClient({})
-
-const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
 const TestTable = new TableV2({
   name: 'test-table',
@@ -19,8 +12,7 @@ const TestTable = new TableV2({
   sortKey: {
     type: 'string',
     name: 'sk'
-  },
-  documentClient
+  }
 })
 const TestTable2 = new TableV2({
   name: 'test-table2',
@@ -38,8 +30,7 @@ const TestTable2 = new TableV2({
       sortKey: { name: 'GSIsk1', type: 'string' },
       type: 'global'
     }
-  },
-  documentClient
+  }
 })
 
 const TestEntity = new EntityV2({

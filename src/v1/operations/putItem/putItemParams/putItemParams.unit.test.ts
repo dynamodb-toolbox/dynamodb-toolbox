@@ -1,6 +1,3 @@
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-
 import {
   TableV2,
   EntityV2,
@@ -19,10 +16,6 @@ import {
   prefix
 } from 'v1'
 
-const dynamoDbClient = new DynamoDBClient({})
-
-const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
-
 const TestTable = new TableV2({
   name: 'test-table',
   partitionKey: {
@@ -32,8 +25,7 @@ const TestTable = new TableV2({
   sortKey: {
     type: 'string',
     name: 'sk'
-  },
-  documentClient
+  }
 })
 
 const TestEntity = new EntityV2({
@@ -62,8 +54,7 @@ const TestEntity = new EntityV2({
 
 const TestTable2 = new TableV2({
   name: 'test-table',
-  partitionKey: { type: 'string', name: 'pk' },
-  documentClient
+  partitionKey: { type: 'string', name: 'pk' }
 })
 
 const TestEntity2 = new EntityV2({
@@ -97,8 +88,7 @@ const TestEntity3 = new EntityV2({
 const TestTable3 = new TableV2({
   name: 'TestTable3',
   partitionKey: { type: 'string', name: 'pk' },
-  sortKey: { type: 'string', name: 'sk' },
-  documentClient
+  sortKey: { type: 'string', name: 'sk' }
 })
 
 const TestEntity4 = new EntityV2({

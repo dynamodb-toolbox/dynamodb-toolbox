@@ -1,12 +1,5 @@
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-
 import { DynamoDBToolboxError, EntityV2, TableV2, schema, string } from 'v1'
 import { BatchDeleteItemRequest } from './operation'
-
-const dynamoDbClient = new DynamoDBClient({})
-
-const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
 const TestTable = new TableV2({
   name: 'test-table',
@@ -17,8 +10,7 @@ const TestTable = new TableV2({
   sortKey: {
     type: 'string',
     name: 'sk'
-  },
-  documentClient
+  }
 })
 
 const TestEntity = new EntityV2({
