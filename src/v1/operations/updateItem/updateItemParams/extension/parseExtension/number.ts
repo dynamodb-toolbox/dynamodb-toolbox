@@ -23,7 +23,7 @@ export const parseNumberExtension = (
   inputValue: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { clone = true } = options
+  const { fill = true } = options
 
   if (hasSumOperation(inputValue)) {
     return {
@@ -48,24 +48,22 @@ export const parseNumberExtension = (
           }
         }
 
-        if (clone) {
+        if (fill) {
           if (isInputValueArray) {
-            const clonedValue = {
+            const defaultedValue = {
               [$SUM]: parsers.map(parser => parser.next().value)
             }
-            yield clonedValue
+            yield defaultedValue
 
             const linkedValue = {
               [$SUM]: parsers.map(parser => parser.next().value)
             }
             yield linkedValue
           } else {
-            const inputClone = { [$SUM]: cloneDeep(inputValue[$SUM]) }
+            const defaultedValue = { [$SUM]: cloneDeep(inputValue[$SUM]) }
+            yield defaultedValue
 
-            const clonedValue = inputClone
-            yield clonedValue
-
-            const linkedValue = clonedValue
+            const linkedValue = defaultedValue
             yield linkedValue
           }
         }
@@ -112,24 +110,22 @@ export const parseNumberExtension = (
           }
         }
 
-        if (clone) {
+        if (fill) {
           if (isInputValueArray) {
-            const clonedValue = {
+            const defaultedValue = {
               [$SUBTRACT]: parsers.map(parser => parser.next().value)
             }
-            yield clonedValue
+            yield defaultedValue
 
             const linkedValue = {
               [$SUBTRACT]: parsers.map(parser => parser.next().value)
             }
             yield linkedValue
           } else {
-            const inputClone = { [$SUBTRACT]: cloneDeep(inputValue[$SUBTRACT]) }
+            const defaultedValue = { [$SUBTRACT]: cloneDeep(inputValue[$SUBTRACT]) }
+            yield defaultedValue
 
-            const clonedValue = inputClone
-            yield clonedValue
-
-            const linkedValue = clonedValue
+            const linkedValue = defaultedValue
             yield linkedValue
           }
         }
@@ -164,9 +160,9 @@ export const parseNumberExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        if (clone) {
-          const clonedValue = { [$ADD]: parser.next().value }
-          yield clonedValue
+        if (fill) {
+          const defaultedValue = { [$ADD]: parser.next().value }
+          yield defaultedValue
 
           const linkedValue = { [$ADD]: parser.next().value }
           yield linkedValue

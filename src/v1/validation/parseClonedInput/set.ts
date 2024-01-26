@@ -32,7 +32,7 @@ export function* parseSetAttributeClonedInput<
   SetAttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { clone = true } = options
+  const { fill = true } = options
 
   const parsers: Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>[] = []
 
@@ -43,20 +43,20 @@ export function* parseSetAttributeClonedInput<
     }
   }
 
-  if (clone) {
+  if (fill) {
     if (isInputValueSet) {
-      const clonedValue = new Set(parsers.map(parser => parser.next().value))
-      yield clonedValue as SetAttributeBasicValue<INPUT_EXTENSION>
+      const defaultedValue = new Set(parsers.map(parser => parser.next().value))
+      yield defaultedValue as SetAttributeBasicValue<INPUT_EXTENSION>
 
       const linkedValue = new Set(parsers.map(parser => parser.next().value))
       yield linkedValue
     } else {
-      const clonedValue = (cloneDeep(
+      const defaultedValue = (cloneDeep(
         inputValue
       ) as unknown) as SetAttributeBasicValue<INPUT_EXTENSION>
-      yield clonedValue
+      yield defaultedValue
 
-      const linkedValue = clonedValue
+      const linkedValue = defaultedValue
       yield linkedValue
     }
   }

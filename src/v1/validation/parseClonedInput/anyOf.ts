@@ -30,18 +30,18 @@ export function* parseAnyOfAttributeClonedInput<
   AttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { clone = true } = options
+  const { fill = true } = options
 
   let parser: Generator<AttributeValue<INPUT_EXTENSION>> | undefined = undefined
-  let _clonedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
+  let _defaultedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
   let _linkedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
   let _parsedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
 
   for (const elementAttribute of attribute.elements) {
     try {
       parser = parseAttributeClonedInput(elementAttribute, inputValue, options)
-      if (clone) {
-        _clonedValue = parser.next().value
+      if (fill) {
+        _defaultedValue = parser.next().value
         // Note: Links cannot be used in anyOf elements or sub elements for this reason (we need the return of the yield)
         _linkedValue = parser.next().value
       }
@@ -49,18 +49,18 @@ export function* parseAnyOfAttributeClonedInput<
       break
     } catch (error) {
       parser = undefined
-      _clonedValue = undefined
+      _defaultedValue = undefined
       _linkedValue = undefined
       _parsedValue = undefined
       continue
     }
   }
 
-  if (clone) {
-    const clonedValue = _clonedValue ?? cloneDeep(inputValue)
-    yield clonedValue
+  if (fill) {
+    const defaultedValue = _defaultedValue ?? cloneDeep(inputValue)
+    yield defaultedValue
 
-    const linkedValue = _linkedValue ?? clonedValue
+    const linkedValue = _linkedValue ?? defaultedValue
     yield linkedValue
   }
 

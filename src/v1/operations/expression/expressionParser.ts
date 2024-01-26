@@ -117,7 +117,7 @@ export const appendAttributePath = (
       case 'record': {
         const keyAttribute = parentAttribute.keys
         const keyParser = parseAttributeClonedInput(keyAttribute, childAttributeAccessor, {
-          clone: false
+          fill: false
         })
         keyParser.next() // parsed
         const collapsedKey = keyParser.next().value as string

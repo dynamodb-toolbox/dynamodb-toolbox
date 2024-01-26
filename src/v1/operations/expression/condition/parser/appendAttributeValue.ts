@@ -16,7 +16,7 @@ export const appendAttributeValue = (
   const inputParser = parseAttributeClonedInput(
     attribute,
     expressionAttributeValue as AttributeValue,
-    { clone: false, transform }
+    { fill: false, transform }
   )
   inputParser.next() // parsed
   const collapsedInput = inputParser.next().value

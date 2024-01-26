@@ -16,7 +16,7 @@ export const parseReferenceExtension: ExtensionParser<
   ReferenceExtension,
   UpdateItemInputExtension
 > = (attribute, inputValue, options) => {
-  const { clone = true } = options
+  const { fill = true } = options
 
   if (hasGetOperation(inputValue)) {
     return {
@@ -40,9 +40,9 @@ export const parseReferenceExtension: ExtensionParser<
           rest = _rest
         }
 
-        if (clone) {
+        if (fill) {
           if (isInputValueArray) {
-            const clonedValue = {
+            const defaultedValue = {
               [$GET]: [
                 cloneDeep(reference),
                 ...[
@@ -55,7 +55,7 @@ export const parseReferenceExtension: ExtensionParser<
                 ...cloneDeep(rest)
               ]
             }
-            yield clonedValue
+            yield defaultedValue
 
             const linkedValue = {
               [$GET]: [
@@ -72,10 +72,10 @@ export const parseReferenceExtension: ExtensionParser<
             }
             yield linkedValue
           } else {
-            const clonedValue = { [$GET]: cloneDeep(inputValue[$GET]) }
-            yield clonedValue
+            const defaultedValue = { [$GET]: cloneDeep(inputValue[$GET]) }
+            yield defaultedValue
 
-            const linkedValue = clonedValue
+            const linkedValue = defaultedValue
             yield linkedValue
           }
         }

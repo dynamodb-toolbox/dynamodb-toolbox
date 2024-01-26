@@ -18,7 +18,7 @@ describe('parseSetAttributeClonedInput', () => {
 
   it('throws an error if input is not a set', () => {
     const invalidCall = () =>
-      parseSetAttributeClonedInput(setAttr, { foo: 'bar' }, { clone: false }).next()
+      parseSetAttributeClonedInput(setAttr, { foo: 'bar' }, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -33,9 +33,9 @@ describe('parseSetAttributeClonedInput', () => {
       options
     )
 
-    const clonedState = parser.next()
-    expect(clonedState.done).toBe(false)
-    expect(clonedState.value).toStrictEqual(new Set(['foo', 'bar']))
+    const defaultedState = parser.next()
+    expect(defaultedState.done).toBe(false)
+    expect(defaultedState.value).toStrictEqual(new Set(['foo', 'bar']))
 
     expect(parseAttributeClonedInput).toHaveBeenCalledTimes(2)
     expect(parseAttributeClonedInput).toHaveBeenCalledWith(setAttr.elements, 'foo', options)

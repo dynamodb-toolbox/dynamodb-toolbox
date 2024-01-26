@@ -32,15 +32,15 @@ export function* parsePrimitiveAttributeClonedInput<
   PrimitiveAttributeBasicValue,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { transform = true, clone = true } = options
+  const { transform = true, fill = true } = options
 
   const linkedValue: AttributeValue<INPUT_EXTENSION> = inputValue
 
-  if (clone) {
-    const clonedValue = cloneDeep(inputValue) as PrimitiveAttributeBasicValue
-    yield clonedValue
+  if (fill) {
+    const defaultedValue = cloneDeep(inputValue) as PrimitiveAttributeBasicValue
+    yield defaultedValue
 
-    const linkedValue = clonedValue
+    const linkedValue = defaultedValue
     yield linkedValue
   }
 
