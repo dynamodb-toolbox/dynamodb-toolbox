@@ -79,9 +79,9 @@ export class DeleteItemCommand<
   async send(): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
     const deleteItemParams = this.params()
 
-    const commandOutput = await this[$entity].table.documentClient.send(
-      new DeleteCommand(deleteItemParams)
-    )
+    const commandOutput = await this[$entity].table
+      .getDocumentClient()
+      .send(new DeleteCommand(deleteItemParams))
 
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 

@@ -71,6 +71,12 @@ type UnknownOptionErrorBlueprint = ErrorBlueprint<{
   payload: { option: unknown }
 }>
 
+type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
+  code: 'operations.missingDocumentClient'
+  hasPath: false
+  payload: undefined
+}>
+
 export type OperationsErrorBlueprints =
   | ScanCommandErrorBlueprints
   | QueryCommandErrorBlueprints
@@ -87,3 +93,4 @@ export type OperationsErrorBlueprints =
   | InvalidSelectOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
   | ExpressionParsersErrorBlueprints
+  | MissingDocumentClientErrorBlueprint

@@ -72,9 +72,9 @@ export class GetItemCommand<
   async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
-    const commandOutput = await this[$entity].table.documentClient.send(
-      new GetCommand(getItemParams)
-    )
+    const commandOutput = await this[$entity].table
+      .getDocumentClient()
+      .send(new GetCommand(getItemParams))
 
     const { Item: item, ...restCommandOutput } = commandOutput
 

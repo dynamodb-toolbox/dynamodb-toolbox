@@ -1,5 +1,6 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
+import { DynamoDBToolboxError } from 'v1/errors'
 import type { TableCommand } from 'v1/operations/class'
 import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject'
 import { isString } from 'v1/utils/validation/isString'
@@ -12,7 +13,7 @@ export class TableV2<
   INDEXES extends Record<string, Index> = Key extends PARTITION_KEY ? Record<string, Index> : {},
   ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
 > {
-  public documentClient: DynamoDBDocumentClient
+  public documentClient?: DynamoDBDocumentClient
   public name: string | (() => string)
   public partitionKey: PARTITION_KEY
   public sortKey?: SORT_KEY
@@ -22,7 +23,7 @@ export class TableV2<
   /**
    * Define a Table
    *
-   * @param documentClient DynamoDBDocumentClient
+   * @param documentClient _(optional)_ DynamoDBDocumentClient
    * @param name string
    * @param partitionKey Partition key
    * @param sortKey _(optional)_ Sort key
@@ -36,7 +37,7 @@ export class TableV2<
     indexes = {} as INDEXES,
     entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS
   }: {
-    documentClient: DynamoDBDocumentClient
+    documentClient?: DynamoDBDocumentClient
     name: string | (() => string)
     partitionKey: NarrowObject<PARTITION_KEY>
     sortKey?: NarrowObject<SORT_KEY>
@@ -65,5 +66,15 @@ export class TableV2<
     commandClass: new (table: this) => TABLE_COMMAND_CLASS
   ): TABLE_COMMAND_CLASS {
     return new commandClass(this)
+  }
+
+  getDocumentClient = () => {
+    if (this.documentClient === undefined) {
+      throw new DynamoDBToolboxError('operations.missingDocumentClient', {
+        message: 'You need to set a document client on your table to send a command'
+      })
+    }
+
+    return this.documentClient
   }
 }
