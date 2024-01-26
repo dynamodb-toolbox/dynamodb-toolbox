@@ -12,15 +12,14 @@ import type { If } from 'v1/types'
 import { isSet } from 'v1/utils/validation/isSet'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions } from './types'
-import { parseAttributeClonedInput } from './attribute'
+import type { HasExtension, ParsingOptions } from './types'
+import { attributeParser } from './attribute'
 
-export function* parseSetAttributeClonedInput<
+export function* setAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
-  setAttribute: SetAttribute,
+  attribute: SetAttribute,
   inputValue: AttributeBasicValue<INPUT_EXTENSION>,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
@@ -39,7 +38,7 @@ export function* parseSetAttributeClonedInput<
   const isInputValueSet = isSet(inputValue)
   if (isInputValueSet) {
     for (const element of inputValue.values()) {
-      parsers.push(parseAttributeClonedInput(setAttribute.elements, element, options))
+      parsers.push(attributeParser(attribute.elements, element, options))
     }
   }
 
@@ -63,11 +62,11 @@ export function* parseSetAttributeClonedInput<
 
   if (!isInputValueSet) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${setAttribute.path} should be a ${setAttribute.type}`,
-      path: setAttribute.path,
+      message: `Attribute ${attribute.path} should be a ${attribute.type}`,
+      path: attribute.path,
       payload: {
         received: inputValue,
-        expected: setAttribute.type
+        expected: attribute.type
       }
     })
   }
@@ -75,6 +74,6 @@ export function* parseSetAttributeClonedInput<
   const parsedValue = new Set(parsers.map(parser => parser.next().value))
   yield parsedValue
 
-  const collapsedValue = new Set(parsers.map(parser => parser.next().value))
-  return collapsedValue
+  const transformedValue = new Set(parsers.map(parser => parser.next().value))
+  return transformedValue
 }

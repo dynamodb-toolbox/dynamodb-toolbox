@@ -12,16 +12,15 @@ import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions } from './types'
-import { parseAttributeClonedInput } from './attribute'
+import type { HasExtension, ParsingOptions } from './types'
+import { attributeParser } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 
-export function* parseMapAttributeClonedInput<
+export function* mapAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
-  mapAttribute: MapAttribute,
+  attribute: MapAttribute,
   inputValue: AttributeBasicValue<INPUT_EXTENSION>,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
@@ -41,21 +40,17 @@ export function* parseMapAttributeClonedInput<
   if (isInputValueObject) {
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
-    Object.entries(mapAttribute.attributes)
-      .filter(([, attribute]) => doesAttributeMatchFilters(attribute, filters))
-      .forEach(([attributeName, attribute]) => {
-        parsers[attributeName] = parseAttributeClonedInput(
-          attribute,
-          inputValue[attributeName],
-          options
-        )
+    Object.entries(attribute.attributes)
+      .filter(([, attr]) => doesAttributeMatchFilters(attr, filters))
+      .forEach(([attrName, attr]) => {
+        parsers[attrName] = attributeParser(attr, inputValue[attrName], options)
 
-        additionalAttributeNames.delete(attributeName)
+        additionalAttributeNames.delete(attrName)
       })
 
-    restEntries = [...additionalAttributeNames.values()].map(attributeName => [
-      attributeName,
-      cloneDeep(inputValue[attributeName])
+    restEntries = [...additionalAttributeNames.values()].map(attrName => [
+      attrName,
+      cloneDeep(inputValue[attrName])
     ])
   }
 
@@ -63,16 +58,16 @@ export function* parseMapAttributeClonedInput<
     if (isInputValueObject) {
       const defaultedValue = Object.fromEntries([
         ...Object.entries(parsers)
-          .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
-          .filter(([, filledAttributeValue]) => filledAttributeValue !== undefined),
+          .map(([attrName, attr]) => [attrName, attr.next().value])
+          .filter(([, filledAttrValue]) => filledAttrValue !== undefined),
         ...restEntries
       ])
       const itemInput = yield defaultedValue
 
       const linkedValue = Object.fromEntries([
         ...Object.entries(parsers)
-          .map(([attributeName, parser]) => [attributeName, parser.next(itemInput).value])
-          .filter(([, linkedAttributeValue]) => linkedAttributeValue !== undefined),
+          .map(([attrName, parser]) => [attrName, parser.next(itemInput).value])
+          .filter(([, linkedAttrValue]) => linkedAttrValue !== undefined),
         ...restEntries
       ])
       yield linkedValue
@@ -89,29 +84,29 @@ export function* parseMapAttributeClonedInput<
 
   if (!isInputValueObject) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${mapAttribute.path} should be a ${mapAttribute.type}`,
-      path: mapAttribute.path,
+      message: `Attribute ${attribute.path} should be a ${attribute.type}`,
+      path: attribute.path,
       payload: {
         received: inputValue,
-        expected: mapAttribute.type
+        expected: attribute.type
       }
     })
   }
 
   const parsedValue = Object.fromEntries(
     Object.entries(parsers)
-      .map(([attributeName, attribute]) => [attributeName, attribute.next().value])
-      .filter(([, attributeValue]) => attributeValue !== undefined)
+      .map(([attrName, attr]) => [attrName, attr.next().value])
+      .filter(([, attrValue]) => attrValue !== undefined)
   )
   yield parsedValue
 
-  const collapsedValue = Object.fromEntries(
+  const transformedValue = Object.fromEntries(
     Object.entries(parsers)
-      .map(([attributeName, attribute]) => [
-        mapAttribute.attributes[attributeName].savedAs ?? attributeName,
-        attribute.next().value
+      .map(([attrName, attr]) => [
+        attribute.attributes[attrName].savedAs ?? attrName,
+        attr.next().value
       ])
-      .filter(([, attributeValue]) => attributeValue !== undefined)
+      .filter(([, attrValue]) => attrValue !== undefined)
   )
-  return collapsedValue
+  return transformedValue
 }

@@ -10,11 +10,10 @@ import type {
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions } from './types'
-import { parseAttributeClonedInput } from './attribute'
+import type { HasExtension, ParsingOptions } from './types'
+import { attributeParser } from './attribute'
 
-export function* parseAnyOfAttributeClonedInput<
+export function* anyOfAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
@@ -39,7 +38,7 @@ export function* parseAnyOfAttributeClonedInput<
 
   for (const elementAttribute of attribute.elements) {
     try {
-      parser = parseAttributeClonedInput(elementAttribute, inputValue, options)
+      parser = attributeParser(elementAttribute, inputValue, options)
       if (fill) {
         _defaultedValue = parser.next().value
         // Note: Links cannot be used in anyOf elements or sub elements for this reason (we need the return of the yield)
@@ -77,6 +76,6 @@ export function* parseAnyOfAttributeClonedInput<
 
   yield parsedValue
 
-  const collapsedValue = parser.next().value
-  return collapsedValue
+  const transformedValue = parser.next().value
+  return transformedValue
 }

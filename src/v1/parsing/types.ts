@@ -1,14 +1,14 @@
 import type {
-  Attribute,
-  AttributeBasicValue,
-  AttributeValue,
-  RequiredOption,
   Extension,
-  Item
+  Item,
+  Attribute,
+  AttributeValue,
+  AttributeBasicValue,
+  RequiredOption
 } from 'v1/schema'
 import type { If } from 'v1/types'
 
-import type { HasExtension } from '../types'
+export type HasExtension<EXTENSION extends Extension> = [EXTENSION] extends [never] ? false : true
 
 export type ExtensionParser<
   INPUT_EXTENSION extends Extension,

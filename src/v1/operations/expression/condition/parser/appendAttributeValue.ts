@@ -1,5 +1,5 @@
 import type { Attribute, AttributeValue } from 'v1/schema'
-import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
+import { attributeParser } from 'v1/parsing'
 
 import type { ConditionParser } from './parser'
 
@@ -13,16 +13,15 @@ export const appendAttributeValue = (
 ): void => {
   const { transform = false } = options
 
-  const inputParser = parseAttributeClonedInput(
-    attribute,
-    expressionAttributeValue as AttributeValue,
-    { fill: false, transform }
-  )
+  const inputParser = attributeParser(attribute, expressionAttributeValue as AttributeValue, {
+    fill: false,
+    transform
+  })
   inputParser.next() // parsed
-  const collapsedInput = inputParser.next().value
+  const transformedInput = inputParser.next().value
 
   const expressionAttributeValueIndex = conditionParser.expressionAttributeValues.push(
-    collapsedInput
+    transformedInput
   )
 
   conditionParser.appendToExpression(
