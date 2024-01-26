@@ -5,20 +5,19 @@ import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isFunction, isString } from 'v1/utils/validation'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions, ExtensionParser } from './types'
-import { parseAnyAttributeClonedInput } from './any'
-import { parsePrimitiveAttributeClonedInput } from './primitive'
-import { parseSetAttributeClonedInput } from './set'
-import { parseListAttributeClonedInput } from './list'
-import { parseMapAttributeClonedInput } from './map'
-import { parseRecordAttributeClonedInput } from './record'
-import { parseAnyOfAttributeClonedInput } from './anyOf'
+import type { HasExtension, ParsingOptions, ExtensionParser } from './types'
+import { anyAttributeParser } from './any'
+import { primitiveAttributeParser } from './primitive'
+import { setAttributeParser } from './set'
+import { listAttributeParser } from './list'
+import { mapAttributeParser } from './map'
+import { recordAttributeParser } from './record'
+import { anyOfAttributeParser } from './anyOf'
 import { defaultParseExtension } from './utils'
 
 const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'])
 
-export function* parseAttributeClonedInput<
+export function* attributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
@@ -97,27 +96,27 @@ export function* parseAttributeClonedInput<
     const parsedValue = basicInput
     yield parsedValue
 
-    const collapsedValue = parsedValue
-    return collapsedValue
+    const transformedValue = parsedValue
+    return transformedValue
   }
 
   switch (attribute.type) {
     case 'any':
-      return yield* parseAnyAttributeClonedInput(basicInput, nextOpts)
+      return yield* anyAttributeParser(basicInput, nextOpts)
     case 'boolean':
     case 'binary':
     case 'number':
     case 'string':
-      return yield* parsePrimitiveAttributeClonedInput(attribute, basicInput, nextOpts)
+      return yield* primitiveAttributeParser(attribute, basicInput, nextOpts)
     case 'set':
-      return yield* parseSetAttributeClonedInput(attribute, basicInput, nextOpts)
+      return yield* setAttributeParser(attribute, basicInput, nextOpts)
     case 'list':
-      return yield* parseListAttributeClonedInput(attribute, basicInput, nextOpts)
+      return yield* listAttributeParser(attribute, basicInput, nextOpts)
     case 'map':
-      return yield* parseMapAttributeClonedInput(attribute, basicInput, nextOpts)
+      return yield* mapAttributeParser(attribute, basicInput, nextOpts)
     case 'record':
-      return yield* parseRecordAttributeClonedInput(attribute, basicInput, nextOpts)
+      return yield* recordAttributeParser(attribute, basicInput, nextOpts)
     case 'anyOf':
-      return yield* parseAnyOfAttributeClonedInput(attribute, basicInput, nextOpts)
+      return yield* anyOfAttributeParser(attribute, basicInput, nextOpts)
   }
 }

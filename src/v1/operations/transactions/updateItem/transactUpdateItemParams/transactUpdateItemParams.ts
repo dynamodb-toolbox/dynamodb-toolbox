@@ -26,16 +26,16 @@ export const transactUpdateItemParams = <
 ): TransactUpdateItemParams => {
   const validInputParser = parseEntityUpdateTransactionInput(entity, input)
   const validInput = validInputParser.next().value
-  const collapsedInput = validInputParser.next().value
+  const transformedInput = validInputParser.next().value
 
-  const keyInput = entity.computeKey ? entity.computeKey(validInput) : collapsedInput
+  const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
 
   const {
     ExpressionAttributeNames: updateExpressionAttributeNames,
     ExpressionAttributeValues: updateExpressionAttributeValues,
     ...update
-  } = parseUpdate(entity, omit(collapsedInput, Object.keys(primaryKey)))
+  } = parseUpdate(entity, omit(transformedInput, Object.keys(primaryKey)))
 
   const {
     ExpressionAttributeNames: optionsExpressionAttributeNames,

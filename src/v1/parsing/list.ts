@@ -12,15 +12,14 @@ import type { If } from 'v1/types'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions } from './types'
-import { parseAttributeClonedInput } from './attribute'
+import type { HasExtension, ParsingOptions } from './types'
+import { attributeParser } from './attribute'
 
-export function* parseListAttributeClonedInput<
+export function* listAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
-  listAttribute: ListAttribute,
+  attribute: ListAttribute,
   inputValue: AttributeBasicValue<INPUT_EXTENSION>,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
@@ -39,7 +38,7 @@ export function* parseListAttributeClonedInput<
   const isInputValueArray = isArray(inputValue)
   if (isInputValueArray) {
     for (const element of inputValue) {
-      parsers.push(parseAttributeClonedInput(listAttribute.elements, element, options))
+      parsers.push(attributeParser(attribute.elements, element, options))
     }
   }
 
@@ -63,11 +62,11 @@ export function* parseListAttributeClonedInput<
 
   if (!isInputValueArray) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${listAttribute.path} should be a ${listAttribute.type}`,
-      path: listAttribute.path,
+      message: `Attribute ${attribute.path} should be a ${attribute.type}`,
+      path: attribute.path,
       payload: {
         received: inputValue,
-        expected: listAttribute.type
+        expected: attribute.type
       }
     })
   }
@@ -75,6 +74,6 @@ export function* parseListAttributeClonedInput<
   const parsedValue = parsers.map(parser => parser.next().value)
   yield parsedValue
 
-  const collapsedValue = parsers.map(parser => parser.next().value)
-  return collapsedValue
+  const transformedValue = parsers.map(parser => parser.next().value)
+  return transformedValue
 }

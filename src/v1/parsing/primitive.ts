@@ -13,14 +13,13 @@ import type { If } from 'v1/types'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { HasExtension } from '../types'
-import type { ParsingOptions } from './types'
+import type { HasExtension, ParsingOptions } from './types'
 
-export function* parsePrimitiveAttributeClonedInput<
+export function* primitiveAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
-  primitiveAttribute: PrimitiveAttribute,
+  attribute: PrimitiveAttribute,
   inputValue: AttributeValue<INPUT_EXTENSION>,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
@@ -44,30 +43,30 @@ export function* parsePrimitiveAttributeClonedInput<
     yield linkedValue
   }
 
-  const validator = validatorsByPrimitiveType[primitiveAttribute.type]
+  const validator = validatorsByPrimitiveType[attribute.type]
   if (!validator(linkedValue)) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${primitiveAttribute.path} should be a ${primitiveAttribute.type}`,
-      path: primitiveAttribute.path,
+      message: `Attribute ${attribute.path} should be a ${attribute.type}`,
+      path: attribute.path,
       payload: {
         received: linkedValue,
-        expected: primitiveAttribute.type
+        expected: attribute.type
       }
     })
   }
 
   if (
-    primitiveAttribute.enum !== undefined &&
-    !primitiveAttribute.enum.includes(linkedValue as ResolvedPrimitiveAttribute)
+    attribute.enum !== undefined &&
+    !attribute.enum.includes(linkedValue as ResolvedPrimitiveAttribute)
   ) {
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${
-        primitiveAttribute.path
-      } should be one of: ${primitiveAttribute.enum.map(String).join(', ')}`,
-      path: primitiveAttribute.path,
+      message: `Attribute ${attribute.path} should be one of: ${attribute.enum
+        .map(String)
+        .join(', ')}`,
+      path: attribute.path,
       payload: {
         received: linkedValue,
-        expected: primitiveAttribute.enum
+        expected: attribute.enum
       }
     })
   }
@@ -78,10 +77,10 @@ export function* parsePrimitiveAttributeClonedInput<
   const parsedValue = linkedValue as PrimitiveAttributeBasicValue
   yield parsedValue
 
-  const collapsedValue =
-    transform && primitiveAttribute.transform !== undefined
-      ? (primitiveAttribute.transform as Transformer).parse(parsedValue)
+  const transformedValue =
+    transform && attribute.transform !== undefined
+      ? (attribute.transform as Transformer).parse(parsedValue)
       : parsedValue
 
-  return collapsedValue
+  return transformedValue
 }

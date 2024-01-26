@@ -1,24 +1,20 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import { map, string } from 'v1/schema'
 
-import { parseMapAttributeClonedInput } from './map'
-import * as parseAttributeClonedInputModule from './attribute'
+import { mapAttributeParser } from './map'
+import * as attributeParserModule from './attribute'
 
-const parseAttributeClonedInput = jest.spyOn(
-  parseAttributeClonedInputModule,
-  'parseAttributeClonedInput'
-)
+const attributeParser = jest.spyOn(attributeParserModule, 'attributeParser')
 
 const mapAttr = map({ foo: string(), bar: string() }).freeze('path')
 
 describe('parseMapAttributeClonedInput', () => {
   beforeEach(() => {
-    parseAttributeClonedInput.mockClear()
+    attributeParser.mockClear()
   })
 
   it('throws an error if input is not a map', () => {
-    const invalidCall = () =>
-      parseMapAttributeClonedInput(mapAttr, ['foo', 'bar'], { fill: false }).next()
+    const invalidCall = () => mapAttributeParser(mapAttr, ['foo', 'bar'], { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -26,7 +22,7 @@ describe('parseMapAttributeClonedInput', () => {
 
   it('applies parseAttributeClonesInput on input properties otherwise (and pass options)', () => {
     const options = { some: 'options' }
-    const parser = parseMapAttributeClonedInput(
+    const parser = mapAttributeParser(
       mapAttr,
       { foo: 'foo', bar: 'bar' },
       // @ts-expect-error we don't really care about the type here
@@ -37,9 +33,9 @@ describe('parseMapAttributeClonedInput', () => {
     expect(defaultedState.done).toBe(false)
     expect(defaultedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
-    expect(parseAttributeClonedInput).toHaveBeenCalledTimes(2)
-    expect(parseAttributeClonedInput).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
-    expect(parseAttributeClonedInput).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', options)
+    expect(attributeParser).toHaveBeenCalledTimes(2)
+    expect(attributeParser).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
+    expect(attributeParser).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', options)
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)
@@ -49,8 +45,8 @@ describe('parseMapAttributeClonedInput', () => {
     expect(parsedState.done).toBe(false)
     expect(parsedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
-    const collapsedState = parser.next()
-    expect(collapsedState.done).toBe(true)
-    expect(collapsedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
+    const transformedState = parser.next()
+    expect(transformedState.done).toBe(true)
+    expect(transformedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
   })
 })

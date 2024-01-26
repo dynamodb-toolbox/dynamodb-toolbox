@@ -1,6 +1,6 @@
 import type { AttributeValue, AttributeBasicValue, MapAttribute } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/validation/parseClonedInput/types'
-import { parseAttributeClonedInput } from 'v1/validation/parseClonedInput'
+import type { ExtensionParser, ParsingOptions } from 'v1/parsing/types'
+import { attributeParser } from 'v1/parsing'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $SET } from 'v1/operations/updateItem/constants'
@@ -17,7 +17,7 @@ export const parseMapExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = parseAttributeClonedInput<never, UpdateItemInputExtension>(
+        const parser = attributeParser<never, UpdateItemInputExtension>(
           attribute,
           input[$SET],
           // Should a simple map of valid elements (not extended)
@@ -35,8 +35,8 @@ export const parseMapExtension = (
         const parsedValue = { [$SET]: parser.next().value }
         yield parsedValue
 
-        const collapsedValue = { [$SET]: parser.next().value }
-        return collapsedValue
+        const transformedValue = { [$SET]: parser.next().value }
+        return transformedValue
       }
     }
   }
