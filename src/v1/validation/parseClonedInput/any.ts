@@ -21,20 +21,18 @@ export function* parseAnyAttributeClonedInput<
   AttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { clone = true } = options
+  const { fill = true } = options
 
-  const startValue: AttributeBasicValue<INPUT_EXTENSION> = cloneDeep(inputValue)
   let linkedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
+  if (fill) {
+    const defaultedValue = cloneDeep(inputValue)
+    yield defaultedValue
 
-  if (clone) {
-    const clonedValue = startValue
-    yield clonedValue
-
-    linkedValue = clonedValue
+    linkedValue = defaultedValue
     yield linkedValue
   }
 
-  const parsedValue = linkedValue ?? startValue
+  const parsedValue = linkedValue ?? cloneDeep(inputValue)
   yield parsedValue
 
   const collapsedValue = parsedValue

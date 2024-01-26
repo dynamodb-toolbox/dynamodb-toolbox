@@ -37,15 +37,13 @@ export interface AttributeFilters {
   key?: boolean
 }
 
-export type OperationName = 'key' | 'put' | 'update'
+export type FillKey = 'key' | 'put' | 'update'
 
 export type ParsingOptions<
   INPUT_EXTENSION extends Extension,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 > = {
-  // TODO: Merge clone & operationName to a boolean or string "fill" option
-  clone?: boolean
-  operationName?: OperationName
+  fill?: boolean | FillKey
   requiringOptions?: Set<RequiredOption>
   filters?: AttributeFilters
   transform?: boolean

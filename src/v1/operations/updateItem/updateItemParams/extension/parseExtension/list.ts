@@ -25,14 +25,14 @@ function* parseListElementClonedInput(
   AttributeValue<UpdateItemInputExtension> | undefined,
   Item<UpdateItemInputExtension> | undefined
 > {
-  const { clone = true } = options
+  const { fill = true } = options
 
   if (inputValue === $REMOVE) {
-    if (clone) {
-      const clonedValue: typeof $REMOVE = $REMOVE
-      yield clonedValue
+    if (fill) {
+      const defaultedValue: typeof $REMOVE = $REMOVE
+      yield defaultedValue
 
-      const linkedValue: typeof $REMOVE = clonedValue
+      const linkedValue: typeof $REMOVE = defaultedValue
       yield linkedValue
     }
 
@@ -44,9 +44,9 @@ function* parseListElementClonedInput(
   }
 
   if (inputValue === undefined) {
-    if (clone) {
-      const clonedValue = undefined
-      yield clonedValue
+    if (fill) {
+      const defaultedValue = undefined
+      yield defaultedValue
 
       const linkedValue = undefined
       yield linkedValue
@@ -67,7 +67,7 @@ export const parseListExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { clone = true } = options
+  const { fill = true } = options
 
   if (hasSetOperation(input)) {
     return {
@@ -79,9 +79,9 @@ export const parseListExtension = (
           parseExtension: undefined
         })
 
-        if (clone) {
-          const clonedValue = { [$SET]: parser.next().value }
-          yield clonedValue
+        if (fill) {
+          const defaultedValue = { [$SET]: parser.next().value }
+          yield defaultedValue
 
           const linkedValue = { [$SET]: parser.next().value }
           yield linkedValue
@@ -116,9 +116,9 @@ export const parseListExtension = (
               )
             )
 
-            if (clone) {
-              const clonedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
-              yield clonedValue
+            if (fill) {
+              const defaultedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
+              yield defaultedValue
 
               const linkedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
               yield linkedValue
@@ -143,9 +143,9 @@ export const parseListExtension = (
             { ...options, parseExtension: parseReferenceExtension }
           )
 
-          if (clone) {
-            const clonedValue = { [$APPEND]: parser.next().value }
-            yield clonedValue
+          if (fill) {
+            const defaultedValue = { [$APPEND]: parser.next().value }
+            yield defaultedValue
 
             const linkedValue = { [$APPEND]: parser.next().value }
             yield linkedValue
@@ -179,9 +179,9 @@ export const parseListExtension = (
               )
             )
 
-            if (clone) {
-              const clonedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
-              yield clonedValue
+            if (fill) {
+              const defaultedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
+              yield defaultedValue
 
               const linkedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
               yield linkedValue
@@ -206,9 +206,9 @@ export const parseListExtension = (
             { ...options, parseExtension: parseReferenceExtension }
           )
 
-          if (clone) {
-            const clonedValue = { [$PREPEND]: parser.next().value }
-            yield clonedValue
+          if (fill) {
+            const defaultedValue = { [$PREPEND]: parser.next().value }
+            yield defaultedValue
 
             const linkedValue = { [$PREPEND]: parser.next().value }
             yield linkedValue
@@ -241,13 +241,13 @@ export const parseListExtension = (
             .filter(([, element]) => element !== undefined)
         )
 
-        if (clone) {
-          const clonedValue = Object.fromEntries(
+        if (fill) {
+          const defaultedValue = Object.fromEntries(
             Object.entries(parsers)
               .map(([index, parser]) => [index, parser.next().value])
               .filter(([, element]) => element !== undefined)
           )
-          yield clonedValue
+          yield defaultedValue
 
           const linkedValue = Object.fromEntries(
             Object.entries(parsers)

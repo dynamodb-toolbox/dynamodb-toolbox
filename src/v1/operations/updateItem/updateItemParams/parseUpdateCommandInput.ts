@@ -14,12 +14,12 @@ const requiringOptions = new Set<RequiredOption>(['always'])
 
 export const parseEntityUpdateCommandInput: EntityUpdateCommandInputParser = (entity, input) => {
   const parser = parseSchemaClonedInput(entity.schema, input, {
-    operationName: 'update',
+    fill: 'update',
     requiringOptions,
     parseExtension: parseUpdateExtension
   })
 
-  parser.next() // cloned
+  parser.next() // defaulted
   parser.next() // linked
 
   return parser

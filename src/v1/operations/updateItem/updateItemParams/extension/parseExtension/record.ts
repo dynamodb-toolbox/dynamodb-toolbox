@@ -16,12 +16,12 @@ function* parseRecordElementClonedInput(
   AttributeValue<UpdateItemInputExtension>,
   Item<UpdateItemInputExtension> | undefined
 > {
-  const { clone = true } = options
+  const { fill = true } = options
 
   if (inputValue === $REMOVE) {
-    if (clone) {
-      const clonedValue: typeof $REMOVE = $REMOVE
-      yield clonedValue
+    if (fill) {
+      const defaultedValue: typeof $REMOVE = $REMOVE
+      yield defaultedValue
 
       const linkedValue: typeof $REMOVE = $REMOVE
       yield linkedValue
@@ -42,7 +42,7 @@ export const parseRecordExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { clone = true } = options
+  const { fill = true } = options
 
   if (hasSetOperation(input)) {
     return {
@@ -54,9 +54,9 @@ export const parseRecordExtension = (
           parseExtension: undefined
         })
 
-        if (clone) {
-          const clonedValue = { [$SET]: parser.next().value }
-          yield clonedValue
+        if (fill) {
+          const defaultedValue = { [$SET]: parser.next().value }
+          yield defaultedValue
 
           const linkedValue = { [$SET]: parser.next().value }
           yield linkedValue
@@ -102,8 +102,8 @@ export const parseRecordExtension = (
             )
           ])
 
-        if (clone) {
-          const clonedValue = Object.fromEntries(
+        if (fill) {
+          const defaultedValue = Object.fromEntries(
             parsers
               .map(([keyParser, elementParser]) => [
                 keyParser.next().value,
@@ -111,7 +111,7 @@ export const parseRecordExtension = (
               ])
               .filter(([, element]) => element !== undefined)
           )
-          yield clonedValue
+          yield defaultedValue
 
           const linkedValue = Object.fromEntries(
             parsers
