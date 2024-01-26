@@ -128,7 +128,7 @@ export class ScanCommand<
         ScannedCount: pageScannedCount,
         ConsumedCapacity: pageConsumedCapacity,
         $metadata: pageMetadata
-      } = await this[$table].documentClient.send(new _ScanCommand(pageScanParams))
+      } = await this[$table].getDocumentClient().send(new _ScanCommand(pageScanParams))
 
       for (const item of items) {
         const itemEntityName = item[this[$table].entityAttributeSavedAs]
