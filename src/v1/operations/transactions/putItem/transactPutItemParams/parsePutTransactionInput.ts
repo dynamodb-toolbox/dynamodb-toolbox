@@ -12,8 +12,8 @@ export const parseEntityPutTransactionInput: EntityPutCommandInputParser = (enti
     operationName: 'put'
   })
 
-  const clonedInput = parser.next() // cloned
-  parser.next(clonedInput) // linked
+  parser.next() // cloned
+  parser.next() // linked
 
   return parser
 }
