@@ -28,7 +28,7 @@ export const batchWrite = async (
   } = {}
 ): Promise<BatchWriteCommandOutput> => {
   const documentClient =
-    options?.dynamoDBDocumentClient ?? requests[0][$entity].table.documentClient
+    options?.dynamoDBDocumentClient ?? requests[0][$entity].table.getDocumentClient()
 
   const commandInput = getBatchWriteCommandInput(requests, options?.batchWriteOptions)
 

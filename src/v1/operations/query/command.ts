@@ -160,7 +160,7 @@ export class QueryCommand<
         ScannedCount: pageScannedCount,
         ConsumedCapacity: pageConsumedCapacity,
         $metadata: pageMetadata
-      } = await this[$table].documentClient.send(new _QueryCommand(pageQueryParams))
+      } = await this[$table].getDocumentClient().send(new _QueryCommand(pageQueryParams))
 
       for (const item of items) {
         const itemEntityName = item[this[$table].entityAttributeSavedAs]

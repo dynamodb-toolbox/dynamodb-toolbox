@@ -58,7 +58,7 @@ export class DeleteItemTransaction<
     params: TransactDeleteItemParams
   } {
     return {
-      documentClient: this[$entity].table.documentClient,
+      documentClient: this[$entity].table.getDocumentClient(),
       type: 'Delete',
       params: this.params()
     }

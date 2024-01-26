@@ -58,7 +58,7 @@ export class UpdateItemTransaction<
     params: TransactUpdateItemParams
   } {
     return {
-      documentClient: this[$entity].table.documentClient,
+      documentClient: this[$entity].table.getDocumentClient(),
       type: 'Update',
       params: this.params()
     }

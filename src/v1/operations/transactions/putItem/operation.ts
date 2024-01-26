@@ -58,7 +58,7 @@ export class PutItemTransaction<
     params: TransactPutItemParams
   } {
     return {
-      documentClient: this[$entity].table.documentClient,
+      documentClient: this[$entity].table.getDocumentClient(),
       type: 'Put',
       params: this.params()
     }
