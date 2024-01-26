@@ -21,6 +21,7 @@ export const parseEntityUpdateTransactionInput: EntityUpdateCommandInputParser =
     parseExtension: parseUpdateExtension
   })
 
+  parser.next() // linked
   parser.next() // cloned
 
   return parser
