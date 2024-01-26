@@ -8,12 +8,12 @@ const requiringOptions = new Set<RequiredOption>(['always'])
 
 export const parseEntityKeyInput: EntityKeyInputParser = (entity, input) => {
   const parser = parseSchemaClonedInput(entity.schema, input, {
-    operationName: 'key',
-    requiringOptions,
-    filters: { key: true }
+    fill: 'key',
+    filters: { key: true },
+    requiringOptions
   })
 
-  parser.next() // cloned
+  parser.next() // defaulted
   parser.next() // linked
 
   return parser

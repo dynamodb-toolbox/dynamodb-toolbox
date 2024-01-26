@@ -18,9 +18,7 @@ describe('parseRecordAttributeClonedInput', () => {
 
   it('throws an error if input is not a record', () => {
     const invalidCall = () =>
-      parseRecordAttributeClonedInput(recordAttr, ['foo', 'bar'], {
-        clone: false
-      }).next()
+      parseRecordAttributeClonedInput(recordAttr, ['foo', 'bar'], { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -35,9 +33,9 @@ describe('parseRecordAttributeClonedInput', () => {
       options
     )
 
-    const clonedState = parser.next()
-    expect(clonedState.done).toBe(false)
-    expect(clonedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
+    const defaultedState = parser.next()
+    expect(defaultedState.done).toBe(false)
+    expect(defaultedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
 
     expect(parseAttributeClonedInput).toHaveBeenCalledTimes(4)
     expect(parseAttributeClonedInput).toHaveBeenCalledWith(recordAttr.keys, 'foo', options)

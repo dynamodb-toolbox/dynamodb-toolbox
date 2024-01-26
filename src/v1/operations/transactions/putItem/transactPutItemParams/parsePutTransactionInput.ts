@@ -8,11 +8,11 @@ const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
 export const parseEntityPutTransactionInput: EntityPutCommandInputParser = (entity, input) => {
   const parser = parseSchemaClonedInput(entity.schema, input, {
-    requiringOptions,
-    operationName: 'put'
+    fill: 'put',
+    requiringOptions
   })
 
-  parser.next() // cloned
+  parser.next() // defaulted
   parser.next() // linked
 
   return parser

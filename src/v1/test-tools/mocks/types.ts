@@ -37,7 +37,7 @@ type OperationMock =
   | typeof DeleteItemCommandMock
   | typeof UpdateItemCommandMock
 
-export type operationName = ClassStaticProperties<OperationMock>[$operationName]
+export type OperationName = ClassStaticProperties<OperationMock>[$operationName]
 
 export type OperationClassResults<
   ENTITY extends EntityV2,

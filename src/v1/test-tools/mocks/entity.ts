@@ -19,7 +19,7 @@ import {
 } from 'v1/operations/updateItem'
 import type { UpdateItemCommandClass } from 'v1/operations/updateItem/command'
 
-import type { OperationClassMocker, OperationClassResults, operationName } from './types'
+import type { OperationClassMocker, OperationClassResults, OperationName } from './types'
 import { GetItemCommandMock } from './getItemCommand'
 import { PutItemCommandMock } from './putItemCommand'
 import { DeleteItemCommandMock } from './deleteItemCommand'
@@ -91,7 +91,7 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
   >(
     operation: OPERATION_CLASS
   ): OperationClassMocker<ENTITY, OPERATION_CLASS> =>
-    new OperationMocker<operationName, any, any, any>(
+    new OperationMocker<OperationName, any, any, any>(
       operation.operationName,
       this
     ) as OperationClassMocker<ENTITY, OPERATION_CLASS>

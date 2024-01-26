@@ -18,17 +18,17 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   input,
   options
 ) => {
-  const { clone = true } = options
-  // We don't want to fill any default or link while parsing update extension
-  const nextOpts = { ...options, operationName: undefined }
+  const { fill = true } = options
+  // We cast as boolean as we don't want to fill any default/link while parsing update extensions
+  const nextOpts = { ...options, fill: Boolean(fill) }
 
   if (input === $REMOVE) {
     return {
       isExtension: true,
       *extensionParser() {
-        if (clone) {
-          const clonedValue: typeof $REMOVE = $REMOVE
-          yield clonedValue
+        if (fill) {
+          const defaultedValue: typeof $REMOVE = $REMOVE
+          yield defaultedValue
 
           const linkedValue: typeof $REMOVE = $REMOVE
           yield linkedValue

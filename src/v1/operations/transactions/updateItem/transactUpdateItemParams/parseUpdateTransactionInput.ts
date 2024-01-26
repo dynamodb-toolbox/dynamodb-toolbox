@@ -16,13 +16,13 @@ export const parseEntityUpdateTransactionInput: EntityUpdateCommandInputParser =
   input
 ) => {
   const parser = parseSchemaClonedInput(entity.schema, input, {
-    operationName: 'update',
+    fill: 'update',
     requiringOptions,
     parseExtension: parseUpdateExtension
   })
 
+  parser.next() // defaulted
   parser.next() // linked
-  parser.next() // cloned
 
   return parser
 }
