@@ -95,9 +95,8 @@ export class ScanCommand<
   send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()
 
-    const entities = this[$entities] ?? []
     const entitiesByName: Record<string, EntityV2> = {}
-    entities.forEach(entity => {
+    this[$entities].forEach(entity => {
       entitiesByName[entity.name] = entity
     })
 
@@ -139,6 +138,9 @@ export class ScanCommand<
         const itemEntity = entitiesByName[itemEntityName]
 
         if (itemEntity === undefined) {
+          if (this[$entities].length === 0) {
+            formattedItems.push(item)
+          }
           continue
         }
 
