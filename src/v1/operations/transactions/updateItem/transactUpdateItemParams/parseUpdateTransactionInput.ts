@@ -17,6 +17,7 @@ export const parseEntityUpdateTransactionInput: EntityUpdateCommandInputParser =
 ) => {
   const parser = schemaParser(entity.schema, input, {
     fill: 'update',
+    transform: true,
     requiringOptions,
     parseExtension: parseUpdateExtension
   })

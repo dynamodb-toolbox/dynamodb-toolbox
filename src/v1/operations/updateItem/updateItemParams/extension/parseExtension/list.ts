@@ -25,7 +25,7 @@ function* parseListElementClonedInput(
   AttributeValue<UpdateItemInputExtension> | undefined,
   Item<UpdateItemInputExtension> | undefined
 > {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   if (inputValue === $REMOVE) {
     if (fill) {
@@ -37,7 +37,12 @@ function* parseListElementClonedInput(
     }
 
     const parsedValue: typeof $REMOVE = $REMOVE
-    yield parsedValue
+
+    if (transform) {
+      yield parsedValue
+    } else {
+      return parsedValue
+    }
 
     const transformedValue: typeof $REMOVE = $REMOVE
     return transformedValue
@@ -53,7 +58,12 @@ function* parseListElementClonedInput(
     }
 
     const parsedValue = undefined
-    yield parsedValue
+
+    if (transform) {
+      yield parsedValue
+    } else {
+      return parsedValue
+    }
 
     const transformedValue = undefined
     return transformedValue
@@ -67,7 +77,7 @@ export const parseListExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   if (hasSetOperation(input)) {
     return {
@@ -88,7 +98,12 @@ export const parseListExtension = (
         }
 
         const parsedValue = { [$SET]: parser.next().value }
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = { [$SET]: parser.next().value }
         return transformedValue
@@ -125,7 +140,12 @@ export const parseListExtension = (
             }
 
             const parsedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
-            yield parsedValue
+
+            if (transform) {
+              yield parsedValue
+            } else {
+              return parsedValue
+            }
 
             const transformedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
             return transformedValue
@@ -152,7 +172,12 @@ export const parseListExtension = (
           }
 
           const parsedValue = { [$APPEND]: parser.next().value }
-          yield parsedValue
+
+          if (transform) {
+            yield parsedValue
+          } else {
+            return parsedValue
+          }
 
           const transformedValue = { [$APPEND]: parser.next().value }
           return transformedValue
@@ -188,7 +213,12 @@ export const parseListExtension = (
             }
 
             const parsedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
-            yield parsedValue
+
+            if (transform) {
+              yield parsedValue
+            } else {
+              return parsedValue
+            }
 
             const transformedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
             return transformedValue
@@ -215,7 +245,12 @@ export const parseListExtension = (
           }
 
           const parsedValue = { [$PREPEND]: parser.next().value }
-          yield parsedValue
+
+          if (transform) {
+            yield parsedValue
+          } else {
+            return parsedValue
+          }
 
           const transformedValue = { [$PREPEND]: parser.next().value }
           return transformedValue
@@ -278,7 +313,12 @@ export const parseListExtension = (
             .map(([index, parser]) => [index, parser.next().value])
             .filter(([, element]) => element !== undefined)
         )
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = [...Array(maxUpdatedIndex + 1).keys()].map(index => {
           const parser = parsers[index]

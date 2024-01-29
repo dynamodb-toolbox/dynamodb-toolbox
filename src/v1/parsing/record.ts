@@ -31,7 +31,7 @@ export function* recordAttributeParser<
   RecordAttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   const parsers: [
     Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>,
@@ -93,12 +93,17 @@ export function* recordAttributeParser<
       .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
       .filter(([, element]) => element !== undefined)
   )
-  yield parsedValue
 
-  const collapsedValue = Object.fromEntries(
+  if (transform) {
+    yield parsedValue
+  } else {
+    return parsedValue
+  }
+
+  const transformedValue = Object.fromEntries(
     parsers
       .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
       .filter(([, element]) => element !== undefined)
   )
-  return collapsedValue
+  return transformedValue
 }

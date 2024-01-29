@@ -9,6 +9,7 @@ const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 export const parseEntityPutCommandInput: EntityPutCommandInputParser = (entity, input) => {
   const parser = schemaParser(entity.schema, input, {
     fill: 'put',
+    transform: true,
     requiringOptions
   })
 

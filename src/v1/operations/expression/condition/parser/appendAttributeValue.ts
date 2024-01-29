@@ -17,8 +17,8 @@ export const appendAttributeValue = (
     fill: false,
     transform
   })
-  inputParser.next() // parsed
-  const transformedInput = inputParser.next().value
+  const parsedState = inputParser.next() // parsed
+  const transformedInput = parsedState.done ? parsedState.value : inputParser.next().value
 
   const expressionAttributeValueIndex = conditionParser.expressionAttributeValues.push(
     transformedInput

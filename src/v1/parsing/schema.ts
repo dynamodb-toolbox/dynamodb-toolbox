@@ -18,7 +18,7 @@ export function* schemaParser<SCHEMA_EXTENSION extends Extension = never>(
     [options?: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<Item<SCHEMA_EXTENSION>, Item<SCHEMA_EXTENSION>> {
-  const { filters, fill = true } = options
+  const { filters, fill = true, transform = true } = options
   const parsers: Record<string, Generator<AttributeValue<SCHEMA_EXTENSION>>> = {}
   let restEntries: [string, AttributeValue<SCHEMA_EXTENSION>][] = []
 
@@ -82,7 +82,12 @@ export function* schemaParser<SCHEMA_EXTENSION extends Extension = never>(
       .map(([attrName, attr]) => [attrName, attr.next().value])
       .filter(([, attrValue]) => attrValue !== undefined)
   )
-  yield parsedValue
+
+  if (transform) {
+    yield parsedValue
+  } else {
+    return parsedValue
+  }
 
   const transformedValue = Object.fromEntries(
     Object.entries(parsers)

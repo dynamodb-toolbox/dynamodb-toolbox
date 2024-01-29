@@ -31,7 +31,7 @@ export function* primitiveAttributeParser<
   PrimitiveAttributeBasicValue,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { transform = true, fill = true } = options
+  const { fill = true, transform = true } = options
 
   const linkedValue: AttributeValue<INPUT_EXTENSION> = inputValue
 
@@ -75,12 +75,16 @@ export function* primitiveAttributeParser<
    * @debt type "validator should act as typeguard"
    */
   const parsedValue = linkedValue as PrimitiveAttributeBasicValue
-  yield parsedValue
+
+  if (transform) {
+    yield parsedValue
+  } else {
+    return parsedValue
+  }
 
   const transformedValue =
-    transform && attribute.transform !== undefined
+    attribute.transform !== undefined
       ? (attribute.transform as Transformer).parse(parsedValue)
       : parsedValue
-
   return transformedValue
 }
