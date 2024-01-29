@@ -1,5 +1,9 @@
+
 import Table from '../classes/Table/Table.js'
 import Entity from '../classes/Entity/Entity.js'
+import { Equals } from 'ts-toolbelt/out/Any/Equals.js'
+import { DocumentClient } from './bootstrap.test.js'
+import { GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 describe('Entity properties', () => {
   describe('table', () => {
@@ -270,5 +274,54 @@ describe('Entity properties', () => {
     expect(() => {
       TestEntity.attribute('missing')
     }).toThrow(`'missing' does not exist or is an invalid alias`)
+  })
+})
+
+
+describe('Extended classes behave as expected', () => {
+  const config = {
+    name: 'TestEnt',
+    attributes: {
+      pk: { partitionKey: true },
+      test: { map: 'sk' },
+    },
+    autoParse: false,
+    table: new Table({
+      name: 'base-table',
+      partitionKey: 'pk',
+      DocumentClient,
+    }),
+  } as const
+  
+  class TestEntityExtended extends Entity {
+    constructor() {
+      super(config)
+    }
+  }
+
+  it(`get, update, put  method on base class will be fine`, async () => {
+    const baseEntity = new Entity(config);
+    const res = baseEntity.get({ pk: 'foo' })
+
+    type TestExtends = Equals<typeof res, Promise<GetCommandOutput>>
+    const testExtends: TestExtends = 1 //
+    expect(testExtends).toBe(1)
+  })
+
+
+  it(`get method in derived class should return GetCommandOutput if autoExecute is configured`, async () => {
+    const testEntity = new TestEntityExtended()
+    const res = testEntity.get({ pk: 'foo' })
+    type TestExtends = Equals<typeof res, Promise<GetCommandOutput>>
+    const testExtends: TestExtends = 1
+    expect(testExtends).toBe(1)
+  })
+
+  it(`get method in derived class should return GetCommandOutput if autoExecute false but execute parameter passed`, async () => {
+    const TestEntity = new TestEntityExtended()
+    const res = TestEntity.get({ pk: 'foo' }, { execute: true })
+    type TestExtends = Equals<typeof res, Promise<GetCommandOutput>>
+    const testExtends: TestExtends = 1
+    expect(testExtends).toBe(1)
   })
 })
