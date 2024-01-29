@@ -31,7 +31,7 @@ export function* setAttributeParser<
   SetAttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   const parsers: Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>[] = []
 
@@ -72,7 +72,12 @@ export function* setAttributeParser<
   }
 
   const parsedValue = new Set(parsers.map(parser => parser.next().value))
-  yield parsedValue
+
+  if (transform) {
+    yield parsedValue
+  } else {
+    return parsedValue
+  }
 
   const transformedValue = new Set(parsers.map(parser => parser.next().value))
   return transformedValue

@@ -15,6 +15,7 @@ const requiringOptions = new Set<RequiredOption>(['always'])
 export const parseEntityUpdateCommandInput: EntityUpdateCommandInputParser = (entity, input) => {
   const parser = schemaParser(entity.schema, input, {
     fill: 'update',
+    transform: true,
     requiringOptions,
     parseExtension: parseUpdateExtension
   })

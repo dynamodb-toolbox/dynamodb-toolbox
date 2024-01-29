@@ -23,7 +23,7 @@ export const parseNumberExtension = (
   inputValue: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   if (hasSumOperation(inputValue)) {
     return {
@@ -79,7 +79,12 @@ export const parseNumberExtension = (
         }
 
         const parsedValue = { [$SUM]: parsers.map(parser => parser.next().value) }
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = { [$SUM]: parsers.map(parser => parser.next().value) }
         return transformedValue
@@ -141,7 +146,12 @@ export const parseNumberExtension = (
         }
 
         const parsedValue = { [$SUBTRACT]: parsers.map(parser => parser.next().value) }
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = { [$SUBTRACT]: parsers.map(parser => parser.next().value) }
         return transformedValue
@@ -169,7 +179,12 @@ export const parseNumberExtension = (
         }
 
         const parsedValue = { [$ADD]: parser.next().value }
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = { [$ADD]: parser.next().value }
         return transformedValue

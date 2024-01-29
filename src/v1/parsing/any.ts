@@ -20,7 +20,7 @@ export function* anyAttributeParser<
   AttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   let linkedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
   if (fill) {
@@ -32,7 +32,12 @@ export function* anyAttributeParser<
   }
 
   const parsedValue = linkedValue ?? cloneDeep(inputValue)
-  yield parsedValue
+
+  if (transform) {
+    yield parsedValue
+  } else {
+    return parsedValue
+  }
 
   const transformedValue = parsedValue
   return transformedValue

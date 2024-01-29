@@ -44,9 +44,9 @@ export type ParsingOptions<
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 > = {
   fill?: boolean | FillKey
+  transform?: boolean
   requiringOptions?: Set<RequiredOption>
   filters?: AttributeFilters
-  transform?: boolean
 } & If<
   HasExtension<INPUT_EXTENSION>,
   { parseExtension: ExtensionParser<INPUT_EXTENSION, SCHEMA_EXTENSION> },

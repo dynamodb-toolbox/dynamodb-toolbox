@@ -11,7 +11,7 @@ export const parseSetExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   if (hasAddOperation(input)) {
     return {
@@ -32,7 +32,12 @@ export const parseSetExtension = (
         }
 
         const parsedValue = { [$ADD]: parser.next().value }
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = { [$ADD]: parser.next().value }
         return transformedValue
@@ -59,7 +64,12 @@ export const parseSetExtension = (
         }
 
         const parsedValue = { [$DELETE]: parser.next().value }
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = { [$DELETE]: parser.next().value }
         return transformedValue

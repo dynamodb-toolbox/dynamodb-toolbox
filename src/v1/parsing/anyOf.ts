@@ -29,7 +29,7 @@ export function* anyOfAttributeParser<
   AttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   let parser: Generator<AttributeValue<INPUT_EXTENSION>> | undefined = undefined
   let _defaultedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
@@ -74,7 +74,11 @@ export function* anyOfAttributeParser<
     })
   }
 
-  yield parsedValue
+  if (transform) {
+    yield parsedValue
+  } else {
+    return parsedValue
+  }
 
   const transformedValue = parser.next().value
   return transformedValue
