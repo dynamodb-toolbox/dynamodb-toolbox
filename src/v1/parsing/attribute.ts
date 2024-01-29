@@ -36,6 +36,7 @@ export function* attributeParser<
   const {
     requiringOptions = defaultRequiringOptions,
     fill = true,
+    transform = true,
     /**
      * @debt type "Maybe there's a way not to have to cast here"
      */
@@ -94,7 +95,12 @@ export function* attributeParser<
     }
 
     const parsedValue = basicInput
-    yield parsedValue
+
+    if (transform) {
+      yield parsedValue
+    } else {
+      return parsedValue
+    }
 
     const transformedValue = parsedValue
     return transformedValue

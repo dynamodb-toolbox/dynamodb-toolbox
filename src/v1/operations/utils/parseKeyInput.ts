@@ -9,6 +9,7 @@ const requiringOptions = new Set<RequiredOption>(['always'])
 export const parseEntityKeyInput: EntityKeyInputParser = (entity, input) => {
   const parser = schemaParser(entity.schema, input, {
     fill: 'key',
+    transform: true,
     filters: { key: true },
     requiringOptions
   })
