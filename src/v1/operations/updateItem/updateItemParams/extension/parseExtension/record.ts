@@ -16,7 +16,7 @@ function* parseRecordElementClonedInput(
   AttributeValue<UpdateItemInputExtension>,
   Item<UpdateItemInputExtension> | undefined
 > {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   if (inputValue === $REMOVE) {
     if (fill) {
@@ -28,7 +28,12 @@ function* parseRecordElementClonedInput(
     }
 
     const parsedValue: typeof $REMOVE = $REMOVE
-    yield parsedValue
+
+    if (transform) {
+      yield parsedValue
+    } else {
+      return parsedValue
+    }
 
     const transformedValue: typeof $REMOVE = $REMOVE
     return transformedValue
@@ -42,7 +47,7 @@ export const parseRecordExtension = (
   input: AttributeValue<UpdateItemInputExtension> | undefined,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { fill = true } = options
+  const { fill = true, transform = true } = options
 
   if (hasSetOperation(input)) {
     return {
@@ -63,7 +68,12 @@ export const parseRecordExtension = (
         }
 
         const parsedValue = { [$SET]: parser.next().value }
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = { [$SET]: parser.next().value }
         return transformedValue
@@ -132,7 +142,12 @@ export const parseRecordExtension = (
             ])
             .filter(([, element]) => element !== undefined)
         )
-        yield parsedValue
+
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = Object.fromEntries(
           parsers

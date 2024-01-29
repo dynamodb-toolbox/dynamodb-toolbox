@@ -32,7 +32,7 @@ export function* mapAttributeParser<
   MapAttributeBasicValue<INPUT_EXTENSION>,
   Item<SCHEMA_EXTENSION> | undefined
 > {
-  const { filters, fill = true } = options
+  const { filters, fill = true, transform = true } = options
   const parsers: Record<string, Generator<AttributeValue<INPUT_EXTENSION>>> = {}
   let restEntries: [string, AttributeValue<INPUT_EXTENSION>][] = []
 
@@ -98,7 +98,12 @@ export function* mapAttributeParser<
       .map(([attrName, attr]) => [attrName, attr.next().value])
       .filter(([, attrValue]) => attrValue !== undefined)
   )
-  yield parsedValue
+
+  if (transform) {
+    yield parsedValue
+  } else {
+    return parsedValue
+  }
 
   const transformedValue = Object.fromEntries(
     Object.entries(parsers)
