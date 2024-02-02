@@ -1,26 +1,27 @@
+import { getTransactWriteCommandInput, transactWriteItems } from './transactWriteItems'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import {
-  EntityV2,
-  TableV2,
-  PutItemTransaction,
-  DeleteItemTransaction,
+  $add,
+  $append,
+  $set,
   any,
   binary,
   boolean,
+  ConditionCheck,
+  DeleteItemTransaction,
+  DynamoDBToolboxError,
+  EntityV2,
   list,
   map,
   number,
+  PutItemTransaction,
   schema,
   set,
   string,
-  DynamoDBToolboxError,
-  UpdateItemTransaction,
-  $append,
-  $set,
-  $add
+  TableV2,
+  UpdateItemTransaction
 } from 'v1'
-import { transactWriteItems, getTransactWriteCommandInput } from './transactWriteItems'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 
@@ -104,7 +105,10 @@ describe('transactWriteItems', () => {
 
   it('should send a transaction with the correct parameters', async () => {
     const commands = [
-      TestEntity.build(PutItemTransaction).item({ email: 'titi@example.com', sort: 'titi' }),
+      TestEntity.build(PutItemTransaction).item({
+        email: 'titi@example.com',
+        sort: 'titi'
+      }),
       TestEntity2.build(PutItemTransaction).item({
         email: 'toto@example.com'
       })
@@ -149,6 +153,12 @@ describe('generateTransactWriteCommandInput', () => {
   })
   it('should generate a transaction with the correct parameters', async () => {
     const transactions = [
+      TestEntity.build(ConditionCheck)
+        .key({
+          email: 'tata@example.com',
+          sort: 'tata'
+        })
+        .condition({ attr: 'count', gt: 4 }),
       TestEntity.build(PutItemTransaction).item({
         email: 'titi@example.com',
         sort: 'titi',
@@ -163,7 +173,10 @@ describe('generateTransactWriteCommandInput', () => {
         test_number_set: new Set([1, 2, 3]),
         test_binary_set: new Set([Buffer.from('a'), Buffer.from('b')])
       }),
-      TestEntity.build(DeleteItemTransaction).key({ email: 'tata@example.com', sort: 'tata' }),
+      TestEntity.build(DeleteItemTransaction).key({
+        email: 'tata@example.com',
+        sort: 'tata'
+      }),
       TestEntity.build(UpdateItemTransaction).item({
         email: 'titi@example.com',
         sort: 'titi',
@@ -189,6 +202,22 @@ describe('generateTransactWriteCommandInput', () => {
       ReturnConsumedCapacity: 'NONE',
       ReturnItemCollectionMetrics: 'SIZE',
       TransactItems: [
+        {
+          ConditionCheck: {
+            ConditionExpression: '#c_1 > :c_1',
+            ExpressionAttributeNames: {
+              '#c_1': 'test_number'
+            },
+            ExpressionAttributeValues: {
+              ':c_1': 4
+            },
+            Key: {
+              pk: 'tata@example.com',
+              sk: 'tata'
+            },
+            TableName: 'test-table'
+          }
+        },
         {
           Put: {
             Item: {
