@@ -21,7 +21,12 @@ export { ScanCommand } from './scan'
 export type { ScanOptions, ScanResponse } from './scan'
 export { QueryCommand } from './query'
 export type { QueryOptions, QueryResponse } from './query'
-export { PutItemTransaction, DeleteItemTransaction, UpdateItemTransaction } from './transactions'
+export {
+  ConditionCheck,
+  PutItemTransaction,
+  DeleteItemTransaction,
+  UpdateItemTransaction
+} from './transactions'
 export { batchWrite, BatchDeleteItemRequest, BatchPutItemRequest } from './batch'
 export type { BatchWriteOptions, BatchWriteItemRequest } from './batch'
 export { formatSavedItem } from './utils/formatSavedItem'
