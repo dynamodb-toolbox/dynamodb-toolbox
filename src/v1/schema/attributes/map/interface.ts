@@ -58,7 +58,9 @@ export interface $MapAttribute<
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $MapAttribute<$ATTRIBUTES, O.Overwrite<STATE, { hidden: true }>>
+  hidden: <NEXT_HIDDEN extends boolean = true>(
+    nextHidden?: NEXT_HIDDEN
+  ) => $MapAttribute<$ATTRIBUTES, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */

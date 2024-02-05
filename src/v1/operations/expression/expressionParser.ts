@@ -1,4 +1,6 @@
 import type { AnyAttribute, Attribute, PrimitiveAttribute, Schema } from 'v1/schema'
+import { any } from 'v1/schema/attributes/any'
+import { number } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
@@ -17,44 +19,11 @@ export interface ExpressionParser {
   appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Attribute
 }
 
-const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
-  type: 'any',
-  required: 'never',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  links: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  castAs: undefined
-}
+const defaultAnyAttribute: AnyAttribute = any({ required: 'never' }).freeze('')
 
-const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
-  type: 'number',
-  required: 'never',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  links: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  enum: undefined,
-  transform: undefined
-}
+const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = number({
+  required: 'never'
+}).freeze('')
 
 class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'operations.invalidExpressionAttributePath'> {
   constructor(attributePath: string) {
@@ -100,10 +69,10 @@ export const appendAttributePath = (
         }
 
         parentAttribute = {
+          ...defaultAnyAttribute,
           path: [parentAttribute.path, childAttributeAccessor].join(
             isChildAttributeInList ? '' : '.'
-          ),
-          ...defaultAnyAttribute
+          )
         }
         break
       }
@@ -194,8 +163,8 @@ export const appendAttributePath = (
 
   return size
     ? {
-        path: parentAttribute.path,
-        ...defaultNumberAttribute
+        ...defaultNumberAttribute,
+        path: parentAttribute.path
       }
     : parentAttribute
 }

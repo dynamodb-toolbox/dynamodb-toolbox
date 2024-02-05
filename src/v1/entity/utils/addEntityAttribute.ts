@@ -1,5 +1,6 @@
 import type { Schema, AtLeastOnce, PrimitiveAttribute } from 'v1/schema'
 import type { EntityAttributeSavedAs, TableV2 } from 'v1/table'
+import { string } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $get } from 'v1/operations/updateItem/utils'
 
@@ -71,26 +72,13 @@ export const addEntityAttribute: EntityAttributeAdder = <
     })
   }
 
-  const entityAttribute: EntityAttribute<TABLE, ENTITY_NAME> = {
-    path: entityAttributeName,
-    type: 'string',
-    required: 'atLeastOnce',
+  const entityAttribute: EntityAttribute<TABLE, ENTITY_NAME> = string({
     hidden: true,
-    key: false,
-    savedAs: table.entityAttributeSavedAs,
-    enum: [entityName],
-    defaults: {
-      key: undefined,
-      put: entityName,
-      update: () => $get(entityAttributeName, entityName)
-    },
-    links: {
-      key: undefined,
-      put: undefined,
-      update: undefined
-    },
-    transform: undefined
-  }
+    savedAs: table.entityAttributeSavedAs
+  })
+    .const(entityName)
+    .updateDefault(() => $get(entityAttributeName, entityName))
+    .freeze(entityAttributeName)
 
   return addInternalAttribute(schema, entityAttributeName, entityAttribute) as WithEntityAttribute<
     SCHEMA,

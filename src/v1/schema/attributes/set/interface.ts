@@ -60,7 +60,9 @@ export interface $SetAttribute<
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { hidden: true }>>
+  hidden: <NEXT_HIDDEN extends boolean = true>(
+    nextHidden?: NEXT_HIDDEN
+  ) => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */

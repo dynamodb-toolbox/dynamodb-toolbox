@@ -66,7 +66,9 @@ export interface $RecordAttribute<
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $RecordAttribute<$KEYS, $ELEMENTS, O.Overwrite<STATE, { hidden: true }>>
+  hidden: <NEXT_HIDDEN extends boolean = true>(
+    nextHidden?: NEXT_HIDDEN
+  ) => $RecordAttribute<$KEYS, $ELEMENTS, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */

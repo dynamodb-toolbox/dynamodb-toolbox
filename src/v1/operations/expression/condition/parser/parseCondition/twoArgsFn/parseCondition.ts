@@ -1,4 +1,5 @@
-import { Always, PrimitiveAttribute } from 'v1/schema'
+import type { Always, PrimitiveAttribute } from 'v1/schema'
+import { string } from 'v1/schema/attributes/primitive'
 
 import type { ConditionParser } from '../../parser'
 import { TwoArgsFnOperator, isTwoArgsFnOperator, TwoArgsFnCondition } from './types'
@@ -29,26 +30,10 @@ const typeAttribute: PrimitiveAttribute<
     }
     transform: undefined
   }
-> = {
-  path: '',
-  type: 'string',
-  required: 'always',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  enum: ['S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M'],
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  links: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  transform: undefined
-}
+> = string()
+  .required('always')
+  .enum('S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M')
+  .freeze('')
 
 export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   conditionParser: ConditionParser,

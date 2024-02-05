@@ -6,7 +6,7 @@ import { $key, $savedAs, $required } from './attributes/constants/attributeOptio
 
 import type { Schema } from './interface'
 import type { RequiredOption } from './attributes/constants/requiredOptions'
-import type { FreezeAttribute } from './attributes/freeze'
+import type { FreezeAttribute } from './attributes/types'
 
 type $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = {}>(arg: {
   attributes: NarrowObject<ATTRIBUTES>

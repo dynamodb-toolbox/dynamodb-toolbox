@@ -3,7 +3,7 @@ import type { O } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isArray } from 'v1/utils/validation'
 
-import type { FreezeAttribute } from '../freeze'
+import type { FreezeAttribute } from '../types'
 import { validateAttributeProperties } from '../shared/validate'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault'
 import {

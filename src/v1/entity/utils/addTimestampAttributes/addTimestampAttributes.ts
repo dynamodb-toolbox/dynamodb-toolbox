@@ -1,5 +1,6 @@
 import type { Schema } from 'v1/schema'
 import type { If } from 'v1/types/if'
+import { string } from 'v1/schema/attributes/primitive'
 import { $get } from 'v1/operations/updateItem/utils'
 
 import { WithInternalAttribute, addInternalAttribute } from '../addInternalAttribute'
@@ -90,26 +91,12 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
     const createdAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
-    > = {
-      path: createdName,
-      type: 'string',
-      required: 'atLeastOnce',
-      hidden: getTimestampOptionValue(timestamps, 'created', 'hidden'),
-      key: false,
-      savedAs: getTimestampOptionValue(timestamps, 'created', 'savedAs'),
-      enum: undefined,
-      defaults: {
-        key: undefined,
-        put: () => new Date().toISOString(),
-        update: () => $get(createdName, new Date().toISOString())
-      },
-      links: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      },
-      transform: undefined
-    }
+    > = string()
+      .hidden(getTimestampOptionValue(timestamps, 'created', 'hidden'))
+      .savedAs(getTimestampOptionValue(timestamps, 'created', 'savedAs'))
+      .putDefault(() => new Date().toISOString())
+      .updateDefault(() => $get(createdName, new Date().toISOString()))
+      .freeze(createdName)
 
     schemaWithTimestamps = addInternalAttribute(schemaWithTimestamps, createdName, createdAttribute)
   }
@@ -121,26 +108,12 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
     const modifiedAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
-    > = {
-      path: modifiedName,
-      type: 'string',
-      required: 'atLeastOnce',
-      hidden: getTimestampOptionValue(timestamps, 'modified', 'hidden'),
-      key: false,
-      savedAs: getTimestampOptionValue(timestamps, 'modified', 'savedAs'),
-      enum: undefined,
-      defaults: {
-        key: undefined,
-        put: () => new Date().toISOString(),
-        update: () => new Date().toISOString()
-      },
-      links: {
-        key: undefined,
-        put: undefined,
-        update: undefined
-      },
-      transform: undefined
-    }
+    > = string()
+      .hidden(getTimestampOptionValue(timestamps, 'modified', 'hidden'))
+      .savedAs(getTimestampOptionValue(timestamps, 'modified', 'savedAs'))
+      .putDefault(() => new Date().toISOString())
+      .updateDefault(() => new Date().toISOString())
+      .freeze(modifiedName)
 
     schemaWithTimestamps = addInternalAttribute(
       schemaWithTimestamps,

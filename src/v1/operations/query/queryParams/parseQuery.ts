@@ -1,12 +1,13 @@
 import type { O } from 'ts-toolbelt'
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
-import { ConditionParser } from 'v1/operations/expression/condition/parser'
 import _pick from 'lodash.pick'
 
 import type { Condition, Query } from 'v1/operations/types'
-import type { Attribute, PrimitiveAttribute, ResolvedPrimitiveAttribute, Schema } from 'v1/schema'
+import type { PrimitiveAttribute, ResolvedPrimitiveAttribute, Schema } from 'v1/schema'
+import { string, binary, number } from 'v1/schema/attributes/primitive'
 import type { TableV2 } from 'v1/table'
 import type { PrimitiveAttributeExtraCondition } from 'v1/operations/types/condition'
+import { ConditionParser } from 'v1/operations/expression/condition/parser'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { queryOperatorSet } from 'v1/operations/types/query'
 
@@ -21,23 +22,6 @@ const defaultSchema: Schema = {
     never: new Set()
   },
   and: undefined as any
-}
-
-const defaultAttribute: Omit<Attribute, 'path' | 'type'> = {
-  required: 'never',
-  key: false,
-  hidden: false,
-  savedAs: undefined,
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  links: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  }
 }
 
 const pick = _pick as <OBJECT extends object, KEYS extends string[]>(
@@ -65,12 +49,22 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
   }
 
   const indexSchema: Schema = defaultSchema
-  indexSchema.attributes[partitionKey.name] = {
-    ...defaultAttribute,
-    path: partitionKey.name,
-    type: partitionKey.type,
-    enum: undefined,
-    transform: undefined
+  switch (partitionKey.type) {
+    case 'string':
+      indexSchema.attributes[partitionKey.name] = string({ required: 'never' }).freeze(
+        partitionKey.name
+      )
+      break
+    case 'number':
+      indexSchema.attributes[partitionKey.name] = number({ required: 'never' }).freeze(
+        partitionKey.name
+      )
+      break
+    case 'binary':
+      indexSchema.attributes[partitionKey.name] = binary({ required: 'never' }).freeze(
+        partitionKey.name
+      )
+      break
   }
 
   let condition: Condition = {
@@ -79,12 +73,16 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
   }
 
   if (sortKey !== undefined && range !== undefined) {
-    indexSchema.attributes[sortKey.name] = {
-      ...defaultAttribute,
-      path: sortKey.name,
-      type: sortKey.type,
-      enum: undefined,
-      transform: undefined
+    switch (sortKey.type) {
+      case 'string':
+        indexSchema.attributes[sortKey.name] = string({ required: 'never' }).freeze(sortKey.name)
+        break
+      case 'number':
+        indexSchema.attributes[sortKey.name] = number({ required: 'never' }).freeze(sortKey.name)
+        break
+      case 'binary':
+        indexSchema.attributes[sortKey.name] = binary({ required: 'never' }).freeze(sortKey.name)
+        break
     }
 
     const sortKeyCondition = ({

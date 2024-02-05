@@ -1,7 +1,7 @@
 import type { NarrowObject } from 'v1/types'
 
 import type { SchemaAttributes, RequiredOption, $SchemaAttributeNestedStates } from './attributes'
-import type { FreezeAttribute } from './attributes/freeze'
+import type { FreezeAttribute } from './attributes/types'
 
 export interface Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
   type: 'schema'

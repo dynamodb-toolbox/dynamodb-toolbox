@@ -64,7 +64,9 @@ export interface $PrimitiveAttribute<
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { hidden: true }>>
+  hidden: <NEXT_HIDDEN extends boolean = true>(
+    nextHidden?: NEXT_HIDDEN
+  ) => $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */

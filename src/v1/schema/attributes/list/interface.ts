@@ -58,7 +58,9 @@ export interface $ListAttribute<
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $ListAttribute<$ELEMENTS, O.Overwrite<STATE, { hidden: true }>>
+  hidden: <NEXT_HIDDEN extends boolean = true>(
+    nextHidden?: NEXT_HIDDEN
+  ) => $ListAttribute<$ELEMENTS, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */

@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { schema } from './typer'
 import { boolean, binary, number, string, set, list, map } from './attributes'
-import type { FreezeAttribute } from './attributes/freeze'
+import type { FreezeAttribute } from './attributes/types'
 
 describe('schema', () => {
   it('primitives', () => {

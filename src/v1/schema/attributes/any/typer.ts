@@ -39,7 +39,8 @@ const $any: $AnyAttributeTyper = <STATE extends AnyAttributeState = AnyAttribute
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => $any(overwrite(state, { required: nextRequired })),
     optional: () => $any(overwrite(state, { required: 'never' })),
-    hidden: () => $any(overwrite(state, { hidden: true })),
+    hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
+      $any(overwrite(state, { hidden: nextHidden })),
     key: () => $any(overwrite(state, { key: true, required: 'always' })),
     savedAs: nextSavedAs => $any(overwrite(state, { savedAs: nextSavedAs })),
     castAs: <NEXT_CAST_AS>(nextCastAs = (undefined as unknown) as NEXT_CAST_AS) =>
