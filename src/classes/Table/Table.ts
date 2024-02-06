@@ -275,17 +275,7 @@ class Table<Name extends string, PartitionKey extends A.Key, SortKey extends A.K
       // Loop through the Entity's attributes and validate their types against the Table definition
       // Add attribute to table if not defined
       for (const attr in entity.schema.attributes) {
-        // If an entity field conflicts with the entityField or its alias, throw an error
-        if (
-          this.Table.entityField &&
-          (attr === this.Table.entityField || attr === entity._etAlias)
-        ) {
-          error(
-            `Attribute or alias '${attr}' conflicts with the table's 'entityField' mapping or entity alias`,
-          )
-
-          // If the atribute already exists in the table definition
-        } else if (this.Table.attributes[attr]) {
+        if (this.Table.attributes[attr]) {
           // If type is specified, check for attribute match
           if (
             this.Table.attributes[attr].type &&
