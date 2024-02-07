@@ -1,5 +1,4 @@
-import type { O } from 'ts-toolbelt'
-
+import type { ComputeObject } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { FreezeAttribute } from '../types'
@@ -16,26 +15,22 @@ import {
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
-import type { $ListAttributeState, ListAttribute } from './interface'
+import type { $ListAttributeState, MegaListAttribute } from './interface'
 import type { $ListAttributeElements } from './types'
 
-export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    ListAttribute<
-      FreezeAttribute<$LIST_ATTRIBUTE[$elements]>,
-      {
-        required: $LIST_ATTRIBUTE[$required]
-        hidden: $LIST_ATTRIBUTE[$hidden]
-        key: $LIST_ATTRIBUTE[$key]
-        savedAs: $LIST_ATTRIBUTE[$savedAs]
-        defaults: $LIST_ATTRIBUTE[$defaults]
-        links: $LIST_ATTRIBUTE[$links]
-      }
-    >,
-    never,
-    never
+export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> = ComputeObject<
+  MegaListAttribute<
+    FreezeAttribute<$LIST_ATTRIBUTE[$elements]>,
+    {
+      required: $LIST_ATTRIBUTE[$required]
+      hidden: $LIST_ATTRIBUTE[$hidden]
+      key: $LIST_ATTRIBUTE[$key]
+      savedAs: $LIST_ATTRIBUTE[$savedAs]
+      defaults: $LIST_ATTRIBUTE[$defaults]
+      links: $LIST_ATTRIBUTE[$links]
+    }
   >
+>
 
 type ListAttributeFreezer = <
   $ELEMENTS extends $ListAttributeElements,
@@ -98,6 +93,8 @@ export const freezeListAttribute: ListAttributeFreezer = <
     path,
     type: 'list',
     elements: frozenElements,
+    // TODO
+    parse: input => input as any,
     ...state
   }
 }

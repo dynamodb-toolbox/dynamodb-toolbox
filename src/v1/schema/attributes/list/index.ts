@@ -6,3 +6,4 @@ export type {
   ListAttribute
 } from './interface'
 export type { FreezeListAttribute } from './freeze'
+export type { ResolveListAttribute } from './resolve'

@@ -172,12 +172,15 @@ export type Reference<
   ]
 >
 
-type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
-  ? AttributeValue | undefined
+type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute extends Pick<
+  ATTRIBUTE,
+  keyof Attribute
+>
+  ? any
   :
       | (ATTRIBUTE extends { required: Never } ? undefined : never)
       | (ATTRIBUTE extends AnyAttribute
-          ? ResolveAnyAttribute<ATTRIBUTE> | unknown
+          ? ResolveAnyAttribute<ATTRIBUTE>
           : ATTRIBUTE extends PrimitiveAttribute
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
           : ATTRIBUTE extends SetAttribute
@@ -215,8 +218,8 @@ export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute = Attribute,
   REQUIRED_DEFAULTS extends boolean = false,
   SCHEMA_ATTRIBUTE_PATHS extends string = string
-> = Attribute extends ATTRIBUTE
-  ? AttributeValue<UpdateItemInputExtension> | undefined
+> = Attribute extends Pick<ATTRIBUTE, keyof Attribute>
+  ? any
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
       | If<CanBeRemoved<ATTRIBUTE>, $REMOVE, never>
@@ -230,7 +233,7 @@ export type AttributeUpdateItemInput<
           ]
         >
       | (ATTRIBUTE extends AnyAttribute
-          ? ResolveAnyAttribute<ATTRIBUTE> | unknown
+          ? ResolveAnyAttribute<ATTRIBUTE>
           : ATTRIBUTE extends PrimitiveAttribute
           ?
               | ResolvePrimitiveAttribute<ATTRIBUTE>

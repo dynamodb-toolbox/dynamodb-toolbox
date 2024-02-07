@@ -6,3 +6,4 @@ export type {
   SetAttribute
 } from './interface'
 export type { FreezeSetAttribute } from './freeze'
+export type { ResolveSetAttribute } from './resolve'

@@ -17,6 +17,7 @@ import type { $SharedAttributeState, SharedAttributeState } from '../shared/inte
 
 import type { FreezeListAttribute } from './freeze'
 import type { $ListAttributeElements, ListAttributeElements } from './types'
+import type { ResolveListAttribute } from './resolve'
 
 export interface $ListAttributeState<
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
@@ -280,4 +281,11 @@ export interface ListAttribute<
   path: string
   type: 'list'
   elements: ELEMENTS
+}
+
+export interface MegaListAttribute<
+  ELEMENTS extends ListAttributeElements = ListAttributeElements,
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends ListAttribute<ELEMENTS, STATE> {
+  parse: (input: unknown) => ResolveListAttribute<ListAttribute<ELEMENTS, STATE>>
 }

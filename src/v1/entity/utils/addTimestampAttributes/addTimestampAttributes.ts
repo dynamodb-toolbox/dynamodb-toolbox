@@ -94,8 +94,8 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
     > = string()
       .hidden(getTimestampOptionValue(timestamps, 'created', 'hidden'))
       .savedAs(getTimestampOptionValue(timestamps, 'created', 'savedAs'))
-      .putDefault(() => new Date().toISOString())
-      .updateDefault(() => $get(createdName, new Date().toISOString()))
+      .putDefault(() => new Date().toISOString() as any)
+      .updateDefault(() => $get(createdName, new Date().toISOString()) as any)
       .freeze(createdName)
 
     schemaWithTimestamps = addInternalAttribute(schemaWithTimestamps, createdName, createdAttribute)
@@ -111,8 +111,8 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
     > = string()
       .hidden(getTimestampOptionValue(timestamps, 'modified', 'hidden'))
       .savedAs(getTimestampOptionValue(timestamps, 'modified', 'savedAs'))
-      .putDefault(() => new Date().toISOString())
-      .updateDefault(() => new Date().toISOString())
+      .putDefault(() => new Date().toISOString() as any)
+      .updateDefault(() => new Date().toISOString() as any)
       .freeze(modifiedName)
 
     schemaWithTimestamps = addInternalAttribute(
