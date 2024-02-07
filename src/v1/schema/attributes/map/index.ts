@@ -6,3 +6,4 @@ export type {
   MapAttribute
 } from './interface'
 export type { FreezeMapAttribute } from './freeze'
+export type { ResolveMapAttribute } from './resolve'

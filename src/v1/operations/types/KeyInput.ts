@@ -3,7 +3,6 @@ import type { O } from 'ts-toolbelt'
 import type {
   Schema,
   Attribute,
-  AttributeValue,
   ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   MapAttributeValue,
@@ -74,8 +73,8 @@ export type KeyInput<
 export type AttributeKeyInput<
   ATTRIBUTE extends Attribute,
   REQUIRED_DEFAULTS extends boolean = false
-> = Attribute extends ATTRIBUTE
-  ? AttributeValue | undefined
+> = Attribute extends Pick<ATTRIBUTE, keyof Attribute>
+  ? any
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
       | (ATTRIBUTE extends AnyAttribute

@@ -17,6 +17,7 @@ import type { SharedAttributeState, $SharedAttributeState } from '../shared/inte
 
 import type { FreezeMapAttribute } from './freeze'
 import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types'
+import type { ResolveMapAttribute } from './resolve'
 
 export interface $MapAttributeState<
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
@@ -282,4 +283,11 @@ export interface MapAttribute<
   attributes: ATTRIBUTES
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<RequiredOption, Set<string>>
+}
+
+export interface MegaMapAttribute<
+  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes,
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends MapAttribute<ATTRIBUTES, STATE> {
+  parse: (input: unknown) => ResolveMapAttribute<MapAttribute<ATTRIBUTES, STATE>>
 }

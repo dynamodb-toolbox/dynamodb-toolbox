@@ -21,6 +21,7 @@ import type {
   RecordAttributeElements
 } from './types'
 import type { FreezeRecordAttribute } from './freeze'
+import type { ResolveRecordAttribute } from './resolve'
 
 export interface $RecordAttributeState<
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
@@ -325,4 +326,12 @@ export interface RecordAttribute<
   type: 'record'
   keys: KEYS
   elements: ELEMENTS
+}
+
+export interface MegaRecordAttribute<
+  KEYS extends RecordAttributeKeys = RecordAttributeKeys,
+  ELEMENTS extends RecordAttributeElements = RecordAttributeElements,
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends RecordAttribute<KEYS, ELEMENTS, STATE> {
+  parse: (input: unknown) => ResolveRecordAttribute<RecordAttribute<KEYS, ELEMENTS, STATE>>
 }

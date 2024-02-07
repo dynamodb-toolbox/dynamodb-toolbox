@@ -18,6 +18,7 @@ import type { Attribute } from '../types'
 
 import type { FreezeAnyOfAttribute } from './freeze'
 import type { $AnyOfAttributeElements } from './types'
+import type { ResolveAnyOfAttribute } from './resolve'
 
 export interface $AnyOfAttributeState<
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[],
@@ -284,4 +285,11 @@ export interface AnyOfAttribute<
   path: string
   type: 'anyOf'
   elements: ELEMENTS
+}
+
+export interface MegaAnyOfAttribute<
+  ELEMENTS extends Attribute[] = Attribute[],
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends AnyOfAttribute<ELEMENTS, STATE> {
+  parse: (input: unknown) => ResolveAnyOfAttribute<AnyOfAttribute<ELEMENTS, STATE>>
 }

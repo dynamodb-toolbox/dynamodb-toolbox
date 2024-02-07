@@ -17,6 +17,7 @@ import type { $SharedAttributeState, SharedAttributeState } from '../shared/inte
 
 import type { FreezeAnyAttribute } from './freeze'
 import type { AnyAttributeState } from './types'
+import type { ResolveAnyAttribute } from './resolve'
 
 export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState>
   extends $SharedAttributeState<STATE> {
@@ -270,4 +271,9 @@ export interface AnyAttribute<STATE extends AnyAttributeState = AnyAttributeStat
   path: string
   type: 'any'
   castAs: STATE['castAs']
+}
+
+export interface MegaAnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
+  extends AnyAttribute<STATE> {
+  parse: (input: unknown) => ResolveAnyAttribute<AnyAttribute<STATE>>
 }

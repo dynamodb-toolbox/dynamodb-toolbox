@@ -41,7 +41,7 @@ type RecSavedItem<
   SCHEMA extends Schema | MapAttribute,
   SWAPPED_ATTRIBUTES extends SchemaAttributes = SwapWithSavedAs<SCHEMA['attributes']>
 > = O.Required<
-  O.Partial<
+  Partial<
     {
       // Keep all attributes
       [KEY in keyof SWAPPED_ATTRIBUTES]: SavedItem<SWAPPED_ATTRIBUTES[KEY]>

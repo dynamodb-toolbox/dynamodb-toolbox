@@ -1,5 +1,4 @@
-import type { O } from 'ts-toolbelt'
-
+import type { ComputeObject } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { FreezeAttribute } from '../types'
@@ -18,27 +17,23 @@ import {
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
-import type { $RecordAttributeState, RecordAttribute } from './interface'
+import type { $RecordAttributeState, MegaRecordAttribute } from './interface'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types'
 
-export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    RecordAttribute<
-      FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
-      FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>,
-      {
-        required: $RECORD_ATTRIBUTE[$required]
-        hidden: $RECORD_ATTRIBUTE[$hidden]
-        key: $RECORD_ATTRIBUTE[$key]
-        savedAs: $RECORD_ATTRIBUTE[$savedAs]
-        defaults: $RECORD_ATTRIBUTE[$defaults]
-        links: $RECORD_ATTRIBUTE[$links]
-      }
-    >,
-    never,
-    never
+export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> = ComputeObject<
+  MegaRecordAttribute<
+    FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
+    FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>,
+    {
+      required: $RECORD_ATTRIBUTE[$required]
+      hidden: $RECORD_ATTRIBUTE[$hidden]
+      key: $RECORD_ATTRIBUTE[$key]
+      savedAs: $RECORD_ATTRIBUTE[$savedAs]
+      defaults: $RECORD_ATTRIBUTE[$defaults]
+      links: $RECORD_ATTRIBUTE[$links]
+    }
   >
+>
 
 type RecordAttributeFreezer = <
   $KEYS extends $RecordAttributeKeys,
@@ -159,6 +154,8 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     type: 'record',
     keys: frozenKeys,
     elements: frozenElements,
+    // TODO
+    parse: input => input as any,
     ...state
   }
 }

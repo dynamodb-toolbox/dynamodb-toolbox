@@ -4,7 +4,6 @@ import type {
   Schema,
   Attribute,
   Item,
-  AttributeValue,
   ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   AnyAttribute,
@@ -22,7 +21,7 @@ import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndef
 import type { EntityV2 } from 'v1/entity/class'
 import type { If } from 'v1/types/if'
 
-export type MustBeDefined<
+type MustBeDefined<
   ATTRIBUTE extends Attribute,
   REQUIRED_DEFAULTS extends boolean = false
 > = REQUIRED_DEFAULTS extends false
@@ -83,8 +82,8 @@ export type PutItemInput<
 export type AttributePutItemInput<
   ATTRIBUTE extends Attribute,
   REQUIRED_DEFAULTS extends boolean = false
-> = Attribute extends ATTRIBUTE
-  ? AttributeValue | undefined
+> = Attribute extends Pick<ATTRIBUTE, keyof Attribute>
+  ? any
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
       | (ATTRIBUTE extends AnyAttribute

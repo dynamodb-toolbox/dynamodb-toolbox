@@ -38,14 +38,18 @@ describe('schema', () => {
     > = 1
     assertSch
 
-    expect(sch.attributes).toMatchObject({
-      reqStr: reqStr.freeze('reqStr'),
-      hidBool: hidBool.freeze('hidBool'),
-      defNum: defNum.freeze('defNum'),
-      savedAsBin: savedAsBin.freeze('savedAsBin'),
-      keyStr: keyStr.freeze('keyStr'),
-      enumStr: enumStr.freeze('enumStr')
-    })
+    expect(sch.attributes).toMatchObject(
+      JSON.parse(
+        JSON.stringify({
+          reqStr: reqStr.freeze('reqStr'),
+          hidBool: hidBool.freeze('hidBool'),
+          defNum: defNum.freeze('defNum'),
+          savedAsBin: savedAsBin.freeze('savedAsBin'),
+          keyStr: keyStr.freeze('keyStr'),
+          enumStr: enumStr.freeze('enumStr')
+        })
+      )
+    )
   })
 
   it('maps', () => {
@@ -72,14 +76,16 @@ describe('schema', () => {
     > = 1
     assertSch
 
-    expect(sch).toMatchObject({
-      attributes: {
-        flatMap: flatMap.freeze('flatMap'),
-        nestedMap: nestedMap.freeze('nestedMap'),
-        reqMap: reqMap.freeze('reqMap'),
-        hiddenMap: hiddenMap.freeze('hiddenMap')
-      }
-    })
+    expect(sch.attributes).toMatchObject(
+      JSON.parse(
+        JSON.stringify({
+          flatMap: flatMap.freeze('flatMap'),
+          nestedMap: nestedMap.freeze('nestedMap'),
+          reqMap: reqMap.freeze('reqMap'),
+          hiddenMap: hiddenMap.freeze('hiddenMap')
+        })
+      )
+    )
   })
 
   it('list', () => {
@@ -109,14 +115,16 @@ describe('schema', () => {
     > = 1
     assertSch
 
-    expect(sch).toMatchObject({
-      attributes: {
-        optList: optList.freeze('optList'),
-        nestedList: nestedList.freeze('nestedList'),
-        reqList: reqList.freeze('reqList'),
-        hiddenList: hiddenList.freeze('hiddenList')
-      }
-    })
+    expect(sch.attributes).toMatchObject(
+      JSON.parse(
+        JSON.stringify({
+          optList: optList.freeze('optList'),
+          nestedList: nestedList.freeze('nestedList'),
+          reqList: reqList.freeze('reqList'),
+          hiddenList: hiddenList.freeze('hiddenList')
+        })
+      )
+    )
   })
 
   it('sets', () => {
@@ -143,12 +151,14 @@ describe('schema', () => {
     > = 1
     assertSch
 
-    expect(sch).toMatchObject({
-      attributes: {
-        optSet: optSet.freeze('optSet'),
-        reqSet: reqSet.freeze('reqSet'),
-        hiddenSet: hiddenSet.freeze('hiddenSet')
-      }
-    })
+    expect(sch.attributes).toMatchObject(
+      JSON.parse(
+        JSON.stringify({
+          optSet: optSet.freeze('optSet'),
+          reqSet: reqSet.freeze('reqSet'),
+          hiddenSet: hiddenSet.freeze('hiddenSet')
+        })
+      )
+    )
   })
 })

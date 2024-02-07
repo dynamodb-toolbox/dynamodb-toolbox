@@ -88,15 +88,15 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
   if (isCreatedEnable) {
     const createdName = getTimestampOptionValue(timestamps, 'created', 'name')
 
-    const createdAttribute: TimestampAttribute<
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
-    > = string()
-      .hidden(getTimestampOptionValue(timestamps, 'created', 'hidden'))
-      .savedAs(getTimestampOptionValue(timestamps, 'created', 'savedAs'))
-      .putDefault(() => new Date().toISOString())
-      .updateDefault(() => $get(createdName, new Date().toISOString()))
-      .freeze(createdName)
+    const createdAttribute = string({
+      hidden: getTimestampOptionValue(timestamps, 'created', 'hidden'),
+      savedAs: getTimestampOptionValue(timestamps, 'created', 'savedAs'),
+      defaults: {
+        put: () => new Date().toISOString(),
+        update: () => $get(createdName, new Date().toISOString()),
+        key: undefined
+      }
+    }).freeze(createdName)
 
     schemaWithTimestamps = addInternalAttribute(schemaWithTimestamps, createdName, createdAttribute)
   }
@@ -105,15 +105,15 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
   if (isModifiedEnable) {
     const modifiedName = getTimestampOptionValue(timestamps, 'modified', 'name')
 
-    const modifiedAttribute: TimestampAttribute<
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
-    > = string()
-      .hidden(getTimestampOptionValue(timestamps, 'modified', 'hidden'))
-      .savedAs(getTimestampOptionValue(timestamps, 'modified', 'savedAs'))
-      .putDefault(() => new Date().toISOString())
-      .updateDefault(() => new Date().toISOString())
-      .freeze(modifiedName)
+    const modifiedAttribute = string({
+      hidden: getTimestampOptionValue(timestamps, 'modified', 'hidden'),
+      savedAs: getTimestampOptionValue(timestamps, 'modified', 'savedAs'),
+      defaults: {
+        put: () => new Date().toISOString(),
+        update: () => new Date().toISOString(),
+        key: undefined
+      }
+    }).freeze(modifiedName)
 
     schemaWithTimestamps = addInternalAttribute(
       schemaWithTimestamps,
