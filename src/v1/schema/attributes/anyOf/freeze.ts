@@ -1,5 +1,4 @@
-import type { O } from 'ts-toolbelt'
-
+import type { ComputeObject } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isArray } from 'v1/utils/validation'
 
@@ -18,7 +17,7 @@ import {
 
 import type { SharedAttributeState } from '../shared/interface'
 import type { $AttributeState } from '../types'
-import type { $AnyOfAttributeState, AnyOfAttribute } from './interface'
+import type { $AnyOfAttributeState, MegaAnyOfAttribute } from './interface'
 import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types'
 
 type FreezeElements<
@@ -36,23 +35,19 @@ type FreezeElements<
     : never
   : RESULTS
 
-export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    AnyOfAttribute<
-      FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>,
-      {
-        required: $ANY_OF_ATTRIBUTE[$required]
-        hidden: $ANY_OF_ATTRIBUTE[$hidden]
-        key: $ANY_OF_ATTRIBUTE[$key]
-        savedAs: $ANY_OF_ATTRIBUTE[$savedAs]
-        defaults: $ANY_OF_ATTRIBUTE[$defaults]
-        links: $ANY_OF_ATTRIBUTE[$links]
-      }
-    >,
-    never,
-    never
+export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> = ComputeObject<
+  MegaAnyOfAttribute<
+    FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>,
+    {
+      required: $ANY_OF_ATTRIBUTE[$required]
+      hidden: $ANY_OF_ATTRIBUTE[$hidden]
+      key: $ANY_OF_ATTRIBUTE[$key]
+      savedAs: $ANY_OF_ATTRIBUTE[$savedAs]
+      defaults: $ANY_OF_ATTRIBUTE[$defaults]
+      links: $ANY_OF_ATTRIBUTE[$links]
+    }
   >
+>
 
 type AnyOfAttributeFreezer = <
   $ELEMENTS extends $AnyOfAttributeElements[],
@@ -131,6 +126,8 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
     path,
     type: 'anyOf',
     elements: frozenElements,
+    // TODO
+    parse: input => input as any,
     ...state
   }
 }

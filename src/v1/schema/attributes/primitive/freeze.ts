@@ -1,5 +1,4 @@
-import type { O } from 'ts-toolbelt'
-
+import type { ComputeObject } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isStaticDefault } from 'v1/schema/utils/isStaticDefault'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
@@ -17,35 +16,33 @@ import {
   $transform
 } from '../constants/attributeOptions'
 
-import type { $PrimitiveAttributeState, PrimitiveAttribute } from './interface'
+import type { $PrimitiveAttributeState, MegaPrimitiveAttribute } from './interface'
 import type {
   PrimitiveAttributeEnumValues,
   PrimitiveAttributeState,
   PrimitiveAttributeType
 } from './types'
 
-export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    PrimitiveAttribute<
-      $PRIMITIVE_ATTRIBUTE[$type],
-      {
-        required: $PRIMITIVE_ATTRIBUTE[$required]
-        hidden: $PRIMITIVE_ATTRIBUTE[$hidden]
-        key: $PRIMITIVE_ATTRIBUTE[$key]
-        savedAs: $PRIMITIVE_ATTRIBUTE[$savedAs]
-        enum: Extract<
-          $PRIMITIVE_ATTRIBUTE[$enum],
-          PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
-        >
-        defaults: $PRIMITIVE_ATTRIBUTE[$defaults]
-        links: $PRIMITIVE_ATTRIBUTE[$links]
-        transform: $PRIMITIVE_ATTRIBUTE[$transform]
-      }
-    >,
-    never,
-    never
+export type FreezePrimitiveAttribute<
+  $PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState
+> = ComputeObject<
+  MegaPrimitiveAttribute<
+    $PRIMITIVE_ATTRIBUTE[$type],
+    {
+      required: $PRIMITIVE_ATTRIBUTE[$required]
+      hidden: $PRIMITIVE_ATTRIBUTE[$hidden]
+      key: $PRIMITIVE_ATTRIBUTE[$key]
+      savedAs: $PRIMITIVE_ATTRIBUTE[$savedAs]
+      enum: Extract<
+        $PRIMITIVE_ATTRIBUTE[$enum],
+        PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
+      >
+      defaults: $PRIMITIVE_ATTRIBUTE[$defaults]
+      links: $PRIMITIVE_ATTRIBUTE[$links]
+      transform: $PRIMITIVE_ATTRIBUTE[$transform]
+    }
   >
+>
 
 type PrimitiveAttributeFreezer = <
   TYPE extends PrimitiveAttributeType,
@@ -118,6 +115,8 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     path,
     type,
     enum: state.enum as Extract<STATE['enum'], PrimitiveAttributeEnumValues<TYPE>>,
+    // TODO
+    parse: input => input as any,
     ...restState
   }
 }

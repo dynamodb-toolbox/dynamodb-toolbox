@@ -1,13 +1,13 @@
 import type { AtLeastOnce } from '../constants'
 import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive/interface'
-import type { PrimitiveAttributeEnumValues } from '../primitive/types'
+import type { PrimitiveAttributeEnumValues, PrimitiveAttributeType } from '../primitive/types'
 
-interface SetAttributeElementState {
+interface SetAttributeElementState<TYPE extends PrimitiveAttributeType> {
   required: AtLeastOnce
   hidden: false
   key: boolean
   savedAs: undefined
-  enum: PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>
+  enum: PrimitiveAttributeEnumValues<TYPE>
   defaults: {
     key: undefined
     put: undefined
@@ -21,12 +21,12 @@ interface SetAttributeElementState {
   transform: undefined | unknown
 }
 
-export type $SetAttributeElements = $PrimitiveAttributeNestedState<
-  'string' | 'number' | 'binary',
-  SetAttributeElementState
->
+export type $SetAttributeElements =
+  | $PrimitiveAttributeNestedState<'string', SetAttributeElementState<'string'>>
+  | $PrimitiveAttributeNestedState<'number', SetAttributeElementState<'number'>>
+  | $PrimitiveAttributeNestedState<'binary', SetAttributeElementState<'binary'>>
 
-export type SetAttributeElements = PrimitiveAttribute<
-  'string' | 'number' | 'binary',
-  SetAttributeElementState
->
+export type SetAttributeElements =
+  | PrimitiveAttribute<'string', SetAttributeElementState<'string'>>
+  | PrimitiveAttribute<'number', SetAttributeElementState<'number'>>
+  | PrimitiveAttribute<'binary', SetAttributeElementState<'binary'>>

@@ -20,8 +20,7 @@ const defaultSchema: Schema = {
     always: new Set(),
     atLeastOnce: new Set(),
     never: new Set()
-  },
-  and: undefined as any
+  }
 }
 
 const pick = _pick as <OBJECT extends object, KEYS extends string[]>(

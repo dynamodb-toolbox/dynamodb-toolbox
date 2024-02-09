@@ -22,6 +22,7 @@ import type {
   Transformer
 } from './types'
 import type { FreezePrimitiveAttribute } from './freeze'
+import type { ResolvePrimitiveAttribute } from './resolve'
 
 export interface $PrimitiveAttributeState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
@@ -362,4 +363,11 @@ export interface PrimitiveAttribute<
   type: TYPE
   enum: STATE['enum']
   transform: STATE['transform']
+}
+
+export interface MegaPrimitiveAttribute<
+  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
+  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
+> extends PrimitiveAttribute<TYPE, STATE> {
+  parse: (input: unknown) => ResolvePrimitiveAttribute<PrimitiveAttribute<TYPE, STATE>>
 }

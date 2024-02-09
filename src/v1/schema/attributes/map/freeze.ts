@@ -1,5 +1,4 @@
-import type { O } from 'ts-toolbelt'
-
+import type { ComputeObject } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { RequiredOption } from '../constants/requiredOptions'
@@ -16,30 +15,24 @@ import {
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
-import type { $MapAttributeState, MapAttribute } from './interface'
+import type { $MapAttributeState, MegaMapAttribute } from './interface'
 import type { $MapAttributeAttributeStates } from './types'
 
-export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    MapAttribute<
-      {
-        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
-          $MAP_ATTRIBUTE[$attributes][KEY]
-        >
-      },
-      {
-        required: $MAP_ATTRIBUTE[$required]
-        hidden: $MAP_ATTRIBUTE[$hidden]
-        key: $MAP_ATTRIBUTE[$key]
-        savedAs: $MAP_ATTRIBUTE[$savedAs]
-        defaults: $MAP_ATTRIBUTE[$defaults]
-        links: $MAP_ATTRIBUTE[$links]
-      }
-    >,
-    never,
-    never
+export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> = ComputeObject<
+  MegaMapAttribute<
+    {
+      [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<$MAP_ATTRIBUTE[$attributes][KEY]>
+    },
+    {
+      required: $MAP_ATTRIBUTE[$required]
+      hidden: $MAP_ATTRIBUTE[$hidden]
+      key: $MAP_ATTRIBUTE[$key]
+      savedAs: $MAP_ATTRIBUTE[$savedAs]
+      defaults: $MAP_ATTRIBUTE[$defaults]
+      links: $MAP_ATTRIBUTE[$links]
+    }
   >
+>
 
 type MapAttributeFreezer = <
   $ATTRIBUTES extends $MapAttributeAttributeStates,
@@ -112,6 +105,8 @@ export const freezeMapAttribute: MapAttributeFreezer = <
     attributes: frozenAttributes,
     keyAttributeNames,
     requiredAttributeNames,
+    // TODO
+    parse: input => input as any,
     ...state
   }
 }

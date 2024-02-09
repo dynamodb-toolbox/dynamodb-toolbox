@@ -17,6 +17,7 @@ import type { $SharedAttributeState, SharedAttributeState } from '../shared/inte
 
 import type { $SetAttributeElements, SetAttributeElements } from './types'
 import type { FreezeSetAttribute } from './freeze'
+import type { ResolveSetAttribute } from './resolve'
 
 export interface $SetAttributeState<
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
@@ -282,4 +283,11 @@ export interface SetAttribute<
   path: string
   type: 'set'
   elements: ELEMENTS
+}
+
+export interface MegaSetAttribute<
+  ELEMENTS extends SetAttributeElements = SetAttributeElements,
+  STATE extends SharedAttributeState = SharedAttributeState
+> extends SetAttribute<ELEMENTS, STATE> {
+  parse: (input: unknown) => ResolveSetAttribute<SetAttribute<ELEMENTS, STATE>>
 }

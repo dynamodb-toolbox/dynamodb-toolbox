@@ -1,6 +1,5 @@
-import type { O } from 'ts-toolbelt'
-
 import { DynamoDBToolboxError } from 'v1/errors'
+import type { ComputeObject } from 'v1/types'
 
 import type { FreezeAttribute } from '../types'
 import { validateAttributeProperties } from '../shared/validate'
@@ -16,26 +15,22 @@ import {
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
-import type { $SetAttributeState, SetAttribute } from './interface'
+import type { $SetAttributeState, MegaSetAttribute } from './interface'
 import type { $SetAttributeElements } from './types'
 
-export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    SetAttribute<
-      FreezeAttribute<$SET_ATTRIBUTE[$elements]>,
-      {
-        required: $SET_ATTRIBUTE[$required]
-        hidden: $SET_ATTRIBUTE[$hidden]
-        key: $SET_ATTRIBUTE[$key]
-        savedAs: $SET_ATTRIBUTE[$savedAs]
-        defaults: $SET_ATTRIBUTE[$defaults]
-        links: $SET_ATTRIBUTE[$links]
-      }
-    >,
-    never,
-    never
+export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> = ComputeObject<
+  MegaSetAttribute<
+    FreezeAttribute<$SET_ATTRIBUTE[$elements]>,
+    {
+      required: $SET_ATTRIBUTE[$required]
+      hidden: $SET_ATTRIBUTE[$hidden]
+      key: $SET_ATTRIBUTE[$key]
+      savedAs: $SET_ATTRIBUTE[$savedAs]
+      defaults: $SET_ATTRIBUTE[$defaults]
+      links: $SET_ATTRIBUTE[$links]
+    }
   >
+>
 
 type SetAttributeFreezer = <
   $ELEMENTS extends $SetAttributeElements,
@@ -98,6 +93,8 @@ export const freezeSetAttribute: SetAttributeFreezer = <
     path,
     type: 'set',
     elements: frozenElements,
+    // TODO
+    parse: input => input as any,
     ...state
   }
 }

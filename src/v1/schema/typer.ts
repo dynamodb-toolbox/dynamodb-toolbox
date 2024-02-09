@@ -4,7 +4,7 @@ import type { NarrowObject } from 'v1/types'
 import type { SchemaAttributes, $SchemaAttributeNestedStates } from './attributes'
 import { $key, $savedAs, $required } from './attributes/constants/attributeOptions'
 
-import type { Schema } from './interface'
+import type { MegaSchema } from './interface'
 import type { RequiredOption } from './attributes/constants/requiredOptions'
 import type { FreezeAttribute } from './attributes/types'
 
@@ -13,7 +13,7 @@ type $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = {}>(arg: {
   savedAttributeNames: Set<string>
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<RequiredOption, Set<string>>
-}) => Schema<ATTRIBUTES>
+}) => MegaSchema<ATTRIBUTES>
 
 const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttributes>({
   attributes,
@@ -32,6 +32,7 @@ const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttri
     savedAttributeNames,
     keyAttributeNames,
     requiredAttributeNames,
+    parse: input => input as any,
     and: additionalAttr => {
       const additionalAttributes = (typeof additionalAttr === 'function'
         ? additionalAttr(
@@ -83,11 +84,11 @@ const $schema: $SchemaTyper = <ATTRIBUTES extends SchemaAttributes = SchemaAttri
         requiredAttributeNames: nextRequiredAttributeNames
       })
     }
-  } as Schema<ATTRIBUTES>)
+  } as MegaSchema<ATTRIBUTES>)
 
 type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeNestedStates = {}>(
   attributes: NarrowObject<$ATTRIBUTES>
-) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
+) => MegaSchema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
 
 /**
  * Defines an Entity schema
@@ -99,7 +100,7 @@ export const schema: SchemaTyper = <
   $MAP_ATTRIBUTE_ATTRIBUTES extends $SchemaAttributeNestedStates = {}
 >(
   attributes: NarrowObject<$MAP_ATTRIBUTE_ATTRIBUTES>
-): Schema<
+): MegaSchema<
   { [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]> }
 > =>
   $schema({
@@ -111,4 +112,6 @@ export const schema: SchemaTyper = <
       atLeastOnce: new Set(),
       never: new Set()
     }
-  }).and(attributes)
+  }).and(attributes) as MegaSchema<
+    { [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]> }
+  >
