@@ -23,9 +23,12 @@ export { QueryCommand } from './query'
 export type { QueryOptions, QueryResponse } from './query'
 export {
   ConditionCheck,
+  GetItemTransaction,
   PutItemTransaction,
   DeleteItemTransaction,
-  UpdateItemTransaction
+  UpdateItemTransaction,
+  transactWriteItems,
+  transactGetItems
 } from './transactions'
 export { batchWrite, BatchDeleteItemRequest, BatchPutItemRequest } from './batch'
 export type { BatchWriteOptions, BatchWriteItemRequest } from './batch'
