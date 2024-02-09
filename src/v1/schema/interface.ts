@@ -29,5 +29,11 @@ export interface MegaSchema<ATTRIBUTES extends SchemaAttributes = SchemaAttribut
         : never
     }
   >
-  parse: (input: unknown) => ResolveSchema<Schema<ATTRIBUTES>>
+  parse: <OPTIONS extends { key?: boolean } = {}>(
+    input: unknown,
+    opts?: OPTIONS
+  ) => ResolveSchema<
+    Schema<ATTRIBUTES>,
+    { key: OPTIONS['key'] extends boolean ? OPTIONS['key'] : false }
+  >
 }

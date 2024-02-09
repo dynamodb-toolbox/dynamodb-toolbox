@@ -333,5 +333,11 @@ export interface MegaRecordAttribute<
   ELEMENTS extends RecordAttributeElements = RecordAttributeElements,
   STATE extends SharedAttributeState = SharedAttributeState
 > extends RecordAttribute<KEYS, ELEMENTS, STATE> {
-  parse: (input: unknown) => ResolveRecordAttribute<RecordAttribute<KEYS, ELEMENTS, STATE>>
+  parse: <OPTIONS extends { key?: boolean } = {}>(
+    input: unknown,
+    opts?: OPTIONS
+  ) => ResolveRecordAttribute<
+    RecordAttribute<KEYS, ELEMENTS, STATE>,
+    { key: OPTIONS['key'] extends boolean ? OPTIONS['key'] : false }
+  >
 }

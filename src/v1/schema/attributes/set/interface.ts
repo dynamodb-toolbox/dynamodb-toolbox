@@ -289,5 +289,11 @@ export interface MegaSetAttribute<
   ELEMENTS extends SetAttributeElements = SetAttributeElements,
   STATE extends SharedAttributeState = SharedAttributeState
 > extends SetAttribute<ELEMENTS, STATE> {
-  parse: (input: unknown) => ResolveSetAttribute<SetAttribute<ELEMENTS, STATE>>
+  parse: <OPTIONS extends { key?: boolean } = {}>(
+    input: unknown,
+    opts?: OPTIONS
+  ) => ResolveSetAttribute<
+    SetAttribute<ELEMENTS, STATE>,
+    { key: OPTIONS['key'] extends boolean ? OPTIONS['key'] : false }
+  >
 }

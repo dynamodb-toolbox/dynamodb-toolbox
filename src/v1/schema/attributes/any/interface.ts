@@ -275,5 +275,11 @@ export interface AnyAttribute<STATE extends AnyAttributeState = AnyAttributeStat
 
 export interface MegaAnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   extends AnyAttribute<STATE> {
-  parse: (input: unknown) => ResolveAnyAttribute<AnyAttribute<STATE>>
+  parse: <OPTIONS extends { key?: boolean } = {}>(
+    input: unknown,
+    opts?: OPTIONS
+  ) => ResolveAnyAttribute<
+    AnyAttribute<STATE>,
+    { key: OPTIONS['key'] extends boolean ? OPTIONS['key'] : false }
+  >
 }

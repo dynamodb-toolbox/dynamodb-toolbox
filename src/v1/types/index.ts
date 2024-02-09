@@ -1,6 +1,8 @@
 export type { ComputeObject } from './computeObject'
 export type { If } from './if'
+export type { IsConstraint } from './isConstraint'
 export type { NarrowObject } from './narrowObject'
 export type { OptionalizeUndefinableProperties } from './optionalizeUndefinableProperties'
 export type { Or } from './or'
+export type { Prettify } from './prettify'
 export type { ValueOrGetter } from './valueOrGetter'

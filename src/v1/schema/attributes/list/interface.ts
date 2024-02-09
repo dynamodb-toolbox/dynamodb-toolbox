@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If, ValueOrGetter } from 'v1/types'
+import type { If, Prettify, ValueOrGetter } from 'v1/types'
 import type {
   AttributeKeyInput,
   AttributePutItemInput,
@@ -287,5 +287,13 @@ export interface MegaListAttribute<
   ELEMENTS extends ListAttributeElements = ListAttributeElements,
   STATE extends SharedAttributeState = SharedAttributeState
 > extends ListAttribute<ELEMENTS, STATE> {
-  parse: (input: unknown) => ResolveListAttribute<ListAttribute<ELEMENTS, STATE>>
+  parse: <OPTIONS extends { key?: boolean } = {}>(
+    input: unknown,
+    opts?: OPTIONS
+  ) => Prettify<
+    ResolveListAttribute<
+      ListAttribute<ELEMENTS, STATE>,
+      { key: OPTIONS['key'] extends boolean ? OPTIONS['key'] : false }
+    >
+  >
 }

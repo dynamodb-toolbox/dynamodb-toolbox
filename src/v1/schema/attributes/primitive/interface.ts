@@ -369,5 +369,11 @@ export interface MegaPrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
 > extends PrimitiveAttribute<TYPE, STATE> {
-  parse: (input: unknown) => ResolvePrimitiveAttribute<PrimitiveAttribute<TYPE, STATE>>
+  parse: <OPTIONS extends { key?: boolean } = {}>(
+    input: unknown,
+    opts?: OPTIONS
+  ) => ResolvePrimitiveAttribute<
+    PrimitiveAttribute<TYPE, STATE>,
+    { key: OPTIONS['key'] extends boolean ? OPTIONS['key'] : false }
+  >
 }

@@ -289,5 +289,11 @@ export interface MegaMapAttribute<
   ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes,
   STATE extends SharedAttributeState = SharedAttributeState
 > extends MapAttribute<ATTRIBUTES, STATE> {
-  parse: (input: unknown) => ResolveMapAttribute<MapAttribute<ATTRIBUTES, STATE>>
+  parse: <OPTIONS extends { key?: boolean } = {}>(
+    input: unknown,
+    opts?: OPTIONS
+  ) => ResolveMapAttribute<
+    MapAttribute<ATTRIBUTES, STATE>,
+    { key: OPTIONS['key'] extends boolean ? OPTIONS['key'] : false }
+  >
 }

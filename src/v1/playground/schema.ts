@@ -11,11 +11,13 @@ import {
   PutItemInput,
   FormattedAttribute,
   SavedItem,
-  KeyInput
+  KeyInput,
+  anyOf,
+  record
 } from 'v1'
 
 const playgroundSchema1 = schema({
-  reqStr: string(),
+  reqStr: string().key(),
   reqStrWithDef: string().putDefault('string'),
   hiddenStr: string().optional().hidden(),
   num: number().optional(),
@@ -41,6 +43,31 @@ const playgroundSchema1 = schema({
   ),
   hiddenList: list(string()).optional().hidden()
 })
+
+const parsed = playgroundSchema1.parse('foo')
+
+const parsed2 = list(string()).freeze('').parse('bar')
+
+// TOTO: Prettify
+const parsed3 = anyOf(list(string()), number(), map({ yo: string() }))
+  .freeze('')
+  .parse('baz')
+
+const parsed4 = map({
+  nestedMap: map({
+    str: list(map({ l: list(string()).key() }))
+      .key()
+      .optional(),
+    yoo: anyOf(list(string()), number(), map({ yo: string() })),
+    rec: record(string(), record(string(), number()))
+  })
+    .optional()
+    .key()
+})
+  .optional()
+  .key()
+  .freeze('')
+  .parse('foobar')
 
 type PlaygroundSchema1PutItemInput = PutItemInput<typeof playgroundSchema1>
 type PlaygroundSchema1FormattedItem = FormattedAttribute<typeof playgroundSchema1>
