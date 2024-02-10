@@ -11,6 +11,7 @@ import type {
 } from 'v1/operations'
 
 import type { Schema } from '../../schema'
+import type { SchemaAction } from '../../action'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $attributes } from '../constants/attributeOptions'
 import type { SharedAttributeState, $SharedAttributeState } from '../shared/interface'
@@ -271,13 +272,58 @@ export interface $MapAttribute<
   >
 }
 
-export interface MapAttribute<
+export class MapAttribute<
   ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes,
   STATE extends SharedAttributeState = SharedAttributeState
-> extends SharedAttributeState<STATE> {
-  path: string
+> implements SharedAttributeState<STATE> {
   type: 'map'
+  path: string
   attributes: ATTRIBUTES
+  required: STATE['required']
+  hidden: STATE['hidden']
+  key: STATE['key']
+  savedAs: STATE['savedAs']
+  defaults: STATE['defaults']
+  links: STATE['links']
+
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<RequiredOption, Set<string>>
+
+  constructor({ path, attributes, ...state }: STATE & { path: string; attributes: ATTRIBUTES }) {
+    this.type = 'map'
+    this.path = path
+    this.attributes = attributes
+    this.required = state.required
+    this.hidden = state.hidden
+    this.key = state.key
+    this.savedAs = state.savedAs
+    this.defaults = state.defaults
+    this.links = state.links
+
+    const keyAttributeNames = new Set<string>()
+    const requiredAttributeNames: Record<RequiredOption, Set<string>> = {
+      always: new Set(),
+      atLeastOnce: new Set(),
+      never: new Set()
+    }
+
+    for (const attributeName in attributes) {
+      const attribute = attributes[attributeName]
+
+      if (attribute.key) {
+        keyAttributeNames.add(attributeName)
+      }
+
+      requiredAttributeNames[attribute.required].add(attributeName)
+    }
+
+    this.keyAttributeNames = keyAttributeNames
+    this.requiredAttributeNames = requiredAttributeNames
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

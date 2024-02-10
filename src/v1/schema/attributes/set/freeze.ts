@@ -16,8 +16,8 @@ import {
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
-import type { $SetAttributeState, SetAttribute } from './interface'
 import type { $SetAttributeElements } from './types'
+import { $SetAttributeState, SetAttribute } from './interface'
 
 export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
   // Applying void O.Update improves type display
@@ -94,10 +94,5 @@ export const freezeSetAttribute: SetAttributeFreezer = <
 
   const frozenElements = elements.freeze(`${path}[x]`) as FreezeAttribute<$ELEMENTS>
 
-  return {
-    path,
-    type: 'set',
-    elements: frozenElements,
-    ...state
-  }
+  return new SetAttribute({ path, elements: frozenElements, ...state })
 }

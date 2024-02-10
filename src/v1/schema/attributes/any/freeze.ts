@@ -11,8 +11,8 @@ import {
   $castAs
 } from '../constants/attributeOptions'
 
-import type { $AnyAttributeState, AnyAttribute } from './interface'
 import type { AnyAttributeState } from './types'
+import { $AnyAttributeState, AnyAttribute } from './interface'
 
 export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
   // Applying void O.Update improves type display
@@ -48,5 +48,5 @@ export const freezeAnyAttribute: AnyAttributeFreezer = <STATE extends AnyAttribu
 ) => {
   validateAttributeProperties(state, path)
 
-  return { path, type: 'any', ...state }
+  return new AnyAttribute({ path, ...state })
 }

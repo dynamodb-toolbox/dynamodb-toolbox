@@ -11,6 +11,7 @@ import type {
 } from 'v1/operations'
 
 import type { Schema } from '../../schema'
+import type { SchemaAction } from '../../action'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { $type, $castAs } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
@@ -263,9 +264,38 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
   >
 }
 
-export interface AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
-  extends SharedAttributeState<STATE> {
-  path: string
+export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
+  implements SharedAttributeState<STATE> {
   type: 'any'
+  path: string
+  required: STATE['required']
+  hidden: STATE['hidden']
+  key: STATE['key']
+  savedAs: STATE['savedAs']
+  defaults: STATE['defaults']
+  links: STATE['links']
   castAs: STATE['castAs']
+
+  constructor({
+    path,
+    ...state
+  }: STATE & {
+    path: string
+  }) {
+    this.type = 'any'
+    this.path = path
+    this.required = state.required
+    this.hidden = state.hidden
+    this.key = state.key
+    this.savedAs = state.savedAs
+    this.defaults = state.defaults
+    this.links = state.links
+    this.castAs = state.castAs
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

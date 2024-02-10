@@ -1,4 +1,6 @@
-import type { AnyAttribute, Attribute, PrimitiveAttribute, Schema } from 'v1/schema'
+import type { Attribute, Schema } from 'v1/schema'
+import { AnyAttribute } from 'v1/schema/attributes/any'
+import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
@@ -17,7 +19,8 @@ export interface ExpressionParser {
   appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Attribute
 }
 
-const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
+const defaultAnyAttribute = new AnyAttribute({
+  path: '',
   type: 'any',
   required: 'never',
   hidden: false,
@@ -34,9 +37,10 @@ const defaultAnyAttribute: Omit<AnyAttribute, 'path'> = {
     update: undefined
   },
   castAs: undefined
-}
+})
 
-const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
+const defaultNumberAttribute: PrimitiveAttribute<'number'> = new PrimitiveAttribute({
+  path: '',
   type: 'number',
   required: 'never',
   hidden: false,
@@ -54,7 +58,7 @@ const defaultNumberAttribute: Omit<PrimitiveAttribute<'number'>, 'path'> = {
   },
   enum: undefined,
   transform: undefined
-}
+})
 
 class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'operations.invalidExpressionAttributePath'> {
   constructor(attributePath: string) {
@@ -99,12 +103,12 @@ export const appendAttributePath = (
           expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
         }
 
-        parentAttribute = {
+        parentAttribute = new AnyAttribute({
+          ...defaultAnyAttribute,
           path: [parentAttribute.path, childAttributeAccessor].join(
             isChildAttributeInList ? '' : '.'
-          ),
-          ...defaultAnyAttribute
-        }
+          )
+        })
         break
       }
       case 'binary':
@@ -193,9 +197,9 @@ export const appendAttributePath = (
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
   return size
-    ? {
-        path: parentAttribute.path,
-        ...defaultNumberAttribute
-      }
+    ? new PrimitiveAttribute({
+        ...defaultNumberAttribute,
+        path: parentAttribute.path
+      })
     : parentAttribute
 }

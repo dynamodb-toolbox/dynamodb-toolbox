@@ -16,8 +16,8 @@ import {
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
-import type { $MapAttributeState, MapAttribute } from './interface'
 import type { $MapAttributeAttributeStates } from './types'
+import { $MapAttributeState, MapAttribute } from './interface'
 
 export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
   // Applying void O.Update improves type display
@@ -106,12 +106,9 @@ export const freezeMapAttribute: MapAttributeFreezer = <
     ) as FreezeAttribute<$ATTRIBUTES[Extract<keyof $ATTRIBUTES, string>]>
   }
 
-  return {
+  return new MapAttribute({
     path,
-    type: 'map',
     attributes: frozenAttributes,
-    keyAttributeNames,
-    requiredAttributeNames,
     ...state
-  }
+  })
 }

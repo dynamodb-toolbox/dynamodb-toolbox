@@ -16,8 +16,8 @@ import {
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
-import type { $ListAttributeState, ListAttribute } from './interface'
 import type { $ListAttributeElements } from './types'
+import { $ListAttributeState, ListAttribute } from './interface'
 
 export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
   // Applying void O.Update improves type display
@@ -94,10 +94,9 @@ export const freezeListAttribute: ListAttributeFreezer = <
 
   const frozenElements = elements.freeze(`${path}[n]`) as FreezeAttribute<$ELEMENTS>
 
-  return {
+  return new ListAttribute({
     path,
-    type: 'list',
     elements: frozenElements,
     ...state
-  }
+  })
 }

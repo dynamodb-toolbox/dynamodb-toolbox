@@ -17,12 +17,12 @@ import {
   $transform
 } from '../constants/attributeOptions'
 
-import type { $PrimitiveAttributeState, PrimitiveAttribute } from './interface'
 import type {
   PrimitiveAttributeEnumValues,
   PrimitiveAttributeState,
   PrimitiveAttributeType
 } from './types'
+import { $PrimitiveAttributeState, PrimitiveAttribute } from './interface'
 
 export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
   // Applying void O.Update improves type display
@@ -114,10 +114,10 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     }
   }
 
-  return {
+  return new PrimitiveAttribute({
     path,
     type,
     enum: state.enum as Extract<STATE['enum'], PrimitiveAttributeEnumValues<TYPE>>,
     ...restState
-  }
+  })
 }

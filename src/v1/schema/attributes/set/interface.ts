@@ -11,6 +11,7 @@ import type {
 } from 'v1/operations'
 
 import type { Schema } from '../../schema'
+import type { SchemaAction } from '../../action'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { $type, $elements } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
@@ -273,11 +274,35 @@ export interface $SetAttribute<
   >
 }
 
-export interface SetAttribute<
+export class SetAttribute<
   ELEMENTS extends SetAttributeElements = SetAttributeElements,
   STATE extends SharedAttributeState = SharedAttributeState
-> extends SharedAttributeState<STATE> {
-  path: string
+> implements SharedAttributeState<STATE> {
   type: 'set'
+  path: string
   elements: ELEMENTS
+  required: STATE['required']
+  hidden: STATE['hidden']
+  key: STATE['key']
+  savedAs: STATE['savedAs']
+  defaults: STATE['defaults']
+  links: STATE['links']
+
+  constructor({ path, elements, ...state }: STATE & { path: string; elements: ELEMENTS }) {
+    this.type = 'set'
+    this.path = path
+    this.elements = elements
+    this.required = state.required
+    this.hidden = state.hidden
+    this.key = state.key
+    this.savedAs = state.savedAs
+    this.defaults = state.defaults
+    this.links = state.links
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

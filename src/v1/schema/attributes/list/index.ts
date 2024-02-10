@@ -1,5 +1,5 @@
 export { list } from './typer'
-export type {
+export {
   $ListAttributeState,
   $ListAttributeNestedState,
   $ListAttribute,

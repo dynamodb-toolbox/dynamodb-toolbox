@@ -1,5 +1,6 @@
-import type { Schema, AtLeastOnce, PrimitiveAttribute } from 'v1/schema'
+import type { Schema, AtLeastOnce } from 'v1/schema'
 import type { EntityAttributeSavedAs, TableV2 } from 'v1/table'
+import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { $get } from 'v1/operations/updateItem/utils'
 
@@ -71,7 +72,7 @@ export const addEntityAttribute: EntityAttributeAdder = <
     })
   }
 
-  const entityAttribute: EntityAttribute<TABLE, ENTITY_NAME> = {
+  const entityAttribute: EntityAttribute<TABLE, ENTITY_NAME> = new PrimitiveAttribute({
     path: entityAttributeName,
     type: 'string',
     required: 'atLeastOnce',
@@ -90,7 +91,7 @@ export const addEntityAttribute: EntityAttributeAdder = <
       update: undefined
     },
     transform: undefined
-  }
+  })
 
   return addInternalAttribute(schema, entityAttributeName, entityAttribute) as WithEntityAttribute<
     SCHEMA,
