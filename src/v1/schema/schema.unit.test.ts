@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import { schema } from './typer'
+import { schema } from './schema'
 import { boolean, binary, number, string, set, list, map } from './attributes'
 import type { FreezeAttribute } from './attributes/freeze'
 

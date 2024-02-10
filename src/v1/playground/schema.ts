@@ -13,6 +13,7 @@ import {
   SavedItem,
   KeyInput
 } from 'v1'
+import { SchemaAction } from 'v1/schema/schema'
 
 const playgroundSchema1 = schema({
   reqStr: string(),
@@ -41,6 +42,9 @@ const playgroundSchema1 = schema({
   ),
   hiddenList: list(string()).optional().hidden()
 })
+
+const schemaAction = playgroundSchema1.build(SchemaAction)
+schemaAction
 
 type PlaygroundSchema1PutItemInput = PutItemInput<typeof playgroundSchema1>
 type PlaygroundSchema1FormattedItem = FormattedAttribute<typeof playgroundSchema1>
