@@ -1,5 +1,5 @@
 export { set } from './typer'
-export type {
+export {
   $SetAttributeState,
   $SetAttributeNestedState,
   $SetAttribute,

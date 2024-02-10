@@ -13,7 +13,7 @@ import {
   SavedItem,
   KeyInput
 } from 'v1'
-import { SchemaAction } from 'v1/schema/schema'
+import { SchemaAction } from 'v1/schema/action'
 
 const playgroundSchema1 = schema({
   reqStr: string(),
@@ -48,6 +48,8 @@ schemaAction
 
 type PlaygroundSchema1PutItemInput = PutItemInput<typeof playgroundSchema1>
 type PlaygroundSchema1FormattedItem = FormattedAttribute<typeof playgroundSchema1>
+
+const listAction = list(string()).optional().hidden().freeze('').build(SchemaAction)
 
 const allCasesOfProps = {
   optProp: string().optional(),

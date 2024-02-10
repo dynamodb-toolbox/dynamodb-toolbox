@@ -5,7 +5,7 @@ export type {
   ResolvedPrimitiveAttribute,
   Transformer
 } from './types'
-export type {
+export {
   $PrimitiveAttributeState,
   $PrimitiveAttributeNestedState,
   $PrimitiveAttribute,
