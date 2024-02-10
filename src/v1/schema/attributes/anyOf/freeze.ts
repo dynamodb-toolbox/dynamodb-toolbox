@@ -18,8 +18,8 @@ import {
 
 import type { SharedAttributeState } from '../shared/interface'
 import type { $AttributeState } from '../types'
-import type { $AnyOfAttributeState, AnyOfAttribute } from './interface'
 import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types'
+import { $AnyOfAttributeState, AnyOfAttribute } from './interface'
 
 type FreezeElements<
   $ELEMENTS extends $AnyOfAttributeElements[],
@@ -127,10 +127,9 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
 
   const frozenElements = elements.map(element => element.freeze(path)) as FreezeElements<$ELEMENTS>
 
-  return {
+  return new AnyOfAttribute({
     path,
-    type: 'anyOf',
     elements: frozenElements,
     ...state
-  }
+  })
 }

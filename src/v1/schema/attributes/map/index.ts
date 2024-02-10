@@ -1,5 +1,5 @@
 export { map } from './typer'
-export type {
+export {
   $MapAttributeState,
   $MapAttributeNestedState,
   $MapAttribute,

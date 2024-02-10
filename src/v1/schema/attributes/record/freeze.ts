@@ -18,8 +18,8 @@ import {
 } from '../constants/attributeOptions'
 
 import type { SharedAttributeState } from '../shared/interface'
-import type { $RecordAttributeState, RecordAttribute } from './interface'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types'
+import { $RecordAttributeState, RecordAttribute } from './interface'
 
 export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =
   // Applying void O.Update improves type display
@@ -154,11 +154,10 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   const frozenKeys = keys.freeze(`${path} (KEY)`) as FreezeAttribute<$KEYS>
   const frozenElements = elements.freeze(`${path}[string]`) as FreezeAttribute<$ELEMENTS>
 
-  return {
+  return new RecordAttribute({
     path,
-    type: 'record',
     keys: frozenKeys,
     elements: frozenElements,
     ...state
-  }
+  })
 }

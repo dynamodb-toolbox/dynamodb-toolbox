@@ -4,14 +4,14 @@ import { ConditionParser } from 'v1/operations/expression/condition/parser'
 import _pick from 'lodash.pick'
 
 import type { Condition, Query } from 'v1/operations/types'
-import type { Attribute, PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema'
 import type { TableV2 } from 'v1/table'
 import type { PrimitiveAttributeExtraCondition } from 'v1/operations/types/condition'
 import { Schema } from 'v1/schema/schema'
+import { PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { queryOperatorSet } from 'v1/operations/types/query'
 
-const defaultAttribute: Omit<Attribute, 'path' | 'type'> = {
+const defaultAttribute: Omit<PrimitiveAttribute, 'path' | 'type' | 'build'> = {
   required: 'never',
   key: false,
   hidden: false,
@@ -25,7 +25,9 @@ const defaultAttribute: Omit<Attribute, 'path' | 'type'> = {
     key: undefined,
     put: undefined,
     update: undefined
-  }
+  },
+  enum: undefined,
+  transform: undefined
 }
 
 const pick = _pick as <OBJECT extends object, KEYS extends string[]>(
@@ -53,13 +55,13 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
   }
 
   const indexSchema: Schema = new Schema<{}>({})
-  indexSchema.attributes[partitionKey.name] = {
+  indexSchema.attributes[partitionKey.name] = new PrimitiveAttribute({
     ...defaultAttribute,
     path: partitionKey.name,
     type: partitionKey.type,
     enum: undefined,
     transform: undefined
-  }
+  })
 
   let condition: Condition = {
     attr: partitionKey.name,
@@ -67,13 +69,13 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
   }
 
   if (sortKey !== undefined && range !== undefined) {
-    indexSchema.attributes[sortKey.name] = {
+    indexSchema.attributes[sortKey.name] = new PrimitiveAttribute({
       ...defaultAttribute,
       path: sortKey.name,
       type: sortKey.type,
       enum: undefined,
       transform: undefined
-    }
+    })
 
     const sortKeyCondition = ({
       attr: sortKey.name,

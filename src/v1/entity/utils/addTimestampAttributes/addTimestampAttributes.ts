@@ -1,5 +1,6 @@
 import type { Schema } from 'v1/schema'
 import type { If } from 'v1/types/if'
+import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { $get } from 'v1/operations/updateItem/utils'
 
 import { WithInternalAttribute, addInternalAttribute } from '../addInternalAttribute'
@@ -90,7 +91,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
     const createdAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
-    > = {
+    > = new PrimitiveAttribute({
       path: createdName,
       type: 'string',
       required: 'atLeastOnce',
@@ -109,7 +110,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
         update: undefined
       },
       transform: undefined
-    }
+    })
 
     schemaWithTimestamps = addInternalAttribute(schemaWithTimestamps, createdName, createdAttribute)
   }
@@ -121,7 +122,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
     const modifiedAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
-    > = {
+    > = new PrimitiveAttribute({
       path: modifiedName,
       type: 'string',
       required: 'atLeastOnce',
@@ -140,7 +141,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
         update: undefined
       },
       transform: undefined
-    }
+    })
 
     schemaWithTimestamps = addInternalAttribute(
       schemaWithTimestamps,

@@ -1,3 +1,4 @@
 export * from './attributes'
 export * from './errors'
-export { schema, Schema, SchemaAction } from './schema'
+export { schema, Schema } from './schema'
+export { SchemaAction } from './action'
