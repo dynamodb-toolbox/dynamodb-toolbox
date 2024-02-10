@@ -1,5 +1,5 @@
 export { any } from './typer'
-export type {
+export {
   $AnyAttributeState,
   $AnyAttributeNestedState,
   $AnyAttribute,
