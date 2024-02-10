@@ -10,7 +10,7 @@ import type {
   UpdateItemInput
 } from 'v1/operations'
 
-import type { Schema } from '../../interface'
+import type { Schema } from '../../schema'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $attributes } from '../constants/attributeOptions'
 import type { SharedAttributeState, $SharedAttributeState } from '../shared/interface'

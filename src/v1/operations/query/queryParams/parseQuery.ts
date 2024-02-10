@@ -4,24 +4,12 @@ import { ConditionParser } from 'v1/operations/expression/condition/parser'
 import _pick from 'lodash.pick'
 
 import type { Condition, Query } from 'v1/operations/types'
-import type { Attribute, PrimitiveAttribute, ResolvedPrimitiveAttribute, Schema } from 'v1/schema'
+import type { Attribute, PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema'
 import type { TableV2 } from 'v1/table'
 import type { PrimitiveAttributeExtraCondition } from 'v1/operations/types/condition'
+import { Schema } from 'v1/schema/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { queryOperatorSet } from 'v1/operations/types/query'
-
-const defaultSchema: Schema = {
-  type: 'schema',
-  attributes: {},
-  savedAttributeNames: new Set(),
-  keyAttributeNames: new Set(),
-  requiredAttributeNames: {
-    always: new Set(),
-    atLeastOnce: new Set(),
-    never: new Set()
-  },
-  and: undefined as any
-}
 
 const defaultAttribute: Omit<Attribute, 'path' | 'type'> = {
   required: 'never',
@@ -64,7 +52,7 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
     })
   }
 
-  const indexSchema: Schema = defaultSchema
+  const indexSchema: Schema = new Schema<{}>({})
   indexSchema.attributes[partitionKey.name] = {
     ...defaultAttribute,
     path: partitionKey.name,
