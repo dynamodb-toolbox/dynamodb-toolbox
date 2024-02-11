@@ -1,6 +1,6 @@
 import type { EntityV2 } from 'v1/entity'
 import type { Item, RequiredOption } from 'v1/schema'
-import { schemaParser } from 'v1/parser'
+import { Parser } from 'v1/parser'
 
 import type { UpdateItemInputExtension } from '../types'
 import { parseUpdateExtension } from './extension/parseExtension'
@@ -13,15 +13,15 @@ type EntityUpdateCommandInputParser = (
 const requiringOptions = new Set<RequiredOption>(['always'])
 
 export const parseEntityUpdateCommandInput: EntityUpdateCommandInputParser = (entity, input) => {
-  const parser = schemaParser(entity.schema, input, {
+  const workflow = entity.schema.build(Parser).workflow(input, {
     fill: 'update',
     transform: true,
     requiringOptions,
     parseExtension: parseUpdateExtension
   })
 
-  parser.next() // defaulted
-  parser.next() // linked
+  workflow.next() // defaulted
+  workflow.next() // linked
 
-  return parser
+  return workflow
 }
