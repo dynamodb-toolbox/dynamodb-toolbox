@@ -2,6 +2,7 @@ import type { SchemaErrorBlueprints } from 'v1/schema/errors'
 import type { EntityErrorBlueprints } from 'v1/entity/errors'
 import type { OperationsErrorBlueprints } from 'v1/operations/errors'
 import type { ParserErrorBlueprints } from 'v1/parser/errors'
+import type { FormatterErrorBlueprints } from 'v1/formatter/errors'
 
 import type { ErrorBlueprint } from './blueprint'
 
@@ -10,6 +11,7 @@ type ErrorBlueprints =
   | EntityErrorBlueprints
   | OperationsErrorBlueprints
   | ParserErrorBlueprints
+  | FormatterErrorBlueprints
 
 type IndexErrors<ERROR_BLUEPRINTS extends ErrorBlueprint> = {
   [ERROR_BLUEPRINT in ERROR_BLUEPRINTS as ERROR_BLUEPRINT['code']]: ERROR_BLUEPRINT

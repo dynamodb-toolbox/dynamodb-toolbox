@@ -20,6 +20,6 @@ type InvalidSavedAttributeErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-export type FormatSavedItemErrorBlueprints =
+export type FormatterErrorBlueprints =
   | SavedAttributeRequiredErrorBlueprint
   | InvalidSavedAttributeErrorBlueprint
