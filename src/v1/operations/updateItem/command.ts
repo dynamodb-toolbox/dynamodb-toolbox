@@ -10,7 +10,7 @@ import type {
   AllNewReturnValuesOption
 } from 'v1/operations/constants/options/returnValues'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
+import { formatSavedItem } from 'v1/formatter'
 
 import { EntityOperation, $entity } from '../class'
 import type { UpdateItemInput } from './types'

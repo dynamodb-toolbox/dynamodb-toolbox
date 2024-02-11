@@ -4,7 +4,7 @@ import { GetCommandInput, GetCommand, GetCommandOutput } from '@aws-sdk/lib-dyna
 import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { AnyAttributePath, KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
+import { formatSavedItem } from 'v1/formatter'
 
 import { EntityOperation, $entity } from '../class'
 import type { GetItemOptions } from './options'
