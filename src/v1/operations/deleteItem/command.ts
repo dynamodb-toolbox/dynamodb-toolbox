@@ -8,7 +8,7 @@ import type {
 } from 'v1/operations/constants/options/returnValues'
 import type { KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
+import { formatSavedItem } from 'v1/formatter'
 
 import { EntityOperation, $entity } from '../class'
 import type { DeleteItemOptions, DeleteItemCommandReturnValuesOption } from './options'
