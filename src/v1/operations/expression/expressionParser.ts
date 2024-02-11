@@ -4,7 +4,7 @@ import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
-import { attributeParser } from 'v1/parsing'
+import { attributeParser } from 'v1/parser'
 
 export type AppendAttributePathOptions = { size?: boolean }
 

@@ -2,9 +2,9 @@ import cloneDeep from 'lodash.clonedeep'
 
 import type { AttributeValue } from 'v1/schema'
 import type { ReferenceExtension } from 'v1/operations/types'
-import type { ExtensionParser } from 'v1/parsing/types'
+import type { ExtensionParser } from 'v1/parser/types'
 import { isArray } from 'v1/utils/validation/isArray'
-import { attributeParser } from 'v1/parsing/attribute'
+import { attributeParser } from 'v1/parser/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'

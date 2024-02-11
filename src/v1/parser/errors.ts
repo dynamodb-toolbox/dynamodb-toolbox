@@ -24,7 +24,7 @@ type InvalidAttributeInputErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-export type ParsingErrorBlueprints =
+export type ParserErrorBlueprints =
   | InvalidItemErrorBlueprint
   | AttributeRequiredErrorBlueprint
   | InvalidAttributeInputErrorBlueprint
