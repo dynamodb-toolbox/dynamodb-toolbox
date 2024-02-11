@@ -1,4 +1,4 @@
-import type { ExtensionParser } from 'v1/parsing/types'
+import type { ExtensionParser } from 'v1/parser/types'
 import type { PrimitiveAttribute } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
