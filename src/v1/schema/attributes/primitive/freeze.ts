@@ -53,7 +53,7 @@ type PrimitiveAttributeFreezer = <
 >(
   type: TYPE,
   primitiveAttribute: STATE,
-  path: string
+  path?: string
 ) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
 
 /**
@@ -70,7 +70,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
 >(
   type: TYPE,
   state: STATE,
-  path: string
+  path?: string
 ): FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>> => {
   validateAttributeProperties(state, path)
 
@@ -81,9 +81,9 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     const isEnumValueValid = typeValidator(enumValue)
     if (!isEnumValueValid) {
       throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidEnumValueType', {
-        message: `Invalid enum value type at path ${path}. Expected: ${type}. Received: ${String(
-          enumValue
-        )}.`,
+        message: `Invalid enum value type${
+          path !== undefined ? ` at path '${path}'` : ''
+        }. Expected: ${type}. Received: ${String(enumValue)}.`,
         path,
         payload: { expectedType: type, enumValue }
       })
@@ -94,9 +94,9 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     if (defaultValue !== undefined && isStaticDefault(defaultValue)) {
       if (!typeValidator(defaultValue)) {
         throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueType', {
-          message: `Invalid default value type at path ${path}: Expected: ${type}. Received: ${String(
-            defaultValue
-          )}.`,
+          message: `Invalid default value type${
+            path !== undefined ? ` at path '${path}'` : ''
+          }: Expected: ${type}. Received: ${String(defaultValue)}.`,
           path,
           payload: { expectedType: type, defaultValue }
         })
@@ -104,9 +104,9 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
 
       if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
         throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueRange', {
-          message: `Invalid default value at path ${path}: Expected one of: ${enumValues.join(
-            ', '
-          )}. Received: ${String(defaultValue)}.`,
+          message: `Invalid default value${
+            path !== undefined ? ` at path '${path}'` : ''
+          }: Expected one of: ${enumValues.join(', ')}. Received: ${String(defaultValue)}.`,
           path,
           payload: { enumValues, defaultValue }
         })

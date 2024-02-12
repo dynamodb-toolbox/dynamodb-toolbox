@@ -11,7 +11,7 @@ import { PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema/attrib
 import { DynamoDBToolboxError } from 'v1/errors'
 import { queryOperatorSet } from 'v1/operations/types/query'
 
-const defaultAttribute: Omit<PrimitiveAttribute, 'path' | 'type' | 'build'> = {
+const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0], 'type'> = {
   required: 'never',
   key: false,
   hidden: false,

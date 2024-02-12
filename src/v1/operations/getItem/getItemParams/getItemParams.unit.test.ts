@@ -81,7 +81,7 @@ describe('get', () => {
           {}
         )
         .params()
-    ).toThrow('Attribute email is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing the sortKey', () => {
@@ -92,7 +92,7 @@ describe('get', () => {
           { pk: 'test-pk' }
         )
         .params()
-    ).toThrow('Attribute email is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing partitionKey (no alias)', () => {
@@ -103,7 +103,7 @@ describe('get', () => {
           {}
         )
         .params()
-    ).toThrow('Attribute pk is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing the sortKey (no alias)', () => {
@@ -114,7 +114,7 @@ describe('get', () => {
           { pk: 'test-pk' }
         )
         .params()
-    ).toThrow('Attribute sk is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   // Options

@@ -8,17 +8,21 @@ import { formatSavedAttribute } from './attribute'
 import { matchProjection } from './utils'
 
 export const formatSavedRecordAttribute = (
-  recordAttribute: RecordAttribute,
+  attribute: RecordAttribute,
   savedValue: AttributeValue,
   { attributes, ...restOptions }: FormatOptions
 ): RecordAttributeValue => {
   if (!isObject(savedValue)) {
+    const { path, type } = attribute
+
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
-      message: `Invalid attribute in saved item: ${recordAttribute.path}. Should be a ${recordAttribute.type}.`,
-      path: recordAttribute.path,
+      message: `Invalid attribute detected while formatting${
+        path !== undefined ? `: '${path}'` : ''
+      }. Should be a ${type}.`,
+      path,
       payload: {
         received: savedValue,
-        expected: recordAttribute.type
+        expected: type
       }
     })
   }
@@ -26,12 +30,12 @@ export const formatSavedRecordAttribute = (
   const formattedRecord: RecordAttributeValue = {}
 
   Object.entries(savedValue).forEach(([key, element]) => {
-    const parsedKey = formatSavedPrimitiveAttribute(recordAttribute.keys, key) as string
+    const parsedKey = formatSavedPrimitiveAttribute(attribute.keys, key) as string
 
     // We don't need isProjected: We used the saved value key so we know it is
     const { childrenAttributes } = matchProjection(new RegExp('^\\.' + parsedKey), attributes)
 
-    const formattedAttribute = formatSavedAttribute(recordAttribute.elements, element, {
+    const formattedAttribute = formatSavedAttribute(attribute.elements, element, {
       attributes: childrenAttributes,
       ...restOptions
     })

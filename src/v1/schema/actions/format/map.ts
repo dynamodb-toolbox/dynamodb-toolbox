@@ -7,24 +7,28 @@ import { formatSavedAttribute } from './attribute'
 import { matchProjection } from './utils'
 
 export const formatSavedMapAttribute = (
-  mapAttribute: MapAttribute,
+  attribute: MapAttribute,
   savedValue: AttributeValue,
   { attributes, ...restOptions }: FormatOptions = {}
 ): MapAttributeValue => {
   if (!isObject(savedValue)) {
+    const { path, type } = attribute
+
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
-      message: `Invalid attribute in saved item: ${mapAttribute.path}. Should be a ${mapAttribute.type}.`,
-      path: mapAttribute.path,
+      message: `Invalid attribute detected while formatting${
+        path !== undefined ? `: '${path}'` : ''
+      }. Should be a ${type}.`,
+      path,
       payload: {
         received: savedValue,
-        expected: mapAttribute.type
+        expected: type
       }
     })
   }
 
   const formattedMap: MapAttributeValue = {}
 
-  Object.entries(mapAttribute.attributes).forEach(([attributeName, attribute]) => {
+  Object.entries(attribute.attributes).forEach(([attributeName, attribute]) => {
     if (attribute.hidden) {
       return
     }

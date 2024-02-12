@@ -81,9 +81,13 @@ export const parseReferenceExtension: ExtensionParser<
         }
 
         if (!isInputValueArray) {
+          const { path } = attribute
+
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-            message: `Reference for attribute ${attribute.path} should be a tuple of one or two elements`,
-            path: attribute.path,
+            message: `References ${
+              path !== undefined ? `for attribute '${path}' ` : ''
+            }should be a tuple of one or two elements`,
+            path,
             payload: {
               received: inputValue[$GET]
             }
@@ -91,9 +95,13 @@ export const parseReferenceExtension: ExtensionParser<
         }
 
         if (!isString(reference)) {
+          const { path } = attribute
+
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-            message: `First element of a reference for attribute ${attribute.path} should be a string`,
-            path: attribute.path,
+            message: `First elements of references ${
+              path !== undefined ? `for attribute '${path}' ` : ''
+            }should be strings`,
+            path,
             payload: {
               received: inputValue[$GET][0]
             }

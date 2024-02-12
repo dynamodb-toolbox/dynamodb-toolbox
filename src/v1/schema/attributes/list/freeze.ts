@@ -43,7 +43,7 @@ type ListAttributeFreezer = <
 >(
   $elements: $ELEMENTS,
   state: STATE,
-  path: string
+  path?: string
 ) => FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>
 
 /**
@@ -60,39 +60,47 @@ export const freezeListAttribute: ListAttributeFreezer = <
 >(
   elements: $ELEMENTS,
   state: STATE,
-  path: string
+  path?: string
 ): FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>> => {
   validateAttributeProperties(state, path)
 
   if (elements[$required] !== 'atLeastOnce' && elements[$required] !== 'always') {
     throw new DynamoDBToolboxError('schema.listAttribute.optionalElements', {
-      message: `Invalid list elements at path ${path}: List elements must be required`,
+      message: `Invalid list elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: List elements must be required.`,
       path
     })
   }
 
   if (elements[$hidden] !== false) {
     throw new DynamoDBToolboxError('schema.listAttribute.hiddenElements', {
-      message: `Invalid list elements at path ${path}: List elements cannot be hidden`,
+      message: `Invalid list elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: List elements cannot be hidden.`,
       path
     })
   }
 
   if (elements[$savedAs] !== undefined) {
     throw new DynamoDBToolboxError('schema.listAttribute.savedAsElements', {
-      message: `Invalid list elements at path ${path}: List elements cannot be renamed (have savedAs option)`,
+      message: `Invalid list elements at path ${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: List elements cannot be renamed (have savedAs option).`,
       path
     })
   }
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.listAttribute.defaultedElements', {
-      message: `Invalid list elements at path ${path}: List elements cannot have default or linked values`,
+      message: `Invalid list elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: List elements cannot have default or linked values.`,
       path
     })
   }
 
-  const frozenElements = elements.freeze(`${path}[n]`) as FreezeAttribute<$ELEMENTS>
+  const frozenElements = elements.freeze(`${path ?? ''}[n]`) as FreezeAttribute<$ELEMENTS>
 
   return new ListAttribute({
     path,

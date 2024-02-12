@@ -23,9 +23,13 @@ export const formatSavedAttribute = (
 ): AttributeValue | undefined => {
   if (savedValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
+      const { path } = attribute
+
       throw new DynamoDBToolboxError('formatter.missingAttribute', {
-        message: `Missing required attribute in item: ${attribute.path}.`,
-        path: attribute.path,
+        message: `Missing required attribute for formatting${
+          path !== undefined ? `: '${path}'` : ''
+        }.`,
+        path,
         payload: {}
       })
     } else {

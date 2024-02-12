@@ -83,12 +83,14 @@ export function* mapAttributeParser<
   }
 
   if (!isInputValueObject) {
+    const { path, type } = attribute
+
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${attribute.path} should be a ${attribute.type}`,
-      path: attribute.path,
+      message: `Attribute ${path !== undefined ? `'${path}' ` : ''}should be a ${type}.`,
+      path,
       payload: {
         received: inputValue,
-        expected: attribute.type
+        expected: type
       }
     })
   }
