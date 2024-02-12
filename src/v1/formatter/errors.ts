@@ -1,7 +1,7 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
 type SavedAttributeRequiredErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.formatSavedItem.savedAttributeRequired'
+  code: 'formatter.missingAttribute'
   hasPath: true
   payload: {
     partitionKey?: unknown
@@ -10,7 +10,7 @@ type SavedAttributeRequiredErrorBlueprint = ErrorBlueprint<{
 }>
 
 type InvalidSavedAttributeErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.formatSavedItem.invalidSavedAttribute'
+  code: 'formatter.invalidAttribute'
   hasPath: true
   payload: {
     received: unknown

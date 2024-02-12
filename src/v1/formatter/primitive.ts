@@ -8,31 +8,18 @@ import type {
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatSavedAttributeOptions } from './types'
-import { getItemKey } from './utils'
-
 export const formatSavedPrimitiveAttribute = (
   primitiveAttribute: PrimitiveAttribute,
-  savedValue: AttributeValue,
-  options: FormatSavedAttributeOptions = {}
+  savedValue: AttributeValue
 ): PrimitiveAttributeValue => {
-  const { partitionKey, sortKey } = options
-
   const validator = validatorsByPrimitiveType[primitiveAttribute.type]
   if (!validator(savedValue)) {
-    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
-      message: [
-        `Invalid attribute in saved item: ${primitiveAttribute.path}. Should be a ${primitiveAttribute.type}.`,
-        getItemKey({ partitionKey, sortKey })
-      ]
-        .filter(Boolean)
-        .join(' '),
+    throw new DynamoDBToolboxError('formatter.invalidAttribute', {
+      message: `Invalid attribute in saved item: ${primitiveAttribute.path}. Should be a ${primitiveAttribute.type}.`,
       path: primitiveAttribute.path,
       payload: {
         received: savedValue,
-        expected: primitiveAttribute.type,
-        partitionKey,
-        sortKey
+        expected: primitiveAttribute.type
       }
     })
   }
@@ -46,21 +33,14 @@ export const formatSavedPrimitiveAttribute = (
     transformer !== undefined ? transformer.format(savedPrimitive) : savedPrimitive
 
   if (primitiveAttribute.enum !== undefined && !primitiveAttribute.enum.includes(formattedValue)) {
-    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
-      message: [
-        `Invalid attribute in saved item: ${
-          primitiveAttribute.path
-        }. Should be one of: ${primitiveAttribute.enum.map(String).join(', ')}.`,
-        getItemKey({ partitionKey, sortKey })
-      ]
-        .filter(Boolean)
-        .join(' '),
+    throw new DynamoDBToolboxError('formatter.invalidAttribute', {
+      message: `Invalid attribute in saved item: ${
+        primitiveAttribute.path
+      }. Should be one of: ${primitiveAttribute.enum.map(String).join(', ')}.`,
       path: primitiveAttribute.path,
       payload: {
         received: formattedValue,
-        expected: primitiveAttribute.enum,
-        partitionKey,
-        sortKey
+        expected: primitiveAttribute.enum
       }
     })
   }

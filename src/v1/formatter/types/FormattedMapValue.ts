@@ -2,13 +2,13 @@ import type { O } from 'ts-toolbelt'
 import type { Schema, AtLeastOnce, Always, MapAttribute } from 'v1/schema'
 import type { If } from 'v1/types/if'
 
-import type { FormattedAttribute } from './attribute'
-import type { MatchKeys } from './utils'
-import type { FormattedItemOptions } from './utils'
+import type { FormattedValue } from './FormattedValue'
+import type { MatchKeys } from './MatchKeys'
+import type { FormattedValueOptions } from './FormattedValueOptions'
 
-export type FormattedMapAttribute<
+export type FormattedMapValue<
   SCHEMA extends Schema | MapAttribute,
-  OPTIONS extends FormattedItemOptions = FormattedItemOptions,
+  OPTIONS extends FormattedValueOptions = FormattedValueOptions,
   KEY_PREFIX extends string = SCHEMA extends Schema
     ? ''
     : SCHEMA extends MapAttribute
@@ -17,7 +17,7 @@ export type FormattedMapAttribute<
   MATCHING_KEYS extends string = MatchKeys<
     Extract<keyof SCHEMA['attributes'], string>,
     KEY_PREFIX,
-    OPTIONS['attributes']
+    OPTIONS['attributes'][number]
   >
 > =
   // Possible in case of anyOf subSchema
@@ -31,15 +31,15 @@ export type FormattedMapAttribute<
               // Pick only filtered keys
               O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
               { hidden: false }
-            >]: FormattedAttribute<
+            >]: FormattedValue<
               SCHEMA['attributes'][KEY],
               O.Update<
                 OPTIONS,
                 'attributes',
-                `${KEY_PREFIX}${KEY}` extends OPTIONS['attributes']
-                  ? string
-                  : OPTIONS['attributes'] extends `${KEY_PREFIX}${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                  ? CHILDREN_FILTERED_ATTRIBUTES
+                `${KEY_PREFIX}${KEY}` extends OPTIONS['attributes'][number]
+                  ? string[]
+                  : OPTIONS['attributes'][number] extends `${KEY_PREFIX}${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+                  ? CHILDREN_FILTERED_ATTRIBUTES[]
                   : never
               >
             >

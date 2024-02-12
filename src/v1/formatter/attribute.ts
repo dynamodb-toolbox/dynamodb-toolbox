@@ -3,14 +3,13 @@ import cloneDeep from 'lodash.clonedeep'
 import type { Attribute, RequiredOption, AttributeValue } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatSavedAttributeOptions } from './types'
+import type { FormatOptions } from './schema'
 import { formatSavedPrimitiveAttribute } from './primitive'
 import { formatSavedSetAttribute } from './set'
 import { formatSavedListAttribute } from './list'
 import { formatSavedMapAttribute } from './map'
 import { formatSavedAnyOfAttribute } from './anyOf'
 import { formatSavedRecordAttribute } from './record'
-import { getItemKey } from './utils'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
@@ -20,24 +19,14 @@ export const isRequired = (attribute: Attribute): boolean =>
 export const formatSavedAttribute = (
   attribute: Attribute,
   savedValue: AttributeValue | undefined,
-  options: FormatSavedAttributeOptions = {}
+  options: FormatOptions = {}
 ): AttributeValue | undefined => {
   if (savedValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
-      const { partitionKey, sortKey } = options
-
-      throw new DynamoDBToolboxError('operations.formatSavedItem.savedAttributeRequired', {
-        message: [
-          `Missing required attribute in saved item: ${attribute.path}.`,
-          getItemKey({ partitionKey, sortKey })
-        ]
-          .filter(Boolean)
-          .join(' '),
+      throw new DynamoDBToolboxError('formatter.missingAttribute', {
+        message: `Missing required attribute in item: ${attribute.path}.`,
         path: attribute.path,
-        payload: {
-          partitionKey,
-          sortKey
-        }
+        payload: {}
       })
     } else {
       return undefined
@@ -51,7 +40,7 @@ export const formatSavedAttribute = (
     case 'binary':
     case 'boolean':
     case 'number':
-      return formatSavedPrimitiveAttribute(attribute, savedValue, options)
+      return formatSavedPrimitiveAttribute(attribute, savedValue)
     case 'set':
       return formatSavedSetAttribute(attribute, savedValue, options)
     case 'list':

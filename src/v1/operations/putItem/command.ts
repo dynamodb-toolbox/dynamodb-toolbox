@@ -9,8 +9,8 @@ import type {
   AllOldReturnValuesOption,
   AllNewReturnValuesOption
 } from 'v1/operations/constants/options/returnValues'
+import { EntityFormatter } from 'v1/operations/format'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { formatSavedItem } from 'v1/formatter'
 
 import { EntityOperation, $entity } from '../class'
 import type { PutItemInput } from './types'
@@ -102,12 +102,12 @@ export class PutItemCommand<
 
     const { returnValues } = this[$options]
 
-    const formattedItem = (formatSavedItem(this[$entity], attributes, {
+    const formattedItem = new EntityFormatter(this[$entity]).format(attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
-    }) as unknown) as ReturnedAttributes<ENTITY, OPTIONS>
+    })
 
     return {
-      Attributes: formattedItem,
+      Attributes: formattedItem as any,
       ...restCommandOutput
     }
   }

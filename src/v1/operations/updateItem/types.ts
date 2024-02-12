@@ -26,7 +26,7 @@ import type {
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
 import type { If } from 'v1/types/if'
-import type { SchemaAttributePath } from 'v1/operations/types'
+import type { AnyAttributePath } from 'v1/operations/types'
 
 import {
   $HAS_VERB,
@@ -150,7 +150,7 @@ export type UpdateItemInput<
         [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
           SCHEMA['attributes'][KEY],
           REQUIRED_DEFAULTS,
-          SchemaAttributePath<SCHEMA>
+          AnyAttributePath<SCHEMA>
         >
       },
       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
