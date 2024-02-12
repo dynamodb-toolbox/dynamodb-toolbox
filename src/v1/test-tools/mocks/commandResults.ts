@@ -5,23 +5,23 @@ import { $receivedCommands } from './constants'
 export class CommandResults<INPUT, OPTIONS> {
   [$receivedCommands]: [input?: INPUT, options?: OPTIONS][]
 
-  count: () => number
-  args: (at: number) => [input?: INPUT, options?: OPTIONS] | undefined
-  allArgs: () => [input?: INPUT, options?: OPTIONS][]
-
   constructor(receivedCommands: [input?: INPUT, options?: OPTIONS][]) {
     this[$receivedCommands] = receivedCommands
+  }
 
-    this.count = () => this[$receivedCommands].length
+  count(): number {
+    return this[$receivedCommands].length
+  }
 
-    this.args = (at: number) => {
-      if (!isInteger(at)) {
-        throw new Error('Please provide an integer when searching for received command arguments')
-      }
-
-      return this[$receivedCommands][at]
+  args(at: number): [input?: INPUT, options?: OPTIONS] | undefined {
+    if (!isInteger(at)) {
+      throw new Error('Please provide an integer when searching for received command arguments')
     }
 
-    this.allArgs = () => this[$receivedCommands]
+    return this[$receivedCommands][at]
+  }
+
+  allArgs(): [input?: INPUT, options?: OPTIONS][] {
+    return this[$receivedCommands]
   }
 }

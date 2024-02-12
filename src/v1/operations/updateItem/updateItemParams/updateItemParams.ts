@@ -4,12 +4,12 @@ import omit from 'lodash.omit'
 
 import type { EntityV2 } from 'v1/entity'
 import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
+import { Parser } from 'v1/schema/actions/parse'
 
 import type { UpdateItemInput } from '../types'
 import type { UpdateItemOptions } from '../options'
 import { parseUpdate } from '../updateExpression'
-
-import { parseEntityUpdateCommandInput } from './parseUpdateCommandInput'
+import { parseUpdateExtension } from './extension/parseExtension'
 import { parseUpdateItemOptions } from './parseUpdateItemOptions'
 
 export const updateItemParams = <
@@ -20,9 +20,17 @@ export const updateItemParams = <
   input: UpdateItemInput<ENTITY>,
   updateItemOptions: OPTIONS = {} as OPTIONS
 ): UpdateCommandInput => {
-  const validInputParser = parseEntityUpdateCommandInput(entity, input)
-  const validInput = validInputParser.next().value
-  const transformedInput = validInputParser.next().value
+  const workflow = entity.schema.build(Parser).workflow(input, {
+    fill: 'update',
+    transform: true,
+    requiringOptions: new Set(['always']),
+    parseExtension: parseUpdateExtension
+  })
+
+  workflow.next() // defaulted
+  workflow.next() // linked
+  const validInput = workflow.next().value
+  const transformedInput = workflow.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)

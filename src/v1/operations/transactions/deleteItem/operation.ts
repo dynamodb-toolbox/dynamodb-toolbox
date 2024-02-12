@@ -23,23 +23,26 @@ export class DeleteItemTransaction<
   implements WriteItemTransaction<ENTITY, 'Delete'> {
   static operationName = 'transactDelete' as const;
 
-  [$key]?: KeyInput<ENTITY>
-  key: (keyInput: KeyInput<ENTITY>) => DeleteItemTransaction<ENTITY>;
+  [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends DeleteItemTransactionOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
-  ) => DeleteItemTransaction<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
-
-    this.key = nextKey => new DeleteItemTransaction(this[$entity], nextKey, this[$options])
-    this.options = nextOptions => new DeleteItemTransaction(this[$entity], this[$key], nextOptions)
   }
 
-  params = (): TransactDeleteItemParams => {
+  key(nextKey: KeyInput<ENTITY>): DeleteItemTransaction<ENTITY> {
+    return new DeleteItemTransaction(this[$entity], nextKey, this[$options])
+  }
+
+  options<NEXT_OPTIONS extends DeleteItemTransactionOptions<ENTITY>>(
+    nextOptions: NEXT_OPTIONS
+  ): DeleteItemTransaction<ENTITY, NEXT_OPTIONS> {
+    return new DeleteItemTransaction(this[$entity], this[$key], nextOptions)
+  }
+
+  params(): TransactDeleteItemParams {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'DeleteItemTransaction incomplete: Missing "key" property'
@@ -49,15 +52,17 @@ export class DeleteItemTransaction<
     return transactDeleteItemParams(this[$entity], this[$key], this[$options])
   }
 
-  get = (): {
+  get(): {
     documentClient: DynamoDBDocumentClient
     type: 'Delete'
     params: TransactDeleteItemParams
-  } => ({
-    documentClient: this[$entity].table.documentClient,
-    type: 'Delete',
-    params: this.params()
-  })
+  } {
+    return {
+      documentClient: this[$entity].table.documentClient,
+      type: 'Delete',
+      params: this.params()
+    }
+  }
 }
 
 export type DeleteItemTransactionClass = typeof DeleteItemTransaction

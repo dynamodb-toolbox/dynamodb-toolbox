@@ -40,9 +40,6 @@ export class EntityV2<
   public computeKey?: (
     keyInput: Schema extends SCHEMA ? any : KeyInput<SCHEMA>
   ) => PrimaryKey<TABLE>
-  public build: <OPERATION_CLASS extends EntityOperation<this> = EntityOperation<this>>(
-    operationClass: new (entity: this) => OPERATION_CLASS
-  ) => OPERATION_CLASS
 
   /**
    * Define an Entity for a given table
@@ -95,6 +92,11 @@ export class EntityV2<
     })
 
     this.computeKey = computeKey as any
-    this.build = operationClass => new operationClass(this) as any
+  }
+
+  build<OPERATION_CLASS extends EntityOperation<this> = EntityOperation<this>>(
+    operationClass: new (entity: this) => OPERATION_CLASS
+  ): OPERATION_CLASS {
+    return new operationClass(this)
   }
 }

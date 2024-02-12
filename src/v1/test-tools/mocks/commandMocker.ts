@@ -38,14 +38,6 @@ export class OperationMocker<OPERATION_NAME extends OperationName, INPUT, OPTION
     >
   }
 
-  resolve: (response: RESPONSE) => OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE>
-  reject: (
-    error?: string | Error | AwsError
-  ) => OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE>
-  mockImplementation: (
-    implementation: (key: INPUT, options?: OPTIONS) => RESPONSE
-  ) => OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE>
-
   constructor(
     operationName: OPERATION_NAME,
     mockedEntity: {
@@ -56,28 +48,32 @@ export class OperationMocker<OPERATION_NAME extends OperationName, INPUT, OPTION
   ) {
     this[$operationName] = operationName
     this[$mockedEntity] = mockedEntity
+  }
 
-    this.resolve = response => {
-      this[$mockedEntity][$mockedImplementations][this[$operationName]] = () => response
-      return this
-    }
+  resolve(response: RESPONSE): OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE> {
+    this[$mockedEntity][$mockedImplementations][this[$operationName]] = () => response
+    return this
+  }
 
-    this.reject = error => {
-      this[$mockedEntity][$mockedImplementations][this[$operationName]] = () => {
-        if (error === undefined || isString(error)) {
-          throw new Error(error)
-        } else {
-          throw error
-        }
+  reject(
+    error?: string | Error | AwsError
+  ): OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE> {
+    this[$mockedEntity][$mockedImplementations][this[$operationName]] = () => {
+      if (error === undefined || isString(error)) {
+        throw new Error(error)
+      } else {
+        throw error
       }
-
-      return this
     }
 
-    this.mockImplementation = implementation => {
-      this[$mockedEntity][$mockedImplementations][this[$operationName]] = implementation
+    return this
+  }
 
-      return this
-    }
+  mockImplementation(
+    implementation: (key: INPUT, options?: OPTIONS) => RESPONSE
+  ): OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE> {
+    this[$mockedEntity][$mockedImplementations][this[$operationName]] = implementation
+
+    return this
   }
 }

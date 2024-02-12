@@ -26,13 +26,8 @@ export class GetItemCommandMock<
   static [$operationName] = 'get' as const;
 
   [$entity]: ENTITY;
-  [$key]?: KeyInput<ENTITY>
-  key: (nextKey: KeyInput<ENTITY>) => GetItemCommandMock<ENTITY, OPTIONS>;
-  [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
-  ) => GetItemCommandMock<ENTITY, NEXT_OPTIONS>;
-
+  [$key]?: KeyInput<ENTITY>;
+  [$options]: OPTIONS;
   [$mockedEntity]: MockedEntity<ENTITY>
 
   constructor(
@@ -44,13 +39,19 @@ export class GetItemCommandMock<
     this[$mockedEntity] = mockedEntity
     this[$key] = key
     this[$options] = options
-
-    this.key = nextKey => new GetItemCommandMock(this[$mockedEntity], nextKey, this[$options])
-    this.options = nextOptions =>
-      new GetItemCommandMock(this[$mockedEntity], this[$key], nextOptions)
   }
 
-  params = (): GetCommandInput => {
+  key(nextKey: KeyInput<ENTITY>): GetItemCommandMock<ENTITY, OPTIONS> {
+    return new GetItemCommandMock(this[$mockedEntity], nextKey, this[$options])
+  }
+
+  options<NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
+    nextOptions: NEXT_OPTIONS
+  ): GetItemCommandMock<ENTITY, NEXT_OPTIONS> {
+    return new GetItemCommandMock(this[$mockedEntity], this[$key], nextOptions)
+  }
+
+  params(): GetCommandInput {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'GetItemCommand incomplete: Missing "key" property'
@@ -60,7 +61,7 @@ export class GetItemCommandMock<
     return getItemParams(this[$entity], this[$key], this[$options])
   }
 
-  send = async (): Promise<GetItemResponse<ENTITY, OPTIONS>> => {
+  async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
     this[$mockedEntity][$receivedCommands].get.push([this[$key], this[$options]])
 
     const implementation = this[$mockedEntity][$mockedImplementations].get

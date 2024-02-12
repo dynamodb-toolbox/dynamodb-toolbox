@@ -26,13 +26,8 @@ export class DeleteItemCommandMock<
   static [$operationName] = 'delete' as const;
 
   [$entity]: ENTITY;
-  [$key]?: KeyInput<ENTITY>
-  key: (nextKey: KeyInput<ENTITY>) => DeleteItemCommandMock<ENTITY, OPTIONS>;
-  [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends DeleteItemOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
-  ) => DeleteItemCommandMock<ENTITY, NEXT_OPTIONS>;
-
+  [$key]?: KeyInput<ENTITY>;
+  [$options]: OPTIONS;
   [$mockedEntity]: MockedEntity<ENTITY>
 
   constructor(
@@ -44,13 +39,19 @@ export class DeleteItemCommandMock<
     this[$mockedEntity] = mockedEntity
     this[$key] = key
     this[$options] = options
-
-    this.key = nextKey => new DeleteItemCommandMock(this[$mockedEntity], nextKey, this[$options])
-    this.options = nextOptions =>
-      new DeleteItemCommandMock(this[$mockedEntity], this[$key], nextOptions)
   }
 
-  params = (): DeleteCommandInput => {
+  key(nextKey: KeyInput<ENTITY>): DeleteItemCommandMock<ENTITY, OPTIONS> {
+    return new DeleteItemCommandMock(this[$mockedEntity], nextKey, this[$options])
+  }
+
+  options<NEXT_OPTIONS extends DeleteItemOptions<ENTITY>>(
+    nextOptions: NEXT_OPTIONS
+  ): DeleteItemCommandMock<ENTITY, NEXT_OPTIONS> {
+    return new DeleteItemCommandMock(this[$mockedEntity], this[$key], nextOptions)
+  }
+
+  params(): DeleteCommandInput {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'DeleteItemCommand incomplete: Missing "key" property'
@@ -60,7 +61,7 @@ export class DeleteItemCommandMock<
     return deleteItemParams(this[$entity], this[$key], this[$options])
   }
 
-  send = async (): Promise<DeleteItemResponse<ENTITY, OPTIONS>> => {
+  async send(): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
     this[$mockedEntity][$receivedCommands].delete.push([this[$key], this[$options]])
 
     const implementation = this[$mockedEntity][$mockedImplementations].delete

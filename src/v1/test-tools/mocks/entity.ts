@@ -49,18 +49,12 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
     delete: [input?: KeyInput<ENTITY>, options?: DeleteItemOptions<ENTITY>][]
     update: [input?: UpdateItemInput<ENTITY>, options?: UpdateItemOptions<ENTITY>][]
   }
-  reset: () => void
 
   constructor(entity: ENTITY) {
     this[$originalEntity] = entity
 
     this[$mockedImplementations] = {}
     this[$receivedCommands] = { get: [], put: [], delete: [], update: [] }
-
-    this.reset = () => {
-      this[$mockedImplementations] = {}
-      this[$receivedCommands] = { get: [], put: [], delete: [], update: [] }
-    }
 
     entity.build = command => {
       switch (command) {
@@ -82,30 +76,33 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
     }
   }
 
-  on = <
+  reset(): void {
+    this[$mockedImplementations] = {}
+    this[$receivedCommands] = { get: [], put: [], delete: [], update: [] }
+  }
+
+  on<
     OPERATION_CLASS extends
       | GetItemCommandClass
       | PutItemCommandClass
       | DeleteItemCommandClass
       | UpdateItemCommandClass
-  >(
-    operation: OPERATION_CLASS
-  ): OperationClassMocker<ENTITY, OPERATION_CLASS> =>
-    new OperationMocker<OperationName, any, any, any>(
+  >(operation: OPERATION_CLASS): OperationClassMocker<ENTITY, OPERATION_CLASS> {
+    return new OperationMocker<OperationName, any, any, any>(
       operation.operationName,
       this
     ) as OperationClassMocker<ENTITY, OPERATION_CLASS>
+  }
 
-  received = <
+  received<
     OPERATION_CLASS extends
       | GetItemCommandClass
       | PutItemCommandClass
       | DeleteItemCommandClass
       | UpdateItemCommandClass
-  >(
-    operation: OPERATION_CLASS
-  ): OperationClassResults<ENTITY, OPERATION_CLASS> =>
-    new CommandResults<unknown, unknown>(
+  >(operation: OPERATION_CLASS): OperationClassResults<ENTITY, OPERATION_CLASS> {
+    return new CommandResults<unknown, unknown>(
       this[$receivedCommands][operation.operationName]
     ) as OperationClassResults<ENTITY, OPERATION_CLASS>
+  }
 }

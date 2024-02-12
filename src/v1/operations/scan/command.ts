@@ -53,16 +53,9 @@ export class ScanCommand<
   ENTITIES extends EntityV2[] = EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
 > extends TableCommand<TABLE, ENTITIES> {
-  static operationName = 'scan' as const
-
-  entities: <NEXT_ENTITIES extends EntityV2[]>(
-    ...nextEntities: NEXT_ENTITIES
-  ) => ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>;
+  static operationName = 'scan' as const;
 
   [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
-    nextOptions: NEXT_OPTIONS
-  ) => ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS>
 
   constructor(
     table: TABLE,
@@ -71,15 +64,23 @@ export class ScanCommand<
   ) {
     super(table, entities)
     this[$options] = options
+  }
 
-    this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>
-      new ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>(
-        this[$table],
-        nextEntities,
-        // For some reason we can't do the same as Query (cast OPTIONS) as it triggers an infinite type compute
-        this[$options] as ScanOptions<TABLE, NEXT_ENTITIES>
-      )
-    this.options = nextOptions => new ScanCommand(this[$table], this[$entities], nextOptions)
+  entities<NEXT_ENTITIES extends EntityV2[]>(
+    ...nextEntities: NEXT_ENTITIES
+  ): ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>> {
+    return new ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>(
+      this[$table],
+      nextEntities,
+      // For some reason we can't do the same as Query (cast OPTIONS) as it triggers an infinite type compute
+      this[$options] as ScanOptions<TABLE, NEXT_ENTITIES>
+    )
+  }
+
+  options<NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
+    nextOptions: NEXT_OPTIONS
+  ): ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS> {
+    return new ScanCommand(this[$table], this[$entities], nextOptions)
   }
 
   params = (): ScanCommandInput => scanParams(this[$table], this[$entities], this[$options])
