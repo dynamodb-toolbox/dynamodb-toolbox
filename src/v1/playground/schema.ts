@@ -9,7 +9,7 @@ import {
   any,
   schema,
   PutItemInput,
-  FormattedAttribute,
+  FormattedValue,
   SavedItem,
   KeyInput
 } from 'v1'
@@ -47,7 +47,7 @@ const schemaAction = playgroundSchema1.build(SchemaAction)
 schemaAction
 
 type PlaygroundSchema1PutItemInput = PutItemInput<typeof playgroundSchema1>
-type PlaygroundSchema1FormattedItem = FormattedAttribute<typeof playgroundSchema1>
+type PlaygroundSchema1FormattedItem = FormattedValue<typeof playgroundSchema1>
 
 const listAction = list(string()).optional().hidden().freeze('').build(SchemaAction)
 
@@ -69,7 +69,7 @@ const playgroundSchema2 = schema({
   reqLink: string().putLink<typeof schema>(({ reqPropWithIndepDef }) => reqPropWithIndepDef)
 }))
 
-type PlaygroundSchema2FormattedItem = FormattedAttribute<typeof playgroundSchema2>
+type PlaygroundSchema2FormattedItem = FormattedValue<typeof playgroundSchema2>
 type PlaygroundSchema2PutItemInput = PutItemInput<typeof playgroundSchema2>
 type PlaygroundSchema2PutItemInputWithDefaults = PutItemInput<typeof playgroundSchema2, true>
 

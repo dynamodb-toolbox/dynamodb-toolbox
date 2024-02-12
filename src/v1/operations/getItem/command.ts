@@ -2,9 +2,9 @@ import type { O } from 'ts-toolbelt'
 import { GetCommandInput, GetCommand, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2, FormattedItem } from 'v1/entity'
-import type { AnyAttributePath, KeyInput } from 'v1/operations/types'
+import type { KeyInput } from 'v1/operations/types'
+import { EntityFormatter } from 'v1/operations/format'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
 
 import { EntityOperation, $entity } from '../class'
 import type { GetItemOptions } from './options'
@@ -21,13 +21,7 @@ export type GetItemResponse<
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > = O.Merge<
   Omit<GetCommandOutput, 'Item'>,
-  {
-    Item?:
-      | (OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
-          ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'][number] }>
-          : FormattedItem<ENTITY>)
-      | undefined
-  }
+  { Item?: FormattedItem<ENTITY, { attributes: OPTIONS['attributes'] }> }
 >
 
 export class GetItemCommand<
@@ -76,10 +70,11 @@ export class GetItemCommand<
     }
 
     const { attributes } = this[$options]
-    const formattedItem = formatSavedItem(this[$entity], item, { attributes })
+
+    const formattedItem = new EntityFormatter(this[$entity]).format(item, { attributes })
 
     return {
-      Item: formattedItem,
+      Item: formattedItem as any,
       ...restCommandOutput
     }
   }

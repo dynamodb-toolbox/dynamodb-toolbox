@@ -11,9 +11,7 @@ describe('parseSavedPrimitiveAttribute', () => {
     const invalidCall = () => formatSavedPrimitiveAttribute(str, 42)
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.formatSavedItem.invalidSavedAttribute' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'formatter.invalidAttribute' }))
   })
 
   it('uses formatter if transformer has been provided', () => {
@@ -33,8 +31,6 @@ describe('parseSavedPrimitiveAttribute', () => {
     const invalidCall = () => formatSavedPrimitiveAttribute(str, 'TEST#baz')
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.formatSavedItem.invalidSavedAttribute' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'formatter.invalidAttribute' }))
   })
 })

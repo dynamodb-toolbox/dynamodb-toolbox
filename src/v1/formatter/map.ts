@@ -2,31 +2,22 @@ import type { MapAttribute, AttributeValue, MapAttributeValue } from 'v1/schema'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatSavedAttributeOptions } from './types'
+import type { FormatOptions } from './schema'
 import { formatSavedAttribute } from './attribute'
-import { matchProjection, getItemKey } from './utils'
+import { matchProjection } from './utils'
 
 export const formatSavedMapAttribute = (
   mapAttribute: MapAttribute,
   savedValue: AttributeValue,
-  { projectedAttributes, ...restOptions }: FormatSavedAttributeOptions = {}
+  { attributes, ...restOptions }: FormatOptions = {}
 ): MapAttributeValue => {
   if (!isObject(savedValue)) {
-    const { partitionKey, sortKey } = restOptions
-
-    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
-      message: [
-        `Invalid attribute in saved item: ${mapAttribute.path}. Should be a ${mapAttribute.type}.`,
-        getItemKey({ partitionKey, sortKey })
-      ]
-        .filter(Boolean)
-        .join(' '),
+    throw new DynamoDBToolboxError('formatter.invalidAttribute', {
+      message: `Invalid attribute in saved item: ${mapAttribute.path}. Should be a ${mapAttribute.type}.`,
       path: mapAttribute.path,
       payload: {
         received: savedValue,
-        expected: mapAttribute.type,
-        partitionKey,
-        sortKey
+        expected: mapAttribute.type
       }
     })
   }
@@ -40,7 +31,7 @@ export const formatSavedMapAttribute = (
 
     const { isProjected, childrenAttributes } = matchProjection(
       new RegExp('^\\.' + attributeName),
-      projectedAttributes
+      attributes
     )
 
     if (!isProjected) {
@@ -50,7 +41,7 @@ export const formatSavedMapAttribute = (
     const attributeSavedAs = attribute.savedAs ?? attributeName
 
     const formattedAttribute = formatSavedAttribute(attribute, savedValue[attributeSavedAs], {
-      projectedAttributes: childrenAttributes,
+      attributes: childrenAttributes,
       ...restOptions
     })
 

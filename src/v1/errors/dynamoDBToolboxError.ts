@@ -10,6 +10,12 @@ type ErrorArgs<ERROR_CODE extends ErrorCodes> = (IndexedErrors[ERROR_CODE]['hasP
   }
 
 export class DynamoDBToolboxError<ERROR_CODE extends ErrorCodes = ErrorCodes> extends Error {
+  static match = <PREFIX extends string>(
+    error: unknown,
+    prefix: PREFIX = '' as PREFIX
+  ): error is DynamoDBToolboxError<Extract<ErrorCodes, `${PREFIX}${string}`>> =>
+    error instanceof DynamoDBToolboxError && error.code.startsWith(prefix)
+
   code: ERROR_CODE
   path: IndexedErrors[ERROR_CODE]['hasPath'] extends false ? undefined : string
   payload: IndexedErrors[ERROR_CODE]['payload']

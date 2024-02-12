@@ -14,6 +14,7 @@ import {
   UpdateItemInput,
   prefix
 } from 'v1'
+import { EntityFormatter } from 'v1/operations/format'
 
 import { MyTable } from './table'
 
@@ -39,6 +40,8 @@ export const UserEntity = new EntityV2({
     )
   }))
 })
+
+const yo = UserEntity.build(EntityFormatter).format({ foo: 'bar' }, { attributes: ['userId'] })
 
 type UserPutItemInput = PutItemInput<typeof UserEntity>
 type SavedUser = SavedItem<typeof UserEntity>

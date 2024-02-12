@@ -2,31 +2,21 @@ import type { SetAttribute, AttributeValue, SetAttributeValue } from 'v1/schema'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatSavedAttributeOptions } from './types'
+import type { FormatOptions } from './schema'
 import { formatSavedAttribute } from './attribute'
-import { getItemKey } from './utils'
 
 export const formatSavedSetAttribute = (
   setAttribute: SetAttribute,
   savedValue: AttributeValue,
-  options: FormatSavedAttributeOptions = {}
+  options: FormatOptions = {}
 ): SetAttributeValue => {
   if (!isSet(savedValue)) {
-    const { partitionKey, sortKey } = options
-
-    throw new DynamoDBToolboxError('operations.formatSavedItem.invalidSavedAttribute', {
-      message: [
-        `Invalid attribute in saved item: ${setAttribute.path}. Should be a ${setAttribute.type}.`,
-        getItemKey({ partitionKey, sortKey })
-      ]
-        .filter(Boolean)
-        .join(' '),
+    throw new DynamoDBToolboxError('formatter.invalidAttribute', {
+      message: `Invalid attribute in saved item: ${setAttribute.path}. Should be a ${setAttribute.type}.`,
       path: setAttribute.path,
       payload: {
         received: savedValue,
-        expected: setAttribute.type,
-        partitionKey,
-        sortKey
+        expected: setAttribute.type
       }
     })
   }

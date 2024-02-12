@@ -11,8 +11,7 @@ import type { TableV2 } from 'v1/table'
 import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { Item } from 'v1/schema'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
-import type { AnyAttributePath } from 'v1/operations/types'
-import { formatSavedItem } from 'v1/operations/utils/formatSavedItem'
+import { Formatter } from 'v1/formatter'
 import { isString } from 'v1/utils/validation'
 
 import { TableCommand, $table, $entities } from '../class'
@@ -32,14 +31,7 @@ type ReturnedItems<
       ? Item
       : ENTITIES[number] extends infer ENTITY
       ? ENTITY extends EntityV2
-        ? FormattedItem<
-            ENTITY,
-            {
-              attributes: OPTIONS['attributes'] extends AnyAttributePath<ENTITY>[]
-                ? OPTIONS['attributes'][number]
-                : undefined
-            }
-          >
+        ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'] }>
         : never
       : never)[]
 
@@ -95,9 +87,9 @@ export class ScanCommand<
   send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()
 
-    const entitiesByName: Record<string, EntityV2> = {}
+    const formattersByName: Record<string, Formatter> = {}
     this[$entities].forEach(entity => {
-      entitiesByName[entity.name] = entity
+      formattersByName[entity.name] = entity.schema.build(Formatter)
     })
 
     const formattedItems: Item[] = []
@@ -135,9 +127,9 @@ export class ScanCommand<
           continue
         }
 
-        const itemEntity = entitiesByName[itemEntityName]
+        const formatter = formattersByName[itemEntityName]
 
-        if (itemEntity === undefined) {
+        if (formatter === undefined) {
           if (this[$entities].length === 0) {
             formattedItems.push(item)
           }
@@ -145,7 +137,7 @@ export class ScanCommand<
         }
 
         formattedItems.push(
-          formatSavedItem<EntityV2, {}>(itemEntity, item, { attributes })
+          formatter.format<{ attributes: string[] | undefined }>(item, { attributes })
         )
       }
 
