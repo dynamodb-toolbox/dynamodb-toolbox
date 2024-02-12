@@ -775,7 +775,7 @@ describe('query', () => {
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
-      FormattedItem<typeof Entity1, { attributes: 'age' | 'name' }>[] | undefined
+      FormattedItem<typeof Entity1, { attributes: ['age', 'name'] }>[] | undefined
     > = 1
     assertReturnedItems
 
@@ -800,8 +800,8 @@ describe('query', () => {
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
       | (
-          | FormattedItem<typeof Entity1, { attributes: 'created' | 'modified' }>
-          | FormattedItem<typeof Entity2, { attributes: 'created' | 'modified' }>
+          | FormattedItem<typeof Entity1, { attributes: ['created', 'modified'] }>
+          | FormattedItem<typeof Entity2, { attributes: ['created', 'modified'] }>
         )[]
       | undefined
     > = 1
