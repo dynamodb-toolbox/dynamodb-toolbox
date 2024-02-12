@@ -31,7 +31,7 @@ export interface $MapAttributeNestedState<
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
   STATE extends SharedAttributeState = SharedAttributeState
 > extends $MapAttributeState<$ATTRIBUTES, STATE> {
-  freeze: (path: string) => FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>
+  freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>
 }
 
 /**
@@ -277,7 +277,7 @@ export class MapAttribute<
   STATE extends SharedAttributeState = SharedAttributeState
 > implements SharedAttributeState<STATE> {
   type: 'map'
-  path: string
+  path?: string
   attributes: ATTRIBUTES
   required: STATE['required']
   hidden: STATE['hidden']
@@ -289,7 +289,7 @@ export class MapAttribute<
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<RequiredOption, Set<string>>
 
-  constructor({ path, attributes, ...state }: STATE & { path: string; attributes: ATTRIBUTES }) {
+  constructor({ path, attributes, ...state }: STATE & { path?: string; attributes: ATTRIBUTES }) {
     this.type = 'map'
     this.path = path
     this.attributes = attributes

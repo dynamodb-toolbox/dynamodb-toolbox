@@ -32,7 +32,7 @@ export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
 
 type AnyAttributeFreezer = <STATE extends AnyAttributeState>(
   anyAttribute: STATE,
-  path: string
+  path?: string
 ) => FreezeAnyAttribute<$AnyAttributeState<STATE>>
 
 /**
@@ -44,7 +44,7 @@ type AnyAttributeFreezer = <STATE extends AnyAttributeState>(
  */
 export const freezeAnyAttribute: AnyAttributeFreezer = <STATE extends AnyAttributeState>(
   state: STATE,
-  path: string
+  path?: string
 ) => {
   validateAttributeProperties(state, path)
 

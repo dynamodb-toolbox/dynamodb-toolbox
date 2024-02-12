@@ -9,17 +9,21 @@ import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 export const formatSavedPrimitiveAttribute = (
-  primitiveAttribute: PrimitiveAttribute,
+  attribute: PrimitiveAttribute,
   savedValue: AttributeValue
 ): PrimitiveAttributeValue => {
-  const validator = validatorsByPrimitiveType[primitiveAttribute.type]
+  const validator = validatorsByPrimitiveType[attribute.type]
   if (!validator(savedValue)) {
+    const { path, type } = attribute
+
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
-      message: `Invalid attribute in saved item: ${primitiveAttribute.path}. Should be a ${primitiveAttribute.type}.`,
-      path: primitiveAttribute.path,
+      message: `Invalid attribute detected while formatting${
+        path !== undefined ? `: '${path}'` : ''
+      }. Should be a ${type}.`,
+      path,
       payload: {
         received: savedValue,
-        expected: primitiveAttribute.type
+        expected: type
       }
     })
   }
@@ -28,19 +32,21 @@ export const formatSavedPrimitiveAttribute = (
    * @debt type "validator should act as typeguard"
    */
   const savedPrimitive = savedValue as ResolvedPrimitiveAttribute
-  const transformer = primitiveAttribute.transform as Transformer
+  const transformer = attribute.transform as Transformer
   const formattedValue =
     transformer !== undefined ? transformer.format(savedPrimitive) : savedPrimitive
 
-  if (primitiveAttribute.enum !== undefined && !primitiveAttribute.enum.includes(formattedValue)) {
+  if (attribute.enum !== undefined && !attribute.enum.includes(formattedValue)) {
+    const { path } = attribute
+
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
-      message: `Invalid attribute in saved item: ${
-        primitiveAttribute.path
-      }. Should be one of: ${primitiveAttribute.enum.map(String).join(', ')}.`,
-      path: primitiveAttribute.path,
+      message: `Invalid attribute detected while formatting${
+        path !== undefined ? `: '${path}'` : ''
+      }. Should be one of: ${attribute.enum.map(String).join(', ')}.`,
+      path,
       payload: {
         received: formattedValue,
-        expected: primitiveAttribute.enum
+        expected: attribute.enum
       }
     })
   }

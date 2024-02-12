@@ -69,9 +69,13 @@ export const parseNumberExtension = (
         }
 
         if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(inputValue[$SUM].length)) {
+          const { path } = attribute
+
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-            message: `Sum for number attribute ${attribute.path} should be a tuple of length 1 or 2`,
-            path: attribute.path,
+            message: `Sum for number attribute ${
+              path !== undefined ? `'${path}' ` : ''
+            }should be a tuple of length 1 or 2`,
+            path,
             payload: {
               received: inputValue[$SUM]
             }
@@ -136,9 +140,13 @@ export const parseNumberExtension = (
         }
 
         if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(inputValue[$SUBTRACT].length)) {
+          const { path } = attribute
+
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-            message: `Subtraction for number attribute ${attribute.path} should be a tuple of length 1 or 2`,
-            path: attribute.path,
+            message: `Subtraction for number attribute ${
+              path !== undefined ? `'${path}' ` : ''
+            }should be a tuple of length 1 or 2`,
+            path,
             payload: {
               received: inputValue[$SUBTRACT]
             }

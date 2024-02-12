@@ -32,7 +32,7 @@ export interface $AnyOfAttributeNestedState<
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[],
   STATE extends SharedAttributeState = SharedAttributeState
 > extends $AnyOfAttributeState<$ELEMENTS, STATE> {
-  freeze: (path: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>
+  freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>
 }
 
 /**
@@ -281,7 +281,7 @@ export class AnyOfAttribute<
   STATE extends SharedAttributeState = SharedAttributeState
 > implements SharedAttributeState<STATE> {
   type: 'anyOf'
-  path: string
+  path?: string
   elements: ELEMENTS
   required: STATE['required']
   hidden: STATE['hidden']
@@ -290,7 +290,7 @@ export class AnyOfAttribute<
   defaults: STATE['defaults']
   links: STATE['links']
 
-  constructor({ path, elements, ...state }: STATE & { path: string; elements: ELEMENTS }) {
+  constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
     this.type = 'anyOf'
     this.path = path
     this.elements = elements

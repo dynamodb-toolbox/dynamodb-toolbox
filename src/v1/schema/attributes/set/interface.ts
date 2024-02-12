@@ -31,7 +31,7 @@ export interface $SetAttributeNestedState<
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
   STATE extends SharedAttributeState = SharedAttributeState
 > extends $SetAttributeState<$ELEMENTS, STATE> {
-  freeze: (path: string) => FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>
+  freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>
 }
 
 /**
@@ -279,7 +279,7 @@ export class SetAttribute<
   STATE extends SharedAttributeState = SharedAttributeState
 > implements SharedAttributeState<STATE> {
   type: 'set'
-  path: string
+  path?: string
   elements: ELEMENTS
   required: STATE['required']
   hidden: STATE['hidden']
@@ -288,7 +288,7 @@ export class SetAttribute<
   defaults: STATE['defaults']
   links: STATE['links']
 
-  constructor({ path, elements, ...state }: STATE & { path: string; elements: ELEMENTS }) {
+  constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
     this.type = 'set'
     this.path = path
     this.elements = elements

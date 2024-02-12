@@ -6,17 +6,21 @@ import type { FormatOptions } from './schema'
 import { formatSavedAttribute } from './attribute'
 
 export const formatSavedSetAttribute = (
-  setAttribute: SetAttribute,
+  attribute: SetAttribute,
   savedValue: AttributeValue,
   options: FormatOptions = {}
 ): SetAttributeValue => {
   if (!isSet(savedValue)) {
+    const { path, type } = attribute
+
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
-      message: `Invalid attribute in saved item: ${setAttribute.path}. Should be a ${setAttribute.type}.`,
-      path: setAttribute.path,
+      message: `Invalid attribute detected while formatting${
+        path !== undefined ? `: '${path}'` : ''
+      }. Should be a ${type}.`,
+      path: path,
       payload: {
         received: savedValue,
-        expected: setAttribute.type
+        expected: type
       }
     })
   }
@@ -24,7 +28,7 @@ export const formatSavedSetAttribute = (
   const parsedPutItemInput: SetAttributeValue = new Set()
 
   for (const savedElement of savedValue) {
-    const parsedElement = formatSavedAttribute(setAttribute.elements, savedElement, options)
+    const parsedElement = formatSavedAttribute(attribute.elements, savedElement, options)
 
     if (parsedElement !== undefined) {
       parsedPutItemInput.add(parsedElement)

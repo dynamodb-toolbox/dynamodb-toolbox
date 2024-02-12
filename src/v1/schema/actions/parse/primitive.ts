@@ -45,12 +45,14 @@ export function* primitiveAttributeParser<
 
   const validator = validatorsByPrimitiveType[attribute.type]
   if (!validator(linkedValue)) {
+    const { path, type } = attribute
+
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${attribute.path} should be a ${attribute.type}`,
-      path: attribute.path,
+      message: `Attribute ${path !== undefined ? `'${path}' ` : ''}should be a ${type}.`,
+      path,
       payload: {
         received: linkedValue,
-        expected: attribute.type
+        expected: type
       }
     })
   }
@@ -59,11 +61,13 @@ export function* primitiveAttributeParser<
     attribute.enum !== undefined &&
     !attribute.enum.includes(linkedValue as ResolvedPrimitiveAttribute)
   ) {
+    const { path } = attribute
+
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${attribute.path} should be one of: ${attribute.enum
-        .map(String)
-        .join(', ')}`,
-      path: attribute.path,
+      message: `Attribute ${
+        path !== undefined ? `'${path}' ` : ''
+      }should be one of: ${attribute.enum.map(String).join(', ')}.`,
+      path,
       payload: {
         received: linkedValue,
         expected: attribute.enum
