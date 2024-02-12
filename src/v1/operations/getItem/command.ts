@@ -30,23 +30,26 @@ export class GetItemCommand<
 > extends EntityOperation<ENTITY> {
   static operationName = 'get' as const;
 
-  [$key]?: KeyInput<ENTITY>
-  key: (key: KeyInput<ENTITY>) => GetItemCommand<ENTITY, OPTIONS>;
+  [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
-  ) => GetItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
-
-    this.key = nextKey => new GetItemCommand(this[$entity], nextKey, this[$options])
-    this.options = nextOptions => new GetItemCommand(this[$entity], this[$key], nextOptions)
   }
 
-  params = (): GetCommandInput => {
+  key(nextKey: KeyInput<ENTITY>): GetItemCommand<ENTITY, OPTIONS> {
+    return new GetItemCommand(this[$entity], nextKey, this[$options])
+  }
+
+  options<NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
+    nextOptions: NEXT_OPTIONS
+  ): GetItemCommand<ENTITY, NEXT_OPTIONS> {
+    return new GetItemCommand(this[$entity], this[$key], nextOptions)
+  }
+
+  params(): GetCommandInput {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'GetItemCommand incomplete: Missing "key" property'
@@ -56,7 +59,7 @@ export class GetItemCommand<
     return getItemParams(this[$entity], this[$key], this[$options])
   }
 
-  send = async (): Promise<GetItemResponse<ENTITY, OPTIONS>> => {
+  async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
     const commandOutput = await this[$entity].table.documentClient.send(

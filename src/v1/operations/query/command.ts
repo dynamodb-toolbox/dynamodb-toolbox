@@ -61,27 +61,10 @@ export class QueryCommand<
   QUERY extends Query<TABLE> = Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
 > extends TableCommand<TABLE, ENTITIES> {
-  static operationName = 'query' as const
+  static operationName = 'query' as const;
 
-  entities: <NEXT_ENTITIES extends EntityV2[]>(
-    ...nextEntities: NEXT_ENTITIES
-  ) => QueryCommand<
-    TABLE,
-    NEXT_ENTITIES,
-    QUERY,
-    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
-      ? OPTIONS
-      : QueryOptions<TABLE, NEXT_ENTITIES>
-  >;
-
-  [$query]?: QUERY
-  query: <NEXT_QUERY extends Query<TABLE>>(
-    query: NEXT_QUERY
-  ) => QueryCommand<TABLE, ENTITIES, NEXT_QUERY, OPTIONS>;
+  [$query]?: QUERY;
   [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
-    nextOptions: NEXT_OPTIONS
-  ) => QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS>
 
   constructor(
     table: TABLE,
@@ -92,27 +75,45 @@ export class QueryCommand<
     super(table, entities)
     this[$query] = query
     this[$options] = options
+  }
 
-    this.entities = <NEXT_ENTITIES extends EntityV2[]>(...nextEntities: NEXT_ENTITIES) =>
-      new QueryCommand<
-        TABLE,
-        NEXT_ENTITIES,
-        QUERY,
-        OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
-          ? OPTIONS
-          : QueryOptions<TABLE, NEXT_ENTITIES>
-      >(
-        this[$table],
-        nextEntities,
-        this[$query],
-        this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
-          ? OPTIONS
-          : QueryOptions<TABLE, NEXT_ENTITIES>
-      )
-    this.query = nextQuery =>
-      new QueryCommand(this[$table], this[$entities], nextQuery, this[$options])
-    this.options = nextOptions =>
-      new QueryCommand(this[$table], this[$entities], this[$query], nextOptions)
+  entities<NEXT_ENTITIES extends EntityV2[]>(
+    ...nextEntities: NEXT_ENTITIES
+  ): QueryCommand<
+    TABLE,
+    NEXT_ENTITIES,
+    QUERY,
+    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
+      ? OPTIONS
+      : QueryOptions<TABLE, NEXT_ENTITIES>
+  > {
+    return new QueryCommand<
+      TABLE,
+      NEXT_ENTITIES,
+      QUERY,
+      OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
+        ? OPTIONS
+        : QueryOptions<TABLE, NEXT_ENTITIES>
+    >(
+      this[$table],
+      nextEntities,
+      this[$query],
+      this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
+        ? OPTIONS
+        : QueryOptions<TABLE, NEXT_ENTITIES>
+    )
+  }
+
+  query<NEXT_QUERY extends Query<TABLE>>(
+    nextQuery: NEXT_QUERY
+  ): QueryCommand<TABLE, ENTITIES, NEXT_QUERY, OPTIONS> {
+    return new QueryCommand(this[$table], this[$entities], nextQuery, this[$options])
+  }
+
+  options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
+    nextOptions: NEXT_OPTIONS
+  ): QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS> {
+    return new QueryCommand(this[$table], this[$entities], this[$query], nextOptions)
   }
 
   params = (): QueryCommandInput => {
@@ -125,7 +126,7 @@ export class QueryCommand<
     return queryParams(this[$table], this[$entities], this[$query], this[$options])
   }
 
-  send = async (): Promise<QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>> => {
+  async send(): Promise<QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>> {
     const queryParams = this.params()
 
     const formatters: Record<string, Formatter> = {}
