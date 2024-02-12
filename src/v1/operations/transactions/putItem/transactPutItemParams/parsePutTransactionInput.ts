@@ -1,6 +1,6 @@
 import type { EntityV2 } from 'v1/entity'
 import type { Item, RequiredOption } from 'v1/schema'
-import { Parser } from 'v1/parser'
+import { Parser } from 'v1/schema/actions/parse'
 
 type EntityPutCommandInputParser = (entity: EntityV2, input: Item) => Generator<Item, Item>
 

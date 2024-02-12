@@ -1,5 +1,5 @@
 import type { Attribute, AttributeValue } from 'v1/schema'
-import { attributeParser } from 'v1/parser'
+import { attributeParser } from 'v1/schema/actions/parse'
 
 import type { ConditionParser } from './parser'
 
