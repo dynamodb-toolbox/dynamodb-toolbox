@@ -38,7 +38,7 @@ export interface $RecordAttributeNestedState<
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements,
   STATE extends SharedAttributeState = SharedAttributeState
 > extends $RecordAttributeState<$KEYS, $ELEMENTS, STATE> {
-  freeze: (path: string) => FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>
+  freeze: (path?: string) => FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>
 }
 
 /**
@@ -321,7 +321,7 @@ export class RecordAttribute<
   STATE extends SharedAttributeState = SharedAttributeState
 > implements SharedAttributeState<STATE> {
   type: 'record'
-  path: string
+  path?: string
   keys: KEYS
   elements: ELEMENTS
   required: STATE['required']
@@ -336,7 +336,7 @@ export class RecordAttribute<
     keys,
     elements,
     ...state
-  }: STATE & { path: string; keys: KEYS; elements: ELEMENTS }) {
+  }: STATE & { path?: string; keys: KEYS; elements: ELEMENTS }) {
     this.type = 'record'
     this.path = path
     this.keys = keys

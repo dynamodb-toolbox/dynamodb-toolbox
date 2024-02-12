@@ -37,7 +37,7 @@ export interface $PrimitiveAttributeNestedState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
 > extends $PrimitiveAttributeState<TYPE, STATE> {
-  freeze: (path: string) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+  freeze: (path?: string) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
 }
 
 /**
@@ -358,7 +358,7 @@ export class PrimitiveAttribute<
   STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
 > implements SharedAttributeState<STATE> {
   type: TYPE
-  path: string
+  path?: string
   required: STATE['required']
   hidden: STATE['hidden']
   key: STATE['key']
@@ -373,7 +373,7 @@ export class PrimitiveAttribute<
     path,
     ...state
   }: STATE & {
-    path: string
+    path?: string
     type: TYPE
   }) {
     this.type = type

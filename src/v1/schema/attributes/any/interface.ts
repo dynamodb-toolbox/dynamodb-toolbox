@@ -27,7 +27,7 @@ export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttribu
 
 export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
   extends $AnyAttributeState<STATE> {
-  freeze: (path: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>>
+  freeze: (path?: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>>
 }
 
 /**
@@ -267,7 +267,7 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
 export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   implements SharedAttributeState<STATE> {
   type: 'any'
-  path: string
+  path?: string
   required: STATE['required']
   hidden: STATE['hidden']
   key: STATE['key']
@@ -276,12 +276,7 @@ export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   links: STATE['links']
   castAs: STATE['castAs']
 
-  constructor({
-    path,
-    ...state
-  }: STATE & {
-    path: string
-  }) {
+  constructor({ path, ...state }: STATE & { path?: string }) {
     this.type = 'any'
     this.path = path
     this.required = state.required

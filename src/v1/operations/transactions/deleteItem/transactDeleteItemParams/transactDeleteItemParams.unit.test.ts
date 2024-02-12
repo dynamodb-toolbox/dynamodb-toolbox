@@ -72,7 +72,7 @@ describe('delete transaction', () => {
           {}
         )
         .params()
-    ).toThrow('Attribute email is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing the sortKey', () => {
@@ -83,7 +83,7 @@ describe('delete transaction', () => {
           { pk: 'test-pk' }
         )
         .params()
-    ).toThrow('Attribute email is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing partitionKey (no alias)', () => {
@@ -94,7 +94,7 @@ describe('delete transaction', () => {
           {}
         )
         .params()
-    ).toThrow('Attribute pk is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing the sortKey (no alias)', () => {
@@ -105,7 +105,7 @@ describe('delete transaction', () => {
           { pk: 'test-pk' }
         )
         .params()
-    ).toThrow('Attribute sk is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   // Options

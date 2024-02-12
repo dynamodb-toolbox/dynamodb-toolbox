@@ -43,7 +43,7 @@ type SetAttributeFreezer = <
 >(
   $elements: $ELEMENTS,
   state: STATE,
-  path: string
+  path?: string
 ) => FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>
 
 /**
@@ -60,39 +60,47 @@ export const freezeSetAttribute: SetAttributeFreezer = <
 >(
   elements: $ELEMENTS,
   state: STATE,
-  path: string
+  path?: string
 ): FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>> => {
   validateAttributeProperties(state, path)
 
   if (elements[$required] !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.setAttribute.optionalElements', {
-      message: `Invalid set elements at path ${path}: Set elements must be required`,
+      message: `Invalid set elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Set elements must be required.`,
       path
     })
   }
 
   if (elements[$hidden] !== false) {
     throw new DynamoDBToolboxError('schema.setAttribute.hiddenElements', {
-      message: `Invalid set elements at path ${path}: Set elements cannot be hidden`,
+      message: `Invalid set elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Set elements cannot be hidden.`,
       path
     })
   }
 
   if (elements[$savedAs] !== undefined) {
     throw new DynamoDBToolboxError('schema.setAttribute.savedAsElements', {
-      message: `Invalid set elements at path ${path}: Set elements cannot be renamed (have savedAs option)`,
+      message: `Invalid set elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Set elements cannot be renamed (have savedAs option).`,
       path
     })
   }
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.setAttribute.defaultedElements', {
-      message: `Invalid set elements at path ${path}: Set elements cannot have default or linked values`,
+      message: `Invalid set elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Set elements cannot have default or linked values.`,
       path
     })
   }
 
-  const frozenElements = elements.freeze(`${path}[x]`) as FreezeAttribute<$ELEMENTS>
+  const frozenElements = elements.freeze(`${path ?? ''}[x]`) as FreezeAttribute<$ELEMENTS>
 
   return new SetAttribute({ path, elements: frozenElements, ...state })
 }

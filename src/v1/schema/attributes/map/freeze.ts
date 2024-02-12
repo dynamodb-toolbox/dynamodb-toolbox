@@ -47,7 +47,7 @@ type MapAttributeFreezer = <
 >(
   attribute: $ATTRIBUTES,
   state: STATE,
-  path: string
+  path?: string
 ) => FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>
 
 /**
@@ -64,7 +64,7 @@ export const freezeMapAttribute: MapAttributeFreezer = <
 >(
   attributes: $ATTRIBUTES,
   state: STATE,
-  path: string
+  path?: string
 ): FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>> => {
   validateAttributeProperties(state, path)
 
@@ -88,7 +88,9 @@ export const freezeMapAttribute: MapAttributeFreezer = <
     const attributeSavedAs = attribute[$savedAs] ?? attributeName
     if (attributesSavedAs.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('schema.mapAttribute.duplicateSavedAs', {
-        message: `Invalid map attributes at path ${path}: More than two attributes are saved as '${attributeSavedAs}'`,
+        message: `Invalid map attributes${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: More than two attributes are saved as '${attributeSavedAs}'.`,
         path,
         payload: { savedAs: attributeSavedAs }
       })

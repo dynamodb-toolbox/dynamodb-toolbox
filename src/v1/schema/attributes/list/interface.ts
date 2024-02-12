@@ -31,7 +31,7 @@ export interface $ListAttributeNestedState<
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
   STATE extends SharedAttributeState = SharedAttributeState
 > extends $ListAttributeState<$ELEMENTS, STATE> {
-  freeze: (path: string) => FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>
+  freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>
 }
 
 /**
@@ -277,7 +277,7 @@ export class ListAttribute<
   STATE extends SharedAttributeState = SharedAttributeState
 > implements SharedAttributeState<STATE> {
   type: 'list'
-  path: string
+  path?: string
   elements: ELEMENTS
   required: STATE['required']
   hidden: STATE['hidden']
@@ -286,7 +286,7 @@ export class ListAttribute<
   defaults: STATE['defaults']
   links: STATE['links']
 
-  constructor({ path, elements, ...state }: STATE & { path: string; elements: ELEMENTS }) {
+  constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
     this.type = 'list'
     this.path = path
     this.elements = elements

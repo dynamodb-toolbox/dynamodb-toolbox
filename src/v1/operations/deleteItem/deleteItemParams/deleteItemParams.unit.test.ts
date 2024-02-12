@@ -79,7 +79,7 @@ describe('delete', () => {
           {}
         )
         .params()
-    ).toThrow('Attribute email is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing the sortKey', () => {
@@ -90,7 +90,7 @@ describe('delete', () => {
           { pk: 'test-pk' }
         )
         .params()
-    ).toThrow('Attribute email is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing partitionKey (no alias)', () => {
@@ -101,7 +101,7 @@ describe('delete', () => {
           {}
         )
         .params()
-    ).toThrow('Attribute pk is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing the sortKey (no alias)', () => {
@@ -112,7 +112,7 @@ describe('delete', () => {
           { pk: 'test-pk' }
         )
         .params()
-    ).toThrow('Attribute sk is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('sets capacity options', () => {

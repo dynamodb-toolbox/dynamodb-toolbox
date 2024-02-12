@@ -86,11 +86,13 @@ export function* attributeParser<
   }
 
   if (basicInput === undefined) {
+    const { required, path } = attribute
+
     // We don't need to fill
-    if (requiringOptions.has(attribute.required)) {
+    if (requiringOptions.has(required)) {
       throw new DynamoDBToolboxError('parsing.attributeRequired', {
-        message: `Attribute ${attribute.path} is required`,
-        path: attribute.path
+        message: `Attribute ${path !== undefined ? `'${path}' ` : ''}is required.`,
+        path
       })
     }
 
