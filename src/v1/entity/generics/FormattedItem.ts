@@ -1,7 +1,7 @@
 import type { AnyAttributePath } from 'v1/operations/types'
+import type { FormattedValue } from 'v1/formatter/types'
 
-import type { EntityV2 } from '../../class'
-import type { FormattedAttribute } from './attribute'
+import type { EntityV2 } from '../class'
 
 /**
  * Returned item of a fetch command (GET, QUERY ...) for a given Entity
@@ -11,13 +11,13 @@ import type { FormattedAttribute } from './attribute'
  */
 export type FormattedItem<
   ENTITY extends EntityV2,
-  OPTIONS extends { attributes?: AnyAttributePath<ENTITY>; partial?: boolean } = {}
-> = FormattedAttribute<
+  OPTIONS extends { attributes?: AnyAttributePath<ENTITY['schema']>[]; partial?: boolean } = {}
+> = FormattedValue<
   ENTITY['schema'],
   {
-    attributes: OPTIONS extends { attributes: string }
+    attributes: OPTIONS extends { attributes: string[] }
       ? OPTIONS['attributes']
-      : AnyAttributePath<ENTITY>
+      : AnyAttributePath<ENTITY['schema']>[]
     partial: OPTIONS extends { partial: boolean } ? OPTIONS['partial'] : false
   }
 >

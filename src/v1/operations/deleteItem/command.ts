@@ -8,9 +8,10 @@ import type {
 } from 'v1/operations/constants/options/returnValues'
 import type { KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { formatSavedItem } from 'v1/formatter'
+import { EntityFormatter } from 'v1/operations/format'
 
 import { EntityOperation, $entity } from '../class'
+
 import type { DeleteItemOptions, DeleteItemCommandReturnValuesOption } from './options'
 import { deleteItemParams } from './deleteItemParams'
 
@@ -84,10 +85,10 @@ export class DeleteItemCommand<
       return restCommandOutput
     }
 
-    const formattedItem = formatSavedItem(this[$entity], attributes)
+    const formattedItem = new EntityFormatter(this[$entity]).format(attributes)
 
     return {
-      Attributes: formattedItem as ReturnedAttributes<ENTITY, OPTIONS>,
+      Attributes: formattedItem as any,
       ...restCommandOutput
     }
   }

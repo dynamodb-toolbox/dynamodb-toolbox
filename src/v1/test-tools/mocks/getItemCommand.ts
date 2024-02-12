@@ -72,7 +72,7 @@ export class GetItemCommandMock<
         })
       }
 
-      return implementation(this[$key], this[$options])
+      return implementation(this[$key], this[$options]) as any
     }
 
     return new GetItemCommand(this[$entity], this[$key], this[$options]).send()
