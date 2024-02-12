@@ -1,8 +1,8 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type { AttributeBasicValue, AttributeValue, PrimitiveAttribute } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/parser/types'
-import { attributeParser } from 'v1/parser/attribute'
+import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
+import { attributeParser } from 'v1/schema/actions/parse/attribute'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 

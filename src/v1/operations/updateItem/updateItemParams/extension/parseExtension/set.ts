@@ -1,6 +1,6 @@
 import type { AttributeBasicValue, AttributeValue, SetAttribute } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/parser/types'
-import { attributeParser } from 'v1/parser/attribute'
+import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
+import { attributeParser } from 'v1/schema/actions/parse/attribute'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $ADD, $DELETE } from 'v1/operations/updateItem/constants'
