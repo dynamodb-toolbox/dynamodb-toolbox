@@ -23,23 +23,26 @@ export class UpdateItemTransaction<
   implements WriteItemTransaction<ENTITY, 'Update'> {
   static operationName = 'transactUpdate' as const;
 
-  [$item]?: UpdateItemInput<ENTITY>
-  item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemTransaction<ENTITY>;
+  [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends UpdateItemTransactionOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
-  ) => UpdateItemTransaction<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, item?: UpdateItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$item] = item
     this[$options] = options
-
-    this.item = nextItem => new UpdateItemTransaction(this[$entity], nextItem, this[$options])
-    this.options = nextOptions => new UpdateItemTransaction(this[$entity], this[$item], nextOptions)
   }
 
-  params = (): TransactUpdateItemParams => {
+  item(nextItem: UpdateItemInput<ENTITY>): UpdateItemTransaction<ENTITY> {
+    return new UpdateItemTransaction(this[$entity], nextItem, this[$options])
+  }
+
+  options<NEXT_OPTIONS extends UpdateItemTransactionOptions<ENTITY>>(
+    nextOptions: NEXT_OPTIONS
+  ): UpdateItemTransaction<ENTITY, NEXT_OPTIONS> {
+    return new UpdateItemTransaction(this[$entity], this[$item], nextOptions)
+  }
+
+  params(): TransactUpdateItemParams {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'UpdateItemTransaction incomplete: Missing "item" property'
@@ -49,15 +52,17 @@ export class UpdateItemTransaction<
     return transactUpdateItemParams(this[$entity], this[$item], this[$options])
   }
 
-  get = (): {
+  get(): {
     documentClient: DynamoDBDocumentClient
     type: 'Update'
     params: TransactUpdateItemParams
-  } => ({
-    documentClient: this[$entity].table.documentClient,
-    type: 'Update',
-    params: this.params()
-  })
+  } {
+    return {
+      documentClient: this[$entity].table.documentClient,
+      type: 'Update',
+      params: this.params()
+    }
+  }
 }
 
 export type UpdateItemTransactionClass = typeof UpdateItemTransaction
