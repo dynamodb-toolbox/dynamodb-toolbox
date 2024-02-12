@@ -1,6 +1,6 @@
 import type { EntityV2 } from 'v1/entity'
 import type { Item, RequiredOption } from 'v1/schema'
-import { Parser } from 'v1/parser'
+import { Parser } from 'v1/schema/actions/parse'
 import { UpdateItemInputExtension } from 'v1/operations/types'
 import { parseUpdateExtension } from 'v1/operations/updateItem/updateItemParams/extension/parseExtension'
 

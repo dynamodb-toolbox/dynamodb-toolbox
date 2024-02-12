@@ -12,7 +12,7 @@ import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { Item } from 'v1/schema'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
 import type { Query } from 'v1/operations/types'
-import { Formatter } from 'v1/formatter'
+import { Formatter } from 'v1/schema/actions/format'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isString } from 'v1/utils/validation'
 

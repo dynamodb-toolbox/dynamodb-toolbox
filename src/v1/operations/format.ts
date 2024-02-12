@@ -1,6 +1,6 @@
 import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { Item } from 'v1/schema'
-import { Formatter } from 'v1/formatter'
+import { Formatter } from 'v1/schema/actions/format'
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { AnyAttributePath } from 'v1/operations/types'
 

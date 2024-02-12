@@ -1,5 +1,5 @@
 import type { AnyAttributePath } from 'v1/operations/types'
-import type { FormattedValue } from 'v1/formatter/types'
+import type { FormattedValue } from 'v1/schema/actions/format'
 
 import type { EntityV2 } from '../class'
 

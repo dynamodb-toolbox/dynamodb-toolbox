@@ -11,7 +11,7 @@ import type { TableV2 } from 'v1/table'
 import type { EntityV2, FormattedItem } from 'v1/entity'
 import type { Item } from 'v1/schema'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
-import { Formatter } from 'v1/formatter'
+import { Formatter } from 'v1/schema/actions/format'
 import { isString } from 'v1/utils/validation'
 
 import { TableCommand, $table, $entities } from '../class'

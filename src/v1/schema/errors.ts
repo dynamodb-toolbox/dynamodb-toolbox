@@ -1,5 +1,5 @@
 import type { AttributeErrorBlueprints } from './attributes/errors'
-
+import type { ActionErrorBlueprints } from './actions/errors'
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
 type DuplicateAttributeErrorBlueprint = ErrorBlueprint<{
@@ -16,5 +16,6 @@ type DuplicateSavedAsErrorBlueprint = ErrorBlueprint<{
 
 export type SchemaErrorBlueprints =
   | AttributeErrorBlueprints
+  | ActionErrorBlueprints
   | DuplicateAttributeErrorBlueprint
   | DuplicateSavedAsErrorBlueprint

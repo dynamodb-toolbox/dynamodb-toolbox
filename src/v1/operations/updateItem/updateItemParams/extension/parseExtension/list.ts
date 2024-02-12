@@ -1,6 +1,6 @@
 import type { AttributeBasicValue, AttributeValue, ListAttribute, Item } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/parser/types'
-import { attributeParser } from 'v1/parser/attribute'
+import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
+import { attributeParser } from 'v1/schema/actions/parse/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
