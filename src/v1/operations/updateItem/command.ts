@@ -61,23 +61,26 @@ export class UpdateItemCommand<
 > extends EntityOperation<ENTITY> {
   static operationName = 'update' as const;
 
-  [$item]?: UpdateItemInput<ENTITY>
-  item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemCommand<ENTITY, OPTIONS>;
+  [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends UpdateItemOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
-  ) => UpdateItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, item?: UpdateItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$item] = item
     this[$options] = options
-
-    this.item = nextItem => new UpdateItemCommand(this[$entity], nextItem, this[$options])
-    this.options = nextOptions => new UpdateItemCommand(this[$entity], this[$item], nextOptions)
   }
 
-  params = (): UpdateCommandInput => {
+  item(nextItem: UpdateItemInput<ENTITY>): UpdateItemCommand<ENTITY, OPTIONS> {
+    return new UpdateItemCommand(this[$entity], nextItem, this[$options])
+  }
+
+  options<NEXT_OPTIONS extends UpdateItemOptions<ENTITY>>(
+    nextOptions: NEXT_OPTIONS
+  ): UpdateItemCommand<ENTITY, NEXT_OPTIONS> {
+    return new UpdateItemCommand(this[$entity], this[$item], nextOptions)
+  }
+
+  params(): UpdateCommandInput {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'UpdateItemCommand incomplete: Missing "item" property'
@@ -87,7 +90,7 @@ export class UpdateItemCommand<
     return updateItemParams(this[$entity], this[$item], this[$options])
   }
 
-  send = async (): Promise<UpdateItemResponse<ENTITY, OPTIONS>> => {
+  async send(): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
     const commandOutput = await this[$entity].table.documentClient.send(

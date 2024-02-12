@@ -19,11 +19,6 @@ export class TableV2<
   public indexes: INDEXES
   public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS
 
-  public getName: () => string
-  public build: <TABLE_COMMAND_CLASS extends TableCommand<this> = TableCommand<this>>(
-    tableCommandClass: new (table: this) => TABLE_COMMAND_CLASS
-  ) => TABLE_COMMAND_CLASS
-
   /**
    * Define a Table
    *
@@ -56,15 +51,19 @@ export class TableV2<
     }
     this.indexes = indexes as INDEXES
     this.entityAttributeSavedAs = entityAttributeSavedAs
+  }
 
-    this.getName = () => {
-      if (isString(this.name)) {
-        return this.name
-      } else {
-        return this.name()
-      }
+  getName(): string {
+    if (isString(this.name)) {
+      return this.name
+    } else {
+      return this.name()
     }
+  }
 
-    this.build = commandClass => new commandClass(this) as any
+  build<TABLE_COMMAND_CLASS extends TableCommand<this> = TableCommand<this>>(
+    commandClass: new (table: this) => TABLE_COMMAND_CLASS
+  ): TABLE_COMMAND_CLASS {
+    return new commandClass(this)
   }
 }

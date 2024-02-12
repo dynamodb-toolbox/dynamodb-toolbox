@@ -61,23 +61,26 @@ export class PutItemCommand<
 > extends EntityOperation<ENTITY> {
   static operationName = 'put' as const;
 
-  [$item]?: PutItemInput<ENTITY>
-  item: (nextItem: PutItemInput<ENTITY>) => PutItemCommand<ENTITY, OPTIONS>;
+  [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS
-  options: <NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
-  ) => PutItemCommand<ENTITY, NEXT_OPTIONS>
 
   constructor(entity: ENTITY, item?: PutItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$item] = item
     this[$options] = options
-
-    this.item = nextItem => new PutItemCommand(this[$entity], nextItem, this[$options])
-    this.options = nextOptions => new PutItemCommand(this[$entity], this[$item], nextOptions)
   }
 
-  params = (): PutCommandInput => {
+  item(nextItem: PutItemInput<ENTITY>): PutItemCommand<ENTITY, OPTIONS> {
+    return new PutItemCommand(this[$entity], nextItem, this[$options])
+  }
+
+  options<NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
+    nextOptions: NEXT_OPTIONS
+  ): PutItemCommand<ENTITY, NEXT_OPTIONS> {
+    return new PutItemCommand(this[$entity], this[$item], nextOptions)
+  }
+
+  params(): PutCommandInput {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('operations.incompleteOperation', {
         message: 'PutItemCommand incomplete: Missing "item" property'
@@ -87,7 +90,7 @@ export class PutItemCommand<
     return putItemParams(this[$entity], this[$item], this[$options])
   }
 
-  send = async (): Promise<PutItemResponse<ENTITY, OPTIONS>> => {
+  async send(): Promise<PutItemResponse<ENTITY, OPTIONS>> {
     const putItemParams = this.params()
 
     const commandOutput = await this[$entity].table.documentClient.send(

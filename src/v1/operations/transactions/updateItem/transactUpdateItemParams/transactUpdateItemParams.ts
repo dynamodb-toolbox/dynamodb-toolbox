@@ -3,10 +3,11 @@ import isEmpty from 'lodash.isempty'
 import omit from 'lodash.omit'
 
 import type { EntityV2 } from 'v1/entity'
+import type { UpdateItemInput } from 'v1/operations/updateItem'
+import { parseUpdateExtension } from 'v1/operations/updateItem/updateItemParams/extension/parseExtension'
 import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
+import { Parser } from 'v1/schema/actions/parse'
 
-import type { UpdateItemInput } from '../../../updateItem'
-import { parseEntityUpdateTransactionInput } from './parseUpdateTransactionInput'
 import type { UpdateItemTransactionOptions } from '../options'
 
 import { parseUpdateItemTransactionOptions } from './parseUpdateItemOptions'
@@ -24,9 +25,17 @@ export const transactUpdateItemParams = <
   input: UpdateItemInput<ENTITY>,
   updateItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactUpdateItemParams => {
-  const validInputParser = parseEntityUpdateTransactionInput(entity, input)
-  const validInput = validInputParser.next().value
-  const transformedInput = validInputParser.next().value
+  const workflow = entity.schema.build(Parser).workflow(input, {
+    fill: 'update',
+    transform: true,
+    requiringOptions: new Set(['always']),
+    parseExtension: parseUpdateExtension
+  })
+
+  workflow.next() // defaulted
+  workflow.next() // linked
+  const validInput = workflow.next().value
+  const transformedInput = workflow.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)
