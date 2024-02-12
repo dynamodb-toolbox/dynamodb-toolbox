@@ -60,7 +60,7 @@ type AnyOfAttributeFreezer = <
 >(
   elements: $ELEMENTS,
   state: STATE,
-  path: string
+  path?: string
 ) => FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>
 
 /**
@@ -77,20 +77,24 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
 >(
   elements: $ELEMENTS,
   state: STATE,
-  path: string
+  path?: string
 ): FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>> => {
   validateAttributeProperties(state, path)
 
   if (!isArray(elements)) {
     throw new DynamoDBToolboxError('schema.anyOfAttribute.invalidElements', {
-      message: `Invalid anyOf elements at path ${path}: AnyOf elements must be an array`,
+      message: `Invalid anyOf elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: AnyOf elements must be an array.`,
       path
     })
   }
 
   if (elements.length === 0) {
     throw new DynamoDBToolboxError('schema.anyOfAttribute.missingElements', {
-      message: `Invalid anyOf elements at path ${path}: AnyOf attributes must have at least one element`,
+      message: `Invalid anyOf elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: AnyOf attributes must have at least one element.`,
       path
     })
   }
@@ -98,28 +102,36 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
   elements.forEach(element => {
     if (element[$required] !== 'atLeastOnce' && element[$required] !== 'always') {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.optionalElements', {
-        message: `Invalid anyOf elements at path ${path}: AnyOf elements must be required`,
+        message: `Invalid anyOf elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: AnyOf elements must be required.`,
         path
       })
     }
 
     if (element[$hidden] !== false) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.hiddenElements', {
-        message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot be hidden`,
+        message: `Invalid anyOf elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: AnyOf elements cannot be hidden.`,
         path
       })
     }
 
     if (element[$savedAs] !== undefined) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.savedAsElements', {
-        message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot be renamed (have savedAs option)`,
+        message: `Invalid anyOf elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: AnyOf elements cannot be renamed (have savedAs option).`,
         path
       })
     }
 
     if (hasDefinedDefault(element)) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.defaultedElements', {
-        message: `Invalid anyOf elements at path ${path}: AnyOf elements cannot have default or linked values`,
+        message: `Invalid anyOf elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: AnyOf elements cannot have default or linked values.`,
         path
       })
     }

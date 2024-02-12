@@ -296,9 +296,13 @@ export const parseListExtension = (
           const parsedInputKey = parseFloat(inputKey)
 
           if (!isInteger(parsedInputKey)) {
+            const { path } = attribute
+
             throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-              message: `Index of array attribute ${attribute.path} is not a valid integer`,
-              path: attribute.path,
+              message: `Index of array attribute ${
+                path !== undefined ? `'${path}' ` : ''
+              }is not a valid integer`,
+              path,
               payload: {
                 received: inputKey
               }

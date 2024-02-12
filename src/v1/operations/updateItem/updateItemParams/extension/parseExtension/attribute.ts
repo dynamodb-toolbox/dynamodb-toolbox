@@ -34,10 +34,14 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
           yield linkedValue
         }
 
-        if (attribute.required !== 'never') {
+        const { path, required } = attribute
+
+        if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {
-            message: `Attribute ${attribute.path} is required and cannot be removed`,
-            path: attribute.path
+            message: `Attribute ${
+              path !== undefined ? `'${path}' ` : ''
+            }is required and cannot be removed`,
+            path
           })
         }
 

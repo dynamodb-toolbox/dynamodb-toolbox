@@ -48,7 +48,7 @@ type RecordAttributeFreezer = <
   keys: $KEYS,
   elements: $ELEMENTS,
   state: STATE,
-  path: string
+  path?: string
 ) => FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>
 
 /**
@@ -68,13 +68,15 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   keys: $KEYS,
   elements: $ELEMENTS,
   state: STATE,
-  path: string
+  path?: string
 ): FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>> => {
   validateAttributeProperties(state, path)
 
   if (keys[$type] !== 'string') {
     throw new DynamoDBToolboxError('schema.recordAttribute.invalidKeys', {
-      message: `Invalid record keys at path ${path}: Record keys must be a string`,
+      message: `Invalid record keys${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record keys must be a string.`,
       path
     })
   }
@@ -82,35 +84,45 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   // Checking $key before $required as $key implies attribute is always $required
   if (keys[$key] !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.keyKeys', {
-      message: `Invalid record keys at path ${path}: Record keys cannot be part of primary key`,
+      message: `Invalid record keys${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record keys cannot be part of primary key.`,
       path
     })
   }
 
   if (keys[$required] !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.recordAttribute.optionalKeys', {
-      message: `Invalid record keys at path ${path}: Record keys must be required`,
+      message: `Invalid record keys${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record keys must be required.`,
       path
     })
   }
 
   if (keys[$hidden] !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.hiddenKeys', {
-      message: `Invalid record keys at path ${path}: Record keys cannot be hidden`,
+      message: `Invalid record keys${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record keys cannot be hidden.`,
       path
     })
   }
 
   if (keys[$savedAs] !== undefined) {
     throw new DynamoDBToolboxError('schema.recordAttribute.savedAsKeys', {
-      message: `Invalid record keys at path ${path}: Record keys cannot be renamed (have savedAs option)`,
+      message: `Invalid record keys${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record keys cannot be renamed (have savedAs option).`,
       path
     })
   }
 
   if (hasDefinedDefault(keys)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedKeys', {
-      message: `Invalid record keys at path ${path}: Record keys cannot have default or linked values`,
+      message: `Invalid record keys${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record keys cannot have default or linked values.`,
       path
     })
   }
@@ -118,41 +130,51 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   // Checking $key before $required as $key implies attribute is always $required
   if (elements[$key] !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.keyElements', {
-      message: `Invalid record elements at path ${path}: Record elements cannot be part of primary key`,
+      message: `Invalid record elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record elements cannot be part of primary key.`,
       path
     })
   }
 
   if (elements[$required] !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.recordAttribute.optionalElements', {
-      message: `Invalid record elements at path ${path}: Record elements must be required`,
+      message: `Invalid record elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record elements must be required.`,
       path
     })
   }
 
   if (elements[$hidden] !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.hiddenElements', {
-      message: `Invalid record elements at path ${path}: Record elements cannot be hidden`,
+      message: `Invalid record elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record elements cannot be hidden.`,
       path
     })
   }
 
   if (elements[$savedAs] !== undefined) {
     throw new DynamoDBToolboxError('schema.recordAttribute.savedAsElements', {
-      message: `Invalid record elements at path ${path}: Record elements cannot be renamed (have savedAs option)`,
+      message: `Invalid record elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Record elements cannot be renamed (have savedAs option).`,
       path
     })
   }
 
   if (hasDefinedDefault(elements)) {
     throw new DynamoDBToolboxError('schema.recordAttribute.defaultedElements', {
-      message: `Invalid record elements at path ${path}: Records elements cannot have default or linked values`,
+      message: `Invalid record elements${
+        path !== undefined ? ` at path '${path}'` : ''
+      }: Records elements cannot have default or linked values.`,
       path
     })
   }
 
-  const frozenKeys = keys.freeze(`${path} (KEY)`) as FreezeAttribute<$KEYS>
-  const frozenElements = elements.freeze(`${path}[string]`) as FreezeAttribute<$ELEMENTS>
+  const frozenKeys = keys.freeze(path && `${path} (KEY)`) as FreezeAttribute<$KEYS>
+  const frozenElements = elements.freeze(`${path ?? ''}[string]`) as FreezeAttribute<$ELEMENTS>
 
   return new RecordAttribute({
     path,

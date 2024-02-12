@@ -65,9 +65,13 @@ export function* anyOfAttributeParser<
 
   const parsedValue = _parsedValue
   if (parser === undefined || parsedValue === undefined) {
+    const { path } = attribute
+
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${attribute.path} does not match any of the possible sub-types`,
-      path: attribute.path,
+      message: `Attribute ${
+        path !== undefined ? `'${path}' ` : ''
+      }does not match any of the possible sub-types.`,
+      path,
       payload: {
         received: inputValue
       }

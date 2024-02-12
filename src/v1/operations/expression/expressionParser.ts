@@ -20,7 +20,6 @@ export interface ExpressionParser {
 }
 
 const defaultAnyAttribute = new AnyAttribute({
-  path: '',
   type: 'any',
   required: 'never',
   hidden: false,
@@ -40,7 +39,6 @@ const defaultAnyAttribute = new AnyAttribute({
 })
 
 const defaultNumberAttribute: PrimitiveAttribute<'number'> = new PrimitiveAttribute({
-  path: '',
   type: 'number',
   required: 'never',
   hidden: false,
@@ -105,9 +103,9 @@ export const appendAttributePath = (
 
         parentAttribute = new AnyAttribute({
           ...defaultAnyAttribute,
-          path: [parentAttribute.path, childAttributeAccessor].join(
-            isChildAttributeInList ? '' : '.'
-          )
+          path: [parentAttribute.path, childAttributeAccessor]
+            .filter(Boolean)
+            .join(isChildAttributeInList ? '' : '.')
         })
         break
       }

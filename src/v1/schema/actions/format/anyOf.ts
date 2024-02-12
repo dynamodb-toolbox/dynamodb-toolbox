@@ -5,13 +5,13 @@ import type { FormatOptions } from './schema'
 import { formatSavedAttribute } from './attribute'
 
 export const formatSavedAnyOfAttribute = (
-  anyOfAttribute: AnyOfAttribute,
+  attribute: AnyOfAttribute,
   savedValue: AttributeValue,
   options: FormatOptions = {}
 ): AttributeValue => {
   let parsedAttribute: AttributeValue | undefined = undefined
 
-  for (const element of anyOfAttribute.elements) {
+  for (const element of attribute.elements) {
     try {
       parsedAttribute = formatSavedAttribute(element, savedValue, options)
       break
@@ -21,9 +21,13 @@ export const formatSavedAnyOfAttribute = (
   }
 
   if (parsedAttribute === undefined) {
+    const { path } = attribute
+
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
-      message: `Item attribute does not match any of the possible sub-types: ${anyOfAttribute.path}.`,
-      path: anyOfAttribute.path,
+      message: `Invalid attribute detected while formatting. Attribute does not match any of the possible sub-types${
+        path !== undefined ? `: '${path}'` : ''
+      }.`,
+      path,
       payload: {
         received: savedValue
       }

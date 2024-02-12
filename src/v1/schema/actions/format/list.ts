@@ -7,17 +7,21 @@ import { formatSavedAttribute } from './attribute'
 import { matchProjection } from './utils'
 
 export const formatSavedListAttribute = (
-  listAttribute: ListAttribute,
+  attribute: ListAttribute,
   savedValue: AttributeValue,
   { attributes, ...restOptions }: FormatOptions = {}
 ): ListAttributeValue => {
   if (!isArray(savedValue)) {
+    const { path, type } = attribute
+
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
-      message: `Invalid attribute in saved item: ${listAttribute.path}. Should be a ${listAttribute.type}.`,
-      path: listAttribute.path,
+      message: `Invalid attribute detected while formatting${
+        path !== undefined ? `: '${path}'` : ''
+      }. Should be a ${type}.`,
+      path,
       payload: {
         received: savedValue,
-        expected: listAttribute.type
+        expected: type
       }
     })
   }
@@ -30,7 +34,7 @@ export const formatSavedListAttribute = (
 
   const parsedValues: ListAttributeValue = []
   for (const savedElement of savedValue) {
-    const parsedElement = formatSavedAttribute(listAttribute.elements, savedElement, {
+    const parsedElement = formatSavedAttribute(attribute.elements, savedElement, {
       attributes: childrenAttributes,
       ...restOptions
     })

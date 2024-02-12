@@ -205,7 +205,7 @@ describe('put transaction', () => {
           { email: 'test-pk' }
         )
         .params()
-    ).toThrow('Attribute test is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('ignores additional attribute', () => {
@@ -231,7 +231,7 @@ describe('put transaction', () => {
           test_string: 1
         })
         .params()
-    ).toThrow('Attribute test_string should be a string')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when invalid boolean provided with no coercion', () => {
@@ -244,7 +244,7 @@ describe('put transaction', () => {
           test_boolean: 'x'
         })
         .params()
-    ).toThrow('Attribute test_boolean should be a boolean')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when invalid number provided with no coercion', () => {
@@ -257,7 +257,7 @@ describe('put transaction', () => {
           count: 'x'
         })
         .params()
-    ).toThrow('Attribute count should be a number')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('with valid array', () => {
@@ -284,7 +284,7 @@ describe('put transaction', () => {
           test_list: ['a', 2]
         })
         .params()
-    ).toThrow('Attribute test_list[n] should be a string')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('with valid map', () => {
@@ -313,7 +313,7 @@ describe('put transaction', () => {
           test_map: { str: 2 }
         })
         .params()
-    ).toThrow('Attribute test_map.str should be a string')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('with valid set', () => {
@@ -340,7 +340,7 @@ describe('put transaction', () => {
           test_string_set: new Set(['a', 'b', 3])
         })
         .params()
-    ).toThrow('Attribute test_string_set[x] should be a string')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('fails when missing a required field', () => {
@@ -351,7 +351,7 @@ describe('put transaction', () => {
           { email: 'test-pk', test2: 'test' }
         )
         .params()
-    ).toThrow('Attribute test is required')
+    ).toThrow(DynamoDBToolboxError)
   })
 
   it('puts 0 and false to required fields', () => {

@@ -31,7 +31,6 @@ const typeAttribute: PrimitiveAttribute<
     transform: undefined
   }
 > = new PrimitiveAttribute({
-  path: '',
   type: 'string',
   required: 'always',
   hidden: false,
