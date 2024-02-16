@@ -22,7 +22,7 @@ import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndef
 import type { EntityV2 } from 'v1/entity/class'
 import type { If } from 'v1/types/if'
 
-export type MustBeDefined<
+type MustBeDefined<
   ATTRIBUTE extends Attribute,
   REQUIRED_DEFAULTS extends boolean = false
 > = REQUIRED_DEFAULTS extends false
