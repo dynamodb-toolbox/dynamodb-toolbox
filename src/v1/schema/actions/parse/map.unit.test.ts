@@ -2,15 +2,16 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { map, string } from 'v1/schema'
 
 import { mapAttributeParser } from './map'
-import * as attributeParserModule from './attribute'
+import * as attrWorkflowModule from './attribute'
 
-const attributeParser = jest.spyOn(attributeParserModule, 'attributeParser')
+// @ts-ignore
+const attrWorkflow = jest.spyOn(attrWorkflowModule, 'attrWorkflow')
 
 const mapAttr = map({ foo: string(), bar: string() }).freeze('path')
 
 describe('parseMapAttributeClonedInput', () => {
   beforeEach(() => {
-    attributeParser.mockClear()
+    attrWorkflow.mockClear()
   })
 
   it('throws an error if input is not a map', () => {
@@ -33,9 +34,9 @@ describe('parseMapAttributeClonedInput', () => {
     expect(defaultedState.done).toBe(false)
     expect(defaultedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
-    expect(attributeParser).toHaveBeenCalledTimes(2)
-    expect(attributeParser).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
-    expect(attributeParser).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', options)
+    expect(attrWorkflow).toHaveBeenCalledTimes(2)
+    expect(attrWorkflow).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
+    expect(attrWorkflow).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', options)
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)

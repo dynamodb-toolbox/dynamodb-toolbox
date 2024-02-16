@@ -1,20 +1,21 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import { set, string } from 'v1/schema'
 
-import { setAttributeParser } from './set'
-import * as attributeParserModule from './attribute'
+import { setAttrWorkflow } from './set'
+import * as attrWorkflowModule from './attribute'
 
-const attributeParser = jest.spyOn(attributeParserModule, 'attributeParser')
+// @ts-ignore
+const attrWorkflow = jest.spyOn(attrWorkflowModule, 'attrWorkflow')
 
 const setAttr = set(string()).freeze('path')
 
 describe('parseSetAttributeClonedInput', () => {
   beforeEach(() => {
-    attributeParser.mockClear()
+    attrWorkflow.mockClear()
   })
 
   it('throws an error if input is not a set', () => {
-    const invalidCall = () => setAttributeParser(setAttr, { foo: 'bar' }, { fill: false }).next()
+    const invalidCall = () => setAttrWorkflow(setAttr, { foo: 'bar' }, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -22,7 +23,7 @@ describe('parseSetAttributeClonedInput', () => {
 
   it('applies parseAttributeClonesInput on input elements otherwise (and pass options)', () => {
     const options = { some: 'options' }
-    const parser = setAttributeParser(
+    const parser = setAttrWorkflow(
       setAttr,
       new Set(['foo', 'bar']),
       // @ts-expect-error we don't really care about the type here
@@ -33,9 +34,9 @@ describe('parseSetAttributeClonedInput', () => {
     expect(defaultedState.done).toBe(false)
     expect(defaultedState.value).toStrictEqual(new Set(['foo', 'bar']))
 
-    expect(attributeParser).toHaveBeenCalledTimes(2)
-    expect(attributeParser).toHaveBeenCalledWith(setAttr.elements, 'foo', options)
-    expect(attributeParser).toHaveBeenCalledWith(setAttr.elements, 'bar', options)
+    expect(attrWorkflow).toHaveBeenCalledTimes(2)
+    expect(attrWorkflow).toHaveBeenCalledWith(setAttr.elements, 'foo', options)
+    expect(attrWorkflow).toHaveBeenCalledWith(setAttr.elements, 'bar', options)
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)

@@ -1,20 +1,21 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import { list, string } from 'v1/schema'
 
-import { listAttributeParser } from './list'
-import * as attributeParserModule from './attribute'
+import { listAttrWorkflow } from './list'
+import * as attrWorkflowModule from './attribute'
 
-const attributeParser = jest.spyOn(attributeParserModule, 'attributeParser')
+// @ts-ignore
+const attrWorkflow = jest.spyOn(attrWorkflowModule, 'attrWorkflow')
 
 const listAttr = list(string()).freeze('path')
 
 describe('parseListAttributeClonedInput', () => {
   beforeEach(() => {
-    attributeParser.mockClear()
+    attrWorkflow.mockClear()
   })
 
   it('throws an error if input is not a list', () => {
-    const invalidCall = () => listAttributeParser(listAttr, { foo: 'bar' }, { fill: false }).next()
+    const invalidCall = () => listAttrWorkflow(listAttr, { foo: 'bar' }, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -22,7 +23,7 @@ describe('parseListAttributeClonedInput', () => {
 
   it('applies parseAttributeClonesInput on input elements otherwise (and pass options)', () => {
     const options = { some: 'options' }
-    const parser = listAttributeParser(
+    const parser = listAttrWorkflow(
       listAttr,
       ['foo', 'bar'],
       // @ts-expect-error we don't really care about the type here
@@ -33,9 +34,9 @@ describe('parseListAttributeClonedInput', () => {
     expect(defaultedState.done).toBe(false)
     expect(defaultedState.value).toStrictEqual(['foo', 'bar'])
 
-    expect(attributeParser).toHaveBeenCalledTimes(2)
-    expect(attributeParser).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
-    expect(attributeParser).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
+    expect(attrWorkflow).toHaveBeenCalledTimes(2)
+    expect(attrWorkflow).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
+    expect(attrWorkflow).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)

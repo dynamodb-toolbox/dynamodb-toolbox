@@ -1,6 +1,6 @@
-import type { AttributeBasicValue, AttributeValue, SetAttribute } from 'v1/schema'
+import type { AttributeBasicValue, SetAttribute } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
-import { attributeParser } from 'v1/schema/actions/parse/attribute'
+import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $ADD, $DELETE } from 'v1/operations/updateItem/constants'
@@ -8,7 +8,7 @@ import { hasAddOperation, hasDeleteOperation } from 'v1/operations/updateItem/ut
 
 export const parseSetExtension = (
   attribute: SetAttribute,
-  input: AttributeValue<UpdateItemInputExtension> | undefined,
+  input: unknown,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { fill = true, transform = true } = options
@@ -17,7 +17,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attributeParser(attribute, input[$ADD], {
+        const parser = attrWorkflow(attribute, input[$ADD], {
           ...options,
           // Should a simple set of valid elements (not extended)
           parseExtension: undefined
@@ -49,7 +49,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attributeParser(attribute, input[$DELETE], {
+        const parser = attrWorkflow(attribute, input[$DELETE], {
           ...options,
           // Should a simple set of valid elements (not extended)
           parseExtension: undefined

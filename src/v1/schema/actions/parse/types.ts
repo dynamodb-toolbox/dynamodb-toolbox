@@ -1,10 +1,10 @@
 import type {
   Extension,
-  Item,
+  Schema,
   Attribute,
-  AttributeValue,
   AttributeBasicValue,
-  RequiredOption
+  RequiredOption,
+  ValidValue
 } from 'v1/schema'
 import type { If } from 'v1/types'
 
@@ -15,15 +15,15 @@ export type ExtensionParser<
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 > = (
   attribute: Attribute,
-  input: AttributeValue<INPUT_EXTENSION> | undefined,
+  input: unknown,
   options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>
 ) =>
   | {
       isExtension: true
       extensionParser: () => Generator<
-        AttributeValue<INPUT_EXTENSION>,
-        AttributeValue<INPUT_EXTENSION>,
-        Item<SCHEMA_EXTENSION> | undefined
+        ValidValue<Attribute, INPUT_EXTENSION>,
+        ValidValue<Attribute, INPUT_EXTENSION>,
+        ValidValue<Schema, SCHEMA_EXTENSION> | undefined
       >
       basicInput?: never
     }

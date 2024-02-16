@@ -1,42 +1,52 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type {
-  Extension,
-  Item,
+  Schema,
   PrimitiveAttribute,
-  AttributeValue,
-  PrimitiveAttributeBasicValue,
+  ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute,
+  Extension,
+  ExtendedValue,
   Transformer
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { ValidValue } from './parser'
 import type { HasExtension, ParsingOptions } from './types'
 
-export function* primitiveAttributeParser<
+export type ValidPrimitiveAttrValue<
+  ATTRIBUTE extends PrimitiveAttribute,
+  EXTENSION extends Extension = never
+> =
+  | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
+      ? ATTRIBUTE['enum'][number]
+      : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
+  | ExtendedValue<EXTENSION, ATTRIBUTE['type']>
+
+export function* primitiveAttrWorkflow<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
   attribute: PrimitiveAttribute,
-  inputValue: AttributeValue<INPUT_EXTENSION>,
+  inputValue: unknown,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<
-  PrimitiveAttributeBasicValue,
-  PrimitiveAttributeBasicValue,
-  Item<SCHEMA_EXTENSION> | undefined
+  ValidPrimitiveAttrValue<PrimitiveAttribute, INPUT_EXTENSION>,
+  ValidPrimitiveAttrValue<PrimitiveAttribute, INPUT_EXTENSION>,
+  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
 > {
   const { fill = true, transform = true } = options
 
-  const linkedValue: AttributeValue<INPUT_EXTENSION> = inputValue
+  const linkedValue = inputValue
 
   if (fill) {
-    const defaultedValue = cloneDeep(inputValue) as PrimitiveAttributeBasicValue
+    const defaultedValue = cloneDeep(inputValue)
     yield defaultedValue
 
     const linkedValue = defaultedValue
@@ -78,7 +88,7 @@ export function* primitiveAttributeParser<
   /**
    * @debt type "validator should act as typeguard"
    */
-  const parsedValue = linkedValue as PrimitiveAttributeBasicValue
+  const parsedValue = linkedValue as ResolvedPrimitiveAttribute
 
   if (transform) {
     yield parsedValue

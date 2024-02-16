@@ -1,8 +1,8 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { AttributeBasicValue, AttributeValue, PrimitiveAttribute } from 'v1/schema'
+import type { PrimitiveAttribute, ValidValue, AttributeBasicValue } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
-import { attributeParser } from 'v1/schema/actions/parse/attribute'
+import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -20,7 +20,7 @@ const ACCEPTABLE_LENGTH_SET = new Set<number>([1, 2])
 
 export const parseNumberExtension = (
   attribute: PrimitiveAttribute<'number'>,
-  inputValue: AttributeValue<UpdateItemInputExtension> | undefined,
+  inputValue: unknown,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { fill = true, transform = true } = options
@@ -30,15 +30,20 @@ export const parseNumberExtension = (
       isExtension: true,
       *extensionParser() {
         const parsers: Generator<
-          AttributeValue<ReferenceExtension>,
-          AttributeValue<ReferenceExtension>
+          ValidValue<PrimitiveAttribute<'number'>, ReferenceExtension>,
+          ValidValue<PrimitiveAttribute<'number'>, ReferenceExtension>
         >[] = []
 
-        const isInputValueArray = isArray(inputValue[$SUM])
+        const sumElements = inputValue[$SUM]
+        const isInputValueArray = isArray(sumElements)
         if (isInputValueArray) {
-          for (const sumElement of inputValue[$SUM]) {
+          for (const sumElement of sumElements) {
             parsers.push(
-              attributeParser<ReferenceExtension, UpdateItemInputExtension>(
+              attrWorkflow<
+                PrimitiveAttribute<'number'>,
+                ReferenceExtension,
+                UpdateItemInputExtension
+              >(
                 attribute,
                 sumElement,
                 // References are allowed in sums
@@ -68,7 +73,7 @@ export const parseNumberExtension = (
           }
         }
 
-        if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(inputValue[$SUM].length)) {
+        if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(sumElements.length)) {
           const { path } = attribute
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -101,15 +106,20 @@ export const parseNumberExtension = (
       isExtension: true,
       *extensionParser() {
         const parsers: Generator<
-          AttributeValue<ReferenceExtension>,
-          AttributeValue<ReferenceExtension>
+          ValidValue<PrimitiveAttribute<'number'>, ReferenceExtension>,
+          ValidValue<PrimitiveAttribute<'number'>, ReferenceExtension>
         >[] = []
 
-        const isInputValueArray = isArray(inputValue[$SUBTRACT])
+        const subtractElements = inputValue[$SUBTRACT]
+        const isInputValueArray = isArray(subtractElements)
         if (isInputValueArray) {
-          for (const subtractElement of inputValue[$SUBTRACT]) {
+          for (const subtractElement of subtractElements) {
             parsers.push(
-              attributeParser<ReferenceExtension, UpdateItemInputExtension>(
+              attrWorkflow<
+                PrimitiveAttribute<'number'>,
+                ReferenceExtension,
+                UpdateItemInputExtension
+              >(
                 attribute,
                 subtractElement,
                 // References are allowed in subtractions
@@ -139,7 +149,7 @@ export const parseNumberExtension = (
           }
         }
 
-        if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(inputValue[$SUBTRACT].length)) {
+        if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(subtractElements.length)) {
           const { path } = attribute
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -168,7 +178,11 @@ export const parseNumberExtension = (
   }
 
   if (hasAddOperation(inputValue)) {
-    const parser = attributeParser<ReferenceExtension, UpdateItemInputExtension>(
+    const parser = attrWorkflow<
+      PrimitiveAttribute<'number'>,
+      ReferenceExtension,
+      UpdateItemInputExtension
+    >(
       attribute,
       inputValue[$ADD],
       // References are allowed in additions

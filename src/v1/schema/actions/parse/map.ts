@@ -1,40 +1,66 @@
 import cloneDeep from 'lodash.clonedeep'
+import type { O } from 'ts-toolbelt'
 
 import type {
-  Extension,
-  Item,
-  AttributeValue,
+  Schema,
+  Attribute,
+  AnyAttribute,
   MapAttribute,
-  AttributeBasicValue,
-  MapAttributeBasicValue
+  Extension,
+  ExtendedValue,
+  Never
 } from 'v1/schema'
-import type { If } from 'v1/types'
+import type { If, OptionalizeUndefinableProperties } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 
+import type { ValidValue } from './parser'
 import type { HasExtension, ParsingOptions } from './types'
-import { attributeParser } from './attribute'
+import { attrWorkflow, ValidAttrValue } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
+
+export type ValidMapAttrValue<
+  ATTRIBUTE extends MapAttribute,
+  EXTENSION extends Extension = never
+> =
+  | OptionalizeUndefinableProperties<
+      {
+        [KEY in keyof ATTRIBUTE['attributes'] & string]: ValidAttrValue<
+          ATTRIBUTE['attributes'][KEY],
+          EXTENSION
+        >
+      },
+      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+      O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+    >
+  | ExtendedValue<EXTENSION, 'map'>
 
 export function* mapAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
   attribute: MapAttribute,
-  inputValue: AttributeBasicValue<INPUT_EXTENSION>,
+  inputValue: unknown,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<
-  MapAttributeBasicValue<INPUT_EXTENSION>,
-  MapAttributeBasicValue<INPUT_EXTENSION>,
-  Item<SCHEMA_EXTENSION> | undefined
+  ValidMapAttrValue<MapAttribute, INPUT_EXTENSION>,
+  ValidMapAttrValue<MapAttribute, INPUT_EXTENSION>,
+  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
 > {
   const { filters, fill = true, transform = true } = options
-  const parsers: Record<string, Generator<AttributeValue<INPUT_EXTENSION>>> = {}
-  let restEntries: [string, AttributeValue<INPUT_EXTENSION>][] = []
+  const parsers: Record<
+    string,
+    Generator<
+      ValidValue<Attribute, INPUT_EXTENSION>,
+      ValidValue<Attribute, INPUT_EXTENSION>,
+      ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+    >
+  > = {}
+  let restEntries: [string, unknown][] = []
 
   const isInputValueObject = isObject(inputValue)
   if (isInputValueObject) {
@@ -43,7 +69,7 @@ export function* mapAttributeParser<
     Object.entries(attribute.attributes)
       .filter(([, attr]) => doesAttributeMatchFilters(attr, filters))
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attributeParser(attr, inputValue[attrName], options)
+        parsers[attrName] = attrWorkflow(attr, inputValue[attrName], options)
 
         additionalAttributeNames.delete(attrName)
       })
@@ -72,9 +98,7 @@ export function* mapAttributeParser<
       ])
       yield linkedValue
     } else {
-      const defaultedValue = (cloneDeep(
-        inputValue
-      ) as unknown) as MapAttributeBasicValue<INPUT_EXTENSION>
+      const defaultedValue = cloneDeep(inputValue)
       yield defaultedValue
 
       const linkedValue = defaultedValue

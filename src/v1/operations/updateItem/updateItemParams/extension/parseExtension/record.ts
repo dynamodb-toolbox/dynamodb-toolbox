@@ -1,20 +1,28 @@
-import type { AttributeBasicValue, AttributeValue, RecordAttribute, Item } from 'v1/schema'
+import type {
+  Schema,
+  Attribute,
+  RecordAttribute,
+  RecordAttributeKeys,
+  RecordAttributeElements,
+  ValidValue,
+  AttributeBasicValue
+} from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
-import { attributeParser } from 'v1/schema/actions/parse'
+import { attrWorkflow } from 'v1/schema/actions/parse'
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $SET, $REMOVE } from 'v1/operations/updateItem/constants'
 import { hasSetOperation } from 'v1/operations/updateItem/utils'
 
-function* parseRecordElementClonedInput(
+function* recordElementsWorkflow(
   attribute: RecordAttribute,
-  inputValue: AttributeValue<UpdateItemInputExtension>,
+  inputValue: unknown,
   options: ParsingOptions<UpdateItemInputExtension>
 ): Generator<
-  AttributeValue<UpdateItemInputExtension>,
-  AttributeValue<UpdateItemInputExtension>,
-  Item<UpdateItemInputExtension> | undefined
+  ValidValue<Attribute, UpdateItemInputExtension>,
+  ValidValue<Attribute, UpdateItemInputExtension>,
+  ValidValue<Schema, UpdateItemInputExtension> | undefined
 > {
   const { fill = true, transform = true } = options
 
@@ -39,12 +47,12 @@ function* parseRecordElementClonedInput(
     return transformedValue
   }
 
-  return yield* attributeParser(attribute.elements, inputValue, options)
+  return yield* attrWorkflow(attribute.elements, inputValue, options)
 }
 
 export const parseRecordExtension = (
   attribute: RecordAttribute,
-  input: AttributeValue<UpdateItemInputExtension> | undefined,
+  input: unknown,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { fill = true, transform = true } = options
@@ -53,7 +61,7 @@ export const parseRecordExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attributeParser(attribute, input[$SET], {
+        const parser = attrWorkflow(attribute, input[$SET], {
           ...options,
           // Should a simple record of valid elements (not extended)
           parseExtension: undefined
@@ -86,30 +94,20 @@ export const parseRecordExtension = (
       isExtension: true,
       *extensionParser() {
         const parsers: [
+          Generator<ValidValue<RecordAttributeKeys>, ValidValue<RecordAttributeKeys>>,
           Generator<
-            AttributeValue<UpdateItemInputExtension>,
-            AttributeValue<UpdateItemInputExtension>
-          >,
-          Generator<
-            AttributeValue<UpdateItemInputExtension>,
-            AttributeValue<UpdateItemInputExtension>
+            ValidValue<RecordAttributeElements, UpdateItemInputExtension>,
+            ValidValue<RecordAttributeElements, UpdateItemInputExtension>
           >
         ][] = Object.entries(input)
           .filter(([, inputValue]) => inputValue !== undefined)
           .map(([inputKey, inputValue]) => [
-            attributeParser<never, UpdateItemInputExtension>(attribute.keys, inputKey, {
+            attrWorkflow<RecordAttributeKeys>(attribute.keys, inputKey, {
               ...options,
               // Should a simple string (not extended)
               parseExtension: undefined
             }),
-            parseRecordElementClonedInput(
-              attribute,
-              /**
-               * @debt type "TODO: Fix this cast"
-               */
-              inputValue as AttributeValue<UpdateItemInputExtension>,
-              options
-            )
+            recordElementsWorkflow(attribute, inputValue, options)
           ])
 
         if (fill) {
