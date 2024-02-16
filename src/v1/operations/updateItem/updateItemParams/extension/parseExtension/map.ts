@@ -1,6 +1,6 @@
-import type { AttributeValue, AttributeBasicValue, MapAttribute } from 'v1/schema'
+import type { MapAttribute, AttributeBasicValue } from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
-import { attributeParser } from 'v1/schema/actions/parse'
+import { attrWorkflow } from 'v1/schema/actions/parse'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $SET } from 'v1/operations/updateItem/constants'
@@ -8,7 +8,7 @@ import { hasSetOperation } from 'v1/operations/updateItem/utils'
 
 export const parseMapExtension = (
   attribute: MapAttribute,
-  input: AttributeValue<UpdateItemInputExtension> | undefined,
+  input: unknown,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { fill = true, transform = true } = options
@@ -17,7 +17,7 @@ export const parseMapExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attributeParser<never, UpdateItemInputExtension>(
+        const parser = attrWorkflow<MapAttribute, never, UpdateItemInputExtension>(
           attribute,
           input[$SET],
           // Should a simple map of valid elements (not extended)

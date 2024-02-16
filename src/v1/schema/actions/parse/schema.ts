@@ -1,26 +1,43 @@
 import cloneDeep from 'lodash.clonedeep'
+import type { O } from 'ts-toolbelt'
 
-import type { Schema, Item, Extension, AttributeValue, SchemaAction } from 'v1/schema'
-import type { If } from 'v1/types'
+import type { Schema, Attribute, AnyAttribute, Extension, Never } from 'v1/schema'
+import type { If, OptionalizeUndefinableProperties, IsConstraint } from 'v1/types'
 import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { HasExtension, ParsingOptions } from './types'
-import { attributeParser } from './attribute'
+import type { ValidValue } from './parser'
+import { attrWorkflow, ValidAttrValue } from './attribute'
 import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
 
-function* schemaWorkflow<SCHEMA_EXTENSION extends Extension = never>(
-  schema: Schema,
-  inputValue: Item<SCHEMA_EXTENSION>,
-  ...[options = {} as ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]: If<
-    HasExtension<SCHEMA_EXTENSION>,
-    [options: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>],
-    [options?: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]
+export type ValidSchemaValue<SCHEMA extends Schema, EXTENSION extends Extension = never> = If<
+  IsConstraint<SCHEMA, Schema>,
+  { [KEY in string]: ValidAttrValue<Attribute, EXTENSION> },
+  OptionalizeUndefinableProperties<
+    {
+      [KEY in keyof SCHEMA['attributes'] & string]: ValidAttrValue<
+        SCHEMA['attributes'][KEY],
+        EXTENSION
+      >
+    },
+    // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+    O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
   >
-): Generator<Item<SCHEMA_EXTENSION>, Item<SCHEMA_EXTENSION>> {
+>
+
+export function* schemaWorkflow<SCHEMA extends Schema, EXTENSION extends Extension = never>(
+  schema: SCHEMA,
+  inputValue: unknown,
+  ...[options = {} as ParsingOptions<EXTENSION, EXTENSION>]: If<
+    HasExtension<EXTENSION>,
+    [options: ParsingOptions<EXTENSION, EXTENSION>],
+    [options?: ParsingOptions<EXTENSION, EXTENSION>]
+  >
+): Generator<ValidValue<SCHEMA, EXTENSION>, ValidValue<SCHEMA, EXTENSION>> {
   const { filters, fill = true, transform = true } = options
-  const parsers: Record<string, Generator<AttributeValue<SCHEMA_EXTENSION>>> = {}
-  let restEntries: [string, AttributeValue<SCHEMA_EXTENSION>][] = []
+  const parsers: Record<string, Generator<ValidValue<Attribute, EXTENSION>>> = {}
+  let restEntries: [string, ValidValue<Attribute, EXTENSION>][] = []
 
   const isInputValueObject = isObject(inputValue)
 
@@ -30,7 +47,7 @@ function* schemaWorkflow<SCHEMA_EXTENSION extends Extension = never>(
     Object.entries(schema.attributes)
       .filter(([, attr]) => doesAttributeMatchFilters(attr, filters))
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attributeParser(attr, inputValue[attrName], options)
+        parsers[attrName] = attrWorkflow(attr, inputValue[attrName], options)
 
         additionalAttributeNames.delete(attrName)
       })
@@ -60,10 +77,10 @@ function* schemaWorkflow<SCHEMA_EXTENSION extends Extension = never>(
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue
+      yield defaultedValue as any
 
       const linkedValue = defaultedValue
-      yield linkedValue
+      yield linkedValue as any
     }
   }
 
@@ -98,44 +115,4 @@ function* schemaWorkflow<SCHEMA_EXTENSION extends Extension = never>(
       .filter(([, attrValue]) => attrValue !== undefined)
   )
   return transformedValue
-}
-
-export class Parser<SCHEMA extends Schema> implements SchemaAction<SCHEMA> {
-  schema: SCHEMA
-
-  constructor(schema: SCHEMA) {
-    this.schema = schema
-  }
-
-  workflow<SCHEMA_EXTENSION extends Extension = never>(
-    inputValue: Item<SCHEMA_EXTENSION>,
-    ...[options = {} as ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]: If<
-      HasExtension<SCHEMA_EXTENSION>,
-      [options: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>],
-      [options?: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]
-    >
-  ): Generator<Item<SCHEMA_EXTENSION>, Item<SCHEMA_EXTENSION>> {
-    return schemaWorkflow(this.schema, inputValue, options)
-  }
-
-  parse<SCHEMA_EXTENSION extends Extension = never>(
-    inputValue: Item<SCHEMA_EXTENSION>,
-    ...[options = {} as ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]: If<
-      HasExtension<SCHEMA_EXTENSION>,
-      [options: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>],
-      [options?: ParsingOptions<SCHEMA_EXTENSION, SCHEMA_EXTENSION>]
-    >
-  ): Item<SCHEMA_EXTENSION> {
-    const workflow = this.workflow(inputValue, options)
-
-    let done = false
-    let value: Item<SCHEMA_EXTENSION>
-    do {
-      const nextState = workflow.next()
-      done = Boolean(nextState.done)
-      value = nextState.value
-    } while (!done)
-
-    return value
-  }
 }

@@ -13,7 +13,7 @@ import {
   SavedItem,
   KeyInput
 } from 'v1'
-import { SchemaAction } from 'v1/schema/action'
+import { Parser } from 'v1/schema/actions/parse'
 
 const playgroundSchema1 = schema({
   reqStr: string(),
@@ -43,13 +43,12 @@ const playgroundSchema1 = schema({
   hiddenList: list(string()).optional().hidden()
 })
 
-const schemaAction = playgroundSchema1.build(SchemaAction)
-schemaAction
+const parsedValue = playgroundSchema1.build(Parser).parse({ foo: 'bar' })
 
 type PlaygroundSchema1PutItemInput = PutItemInput<typeof playgroundSchema1>
 type PlaygroundSchema1FormattedItem = FormattedValue<typeof playgroundSchema1>
 
-const listAction = list(string()).optional().hidden().freeze('').build(SchemaAction)
+const parsedValue2 = list(string()).optional().freeze().build(Parser).parse({ foo: 'bar' })
 
 const allCasesOfProps = {
   optProp: string().optional(),

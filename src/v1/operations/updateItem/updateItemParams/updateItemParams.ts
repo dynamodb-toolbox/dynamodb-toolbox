@@ -6,7 +6,7 @@ import type { EntityV2 } from 'v1/entity'
 import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
 import { Parser } from 'v1/schema/actions/parse'
 
-import type { UpdateItemInput } from '../types'
+import type { UpdateItemInput, UpdateItemInputExtension } from '../types'
 import type { UpdateItemOptions } from '../options'
 import { parseUpdate } from '../updateExpression'
 import { parseUpdateExtension } from './extension/parseExtension'
@@ -20,7 +20,7 @@ export const updateItemParams = <
   input: UpdateItemInput<ENTITY>,
   updateItemOptions: OPTIONS = {} as OPTIONS
 ): UpdateCommandInput => {
-  const workflow = entity.schema.build(Parser).workflow(input, {
+  const workflow = entity.schema.build(Parser).workflow<UpdateItemInputExtension>(input, {
     fill: 'update',
     transform: true,
     requiringOptions: new Set(['always']),

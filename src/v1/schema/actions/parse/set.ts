@@ -1,58 +1,65 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type {
+  Schema,
   SetAttribute,
-  AttributeValue,
-  AttributeBasicValue,
-  SetAttributeBasicValue,
+  SetAttributeElements,
   Extension,
-  Item
+  ExtendedValue
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { isSet } from 'v1/utils/validation/isSet'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { ValidValue } from './parser'
 import type { HasExtension, ParsingOptions } from './types'
-import { attributeParser } from './attribute'
+import { attrWorkflow, ValidAttrValue } from './attribute'
 
-export function* setAttributeParser<
+export type ValidSetAttrValue<
+  ATTRIBUTE extends SetAttribute,
+  EXTENSION extends Extension = never
+> = Set<ValidAttrValue<ATTRIBUTE['elements']>> | ExtendedValue<EXTENSION, 'set'>
+
+export function* setAttrWorkflow<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
   attribute: SetAttribute,
-  inputValue: AttributeBasicValue<INPUT_EXTENSION>,
+  inputValue: unknown,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<
-  SetAttributeBasicValue<INPUT_EXTENSION>,
-  SetAttributeBasicValue<INPUT_EXTENSION>,
-  Item<SCHEMA_EXTENSION> | undefined
+  ValidSetAttrValue<SetAttribute, INPUT_EXTENSION>,
+  ValidSetAttrValue<SetAttribute, INPUT_EXTENSION>,
+  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
 > {
   const { fill = true, transform = true } = options
 
-  const parsers: Generator<AttributeValue<INPUT_EXTENSION>, AttributeValue<INPUT_EXTENSION>>[] = []
+  const parsers: Generator<
+    ValidValue<SetAttributeElements, INPUT_EXTENSION>,
+    ValidValue<SetAttributeElements, INPUT_EXTENSION>,
+    ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+  >[] = []
 
   const isInputValueSet = isSet(inputValue)
   if (isInputValueSet) {
     for (const element of inputValue.values()) {
-      parsers.push(attributeParser(attribute.elements, element, options))
+      parsers.push(attrWorkflow(attribute.elements, element, options))
     }
   }
 
   if (fill) {
     if (isInputValueSet) {
       const defaultedValue = new Set(parsers.map(parser => parser.next().value))
-      yield defaultedValue as SetAttributeBasicValue<INPUT_EXTENSION>
+      yield defaultedValue
 
       const linkedValue = new Set(parsers.map(parser => parser.next().value))
       yield linkedValue
     } else {
-      const defaultedValue = (cloneDeep(
-        inputValue
-      ) as unknown) as SetAttributeBasicValue<INPUT_EXTENSION>
+      const defaultedValue = cloneDeep(inputValue)
       yield defaultedValue
 
       const linkedValue = defaultedValue

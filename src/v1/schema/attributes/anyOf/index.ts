@@ -6,3 +6,4 @@ export type {
   AnyOfAttribute
 } from './interface'
 export type { FreezeAnyOfAttribute } from './freeze'
+export type { AnyOfAttributeElements } from './types'

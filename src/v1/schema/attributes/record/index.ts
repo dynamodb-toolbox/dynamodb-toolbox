@@ -6,3 +6,4 @@ export type {
   RecordAttribute
 } from './interface'
 export type { FreezeRecordAttribute } from './freeze'
+export type { RecordAttributeKeys, RecordAttributeElements } from './types'
