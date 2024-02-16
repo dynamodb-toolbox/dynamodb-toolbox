@@ -7,7 +7,7 @@ import {
   AppendAttributePathOptions
 } from 'v1/operations/expression/expressionParser'
 
-import type { UpdateItemInputExtension } from '../types'
+import type { ReferenceExtension, UpdateItemInputExtension } from '../types'
 import { hasGetOperation } from '../utils'
 import { $GET } from '../constants'
 import type { ParsedUpdate } from './type'
@@ -80,7 +80,11 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     validAttributeValue: AttributeValue<UpdateItemInputExtension>
   ): void => {
     if (hasGetOperation(validAttributeValue)) {
-      const [expression, fallback] = validAttributeValue[$GET]
+      // TODO: Fix this cast
+      const [expression, fallback] = validAttributeValue[$GET] as [
+        string,
+        AttributeValue<ReferenceExtension> | undefined
+      ]
 
       if (fallback === undefined) {
         this.appendAttributePath(expression)

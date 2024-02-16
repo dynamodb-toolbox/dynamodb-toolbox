@@ -1,44 +1,75 @@
 import cloneDeep from 'lodash.clonedeep'
 
 import type {
+  Schema,
+  Attribute,
   AnyOfAttribute,
+  AnyOfAttributeElements,
   Extension,
-  AttributeValue,
-  AttributeBasicValue,
-  Item
+  ExtendedValue
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { ValidValue } from './parser'
 import type { HasExtension, ParsingOptions } from './types'
-import { attributeParser } from './attribute'
+import { attrWorkflow, ValidAttrValue } from './attribute'
+
+export type ValidAnyOfAttrValue<
+  ATTRIBUTE extends AnyOfAttribute,
+  EXTENSION extends Extension = never
+> = ValidAnyOfAttrValueRec<ATTRIBUTE['elements'], EXTENSION> | ExtendedValue<EXTENSION, 'anyOf'>
+
+type ValidAnyOfAttrValueRec<
+  ELEMENTS extends Attribute[],
+  EXTENSION extends Extension = never,
+  RESULTS = never
+> = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
+  ? ELEMENTS_HEAD extends Attribute
+    ? ELEMENTS_TAIL extends Attribute[]
+      ? ValidAnyOfAttrValueRec<
+          ELEMENTS_TAIL,
+          EXTENSION,
+          RESULTS | ValidAttrValue<ELEMENTS_HEAD, EXTENSION>
+        >
+      : never
+    : never
+  : [RESULTS] extends [never]
+  ? unknown
+  : RESULTS
 
 export function* anyOfAttributeParser<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
   attribute: AnyOfAttribute,
-  inputValue: AttributeBasicValue<INPUT_EXTENSION>,
+  inputValue: unknown,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<
-  AttributeBasicValue<INPUT_EXTENSION>,
-  AttributeBasicValue<INPUT_EXTENSION>,
-  Item<SCHEMA_EXTENSION> | undefined
+  ValidAnyOfAttrValue<AnyOfAttribute, INPUT_EXTENSION>,
+  ValidAnyOfAttrValue<AnyOfAttribute, INPUT_EXTENSION>,
+  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
 > {
   const { fill = true, transform = true } = options
 
-  let parser: Generator<AttributeValue<INPUT_EXTENSION>> | undefined = undefined
-  let _defaultedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
-  let _linkedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
-  let _parsedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
+  let parser:
+    | Generator<
+        ValidValue<AnyOfAttributeElements, INPUT_EXTENSION>,
+        ValidValue<AnyOfAttributeElements, INPUT_EXTENSION>,
+        ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+      >
+    | undefined = undefined
+  let _defaultedValue = undefined
+  let _linkedValue = undefined
+  let _parsedValue = undefined
 
   for (const elementAttribute of attribute.elements) {
     try {
-      parser = attributeParser(elementAttribute, inputValue, options)
+      parser = attrWorkflow(elementAttribute, inputValue, options)
       if (fill) {
         _defaultedValue = parser.next().value
         // Note: Links cannot be used in anyOf elements or sub elements for this reason (we need the return of the yield)

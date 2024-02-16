@@ -1,28 +1,34 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { AttributeBasicValue, Extension, Item } from 'v1/schema'
+import type { Schema, AnyAttribute, Extension, ExtendedValue } from 'v1/schema'
 import type { If } from 'v1/types'
 
+import type { ValidValue } from './parser'
 import type { HasExtension, ParsingOptions } from './types'
 
-export function* anyAttributeParser<
+export type ValidAnyAttrValue<
+  ATTRIBUTE extends AnyAttribute,
+  EXTENSION extends Extension = never
+> = ATTRIBUTE['castAs'] | ExtendedValue<EXTENSION, 'any'>
+
+export function* anyAttrWorkflow<
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
-  inputValue: AttributeBasicValue<INPUT_EXTENSION>,
+  inputValue: unknown,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<
-  AttributeBasicValue<INPUT_EXTENSION>,
-  AttributeBasicValue<INPUT_EXTENSION>,
-  Item<SCHEMA_EXTENSION> | undefined
+  ValidAnyAttrValue<AnyAttribute, INPUT_EXTENSION>,
+  ValidAnyAttrValue<AnyAttribute, INPUT_EXTENSION>,
+  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
 > {
   const { fill = true, transform = true } = options
 
-  let linkedValue: AttributeBasicValue<INPUT_EXTENSION> | undefined = undefined
+  let linkedValue = undefined
   if (fill) {
     const defaultedValue = cloneDeep(inputValue)
     yield defaultedValue

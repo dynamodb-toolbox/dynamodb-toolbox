@@ -1,5 +1,5 @@
 import type { ExtensionParser } from 'v1/schema/actions/parse/types'
-import type { PrimitiveAttribute } from 'v1/schema'
+import type { PrimitiveAttribute, AttributeBasicValue } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
@@ -80,6 +80,9 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
     case 'record':
       return parseRecordExtension(attribute, input, nextOpts)
     default:
-      return { isExtension: false, basicInput: input }
+      return {
+        isExtension: false,
+        basicInput: input as AttributeBasicValue<UpdateItemInputExtension> | undefined
+      }
   }
 }

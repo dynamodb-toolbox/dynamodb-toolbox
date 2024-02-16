@@ -4,7 +4,7 @@ import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
-import { attributeParser } from 'v1/schema/actions/parse'
+import { attrWorkflow } from 'v1/schema/actions/parse'
 
 export type AppendAttributePathOptions = { size?: boolean }
 
@@ -38,7 +38,7 @@ const defaultAnyAttribute = new AnyAttribute({
   castAs: undefined
 })
 
-const defaultNumberAttribute: PrimitiveAttribute<'number'> = new PrimitiveAttribute({
+const defaultNumberAttribute = new PrimitiveAttribute({
   type: 'number',
   required: 'never',
   hidden: false,
@@ -118,7 +118,7 @@ export const appendAttributePath = (
 
       case 'record': {
         const keyAttribute = parentAttribute.keys
-        const keyParser = attributeParser(keyAttribute, childAttributeAccessor, {
+        const keyParser = attrWorkflow(keyAttribute, childAttributeAccessor, {
           fill: false,
           transform: true
         })

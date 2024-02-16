@@ -1,10 +1,10 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { AttributeValue } from 'v1/schema'
+import type { Attribute, ValidValue, AttributeBasicValue } from 'v1/schema'
 import type { ReferenceExtension } from 'v1/operations/types'
 import type { ExtensionParser } from 'v1/schema/actions/parse/types'
 import { isArray } from 'v1/utils/validation/isArray'
-import { attributeParser } from 'v1/schema/actions/parse/attribute'
+import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
@@ -22,26 +22,30 @@ export const parseReferenceExtension: ExtensionParser<
     return {
       isExtension: true,
       *extensionParser() {
-        const isInputValueArray = isArray(inputValue[$GET])
+        const references = inputValue[$GET]
+        const areReferencesArray = isArray(references)
         let reference: string | undefined = undefined
         let fallbackParser:
-          | Generator<AttributeValue<ReferenceExtension>, AttributeValue<ReferenceExtension>>
+          | Generator<
+              ValidValue<Attribute, ReferenceExtension>,
+              ValidValue<Attribute, ReferenceExtension>
+            >
           | undefined = undefined
-        let rest: AttributeValue<ReferenceExtension>[] = []
+        let rest: unknown[] = []
 
-        if (isInputValueArray) {
-          const [_reference, fallback, ..._rest] = inputValue[$GET]
-          reference = _reference
+        if (areReferencesArray) {
+          const [_reference, fallback, ..._rest] = references
+          reference = _reference as string | undefined
 
           if (fallback !== undefined) {
-            fallbackParser = attributeParser(attribute, fallback, options)
+            fallbackParser = attrWorkflow(attribute, fallback, options)
           }
 
           rest = _rest
         }
 
         if (fill) {
-          if (isInputValueArray) {
+          if (areReferencesArray) {
             const defaultedValue = {
               [$GET]: [
                 cloneDeep(reference),
@@ -80,7 +84,7 @@ export const parseReferenceExtension: ExtensionParser<
           }
         }
 
-        if (!isInputValueArray) {
+        if (!areReferencesArray) {
           const { path } = attribute
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -103,7 +107,7 @@ export const parseReferenceExtension: ExtensionParser<
             }should be strings`,
             path,
             payload: {
-              received: inputValue[$GET][0]
+              received: references[0]
             }
           })
         }
@@ -131,6 +135,6 @@ export const parseReferenceExtension: ExtensionParser<
 
   return {
     isExtension: false,
-    basicInput: inputValue
+    basicInput: inputValue as AttributeBasicValue<ReferenceExtension> | undefined
   }
 }

@@ -1,10 +1,10 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Schema, Attribute } from 'v1/schema'
+import type { Schema, Attribute, AttributeValue } from 'v1/schema'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isArray } from 'v1/utils/validation/isArray'
 
-import type { UpdateItemInput, AttributeUpdateItemInput } from '../types'
+import type { UpdateItemInput, AttributeUpdateItemInput, UpdateItemInputExtension } from '../types'
 import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants'
 import {
   hasSetOperation,
@@ -47,7 +47,8 @@ export class UpdateExpressionParser {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
-      this.set.appendValidAttributeValue(input[$SET])
+      // TODO: Fix this cast
+      this.set.appendValidAttributeValue(input[$SET] as AttributeValue<UpdateItemInputExtension>)
       return
     }
 
@@ -66,24 +67,32 @@ export class UpdateExpressionParser {
     }
 
     if (hasSumOperation(input)) {
-      const [a, b] = input[$SUM]
+      // TODO: Fix this cast
+      const [left, right] = input[$SUM] as [
+        AttributeValue<UpdateItemInputExtension>,
+        AttributeValue<UpdateItemInputExtension>
+      ]
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
-      this.set.appendValidAttributeValue(a)
+      this.set.appendValidAttributeValue(left)
       this.set.appendToExpression(' + ')
-      this.set.appendValidAttributeValue(b)
+      this.set.appendValidAttributeValue(right)
       return
     }
 
     if (hasSubtractOperation(input)) {
-      const [a, b] = input[$SUBTRACT]
+      // TODO: Fix this cast
+      const [left, right] = input[$SUBTRACT] as [
+        AttributeValue<UpdateItemInputExtension>,
+        AttributeValue<UpdateItemInputExtension>
+      ]
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
-      this.set.appendValidAttributeValue(a)
+      this.set.appendValidAttributeValue(left)
       this.set.appendToExpression(' - ')
-      this.set.appendValidAttributeValue(b)
+      this.set.appendValidAttributeValue(right)
       return
     }
 
@@ -91,7 +100,8 @@ export class UpdateExpressionParser {
       this.add.beginNewInstruction()
       this.add.appendValidAttributePath(currentPath)
       this.add.appendToExpression(' ')
-      this.add.appendValidAttributeValue(input[$ADD])
+      // TODO: Fix this cast
+      this.add.appendValidAttributeValue(input[$ADD] as AttributeValue<UpdateItemInputExtension>)
       return
     }
 
@@ -99,7 +109,10 @@ export class UpdateExpressionParser {
       this.delete.beginNewInstruction()
       this.delete.appendValidAttributePath(currentPath)
       this.delete.appendToExpression(' ')
-      this.delete.appendValidAttributeValue(input[$DELETE])
+      // TODO: Fix this cast
+      this.delete.appendValidAttributeValue(
+        input[$DELETE] as AttributeValue<UpdateItemInputExtension>
+      )
       return
     }
 
@@ -109,7 +122,8 @@ export class UpdateExpressionParser {
       this.set.appendToExpression(' = list_append(')
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(', ')
-      this.set.appendValidAttributeValue(input[$APPEND])
+      // TODO: Fix this cast
+      this.set.appendValidAttributeValue(input[$APPEND] as AttributeValue<UpdateItemInputExtension>)
       this.set.appendToExpression(')')
       return
     }
@@ -118,7 +132,10 @@ export class UpdateExpressionParser {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = list_append(')
-      this.set.appendValidAttributeValue(input[$PREPEND])
+      // TODO: Fix this cast
+      this.set.appendValidAttributeValue(
+        input[$PREPEND] as AttributeValue<UpdateItemInputExtension>
+      )
       this.set.appendToExpression(', ')
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(')')

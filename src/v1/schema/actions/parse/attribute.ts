@@ -1,37 +1,79 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { RequiredOption, Attribute, Extension, AttributeValue, Item } from 'v1/schema'
-import type { If } from 'v1/types'
+import type {
+  RequiredOption,
+  Attribute,
+  AnyAttribute,
+  PrimitiveAttribute,
+  SetAttribute,
+  ListAttribute,
+  MapAttribute,
+  RecordAttribute,
+  AnyOfAttribute,
+  Extension,
+  AtLeastOnce,
+  Always
+} from 'v1/schema'
+import type { If, IsConstraint } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isFunction, isString } from 'v1/utils/validation'
 
+import type { ValidValue } from './parser'
 import type { HasExtension, ParsingOptions, ExtensionParser } from './types'
-import { anyAttributeParser } from './any'
-import { primitiveAttributeParser } from './primitive'
-import { setAttributeParser } from './set'
-import { listAttributeParser } from './list'
-import { mapAttributeParser } from './map'
-import { recordAttributeParser } from './record'
-import { anyOfAttributeParser } from './anyOf'
+import { anyAttrWorkflow, ValidAnyAttrValue } from './any'
+import { primitiveAttrWorkflow, ValidPrimitiveAttrValue } from './primitive'
+import { setAttrWorkflow, ValidSetAttrValue } from './set'
+import { listAttrWorkflow, ValidListAttrValue } from './list'
+import { mapAttributeParser, ValidMapAttrValue } from './map'
+import { recordAttributeParser, ValidRecordAttrValue } from './record'
+import { anyOfAttributeParser, ValidAnyOfAttrValue } from './anyOf'
 import { defaultParseExtension } from './utils'
+
+type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
+  required: AtLeastOnce | Always
+}
+  ? true
+  : false
+
+export type ValidAttrValue<ATTRIBUTE extends Attribute, EXTENSION extends Extension = never> = If<
+  IsConstraint<ATTRIBUTE, Attribute>,
+  unknown,
+  | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+  | (ATTRIBUTE extends AnyAttribute
+      ? ValidAnyAttrValue<ATTRIBUTE, EXTENSION>
+      : ATTRIBUTE extends PrimitiveAttribute
+      ? ValidPrimitiveAttrValue<ATTRIBUTE, EXTENSION>
+      : ATTRIBUTE extends SetAttribute
+      ? ValidSetAttrValue<ATTRIBUTE, EXTENSION>
+      : ATTRIBUTE extends ListAttribute
+      ? ValidListAttrValue<ATTRIBUTE, EXTENSION>
+      : ATTRIBUTE extends MapAttribute
+      ? ValidMapAttrValue<ATTRIBUTE, EXTENSION>
+      : ATTRIBUTE extends RecordAttribute
+      ? ValidRecordAttrValue<ATTRIBUTE, EXTENSION>
+      : ATTRIBUTE extends AnyOfAttribute
+      ? ValidAnyOfAttrValue<ATTRIBUTE, EXTENSION>
+      : never)
+>
 
 const defaultRequiringOptions = new Set<RequiredOption>(['atLeastOnce', 'always'])
 
-export function* attributeParser<
+export function* attrWorkflow<
+  ATTRIBUTE extends Attribute,
   INPUT_EXTENSION extends Extension = never,
   SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
 >(
-  attribute: Attribute,
-  inputValue: AttributeValue<INPUT_EXTENSION> | undefined,
+  attribute: ATTRIBUTE,
+  inputValue: unknown,
   ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
     HasExtension<INPUT_EXTENSION>,
     [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
     [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
   >
 ): Generator<
-  AttributeValue<INPUT_EXTENSION>,
-  AttributeValue<INPUT_EXTENSION>,
-  Item<SCHEMA_EXTENSION> | undefined
+  ValidValue<ATTRIBUTE, INPUT_EXTENSION>,
+  ValidValue<ATTRIBUTE, INPUT_EXTENSION>,
+  ValidValue<ATTRIBUTE, SCHEMA_EXTENSION> | undefined
 > {
   const {
     requiringOptions = defaultRequiringOptions,
@@ -46,28 +88,28 @@ export function* attributeParser<
     >
   } = options
 
-  let filledValue: AttributeValue<INPUT_EXTENSION> | undefined = inputValue
+  let filledValue: ValidValue<ATTRIBUTE, INPUT_EXTENSION> | undefined = inputValue as any
   let nextFill = fill
 
   if (nextFill && filledValue === undefined) {
-    let defaultedValue: AttributeValue<INPUT_EXTENSION> | undefined = undefined
+    let defaultedValue: ValidValue<ATTRIBUTE, INPUT_EXTENSION> | undefined = undefined
     const isFillString = isString(fill)
 
     if (isFillString) {
       const operationDefault = attribute.defaults[attribute.key ? 'key' : fill]
       defaultedValue = isFunction(operationDefault)
         ? operationDefault()
-        : cloneDeep(operationDefault)
+        : (cloneDeep(operationDefault) as any)
     }
 
-    const itemInput = yield defaultedValue
+    const itemInput = yield defaultedValue as ValidValue<ATTRIBUTE, INPUT_EXTENSION>
 
-    let linkedValue: AttributeValue<INPUT_EXTENSION> | undefined = defaultedValue
+    let linkedValue: ValidValue<ATTRIBUTE, INPUT_EXTENSION> | undefined = defaultedValue
     if (isFillString && linkedValue === undefined && itemInput !== undefined) {
       const operationLink = attribute.links[attribute.key ? 'key' : fill]
-      linkedValue = isFunction(operationLink) ? operationLink(itemInput) : linkedValue
+      linkedValue = (isFunction(operationLink) ? operationLink(itemInput) : linkedValue) as any
     }
-    yield linkedValue
+    yield linkedValue as ValidValue<ATTRIBUTE, INPUT_EXTENSION>
 
     filledValue = linkedValue
     nextFill = false
@@ -82,7 +124,7 @@ export function* attributeParser<
   )
 
   if (isExtension) {
-    return yield* extensionParser()
+    return yield* extensionParser() as any
   }
 
   if (basicInput === undefined) {
@@ -99,32 +141,56 @@ export function* attributeParser<
     const parsedValue = basicInput
 
     if (transform) {
-      yield parsedValue
+      yield parsedValue as any
     } else {
-      return parsedValue
+      return parsedValue as any
     }
 
     const transformedValue = parsedValue
-    return transformedValue
+    return transformedValue as any
   }
 
   switch (attribute.type) {
     case 'any':
-      return yield* anyAttributeParser(basicInput, nextOpts)
+      return yield* anyAttrWorkflow<INPUT_EXTENSION, SCHEMA_EXTENSION>(basicInput, nextOpts) as any
     case 'boolean':
     case 'binary':
     case 'number':
     case 'string':
-      return yield* primitiveAttributeParser(attribute, basicInput, nextOpts)
+      return yield* primitiveAttrWorkflow<INPUT_EXTENSION, SCHEMA_EXTENSION>(
+        attribute,
+        basicInput,
+        nextOpts
+      ) as any
     case 'set':
-      return yield* setAttributeParser(attribute, basicInput, nextOpts)
+      return yield* setAttrWorkflow<INPUT_EXTENSION, SCHEMA_EXTENSION>(
+        attribute,
+        basicInput,
+        nextOpts
+      ) as any
     case 'list':
-      return yield* listAttributeParser(attribute, basicInput, nextOpts)
+      return yield* listAttrWorkflow<INPUT_EXTENSION, SCHEMA_EXTENSION>(
+        attribute,
+        basicInput,
+        nextOpts
+      ) as any
     case 'map':
-      return yield* mapAttributeParser(attribute, basicInput, nextOpts)
+      return yield* mapAttributeParser<INPUT_EXTENSION, SCHEMA_EXTENSION>(
+        attribute,
+        basicInput,
+        nextOpts
+      ) as any
     case 'record':
-      return yield* recordAttributeParser(attribute, basicInput, nextOpts)
+      return yield* recordAttributeParser<INPUT_EXTENSION, SCHEMA_EXTENSION>(
+        attribute,
+        basicInput,
+        nextOpts
+      ) as any
     case 'anyOf':
-      return yield* anyOfAttributeParser(attribute, basicInput, nextOpts)
+      return yield* anyOfAttributeParser<INPUT_EXTENSION, SCHEMA_EXTENSION>(
+        attribute,
+        basicInput,
+        nextOpts
+      ) as any
   }
 }
