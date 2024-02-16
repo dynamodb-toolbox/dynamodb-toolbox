@@ -88,10 +88,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
   if (isCreatedEnable) {
     const createdName = getTimestampOptionValue(timestamps, 'created', 'name')
 
-    const createdAttribute: TimestampAttribute<
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
-    > = new PrimitiveAttribute({
+    const createdAttribute = new PrimitiveAttribute({
       path: createdName,
       type: 'string',
       required: 'atLeastOnce',
@@ -119,10 +116,7 @@ export const addTimestampAttributes: TimestampAttributesAdder = <
   if (isModifiedEnable) {
     const modifiedName = getTimestampOptionValue(timestamps, 'modified', 'name')
 
-    const modifiedAttribute: TimestampAttribute<
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
-      TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
-    > = new PrimitiveAttribute({
+    const modifiedAttribute = new PrimitiveAttribute({
       path: modifiedName,
       type: 'string',
       required: 'atLeastOnce',
