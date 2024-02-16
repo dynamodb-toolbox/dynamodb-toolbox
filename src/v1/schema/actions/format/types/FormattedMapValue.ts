@@ -24,7 +24,7 @@ export type FormattedMapValue<
   [MATCHING_KEYS] extends [never]
     ? never
     : O.Required<
-        O.Partial<
+        Partial<
           {
             // Keep only non-hidden attributes
             [KEY in O.SelectKeys<

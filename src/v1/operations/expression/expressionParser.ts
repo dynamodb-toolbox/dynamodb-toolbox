@@ -38,7 +38,7 @@ const defaultAnyAttribute = new AnyAttribute({
   castAs: undefined
 })
 
-const defaultNumberAttribute: PrimitiveAttribute<'number'> = new PrimitiveAttribute({
+const defaultNumberAttribute = new PrimitiveAttribute({
   type: 'number',
   required: 'never',
   hidden: false,
