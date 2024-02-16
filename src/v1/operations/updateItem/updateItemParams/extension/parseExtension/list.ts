@@ -1,6 +1,12 @@
-import type { AttributeBasicValue, AttributeValue, ListAttribute, Item } from 'v1/schema'
+import type {
+  Schema,
+  ListAttribute,
+  ListAttributeElements,
+  ValidValue,
+  AttributeBasicValue
+} from 'v1/schema'
 import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
-import { attributeParser } from 'v1/schema/actions/parse/attribute'
+import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
@@ -16,14 +22,14 @@ import {
 
 import { parseReferenceExtension } from './reference'
 
-function* parseListElementClonedInput(
+function* listElementWorkflow(
   attribute: ListAttribute,
-  inputValue: AttributeValue<UpdateItemInputExtension> | undefined,
+  inputValue: unknown,
   options: ParsingOptions<UpdateItemInputExtension>
 ): Generator<
-  AttributeValue<UpdateItemInputExtension> | undefined,
-  AttributeValue<UpdateItemInputExtension> | undefined,
-  Item<UpdateItemInputExtension> | undefined
+  ValidValue<ListAttributeElements, UpdateItemInputExtension> | undefined,
+  ValidValue<ListAttributeElements, UpdateItemInputExtension> | undefined,
+  ValidValue<Schema, UpdateItemInputExtension> | undefined
 > {
   const { fill = true, transform = true } = options
 
@@ -69,12 +75,12 @@ function* parseListElementClonedInput(
     return transformedValue
   }
 
-  return yield* attributeParser(attribute.elements, inputValue, options)
+  return yield* attrWorkflow(attribute.elements, inputValue, options)
 }
 
 export const parseListExtension = (
   attribute: ListAttribute,
-  input: AttributeValue<UpdateItemInputExtension> | undefined,
+  input: unknown,
   options: ParsingOptions<UpdateItemInputExtension>
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { fill = true, transform = true } = options
@@ -83,7 +89,7 @@ export const parseListExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attributeParser(attribute, input[$SET], {
+        const parser = attrWorkflow(attribute, input[$SET], {
           ...options,
           // Should a simple list of valid elements (not extended)
           parseExtension: undefined
@@ -119,11 +125,8 @@ export const parseListExtension = (
         return {
           isExtension: true,
           *extensionParser() {
-            /**
-             * @debt type "TODO: fix this cast"
-             */
-            const parsers = (appendedValue as AttributeValue<never>[]).map(element =>
-              attributeParser<never, UpdateItemInputExtension>(
+            const parsers = appendedValue.map(element =>
+              attrWorkflow<ListAttributeElements, never, UpdateItemInputExtension>(
                 attribute.elements,
                 element,
                 // Should a simple list of valid elements (not extended)
@@ -156,7 +159,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = attributeParser<ReferenceExtension, UpdateItemInputExtension>(
+          const parser = attrWorkflow<ListAttribute, ReferenceExtension, UpdateItemInputExtension>(
             attribute,
             appendedValue,
             // Can be a reference
@@ -192,11 +195,8 @@ export const parseListExtension = (
         return {
           isExtension: true,
           *extensionParser() {
-            /**
-             * @debt type "TODO: fix this cast"
-             */
-            const parsers = (prependedValue as AttributeValue<never>[]).map(element =>
-              attributeParser<never, UpdateItemInputExtension>(
+            const parsers = prependedValue.map(element =>
+              attrWorkflow<ListAttributeElements, never, UpdateItemInputExtension>(
                 attribute.elements,
                 element,
                 // Should a simple list of valid elements (not extended)
@@ -229,7 +229,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = attributeParser<ReferenceExtension, UpdateItemInputExtension>(
+          const parser = attrWorkflow<ListAttribute, ReferenceExtension, UpdateItemInputExtension>(
             attribute,
             prependedValue,
             // Can be a reference
@@ -264,15 +264,12 @@ export const parseListExtension = (
         let maxUpdatedIndex = 0
         const parsers: {
           [KEY in number]: Generator<
-            AttributeValue<UpdateItemInputExtension>,
-            AttributeValue<UpdateItemInputExtension>
+            ValidValue<ListAttributeElements, UpdateItemInputExtension>,
+            ValidValue<ListAttributeElements, UpdateItemInputExtension>
           >
         } = Object.fromEntries(
           Object.entries(input)
-            .map(([index, element]) => [
-              index,
-              parseListElementClonedInput(attribute, element, options)
-            ])
+            .map(([index, element]) => [index, listElementWorkflow(attribute, element, options)])
             .filter(([, element]) => element !== undefined)
         )
 

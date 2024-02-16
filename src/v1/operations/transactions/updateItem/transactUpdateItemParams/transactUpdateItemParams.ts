@@ -4,6 +4,8 @@ import omit from 'lodash.omit'
 
 import type { EntityV2 } from 'v1/entity'
 import type { UpdateItemInput } from 'v1/operations/updateItem'
+import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
+import { parseUpdate } from 'v1/operations/updateItem/updateExpression/parse'
 import { parseUpdateExtension } from 'v1/operations/updateItem/updateItemParams/extension/parseExtension'
 import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
 import { Parser } from 'v1/schema/actions/parse'
@@ -11,7 +13,6 @@ import { Parser } from 'v1/schema/actions/parse'
 import type { UpdateItemTransactionOptions } from '../options'
 
 import { parseUpdateItemTransactionOptions } from './parseUpdateItemOptions'
-import { parseUpdate } from 'v1/operations/updateItem/updateExpression/parse'
 
 export type TransactUpdateItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Update']
@@ -25,7 +26,7 @@ export const transactUpdateItemParams = <
   input: UpdateItemInput<ENTITY>,
   updateItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactUpdateItemParams => {
-  const workflow = entity.schema.build(Parser).workflow(input, {
+  const workflow = entity.schema.build(Parser).workflow<UpdateItemInputExtension>(input, {
     fill: 'update',
     transform: true,
     requiringOptions: new Set(['always']),

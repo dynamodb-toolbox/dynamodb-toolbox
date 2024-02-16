@@ -1,5 +1,5 @@
 import type { Attribute, AttributeValue } from 'v1/schema'
-import { attributeParser } from 'v1/schema/actions/parse'
+import { attrWorkflow } from 'v1/schema/actions/parse'
 
 import type { ConditionParser } from './parser'
 
@@ -13,7 +13,7 @@ export const appendAttributeValue = (
 ): void => {
   const { transform = false } = options
 
-  const inputParser = attributeParser(attribute, expressionAttributeValue as AttributeValue, {
+  const inputParser = attrWorkflow(attribute, expressionAttributeValue as AttributeValue, {
     fill: false,
     transform
   })
