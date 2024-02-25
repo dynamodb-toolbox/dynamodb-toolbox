@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { Attribute } from 'v1/schema'
+import type { Attribute, Paths } from 'v1/schema'
 
 import type {
   SchemaCondition,
@@ -10,10 +10,10 @@ import type {
   TypeCondition,
   AttrOrSize
 } from './condition'
-import type { ATTRIBUTE_PATHS } from './paths.type.test'
 import { mySchema } from './fixtures.test'
 
 type ATTRIBUTES = typeof mySchema['attributes']
+type ATTRIBUTE_PATHS = Paths<typeof mySchema>
 
 type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
 const assertParentIdCondition: A.Equals<

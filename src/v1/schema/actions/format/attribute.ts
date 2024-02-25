@@ -1,27 +1,69 @@
-import cloneDeep from 'lodash.clonedeep'
-
-import type { Attribute, RequiredOption, AttributeValue } from 'v1/schema'
+import type {
+  Schema,
+  Attribute,
+  AnyAttribute,
+  PrimitiveAttribute,
+  SetAttribute,
+  ListAttribute,
+  MapAttribute,
+  RecordAttribute,
+  AnyOfAttribute,
+  RequiredOption,
+  AtLeastOnce,
+  Always
+} from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatOptions } from './schema'
-import { formatSavedPrimitiveAttribute } from './primitive'
-import { formatSavedSetAttribute } from './set'
-import { formatSavedListAttribute } from './list'
-import { formatSavedMapAttribute } from './map'
-import { formatSavedAnyOfAttribute } from './anyOf'
-import { formatSavedRecordAttribute } from './record'
+import type { FormatOptions, UnpackFormatOptions, FormattedValueOptions } from './types'
+import { formatAnyAttrRawValue, AnyAttrFormattedValue } from './any'
+import { formatPrimitiveAttrRawValue, PrimitiveAttrFormattedValue } from './primitive'
+import { formatSavedSetAttribute, SetAttrFormattedValue } from './set'
+import { formatListAttrRawValue, ListAttrFormattedValue } from './list'
+import { formatMapAttrRawValue, MapAttrFormattedValue } from './map'
+import { formatRecordAttrRawValue, RecordAttrFormattedValue } from './record'
+import { formatAnyOfAttrRawValue, AnyOfAttrFormattedValue } from './anyOf'
+
+export type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
+  required: AtLeastOnce | Always
+}
+  ? true
+  : false
+
+export type AttrFormattedValue<
+  ATTRIBUTE extends Attribute,
+  OPTIONS extends FormattedValueOptions = FormattedValueOptions
+> = ATTRIBUTE extends AnyAttribute
+  ? AnyAttrFormattedValue<ATTRIBUTE>
+  : ATTRIBUTE extends PrimitiveAttribute
+  ? PrimitiveAttrFormattedValue<ATTRIBUTE>
+  : ATTRIBUTE extends SetAttribute
+  ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS>
+  : ATTRIBUTE extends ListAttribute
+  ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS>
+  : ATTRIBUTE extends Schema | MapAttribute
+  ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS>
+  : ATTRIBUTE extends RecordAttribute
+  ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS>
+  : ATTRIBUTE extends AnyOfAttribute
+  ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS>
+  : never
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
 export const isRequired = (attribute: Attribute): boolean =>
   requiringOptions.has(attribute.required)
 
-export const formatSavedAttribute = (
+export const formatAttrRawValue = <
+  ATTRIBUTE extends Attribute,
+  OPTIONS extends FormatOptions = FormatOptions
+>(
   attribute: Attribute,
-  savedValue: AttributeValue | undefined,
-  options: FormatOptions = {}
-): AttributeValue | undefined => {
-  if (savedValue === undefined) {
+  rawValue: unknown,
+  options: OPTIONS = {} as OPTIONS
+): AttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
+  type Formatted = AttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
+
+  if (rawValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
       const { path } = attribute
 
@@ -33,27 +75,27 @@ export const formatSavedAttribute = (
         payload: {}
       })
     } else {
-      return undefined
+      return undefined as Formatted
     }
   }
 
   switch (attribute.type) {
     case 'any':
-      return cloneDeep(savedValue) as AttributeValue
+      return formatAnyAttrRawValue(attribute, rawValue) as Formatted
     case 'string':
     case 'binary':
     case 'boolean':
     case 'number':
-      return formatSavedPrimitiveAttribute(attribute, savedValue)
+      return formatPrimitiveAttrRawValue(attribute, rawValue) as Formatted
     case 'set':
-      return formatSavedSetAttribute(attribute, savedValue, options)
+      return formatSavedSetAttribute(attribute, rawValue, options) as Formatted
     case 'list':
-      return formatSavedListAttribute(attribute, savedValue, options)
+      return formatListAttrRawValue(attribute, rawValue, options) as Formatted
     case 'map':
-      return formatSavedMapAttribute(attribute, savedValue, options)
+      return formatMapAttrRawValue(attribute, rawValue, options) as Formatted
     case 'record':
-      return formatSavedRecordAttribute(attribute, savedValue, options)
+      return formatRecordAttrRawValue(attribute, rawValue, options) as Formatted
     case 'anyOf':
-      return formatSavedAnyOfAttribute(attribute, savedValue, options)
+      return formatAnyOfAttrRawValue(attribute, rawValue, options) as Formatted
   }
 }
