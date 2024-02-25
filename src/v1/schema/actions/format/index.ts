@@ -1,3 +1,3 @@
-export { Formatter } from './schema'
-export type { FormatOptions } from './schema'
-export type { FormattedValue } from './types'
+export { Formatter } from './formatter'
+export type { FormattedValue } from './formatter'
+export type { FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'

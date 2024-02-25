@@ -1,6 +1,6 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-type SavedAttributeRequiredErrorBlueprint = ErrorBlueprint<{
+type RawAttributeRequiredErrorBlueprint = ErrorBlueprint<{
   code: 'formatter.missingAttribute'
   hasPath: true
   payload: {
@@ -9,7 +9,7 @@ type SavedAttributeRequiredErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-type InvalidSavedAttributeErrorBlueprint = ErrorBlueprint<{
+type InvalidRawAttributeErrorBlueprint = ErrorBlueprint<{
   code: 'formatter.invalidAttribute'
   hasPath: true
   payload: {
@@ -20,6 +20,18 @@ type InvalidSavedAttributeErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+type InvalidRawItemErrorBlueprint = ErrorBlueprint<{
+  code: 'formatter.invalidItem'
+  hasPath: false
+  payload: {
+    received: unknown
+    expected?: unknown
+    partitionKey?: unknown
+    sortKey?: unknown
+  }
+}>
+
 export type FormatterErrorBlueprints =
-  | SavedAttributeRequiredErrorBlueprint
-  | InvalidSavedAttributeErrorBlueprint
+  | RawAttributeRequiredErrorBlueprint
+  | InvalidRawAttributeErrorBlueprint
+  | InvalidRawItemErrorBlueprint

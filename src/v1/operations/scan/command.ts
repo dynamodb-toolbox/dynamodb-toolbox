@@ -9,8 +9,9 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import type { TableV2 } from 'v1/table'
 import type { EntityV2, FormattedItem } from 'v1/entity'
-import type { Item } from 'v1/schema'
+import type { Schema } from 'v1/schema'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
+import type { EntityPaths } from 'v1/operations/paths'
 import { Formatter } from 'v1/schema/actions/format'
 import { isString } from 'v1/utils/validation'
 
@@ -28,10 +29,17 @@ type ReturnedItems<
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
   : (EntityV2[] extends ENTITIES
-      ? Item
+      ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
       ? ENTITY extends EntityV2
-        ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'] }>
+        ? FormattedItem<
+            ENTITY,
+            {
+              attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
+                ? OPTIONS['attributes'][number]
+                : undefined
+            }
+          >
         : never
       : never)[]
 
@@ -88,12 +96,12 @@ export class ScanCommand<
   send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()
 
-    const formattersByName: Record<string, Formatter> = {}
+    const formattersByName: Record<string, Formatter<Schema>> = {}
     this[$entities].forEach(entity => {
       formattersByName[entity.name] = entity.schema.build(Formatter)
     })
 
-    const formattedItems: Item[] = []
+    const formattedItems: FormattedItem[] = []
     let lastEvaluatedKey: Record<string, NativeAttributeValue> | undefined = undefined
     let count: number | undefined = 0
     let scannedCount: number | undefined = 0
@@ -137,9 +145,7 @@ export class ScanCommand<
           continue
         }
 
-        formattedItems.push(
-          formatter.format<{ attributes: string[] | undefined }>(item, { attributes })
-        )
+        formattedItems.push(formatter.format(item, { attributes }))
       }
 
       lastEvaluatedKey = pageLastEvaluatedKey

@@ -4,7 +4,8 @@ import type {
   AllProjectedAttributesSelectOption,
   SpecificAttributesSelectOption
 } from 'v1/operations/constants/options/select'
-import type { Condition, Query, AnyCommonAttributePath } from 'v1/operations/types'
+import type { EntityPathsIntersection } from 'v1/operations/paths'
+import type { Condition, Query } from 'v1/operations/types'
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 
@@ -35,7 +36,7 @@ export type QueryOptions<
   (
     | { attributes?: undefined; select?: SelectOption }
     | {
-        attributes: AnyCommonAttributePath<ENTITIES>[]
+        attributes: EntityPathsIntersection<ENTITIES>[]
         // "SPECIFIC_ATTRIBUTES" is the only valid option if projectionExpression is present
         select?: SpecificAttributesSelectOption
       }

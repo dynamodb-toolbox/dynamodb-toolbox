@@ -1,19 +1,27 @@
 import type {
   PrimitiveAttribute,
-  AttributeValue,
-  PrimitiveAttributeValue,
+  ResolvePrimitiveAttribute,
   ResolvedPrimitiveAttribute,
   Transformer
 } from 'v1/schema'
+import type { If } from 'v1/types'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-export const formatSavedPrimitiveAttribute = (
-  attribute: PrimitiveAttribute,
-  savedValue: AttributeValue
-): PrimitiveAttributeValue => {
+import type { MustBeDefined } from './attribute'
+
+export type PrimitiveAttrFormattedValue<
+  ATTRIBUTE extends PrimitiveAttribute
+> = PrimitiveAttribute extends ATTRIBUTE
+  ? ResolvedPrimitiveAttribute
+  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvePrimitiveAttribute<ATTRIBUTE>
+
+export const formatPrimitiveAttrRawValue = <ATTRIBUTE extends PrimitiveAttribute>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown
+): PrimitiveAttrFormattedValue<ATTRIBUTE> => {
   const validator = validatorsByPrimitiveType[attribute.type]
-  if (!validator(savedValue)) {
+  if (!validator(rawValue)) {
     const { path, type } = attribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -22,7 +30,7 @@ export const formatSavedPrimitiveAttribute = (
       }. Should be a ${type}.`,
       path,
       payload: {
-        received: savedValue,
+        received: rawValue,
         expected: type
       }
     })
@@ -31,10 +39,9 @@ export const formatSavedPrimitiveAttribute = (
   /**
    * @debt type "validator should act as typeguard"
    */
-  const savedPrimitive = savedValue as ResolvedPrimitiveAttribute
+  const rawPrimitive = rawValue as ResolvedPrimitiveAttribute
   const transformer = attribute.transform as Transformer
-  const formattedValue =
-    transformer !== undefined ? transformer.format(savedPrimitive) : savedPrimitive
+  const formattedValue = transformer !== undefined ? transformer.format(rawPrimitive) : rawPrimitive
 
   if (attribute.enum !== undefined && !attribute.enum.includes(formattedValue)) {
     const { path } = attribute
@@ -51,5 +58,5 @@ export const formatSavedPrimitiveAttribute = (
     })
   }
 
-  return formattedValue
+  return formattedValue as PrimitiveAttrFormattedValue<ATTRIBUTE>
 }

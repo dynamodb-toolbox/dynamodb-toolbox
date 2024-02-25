@@ -1,5 +1,5 @@
-import type { AnyAttributePath } from 'v1/operations/types'
-import type { FormattedValue } from 'v1/schema/actions/format'
+import type { EntityPaths } from 'v1/operations/paths'
+import type { FormattedValue, FormattedValueOptions } from 'v1/schema/actions/format'
 
 import type { EntityV2 } from '../class'
 
@@ -10,14 +10,6 @@ import type { EntityV2 } from '../class'
  * @return Object
  */
 export type FormattedItem<
-  ENTITY extends EntityV2,
-  OPTIONS extends { attributes?: AnyAttributePath<ENTITY['schema']>[]; partial?: boolean } = {}
-> = FormattedValue<
-  ENTITY['schema'],
-  {
-    attributes: OPTIONS extends { attributes: string[] }
-      ? OPTIONS['attributes']
-      : AnyAttributePath<ENTITY['schema']>[]
-    partial: OPTIONS extends { partial: boolean } ? OPTIONS['partial'] : false
-  }
->
+  ENTITY extends EntityV2 = EntityV2,
+  OPTIONS extends FormattedValueOptions<EntityPaths<ENTITY>> = {}
+> = FormattedValue<ENTITY['schema'], OPTIONS>

@@ -9,9 +9,10 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import type { TableV2 } from 'v1/table'
 import type { EntityV2, FormattedItem } from 'v1/entity'
-import type { Item } from 'v1/schema'
+import type { Schema } from 'v1/schema'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
 import type { Query } from 'v1/operations/types'
+import type { EntityPaths } from 'v1/operations/paths'
 import { Formatter } from 'v1/schema/actions/format'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isString } from 'v1/utils/validation'
@@ -23,7 +24,7 @@ import { queryParams } from './queryParams'
 const $query = Symbol('$query')
 type $query = typeof $query
 
-const $options = Symbol('$options')
+export const $options = Symbol('$options')
 type $options = typeof $options
 
 type ReturnedItems<
@@ -34,10 +35,17 @@ type ReturnedItems<
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
   : (EntityV2[] extends ENTITIES
-      ? Item
+      ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
       ? ENTITY extends EntityV2
-        ? FormattedItem<ENTITY, { attributes: OPTIONS['attributes'] }>
+        ? FormattedItem<
+            ENTITY,
+            {
+              attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
+                ? OPTIONS['attributes'][number]
+                : undefined
+            }
+          >
         : never
       : never)[]
 
@@ -129,12 +137,12 @@ export class QueryCommand<
   async send(): Promise<QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>> {
     const queryParams = this.params()
 
-    const formatters: Record<string, Formatter> = {}
+    const formatters: Record<string, Formatter<Schema>> = {}
     this[$entities].forEach(entity => {
       formatters[entity.name] = entity.schema.build(Formatter)
     })
 
-    const formattedItems: Item[] = []
+    const formattedItems: FormattedItem[] = []
     let lastEvaluatedKey: Record<string, NativeAttributeValue> | undefined = undefined
     let count: number | undefined = 0
     let scannedCount: number | undefined = 0
@@ -178,9 +186,7 @@ export class QueryCommand<
           continue
         }
 
-        formattedItems.push(
-          formatter.format<{ attributes: string[] | undefined }>(item, { attributes })
-        )
+        formattedItems.push(formatter.format(item, { attributes }))
       }
 
       lastEvaluatedKey = pageLastEvaluatedKey
