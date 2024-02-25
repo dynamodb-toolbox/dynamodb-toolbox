@@ -2,9 +2,12 @@ import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
 import type { TableV2 } from 'v1/table'
-import type { AnyAttributePath, Condition, Query } from 'v1/operations/types'
 import type { EntityV2 } from 'v1/entity'
+import type { Condition, Query } from 'v1/operations/types'
+import type { EntityPaths } from 'v1/operations/paths'
+import { isBoolean } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
+
 import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
 import { parseIndexOption } from 'v1/operations/utils/parseOptions/parseIndexOption'
 import { parseConsistentOption } from 'v1/operations/utils/parseOptions/parseConsistentOption'
@@ -16,7 +19,6 @@ import { parseCondition } from 'v1/operations/expression/condition/parse'
 import { parseProjection } from 'v1/operations/expression/projection/parse'
 
 import type { QueryOptions } from '../options'
-import { isBoolean } from 'v1/utils/validation'
 import { parseQuery } from './parseQuery'
 
 export const queryParams = <
@@ -45,7 +47,7 @@ export const queryParams = <
   } = scanOptions
 
   const filters = (_filters ?? {}) as Record<string, Condition>
-  const attributes = _attributes as AnyAttributePath[] | undefined
+  const attributes = _attributes as EntityPaths[] | undefined
 
   const commandOptions: QueryCommandInput = {
     TableName: table.getName()
@@ -132,7 +134,7 @@ export const queryParams = <
         const {
           ExpressionAttributeNames: projectionExpressionAttributeNames,
           ProjectionExpression
-        } = parseProjection<EntityV2, AnyAttributePath[]>(entity, [
+        } = parseProjection<EntityV2, EntityPaths[]>(entity, [
           // entityAttributeName is required at all times for formatting
           ...(attributes.includes(entity.entityAttributeName) ? [] : [entity.entityAttributeName]),
           ...attributes

@@ -9,9 +9,9 @@ import type {
   Attribute,
   ResolvePrimitiveAttribute,
   ResolvedPrimitiveAttribute,
-  PrimitiveAttribute
+  PrimitiveAttribute,
+  Paths
 } from 'v1/schema'
-import type { AnyAttributePath } from './paths'
 
 export type AnyAttributeCondition<
   ATTRIBUTE_PATH extends string,
@@ -151,11 +151,7 @@ export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends
   ? AnyAttributeCondition<string, string>
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
   ? ATTRIBUTE_PATH extends string
-    ? AttributeCondition<
-        ATTRIBUTE_PATH,
-        SCHEMA['attributes'][ATTRIBUTE_PATH],
-        AnyAttributePath<SCHEMA>
-      >
+    ? AttributeCondition<ATTRIBUTE_PATH, SCHEMA['attributes'][ATTRIBUTE_PATH], Paths<SCHEMA>>
     : never
   : never
 

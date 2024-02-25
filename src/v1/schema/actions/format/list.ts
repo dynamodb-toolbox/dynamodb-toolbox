@@ -1,17 +1,44 @@
-import type { ListAttribute, AttributeValue, ListAttributeValue } from 'v1/schema'
-import { isArray } from 'v1/utils/validation'
+import type { ListAttribute } from 'v1/schema'
+import type { If } from 'v1/types'
+import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatOptions } from './schema'
-import { formatSavedAttribute } from './attribute'
+import type { FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute'
 import { matchProjection } from './utils'
 
-export const formatSavedListAttribute = (
-  attribute: ListAttribute,
-  savedValue: AttributeValue,
-  { attributes, ...restOptions }: FormatOptions = {}
-): ListAttributeValue => {
-  if (!isArray(savedValue)) {
+export type ListAttrFormattedValue<
+  ATTRIBUTE extends ListAttribute,
+  OPTIONS extends FormattedValueOptions = FormattedValueOptions,
+  FORMATTED_ATTRIBUTE = ListAttribute extends ATTRIBUTE
+    ? unknown
+    : AttrFormattedValue<
+        ATTRIBUTE['elements'],
+        {
+          attributes: OPTIONS extends { attributes: string }
+            ? OPTIONS['attributes'] extends `[${number}]`
+              ? undefined
+              : OPTIONS['attributes'] extends `[${number}]${infer CHILDREN_FILTERED_ATTRIBUTES}`
+              ? CHILDREN_FILTERED_ATTRIBUTES
+              : never
+            : undefined
+          partial: OPTIONS['partial']
+        }
+      >
+  // Possible in case of anyOf subSchema
+> = [FORMATTED_ATTRIBUTE] extends [never]
+  ? never
+  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | FORMATTED_ATTRIBUTE[]
+
+export const formatListAttrRawValue = <
+  ATTRIBUTE extends ListAttribute,
+  OPTIONS extends FormatOptions = FormatOptions
+>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown,
+  { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
+): ListAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
+  if (!isArray(rawValue)) {
     const { path, type } = attribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -20,7 +47,7 @@ export const formatSavedListAttribute = (
       }. Should be a ${type}.`,
       path,
       payload: {
-        received: savedValue,
+        received: rawValue,
         expected: type
       }
     })
@@ -32,17 +59,17 @@ export const formatSavedListAttribute = (
   // - Either projection is nested => childrenAttributes defined
   const { childrenAttributes } = matchProjection(/\[\d+\]/, attributes)
 
-  const parsedValues: ListAttributeValue = []
-  for (const savedElement of savedValue) {
-    const parsedElement = formatSavedAttribute(attribute.elements, savedElement, {
+  const formattedValues: unknown[] = []
+  for (const rawElement of rawValue) {
+    const formattedElement = formatAttrRawValue(attribute.elements, rawElement, {
       attributes: childrenAttributes,
       ...restOptions
     })
 
-    if (parsedElement !== undefined) {
-      parsedValues.push(parsedElement)
+    if (formattedElement !== undefined) {
+      formattedValues.push(formattedElement)
     }
   }
 
-  return parsedValues
+  return formattedValues as ListAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
 }

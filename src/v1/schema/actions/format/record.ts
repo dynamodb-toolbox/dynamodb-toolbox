@@ -1,18 +1,57 @@
-import type { RecordAttribute, AttributeValue, RecordAttributeValue } from 'v1/schema'
+import type { RecordAttribute, ResolvePrimitiveAttribute } from 'v1/schema'
+import type { If } from 'v1/types'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatOptions } from './schema'
-import { formatSavedPrimitiveAttribute } from './primitive'
-import { formatSavedAttribute } from './attribute'
+import type { MatchKeys, FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import { formatPrimitiveAttrRawValue } from './primitive'
+import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute'
 import { matchProjection } from './utils'
 
-export const formatSavedRecordAttribute = (
-  attribute: RecordAttribute,
-  savedValue: AttributeValue,
-  { attributes, ...restOptions }: FormatOptions
-): RecordAttributeValue => {
-  if (!isObject(savedValue)) {
+export type RecordAttrFormattedValue<
+  ATTRIBUTE extends RecordAttribute,
+  OPTIONS extends FormattedValueOptions = FormattedValueOptions,
+  MATCHING_KEYS extends string = MatchKeys<
+    ResolvePrimitiveAttribute<ATTRIBUTE['keys']>,
+    '.',
+    OPTIONS['attributes']
+  >
+> = RecordAttribute extends ATTRIBUTE
+  ? { [KEY in string]: unknown }
+  : // Possible in case of anyOf subSchema
+  [MATCHING_KEYS] extends [never]
+  ? never
+  :
+      | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+      | {
+          [KEY in MATCHING_KEYS]?: AttrFormattedValue<
+            ATTRIBUTE['elements'],
+            {
+              partial: OPTIONS['partial']
+              attributes: OPTIONS extends { attributes: string }
+                ? MATCHING_KEYS extends infer FILTERED_KEY
+                  ? FILTERED_KEY extends string
+                    ? `.${FILTERED_KEY}` extends OPTIONS['attributes']
+                      ? undefined
+                      : OPTIONS['attributes'] extends `.${FILTERED_KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+                      ? CHILDREN_FILTERED_ATTRIBUTES
+                      : never
+                    : never
+                  : never
+                : undefined
+            }
+          >
+        }
+
+export const formatRecordAttrRawValue = <
+  ATTRIBUTE extends RecordAttribute,
+  OPTIONS extends FormatOptions = FormatOptions
+>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown,
+  { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
+): RecordAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
+  if (!isObject(rawValue)) {
     const { path, type } = attribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -21,21 +60,21 @@ export const formatSavedRecordAttribute = (
       }. Should be a ${type}.`,
       path,
       payload: {
-        received: savedValue,
+        received: rawValue,
         expected: type
       }
     })
   }
 
-  const formattedRecord: RecordAttributeValue = {}
+  const formattedRecord: Record<string, unknown> = {}
 
-  Object.entries(savedValue).forEach(([key, element]) => {
-    const parsedKey = formatSavedPrimitiveAttribute(attribute.keys, key) as string
+  Object.entries(rawValue).forEach(([key, element]) => {
+    const parsedKey = formatPrimitiveAttrRawValue(attribute.keys, key) as string
 
     // We don't need isProjected: We used the saved value key so we know it is
     const { childrenAttributes } = matchProjection(new RegExp('^\\.' + parsedKey), attributes)
 
-    const formattedAttribute = formatSavedAttribute(attribute.elements, element, {
+    const formattedAttribute = formatAttrRawValue(attribute.elements, element, {
       attributes: childrenAttributes,
       ...restOptions
     })
@@ -45,5 +84,5 @@ export const formatSavedRecordAttribute = (
     }
   })
 
-  return formattedRecord
+  return formattedRecord as RecordAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
 }

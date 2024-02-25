@@ -1,15 +1,9 @@
 import type { EntityV2, FormattedItem } from 'v1/entity'
-import type { Item } from 'v1/schema'
-import { Formatter } from 'v1/schema/actions/format'
+import type { Paths } from 'v1/schema/actions/paths'
+import { Formatter, FormatOptions, UnpackFormatOptions } from 'v1/schema/actions/format'
 import { DynamoDBToolboxError } from 'v1/errors'
-import type { AnyAttributePath } from 'v1/operations/types'
 
 import { EntityOperation, $entity } from './class'
-
-type FormatSavedItemOptions<ENTITY extends EntityV2> = {
-  attributes?: AnyAttributePath<ENTITY['schema']>[]
-  partial?: boolean
-}
 
 export const $formatter = Symbol('$formatter')
 export type $formatter = typeof $formatter
@@ -23,12 +17,12 @@ export class EntityFormatter<ENTITY extends EntityV2 = EntityV2> extends EntityO
     this[$formatter] = new Formatter<ENTITY['schema']>(entity.schema)
   }
 
-  format<OPTIONS extends FormatSavedItemOptions<ENTITY>>(
-    item: Item,
-    { attributes, partial = false }: OPTIONS = {} as OPTIONS
-  ): FormattedItem<ENTITY, OPTIONS> {
+  format<OPTIONS extends FormatOptions<Paths<ENTITY['schema']>>>(
+    item: { [KEY in string]: unknown },
+    options: OPTIONS = {} as OPTIONS
+  ): FormattedItem<ENTITY, UnpackFormatOptions<OPTIONS>> {
     try {
-      return this[$formatter].format(item, { attributes, partial }) as any
+      return this[$formatter].format(item, options)
     } catch (error) {
       if (!DynamoDBToolboxError.match(error, 'formatter.')) throw error
 

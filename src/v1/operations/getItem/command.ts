@@ -21,7 +21,16 @@ export type GetItemResponse<
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > = O.Merge<
   Omit<GetCommandOutput, 'Item'>,
-  { Item?: FormattedItem<ENTITY, { attributes: OPTIONS['attributes'] }> }
+  {
+    Item?: FormattedItem<
+      ENTITY,
+      {
+        attributes: OPTIONS extends { attributes: string[] }
+          ? OPTIONS['attributes'][number]
+          : undefined
+      }
+    >
+  }
 >
 
 export class GetItemCommand<
