@@ -14,6 +14,7 @@ import {
   KeyInput
 } from 'v1'
 import { Parser } from 'v1/schema/actions/parse'
+import { Formatter } from 'v1/schema/actions/format'
 
 const playgroundSchema1 = schema({
   reqStr: string(),
@@ -44,11 +45,18 @@ const playgroundSchema1 = schema({
 })
 
 const parsedValue = playgroundSchema1.build(Parser).parse({ foo: 'bar' })
+const formattedValue = playgroundSchema1.build(Formatter).format({ foo: 'bar' })
 
 type PlaygroundSchema1PutItemInput = PutItemInput<typeof playgroundSchema1>
 type PlaygroundSchema1FormattedItem = FormattedValue<typeof playgroundSchema1>
 
-const parsedValue2 = list(string()).optional().freeze().build(Parser).parse({ foo: 'bar' })
+const listAttr = list(string()).optional().freeze()
+const parsedValue2 = listAttr.build(Parser).parse({ foo: 'bar' })
+const formattedValue2 = listAttr.build(Formatter).format({ foo: 'bar' })
+
+const strAttr = string().optional().freeze()
+const parsedValue3 = strAttr.build(Parser).parse({ foo: 'bar' })
+const formattedValue3 = strAttr.build(Formatter).format({ foo: 'bar' })
 
 const allCasesOfProps = {
   optProp: string().optional(),

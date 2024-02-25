@@ -2,7 +2,8 @@ import type { ScanCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
 import type { TableV2 } from 'v1/table'
-import type { AnyAttributePath, Condition } from 'v1/operations/types'
+import type { Condition } from 'v1/operations/types'
+import type { EntityPaths } from 'v1/operations/paths'
 import type { EntityV2 } from 'v1/entity'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
@@ -43,7 +44,7 @@ export const scanParams = <
   } = scanOptions
 
   const filters = (_filters ?? {}) as Record<string, Condition>
-  const attributes = _attributes as AnyAttributePath[] | undefined
+  const attributes = _attributes as EntityPaths[] | undefined
 
   const commandOptions: ScanCommandInput = {
     TableName: table.getName()
@@ -137,7 +138,7 @@ export const scanParams = <
         const {
           ExpressionAttributeNames: projectionExpressionAttributeNames,
           ProjectionExpression
-        } = parseProjection<EntityV2, AnyAttributePath[]>(entity, [
+        } = parseProjection<EntityV2, EntityPaths[]>(entity, [
           // entityAttributeName is required at all times for formatting
           ...(attributes.includes(entity.entityAttributeName) ? [] : [entity.entityAttributeName]),
           ...attributes

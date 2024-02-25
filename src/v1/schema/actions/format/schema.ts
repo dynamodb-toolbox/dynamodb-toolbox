@@ -1,60 +1,118 @@
-import type { Item, Schema, SchemaAction } from 'v1/schema'
-import type { AnyAttributePath } from 'v1/operations/types'
+import type { O } from 'ts-toolbelt'
 
-import type { FormattedValue } from './types'
-import { formatSavedAttribute } from './attribute'
+import type { OptionalizeUndefinableProperties } from 'v1/types'
+import type { Schema, AnyAttribute, Never } from 'v1/schema'
+import { DynamoDBToolboxError } from 'v1/errors'
+import { isObject } from 'v1/utils/validation'
+
+import type { MatchKeys, FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import { formatAttrRawValue, AttrFormattedValue } from './attribute'
 import { matchProjection } from './utils'
 
-export type FormatOptions<SCHEMA extends Schema = Schema> = {
-  attributes?: AnyAttributePath<SCHEMA>[]
-  partial?: boolean
-}
-
-export class Formatter<SCHEMA extends Schema = Schema> implements SchemaAction<SCHEMA> {
-  schema: SCHEMA
-
-  constructor(schema: SCHEMA) {
-    this.schema = schema
-  }
-
-  format<OPTIONS extends FormatOptions<SCHEMA>>(
-    rawValue: Item,
-    { attributes, partial = false }: OPTIONS = {} as OPTIONS
-  ): FormattedValue<
-    SCHEMA,
-    {
-      attributes: OPTIONS['attributes'] extends string[] ? OPTIONS['attributes'] : string[]
-      partial: OPTIONS extends { partial: boolean } ? OPTIONS['partial'] : false
+export type SchemaFormattedValue<
+  SCHEMA extends Schema,
+  OPTIONS extends FormattedValueOptions = FormattedValueOptions,
+  MATCHING_KEYS extends string = MatchKeys<
+    Extract<keyof SCHEMA['attributes'], string>,
+    '',
+    OPTIONS['attributes']
+  >
+> = Schema extends SCHEMA
+  ? { [KEY in string]: unknown }
+  : // Possible in case of anyOf subSchema
+  [MATCHING_KEYS] extends [never]
+  ? never
+  : OPTIONS extends { partial: true }
+  ? {
+      // Keep only non-hidden attributes
+      [KEY in O.SelectKeys<
+        // Pick only filtered keys
+        O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
+        { hidden: false }
+      >]?: AttrFormattedValue<
+        SCHEMA['attributes'][KEY],
+        {
+          partial: OPTIONS['partial']
+          attributes: OPTIONS extends { attributes: string }
+            ? KEY extends OPTIONS['attributes']
+              ? undefined
+              : OPTIONS['attributes'] extends `${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+              ? CHILDREN_FILTERED_ATTRIBUTES
+              : never
+            : undefined
+        }
+      >
     }
-  > {
-    const formattedValue: Item = {}
+  : OptionalizeUndefinableProperties<
+      {
+        // Keep only non-hidden attributes
+        [KEY in O.SelectKeys<
+          // Pick only filtered keys
+          O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
+          { hidden: false }
+        >]: AttrFormattedValue<
+          SCHEMA['attributes'][KEY],
+          {
+            partial: OPTIONS['partial']
+            attributes: OPTIONS extends { attributes: string }
+              ? KEY extends OPTIONS['attributes']
+                ? undefined
+                : OPTIONS['attributes'] extends `${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+                ? CHILDREN_FILTERED_ATTRIBUTES
+                : never
+              : undefined
+          }
+        >
+      },
+      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+      O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
+    >
 
-    Object.entries(this.schema.attributes).forEach(([attributeName, attribute]) => {
-      if (attribute.hidden) {
-        return
-      }
-
-      const { isProjected, childrenAttributes } = matchProjection(
-        new RegExp('^' + attributeName),
-        attributes
-      )
-
-      if (!isProjected) {
-        return
-      }
-
-      const attributeSavedAs = attribute.savedAs ?? attributeName
-
-      const formattedAttribute = formatSavedAttribute(attribute, rawValue[attributeSavedAs], {
-        attributes: childrenAttributes,
-        partial
-      })
-
-      if (formattedAttribute !== undefined) {
-        formattedValue[attributeName] = formattedAttribute
+export const formatSchemaRawValue = <
+  SCHEMA extends Schema,
+  OPTIONS extends FormatOptions = FormatOptions
+>(
+  schema: SCHEMA,
+  rawValue: unknown,
+  { attributes, partial = false }: OPTIONS = {} as OPTIONS
+): SchemaFormattedValue<SCHEMA, UnpackFormatOptions<OPTIONS>> => {
+  if (!isObject(rawValue)) {
+    throw new DynamoDBToolboxError('formatter.invalidItem', {
+      message: 'Invalid item detected while formatting. Should be an object.',
+      payload: {
+        received: rawValue,
+        expected: 'Object'
       }
     })
-
-    return formattedValue as any
   }
+
+  const formattedValue: Record<string, unknown> = {}
+
+  Object.entries(schema.attributes).forEach(([attributeName, attribute]) => {
+    if (attribute.hidden) {
+      return
+    }
+
+    const { isProjected, childrenAttributes } = matchProjection(
+      new RegExp('^' + attributeName),
+      attributes
+    )
+
+    if (!isProjected) {
+      return
+    }
+
+    const attributeSavedAs = attribute.savedAs ?? attributeName
+
+    const formattedAttribute = formatAttrRawValue(attribute, rawValue[attributeSavedAs], {
+      attributes: childrenAttributes,
+      partial
+    })
+
+    if (formattedAttribute !== undefined) {
+      formattedValue[attributeName] = formattedAttribute
+    }
+  })
+
+  return formattedValue as SchemaFormattedValue<SCHEMA, UnpackFormatOptions<OPTIONS>>
 }

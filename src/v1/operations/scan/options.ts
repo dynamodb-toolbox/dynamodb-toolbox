@@ -1,12 +1,13 @@
+import type { TableV2, IndexNames } from 'v1/table'
+import type { EntityV2 } from 'v1/entity'
 import type { CapacityOption } from 'v1/operations/constants/options/capacity'
 import type {
   SelectOption,
   AllProjectedAttributesSelectOption,
   SpecificAttributesSelectOption
 } from 'v1/operations/constants/options/select'
-import type { Condition, AnyCommonAttributePath } from 'v1/operations/types'
-import type { TableV2, IndexNames } from 'v1/table'
-import type { EntityV2 } from 'v1/entity'
+import type { Condition } from 'v1/operations/types'
+import type { EntityPathsIntersection } from 'v1/operations/paths'
 
 export type ScanOptions<
   TABLE extends TableV2 = TableV2,
@@ -41,7 +42,7 @@ export type ScanOptions<
   (
     | { attributes?: undefined; select?: SelectOption }
     | {
-        attributes: AnyCommonAttributePath<ENTITIES>[]
+        attributes: EntityPathsIntersection<ENTITIES>[]
         // "SPECIFIC_ATTRIBUTES" is the only valid option if projectionExpression is present
         select?: SpecificAttributesSelectOption
       }

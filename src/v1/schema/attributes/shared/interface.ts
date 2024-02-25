@@ -8,7 +8,7 @@ import type {
   $links
 } from '../constants/attributeOptions'
 
-interface SharedAttributeStateConstraint {
+export interface SharedAttributeStateConstraint {
   required: RequiredOption
   hidden: boolean
   key: boolean
