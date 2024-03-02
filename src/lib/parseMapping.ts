@@ -134,7 +134,7 @@ export default (
         break
       case 'derive':
         if (typeof config[prop] !== 'function') error(`'${prop}' must be a function`)
-        track
+        track.derived.push(field)
         break
       default:
         error(`'${prop}' is not a valid property type`)
