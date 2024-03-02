@@ -132,6 +132,10 @@ export default (
           error(`'${prop}' must be a boolean, string, or array`)
         }
         break
+      case 'derive':
+        if (typeof config[prop] !== 'function') error(`'${prop}' must be a function`)
+        track
+        break
       default:
         error(`'${prop}' is not a valid property type`)
     }

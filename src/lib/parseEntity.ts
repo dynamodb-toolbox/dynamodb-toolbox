@@ -14,6 +14,7 @@ export interface TrackingInfo {
   required: any
   linked: Linked
   keys: any
+  derived: string[]
 }
 
 export interface Linked {
@@ -164,7 +165,8 @@ export function parseEntity<
     defaults: {}, // tracks default attributes
     required: {},
     linked: {},
-    keys: {} // tracks partition/sort/index keys
+    keys: {}, // tracks partition/sort/index keys
+    derived: [],
   }
 
   const schema = parseEntityAttributes<ReadonlyAttributeDefinitions>(attributes, track) // removed nested attribute?
@@ -188,6 +190,7 @@ export function parseEntity<
     defaults: track.defaults,
     required: track.required,
     linked: track.linked,
+    derived: track.derived,
     autoExecute,
     autoParse,
     typeHidden,
