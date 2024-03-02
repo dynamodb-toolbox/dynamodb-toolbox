@@ -81,29 +81,29 @@ class Entity<Name extends string = string,
   ReadonlyAttributeDefinitions extends Readonly<AttributeDefinitions> = Readonly<AttributeDefinitions>,
   WritableAttributeDefinitions extends AttributeDefinitions = Writable<ReadonlyAttributeDefinitions>,
   Attributes extends ParsedAttributes = string extends Name
-  ? ParsedAttributes
-  : If<A.Equals<EntityItemOverlay, undefined>,
-    // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
-    ParseAttributes<WritableAttributeDefinitions,
-      Timestamps,
-      CreatedAlias,
-      ModifiedAlias,
-      TypeAlias,
-      TypeHidden>,
-    ParsedAttributes<keyof EntityItemOverlay>>,
+    ? ParsedAttributes
+    : If<A.Equals<EntityItemOverlay, undefined>,
+      // 🔨 TOIMPROVE: Use EntityTable in attributes parsing
+      ParseAttributes<WritableAttributeDefinitions,
+        Timestamps,
+        CreatedAlias,
+        ModifiedAlias,
+        TypeAlias,
+        TypeHidden>,
+      ParsedAttributes<keyof EntityItemOverlay>>,
   $Item = string extends Name
-  ? any
-  : If<A.Equals<EntityItemOverlay, undefined>,
-    // 🔨 TOIMPROVE: Use EntityTable in item infering
-    InferItem<WritableAttributeDefinitions, Attributes>,
-    EntityItemOverlay>,
+    ? any
+    : If<A.Equals<EntityItemOverlay, undefined>,
+      // 🔨 TOIMPROVE: Use EntityTable in item infering
+      InferItem<WritableAttributeDefinitions, Attributes>,
+      EntityItemOverlay>,
   // Necessary to cast in a second step to prevent infinite loop during type check
   Item extends O.Object = string extends Name ? O.Object : A.Cast<$Item, O.Object>,
   CompositePrimaryKey extends O.Object = string extends Name
-  ? O.Object
-  : If<A.Equals<EntityItemOverlay, undefined>,
-    InferCompositePrimaryKey<Item, Attributes>,
-    O.Object>> {
+    ? O.Object
+    : If<A.Equals<EntityItemOverlay, undefined>,
+      InferCompositePrimaryKey<Item, Attributes>,
+      O.Object>> {
   // @ts-ignore
   public _typesOnly: {
     _entityItemOverlay: EntityItemOverlay
@@ -262,7 +262,7 @@ class Entity<Name extends string = string,
     const data = input.Item || input.Items || input
 
 
-
+ 
     if (Array.isArray(data)) {
       return data.map(item => {
         const formattedItem = formatItem()(schema.attributes, linked, item, include)
@@ -277,7 +277,7 @@ class Entity<Name extends string = string,
     } else {
       const formattedItem = formatItem()(schema.attributes, linked, data, include) as any
       const derivedAttributes = this.derived
-        .map(derivedAtrribute => schema.attributes[derivedAtrribute].derive(formattedItem))
+      .map(derivedAtrribute => schema.attributes[derivedAtrribute].derive(formattedItem))
       return {
         ...formattedItem,
         ...derivedAttributes
@@ -299,16 +299,16 @@ class Entity<Name extends string = string,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
-      item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-      options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
-      params: Partial<GetCommandInput> = {},
-    ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
-      GetCommandInput,
-      If<B.Not<ShouldParse<Parse, AutoParse>>,
-        GetCommandOutput,
-        Compute<O.Update<GetCommandOutput,
-          'Item',
-          FirstDefined<[MethodItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
+    options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
+    params: Partial<GetCommandInput> = {},
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    GetCommandInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      GetCommandOutput,
+      Compute<O.Update<GetCommandOutput,
+        'Item',
+        FirstDefined<[MethodItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
     const getParams = this.getParams<MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ShownItemAttributes,
@@ -361,27 +361,27 @@ class Entity<Name extends string = string,
       Attributes['shown'],
       keyof MethodItemOverlay>,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes>(
-      item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-      options: { attributes?: ResponseAttributes[] } = {},
-    ): {
-      Entity: Entity<Name,
-        EntityItemOverlay,
-        EntityCompositeKeyOverlay,
-        EntityTable,
-        AutoExecute,
-        AutoParse,
-        Timestamps,
-        CreatedAlias,
-        ModifiedAlias,
-        TypeAlias,
-        TypeHidden,
-        ReadonlyAttributeDefinitions,
-        WritableAttributeDefinitions,
-        Attributes,
-        $Item,
-        Item,
-        CompositePrimaryKey>
-    } & TransactGetItem {
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
+    options: { attributes?: ResponseAttributes[] } = {},
+  ): {
+    Entity: Entity<Name,
+      EntityItemOverlay,
+      EntityCompositeKeyOverlay,
+      EntityTable,
+      AutoExecute,
+      AutoParse,
+      Timestamps,
+      CreatedAlias,
+      ModifiedAlias,
+      TypeAlias,
+      TypeHidden,
+      ReadonlyAttributeDefinitions,
+      WritableAttributeDefinitions,
+      Attributes,
+      $Item,
+      Item,
+      CompositePrimaryKey>
+  } & TransactGetItem {
     // Destructure options to check for extraneous arguments
     const {
       attributes, // ProjectionExpression
@@ -420,10 +420,10 @@ class Entity<Name extends string = string,
     ResponseAttributes extends ShownItemAttributes = ShownItemAttributes,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
-      item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-      options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
-      params: Partial<GetCommandInput> = {},
-    ): GetCommandInput {
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
+    options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
+    params: Partial<GetCommandInput> = {},
+  ): GetCommandInput {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
     const data = normalizeData()(
@@ -510,19 +510,19 @@ class Entity<Name extends string = string,
     ReturnValues extends DeleteOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
-      item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-      options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
-      params: Partial<DeleteCommandInput> = {},
-    ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
-      DeleteCommandInput,
-      If<B.Not<ShouldParse<Parse, AutoParse>>,
-        DeleteCommandOutput,
-        If<// If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-          B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-          O.Omit<DeleteCommandOutput, 'Attributes'>,
-          O.Update<DeleteCommandOutput,
-            'Attributes',
-            FirstDefined<[MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
+    options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    params: Partial<DeleteCommandInput> = {},
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    DeleteCommandInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      DeleteCommandOutput,
+      If<// If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
+        B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
+        O.Omit<DeleteCommandOutput, 'Attributes'>,
+        O.Update<DeleteCommandOutput,
+          'Attributes',
+          FirstDefined<[MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
     const deleteParams = this.deleteParams<MethodItemOverlay,
       MethodCompositeKeyOverlay,
       ShownItemAttributes,
@@ -580,10 +580,10 @@ class Entity<Name extends string = string,
       Attributes['all'],
       keyof MethodItemOverlay>,
     ResponseAttributes extends ItemAttributes = ItemAttributes>(
-      item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-      options: TransactionOptions<ResponseAttributes> = {},
-      params?: Partial<DeleteCommandInput>,
-    ): { Delete: Delete } {
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
+    options: TransactionOptions<ResponseAttributes> = {},
+    params?: Partial<DeleteCommandInput>,
+  ): { Delete: Delete } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -628,10 +628,10 @@ class Entity<Name extends string = string,
     ReturnValues extends DeleteOptionsReturnValues | TransactionOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
-      item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-      options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
-      params: Partial<DeleteCommandInput> = {},
-    ): DeleteCommandInput {
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
+    options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
+    params: Partial<DeleteCommandInput> = {},
+  ): DeleteCommandInput {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
     const data = normalizeData()(
@@ -737,31 +737,31 @@ class Entity<Name extends string = string,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true>(
-      item: UpdateItem<MethodItemOverlay,
-        EntityItemOverlay,
-        CompositePrimaryKey,
-        Item,
-        Attributes,
-        StrictSchemaCheck>,
-      options: $UpdateOptions<ResponseAttributes,
-        ReturnValues,
-        Execute,
-        Parse,
-        StrictSchemaCheck> = {},
-      params: UpdateCustomParams = {},
-    ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
-      UpdateCommandInput,
-      If<B.Not<ShouldParse<Parse, AutoParse>>,
-        UpdateCommandOutput,
-        If<A.Equals<ReturnValues, 'NONE'>,
-          Omit<UpdateCommandOutput, 'Attributes'>,
-          O.Update<UpdateCommandOutput,
-            'Attributes',
-            If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
-              FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
-              If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
-                A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-                FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>> {
+    item: UpdateItem<MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck>,
+    options: $UpdateOptions<ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck> = {},
+    params: UpdateCustomParams = {},
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    UpdateCommandInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      UpdateCommandOutput,
+      If<A.Equals<ReturnValues, 'NONE'>,
+        Omit<UpdateCommandOutput, 'Attributes'>,
+        O.Update<UpdateCommandOutput,
+          'Attributes',
+          If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
+            FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+            If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
+              A.Equals<ReturnValues, 'UPDATED_NEW'>>,
+              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,
@@ -806,15 +806,15 @@ class Entity<Name extends string = string,
       keyof MethodItemOverlay>,
     ResponseAttributes extends ItemAttributes = ItemAttributes,
     StrictSchemaCheck extends boolean | undefined = true>(
-      item: UpdateItem<MethodItemOverlay,
-        EntityItemOverlay,
-        CompositePrimaryKey,
-        Item,
-        Attributes,
-        StrictSchemaCheck>,
-      options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
-      params?: UpdateCustomParams,
-    ): { Update: Update } {
+    item: UpdateItem<MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck>,
+    options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
+    params?: UpdateCustomParams,
+  ): { Update: Update } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -857,27 +857,27 @@ class Entity<Name extends string = string,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true>(
-      item: UpdateItem<MethodItemOverlay,
-        EntityItemOverlay,
-        CompositePrimaryKey,
-        Item,
-        Attributes,
-        StrictSchemaCheck>,
-      options: $UpdateOptions<ResponseAttributes,
-        ReturnValues,
-        Execute,
-        Parse,
-        StrictSchemaCheck> = {},
-      {
-        SET = [],
-        REMOVE = [],
-        ADD = [],
-        DELETE = [],
-        ExpressionAttributeNames = {},
-        ExpressionAttributeValues = {},
-        ...params
-      }: UpdateCustomParams = {},
-    ): UpdateCommandInput {
+    item: UpdateItem<MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck>,
+    options: $UpdateOptions<ResponseAttributes,
+      ReturnValues,
+      Execute,
+      Parse,
+      StrictSchemaCheck> = {},
+    {
+      SET = [],
+      REMOVE = [],
+      ADD = [],
+      DELETE = [],
+      ExpressionAttributeNames = {},
+      ExpressionAttributeValues = {},
+      ...params
+    }: UpdateCustomParams = {},
+  ): UpdateCommandInput {
     // Validate operation types
     if (!Array.isArray(SET)) error('SET must be an array')
     if (!Array.isArray(REMOVE)) error('REMOVE must be an array')
@@ -1249,24 +1249,24 @@ class Entity<Name extends string = string,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true>(
-      item: PutItem<MethodItemOverlay,
-        EntityItemOverlay,
-        CompositePrimaryKey,
-        Item,
-        Attributes,
-        StrictSchemaCheck>,
-      options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
-      params: Partial<PutCommandInput> = {},
-    ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
-      PutCommandInput,
-      If<B.Not<ShouldParse<Parse, AutoParse>>,
-        PutCommandOutput,
-        // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
-        If<B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-          O.Omit<PutCommandOutput, 'Attributes'>,
-          O.Update<PutCommandOutput,
-            'Attributes',
-            FirstDefined<[MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
+    item: PutItem<MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck>,
+    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
+    params: Partial<PutCommandInput> = {},
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    PutCommandInput,
+    If<B.Not<ShouldParse<Parse, AutoParse>>,
+      PutCommandOutput,
+      // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
+      If<B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
+        O.Omit<PutCommandOutput, 'Attributes'>,
+        O.Update<PutCommandOutput,
+          'Attributes',
+          FirstDefined<[MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
     const putParams = this.putParams<MethodItemOverlay,
       ShownItemAttributes,
       ResponseAttributes,
@@ -1312,14 +1312,14 @@ class Entity<Name extends string = string,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true>(
-      item: PutItem<MethodItemOverlay,
-        EntityItemOverlay,
-        CompositePrimaryKey,
-        Item,
-        Attributes,
-        StrictSchemaCheck>,
-      options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {},
-    ): { [key: string]: WriteRequest } {
+    item: PutItem<MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck>,
+    options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {},
+  ): { [key: string]: WriteRequest } {
     const payload = this.putParams<MethodItemOverlay,
       ShownItemAttributes,
       ResponseAttributes,
@@ -1344,15 +1344,15 @@ class Entity<Name extends string = string,
       keyof MethodItemOverlay>,
     ResponseAttributes extends ItemAttributes = ItemAttributes,
     StrictSchemaCheck extends boolean | undefined = true>(
-      item: PutItem<MethodItemOverlay,
-        EntityItemOverlay,
-        CompositePrimaryKey,
-        Item,
-        Attributes,
-        StrictSchemaCheck>,
-      options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
-      params?: Partial<PutCommandInput>,
-    ): { Put: Put } {
+    item: PutItem<MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck>,
+    options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
+    params?: Partial<PutCommandInput>,
+  ): { Put: Put } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -1395,15 +1395,15 @@ class Entity<Name extends string = string,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
     StrictSchemaCheck extends boolean | undefined = true>(
-      item: PutItem<MethodItemOverlay,
-        EntityItemOverlay,
-        CompositePrimaryKey,
-        Item,
-        Attributes,
-        StrictSchemaCheck>,
-      options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
-      params: Partial<PutCommandInput> = {},
-    ): PutCommandInput {
+    item: PutItem<MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck>,
+    options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
+    params: Partial<PutCommandInput> = {},
+  ): PutCommandInput {
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
 
@@ -1553,9 +1553,9 @@ class Entity<Name extends string = string,
       Attributes['all'],
       keyof MethodItemOverlay>,
     ResponseAttributes extends ItemAttributes = ItemAttributes>(
-      item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-      options: TransactionOptions<ResponseAttributes> = {},
-    ): { ConditionCheck: ConditionCheck } {
+    item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
+    options: TransactionOptions<ResponseAttributes> = {},
+  ): { ConditionCheck: ConditionCheck } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -1597,10 +1597,10 @@ class Entity<Name extends string = string,
     FiltersAttributes extends ItemAttributes['all'] = ItemAttributes['all'],
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
-      pk: any,
-      options: EntityQueryOptions<ResponseAttributes, FiltersAttributes, Execute, Parse> = {},
-      params: Partial<QueryInput> = {},
-    ) {
+    pk: any,
+    options: EntityQueryOptions<ResponseAttributes, FiltersAttributes, Execute, Parse> = {},
+    params: Partial<QueryInput> = {},
+  ) {
     if (!this.table) {
       throw new Error('Entity table is not defined')
     }
@@ -1615,7 +1615,7 @@ class Entity<Name extends string = string,
   scan<MethodItemOverlay extends Overlay = undefined,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
-      options: ScanOptions<Execute, Parse> = {}, params: Partial<ScanInput> = {}) {
+    options: ScanOptions<Execute, Parse> = {}, params: Partial<ScanInput> = {}) {
     if (!this.table) {
       throw new Error('Entity table is not defined')
     }
