@@ -45,6 +45,7 @@ export type ParsedEntity<
   autoExecute: AutoExecute | undefined
   linked: Linked
   defaults: any
+  derived: string[]
   required: any
   table?: EntityTable | undefined,
   setTable?: <NextTable extends EntityTable | undefined>(table: NextTable) => ParsedEntity<NextTable, Name, AutoExecute, AutoParse, TypeAlias, TypeHidden>

@@ -52,6 +52,7 @@ export type KeyAttributeDefinition = {
   alias: never
   map: never
   setType: never
+  derive: never
 }
 
 export type PartitionKeyDefinition = Partial<KeyAttributeDefinition> & {
@@ -94,7 +95,8 @@ export type PureAttributeDefinition = Partial<{
   setType: DynamoDBKeyTypes
   delimiter: string
   prefix: string
-  suffix: string
+  suffix: string,
+  derive: (data: {}) => any
 }>
 
 export type CompositeAttributeDefinition =

@@ -52,6 +52,7 @@ export default () => (
   linked: Linked,
   item: any,
   include: string[] = [],
+  derived: string[]
 ) => {
   // TODO: Support nested maps?
   // TODO: include alias support?
@@ -60,7 +61,7 @@ export default () => (
   // Intialize validate type
   const validateType = validateTypes()
 
-  return Object.keys(item).reduce((acc, field) => {
+  const formattedItem = Object.keys(item).reduce((acc, field) => {
     const link =
       linked[field] ||
       (attributes[field] && attributes[field].alias && linked[attributes[field].alias!])
@@ -114,6 +115,14 @@ export default () => (
       [(attributes[field] && attributes[field].alias) || field]: transformedValue,
     })
   }, {})
+
+  const derivedAttribute = derived
+    .map(derivedAtrribute => attributes[derivedAtrribute].derive?.(formattedItem))
+
+  return {
+    ...formattedItem,
+    ...derivedAttribute
+  }
 }
 
 function escapeRegExp(text: string) {

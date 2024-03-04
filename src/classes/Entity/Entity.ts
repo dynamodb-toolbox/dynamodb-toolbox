@@ -119,7 +119,7 @@ class Entity<Name extends string = string,
   public _etAlias!: string
   public defaults: any
   public linked: any
-  public derived: string[]
+  public derived: any
   public required: any
   public attributes: ReadonlyAttributeDefinitions
   public timestamps: Timestamps
@@ -256,32 +256,19 @@ class Entity<Name extends string = string,
     })
 
     // Load the schema
-    const { schema, linked } = this
+    const { schema, linked, derived } = this
 
     // Assume standard response from DynamoDB
     const data = input.Item || input.Items || input
 
 
- 
+
     if (Array.isArray(data)) {
       return data.map(item => {
-        const formattedItem = formatItem()(schema.attributes, linked, item, include)
-        const derivedAttributes = this.derived
-          .map(derivedAtrribute => schema.attributes[derivedAtrribute].derive(formattedItem))
-        return {
-          ...formattedItem,
-          ...derivedAttributes
-        }
-      }
-      ) as any
+        return formatItem()(schema.attributes, linked, item, include, derived)
+      }) as any
     } else {
-      const formattedItem = formatItem()(schema.attributes, linked, data, include) as any
-      const derivedAttributes = this.derived
-      .map(derivedAtrribute => schema.attributes[derivedAtrribute].derive(formattedItem))
-      return {
-        ...formattedItem,
-        ...derivedAttributes
-      }
+      return formatItem()(schema.attributes, linked, data, include, derived) as any
     }
   }
 
