@@ -264,9 +264,9 @@ class Entity<Name extends string = string,
 
 
     if (Array.isArray(data)) {
-      return data.map(item => {
-        return formatItem()(schema.attributes, linked, item, include, derived)
-      }) as any
+      return data.map(item => 
+        formatItem()(schema.attributes, linked, item, include, derived)
+      ) as any
     } else {
       return formatItem()(schema.attributes, linked, data, include, derived) as any
     }
