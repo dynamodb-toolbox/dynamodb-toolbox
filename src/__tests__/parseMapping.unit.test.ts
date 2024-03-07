@@ -6,7 +6,8 @@ let track: TrackingInfo = {
   defaults: [],
   required: [],
   linked: {},
-  keys: []
+  keys: [],
+  derived: [],
 }
 
 beforeEach(() => {
@@ -15,7 +16,8 @@ beforeEach(() => {
     defaults: [],
     required: [],
     linked: {},
-    keys: []
+    keys: [],
+    derived: [],
   }
 })
 

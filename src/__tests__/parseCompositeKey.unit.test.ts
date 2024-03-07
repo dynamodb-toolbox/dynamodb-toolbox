@@ -11,7 +11,8 @@ const track: TrackingInfo = {
   defaults: [],
   required: [],
   linked: {},
-  keys: []
+  keys: [],
+  derived: [],
 }
 
 describe('parseCompositeKey', () => {

@@ -52,7 +52,7 @@ export default () => (
   linked: Linked,
   item: any,
   include: string[] = [],
-  derived: string[]
+  derived: string[] = []
 ) => {
   // TODO: Support nested maps?
   // TODO: include alias support?
@@ -116,12 +116,12 @@ export default () => (
     })
   }, {})
 
-  const derivedAttribute = derived
-    .map(derivedAtrribute => attributes[derivedAtrribute].derive?.(formattedItem))
+  const derivedAttributes = derived
+    .map(derivedAttribute => attributes[derivedAttribute].derive?.(formattedItem))
 
   return {
     ...formattedItem,
-    ...derivedAttribute
+    ...derivedAttributes
   }
 }
 
