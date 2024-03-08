@@ -19,6 +19,26 @@ const sidebars = {
   docsSidebar: [
     {
       type: 'category',
+      label: 'v1',
+      items: [
+        {
+          type: 'category',
+          label: 'Introduction',
+          items: [
+            'v1/introduction/introduction-to-v1',
+            {
+              type: 'link',
+              label: 'Features',
+              href: '#features'
+            },
+            'v1/introduction/quick-start',
+            'v1/introduction/migration-path'
+          ]
+        }
+      ]
+    },
+    {
+      type: 'category',
       label: 'v0',
       items: [
         {
