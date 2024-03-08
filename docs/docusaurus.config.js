@@ -65,7 +65,7 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'v0/introduction/what-is-dynamodb-toolbox',
+            docId: 'v1/introduction/introduction-to-v1',
             position: 'right',
             label: 'Documentation'
           },
@@ -89,7 +89,11 @@ const config = {
               },
               {
                 label: 'Quick Start',
-                to: '/docs/v0/introduction/quick-start'
+                to: '/docs/v1/introduction/quick-start'
+              },
+              {
+                label: 'Documentation v0',
+                to: '/docs/v0'
               },
               {
                 label: 'Contributing',
