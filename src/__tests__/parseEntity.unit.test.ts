@@ -14,7 +14,8 @@ const entity = {
     pk: { partitionKey: true },
     sk: { sortKey: true },
     attr1: 'number',
-    attr2: { type: 'list', required: true }
+    attr2: { type: 'list', required: true },
+    attr3: { derive: () => 'test' }
   },
   autoExecute: true,
   autoParse: true
@@ -35,6 +36,7 @@ describe('parseEntity', () => {
     expect(ent.autoParse).toBe(true)
     expect(ent._etAlias).toBe('typeAlias')
     expect(ent.typeHidden).toBe(true)
+    expect(ent.derived).toEqual(['attr3'])
   })
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

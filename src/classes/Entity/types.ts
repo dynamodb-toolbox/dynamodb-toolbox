@@ -96,7 +96,7 @@ export type PureAttributeDefinition = Partial<{
   delimiter: string
   prefix: string
   suffix: string,
-  derive: (data: {}) => any
+  derive: (data: Record<string, any>) => any
 }>
 
 export type CompositeAttributeDefinition =

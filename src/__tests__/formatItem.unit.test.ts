@@ -36,7 +36,10 @@ DefaultTable.addEntity(
       linked4: ['composite1', 1, { save: false, alias: 'linked4_alias' }],
       composite2_alias: { type: 'string', map: 'composite2' },
       linked5: ['composite2_alias', 0, { save: false }],
-      linked6: ['composite2_alias', 1, { save: false, alias: 'linked6_alias' }]
+      linked6: ['composite2_alias', 1, { save: false, alias: 'linked6_alias' }],
+      derived: { derive: (item) => item.derivedFrom1 + item.derivedFrom2 },
+      derivedFrom1: { type:'number'},
+      derivedFrom2: { type:'number'},
     }
   } as const)
 )
@@ -194,5 +197,20 @@ describe('formatItem', () => {
       number: null
     })
     expect(result).toEqual({ number: null })
+  })
+
+  it('calculates derived states', () => {
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      other: 'other',
+      derivedFrom1: 1,
+      derivedFrom2: 15
+    }, [], ['derived'])
+    
+    expect(result).toEqual({
+      other: 'other',
+      derivedFrom1: 1,
+      derivedFrom2: 15,
+      derived: 16
+    })
   })
 })

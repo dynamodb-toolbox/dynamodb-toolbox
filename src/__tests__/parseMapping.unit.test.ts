@@ -211,4 +211,20 @@ describe('parseMapping', () => {
       parseMapping('attr', { type: 'string', map: 'test', alias: 'testx' }, track)
     }).toThrow(`'attr' cannot contain both an alias and a map`)
   })
+
+  it('parses mapping with derived', async () => {
+    // Parse to string so we can compare without the derive function giving false negative
+    expect(JSON.stringify(parseMapping('attr', { derive: () => 'test' }, track))).toEqual(
+      JSON.stringify({
+        attr: { save: false, derive: () => 'test',  type: 'string', coerce: true, }
+      })
+    )
+  })
+
+  it('fails on non-function derive', async () => {
+    expect(() => {
+      // @ts-expect-error
+      parseMapping('attr', { derive: 'test' }, track)
+    }).toThrow(`'derive' must be a function`)
+  })
 })
