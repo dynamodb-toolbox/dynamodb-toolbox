@@ -1,17 +1,23 @@
 import type { O } from 'ts-toolbelt'
 
-import type { MapAttribute, AnyAttribute, Never } from 'v1/schema'
+import type { MapAttribute, AnyAttribute, Never, Paths } from 'v1/schema'
 import type { If, OptionalizeUndefinableProperties } from 'v1/types'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { MatchKeys, FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import type {
+  MatchKeys,
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './types'
 import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute'
 import { matchProjection } from './utils'
 
 export type MapAttrFormattedValue<
   ATTRIBUTE extends MapAttribute,
-  OPTIONS extends FormattedValueOptions = FormattedValueOptions,
+  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions,
   MATCHING_KEYS extends string = MatchKeys<
     Extract<keyof ATTRIBUTE['attributes'], string>,
     '.',
@@ -39,7 +45,7 @@ export type MapAttrFormattedValue<
                     ? `.${KEY}` extends OPTIONS['attributes']
                       ? undefined
                       : OPTIONS['attributes'] extends `.${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                      ? CHILDREN_FILTERED_ATTRIBUTES
+                      ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['attributes'][KEY]>>
                       : never
                     : undefined
                 }
@@ -60,7 +66,7 @@ export type MapAttrFormattedValue<
                       ? `.${KEY}` extends OPTIONS['attributes']
                         ? undefined
                         : OPTIONS['attributes'] extends `.${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                        ? CHILDREN_FILTERED_ATTRIBUTES
+                        ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['attributes'][KEY]>>
                         : never
                       : undefined
                   }
@@ -72,12 +78,14 @@ export type MapAttrFormattedValue<
 
 export const formatMapAttrRawValue = <
   ATTRIBUTE extends MapAttribute,
-  OPTIONS extends FormatOptions = FormatOptions
+  OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): MapAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
+): MapAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+  type Formatted = MapAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
   if (!isObject(rawValue)) {
     const { path, type } = attribute
 
@@ -121,5 +129,5 @@ export const formatMapAttrRawValue = <
     }
   })
 
-  return formattedMap as MapAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
+  return formattedMap as Formatted
 }

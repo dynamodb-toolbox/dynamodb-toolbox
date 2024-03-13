@@ -1,6 +1,11 @@
-import type { Schema, Attribute, SchemaAction, Paths } from 'v1/schema'
+import type { Schema, Attribute, SchemaAction } from 'v1/schema'
 
-import type { FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import type {
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './types'
 import { formatAttrRawValue, AttrFormattedValue } from './attribute'
 import { formatSchemaRawValue, SchemaFormattedValue } from './schema'
 
@@ -12,7 +17,7 @@ import { formatSchemaRawValue, SchemaFormattedValue } from './schema'
  */
 export type FormattedValue<
   SCHEMA extends Schema | Attribute,
-  OPTIONS extends FormattedValueOptions<Paths<SCHEMA>> = FormattedValueOptions<Paths<SCHEMA>>
+  OPTIONS extends FormattedValueOptions<SCHEMA> = FormattedValueDefaultOptions
 > = SCHEMA extends Schema
   ? SchemaFormattedValue<SCHEMA, OPTIONS>
   : SCHEMA extends Attribute
@@ -27,16 +32,16 @@ export class Formatter<SCHEMA extends Schema | Attribute = Schema | Attribute>
     this.schema = schema
   }
 
-  format<OPTIONS extends FormatOptions<Paths<SCHEMA>>>(
+  format<OPTIONS extends FormatOptions<SCHEMA>>(
     rawValue: unknown,
     options: OPTIONS = {} as OPTIONS
-  ): FormattedValue<SCHEMA, UnpackFormatOptions<OPTIONS>> {
-    type Formatted = FormattedValue<SCHEMA, UnpackFormatOptions<OPTIONS>>
+  ): FormattedValue<SCHEMA, FromFormatOptions<SCHEMA, OPTIONS>> {
+    type Formatted = FormattedValue<SCHEMA, FromFormatOptions<SCHEMA, OPTIONS>>
 
     if (this.schema.type === 'schema') {
-      return formatSchemaRawValue<Schema>(this.schema, rawValue, options) as Formatted
+      return formatSchemaRawValue(this.schema, rawValue, options) as Formatted
     } else {
-      return formatAttrRawValue<Attribute>(this.schema, rawValue, options) as Formatted
+      return formatAttrRawValue(this.schema, rawValue, options) as Formatted
     }
   }
 }
