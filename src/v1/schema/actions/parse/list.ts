@@ -1,47 +1,49 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type {
-  Schema,
-  ListAttribute,
-  ListAttributeElements,
-  Extension,
-  ExtendedValue
-} from 'v1/schema'
+import type { Schema, ListAttribute, ListAttributeElements, ExtendedValue } from 'v1/schema'
 import type { If } from 'v1/types'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { ValidValue } from './parser'
-import type { HasExtension, ParsingOptions } from './types'
-import { attrWorkflow, ValidAttrValue } from './attribute'
+import type { ParsedValue } from './parser'
+import type {
+  ParsedValueOptions,
+  ParsedValueDefaultOptions,
+  ParsingOptions,
+  FromParsingOptions
+} from './types'
+import { attrWorkflow, AttrParsedValue, MustBeDefined } from './attribute'
 
-export type ValidListAttrValue<
+export type ListAttrParsedValue<
   ATTRIBUTE extends ListAttribute,
-  EXTENSION extends Extension = never
-> = ValidAttrValue<ATTRIBUTE['elements']>[] | ExtendedValue<EXTENSION, 'list'>
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = ListAttribute extends ATTRIBUTE
+  ? unknown
+  :
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | AttrParsedValue<ATTRIBUTE['elements']>[]
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>
 
 export function* listAttrWorkflow<
-  INPUT_EXTENSION extends Extension = never,
-  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
+  ATTRIBUTE extends ListAttribute,
+  OPTIONS extends ParsingOptions = ParsingOptions
 >(
-  attribute: ListAttribute,
+  attribute: ATTRIBUTE,
   inputValue: unknown,
-  ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
-    HasExtension<INPUT_EXTENSION>,
-    [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
-    [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
-  >
+  options: OPTIONS = {} as OPTIONS
 ): Generator<
-  ValidListAttrValue<ListAttribute, INPUT_EXTENSION>,
-  ValidListAttrValue<ListAttribute, INPUT_EXTENSION>,
-  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+  ListAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  ListAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
 > {
+  type Parsed = ListAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
+
   const { fill = true, transform = true } = options
 
   const parsers: Generator<
-    ValidValue<ListAttributeElements, INPUT_EXTENSION>,
-    ValidValue<ListAttributeElements, INPUT_EXTENSION>,
-    ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+    ParsedValue<ListAttributeElements, FromParsingOptions<OPTIONS>>,
+    ParsedValue<ListAttributeElements, FromParsingOptions<OPTIONS>>,
+    ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
   >[] = []
 
   const isInputValueArray = isArray(inputValue)
@@ -54,16 +56,16 @@ export function* listAttrWorkflow<
   if (fill) {
     if (isInputValueArray) {
       const defaultedValue = parsers.map(parser => parser.next().value)
-      const itemInput = yield defaultedValue
+      const itemInput = yield defaultedValue as Parsed
 
       const linkedValue = parsers.map(parser => parser.next(itemInput).value)
-      yield linkedValue
+      yield linkedValue as Parsed
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue
+      yield defaultedValue as Parsed
 
       const linkedValue = defaultedValue
-      yield linkedValue
+      yield linkedValue as Parsed
     }
   }
 
@@ -83,11 +85,11 @@ export function* listAttrWorkflow<
   const parsedValue = parsers.map(parser => parser.next().value)
 
   if (transform) {
-    yield parsedValue
+    yield parsedValue as Parsed
   } else {
-    return parsedValue
+    return parsedValue as Parsed
   }
 
   const transformedValue = parsers.map(parser => parser.next().value)
-  return transformedValue
+  return transformedValue as Parsed
 }

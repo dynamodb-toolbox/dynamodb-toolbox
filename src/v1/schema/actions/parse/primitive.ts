@@ -5,7 +5,6 @@ import type {
   PrimitiveAttribute,
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute,
-  Extension,
   ExtendedValue,
   Transformer
 } from 'v1/schema'
@@ -13,44 +12,60 @@ import type { If } from 'v1/types'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { ValidValue } from './parser'
-import type { HasExtension, ParsingOptions } from './types'
+import type { ParsedValue } from './parser'
+import type {
+  ParsedValueOptions,
+  ParsedValueDefaultOptions,
+  ParsingOptions,
+  FromParsingOptions
+} from './types'
+import type { MustBeDefined } from './attribute'
 
-export type ValidPrimitiveAttrValue<
+export type PrimitiveAttrParsedValue<
   ATTRIBUTE extends PrimitiveAttribute,
-  EXTENSION extends Extension = never
-> =
-  | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
-      ? ATTRIBUTE['enum'][number]
-      : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
-  | ExtendedValue<EXTENSION, ATTRIBUTE['type']>
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = PrimitiveAttribute extends ATTRIBUTE
+  ? ResolvedPrimitiveAttribute
+  : ATTRIBUTE extends { transform: undefined }
+  ?
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
+          ? ATTRIBUTE['enum'][number]
+          : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
+  : OPTIONS extends { transform: true }
+  ? ResolvePrimitiveAttributeType<ATTRIBUTE['type']>
+  :
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
+          ? ATTRIBUTE['enum'][number]
+          : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
 
 export function* primitiveAttrWorkflow<
-  INPUT_EXTENSION extends Extension = never,
-  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
+  ATTRIBUTE extends PrimitiveAttribute,
+  OPTIONS extends ParsingOptions = ParsingOptions
 >(
-  attribute: PrimitiveAttribute,
+  attribute: ATTRIBUTE,
   inputValue: unknown,
-  ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
-    HasExtension<INPUT_EXTENSION>,
-    [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
-    [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
-  >
+  options: OPTIONS = {} as OPTIONS
 ): Generator<
-  ValidPrimitiveAttrValue<PrimitiveAttribute, INPUT_EXTENSION>,
-  ValidPrimitiveAttrValue<PrimitiveAttribute, INPUT_EXTENSION>,
-  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+  PrimitiveAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  PrimitiveAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
 > {
+  type Parsed = PrimitiveAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
+
   const { fill = true, transform = true } = options
 
   const linkedValue = inputValue
 
   if (fill) {
     const defaultedValue = cloneDeep(inputValue)
-    yield defaultedValue
+    yield defaultedValue as Parsed
 
     const linkedValue = defaultedValue
-    yield linkedValue
+    yield linkedValue as Parsed
   }
 
   const validator = validatorsByPrimitiveType[attribute.type]
@@ -89,16 +104,15 @@ export function* primitiveAttrWorkflow<
    * @debt type "validator should act as typeguard"
    */
   const parsedValue = linkedValue as ResolvedPrimitiveAttribute
-
   if (transform) {
-    yield parsedValue
+    yield parsedValue as Parsed
   } else {
-    return parsedValue
+    return parsedValue as Parsed
   }
 
   const transformedValue =
     attribute.transform !== undefined
       ? (attribute.transform as Transformer).parse(parsedValue)
       : parsedValue
-  return transformedValue
+  return transformedValue as Parsed
 }

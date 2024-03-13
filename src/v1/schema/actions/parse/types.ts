@@ -1,54 +1,73 @@
-import type {
-  Extension,
-  Schema,
-  Attribute,
-  AttributeBasicValue,
-  RequiredOption,
-  ValidValue
-} from 'v1/schema'
-import type { If } from 'v1/types'
+import type { Extension, Schema, Attribute, AttributeBasicValue } from 'v1/schema'
 
-export type HasExtension<EXTENSION extends Extension> = [EXTENSION] extends [never] ? false : true
+import type { ParsedValue } from './parser'
+
+export const $extension = Symbol('$extension')
+export type $extension = typeof $extension
+
+export const $contextExtension = Symbol('$contextExtension')
+export type $contextExtension = typeof $contextExtension
+
+export type ExtensionParserOptions = { transform?: boolean }
 
 export type ExtensionParser<
-  INPUT_EXTENSION extends Extension,
-  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
-> = (
+  EXTENSION extends Extension = Extension,
+  CONTEXT_EXTENSION extends Extension = EXTENSION
+> = { [$extension]?: EXTENSION; [$contextExtension]?: CONTEXT_EXTENSION } & ((
   attribute: Attribute,
   input: unknown,
-  options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>
+  options?: ExtensionParserOptions
 ) =>
   | {
       isExtension: true
       extensionParser: () => Generator<
-        ValidValue<Attribute, INPUT_EXTENSION>,
-        ValidValue<Attribute, INPUT_EXTENSION>,
-        ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+        ParsedValue<Attribute, { extension: EXTENSION }>,
+        ParsedValue<Attribute, { extension: EXTENSION }>,
+        ParsedValue<Schema, { extension: CONTEXT_EXTENSION }> | undefined
       >
       basicInput?: never
     }
   | {
       isExtension: false
       extensionParser?: never
-      basicInput: AttributeBasicValue<INPUT_EXTENSION> | undefined
-    }
+      basicInput: AttributeBasicValue<EXTENSION> | undefined
+    })
 
-export interface AttributeFilters {
-  key?: boolean
+export type Operation = 'key' | 'put' | 'update'
+
+export type ParsingOptions = {
+  fill?: boolean
+  transform?: boolean
+  operation?: Operation
+  parseExtension?: ExtensionParser
 }
 
-export type FillKey = 'key' | 'put' | 'update'
+export type ParsingDefaultOptions = {
+  fill: true
+  transform: true
+  operation: 'put'
+  parseExtension?: undefined
+}
 
-export type ParsingOptions<
-  INPUT_EXTENSION extends Extension,
-  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
-> = {
-  fill?: boolean | FillKey
+export type ParsedValueOptions = {
   transform?: boolean
-  requiringOptions?: Set<RequiredOption>
-  filters?: AttributeFilters
-} & If<
-  HasExtension<INPUT_EXTENSION>,
-  { parseExtension: ExtensionParser<INPUT_EXTENSION, SCHEMA_EXTENSION> },
-  { parseExtension?: never }
->
+  operation?: Operation
+  extension?: Extension
+}
+
+export type ParsedValueDefaultOptions = {
+  transform: true
+  operation: 'put'
+}
+
+export type FromParsingOptions<OPTIONS extends ParsingOptions, CONTEXT extends boolean = false> = {
+  transform: OPTIONS['transform'] extends boolean
+    ? OPTIONS['transform']
+    : ParsedValueDefaultOptions['transform']
+  operation: OPTIONS['operation'] extends Operation
+    ? OPTIONS['operation']
+    : ParsedValueDefaultOptions['operation']
+  extension: OPTIONS['parseExtension'] extends ExtensionParser
+    ? NonNullable<OPTIONS['parseExtension'][CONTEXT extends true ? $contextExtension : $extension]>
+    : undefined
+}

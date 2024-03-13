@@ -21,12 +21,7 @@ export const transactDeleteItemParams = <
   input: KeyInput<ENTITY>,
   deleteItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactDeleteItemParams => {
-  const workflow = entity.schema.build(Parser).workflow(input, {
-    fill: 'key',
-    transform: true,
-    filters: { key: true },
-    requiringOptions: new Set(['always'])
-  })
+  const workflow = entity.schema.build(Parser).workflow(input, { operation: 'key' })
 
   workflow.next() // defaulted
   workflow.next() // linked
