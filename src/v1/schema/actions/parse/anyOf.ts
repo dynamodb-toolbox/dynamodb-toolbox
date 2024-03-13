@@ -5,32 +5,41 @@ import type {
   Attribute,
   AnyOfAttribute,
   AnyOfAttributeElements,
-  Extension,
   ExtendedValue
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { ValidValue } from './parser'
-import type { HasExtension, ParsingOptions } from './types'
-import { attrWorkflow, ValidAttrValue } from './attribute'
+import type { ParsedValue } from './parser'
+import type {
+  ParsedValueOptions,
+  ParsedValueDefaultOptions,
+  ParsingOptions,
+  FromParsingOptions
+} from './types'
+import { attrWorkflow, AttrParsedValue, MustBeDefined } from './attribute'
 
-export type ValidAnyOfAttrValue<
+export type AnyOfAttrParsedValue<
   ATTRIBUTE extends AnyOfAttribute,
-  EXTENSION extends Extension = never
-> = ValidAnyOfAttrValueRec<ATTRIBUTE['elements'], EXTENSION> | ExtendedValue<EXTENSION, 'anyOf'>
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = AnyOfAttribute extends ATTRIBUTE
+  ? unknown
+  :
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | ValidAnyOfAttrValueRec<ATTRIBUTE['elements'], OPTIONS>
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'anyOf'>
 
 type ValidAnyOfAttrValueRec<
   ELEMENTS extends Attribute[],
-  EXTENSION extends Extension = never,
+  OPTIONS extends ParsedValueOptions = ParsedValueOptions,
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
   ? ELEMENTS_HEAD extends Attribute
     ? ELEMENTS_TAIL extends Attribute[]
       ? ValidAnyOfAttrValueRec<
           ELEMENTS_TAIL,
-          EXTENSION,
-          RESULTS | ValidAttrValue<ELEMENTS_HEAD, EXTENSION>
+          OPTIONS,
+          RESULTS | AttrParsedValue<ELEMENTS_HEAD, OPTIONS>
         >
       : never
     : never
@@ -38,29 +47,22 @@ type ValidAnyOfAttrValueRec<
   ? unknown
   : RESULTS
 
-export function* anyOfAttributeParser<
-  INPUT_EXTENSION extends Extension = never,
-  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
->(
+export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOptions>(
   attribute: AnyOfAttribute,
   inputValue: unknown,
-  ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
-    HasExtension<INPUT_EXTENSION>,
-    [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
-    [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
-  >
+  options: OPTIONS = {} as OPTIONS
 ): Generator<
-  ValidAnyOfAttrValue<AnyOfAttribute, INPUT_EXTENSION>,
-  ValidAnyOfAttrValue<AnyOfAttribute, INPUT_EXTENSION>,
-  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+  AnyOfAttrParsedValue<AnyOfAttribute, FromParsingOptions<OPTIONS>>,
+  AnyOfAttrParsedValue<AnyOfAttribute, FromParsingOptions<OPTIONS>>,
+  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
 > {
   const { fill = true, transform = true } = options
 
   let parser:
     | Generator<
-        ValidValue<AnyOfAttributeElements, INPUT_EXTENSION>,
-        ValidValue<AnyOfAttributeElements, INPUT_EXTENSION>,
-        ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+        ParsedValue<AnyOfAttributeElements, FromParsingOptions<OPTIONS>>,
+        ParsedValue<AnyOfAttributeElements, FromParsingOptions<OPTIONS>>,
+        ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
       >
     | undefined = undefined
   let _defaultedValue = undefined

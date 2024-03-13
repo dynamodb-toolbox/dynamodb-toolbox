@@ -1,20 +1,24 @@
-import type { If, IsConstraint } from 'v1/types'
-import type { Schema, Attribute, Extension, SchemaAction } from 'v1/schema'
+import type { Schema, Attribute, SchemaAction } from 'v1/schema'
 
-import type { HasExtension, ParsingOptions } from './types'
+import type {
+  ParsedValueOptions,
+  ParsedValueDefaultOptions,
+  ParsingOptions,
+  ParsingDefaultOptions,
+  FromParsingOptions
+} from './types'
 
-import { schemaWorkflow, ValidSchemaValue } from './schema'
-import { attrWorkflow, ValidAttrValue } from './attribute'
+import { schemaWorkflow, SchemaParsedValue } from './schema'
+import { attrWorkflow, AttrParsedValue } from './attribute'
 
-export type ValidValue<SCHEMA extends Schema | Attribute, EXTENSION extends Extension = never> = If<
-  IsConstraint<SCHEMA, Schema | Attribute>,
-  unknown,
-  SCHEMA extends Schema
-    ? ValidSchemaValue<SCHEMA, EXTENSION>
-    : SCHEMA extends Attribute
-    ? ValidAttrValue<SCHEMA, EXTENSION>
-    : never
->
+export type ParsedValue<
+  SCHEMA extends Schema | Attribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = SCHEMA extends Schema
+  ? SchemaParsedValue<SCHEMA, OPTIONS>
+  : SCHEMA extends Attribute
+  ? AttrParsedValue<SCHEMA, OPTIONS>
+  : never
 
 export class Parser<SCHEMA extends Schema | Attribute> implements SchemaAction<SCHEMA> {
   schema: SCHEMA
@@ -23,33 +27,36 @@ export class Parser<SCHEMA extends Schema | Attribute> implements SchemaAction<S
     this.schema = schema
   }
 
-  workflow<EXTENSION extends Extension = never>(
+  workflow<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
     inputValue: unknown,
-    ...[options = {} as ParsingOptions<EXTENSION, EXTENSION>]: If<
-      HasExtension<EXTENSION>,
-      [options: ParsingOptions<EXTENSION, EXTENSION>],
-      [options?: ParsingOptions<EXTENSION, EXTENSION>]
-    >
-  ): Generator<ValidValue<SCHEMA, EXTENSION>, ValidValue<SCHEMA, EXTENSION>> {
+    options: OPTIONS = {} as OPTIONS
+  ): Generator<
+    ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>,
+    ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
+  > {
+    type Parsed = ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
+
     if (this.schema.type === 'schema') {
-      return schemaWorkflow<Schema, EXTENSION>(this.schema, inputValue, options) as any
+      return schemaWorkflow<Schema, OPTIONS>(this.schema, inputValue, options) as Generator<
+        Parsed,
+        Parsed
+      >
     } else {
-      return attrWorkflow<Attribute, EXTENSION>(this.schema, inputValue, options) as any
+      return attrWorkflow<Attribute, OPTIONS>(this.schema, inputValue, options) as Generator<
+        Parsed,
+        Parsed
+      >
     }
   }
 
-  parse<EXTENSION extends Extension = never>(
+  parse<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
     inputValue: unknown,
-    ...[options = {} as ParsingOptions<EXTENSION, EXTENSION>]: If<
-      HasExtension<EXTENSION>,
-      [options: ParsingOptions<EXTENSION, EXTENSION>],
-      [options?: ParsingOptions<EXTENSION, EXTENSION>]
-    >
-  ): ValidValue<SCHEMA, EXTENSION> {
+    options: OPTIONS = {} as OPTIONS
+  ): ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
     const workflow = this.workflow(inputValue, options)
 
     let done = false
-    let value: ValidValue<SCHEMA, EXTENSION>
+    let value: ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
     do {
       const nextState = workflow.next()
       done = Boolean(nextState.done)

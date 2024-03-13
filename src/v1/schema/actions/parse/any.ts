@@ -1,30 +1,33 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { Schema, AnyAttribute, Extension, ExtendedValue } from 'v1/schema'
-import type { If } from 'v1/types'
+import type { Schema, AnyAttribute, ExtendedValue } from 'v1/schema'
 
-import type { ValidValue } from './parser'
-import type { HasExtension, ParsingOptions } from './types'
+import type { ParsedValue } from './parser'
+import type {
+  ParsedValueOptions,
+  ParsedValueDefaultOptions,
+  ParsingOptions,
+  FromParsingOptions
+} from './types'
 
-export type ValidAnyAttrValue<
+export type AnyAttrParsedValue<
   ATTRIBUTE extends AnyAttribute,
-  EXTENSION extends Extension = never
-> = ATTRIBUTE['castAs'] | ExtendedValue<EXTENSION, 'any'>
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = AnyAttribute extends ATTRIBUTE
+  ? unknown
+  : ATTRIBUTE['castAs'] | ExtendedValue<NonNullable<OPTIONS['extension']>, 'any'>
 
 export function* anyAttrWorkflow<
-  INPUT_EXTENSION extends Extension = never,
-  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
+  ATTRIBUTE extends AnyAttribute,
+  OPTIONS extends ParsingOptions = ParsingOptions
 >(
+  _: ATTRIBUTE,
   inputValue: unknown,
-  ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
-    HasExtension<INPUT_EXTENSION>,
-    [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
-    [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
-  >
+  options: OPTIONS = {} as OPTIONS
 ): Generator<
-  ValidAnyAttrValue<AnyAttribute, INPUT_EXTENSION>,
-  ValidAnyAttrValue<AnyAttribute, INPUT_EXTENSION>,
-  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+  AnyAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  AnyAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
 > {
   const { fill = true, transform = true } = options
 

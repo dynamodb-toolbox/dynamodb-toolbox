@@ -1,8 +1,6 @@
-import cloneDeep from 'lodash.clonedeep'
-
-import type { Attribute, ValidValue, AttributeBasicValue } from 'v1/schema'
+import type { Attribute, AttributeBasicValue } from 'v1/schema'
 import type { ReferenceExtension } from 'v1/operations/types'
-import type { ExtensionParser } from 'v1/schema/actions/parse/types'
+import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { isArray } from 'v1/utils/validation/isArray'
 import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -15,76 +13,18 @@ import { isString } from 'v1/utils/validation'
 export const parseReferenceExtension: ExtensionParser<
   ReferenceExtension,
   UpdateItemInputExtension
-> = (attribute, inputValue, options) => {
-  const { fill = true } = options
-
-  if (hasGetOperation(inputValue)) {
+> = (
+  attribute: Attribute,
+  inputValue: unknown,
+  { transform = true }: ExtensionParserOptions = {}
+) => {
+  if (hasGetOperation(inputValue) && inputValue[$GET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
         const references = inputValue[$GET]
-        const areReferencesArray = isArray(references)
-        let reference: string | undefined = undefined
-        let fallbackParser:
-          | Generator<
-              ValidValue<Attribute, ReferenceExtension>,
-              ValidValue<Attribute, ReferenceExtension>
-            >
-          | undefined = undefined
-        let rest: unknown[] = []
 
-        if (areReferencesArray) {
-          const [_reference, fallback, ..._rest] = references
-          reference = _reference as string | undefined
-
-          if (fallback !== undefined) {
-            fallbackParser = attrWorkflow(attribute, fallback, options)
-          }
-
-          rest = _rest
-        }
-
-        if (fill) {
-          if (areReferencesArray) {
-            const defaultedValue = {
-              [$GET]: [
-                cloneDeep(reference),
-                ...[
-                  fallbackParser !== undefined
-                    ? [fallbackParser.next().value]
-                    : rest.length === 0
-                    ? []
-                    : [undefined]
-                ],
-                ...cloneDeep(rest)
-              ]
-            }
-            yield defaultedValue
-
-            const linkedValue = {
-              [$GET]: [
-                cloneDeep(reference),
-                ...[
-                  fallbackParser !== undefined
-                    ? [fallbackParser.next().value]
-                    : rest.length === 0
-                    ? []
-                    : [undefined]
-                ],
-                ...cloneDeep(rest)
-              ]
-            }
-            yield linkedValue
-          } else {
-            const defaultedValue = { [$GET]: cloneDeep(inputValue[$GET]) }
-            yield defaultedValue
-
-            const linkedValue = defaultedValue
-            yield linkedValue
-          }
-        }
-
-        if (!areReferencesArray) {
+        if (!isArray(references)) {
           const { path } = attribute
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -97,6 +37,8 @@ export const parseReferenceExtension: ExtensionParser<
             }
           })
         }
+
+        const [reference, fallback] = references
 
         if (!isString(reference)) {
           const { path } = attribute
@@ -112,6 +54,15 @@ export const parseReferenceExtension: ExtensionParser<
           })
         }
 
+        const fallbackParser =
+          fallback !== undefined
+            ? attrWorkflow(attribute, fallback, {
+                fill: false,
+                transform,
+                parseExtension: parseReferenceExtension
+              })
+            : undefined
+
         const parsedValue = {
           [$GET]: [
             // NOTE: Reference validation will be done in UpdateExpressionParser
@@ -119,7 +70,11 @@ export const parseReferenceExtension: ExtensionParser<
             ...(fallbackParser !== undefined ? [fallbackParser.next().value] : [])
           ]
         }
-        yield parsedValue
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue = {
           [$GET]: [

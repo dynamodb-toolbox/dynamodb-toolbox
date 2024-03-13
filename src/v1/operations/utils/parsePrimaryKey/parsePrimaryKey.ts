@@ -1,17 +1,17 @@
 import type { EntityV2 } from 'v1/entity'
-import type { Schema, Extension, ValidValue } from 'v1/schema'
+import type { Schema, Extension, ParsedValue } from 'v1/schema'
 import type { PrimaryKey } from 'v1/table'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 
 export const parsePrimaryKey = <ENTITY extends EntityV2, EXTENSION extends Extension>(
   entity: ENTITY,
-  keyInput: ValidValue<Schema, EXTENSION>
+  keyInput: ParsedValue<Schema, { operation: 'key'; extension: EXTENSION }>
 ): PrimaryKey<ENTITY['table']> => {
   const { table } = entity
   const { partitionKey, sortKey } = table
 
-  const primaryKey: ValidValue<Schema> = {}
+  const primaryKey: ParsedValue<Schema, { operation: 'key'; extension: EXTENSION }> = {}
 
   const partitionKeyValidator = validatorsByPrimitiveType[partitionKey.type]
   const partitionKeyValue = keyInput[partitionKey.name]

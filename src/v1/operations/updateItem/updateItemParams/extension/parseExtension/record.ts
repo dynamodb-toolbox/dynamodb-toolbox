@@ -2,12 +2,10 @@ import type {
   Schema,
   Attribute,
   RecordAttribute,
-  RecordAttributeKeys,
-  RecordAttributeElements,
-  ValidValue,
+  ParsedValue,
   AttributeBasicValue
 } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
+import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { attrWorkflow } from 'v1/schema/actions/parse'
 import { isObject } from 'v1/utils/validation/isObject'
 
@@ -15,28 +13,19 @@ import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $SET, $REMOVE } from 'v1/operations/updateItem/constants'
 import { hasSetOperation } from 'v1/operations/updateItem/utils'
 
+import { parseUpdateExtension } from './attribute'
+
 function* recordElementsWorkflow(
   attribute: RecordAttribute,
   inputValue: unknown,
-  options: ParsingOptions<UpdateItemInputExtension>
+  { transform = true }: ExtensionParserOptions = {}
 ): Generator<
-  ValidValue<Attribute, UpdateItemInputExtension>,
-  ValidValue<Attribute, UpdateItemInputExtension>,
-  ValidValue<Schema, UpdateItemInputExtension> | undefined
+  ParsedValue<Attribute, { extension: UpdateItemInputExtension }>,
+  ParsedValue<Attribute, { extension: UpdateItemInputExtension }>,
+  ParsedValue<Schema, { extension: UpdateItemInputExtension }> | undefined
 > {
-  const { fill = true, transform = true } = options
-
   if (inputValue === $REMOVE) {
-    if (fill) {
-      const defaultedValue: typeof $REMOVE = $REMOVE
-      yield defaultedValue
-
-      const linkedValue: typeof $REMOVE = $REMOVE
-      yield linkedValue
-    }
-
     const parsedValue: typeof $REMOVE = $REMOVE
-
     if (transform) {
       yield parsedValue
     } else {
@@ -47,36 +36,28 @@ function* recordElementsWorkflow(
     return transformedValue
   }
 
-  return yield* attrWorkflow(attribute.elements, inputValue, options)
+  return yield* attrWorkflow(attribute.elements, inputValue, {
+    operation: 'update',
+    fill: false,
+    transform,
+    parseExtension: parseUpdateExtension
+  })
 }
 
 export const parseRecordExtension = (
   attribute: RecordAttribute,
   input: unknown,
-  options: ParsingOptions<UpdateItemInputExtension>
+  options: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { fill = true, transform = true } = options
+  const { transform = true } = options
 
-  if (hasSetOperation(input)) {
+  if (hasSetOperation(input) && input[$SET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attrWorkflow(attribute, input[$SET], {
-          ...options,
-          // Should a simple record of valid elements (not extended)
-          parseExtension: undefined
-        })
-
-        if (fill) {
-          const defaultedValue = { [$SET]: parser.next().value }
-          yield defaultedValue
-
-          const linkedValue = { [$SET]: parser.next().value }
-          yield linkedValue
-        }
+        const parser = attrWorkflow(attribute, input[$SET], { fill: false, transform })
 
         const parsedValue = { [$SET]: parser.next().value }
-
         if (transform) {
           yield parsedValue
         } else {
@@ -93,44 +74,12 @@ export const parseRecordExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parsers: [
-          Generator<ValidValue<RecordAttributeKeys>, ValidValue<RecordAttributeKeys>>,
-          Generator<
-            ValidValue<RecordAttributeElements, UpdateItemInputExtension>,
-            ValidValue<RecordAttributeElements, UpdateItemInputExtension>
-          >
-        ][] = Object.entries(input)
+        const parsers = Object.entries(input)
           .filter(([, inputValue]) => inputValue !== undefined)
           .map(([inputKey, inputValue]) => [
-            attrWorkflow<RecordAttributeKeys>(attribute.keys, inputKey, {
-              ...options,
-              // Should a simple string (not extended)
-              parseExtension: undefined
-            }),
+            attrWorkflow(attribute.keys, inputKey, { fill: false, transform }),
             recordElementsWorkflow(attribute, inputValue, options)
           ])
-
-        if (fill) {
-          const defaultedValue = Object.fromEntries(
-            parsers
-              .map(([keyParser, elementParser]) => [
-                keyParser.next().value,
-                elementParser.next().value
-              ])
-              .filter(([, element]) => element !== undefined)
-          )
-          yield defaultedValue
-
-          const linkedValue = Object.fromEntries(
-            parsers
-              .map(([keyParser, elementParser]) => [
-                keyParser.next().value,
-                elementParser.next().value
-              ])
-              .filter(([, element]) => element !== undefined)
-          )
-          yield linkedValue
-        }
 
         const parsedValue = Object.fromEntries(
           parsers
@@ -140,7 +89,6 @@ export const parseRecordExtension = (
             ])
             .filter(([, element]) => element !== undefined)
         )
-
         if (transform) {
           yield parsedValue
         } else {

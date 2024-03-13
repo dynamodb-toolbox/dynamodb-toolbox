@@ -14,11 +14,7 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
   input: PutItemInput<ENTITY>,
   putItemOptions: OPTIONS = {} as OPTIONS
 ): PutCommandInput => {
-  const workflow = entity.schema.build(Parser).workflow(input, {
-    fill: 'put',
-    transform: true,
-    requiringOptions: new Set(['always', 'atLeastOnce'])
-  })
+  const workflow = entity.schema.build(Parser).workflow(input)
 
   workflow.next() // defaulted
   workflow.next() // linked
