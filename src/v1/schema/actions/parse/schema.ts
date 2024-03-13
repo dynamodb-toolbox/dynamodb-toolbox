@@ -1,43 +1,53 @@
 import cloneDeep from 'lodash.clonedeep'
 import type { O } from 'ts-toolbelt'
 
-import type { Schema, Attribute, AnyAttribute, Extension, Never } from 'v1/schema'
-import type { If, OptionalizeUndefinableProperties, IsConstraint } from 'v1/types'
+import type { Schema, Attribute, AnyAttribute, Never } from 'v1/schema'
+import type { OptionalizeUndefinableProperties } from 'v1/types'
 import { isObject } from 'v1/utils/validation/isObject'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { HasExtension, ParsingOptions } from './types'
-import type { ValidValue } from './parser'
-import { attrWorkflow, ValidAttrValue } from './attribute'
-import { doesAttributeMatchFilters } from './doesAttributeMatchFilter'
+import type {
+  ParsedValueOptions,
+  FromParsingOptions,
+  ParsingOptions,
+  ParsingDefaultOptions
+} from './types'
+import type { ParsedValue } from './parser'
+import { attrWorkflow, AttrParsedValue } from './attribute'
 
-export type ValidSchemaValue<SCHEMA extends Schema, EXTENSION extends Extension = never> = If<
-  IsConstraint<SCHEMA, Schema>,
-  { [KEY in string]: ValidAttrValue<Attribute, EXTENSION> },
-  OptionalizeUndefinableProperties<
-    {
-      [KEY in keyof SCHEMA['attributes'] & string]: ValidAttrValue<
-        SCHEMA['attributes'][KEY],
-        EXTENSION
-      >
-    },
-    // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-    O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
-  >
->
+export type SchemaParsedValue<
+  SCHEMA extends Schema,
+  OPTIONS extends ParsedValueOptions = ParsedValueOptions
+> = Schema extends SCHEMA
+  ? { [KEY in string]: AttrParsedValue<Attribute, OPTIONS> }
+  : OptionalizeUndefinableProperties<
+      {
+        [KEY in OPTIONS['operation'] extends 'key'
+          ? O.SelectKeys<SCHEMA['attributes'], { key: true }>
+          : keyof SCHEMA['attributes'] & string]: AttrParsedValue<
+          SCHEMA['attributes'][KEY],
+          OPTIONS
+        >
+      },
+      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+      O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
+    >
 
-export function* schemaWorkflow<SCHEMA extends Schema, EXTENSION extends Extension = never>(
+export function* schemaWorkflow<
+  SCHEMA extends Schema,
+  OPTIONS extends ParsingOptions = ParsingDefaultOptions
+>(
   schema: SCHEMA,
   inputValue: unknown,
-  ...[options = {} as ParsingOptions<EXTENSION, EXTENSION>]: If<
-    HasExtension<EXTENSION>,
-    [options: ParsingOptions<EXTENSION, EXTENSION>],
-    [options?: ParsingOptions<EXTENSION, EXTENSION>]
-  >
-): Generator<ValidValue<SCHEMA, EXTENSION>, ValidValue<SCHEMA, EXTENSION>> {
-  const { filters, fill = true, transform = true } = options
-  const parsers: Record<string, Generator<ValidValue<Attribute, EXTENSION>>> = {}
-  let restEntries: [string, ValidValue<Attribute, EXTENSION>][] = []
+  options: OPTIONS = {} as OPTIONS
+): Generator<
+  ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>,
+  ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
+> {
+  const { operation = 'put', fill = true, transform = true } = options
+
+  const parsers: Record<string, Generator<ParsedValue<Attribute, FromParsingOptions<OPTIONS>>>> = {}
+  let restEntries: [string, ParsedValue<Attribute, FromParsingOptions<OPTIONS>>][] = []
 
   const isInputValueObject = isObject(inputValue)
 
@@ -45,7 +55,7 @@ export function* schemaWorkflow<SCHEMA extends Schema, EXTENSION extends Extensi
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
     Object.entries(schema.attributes)
-      .filter(([, attr]) => doesAttributeMatchFilters(attr, filters))
+      .filter(([, attr]) => operation !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
         parsers[attrName] = attrWorkflow(attr, inputValue[attrName], options)
 

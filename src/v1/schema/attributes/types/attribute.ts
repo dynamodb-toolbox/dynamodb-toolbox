@@ -35,9 +35,19 @@ export type Extension = {
 }
 
 export type ExtendedValue<
-  EXTENSION extends Extension,
+  EXTENSIONS extends Extension,
   TYPE extends Attribute['type'] | '*'
-> = Extract<EXTENSION, { type: TYPE | '*' }>['value']
+> = '*' extends TYPE
+  ? EXTENSIONS['value']
+  : EXTENSIONS extends infer EXTENSION
+  ? EXTENSION extends Extension
+    ? EXTENSION['type'] extends infer EXTENSION_TYPE
+      ? EXTENSION_TYPE extends TYPE | '*'
+        ? EXTENSION['value']
+        : never
+      : never
+    : never
+  : never
 
 export type PrimitiveAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, PrimitiveAttributeType>

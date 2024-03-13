@@ -1,5 +1,5 @@
-import type { ExtensionParser } from 'v1/schema/actions/parse/types'
-import type { PrimitiveAttribute, AttributeBasicValue } from 'v1/schema'
+import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
+import type { PrimitiveAttribute, AttributeBasicValue, Attribute } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
@@ -14,26 +14,16 @@ import { parseRecordExtension } from './record'
 import { parseReferenceExtension } from './reference'
 
 export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
-  attribute,
-  input,
-  options
+  attribute: Attribute,
+  input: unknown,
+  options: ExtensionParserOptions = {}
 ) => {
-  const { fill = true } = options
-  // We cast as boolean as we don't want to fill any default/link while parsing update extensions
-  const nextOpts = { ...options, fill: Boolean(fill) }
+  const { transform = true } = options
 
   if (input === $REMOVE) {
     return {
       isExtension: true,
       *extensionParser() {
-        if (fill) {
-          const defaultedValue: typeof $REMOVE = $REMOVE
-          yield defaultedValue
-
-          const linkedValue: typeof $REMOVE = $REMOVE
-          yield linkedValue
-        }
-
         const { path, required } = attribute
 
         if (required !== 'never') {
@@ -46,7 +36,11 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
         }
 
         const parsedValue: typeof $REMOVE = $REMOVE
-        yield parsedValue
+        if (transform) {
+          yield parsedValue
+        } else {
+          return parsedValue
+        }
 
         const transformedValue: typeof $REMOVE = $REMOVE
         return transformedValue
@@ -54,15 +48,8 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
     }
   }
 
-  /**
-   * @debt refactor "Maybe we can simply parse a super-extension here, and continue if is(Super)Extension is false. Would be neat."
-   */
   if (hasGetOperation(input)) {
-    return parseReferenceExtension(attribute, input, {
-      ...nextOpts,
-      // Can be a reference
-      parseExtension: parseReferenceExtension
-    })
+    return parseReferenceExtension(attribute, input, options)
   }
 
   switch (attribute.type) {
@@ -70,15 +57,15 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
       /**
        * @debt type "fix this cast"
        */
-      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input, nextOpts)
+      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input, options)
     case 'set':
-      return parseSetExtension(attribute, input, nextOpts)
+      return parseSetExtension(attribute, input, options)
     case 'list':
-      return parseListExtension(attribute, input, nextOpts)
+      return parseListExtension(attribute, input, options)
     case 'map':
-      return parseMapExtension(attribute, input, nextOpts)
+      return parseMapExtension(attribute, input, options)
     case 'record':
-      return parseRecordExtension(attribute, input, nextOpts)
+      return parseRecordExtension(attribute, input, options)
     default:
       return {
         isExtension: false,
