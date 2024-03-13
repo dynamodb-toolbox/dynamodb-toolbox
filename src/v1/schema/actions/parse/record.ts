@@ -2,9 +2,9 @@ import cloneDeep from 'lodash.clonedeep'
 
 import type {
   Schema,
+  Attribute,
   RecordAttribute,
   RecordAttributeKeys,
-  RecordAttributeElements,
   ExtendedValue
 } from 'v1/schema'
 import type { If } from 'v1/types'
@@ -57,8 +57,8 @@ export function* recordAttributeParser<
       undefined
     >,
     Generator<
-      ParsedValue<RecordAttributeElements, FromParsingOptions<OPTIONS>>,
-      ParsedValue<RecordAttributeElements, FromParsingOptions<OPTIONS>>,
+      ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
+      ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
       ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
     >
   ][] = []

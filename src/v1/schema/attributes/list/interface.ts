@@ -15,9 +15,10 @@ import type { SchemaAction } from '../../action'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $elements } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
+import type { Attribute } from '../types'
 
 import type { FreezeListAttribute } from './freeze'
-import type { $ListAttributeElements, ListAttributeElements } from './types'
+import type { $ListAttributeElements } from './types'
 
 export interface $ListAttributeState<
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,
@@ -273,7 +274,7 @@ export interface $ListAttribute<
 }
 
 export class ListAttribute<
-  ELEMENTS extends ListAttributeElements = ListAttributeElements,
+  ELEMENTS extends Attribute = Attribute,
   STATE extends SharedAttributeState = SharedAttributeState
 > implements SharedAttributeState<STATE> {
   type: 'list'
