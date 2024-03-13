@@ -14,7 +14,12 @@ import type {
 } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatOptions, UnpackFormatOptions, FormattedValueOptions } from './types'
+import type {
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './types'
 import { formatAnyAttrRawValue, AnyAttrFormattedValue } from './any'
 import { formatPrimitiveAttrRawValue, PrimitiveAttrFormattedValue } from './primitive'
 import { formatSavedSetAttribute, SetAttrFormattedValue } from './set'
@@ -31,7 +36,7 @@ export type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
 
 export type AttrFormattedValue<
   ATTRIBUTE extends Attribute,
-  OPTIONS extends FormattedValueOptions = FormattedValueOptions
+  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrFormattedValue<ATTRIBUTE>
   : ATTRIBUTE extends PrimitiveAttribute
@@ -55,13 +60,13 @@ export const isRequired = (attribute: Attribute): boolean =>
 
 export const formatAttrRawValue = <
   ATTRIBUTE extends Attribute,
-  OPTIONS extends FormatOptions = FormatOptions
+  OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
-  attribute: Attribute,
+  attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): AttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
-  type Formatted = AttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
+): AttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+  type Formatted = AttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
 
   if (rawValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {

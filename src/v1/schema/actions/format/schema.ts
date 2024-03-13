@@ -1,17 +1,23 @@
 import type { O } from 'ts-toolbelt'
 
 import type { OptionalizeUndefinableProperties } from 'v1/types'
-import type { Schema, AnyAttribute, Never } from 'v1/schema'
+import type { Schema, AnyAttribute, Never, Paths } from 'v1/schema'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation'
 
-import type { MatchKeys, FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import type {
+  MatchKeys,
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './types'
 import { formatAttrRawValue, AttrFormattedValue } from './attribute'
 import { matchProjection } from './utils'
 
 export type SchemaFormattedValue<
   SCHEMA extends Schema,
-  OPTIONS extends FormattedValueOptions = FormattedValueOptions,
+  OPTIONS extends FormattedValueOptions<SCHEMA> = FormattedValueDefaultOptions,
   MATCHING_KEYS extends string = MatchKeys<
     Extract<keyof SCHEMA['attributes'], string>,
     '',
@@ -37,7 +43,7 @@ export type SchemaFormattedValue<
             ? KEY extends OPTIONS['attributes']
               ? undefined
               : OPTIONS['attributes'] extends `${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-              ? CHILDREN_FILTERED_ATTRIBUTES
+              ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<SCHEMA['attributes'][KEY]>>
               : never
             : undefined
         }
@@ -58,7 +64,7 @@ export type SchemaFormattedValue<
               ? KEY extends OPTIONS['attributes']
                 ? undefined
                 : OPTIONS['attributes'] extends `${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                ? CHILDREN_FILTERED_ATTRIBUTES
+                ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<SCHEMA['attributes'][KEY]>>
                 : never
               : undefined
           }
@@ -68,14 +74,13 @@ export type SchemaFormattedValue<
       O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
     >
 
-export const formatSchemaRawValue = <
-  SCHEMA extends Schema,
-  OPTIONS extends FormatOptions = FormatOptions
->(
+export const formatSchemaRawValue = <SCHEMA extends Schema, OPTIONS extends FormatOptions<SCHEMA>>(
   schema: SCHEMA,
   rawValue: unknown,
   { attributes, partial = false }: OPTIONS = {} as OPTIONS
-): SchemaFormattedValue<SCHEMA, UnpackFormatOptions<OPTIONS>> => {
+): SchemaFormattedValue<SCHEMA, FromFormatOptions<SCHEMA, OPTIONS>> => {
+  type Formatted = SchemaFormattedValue<SCHEMA, FromFormatOptions<SCHEMA, OPTIONS>>
+
   if (!isObject(rawValue)) {
     throw new DynamoDBToolboxError('formatter.invalidItem', {
       message: 'Invalid item detected while formatting. Should be an object.',
@@ -114,5 +119,5 @@ export const formatSchemaRawValue = <
     }
   })
 
-  return formattedValue as SchemaFormattedValue<SCHEMA, UnpackFormatOptions<OPTIONS>>
+  return formattedValue as Formatted
 }

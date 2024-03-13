@@ -1,16 +1,22 @@
-import type { RecordAttribute, ResolvePrimitiveAttribute } from 'v1/schema'
+import type { RecordAttribute, ResolvePrimitiveAttribute, Paths } from 'v1/schema'
 import type { If } from 'v1/types'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { MatchKeys, FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import type {
+  MatchKeys,
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './types'
 import { formatPrimitiveAttrRawValue } from './primitive'
 import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute'
 import { matchProjection } from './utils'
 
 export type RecordAttrFormattedValue<
   ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends FormattedValueOptions = FormattedValueOptions,
+  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions,
   MATCHING_KEYS extends string = MatchKeys<
     ResolvePrimitiveAttribute<ATTRIBUTE['keys']>,
     '.',
@@ -34,8 +40,8 @@ export type RecordAttrFormattedValue<
                     ? `.${FILTERED_KEY}` extends OPTIONS['attributes']
                       ? undefined
                       : OPTIONS['attributes'] extends `.${FILTERED_KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                      ? CHILDREN_FILTERED_ATTRIBUTES
-                      : never
+                      ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['elements']>>
+                      : undefined
                     : never
                   : never
                 : undefined
@@ -45,12 +51,14 @@ export type RecordAttrFormattedValue<
 
 export const formatRecordAttrRawValue = <
   ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends FormatOptions = FormatOptions
+  OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): RecordAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
+): RecordAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+  type Formatted = RecordAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
   if (!isObject(rawValue)) {
     const { path, type } = attribute
 
@@ -84,5 +92,5 @@ export const formatRecordAttrRawValue = <
     }
   })
 
-  return formattedRecord as RecordAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
+  return formattedRecord as Formatted
 }
