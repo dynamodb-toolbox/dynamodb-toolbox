@@ -4,5 +4,5 @@ import type { Optional } from './optional'
 
 export type OptionalizeUndefinableProperties<
   OBJECT extends Record<string, unknown>,
-  UNDEFINABLE_PROPERTIES_OVERRIDE extends string = never
+  UNDEFINABLE_PROPERTIES_OVERRIDE extends string | number | symbol = never
 > = Optional<OBJECT, O.SelectKeys<OBJECT, undefined> | UNDEFINABLE_PROPERTIES_OVERRIDE>
