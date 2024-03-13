@@ -12,7 +12,7 @@ import type {
   ParsingOptions,
   FromParsingOptions
 } from './types'
-import { attrWorkflow, AttrParsedValue, MustBeDefined } from './attribute'
+import { attrParser, AttrParsedValue, MustBeDefined } from './attribute'
 
 export type ListAttrParsedValue<
   ATTRIBUTE extends ListAttribute,
@@ -24,7 +24,7 @@ export type ListAttrParsedValue<
       | AttrParsedValue<ATTRIBUTE['elements']>[]
       | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>
 
-export function* listAttrWorkflow<
+export function* listAttrParser<
   ATTRIBUTE extends ListAttribute,
   OPTIONS extends ParsingOptions = ParsingOptions
 >(
@@ -49,7 +49,7 @@ export function* listAttrWorkflow<
   const isInputValueArray = isArray(inputValue)
   if (isInputValueArray) {
     for (const element of inputValue) {
-      parsers.push(attrWorkflow(attribute.elements, element, options))
+      parsers.push(attrParser(attribute.elements, element, options))
     }
   }
 

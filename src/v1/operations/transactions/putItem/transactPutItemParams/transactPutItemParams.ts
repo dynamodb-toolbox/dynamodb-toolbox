@@ -20,12 +20,12 @@ export const transactPutItemParams = <
   input: PutItemInput<ENTITY>,
   putItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactPutItemParams => {
-  const workflow = entity.schema.build(Parser).workflow(input)
+  const parser = entity.schema.build(Parser).start(input)
 
-  workflow.next() // defaulted
-  workflow.next() // linked
-  const validInput = workflow.next().value
-  const transformedInput = workflow.next().value
+  parser.next() // defaulted
+  parser.next() // linked
+  const validInput = parser.next().value
+  const transformedInput = parser.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)

@@ -14,12 +14,12 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
   input: PutItemInput<ENTITY>,
   putItemOptions: OPTIONS = {} as OPTIONS
 ): PutCommandInput => {
-  const workflow = entity.schema.build(Parser).workflow(input)
+  const parser = entity.schema.build(Parser).start(input)
 
-  workflow.next() // defaulted
-  workflow.next() // linked
-  const validInput = workflow.next().value
-  const transformedInput = workflow.next().value
+  parser.next() // defaulted
+  parser.next() // linked
+  const validInput = parser.next().value
+  const transformedInput = parser.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)

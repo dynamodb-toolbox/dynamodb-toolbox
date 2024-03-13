@@ -13,7 +13,7 @@ import type {
   ParsingDefaultOptions
 } from './types'
 import type { ParsedValue } from './parser'
-import { attrWorkflow, AttrParsedValue } from './attribute'
+import { attrParser, AttrParsedValue } from './attribute'
 
 export type SchemaParsedValue<
   SCHEMA extends Schema,
@@ -33,7 +33,7 @@ export type SchemaParsedValue<
       O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
     >
 
-export function* schemaWorkflow<
+export function* schemaParser<
   SCHEMA extends Schema,
   OPTIONS extends ParsingOptions = ParsingDefaultOptions
 >(
@@ -57,7 +57,7 @@ export function* schemaWorkflow<
     Object.entries(schema.attributes)
       .filter(([, attr]) => operation !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attrWorkflow(attr, inputValue[attrName], options)
+        parsers[attrName] = attrParser(attr, inputValue[attrName], options)
 
         additionalAttributeNames.delete(attrName)
       })

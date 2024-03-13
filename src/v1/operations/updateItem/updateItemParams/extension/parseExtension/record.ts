@@ -6,7 +6,7 @@ import type {
   AttributeBasicValue
 } from 'v1/schema'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
-import { attrWorkflow } from 'v1/schema/actions/parse'
+import { Parser } from 'v1/schema/actions/parse'
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
@@ -15,7 +15,7 @@ import { hasSetOperation } from 'v1/operations/updateItem/utils'
 
 import { parseUpdateExtension } from './attribute'
 
-function* recordElementsWorkflow(
+function* recordElementsParser(
   attribute: RecordAttribute,
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
@@ -36,7 +36,7 @@ function* recordElementsWorkflow(
     return transformedValue
   }
 
-  return yield* attrWorkflow(attribute.elements, inputValue, {
+  return yield* new Parser(attribute.elements).start(inputValue, {
     operation: 'update',
     fill: false,
     transform,
@@ -55,7 +55,7 @@ export const parseRecordExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attrWorkflow(attribute, input[$SET], { fill: false, transform })
+        const parser = attribute.build(Parser).start(input[$SET], { fill: false, transform })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
@@ -77,8 +77,8 @@ export const parseRecordExtension = (
         const parsers = Object.entries(input)
           .filter(([, inputValue]) => inputValue !== undefined)
           .map(([inputKey, inputValue]) => [
-            attrWorkflow(attribute.keys, inputKey, { fill: false, transform }),
-            recordElementsWorkflow(attribute, inputValue, options)
+            attribute.keys.build(Parser).start(inputKey, { fill: false, transform }),
+            recordElementsParser(attribute, inputValue, options)
           ])
 
         const parsedValue = Object.fromEntries(

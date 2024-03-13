@@ -1,6 +1,6 @@
 import type { MapAttribute, AttributeBasicValue } from 'v1/schema'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
-import { attrWorkflow } from 'v1/schema/actions/parse'
+import { Parser } from 'v1/schema/actions/parse'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $SET } from 'v1/operations/updateItem/constants'
@@ -15,7 +15,7 @@ export const parseMapExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attrWorkflow(attribute, input[$SET], { fill: false, transform })
+        const parser = attribute.build(Parser).start(input[$SET], { fill: false, transform })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
