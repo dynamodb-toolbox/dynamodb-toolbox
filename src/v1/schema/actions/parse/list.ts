@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { Schema, ListAttribute, ListAttributeElements, ExtendedValue } from 'v1/schema'
+import type { Schema, Attribute, ListAttribute, ExtendedValue } from 'v1/schema'
 import type { If } from 'v1/types'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -41,8 +41,8 @@ export function* listAttrWorkflow<
   const { fill = true, transform = true } = options
 
   const parsers: Generator<
-    ParsedValue<ListAttributeElements, FromParsingOptions<OPTIONS>>,
-    ParsedValue<ListAttributeElements, FromParsingOptions<OPTIONS>>,
+    ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
+    ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
     ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
   >[] = []
 

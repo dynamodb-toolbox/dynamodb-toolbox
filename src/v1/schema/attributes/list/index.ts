@@ -6,4 +6,3 @@ export {
   ListAttribute
 } from './interface'
 export type { FreezeListAttribute } from './freeze'
-export type { ListAttributeElements } from './types'
