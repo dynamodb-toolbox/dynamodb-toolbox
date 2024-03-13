@@ -24,10 +24,10 @@ import type {
   ParsingDefaultOptions,
   FromParsingOptions
 } from './types'
-import { anyAttrWorkflow, AnyAttrParsedValue } from './any'
-import { primitiveAttrWorkflow, PrimitiveAttrParsedValue } from './primitive'
-import { setAttrWorkflow, SetAttrParsedValue } from './set'
-import { listAttrWorkflow, ListAttrParsedValue } from './list'
+import { anyAttrParser, AnyAttrParsedValue } from './any'
+import { primitiveAttrParser, PrimitiveAttrParsedValue } from './primitive'
+import { setAttrParser, SetAttrParsedValue } from './set'
+import { listAttrParser, ListAttrParsedValue } from './list'
 import { mapAttributeParser, MapAttrParsedValue } from './map'
 import { recordAttributeParser, RecordAttrParsedValue } from './record'
 import { anyOfAttributeParser, AnyOfAttrParsedValue } from './anyOf'
@@ -63,7 +63,7 @@ export type AttrParsedValue<
   ? AnyOfAttrParsedValue<ATTRIBUTE, OPTIONS>
   : never
 
-export function* attrWorkflow<
+export function* attrParser<
   ATTRIBUTE extends Attribute,
   OPTIONS extends ParsingOptions = ParsingDefaultOptions
 >(
@@ -155,16 +155,16 @@ export function* attrWorkflow<
 
   switch (attribute.type) {
     case 'any':
-      return yield* anyAttrWorkflow(attribute, basicInput, nextOpts) as any
+      return yield* anyAttrParser(attribute, basicInput, nextOpts) as any
     case 'boolean':
     case 'binary':
     case 'number':
     case 'string':
-      return yield* primitiveAttrWorkflow(attribute, basicInput, nextOpts) as any
+      return yield* primitiveAttrParser(attribute, basicInput, nextOpts) as any
     case 'set':
-      return yield* setAttrWorkflow(attribute, basicInput, nextOpts) as any
+      return yield* setAttrParser(attribute, basicInput, nextOpts) as any
     case 'list':
-      return yield* listAttrWorkflow(attribute, basicInput, nextOpts) as any
+      return yield* listAttrParser(attribute, basicInput, nextOpts) as any
     case 'map':
       return yield* mapAttributeParser(attribute, basicInput, nextOpts) as any
     case 'record':

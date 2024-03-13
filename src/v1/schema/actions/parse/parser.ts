@@ -8,8 +8,8 @@ import type {
   FromParsingOptions
 } from './types'
 
-import { schemaWorkflow, SchemaParsedValue } from './schema'
-import { attrWorkflow, AttrParsedValue } from './attribute'
+import { schemaParser, SchemaParsedValue } from './schema'
+import { attrParser, AttrParsedValue } from './attribute'
 
 export type ParsedValue<
   SCHEMA extends Schema | Attribute,
@@ -27,7 +27,7 @@ export class Parser<SCHEMA extends Schema | Attribute> implements SchemaAction<S
     this.schema = schema
   }
 
-  workflow<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
+  start<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
   ): Generator<
@@ -37,12 +37,12 @@ export class Parser<SCHEMA extends Schema | Attribute> implements SchemaAction<S
     type Parsed = ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
 
     if (this.schema.type === 'schema') {
-      return schemaWorkflow<Schema, OPTIONS>(this.schema, inputValue, options) as Generator<
+      return schemaParser<Schema, OPTIONS>(this.schema, inputValue, options) as Generator<
         Parsed,
         Parsed
       >
     } else {
-      return attrWorkflow<Attribute, OPTIONS>(this.schema, inputValue, options) as Generator<
+      return attrParser<Attribute, OPTIONS>(this.schema, inputValue, options) as Generator<
         Parsed,
         Parsed
       >
@@ -53,12 +53,12 @@ export class Parser<SCHEMA extends Schema | Attribute> implements SchemaAction<S
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
   ): ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
-    const workflow = this.workflow(inputValue, options)
+    const parser = this.start(inputValue, options)
 
     let done = false
     let value: ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
     do {
-      const nextState = workflow.next()
+      const nextState = parser.next()
       done = Boolean(nextState.done)
       value = nextState.value
     } while (!done)

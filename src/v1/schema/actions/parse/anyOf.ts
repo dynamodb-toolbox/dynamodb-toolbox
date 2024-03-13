@@ -17,7 +17,7 @@ import type {
   ParsingOptions,
   FromParsingOptions
 } from './types'
-import { attrWorkflow, AttrParsedValue, MustBeDefined } from './attribute'
+import { attrParser, AttrParsedValue, MustBeDefined } from './attribute'
 
 export type AnyOfAttrParsedValue<
   ATTRIBUTE extends AnyOfAttribute,
@@ -71,7 +71,7 @@ export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOp
 
   for (const elementAttribute of attribute.elements) {
     try {
-      parser = attrWorkflow(elementAttribute, inputValue, options)
+      parser = attrParser(elementAttribute, inputValue, options)
       if (fill) {
         _defaultedValue = parser.next().value
         // Note: Links cannot be used in anyOf elements or sub elements for this reason (we need the return of the yield)

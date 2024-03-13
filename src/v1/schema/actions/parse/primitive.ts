@@ -42,7 +42,7 @@ export type PrimitiveAttrParsedValue<
           : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
 
-export function* primitiveAttrWorkflow<
+export function* primitiveAttrParser<
   ATTRIBUTE extends PrimitiveAttribute,
   OPTIONS extends ParsingOptions = ParsingOptions
 >(

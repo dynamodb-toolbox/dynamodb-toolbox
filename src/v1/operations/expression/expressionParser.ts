@@ -1,10 +1,10 @@
 import type { Attribute, Schema } from 'v1/schema'
+import { Parser } from 'v1/schema/actions/parse'
 import { AnyAttribute } from 'v1/schema/attributes/any'
 import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isString } from 'v1/utils/validation/isString'
-import { attrWorkflow } from 'v1/schema/actions/parse'
 
 export type AppendAttributePathOptions = { size?: boolean }
 
@@ -118,10 +118,9 @@ export const appendAttributePath = (
 
       case 'record': {
         const keyAttribute = parentAttribute.keys
-        const keyParser = attrWorkflow(keyAttribute, childAttributeAccessor, {
-          fill: false,
-          transform: true
-        })
+        const keyParser = keyAttribute
+          .build(Parser)
+          .start(childAttributeAccessor, { fill: false, transform: true })
         keyParser.next() // parsed
         const transformedKey = keyParser.next().value as string
 
