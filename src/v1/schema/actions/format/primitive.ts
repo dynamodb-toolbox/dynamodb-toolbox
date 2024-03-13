@@ -20,6 +20,8 @@ export const formatPrimitiveAttrRawValue = <ATTRIBUTE extends PrimitiveAttribute
   attribute: ATTRIBUTE,
   rawValue: unknown
 ): PrimitiveAttrFormattedValue<ATTRIBUTE> => {
+  type Formatted = PrimitiveAttrFormattedValue<ATTRIBUTE>
+
   const validator = validatorsByPrimitiveType[attribute.type]
   if (!validator(rawValue)) {
     const { path, type } = attribute
@@ -58,5 +60,5 @@ export const formatPrimitiveAttrRawValue = <ATTRIBUTE extends PrimitiveAttribute
     })
   }
 
-  return formattedValue as PrimitiveAttrFormattedValue<ATTRIBUTE>
+  return formattedValue as Formatted
 }

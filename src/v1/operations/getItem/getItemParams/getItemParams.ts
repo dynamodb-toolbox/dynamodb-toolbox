@@ -14,12 +14,7 @@ export const getItemParams = <ENTITY extends EntityV2, OPTIONS extends GetItemOp
   input: KeyInput<ENTITY>,
   getItemOptions: OPTIONS = {} as OPTIONS
 ): GetCommandInput => {
-  const workflow = entity.schema.build(Parser).workflow(input, {
-    fill: 'key',
-    transform: true,
-    filters: { key: true },
-    requiringOptions: new Set(['always'])
-  })
+  const workflow = entity.schema.build(Parser).workflow(input, { operation: 'key' })
 
   workflow.next() // defaulted
   workflow.next() // linked

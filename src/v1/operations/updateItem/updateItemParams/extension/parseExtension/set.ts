@@ -1,5 +1,5 @@
 import type { AttributeBasicValue, SetAttribute } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
+import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
@@ -9,30 +9,15 @@ import { hasAddOperation, hasDeleteOperation } from 'v1/operations/updateItem/ut
 export const parseSetExtension = (
   attribute: SetAttribute,
   input: unknown,
-  options: ParsingOptions<UpdateItemInputExtension>
+  { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { fill = true, transform = true } = options
-
-  if (hasAddOperation(input)) {
+  if (hasAddOperation(input) && input[$ADD] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attrWorkflow(attribute, input[$ADD], {
-          ...options,
-          // Should a simple set of valid elements (not extended)
-          parseExtension: undefined
-        })
-
-        if (fill) {
-          const defaultedValue = { [$ADD]: parser.next().value }
-          yield defaultedValue
-
-          const linkedValue = { [$ADD]: parser.next().value }
-          yield linkedValue
-        }
+        const parser = attrWorkflow(attribute, input[$ADD], { fill: false, transform })
 
         const parsedValue = { [$ADD]: parser.next().value }
-
         if (transform) {
           yield parsedValue
         } else {
@@ -45,26 +30,13 @@ export const parseSetExtension = (
     }
   }
 
-  if (hasDeleteOperation(input)) {
+  if (hasDeleteOperation(input) && input[$DELETE] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attrWorkflow(attribute, input[$DELETE], {
-          ...options,
-          // Should a simple set of valid elements (not extended)
-          parseExtension: undefined
-        })
-
-        if (fill) {
-          const defaultedValue = { [$DELETE]: parser.next().value }
-          yield defaultedValue
-
-          const linkedValue = { [$DELETE]: parser.next().value }
-          yield linkedValue
-        }
+        const parser = attrWorkflow(attribute, input[$DELETE], { fill: false, transform })
 
         const parsedValue = { [$DELETE]: parser.next().value }
-
         if (transform) {
           yield parsedValue
         } else {

@@ -1,16 +1,21 @@
-import type { ListAttribute } from 'v1/schema'
 import type { If } from 'v1/types'
+import type { ListAttribute, Paths } from 'v1/schema'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import type {
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './types'
 import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute'
 import { matchProjection } from './utils'
 
 export type ListAttrFormattedValue<
   ATTRIBUTE extends ListAttribute,
-  OPTIONS extends FormattedValueOptions = FormattedValueOptions,
-  FORMATTED_ATTRIBUTE = ListAttribute extends ATTRIBUTE
+  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions,
+  FORMATTED_ELEMENTS = ListAttribute extends ATTRIBUTE
     ? unknown
     : AttrFormattedValue<
         ATTRIBUTE['elements'],
@@ -19,25 +24,27 @@ export type ListAttrFormattedValue<
             ? OPTIONS['attributes'] extends `[${number}]`
               ? undefined
               : OPTIONS['attributes'] extends `[${number}]${infer CHILDREN_FILTERED_ATTRIBUTES}`
-              ? CHILDREN_FILTERED_ATTRIBUTES
+              ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['elements']>>
               : never
             : undefined
           partial: OPTIONS['partial']
         }
       >
   // Possible in case of anyOf subSchema
-> = [FORMATTED_ATTRIBUTE] extends [never]
+> = [FORMATTED_ELEMENTS] extends [never]
   ? never
-  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | FORMATTED_ATTRIBUTE[]
+  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | FORMATTED_ELEMENTS[]
 
 export const formatListAttrRawValue = <
   ATTRIBUTE extends ListAttribute,
-  OPTIONS extends FormatOptions = FormatOptions
+  OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): ListAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
+): ListAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+  type Formatted = ListAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
   if (!isArray(rawValue)) {
     const { path, type } = attribute
 
@@ -71,5 +78,5 @@ export const formatListAttrRawValue = <
     }
   }
 
-  return formattedValues as ListAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
+  return formattedValues as Formatted
 }

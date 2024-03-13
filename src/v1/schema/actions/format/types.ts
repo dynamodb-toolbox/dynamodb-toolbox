@@ -1,17 +1,28 @@
-export type FormatOptions<PATHS extends string = string> = {
-  attributes?: PATHS[]
+import type { Schema, Attribute, Paths } from 'v1/schema'
+
+export type FormatOptions<SCHEMA extends Schema | Attribute> = {
+  attributes?: Paths<SCHEMA>[]
   partial?: boolean
 }
 
-export type FormattedValueOptions<PATHS extends string = string> = {
-  attributes?: PATHS
+export type FormattedValueOptions<SCHEMA extends Schema | Attribute> = {
+  attributes?: Paths<SCHEMA>
   partial?: boolean
 }
 
-export type UnpackFormatOptions<
-  OPTIONS extends FormatOptions
-> = (OPTIONS['attributes'] extends string[] ? { attributes: OPTIONS['attributes'][number] } : {}) &
-  (OPTIONS['partial'] extends boolean ? { partial: OPTIONS['partial'] } : {})
+export type FormattedValueDefaultOptions = {
+  partial?: false
+}
+
+export type FromFormatOptions<
+  SCHEMA extends Schema | Attribute,
+  OPTIONS extends FormatOptions<SCHEMA>
+> = {
+  attributes: OPTIONS extends { attributes: Paths<SCHEMA>[] }
+    ? OPTIONS['attributes'][number]
+    : undefined
+  partial: OPTIONS extends { partial: boolean } ? OPTIONS['partial'] : false
+}
 
 export type MatchKeys<
   KEYS extends string,

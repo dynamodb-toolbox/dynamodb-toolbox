@@ -59,7 +59,23 @@ type AnyOfAttrPaths<
   ATTRIBUTE_PATH extends string = ''
 > = AnyOfAttribute extends ATTRIBUTE
   ? string
-  : AttrPaths<ATTRIBUTE['elements'][number], ATTRIBUTE_PATH>
+  : AnyOfAttrPathsRec<ATTRIBUTE['elements'], ATTRIBUTE_PATH>
+
+type AnyOfAttrPathsRec<
+  ATTRIBUTES extends Attribute[],
+  ATTRIBUTE_PATH extends string = '',
+  RESULTS = never
+> = ATTRIBUTES extends [infer ATTRIBUTES_HEAD, ...infer ATTRIBUTES_TAIL]
+  ? ATTRIBUTES_HEAD extends Attribute
+    ? ATTRIBUTES_TAIL extends Attribute[]
+      ? AnyOfAttrPathsRec<
+          ATTRIBUTES_TAIL,
+          ATTRIBUTE_PATH,
+          RESULTS | AttrPaths<ATTRIBUTES_HEAD, ATTRIBUTE_PATH>
+        >
+      : never
+    : never
+  : RESULTS
 
 export type AttrPaths<
   ATTRIBUTE extends Attribute,
@@ -88,8 +104,10 @@ export type SchemaPaths<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
     : never
   : never
 
-export type Paths<SCHEMA extends Schema | Attribute = Schema | Attribute> = SCHEMA extends Schema
-  ? SchemaPaths<SCHEMA>
-  : SCHEMA extends Attribute
-  ? AttrPaths<SCHEMA>
-  : never
+// string is there to simplify type-constraint checks when using Paths
+export type Paths<SCHEMA extends Schema | Attribute = Schema | Attribute> = string &
+  (SCHEMA extends Schema
+    ? SchemaPaths<SCHEMA>
+    : SCHEMA extends Attribute
+    ? AttrPaths<SCHEMA>
+    : never)

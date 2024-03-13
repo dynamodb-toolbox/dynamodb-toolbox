@@ -1,4 +1,4 @@
 export { Parser } from './parser'
 export { attrWorkflow } from './attribute'
-export type { ValidValue } from './parser'
+export type { ParsedValue } from './parser'
 export * from './types'

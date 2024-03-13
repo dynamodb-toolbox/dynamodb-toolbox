@@ -4,31 +4,33 @@ import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { AttrFormattedValue } from './attribute'
-import type { FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import type {
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './types'
 import { formatAttrRawValue, MustBeDefined } from './attribute'
 
 export type SetAttrFormattedValue<
   ATTRIBUTE extends SetAttribute,
-  OPTIONS extends FormattedValueOptions = FormattedValueOptions
+  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
 > = SetAttribute extends ATTRIBUTE
   ? Set<AttrFormattedValue<SetAttribute['elements']>>
   :
       | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-      | Set<
-          AttrFormattedValue<
-            ATTRIBUTE['elements'],
-            { attributes: undefined; partial: OPTIONS['partial'] }
-          >
-        >
+      | Set<AttrFormattedValue<ATTRIBUTE['elements'], { partial: OPTIONS['partial'] }>>
 
 export const formatSavedSetAttribute = <
   ATTRIBUTE extends SetAttribute,
-  OPTIONS extends FormatOptions = FormatOptions
+  OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): SetAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
+): SetAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+  type Formatted = SetAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
   if (!isSet(rawValue)) {
     const { path, type } = attribute
 
@@ -47,16 +49,15 @@ export const formatSavedSetAttribute = <
   const parsedPutItemInput: SetAttrFormattedValue<SetAttribute> = new Set()
 
   for (const savedElement of rawValue) {
-    const parsedElement = formatAttrRawValue<SetAttribute['elements']>(
-      attribute.elements,
-      savedElement,
-      { ...options, attributes: undefined }
-    )
+    const parsedElement = formatAttrRawValue(attribute.elements, savedElement, {
+      ...options,
+      attributes: undefined
+    })
 
     if (parsedElement !== undefined) {
       parsedPutItemInput.add(parsedElement)
     }
   }
 
-  return parsedPutItemInput as SetAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
+  return parsedPutItemInput as Formatted
 }

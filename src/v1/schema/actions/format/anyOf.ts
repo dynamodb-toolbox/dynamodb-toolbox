@@ -1,20 +1,25 @@
-import type { Attribute, AnyOfAttribute } from 'v1/schema'
-import { DynamoDBToolboxError } from 'v1/errors'
+import type { Attribute, AnyOfAttribute, Paths } from 'v1/schema'
 import type { If } from 'v1/types'
+import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { FormatOptions, FormattedValueOptions, UnpackFormatOptions } from './types'
+import type {
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './types'
 import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute'
 
 export type AnyOfAttrFormattedValue<
   ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormattedValueOptions = FormattedValueOptions
+  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
 > = AnyOfAttribute extends ATTRIBUTE
   ? unknown
   : If<MustBeDefined<ATTRIBUTE>, never, undefined> | AnyOfAttrFormattedValueRec<ATTRIBUTE, OPTIONS>
 
 type AnyOfAttrFormattedValueRec<
   ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormattedValueOptions,
+  OPTIONS extends FormattedValueOptions<ATTRIBUTE>,
   ELEMENTS extends Attribute[] = ATTRIBUTE['elements'],
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
@@ -24,7 +29,16 @@ type AnyOfAttrFormattedValueRec<
           ATTRIBUTE,
           OPTIONS,
           ELEMENTS_TAIL,
-          RESULTS | AttrFormattedValue<ELEMENTS_HEAD, OPTIONS>
+          | RESULTS
+          | AttrFormattedValue<
+              ELEMENTS_HEAD,
+              {
+                attributes: OPTIONS extends { attributes: string }
+                  ? Extract<OPTIONS['attributes'], Paths<ELEMENTS_HEAD>>
+                  : undefined
+                partial: OPTIONS['partial']
+              }
+            >
         >
       : never
     : never
@@ -34,13 +48,15 @@ type AnyOfAttrFormattedValueRec<
 
 export const formatAnyOfAttrRawValue = <
   ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormatOptions = FormatOptions
+  OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): AnyOfAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>> => {
-  let formattedValue: AttrFormattedValue<Attribute> | undefined = undefined
+): AnyOfAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+  type Formatted = AnyOfAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
+  let formattedValue: unknown = undefined
 
   for (const element of attribute.elements) {
     try {
@@ -65,5 +81,5 @@ export const formatAnyOfAttrRawValue = <
     })
   }
 
-  return formattedValue as AnyOfAttrFormattedValue<ATTRIBUTE, UnpackFormatOptions<OPTIONS>>
+  return formattedValue as Formatted
 }

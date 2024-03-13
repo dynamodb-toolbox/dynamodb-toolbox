@@ -1,12 +1,11 @@
-import cloneDeep from 'lodash.clonedeep'
-
-import type { PrimitiveAttribute, ValidValue, AttributeBasicValue } from 'v1/schema'
-import type { ExtensionParser, ParsingOptions } from 'v1/schema/actions/parse/types'
+import type { PrimitiveAttribute, AttributeBasicValue } from 'v1/schema'
+import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
+import { number } from 'v1/schema/attributes/primitive'
 import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { ReferenceExtension, UpdateItemInputExtension } from 'v1/operations/updateItem/types'
+import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $SUM, $SUBTRACT, $ADD } from 'v1/operations/updateItem/constants'
 import {
   hasSumOperation,
@@ -16,70 +15,24 @@ import {
 
 import { parseReferenceExtension } from './reference'
 
-const ACCEPTABLE_LENGTH_SET = new Set<number>([1, 2])
-
 export const parseNumberExtension = (
   attribute: PrimitiveAttribute<'number'>,
   inputValue: unknown,
-  options: ParsingOptions<UpdateItemInputExtension>
+  { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { fill = true, transform = true } = options
-
-  if (hasSumOperation(inputValue)) {
+  if (hasSumOperation(inputValue) && inputValue[$SUM] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parsers: Generator<
-          ValidValue<PrimitiveAttribute<'number'>, ReferenceExtension>,
-          ValidValue<PrimitiveAttribute<'number'>, ReferenceExtension>
-        >[] = []
-
         const sumElements = inputValue[$SUM]
-        const isInputValueArray = isArray(sumElements)
-        if (isInputValueArray) {
-          for (const sumElement of sumElements) {
-            parsers.push(
-              attrWorkflow<
-                PrimitiveAttribute<'number'>,
-                ReferenceExtension,
-                UpdateItemInputExtension
-              >(
-                attribute,
-                sumElement,
-                // References are allowed in sums
-                { ...options, parseExtension: parseReferenceExtension }
-              )
-            )
-          }
-        }
 
-        if (fill) {
-          if (isInputValueArray) {
-            const defaultedValue = {
-              [$SUM]: parsers.map(parser => parser.next().value)
-            }
-            yield defaultedValue
-
-            const linkedValue = {
-              [$SUM]: parsers.map(parser => parser.next().value)
-            }
-            yield linkedValue
-          } else {
-            const defaultedValue = { [$SUM]: cloneDeep(inputValue[$SUM]) }
-            yield defaultedValue
-
-            const linkedValue = defaultedValue
-            yield linkedValue
-          }
-        }
-
-        if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(sumElements.length)) {
+        if (!isArray(sumElements) || sumElements.length !== 2) {
           const { path } = attribute
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
             message: `Sum for number attribute ${
               path !== undefined ? `'${path}' ` : ''
-            }should be a tuple of length 1 or 2`,
+            }should be a tuple of length 2`,
             path,
             payload: {
               received: inputValue[$SUM]
@@ -87,8 +40,21 @@ export const parseNumberExtension = (
           })
         }
 
-        const parsedValue = { [$SUM]: parsers.map(parser => parser.next().value) }
+        const [left, right] = sumElements
+        const parsers = [
+          attrWorkflow(number().freeze(`${attribute.path}[$SUM][0]`), left, {
+            fill: false,
+            transform,
+            parseExtension: parseReferenceExtension
+          }),
+          attrWorkflow(number().freeze(`${attribute.path}[$SUM][1]`), right, {
+            fill: false,
+            transform,
+            parseExtension: parseReferenceExtension
+          })
+        ]
 
+        const parsedValue = { [$SUM]: parsers.map(parser => parser.next().value) }
         if (transform) {
           yield parsedValue
         } else {
@@ -101,67 +67,39 @@ export const parseNumberExtension = (
     }
   }
 
-  if (hasSubtractOperation(inputValue)) {
+  if (hasSubtractOperation(inputValue) && inputValue[$SUBTRACT] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parsers: Generator<
-          ValidValue<PrimitiveAttribute<'number'>, ReferenceExtension>,
-          ValidValue<PrimitiveAttribute<'number'>, ReferenceExtension>
-        >[] = []
-
         const subtractElements = inputValue[$SUBTRACT]
-        const isInputValueArray = isArray(subtractElements)
-        if (isInputValueArray) {
-          for (const subtractElement of subtractElements) {
-            parsers.push(
-              attrWorkflow<
-                PrimitiveAttribute<'number'>,
-                ReferenceExtension,
-                UpdateItemInputExtension
-              >(
-                attribute,
-                subtractElement,
-                // References are allowed in subtractions
-                { ...options, parseExtension: parseReferenceExtension }
-              )
-            )
-          }
-        }
 
-        if (fill) {
-          if (isInputValueArray) {
-            const defaultedValue = {
-              [$SUBTRACT]: parsers.map(parser => parser.next().value)
-            }
-            yield defaultedValue
-
-            const linkedValue = {
-              [$SUBTRACT]: parsers.map(parser => parser.next().value)
-            }
-            yield linkedValue
-          } else {
-            const defaultedValue = { [$SUBTRACT]: cloneDeep(inputValue[$SUBTRACT]) }
-            yield defaultedValue
-
-            const linkedValue = defaultedValue
-            yield linkedValue
-          }
-        }
-
-        if (!isInputValueArray || !ACCEPTABLE_LENGTH_SET.has(subtractElements.length)) {
+        if (!isArray(subtractElements) || subtractElements.length !== 2) {
           const { path } = attribute
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
             message: `Subtraction for number attribute ${
               path !== undefined ? `'${path}' ` : ''
-            }should be a tuple of length 1 or 2`,
+            }should be a tuple of length 2`,
             path,
             payload: {
               received: inputValue[$SUBTRACT]
             }
           })
         }
+
+        const [left, right] = subtractElements
+        const parsers = [
+          attrWorkflow(number().freeze(`${attribute.path}[$SUBTRACT][0]`), left, {
+            fill: false,
+            transform,
+            parseExtension: parseReferenceExtension
+          }),
+          attrWorkflow(number().freeze(`${attribute.path}[$SUBTRACT][1]`), right, {
+            fill: false,
+            transform,
+            parseExtension: parseReferenceExtension
+          })
+        ]
 
         const parsedValue = { [$SUBTRACT]: parsers.map(parser => parser.next().value) }
 
@@ -177,29 +115,16 @@ export const parseNumberExtension = (
     }
   }
 
-  if (hasAddOperation(inputValue)) {
-    const parser = attrWorkflow<
-      PrimitiveAttribute<'number'>,
-      ReferenceExtension,
-      UpdateItemInputExtension
-    >(
-      attribute,
-      inputValue[$ADD],
-      // References are allowed in additions
-      { ...options, parseExtension: parseReferenceExtension }
-    )
+  if (hasAddOperation(inputValue) && inputValue[$ADD] !== undefined) {
+    const parser = attrWorkflow(number().freeze(`${attribute.path}[$ADD]`), inputValue[$ADD], {
+      fill: false,
+      transform,
+      parseExtension: parseReferenceExtension
+    })
 
     return {
       isExtension: true,
       *extensionParser() {
-        if (fill) {
-          const defaultedValue = { [$ADD]: parser.next().value }
-          yield defaultedValue
-
-          const linkedValue = { [$ADD]: parser.next().value }
-          yield linkedValue
-        }
-
         const parsedValue = { [$ADD]: parser.next().value }
 
         if (transform) {

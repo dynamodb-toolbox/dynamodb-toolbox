@@ -2,60 +2,64 @@ import cloneDeep from 'lodash.clonedeep'
 
 import type {
   Schema,
+  Attribute,
   RecordAttribute,
   RecordAttributeKeys,
-  RecordAttributeElements,
-  Extension,
   ExtendedValue
 } from 'v1/schema'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 
-import type { ValidValue } from './parser'
-import type { HasExtension, ParsingOptions } from './types'
-import { attrWorkflow, ValidAttrValue } from './attribute'
+import type { ParsedValue } from './parser'
+import type {
+  ParsedValueOptions,
+  ParsedValueDefaultOptions,
+  ParsingOptions,
+  FromParsingOptions
+} from './types'
+import { attrWorkflow, AttrParsedValue, MustBeDefined } from './attribute'
 
-export type ValidRecordAttrValue<
+export type RecordAttrParsedValue<
   ATTRIBUTE extends RecordAttribute,
-  EXTENSION extends Extension = never
-> =  // We cannot use Record type as it messes up map resolution down the line
-  | {
-      [KEY in Extract<ValidAttrValue<ATTRIBUTE['keys'], EXTENSION>, string>]?: ValidAttrValue<
-        ATTRIBUTE['elements'],
-        EXTENSION
-      >
-    }
-  | ExtendedValue<EXTENSION, 'record'>
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions,
+  KEYS extends string = Extract<AttrParsedValue<ATTRIBUTE['keys'], OPTIONS>, string>
+> = RecordAttribute extends ATTRIBUTE
+  ? { [KEY in string]: unknown }
+  : // We cannot use Record type as it messes up map resolution down the line
+
+    | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | {
+          [KEY in KEYS]?: AttrParsedValue<ATTRIBUTE['elements'], OPTIONS>
+        }
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'record'>
 
 export function* recordAttributeParser<
-  INPUT_EXTENSION extends Extension = never,
-  SCHEMA_EXTENSION extends Extension = INPUT_EXTENSION
+  ATTRIBUTE extends RecordAttribute,
+  OPTIONS extends ParsingOptions = ParsingOptions
 >(
-  attribute: RecordAttribute,
+  attribute: ATTRIBUTE,
   inputValue: unknown,
-  ...[options = {} as ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]: If<
-    HasExtension<INPUT_EXTENSION>,
-    [options: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>],
-    [options?: ParsingOptions<INPUT_EXTENSION, SCHEMA_EXTENSION>]
-  >
+  options: OPTIONS = {} as OPTIONS
 ): Generator<
-  ValidRecordAttrValue<RecordAttribute, INPUT_EXTENSION>,
-  ValidRecordAttrValue<RecordAttribute, INPUT_EXTENSION>,
-  ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+  RecordAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  RecordAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
 > {
+  type Parsed = RecordAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
+
   const { fill = true, transform = true } = options
 
   const parsers: [
     Generator<
-      ValidValue<RecordAttributeKeys, INPUT_EXTENSION>,
-      ValidValue<RecordAttributeKeys, INPUT_EXTENSION>,
+      ParsedValue<RecordAttributeKeys, FromParsingOptions<OPTIONS>>,
+      ParsedValue<RecordAttributeKeys, FromParsingOptions<OPTIONS>>,
       undefined
     >,
     Generator<
-      ValidValue<RecordAttributeElements, INPUT_EXTENSION>,
-      ValidValue<RecordAttributeElements, INPUT_EXTENSION>,
-      ValidValue<Schema, SCHEMA_EXTENSION> | undefined
+      ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
+      ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
+      ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
     >
   ][] = []
 
@@ -76,7 +80,7 @@ export function* recordAttributeParser<
           .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
           .filter(([, element]) => element !== undefined)
       )
-      const itemInput = yield defaultedValue
+      const itemInput = yield defaultedValue as Parsed
 
       const linkedValue = Object.fromEntries(
         parsers
@@ -86,13 +90,13 @@ export function* recordAttributeParser<
           ])
           .filter(([, element]) => element !== undefined)
       )
-      yield linkedValue
+      yield linkedValue as Parsed
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue
+      yield defaultedValue as Parsed
 
       const linkedValue = defaultedValue
-      yield linkedValue
+      yield linkedValue as Parsed
     }
   }
 
@@ -116,9 +120,9 @@ export function* recordAttributeParser<
   )
 
   if (transform) {
-    yield parsedValue
+    yield parsedValue as Parsed
   } else {
-    return parsedValue
+    return parsedValue as Parsed
   }
 
   const transformedValue = Object.fromEntries(
@@ -126,5 +130,5 @@ export function* recordAttributeParser<
       .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
       .filter(([, element]) => element !== undefined)
   )
-  return transformedValue
+  return transformedValue as Parsed
 }
