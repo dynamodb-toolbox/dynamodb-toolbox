@@ -2,16 +2,16 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { record, string } from 'v1/schema'
 
 import { recordAttributeParser } from './record'
-import * as attrWorkflowModule from './attribute'
+import * as attrParserModule from './attribute'
 
 // @ts-ignore
-const attrWorkflow = jest.spyOn(attrWorkflowModule, 'attrWorkflow')
+const attrParser = jest.spyOn(attrParserModule, 'attrParser')
 
 const recordAttr = record(string(), string()).freeze('path')
 
 describe('parseRecordAttributeClonedInput', () => {
   beforeEach(() => {
-    attrWorkflow.mockClear()
+    attrParser.mockClear()
   })
 
   it('throws an error if input is not a record', () => {
@@ -35,11 +35,11 @@ describe('parseRecordAttributeClonedInput', () => {
     expect(defaultedState.done).toBe(false)
     expect(defaultedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
 
-    expect(attrWorkflow).toHaveBeenCalledTimes(4)
-    expect(attrWorkflow).toHaveBeenCalledWith(recordAttr.keys, 'foo', options)
-    expect(attrWorkflow).toHaveBeenCalledWith(recordAttr.keys, 'bar', options)
-    expect(attrWorkflow).toHaveBeenCalledWith(recordAttr.elements, 'foo1', options)
-    expect(attrWorkflow).toHaveBeenCalledWith(recordAttr.elements, 'bar1', options)
+    expect(attrParser).toHaveBeenCalledTimes(4)
+    expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'foo', options)
+    expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'bar', options)
+    expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'foo1', options)
+    expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'bar1', options)
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)

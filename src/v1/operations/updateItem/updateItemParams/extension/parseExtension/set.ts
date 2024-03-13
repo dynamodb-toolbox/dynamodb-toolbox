@@ -1,6 +1,6 @@
 import type { AttributeBasicValue, SetAttribute } from 'v1/schema'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
-import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
+import { Parser } from 'v1/schema/actions/parse'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
 import { $ADD, $DELETE } from 'v1/operations/updateItem/constants'
@@ -15,7 +15,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attrWorkflow(attribute, input[$ADD], { fill: false, transform })
+        const parser = attribute.build(Parser).start(input[$ADD], { fill: false, transform })
 
         const parsedValue = { [$ADD]: parser.next().value }
         if (transform) {
@@ -34,7 +34,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attrWorkflow(attribute, input[$DELETE], { fill: false, transform })
+        const parser = attribute.build(Parser).start(input[$DELETE], { fill: false, transform })
 
         const parsedValue = { [$DELETE]: parser.next().value }
         if (transform) {

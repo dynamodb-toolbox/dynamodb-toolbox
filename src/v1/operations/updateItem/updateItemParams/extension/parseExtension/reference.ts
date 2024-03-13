@@ -2,7 +2,7 @@ import type { Attribute, AttributeBasicValue } from 'v1/schema'
 import type { ReferenceExtension } from 'v1/operations/types'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { isArray } from 'v1/utils/validation/isArray'
-import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
+import { Parser } from 'v1/schema/actions/parse'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'
@@ -56,7 +56,7 @@ export const parseReferenceExtension: ExtensionParser<
 
         const fallbackParser =
           fallback !== undefined
-            ? attrWorkflow(attribute, fallback, {
+            ? new Parser(attribute).start(fallback, {
                 fill: false,
                 transform,
                 parseExtension: parseReferenceExtension
