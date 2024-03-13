@@ -1,4 +1,3 @@
-import type { EntityPaths } from 'v1/operations/paths'
 import type { FormattedValue, FormattedValueOptions } from 'v1/schema/actions/format'
 
 import type { EntityV2 } from '../class'
@@ -11,5 +10,5 @@ import type { EntityV2 } from '../class'
  */
 export type FormattedItem<
   ENTITY extends EntityV2 = EntityV2,
-  OPTIONS extends FormattedValueOptions<EntityPaths<ENTITY>> = {}
+  OPTIONS extends FormattedValueOptions<ENTITY['schema']> = {}
 > = FormattedValue<ENTITY['schema'], OPTIONS>

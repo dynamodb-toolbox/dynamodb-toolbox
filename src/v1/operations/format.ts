@@ -1,6 +1,5 @@
 import type { EntityV2, FormattedItem } from 'v1/entity'
-import type { Paths } from 'v1/schema/actions/paths'
-import { Formatter, FormatOptions, UnpackFormatOptions } from 'v1/schema/actions/format'
+import { Formatter, FormatOptions, FromFormatOptions } from 'v1/schema/actions/format'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import { EntityOperation, $entity } from './class'
@@ -17,10 +16,10 @@ export class EntityFormatter<ENTITY extends EntityV2 = EntityV2> extends EntityO
     this[$formatter] = new Formatter<ENTITY['schema']>(entity.schema)
   }
 
-  format<OPTIONS extends FormatOptions<Paths<ENTITY['schema']>>>(
+  format<OPTIONS extends FormatOptions<ENTITY['schema']>>(
     item: { [KEY in string]: unknown },
     options: OPTIONS = {} as OPTIONS
-  ): FormattedItem<ENTITY, UnpackFormatOptions<OPTIONS>> {
+  ): FormattedItem<ENTITY, FromFormatOptions<ENTITY['schema'], OPTIONS>> {
     try {
       return this[$formatter].format(item, options)
     } catch (error) {
