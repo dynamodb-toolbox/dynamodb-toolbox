@@ -12,7 +12,7 @@ import type {
   ParsingOptions,
   FromParsingOptions
 } from './types'
-import { attrWorkflow, AttrParsedValue, MustBeDefined } from './attribute'
+import { attrParser, AttrParsedValue, MustBeDefined } from './attribute'
 
 export type SetAttrParsedValue<
   ATTRIBUTE extends SetAttribute,
@@ -24,7 +24,7 @@ export type SetAttrParsedValue<
       | Set<AttrParsedValue<ATTRIBUTE['elements'], OPTIONS>>
       | ExtendedValue<NonNullable<OPTIONS['extension']>, 'set'>
 
-export function* setAttrWorkflow<ATTRIBUTE extends SetAttribute, OPTIONS extends ParsingOptions>(
+export function* setAttrParser<ATTRIBUTE extends SetAttribute, OPTIONS extends ParsingOptions>(
   attribute: ATTRIBUTE,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
@@ -46,7 +46,7 @@ export function* setAttrWorkflow<ATTRIBUTE extends SetAttribute, OPTIONS extends
   const isInputValueSet = isSet(inputValue)
   if (isInputValueSet) {
     for (const element of inputValue.values()) {
-      parsers.push(attrWorkflow(attribute.elements, element, options))
+      parsers.push(attrParser(attribute.elements, element, options))
     }
   }
 

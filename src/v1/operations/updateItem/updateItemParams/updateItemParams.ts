@@ -20,15 +20,15 @@ export const updateItemParams = <
   input: UpdateItemInput<ENTITY>,
   updateItemOptions: OPTIONS = {} as OPTIONS
 ): UpdateCommandInput => {
-  const workflow = entity.schema.build(Parser).workflow(input, {
+  const parser = entity.schema.build(Parser).start(input, {
     operation: 'update',
     parseExtension: parseUpdateExtension
   })
 
-  workflow.next() // defaulted
-  workflow.next() // linked
-  const validInput = workflow.next().value
-  const transformedInput = workflow.next().value
+  parser.next() // defaulted
+  parser.next() // linked
+  const validInput = parser.next().value
+  const transformedInput = parser.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
   const primaryKey = parsePrimaryKey(entity, keyInput)

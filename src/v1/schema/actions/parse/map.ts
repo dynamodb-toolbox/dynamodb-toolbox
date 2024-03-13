@@ -13,7 +13,7 @@ import type {
   ParsingOptions,
   FromParsingOptions
 } from './types'
-import { attrWorkflow, AttrParsedValue, MustBeDefined } from './attribute'
+import { attrParser, AttrParsedValue, MustBeDefined } from './attribute'
 
 export type MapAttrParsedValue<
   ATTRIBUTE extends MapAttribute,
@@ -68,7 +68,7 @@ export function* mapAttributeParser<
     Object.entries(attribute.attributes)
       .filter(([, attr]) => operation !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attrWorkflow(attr, inputValue[attrName], options)
+        parsers[attrName] = attrParser(attr, inputValue[attrName], options)
 
         additionalAttributeNames.delete(attrName)
       })

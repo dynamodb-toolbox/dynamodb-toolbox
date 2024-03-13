@@ -18,7 +18,7 @@ import type {
   ParsingOptions,
   FromParsingOptions
 } from './types'
-import { attrWorkflow, AttrParsedValue, MustBeDefined } from './attribute'
+import { attrParser, AttrParsedValue, MustBeDefined } from './attribute'
 
 export type RecordAttrParsedValue<
   ATTRIBUTE extends RecordAttribute,
@@ -67,8 +67,8 @@ export function* recordAttributeParser<
   if (isInputValueObject) {
     for (const [key, element] of Object.entries(inputValue)) {
       parsers.push([
-        attrWorkflow(attribute.keys, key, options),
-        attrWorkflow(attribute.elements, element, options)
+        attrParser(attribute.keys, key, options),
+        attrParser(attribute.elements, element, options)
       ])
     }
   }

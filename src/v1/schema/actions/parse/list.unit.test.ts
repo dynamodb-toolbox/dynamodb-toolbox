@@ -1,21 +1,21 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import { list, string } from 'v1/schema'
 
-import { listAttrWorkflow } from './list'
-import * as attrWorkflowModule from './attribute'
+import { listAttrParser } from './list'
+import * as attrParserModule from './attribute'
 
 // @ts-ignore
-const attrWorkflow = jest.spyOn(attrWorkflowModule, 'attrWorkflow')
+const attrParser = jest.spyOn(attrParserModule, 'attrParser')
 
 const listAttr = list(string()).freeze('path')
 
 describe('parseListAttributeClonedInput', () => {
   beforeEach(() => {
-    attrWorkflow.mockClear()
+    attrParser.mockClear()
   })
 
   it('throws an error if input is not a list', () => {
-    const invalidCall = () => listAttrWorkflow(listAttr, { foo: 'bar' }, { fill: false }).next()
+    const invalidCall = () => listAttrParser(listAttr, { foo: 'bar' }, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -23,7 +23,7 @@ describe('parseListAttributeClonedInput', () => {
 
   it('applies parseAttributeClonesInput on input elements otherwise (and pass options)', () => {
     const options = { some: 'options' }
-    const parser = listAttrWorkflow(
+    const parser = listAttrParser(
       listAttr,
       ['foo', 'bar'],
       // @ts-expect-error we don't really care about the type here
@@ -34,9 +34,9 @@ describe('parseListAttributeClonedInput', () => {
     expect(defaultedState.done).toBe(false)
     expect(defaultedState.value).toStrictEqual(['foo', 'bar'])
 
-    expect(attrWorkflow).toHaveBeenCalledTimes(2)
-    expect(attrWorkflow).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
-    expect(attrWorkflow).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
+    expect(attrParser).toHaveBeenCalledTimes(2)
+    expect(attrParser).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
+    expect(attrParser).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)

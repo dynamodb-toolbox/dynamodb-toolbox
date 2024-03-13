@@ -1,7 +1,7 @@
 import type { PrimitiveAttribute, AttributeBasicValue } from 'v1/schema'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { number } from 'v1/schema/attributes/primitive'
-import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
+import { Parser } from 'v1/schema/actions/parse'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -42,12 +42,12 @@ export const parseNumberExtension = (
 
         const [left, right] = sumElements
         const parsers = [
-          attrWorkflow(number().freeze(`${attribute.path}[$SUM][0]`), left, {
+          number().freeze(`${attribute.path}[$SUM][0]`).build(Parser).start(left, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
           }),
-          attrWorkflow(number().freeze(`${attribute.path}[$SUM][1]`), right, {
+          number().freeze(`${attribute.path}[$SUM][1]`).build(Parser).start(right, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
@@ -89,12 +89,12 @@ export const parseNumberExtension = (
 
         const [left, right] = subtractElements
         const parsers = [
-          attrWorkflow(number().freeze(`${attribute.path}[$SUBTRACT][0]`), left, {
+          number().freeze(`${attribute.path}[$SUBTRACT][0]`).build(Parser).start(left, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
           }),
-          attrWorkflow(number().freeze(`${attribute.path}[$SUBTRACT][1]`), right, {
+          number().freeze(`${attribute.path}[$SUBTRACT][1]`).build(Parser).start(right, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
@@ -116,11 +116,14 @@ export const parseNumberExtension = (
   }
 
   if (hasAddOperation(inputValue) && inputValue[$ADD] !== undefined) {
-    const parser = attrWorkflow(number().freeze(`${attribute.path}[$ADD]`), inputValue[$ADD], {
-      fill: false,
-      transform,
-      parseExtension: parseReferenceExtension
-    })
+    const parser = number()
+      .freeze(`${attribute.path}[$ADD]`)
+      .build(Parser)
+      .start(inputValue[$ADD], {
+        fill: false,
+        transform,
+        parseExtension: parseReferenceExtension
+      })
 
     return {
       isExtension: true,

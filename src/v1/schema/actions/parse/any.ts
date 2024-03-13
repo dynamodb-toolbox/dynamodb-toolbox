@@ -17,7 +17,7 @@ export type AnyAttrParsedValue<
   ? unknown
   : ATTRIBUTE['castAs'] | ExtendedValue<NonNullable<OPTIONS['extension']>, 'any'>
 
-export function* anyAttrWorkflow<
+export function* anyAttrParser<
   ATTRIBUTE extends AnyAttribute,
   OPTIONS extends ParsingOptions = ParsingOptions
 >(

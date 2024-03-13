@@ -1,6 +1,6 @@
 import type { Schema, Attribute, ListAttribute, ParsedValue, AttributeBasicValue } from 'v1/schema'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
-import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
+import { Parser } from 'v1/schema/actions/parse'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
@@ -17,7 +17,7 @@ import {
 import { parseReferenceExtension } from './reference'
 import { parseUpdateExtension } from './attribute'
 
-function* listElementWorkflow(
+function* listElementParser(
   attribute: ListAttribute,
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions
@@ -50,7 +50,7 @@ function* listElementWorkflow(
     return transformedValue
   }
 
-  return yield* attrWorkflow(attribute.elements, inputValue, {
+  return yield* new Parser(attribute.elements).start(inputValue, {
     operation: 'update',
     fill: false,
     transform,
@@ -69,7 +69,7 @@ export const parseListExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attrWorkflow(attribute, input[$SET], { fill: false, transform })
+        const parser = attribute.build(Parser).start(input[$SET], { fill: false, transform })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
@@ -94,7 +94,7 @@ export const parseListExtension = (
           *extensionParser() {
             const parsers = appendedValue.map(element =>
               // Should a simple list of valid elements (not extended)
-              attrWorkflow(attribute.elements, element, { fill: false, transform })
+              new Parser(attribute.elements).start(element, { fill: false, transform })
             )
 
             const parsedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
@@ -113,7 +113,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = attrWorkflow(attribute, appendedValue, {
+          const parser = attribute.build(Parser).start(appendedValue, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
@@ -140,7 +140,7 @@ export const parseListExtension = (
           isExtension: true,
           *extensionParser() {
             const parsers = prependedValue.map(element =>
-              attrWorkflow(attribute.elements, element, { fill: false, transform })
+              new Parser(attribute.elements).start(element, { fill: false, transform })
             )
 
             const parsedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
@@ -159,7 +159,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = attrWorkflow(attribute, prependedValue, {
+          const parser = attribute.build(Parser).start(prependedValue, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
@@ -191,7 +191,7 @@ export const parseListExtension = (
         } = Object.fromEntries(
           Object.entries(input).map(([index, element]) => [
             index,
-            listElementWorkflow(attribute, element, options)
+            listElementParser(attribute, element, options)
           ])
         )
 
