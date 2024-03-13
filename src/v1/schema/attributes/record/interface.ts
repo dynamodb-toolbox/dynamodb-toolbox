@@ -15,12 +15,9 @@ import type { SchemaAction } from '../../action'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $elements, $keys } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
-import type {
-  $RecordAttributeKeys,
-  RecordAttributeKeys,
-  $RecordAttributeElements,
-  RecordAttributeElements
-} from './types'
+import type { Attribute } from '../types'
+
+import type { $RecordAttributeKeys, RecordAttributeKeys, $RecordAttributeElements } from './types'
 import type { FreezeRecordAttribute } from './freeze'
 
 export interface $RecordAttributeState<
@@ -317,7 +314,7 @@ export interface $RecordAttribute<
 
 export class RecordAttribute<
   KEYS extends RecordAttributeKeys = RecordAttributeKeys,
-  ELEMENTS extends RecordAttributeElements = RecordAttributeElements,
+  ELEMENTS extends Attribute = Attribute,
   STATE extends SharedAttributeState = SharedAttributeState
 > implements SharedAttributeState<STATE> {
   type: 'record'

@@ -1,10 +1,4 @@
-import type {
-  Schema,
-  ListAttribute,
-  ListAttributeElements,
-  ParsedValue,
-  AttributeBasicValue
-} from 'v1/schema'
+import type { Schema, Attribute, ListAttribute, ParsedValue, AttributeBasicValue } from 'v1/schema'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { attrWorkflow } from 'v1/schema/actions/parse/attribute'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -28,8 +22,8 @@ function* listElementWorkflow(
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions
 ): Generator<
-  ParsedValue<ListAttributeElements, { extension: UpdateItemInputExtension }> | undefined,
-  ParsedValue<ListAttributeElements, { extension: UpdateItemInputExtension }> | undefined,
+  ParsedValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
+  ParsedValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
   ParsedValue<Schema, { extension: UpdateItemInputExtension }> | undefined
 > {
   if (inputValue === $REMOVE) {
@@ -190,8 +184,8 @@ export const parseListExtension = (
         let maxUpdatedIndex = 0
         const parsers: {
           [KEY in number]: Generator<
-            ParsedValue<ListAttributeElements, { extension: UpdateItemInputExtension }>,
-            ParsedValue<ListAttributeElements, { extension: UpdateItemInputExtension }>,
+            ParsedValue<Attribute, { extension: UpdateItemInputExtension }>,
+            ParsedValue<Attribute, { extension: UpdateItemInputExtension }>,
             ParsedValue<Schema, { extension: UpdateItemInputExtension }> | undefined
           >
         } = Object.fromEntries(
