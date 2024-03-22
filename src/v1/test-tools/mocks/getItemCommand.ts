@@ -1,6 +1,6 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
 import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/operations/getItem'
 import { $key, $options } from 'v1/operations/getItem/command'
 import { getItemParams } from 'v1/operations/getItem/getItemParams'

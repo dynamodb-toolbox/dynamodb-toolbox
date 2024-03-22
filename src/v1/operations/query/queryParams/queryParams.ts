@@ -2,7 +2,7 @@ import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
 import type { TableV2 } from 'v1/table'
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
 import type { Condition, Query } from 'v1/operations/types'
 import type { EntityPaths } from 'v1/operations/paths'
 import { isBoolean } from 'v1/utils/validation'
