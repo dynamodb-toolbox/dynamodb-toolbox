@@ -1,6 +1,6 @@
-import { getTransactWriteCommandInput, transactWriteItems } from './transactWriteItems'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+
 import {
   $add,
   $append,
@@ -19,9 +19,12 @@ import {
   schema,
   set,
   string,
-  TableV2,
-  UpdateItemTransaction
+  transactWriteItems,
+  UpdateItemTransaction,
+  TableV2
 } from 'v1'
+
+import { getTransactWriteCommandInput } from './transactWriteItems'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 
@@ -96,15 +99,15 @@ describe('transactWriteItems', () => {
   })
 
   it('should throw an error if dynamoDBDocumentClient is not found', async () => {
-    const commands: PutItemTransaction[] = []
+    const transactions: PutItemTransaction[] = []
     const options = {}
-    await expect(transactWriteItems(commands, options)).rejects.toThrow(
+    await expect(transactWriteItems(transactions, options)).rejects.toThrow(
       'DynamoDBDocumentClient not found'
     )
   })
 
   it('should send a transaction with the correct parameters', async () => {
-    const commands = [
+    const transactions = [
       TestEntity.build(PutItemTransaction).item({
         email: 'titi@example.com',
         sort: 'titi'
@@ -115,7 +118,7 @@ describe('transactWriteItems', () => {
     ]
     const options = { dynamoDBDocumentClient: documentClient }
 
-    await transactWriteItems(commands, options)
+    await transactWriteItems(transactions, options)
 
     expect(documentClient.send).toHaveBeenCalledTimes(1)
   })
