@@ -1,4 +1,4 @@
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
 import type { Schema } from 'v1/schema/schema'
 import type { Paths } from 'v1/schema/actions/paths'
 import type { EntityPaths } from 'v1/operations/paths'

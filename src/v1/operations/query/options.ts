@@ -7,7 +7,7 @@ import type {
 import type { EntityPathsIntersection } from 'v1/operations/paths'
 import type { Condition, Query } from 'v1/operations/types'
 import type { TableV2 } from 'v1/table'
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
 
 export type QueryOptions<
   TABLE extends TableV2 = TableV2,

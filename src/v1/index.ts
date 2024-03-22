@@ -6,6 +6,11 @@ export * from './schema/actions'
 export { schema, Schema } from './schema/schema'
 export { SchemaAction } from './schema/action'
 
+// entities
+// TODO: Pick relevant types
+export * from './entity/generics'
+export { EntityV2 } from './entity/class'
+
 // operations
 export { GetItemCommand } from './operations/getItem'
 export type { GetItemOptions, GetItemResponse } from './operations/getItem'
@@ -47,7 +52,7 @@ export { parseProjection } from './operations/expression/projection/parse'
 export * from './operations/types'
 
 export * from './table'
-export * from './entity'
+
 export * from './errors'
 export * from './test-tools'
 export * from './transformers'

@@ -1,6 +1,6 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
 import { EntityOperation } from 'v1/operations/class'
 
 type BatchWriteItemRequestInputRecord = NonNullable<
