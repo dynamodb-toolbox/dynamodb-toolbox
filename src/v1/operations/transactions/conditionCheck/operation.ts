@@ -1,10 +1,12 @@
-import { $entity, EntityOperation } from '../../class'
-import { WriteItemTransaction } from '../types'
-import { conditionCheckParams, ConditionCheckParams } from './conditionCheckParams'
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-import type { EntityV2 } from 'v1/entity'
+import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+
+import type { EntityV2 } from 'v1/entity/class'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { Condition, KeyInput } from 'v1/operations/types'
+
+import { $entity, EntityOperation } from '../../class'
+import type { WriteItemTransaction } from '../types'
+import { conditionCheckParams, ConditionCheckParams } from './conditionCheckParams'
 
 export const $key = Symbol('$key')
 export type $key = typeof $key
@@ -52,7 +54,7 @@ export class ConditionCheck<ENTITY extends EntityV2 = EntityV2>
     type: 'ConditionCheck'
     params: ConditionCheckParams
   } => ({
-    documentClient: this[$entity].table.documentClient,
+    documentClient: this[$entity].table.getDocumentClient(),
     type: 'ConditionCheck',
     params: this.params()
   })
