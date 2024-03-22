@@ -1,6 +1,5 @@
-import type { Schema } from 'v1/schema'
+import type { Schema, ParserInput } from 'v1/schema'
 import type { TableV2, PrimaryKey } from 'v1/table'
-import type { KeyInput } from 'v1/operations/types'
 import type { EntityOperation } from 'v1/operations/class'
 import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -38,7 +37,7 @@ export class EntityV2<
   public timestamps: TIMESTAMPS_OPTIONS
   // any is needed for contravariance
   public computeKey?: (
-    keyInput: Schema extends SCHEMA ? any : KeyInput<SCHEMA>
+    keyInput: Schema extends SCHEMA ? any : ParserInput<SCHEMA, { operation: 'key'; fill: false }>
   ) => PrimaryKey<TABLE>
 
   /**
@@ -67,7 +66,11 @@ export class EntityV2<
     timestamps?: NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   } & If<
     NeedsKeyCompute<SCHEMA, TABLE>,
-    { computeKey: (keyInput: KeyInput<SCHEMA, true>) => PrimaryKey<TABLE> },
+    {
+      computeKey: (
+        keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+      ) => PrimaryKey<TABLE>
+    },
     { computeKey?: undefined }
   >) {
     this.type = 'entity'

@@ -1,12 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If, ValueOrGetter } from 'v1/types'
-import type {
-  AttributeKeyInput,
-  AttributeUpdateItemInput,
-  KeyInput,
-  UpdateItemInput
-} from 'v1/operations'
+import type { AttributeUpdateItemInput, UpdateItemInput } from 'v1/operations'
 import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
@@ -76,7 +71,10 @@ export interface $MapAttribute<
    */
   keyDefault: (
     nextKeyDefault: ValueOrGetter<
-      AttributeKeyInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>
+      ParserInput<
+        FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
+        { operation: 'key'; fill: false }
+      >
     >
   ) => $MapAttribute<
     $ATTRIBUTES,
@@ -144,7 +142,10 @@ export interface $MapAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        AttributeKeyInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>,
+        ParserInput<
+          FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
+          { operation: 'key'; fill: false }
+        >,
         ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
       >
     >
@@ -176,8 +177,11 @@ export interface $MapAttribute<
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: KeyInput<SCHEMA, true>
-    ) => AttributeKeyInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>
+      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+    ) => ParserInput<
+      FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
+      { operation: 'key'; fill: false }
+    >
   ) => $MapAttribute<
     $ATTRIBUTES,
     O.Overwrite<
@@ -244,12 +248,15 @@ export interface $MapAttribute<
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
-        KeyInput<SCHEMA, true>,
+        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
         ParserInput<SCHEMA, { fill: false }>
       >
     ) => If<
       STATE['key'],
-      AttributeKeyInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>,
+      ParserInput<
+        FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
+        { operation: 'key'; fill: false }
+      >,
       ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
     >
   ) => $MapAttribute<
