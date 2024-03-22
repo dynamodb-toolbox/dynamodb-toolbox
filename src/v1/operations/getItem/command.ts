@@ -1,7 +1,8 @@
 import type { O } from 'ts-toolbelt'
 import { GetCommandInput, GetCommand, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2, FormattedItem } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
+import type { FormattedItem } from 'v1/entity/generics'
 import type { KeyInput } from 'v1/operations/types'
 import { EntityFormatter } from 'v1/operations/format'
 import { DynamoDBToolboxError } from 'v1/errors'

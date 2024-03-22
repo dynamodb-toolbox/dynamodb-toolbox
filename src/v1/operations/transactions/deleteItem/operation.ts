@@ -1,6 +1,6 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { KeyInput } from 'v1/operations/types'
 

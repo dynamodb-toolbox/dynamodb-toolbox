@@ -1,4 +1,4 @@
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
 import type { KeyInput } from 'v1/operations/types/KeyInput'
 import { deleteItemParams } from 'v1/operations/deleteItem/deleteItemParams'
 import { DynamoDBToolboxError } from 'v1/errors'

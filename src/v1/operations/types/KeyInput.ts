@@ -1,5 +1,5 @@
 import type { ParserInput } from 'v1/schema/actions/tParse'
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
 
 /**
  * Key input of a single item command (GET, DELETE ...) for an Entity or Schema
