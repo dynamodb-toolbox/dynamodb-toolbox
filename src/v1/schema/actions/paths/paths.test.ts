@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import { schema } from 'v1/schema/schema'
+import { schema } from 'v1/schema'
 import {
   any,
   string,

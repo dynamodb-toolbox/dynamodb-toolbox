@@ -1,6 +1,6 @@
 import type { FormattedValue, FormattedValueOptions } from 'v1/schema/actions/format'
 
-import type { EntityV2 } from '../class'
+import type { EntityV2 } from '../entity'
 
 /**
  * Returned item of a fetch command (GET, QUERY ...) for a given Entity

@@ -4,7 +4,7 @@ import type {
   TransactWriteCommandInput
 } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 
 import type { EntityOperation } from '../class'
 

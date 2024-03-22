@@ -1,4 +1,4 @@
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import type { KeyInput } from 'v1/operations/types/KeyInput'
 import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/operations/getItem'
 import type { GetItemCommandClass } from 'v1/operations/getItem/command'

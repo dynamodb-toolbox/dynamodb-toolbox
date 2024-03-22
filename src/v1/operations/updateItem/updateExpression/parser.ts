@@ -1,6 +1,6 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type { Attribute, AttributeValue } from 'v1/schema/attributes'
 import type { ParsedValue } from 'v1/schema/actions/parse'
 import { isObject } from 'v1/utils/validation/isObject'

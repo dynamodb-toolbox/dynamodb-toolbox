@@ -1,20 +1,19 @@
 // schema
-export { schema, Schema } from './schema/schema'
+export { schema, Schema, SchemaAction } from './schema'
 // TODO: Pick relevant exports
 export * from './schema/attributes'
-export { SchemaAction } from './schema/action'
 // TODO: Pick relevant exports
 export * from './schema/actions'
 
 // tables
-export { TableV2 } from './table/class'
+export { TableV2 } from './table'
 // TODO: Pick relevant types
 export * from './table/types'
 // TODO: Pick relevant types
 export * from './table/generics'
 
 // entities
-export { EntityV2 } from './entity/class'
+export { EntityV2 } from './entity'
 // TODO: Pick relevant types
 export * from './entity/generics'
 

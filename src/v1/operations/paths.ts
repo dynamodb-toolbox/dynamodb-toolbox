@@ -1,4 +1,4 @@
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import type { Paths } from 'v1/schema/actions/paths'
 
 export type EntityPaths<ENTITY extends EntityV2 = EntityV2> = Paths<ENTITY['schema']>

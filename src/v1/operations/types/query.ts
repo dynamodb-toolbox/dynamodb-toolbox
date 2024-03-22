@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema/attributes'
-import type { TableV2 } from 'v1/table/class'
+import type { TableV2 } from 'v1/table'
 import type { IndexableKeyType, LocalIndex, GlobalIndex, Key } from 'v1/table/types'
 import type { IndexNames, IndexSchema } from 'v1/table/generics'
 import type { RangeOperator } from 'v1/operations/expression/condition/parser/parseCondition/comparison/types'
