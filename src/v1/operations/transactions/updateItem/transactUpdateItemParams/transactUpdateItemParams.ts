@@ -6,7 +6,7 @@ import type { EntityV2 } from 'v1/entity/class'
 import type { UpdateItemInput } from 'v1/operations/updateItem'
 import { parseUpdate } from 'v1/operations/updateItem/updateExpression/parse'
 import { parseUpdateExtension } from 'v1/operations/updateItem/updateItemParams/extension/parseExtension'
-import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
+import { PrimaryKeyParser } from 'v1/operations/primaryKeyParser'
 import { Parser } from 'v1/schema/actions/parse'
 
 import type { UpdateItemTransactionOptions } from '../options'
@@ -36,7 +36,7 @@ export const transactUpdateItemParams = <
   const transformedInput = parser.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
-  const primaryKey = parsePrimaryKey(entity, keyInput)
+  const primaryKey = entity.build(PrimaryKeyParser).parse(keyInput)
 
   const {
     ExpressionAttributeNames: updateExpressionAttributeNames,
