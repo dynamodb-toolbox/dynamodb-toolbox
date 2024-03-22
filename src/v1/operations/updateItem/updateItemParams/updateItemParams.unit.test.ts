@@ -1,6 +1,3 @@
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-
 import {
   TableV2,
   EntityV2,
@@ -20,10 +17,6 @@ import {
 } from 'v1'
 import { $set, $get, $remove, $sum, $subtract, $add, $delete, $append, $prepend } from '../utils'
 
-const dynamoDbClient = new DynamoDBClient({})
-
-const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
-
 const TestTable = new TableV2({
   name: 'test-table',
   partitionKey: {
@@ -33,8 +26,7 @@ const TestTable = new TableV2({
   sortKey: {
     type: 'string',
     name: 'sk'
-  },
-  documentClient
+  }
 })
 
 const TestEntity = new EntityV2({
@@ -78,8 +70,7 @@ const TestTable2 = new TableV2({
   partitionKey: {
     type: 'string',
     name: 'pk'
-  },
-  documentClient
+  }
 })
 
 const TestEntity2 = new EntityV2({
@@ -111,8 +102,7 @@ const TestTable3 = new TableV2({
   partitionKey: {
     type: 'string',
     name: 'pk'
-  },
-  documentClient
+  }
 })
 
 const TestEntity3 = new EntityV2({
@@ -132,8 +122,7 @@ const TestTable4 = new TableV2({
   partitionKey: {
     type: 'string',
     name: 'pk'
-  },
-  documentClient
+  }
 })
 
 const TestEntity4 = new EntityV2({

@@ -94,9 +94,9 @@ export class UpdateItemCommand<
   async send(): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
-    const commandOutput = await this[$entity].table.documentClient.send(
-      new UpdateCommand(getItemParams)
-    )
+    const commandOutput = await this[$entity].table
+      .getDocumentClient()
+      .send(new UpdateCommand(getItemParams))
 
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 
