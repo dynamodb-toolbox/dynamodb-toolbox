@@ -19,17 +19,18 @@ export type MapAttrParsedValue<
   ATTRIBUTE extends MapAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = MapAttribute extends ATTRIBUTE
-  ? { [KEY in string]: unknown }
+  ? { [KEY: string]: unknown }
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | OptionalizeUndefinableProperties<
           {
-            [KEY in OPTIONS['operation'] extends 'key'
+            [KEY in OPTIONS extends { operation: 'key' }
               ? O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>
-              : keyof ATTRIBUTE['attributes'] & string]: AttrParsedValue<
-              ATTRIBUTE['attributes'][KEY],
-              OPTIONS
-            >
+              : keyof ATTRIBUTE['attributes'] & string as OPTIONS extends { transform: false }
+              ? KEY
+              : ATTRIBUTE['attributes'][KEY] extends { savedAs: string }
+              ? ATTRIBUTE['attributes'][KEY]['savedAs']
+              : KEY]: AttrParsedValue<ATTRIBUTE['attributes'][KEY], OPTIONS>
           },
           // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
           O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>

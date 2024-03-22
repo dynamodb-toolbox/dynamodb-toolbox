@@ -8,10 +8,9 @@ import {
   list,
   any,
   schema,
-  PutItemInput,
   FormattedValue,
   SavedItem,
-  KeyInput
+  ParserInput
 } from 'v1'
 import { Parser } from 'v1/schema/actions/parse'
 import { Formatter } from 'v1/schema/actions/format'
@@ -47,7 +46,7 @@ const playgroundSchema1 = schema({
 const parsedValue = playgroundSchema1.build(Parser).parse({ foo: 'bar' })
 const formattedValue = playgroundSchema1.build(Formatter).format({ foo: 'bar' })
 
-type PlaygroundSchema1PutItemInput = PutItemInput<typeof playgroundSchema1>
+type PlaygroundSchema1PutItemInput = ParserInput<typeof playgroundSchema1>
 type PlaygroundSchema1FormattedItem = FormattedValue<typeof playgroundSchema1>
 
 const listAttr = list(string()).optional().freeze()
@@ -60,9 +59,9 @@ const formattedValue3 = strAttr.build(Formatter).format({ foo: 'bar' })
 
 const allCasesOfProps = {
   optProp: string().optional(),
-  optPropWithIndepDef: string().optional().putDefault('foo'),
+  optPropWithDef: string().optional().putDefault('foo'),
   reqProp: string(),
-  reqPropWithIndepDef: string().putDefault('baz')
+  reqPropWithDef: string().putDefault('baz')
 }
 
 const playgroundSchema2 = schema({
@@ -72,13 +71,16 @@ const playgroundSchema2 = schema({
 }).and(schema => ({
   optLink: string()
     .optional()
-    .putLink<typeof schema>(({ optPropWithIndepDef }) => optPropWithIndepDef),
-  reqLink: string().putLink<typeof schema>(({ reqPropWithIndepDef }) => reqPropWithIndepDef)
+    .putLink<typeof schema>(({ optPropWithDef }) => optPropWithDef),
+  reqLink: string().putLink<typeof schema>(({ reqPropWithDef }) => reqPropWithDef)
 }))
 
 type PlaygroundSchema2FormattedItem = FormattedValue<typeof playgroundSchema2>
-type PlaygroundSchema2PutItemInput = PutItemInput<typeof playgroundSchema2>
-type PlaygroundSchema2PutItemInputWithDefaults = PutItemInput<typeof playgroundSchema2, true>
+type PlaygroundSchema2PutItemInput = ParserInput<typeof playgroundSchema2>
+type PlaygroundSchema2PutItemInputWithDefaults = ParserInput<
+  typeof playgroundSchema2,
+  { fill: false }
+>
 
 const playgroundSchema3 = schema({
   keyEl: string().key(),
@@ -92,4 +94,4 @@ const playgroundSchema3 = schema({
 })
 
 type PlaygroundSchema3SavedItem = SavedItem<typeof playgroundSchema3>
-type PlaygroundSchema3KeyInput = KeyInput<typeof playgroundSchema3>
+type PlaygroundSchema3KeyInput = ParserInput<typeof playgroundSchema3, { operation: 'key' }>

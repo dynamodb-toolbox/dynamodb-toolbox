@@ -1,14 +1,8 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If, ValueOrGetter } from 'v1/types'
-import type {
-  AttributeKeyInput,
-  AttributePutItemInput,
-  AttributeUpdateItemInput,
-  KeyInput,
-  PutItemInput,
-  UpdateItemInput
-} from 'v1/operations'
+import type { AttributeUpdateItemInput, UpdateItemInput } from 'v1/operations'
+import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
 import type { SchemaAction } from '../../action'
@@ -78,7 +72,10 @@ export interface $ListAttribute<
    */
   keyDefault: (
     nextKeyDefault: ValueOrGetter<
-      AttributeKeyInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, true>
+      ParserInput<
+        FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>,
+        { operation: 'key'; fill: false }
+      >
     >
   ) => $ListAttribute<
     $ELEMENTS,
@@ -100,7 +97,7 @@ export interface $ListAttribute<
    */
   putDefault: (
     nextPutDefault: ValueOrGetter<
-      AttributePutItemInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, true>
+      ParserInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, { fill: false }>
     >
   ) => $ListAttribute<
     $ELEMENTS,
@@ -146,8 +143,11 @@ export interface $ListAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        AttributeKeyInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, true>,
-        AttributePutItemInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, true>
+        ParserInput<
+          FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>,
+          { operation: 'key'; fill: false }
+        >,
+        ParserInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, { fill: false }>
       >
     >
   ) => $ListAttribute<
@@ -178,8 +178,11 @@ export interface $ListAttribute<
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: KeyInput<SCHEMA, true>
-    ) => AttributeKeyInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, true>
+      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+    ) => ParserInput<
+      FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>,
+      { operation: 'key'; fill: false }
+    >
   ) => $ListAttribute<
     $ELEMENTS,
     O.Overwrite<
@@ -200,8 +203,8 @@ export interface $ListAttribute<
    */
   putLink: <SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: PutItemInput<SCHEMA, true>
-    ) => AttributePutItemInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, true>
+      putItemInput: ParserInput<SCHEMA, { fill: false }>
+    ) => ParserInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, { fill: false }>
   ) => $ListAttribute<
     $ELEMENTS,
     O.Overwrite<
@@ -244,11 +247,18 @@ export interface $ListAttribute<
    */
   link: <SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>
+      keyOrPutItemInput: If<
+        STATE['key'],
+        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
+        ParserInput<SCHEMA, { fill: false }>
+      >
     ) => If<
       STATE['key'],
-      AttributeKeyInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, true>,
-      AttributePutItemInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, true>
+      ParserInput<
+        FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>,
+        { operation: 'key'; fill: false }
+      >,
+      ParserInput<FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>, { fill: false }>
     >
   ) => $ListAttribute<
     $ELEMENTS,

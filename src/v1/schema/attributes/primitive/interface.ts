@@ -1,14 +1,8 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If, ValueOrGetter } from 'v1/types'
-import type {
-  AttributeKeyInput,
-  AttributePutItemInput,
-  AttributeUpdateItemInput,
-  KeyInput,
-  PutItemInput,
-  UpdateItemInput
-} from 'v1/operations'
+import type { AttributeUpdateItemInput, UpdateItemInput } from 'v1/operations'
+import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
 import type { SchemaAction } from '../../action'
@@ -128,7 +122,10 @@ export interface $PrimitiveAttribute<
    */
   keyDefault: (
     nextKeyDefault: ValueOrGetter<
-      AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>
+      ParserInput<
+        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        { operation: 'key'; fill: false }
+      >
     >
   ) => $PrimitiveAttribute<
     TYPE,
@@ -150,7 +147,7 @@ export interface $PrimitiveAttribute<
    */
   putDefault: (
     nextPutDefault: ValueOrGetter<
-      AttributePutItemInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>
+      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
     >
   ) => $PrimitiveAttribute<
     TYPE,
@@ -199,8 +196,14 @@ export interface $PrimitiveAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>,
-        AttributePutItemInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>
+        ParserInput<
+          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          { operation: 'key'; fill: false }
+        >,
+        ParserInput<
+          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          { fill: false }
+        >
       >
     >
   ) => $PrimitiveAttribute<
@@ -231,16 +234,19 @@ export interface $PrimitiveAttribute<
    */
   transform: (
     transformer: Transformer<
-      Exclude<
+      Extract<
         If<
           STATE['key'],
-          AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>,
-          AttributePutItemInput<
+          ParserInput<
             FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            true
+            { operation: 'key'; fill: false }
+          >,
+          ParserInput<
+            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+            { fill: false }
           >
         >,
-        undefined
+        ResolvePrimitiveAttributeType<TYPE>
       >,
       ResolvePrimitiveAttributeType<TYPE>
     >
@@ -252,8 +258,11 @@ export interface $PrimitiveAttribute<
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: KeyInput<SCHEMA, true>
-    ) => AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>
+      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+    ) => ParserInput<
+      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+      { operation: 'key'; fill: false }
+    >
   ) => $PrimitiveAttribute<
     TYPE,
     O.Overwrite<
@@ -274,10 +283,10 @@ export interface $PrimitiveAttribute<
    */
   putLink: <SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: PutItemInput<SCHEMA, true>
-    ) => AttributePutItemInput<
+      putItemInput: ParserInput<SCHEMA, { fill: false }>
+    ) => ParserInput<
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      true
+      { fill: false }
     >
   ) => $PrimitiveAttribute<
     TYPE,
@@ -324,11 +333,18 @@ export interface $PrimitiveAttribute<
    */
   link: <SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>
+      keyOrPutItemInput: If<
+        STATE['key'],
+        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
+        ParserInput<SCHEMA, { fill: false }>
+      >
     ) => If<
       STATE['key'],
-      AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>,
-      AttributePutItemInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>
+      ParserInput<
+        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        { operation: 'key'; fill: false }
+      >,
+      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
     >
   ) => $PrimitiveAttribute<
     TYPE,
