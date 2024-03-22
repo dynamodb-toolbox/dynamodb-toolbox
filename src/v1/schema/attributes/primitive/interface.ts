@@ -234,7 +234,7 @@ export interface $PrimitiveAttribute<
    */
   transform: (
     transformer: Transformer<
-      Exclude<
+      Extract<
         If<
           STATE['key'],
           ParserInput<
@@ -246,7 +246,7 @@ export interface $PrimitiveAttribute<
             { fill: false }
           >
         >,
-        undefined
+        ResolvePrimitiveAttributeType<TYPE>
       >,
       ResolvePrimitiveAttributeType<TYPE>
     >
