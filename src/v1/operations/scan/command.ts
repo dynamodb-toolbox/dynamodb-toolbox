@@ -7,7 +7,7 @@ import {
 import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { TableV2 } from 'v1/table'
+import type { TableV2 } from 'v1/table/class'
 import type { EntityV2 } from 'v1/entity/class'
 import type { FormattedItem } from 'v1/entity/generics'
 import type { Schema } from 'v1/schema/schema'

@@ -1,5 +1,5 @@
 import type { Schema } from 'v1/schema/schema'
-import type { TableV2 } from 'v1/table'
+import type { TableV2 } from 'v1/table/class'
 
 import { WithEntityAttribute, addEntityAttribute } from './addEntityAttribute'
 import {

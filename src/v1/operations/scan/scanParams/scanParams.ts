@@ -1,7 +1,7 @@
 import type { ScanCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
-import type { TableV2 } from 'v1/table'
+import type { TableV2 } from 'v1/table/class'
 import type { EntityV2 } from 'v1/entity/class'
 import type { Condition } from 'v1/operations/types'
 import type { EntityPaths } from 'v1/operations/paths'
