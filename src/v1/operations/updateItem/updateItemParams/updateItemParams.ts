@@ -3,7 +3,7 @@ import isEmpty from 'lodash.isempty'
 import omit from 'lodash.omit'
 
 import type { EntityV2 } from 'v1/entity/class'
-import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
+import { PrimaryKeyParser } from 'v1/operations/primaryKeyParser'
 import { Parser } from 'v1/schema/actions/parse'
 
 import type { UpdateItemInput } from '../types'
@@ -31,7 +31,7 @@ export const updateItemParams = <
   const transformedInput = parser.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
-  const primaryKey = parsePrimaryKey(entity, keyInput)
+  const primaryKey = entity.build(PrimaryKeyParser).parse(keyInput)
 
   const {
     ExpressionAttributeNames: updateExpressionAttributeNames,

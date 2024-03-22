@@ -10,4 +10,4 @@ type InvalidKeyPartErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-export type ParsePrimaryKeyErrorBlueprints = InvalidKeyPartErrorBlueprint
+export type PrimaryKeyParserErrorBlueprints = InvalidKeyPartErrorBlueprint
