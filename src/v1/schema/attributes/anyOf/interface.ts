@@ -3,12 +3,11 @@ import type { O } from 'ts-toolbelt'
 import type { If, ValueOrGetter } from 'v1/types'
 import type {
   AttributeKeyInput,
-  AttributePutItemInput,
   AttributeUpdateItemInput,
   KeyInput,
-  PutItemInput,
   UpdateItemInput
 } from 'v1/operations'
+import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
 import type { SchemaAction } from '../../action'
@@ -100,7 +99,7 @@ export interface $AnyOfAttribute<
    */
   putDefault: (
     nextPutDefault: ValueOrGetter<
-      AttributePutItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>
+      ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, { fill: false }>
     >
   ) => $AnyOfAttribute<
     $ELEMENTS,
@@ -147,7 +146,7 @@ export interface $AnyOfAttribute<
       If<
         STATE['key'],
         AttributeKeyInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>,
-        AttributePutItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>
+        ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, { fill: false }>
       >
     >
   ) => $AnyOfAttribute<
@@ -200,8 +199,8 @@ export interface $AnyOfAttribute<
    */
   putLink: <SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: PutItemInput<SCHEMA, true>
-    ) => AttributePutItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>
+      putItemInput: ParserInput<SCHEMA, { fill: false }>
+    ) => ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, { fill: false }>
   ) => $AnyOfAttribute<
     $ELEMENTS,
     O.Overwrite<
@@ -247,11 +246,15 @@ export interface $AnyOfAttribute<
    */
   link: <SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>
+      keyOrPutItemInput: If<
+        STATE['key'],
+        KeyInput<SCHEMA, true>,
+        ParserInput<SCHEMA, { fill: false }>
+      >
     ) => If<
       STATE['key'],
       AttributeKeyInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>,
-      AttributePutItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, true>
+      ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, { fill: false }>
     >
   ) => $AnyOfAttribute<
     $ELEMENTS,

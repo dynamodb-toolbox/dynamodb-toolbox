@@ -11,7 +11,8 @@ export type FormattedValueOptions<SCHEMA extends Schema | Attribute> = {
 }
 
 export type FormattedValueDefaultOptions = {
-  partial?: false
+  attributes: undefined
+  partial: false
 }
 
 export type FromFormatOptions<
@@ -20,8 +21,10 @@ export type FromFormatOptions<
 > = {
   attributes: OPTIONS extends { attributes: Paths<SCHEMA>[] }
     ? OPTIONS['attributes'][number]
-    : undefined
-  partial: OPTIONS extends { partial: boolean } ? OPTIONS['partial'] : false
+    : FormattedValueDefaultOptions['attributes']
+  partial: OPTIONS extends { partial: boolean }
+    ? OPTIONS['partial']
+    : FormattedValueDefaultOptions['partial']
 }
 
 export type MatchKeys<

@@ -24,7 +24,7 @@ export type MapAttrFormattedValue<
     OPTIONS['attributes']
   >
 > = MapAttribute extends ATTRIBUTE
-  ? { [KEY in string]: unknown }
+  ? { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
   [MATCHING_KEYS] extends [never]
   ? never

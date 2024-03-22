@@ -24,7 +24,7 @@ export type SchemaFormattedValue<
     OPTIONS['attributes']
   >
 > = Schema extends SCHEMA
-  ? { [KEY in string]: unknown }
+  ? { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
   [MATCHING_KEYS] extends [never]
   ? never

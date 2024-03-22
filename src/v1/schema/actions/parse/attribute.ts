@@ -36,11 +36,11 @@ import { defaultParseExtension, isRequired } from './utils'
 export type MustBeDefined<
   ATTRIBUTE extends Attribute,
   OPTIONS extends ParsedValueOptions
-> = OPTIONS extends { operation: 'put' }
-  ? ATTRIBUTE extends { required: AtLeastOnce | Always }
+> = OPTIONS extends { operation: 'update' | 'key' }
+  ? ATTRIBUTE extends { required: Always }
     ? true
     : false
-  : ATTRIBUTE extends { required: Always }
+  : ATTRIBUTE extends { required: AtLeastOnce | Always }
   ? true
   : false
 

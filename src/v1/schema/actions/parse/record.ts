@@ -25,7 +25,7 @@ export type RecordAttrParsedValue<
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions,
   KEYS extends string = Extract<AttrParsedValue<ATTRIBUTE['keys'], OPTIONS>, string>
 > = RecordAttribute extends ATTRIBUTE
-  ? { [KEY in string]: unknown }
+  ? { [KEY: string]: unknown }
   : // We cannot use Record type as it messes up map resolution down the line
 
     | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
