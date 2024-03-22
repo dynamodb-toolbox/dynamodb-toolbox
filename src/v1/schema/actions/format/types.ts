@@ -1,4 +1,6 @@
-import type { Schema, Attribute, Paths } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { Attribute } from 'v1/schema/attributes'
+import type { Paths } from 'v1/schema/actions/paths'
 
 export type FormatOptions<SCHEMA extends Schema | Attribute> = {
   attributes?: Paths<SCHEMA>[]

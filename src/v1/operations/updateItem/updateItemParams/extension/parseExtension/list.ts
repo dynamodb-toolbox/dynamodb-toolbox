@@ -1,4 +1,6 @@
-import type { Schema, Attribute, ListAttribute, ParsedValue, AttributeBasicValue } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { Attribute, ListAttribute, AttributeBasicValue } from 'v1/schema/attributes'
+import type { ParsedValue } from 'v1/schema/actions/parse'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { Parser } from 'v1/schema/actions/parse'
 import { DynamoDBToolboxError } from 'v1/errors'

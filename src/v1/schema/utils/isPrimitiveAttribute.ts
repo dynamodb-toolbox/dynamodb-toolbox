@@ -1,4 +1,4 @@
-import type { Attribute, PrimitiveAttribute, PrimitiveAttributeType } from 'v1/schema'
+import type { Attribute, PrimitiveAttribute, PrimitiveAttributeType } from 'v1/schema/attributes'
 
 const primitiveAttributeTypeSet = new Set<PrimitiveAttributeType>([
   'boolean',

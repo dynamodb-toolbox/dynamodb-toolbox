@@ -1,5 +1,6 @@
 import type { If } from 'v1/types'
-import type { ListAttribute, Paths } from 'v1/schema'
+import type { ListAttribute } from 'v1/schema/attributes'
+import type { Paths } from 'v1/schema/actions/paths'
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 

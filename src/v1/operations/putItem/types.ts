@@ -1,4 +1,4 @@
-import type { ParserInput } from 'v1/schema'
+import type { ParserInput } from 'v1/schema/actions/tParse'
 import type { EntityV2 } from 'v1/entity/class'
 
 /**

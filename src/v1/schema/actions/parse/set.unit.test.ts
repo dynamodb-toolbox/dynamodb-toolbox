@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { set, string } from 'v1/schema'
+import { set, string } from 'v1/schema/attributes'
 
 import { setAttrParser } from './set'
 import * as attrParserModule from './attribute'

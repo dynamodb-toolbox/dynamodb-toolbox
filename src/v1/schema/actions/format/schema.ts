@@ -1,7 +1,9 @@
 import type { O } from 'ts-toolbelt'
 
 import type { OptionalizeUndefinableProperties } from 'v1/types'
-import type { Schema, AnyAttribute, Never, Paths } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { AnyAttribute, Never } from 'v1/schema/attributes'
+import type { Paths } from 'v1/schema/actions/paths'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation'
 

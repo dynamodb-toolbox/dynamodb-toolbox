@@ -1,4 +1,4 @@
-import type { AttributeBasicValue, SetAttribute } from 'v1/schema'
+import type { AttributeBasicValue, SetAttribute } from 'v1/schema/attributes'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { Parser } from 'v1/schema/actions/parse'
 

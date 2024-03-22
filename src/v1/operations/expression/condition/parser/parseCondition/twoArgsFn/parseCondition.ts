@@ -1,4 +1,4 @@
-import type { Always } from 'v1/schema'
+import type { Always } from 'v1/schema/attributes'
 import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 
 import type { ConditionParser } from '../../parser'

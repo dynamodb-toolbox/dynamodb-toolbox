@@ -1,4 +1,4 @@
-import type { SetAttribute } from 'v1/schema'
+import type { SetAttribute } from 'v1/schema/attributes'
 import type { If } from 'v1/types'
 import { isSet } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'

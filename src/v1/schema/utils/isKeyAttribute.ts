@@ -1,3 +1,3 @@
-import { Attribute } from 'v1/schema'
+import type { Attribute } from 'v1/schema/attributes'
 
 export const isKeyAttribute = ({ key }: Attribute): boolean => key
