@@ -17,7 +17,7 @@ export class EntityFormatter<ENTITY extends EntityV2 = EntityV2> extends EntityO
   }
 
   format<OPTIONS extends FormatOptions<ENTITY['schema']>>(
-    item: { [KEY in string]: unknown },
+    item: { [KEY: string]: unknown },
     options: OPTIONS = {} as OPTIONS
   ): FormattedItem<ENTITY, FromFormatOptions<ENTITY['schema'], OPTIONS>> {
     try {

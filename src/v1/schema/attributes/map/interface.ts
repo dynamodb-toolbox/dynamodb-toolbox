@@ -3,12 +3,11 @@ import type { O } from 'ts-toolbelt'
 import type { If, ValueOrGetter } from 'v1/types'
 import type {
   AttributeKeyInput,
-  AttributePutItemInput,
   AttributeUpdateItemInput,
   KeyInput,
-  PutItemInput,
   UpdateItemInput
 } from 'v1/operations'
+import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
 import type { SchemaAction } from '../../action'
@@ -99,7 +98,7 @@ export interface $MapAttribute<
    */
   putDefault: (
     nextPutDefault: ValueOrGetter<
-      AttributePutItemInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>
+      ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
     >
   ) => $MapAttribute<
     $ATTRIBUTES,
@@ -146,7 +145,7 @@ export interface $MapAttribute<
       If<
         STATE['key'],
         AttributeKeyInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>,
-        AttributePutItemInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>
+        ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
       >
     >
   ) => $MapAttribute<
@@ -199,8 +198,8 @@ export interface $MapAttribute<
    */
   putLink: <SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: PutItemInput<SCHEMA, true>
-    ) => AttributePutItemInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>
+      putItemInput: ParserInput<SCHEMA, { fill: false }>
+    ) => ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
   ) => $MapAttribute<
     $ATTRIBUTES,
     O.Overwrite<
@@ -243,11 +242,15 @@ export interface $MapAttribute<
    */
   link: <SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>
+      keyOrPutItemInput: If<
+        STATE['key'],
+        KeyInput<SCHEMA, true>,
+        ParserInput<SCHEMA, { fill: false }>
+      >
     ) => If<
       STATE['key'],
       AttributeKeyInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>,
-      AttributePutItemInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>
+      ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
     >
   ) => $MapAttribute<
     $ATTRIBUTES,

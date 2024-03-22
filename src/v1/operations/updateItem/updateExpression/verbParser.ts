@@ -1,4 +1,4 @@
-import type { Schema, Attribute, AttributeValue } from 'v1/schema'
+import type { Schema, Attribute, ParsedValue } from 'v1/schema'
 import { isNumber, isString } from 'v1/utils/validation'
 
 import {
@@ -77,13 +77,16 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
   }
 
   appendValidAttributeValue = (
-    validAttributeValue: AttributeValue<UpdateItemInputExtension>
+    validAttributeValue: ParsedValue<
+      Attribute,
+      { operation: 'update'; extension: UpdateItemInputExtension }
+    >
   ): void => {
     if (hasGetOperation(validAttributeValue)) {
       // TODO: Fix this cast
       const [expression, fallback] = validAttributeValue[$GET] as [
         string,
-        AttributeValue<ReferenceExtension> | undefined
+        ParsedValue<Attribute, { operation: 'update'; extension: ReferenceExtension }> | undefined
       ]
 
       if (fallback === undefined) {
