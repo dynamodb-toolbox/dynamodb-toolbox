@@ -8,10 +8,8 @@ import {
   list,
   any,
   schema,
-  PutItemInput,
   FormattedValue,
   SavedItem,
-  KeyInput,
   ParserInput
 } from 'v1'
 import { Parser } from 'v1/schema/actions/parse'
@@ -96,4 +94,4 @@ const playgroundSchema3 = schema({
 })
 
 type PlaygroundSchema3SavedItem = SavedItem<typeof playgroundSchema3>
-type PlaygroundSchema3KeyInput = KeyInput<typeof playgroundSchema3>
+type PlaygroundSchema3KeyInput = ParserInput<typeof playgroundSchema3, { operation: 'key' }>

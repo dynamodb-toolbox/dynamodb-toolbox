@@ -1,12 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If, ValueOrGetter } from 'v1/types'
-import type {
-  AttributeKeyInput,
-  AttributeUpdateItemInput,
-  KeyInput,
-  UpdateItemInput
-} from 'v1/operations'
+import type { AttributeUpdateItemInput, UpdateItemInput } from 'v1/operations'
 import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
@@ -76,7 +71,7 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
    */
   keyDefault: (
     nextKeyDefault: ValueOrGetter<
-      AttributeKeyInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { operation: 'key'; fill: false }>
     >
   ) => $AnyAttribute<
     O.Overwrite<
@@ -141,7 +136,10 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        AttributeKeyInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
+        ParserInput<
+          FreezeAnyAttribute<$AnyAttributeState<STATE>>,
+          { operation: 'key'; fill: false }
+        >,
         ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
       >
     >
@@ -172,8 +170,11 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: KeyInput<SCHEMA, true>
-    ) => AttributeKeyInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+    ) => ParserInput<
+      FreezeAnyAttribute<$AnyAttributeState<STATE>>,
+      { operation: 'key'; fill: false }
+    >
   ) => $AnyAttribute<
     O.Overwrite<
       STATE,
@@ -237,12 +238,12 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
-        KeyInput<SCHEMA, true>,
+        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
         ParserInput<SCHEMA, { fill: false }>
       >
     ) => If<
       STATE['key'],
-      AttributeKeyInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
+      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { operation: 'key'; fill: false }>,
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
     >
   ) => $AnyAttribute<
