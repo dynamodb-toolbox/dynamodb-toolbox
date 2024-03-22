@@ -1,4 +1,5 @@
-import type { TableV2, IndexNames } from 'v1/table'
+import type { TableV2 } from 'v1/table/class'
+import type { IndexNames } from 'v1/table/generics'
 import type { EntityV2 } from 'v1/entity/class'
 import type { CapacityOption } from 'v1/operations/constants/options/capacity'
 import type {

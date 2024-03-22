@@ -1,15 +1,22 @@
 // schema
+export { schema, Schema } from './schema/schema'
 // TODO: Pick relevant exports
 export * from './schema/attributes'
+export { SchemaAction } from './schema/action'
 // TODO: Pick relevant exports
 export * from './schema/actions'
-export { schema, Schema } from './schema/schema'
-export { SchemaAction } from './schema/action'
+
+// tables
+export { TableV2 } from './table/class'
+// TODO: Pick relevant types
+export * from './table/types'
+// TODO: Pick relevant types
+export * from './table/generics'
 
 // entities
+export { EntityV2 } from './entity/class'
 // TODO: Pick relevant types
 export * from './entity/generics'
-export { EntityV2 } from './entity/class'
 
 // operations
 export { GetItemCommand } from './operations/getItem'
@@ -50,8 +57,6 @@ export { parseCondition } from './operations/expression/condition/parse'
 export { parseProjection } from './operations/expression/projection/parse'
 // TODO: Pick relevant types
 export * from './operations/types'
-
-export * from './table'
 
 export * from './errors'
 export * from './test-tools'

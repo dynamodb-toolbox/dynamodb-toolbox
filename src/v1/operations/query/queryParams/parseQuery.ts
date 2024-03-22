@@ -4,7 +4,7 @@ import { ConditionParser } from 'v1/operations/expression/condition/parser'
 import _pick from 'lodash.pick'
 
 import type { Condition, Query } from 'v1/operations/types'
-import type { TableV2 } from 'v1/table'
+import type { TableV2 } from 'v1/table/class'
 import type { PrimitiveAttributeExtraCondition } from 'v1/operations/types/condition'
 import { Schema } from 'v1/schema/schema'
 import { PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema/attributes/primitive'

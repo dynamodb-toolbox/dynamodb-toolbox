@@ -1,15 +1,9 @@
 import type { A } from 'ts-toolbelt'
 
 import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema/attributes'
-import type {
-  IndexableKeyType,
-  TableV2,
-  LocalIndex,
-  GlobalIndex,
-  IndexNames,
-  IndexSchema,
-  Key
-} from 'v1/table'
+import type { TableV2 } from 'v1/table/class'
+import type { IndexableKeyType, LocalIndex, GlobalIndex, Key } from 'v1/table/types'
+import type { IndexNames, IndexSchema } from 'v1/table/generics'
 import type { RangeOperator } from 'v1/operations/expression/condition/parser/parseCondition/comparison/types'
 import type { BeginsWithOperator } from 'v1/operations/expression/condition/parser/parseCondition/twoArgsFn/types'
 import type { BetweenOperator } from 'v1/operations/expression/condition/parser/parseCondition/between/types'
