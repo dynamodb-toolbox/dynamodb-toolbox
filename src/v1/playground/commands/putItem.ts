@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PutItemCommand } from 'v1/operations'
+import { PutItemCommand } from 'v1/operations/putItem'
 
 import { UserEntity } from '../entity'
 
