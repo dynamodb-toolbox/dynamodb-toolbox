@@ -6,5 +6,5 @@ export type {
   AnyAttributeCondition,
   NonLogicalCondition
 } from './condition'
-export type { KeyInput, AttributeKeyInput } from './KeyInput'
+export type { KeyInput } from './KeyInput'
 export type { Query } from './query'

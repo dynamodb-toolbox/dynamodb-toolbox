@@ -8,7 +8,4 @@ import type { EntityV2 } from 'v1/entity/class'
  * @param RequireIndependentDefaults Boolean
  * @return Object
  */
-export type PutItemInput<SCHEMA extends EntityV2> = ParserInput<
-  SCHEMA['schema'],
-  { operation: 'put' }
->
+export type PutItemInput<SCHEMA extends EntityV2> = ParserInput<SCHEMA['schema']>
