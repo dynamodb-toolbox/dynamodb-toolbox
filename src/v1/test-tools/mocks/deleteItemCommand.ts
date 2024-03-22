@@ -1,6 +1,6 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import { DeleteItemCommand, DeleteItemOptions, DeleteItemResponse } from 'v1/operations/deleteItem'
 import { $key, $options } from 'v1/operations/deleteItem/command'
 import { deleteItemParams } from 'v1/operations/deleteItem/deleteItemParams'

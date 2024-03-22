@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type {
   Attribute,
   AttributeValue,
@@ -24,7 +24,7 @@ import type {
   Never
 } from 'v1/schema/attributes'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import type { If } from 'v1/types/if'
 import type { Paths } from 'v1/schema/actions/paths'
 

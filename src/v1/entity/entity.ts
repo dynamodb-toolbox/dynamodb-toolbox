@@ -1,9 +1,9 @@
-import type { Schema } from 'v1/schema/schema'
+import type { If } from 'v1/types/if'
+import type { Schema } from 'v1/schema'
 import type { ParserInput } from 'v1/schema/actions/tParse'
-import type { TableV2 } from 'v1/table/class'
+import type { TableV2 } from 'v1/table'
 import type { PrimaryKey } from 'v1/table/generics'
 import type { EntityOperation } from 'v1/operations/class'
-import type { If } from 'v1/types/if'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { NeedsKeyCompute } from './generics'

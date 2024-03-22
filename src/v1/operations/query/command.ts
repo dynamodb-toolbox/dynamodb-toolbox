@@ -7,10 +7,10 @@ import {
 import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { TableV2 } from 'v1/table/class'
-import type { EntityV2 } from 'v1/entity/class'
+import type { TableV2 } from 'v1/table'
+import type { EntityV2 } from 'v1/entity'
 import type { FormattedItem } from 'v1/entity/generics'
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
 import type { Query } from 'v1/operations/types'
 import type { EntityPaths } from 'v1/operations/paths'

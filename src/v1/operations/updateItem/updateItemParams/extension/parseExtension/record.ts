@@ -1,4 +1,4 @@
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type { Attribute, RecordAttribute, AttributeBasicValue } from 'v1/schema/attributes'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { Parser, ParsedValue } from 'v1/schema/actions/parse'

@@ -1,6 +1,5 @@
-import type { Schema } from 'v1/schema/schema'
+import type { Schema, SchemaAction } from 'v1/schema'
 import type { Attribute } from 'v1/schema/attributes'
-import type { SchemaAction } from 'v1/schema/action'
 
 import type {
   FormatOptions,
