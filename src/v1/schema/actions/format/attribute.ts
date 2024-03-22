@@ -1,5 +1,5 @@
+import type { Schema } from 'v1/schema/schema'
 import type {
-  Schema,
   Attribute,
   AnyAttribute,
   PrimitiveAttribute,
@@ -11,7 +11,7 @@ import type {
   RequiredOption,
   AtLeastOnce,
   Always
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type {

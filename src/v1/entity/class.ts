@@ -1,4 +1,5 @@
-import type { Schema, ParserInput } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { ParserInput } from 'v1/schema/actions/tParse'
 import type { TableV2, PrimaryKey } from 'v1/table'
 import type { EntityOperation } from 'v1/operations/class'
 import type { If } from 'v1/types/if'

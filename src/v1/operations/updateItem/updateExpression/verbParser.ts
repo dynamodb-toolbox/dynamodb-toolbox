@@ -1,4 +1,6 @@
-import type { Schema, Attribute, ParsedValue } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { Attribute } from 'v1/schema/attributes'
+import type { ParsedValue } from 'v1/schema/actions/parse'
 import { isNumber, isString } from 'v1/utils/validation'
 
 import {

@@ -1,12 +1,12 @@
 import cloneDeep from 'lodash.clonedeep'
 
+import type { Schema } from 'v1/schema/schema'
 import type {
-  Schema,
   Attribute,
   RecordAttribute,
   RecordAttributeKeys,
   ExtendedValue
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isObject } from 'v1/utils/validation/isObject'

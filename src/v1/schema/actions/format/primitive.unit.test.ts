@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { string } from 'v1/schema'
+import { string } from 'v1/schema/attributes'
 import { prefix } from 'v1/transformers'
 
 import { formatPrimitiveAttrRawValue } from './primitive'

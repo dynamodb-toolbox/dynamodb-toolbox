@@ -1,13 +1,13 @@
 import cloneDeep from 'lodash.clonedeep'
 
+import type { Schema } from 'v1/schema/schema'
 import type {
-  Schema,
   PrimitiveAttribute,
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute,
   ExtendedValue,
   Transformer
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 import type { If } from 'v1/types'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'

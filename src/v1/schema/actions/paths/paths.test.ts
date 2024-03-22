@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
+import { schema } from 'v1/schema/schema'
 import {
-  schema,
   any,
   string,
   number,
@@ -12,7 +12,7 @@ import {
   map,
   record,
   anyOf
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 
 import type { Paths } from './paths'
 

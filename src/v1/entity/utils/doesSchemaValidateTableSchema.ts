@@ -1,5 +1,5 @@
 import type { TableV2, Key } from 'v1/table'
-import type { Schema } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
 
 const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean => {
   if (key === undefined) return true

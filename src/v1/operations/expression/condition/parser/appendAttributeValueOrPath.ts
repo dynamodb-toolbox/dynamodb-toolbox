@@ -1,4 +1,4 @@
-import type { Attribute } from 'v1/schema'
+import type { Attribute } from 'v1/schema/attributes'
 
 import { isAttributePath, AppendAttributePathOptions } from '../../expressionParser'
 import type { ConditionParser } from './parser'

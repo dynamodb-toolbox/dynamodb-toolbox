@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
+import type { Schema } from 'v1/schema/schema'
 import type {
-  Schema,
   Attribute,
   AnyAttribute,
   PrimitiveAttribute,
@@ -16,7 +16,7 @@ import type {
   ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   ResolvePrimitiveAttributeType
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 import type { PrimaryKey } from 'v1/table'
 
 import type { EntityV2 } from '../class'
