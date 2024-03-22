@@ -2,7 +2,7 @@ import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity/class'
 import type { PutItemInput } from 'v1/operations/putItem'
-import { parsePrimaryKey } from 'v1/operations/utils/parsePrimaryKey'
+import { PrimaryKeyParser } from 'v1/operations/primaryKeyParser'
 import { Parser } from 'v1/schema/actions/parse'
 
 import type { PutItemTransactionOptions } from '../options'
@@ -28,7 +28,7 @@ export const transactPutItemParams = <
   const transformedInput = parser.next().value
 
   const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
-  const primaryKey = parsePrimaryKey(entity, keyInput)
+  const primaryKey = entity.build(PrimaryKeyParser).parse(keyInput)
 
   const options = parsePutItemTransactionOptions(entity, putItemTransactionOptions)
 
