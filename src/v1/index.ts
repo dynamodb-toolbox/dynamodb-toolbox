@@ -48,6 +48,9 @@ export { QueryCommand } from './operations/query'
 export type { QueryOptions, QueryResponse } from './operations/query'
 export {
   ConditionCheck,
+  transactGetItems,
+  GetItemTransaction,
+  transactWriteItems,
   PutItemTransaction,
   DeleteItemTransaction,
   UpdateItemTransaction

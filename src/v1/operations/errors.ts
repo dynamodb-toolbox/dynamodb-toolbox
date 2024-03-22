@@ -71,6 +71,15 @@ type UnknownOptionErrorBlueprint = ErrorBlueprint<{
   payload: { option: unknown }
 }>
 
+type InconsistentNumberOfItemsErrorBlueprint = ErrorBlueprint<{
+  code: 'operations.inconsistentNumberOfItems'
+  hasPath: false
+  payload: {
+    received: number
+    expected: number
+  }
+}>
+
 type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
   code: 'operations.missingDocumentClient'
   hasPath: false
@@ -93,4 +102,5 @@ export type OperationsErrorBlueprints =
   | InvalidSelectOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
   | ExpressionParsersErrorBlueprints
+  | InconsistentNumberOfItemsErrorBlueprint
   | MissingDocumentClientErrorBlueprint
