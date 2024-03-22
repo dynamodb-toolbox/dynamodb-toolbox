@@ -1,5 +1,5 @@
-import type { EntityV2 } from 'v1/entity/class'
-import type { Schema } from 'v1/schema/schema'
+import type { EntityV2 } from 'v1/entity'
+import type { Schema } from 'v1/schema'
 import type { ParsedValue } from 'v1/schema/actions/parse'
 import type { PrimaryKey } from 'v1/table/generics'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'

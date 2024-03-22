@@ -1,4 +1,4 @@
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import type { PutItemInput } from 'v1/operations/putItem'
 import { putItemParams } from 'v1/operations/putItem/putItemParams'
 import { DynamoDBToolboxError } from 'v1/errors'

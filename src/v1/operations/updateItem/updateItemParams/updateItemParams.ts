@@ -2,7 +2,7 @@ import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 import omit from 'lodash.omit'
 
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import { PrimaryKeyParser } from 'v1/operations/primaryKeyParser'
 import { Parser } from 'v1/schema/actions/parse'
 

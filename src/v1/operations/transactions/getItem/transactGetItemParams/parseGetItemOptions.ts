@@ -1,6 +1,6 @@
 import isEmpty from 'lodash.isempty'
 
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import { parseProjection } from 'v1/operations/expression/projection/parse'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
 

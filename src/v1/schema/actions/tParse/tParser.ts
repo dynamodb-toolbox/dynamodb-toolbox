@@ -1,8 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If } from 'v1/types/if'
-import type { Schema } from 'v1/schema/schema'
-import type { SchemaAction } from 'v1/schema/action'
+import type { Schema, SchemaAction } from 'v1/schema'
 import type {
   Attribute,
   ResolveAnyAttribute,

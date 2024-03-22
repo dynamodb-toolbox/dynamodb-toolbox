@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type { Attribute, ListAttribute, ExtendedValue } from 'v1/schema/attributes'
 import type { If } from 'v1/types'
 import { isArray } from 'v1/utils/validation/isArray'

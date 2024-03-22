@@ -1,4 +1,4 @@
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import { parseCondition } from 'v1/operations/expression/condition/parse'
 
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'

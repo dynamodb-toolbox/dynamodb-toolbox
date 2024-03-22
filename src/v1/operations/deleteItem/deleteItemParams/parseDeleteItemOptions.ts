@@ -1,7 +1,7 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
 import { parseMetricsOption } from 'v1/operations/utils/parseOptions/parseMetricsOption'
 import { parseReturnValuesOption } from 'v1/operations/utils/parseOptions/parseReturnValuesOption'

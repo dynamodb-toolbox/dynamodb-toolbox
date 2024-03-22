@@ -1,4 +1,4 @@
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type {
   Attribute,
   AnyAttribute,

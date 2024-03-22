@@ -1,6 +1,6 @@
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type { AtLeastOnce } from 'v1/schema/attributes'
-import type { TableV2 } from 'v1/table/class'
+import type { TableV2 } from 'v1/table'
 import type { EntityAttributeSavedAs } from 'v1/table/types'
 import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { DynamoDBToolboxError } from 'v1/errors'

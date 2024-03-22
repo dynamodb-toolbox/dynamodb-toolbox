@@ -1,4 +1,4 @@
-import type { EntityV2 } from 'v1/entity/class'
+import type { EntityV2 } from 'v1/entity'
 import type { FormattedItem } from 'v1/entity/generics'
 import { Formatter, FormatOptions, FromFormatOptions } from 'v1/schema/actions/format'
 import { DynamoDBToolboxError } from 'v1/errors'

@@ -1,5 +1,5 @@
-import type { EntityV2 } from '../entity/class'
-import type { TableV2 } from '../table/class'
+import type { EntityV2 } from '../entity'
+import type { TableV2 } from '../table'
 
 export const $entity = Symbol('$entity')
 export type $entity = typeof $entity
