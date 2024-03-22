@@ -1,5 +1,6 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import type { Schema, Attribute } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { Attribute } from 'v1/schema/attributes'
 import { addProperty } from 'v1/utils/addProperty'
 
 export type WithInternalAttribute<

@@ -9,7 +9,7 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import type { TableV2 } from 'v1/table'
 import type { EntityV2, FormattedItem } from 'v1/entity'
-import type { Schema } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
 import type { EntityPaths } from 'v1/operations/paths'
 import { Formatter } from 'v1/schema/actions/format'

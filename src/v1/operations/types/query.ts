@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema'
+import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema/attributes'
 import type {
   IndexableKeyType,
   TableV2,

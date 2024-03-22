@@ -1,4 +1,4 @@
-import type { Attribute, AttributeValue } from 'v1/schema'
+import type { Attribute, AttributeValue } from 'v1/schema/attributes'
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type { SET, GET, SUM, SUBTRACT, ADD, DELETE, APPEND, PREPEND, Reference } from './types'

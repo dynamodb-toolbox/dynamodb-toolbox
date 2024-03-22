@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep'
 
+import type { Schema } from 'v1/schema/schema'
 import type {
-  Schema,
   Attribute,
   AnyAttribute,
   PrimitiveAttribute,
@@ -12,7 +12,7 @@ import type {
   AnyOfAttribute,
   AtLeastOnce,
   Always
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isFunction } from 'v1/utils/validation'
 

@@ -1,10 +1,10 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If } from 'v1/types/if'
+import type { Schema } from 'v1/schema/schema'
+import type { SchemaAction } from 'v1/schema/action'
 import type {
-  Schema,
   Attribute,
-  SchemaAction,
   ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   AnyAttribute,
@@ -17,7 +17,7 @@ import type {
   AtLeastOnce,
   Always,
   Never
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 
 import {

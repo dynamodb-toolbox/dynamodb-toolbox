@@ -1,4 +1,10 @@
-export * from './schema'
+// schema
+// TODO: Pick relevant exports
+export * from './schema/attributes'
+// TODO: Pick relevant exports
+export * from './schema/actions'
+export { schema, Schema } from './schema/schema'
+export { SchemaAction } from './schema/action'
 
 // operations
 export { GetItemCommand } from './operations/getItem'

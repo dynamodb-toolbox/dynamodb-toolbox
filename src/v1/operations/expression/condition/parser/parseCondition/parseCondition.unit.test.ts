@@ -1,4 +1,5 @@
-import { schema, string, number, anyOf, map, list } from 'v1/schema'
+import { schema } from 'v1/schema/schema'
+import { string, number, anyOf, map, list } from 'v1/schema/attributes'
 
 import { parseSchemaCondition } from '../../parse'
 

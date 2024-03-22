@@ -1,4 +1,4 @@
-import type { PrimitiveAttribute, AttributeBasicValue } from 'v1/schema'
+import type { PrimitiveAttribute, AttributeBasicValue } from 'v1/schema/attributes'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { number } from 'v1/schema/attributes/primitive'
 import { Parser } from 'v1/schema/actions/parse'

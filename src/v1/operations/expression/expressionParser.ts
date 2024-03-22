@@ -1,4 +1,5 @@
-import type { Attribute, Schema } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { Attribute } from 'v1/schema/attributes'
 import { Parser } from 'v1/schema/actions/parse'
 import { AnyAttribute } from 'v1/schema/attributes/any'
 import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'

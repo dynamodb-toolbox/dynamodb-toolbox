@@ -1,5 +1,5 @@
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
-import type { PrimitiveAttribute, AttributeBasicValue, Attribute } from 'v1/schema'
+import type { PrimitiveAttribute, AttributeBasicValue, Attribute } from 'v1/schema/attributes'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'

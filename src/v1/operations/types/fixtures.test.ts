@@ -1,5 +1,5 @@
+import { schema } from 'v1/schema/schema'
 import {
-  schema,
   any,
   string,
   number,
@@ -10,7 +10,7 @@ import {
   map,
   record,
   anyOf
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 
 export const mySchema = schema({
   parentId: string().key().savedAs('pk'),
