@@ -1,4 +1,4 @@
-import { Transformer } from 'v1/schema'
+import type { Transformer } from 'v1/schema/attributes'
 
 type Prefixer = (prefix: string, options?: { delimiter?: string }) => Transformer<string, string>
 

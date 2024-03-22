@@ -1,4 +1,4 @@
-import type { Schema } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
 import type { If } from 'v1/types/if'
 import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import { $get } from 'v1/operations/updateItem/utils'

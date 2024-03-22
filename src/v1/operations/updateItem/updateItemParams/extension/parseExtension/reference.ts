@@ -1,4 +1,4 @@
-import type { Attribute, AttributeBasicValue } from 'v1/schema'
+import type { Attribute, AttributeBasicValue } from 'v1/schema/attributes'
 import type { ReferenceExtension } from 'v1/operations/types'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
 import { isArray } from 'v1/utils/validation/isArray'

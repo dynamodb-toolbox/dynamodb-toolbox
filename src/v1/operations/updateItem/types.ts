@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
+import type { Schema } from 'v1/schema/schema'
 import type {
-  Schema,
   Attribute,
   AttributeValue,
   ResolveAnyAttribute,
@@ -22,7 +22,7 @@ import type {
   AtLeastOnce,
   Always,
   Never
-} from 'v1/schema'
+} from 'v1/schema/attributes'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { EntityV2 } from 'v1/entity/class'
 import type { If } from 'v1/types/if'

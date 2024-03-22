@@ -1,4 +1,4 @@
-import type { AtLeastOnce, PrimitiveAttribute } from 'v1/schema'
+import type { AtLeastOnce, PrimitiveAttribute } from 'v1/schema/attributes'
 
 export type TimestampAttribute<
   SAVED_AS extends string,

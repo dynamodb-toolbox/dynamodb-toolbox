@@ -1,6 +1,7 @@
 import cloneDeep from 'lodash.clonedeep'
 
-import type { Schema, SetAttribute, SetAttributeElements, ExtendedValue } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { SetAttribute, SetAttributeElements, ExtendedValue } from 'v1/schema/attributes'
 import type { If } from 'v1/types'
 import { isSet } from 'v1/utils/validation/isSet'
 import { DynamoDBToolboxError } from 'v1/errors'

@@ -1,12 +1,7 @@
-import type {
-  Schema,
-  Attribute,
-  RecordAttribute,
-  ParsedValue,
-  AttributeBasicValue
-} from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { Attribute, RecordAttribute, AttributeBasicValue } from 'v1/schema/attributes'
 import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/types'
-import { Parser } from 'v1/schema/actions/parse'
+import { Parser, ParsedValue } from 'v1/schema/actions/parse'
 import { isObject } from 'v1/utils/validation/isObject'
 
 import type { UpdateItemInputExtension } from 'v1/operations/updateItem/types'

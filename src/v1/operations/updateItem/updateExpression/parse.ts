@@ -1,5 +1,6 @@
-import type { EntityV2 } from 'v1/entity'
-import type { Schema, ParsedValue } from 'v1/schema'
+import type { EntityV2 } from 'v1/entity/class'
+import type { Schema } from 'v1/schema/schema'
+import type { ParsedValue } from 'v1/schema/actions/parse'
 
 import type { UpdateItemInputExtension } from '../types'
 import type { ParsedUpdate } from './type'

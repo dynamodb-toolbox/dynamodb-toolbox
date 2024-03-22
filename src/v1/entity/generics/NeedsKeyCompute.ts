@@ -1,8 +1,10 @@
 import type { O } from 'ts-toolbelt'
 
 import type { Or } from 'v1/types/or'
-import type { Schema, Always } from 'v1/schema'
-import type { TableV2, IndexableKeyType, Key } from 'v1/table'
+import type { Schema } from 'v1/schema/schema'
+import type { Always } from 'v1/schema/attributes'
+import type { TableV2 } from 'v1/table/class'
+import type { IndexableKeyType, Key } from 'v1/table/types'
 
 type NeedsKeyPartCompute<
   SCHEMA extends Schema,

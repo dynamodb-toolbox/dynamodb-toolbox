@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import { map, string } from 'v1/schema'
+import { map, string } from 'v1/schema/attributes'
 
 import { mapAttributeParser } from './map'
 import * as attrParserModule from './attribute'

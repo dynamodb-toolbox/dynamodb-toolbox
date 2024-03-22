@@ -1,4 +1,4 @@
-import type { Attribute } from 'v1/schema'
+import type { Attribute } from 'v1/schema/attributes'
 import { Parser } from 'v1/schema/actions/parse'
 
 import type { ConditionParser } from './parser'

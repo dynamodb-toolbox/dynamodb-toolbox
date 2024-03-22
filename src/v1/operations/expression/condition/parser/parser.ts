@@ -1,6 +1,7 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Schema, Attribute } from 'v1/schema'
+import type { Schema } from 'v1/schema/schema'
+import type { Attribute } from 'v1/schema/attributes'
 import type { Condition } from 'v1/operations/types'
 
 import {

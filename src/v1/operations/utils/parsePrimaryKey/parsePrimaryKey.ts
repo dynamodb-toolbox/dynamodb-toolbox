@@ -1,6 +1,8 @@
-import type { EntityV2 } from 'v1/entity'
-import type { Schema, Extension, ParsedValue } from 'v1/schema'
-import type { PrimaryKey } from 'v1/table'
+import type { EntityV2 } from 'v1/entity/class'
+import type { Schema } from 'v1/schema/schema'
+import type { Extension } from 'v1/schema/attributes'
+import type { ParsedValue } from 'v1/schema/actions/parse'
+import type { PrimaryKey } from 'v1/table/generics'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 

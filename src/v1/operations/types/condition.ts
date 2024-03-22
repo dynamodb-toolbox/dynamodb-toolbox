@@ -1,6 +1,6 @@
-import type { EntityV2 } from 'v1/entity'
+import type { EntityV2 } from 'v1/entity/class'
+import type { Schema } from 'v1/schema/schema'
 import type {
-  Schema,
   AnyAttribute,
   ListAttribute,
   MapAttribute,
@@ -9,9 +9,9 @@ import type {
   Attribute,
   ResolvePrimitiveAttribute,
   ResolvedPrimitiveAttribute,
-  PrimitiveAttribute,
-  Paths
-} from 'v1/schema'
+  PrimitiveAttribute
+} from 'v1/schema/attributes'
+import type { Paths } from 'v1/schema/actions/paths'
 
 export type AnyAttributeCondition<
   ATTRIBUTE_PATH extends string,

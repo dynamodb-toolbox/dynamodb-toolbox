@@ -1,4 +1,5 @@
-import type { RecordAttribute, ResolvePrimitiveAttribute, Paths } from 'v1/schema'
+import type { RecordAttribute, ResolvePrimitiveAttribute } from 'v1/schema/attributes'
+import type { Paths } from 'v1/schema/actions/paths'
 import type { If } from 'v1/types'
 import { isObject } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
