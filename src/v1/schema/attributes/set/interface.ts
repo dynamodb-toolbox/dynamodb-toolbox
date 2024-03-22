@@ -3,12 +3,11 @@ import type { O } from 'ts-toolbelt'
 import type { If, ValueOrGetter } from 'v1/types'
 import type {
   AttributeKeyInput,
-  AttributePutItemInput,
   AttributeUpdateItemInput,
   KeyInput,
-  PutItemInput,
   UpdateItemInput
 } from 'v1/operations'
+import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
 import type { SchemaAction } from '../../action'
@@ -101,7 +100,7 @@ export interface $SetAttribute<
    */
   putDefault: (
     nextPutDefault: ValueOrGetter<
-      AttributePutItemInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, true>
+      ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
     >
   ) => $SetAttribute<
     $ELEMENTS,
@@ -148,7 +147,7 @@ export interface $SetAttribute<
       If<
         STATE['key'],
         AttributeKeyInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, true>,
-        AttributePutItemInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, true>
+        ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
       >
     >
   ) => $SetAttribute<
@@ -201,8 +200,8 @@ export interface $SetAttribute<
    */
   putLink: <SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: PutItemInput<SCHEMA, true>
-    ) => AttributePutItemInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, true>
+      putItemInput: ParserInput<SCHEMA, { fill: false }>
+    ) => ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
   ) => $SetAttribute<
     $ELEMENTS,
     O.Overwrite<
@@ -245,11 +244,15 @@ export interface $SetAttribute<
    */
   link: <SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>
+      keyOrPutItemInput: If<
+        STATE['key'],
+        KeyInput<SCHEMA, true>,
+        ParserInput<SCHEMA, { fill: false }>
+      >
     ) => If<
       STATE['key'],
       AttributeKeyInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, true>,
-      AttributePutItemInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, true>
+      ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
     >
   ) => $SetAttribute<
     $ELEMENTS,

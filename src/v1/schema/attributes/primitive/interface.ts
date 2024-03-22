@@ -3,12 +3,11 @@ import type { O } from 'ts-toolbelt'
 import type { If, ValueOrGetter } from 'v1/types'
 import type {
   AttributeKeyInput,
-  AttributePutItemInput,
   AttributeUpdateItemInput,
   KeyInput,
-  PutItemInput,
   UpdateItemInput
 } from 'v1/operations'
+import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
 import type { SchemaAction } from '../../action'
@@ -150,7 +149,7 @@ export interface $PrimitiveAttribute<
    */
   putDefault: (
     nextPutDefault: ValueOrGetter<
-      AttributePutItemInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>
+      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
     >
   ) => $PrimitiveAttribute<
     TYPE,
@@ -200,7 +199,10 @@ export interface $PrimitiveAttribute<
       If<
         STATE['key'],
         AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>,
-        AttributePutItemInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>
+        ParserInput<
+          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          { fill: false }
+        >
       >
     >
   ) => $PrimitiveAttribute<
@@ -235,9 +237,9 @@ export interface $PrimitiveAttribute<
         If<
           STATE['key'],
           AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>,
-          AttributePutItemInput<
+          ParserInput<
             FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            true
+            { fill: false }
           >
         >,
         undefined
@@ -274,10 +276,10 @@ export interface $PrimitiveAttribute<
    */
   putLink: <SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: PutItemInput<SCHEMA, true>
-    ) => AttributePutItemInput<
+      putItemInput: ParserInput<SCHEMA, { fill: false }>
+    ) => ParserInput<
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      true
+      { fill: false }
     >
   ) => $PrimitiveAttribute<
     TYPE,
@@ -324,11 +326,15 @@ export interface $PrimitiveAttribute<
    */
   link: <SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>
+      keyOrPutItemInput: If<
+        STATE['key'],
+        KeyInput<SCHEMA, true>,
+        ParserInput<SCHEMA, { fill: false }>
+      >
     ) => If<
       STATE['key'],
       AttributeKeyInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>,
-      AttributePutItemInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, true>
+      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
     >
   ) => $PrimitiveAttribute<
     TYPE,

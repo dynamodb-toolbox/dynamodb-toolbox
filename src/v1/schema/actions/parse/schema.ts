@@ -19,15 +19,16 @@ export type SchemaParsedValue<
   SCHEMA extends Schema,
   OPTIONS extends ParsedValueOptions = ParsedValueOptions
 > = Schema extends SCHEMA
-  ? { [KEY in string]: AttrParsedValue<Attribute, OPTIONS> }
+  ? { [KEY: string]: AttrParsedValue<Attribute, OPTIONS> }
   : OptionalizeUndefinableProperties<
       {
-        [KEY in OPTIONS['operation'] extends 'key'
+        [KEY in OPTIONS extends { operation: 'key' }
           ? O.SelectKeys<SCHEMA['attributes'], { key: true }>
-          : keyof SCHEMA['attributes'] & string]: AttrParsedValue<
-          SCHEMA['attributes'][KEY],
-          OPTIONS
-        >
+          : keyof SCHEMA['attributes'] & string as OPTIONS extends { transform: false }
+          ? KEY
+          : SCHEMA['attributes'][KEY] extends { savedAs: string }
+          ? SCHEMA['attributes'][KEY]['savedAs']
+          : KEY]: AttrParsedValue<SCHEMA['attributes'][KEY], OPTIONS>
       },
       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
       O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>

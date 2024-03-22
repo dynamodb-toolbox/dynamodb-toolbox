@@ -23,7 +23,7 @@ export type RecordAttrFormattedValue<
     OPTIONS['attributes']
   >
 > = RecordAttribute extends ATTRIBUTE
-  ? { [KEY in string]: unknown }
+  ? { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
   [MATCHING_KEYS] extends [never]
   ? never

@@ -1,10 +1,10 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Schema, Attribute, AttributeValue } from 'v1/schema'
+import type { Schema, Attribute, AttributeValue, ParsedValue } from 'v1/schema'
 import { isObject } from 'v1/utils/validation/isObject'
 import { isArray } from 'v1/utils/validation/isArray'
 
-import type { UpdateItemInput, AttributeUpdateItemInput, UpdateItemInputExtension } from '../types'
+import type { UpdateItemInputExtension } from '../types'
 import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants'
 import {
   hasSetOperation,
@@ -36,7 +36,10 @@ export class UpdateExpressionParser {
   }
 
   parseUpdate = (
-    input: UpdateItemInput | AttributeUpdateItemInput,
+    input: ParsedValue<
+      Schema | Attribute,
+      { operation: 'update'; extension: UpdateItemInputExtension }
+    >,
     currentPath: (string | number)[] = []
   ): void => {
     if (input === undefined) {
@@ -48,7 +51,7 @@ export class UpdateExpressionParser {
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
       // TODO: Fix this cast
-      this.set.appendValidAttributeValue(input[$SET] as AttributeValue<UpdateItemInputExtension>)
+      this.set.appendValidAttributeValue(input[$SET])
       return
     }
 

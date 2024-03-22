@@ -33,14 +33,14 @@ export type PrimitiveAttrParsedValue<
           ? ATTRIBUTE['enum'][number]
           : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
-  : OPTIONS extends { transform: true }
-  ? ResolvePrimitiveAttributeType<ATTRIBUTE['type']>
-  :
+  : OPTIONS extends { transform: false }
+  ?
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
           ? ATTRIBUTE['enum'][number]
           : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
+  : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>
 
 export function* primitiveAttrParser<
   ATTRIBUTE extends PrimitiveAttribute,

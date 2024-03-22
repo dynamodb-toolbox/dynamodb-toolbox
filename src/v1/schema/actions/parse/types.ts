@@ -46,28 +46,32 @@ export type ParsingDefaultOptions = {
   fill: true
   transform: true
   operation: 'put'
-  parseExtension?: undefined
+  parseExtension: undefined
 }
 
 export type ParsedValueOptions = {
+  fill?: boolean
   transform?: boolean
   operation?: Operation
   extension?: Extension
 }
 
 export type ParsedValueDefaultOptions = {
+  fill: true
   transform: true
   operation: 'put'
+  extension: undefined
 }
 
 export type FromParsingOptions<OPTIONS extends ParsingOptions, CONTEXT extends boolean = false> = {
-  transform: OPTIONS['transform'] extends boolean
+  fill: OPTIONS extends { fill: boolean } ? OPTIONS['fill'] : ParsedValueDefaultOptions['fill']
+  transform: OPTIONS extends { transform: boolean }
     ? OPTIONS['transform']
     : ParsedValueDefaultOptions['transform']
-  operation: OPTIONS['operation'] extends Operation
+  operation: OPTIONS extends { operation: Operation }
     ? OPTIONS['operation']
     : ParsedValueDefaultOptions['operation']
-  extension: OPTIONS['parseExtension'] extends ExtensionParser
+  extension: OPTIONS extends { parseExtension: ExtensionParser }
     ? NonNullable<OPTIONS['parseExtension'][CONTEXT extends true ? $contextExtension : $extension]>
-    : undefined
+    : ParsedValueDefaultOptions['extension']
 }

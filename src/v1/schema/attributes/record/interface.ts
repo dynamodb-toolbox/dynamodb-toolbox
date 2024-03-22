@@ -3,12 +3,11 @@ import type { O } from 'ts-toolbelt'
 import type { If, ValueOrGetter } from 'v1/types'
 import type {
   AttributeKeyInput,
-  AttributePutItemInput,
   AttributeUpdateItemInput,
   KeyInput,
-  PutItemInput,
   UpdateItemInput
 } from 'v1/operations'
+import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema } from '../../schema'
 import type { SchemaAction } from '../../action'
@@ -105,9 +104,9 @@ export interface $RecordAttribute<
    */
   putDefault: (
     nextPutDefault: ValueOrGetter<
-      AttributePutItemInput<
+      ParserInput<
         FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
-        true
+        { fill: false }
       >
     >
   ) => $RecordAttribute<
@@ -163,9 +162,9 @@ export interface $RecordAttribute<
           FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
           true
         >,
-        AttributePutItemInput<
+        ParserInput<
           FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
-          true
+          { fill: false }
         >
       >
     >
@@ -224,10 +223,10 @@ export interface $RecordAttribute<
    */
   putLink: <SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: PutItemInput<SCHEMA, true>
-    ) => AttributePutItemInput<
+      putItemInput: ParserInput<SCHEMA, { fill: false }>
+    ) => ParserInput<
       FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
-      true
+      { fill: false }
     >
   ) => $RecordAttribute<
     $KEYS,
@@ -276,16 +275,20 @@ export interface $RecordAttribute<
    */
   link: <SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], KeyInput<SCHEMA, true>, PutItemInput<SCHEMA, true>>
+      keyOrPutItemInput: If<
+        STATE['key'],
+        KeyInput<SCHEMA, true>,
+        ParserInput<SCHEMA, { fill: false }>
+      >
     ) => If<
       STATE['key'],
       AttributeKeyInput<
         FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
         true
       >,
-      AttributePutItemInput<
+      ParserInput<
         FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
-        true
+        { fill: false }
       >
     >
   ) => $RecordAttribute<
