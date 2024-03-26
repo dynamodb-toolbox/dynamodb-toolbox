@@ -1,5 +1,4 @@
-import { GetItemCommand } from 'v1/operations/getItem'
-import { mockEntity } from 'v1/test-tools'
+import { GetItemCommand, mockEntity } from 'v1'
 
 import { UserEntity } from '../entity'
 

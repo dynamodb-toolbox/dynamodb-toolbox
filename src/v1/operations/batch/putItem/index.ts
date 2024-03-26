@@ -1,1 +1,0 @@
-export { BatchPutItemRequest } from './operation'
