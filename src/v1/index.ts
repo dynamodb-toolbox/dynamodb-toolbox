@@ -7,6 +7,11 @@ export * from './schema/actions'
 
 // tables
 export { TableV2 } from './table'
+export { PrimaryKeyParser } from './table/actions/primaryKeyParser'
+export { QueryCommand } from './table/actions/queryCommand'
+export type { QueryOptions, QueryResponse } from './table/actions/queryCommand'
+export { ScanCommand } from './table/actions/scanCommand'
+export type { ScanOptions, ScanResponse } from './table/actions/scanCommand'
 // TODO: Pick relevant types
 export * from './table/types'
 // TODO: Pick relevant types
@@ -14,16 +19,16 @@ export * from './table/generics'
 
 // entities
 export { EntityV2 } from './entity'
-// TODO: Pick relevant types
-export * from './entity/generics'
-
-// operations
-export { GetItemCommand } from './operations/getItem'
-export type { GetItemOptions, GetItemResponse } from './operations/getItem'
-export { PutItemCommand } from './operations/putItem'
-export type { PutItemInput, PutItemOptions, PutItemResponse } from './operations/putItem'
-export { DeleteItemCommand } from './operations/deleteItem'
-export type { DeleteItemOptions, DeleteItemResponse } from './operations/deleteItem'
+export { GetItemCommand } from './entity/actions/commands/getItem'
+export type { GetItemOptions, GetItemResponse } from './entity/actions/commands/getItem'
+export { PutItemCommand } from './entity/actions/commands/putItem'
+export type {
+  PutItemInput,
+  PutItemOptions,
+  PutItemResponse
+} from './entity/actions/commands/putItem'
+export { DeleteItemCommand } from './entity/actions/commands/deleteItem'
+export type { DeleteItemOptions, DeleteItemResponse } from './entity/actions/commands/deleteItem'
 export {
   UpdateItemCommand,
   $set,
@@ -35,27 +40,28 @@ export {
   $delete,
   $append,
   $prepend
-} from './operations/updateItem'
+} from './entity/actions/commands/updateItem'
 export type {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from './operations/updateItem'
-export { ScanCommand } from './operations/scan'
-export type { ScanOptions, ScanResponse } from './operations/scan'
-export { QueryCommand } from './operations/query'
-export type { QueryOptions, QueryResponse } from './operations/query'
-export {
-  ConditionCheck,
-  transactGetItems,
-  GetItemTransaction,
-  transactWriteItems,
-  PutItemTransaction,
-  DeleteItemTransaction,
-  UpdateItemTransaction
-} from './operations/transactions'
-export { batchWrite, BatchDeleteItemRequest, BatchPutItemRequest } from './operations/batch'
-export type { BatchWriteOptions, BatchWriteItemRequest } from './operations/batch'
+} from './entity/actions/commands/updateItem'
+export { batchWrite } from './entity/actions/batchWrite/batchWrite'
+export { BatchDeleteItemRequest } from './entity/actions/batchWrite/batchDeleteItem'
+export { BatchPutItemRequest } from './entity/actions/batchWrite/batchPutItem'
+export { transactGetItems } from './entity/actions/transactions/transactGetItems'
+export { transactWriteItems } from './entity/actions/transactions/transactWriteItems'
+export { GetItemTransaction } from './entity/actions/transactions/transactGetItem'
+export { PutItemTransaction } from './entity/actions/transactions/transactPutItem'
+export { UpdateItemTransaction } from './entity/actions/transactions/transactUpdateItem'
+export { DeleteItemTransaction } from './entity/actions/transactions/transactDeleteItem'
+export { ConditionCheck } from './entity/actions/transactions/conditionCheck'
+export type { EntityPaths, EntityPathsIntersection } from './entity/actions/paths'
+export { EntityFormatter } from './entity/actions/formatter'
+// TODO: Pick relevant types
+export * from './entity/generics'
+
+// operations: TO REMOVE
 export { parseCondition } from './operations/expression/condition/parse'
 export { parseProjection } from './operations/expression/projection/parse'
 // TODO: Pick relevant types

@@ -1,8 +1,7 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { NarrowObject } from 'v1/types'
 
-import { SchemaAttributes, $SchemaAttributeNestedStates, Attribute } from './attributes'
-
+import type { SchemaAttributes, $SchemaAttributeNestedStates, Attribute } from './attributes'
 import type { RequiredOption } from './attributes/constants/requiredOptions'
 import type { FreezeAttribute } from './attributes/freeze'
 

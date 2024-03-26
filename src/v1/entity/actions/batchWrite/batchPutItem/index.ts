@@ -1,0 +1,1 @@
+export { BatchPutItemRequest } from './batchPutItem'

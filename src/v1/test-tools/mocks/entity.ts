@@ -1,23 +1,27 @@
 import type { EntityV2 } from 'v1/entity'
 import type { KeyInput } from 'v1/operations/types/KeyInput'
-import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/operations/getItem'
-import type { GetItemCommandClass } from 'v1/operations/getItem/command'
+import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/entity/actions/commands/getItem'
+import type { GetItemCommandClass } from 'v1/entity/actions/commands/getItem/getItemCommand'
 import {
   PutItemCommand,
   PutItemInput,
   PutItemOptions,
   PutItemResponse
-} from 'v1/operations/putItem'
-import type { PutItemCommandClass } from 'v1/operations/putItem/command'
-import { DeleteItemCommand, DeleteItemOptions, DeleteItemResponse } from 'v1/operations/deleteItem'
-import type { DeleteItemCommandClass } from 'v1/operations/deleteItem/command'
+} from 'v1/entity/actions/commands/putItem'
+import type { PutItemCommandClass } from 'v1/entity/actions/commands/putItem/putItemCommand'
+import {
+  DeleteItemCommand,
+  DeleteItemOptions,
+  DeleteItemResponse
+} from 'v1/entity/actions/commands/deleteItem'
+import type { DeleteItemCommandClass } from 'v1/entity/actions/commands/deleteItem/deleteItemCommand'
 import {
   UpdateItemCommand,
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from 'v1/operations/updateItem'
-import type { UpdateItemCommandClass } from 'v1/operations/updateItem/command'
+} from 'v1/entity/actions/commands/updateItem'
+import type { UpdateItemCommandClass } from 'v1/entity/actions/commands/updateItem/updateItemCommand'
 
 import type { OperationClassMocker, OperationClassResults, OperationName } from './types'
 import { GetItemCommandMock } from './getItemCommand'

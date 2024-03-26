@@ -1,1 +1,1 @@
-export { EntityV2 } from './entity'
+export { EntityV2, EntityAction, $entity } from './entity'
