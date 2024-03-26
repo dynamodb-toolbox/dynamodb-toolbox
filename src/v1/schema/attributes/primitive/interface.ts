@@ -1,11 +1,14 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If, ValueOrGetter } from 'v1/types'
-import type { AttributeUpdateItemInput, UpdateItemInput } from 'v1/operations/updateItem'
+// TODO: Remove this import
+import type {
+  AttributeUpdateItemInput,
+  UpdateItemInput
+} from 'v1/entity/actions/commands/updateItem/types'
 import type { ParserInput } from 'v1/schema/actions'
 
-import type { Schema } from '../../schema'
-import type { SchemaAction } from '../../action'
+import type { Schema, SchemaAction } from '../../schema'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { $type, $enum, $transform } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'

@@ -1,9 +1,6 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-import type { ScanCommandErrorBlueprints } from './scan/errors'
-import type { QueryCommandErrorBlueprints } from './query/errors'
 import type { ExpressionParsersErrorBlueprints } from './expression/errors'
-import type { PrimaryKeyParserErrorBlueprints } from './primaryKeyParser/errors'
 
 type IncompleteOperationErrorBlueprint = ErrorBlueprint<{
   code: 'operations.incompleteOperation'
@@ -87,9 +84,6 @@ type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
 }>
 
 export type OperationsErrorBlueprints =
-  | ScanCommandErrorBlueprints
-  | QueryCommandErrorBlueprints
-  | PrimaryKeyParserErrorBlueprints
   | IncompleteOperationErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
   | InvalidClientRequestTokenOptionErrorBlueprint

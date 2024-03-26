@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep'
 import type { O } from 'ts-toolbelt'
 
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type { Attribute, AnyAttribute, Never } from 'v1/schema/attributes'
 import type { OptionalizeUndefinableProperties } from 'v1/types'
 import { isObject } from 'v1/utils/validation/isObject'

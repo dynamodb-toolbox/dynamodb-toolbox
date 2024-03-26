@@ -1,4 +1,4 @@
-import type { TableV2 } from '../class'
+import type { TableV2 } from '../table'
 
 /**
  * Returns the indexes of a Table

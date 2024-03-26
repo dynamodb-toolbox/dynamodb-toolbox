@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type {
   Attribute,
   AnyAttribute,
@@ -19,7 +19,7 @@ import type {
 } from 'v1/schema/attributes'
 import type { PrimaryKey } from 'v1/table/generics'
 
-import type { EntityV2 } from '../class'
+import type { EntityV2 } from '../entity'
 
 /**
  * Swaps the key of a attributes dictionnary for their "savedAs" values if they exist

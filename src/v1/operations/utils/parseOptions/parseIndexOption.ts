@@ -1,4 +1,4 @@
-import type { TableV2 } from 'v1/table/class'
+import type { TableV2 } from 'v1/table'
 
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
 import { isString } from 'v1/utils/validation/isString'

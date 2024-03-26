@@ -1,11 +1,10 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity/class'
-import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/operations/getItem'
-import { $key, $options } from 'v1/operations/getItem/command'
-import { getItemParams } from 'v1/operations/getItem/getItemParams'
+import { EntityV2, $entity } from 'v1/entity'
+import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/entity/actions/commands/getItem'
+import { $key, $options } from 'v1/entity/actions/commands/getItem/getItemCommand'
+import { getItemParams } from 'v1/entity/actions/commands/getItem/getItemParams'
 import type { KeyInput } from 'v1/operations/types'
-import { $entity } from 'v1/operations/class'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'

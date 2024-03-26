@@ -1,9 +1,7 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { NarrowObject } from 'v1/types'
-import type { SchemaAction } from './action'
 
-import type { SchemaAttributes, $SchemaAttributeNestedStates } from './attributes'
-
+import type { SchemaAttributes, $SchemaAttributeNestedStates, Attribute } from './attributes'
 import type { RequiredOption } from './attributes/constants/requiredOptions'
 import type { FreezeAttribute } from './attributes/freeze'
 
@@ -129,3 +127,11 @@ export const schema: SchemaTyper = <
 ): Schema<
   { [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]> }
 > => new Schema<{}>({}).and(attributes)
+
+export class SchemaAction<SCHEMA extends Schema | Attribute = Schema | Attribute> {
+  schema: SCHEMA
+
+  constructor(schema: SCHEMA) {
+    this.schema = schema
+  }
+}

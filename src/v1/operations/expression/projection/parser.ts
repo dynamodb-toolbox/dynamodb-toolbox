@@ -1,4 +1,4 @@
-import type { Schema } from 'v1/schema/schema'
+import type { Schema } from 'v1/schema'
 import type { Attribute } from 'v1/schema/attributes'
 import { appendAttributePath, ExpressionParser } from 'v1/operations/expression/expressionParser'
 

@@ -1,4 +1,4 @@
-import type { TableV2 } from '../class'
+import type { TableV2 } from '../table'
 import type { IndexableKeyType, ResolveIndexableKeyType, Key } from '../types'
 
 /**
