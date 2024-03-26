@@ -1,15 +1,14 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity'
+import { EntityV2, $entity } from 'v1/entity'
 import {
   UpdateItemCommand,
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from 'v1/operations/updateItem'
-import { $item, $options } from 'v1/operations/updateItem/command'
-import { updateItemParams } from 'v1/operations/updateItem/updateItemParams'
-import { $entity } from 'v1/operations/class'
+} from 'v1/entity/actions/commands/updateItem'
+import { $item, $options } from 'v1/entity/actions/commands/updateItem/updateItemCommand'
+import { updateItemParams } from 'v1/entity/actions/commands/updateItem/updateItemParams'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'

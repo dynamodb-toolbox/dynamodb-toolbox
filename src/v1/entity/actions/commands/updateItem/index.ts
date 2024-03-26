@@ -1,0 +1,5 @@
+export { UpdateItemCommand } from './updateItemCommand'
+export type { UpdateItemResponse } from './updateItemCommand'
+export { $set, $get, $remove, $sum, $subtract, $add, $delete, $append, $prepend } from './utils'
+export type { UpdateItemOptions } from './options'
+export type { UpdateItemInput, AttributeUpdateItemInput } from './types'

@@ -3,7 +3,6 @@ import type { Schema } from 'v1/schema'
 import type { ParserInput } from 'v1/schema/actions/tParse'
 import type { TableV2 } from 'v1/table'
 import type { PrimaryKey } from 'v1/table/generics'
-import type { EntityOperation } from 'v1/operations/class'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { NeedsKeyCompute } from './generics'
@@ -99,9 +98,25 @@ export class EntityV2<
     this.computeKey = computeKey as any
   }
 
-  build<OPERATION_CLASS extends EntityOperation<this> = EntityOperation<this>>(
+  build<OPERATION_CLASS extends EntityAction<this> = EntityAction<this>>(
     operationClass: new (entity: this) => OPERATION_CLASS
   ): OPERATION_CLASS {
     return new operationClass(this)
+  }
+}
+
+export const $entity = Symbol('$entity')
+export type $entity = typeof $entity
+
+export class EntityAction<ENTITY extends EntityV2 = EntityV2> {
+  // Still needed?
+  static operationType = 'entity'
+  // Still needed?
+  static operationName: string;
+
+  [$entity]: ENTITY
+
+  constructor(entity: ENTITY) {
+    this[$entity] = entity
   }
 }

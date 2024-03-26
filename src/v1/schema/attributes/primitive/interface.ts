@@ -1,7 +1,11 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If, ValueOrGetter } from 'v1/types'
-import type { AttributeUpdateItemInput, UpdateItemInput } from 'v1/operations/updateItem'
+// TODO: Remove this import
+import type {
+  AttributeUpdateItemInput,
+  UpdateItemInput
+} from 'v1/entity/actions/commands/updateItem/types'
 import type { ParserInput } from 'v1/schema/actions'
 
 import type { Schema, SchemaAction } from '../../schema'

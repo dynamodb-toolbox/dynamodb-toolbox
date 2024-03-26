@@ -1,9 +1,9 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import type { TableCommand } from 'v1/operations/class'
 import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject'
 import { isString } from 'v1/utils/validation/isString'
+import { DynamoDBToolboxError } from 'v1/errors'
+import type { EntityV2 } from 'v1/entity'
 
 import type { Index, Key } from './types'
 
@@ -62,7 +62,7 @@ export class TableV2<
     }
   }
 
-  build<TABLE_COMMAND_CLASS extends TableCommand<this> = TableCommand<this>>(
+  build<TABLE_COMMAND_CLASS extends TableAction<this> = TableAction<this>>(
     commandClass: new (table: this) => TABLE_COMMAND_CLASS
   ): TABLE_COMMAND_CLASS {
     return new commandClass(this)
@@ -76,5 +76,27 @@ export class TableV2<
     }
 
     return this.documentClient
+  }
+}
+
+export const $table = Symbol('$table')
+export type $table = typeof $table
+
+export const $entities = Symbol('$entities')
+export type $entities = typeof $entities
+
+export class TableAction<
+  TABLE extends TableV2 = TableV2,
+  ENTITIES extends EntityV2[] = EntityV2[]
+> {
+  static operationType = 'table'
+  static operationName: string;
+
+  [$table]: TABLE;
+  [$entities]: ENTITIES
+
+  constructor(table: TABLE, entities = ([] as unknown) as ENTITIES) {
+    this[$table] = table
+    this[$entities] = entities
   }
 }

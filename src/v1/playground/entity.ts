@@ -12,9 +12,9 @@ import {
   FormattedItem,
   KeyInput,
   UpdateItemInput,
-  prefix
+  prefix,
+  EntityFormatter
 } from 'v1'
-import { EntityFormatter } from 'v1/operations/format'
 
 import { MyTable } from './table'
 
