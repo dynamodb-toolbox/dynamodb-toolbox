@@ -17,7 +17,7 @@ import type {
   ResolvePrimitiveAttribute,
   ResolvePrimitiveAttributeType
 } from 'v1/schema/attributes'
-import type { PrimaryKey } from 'v1/table/generics'
+import type { PrimaryKey } from 'v1/table/actions/parsePrimaryKey'
 
 import type { EntityV2 } from '../entity'
 

@@ -7,15 +7,15 @@ export * from './schema/actions'
 
 // tables
 export { TableV2 } from './table'
-export { PrimaryKeyParser } from './table/actions/primaryKeyParser'
+export { PrimaryKeyParser } from './table/actions/parsePrimaryKey'
+export type { PrimaryKey } from './table/actions/parsePrimaryKey'
 export { QueryCommand } from './table/actions/queryCommand'
 export type { QueryOptions, QueryResponse } from './table/actions/queryCommand'
 export { ScanCommand } from './table/actions/scanCommand'
 export type { ScanOptions, ScanResponse } from './table/actions/scanCommand'
+export type { IndexNames, IndexSchema } from './table/actions/indexes'
 // TODO: Pick relevant types
 export * from './table/types'
-// TODO: Pick relevant types
-export * from './table/generics'
 
 // entities
 export { EntityV2 } from './entity'
