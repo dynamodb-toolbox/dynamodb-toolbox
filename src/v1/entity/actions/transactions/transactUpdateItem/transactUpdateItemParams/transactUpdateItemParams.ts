@@ -2,7 +2,7 @@ import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 import omit from 'lodash.omit'
 
-import { PrimaryKeyParser } from 'v1/table/actions/primaryKeyParser'
+import { PrimaryKeyParser } from 'v1/table/actions/parsePrimaryKey'
 import type { EntityV2 } from 'v1/entity'
 import type { UpdateItemInput } from 'v1/entity/actions/commands/updateItem'
 import { parseUpdate } from 'v1/entity/actions/commands/updateItem/updateExpression/parse'
