@@ -85,6 +85,8 @@ export type {
   SavedItem,
   EntityParseOptions
 } from './entity/actions/parse'
+export { EntityTParser } from './entity/actions/tParse'
+export type { EntityParserInput, KeyInput } from './entity/actions/tParse'
 
 // operations: TO REMOVE
 export { parseCondition } from './operations/expression/condition/parse'

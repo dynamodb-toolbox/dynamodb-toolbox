@@ -1,6 +1,6 @@
 import { DynamoDBToolboxError } from 'v1/errors'
-import type { KeyInput } from 'v1/operations/types/KeyInput'
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
+import type { KeyInput } from 'v1/entity/actions/tParse'
 import { deleteItemParams } from 'v1/entity/actions/commands/deleteItem/deleteItemParams'
 
 import type { BatchWriteItemRequest } from '../BatchWriteItemRequest'
