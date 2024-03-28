@@ -6,7 +6,7 @@ import type {
   AttributeUpdateItemInput,
   UpdateItemInput
 } from 'v1/entity/actions/commands/updateItem/types'
-import type { ParserInput } from 'v1/schema/actions'
+import type { ParserInput } from 'v1/schema/actions/tParse'
 
 import type { Schema, SchemaAction } from '../../schema'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
