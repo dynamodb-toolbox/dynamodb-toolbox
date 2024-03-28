@@ -6,8 +6,7 @@ import {
 } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, $entity } from 'v1/entity'
-import type { FormattedItem } from 'v1/entity/generics'
-import { EntityFormatter } from 'v1/entity/actions/formatter'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
 import type { EntityPaths } from 'v1/entity/actions/paths'
 
 import { DynamoDBToolboxError } from 'v1/errors'

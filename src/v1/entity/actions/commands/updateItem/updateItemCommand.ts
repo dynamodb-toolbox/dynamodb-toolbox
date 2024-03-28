@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 import { UpdateCommandInput, UpdateCommand, UpdateCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import type { FormattedItem } from 'v1/entity/generics'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
 import type {
   NoneReturnValuesOption,
   UpdatedOldReturnValuesOption,
@@ -11,7 +11,6 @@ import type {
   AllNewReturnValuesOption
 } from 'v1/operations/constants/options/returnValues'
 import { DynamoDBToolboxError } from 'v1/errors'
-import { Formatter } from 'v1/schema/actions/format'
 
 import type { UpdateItemInput } from './types'
 import type { UpdateItemOptions, UpdateItemCommandReturnValuesOption } from './options'
@@ -105,7 +104,7 @@ export class UpdateItemCommand<
 
     const { returnValues } = this[$options]
 
-    const formattedItem = (new Formatter(this[$entity].schema).format(attributes, {
+    const formattedItem = (new EntityFormatter(this[$entity]).format(attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
     }) as unknown) as ReturnedAttributes<ENTITY, OPTIONS>
 
