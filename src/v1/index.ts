@@ -59,8 +59,13 @@ export { ConditionCheck } from './entity/actions/transactions/conditionCheck'
 export type { EntityPaths, EntityPathsIntersection } from './entity/actions/paths'
 export { EntityFormatter } from './entity/actions/format'
 export type { FormattedItem } from './entity/actions/format'
-// TODO: Pick relevant types
-export * from './entity/generics'
+export { EntityParser } from './entity/actions/parse'
+export type {
+  ParsedItemOptions,
+  ParsedItem,
+  SavedItem,
+  EntityParseOptions
+} from './entity/actions/parse'
 
 // operations: TO REMOVE
 export { parseCondition } from './operations/expression/condition/parse'

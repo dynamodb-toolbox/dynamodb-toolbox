@@ -5,7 +5,8 @@ import {
   FormatOptions,
   FromFormatOptions,
   FormattedValue,
-  FormattedValueOptions
+  FormattedValueOptions,
+  FormattedValueDefaultOptions
 } from 'v1/schema/actions/format'
 
 /**
@@ -16,7 +17,7 @@ import {
  */
 export type FormattedItem<
   ENTITY extends EntityV2 = EntityV2,
-  OPTIONS extends FormattedValueOptions<ENTITY['schema']> = {}
+  OPTIONS extends FormattedValueOptions<ENTITY['schema']> = FormattedValueDefaultOptions
 > = FormattedValue<ENTITY['schema'], OPTIONS>
 
 export const $formatter = Symbol('$formatter')
