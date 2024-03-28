@@ -15,7 +15,6 @@ export const putItemParams = <ENTITY extends EntityV2, OPTIONS extends PutItemOp
   putItemOptions: OPTIONS = {} as OPTIONS
 ): PutCommandInput => {
   const parser = entity.schema.build(Parser).start(input)
-
   parser.next() // defaulted
   parser.next() // linked
   const validInput = parser.next().value

@@ -57,7 +57,8 @@ export { UpdateItemTransaction } from './entity/actions/transactions/transactUpd
 export { DeleteItemTransaction } from './entity/actions/transactions/transactDeleteItem'
 export { ConditionCheck } from './entity/actions/transactions/conditionCheck'
 export type { EntityPaths, EntityPathsIntersection } from './entity/actions/paths'
-export { EntityFormatter } from './entity/actions/formatter'
+export { EntityFormatter } from './entity/actions/format'
+export type { FormattedItem } from './entity/actions/format'
 // TODO: Pick relevant types
 export * from './entity/generics'
 
