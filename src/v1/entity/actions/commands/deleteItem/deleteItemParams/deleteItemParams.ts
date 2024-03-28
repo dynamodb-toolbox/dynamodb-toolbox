@@ -1,6 +1,6 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { PrimaryKeyParser } from 'v1/table/actions/primaryKeyParser'
+import { PrimaryKeyParser } from 'v1/table/actions/parsePrimaryKey'
 import type { EntityV2 } from 'v1/entity'
 import type { KeyInput } from 'v1/operations/types'
 import { Parser } from 'v1/schema/actions/parse'

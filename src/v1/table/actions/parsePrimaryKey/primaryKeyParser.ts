@@ -1,9 +1,31 @@
 import { TableV2, TableAction, $table } from 'v1/table'
-import type { Schema } from 'v1/schema'
-import type { ParsedValue } from 'v1/schema/actions/parse'
-import type { PrimaryKey } from 'v1/table/generics'
 import { validatorsByPrimitiveType } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
+import type { ResolveIndexableKeyType, IndexableKeyType, Key } from 'v1/table/types'
+
+/**
+ * Returns the TS type of a Table Primary Key
+ *
+ * @param TABLE Table
+ * @return Object
+ */
+export type PrimaryKey<TABLE extends TableV2 = TableV2> = TableV2 extends TABLE
+  ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>
+  : Key extends TABLE['sortKey']
+  ? {
+      [KEY in TABLE['partitionKey']['name']]: ResolveIndexableKeyType<TABLE['partitionKey']['type']>
+    }
+  : NonNullable<TABLE['sortKey']> extends Key
+  ? {
+      [KEY in
+        | TABLE['partitionKey']['name']
+        | NonNullable<TABLE['sortKey']>['name']]: KEY extends TABLE['partitionKey']['name']
+        ? ResolveIndexableKeyType<TABLE['partitionKey']['type']>
+        : KEY extends NonNullable<TABLE['sortKey']>['name']
+        ? ResolveIndexableKeyType<NonNullable<TABLE['sortKey']>['type']>
+        : never
+    }
+  : never
 
 export class PrimaryKeyParser<TABLE extends TableV2 = TableV2> extends TableAction<TABLE> {
   static operationName = 'parsePrimaryKey' as const
@@ -12,11 +34,11 @@ export class PrimaryKeyParser<TABLE extends TableV2 = TableV2> extends TableActi
     super(table)
   }
 
-  parse(keyInput: ParsedValue<Schema, { operation: 'key' }>): PrimaryKey<TABLE> {
+  parse(keyInput: { [KEY: string]: unknown }): PrimaryKey<TABLE> {
     const table = this[$table]
     const { partitionKey, sortKey } = table
 
-    const primaryKey: ParsedValue<Schema, { operation: 'key' }> = {}
+    const primaryKey: { [KEY: string]: unknown } = {}
 
     const partitionKeyValidator = validatorsByPrimitiveType[partitionKey.type]
     const partitionKeyValue = keyInput[partitionKey.name]
