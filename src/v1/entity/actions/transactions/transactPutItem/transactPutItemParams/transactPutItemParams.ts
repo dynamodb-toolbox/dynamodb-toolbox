@@ -1,9 +1,8 @@
 import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { PrimaryKeyParser } from 'v1/table/actions/parsePrimaryKey'
 import type { EntityV2 } from 'v1/entity'
+import { EntityParser } from 'v1/entity/actions/parse'
 import type { PutItemInput } from 'v1/entity/actions/commands/putItem'
-import { Parser } from 'v1/schema/actions/parse'
 
 import type { PutItemTransactionOptions } from '../options'
 import { parsePutItemTransactionOptions } from './parsePutItemOptions'
@@ -20,20 +19,12 @@ export const transactPutItemParams = <
   input: PutItemInput<ENTITY>,
   putItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactPutItemParams => {
-  const parser = entity.schema.build(Parser).start(input)
-  parser.next() // defaulted
-  parser.next() // linked
-  const validInput = parser.next().value
-  const transformedInput = parser.next().value
-
-  const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
-  const primaryKey = entity.table.build(PrimaryKeyParser).parse(keyInput)
-
+  const { item } = entity.build(EntityParser).parse(input)
   const options = parsePutItemTransactionOptions(entity, putItemTransactionOptions)
 
   return {
     TableName: entity.table.getName(),
-    Item: { ...transformedInput, ...primaryKey },
+    Item: item,
     ...options
   }
 }

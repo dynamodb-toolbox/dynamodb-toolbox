@@ -1,4 +1,5 @@
 import type { EntityV2 } from 'v1/entity'
+import type { ParsedItem } from 'v1/entity/actions/parse'
 import type { Schema } from 'v1/schema'
 import type { ParsedValue } from 'v1/schema/actions/parse'
 
@@ -17,5 +18,5 @@ export const parseSchemaUpdate = (
 
 export const parseUpdate = (
   entity: EntityV2,
-  input: ParsedValue<Schema, { operation: 'update'; extension: UpdateItemInputExtension }>
+  input: ParsedItem<EntityV2, { operation: 'update'; extension: UpdateItemInputExtension }>
 ): ParsedUpdate => parseSchemaUpdate(entity.schema, input)

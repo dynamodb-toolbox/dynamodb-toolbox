@@ -6,3 +6,4 @@ export type {
   NarrowTimestampsOptions
 } from './addTimestampAttributes'
 export { doesSchemaValidateTableSchema } from './doesSchemaValidateTableSchema'
+export type { NeedsKeyCompute } from './NeedsKeyCompute'

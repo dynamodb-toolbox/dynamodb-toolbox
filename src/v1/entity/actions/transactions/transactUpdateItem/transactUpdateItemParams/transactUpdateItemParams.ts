@@ -2,12 +2,11 @@ import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 import omit from 'lodash.omit'
 
-import { PrimaryKeyParser } from 'v1/table/actions/parsePrimaryKey'
 import type { EntityV2 } from 'v1/entity'
+import { EntityParser } from 'v1/entity/actions/parse'
 import type { UpdateItemInput } from 'v1/entity/actions/commands/updateItem'
 import { parseUpdate } from 'v1/entity/actions/commands/updateItem/updateExpression/parse'
 import { parseUpdateExtension } from 'v1/entity/actions/commands/updateItem/updateItemParams/extension/parseExtension'
-import { Parser } from 'v1/schema/actions/parse'
 
 import type { UpdateItemTransactionOptions } from '../options'
 
@@ -25,23 +24,16 @@ export const transactUpdateItemParams = <
   input: UpdateItemInput<ENTITY>,
   updateItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactUpdateItemParams => {
-  const parser = entity.schema.build(Parser).start(input, {
+  const { item, key } = entity.build(EntityParser).parse(input, {
     operation: 'update',
     parseExtension: parseUpdateExtension
   })
-  parser.next() // defaulted
-  parser.next() // linked
-  const validInput = parser.next().value
-  const transformedInput = parser.next().value
-
-  const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
-  const primaryKey = entity.table.build(PrimaryKeyParser).parse(keyInput)
 
   const {
     ExpressionAttributeNames: updateExpressionAttributeNames,
     ExpressionAttributeValues: updateExpressionAttributeValues,
     ...update
-  } = parseUpdate(entity, omit(transformedInput, Object.keys(primaryKey)))
+  } = parseUpdate(entity, omit(item, Object.keys(key)))
 
   const {
     ExpressionAttributeNames: optionsExpressionAttributeNames,
@@ -61,7 +53,7 @@ export const transactUpdateItemParams = <
 
   return {
     TableName: entity.table.getName(),
-    Key: primaryKey,
+    Key: key,
     UpdateExpression: update.UpdateExpression,
     ...options,
     ...(!isEmpty(ExpressionAttributeNames) ? { ExpressionAttributeNames } : {}),

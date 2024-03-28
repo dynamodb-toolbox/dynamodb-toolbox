@@ -5,14 +5,14 @@ import type { TableV2 } from 'v1/table'
 import type { PrimaryKey } from 'v1/table/actions/parsePrimaryKey'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { NeedsKeyCompute } from './generics'
 import {
   TimestampsOptions,
   TimestampsDefaultOptions,
   NarrowTimestampsOptions,
   doesSchemaValidateTableSchema,
   addInternalAttributes,
-  WithInternalAttributes
+  WithInternalAttributes,
+  NeedsKeyCompute
 } from './utils'
 
 export class EntityV2<
