@@ -8,7 +8,7 @@ import {
 } from 'v1/entity/actions/commands/deleteItem'
 import { $key, $options } from 'v1/entity/actions/commands/deleteItem/deleteItemCommand'
 import { deleteItemParams } from 'v1/entity/actions/commands/deleteItem/deleteItemParams'
-import type { KeyInput } from 'v1/operations/types'
+import type { KeyInput } from 'v1/entity/actions/tParse'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'

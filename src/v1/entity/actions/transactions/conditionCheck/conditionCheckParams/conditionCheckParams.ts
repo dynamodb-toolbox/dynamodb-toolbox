@@ -2,7 +2,8 @@ import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
 import { EntityParser } from 'v1/entity/actions/parse'
-import type { Condition, KeyInput } from 'v1/operations/types'
+import type { KeyInput } from 'v1/entity/actions/tParse'
+import type { Condition } from 'v1/operations/types'
 
 import { parseConditionCheck } from './parseConditionCheckOptions'
 

@@ -3,11 +3,11 @@ import { DeleteCommandInput, DeleteCommand, DeleteCommandOutput } from '@aws-sdk
 
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
+import type { KeyInput } from 'v1/entity/actions/tParse'
 import type {
   NoneReturnValuesOption,
   AllOldReturnValuesOption
 } from 'v1/operations/constants/options/returnValues'
-import type { KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { DeleteItemOptions, DeleteItemCommandReturnValuesOption } from './options'
