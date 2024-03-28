@@ -9,11 +9,9 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import { TableV2, TableAction, $table, $entities } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
-import type { FormattedItem } from 'v1/entity/generics'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
 import type { EntityPaths } from 'v1/entity/actions/paths'
-import type { Schema } from 'v1/schema'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
-import { Formatter } from 'v1/schema/actions/format'
 import { isString } from 'v1/utils/validation'
 
 import type { ScanOptions } from './options'
@@ -96,9 +94,9 @@ export class ScanCommand<
   send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
     const scanParams = this.params()
 
-    const formattersByName: Record<string, Formatter<Schema>> = {}
+    const formattersByName: Record<string, EntityFormatter> = {}
     this[$entities].forEach(entity => {
-      formattersByName[entity.name] = entity.schema.build(Formatter)
+      formattersByName[entity.name] = entity.build(EntityFormatter)
     })
 
     const formattedItems: FormattedItem[] = []

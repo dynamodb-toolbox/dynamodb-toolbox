@@ -2,8 +2,7 @@ import type { O } from 'ts-toolbelt'
 import { DeleteCommandInput, DeleteCommand, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import type { FormattedItem } from 'v1/entity/generics'
-import { EntityFormatter } from 'v1/entity/actions/formatter'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
 import type {
   NoneReturnValuesOption,
   AllOldReturnValuesOption

@@ -1,7 +1,23 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import type { FormattedItem } from 'v1/entity/generics'
-import { Formatter, FormatOptions, FromFormatOptions } from 'v1/schema/actions/format'
+import {
+  Formatter,
+  FormatOptions,
+  FromFormatOptions,
+  FormattedValue,
+  FormattedValueOptions
+} from 'v1/schema/actions/format'
+
+/**
+ * Returned item of a fetch command (GET, QUERY ...) for a given Entity
+ *
+ * @param Entity Entity
+ * @return Object
+ */
+export type FormattedItem<
+  ENTITY extends EntityV2 = EntityV2,
+  OPTIONS extends FormattedValueOptions<ENTITY['schema']> = {}
+> = FormattedValue<ENTITY['schema'], OPTIONS>
 
 export const $formatter = Symbol('$formatter')
 export type $formatter = typeof $formatter
@@ -12,7 +28,7 @@ export class EntityFormatter<ENTITY extends EntityV2 = EntityV2> extends EntityA
 
   constructor(entity: ENTITY) {
     super(entity)
-    this[$formatter] = new Formatter<ENTITY['schema']>(entity.schema)
+    this[$formatter] = new Formatter(entity.schema)
   }
 
   format<OPTIONS extends FormatOptions<ENTITY['schema']>>(
