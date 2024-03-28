@@ -9,10 +9,8 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import { TableV2, TableAction, $entities, $table } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
-import type { FormattedItem } from 'v1/entity/generics'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
 import type { EntityPaths } from 'v1/entity/actions/paths'
-import type { Schema } from 'v1/schema'
-import { Formatter } from 'v1/schema/actions/format'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
 import type { Query } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -137,9 +135,9 @@ export class QueryCommand<
   async send(): Promise<QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>> {
     const queryParams = this.params()
 
-    const formatters: Record<string, Formatter<Schema>> = {}
+    const formatters: Record<string, EntityFormatter> = {}
     this[$entities].forEach(entity => {
-      formatters[entity.name] = entity.schema.build(Formatter)
+      formatters[entity.name] = entity.build(EntityFormatter)
     })
 
     const formattedItems: FormattedItem[] = []

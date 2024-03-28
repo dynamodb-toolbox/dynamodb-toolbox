@@ -1,21 +1,40 @@
 // schema
 export { schema, Schema, SchemaAction } from './schema'
+export { Parser } from './schema/actions/parse'
+export type {
+  ParsedValue,
+  ExtensionParser,
+  ExtensionParserOptions,
+  Operation,
+  ParsingOptions,
+  ParsedValueOptions,
+  FromParsingOptions
+} from './schema/actions/parse'
+export { TParser } from './schema/actions/tParse'
+export type { ParserInput } from './schema/actions/tParse'
+export { Formatter } from './schema/actions/format'
+export type {
+  FormattedValue,
+  FormatOptions,
+  FormattedValueOptions,
+  FormattedValueDefaultOptions,
+  FromFormatOptions
+} from './schema/actions/format'
+export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/paths'
 // TODO: Pick relevant exports
 export * from './schema/attributes'
-// TODO: Pick relevant exports
-export * from './schema/actions'
 
 // tables
 export { TableV2 } from './table'
-export { PrimaryKeyParser } from './table/actions/primaryKeyParser'
+export { PrimaryKeyParser } from './table/actions/parsePrimaryKey'
+export type { PrimaryKey } from './table/actions/parsePrimaryKey'
 export { QueryCommand } from './table/actions/queryCommand'
 export type { QueryOptions, QueryResponse } from './table/actions/queryCommand'
 export { ScanCommand } from './table/actions/scanCommand'
 export type { ScanOptions, ScanResponse } from './table/actions/scanCommand'
+export type { IndexNames, IndexSchema } from './table/actions/indexes'
 // TODO: Pick relevant types
 export * from './table/types'
-// TODO: Pick relevant types
-export * from './table/generics'
 
 // entities
 export { EntityV2 } from './entity'
@@ -57,9 +76,17 @@ export { UpdateItemTransaction } from './entity/actions/transactions/transactUpd
 export { DeleteItemTransaction } from './entity/actions/transactions/transactDeleteItem'
 export { ConditionCheck } from './entity/actions/transactions/conditionCheck'
 export type { EntityPaths, EntityPathsIntersection } from './entity/actions/paths'
-export { EntityFormatter } from './entity/actions/formatter'
-// TODO: Pick relevant types
-export * from './entity/generics'
+export { EntityFormatter } from './entity/actions/format'
+export type { FormattedItem } from './entity/actions/format'
+export { EntityParser } from './entity/actions/parse'
+export type {
+  ParsedItemOptions,
+  ParsedItem,
+  SavedItem,
+  EntityParseOptions
+} from './entity/actions/parse'
+export { EntityTParser } from './entity/actions/tParse'
+export type { EntityParserInput, KeyInput } from './entity/actions/tParse'
 
 // operations: TO REMOVE
 export { parseCondition } from './operations/expression/condition/parse'

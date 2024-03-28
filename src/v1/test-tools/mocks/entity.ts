@@ -1,5 +1,5 @@
 import type { EntityV2 } from 'v1/entity'
-import type { KeyInput } from 'v1/operations/types/KeyInput'
+import type { KeyInput } from 'v1/entity/actions/tParse'
 import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/entity/actions/commands/getItem'
 import type { GetItemCommandClass } from 'v1/entity/actions/commands/getItem/getItemCommand'
 import {

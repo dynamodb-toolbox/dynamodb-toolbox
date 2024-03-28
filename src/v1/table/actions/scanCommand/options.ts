@@ -1,5 +1,5 @@
 import type { TableV2 } from 'v1/table'
-import type { IndexNames } from 'v1/table/generics'
+import type { IndexNames } from 'v1/table/actions/indexes'
 import type { EntityV2 } from 'v1/entity'
 import type { EntityPathsIntersection } from 'v1/entity/actions/paths'
 import type { CapacityOption } from 'v1/operations/constants/options/capacity'

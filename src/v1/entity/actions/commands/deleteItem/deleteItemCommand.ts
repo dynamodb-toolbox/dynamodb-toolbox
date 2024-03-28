@@ -2,13 +2,12 @@ import type { O } from 'ts-toolbelt'
 import { DeleteCommandInput, DeleteCommand, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import type { FormattedItem } from 'v1/entity/generics'
-import { EntityFormatter } from 'v1/entity/actions/formatter'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
+import type { KeyInput } from 'v1/entity/actions/tParse'
 import type {
   NoneReturnValuesOption,
   AllOldReturnValuesOption
 } from 'v1/operations/constants/options/returnValues'
-import type { KeyInput } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { DeleteItemOptions, DeleteItemCommandReturnValuesOption } from './options'

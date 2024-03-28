@@ -2,9 +2,8 @@ import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 import omit from 'lodash.omit'
 
-import { PrimaryKeyParser } from 'v1/table/actions/primaryKeyParser'
 import type { EntityV2 } from 'v1/entity'
-import { Parser } from 'v1/schema/actions/parse'
+import { EntityParser } from 'v1/entity/actions/parse'
 
 import type { UpdateItemInput } from '../types'
 import type { UpdateItemOptions } from '../options'
@@ -20,23 +19,16 @@ export const updateItemParams = <
   input: UpdateItemInput<ENTITY>,
   updateItemOptions: OPTIONS = {} as OPTIONS
 ): UpdateCommandInput => {
-  const parser = entity.schema.build(Parser).start(input, {
+  const { item, key } = entity.build(EntityParser).parse(input, {
     operation: 'update',
     parseExtension: parseUpdateExtension
   })
-  parser.next() // defaulted
-  parser.next() // linked
-  const validInput = parser.next().value
-  const transformedInput = parser.next().value
-
-  const keyInput = entity.computeKey ? entity.computeKey(validInput) : transformedInput
-  const primaryKey = entity.table.build(PrimaryKeyParser).parse(keyInput)
 
   const {
     ExpressionAttributeNames: updateExpressionAttributeNames,
     ExpressionAttributeValues: updateExpressionAttributeValues,
     ...update
-  } = parseUpdate(entity, omit(transformedInput, Object.keys(primaryKey)))
+  } = parseUpdate(entity, omit(item, Object.keys(key)))
 
   const {
     ExpressionAttributeNames: optionsExpressionAttributeNames,
@@ -56,7 +48,7 @@ export const updateItemParams = <
 
   return {
     TableName: entity.table.getName(),
-    Key: primaryKey,
+    Key: key,
     ...update,
     ...options,
     ...(!isEmpty(ExpressionAttributeNames) ? { ExpressionAttributeNames } : {}),

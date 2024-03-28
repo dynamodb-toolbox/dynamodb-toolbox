@@ -1,8 +1,8 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
+import type { KeyInput } from 'v1/entity/actions/tParse'
 import { DynamoDBToolboxError } from 'v1/errors'
-import type { KeyInput } from 'v1/operations/types'
 
 import type { DeleteItemTransactionOptions } from './options'
 import { transactDeleteItemParams, TransactDeleteItemParams } from './transactDeleteItemParams'

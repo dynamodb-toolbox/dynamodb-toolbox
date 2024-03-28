@@ -2,17 +2,17 @@ import type { If } from 'v1/types/if'
 import type { Schema } from 'v1/schema'
 import type { ParserInput } from 'v1/schema/actions/tParse'
 import type { TableV2 } from 'v1/table'
-import type { PrimaryKey } from 'v1/table/generics'
+import type { PrimaryKey } from 'v1/table/actions/parsePrimaryKey'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { NeedsKeyCompute } from './generics'
 import {
   TimestampsOptions,
   TimestampsDefaultOptions,
   NarrowTimestampsOptions,
   doesSchemaValidateTableSchema,
   addInternalAttributes,
-  WithInternalAttributes
+  WithInternalAttributes,
+  NeedsKeyCompute
 } from './utils'
 
 export class EntityV2<

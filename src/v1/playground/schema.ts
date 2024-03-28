@@ -9,7 +9,6 @@ import {
   any,
   schema,
   FormattedValue,
-  SavedItem,
   ParserInput
 } from 'v1'
 import { Parser } from 'v1/schema/actions/parse'
@@ -93,5 +92,4 @@ const playgroundSchema3 = schema({
   anyvalue: any()
 })
 
-type PlaygroundSchema3SavedItem = SavedItem<typeof playgroundSchema3>
 type PlaygroundSchema3KeyInput = ParserInput<typeof playgroundSchema3, { operation: 'key' }>
