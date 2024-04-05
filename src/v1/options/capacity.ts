@@ -10,7 +10,7 @@ export const capacityOptionsSet = new Set<CapacityOption>(['NONE', 'TOTAL', 'IND
 
 export const parseCapacityOption = (capacity: CapacityOption): CapacityOption => {
   if (!capacityOptionsSet.has(capacity)) {
-    throw new DynamoDBToolboxError('operations.invalidCapacityOption', {
+    throw new DynamoDBToolboxError('options.invalidCapacityOption', {
       message: `Invalid capacity option: '${String(capacity)}'. 'capacity' must be one of: ${[
         ...capacityOptionsSet
       ].join(', ')}.`,

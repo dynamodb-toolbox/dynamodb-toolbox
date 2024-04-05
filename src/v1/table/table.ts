@@ -70,7 +70,7 @@ export class TableV2<
 
   getDocumentClient = () => {
     if (this.documentClient === undefined) {
-      throw new DynamoDBToolboxError('operations.missingDocumentClient', {
+      throw new DynamoDBToolboxError('actions.missingDocumentClient', {
         message: 'You need to set a document client on your table to send a command'
       })
     }

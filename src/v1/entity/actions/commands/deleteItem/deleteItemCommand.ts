@@ -62,7 +62,7 @@ export class DeleteItemCommand<
 
   params(): DeleteCommandInput {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }

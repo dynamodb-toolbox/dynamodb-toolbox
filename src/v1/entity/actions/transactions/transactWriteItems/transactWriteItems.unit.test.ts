@@ -151,7 +151,7 @@ describe('generateTransactWriteCommandInput', () => {
 
     expect(invalidTransactWriteCommandInputGeneration).toThrow(DynamoDBToolboxError)
     expect(invalidTransactWriteCommandInputGeneration).toThrow(
-      expect.objectContaining({ code: 'operations.unknownOption' })
+      expect.objectContaining({ code: 'options.unknownOption' })
     )
   })
   it('should generate a transaction with the correct parameters', async () => {

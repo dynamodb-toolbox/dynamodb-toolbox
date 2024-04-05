@@ -127,9 +127,7 @@ describe('delete', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
   it('sets metrics options', () => {
@@ -152,9 +150,7 @@ describe('delete', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidMetricsOption' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
   })
 
   it('sets returnValues options', () => {
@@ -178,7 +174,7 @@ describe('delete', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidReturnValuesOption' })
+      expect.objectContaining({ code: 'options.invalidReturnValuesOption' })
     )
   })
 
@@ -193,7 +189,7 @@ describe('delete', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
   it('sets condition', () => {
@@ -215,7 +211,7 @@ describe('delete', () => {
     const invalidCall = () => TestEntity.build(DeleteItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
   it('transformed key', () => {

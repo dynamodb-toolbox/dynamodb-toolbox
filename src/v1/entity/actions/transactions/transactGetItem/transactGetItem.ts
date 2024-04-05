@@ -56,7 +56,7 @@ export class GetItemTransaction<
 
   params = (): TransactGetItemParams => {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'GetItemTransaction incomplete: Missing "key" property'
       })
     }
