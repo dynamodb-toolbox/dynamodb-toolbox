@@ -217,7 +217,7 @@ describe('generateTransactGetCommandInput', () => {
 
     expect(invalidTransactGetCommandInputGeneration).toThrow(DynamoDBToolboxError)
     expect(invalidTransactGetCommandInputGeneration).toThrow(
-      expect.objectContaining({ code: 'operations.unknownOption' })
+      expect.objectContaining({ code: 'options.unknownOption' })
     )
   })
   it('should generate a transaction with the correct parameters', async () => {
@@ -412,7 +412,7 @@ describe('formatTransactGetResponse', () => {
 
     expect(invalidFormatting).toThrow(DynamoDBToolboxError)
     expect(invalidFormatting).toThrow(
-      expect.objectContaining({ code: 'operations.inconsistentNumberOfItems' })
+      expect.objectContaining({ code: 'actions.inconsistentNumberOfItems' })
     )
   })
 })

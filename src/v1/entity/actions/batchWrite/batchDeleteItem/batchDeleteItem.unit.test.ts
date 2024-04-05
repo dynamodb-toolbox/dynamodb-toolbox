@@ -38,6 +38,6 @@ describe('BatchDeleteItem', () => {
     const invalidCall = () => TestEntity.build(BatchDeleteItemRequest).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 })

@@ -124,7 +124,7 @@ export class QueryCommand<
 
   params = (): QueryCommandInput => {
     if (!this[$query]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'QueryCommand incomplete: Missing "query" property'
       })
     }

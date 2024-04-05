@@ -81,7 +81,7 @@ export class UpdateItemCommand<
 
   params(): UpdateCommandInput {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'UpdateItemCommand incomplete: Missing "item" property'
       })
     }

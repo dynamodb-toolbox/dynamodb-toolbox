@@ -82,7 +82,7 @@ export const formatTransactGetResponse = <TRANSACTIONS extends GetItemTransactio
   }
 
   if (response.Responses.length !== transactions.length) {
-    throw new DynamoDBToolboxError('operations.inconsistentNumberOfItems', {
+    throw new DynamoDBToolboxError('actions.inconsistentNumberOfItems', {
       message: 'Response length does not match the number of transactions',
       payload: {
         expected: transactions.length,
@@ -128,7 +128,7 @@ export const transactGetItems = async <TRANSACTIONS extends GetItemTransactionIn
     options?.dynamoDBDocumentClient || transactions?.[0]?.get()?.documentClient
 
   if (!dynamoDBDocumentClient) {
-    throw new DynamoDBToolboxError('operations.incompleteOperation', {
+    throw new DynamoDBToolboxError('actions.incompleteAction', {
       message: 'DynamoDBDocumentClient not found'
     })
   }

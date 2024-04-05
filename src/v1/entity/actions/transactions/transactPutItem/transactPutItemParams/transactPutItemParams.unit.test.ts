@@ -376,7 +376,7 @@ describe('put transaction', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
   it('sets condition', () => {
@@ -398,6 +398,6 @@ describe('put transaction', () => {
     const invalidCall = () => TestEntity.build(PutItemTransaction).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 })

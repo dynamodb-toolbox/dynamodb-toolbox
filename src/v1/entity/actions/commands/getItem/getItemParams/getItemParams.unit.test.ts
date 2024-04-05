@@ -129,9 +129,7 @@ describe('get', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
   it('sets consistent option', () => {
@@ -155,7 +153,7 @@ describe('get', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidConsistentOption' })
+      expect.objectContaining({ code: 'options.invalidConsistentOption' })
     )
   })
 
@@ -170,7 +168,7 @@ describe('get', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
   it('parses attribute projections', () => {
@@ -187,7 +185,7 @@ describe('get', () => {
     const invalidCall = () => TestEntity.build(GetItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
   it('transformed key', () => {

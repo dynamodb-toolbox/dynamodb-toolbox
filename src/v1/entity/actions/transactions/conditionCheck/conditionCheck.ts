@@ -35,13 +35,13 @@ export class ConditionCheck<ENTITY extends EntityV2 = EntityV2>
 
   params = (): ConditionCheckParams => {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'ConditionCheck incomplete: Missing "key" property'
       })
     }
 
     if (!this[$condition]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'ConditionCheck incomplete: Missing "condition" property'
       })
     }

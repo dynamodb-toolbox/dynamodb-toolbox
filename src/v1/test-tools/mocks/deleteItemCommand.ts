@@ -56,7 +56,7 @@ export class DeleteItemCommandMock<
 
   params(): DeleteCommandInput {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }
@@ -71,7 +71,7 @@ export class DeleteItemCommandMock<
 
     if (implementation !== undefined) {
       if (!this[$key]) {
-        throw new DynamoDBToolboxError('operations.incompleteOperation', {
+        throw new DynamoDBToolboxError('actions.incompleteAction', {
           message: 'DeleteItemCommand incomplete: Missing "key" property'
         })
       }

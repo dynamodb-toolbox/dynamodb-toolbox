@@ -43,7 +43,7 @@ export class DeleteItemTransaction<
 
   params(): TransactDeleteItemParams {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'DeleteItemTransaction incomplete: Missing "key" property'
       })
     }
