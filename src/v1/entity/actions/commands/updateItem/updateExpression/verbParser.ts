@@ -9,7 +9,7 @@ import {
 import { isNumber, isString } from 'v1/utils/validation'
 
 import type { ReferenceExtension, UpdateItemInputExtension } from '../types'
-import { hasGetOperation } from '../utils'
+import { isReferenceUpdate } from '../utils'
 import { $GET } from '../constants'
 import type { ParsedUpdate } from './type'
 
@@ -83,7 +83,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
       { operation: 'update'; extension: UpdateItemInputExtension }
     >
   ): void => {
-    if (hasGetOperation(validAttributeValue)) {
+    if (isReferenceUpdate(validAttributeValue)) {
       // TODO: Fix this cast
       const [expression, fallback] = validAttributeValue[$GET] as [
         string,

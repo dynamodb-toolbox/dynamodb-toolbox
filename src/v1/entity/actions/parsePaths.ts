@@ -5,7 +5,7 @@ const $pathParser = Symbol('$pathParser')
 type $pathParser = typeof $pathParser
 
 export class EntityPathParser<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
-  static operationName: 'parsePaths';
+  static actionName: 'parsePaths';
   [$pathParser]: PathParser<ENTITY['schema']>
 
   constructor(entity: ENTITY, id = '') {

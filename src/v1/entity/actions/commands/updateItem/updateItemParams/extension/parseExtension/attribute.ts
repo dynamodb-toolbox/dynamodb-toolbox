@@ -4,7 +4,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from '../../../types'
 import { $REMOVE } from '../../../constants'
-import { hasGetOperation } from '../../../utils'
+import { isReferenceUpdate } from '../../../utils'
 
 import { parseNumberExtension } from './number'
 import { parseSetExtension } from './set'
@@ -48,7 +48,7 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
     }
   }
 
-  if (hasGetOperation(input)) {
+  if (isReferenceUpdate(input)) {
     return parseReferenceExtension(attribute, input, options)
   }
 

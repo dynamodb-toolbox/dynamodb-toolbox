@@ -3,14 +3,14 @@ import { Parser, ExtensionParser, ExtensionParserOptions } from 'v1/schema/actio
 
 import type { UpdateItemInputExtension } from '../../../types'
 import { $ADD, $DELETE } from '../../../constants'
-import { hasAddOperation, hasDeleteOperation } from '../../../utils'
+import { isAddUpdate, isDeleteUpdate } from '../../../utils'
 
 export const parseSetExtension = (
   attribute: SetAttribute,
   input: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  if (hasAddOperation(input) && input[$ADD] !== undefined) {
+  if (isAddUpdate(input) && input[$ADD] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -29,7 +29,7 @@ export const parseSetExtension = (
     }
   }
 
-  if (hasDeleteOperation(input) && input[$DELETE] !== undefined) {
+  if (isDeleteUpdate(input) && input[$DELETE] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {

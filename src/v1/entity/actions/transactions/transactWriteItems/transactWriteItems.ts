@@ -25,7 +25,8 @@ export const getTransactWriteCommandInput = (
   }
 }
 
-/** Run a `TransactWriteItems` operation
+/**
+ * Send a collection of `WriteItemTransactions`
  *
  * @param transactions
  * @param options

@@ -17,7 +17,7 @@ import {
 
 export const $set = <VALUE>(value: VALUE): SET<VALUE> => ({ [$HAS_VERB]: true, [$SET]: value })
 
-export const hasSetOperation = (input: unknown): input is { [$SET]: unknown } =>
+export const isSetUpdate = (input: unknown): input is { [$SET]: unknown } =>
   isObject(input) && $SET in input
 
 export const $get = <
@@ -31,14 +31,14 @@ export const $get = <
   [$GET]: (fallback === undefined ? [reference] : [reference, fallback]) as any
 })
 
-export const hasGetOperation = (input: unknown): input is { [$GET]: unknown } =>
+export const isReferenceUpdate = (input: unknown): input is { [$GET]: unknown } =>
   isObject(input) && $GET in input
 
 export const $remove = (): $REMOVE => $REMOVE
 
 export const $sum = <A, B>(a: A, b: B): SUM<A, B> => ({ [$HAS_VERB]: true, [$SUM]: [a, b] })
 
-export const hasSumOperation = (input: unknown): input is { [$SUM]: unknown } =>
+export const isSumUpdate = (input: unknown): input is { [$SUM]: unknown } =>
   isObject(input) && $SUM in input
 
 export const $subtract = <A, B>(a: A, b: B): SUBTRACT<A, B> => ({
@@ -46,12 +46,12 @@ export const $subtract = <A, B>(a: A, b: B): SUBTRACT<A, B> => ({
   [$SUBTRACT]: [a, b]
 })
 
-export const hasSubtractOperation = (input: unknown): input is { [$SUBTRACT]: unknown } =>
+export const isSubtractUpdate = (input: unknown): input is { [$SUBTRACT]: unknown } =>
   isObject(input) && $SUBTRACT in input
 
 export const $add = <VALUE>(value: VALUE): ADD<VALUE> => ({ [$HAS_VERB]: true, [$ADD]: value })
 
-export const hasAddOperation = (input: unknown): input is { [$ADD]: unknown } =>
+export const isAddUpdate = (input: unknown): input is { [$ADD]: unknown } =>
   isObject(input) && $ADD in input
 
 export const $delete = <VALUE>(value: VALUE): DELETE<VALUE> => ({
@@ -59,7 +59,7 @@ export const $delete = <VALUE>(value: VALUE): DELETE<VALUE> => ({
   [$DELETE]: value
 })
 
-export const hasDeleteOperation = (input: unknown): input is { [$DELETE]: unknown } =>
+export const isDeleteUpdate = (input: unknown): input is { [$DELETE]: unknown } =>
   isObject(input) && $DELETE in input
 
 export const $append = <VALUE>(value: VALUE): APPEND<VALUE> => ({
@@ -67,7 +67,7 @@ export const $append = <VALUE>(value: VALUE): APPEND<VALUE> => ({
   [$APPEND]: value
 })
 
-export const hasAppendOperation = (input: unknown): input is { [$APPEND]: unknown } =>
+export const isAppendUpdate = (input: unknown): input is { [$APPEND]: unknown } =>
   isObject(input) && $APPEND in input
 
 export const $prepend = <VALUE>(value: VALUE): PREPEND<VALUE> => ({
@@ -75,5 +75,5 @@ export const $prepend = <VALUE>(value: VALUE): PREPEND<VALUE> => ({
   [$PREPEND]: value
 })
 
-export const hasPrependOperation = (input: unknown): input is { [$PREPEND]: unknown } =>
+export const isPrependUpdate = (input: unknown): input is { [$PREPEND]: unknown } =>
   isObject(input) && $PREPEND in input

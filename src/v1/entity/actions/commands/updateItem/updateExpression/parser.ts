@@ -9,14 +9,14 @@ import { isArray } from 'v1/utils/validation/isArray'
 import type { UpdateItemInputExtension } from '../types'
 import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants'
 import {
-  hasSetOperation,
-  hasGetOperation,
-  hasSumOperation,
-  hasSubtractOperation,
-  hasAddOperation,
-  hasDeleteOperation,
-  hasAppendOperation,
-  hasPrependOperation
+  isSetUpdate,
+  isReferenceUpdate,
+  isSumUpdate,
+  isSubtractUpdate,
+  isAddUpdate,
+  isDeleteUpdate,
+  isAppendUpdate,
+  isPrependUpdate
 } from '../utils'
 
 import type { ParsedUpdate } from './type'
@@ -48,7 +48,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (hasSetOperation(input)) {
+    if (isSetUpdate(input)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
@@ -57,7 +57,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (hasGetOperation(input)) {
+    if (isReferenceUpdate(input)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
@@ -71,7 +71,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (hasSumOperation(input)) {
+    if (isSumUpdate(input)) {
       // TODO: Fix this cast
       const [left, right] = input[$SUM] as [
         AttributeValue<UpdateItemInputExtension>,
@@ -86,7 +86,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (hasSubtractOperation(input)) {
+    if (isSubtractUpdate(input)) {
       // TODO: Fix this cast
       const [left, right] = input[$SUBTRACT] as [
         AttributeValue<UpdateItemInputExtension>,
@@ -101,7 +101,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (hasAddOperation(input)) {
+    if (isAddUpdate(input)) {
       this.add.beginNewInstruction()
       this.add.appendValidAttributePath(currentPath)
       this.add.appendToExpression(' ')
@@ -110,7 +110,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (hasDeleteOperation(input)) {
+    if (isDeleteUpdate(input)) {
       this.delete.beginNewInstruction()
       this.delete.appendValidAttributePath(currentPath)
       this.delete.appendToExpression(' ')
@@ -121,7 +121,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (hasAppendOperation(input)) {
+    if (isAppendUpdate(input)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = list_append(')
@@ -133,7 +133,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (hasPrependOperation(input)) {
+    if (isPrependUpdate(input)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = list_append(')

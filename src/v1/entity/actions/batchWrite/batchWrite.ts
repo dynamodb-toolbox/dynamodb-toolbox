@@ -12,7 +12,8 @@ import { BatchWriteItemRequest, $requestType } from './BatchWriteItemRequest'
 import type { BatchWriteOptions } from './options'
 import { parseBatchWriteOptions } from './parseBatchWriteOptions'
 
-/** Run a `BatchWriteItem` operation
+/**
+ * Send a collection of `BatchWriteItemRequest`
  *
  * @param requests
  * @param options

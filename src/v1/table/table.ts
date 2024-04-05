@@ -89,7 +89,7 @@ export class TableAction<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2[] = EntityV2[]
 > {
-  static operationName: string;
+  static actionName: string;
 
   [$table]: TABLE;
   [$entities]: ENTITIES

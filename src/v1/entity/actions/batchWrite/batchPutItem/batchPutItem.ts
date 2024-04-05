@@ -10,7 +10,7 @@ export const $item = Symbol('$item')
 export class BatchPutItemRequest<ENTITY extends EntityV2 = EntityV2>
   extends EntityAction<ENTITY>
   implements BatchWriteItemRequest<ENTITY, 'PutRequest'> {
-  static operationName = 'putBatch' as const;
+  static actionName = 'putBatch' as const;
 
   [$item]?: PutItemInput<ENTITY>
 

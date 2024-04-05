@@ -24,7 +24,7 @@ export const $formatter = Symbol('$formatter')
 export type $formatter = typeof $formatter
 
 export class EntityFormatter<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
-  static operationName: 'format';
+  static actionName: 'format';
   [$formatter]: Formatter<ENTITY['schema']>
 
   constructor(entity: ENTITY) {

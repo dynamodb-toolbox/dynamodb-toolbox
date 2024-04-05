@@ -1,7 +1,7 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
 type InvalidExpressionAttributePathErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidExpressionAttributePath'
+  code: 'actions.invalidExpressionAttributePath'
   hasPath: false
   payload: {
     attributePath: string

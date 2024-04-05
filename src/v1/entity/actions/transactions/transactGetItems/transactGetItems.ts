@@ -17,14 +17,14 @@ import type { TransactGetOptions } from './options'
 import { parseTransactGetOptions } from './parseTransactGetOptions'
 
 export const getTransactGetCommandInput = (
-  operations: GetItemTransactionInterface[],
+  getItemTransactions: GetItemTransactionInterface[],
   transactGetOptions: TransactGetOptions = {}
 ): TransactGetItemsInput => {
   const options = parseTransactGetOptions(transactGetOptions ?? {})
 
   return {
     ...options,
-    TransactItems: operations
+    TransactItems: getItemTransactions
       .map(command => command.get())
       .map(({ params, type }) => ({
         [type]: params
@@ -105,7 +105,8 @@ export const formatTransactGetResponse = <TRANSACTIONS extends GetItemTransactio
   return formattedResponses as ReturnedItems<TRANSACTIONS>
 }
 
-/** Run a `TransactGetItems` operation
+/**
+ * Send a collection of `GetItemTransaction`
  *
  * @param options Object { dynamoDBDocumentClient: Optional DynamoDBDocumentClient, transactGetOptions: Optional TransactGetOptions }
  * @param transactions Destructured array of Get Item transactions
