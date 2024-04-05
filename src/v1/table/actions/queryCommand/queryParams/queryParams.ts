@@ -7,7 +7,6 @@ import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import { EntityPathParser, EntityPaths } from 'v1/entity/actions/parsePaths'
 import { EntityConditionParser, EntityCondition } from 'v1/entity/actions/parseCondition'
-import type { Query } from 'v1/operations/types'
 
 import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
 import { parseIndexOption } from 'v1/operations/utils/parseOptions/parseIndexOption'
@@ -17,6 +16,7 @@ import { parseMaxPagesOption } from 'v1/operations/utils/parseOptions/parseMaxPa
 import { parseSelectOption } from 'v1/operations/utils/parseOptions/parseSelectOption'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
 
+import type { Query } from '../types'
 import type { QueryOptions } from '../options'
 import { parseQuery } from './parseQuery'
 
