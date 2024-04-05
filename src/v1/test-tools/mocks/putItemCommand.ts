@@ -24,7 +24,6 @@ export class PutItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > implements PutItemCommand<ENTITY, OPTIONS> {
-  static operationType = 'entity' as const
   static operationName = 'put' as const
   static [$operationName] = 'put' as const;
 

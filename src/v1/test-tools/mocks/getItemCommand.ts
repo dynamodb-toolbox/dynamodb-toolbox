@@ -20,7 +20,6 @@ export class GetItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > implements GetItemCommand<ENTITY, OPTIONS> {
-  static operationType = 'entity' as const
   static operationName = 'get' as const
   static [$operationName] = 'get' as const;
 
