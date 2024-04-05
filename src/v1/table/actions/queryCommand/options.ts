@@ -1,6 +1,6 @@
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
-import type { EntityPathsIntersection } from 'v1/entity/actions/paths'
+import type { EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
 import type { EntityCondition } from 'v1/entity/actions/parseCondition'
 import type { CapacityOption } from 'v1/operations/constants/options/capacity'
 import type {

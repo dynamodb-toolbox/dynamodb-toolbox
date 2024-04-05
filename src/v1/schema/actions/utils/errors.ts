@@ -8,4 +8,4 @@ type InvalidExpressionAttributePathErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-export type ExpressionParsersErrorBlueprints = InvalidExpressionAttributePathErrorBlueprint
+export type SchemaActionUtilsErrorBlueprints = InvalidExpressionAttributePathErrorBlueprint

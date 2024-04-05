@@ -1,5 +1,5 @@
 import type { Attribute, AnyOfAttribute } from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/paths'
+import type { Paths } from 'v1/schema/actions/parsePaths'
 import type { If } from 'v1/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
