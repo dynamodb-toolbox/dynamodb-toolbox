@@ -3,9 +3,9 @@ import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
 import { EntityPathParser } from 'v1/entity/actions/parsePaths'
-import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
-import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
-import { parseConsistentOption } from 'v1/operations/utils/parseOptions/parseConsistentOption'
+import { parseCapacityOption } from 'v1/options/capacity'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
+import { parseConsistentOption } from 'v1/options/consistent'
 
 import type { GetItemOptions } from '../options'
 

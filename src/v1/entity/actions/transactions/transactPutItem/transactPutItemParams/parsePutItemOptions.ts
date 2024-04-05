@@ -2,7 +2,7 @@ import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
 import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
-import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
 
 import { PutItemTransactionOptions } from '../options'
 import type { TransactPutItemParams } from './transactPutItemParams'

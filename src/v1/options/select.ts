@@ -1,7 +1,24 @@
 import isEmpty from 'lodash.isempty'
 
 import { DynamoDBToolboxError } from 'v1/errors'
-import { SelectOption, selectOptionsSet } from 'v1/operations/constants/options/select'
+
+export type AllAttributesSelectOption = 'ALL_ATTRIBUTES'
+export type AllProjectedAttributesSelectOption = 'ALL_PROJECTED_ATTRIBUTES'
+export type CountSelectOption = 'COUNT'
+export type SpecificAttributesSelectOption = 'SPECIFIC_ATTRIBUTES'
+
+export type SelectOption =
+  | AllAttributesSelectOption
+  | AllProjectedAttributesSelectOption
+  | CountSelectOption
+  | SpecificAttributesSelectOption
+
+export const selectOptionsSet = new Set<SelectOption>([
+  'ALL_ATTRIBUTES',
+  'ALL_PROJECTED_ATTRIBUTES',
+  'COUNT',
+  'SPECIFIC_ATTRIBUTES'
+])
 
 export const parseSelectOption = (
   select: SelectOption,
