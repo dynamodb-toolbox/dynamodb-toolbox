@@ -4,8 +4,7 @@ import isEmpty from 'lodash.isempty'
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import type { EntityPaths } from 'v1/entity/actions/paths'
-import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
-import type { Condition } from 'v1/operations/types'
+import { EntityConditionParser, EntityCondition } from 'v1/entity/actions/parseCondition'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
 import { parseIndexOption } from 'v1/operations/utils/parseOptions/parseIndexOption'
@@ -43,7 +42,7 @@ export const scanParams = <
     ...extraOptions
   } = scanOptions
 
-  const filters = (_filters ?? {}) as Record<string, Condition>
+  const filters = (_filters ?? {}) as Record<string, EntityCondition>
   const attributes = _attributes as EntityPaths[] | undefined
 
   const commandOptions: ScanCommandInput = {
