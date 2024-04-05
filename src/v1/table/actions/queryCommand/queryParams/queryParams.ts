@@ -5,7 +5,7 @@ import { isBoolean } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
-import type { EntityPaths } from 'v1/entity/actions/paths'
+import { EntityPathParser, EntityPaths } from 'v1/entity/actions/parsePaths'
 import { EntityConditionParser, EntityCondition } from 'v1/entity/actions/parseCondition'
 import type { Query } from 'v1/operations/types'
 
@@ -16,7 +16,6 @@ import { parseLimitOption } from 'v1/operations/utils/parseOptions/parseLimitOpt
 import { parseMaxPagesOption } from 'v1/operations/utils/parseOptions/parseMaxPagesOption'
 import { parseSelectOption } from 'v1/operations/utils/parseOptions/parseSelectOption'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
-import { parseProjection } from 'v1/operations/expression/projection/parse'
 
 import type { QueryOptions } from '../options'
 import { parseQuery } from './parseQuery'
@@ -133,14 +132,20 @@ export const queryParams = <
 
       // TODO: For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist.
       if (projectionExpression === undefined && attributes !== undefined) {
+        const { entityAttributeName } = entity
+
         const {
           ExpressionAttributeNames: projectionExpressionAttributeNames,
           ProjectionExpression
-        } = parseProjection<EntityV2, EntityPaths[]>(entity, [
-          // entityAttributeName is required at all times for formatting
-          ...(attributes.includes(entity.entityAttributeName) ? [] : [entity.entityAttributeName]),
-          ...attributes
-        ])
+        } = entity
+          .build(EntityPathParser)
+          .parse(
+            // entityAttributeName is required at all times for formatting
+            attributes.includes(entityAttributeName)
+              ? attributes
+              : [entityAttributeName, ...attributes]
+          )
+          .toCommandOptions()
 
         Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
         projectionExpression = ProjectionExpression

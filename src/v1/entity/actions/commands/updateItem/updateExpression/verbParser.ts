@@ -1,12 +1,12 @@
 import type { Schema } from 'v1/schema'
 import type { Attribute } from 'v1/schema/attributes'
 import type { ParsedValue } from 'v1/schema/actions/parse'
-import { isNumber, isString } from 'v1/utils/validation'
 import {
   ExpressionParser,
   appendAttributePath,
   AppendAttributePathOptions
-} from 'v1/operations/expression/expressionParser'
+} from 'v1/schema/actions/utils/appendAttributePath'
+import { isNumber, isString } from 'v1/utils/validation'
 
 import type { ReferenceExtension, UpdateItemInputExtension } from '../types'
 import { hasGetOperation } from '../utils'

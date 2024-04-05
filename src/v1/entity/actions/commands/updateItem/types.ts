@@ -24,7 +24,7 @@ import type {
   Always,
   Never
 } from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/paths'
+import type { Paths } from 'v1/schema/actions/parsePaths'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 import type { If } from 'v1/types/if'
 
