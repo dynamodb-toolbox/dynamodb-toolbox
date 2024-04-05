@@ -6,6 +6,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import type { EntityPaths } from 'v1/entity/actions/paths'
+import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
 import type { Condition, Query } from 'v1/operations/types'
 
 import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
@@ -15,7 +16,6 @@ import { parseLimitOption } from 'v1/operations/utils/parseOptions/parseLimitOpt
 import { parseMaxPagesOption } from 'v1/operations/utils/parseOptions/parseMaxPagesOption'
 import { parseSelectOption } from 'v1/operations/utils/parseOptions/parseSelectOption'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
-import { parseCondition } from 'v1/operations/expression/condition/parse'
 import { parseProjection } from 'v1/operations/expression/projection/parse'
 
 import type { QueryOptions } from '../options'
@@ -118,12 +118,14 @@ export const queryParams = <
         ExpressionAttributeNames: filterExpressionAttributeNames,
         ExpressionAttributeValues: filterExpressionAttributeValues,
         ConditionExpression: filterExpression
-      } = parseCondition<EntityV2, Condition<EntityV2>>(
-        entity,
-        entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter,
+      } = entity
+        .build(EntityConditionParser)
         // Need to add +1 to take KeyConditionExpression into account
-        (index + 1).toString()
-      )
+        .setId((index + 1).toString())
+        .parse(
+          entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter
+        )
+        .toCommandOptions()
 
       Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
       Object.assign(expressionAttributeValues, filterExpressionAttributeValues)

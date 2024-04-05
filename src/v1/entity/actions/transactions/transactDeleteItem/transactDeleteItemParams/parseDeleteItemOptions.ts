@@ -1,7 +1,7 @@
 import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
-import { parseCondition } from 'v1/operations/expression/condition/parse'
+import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
 
 import { DeleteItemTransactionOptions } from '../options'
@@ -22,7 +22,7 @@ export const parseDeleteItemTransactionOptions = <ENTITY extends EntityV2>(
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = parseCondition(entity, condition)
+    } = entity.build(EntityConditionParser).parse(condition).toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       transactionOptions.ExpressionAttributeNames = ExpressionAttributeNames

@@ -1,11 +1,11 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { EntityV2 } from 'v1/entity'
+import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
 import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
 import { parseMetricsOption } from 'v1/operations/utils/parseOptions/parseMetricsOption'
 import { parseReturnValuesOption } from 'v1/operations/utils/parseOptions/parseReturnValuesOption'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
-import { parseCondition } from 'v1/operations/expression/condition/parse'
 
 import { updateItemCommandReturnValuesOptionsSet, UpdateItemOptions } from '../options'
 
@@ -40,7 +40,7 @@ export const parseUpdateItemOptions = <ENTITY extends EntityV2>(
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = parseCondition(entity, condition)
+    } = entity.build(EntityConditionParser).parse(condition).toCommandOptions()
 
     commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
     commandOptions.ExpressionAttributeValues = ExpressionAttributeValues

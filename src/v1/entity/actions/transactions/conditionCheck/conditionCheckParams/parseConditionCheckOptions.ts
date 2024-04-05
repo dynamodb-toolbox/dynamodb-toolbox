@@ -1,8 +1,8 @@
 import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
+import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
 import type { Condition } from 'v1/operations/types'
-import { parseCondition } from 'v1/operations/expression/condition/parse'
 
 import type { ConditionCheckParams } from './conditionCheckParams'
 
@@ -12,11 +12,10 @@ export const parseConditionCheck = <ENTITY extends EntityV2>(
   entity: ENTITY,
   condition: Condition<ENTITY>
 ): TransactionOptions => {
-  const {
-    ExpressionAttributeNames,
-    ExpressionAttributeValues,
-    ConditionExpression
-  } = parseCondition(entity, condition)
+  const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
+    .build(EntityConditionParser)
+    .parse(condition)
+    .toCommandOptions()
 
   const transactionOptions: TransactionOptions = { ConditionExpression }
 
