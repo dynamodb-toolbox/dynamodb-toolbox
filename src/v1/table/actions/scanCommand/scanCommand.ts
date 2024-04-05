@@ -59,7 +59,7 @@ export class ScanCommand<
   ENTITIES extends EntityV2[] = EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
-  static operationName = 'scan' as const;
+  static actionName = 'scan' as const;
 
   [$options]: OPTIONS
 

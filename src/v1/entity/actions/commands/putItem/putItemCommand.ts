@@ -58,7 +58,7 @@ export class PutItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
-  static operationName = 'put' as const;
+  static actionName = 'put' as const;
 
   [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS

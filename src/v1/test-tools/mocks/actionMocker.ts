@@ -1,7 +1,7 @@
 import { isString } from 'v1/utils/validation/isString'
 
-import type { OperationName } from './types'
-import { $operationName, $mockedEntity, $mockedImplementations } from './constants'
+import type { ActionName } from './types'
+import { $actionName, $mockedEntity, $mockedImplementations } from './constants'
 
 // NOTE: Those types come from @aws-sdk
 interface Error {
@@ -30,35 +30,33 @@ interface AwsError
   $service?: string
 }
 
-export class OperationMocker<OPERATION_NAME extends OperationName, INPUT, OPTIONS, RESPONSE> {
-  [$operationName]: OPERATION_NAME;
+export class ActionMocker<ACTION_NAME extends ActionName, INPUT, OPTIONS, RESPONSE> {
+  [$actionName]: ACTION_NAME;
   [$mockedEntity]: {
     [$mockedImplementations]: Partial<
-      Record<OPERATION_NAME, (input: INPUT, options?: OPTIONS) => RESPONSE>
+      Record<ACTION_NAME, (input: INPUT, options?: OPTIONS) => RESPONSE>
     >
   }
 
   constructor(
-    operationName: OPERATION_NAME,
+    actionName: ACTION_NAME,
     mockedEntity: {
       [$mockedImplementations]: Partial<
-        Record<OPERATION_NAME, (input: INPUT, options?: OPTIONS) => RESPONSE>
+        Record<ACTION_NAME, (input: INPUT, options?: OPTIONS) => RESPONSE>
       >
     }
   ) {
-    this[$operationName] = operationName
+    this[$actionName] = actionName
     this[$mockedEntity] = mockedEntity
   }
 
-  resolve(response: RESPONSE): OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE> {
-    this[$mockedEntity][$mockedImplementations][this[$operationName]] = () => response
+  resolve(response: RESPONSE): ActionMocker<ACTION_NAME, INPUT, OPTIONS, RESPONSE> {
+    this[$mockedEntity][$mockedImplementations][this[$actionName]] = () => response
     return this
   }
 
-  reject(
-    error?: string | Error | AwsError
-  ): OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE> {
-    this[$mockedEntity][$mockedImplementations][this[$operationName]] = () => {
+  reject(error?: string | Error | AwsError): ActionMocker<ACTION_NAME, INPUT, OPTIONS, RESPONSE> {
+    this[$mockedEntity][$mockedImplementations][this[$actionName]] = () => {
       if (error === undefined || isString(error)) {
         throw new Error(error)
       } else {
@@ -71,8 +69,8 @@ export class OperationMocker<OPERATION_NAME extends OperationName, INPUT, OPTION
 
   mockImplementation(
     implementation: (key: INPUT, options?: OPTIONS) => RESPONSE
-  ): OperationMocker<OPERATION_NAME, INPUT, OPTIONS, RESPONSE> {
-    this[$mockedEntity][$mockedImplementations][this[$operationName]] = implementation
+  ): ActionMocker<ACTION_NAME, INPUT, OPTIONS, RESPONSE> {
+    this[$mockedEntity][$mockedImplementations][this[$actionName]] = implementation
 
     return this
   }

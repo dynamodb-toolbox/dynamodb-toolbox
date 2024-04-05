@@ -1,16 +1,16 @@
 import { isInteger } from 'v1/utils/validation'
 
-import { $receivedCommands } from './constants'
+import { $receivedActions } from './constants'
 
 export class CommandResults<INPUT, OPTIONS> {
-  [$receivedCommands]: [input?: INPUT, options?: OPTIONS][]
+  [$receivedActions]: [input?: INPUT, options?: OPTIONS][]
 
-  constructor(receivedCommands: [input?: INPUT, options?: OPTIONS][]) {
-    this[$receivedCommands] = receivedCommands
+  constructor(receivedActions: [input?: INPUT, options?: OPTIONS][]) {
+    this[$receivedActions] = receivedActions
   }
 
   count(): number {
-    return this[$receivedCommands].length
+    return this[$receivedActions].length
   }
 
   args(at: number): [input?: INPUT, options?: OPTIONS] | undefined {
@@ -18,10 +18,10 @@ export class CommandResults<INPUT, OPTIONS> {
       throw new Error('Please provide an integer when searching for received command arguments')
     }
 
-    return this[$receivedCommands][at]
+    return this[$receivedActions][at]
   }
 
   allArgs(): [input?: INPUT, options?: OPTIONS][] {
-    return this[$receivedCommands]
+    return this[$receivedActions]
   }
 }

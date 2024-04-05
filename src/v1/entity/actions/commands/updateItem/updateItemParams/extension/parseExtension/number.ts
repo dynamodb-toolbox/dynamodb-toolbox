@@ -6,7 +6,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInputExtension } from '../../../types'
 import { $SUM, $SUBTRACT, $ADD } from '../../../constants'
-import { hasSumOperation, hasSubtractOperation, hasAddOperation } from '../../../utils'
+import { isSumUpdate, isSubtractUpdate, isAddUpdate } from '../../../utils'
 
 import { parseReferenceExtension } from './reference'
 
@@ -15,7 +15,7 @@ export const parseNumberExtension = (
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  if (hasSumOperation(inputValue) && inputValue[$SUM] !== undefined) {
+  if (isSumUpdate(inputValue) && inputValue[$SUM] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -62,7 +62,7 @@ export const parseNumberExtension = (
     }
   }
 
-  if (hasSubtractOperation(inputValue) && inputValue[$SUBTRACT] !== undefined) {
+  if (isSubtractUpdate(inputValue) && inputValue[$SUBTRACT] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -110,7 +110,7 @@ export const parseNumberExtension = (
     }
   }
 
-  if (hasAddOperation(inputValue) && inputValue[$ADD] !== undefined) {
+  if (isAddUpdate(inputValue) && inputValue[$ADD] !== undefined) {
     const parser = number()
       .freeze(`${attribute.path}[$ADD]`)
       .build(Parser)

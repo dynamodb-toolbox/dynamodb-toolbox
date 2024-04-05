@@ -13,19 +13,19 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $operationName,
+  $actionName,
   $originalEntity,
   $mockedEntity,
   $mockedImplementations,
-  $receivedCommands
+  $receivedActions
 } from './constants'
 
 export class DeleteItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
 > implements DeleteItemCommand<ENTITY, OPTIONS> {
-  static operationName = 'delete' as const
-  static [$operationName] = 'delete' as const;
+  static actionName = 'delete' as const
+  static [$actionName] = 'delete' as const;
 
   [$entity]: ENTITY;
   [$key]?: KeyInput<ENTITY>;
@@ -64,7 +64,7 @@ export class DeleteItemCommandMock<
   }
 
   async send(): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
-    this[$mockedEntity][$receivedCommands].delete.push([this[$key], this[$options]])
+    this[$mockedEntity][$receivedActions].delete.push([this[$key], this[$options]])
 
     const implementation = this[$mockedEntity][$mockedImplementations].delete
 

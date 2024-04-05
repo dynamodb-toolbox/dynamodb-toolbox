@@ -9,19 +9,19 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $operationName,
+  $actionName,
   $originalEntity,
   $mockedEntity,
   $mockedImplementations,
-  $receivedCommands
+  $receivedActions
 } from './constants'
 
 export class GetItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > implements GetItemCommand<ENTITY, OPTIONS> {
-  static operationName = 'get' as const
-  static [$operationName] = 'get' as const;
+  static actionName = 'get' as const
+  static [$actionName] = 'get' as const;
 
   [$entity]: ENTITY;
   [$key]?: KeyInput<ENTITY>;
@@ -60,7 +60,7 @@ export class GetItemCommandMock<
   }
 
   async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
-    this[$mockedEntity][$receivedCommands].get.push([this[$key], this[$options]])
+    this[$mockedEntity][$receivedActions].get.push([this[$key], this[$options]])
 
     const implementation = this[$mockedEntity][$mockedImplementations].get
 

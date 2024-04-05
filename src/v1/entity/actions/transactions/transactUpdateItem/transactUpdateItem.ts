@@ -20,7 +20,7 @@ export class UpdateItemTransaction<
   >
   extends EntityAction<ENTITY>
   implements WriteItemTransaction<ENTITY, 'Update'> {
-  static operationName = 'transactUpdate' as const;
+  static actionName = 'transactUpdate' as const;
 
   [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS

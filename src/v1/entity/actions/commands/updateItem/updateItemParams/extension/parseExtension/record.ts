@@ -10,7 +10,7 @@ import { isObject } from 'v1/utils/validation/isObject'
 
 import type { UpdateItemInputExtension } from '../../../types'
 import { $SET, $REMOVE } from '../../../constants'
-import { hasSetOperation } from '../../../utils'
+import { isSetUpdate } from '../../../utils'
 
 import { parseUpdateExtension } from './attribute'
 
@@ -50,7 +50,7 @@ export const parseRecordExtension = (
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { transform = true } = options
 
-  if (hasSetOperation(input) && input[$SET] !== undefined) {
+  if (isSetUpdate(input) && input[$SET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {

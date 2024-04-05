@@ -67,7 +67,7 @@ export class QueryCommand<
   QUERY extends Query<TABLE> = Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
 > extends TableAction<TABLE, ENTITIES> {
-  static operationName = 'query' as const;
+  static actionName = 'query' as const;
 
   [$query]?: QUERY;
   [$options]: OPTIONS

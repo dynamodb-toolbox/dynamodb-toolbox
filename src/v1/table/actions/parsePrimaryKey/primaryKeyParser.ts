@@ -28,7 +28,7 @@ export type PrimaryKey<TABLE extends TableV2 = TableV2> = TableV2 extends TABLE
   : never
 
 export class PrimaryKeyParser<TABLE extends TableV2 = TableV2> extends TableAction<TABLE> {
-  static operationName = 'parsePrimaryKey' as const
+  static actionName = 'parsePrimaryKey' as const
 
   constructor(table: TABLE) {
     super(table)
@@ -44,7 +44,7 @@ export class PrimaryKeyParser<TABLE extends TableV2 = TableV2> extends TableActi
     const partitionKeyValue = keyInput[partitionKey.name]
 
     if (!partitionKeyValidator(partitionKeyValue)) {
-      throw new DynamoDBToolboxError('operations.parsePrimaryKey.invalidKeyPart', {
+      throw new DynamoDBToolboxError('actions.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid partition key: ${partitionKey.name}`,
         path: partitionKey.name,
         payload: {
@@ -68,7 +68,7 @@ export class PrimaryKeyParser<TABLE extends TableV2 = TableV2> extends TableActi
     const sortKeyValue = keyInput[sortKey.name]
 
     if (!sortKeyValidator(sortKeyValue)) {
-      throw new DynamoDBToolboxError('operations.parsePrimaryKey.invalidKeyPart', {
+      throw new DynamoDBToolboxError('actions.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid sort key: ${sortKey.name}`,
         path: sortKey.name,
         payload: {

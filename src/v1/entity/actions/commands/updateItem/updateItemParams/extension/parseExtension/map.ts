@@ -3,14 +3,14 @@ import { Parser, ExtensionParser, ExtensionParserOptions } from 'v1/schema/actio
 
 import type { UpdateItemInputExtension } from '../../../types'
 import { $SET } from '../../../constants'
-import { hasSetOperation } from '../../../utils'
+import { isSetUpdate } from '../../../utils'
 
 export const parseMapExtension = (
   attribute: MapAttribute,
   input: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  if (hasSetOperation(input) && input[$SET] !== undefined) {
+  if (isSetUpdate(input) && input[$SET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
