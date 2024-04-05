@@ -1,7 +1,5 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-import type { ExpressionParsersErrorBlueprints } from './expression/errors'
-
 type IncompleteOperationErrorBlueprint = ErrorBlueprint<{
   code: 'operations.incompleteOperation'
   hasPath: false
@@ -95,6 +93,5 @@ export type OperationsErrorBlueprints =
   | InvalidReturnValuesOptionErrorBlueprint
   | InvalidSelectOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
-  | ExpressionParsersErrorBlueprints
   | InconsistentNumberOfItemsErrorBlueprint
   | MissingDocumentClientErrorBlueprint

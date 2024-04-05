@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import type { Attribute } from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/paths'
+import type { Paths } from 'v1/schema/actions/parsePaths'
 
 import type {
   Condition,

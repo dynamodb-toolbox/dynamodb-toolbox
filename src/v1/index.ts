@@ -20,7 +20,8 @@ export type {
   FormattedValueDefaultOptions,
   FromFormatOptions
 } from './schema/actions/format'
-export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/paths'
+export { PathParser } from './schema/actions/parsePaths'
+export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/parsePaths'
 export { ConditionParser } from './schema/actions/parseCondition'
 export type { Condition } from './schema/actions/parseCondition'
 // TODO: Pick relevant exports
@@ -77,7 +78,8 @@ export { PutItemTransaction } from './entity/actions/transactions/transactPutIte
 export { UpdateItemTransaction } from './entity/actions/transactions/transactUpdateItem'
 export { DeleteItemTransaction } from './entity/actions/transactions/transactDeleteItem'
 export { ConditionCheck } from './entity/actions/transactions/conditionCheck'
-export type { EntityPaths, EntityPathsIntersection } from './entity/actions/paths'
+export { EntityPathParser } from './entity/actions/parsePaths'
+export type { EntityPaths } from './entity/actions/parsePaths'
 export { EntityFormatter } from './entity/actions/format'
 export type { FormattedItem } from './entity/actions/format'
 export { EntityParser } from './entity/actions/parse'
@@ -92,8 +94,6 @@ export type { EntityParserInput, KeyInput } from './entity/actions/tParse'
 export { EntityConditionParser } from './entity/actions/parseCondition'
 export type { EntityCondition } from './entity/actions/parseCondition'
 
-// operations: TO REMOVE
-export { parseProjection } from './operations/expression/projection/parse'
 // TODO: Pick relevant types
 export * from './operations/types'
 

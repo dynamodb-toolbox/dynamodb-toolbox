@@ -7,7 +7,7 @@ import {
 
 import { EntityV2, $entity } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { EntityPaths } from 'v1/entity/actions/paths'
+import type { EntityPaths } from 'v1/entity/actions/parsePaths'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 

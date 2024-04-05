@@ -1,38 +1,49 @@
-import type { Schema } from 'v1/schema'
+import { Schema, SchemaAction } from 'v1/schema'
 import type { Attribute } from 'v1/schema/attributes'
-import { appendAttributePath, ExpressionParser } from 'v1/operations/expression/expressionParser'
+import {
+  appendAttributePath,
+  ExpressionParser,
+  AppendAttributePathOptions
+} from 'v1/schema/actions/utils/appendAttributePath'
 
-import type { AppendAttributePathOptions } from '../expressionParser'
-
-export class ProjectionParser implements ExpressionParser {
-  schema: Schema | Attribute
+export class PathParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
+  extends SchemaAction<SCHEMA>
+  implements ExpressionParser {
   expressionAttributePrefix: `p${string}_`
   expressionAttributeNames: string[]
   expression: string
   id: string
 
-  constructor(schema: Schema | Attribute, id = '') {
-    this.schema = schema
+  constructor(schema: SCHEMA, id = '') {
+    super(schema)
+
     this.expressionAttributePrefix = `p${id}_`
     this.expressionAttributeNames = []
     this.expression = ''
     this.id = id
   }
 
-  resetExpression = (initialStr = '') => {
+  setId(nextId: string): this {
+    this.id = nextId
+    this.expressionAttributePrefix = `p${nextId}_`
+    return this
+  }
+
+  resetExpression(initialStr = ''): this {
     this.expression = initialStr
+    return this
   }
 
-  appendAttributePath = (
-    attributePath: string,
-    options: AppendAttributePathOptions = {}
-  ): Attribute => appendAttributePath(this, attributePath, options)
+  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): Attribute {
+    return appendAttributePath(this, attributePath, options)
+  }
 
-  appendToExpression = (projectionExpressionPart: string) => {
+  appendToExpression(projectionExpressionPart: string): this {
     this.expression += projectionExpressionPart
+    return this
   }
 
-  parseProjection = (attributes: string[]): void => {
+  parse(attributes: string[]): this {
     const [firstAttribute, ...restAttributes] = attributes
     this.appendAttributePath(firstAttribute)
 
@@ -40,15 +51,14 @@ export class ProjectionParser implements ExpressionParser {
       this.appendToExpression(', ')
       this.appendAttributePath(attribute)
     }
+
+    return this
   }
 
-  /**
-   * @debt refactor "factorize with other expressions"
-   */
-  toCommandOptions = (): {
+  toCommandOptions(): {
     ProjectionExpression: string
     ExpressionAttributeNames: Record<string, string>
-  } => {
+  } {
     const ExpressionAttributeNames: Record<string, string> = {}
 
     this.expressionAttributeNames.forEach((expressionAttributeName, index) => {
@@ -65,8 +75,8 @@ export class ProjectionParser implements ExpressionParser {
     }
   }
 
-  clone = (schema?: Schema | Attribute): ProjectionParser => {
-    const clonedParser = new ProjectionParser(schema ?? this.schema, this.id)
+  clone(schema?: Schema | Attribute): PathParser {
+    const clonedParser = new PathParser(schema ?? this.schema, this.id)
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]
     clonedParser.expression = this.expression
