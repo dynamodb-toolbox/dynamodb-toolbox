@@ -7,7 +7,7 @@ import {
 
 import { EntityV2, $entity } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { EntityPaths } from 'v1/entity/actions/paths'
+import type { EntityPaths } from 'v1/entity/actions/parsePaths'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 
@@ -17,14 +17,14 @@ import type { TransactGetOptions } from './options'
 import { parseTransactGetOptions } from './parseTransactGetOptions'
 
 export const getTransactGetCommandInput = (
-  operations: GetItemTransactionInterface[],
+  getItemTransactions: GetItemTransactionInterface[],
   transactGetOptions: TransactGetOptions = {}
 ): TransactGetItemsInput => {
   const options = parseTransactGetOptions(transactGetOptions ?? {})
 
   return {
     ...options,
-    TransactItems: operations
+    TransactItems: getItemTransactions
       .map(command => command.get())
       .map(({ params, type }) => ({
         [type]: params
@@ -82,7 +82,7 @@ export const formatTransactGetResponse = <TRANSACTIONS extends GetItemTransactio
   }
 
   if (response.Responses.length !== transactions.length) {
-    throw new DynamoDBToolboxError('operations.inconsistentNumberOfItems', {
+    throw new DynamoDBToolboxError('actions.inconsistentNumberOfItems', {
       message: 'Response length does not match the number of transactions',
       payload: {
         expected: transactions.length,
@@ -105,7 +105,8 @@ export const formatTransactGetResponse = <TRANSACTIONS extends GetItemTransactio
   return formattedResponses as ReturnedItems<TRANSACTIONS>
 }
 
-/** Run a `TransactGetItems` operation
+/**
+ * Send a collection of `GetItemTransaction`
  *
  * @param options Object { dynamoDBDocumentClient: Optional DynamoDBDocumentClient, transactGetOptions: Optional TransactGetOptions }
  * @param transactions Destructured array of Get Item transactions
@@ -128,7 +129,7 @@ export const transactGetItems = async <TRANSACTIONS extends GetItemTransactionIn
     options?.dynamoDBDocumentClient || transactions?.[0]?.get()?.documentClient
 
   if (!dynamoDBDocumentClient) {
-    throw new DynamoDBToolboxError('operations.incompleteOperation', {
+    throw new DynamoDBToolboxError('actions.incompleteAction', {
       message: 'DynamoDBDocumentClient not found'
     })
   }

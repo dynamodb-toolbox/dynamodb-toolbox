@@ -10,13 +10,13 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import { TableV2, TableAction, $entities, $table } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { EntityPaths } from 'v1/entity/actions/paths'
-import type { CountSelectOption } from 'v1/operations/constants/options/select'
-import type { Query } from 'v1/operations/types'
+import type { EntityPaths } from 'v1/entity/actions/parsePaths'
+import type { CountSelectOption } from 'v1/options/select'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isString } from 'v1/utils/validation'
 
 import type { QueryOptions } from './options'
+import type { Query } from './types'
 import { queryParams } from './queryParams'
 
 const $query = Symbol('$query')
@@ -67,7 +67,7 @@ export class QueryCommand<
   QUERY extends Query<TABLE> = Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
 > extends TableAction<TABLE, ENTITIES> {
-  static operationName = 'query' as const;
+  static actionName = 'query' as const;
 
   [$query]?: QUERY;
   [$options]: OPTIONS
@@ -124,7 +124,7 @@ export class QueryCommand<
 
   params = (): QueryCommandInput => {
     if (!this[$query]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'QueryCommand incomplete: Missing "query" property'
       })
     }

@@ -9,7 +9,7 @@ import { isArray } from 'v1/utils/validation/isArray'
 
 import type { UpdateItemInputExtension } from '../../../types'
 import { $SET, $REMOVE, $APPEND, $PREPEND } from '../../../constants'
-import { hasSetOperation, hasAppendOperation, hasPrependOperation } from '../../../utils'
+import { isSetUpdate, isAppendUpdate, isPrependUpdate } from '../../../utils'
 
 import { parseReferenceExtension } from './reference'
 import { parseUpdateExtension } from './attribute'
@@ -62,7 +62,7 @@ export const parseListExtension = (
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { transform = true } = options
 
-  if (hasSetOperation(input) && input[$SET] !== undefined) {
+  if (isSetUpdate(input) && input[$SET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -82,7 +82,7 @@ export const parseListExtension = (
   }
 
   if (isObject(input) || isArray(input)) {
-    if (hasAppendOperation(input) && input[$APPEND] !== undefined) {
+    if (isAppendUpdate(input) && input[$APPEND] !== undefined) {
       const appendedValue = input[$APPEND]
 
       if (isArray(appendedValue)) {
@@ -129,7 +129,7 @@ export const parseListExtension = (
       }
     }
 
-    if (hasPrependOperation(input) && input[$PREPEND] !== undefined) {
+    if (isPrependUpdate(input) && input[$PREPEND] !== undefined) {
       const prependedValue = input[$PREPEND]
 
       if (isArray(prependedValue)) {

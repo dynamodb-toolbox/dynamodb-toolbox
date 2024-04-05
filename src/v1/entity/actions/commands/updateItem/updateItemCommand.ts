@@ -9,7 +9,7 @@ import type {
   UpdatedNewReturnValuesOption,
   AllOldReturnValuesOption,
   AllNewReturnValuesOption
-} from 'v1/operations/constants/options/returnValues'
+} from 'v1/options/returnValues'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInput } from './types'
@@ -58,7 +58,7 @@ export class UpdateItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
-  static operationName = 'update' as const;
+  static actionName = 'update' as const;
 
   [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS
@@ -81,7 +81,7 @@ export class UpdateItemCommand<
 
   params(): UpdateCommandInput {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'UpdateItemCommand incomplete: Missing "item" property'
       })
     }

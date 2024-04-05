@@ -25,7 +25,8 @@ export const getTransactWriteCommandInput = (
   }
 }
 
-/** Run a `TransactWriteItems` operation
+/**
+ * Send a collection of `WriteItemTransactions`
  *
  * @param transactions
  * @param options
@@ -44,7 +45,7 @@ export const transactWriteItems = async <TRANSACTIONS extends WriteItemTransacti
     options?.dynamoDBDocumentClient || transactions?.[0]?.get()?.documentClient
 
   if (!dynamoDBDocumentClient) {
-    throw new DynamoDBToolboxError('operations.incompleteOperation', {
+    throw new DynamoDBToolboxError('actions.incompleteAction', {
       message: 'DynamoDBDocumentClient not found'
     })
   }

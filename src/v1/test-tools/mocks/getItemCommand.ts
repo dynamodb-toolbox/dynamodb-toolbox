@@ -9,20 +9,19 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $operationName,
+  $actionName,
   $originalEntity,
   $mockedEntity,
   $mockedImplementations,
-  $receivedCommands
+  $receivedActions
 } from './constants'
 
 export class GetItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > implements GetItemCommand<ENTITY, OPTIONS> {
-  static operationType = 'entity' as const
-  static operationName = 'get' as const
-  static [$operationName] = 'get' as const;
+  static actionName = 'get' as const
+  static [$actionName] = 'get' as const;
 
   [$entity]: ENTITY;
   [$key]?: KeyInput<ENTITY>;
@@ -52,7 +51,7 @@ export class GetItemCommandMock<
 
   params(): GetCommandInput {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
@@ -61,13 +60,13 @@ export class GetItemCommandMock<
   }
 
   async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
-    this[$mockedEntity][$receivedCommands].get.push([this[$key], this[$options]])
+    this[$mockedEntity][$receivedActions].get.push([this[$key], this[$options]])
 
     const implementation = this[$mockedEntity][$mockedImplementations].get
 
     if (implementation !== undefined) {
       if (!this[$key]) {
-        throw new DynamoDBToolboxError('operations.incompleteOperation', {
+        throw new DynamoDBToolboxError('actions.incompleteAction', {
           message: 'GetItemCommand incomplete: Missing "key" property'
         })
       }

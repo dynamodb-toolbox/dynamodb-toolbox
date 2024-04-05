@@ -3,7 +3,7 @@ import type { Attribute } from 'v1/schema/attributes'
 import {
   isAttributePath,
   AppendAttributePathOptions
-} from 'v1/operations/expression/expressionParser'
+} from 'v1/schema/actions/utils/appendAttributePath'
 import type { ConditionParser } from './conditionParser'
 import type { AppendAttributeValueOptions } from './appendAttributeValue'
 

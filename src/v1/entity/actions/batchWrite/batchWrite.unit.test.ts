@@ -65,7 +65,7 @@ describe('buildBatchWriteCommandInput', () => {
     const invalidCall = () => getBatchWriteCommandInput([])
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
   it('batchWrites data to a single table', () => {
@@ -95,7 +95,7 @@ describe('buildBatchWriteCommandInput', () => {
       )
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
   it('sets capacity options', () => {
@@ -127,9 +127,7 @@ describe('buildBatchWriteCommandInput', () => {
         { capacity: 'test' }
       )
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
   it('sets metrics options', () => {
@@ -161,9 +159,7 @@ describe('buildBatchWriteCommandInput', () => {
         { metrics: 'test' }
       )
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidMetricsOption' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
   })
 
   it('batchWrites data to a single table with multiple items', () => {

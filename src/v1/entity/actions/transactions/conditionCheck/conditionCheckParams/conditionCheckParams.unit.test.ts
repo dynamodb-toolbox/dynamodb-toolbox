@@ -76,7 +76,7 @@ describe('condition check transaction', () => {
     const invalidCall = () => TestEntity.build(ConditionCheck).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
   it('missing condition', () => {
@@ -84,7 +84,7 @@ describe('condition check transaction', () => {
       TestEntity.build(ConditionCheck).key({ email: 'x', sort: 'y' }).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
   it('fails with invalid condition', () => {
@@ -98,6 +98,6 @@ describe('condition check transaction', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidCondition' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.invalidCondition' }))
   })
 })

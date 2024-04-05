@@ -1,18 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import { schema } from 'v1/schema'
-import {
-  any,
-  string,
-  number,
-  boolean,
-  binary,
-  set,
-  list,
-  map,
-  record,
-  anyOf
-} from 'v1/schema/attributes'
+import { schema, any, string, number, boolean, binary, set, list, map, record, anyOf } from 'v1'
 
 import type { Paths } from './paths'
 

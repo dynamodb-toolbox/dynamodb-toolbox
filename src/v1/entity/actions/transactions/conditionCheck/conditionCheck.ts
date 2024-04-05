@@ -17,7 +17,7 @@ export type $condition = typeof $condition
 export class ConditionCheck<ENTITY extends EntityV2 = EntityV2>
   extends EntityAction<ENTITY>
   implements WriteItemTransaction<ENTITY, 'ConditionCheck'> {
-  static operationName = 'conditionCheck' as const
+  static actionName = 'conditionCheck' as const
 
   private [$key]?: KeyInput<ENTITY>
   public key: (keyInput: KeyInput<ENTITY>) => ConditionCheck<ENTITY>
@@ -35,13 +35,13 @@ export class ConditionCheck<ENTITY extends EntityV2 = EntityV2>
 
   params = (): ConditionCheckParams => {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'ConditionCheck incomplete: Missing "key" property'
       })
     }
 
     if (!this[$condition]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'ConditionCheck incomplete: Missing "condition" property'
       })
     }

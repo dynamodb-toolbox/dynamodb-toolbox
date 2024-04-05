@@ -98,10 +98,10 @@ export class EntityV2<
     this.computeKey = computeKey as any
   }
 
-  build<OPERATION_CLASS extends EntityAction<this> = EntityAction<this>>(
-    operationClass: new (entity: this) => OPERATION_CLASS
-  ): OPERATION_CLASS {
-    return new operationClass(this)
+  build<ACTION_CLASS extends EntityAction<this> = EntityAction<this>>(
+    actionClass: new (entity: this) => ACTION_CLASS
+  ): ACTION_CLASS {
+    return new actionClass(this)
   }
 }
 
@@ -109,10 +109,7 @@ export const $entity = Symbol('$entity')
 export type $entity = typeof $entity
 
 export class EntityAction<ENTITY extends EntityV2 = EntityV2> {
-  // Still needed?
-  static operationType = 'entity'
-  // Still needed?
-  static operationName: string;
+  static actionName: string;
 
   [$entity]: ENTITY
 

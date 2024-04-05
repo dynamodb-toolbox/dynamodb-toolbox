@@ -9,7 +9,7 @@ type $conditionParser = typeof $conditionParser
 export class EntityConditionParser<
   ENTITY extends EntityV2 = EntityV2
 > extends EntityAction<ENTITY> {
-  static operationName: 'parseCondition';
+  static actionName: 'parseCondition';
   [$conditionParser]: ConditionParser<ENTITY['schema']>
 
   constructor(entity: ENTITY, id = '') {

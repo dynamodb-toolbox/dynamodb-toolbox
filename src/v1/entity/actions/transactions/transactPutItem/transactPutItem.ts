@@ -20,7 +20,7 @@ export class PutItemTransaction<
   >
   extends EntityAction<ENTITY>
   implements WriteItemTransaction<ENTITY, 'Put'> {
-  static operationName = 'transactPut' as const;
+  static actionName = 'transactPut' as const;
 
   [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS
@@ -43,7 +43,7 @@ export class PutItemTransaction<
 
   params(): TransactPutItemParams {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'PutItemTransaction incomplete: Missing "item" property'
       })
     }

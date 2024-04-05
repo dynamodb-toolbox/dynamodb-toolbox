@@ -21,9 +21,9 @@ import type { GetItemCommandMock } from './getItemCommand'
 import type { PutItemCommandMock } from './putItemCommand'
 import type { DeleteItemCommandMock } from './deleteItemCommand'
 import type { UpdateItemCommandMock } from './updateItemCommand'
-import type { $operationName } from './constants'
+import type { $actionName } from './constants'
 import type { CommandResults } from './commandResults'
-import type { OperationMocker } from './commandMocker'
+import type { ActionMocker } from './actionMocker'
 
 type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
   ? {
@@ -35,61 +35,56 @@ type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
     }
   : never
 
-type OperationMock =
+type ActionMock =
   | typeof GetItemCommandMock
   | typeof PutItemCommandMock
   | typeof DeleteItemCommandMock
   | typeof UpdateItemCommandMock
 
-export type OperationName = ClassStaticProperties<OperationMock>[$operationName]
+export type ActionName = ClassStaticProperties<ActionMock>[$actionName]
 
-export type OperationClassResults<
+export type ActionClassResults<
   ENTITY extends EntityV2,
-  OPERATION_CLASS extends
+  ACTION_CLASS extends
     | GetItemCommandClass
     | PutItemCommandClass
     | DeleteItemCommandClass
     | UpdateItemCommandClass
-> = OPERATION_CLASS extends GetItemCommandClass
+> = ACTION_CLASS extends GetItemCommandClass
   ? CommandResults<KeyInput<ENTITY>, GetItemOptions<ENTITY>>
-  : OPERATION_CLASS extends PutItemCommandClass
+  : ACTION_CLASS extends PutItemCommandClass
   ? CommandResults<PutItemInput<ENTITY>, PutItemOptions<ENTITY>>
-  : OPERATION_CLASS extends DeleteItemCommandClass
+  : ACTION_CLASS extends DeleteItemCommandClass
   ? CommandResults<KeyInput<ENTITY>, DeleteItemOptions<ENTITY>>
-  : OPERATION_CLASS extends UpdateItemCommandClass
+  : ACTION_CLASS extends UpdateItemCommandClass
   ? CommandResults<UpdateItemInput<ENTITY>, UpdateItemOptions<ENTITY>>
   : never
 
-export type OperationClassMocker<
+export type ActionClassMocker<
   ENTITY extends EntityV2,
-  OPERATION_CLASS extends
+  ACTION_CLASS extends
     | GetItemCommandClass
     | PutItemCommandClass
     | DeleteItemCommandClass
     | UpdateItemCommandClass
-> = OPERATION_CLASS extends GetItemCommandClass
-  ? OperationMocker<
-      'get',
-      KeyInput<ENTITY>,
-      GetItemOptions<ENTITY>,
-      Partial<GetItemResponse<ENTITY>>
-    >
-  : OPERATION_CLASS extends PutItemCommandClass
-  ? OperationMocker<
+> = ACTION_CLASS extends GetItemCommandClass
+  ? ActionMocker<'get', KeyInput<ENTITY>, GetItemOptions<ENTITY>, Partial<GetItemResponse<ENTITY>>>
+  : ACTION_CLASS extends PutItemCommandClass
+  ? ActionMocker<
       'put',
       PutItemInput<ENTITY>,
       PutItemOptions<ENTITY>,
       Partial<PutItemResponse<ENTITY>>
     >
-  : OPERATION_CLASS extends DeleteItemCommandClass
-  ? OperationMocker<
+  : ACTION_CLASS extends DeleteItemCommandClass
+  ? ActionMocker<
       'delete',
       KeyInput<ENTITY>,
       DeleteItemOptions<ENTITY>,
       Partial<DeleteItemResponse<ENTITY>>
     >
-  : OPERATION_CLASS extends UpdateItemCommandClass
-  ? OperationMocker<
+  : ACTION_CLASS extends UpdateItemCommandClass
+  ? ActionMocker<
       'update',
       UpdateItemInput<ENTITY>,
       UpdateItemOptions<ENTITY>,

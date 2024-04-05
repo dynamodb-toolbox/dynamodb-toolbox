@@ -1,75 +1,13 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
-import type { ExpressionParsersErrorBlueprints } from './expression/errors'
-
-type IncompleteOperationErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.incompleteOperation'
+type IncompleteActionErrorBlueprint = ErrorBlueprint<{
+  code: 'actions.incompleteAction'
   hasPath: false
   payload: undefined
 }>
 
-type InvalidCapacityOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidCapacityOption'
-  hasPath: false
-  payload: { capacity: unknown }
-}>
-
-type InvalidClientRequestTokenOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidClientRequestTokenOption'
-  hasPath: false
-  payload: { clientRequestToken: unknown }
-}>
-
-type InvalidConsistentOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidConsistentOption'
-  hasPath: false
-  payload: { consistent: unknown }
-}>
-
-type InvalidIndexOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidIndexOption'
-  hasPath: false
-  payload: { index: unknown }
-}>
-
-type InvalidLimitOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidLimitOption'
-  hasPath: false
-  payload: { limit: unknown }
-}>
-
-type InvalidMaxPagesOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidMaxPagesOption'
-  hasPath: false
-  payload: { maxPages: unknown }
-}>
-
-type InvalidMetricsOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidMetricsOption'
-  hasPath: false
-  payload: { metrics: unknown }
-}>
-
-type InvalidReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidReturnValuesOption'
-  hasPath: false
-  payload: { returnValues: unknown }
-}>
-
-type InvalidSelectOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidSelectOption'
-  hasPath: false
-  payload: { select: unknown }
-}>
-
-type UnknownOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.unknownOption'
-  hasPath: false
-  payload: { option: unknown }
-}>
-
 type InconsistentNumberOfItemsErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.inconsistentNumberOfItems'
+  code: 'actions.inconsistentNumberOfItems'
   hasPath: false
   payload: {
     received: number
@@ -78,13 +16,73 @@ type InconsistentNumberOfItemsErrorBlueprint = ErrorBlueprint<{
 }>
 
 type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.missingDocumentClient'
+  code: 'actions.missingDocumentClient'
   hasPath: false
   payload: undefined
 }>
 
+type InvalidCapacityOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidCapacityOption'
+  hasPath: false
+  payload: { capacity: unknown }
+}>
+
+type InvalidClientRequestTokenOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidClientRequestToken'
+  hasPath: false
+  payload: { clientRequestToken: unknown }
+}>
+
+type InvalidConsistentOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidConsistentOption'
+  hasPath: false
+  payload: { consistent: unknown }
+}>
+
+type InvalidIndexOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidIndexOption'
+  hasPath: false
+  payload: { index: unknown }
+}>
+
+type InvalidLimitOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidLimitOption'
+  hasPath: false
+  payload: { limit: unknown }
+}>
+
+type InvalidMaxPagesOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidMaxPagesOption'
+  hasPath: false
+  payload: { maxPages: unknown }
+}>
+
+type InvalidMetricsOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidMetricsOption'
+  hasPath: false
+  payload: { metrics: unknown }
+}>
+
+type InvalidReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidReturnValuesOption'
+  hasPath: false
+  payload: { returnValues: unknown }
+}>
+
+type InvalidSelectOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidSelectOption'
+  hasPath: false
+  payload: { select: unknown }
+}>
+
+type UnknownOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.unknownOption'
+  hasPath: false
+  payload: { option: unknown }
+}>
+
 export type OperationsErrorBlueprints =
-  | IncompleteOperationErrorBlueprint
+  | IncompleteActionErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
   | InvalidClientRequestTokenOptionErrorBlueprint
   | InvalidConsistentOptionErrorBlueprint
@@ -95,6 +93,5 @@ export type OperationsErrorBlueprints =
   | InvalidReturnValuesOptionErrorBlueprint
   | InvalidSelectOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
-  | ExpressionParsersErrorBlueprints
   | InconsistentNumberOfItemsErrorBlueprint
   | MissingDocumentClientErrorBlueprint

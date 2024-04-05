@@ -2,10 +2,10 @@ import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
-import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
-import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
-import { parseConsistentOption } from 'v1/operations/utils/parseOptions/parseConsistentOption'
-import { parseProjection } from 'v1/operations/expression/projection/parse'
+import { EntityPathParser } from 'v1/entity/actions/parsePaths'
+import { parseCapacityOption } from 'v1/options/capacity'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
+import { parseConsistentOption } from 'v1/options/consistent'
 
 import type { GetItemOptions } from '../options'
 
@@ -28,7 +28,10 @@ export const parseGetItemOptions = <ENTITY extends EntityV2>(
   }
 
   if (attributes !== undefined) {
-    const { ExpressionAttributeNames, ProjectionExpression } = parseProjection(entity, attributes)
+    const { ExpressionAttributeNames, ProjectionExpression } = entity
+      .build(EntityPathParser)
+      .parse(attributes)
+      .toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames

@@ -1,14 +1,15 @@
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
-import type { EntityPathsIntersection } from 'v1/entity/actions/paths'
+import type { EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
 import type { EntityCondition } from 'v1/entity/actions/parseCondition'
-import type { CapacityOption } from 'v1/operations/constants/options/capacity'
+import type { CapacityOption } from 'v1/options/capacity'
 import type {
   SelectOption,
   AllProjectedAttributesSelectOption,
   SpecificAttributesSelectOption
-} from 'v1/operations/constants/options/select'
-import type { Query } from 'v1/operations/types'
+} from 'v1/options/select'
+
+import type { Query } from './types'
 
 export type QueryOptions<
   TABLE extends TableV2 = TableV2,

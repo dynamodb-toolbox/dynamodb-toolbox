@@ -18,7 +18,7 @@ export type EntityParserInput<
 export type KeyInput<ENTITY extends EntityV2> = EntityParserInput<ENTITY, { operation: 'key' }>
 
 export class EntityTParser<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
-  static operationName: 'tParse'
+  static actionName: 'tParse'
   parser: EntityParser<ENTITY>
 
   constructor(entity: ENTITY) {

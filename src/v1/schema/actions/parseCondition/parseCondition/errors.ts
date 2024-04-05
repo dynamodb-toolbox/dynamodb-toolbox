@@ -1,7 +1,7 @@
 import type { ErrorBlueprint } from 'v1/errors/blueprint'
 
 type InvalidConditionErrorBlueprint = ErrorBlueprint<{
-  code: 'operations.invalidCondition'
+  code: 'actions.invalidCondition'
   hasPath: false
   payload: undefined
 }>

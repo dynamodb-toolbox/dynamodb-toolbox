@@ -10,8 +10,8 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import { TableV2, TableAction, $table, $entities } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { EntityPaths } from 'v1/entity/actions/paths'
-import type { CountSelectOption } from 'v1/operations/constants/options/select'
+import type { EntityPaths } from 'v1/entity/actions/parsePaths'
+import type { CountSelectOption } from 'v1/options/select'
 import { isString } from 'v1/utils/validation'
 
 import type { ScanOptions } from './options'
@@ -59,7 +59,7 @@ export class ScanCommand<
   ENTITIES extends EntityV2[] = EntityV2[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
-  static operationName = 'scan' as const;
+  static actionName = 'scan' as const;
 
   [$options]: OPTIONS
 

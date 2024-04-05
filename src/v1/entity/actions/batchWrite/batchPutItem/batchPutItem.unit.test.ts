@@ -39,6 +39,6 @@ describe('BatchPutItem', () => {
     const invalidCall = () => TestEntity.build(BatchPutItemRequest).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 })

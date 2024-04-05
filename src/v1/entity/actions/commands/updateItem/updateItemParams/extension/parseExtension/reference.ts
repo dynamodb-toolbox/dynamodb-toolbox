@@ -6,7 +6,7 @@ import { isString } from 'v1/utils/validation/isString'
 
 import type { UpdateItemInputExtension, ReferenceExtension } from '../../../types'
 import { $GET } from '../../../constants'
-import { hasGetOperation } from '../../../utils'
+import { isReferenceUpdate } from '../../../utils'
 
 export const parseReferenceExtension: ExtensionParser<
   ReferenceExtension,
@@ -16,7 +16,7 @@ export const parseReferenceExtension: ExtensionParser<
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ) => {
-  if (hasGetOperation(inputValue) && inputValue[$GET] !== undefined) {
+  if (isReferenceUpdate(inputValue) && inputValue[$GET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {

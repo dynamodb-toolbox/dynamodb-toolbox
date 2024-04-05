@@ -12,7 +12,8 @@ import { BatchWriteItemRequest, $requestType } from './BatchWriteItemRequest'
 import type { BatchWriteOptions } from './options'
 import { parseBatchWriteOptions } from './parseBatchWriteOptions'
 
-/** Run a `BatchWriteItem` operation
+/**
+ * Send a collection of `BatchWriteItemRequest`
  *
  * @param requests
  * @param options
@@ -41,7 +42,7 @@ export const getBatchWriteCommandInput = (
   const RequestItems: NonNullable<BatchWriteCommandInput>['RequestItems'] = {}
 
   if (requests.length === 0) {
-    throw new DynamoDBToolboxError('operations.incompleteOperation', {
+    throw new DynamoDBToolboxError('actions.incompleteAction', {
       message: 'BatchWrite command incomplete: No items supplied'
     })
   }

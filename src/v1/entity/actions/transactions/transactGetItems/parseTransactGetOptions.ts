@@ -1,7 +1,7 @@
 import type { TransactGetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
-import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
+import { parseCapacityOption } from 'v1/options/capacity'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
 
 import type { TransactGetOptions } from './options'
 

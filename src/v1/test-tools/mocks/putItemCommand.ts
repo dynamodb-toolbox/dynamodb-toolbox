@@ -13,20 +13,19 @@ import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'
 import {
-  $operationName,
+  $actionName,
   $originalEntity,
   $mockedEntity,
   $mockedImplementations,
-  $receivedCommands
+  $receivedActions
 } from './constants'
 
 export class PutItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > implements PutItemCommand<ENTITY, OPTIONS> {
-  static operationType = 'entity' as const
-  static operationName = 'put' as const
-  static [$operationName] = 'put' as const;
+  static actionName = 'put' as const
+  static [$actionName] = 'put' as const;
 
   [$entity]: ENTITY;
   [$item]?: PutItemInput<ENTITY>;
@@ -56,7 +55,7 @@ export class PutItemCommandMock<
 
   params(): PutCommandInput {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
@@ -65,13 +64,13 @@ export class PutItemCommandMock<
   }
 
   async send(): Promise<PutItemResponse<ENTITY, OPTIONS>> {
-    this[$mockedEntity][$receivedCommands].put.push([this[$item], this[$options]])
+    this[$mockedEntity][$receivedActions].put.push([this[$item], this[$options]])
 
     const implementation = this[$mockedEntity][$mockedImplementations].put
 
     if (implementation !== undefined) {
       if (!this[$item]) {
-        throw new DynamoDBToolboxError('operations.incompleteOperation', {
+        throw new DynamoDBToolboxError('actions.incompleteAction', {
           message: 'PutItemCommand incomplete: Missing "item" property'
         })
       }

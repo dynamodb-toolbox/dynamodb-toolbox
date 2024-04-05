@@ -10,7 +10,7 @@ import type {
   ResolvedPrimitiveAttribute,
   PrimitiveAttribute
 } from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/paths'
+import type { Paths } from 'v1/schema/actions/parsePaths'
 
 export type AnyAttributeCondition<
   ATTRIBUTE_PATH extends string,

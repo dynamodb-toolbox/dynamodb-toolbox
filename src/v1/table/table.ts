@@ -70,7 +70,7 @@ export class TableV2<
 
   getDocumentClient = () => {
     if (this.documentClient === undefined) {
-      throw new DynamoDBToolboxError('operations.missingDocumentClient', {
+      throw new DynamoDBToolboxError('actions.missingDocumentClient', {
         message: 'You need to set a document client on your table to send a command'
       })
     }
@@ -89,8 +89,7 @@ export class TableAction<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2[] = EntityV2[]
 > {
-  static operationType = 'table'
-  static operationName: string;
+  static actionName: string;
 
   [$table]: TABLE;
   [$entities]: ENTITIES

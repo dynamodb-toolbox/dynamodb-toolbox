@@ -9,7 +9,7 @@ import type {
   UpdatedNewReturnValuesOption,
   AllOldReturnValuesOption,
   AllNewReturnValuesOption
-} from 'v1/operations/constants/options/returnValues'
+} from 'v1/options/returnValues'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { PutItemInput } from './types'
@@ -58,7 +58,7 @@ export class PutItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
-  static operationName = 'put' as const;
+  static actionName = 'put' as const;
 
   [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS
@@ -81,7 +81,7 @@ export class PutItemCommand<
 
   params(): PutCommandInput {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }

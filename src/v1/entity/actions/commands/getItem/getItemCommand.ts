@@ -36,7 +36,7 @@ export class GetItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
-  static operationName = 'get' as const;
+  static actionName = 'get' as const;
 
   [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS
@@ -59,7 +59,7 @@ export class GetItemCommand<
 
   params(): GetCommandInput {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }

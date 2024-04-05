@@ -62,7 +62,7 @@ const TestEntity = new EntityV2({
     test_string: string().optional().updateDefault('default string'),
     test_number_default: number().optional().updateDefault(0),
     test_boolean_default: boolean().optional().updateDefault(false),
-    operationsCount: number()
+    touchCount: number()
       .putDefault(1)
       .updateDefault(() => $add(1))
   }).and(schema => ({
@@ -188,7 +188,7 @@ describe('update transaction', () => {
       '#s_7': '_ct',
       '#s_8': '_ct',
       '#s_9': '_md',
-      '#a_1': 'operationsCount'
+      '#a_1': 'touchCount'
     })
     expect(ExpressionAttributeValues).toStrictEqual({
       ':s_1': 'default string',
@@ -392,7 +392,7 @@ describe('update transaction', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallB = () =>
@@ -413,7 +413,7 @@ describe('update transaction', () => {
         .item({
           email: 'test-pk',
           sort: 'test-pk',
-          // @ts-expect-error $get is only available in SET operations
+          // @ts-expect-error $get is only available in SET updates
           test_number_default: $get('test_string', $add(42))
         })
         .params()
@@ -433,7 +433,7 @@ describe('update transaction', () => {
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
     expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallE = () =>
@@ -450,7 +450,7 @@ describe('update transaction', () => {
     expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  it('performs sum operation', () => {
+  it('performs sum update', () => {
     const {
       UpdateExpression: UpdateExpressionA,
       ExpressionAttributeNames: ExpressionAttributeNamesA,
@@ -533,7 +533,7 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesD).toMatchObject({ ':s_2': 5, ':s_3': 10 })
   })
 
-  it('rejects invalid sum operation', () => {
+  it('rejects invalid sum update', () => {
     const invalidCallA = () =>
       TestEntity.build(UpdateItemTransaction)
         .item({
@@ -572,7 +572,7 @@ describe('update transaction', () => {
 
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
     expect(invalidCallC).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallD = () =>
@@ -589,7 +589,7 @@ describe('update transaction', () => {
     expect(invalidCallD).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  it('performs subtract operation', () => {
+  it('performs subtract update', () => {
     const {
       UpdateExpression: UpdateExpressionA,
       ExpressionAttributeNames: ExpressionAttributeNamesA,
@@ -672,7 +672,7 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesD).toMatchObject({ ':s_2': 5, ':s_3': 10 })
   })
 
-  it('rejects invalid subtract operation', () => {
+  it('rejects invalid subtract update', () => {
     const invalidCallA = () =>
       TestEntity.build(UpdateItemTransaction)
         .item({
@@ -711,7 +711,7 @@ describe('update transaction', () => {
 
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
     expect(invalidCallC).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallD = () =>
@@ -728,7 +728,7 @@ describe('update transaction', () => {
     expect(invalidCallD).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  it('performs number and set add operations', () => {
+  it('performs number and set add updates', () => {
     const {
       UpdateExpression,
       ExpressionAttributeNames,
@@ -753,7 +753,7 @@ describe('update transaction', () => {
     })
   })
 
-  it('rejects an invalid number add operation', () => {
+  it('rejects an invalid number add update', () => {
     const invalidCallA = () =>
       TestEntity.build(UpdateItemTransaction)
         .item({
@@ -809,7 +809,7 @@ describe('update transaction', () => {
     })
   })
 
-  it('performs a delete operation on set', () => {
+  it('performs a delete update on set', () => {
     const {
       UpdateExpression,
       ExpressionAttributeNames,
@@ -834,7 +834,7 @@ describe('update transaction', () => {
     })
   })
 
-  it('rejects an invalid delete operation', () => {
+  it('rejects an invalid delete update', () => {
     const invalidCall = () =>
       TestEntity.build(UpdateItemTransaction)
         .item({
@@ -939,7 +939,7 @@ describe('update transaction', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallB = () =>
@@ -963,7 +963,7 @@ describe('update transaction', () => {
           email: 'test-pk',
           sort: 'test-pk',
           test_list: {
-            // @ts-expect-error $get is only available in SET operations
+            // @ts-expect-error $get is only available in SET updates
             2: $get('test_string', $add(42))
           }
         })
@@ -986,7 +986,7 @@ describe('update transaction', () => {
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
     expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallE = () =>
@@ -1147,7 +1147,7 @@ describe('update transaction', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
   })
 
@@ -1225,7 +1225,7 @@ describe('update transaction', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
   })
 
@@ -1310,7 +1310,7 @@ describe('update transaction', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallB = () =>
@@ -1334,7 +1334,7 @@ describe('update transaction', () => {
           email: 'test-pk',
           sort: 'test-pk',
           test_map: {
-            // @ts-expect-error $get is only available in SET operations
+            // @ts-expect-error $get is only available in SET updates
             optional: $get('test_number_default', $add(42))
           }
         })
@@ -1357,7 +1357,7 @@ describe('update transaction', () => {
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
     expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallE = () =>
@@ -1509,7 +1509,7 @@ describe('update transaction', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallB = () =>
@@ -1533,7 +1533,7 @@ describe('update transaction', () => {
           email: 'test-pk',
           sort: 'test-pk',
           test_record: {
-            // @ts-expect-error $get is only available in SET operations
+            // @ts-expect-error $get is only available in SET updates
             foo: $get('test_number_default', $add(42))
           }
         })
@@ -1556,7 +1556,7 @@ describe('update transaction', () => {
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
     expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'operations.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
 
     const invalidCallE = () =>
@@ -1700,7 +1700,7 @@ describe('update transaction', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
   it('sets conditions', () => {
@@ -1722,7 +1722,7 @@ describe('update transaction', () => {
     const invalidCall = () => TestEntity.build(UpdateItemTransaction).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
   it('transformed key/attribute (partial - 1)', () => {

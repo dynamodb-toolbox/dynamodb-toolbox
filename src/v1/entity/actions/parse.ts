@@ -25,7 +25,7 @@ const $parser = Symbol('$parser')
 type $parser = typeof $parser
 
 export class EntityParser<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
-  static operationName: 'parse';
+  static actionName: 'parse';
   [$parser]: Parser<ENTITY['schema']>
 
   constructor(entity: ENTITY) {
