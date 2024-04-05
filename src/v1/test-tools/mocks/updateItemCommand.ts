@@ -24,7 +24,6 @@ export class UpdateItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > implements UpdateItemCommand<ENTITY, OPTIONS> {
-  static operationType = 'entity' as const
   static operationName = 'update' as const
   static [$operationName] = 'update' as const;
 

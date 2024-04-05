@@ -24,7 +24,6 @@ export class DeleteItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
 > implements DeleteItemCommand<ENTITY, OPTIONS> {
-  static operationType = 'entity' as const
   static operationName = 'delete' as const
   static [$operationName] = 'delete' as const;
 
