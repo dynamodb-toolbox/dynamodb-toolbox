@@ -1,8 +1,8 @@
 import type { EntityV2 } from 'v1/entity'
+import type { EntityCondition } from 'v1/entity/actions/parseCondition'
 import type { CapacityOption } from 'v1/operations/constants/options/capacity'
 import type { MetricsOption } from 'v1/operations/constants/options/metrics'
 import type { ReturnValuesOption } from 'v1/operations/constants/options/returnValues'
-import type { Condition } from 'v1/operations/types'
 
 export type PutItemCommandReturnValuesOption = ReturnValuesOption
 
@@ -18,5 +18,5 @@ export interface PutItemOptions<ENTITY extends EntityV2 = EntityV2> {
   capacity?: CapacityOption
   metrics?: MetricsOption
   returnValues?: PutItemCommandReturnValuesOption
-  condition?: Condition<ENTITY>
+  condition?: EntityCondition<ENTITY>
 }

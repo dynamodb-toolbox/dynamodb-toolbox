@@ -1,4 +1,4 @@
-import type { AnyAttributeCondition, NonLogicalCondition, Condition } from 'v1/operations/types'
+import type { AnyAttributeCondition, NonLogicalCondition, Condition } from '../../condition'
 
 export type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte'
 export type ComparisonOperator = 'eq' | 'ne' | RangeOperator

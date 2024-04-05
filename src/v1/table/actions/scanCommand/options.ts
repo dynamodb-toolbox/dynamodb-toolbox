@@ -2,13 +2,13 @@ import type { TableV2 } from 'v1/table'
 import type { IndexNames } from 'v1/table/actions/indexes'
 import type { EntityV2 } from 'v1/entity'
 import type { EntityPathsIntersection } from 'v1/entity/actions/paths'
+import type { EntityCondition } from 'v1/entity/actions/parseCondition'
 import type { CapacityOption } from 'v1/operations/constants/options/capacity'
 import type {
   SelectOption,
   AllProjectedAttributesSelectOption,
   SpecificAttributesSelectOption
 } from 'v1/operations/constants/options/select'
-import type { Condition } from 'v1/operations/types'
 
 export type ScanOptions<
   TABLE extends TableV2 = TableV2,
@@ -19,8 +19,8 @@ export type ScanOptions<
   limit?: number
   maxPages?: number
   filters?: EntityV2[] extends ENTITIES
-    ? Record<string, Condition>
-    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
+    ? Record<string, EntityCondition>
+    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: EntityCondition<ENTITY> }
 } & (
   | { segment?: never; totalSegments?: never }
   // Either both segment & totalSegments are set, either none

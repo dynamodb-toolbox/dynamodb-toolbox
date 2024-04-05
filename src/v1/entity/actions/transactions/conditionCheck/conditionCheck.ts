@@ -1,9 +1,9 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
+import { DynamoDBToolboxError } from 'v1/errors'
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
 import type { KeyInput } from 'v1/entity/actions/tParse'
-import { DynamoDBToolboxError } from 'v1/errors'
-import type { Condition } from 'v1/operations/types'
+import type { EntityCondition } from 'v1/entity/actions/parseCondition'
 
 import type { WriteItemTransaction } from '../types'
 import { conditionCheckParams, ConditionCheckParams } from './conditionCheckParams'
@@ -21,10 +21,10 @@ export class ConditionCheck<ENTITY extends EntityV2 = EntityV2>
 
   private [$key]?: KeyInput<ENTITY>
   public key: (keyInput: KeyInput<ENTITY>) => ConditionCheck<ENTITY>
-  private [$condition]?: Condition<ENTITY>
-  public condition: (keyInput: Condition<ENTITY>) => ConditionCheck<ENTITY>
+  private [$condition]?: EntityCondition<ENTITY>
+  public condition: (keyInput: EntityCondition<ENTITY>) => ConditionCheck<ENTITY>
 
-  constructor(entity: ENTITY, key?: KeyInput<ENTITY>, condition?: Condition<ENTITY>) {
+  constructor(entity: ENTITY, key?: KeyInput<ENTITY>, condition?: EntityCondition<ENTITY>) {
     super(entity)
     this[$key] = key
     this[$condition] = condition

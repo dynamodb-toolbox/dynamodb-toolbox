@@ -1,4 +1,3 @@
-import type { EntityV2 } from 'v1/entity'
 import type { Schema } from 'v1/schema'
 import type {
   AnyAttribute,
@@ -155,15 +154,8 @@ export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends
     : never
   : never
 
-export type SchemaCondition<SCHEMA extends Schema = Schema> =
+export type Condition<SCHEMA extends Schema = Schema> =
   | NonLogicalCondition<SCHEMA>
-  | { and: SchemaCondition<SCHEMA>[] }
-  | { or: SchemaCondition<SCHEMA>[] }
-  | { not: SchemaCondition<SCHEMA> }
-
-export type Condition<ENTITY extends EntityV2 = EntityV2> = SchemaCondition<ENTITY['schema']>
-
-export interface ConditionOptions<ENTITY extends EntityV2 = EntityV2> {
-  /** Optional condition to apply to the operation */
-  condition?: Condition<ENTITY>
-}
+  | { and: Condition<SCHEMA>[] }
+  | { or: Condition<SCHEMA>[] }
+  | { not: Condition<SCHEMA> }

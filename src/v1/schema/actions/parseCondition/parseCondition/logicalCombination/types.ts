@@ -1,4 +1,4 @@
-import type { Condition } from 'v1/operations/types'
+import type { Condition } from '../../condition'
 
 export type LogicalCombinationOperator = 'and' | 'or'
 

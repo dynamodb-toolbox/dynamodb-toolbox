@@ -1,18 +1,19 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Schema, SchemaAction } from '../../schema'
+import type { Schema, SchemaAction } from 'v1/schema'
 import type { Attribute } from 'v1/schema/attributes'
-import type { Condition } from 'v1/operations/types'
 
 import {
   ExpressionParser,
   appendAttributePath,
   AppendAttributePathOptions
 } from 'v1/operations/expression/expressionParser'
+
 import { appendAttributeValue, AppendAttributeValueOptions } from './appendAttributeValue'
 import { appendAttributeValueOrPath } from './appendAttributeValueOrPath'
 import { parseCondition } from './parseCondition'
 import { toCommandOptions } from './toCommandOptions'
+import type { Condition } from './condition'
 
 export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
   implements SchemaAction<SCHEMA>, ExpressionParser {

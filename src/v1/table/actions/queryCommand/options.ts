@@ -1,13 +1,14 @@
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import type { EntityPathsIntersection } from 'v1/entity/actions/paths'
+import type { EntityCondition } from 'v1/entity/actions/parseCondition'
 import type { CapacityOption } from 'v1/operations/constants/options/capacity'
 import type {
   SelectOption,
   AllProjectedAttributesSelectOption,
   SpecificAttributesSelectOption
 } from 'v1/operations/constants/options/select'
-import type { Condition, Query } from 'v1/operations/types'
+import type { Query } from 'v1/operations/types'
 
 export type QueryOptions<
   TABLE extends TableV2 = TableV2,
@@ -20,8 +21,8 @@ export type QueryOptions<
   maxPages?: number
   reverse?: boolean
   filters?: EntityV2[] extends ENTITIES
-    ? Record<string, Condition>
-    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
+    ? Record<string, EntityCondition>
+    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: EntityCondition<ENTITY> }
 } & (QUERY['index'] extends string
   ? {
       // consistent must be false if a secondary index is queried

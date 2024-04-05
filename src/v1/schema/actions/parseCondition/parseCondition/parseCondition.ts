@@ -1,6 +1,6 @@
-import type { Condition } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 
+import type { Condition } from '../condition'
 import type { ConditionParser } from '../conditionParser'
 import { isComparisonCondition, parseComparisonCondition } from './comparison'
 import { isSingleArgFnCondition, parseSingleArgFnCondition } from './singleArgFn'

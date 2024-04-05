@@ -1,4 +1,4 @@
-import type { AnyAttributeCondition, NonLogicalCondition, Condition } from 'v1/operations/types'
+import type { AnyAttributeCondition, NonLogicalCondition, Condition } from '../../condition'
 
 export type InCondition = NonLogicalCondition &
   Extract<AnyAttributeCondition<string, string>, { in: unknown }>
