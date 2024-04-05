@@ -59,9 +59,9 @@ const defaultNumberAttribute = new PrimitiveAttribute({
   transform: undefined
 })
 
-class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'operations.invalidExpressionAttributePath'> {
+class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'actions.invalidExpressionAttributePath'> {
   constructor(attributePath: string) {
-    super('operations.invalidExpressionAttributePath', {
+    super('actions.invalidExpressionAttributePath', {
       message: `Unable to match expression attribute path with schema: ${attributePath}`,
       payload: { attributePath }
     })

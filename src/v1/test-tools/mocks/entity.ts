@@ -23,14 +23,14 @@ import {
 } from 'v1/entity/actions/commands/updateItem'
 import type { UpdateItemCommandClass } from 'v1/entity/actions/commands/updateItem/updateItemCommand'
 
-import type { OperationClassMocker, OperationClassResults, OperationName } from './types'
+import type { ActionClassMocker, ActionClassResults, ActionName } from './types'
 import { GetItemCommandMock } from './getItemCommand'
 import { PutItemCommandMock } from './putItemCommand'
 import { DeleteItemCommandMock } from './deleteItemCommand'
 import { UpdateItemCommandMock } from './updateItemCommand'
-import { OperationMocker } from './commandMocker'
+import { ActionMocker } from './actionMocker'
 import { CommandResults } from './commandResults'
-import { $originalEntity, $mockedImplementations, $receivedCommands } from './constants'
+import { $originalEntity, $mockedImplementations, $receivedActions } from './constants'
 
 export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
   [$originalEntity]: ENTITY;
@@ -47,7 +47,7 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
       options?: UpdateItemOptions<ENTITY>
     ) => UpdateItemResponse<ENTITY>
   }>;
-  [$receivedCommands]: {
+  [$receivedActions]: {
     get: [input?: KeyInput<ENTITY>, options?: GetItemOptions<ENTITY>][]
     put: [input?: PutItemInput<ENTITY>, options?: PutItemOptions<ENTITY>][]
     delete: [input?: KeyInput<ENTITY>, options?: DeleteItemOptions<ENTITY>][]
@@ -58,7 +58,7 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
     this[$originalEntity] = entity
 
     this[$mockedImplementations] = {}
-    this[$receivedCommands] = { get: [], put: [], delete: [], update: [] }
+    this[$receivedActions] = { get: [], put: [], delete: [], update: [] }
 
     entity.build = command => {
       switch (command) {
@@ -82,31 +82,31 @@ export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
 
   reset(): void {
     this[$mockedImplementations] = {}
-    this[$receivedCommands] = { get: [], put: [], delete: [], update: [] }
+    this[$receivedActions] = { get: [], put: [], delete: [], update: [] }
   }
 
   on<
-    OPERATION_CLASS extends
+    ACTION_CLASS extends
       | GetItemCommandClass
       | PutItemCommandClass
       | DeleteItemCommandClass
       | UpdateItemCommandClass
-  >(operation: OPERATION_CLASS): OperationClassMocker<ENTITY, OPERATION_CLASS> {
-    return new OperationMocker<OperationName, any, any, any>(
-      operation.operationName,
+  >(actionClass: ACTION_CLASS): ActionClassMocker<ENTITY, ACTION_CLASS> {
+    return new ActionMocker<ActionName, any, any, any>(
+      actionClass.actionName,
       this
-    ) as OperationClassMocker<ENTITY, OPERATION_CLASS>
+    ) as ActionClassMocker<ENTITY, ACTION_CLASS>
   }
 
   received<
-    OPERATION_CLASS extends
+    ACTION_CLASS extends
       | GetItemCommandClass
       | PutItemCommandClass
       | DeleteItemCommandClass
       | UpdateItemCommandClass
-  >(operation: OPERATION_CLASS): OperationClassResults<ENTITY, OPERATION_CLASS> {
+  >(actionClass: ACTION_CLASS): ActionClassResults<ENTITY, ACTION_CLASS> {
     return new CommandResults<unknown, unknown>(
-      this[$receivedCommands][operation.operationName]
-    ) as OperationClassResults<ENTITY, OPERATION_CLASS>
+      this[$receivedActions][actionClass.actionName]
+    ) as ActionClassResults<ENTITY, ACTION_CLASS>
   }
 }

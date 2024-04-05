@@ -36,7 +36,7 @@ export class GetItemTransaction<
   >
   extends EntityAction<ENTITY>
   implements GetItemTransactionInterface<ENTITY, OPTIONS> {
-  static operationName = 'transactGet' as const;
+  static actionName = 'transactGet' as const;
 
   [$key]?: KeyInput<ENTITY>
   key: (keyInput: KeyInput<ENTITY>) => GetItemTransaction<ENTITY>;

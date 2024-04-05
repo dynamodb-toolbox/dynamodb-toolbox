@@ -98,6 +98,6 @@ describe('condition check transaction', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.invalidCondition' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.invalidCondition' }))
   })
 })

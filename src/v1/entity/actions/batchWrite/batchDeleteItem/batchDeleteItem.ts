@@ -11,7 +11,7 @@ export const $key = Symbol('$key')
 export class BatchDeleteItemRequest<ENTITY extends EntityV2 = EntityV2>
   extends EntityAction<ENTITY>
   implements BatchWriteItemRequest<ENTITY, 'DeleteRequest'> {
-  static operationName = 'deleteBatch' as const;
+  static actionName = 'deleteBatch' as const;
 
   [$key]?: KeyInput<ENTITY>
 

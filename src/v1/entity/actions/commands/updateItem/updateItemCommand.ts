@@ -58,7 +58,7 @@ export class UpdateItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
-  static operationName = 'update' as const;
+  static actionName = 'update' as const;
 
   [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS

@@ -39,7 +39,7 @@ export class DeleteItemCommand<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
-  static operationName = 'delete' as const;
+  static actionName = 'delete' as const;
 
   [$key]?: KeyInput<ENTITY>;
   [$options]?: OPTIONS

@@ -109,8 +109,7 @@ export const $entity = Symbol('$entity')
 export type $entity = typeof $entity
 
 export class EntityAction<ENTITY extends EntityV2 = EntityV2> {
-  // Still needed?
-  static operationName: string;
+  static actionName: string;
 
   [$entity]: ENTITY
 

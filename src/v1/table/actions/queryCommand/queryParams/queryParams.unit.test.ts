@@ -162,7 +162,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'operations.invalidCondition' }))
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'actions.invalidCondition' }))
   })
 
   it('creates query on LSI', () => {
@@ -251,7 +251,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'operations.invalidCondition' }))
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'actions.invalidCondition' }))
 
     const invalidCallE = () =>
       TestTable.build(QueryCommand)
@@ -358,7 +358,7 @@ describe('query', () => {
         .params()
 
     expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'operations.invalidCondition' }))
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'actions.invalidCondition' }))
 
     const invalidCallE = () =>
       TestTable.build(QueryCommand)
