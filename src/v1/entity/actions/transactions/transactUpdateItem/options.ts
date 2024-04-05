@@ -1,6 +1,6 @@
 import type { EntityV2 } from 'v1/entity'
-import type { ConditionOptions } from 'v1/operations/types/condition'
+import type { EntityCondition } from 'v1/entity/actions/parseCondition'
 
-export type UpdateItemTransactionOptions<
-  ENTITY extends EntityV2 = EntityV2
-> = ConditionOptions<ENTITY>
+export interface UpdateItemTransactionOptions<ENTITY extends EntityV2 = EntityV2> {
+  condition?: EntityCondition<ENTITY>
+}

@@ -4,12 +4,15 @@ import _pick from 'lodash.pick'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { TableV2 } from 'v1/table'
-import { ConditionParser } from 'v1/operations/expression/condition/parser'
-import type { Condition, Query } from 'v1/operations/types'
-import type { PrimitiveAttributeExtraCondition } from 'v1/operations/types/condition'
-import { queryOperatorSet } from 'v1/operations/types/query'
 import { Schema } from 'v1/schema'
 import { PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema/attributes/primitive'
+import {
+  ConditionParser,
+  Condition,
+  PrimitiveAttributeExtraCondition
+} from 'v1/schema/actions/parseCondition'
+import type { Query } from 'v1/operations/types'
+import { queryOperatorSet } from 'v1/operations/types/query'
 
 const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0], 'type'> = {
   required: 'never',
@@ -96,7 +99,7 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
   }
 
   const conditionParser = new ConditionParser(indexSchema, '0')
-  conditionParser.parseCondition(condition)
+  conditionParser.parse(condition)
   const {
     ConditionExpression,
     ExpressionAttributeNames,

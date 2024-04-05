@@ -4,9 +4,11 @@ import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema/at
 import type { TableV2 } from 'v1/table'
 import type { IndexableKeyType, LocalIndex, GlobalIndex, Key } from 'v1/table/types'
 import type { IndexNames, IndexSchema } from 'v1/table/actions/indexes'
-import type { RangeOperator } from 'v1/operations/expression/condition/parser/parseCondition/comparison/types'
-import type { BeginsWithOperator } from 'v1/operations/expression/condition/parser/parseCondition/twoArgsFn/types'
-import type { BetweenOperator } from 'v1/operations/expression/condition/parser/parseCondition/between/types'
+import type {
+  RangeOperator,
+  BeginsWithOperator,
+  BetweenOperator
+} from 'v1/schema/actions/parseCondition'
 
 type QueryOperator = RangeOperator | BeginsWithOperator | BetweenOperator
 export const queryOperatorSet = new Set<QueryOperator>([
