@@ -9,7 +9,7 @@ import type {
   UpdatedNewReturnValuesOption,
   AllOldReturnValuesOption,
   AllNewReturnValuesOption
-} from 'v1/operations/constants/options/returnValues'
+} from 'v1/options/returnValues'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { PutItemInput } from './types'

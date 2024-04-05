@@ -11,7 +11,7 @@ import { TableV2, TableAction, $entities, $table } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
 import type { EntityPaths } from 'v1/entity/actions/parsePaths'
-import type { CountSelectOption } from 'v1/operations/constants/options/select'
+import type { CountSelectOption } from 'v1/options/select'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isString } from 'v1/utils/validation'
 

@@ -3,10 +3,10 @@ import isEmpty from 'lodash.isempty'
 
 import type { EntityV2 } from 'v1/entity'
 import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
-import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
-import { parseMetricsOption } from 'v1/operations/utils/parseOptions/parseMetricsOption'
-import { parseReturnValuesOption } from 'v1/operations/utils/parseOptions/parseReturnValuesOption'
-import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
+import { parseCapacityOption } from 'v1/options/capacity'
+import { parseMetricsOption } from 'v1/options/metrics'
+import { parseReturnValuesOption } from 'v1/options/returnValues'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
 
 import { putItemCommandReturnValuesOptionsSet, PutItemOptions } from '../options'
 

@@ -1,6 +1,6 @@
 import type { SchemaErrorBlueprints } from 'v1/schema/errors'
 import type { EntityErrorBlueprints } from 'v1/entity/errors'
-import type { OperationsErrorBlueprints } from 'v1/operations/errors'
+import type { OperationsErrorBlueprints } from 'v1/options/errors'
 import type { TableErrorBlueprints } from 'v1/table/errors'
 
 import type { ErrorBlueprint } from './blueprint'

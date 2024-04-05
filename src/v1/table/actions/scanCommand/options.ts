@@ -3,12 +3,12 @@ import type { IndexNames } from 'v1/table/actions/indexes'
 import type { EntityV2 } from 'v1/entity'
 import type { EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
 import type { EntityCondition } from 'v1/entity/actions/parseCondition'
-import type { CapacityOption } from 'v1/operations/constants/options/capacity'
+import type { CapacityOption } from 'v1/options/capacity'
 import type {
   SelectOption,
   AllProjectedAttributesSelectOption,
   SpecificAttributesSelectOption
-} from 'v1/operations/constants/options/select'
+} from 'v1/options/select'
 
 export type ScanOptions<
   TABLE extends TableV2 = TableV2,

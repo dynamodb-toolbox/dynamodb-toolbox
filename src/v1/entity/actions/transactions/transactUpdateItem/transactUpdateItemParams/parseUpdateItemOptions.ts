@@ -1,6 +1,6 @@
 import type { EntityV2 } from 'v1/entity'
 import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
-import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
 
 import type { UpdateItemTransactionOptions } from '../options'
 import type { TransactUpdateItemParams } from './transactUpdateItemParams'
