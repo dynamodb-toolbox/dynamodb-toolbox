@@ -12,11 +12,11 @@ import type { EntityV2 } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
 import type { EntityPaths } from 'v1/entity/actions/parsePaths'
 import type { CountSelectOption } from 'v1/operations/constants/options/select'
-import type { Query } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { isString } from 'v1/utils/validation'
 
 import type { QueryOptions } from './options'
+import type { Query } from './types'
 import { queryParams } from './queryParams'
 
 const $query = Symbol('$query')

@@ -11,8 +11,8 @@ import {
   Condition,
   PrimitiveAttributeExtraCondition
 } from 'v1/schema/actions/parseCondition'
-import type { Query } from 'v1/operations/types'
-import { queryOperatorSet } from 'v1/operations/types/query'
+
+import { queryOperatorSet, Query } from '../types'
 
 const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0], 'type'> = {
   required: 'never',
