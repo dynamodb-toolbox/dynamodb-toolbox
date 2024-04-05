@@ -32,7 +32,7 @@ export { TableV2 } from './table'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey'
 export { QueryCommand } from './table/actions/queryCommand'
-export type { QueryOptions, QueryResponse } from './table/actions/queryCommand'
+export type { Query, QueryOptions, QueryResponse } from './table/actions/queryCommand'
 export { ScanCommand } from './table/actions/scanCommand'
 export type { ScanOptions, ScanResponse } from './table/actions/scanCommand'
 export type { IndexNames, IndexSchema } from './table/actions/indexes'
@@ -93,9 +93,6 @@ export { EntityTParser } from './entity/actions/tParse'
 export type { EntityParserInput, KeyInput } from './entity/actions/tParse'
 export { EntityConditionParser } from './entity/actions/parseCondition'
 export type { EntityCondition } from './entity/actions/parseCondition'
-
-// TODO: Pick relevant types
-export * from './operations/types'
 
 export * from './errors'
 export * from './test-tools'

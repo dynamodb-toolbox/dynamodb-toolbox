@@ -8,7 +8,8 @@ import type {
   AllProjectedAttributesSelectOption,
   SpecificAttributesSelectOption
 } from 'v1/operations/constants/options/select'
-import type { Query } from 'v1/operations/types'
+
+import type { Query } from './types'
 
 export type QueryOptions<
   TABLE extends TableV2 = TableV2,
