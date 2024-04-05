@@ -1,5 +1,5 @@
 import type { EntityV2 } from 'v1/entity'
-import { parseCondition } from 'v1/operations/expression/condition/parse'
+import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
 
 import type { UpdateItemTransactionOptions } from '../options'
@@ -21,7 +21,7 @@ export const parseUpdateItemTransactionOptions = <ENTITY extends EntityV2>(
       ExpressionAttributeNames,
       ExpressionAttributeValues,
       ConditionExpression
-    } = parseCondition(entity, condition)
+    } = entity.build(EntityConditionParser).parse(condition).toCommandOptions()
 
     transactionOptions.ExpressionAttributeNames = ExpressionAttributeNames
     transactionOptions.ExpressionAttributeValues = ExpressionAttributeValues

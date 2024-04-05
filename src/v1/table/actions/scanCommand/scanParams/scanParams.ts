@@ -4,6 +4,7 @@ import isEmpty from 'lodash.isempty'
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import type { EntityPaths } from 'v1/entity/actions/paths'
+import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
 import type { Condition } from 'v1/operations/types'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { parseCapacityOption } from 'v1/operations/utils/parseOptions/parseCapacityOption'
@@ -14,7 +15,6 @@ import { parseMaxPagesOption } from 'v1/operations/utils/parseOptions/parseMaxPa
 import { parseSelectOption } from 'v1/operations/utils/parseOptions/parseSelectOption'
 import { rejectExtraOptions } from 'v1/operations/utils/parseOptions/rejectExtraOptions'
 import { isInteger } from 'v1/utils/validation/isInteger'
-import { parseCondition } from 'v1/operations/expression/condition/parse'
 import { parseProjection } from 'v1/operations/expression/projection/parse'
 
 import type { ScanOptions } from '../options'
@@ -123,11 +123,13 @@ export const scanParams = <
         ExpressionAttributeNames: filterExpressionAttributeNames,
         ExpressionAttributeValues: filterExpressionAttributeValues,
         ConditionExpression: filterExpression
-      } = parseCondition<EntityV2, Condition<EntityV2>>(
-        entity,
-        entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter,
-        index.toString()
-      )
+      } = entity
+        .build(EntityConditionParser)
+        .setId(index.toString())
+        .parse(
+          entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter
+        )
+        .toCommandOptions()
 
       Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
       Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
