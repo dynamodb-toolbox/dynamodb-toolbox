@@ -22,6 +22,7 @@ export type {
 } from './schema/actions/format'
 export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/paths'
 export { ConditionParser } from './schema/actions/parseCondition'
+export type { Condition } from './schema/actions/parseCondition'
 // TODO: Pick relevant exports
 export * from './schema/attributes'
 
@@ -89,6 +90,7 @@ export type {
 export { EntityTParser } from './entity/actions/tParse'
 export type { EntityParserInput, KeyInput } from './entity/actions/tParse'
 export { EntityConditionParser } from './entity/actions/parseCondition'
+export type { EntityCondition } from './entity/actions/parseCondition'
 
 // operations: TO REMOVE
 export { parseProjection } from './operations/expression/projection/parse'

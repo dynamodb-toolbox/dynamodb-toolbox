@@ -4,14 +4,14 @@ import type { Attribute } from 'v1/schema/attributes'
 import type { Paths } from 'v1/schema/actions/paths'
 
 import type {
-  SchemaCondition,
+  Condition,
   NonLogicalCondition,
   AttributeCondition,
   SharedAttributeCondition,
   TypeCondition,
   AttrOrSize
 } from './condition'
-import { mySchema } from './fixtures.test'
+import { mySchema } from './condition.fixture.test'
 
 type ATTRIBUTES = typeof mySchema['attributes']
 type ATTRIBUTE_PATHS = Paths<typeof mySchema>
@@ -237,6 +237,6 @@ const assertEntityCondition: A.Contains<
   | { or: NON_LOGICAL_CONDITION[] }
   | { and: NON_LOGICAL_CONDITION[] }
   | { not: NON_LOGICAL_CONDITION },
-  SchemaCondition<typeof mySchema>
+  Condition<typeof mySchema>
 > = 1
 assertEntityCondition

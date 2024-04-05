@@ -4,8 +4,8 @@ import type {
   NoneReturnValuesOption,
   AllOldReturnValuesOption
 } from 'v1/operations/constants/options/returnValues'
-import type { Condition } from 'v1/operations/types'
 import type { EntityV2 } from 'v1/entity'
+import type { EntityCondition } from 'v1/entity/actions/parseCondition'
 
 export type DeleteItemCommandReturnValuesOption = NoneReturnValuesOption | AllOldReturnValuesOption
 
@@ -17,5 +17,5 @@ export interface DeleteItemOptions<ENTITY extends EntityV2 = EntityV2> {
   capacity?: CapacityOption
   metrics?: MetricsOption
   returnValues?: DeleteItemCommandReturnValuesOption
-  condition?: Condition<ENTITY>
+  condition?: EntityCondition<ENTITY>
 }

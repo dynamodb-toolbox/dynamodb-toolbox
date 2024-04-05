@@ -6,9 +6,12 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import type { TableV2 } from 'v1/table'
 import { Schema } from 'v1/schema'
 import { PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema/attributes/primitive'
-import { ConditionParser } from 'v1/schema/actions/parseCondition'
-import type { Condition, Query } from 'v1/operations/types'
-import type { PrimitiveAttributeExtraCondition } from 'v1/operations/types/condition'
+import {
+  ConditionParser,
+  Condition,
+  PrimitiveAttributeExtraCondition
+} from 'v1/schema/actions/parseCondition'
+import type { Query } from 'v1/operations/types'
 import { queryOperatorSet } from 'v1/operations/types/query'
 
 const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0], 'type'> = {
