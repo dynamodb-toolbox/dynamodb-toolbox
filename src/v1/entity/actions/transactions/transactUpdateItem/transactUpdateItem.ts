@@ -43,7 +43,7 @@ export class UpdateItemTransaction<
 
   params(): TransactUpdateItemParams {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'UpdateItemTransaction incomplete: Missing "item" property'
       })
     }

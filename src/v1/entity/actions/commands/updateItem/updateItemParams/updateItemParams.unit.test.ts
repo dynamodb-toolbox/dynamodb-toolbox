@@ -1727,9 +1727,7 @@ describe('update', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidCapacityOption' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
   it('fails on invalid metrics option', () => {
@@ -1743,9 +1741,7 @@ describe('update', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidMetricsOption' })
-    )
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
   })
 
   it('fails on invalid returnValues option', () => {
@@ -1760,7 +1756,7 @@ describe('update', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'operations.invalidReturnValuesOption' })
+      expect.objectContaining({ code: 'options.invalidReturnValuesOption' })
     )
   })
 
@@ -1775,7 +1771,7 @@ describe('update', () => {
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.unknownOption' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
   it('sets conditions', () => {
@@ -1797,7 +1793,7 @@ describe('update', () => {
     const invalidCall = () => TestEntity.build(UpdateItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'operations.incompleteOperation' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
   it('transformed key/attribute (partial - 1)', () => {

@@ -28,7 +28,7 @@ export class BatchDeleteItemRequest<ENTITY extends EntityV2 = EntityV2>
 
   params() {
     if (!this[$key]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }

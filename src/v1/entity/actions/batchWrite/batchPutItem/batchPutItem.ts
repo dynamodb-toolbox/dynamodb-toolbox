@@ -27,7 +27,7 @@ export class BatchPutItemRequest<ENTITY extends EntityV2 = EntityV2>
 
   params() {
     if (!this[$item]) {
-      throw new DynamoDBToolboxError('operations.incompleteOperation', {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'PutBatchItemCommand incomplete: Missing "item" property'
       })
     }
