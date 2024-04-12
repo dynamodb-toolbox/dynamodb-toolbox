@@ -1,0 +1,33 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"],
+    "noImplicitReturns": true,
+    "declaration": true,
+    "declarationMap": true,
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": ".",
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "removeComments": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "target": "es2017",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "preserveSymlinks": true,
+    "jsx": "react",
+    "module": "esnext",
+    "noFallthroughCasesInSwitch": true
+  },
+  "exclude": ["./dist", "dependency-cruiser.js"],
+  "include": ["."]
+}
