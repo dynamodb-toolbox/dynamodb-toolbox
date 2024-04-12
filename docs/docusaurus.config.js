@@ -1,13 +1,18 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github')
-const darkCodeTheme = require('prism-react-renderer/themes/dracula')
+const lightCodeTheme = require('prism-react-renderer/themes/vsLight')
+const darkCodeTheme = require('prism-react-renderer/themes/vsDark')
+
+// @ts-expect-error bad typing
+lightCodeTheme.plain.backgroundColor = '#f8f8f8'
+// @ts-expect-error bad typing
+darkCodeTheme.plain.backgroundColor = '#242424'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'DynamoDB Toolbox',
-  tagline: 'Single Table Designs have never been this easy!',
+  tagline: 'DynamoDB Toolbox made easy!',
   url: 'https://www.dynamodbtoolbox.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -57,18 +62,14 @@ const config = {
     ({
       image: 'img/dynamodb-toolbox-card.png',
       navbar: {
+        hideOnScroll: true,
+        style: 'dark',
+        title: 'DynamoDB Toolbox',
         logo: {
           alt: 'DynamoDB Toolbox',
-          src: 'img/dynamodb-toolbox-logo.svg',
-          srcDark: 'img/dynamodb-toolbox-logo-dark.svg'
+          src: 'img/dynamodb-toolbox-icon.svg'
         },
         items: [
-          {
-            type: 'doc',
-            docId: 'v1/introduction/introduction-to-v1',
-            position: 'right',
-            label: 'Documentation'
-          },
           {
             href: 'https://github.com/jeremydaly/dynamodb-toolbox',
             position: 'right',
