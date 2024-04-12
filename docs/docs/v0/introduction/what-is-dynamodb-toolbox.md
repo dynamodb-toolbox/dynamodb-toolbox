@@ -1,9 +1,3 @@
----
-id: what-is-dynamodb-toolbox
-title: What is DynamoDB Toolbox?
-slug: /
----
-
 # What is DynamoDB Toolbox?
 
 **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) and the [DocumentClient](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html). It's designed with **Single Tables** in mind, but works just as well with multiple tables. It lets you define your Entities (with typings and aliases) and map them to your DynamoDB tables. You can then **generate the API parameters** to `put`, `get`, `delete`, `update`, `query`, `scan`, `batchGet`, and `batchWrite` data by passing in JavaScript objects. The DynamoDB Toolbox will map aliases, validate and coerce types, and even write complex `UpdateExpression`s for you. 😉
@@ -77,7 +71,6 @@ This library **DOES NOT** create DynamoDB Tables for you. You must create the ta
 ### Define a Table
 
 ```typescript
-
 // >=v0.8.0
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
@@ -85,7 +78,7 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 const marshallOptions = {
   // Specify your client options as usual
-  convertEmptyValues: false 
+  convertEmptyValues: false
 }
 
 const translateConfig = { marshallOptions }

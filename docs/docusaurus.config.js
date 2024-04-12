@@ -57,7 +57,6 @@ const config = {
     ({
       image: 'img/dynamodb-toolbox-card.png',
       navbar: {
-        // title: 'DynamoDB Toolbox',
         logo: {
           alt: 'DynamoDB Toolbox',
           src: 'img/dynamodb-toolbox-logo.svg',
@@ -66,12 +65,10 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'introduction/what-is-dynamodb-toolbox',
+            docId: 'v1/introduction/introduction-to-v1',
             position: 'right',
             label: 'Documentation'
           },
-          // { to: '/blog', label: 'Blog', position: 'left' },
-
           {
             href: 'https://github.com/jeremydaly/dynamodb-toolbox',
             position: 'right',
@@ -92,7 +89,11 @@ const config = {
               },
               {
                 label: 'Quick Start',
-                to: '/docs/introduction/quick-start'
+                to: '/docs/v1/introduction/quick-start'
+              },
+              {
+                label: 'Documentation v0',
+                to: '/docs/v0'
               },
               {
                 label: 'Contributing',

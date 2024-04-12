@@ -19,84 +19,110 @@ const sidebars = {
   docsSidebar: [
     {
       type: 'category',
-      label: 'Introduction',
-      items: [
-        'introduction/what-is-dynamodb-toolbox',
-        {
-          type: 'link',
-          label: 'Features',
-          href: '#features'
-        },
-        'introduction/quick-start'
-      ]
-    },
-    {
-      type: 'category',
-      label: 'Table Reference',
-      // link: { type: 'doc', id: 'tables/overview' },
+      label: 'v1',
       items: [
         {
-          type: 'doc',
-          label: 'Overview',
-          id: 'table/index'
-        },
-        {
-          type: 'doc',
-          label: 'Properties',
-          id: 'table/properties'
-        },
-        {
-          type: 'doc',
-          label: 'Methods',
-          id: 'table/methods'
+          type: 'category',
+          label: 'Introduction',
+          items: [
+            'v1/introduction/introduction-to-v1',
+            {
+              type: 'link',
+              label: 'Features',
+              href: '#features'
+            },
+            'v1/introduction/quick-start',
+            'v1/introduction/migration-path'
+          ]
         }
       ]
     },
     {
       type: 'category',
-      label: 'Entity Reference',
-      // link: { type: 'doc', id: 'tables/overview' },
+      label: 'v0',
       items: [
         {
-          type: 'doc',
-          label: 'Overview',
-          id: 'entity/index'
+          type: 'category',
+          label: 'Introduction',
+          items: [
+            'v0/introduction/what-is-dynamodb-toolbox',
+            {
+              type: 'link',
+              label: 'Features',
+              href: '#features'
+            },
+            'v0/introduction/quick-start'
+          ]
         },
         {
-          type: 'doc',
-          label: 'Properties',
-          id: 'entity/properties'
+          type: 'category',
+          label: 'Table Reference',
+          // link: { type: 'doc', id: 'tables/overview' },
+          items: [
+            {
+              type: 'doc',
+              label: 'Overview',
+              id: 'v0/table/index'
+            },
+            {
+              type: 'doc',
+              label: 'Properties',
+              id: 'v0/table/properties'
+            },
+            {
+              type: 'doc',
+              label: 'Methods',
+              id: 'v0/table/methods'
+            }
+          ]
         },
         {
-          type: 'doc',
-          label: 'Methods',
-          id: 'entity/methods'
+          type: 'category',
+          label: 'Entity Reference',
+          // link: { type: 'doc', id: 'tables/overview' },
+          items: [
+            {
+              type: 'doc',
+              label: 'Overview',
+              id: 'v0/entity/index'
+            },
+            {
+              type: 'doc',
+              label: 'Properties',
+              id: 'v0/entity/properties'
+            },
+            {
+              type: 'doc',
+              label: 'Methods',
+              id: 'v0/entity/methods'
+            }
+          ]
+        },
+        {
+          type: 'category',
+          label: 'Filters & Conditions',
+          link: { type: 'doc', id: 'v0/filters-and-conditions/index' },
+          items: []
+        },
+        {
+          type: 'category',
+          label: 'Projection Expressions',
+          link: { type: 'doc', id: 'v0/projection-expressions/index' },
+          items: []
+        },
+        {
+          type: 'category',
+          label: 'Custom Parameters & Clauses',
+          link: { type: 'doc', id: 'v0/custom-parameters/index' },
+          items: []
+        },
+        {
+          type: 'category',
+          label: 'Type Inference',
+          link: { type: 'doc', id: 'v0/type-inference/index' },
+          items: []
         }
       ]
-    },
-    {
-      type: 'category',
-      label: 'Filters & Conditions',
-      link: { type: 'doc', id: 'filters-and-conditions/index' },
-      items: []
-    },
-    {
-      type: 'category',
-      label: 'Projection Expressions',
-      link: { type: 'doc', id: 'projection-expressions/index' },
-      items: []
-    },
-    {
-      type: 'category',
-      label: 'Custom Parameters & Clauses',
-      link: { type: 'doc', id: 'custom-parameters/index' },
-      items: []
-    },
-    {
-      type: 'category',
-      label: 'Type Inference',
-      link: { type: 'doc', id: 'type-inference/index' },
-      items: []
     },
     {
       type: 'category',
