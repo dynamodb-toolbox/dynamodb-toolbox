@@ -4,13 +4,14 @@ import {
   ParsingOptions,
   FromParsingOptions,
   ParsedValue,
-  ParsedValueOptions
+  ParsedValueOptions,
+  ParsedValueDefaultOptions
 } from 'v1/schema/actions/parse'
 import { PrimaryKeyParser, PrimaryKey } from 'v1/table/actions/parsePrimaryKey'
 
 export type ParsedItemOptions = Pick<ParsedValueOptions, 'operation' | 'extension'>
 
-export type ParsedItemDefaultOptions = Pick<ParsedValueOptions, 'operation' | 'extension'>
+export type ParsedItemDefaultOptions = Pick<ParsedValueDefaultOptions, 'operation' | 'extension'>
 
 export type ParsedItem<
   ENTITY extends EntityV2 = EntityV2,
