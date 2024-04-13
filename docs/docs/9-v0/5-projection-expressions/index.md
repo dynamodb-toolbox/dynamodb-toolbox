@@ -1,3 +1,8 @@
+---
+sidebar_position: 5
+title: Projection Expressions
+---
+
 # Projection Expressions
 
 DynamoDB supports [Projection Expressions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html) that allow you to selectively return attributes when using the `get`, `query` or `scan` operations.

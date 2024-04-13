@@ -1,3 +1,7 @@
+---
+title: Quick Start
+---
+
 # Quick Start
 
 ## Install DynamoDB Toolbox
@@ -36,7 +40,7 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 const marshallOptions = {
   // Specify your client options as usual
-  convertEmptyValues: false 
+  convertEmptyValues: false
 }
 
 const translateConfig = { marshallOptions }

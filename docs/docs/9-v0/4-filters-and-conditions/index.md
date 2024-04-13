@@ -1,3 +1,8 @@
+---
+sidebar_position: 4
+title: Filters & Conditions
+---
+
 # Filters and Conditions
 
 DynamoDB supports [**Filter**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.FilterExpression) and [**Condition**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html) expressions. **Filter Expressions** are used to limit data returned by `query` and `scan` operations. **Condition Expressions** are used for data manipulation operations (`put`, `update`, `delete` and `batchWrite`), allowing you to specify a condition to determine which items should be modified.
@@ -27,8 +32,9 @@ The DynamoDB Toolbox provides an **Expression Builder** that allows you to gener
 | entity     | `string`  | The entity this attribute applies to. If supplied (or inherited from the calling operation), `attr` and `size` properties can use the entity's aliases to reference attributes.                                                                                                                                                                                                                                   |
 
 *1 Comparison values should equal the type of the attribute you are comparing against. If you are using the `size` property, the value should be a `number`.  
-*2 In addition to *1, these also allow an object value with a key 'attr' and its value referencing another attribute of the same entity for comparing against.
+*2 In addition to \*1, these also allow an object value with a key 'attr' and its value referencing another attribute of the same entity for comparing against.
 Example condition containing an attribute reference:
+
 ```javascript
 conditions: { attr: 'capacity', gt: { attr: 'reservations' } }
 ```

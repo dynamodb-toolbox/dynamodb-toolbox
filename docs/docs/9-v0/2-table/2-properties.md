@@ -1,3 +1,7 @@
+---
+title: Properties
+---
+
 # Table Properties
 
 The following properties are available on instances of the `Table` Class. Properties can be changed by directly setting the property value:

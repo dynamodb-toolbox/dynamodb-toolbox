@@ -1,3 +1,8 @@
+---
+sidebar_position: 6
+title: Custom Parameters and Clauses
+---
+
 # Adding Custom Parameters and Clauses
 
 This library supports all API options for the available API methods, so it is unnecessary for you to provide additional parameters. However, if you would like to pass custom parameters, simply pass them in an object as the last parameter to any appropriate method.
