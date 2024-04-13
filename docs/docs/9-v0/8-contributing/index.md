@@ -1,3 +1,8 @@
+---
+sidebar_position: 8
+title: Contributing
+---
+
 # Contributions and Feedback
 
 [![npm](https://img.shields.io/npm/v/dynamodb-toolbox.svg)](https://www.npmjs.com/package/dynamodb-toolbox)

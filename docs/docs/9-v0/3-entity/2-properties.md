@@ -1,3 +1,7 @@
+---
+title: Properties
+---
+
 # Entity Properties
 
 The following properties are available on instances of the `Entity` Class. Certain properties can be changed by directly setting the property value. See below for a list of properties and their descriptions.
