@@ -1,3 +1,8 @@
+---
+sidebar_position: 7
+title: Type Inference
+---
+
 # Type Inference
 
 Since the v0.4, most `Entity` methods types are inferred from an `Entity` definition. This is still experimental and may change in the future.

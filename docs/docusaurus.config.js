@@ -86,15 +86,11 @@ const config = {
             items: [
               {
                 label: 'What is DynamoDB Toolbox?',
-                to: '/docs'
+                to: '/docs/installation'
               },
               {
                 label: 'Quick Start',
-                to: '/docs/v1/introduction/quick-start'
-              },
-              {
-                label: 'Documentation v0',
-                to: '/docs/v0'
+                to: '/docs/quick-start'
               },
               {
                 label: 'Contributing',

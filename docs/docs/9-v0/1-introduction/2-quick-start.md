@@ -1,3 +1,7 @@
+---
+title: Quick Start
+---
+
 # Quick Start
 
 ## Install DynamoDB Toolbox using aws-sdk v3 (>=v0.8.0) (recommended)
@@ -49,7 +53,7 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 const marshallOptions = {
   // Specify your client options as usual
-  convertEmptyValues: false 
+  convertEmptyValues: false
 }
 
 const translateConfig = { marshallOptions }
