@@ -1,5 +1,5 @@
 ---
-title: Table
+title: Overview
 ---
 
 # Table
@@ -33,7 +33,7 @@ const MyTable = new Table({
 | indexes              |       `object`        |    no    | Complex type that optionally specifies the name keys of your secondary indexes (see below)                                         |
 | autoExecute          |       `boolean`       |    no    | Enables automatic execution of the DocumentClient method (default: `true`)                                                         |
 | autoParse            |       `boolean`       |    no    | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`)                                          |
-| removeNullAttributes |       `boolean`       |    no    | Removes null and empty (e.g. `''`) attributes instead of setting them to `null` (default: `true`)                                                        |
+| removeNullAttributes |       `boolean`       |    no    | Removes null and empty (e.g. `''`) attributes instead of setting them to `null` (default: `true`)                                  |
 | DocumentClient       |   `DocumentClient`    |    \*    | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
 
 \* _A Table can be instantiated without a DocumentClient, but most methods require it before execution_
