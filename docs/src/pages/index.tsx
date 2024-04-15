@@ -18,7 +18,7 @@ const links: Link[] = [
         <MdOutlineImportContacts className="text-lg" /> Docs
       </div>
     ),
-    to: './docs/installation'
+    to: './docs/getting-started/overview'
   },
   {
     id: 'github',
@@ -232,7 +232,7 @@ const Home = (): JSX.Element => (
           ...well, <strong>not anymore</strong> 💪
         </p>
         <Link
-          to="./docs/installation"
+          to="./docs/getting-started/overview"
           className="py-2 px-4 bg-gradient-to-r bg-color-gradient rounded text-white uppercase font-extrabold"
         >
           👉 Get Started

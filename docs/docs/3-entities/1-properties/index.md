@@ -1,0 +1,5 @@
+---
+title: Properties
+---
+
+# Entity

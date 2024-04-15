@@ -1,0 +1,5 @@
+---
+title: DeleteItem
+---
+
+# BatchDeleteItemRequest
