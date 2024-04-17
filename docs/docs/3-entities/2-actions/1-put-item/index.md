@@ -2,13 +2,11 @@
 title: PutItem
 ---
 
-# PutItem
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
 
-# ScanCommand
+# PutItemCommand
 
 Performs a [PutItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html) on an entity.
 
@@ -46,13 +44,13 @@ If needed, you can use the `PutItemInput` type to explicitely type an object as 
 ```ts
 import type { PutItemInput } from '@dynamodb-toolbox/entity/actions/put'
 
-const item: PutItemInput<typeof PokemonEntity> = {
+const pikachu: PutItemInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1',
   name: 'Pikachu',
   ...
 }
 
-const putItemCommand = PokeTable.build(PutItemCommand).item(item)
+await PokemonEntity.build(PutItemCommand).item(pikachu).send()
 ```
 
 :::info
@@ -70,7 +68,7 @@ await PokemonEntity.build(PutItemCommand)
   .item(...)
   .options({
     consistent: true,
-    returnValues: "ALL_OLD"
+    returnValues: 'ALL_OLD',
     ...
   })
   .send()
@@ -83,7 +81,7 @@ import type { PutItemOptions } from '@dynamodb-toolbox/entity/actions/put'
 
 const options: PutItemOptions<typeof PokemonEntity> = {
   consistent: true,
-  returnValues: "ALL_OLD"
+  returnValues: 'ALL_OLD',
   ...
 }
 
@@ -153,6 +151,6 @@ import type { PutItemResponse } from '@dynamodb-toolbox/entity/actions/put'
 const putItemResponse: PutItemResponse<
   typeof PokemonEntity,
   // 👇 Optional options
-  { returnValues: "ALL_OLD" }
+  { returnValues: 'ALL_OLD' }
 > = { Attributes: ... }
 ```
