@@ -2,10 +2,9 @@ import type { ParserInput } from 'v1/schema/actions/tParse'
 import type { EntityV2 } from 'v1/entity'
 
 /**
- * User input of a PUT command for a given Entity or Schema
+ * User input of a PUT command for a given Entity
  *
- * @param Schema Entity | Schema
- * @param RequireIndependentDefaults Boolean
+ * @param ENTITY Entity
  * @return Object
  */
-export type PutItemInput<SCHEMA extends EntityV2> = ParserInput<SCHEMA['schema']>
+export type PutItemInput<ENTITY extends EntityV2> = ParserInput<ENTITY['schema']>

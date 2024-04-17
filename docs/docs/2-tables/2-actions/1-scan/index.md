@@ -29,9 +29,7 @@ It also enables validation of projection expression and filters. and PARSING.
 
 ```ts
 // Typed as (Pokemon | Trainer)[]
-const {
-  Items: pokemonsAndTrainers = []
-} = await PokeTable.build(ScanCommand)
+const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity, TrainerEntity)
   .send()
 ```
@@ -274,6 +272,6 @@ const scanResponse: ScanResponse<
   // 👇 Optional entities
   [typeof PokemonEntity],
   // 👇 Optional options
-  { attributes: ["name", "type"] }
+  { attributes: ['name', 'type'] }
 > = { Items: ... }
 ```
