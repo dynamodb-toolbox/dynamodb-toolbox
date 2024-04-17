@@ -50,7 +50,7 @@ const { Items } = await PokeTable.build(ScanCommand)
   .send()
 ```
 
-If needed, you can use the `ScanOptions` type to explicitely type an object as scan options:
+If needed, you can use the `ScanOptions` type to explicitely type an object as a `ScanCommand` options:
 
 ```ts
 import type { ScanOptions } from '@dynamodb-toolbox/table/actions/scan'
@@ -59,11 +59,15 @@ const scanOptions: ScanOptions<
   typeof PokeTable,
   // 👇 Optional entities
   [typeof PokemonEntity, typeof TrainerEntity]
-> = { consistent: true, ... }
+> = {
+  consistent: true,
+  limit: 10,
+  ...
+}
 
-const command = PokeTable.build(ScanCommand).options(
-  scanOptions
-)
+const { Items } = await PokeTable.build(ScanCommand)
+  .options(scanOptions)
+  .send()
 ```
 
 :::info
@@ -86,8 +90,8 @@ Providing `entities` first will activate and improve the typing of some options,
 <TabItem value="consistent" label="Consistent">
 
 ```ts
-// WARNING: Will be charged double
 const { Items } = await PokeTable.build(ScanCommand)
+  // WARNING: Will be charged double
   .options({ consistent: true })
   .send()
 ```
@@ -120,10 +124,8 @@ const { Items } = await PokeTable.build(ScanCommand)
 <TabItem value="db" label="All DB">
 
 ```ts
-// Retrieve all items from the table (beware of RAM issues!)
-const { Items: allItems = [] } = await PokeTable.build(
-  ScanCommand
-)
+const { Items } = await PokeTable.build(ScanCommand)
+  // Retrieve all items from the table (beware of RAM issues!)
   .options({ maxPages: Infinity })
   .send()
 ```
@@ -133,11 +135,9 @@ const { Items: allItems = [] } = await PokeTable.build(
 <TabItem value="entity" label="All Pokemons">
 
 ```ts
-// Retrieve all items from the table (beware of RAM issues!)
-const { Items: allPokemons = [] } = await PokeTable.build(
-  ScanCommand
-)
+const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity)
+  // Retrieve all items from the table (beware of RAM issues!)
   .options({ maxPages: Infinity })
   .send()
 ```
@@ -175,7 +175,6 @@ do {
 <TabItem value="filtered" label="Filtered">
 
 ```ts
-// Retrieve all items from the table (beware of RAM issues!)
 const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity, TrainerEntity)
   .options({
@@ -191,7 +190,6 @@ const { Items } = await PokeTable.build(ScanCommand)
 <TabItem value="attributes" label="Attributes">
 
 ```ts
-// Retrieve all items from the table (beware of RAM issues!)
 const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity)
   .options({ attributes: ['name', 'type'] })
@@ -202,7 +200,6 @@ const { Items } = await PokeTable.build(ScanCommand)
 <TabItem value="count" label="Count">
 
 ```ts
-// Retrieve all items from the table (beware of RAM issues!)
 const { Count } = await PokeTable.build(ScanCommand)
   .options({ select: 'COUNT' })
   .send()
@@ -226,9 +223,7 @@ const { Count } = await PokeTable.build(ScanCommand)
 <TabItem value="segment" label="Segment">
 
 ```ts
-const { Items: allItems = [] } = await PokeTable.build(
-  ScanCommand
-)
+const { Items } = await PokeTable.build(ScanCommand)
   .options({ segment: 1, totalSegment: 3 })
   .send()
 ```
@@ -269,7 +264,7 @@ The data is returned with the same response syntax as the [DynamoDB Scan API](ht
 
 If a list of `entities` has been provided, the response `Items` will be formatted by their respective entities.
 
-You can use the `ScanResponse` type to explicitely type an object as a scan response:
+You can use the `ScanResponse` type to explicitely type an object as a `ScanCommand` response:
 
 ```ts
 import type { ScanResponse } from '@dynamodb-toolbox/table/actions/scan'
