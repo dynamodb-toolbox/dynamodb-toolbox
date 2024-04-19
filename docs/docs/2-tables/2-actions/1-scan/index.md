@@ -4,7 +4,6 @@ title: Scan
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import CodeBlock from '@theme/CodeBlock';
 
 # ScanCommand
 
@@ -23,12 +22,12 @@ const { Items } = await scanCommand.send()
 
 ## Entities
 
-Although it is not required, providing a list of entities to your `ScanCommand` enables filtering through the `entityName` attribute, and types of the scan results.
+Provides a list of entities to filter (via the [internal `entity` attribute](TODO)), format and type the returned scanned items.
 
-It also enables validation of projection expression and filters. and PARSING.
+<!-- It also enables validation of projection expression and filters. and PARSING. -->
 
 ```ts
-// Typed as (Pokemon | Trainer)[]
+// 👇 Typed as (Pokemon | Trainer)[]
 const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity, TrainerEntity)
   .send()
@@ -36,7 +35,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 ## Options
 
-You can set additional options via the `options` setter:
+Additional options:
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
@@ -48,7 +47,7 @@ const { Items } = await PokeTable.build(ScanCommand)
   .send()
 ```
 
-If needed, you can use the `ScanOptions` type to explicitely type an object as a `ScanCommand` options:
+You can use the `ScanOptions` type to explicitely type an object as a `ScanCommand` options:
 
 ```ts
 import type { ScanOptions } from '@dynamodb-toolbox/table/actions/scan'
@@ -70,17 +69,105 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 :::info
 
-Providing `entities` first will activate and improve the typing of some options, so you should definitely use the `options` only after.
+It is advised to provide `entities` before `options` as the former will improve the typing of the latter.
 
 :::
 
-### Base options
+Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestParameters) for more details):
 
-| Option       |            Type            | Default  | Description                                               |
-| ------------ | :------------------------: | :------: | --------------------------------------------------------- |
-| `consistent` |         `boolean`          | `false`  | Cannot be set to `true` if a secondary has been provided. |
-| `capacity`   |      `CapacityOption`      | `"NONE"` | See [Capacity](TODO)                                      |
-| `index`      | `IndexNames<typeof Table>` |    -     | Table secondary index to base the scan on.                |
+<table>
+    <thead>
+        <tr>
+            <th>Cat.</th>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}>-</td>
+            <td><code>consistent</code></td>
+            <td align="center"><code>boolean</code></td>
+            <td align="center"><code>false</code></td>
+            <td>
+              By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).
+              <br/>
+              <br/>Set to <code>true</code> to use <b>strongly</b> consistent reads.
+            </td>
+        </tr>
+        <tr>
+            <td><code>index</code></td>
+            <td align="center"><code>IndexNames&lt;typeof Table&gt;</code></td>
+            <td align="center">-</td>
+            <td>The name of a secondary index to scan. This index can be any local secondary index or global secondary index.</td>
+        </tr>
+        <tr>
+            <td><code>capacity</code></td>
+            <td align="center"><code>CapacityOption</code></td>
+            <td align="center"><code>"NONE"</code></td>
+            <td>
+              Determines the level of detail about either provisioned or on-demand throughput consumption that is returned in the response.
+              <br/>
+              <br/>Possible values are <code>"NONE"</code>, <code>"TOTAL"</code> and <code>"INDEXES"</code>.
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Pagination</b></td>
+            <td><code>limit</code></td>
+            <td align="center"><code>integer ≥ 1</code></td>
+            <td align="center">-</td>
+            <td>The limit. Note that this does not guarantee... (1MB limit)</td>
+        </tr>
+        <tr>
+            <td><code>exclusiveStartKey</code></td>
+            <td align="center"><code>Key</code></td>
+            <td align="center">-</td>
+            <td>The startKey. To use in conjonction with the response <code>LastEvaluatedKey</code> property...</td>
+        </tr>
+        <tr>
+            <td><code>maxPages</code></td>
+            <td align="center"><code>integer ≥ 1</code></td>
+            <td align="center"><code>1</code></td>
+            <td>A "meta"-option provided by DynamoDB-Toolbox to retrieve multiple pages in a single promise. <code>Infinity</code> is a valid option.</td>
+        </tr>
+        <tr>
+            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Filters</b></td>
+            <td><code>select</code></td>
+            <td align="center"><code>SelectOption</code></td>
+            <td align="center"><code>"ALL_ATTRIBUTES"?</code></td>
+            <td>See TODO. Possible values are:
+              <code>"ALL_ATTRIBUTES"`</code>, <code>"ALL_PROJECTED_ATTRIBUTES"</code> (only available when providing an <code>index</code>), <code>"COUNT"</code><code>"SPECIFIC_ATTRIBUTES"</code> (the only available option if <code>attributes</code> has been be specified)
+            </td>
+        </tr>
+        <tr>
+            <td><code>filters</code></td>
+            <td align="center"><code>Record&lt;string, Condition&gt;</code></td>
+            <td align="center">-</td>
+            <td>Filter to apply. <code>entities</code> MUST be provided. Conditions are provided by entity name.</td>
+        </tr>
+        <tr>
+            <td><code>attributes</code></td>
+            <td align="center"><code>string[]</code></td>
+            <td align="center">-</td>
+            <td>The attributes to return. <code>entities</code> must be provided?. Paths must be common to all attributes.</td>
+        </tr>
+        <tr>
+            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Threading</b></td>
+            <td><code>segment</code></td>
+            <td align="center"><code>integer ≥ 1</code></td>
+            <td align="center">-</td>
+            <td>For parallel scans. MUST be used in conjunction with <code>totalSegment</code> and MUST be less than or equal to it.</td>
+        </tr>
+        <tr>
+            <td><code>totalSegment</code></td>
+            <td align="center"><code>integer ≥ 1</code></td>
+            <td align="center">-</td>
+            <td>For parallel scans. MUST be used in conjunction with <code>segment</code> option and MUST be greater than or equal to it.</td>
+        </tr>
+    </tbody>
+</table>
 
 :::noteExamples
 
@@ -108,15 +195,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 :::
 
-### Pagination
-
-| Option              |     Type      | Default | Description                                                                                                                |
-| ------------------- | :-----------: | :-----: | -------------------------------------------------------------------------------------------------------------------------- |
-| `limit`             | `integer ≥ 1` |    -    | The limit. Note that this does not guarantee... (1MB limit)                                                                |
-| `exclusiveStartKey` |     `Key`     |    -    | The startKey. To use in conjonction with the response `LastEvaluatedKey` property...                                       |
-| `maxPages`          | `integer ≥ 1` |   `1`   | A "meta"-option provided by DynamoDB-Toolbox to retrieve multiple pages in a single promise. `Infinity` is a valid option. |
-
-:::noteExamples
+:::notePaginated
 
 <Tabs>
 <TabItem value="db" label="All DB">
@@ -135,14 +214,14 @@ const { Items } = await PokeTable.build(ScanCommand)
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity)
-  // Retrieve all items from the table (beware of RAM issues!)
+  // Retrieve all pokemons from the table (beware of RAM issues!)
   .options({ maxPages: Infinity })
   .send()
 ```
 
 </TabItem>
 
-<TabItem value="page-stream" label="Paginated workload">
+<TabItem value="page-stream" label="Paginated">
 
 ```ts
 let lastEvaluatedKey:
@@ -159,15 +238,7 @@ do {
 
 :::
 
-### Filters
-
-| Option       |            Type             |       Default       | Description                                                                                                                                                                                                                                                                        |
-| ------------ | :-------------------------: | :-----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `select`     |       `SelectOption`        | `"ALL_ATTRIBUTES"?` | See [Select](TODO). Possible values are: <ul><li>`"ALL_ATTRIBUTES"`</li><li>`"ALL_PROJECTED_ATTRIBUTES"`: (Only available when providing an `index`)</li><li>`"COUNT"`</li><li>`"SPECIFIC_ATTRIBUTES"`</li> (The only available option if `attributes` has been be specified)</ul> |
-| `filters`    | `Record<string, Condition>` |          -          | Filter to apply. `entities` MUST be provided. Conditions are provided by entity name.                                                                                                                                                                                              |
-| `attributes` |         `string[]`          |          -          | The attributes to return. `entities` must be provided?. Paths must be common to all attributes.                                                                                                                                                                                    |
-
-:::noteExamples
+:::noteFiltered
 
 <Tabs>
 <TabItem value="filtered" label="Filtered">
@@ -208,14 +279,7 @@ const { Count } = await PokeTable.build(ScanCommand)
 
 :::
 
-### Segmenting
-
-| Option         |     Type      | Default | Description                                                                                                    |
-| -------------- | :-----------: | :-----: | -------------------------------------------------------------------------------------------------------------- |
-| `segment`      | `integer ≥ 1` |    -    | For parallel scans. MUST be used in conjunction with `totalSegment` and MUST be less than or equal to it.      |
-| `totalSegment` | `integer ≥ 1` |    -    | For parallel scans. MUST be used in conjunction with `segment` option and MUST be greater than or equal to it. |
-
-:::noteExamples
+:::noteSegmented
 
 <Tabs>
 <TabItem value="segment" label="Segment">
@@ -227,7 +291,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 ```
 
 </TabItem>
-<TabItem value="db" label="All DB (segmented)">
+<TabItem value="db" label="All DB (3 threads)">
 
 ```ts
 const opts = { totalSegment: 3, maxPages: Infinity }

@@ -4,11 +4,10 @@ title: GetItem
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import CodeBlock from '@theme/CodeBlock';
 
 # GetItemCommand
 
-Performs a [GetItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html) on an entity.
+Performs a [GetItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html) on an entity item.
 
 ## Usage
 
@@ -25,7 +24,7 @@ await getItemCommand.send()
 
 <p style={{marginTop: '-15px'}}><i>(required)</i></p>
 
-The key of the item to get (i.e. attributes that are tagged as part of the key):
+The key of the item to get (i.e. attributes that are tagged as part of the primary key):
 
 ```ts
 const { Item } = await PokemonEntity.build(GetItemCommand)
@@ -116,7 +115,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 
 ## Response
 
-The data is returned with the same response syntax as the [DynamoDB GetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_ResponseElements).
+The data is returned with the same response syntax as the [DynamoDB GetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_ResponseElements). If present, the returned item is formatted by the Entity.
 
 You can use the `GetItemResponse` type to explicitely type an object as a `GetItemCommand` response:
 
@@ -127,5 +126,6 @@ const getItemResponse: GetItemResponse<
   typeof PokemonEntity,
   // 👇 Optional options
   { attributes: ['type', 'level'] }
+  // 👇 Typed as Pokemon | undefined
 > = { Item: ... }
 ```
