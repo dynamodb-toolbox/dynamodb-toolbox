@@ -29,8 +29,6 @@ new Entity({
   table: DefaultTable
 } as const)
 
-// console.log(DefaultTable.User);
-
 const attributes = DefaultTable.User.schema.attributes
 const linked = DefaultTable.User.linked
 
@@ -79,5 +77,23 @@ describe('normalizeData', () => {
         notAField: 'test123'
       })
     }).toThrow(`Field 'notAField' does not have a mapping or alias`)
+  })
+
+  it('fails when partion, sortkey or other required fields have depend attributes not provided', () => {
+    const ent = new Entity({
+      name: 'Test',
+      attributes: {
+        pk: { type: 'string', partitionKey: true, default: 'pk'},
+        sk: { type: 'string', sortKey: true, dependsOn: ['parent'],
+          default: (data: { parent: string }) => `parent#${data.parent}`,
+        },
+        parent: { type: 'string'},
+      },
+      table: DefaultTable
+    } as const)
+
+    expect(() => ent.updateParams({})).toThrow(
+      `Required field 'sk' depends on attribute(s), one or more of which can't be resolved (parent)`
+    )
   })
 })
