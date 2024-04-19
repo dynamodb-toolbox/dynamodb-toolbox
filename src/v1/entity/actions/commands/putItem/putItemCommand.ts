@@ -3,17 +3,11 @@ import { PutCommandInput, PutCommand, PutCommandOutput } from '@aws-sdk/lib-dyna
 
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type {
-  NoneReturnValuesOption,
-  UpdatedOldReturnValuesOption,
-  UpdatedNewReturnValuesOption,
-  AllOldReturnValuesOption,
-  AllNewReturnValuesOption
-} from 'v1/options/returnValues'
+import type { NoneReturnValuesOption, AllOldReturnValuesOption } from 'v1/options/returnValues'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { PutItemInput } from './types'
-import type { PutItemOptions, PutItemCommandReturnValuesOption } from './options'
+import type { PutItemOptions } from './options'
 import { putItemParams } from './putItemParams'
 
 export const $item = Symbol('$item')
@@ -25,24 +19,9 @@ export type $options = typeof $options
 type ReturnedAttributes<
   ENTITY extends EntityV2,
   OPTIONS extends PutItemOptions<ENTITY>
-> = PutItemCommandReturnValuesOption extends OPTIONS['returnValues']
+> = OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
-  : OPTIONS['returnValues'] extends NoneReturnValuesOption
-  ? undefined
-  : OPTIONS['returnValues'] extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
-  ?
-      | FormattedItem<
-          ENTITY,
-          {
-            partial: OPTIONS['returnValues'] extends
-              | UpdatedOldReturnValuesOption
-              | UpdatedNewReturnValuesOption
-              ? true
-              : false
-          }
-        >
-      | undefined
-  : OPTIONS['returnValues'] extends AllNewReturnValuesOption | AllOldReturnValuesOption
+  : OPTIONS['returnValues'] extends AllOldReturnValuesOption
   ? FormattedItem<ENTITY> | undefined
   : never
 
@@ -102,11 +81,7 @@ export class PutItemCommand<
       return restCommandOutput
     }
 
-    const { returnValues } = this[$options]
-
-    const formattedItem = new EntityFormatter(this[$entity]).format(attributes, {
-      partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
-    })
+    const formattedItem = new EntityFormatter(this[$entity]).format(attributes)
 
     return {
       Attributes: formattedItem as any,
