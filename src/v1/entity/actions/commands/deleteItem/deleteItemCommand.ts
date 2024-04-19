@@ -7,7 +7,7 @@ import type { KeyInput } from 'v1/entity/actions/tParse'
 import type { NoneReturnValuesOption, AllOldReturnValuesOption } from 'v1/options/returnValues'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { DeleteItemOptions, DeleteItemCommandReturnValuesOption } from './options'
+import type { DeleteItemOptions } from './options'
 import { deleteItemParams } from './deleteItemParams'
 
 export const $key = Symbol('$key')
@@ -19,9 +19,7 @@ export type $options = typeof $options
 type ReturnedAttributes<
   ENTITY extends EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY>
-> = DeleteItemCommandReturnValuesOption extends OPTIONS['returnValues']
-  ? undefined
-  : OPTIONS['returnValues'] extends NoneReturnValuesOption
+> = OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
   : OPTIONS['returnValues'] extends AllOldReturnValuesOption
   ? FormattedItem<ENTITY> | undefined
