@@ -23,9 +23,9 @@ await putItemCommand.send()
 
 ## Item
 
-REQUIRED.
+<p style={{marginTop: '-15px'}}><i>(required)</i></p>
 
-The item, including key attributes.
+The item to write:
 
 ```ts
 await PokemonEntity.build(PutItemCommand)
@@ -39,29 +39,29 @@ await PokemonEntity.build(PutItemCommand)
   .send()
 ```
 
-If needed, you can use the `PutItemInput` type to explicitely type an object as a `PutItemCommand` item:
+You can use the `PutItemInput` type to explicitely type an object as a `PutItemCommand` item:
 
 ```ts
 import type { PutItemInput } from '@dynamodb-toolbox/entity/actions/put'
 
-const pikachu: PutItemInput<typeof PokemonEntity> = {
+const item: PutItemInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1',
   name: 'Pikachu',
   ...
 }
 
-await PokemonEntity.build(PutItemCommand).item(pikachu).send()
+await PokemonEntity.build(PutItemCommand).item(item).send()
 ```
 
 :::info
 
-Note that `PutItemInput` differs from `FormattedItem` as defaults and links will be resolved by the schema when missing.
+Note that `PutItemInput` differs from `ParsedItem` as defaulted and linked attributes are optional.
 
 :::
 
 ## Options
 
-You can set additional options via the `options` setter:
+Additional options:
 
 ```ts
 await PokemonEntity.build(PutItemCommand)
@@ -74,7 +74,7 @@ await PokemonEntity.build(PutItemCommand)
   .send()
 ```
 
-If needed, you can use the `PutItemOptions` type to explicitely type an object as `PutItemCommand` options:
+You can use the `PutItemOptions` type to explicitely type an object as `PutItemCommand` options:
 
 ```ts
 import type { PutItemOptions } from '@dynamodb-toolbox/entity/actions/put'
@@ -91,14 +91,14 @@ await PokemonEntity.build(PutItemCommand)
   .send()
 ```
 
-List of available options:
+Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_RequestParameters) for more details):
 
-| Option         |               Type                | Default  | Description                                                                                                                                                       |
-| -------------- | :-------------------------------: | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition`    | `Condition<typeof PokemonEntity>` |    -     | See [Condition](TODO)                                                                                                                                             |
-| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | See [ReturnValues](TODO). Possible values are: <ul><li>`"NONE"`</li><li>`"ALL_OLD"`</li><li>`"UPDATED_OLD"`</li><li>`"ALL_NEW"`</li><li>`"UPDATED_NEW"`</li></ul> |
-| `metrics`      |          `MetricsOption`          | `"NONE"` | See [Metrics](TODO)                                                                                                                                               |
-| `capacity`     |         `CapacityOption`          | `"NONE"` | See [Capacity](TODO)                                                                                                                                              |
+| Option         |               Type                | Default  | Description                                                                                                                                                                                     |
+| -------------- | :-------------------------------: | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for a conditional PutItem operation to succeed.<br/><br/>See [Condition](TODO) for more details on how to write conditions.                         |
+| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | Use `returnValues` if you want to get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                    |
+| `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                    |
+| `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about either provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`. |
 
 :::noteExamples
 
@@ -113,12 +113,14 @@ await PokemonEntity.build(PutItemCommand)
     type: 'electric',
     level: 50
   })
-  .options({ condition: { attr: 'level', gte: 42 } })
+  .options({
+    condition: { attr: 'level', eq: 49 }
+  })
   .send()
 ```
 
 </TabItem>
-<TabItem value="all-old" label="Retrieve previous item">
+<TabItem value="return-values" label="Return values">
 
 ```ts
 const {
@@ -148,7 +150,7 @@ You can use the `PutItemResponse` type to explicitely type an object as a `PutIt
 ```ts
 import type { PutItemResponse } from '@dynamodb-toolbox/entity/actions/put'
 
-const putItemResponse: PutItemResponse<
+const response: PutItemResponse<
   typeof PokemonEntity,
   // 👇 Optional options
   { returnValues: 'ALL_OLD' }
