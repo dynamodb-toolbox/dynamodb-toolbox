@@ -4,11 +4,10 @@ title: PutItem
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import CodeBlock from '@theme/CodeBlock';
 
 # PutItemCommand
 
-Performs a [PutItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html) on an entity.
+Performs a [PutItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html) on an entity item.
 
 ## Usage
 
@@ -67,8 +66,8 @@ Additional options:
 await PokemonEntity.build(PutItemCommand)
   .item(...)
   .options({
-    consistent: true,
     returnValues: 'ALL_OLD',
+    capacity: 'TOTAL',
     ...
   })
   .send()
@@ -80,8 +79,8 @@ You can use the `PutItemOptions` type to explicitely type an object as `PutItemC
 import type { PutItemOptions } from '@dynamodb-toolbox/entity/actions/put'
 
 const options: PutItemOptions<typeof PokemonEntity> = {
-  consistent: true,
   returnValues: 'ALL_OLD',
+  capacity: 'TOTAL',
   ...
 }
 
@@ -143,7 +142,7 @@ const {
 
 ## Response
 
-The data is returned with the same response syntax as the [DynamoDB PutItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_ResponseElements).
+The data is returned with the same response syntax as the [DynamoDB PutItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_ResponseElements). If present, the returned item is formatted by the Entity.
 
 You can use the `PutItemResponse` type to explicitely type an object as a `PutItemCommand` response:
 
@@ -154,5 +153,6 @@ const response: PutItemResponse<
   typeof PokemonEntity,
   // 👇 Optional options
   { returnValues: 'ALL_OLD' }
+  // 👇 Typed as Pokemon | undefined
 > = { Attributes: ... }
 ```
