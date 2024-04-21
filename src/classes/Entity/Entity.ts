@@ -742,10 +742,10 @@ class Entity<Name extends string = string,
         O.Update<UpdateCommandOutput,
           'Attributes',
           If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
-            FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
+            FirstDefined<[MethodItemOverlay, EntityItemOverlay, Pick<Item, Attributes['shown']>]>,
             If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
               A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>> {
+              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,

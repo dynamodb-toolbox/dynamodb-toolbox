@@ -1,4 +1,4 @@
-import { A } from 'ts-toolbelt'
+import { A, F } from 'ts-toolbelt'
 
 import {
   EntityItem,
@@ -1381,7 +1381,7 @@ describe('Entity', () => {
         ent.updateParams(item5)
         const updatePromise5 = () => ent.update(item5, { returnValues: 'UPDATED_OLD' })
         type UpdateItem5 = Awaited<ReturnType<typeof updatePromise5>>['Attributes']
-        type TestUpdateItem5 = A.Equals<UpdateItem5, Omit<ExpectedItem, 'pk' | 'sk'> | undefined>
+        type TestUpdateItem5 = A.Equals<UpdateItem5, ExpectedItem | undefined>
         const testUpdateItem5: TestUpdateItem5 = 1
         testUpdateItem5
 
@@ -1886,7 +1886,8 @@ describe('Entity', () => {
       name: 'TestEntity_OverlayedMethods',
       attributes: {
         pk: { type: 'string', partitionKey: true, hidden: true },
-        sk: { type: 'string', sortKey: true, hidden: true, default: sk }
+        sk: { type: 'string', sortKey: true, hidden: true, default: sk },
+        string: { type: 'string' }
       },
       table
     } as const)
@@ -2094,25 +2095,26 @@ describe('Entity', () => {
       })
 
       it('with conditions and returnValues', () => {
-        const updateParams = () => ent.update(
+        const updatePromise = () => ent.update(
           {
             pk,
+            string: 'some-string'
           },
           {
             execute: false,
             conditions: [
               {
-                attr: 'pkMap1',
-                exists: true,
-              },
+                attr: 'string',
+                exists: true
+              }
             ],
             returnValues: 'ALL_NEW',
           },
         )
 
-        type UpdateParams = A.Await<F.Return<typeof updateParams>>
+        type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
         type TestUpdateParams = A.Equals<
-          UpdateParams,
+          UpdateItem,
           EntityItem<typeof ent>
         >
 
