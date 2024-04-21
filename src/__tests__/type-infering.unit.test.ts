@@ -50,22 +50,22 @@ type ExpectedQueryOpts<
   FilteredAttributes extends A.Key = A.Key
 > = Partial<
   ExpectedReadOpts<ResponseAttributes> & {
-    index: string
-    limit: number
-    reverse: boolean
-    entity: string
-    parseAsEntity: string
-    select: Select | `${Select}` | Lowercase<Select>
-    filters: ConditionsOrFilters<FilteredAttributes>
-    eq: string | number | bigint
-    lt: string | number | bigint
-    lte: string | number | bigint
-    gt: string | number | bigint
-    gte: string | number | bigint
-    between: [string, string] | [number, number] | [bigint, bigint]
-    beginsWith: string
-    startKey: {}
-  }
+  index: string
+  limit: number
+  reverse: boolean
+  entity: string
+  parseAsEntity: string
+  select: Select | `${Select}` | Lowercase<Select>
+  filters: ConditionsOrFilters<FilteredAttributes>
+  eq: string | number | bigint
+  lt: string | number | bigint
+  lte: string | number | bigint
+  gt: string | number | bigint
+  gte: string | number | bigint
+  between: [string, string] | [number, number] | [bigint, bigint]
+  beginsWith: string
+  startKey: {}
+}
 >
 
 type ExpectedWriteOpts<
@@ -746,38 +746,6 @@ describe('Entity', () => {
         ).toThrow()
         // @ts-expect-error
         ;() => ent.update({ pk }, { conditions: { attr: 'sk', exists: true } })
-      })
-
-      it('with conditions and returnValues', () => {
-        const updateParams = () => ent.update(
-          {
-            pk,
-          },
-          {
-            execute: false,
-            conditions: [
-              {
-                attr: 'pkMap1',
-                exists: true,
-              },
-            ],
-            returnValues: 'ALL_NEW',
-          },
-        )
-
-        type UpdateParams = A.Await<F.Return<typeof updateParams>>
-        type TestUpdateParams = A.Equals<
-          UpdateParams,
-          EntityItem<typeof ent>
-        >
-
-        const testUpdateParams: TestUpdateParams = 1
-        testUpdateParams
-      })
-
-      it('with invalid conditions attributes', () => {
-        // @ts-expect-error
-        ent.updateParams({ pk }, { conditions: { attr: 'nonExistentAttr', exists: true } })
       })
     })
 
@@ -2123,6 +2091,38 @@ describe('Entity', () => {
         type TestUpdateItem = A.Equals<UpdateItem, MethodItemOverlay | undefined>
         const testUpdateItem: TestUpdateItem = 1
         testUpdateItem
+      })
+
+      it('with conditions and returnValues', () => {
+        const updateParams = () => ent.update(
+          {
+            pk,
+          },
+          {
+            execute: false,
+            conditions: [
+              {
+                attr: 'pkMap1',
+                exists: true,
+              },
+            ],
+            returnValues: 'ALL_NEW',
+          },
+        )
+
+        type UpdateParams = A.Await<F.Return<typeof updateParams>>
+        type TestUpdateParams = A.Equals<
+          UpdateParams,
+          EntityItem<typeof ent>
+        >
+
+        const testUpdateParams: TestUpdateParams = 1
+        testUpdateParams
+      })
+
+      it('with invalid conditions attributes', () => {
+        // @ts-expect-error
+        ent.updateParams({ pk }, { conditions: { attr: 'nonExistentAttr', exists: true } })
       })
     })
 
