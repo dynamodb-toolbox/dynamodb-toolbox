@@ -4,7 +4,7 @@
  * @license MIT
  */
 
-import { error } from './utils'
+import { error } from './utils.js'
 
 // Check attribute against attribute set
 export default (attr: string, attrs: any): string => {
@@ -24,4 +24,4 @@ export default (attr: string, attrs: any): string => {
   } else {
     return error(`'${attr}' is not a valid attribute within the given entity/table.`)
   }
-} // end checkAttribute
+}

@@ -1,20 +1,41 @@
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import cloneDeep from 'deep-copy'
+import {
+  DeleteCommand, DeleteCommandInput,
+  DeleteCommandOutput,
+  DynamoDBDocumentClient,
+  GetCommand,
+  GetCommandInput, GetCommandOutput,
+  PutCommand,
+  PutCommandInput, PutCommandOutput,
+  UpdateCommand,
+  UpdateCommandInput, UpdateCommandOutput,
+} from '@aws-sdk/lib-dynamodb'
+import type {
+  WriteRequest,
+  Delete,
+  Update,
+  Put,
+  ConditionCheck,
+  QueryInput,
+  ScanInput,
+  TransactGetItem
+} from '@aws-sdk/client-dynamodb'
+import * as cloneDeep from 'deep-copy'
+
 import type { A, B, O } from 'ts-toolbelt'
 
-import parseEntity from '../../lib/parseEntity'
-import validateTypes from '../../lib/validateTypes'
-import normalizeData from '../../lib/normalizeData'
-import formatItem from '../../lib/formatItem'
-import getKey from '../../lib/getKey'
-import parseConditions from '../../lib/expressionBuilder'
-import parseProjections from '../../lib/projectionBuilder'
-import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils'
+import parseEntity from '../../lib/parseEntity.js'
+import validateTypes from '../../lib/validateTypes.js'
+import normalizeData from '../../lib/normalizeData.js'
+import formatItem from '../../lib/formatItem.js'
+import getKey from '../../lib/getKey.js'
+import parseConditions from '../../lib/expressionBuilder.js'
+import parseProjections from '../../lib/projectionBuilder.js'
+import { error, transformAttr, isEmpty, If, FirstDefined, Compute } from '../../lib/utils.js'
 import {
   ATTRIBUTE_VALUES_LIST_DEFAULT_KEY,
   ATTRIBUTE_VALUES_LIST_DEFAULT_VALUE,
-} from '../../constants'
-import type { ScanOptions, TableDef } from '../Table'
+} from '../../constants.js'
+import type { ScanOptions, TableDef } from '../Table/types.js'
 import type {
   $GetOptions,
   $PutOptions,
@@ -40,9 +61,8 @@ import type {
   UpdateOptionsReturnValues,
   Writable,
   Readonly,
-  $PutBatchOptions,
-} from './types'
-import Table from '../Table'
+  $PutBatchOptions, AttributeMap,
+} from './types.js'
 
 class Entity<Name extends string = string,
   // Name is used to detect Entity instances (new Entity(...)) vs Entity type (const e: Entity = ...)
@@ -130,7 +150,7 @@ class Entity<Name extends string = string,
     // we want to prevent mutation of the original entity configuration input but still be able
     // to mutate the original table instance
     entity = {
-      ...cloneDeep(entitySchemaWithoutTable),
+      ...cloneDeep.default(entitySchemaWithoutTable),
       ...(table ? { table } : {}),
     }
 
@@ -163,8 +183,7 @@ class Entity<Name extends string = string,
     this.setTable(table)
   }
 
-  // Return reference to the DocumentClient
-  get DocumentClient(): DocumentClient {
+  get DocumentClient(): DynamoDBDocumentClient {
     if (this.table?.DocumentClient) {
       return this.table.DocumentClient
     } else {
@@ -219,7 +238,7 @@ class Entity<Name extends string = string,
       : this.schema.attributes[attr]
         ? attr
         : error(`'${attr}' does not exist or is an invalid alias`)
-  } // end attribute
+  }
 
   // Parses the item
   parse(input: { Item: unknown }, include?: string[]): Item
@@ -243,12 +262,12 @@ class Entity<Name extends string = string,
 
     if (Array.isArray(data)) {
       return data.map(item =>
-        formatItem(this.DocumentClient)(schema.attributes, linked, item, include),
+        formatItem()(schema.attributes, linked, item, include),
       ) as any
     } else {
-      return formatItem(this.DocumentClient)(schema.attributes, linked, data, include) as any
+      return formatItem()(schema.attributes, linked, data, include) as any
     }
-  } // end parse
+  }
 
   /**
    * Generate GET parameters and execute operation
@@ -266,12 +285,12 @@ class Entity<Name extends string = string,
     Parse extends boolean | undefined = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
-    params: Partial<DocumentClient.GetItemInput> = {},
+    params: Partial<GetCommandInput> = {},
   ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
-    DocumentClient.GetItemInput,
+    GetCommandInput,
     If<B.Not<ShouldParse<Parse, AutoParse>>,
-      DocumentClient.GetItemOutput,
-      Compute<O.Update<DocumentClient.GetItemOutput,
+      GetCommandOutput,
+      Compute<O.Update<GetCommandOutput,
         'Item',
         FirstDefined<[MethodItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
     const getParams = this.getParams<MethodItemOverlay,
@@ -285,7 +304,7 @@ class Entity<Name extends string = string,
       return getParams as any
     }
 
-    const output = await this.DocumentClient.get(getParams).promise()
+    const output = await this.DocumentClient.send(new GetCommand(getParams))
 
     if (!shouldParse(options.parse, this.autoParse)) {
       return output as any
@@ -319,8 +338,6 @@ class Entity<Name extends string = string,
    * Generate parameters for GET transaction operation
    * @param {object} item - The keys from item you wish to get.
    * @param {object} [options] - Additional get options
-   *
-   * Creates a Delete object: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Get.html
    */
   getTransaction<MethodItemOverlay extends Overlay = undefined,
     MethodCompositeKeyOverlay extends Overlay = undefined,
@@ -348,7 +365,7 @@ class Entity<Name extends string = string,
       $Item,
       Item,
       CompositePrimaryKey>
-  } & DocumentClient.TransactGetItem {
+  } & TransactGetItem {
     // Destructure options to check for extraneous arguments
     const {
       attributes, // ProjectionExpression
@@ -389,11 +406,11 @@ class Entity<Name extends string = string,
     Parse extends boolean | undefined = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: $GetOptions<ResponseAttributes, Execute, Parse> = {},
-    params: Partial<DocumentClient.GetItemInput> = {},
-  ): DocumentClient.GetItemInput {
+    params: Partial<GetCommandInput> = {},
+  ): GetCommandInput {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
-    const data = normalizeData(this.DocumentClient)(
+    const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
@@ -438,14 +455,14 @@ class Entity<Name extends string = string,
         // Merge names and add projection expression
         ExpressionAttributeNames = names
         ProjectionExpression = projections
-      } // end if names
-    } // end if projections
+      }
+    }
 
     // Generate the payload
     const payload = Object.assign(
       {
         TableName: _table!.name,
-        Key: getKey(this.DocumentClient)(
+        Key: getKey()(
           data,
           schema.attributes,
           schema.keys.partitionKey,
@@ -460,7 +477,7 @@ class Entity<Name extends string = string,
     )
 
     return payload
-  } // end getParams
+  }
 
   /**
    * Generate DELETE parameters and execute operation
@@ -479,15 +496,15 @@ class Entity<Name extends string = string,
     Parse extends boolean | undefined = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
-    params: Partial<DocumentClient.DeleteItemInput> = {},
+    params: Partial<DeleteCommandInput> = {},
   ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
-    DocumentClient.DeleteItemInput,
+    DeleteCommandInput,
     If<B.Not<ShouldParse<Parse, AutoParse>>,
-      DocumentClient.DeleteItemOutput,
+      DeleteCommandOutput,
       If<// If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
         B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-        O.Omit<DocumentClient.DeleteItemOutput, 'Attributes'>,
-        O.Update<DocumentClient.DeleteItemOutput,
+        O.Omit<DeleteCommandOutput, 'Attributes'>,
+        O.Update<DeleteCommandOutput,
           'Attributes',
           FirstDefined<[MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
     const deleteParams = this.deleteParams<MethodItemOverlay,
@@ -502,7 +519,7 @@ class Entity<Name extends string = string,
       return deleteParams as any
     }
 
-    const output = await this.DocumentClient.delete(deleteParams).promise()
+    const output = await this.DocumentClient.send(new DeleteCommand(deleteParams))
 
     if (!shouldParse(options.parse, this.autoParse)) {
       return output as any
@@ -528,9 +545,9 @@ class Entity<Name extends string = string,
    */
   deleteBatch<MethodCompositeKeyOverlay extends Overlay = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
-  ): { [key: string]: DocumentClient.WriteRequest } {
+  ): { [key: string]: WriteRequest } {
     const payload = this.deleteParams<undefined, MethodCompositeKeyOverlay>(item)
-    return { [payload.TableName]: { DeleteRequest: { Key: payload.Key } } }
+    return { [payload.TableName!]: { DeleteRequest: { Key: payload.Key } } }
   }
 
   /**
@@ -549,8 +566,8 @@ class Entity<Name extends string = string,
     ResponseAttributes extends ItemAttributes = ItemAttributes>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: TransactionOptions<ResponseAttributes> = {},
-    params?: Partial<DocumentClient.DeleteItemInput>,
-  ): { Delete: DocumentClient.Delete } {
+    params?: Partial<DeleteCommandInput>,
+  ): { Delete: Delete } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -597,11 +614,11 @@ class Entity<Name extends string = string,
     Parse extends boolean | undefined = undefined>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: RawDeleteOptions<ResponseAttributes, ReturnValues, Execute, Parse> = {},
-    params: Partial<DocumentClient.DeleteItemInput> = {},
-  ): DocumentClient.DeleteItemInput {
+    params: Partial<DeleteCommandInput> = {},
+  ): DeleteCommandInput {
     // Extract schema and merge defaults
     const { schema, defaults, linked, _table } = this
-    const data = normalizeData(this.DocumentClient)(
+    const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
@@ -663,14 +680,14 @@ class Entity<Name extends string = string,
         ExpressionAttributeNames = names
         ExpressionAttributeValues = values
         ConditionExpression = expression
-      } // end if names
-    } // end if filters
+      }
+    }
 
     // Generate the payload
     const payload = Object.assign(
       {
         TableName: _table!.name,
-        Key: getKey(this.DocumentClient)(
+        Key: getKey()(
           data,
           schema.attributes,
           schema.keys.partitionKey,
@@ -687,7 +704,7 @@ class Entity<Name extends string = string,
     )
 
     return payload
-  } // end deleteParams
+  }
 
   /**
    * Generate UPDATE parameters and execute operations
@@ -716,19 +733,19 @@ class Entity<Name extends string = string,
       Parse,
       StrictSchemaCheck> = {},
     params: UpdateCustomParams = {},
-  ): Promise<Compute<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
-    DocumentClient.UpdateItemInput,
+  ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
+    UpdateCommandInput,
     If<B.Not<ShouldParse<Parse, AutoParse>>,
-      DocumentClient.UpdateItemOutput,
+      UpdateCommandOutput,
       If<A.Equals<ReturnValues, 'NONE'>,
-        Omit<DocumentClient.UpdateItemOutput, 'Attributes'>,
-        O.Update<DocumentClient.UpdateItemOutput,
+        Omit<UpdateCommandOutput, 'Attributes'>,
+        O.Update<UpdateCommandOutput,
           'Attributes',
           If<B.Or<A.Equals<ReturnValues, 'ALL_OLD'>, A.Equals<ReturnValues, 'ALL_NEW'>>,
             FirstDefined<[O.Pick<Item, ResponseAttributes>, EntityItemOverlay, MethodItemOverlay]>,
             If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
               A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>>> {
+              FirstDefined<[MethodItemOverlay, O.Pick<Item, ResponseAttributes>, EntityItemOverlay]>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,
@@ -742,7 +759,7 @@ class Entity<Name extends string = string,
       return updateParams as any
     }
 
-    const output = await this.DocumentClient.update(updateParams).promise()
+    const output = await this.DocumentClient.send( new UpdateCommand(updateParams))
 
     if (!shouldParse(options.parse, this.autoParse)) {
       return output as any
@@ -781,7 +798,7 @@ class Entity<Name extends string = string,
       StrictSchemaCheck>,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
     params?: UpdateCustomParams,
-  ): { Update: DocumentClient.Update } {
+  ): { Update: Update } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -811,7 +828,7 @@ class Entity<Name extends string = string,
     }
 
     // Return in transaction format (cast as Update since UpdateExpression can't be undefined)
-    return { Update: payload as DocumentClient.Update }
+    return { Update: payload as Update }
   }
 
   // Generate UPDATE Parameters
@@ -844,7 +861,7 @@ class Entity<Name extends string = string,
       ExpressionAttributeValues = {},
       ...params
     }: UpdateCustomParams = {},
-  ): DocumentClient.UpdateItemInput {
+  ): UpdateCommandInput {
     // Validate operation types
     if (!Array.isArray(SET)) error('SET must be an array')
     if (!Array.isArray(REMOVE)) error('REMOVE must be an array')
@@ -864,13 +881,13 @@ class Entity<Name extends string = string,
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
 
-    // Initialize validateType with the DocumentClient
-    const validateType = validateTypes(this.DocumentClient)
+    // Initialize validateType
+    const validateType = validateTypes()
 
     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
     // Merge defaults
-    const data = normalizeData(this.DocumentClient)(
+    const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
@@ -936,8 +953,8 @@ class Entity<Name extends string = string,
         ExpressionAttributeNames = Object.assign(ExpressionAttributeNames, names)
         ExpressionAttributeValues = Object.assign(ExpressionAttributeValues, values)
         ConditionExpression = expression
-      } // end if names
-    } // end if conditions
+      }
+    }
 
     // Check for required fields
     Object.keys(required).forEach(
@@ -949,10 +966,10 @@ class Entity<Name extends string = string,
             this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''
           }' is a required field`,
         ),
-    ) // end required field check
+    )
 
     // Get partition and sort keys
-    const Key = getKey(this.DocumentClient)(
+    const Key = getKey()(
       data,
       schema.attributes,
       schema.keys.partitionKey,
@@ -1000,7 +1017,7 @@ class Entity<Name extends string = string,
           const attr = schema.attributes[attrs[i]].map || attrs[i]
           REMOVE.push(`#${attr}`)
           names[`#${attr}`] = attr
-        } // end for
+        }
       } else if (
         this._table!._removeNulls === true &&
         (data[field] === null || String(data[field]).trim() === '') &&
@@ -1162,7 +1179,7 @@ class Entity<Name extends string = string,
             // Push the update to SET
             SET.push(
               // @ts-ignore
-              mapping.default !== undefined && item[field] === undefined && !mapping.onUpdate
+              mapping.default !== undefined && item[mapping.alias || field] === undefined && !mapping.onUpdate
                 ? `#${field} = if_not_exists(#${field},:${field})`
                 : `#${field} = :${field}`,
             )
@@ -1171,7 +1188,7 @@ class Entity<Name extends string = string,
             values[`:${field}`] = value
           }
         }
-      } // end if undefined
+      }
     })
 
     // Create the update expression
@@ -1199,12 +1216,12 @@ class Entity<Name extends string = string,
       capacity ? { ReturnConsumedCapacity: capacity.toUpperCase() } : null,
       metrics ? { ReturnItemCollectionMetrics: metrics.toUpperCase() } : null,
       returnValues ? { ReturnValues: returnValues.toUpperCase() } : null,
-    ) // end assign
+    )
 
     return payload
 
     // TODO: Check why primary/secondary GSIs are using if_not_exists
-  } // end updateParams
+  }
 
   // PUT - put item
   async put<MethodItemOverlay extends Overlay = undefined,
@@ -1223,15 +1240,15 @@ class Entity<Name extends string = string,
       Attributes,
       StrictSchemaCheck>,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
-    params: Partial<DocumentClient.PutItemInput> = {},
+    params: Partial<PutCommandInput> = {},
   ): Promise<If<B.Not<ShouldExecute<Execute, AutoExecute>>,
-    DocumentClient.PutItemInput,
+    PutCommandInput,
     If<B.Not<ShouldParse<Parse, AutoParse>>,
-      DocumentClient.PutItemOutput,
+      PutCommandOutput,
       // If MethodItemOverlay is defined, ReturnValues is not inferred from args anymore
       If<B.And<A.Equals<ReturnValues, 'NONE'>, A.Equals<MethodItemOverlay, undefined>>,
-        O.Omit<DocumentClient.PutItemOutput, 'Attributes'>,
-        O.Update<DocumentClient.PutItemOutput,
+        O.Omit<PutCommandOutput, 'Attributes'>,
+        O.Update<PutCommandOutput,
           'Attributes',
           FirstDefined<[MethodItemOverlay, EntityItemOverlay, Compute<O.Pick<Item, ResponseAttributes>>]>>>>>> {
     const putParams = this.putParams<MethodItemOverlay,
@@ -1246,7 +1263,7 @@ class Entity<Name extends string = string,
       return putParams as any
     }
 
-    const output = await this.DocumentClient.put(putParams).promise()
+    const output = await this.DocumentClient.send(new PutCommand(putParams))
 
     if (!shouldParse(options.parse, this.autoParse)) {
       return output as any
@@ -1286,7 +1303,7 @@ class Entity<Name extends string = string,
       Attributes,
       StrictSchemaCheck>,
     options: $PutBatchOptions<Execute, Parse, StrictSchemaCheck> = {},
-  ): { [key: string]: DocumentClient.WriteRequest } {
+  ): { [key: string]: WriteRequest } {
     const payload = this.putParams<MethodItemOverlay,
       ShownItemAttributes,
       ResponseAttributes,
@@ -1294,7 +1311,7 @@ class Entity<Name extends string = string,
       Execute,
       Parse,
       StrictSchemaCheck>(item, options)
-    return { [payload.TableName]: { PutRequest: { Item: payload.Item } } }
+    return { [payload.TableName!]: { PutRequest: { Item: payload.Item } } }
   }
 
   /**
@@ -1318,8 +1335,8 @@ class Entity<Name extends string = string,
       Attributes,
       StrictSchemaCheck>,
     options: TransactionOptions<ResponseAttributes, StrictSchemaCheck> = {},
-    params?: Partial<DocumentClient.PutItemInput>,
-  ): { Put: DocumentClient.Put } {
+    params?: Partial<PutCommandInput>,
+  ): { Put: Put } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -1369,18 +1386,18 @@ class Entity<Name extends string = string,
       Attributes,
       StrictSchemaCheck>,
     options: $PutOptions<ResponseAttributes, ReturnValues, Execute, Parse, StrictSchemaCheck> = {},
-    params: Partial<DocumentClient.PutItemInput> = {},
-  ): DocumentClient.PutItemInput {
+    params: Partial<PutCommandInput> = {},
+  ): PutCommandInput {
     // Extract schema and defaults
     const { schema, defaults, required, linked, _table } = this
 
-    // Initialize validateType with the DocumentClient
-    const validateType = validateTypes(this.DocumentClient)
+    // Initialize validateType
+    const validateType = validateTypes()
 
     const shouldFilterUnmappedFields = options.strictSchemaCheck === false
 
     // Merge defaults
-    const data = normalizeData(this.DocumentClient)(
+    const data = normalizeData()(
       schema.attributes,
       linked,
       Object.assign({}, defaults, item),
@@ -1421,7 +1438,6 @@ class Entity<Name extends string = string,
     }
 
     // Verify returnValues
-    // TODO: Check this, conflicts with dynalite
     if (
       returnValues !== undefined &&
       (typeof returnValues !== 'string' ||
@@ -1449,8 +1465,8 @@ class Entity<Name extends string = string,
         ExpressionAttributeNames = names
         ExpressionAttributeValues = values
         ConditionExpression = expression
-      } // end if names
-    } // end if filters
+      }
+    }
 
     // Check for required fields
     Object.keys(required).forEach(
@@ -1462,10 +1478,10 @@ class Entity<Name extends string = string,
             this.schema.attributes[field].alias ? `/${this.schema.attributes[field].alias}` : ''
           }' is a required field`,
         ),
-    ) // end required field check
+    )
 
     // Checks for partition and sort keys
-    getKey(this.DocumentClient)(
+    getKey()(
       data,
       schema.attributes,
       schema.keys.partitionKey,
@@ -1505,7 +1521,7 @@ class Entity<Name extends string = string,
     )
 
     return payload
-  } // end putParams
+  }
 
   /**
    * Generate parameters for ConditionCheck transaction operation
@@ -1523,7 +1539,7 @@ class Entity<Name extends string = string,
     ResponseAttributes extends ItemAttributes = ItemAttributes>(
     item: FirstDefined<[MethodCompositeKeyOverlay, EntityCompositeKeyOverlay, CompositePrimaryKey]>,
     options: TransactionOptions<ResponseAttributes> = {},
-  ): { ConditionCheck: DocumentClient.ConditionCheck } {
+  ): { ConditionCheck: ConditionCheck } {
     // Destructure options to check for extraneous arguments
     const {
       conditions, // ConditionExpression
@@ -1553,7 +1569,7 @@ class Entity<Name extends string = string,
     }
 
     // Return in transaction format
-    return { ConditionCheck: payload as DocumentClient.ConditionCheck }
+    return { ConditionCheck: payload as ConditionCheck }
   }
 
   // Query pass-through (default entity)
@@ -1567,7 +1583,7 @@ class Entity<Name extends string = string,
     Parse extends boolean | undefined = undefined>(
     pk: any,
     options: EntityQueryOptions<ResponseAttributes, FiltersAttributes, Execute, Parse> = {},
-    params: Partial<DocumentClient.QueryInput> = {},
+    params: Partial<QueryInput> = {},
   ) {
     if (!this.table) {
       throw new Error('Entity table is not defined')
@@ -1583,13 +1599,14 @@ class Entity<Name extends string = string,
   scan<MethodItemOverlay extends Overlay = undefined,
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined>(
-    options: ScanOptions<Execute, Parse> = {}, params: Partial<DocumentClient.ScanInput> = {}) {
+    options: ScanOptions<Execute, Parse> = {}, params: Partial<ScanInput> = {}) {
     if (!this.table) {
       throw new Error('Entity table is not defined')
     }
 
+
     options.entity = this.name
-    return this.table.scan<FirstDefined<[MethodItemOverlay, DocumentClient.AttributeMap]>,
+    return this.table.scan<FirstDefined<[MethodItemOverlay, AttributeMap]>,
       Execute,
       Parse>(options, params)
   }

@@ -1,8 +1,8 @@
 import { A } from 'ts-toolbelt'
 
-import parseAttributes from './parseTableAttributes'
-import { error, hasValue } from './utils'
-import { TableConstructor, TableIndexes } from '../classes/Table'
+import parseAttributes from './parseTableAttributes.js'
+import { error, hasValue } from './utils.js'
+import { TableConstructor, TableIndexes } from '../classes/Table/types.js'
 
 export type ParsedTable = ReturnType<typeof parseTable>
 
@@ -112,12 +112,12 @@ export const parseTable = <
       autoExecute,
       autoParse,
       removeNullAttributes,
-      _entities: [] // init Entity tracker
+      _entities: []
     },
-    DocumentClient ? { DocumentClient } : {}, // end DocumentClient
-    entities ? { entities } : {} // end entities
+    DocumentClient ? { DocumentClient } : {},
+    entities ? { entities } : {}
   )
-} // end parseTable
+}
 
 // Parse Indexes
 const parseIndexes = (indexes: TableIndexes, pk: string): TableIndexes =>
@@ -152,7 +152,7 @@ const parseIndexes = (indexes: TableIndexes, pk: string): TableIndexes =>
         partitionKey && type === 'GSI' ? { partitionKey } : {},
         sortKey ? { sortKey } : {},
         { type }
-      ) // end
+      )
     })
   }, {})
 

@@ -10,9 +10,9 @@ import {
   SortKeyDefinition,
   GSISortKeyDefinition,
   PureAttributeDefinition
-} from '../classes/Entity'
-import { TrackingInfo } from './parseEntity'
-import { error } from './utils'
+} from '../classes/Entity/types.js'
+import { TrackingInfo } from './parseEntity.js'
+import { error } from './utils.js'
 
 // Parse and validate mapping config
 export default (
@@ -127,7 +127,7 @@ export default (
             } else {
               error(`Index assignments for '${field}' must be string or boolean values`)
             }
-          } // end for
+          }
         } else {
           error(`'${prop}' must be a boolean, string, or array`)
         }
@@ -172,5 +172,5 @@ export default (
         [map]: Object.assign({}, _config, { alias: field })
       }
       : {}
-  ) // end assign
+  )
 }

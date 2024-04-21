@@ -245,7 +245,7 @@ The data is returned with the same response syntax as the [DynamoDB TransactGetI
 
 #### transactWrite(items [,options] [,parameters])
 
-> TransactWriteItems is a synchronous write operation that groups up to 25 action requests. The actions are completed atomically so that either all of them succeed, or all of them fail.
+> TransactWriteItems is a synchronous write operation that groups up to 100 action requests. The actions are completed atomically so that either all of them succeed, or all of them fail.
 
 The `transactWrite` method is a wrapper for the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html). The DynamoDB Toolbox `transactWrite` method supports all **TransactWriteItems** API operations. The `transactWrite` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `transactWriteParams` can be used, but will only retrieve the generated parameters.
 

@@ -1,6 +1,6 @@
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
-import { DocumentClient } from './bootstrap.test'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
+import { DocumentClient } from './bootstrap.test.js'
 
 describe('Misc Tests (development only)', () => {
   it('uses a numeric pk value', async () => {
@@ -930,9 +930,9 @@ describe('Misc Tests (development only)', () => {
 //             ProjectionExpression = projections
 //             _EntityProjections = entities
 //             _TableProjections = tableAttrs
-//           } // end if names
+//           }
 
-//         } // end if projections
+//         }
 
 //         // Error if extra arguments are provided along with keys
 //         if (keys !== undefined && Object.keys(args).length > 0)

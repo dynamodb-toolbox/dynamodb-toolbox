@@ -8,10 +8,9 @@
 
 import { A } from 'ts-toolbelt'
 
-// Import standard error handler
-import { TableDef } from '../classes/Table'
-import { error } from './utils'
-import checkAttribute from './checkAttribute'
+import { TableDef } from '../classes/Table/types.js'
+import { error } from './utils.js'
+import checkAttribute from './checkAttribute.js'
 
 // This should be able to parse an array with values,
 // or an object that uses the name of the entity plus an array of values
@@ -45,7 +44,7 @@ const projectionBuilder = <EntityTable extends TableDef | undefined>(
   // Check that table is valid and contains attributes
   if (!table || !table.Table || Object.keys(table.Table.attributes).length == 0) {
     throw new Error('Tables must be valid and contain attributes')
-  } // end check table
+  }
 
   // Add entityField if exists
   if (type && table.Table.entityField) attrs.push(table.Table.entityField)
@@ -68,7 +67,7 @@ const projectionBuilder = <EntityTable extends TableDef | undefined>(
       if (!Object.values(names).includes(attr)) {
         names[`#proj${++index}`] = attr
         tableAttrs.push(attribute)
-      } // end if
+      }
     } else if (typeof attribute === 'object') {
       // If an object, loop through keys
       for (const entity in attribute) {
@@ -97,20 +96,20 @@ const projectionBuilder = <EntityTable extends TableDef | undefined>(
 
             if (!Object.values(names).includes(attr)) {
               names[`#proj${++index}`] = attr
-            } // end if
+            }
 
             entities[entity].push(attr)
-          } // end for
+          }
         } else {
           error(`'${entity}' is not a valid entity on this table`)
-        } // end if valid entity
-      } // end for loop
+        }
+      }
 
       // Throw error if invalid type
     } else {
       error(`'${typeof attribute}' is an invalid type. Projections require strings or arrays`)
     }
-  } // end for
+  }
 
   return {
     names,
@@ -120,6 +119,6 @@ const projectionBuilder = <EntityTable extends TableDef | undefined>(
     }, {}),
     tableAttrs
   }
-} // end module
+}
 
 export default projectionBuilder

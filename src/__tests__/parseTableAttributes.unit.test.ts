@@ -1,5 +1,5 @@
-import { TableAttributes } from '../classes/Table'
-import parseTableAttributes from '../lib/parseTableAttributes'
+import { TableAttributes } from '../classes/Table/types.js'
+import parseTableAttributes from '../lib/parseTableAttributes.js'
 
 const attrs: TableAttributes = {
   pk: 'string',

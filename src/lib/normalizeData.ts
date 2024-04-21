@@ -4,20 +4,19 @@
  * @license MIT
  */
 
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
-import validateTypes from './validateTypes'
-import { error, transformAttr } from './utils'
+import validateTypes from './validateTypes.js'
+import { error, transformAttr } from './utils.js'
 
 // Normalize Data
-export default (DocumentClient: DocumentClient) => (
+export default () => (
   schema: any,
   linked: any,
   data: any,
   filter = false
 ) => {
   // Intialize validate type
-  const validateType = validateTypes(DocumentClient)
+  const validateType = validateTypes()
 
   // Build and execute defaults dependency graph
   const dependsOn = (map: any, attr: any) => {
@@ -33,11 +32,13 @@ export default (DocumentClient: DocumentClient) => (
           if (typeof map[dependent] === 'function') {
             // Resolve the dependency graph
             map = dependsOn(map, dependent)
+          } if (typeof map[dependent] === 'undefined') {
+            throw new DependsOnUndefined(`'${dependent}' is undefined, bailing`)
           }
         } else {
           error(`'${dependent}' is not a valid attribute or alias name`)
         }
-      }) // end dependency loop
+      })
 
       map[attr] = map[attr](map)
       return map
@@ -47,11 +48,11 @@ export default (DocumentClient: DocumentClient) => (
         if (schema[attr].alias) map[schema[attr].alias] = map[attr]
         if (schema[attr].map) map[schema[attr].map] = map[attr]
       } catch (e) {
-        // TODO: Find a better way to prevent this for missing fields
+        // noop
       }
       return map
     }
-  } // end dependsOn
+  }
 
   // Generate normalized data object
   const dataMap = Object.keys(data).reduce(
@@ -79,8 +80,15 @@ export default (DocumentClient: DocumentClient) => (
   const defaults: Record<string, any> = Object.keys(defaultMap).reduce((acc, attr) => {
     // If a function, resolve the dependency graph
     if (typeof defaultMap[attr] === 'function') {
-      const map = dependsOn(defaultMap, attr)
-      defaultMap = map
+      try {
+        const map = dependsOn(defaultMap, attr)
+        defaultMap = map
+      } catch (e) {
+        if (e instanceof DependsOnUndefined && (schema[attr].partitionKey || schema[attr].sortKey || schema[attr].required)) {
+          throw new Error(`Required field '${attr}' depends on attribute(s), one or more of which can't be resolved (${schema[attr].dependsOn})`)
+        }
+        delete defaultMap[attr]
+      }
     }
     return Object.assign(acc, { [attr]: defaultMap[attr] })
   }, {})
@@ -107,14 +115,8 @@ export default (DocumentClient: DocumentClient) => (
       })
       .filter((x: any) => x !== null)
 
-    // TODO: add required fields
-    // if (values.length > 0 && values.length !== linked[field].length) {
-    //   error(`${linked[field].join(', ')} are all required for composite key`)
-    // } else
-
     if (values.length === linked[attr].length) {
       return Object.assign(acc, {
-        //[field]: `${schema[attr].prefix || ''}${values.join(schema[attr].delimiter || '#')}${schema[attr].suffix || ''}`
         [field]: values.join(schema[attr].delimiter || '#')
       })
     } else {
@@ -124,19 +126,10 @@ export default (DocumentClient: DocumentClient) => (
 
   // Return the merged data
   return Object.assign(composites, _data)
-} // end normalizeData
+}
 
-// Generate final data and evaluate function expressions
-// let _data = Object.keys(dataMap.data).reduce((acc,field) => {
-//   return Object.assign(acc, {
-//     [field]: typeof dataMap.data[field] === 'function' ? dataMap.data[field](defaults) : dataMap.data[field]
-//   })
-// },{})
-
-// console.log(_data)
-
-// map[schema[attr].dependsOn] = typeof map[schema[attr].dependsOn] === 'function' ?
-//   dependsOn(map,schema[attr].dependsOn) // map[schema[attr].dependsOn](map)
-//   : map[schema[attr].dependsOn]
-// return { map, val: map[attr](map) }
-// return dependsOn(map,attr)
+class DependsOnUndefined extends Error {
+  constructor(message: string) {
+    super(message)
+  }
+}

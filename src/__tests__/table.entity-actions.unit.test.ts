@@ -1,5 +1,5 @@
-import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap.test'
+import { Table, Entity } from '../index.js'
+import { DocumentClient } from './bootstrap.test.js'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -100,4 +100,4 @@ describe('table.parse', () => {
     // @ts-expect-error
     expect(TestTable.parse('TestEntityX')).rejects.toThrow(`'TestEntityX' is not a valid Entity`)
   })
-}) // end table.parse
+})

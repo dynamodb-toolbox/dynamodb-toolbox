@@ -1,10 +1,9 @@
-import formatItem from '../lib/formatItem'
+import formatItem from '../lib/formatItem.js'
 
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient } from './bootstrap.test.js'
 
-// Require Table and Entity classes
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
 
 // Create basic table
 const DefaultTable = new Table({
@@ -24,6 +23,9 @@ DefaultTable.addEntity(
       set: { type: 'set', setType: 'string', alias: 'set_alias' },
       set_alias2: { type: 'set', setType: 'string', map: 'set2' },
       number: 'number',
+      numberSet: { type: 'set', setType: 'number' },
+      bigint: 'bigint',
+      bigintSet: { type: 'set', setType: 'bigint' },
       list: { type: 'list', alias: 'list_alias' },
       list_alias2: { type: 'list', map: 'list2' },
       test: 'map',
@@ -39,65 +41,97 @@ DefaultTable.addEntity(
   } as const)
 )
 
-// console.log(DefaultTable.User);
-
 describe('formatItem', () => {
   it('formats item with no alias', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { pk: 'test' }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      pk: 'test'
+    })
     expect(result).toEqual({ pk: 'test' })
   })
 
   it('formats item with alias', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { list: ['test'] }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      list: ['test']
+    })
     expect(result).toEqual({ list_alias: ['test'] })
   })
 
   it('formats item with mapping', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { list2: ['test'] }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      list2: ['test']
+    })
     expect(result).toEqual({ list_alias2: ['test'] })
   })
 
   it('formats item with set (alias)', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { set: DocumentClient.createSet([1, 2, 3]) }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      set: new Set([1, 2, 3])
+    })
     expect(result).toEqual({ set_alias: [1, 2, 3] })
   })
 
   it('formats item with set (map)', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { set2: DocumentClient.createSet([1, 2, 3]) }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      set2: new Set([1, 2, 3])
+    })
     expect(result).toEqual({ set_alias2: [1, 2, 3] })
   })
 
   it('formats item with linked fields', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { sk: 'test1#test2' }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      sk: 'test1#test2'
+    })
     expect(result).toEqual({ sk: 'test1#test2', linked1: 'test1', linked2: 'test2' })
   })
 
+  it('formats item with wrapped numbers', () => {
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      number: { value: '1' },
+      numberSet: new Set([
+        {
+          value: '1'
+        },
+        {
+          value: '2'
+        },
+        {
+          value: '3'
+        }
+      ]),
+      bigint: { value: '1' },
+      bigintSet: new Set([
+        {
+          value: '11234567899999999'
+        },
+        {
+          value: '11234567899999999'
+        },
+        {
+          value: '11234567899999999'
+        }
+      ])
+    })
+
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "bigint": 1n,
+        "bigintSet": [
+          11234567899999999n,
+          11234567899999999n,
+          11234567899999999n,
+        ],
+        "number": 1,
+        "numberSet": [
+          1,
+          2,
+          3,
+        ],
+      }
+    `)
+  })
+
   it('specifies attributes to include', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { pk: 'test' },
@@ -107,7 +141,7 @@ describe('formatItem', () => {
   })
 
   it('specifies attributes to include', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { list: ['test'] },
@@ -117,7 +151,7 @@ describe('formatItem', () => {
   })
 
   it('specifies attributes to include with linked fields', () => {
-    const result = formatItem(DocumentClient)(
+    const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
       { sk: 'test1#test2' },
@@ -127,11 +161,9 @@ describe('formatItem', () => {
   })
 
   it('formats item with linked aliased composite field', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { composite1: 'test1#test2' }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      composite1: 'test1#test2'
+    })
     expect(result).toEqual({
       composite1_alias: 'test1#test2',
       linked3: 'test1',
@@ -140,11 +172,9 @@ describe('formatItem', () => {
   })
 
   it('formats item with linked mapped composite field', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { composite2: 'test1#test2' }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      composite2: 'test1#test2'
+    })
     expect(result).toEqual({
       composite2_alias: 'test1#test2',
       linked5: 'test1',
@@ -153,11 +183,16 @@ describe('formatItem', () => {
   })
 
   it('passes through attribute not specified in entity', () => {
-    const result = formatItem(DocumentClient)(
-      DefaultTable.User.schema.attributes,
-      DefaultTable.User.linked,
-      { unspecified: 'value' }
-    )
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      unspecified: 'value'
+    })
     expect(result).toEqual({ unspecified: 'value' })
+  })
+
+  it('passes through null attribute', () => {
+    const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
+      number: null
+    })
+    expect(result).toEqual({ number: null })
   })
 })

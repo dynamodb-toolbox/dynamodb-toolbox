@@ -1,9 +1,11 @@
-import type { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import type { A, B, O, F } from 'ts-toolbelt'
+import { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
+import { ReturnConsumedCapacity, ReturnItemCollectionMetrics } from '@aws-sdk/client-dynamodb'
 
-import type { Compute, FirstDefined, If } from '../../lib/utils'
-import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table'
-import Entity from './Entity'
+import type { Compute, FirstDefined, If } from '../../lib/utils.js'
+import type { DynamoDBKeyTypes, DynamoDBTypes, $QueryOptions, TableDef } from '../Table/types.js'
+import Entity from './Entity.js'
+import { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
 export interface EntityConstructor<
   EntityTable extends TableDef | undefined = undefined,
@@ -52,27 +54,27 @@ export type KeyAttributeDefinition = {
   setType: never
 }
 
-export type PartitionKeyDefinition = O.Partial<KeyAttributeDefinition> & {
+export type PartitionKeyDefinition = Partial<KeyAttributeDefinition> & {
   partitionKey: true
   sortKey?: false
 }
 
-export type GSIPartitionKeyDefinition = O.Partial<KeyAttributeDefinition> & {
+export type GSIPartitionKeyDefinition = Partial<KeyAttributeDefinition> & {
   partitionKey: string
   sortKey?: false
 }
 
-export type SortKeyDefinition = O.Partial<KeyAttributeDefinition> & {
+export type SortKeyDefinition = Partial<KeyAttributeDefinition> & {
   sortKey: true
   partitionKey?: false
 }
 
-export type GSISortKeyDefinition = O.Partial<KeyAttributeDefinition> & {
+export type GSISortKeyDefinition = Partial<KeyAttributeDefinition> & {
   partitionKey?: false
   sortKey: string
 }
 
-export type PureAttributeDefinition = O.Partial<{
+export type PureAttributeDefinition = Partial<{
   partitionKey: false
   sortKey: false
   type: DynamoDBTypes
@@ -281,16 +283,16 @@ export type CompositePrimaryKeyPart<
   A.Equals<KeyPureAttribute, never>,
   Record<never, unknown>,
   O.Optional<
-    | O.Pick<Item, KeyPureAttribute>
-    | If<A.Equals<KeyDependsOnAttributes, never>, never, O.Pick<Item, KeyDependsOnAttributes>>
-    | If<A.Equals<KeyCompositeAttributes, never>, never, O.Pick<Item, KeyCompositeAttributes>>,
+    | Pick<Item, KeyPureAttribute>
+    | If<A.Equals<KeyDependsOnAttributes, never>, never, Pick<Item, KeyDependsOnAttributes>>
+    | If<A.Equals<KeyCompositeAttributes, never>, never, Pick<Item, KeyCompositeAttributes>>,
     If<
       A.Equals<KeyDependsOnAttributes, never>,
       // If primary key part doesn't have "dependsOn" attribute, either it has "default" attribute and is optional,
       // either it doesn't and is required
       Attributes['default'],
       // If primary key part has "dependsOn" attribute, "default" should be a function using other attributes. We want
-      // either: - O.Pick<Item, KeyDependsOnAttributes> which should not contain KeyPureAttribute - O.Pick<Item,
+      // either: - Pick<Item, KeyDependsOnAttributes> which should not contain KeyPureAttribute - Pick<Item,
       // KeyPureAttribute> with KeyPureAttribute NOT optional this time
       Exclude<Attributes['default'], KeyPureAttribute>
     >
@@ -313,7 +315,7 @@ export type ConditionOrFilter<Attributes extends A.Key = A.Key> = (
   | { attr: A.Cast<Attributes, `${Attributes}`> }
   | { size: string }
 ) &
-  O.Partial<{
+  Partial<{
     contains: string
     exists: boolean
     type: 'S' | 'SS' | 'N' | 'NS' | 'B' | 'BS' | 'BOOL' | 'NULL' | 'L' | 'M'
@@ -340,7 +342,7 @@ export type BaseOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
 > = {
-  capacity: DocumentClient.ReturnConsumedCapacity
+  capacity: ReturnConsumedCapacity | `${ReturnConsumedCapacity}` | Lowercase<ReturnConsumedCapacity>
   execute: Execute
   parse: Parse
 }
@@ -356,14 +358,14 @@ export type $GetOptions<
   Attributes extends A.Key = A.Key,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<$ReadOptions<Execute, Parse> & { attributes: Attributes[]; include: string[] }>
+> = Partial<$ReadOptions<Execute, Parse> & { attributes: Attributes[]; include: string[] }>
 
 export type EntityQueryOptions<
   Attributes extends A.Key = A.Key,
   FiltersAttributes extends A.Key = Attributes,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<
+> = Partial<
   $QueryOptions<Execute, Parse> & {
     attributes: Attributes[]
     filters: ConditionsOrFilters<FiltersAttributes>
@@ -376,7 +378,7 @@ export type $WriteOptions<
   Parse extends boolean | undefined = undefined
 > = BaseOptions<Execute, Parse> & {
   conditions: ConditionsOrFilters<Attributes>
-  metrics: DocumentClient.ReturnItemCollectionMetrics
+  metrics: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<ReturnItemCollectionMetrics>
   include: string[]
 }
 
@@ -388,7 +390,7 @@ export type $PutOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
   StrictSchemaCheck extends boolean | undefined = true
-> = O.Partial<
+> = Partial<
   $WriteOptions<Attributes, Execute, Parse> & {
     returnValues: ReturnValues
     strictSchemaCheck?: StrictSchemaCheck
@@ -399,7 +401,7 @@ export type $PutBatchOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
   StrictSchemaCheck extends boolean | undefined = true
-> = O.Partial<
+> = Partial<
   Pick<BaseOptions<Execute, Parse>, 'execute' | 'parse'> & { strictSchemaCheck?: StrictSchemaCheck }
 >
 
@@ -416,9 +418,9 @@ export type PutItem<
       EntityItemOverlay,
       Compute<
         CompositePrimaryKey &
-          O.Pick<Item, Attributes['always']['input'] | Attributes['required']['input']> &
-          O.Partial<
-            O.Pick<Item, Attributes['always']['default'] | Attributes['required']['default']> &
+          Pick<Item, Attributes['always']['input'] | Attributes['required']['input']> &
+          Partial<
+            Pick<Item, Attributes['always']['default'] | Attributes['required']['default']> &
               O.Update<Item, Attributes['optional'], A.x | null>
           >
       >
@@ -439,7 +441,7 @@ export type $UpdateOptions<
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined,
   StrictSchemaCheck extends boolean | undefined = true
-> = O.Partial<
+> = Partial<
   $WriteOptions<Attributes, Execute, Parse> & {
     returnValues: ReturnValues
     strictSchemaCheck?: StrictSchemaCheck
@@ -453,7 +455,7 @@ export interface UpdateCustomParameters {
   DELETE: string[]
 }
 
-export type UpdateCustomParams = O.Partial<UpdateCustomParameters & DocumentClient.UpdateItemInput>
+export type UpdateCustomParams = Partial<UpdateCustomParameters & UpdateCommandInput>
 
 export type UpdateItem<
   MethodItemOverlay extends Overlay,
@@ -533,7 +535,7 @@ export type RawDeleteOptions<
   ReturnValues extends DeleteOptionsReturnValues = DeleteOptionsReturnValues,
   Execute extends boolean | undefined = undefined,
   Parse extends boolean | undefined = undefined
-> = O.Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
+> = Partial<$WriteOptions<Attributes, Execute, Parse> & { returnValues: ReturnValues }>
 
 export type TransactionOptionsReturnValues = 'NONE' | 'ALL_OLD'
 
@@ -641,3 +643,5 @@ export type UpdateOptions<
   boolean | undefined,
   boolean | undefined
 >
+
+export type AttributeMap = Record<string, NativeAttributeValue>

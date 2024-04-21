@@ -1,5 +1,5 @@
-import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap.test'
+import { Entity, Table } from '../index.js'
+import { DocumentClient } from './bootstrap.test.js'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -122,7 +122,7 @@ describe('query', () => {
       FilterExpression: '#attr1 = :attr1',
       ProjectionExpression: '#proj1,#proj2,#proj3,#proj4',
       IndexName: 'GSI1',
-      Limit: '10',
+      Limit: 10,
       ScanIndexForward: false,
       ConsistentRead: true,
       ReturnConsumedCapacity: 'TOTAL',
@@ -166,7 +166,7 @@ describe('query', () => {
       FilterExpression: '#attr1_0.#attr1_1.#attr1_2 = :attr1',
       ProjectionExpression: '#proj1,#proj2,#proj3,#proj4',
       IndexName: 'GSI1',
-      Limit: '10',
+      Limit: 10,
       ScanIndexForward: false,
       ConsistentRead: true,
       ReturnConsumedCapacity: 'TOTAL',
@@ -229,12 +229,14 @@ describe('query', () => {
   })
 
   it('fails on invalid select setting', () => {
+    // @ts-expect-error - invalid select
     expect(() => TestTable.queryParams('test', { select: 'test' })).toThrow(
       `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
     )
   })
 
   it('fails on invalid capacity setting', () => {
+    // @ts-expect-error - invalid capacity
     expect(() => TestTable.queryParams('test', { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )

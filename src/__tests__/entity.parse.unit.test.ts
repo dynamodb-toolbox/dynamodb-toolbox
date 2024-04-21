@@ -1,15 +1,14 @@
-import { DocumentClient, DocumentClientWrappedNumbers } from './bootstrap.test'
+import { DocumentClientWithWrappedNumbers } from './bootstrap.test.js'
 
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
-import { toDynamoBigInt } from '../lib/utils'
-import DynamoDB from 'aws-sdk/clients/dynamodb'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
+import { unmarshall } from '@aws-sdk/util-dynamodb'
 
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: 'pk',
   sortKey: 'sk',
-  DocumentClient: DocumentClientWrappedNumbers
+  DocumentClient: DocumentClientWithWrappedNumbers
 })
 
 const TestEntity = new Entity({
@@ -203,10 +202,11 @@ describe('parse', () => {
       test_composite2: 'email'
     })
   })
- 
+
   it('parses wrapped numbers', () => {
     const wrap = (value: number) =>
-      DynamoDB.Converter.output({ N: value.toString() }, { wrapNumbers: true })
+      unmarshall({ valueToUnmarshall: { N: value.toString() } }, { wrapNumbers: true })
+        .valueToUnmarshall.value
 
     const item = TestEntity.parse({
       pk: 'test@test.com',
@@ -226,35 +226,39 @@ describe('parse', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'bigint',
-      test_bigint: toDynamoBigInt(BigInt('90071992547409911234')),
+      test_bigint: { value: '99999999999999999999999999999999999999' },
       test_bigint_coerce: '12345'
     })
-    expect(item).toEqual({
-      email: 'test@test.com',
-      test_type: 'bigint',
-      test_bigint: BigInt('90071992547409911234'),
-      test_bigint_coerce: BigInt('12345')
-    })
+    expect(item).toMatchInlineSnapshot(`
+      {
+        "email": "test@test.com",
+        "test_bigint": 99999999999999999999999999999999999999n,
+        "test_bigint_coerce": 12345n,
+        "test_type": "bigint",
+      }
+    `)
   })
 
   it('parses bigint sets', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'bigint',
-      test_bigint_set_type: DocumentClient.createSet([
-        toDynamoBigInt(BigInt('90071992547409911234')),
-        toDynamoBigInt(BigInt('-90071992547409911234')),
+      test_bigint_set_type: new Set([
+        { value: '90071992547409911234' },
+        { value: '-90071992547409911234' },
         1234
-      ]),
+      ])
     })
-    expect(item).toEqual({
-      email: 'test@test.com',
-      test_type: 'bigint',
-      test_bigint_set_type: [
-        BigInt('90071992547409911234'),
-        BigInt('-90071992547409911234'),
-        BigInt(1234),
-      ]
-    })
+    expect(item).toMatchInlineSnapshot(`
+      {
+        "email": "test@test.com",
+        "test_bigint_set_type": [
+          90071992547409911234n,
+          -90071992547409911234n,
+          1234n,
+        ],
+        "test_type": "bigint",
+      }
+    `)
   })
-}) // end parse
+})

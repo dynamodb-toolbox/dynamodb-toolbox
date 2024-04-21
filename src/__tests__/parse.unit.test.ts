@@ -1,6 +1,6 @@
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
-import { DocumentClient } from './bootstrap.test'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
+import { DocumentClient } from './bootstrap.test.js'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -145,4 +145,4 @@ describe('parse', () => {
   //     test_composite3: 'foo'
   //   })
   // })
-}) // end parse
+})

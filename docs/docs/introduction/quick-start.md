@@ -1,11 +1,21 @@
 # Quick Start
-:::info
-We're using **aws-sdk v2** DynamoDB tools, the support for **aws-sdk v3** is on its way. <br />
-You can read more about the development [here](https://github.com/jeremydaly/dynamodb-toolbox/pull/174).
 
-:::
+## Install DynamoDB Toolbox using aws-sdk v3 (>=v0.8.0) (recommended)
 
-## Install DynamoDB Toolbox
+Using your favorite package manager, install DynamoDB Toolbox and aws-sdk v3 in your project by running one of the following commands:
+
+```bash
+# npm
+npm i dynamodb-toolbox
+npm install @aws-sdk/lib-dynamodb @aws-sdk/client-dynamodb
+
+# yarn
+yarn add dynamodb-toolbox
+yarn add @aws-sdk/lib-dynamodb @aws-sdk/client-dynamodb
+
+```
+
+## Install DynamoDB Toolbox using aws-sdk v2 (<v0.8.0)
 
 Using your favorite package manager, install DynamoDB Toolbox and aws-sdk v2 in your project by running one of the following commands:
 
@@ -19,7 +29,6 @@ yarn add dynamodb-toolbox
 yarn add aws-sdk
 
 ```
-
 ## Add to your code
 
 The `dynamodb-toolbox` package exports `Table` and `Entity` classes. Import or require them into your code as follows:
@@ -31,7 +40,24 @@ const { Table, Entity } = require('dynamodb-toolbox')
 ```typescript title="TypeScript"
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
-## Load the DocumentClient using aws-sdk v2
+
+## Load the DocumentClient using aws-sdk v3 (>=v0.8.0)
+
+```typescript title="TypeScript"
+import { DynamoDB, DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+
+const marshallOptions = {
+  // Specify your client options as usual
+  convertEmptyValues: false 
+}
+
+const translateConfig = { marshallOptions }
+
+export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient(), translateConfig)
+```
+
+## Load the DocumentClient using aws-sdk v2 (<v0.8.0)
 
 ```typescript title="TypeScript"
 import DynamoDB from 'aws-sdk/clients/dynamodb'

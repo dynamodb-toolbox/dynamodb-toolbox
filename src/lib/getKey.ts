@@ -4,12 +4,11 @@
  * @license MIT
  */
 
-import validateTypes from './validateTypes'
-import { error, transformAttr } from './utils'
-import { DocumentClient } from 'aws-sdk/clients/dynamodb'
+import validateTypes from './validateTypes.js'
+import { error, transformAttr } from './utils.js'
 
 // Get partitionKey/sortKey
-export default (DocumentClient: DocumentClient) => (
+export default () => (
   data: any,
   schema: any,
   partitionKey: any,
@@ -19,8 +18,7 @@ export default (DocumentClient: DocumentClient) => (
   partitionKey = schema[partitionKey].map || partitionKey
   sortKey = (schema[sortKey] && schema[sortKey].map) || sortKey || null
 
-  // Intialize validate type
-  const validateType = validateTypes(DocumentClient)
+  const validateType = validateTypes()
 
   // TODO: Add tests for 0 values
   const pk = data[partitionKey]
@@ -56,5 +54,5 @@ export default (DocumentClient: DocumentClient) => (
         )
       }
       : {}
-  ) // end assign
-} // end get keys
+  )
+}

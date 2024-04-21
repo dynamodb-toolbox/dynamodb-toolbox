@@ -1,12 +1,12 @@
-import parseEntityAttributes from './parseEntityAttributes'
-import type { TableDef } from '../classes/Table'
+import parseEntityAttributes from './parseEntityAttributes.js'
+import type { TableDef } from '../classes/Table/types.js'
 import type {
   AttributeDefinitions,
   EntityConstructor,
   PureAttributeDefinition,
   Readonly
-} from '../classes/Entity'
-import { error } from './utils'
+} from '../classes/Entity/types.js'
+import { error } from './utils.js'
 
 export interface TrackingInfo {
   fields: string[]
@@ -175,7 +175,7 @@ export function parseEntity<
       const config = schema.attributes[field]
       if (config.type && config.type === 'bigint' || config.setType && config.setType === 'bigint') {
         // Verify DocumentClient has wrapNumbers set to true
-        if (table?.DocumentClient?.options?.wrapNumbers !== true) {
+        if (table?.DocumentClient?.config?.translateConfig?.unmarshallOptions?.wrapNumbers !== true) {
           error('Please set `wrapNumbers: true` in your DocumentClient to avoid losing precision with bigint fields')
         }
       }

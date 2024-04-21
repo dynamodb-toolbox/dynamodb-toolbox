@@ -1,8 +1,8 @@
-import checkAttribute from '../lib/checkAttribute'
+import checkAttribute from '../lib/checkAttribute.js'
 
 // Require Table and Entity classes
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
 
 // Create basic table
 const DefaultTable = new Table({

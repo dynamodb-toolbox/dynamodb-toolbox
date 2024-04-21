@@ -1,8 +1,9 @@
-import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap.test'
+import { Table, Entity } from '../index.js'
+import { DocumentClient } from './bootstrap.test.js'
 
 let TestTable: any
 let TestEntity: any
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let TestEntity2: any
 
 describe('entities', () => {

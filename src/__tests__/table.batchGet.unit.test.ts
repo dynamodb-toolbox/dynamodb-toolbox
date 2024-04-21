@@ -1,5 +1,5 @@
-import { Table, Entity } from '../index'
-import { DocumentClient } from './bootstrap.test'
+import { Table, Entity } from '../index.js'
+import { DocumentClient } from './bootstrap.test.js'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -55,6 +55,7 @@ describe('batchGet', () => {
   it('fails when providing an invalid capactiy setting', () => {
     expect(() => {
       TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }), {
+        // @ts-expect-error
         capacity: 'test'
       })
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)

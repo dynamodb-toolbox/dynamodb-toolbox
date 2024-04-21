@@ -14,9 +14,14 @@ The **DynamoDB Toolbox** is a set of tools that makes it easy to work with [Amaz
 ## Why single table design?
 Learn more about single table design in [Alex Debrie's blog](https://www.alexdebrie.com/posts/dynamodb-single-table).
 
-## Version 0.7 🙌 <!-- omit in toc -->
+## Version 0.9 🙌 <!-- omit in toc -->
 
 Feedback is welcome and much appreciated! (Huge thanks to [@ThomasAribart](https://github.com/ThomasAribart) for all his work on this 🙌)
+
+## Using AWS SDK v2?
+
+dynamodb-toolbox@v0.8 and above is using AWS SDK v3.
+If you are using AWS SDK v2, please use versions that are lower than 0.8.
 
 ## Docs & Community
 
@@ -24,20 +29,17 @@ Feedback is welcome and much appreciated! (Huge thanks to [@ThomasAribart](https
 - [GitHub Discussions](https://github.com/jeremydaly/dynamodb-toolbox/discussions)
 
 ## Quick Start
-> :information_source:
-We're using **aws-sdk v2** DynamoDB tools, the support for **aws-sdk v3** is on its way. <br />
-You can read more about the development [here](https://github.com/jeremydaly/dynamodb-toolbox/pull/174).
 
-Using your favorite package manager, install DynamoDB Toolbox and aws-sdk v2 in your project by running one of the following commands:
+Using your favorite package manager, install DynamoDB Toolbox and the aws-sdk v3 dependencies in your project by running one of the following commands:
 
 ```bash
 # npm
 npm i dynamodb-toolbox
-npm install aws-sdk
+npm install @aws-sdk/lib-dynamodb @aws-sdk/client-dynamodb
 
 # yarn
 yarn add dynamodb-toolbox
-yarn add aws-sdk
+yarn add @aws-sdk/lib-dynamodb @aws-sdk/client-dynamodb
 ```
 
 Require or import `Table` and `Entity` from `dynamodb-toolbox`:
@@ -46,15 +48,32 @@ Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
 
-Create a Table (with the DocumentClient using aws-sdk v2):
+Create a Table (with the DocumentClient using aws-sdk v3):
 
 ```typescript
-import DynamoDB from 'aws-sdk/clients/dynamodb'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-const DocumentClient = new DynamoDB.DocumentClient({
-  // Specify your client options as usual
-  convertEmptyValues: false
-})
+const marshallOptions = {
+  // Whether to automatically convert empty strings, blobs, and sets to `null`.
+  convertEmptyValues: false, // if not false explicitly, we set it to true.
+  // Whether to remove undefined values while marshalling.
+  removeUndefinedValues: false, // false, by default.
+  // Whether to convert typeof object to map attribute.
+  convertClassInstanceToMap: false, // false, by default.
+}
+
+const unmarshallOptions = {
+  // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
+  // NOTE: this is required to be true in order to use the bigint data type.
+  wrapNumbers: false, // false, by default.
+}
+
+const translateConfig = { marshallOptions, unmarshallOptions }
+
+// Instantiate a DocumentClient
+export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}), translateConfig)
+
 
 // Instantiate a table
 const MyTable = new Table({
@@ -201,7 +220,7 @@ See [Type Inference](https://www.dynamodbtoolbox.com/docs/type-inference) in the
 
 ## Additional References
 
-- [DocumentClient SDK Reference](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html)
+- [DocumentClient SDK Reference](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_lib_dynamodb.html)
 - [Best Practices for DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
 - [DynamoDB, explained.](https://www.dynamodbguide.com/)
 - [The DynamoDB Book](https://www.dynamodbbook.com/)

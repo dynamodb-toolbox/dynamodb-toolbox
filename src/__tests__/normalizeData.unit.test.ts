@@ -1,9 +1,9 @@
-import normalizeData from '../lib/normalizeData'
+import normalizeData from '../lib/normalizeData.js'
 
-import { DocumentClient } from './bootstrap.test'
+import { DocumentClient } from './bootstrap.test.js'
 
-import Table from '../classes/Table'
-import Entity from '../classes/Entity'
+import Table from '../classes/Table/Table.js'
+import Entity from '../classes/Entity/Entity.js'
 
 const DefaultTable = new Table({
   name: 'test-table',
@@ -29,14 +29,12 @@ new Entity({
   table: DefaultTable
 } as const)
 
-// console.log(DefaultTable.User);
-
 const attributes = DefaultTable.User.schema.attributes
 const linked = DefaultTable.User.linked
 
 describe('normalizeData', () => {
   it('converts entity input to table attributes', async () => {
-    const result = normalizeData(DocumentClient)(attributes, linked, {
+    const result = normalizeData()(attributes, linked, {
       pk: 'test',
       set_alias: ['1', '2', '3'],
       number: 1,
@@ -59,7 +57,7 @@ describe('normalizeData', () => {
   })
 
   it('filter out non-mapped fields', async () => {
-    const result = normalizeData(DocumentClient)(
+    const result = normalizeData()(
       attributes,
       linked,
       { pk: 'test', $remove: 'testx', notAField: 'test123' },
@@ -73,11 +71,29 @@ describe('normalizeData', () => {
 
   it('fails on non-mapped fields', async () => {
     expect(() => {
-      normalizeData(DocumentClient)(attributes, linked, {
+      normalizeData()(attributes, linked, {
         pk: 'test',
         $remove: 'testx',
         notAField: 'test123'
       })
     }).toThrow(`Field 'notAField' does not have a mapping or alias`)
+  })
+
+  it('fails when partion, sortkey or other required fields have depend attributes not provided', () => {
+    const ent = new Entity({
+      name: 'Test',
+      attributes: {
+        pk: { type: 'string', partitionKey: true, default: 'pk'},
+        sk: { type: 'string', sortKey: true, dependsOn: ['parent'],
+          default: (data: { parent: string }) => `parent#${data.parent}`,
+        },
+        parent: { type: 'string'},
+      },
+      table: DefaultTable
+    } as const)
+
+    expect(() => ent.updateParams({})).toThrow(
+      `Required field 'sk' depends on attribute(s), one or more of which can't be resolved (parent)`
+    )
   })
 })
