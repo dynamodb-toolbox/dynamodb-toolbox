@@ -22,7 +22,7 @@ await getItemCommand.send()
 
 ## Key
 
-<p style={{marginTop: '-15px'}}><i>(required)</i></p>
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
 The key of the item to get (i.e. attributes that are tagged as part of the primary key):
 
@@ -61,7 +61,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-You can use the `GetItemOptions` type to explicitely type an object as `GetItemCommand` options:
+You can use the `GetItemOptions` type to explicitely type an object as a `GetItemCommand` options:
 
 ```ts
 import type { GetItemOptions } from '@dynamodb-toolbox/entity/actions/get'

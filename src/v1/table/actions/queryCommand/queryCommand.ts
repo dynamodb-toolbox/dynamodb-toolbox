@@ -27,8 +27,8 @@ type $options = typeof $options
 
 type ReturnedItems<
   TABLE extends TableV2,
-  ENTITIES extends EntityV2[],
   QUERY extends Query<TABLE>,
+  ENTITIES extends EntityV2[],
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
@@ -49,13 +49,13 @@ type ReturnedItems<
 
 export type QueryResponse<
   TABLE extends TableV2,
-  ENTITIES extends EntityV2[],
   QUERY extends Query<TABLE>,
+  ENTITIES extends EntityV2[],
   OPTIONS extends QueryOptions<TABLE, ENTITIES>
 > = O.Merge<
   Omit<QueryCommandOutput, 'Items' | '$metadata'>,
   {
-    Items?: ReturnedItems<TABLE, ENTITIES, QUERY, OPTIONS>
+    Items?: ReturnedItems<TABLE, QUERY, ENTITIES, OPTIONS>
     // $metadata is not returned on multiple page queries
     $metadata?: QueryCommandOutput['$metadata']
   }
@@ -132,7 +132,7 @@ export class QueryCommand<
     return queryParams(this[$table], this[$entities], this[$query], this[$options])
   }
 
-  async send(): Promise<QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>> {
+  async send(): Promise<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
     const queryParams = this.params()
 
     const formatters: Record<string, EntityFormatter> = {}
@@ -202,7 +202,7 @@ export class QueryCommand<
     } while (pageIndex < maxPages && lastEvaluatedKey !== undefined)
 
     return {
-      Items: formattedItems as QueryResponse<TABLE, ENTITIES, QUERY, OPTIONS>['Items'],
+      Items: formattedItems as QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>['Items'],
       ...(lastEvaluatedKey !== undefined ? { LastEvaluatedKey: lastEvaluatedKey } : {}),
       ...(count !== undefined ? { Count: count } : {}),
       ...(scannedCount !== undefined ? { ScannedCount: scannedCount } : {}),

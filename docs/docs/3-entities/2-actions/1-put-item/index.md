@@ -22,7 +22,7 @@ await putItemCommand.send()
 
 ## Item
 
-<p style={{marginTop: '-15px'}}><i>(required)</i></p>
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
 The item to write:
 
@@ -73,7 +73,7 @@ await PokemonEntity.build(PutItemCommand)
   .send()
 ```
 
-You can use the `PutItemOptions` type to explicitely type an object as `PutItemCommand` options:
+You can use the `PutItemOptions` type to explicitely type an object as a `PutItemCommand` options:
 
 ```ts
 import type { PutItemOptions } from '@dynamodb-toolbox/entity/actions/put'
