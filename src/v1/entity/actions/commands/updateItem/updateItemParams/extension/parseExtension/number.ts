@@ -37,12 +37,12 @@ export const parseNumberExtension = (
 
         const [left, right] = sumElements
         const parsers = [
-          number().freeze(`${attribute.path}[$SUM][0]`).build(Parser).start(left, {
+          new Parser(number().freeze(`${attribute.path}[$SUM][0]`)).start(left, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
           }),
-          number().freeze(`${attribute.path}[$SUM][1]`).build(Parser).start(right, {
+          new Parser(number().freeze(`${attribute.path}[$SUM][1]`)).start(right, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
@@ -84,12 +84,12 @@ export const parseNumberExtension = (
 
         const [left, right] = subtractElements
         const parsers = [
-          number().freeze(`${attribute.path}[$SUBTRACT][0]`).build(Parser).start(left, {
+          new Parser(number().freeze(`${attribute.path}[$SUBTRACT][0]`)).start(left, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
           }),
-          number().freeze(`${attribute.path}[$SUBTRACT][1]`).build(Parser).start(right, {
+          new Parser(number().freeze(`${attribute.path}[$SUBTRACT][1]`)).start(right, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
@@ -111,14 +111,11 @@ export const parseNumberExtension = (
   }
 
   if (isAddUpdate(inputValue) && inputValue[$ADD] !== undefined) {
-    const parser = number()
-      .freeze(`${attribute.path}[$ADD]`)
-      .build(Parser)
-      .start(inputValue[$ADD], {
-        fill: false,
-        transform,
-        parseExtension: parseReferenceExtension
-      })
+    const parser = new Parser(number().freeze(`${attribute.path}[$ADD]`)).start(inputValue[$ADD], {
+      fill: false,
+      transform,
+      parseExtension: parseReferenceExtension
+    })
 
     return {
       isExtension: true,

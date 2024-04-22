@@ -14,7 +14,7 @@ export const parseMapExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attribute.build(Parser).start(input[$SET], { fill: false, transform })
+        const parser = new Parser(attribute).start(input[$SET], { fill: false, transform })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {

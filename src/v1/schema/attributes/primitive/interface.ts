@@ -407,9 +407,11 @@ export class PrimitiveAttribute<
     this.transform = state.transform
   }
 
-  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-    schemaAction: new (schema: this) => SCHEMA_ACTION
-  ): SCHEMA_ACTION {
-    return new schemaAction(this)
-  }
+  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
+  // TODO: Find a way not to trigger this error
+  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+  //   schemaAction: new (schema: this) => SCHEMA_ACTION
+  // ): SCHEMA_ACTION {
+  //   return new schemaAction(this)
+  // }
 }

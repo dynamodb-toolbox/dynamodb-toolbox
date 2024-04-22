@@ -54,7 +54,7 @@ export const parseRecordExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attribute.build(Parser).start(input[$SET], { fill: false, transform })
+        const parser = new Parser(attribute).start(input[$SET], { fill: false, transform })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
@@ -76,7 +76,7 @@ export const parseRecordExtension = (
         const parsers = Object.entries(input)
           .filter(([, inputValue]) => inputValue !== undefined)
           .map(([inputKey, inputValue]) => [
-            attribute.keys.build(Parser).start(inputKey, { fill: false, transform }),
+            new Parser(attribute.keys).start(inputKey, { fill: false, transform }),
             recordElementsParser(attribute, inputValue, options)
           ])
 
