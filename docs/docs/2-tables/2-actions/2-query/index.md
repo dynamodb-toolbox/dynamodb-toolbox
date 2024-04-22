@@ -2,320 +2,360 @@
 title: Query
 ---
 
-# Query
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-## query
+# QueryCommand
 
-#### query(partitionKey [,options] [,parameters])
+Performs a [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on a table.
 
-> The Query operation finds items based on primary key values. You can query any table or secondary index that has a composite primary key (a partition key and a sort key).
+## Usage
 
-The `query` method is a wrapper for the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). The DynamoDB Toolbox `query` method supports all **Query** API operations. The `query` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `queryParams` can be used, but will only retrieve the generated parameters.
+```ts
+import { QueryCommand } from '@dynamodb-toolbox/table/actions/query'
 
-The `query()` method accepts three arguments. The first argument is used to specify the `partitionKey` you wish to query against (KeyConditionExpression). The value must match the type of your table's partition key.
+const queryCommand = PokeTable.build(QueryCommand)
 
-The second argument is an `options` object that specifies the details of your query. The following options are all optional (corresponding Query API references in parentheses):
-
-| Option        |        Type         | Description                                                                                                                                                                                                                                                                                      |
-| ------------- | :-----------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| index         |      `string`       | Name of secondary index to query. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName)                                                                                      |
-| limit         |      `number`       | The maximum number of items to retrieve per query. (Limit)                                                                                                                                                                                                                                       |
-| reverse       |      `boolean`      | Reverse the order or returned items. (ScanIndexForward)                                                                                                                                                                                                                                          |
-| consistent    |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                                                                                                                                           |
-| capacity      |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                                                                     |
-| select        |      `string`       | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select)                                                                                                                                              |
-| eq            |  same as `sortKey`  | Specifies `sortKey` condition to be _equal_ to supplied value. (KeyConditionExpression)                                                                                                                                                                                                          |
-| lt            |  same as `sortKey`  | Specifies `sortKey` condition to be _less than_ supplied value. (KeyConditionExpression)                                                                                                                                                                                                         |
-| lte           |  same as `sortKey`  | Specifies `sortKey` condition to be _less than or equal to_ supplied value. (KeyConditionExpression)                                                                                                                                                                                             |
-| gt            |  same as `sortKey`  | Specifies `sortKey` condition to be _greater than_ supplied value. (KeyConditionExpression)                                                                                                                                                                                                      |
-| gte           |  same as `sortKey`  | Specifies `sortKey` condition to be _greater than or equal to_ supplied value. (KeyConditionExpression)                                                                                                                                                                                          |
-| between       |       `array`       | Specifies `sortKey` condition to be _between_ the supplied values. Array should have two values matching the `sortKey` type. (KeyConditionExpression)                                                                                                                                            |
-| beginsWith    |  same as `sortKey`  | Specifies `sortKey` condition to _begin with_ the supplied values. (KeyConditionExpression)                                                                                                                                                                                                      |
-| filters       | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](/docs/filters-and-conditions). (FilterExpression)                                                                                                                             |
-| attributes    | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](/docs/projection-expressions) below (ProjectionExpression)                                                                                                                |
-| startKey      |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate (if you're querying a secondary index, the keys for the primary index will also need to be included in the object - see `LastEvaluatedKey` result for details). (ExclusiveStartKey) |
-| entity        |      `string`       | The name of a table Entity to evaluate `filters` and `attributes` against.                                                                                                                                                                                                                       |
-| parseAsEntity |      `string`       | The name of the entity to parse the results as.                                                                                                                                                                                                                                                  |
-| execute       |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                                                             |
-| parse         |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                                                                    |
-
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
-
-```typescript
-const result = await MyTable.query(
-  'user#12345', // partition key
-  {
-    limit: 50, // limit to 50 items
-    beginsWith: 'order#', // select items where sort key begins with value
-    reverse: true, // return items in descending order (newest first)
-    capacity: 'indexes', // return the total capacity consumed by the indexes
-    filters: { attr: 'total', gt: 100 }, // only show orders above $100
-    index: 'GSI1' // query the GSI1 secondary index
-  }
-)
+const params = queryCommand.params()
+const { Items } = await queryCommand.send()
 ```
 
-<h3>Return Data</h3>
+## Query
 
-The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `query` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
-## scan
+The partition to query, with optional index and range condition:
 
-#### scan([options] [,parameters])
+- `partition`: The partition key to query.
+- <code>range <i>(optional)</i></code>: If the table or index has a sort key, an optional range condition.
+- <code>index <i>(optional)</i></code>: The name of a secondary index to query.
 
-> The Scan operation returns one or more items and item attributes by accessing every item in a table or a secondary index.
+```ts
+// Get 'ashKetchum' pokemons with a level ≥ 50
+await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerId',
+    partition: 'TRAINER_ID:ashKetchum',
+    range: { gte: 50 }
+  })
+  .send()
+```
 
-The `scan` method is a wrapper for the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). The DynamoDB Toolbox `scan` method supports all **Scan** API operations. The `scan` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `scanParams` can be used, but will only retrieve the generated parameters.
+You can use the `Query` type to explicitely type an object as a `QueryCommand` query:
 
-The `scan()` method accepts two arguments. The first argument is an `options` object that specifies the details of your scan. The following options are all optional (corresponding Scan API references in parentheses):
+```ts
+import type { Query } from '@dynamodb-toolbox/table/actions/query'
 
-| Option        |        Type         | Description                                                                                                                                                                                                |
-| ------------- | :-----------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| index         |      `string`       | Name of secondary index to scan. If not specified, the query executes on the primary index. The index must include the table's `entityField` attribute for automatic parsing of returned data. (IndexName) |
-| limit         |      `number`       | The maximum number of items to retrieve per scan. (Limit)                                                                                                                                                  |
-| consistent    |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                                                     |
-| capacity      |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                               |
-| select        |      `string`       | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select)                                                        |
-| filters       | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](/docs/filters-and-conditions). (FilterExpression)                                        |
-| attributes    | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](/docs/projection-expressions) below (ProjectionExpression)                          |
-| startKey      |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey)                                                                          |
-| segments      |      `number`       | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments)                                                         |
-| segment       |      `number`       | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment)                                                                                |
-| entity        |      `string`       | The name of a table Entity to evaluate `filters` and `attributes` against.                                                                                                                                 |
-| parseAsEntity |      `string`       | The name of the entity to parse the results as.                                                                                                                                                            |
-| execute       |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                       |
-| parse         |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                              |
+const query: Query<typeof PokeTable> = {
+  index: 'byTrainerId',
+  partition: 'TRAINER_ID:ashKetchum1',
+  range: { gte: 50 }
+}
 
-If you prefer to specify your own parameters, the optional second argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+const { Items } = await PokeTable.build(QueryCommand)
+  .query(query)
+  .send()
+```
 
-```typescript
-const result = await MyTable.scan({
-  limit: 100, // limit to 50 items
-  capacity: 'indexes', // return the total capacity consumed by the indexes
-  filters: { attr: 'total', between: [100, 500] }, // only return orders between $100 and $500
-  index: 'GSI1' // scan the GSI1 secondary index
+## Entities
+
+Provides a list of entities to filter the returned items (via the internal [`entity`](TODO) attribute). Will also format them and type the response.
+
+```ts
+// 👇 Typed as (Pokemon | Trainer)[]
+const { Items } = await PokeTable.build(QueryCommand)
+  .query(query)
+  .entities(PokemonEntity, TrainerEntity)
+  .send()
+```
+
+## Options
+
+Additional options:
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .options({
+    consistent: true,
+    limit: 10
+    ...
+  })
+  .send()
+```
+
+You can use the `QueryOptions` type to explicitely type an object as a `QueryCommand` options:
+
+```ts
+import type { QueryOptions } from '@dynamodb-toolbox/table/actions/query'
+
+const scanOptions: QueryOptions<
+  typeof PokeTable,
+  // 👇 Optional entities
+  [typeof PokemonEntity, typeof TrainerEntity]
+> = {
+  consistent: true,
+  limit: 10,
+  ...
+}
+
+const { Items } = await PokeTable.build(QueryCommand)
+  .query(query)
+  .entities(PokemonEntity, TrainerEntity)
+  .options(scanOptions)
+  .send()
+```
+
+:::info
+
+It is advised to provide `entities` and `query` first as they will constrain the `options` type.
+
+:::
+
+Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_RequestParameters) for more details):
+
+<table>
+    <thead>
+        <tr>
+            <th>Cat.</th>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="4" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}>-</td>
+            <td><code>consistent</code></td>
+            <td align="center"><code>boolean</code></td>
+            <td align="center"><code>false</code></td>
+            <td>
+              By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).
+              <br/>
+              <br/>Set to <code>true</code> to use <b>strongly</b> consistent reads (unavailable on secondary indexes).
+            </td>
+        </tr>
+        <tr>
+            <td><code>index</code></td>
+            <td align="center"><code>string</code></td>
+            <td align="center">-</td>
+            <td>The name of a secondary index to query.
+              <br/>
+              <br/>This index can be any local secondary index or global secondary index.</td>
+        </tr>
+        <tr>
+            <td><code>reverse</code></td>
+            <td align="center"><code>boolean</code></td>
+            <td align="center"><code>false</code></td>
+            <td>
+              Specifies the order for index traversal.
+              <br/>
+              <br/>By default, the traversal is performed in ascending order. If set to <code>true</code>, the traversal is performed in descending order.
+            </td>
+        </tr>
+        <tr>
+            <td><code>capacity</code></td>
+            <td align="center"><code>CapacityOption</code></td>
+            <td align="center"><code>"NONE"</code></td>
+            <td>
+              Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.
+              <br/>
+              <br/>Possible values are <code>"NONE"</code>, <code>"TOTAL"</code> and <code>"INDEXES"</code>.
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Pagination</b></td>
+            <td><code>limit</code></td>
+            <td align="center"><code>integer ≥ 1</code></td>
+            <td align="center">-</td>
+            <td>The maximum number of items to evaluate for 1 page.<br/><br/>Note that DynamoDB may return a lower number of items if it reaches the limit of 1MB, or if filters are applied.</td>
+        </tr>
+        <tr>
+            <td><code>exclusiveStartKey</code></td>
+            <td align="center"><code>Key</code></td>
+            <td align="center">-</td>
+            <td>The primary key of the first item that this operation will evaluate. Use the <code>LastEvaluatedKey</code> from the previous operation.</td>
+        </tr>
+        <tr>
+            <td><code>maxPages</code></td>
+            <td align="center"><code>integer ≥ 1</code></td>
+            <td align="center"><code>1</code></td>
+            <td>A "meta" option provided by DynamoDB-Toolbox to send multiple requests in a single promise.<br/><br/>Note that <code>Infinity</code> is a valid (albeit dangerous) option.<br/><br/>If two pages or more have been fetched, the responses <code>Count</code> and <code>ScannedCount</code> will be summed, but the <code>ConsumedCapacity</code> will be omitted for the moment.</td>
+        </tr>
+        <tr>
+            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Filters</b></td>
+            <td><code>select</code></td>
+            <td align="center"><code>SelectOption</code></td>
+            <td align="center">-</td>
+            <td>The strategy for returned attributes. You can retrieve all attributes, specific attributes, the count of matching items, or in the case of an index, some or all of the projected attributes.<br/><br/>Possible values are <code>"ALL_ATTRIBUTES"</code>, <code>"ALL_PROJECTED_ATTRIBUTES"</code> (if <code>index</code> is specified), <code>"COUNT"</code> and <code>"SPECIFIC_ATTRIBUTES"</code> (if <code>attributes</code> are specified)
+            </td>
+        </tr>
+        <tr>
+            <td><code>filters</code></td>
+            <td align="center"><code>Record&lt;string, Condition&gt;</code></td>
+            <td align="center">-</td>
+            <td>For each entity name, a condition that must be satisfied in order for evaluated items of this entity to be returned (improves performances but does not reduce costs).
+              <br/><br/>See <a href="TODO">Condition</a> for more details on how to write conditions.
+              <br/><br/>Requires <a href="#entities"><code>entities</code></a>.
+            </td>
+        </tr>
+        <tr>
+            <td><code>attributes</code></td>
+            <td align="center"><code>string[]</code></td>
+            <td align="center">-</td>
+            <td>To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See <a href="TODO">Filtering Attributes</a> for more details on how to filter attributes.<br/><br/>Requires <a href="#entities"><code>entities</code></a>. Paths must be common to all entities.</td>
+        </tr>
+    </tbody>
+</table>
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="consistent" label="Strongly consistent">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .entities(PokemonEntity)
+  .options({ consistent: true })
+  .send()
+```
+
+</TabItem>
+<TabItem value="indexed" label="On index">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerId',
+    partition: 'TRAINER_ID:ashKetchum',
+    range: { gte: 50 }
+  })
+  .entities(PokemonEntity)
+  .send()
+```
+
+</TabItem>
+<TabItem value="reverse" label="Reversed">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .entities(PokemonEntity)
+  .options({ reverse: true })
+  .send()
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+:::notePaginated
+
+<Tabs>
+<TabItem value="paginated" label="Paginated">
+
+```ts
+let lastEvaluatedKey:
+  | Record<string, unknown>
+  | undefined = undefined
+const command = PokeTable.build(QueryCommand).query({
+  partition: 'ashKetchum'
 })
+
+do {
+  const page = await command
+    .options({ exclusiveStartKey: lastEvaluatedKey })
+    .send()
+
+  // ...do something with page.Items here...
+
+  lastEvaluatedKey = page.LastEvaluatedKey
+} while (lastEvaluatedKey !== undefined)
 ```
 
-<h3>Return Data</h3>
+</TabItem>
+<TabItem value="partition" label="All Partition">
 
-The data is returned with the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `scan` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  // Retrieve all items from the partition (beware of RAM issues!)
+  .options({ maxPages: Infinity })
+  .send()
+```
 
-## batchGet
+</TabItem>
 
-#### batchGet(items [,options] [,parameters])
+</Tabs>
 
-> The BatchGetItem operation returns the attributes of one or more items from one or more tables. You identify requested items by primary key.
+:::
 
-The `batchGet` method is a wrapper for the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). The DynamoDB Toolbox `batchGet` method supports all **BatchGetItem** API operations. The `batchGet` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `batchGetParams` can be used, but will only retrieve the generated parameters.
+:::noteFiltered
 
-The `batchGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `getBatch` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
+<Tabs>
+<TabItem value="filtered" label="Filtered">
 
-The optional second argument accepts an `options` object. The following options are all optional (corresponding BatchGetItem API references in parentheses):
-
-| Option     |               Type                | Description                                                                                                                                                                       |
-| ---------- | :-------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead)                                                                                                                            |
-| capacity   |             `string`              | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                      |
-| attributes |  `array` or `object` (see below)  | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](/docs/projection-expressions) below (ProjectionExpression) |
-| execute    |             `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                              |
-| parse      |             `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                     |
-
-### Specifying options for multiple tables
-
-The library is built for making working with single table designs easier, but it is possible that you may need to retrieve data from multiple tables within the same batch get. If your `items` contain references to multiple tables, the `consistent` option will accept objects that use either the table `name` or `alias` as the key, and the setting as the value. For example, to specify different `consistent` settings on two tables, you would use something like following:
-
-```typescript
-const results = await MyTable.batchGet(
-  // ... ,
-  {
-    consistent: {
-      'my-table-name': true,
-      'my-other-table-name': false
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .entities(PokemonEntity, TrainerEntity)
+  .options({
+    filters: {
+      POKEMONS: { attr: 'type', eq: 'fire' },
+      TRAINERS: { attr: 'age', gt: 18 }
     }
-    // ...
-  }
-)
+  })
+  .send()
 ```
 
-Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use the same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](/docs/projection-expressions) formatting.
+</TabItem>
+<TabItem value="attributes" label="Attributes">
 
-```typescript
-const results = await MyTable.batchGet(
-  [
-    MyTable.User.getBatch({ family: 'Brady', name: 'Mike' }),
-    MyTable.User.getBatch({ family: 'Brady', name: 'Carol' }),
-    MyTable.Pet.getBatch({ family: 'Brady', name: 'Tiger' })
-  ],
-  {
-    capacity: 'total',
-    attributes: [
-        'name', 'family',
-        { User: ['dob', 'age'] },
-        { Pet: ['petType','lastVetCheck'] }
-      ]
-    }
-  }
-)
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .entities(PokemonEntity)
+  .options({ attributes: ['name', 'type'] })
+  .send()
 ```
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+</TabItem>
+<TabItem value="count" label="Count">
 
-<h3>Return Data</h3>
-
-The data is returned with the same response syntax as the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `batchGet` method again using the same options and passing any `UnprocessedKeys` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
-
-## batchWrite
-
-#### batchWrite(items [,options] [,parameters])
-
-> The BatchWriteItem operation puts or deletes multiple items in one or more tables. A single call to BatchWriteItem can write up to 16 MB of data, which can comprise as many as 25 put or delete requests.
-
-The `batchWrite` method is a wrapper for the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html). The DynamoDB Toolbox `batchWrite` method supports all **BatchWriteItem** API operations. The `batchWrite` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `batchWriteParams` can be used, but will only retrieve the generated parameters.
-
-The `batchWrite` method accepts three arguments. The first is an `array` of item keys to either `put` or `delete`. The DynamoDB Toolbox provides a `putBatch` and `deleteBatch` method on your entities to help you generate the proper key configuration for each item. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
-
-The optional second argument accepts an `options` object. The following options are all optional (corresponding BatchWriteItem API references in parentheses):
-
-| Option   |               Type               | Description                                                                                                                                                                                                                                           |
-| -------- | :------------------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| capacity | `string` or `object` (see below) | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
-| metrics  |             `string`             | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| execute  |            `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
-| parse    |            `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
-
-**NOTE:** The `BatchWriteItem` does not support conditions or return deleted items. _"BatchWriteItem does not behave in the same way as individual PutItem and DeleteItem calls would. For example, you cannot specify conditions on individual put and delete requests, and BatchWriteItem does not return deleted items in the response."_ ~ [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html)
-
-```typescript
-const result = await Default.batchWrite(
-  [
-    MyTable.User.putBatch({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother', 'wife'] }),
-    MyTable.User.putBatch({ family: 'Brady', name: 'Mike', age: 42, roles: ['father', 'husband'] }),
-    MyTable.Pet.deleteBatch({ family: 'Brady', name: 'Tiger' })
-  ],
-  {
-    capacity: 'total',
-    metrics: 'size'
-  }
-)
+```ts
+const { Count } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .options({ select: 'COUNT' })
+  .send()
 ```
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+</TabItem>
+</Tabs>
 
-<h3>Return Data</h3>
+:::
 
-The data is returned with the same response syntax as the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html). If `autoExecute` and `autoParse` are enabled, a `.next()` method will be available on the returned object. Calling this function will call the `batchWrite` method again using the same options and passing any `UnprocessedItems` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
+:::
 
-## transactGet
+## Response
 
-#### transactGet(items [,options] [,parameters])
+The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_ResponseElements).
 
-> TransactGetItems is a synchronous operation that atomically retrieves multiple items from one or more tables (but not from indexes) in a single account and Region.
+If a list of `entities` has been provided, the response `Items` will be formatted by their respective entities.
 
-The `transactGet` method is a wrapper for the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). The DynamoDB Toolbox `transactGet` method supports all **TransactGetItem** API operations. The `transactGet` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `transactGetParams` can be used, but will only retrieve the generated parameters.
+You can use the `QueryResponse` type to explicitely type an object as a `QueryCommand` response:
 
-The `transactGet` method accepts three arguments. The first is an `array` of item keys to get. The DynamoDB Toolbox provides the `getTransaction` method on your entities to help you generate the proper key configuration. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
+```ts
+import type { QueryResponse } from '@dynamodb-toolbox/table/actions/query'
 
-The optional second argument accepts an `options` object. The following options are all optional (corresponding TransactGetItems API references in parentheses):
-
-| Option   |   Type    | Description                                                                                                                  |
-| -------- | :-------: | ---------------------------------------------------------------------------------------------------------------------------- |
-| capacity | `string`  | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                 |
-| execute  | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Table_)                          |
-| parse    | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Table_) |
-
-### Accessing items from multiple tables
-
-Transaction items are atomic, so each `Get` contains the table name and key necessary to retrieve the item. The library will automatically handle adding the necessary information and will parse each entity automatically for you.
-
-```typescript
-const results = await MyTable.transactGet(
-  [
-    User.getTransaction({ family: 'Brady', name: 'Mike' }),
-    User.getTransaction({ family: 'Brady', name: 'Carol' }),
-    Pet.getTransaction({ family: 'Brady', name: 'Tiger' })
-  ],
-  { capacity: 'total' }
-)
+const scanResponse: QueryResponse<
+  typeof PokeTable,
+  // 👇 Query
+  { partition: 'ashKetchum' },
+  // 👇 Optional entities
+  [typeof PokemonEntity],
+  // 👇 Optional options
+  { attributes: ['name', 'type'] }
+> = { Items: ... }
 ```
-
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
-
-<h3>Return Data</h3>
-
-The data is returned with the same response syntax as the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data.
-
-## transactWrite
-
-#### transactWrite(items [,options] [,parameters])
-
-> TransactWriteItems is a synchronous write operation that groups up to 100 action requests. The actions are completed atomically so that either all of them succeed, or all of them fail.
-
-The `transactWrite` method is a wrapper for the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html). The DynamoDB Toolbox `transactWrite` method supports all **TransactWriteItems** API operations. The `transactWrite` method returns a `Promise` and you must use `await` or `.then()` to retrieve the results. An alternative, synchronous method named `transactWriteParams` can be used, but will only retrieve the generated parameters.
-
-The `transactWrite` method accepts three arguments. The first is an `array` of item keys to either `put`, `delete`, `update` or `conditionCheck`. The DynamoDB Toolbox provides `putTransaction`,`deleteTransaction`, `updateTransaction`, and `conditionCheck` methods on your entities to help you generate the proper configuration for each item. You can specify different entity types as well as entities from different tables, and this library will handle the proper payload construction.
-
-The optional second argument accepts an `options` object. The following options are all optional (corresponding TransactWriteItems API references in parentheses):
-
-| Option   |   Type    | Description                                                                                                                                                                                                                                           |
-| -------- | :-------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| capacity | `string`  | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
-| metrics  | `string`  | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
-| token    | `string`  | Optional token to make the call idempotent, meaning that multiple identical calls have the same effect as one single call. (ClientRequestToken)                                                                                                       |
-| execute  | `boolean` | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
-| parse    | `boolean` | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
-
-```typescript
-const result = await Default.transactWrite(
-  [
-    Pet.conditionCheck({ family: 'Brady', name: 'Tiger' }, { conditions: { attr: 'alive', eq: false } },
-    Pet.deleteTransaction({ family: 'Brady', name: 'Tiger' }),
-    User.putTransaction({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother','wife'] }),
-    User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, roles: ['father','husband'] }),
-    User.putTransaction({ family: 'Brady', name: 'Mike', age: 42, unmappedField: 'unmappedValue' }, { strictSchemaCheck: false})
-  ],{
-    capacity: 'total',
-    metrics: 'size',
-  }
-)
-```
-
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
-
-<h3>Return Data</h3>
-
-The data is returned with the same response syntax as the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
-
-## Entity Convenience Methods
-
-The following methods allow you to execute `Entity` methods directly from your `Table` instances. An `entity` must be specified as the first argument to allow the `Table` instance to determine the correct entity type.
-
-### parse
-
-#### parse(entity, input [,include])
-
-Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](/docs/entity/methods#parse) for additional parameters and behavior. In TS, type inference is not applied.
-
-### get
-
-#### get(entity, key [,options] [,parameters])
-
-Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](/docs/entity/methods#get) for additional parameters and behavior. In TS, type inference is not applied.
-
-### delete
-
-#### delete(entity, key [,options] [,parameters])
-
-Executes the `delete` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `delete` method](/docs/entity/methods#delete) for additional parameters and behavior.
-
-### put
-
-#### put(entity, item [,options] [,parameters])
-
-Executes the `put` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `put` method](/docs/entity/methods#put) for additional parameters and behavior.
-
-### update
-
-#### update(entity, key [,options] [,parameters])
-
-Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](/docs/entity/methods#update) for additional parameters and behavior.
