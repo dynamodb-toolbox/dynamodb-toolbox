@@ -119,9 +119,10 @@ export const appendAttributePath = (
 
       case 'record': {
         const keyAttribute = parentAttribute.keys
-        const keyParser = keyAttribute
-          .build(Parser)
-          .start(childAttributeAccessor, { fill: false, transform: true })
+        const keyParser = new Parser(keyAttribute).start(childAttributeAccessor, {
+          fill: false,
+          transform: true
+        })
         keyParser.next() // parsed
         const transformedKey = keyParser.next().value as string
 

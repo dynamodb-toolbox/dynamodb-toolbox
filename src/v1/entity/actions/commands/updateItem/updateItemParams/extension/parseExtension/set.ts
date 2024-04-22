@@ -14,7 +14,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attribute.build(Parser).start(input[$ADD], { fill: false, transform })
+        const parser = new Parser(attribute).start(input[$ADD], { fill: false, transform })
 
         const parsedValue = { [$ADD]: parser.next().value }
         if (transform) {
@@ -33,7 +33,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attribute.build(Parser).start(input[$DELETE], { fill: false, transform })
+        const parser = new Parser(attribute).start(input[$DELETE], { fill: false, transform })
 
         const parsedValue = { [$DELETE]: parser.next().value }
         if (transform) {

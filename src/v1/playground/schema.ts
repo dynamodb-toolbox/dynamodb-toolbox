@@ -49,12 +49,12 @@ type PlaygroundSchema1PutItemInput = ParserInput<typeof playgroundSchema1>
 type PlaygroundSchema1FormattedItem = FormattedValue<typeof playgroundSchema1>
 
 const listAttr = list(string()).optional().freeze()
-const parsedValue2 = listAttr.build(Parser).parse({ foo: 'bar' })
-const formattedValue2 = listAttr.build(Formatter).format({ foo: 'bar' })
+const parsedValue2 = new Parser(listAttr).parse({ foo: 'bar' })
+const formattedValue2 = new Formatter(listAttr).format({ foo: 'bar' })
 
 const strAttr = string().optional().freeze()
-const parsedValue3 = strAttr.build(Parser).parse({ foo: 'bar' })
-const formattedValue3 = strAttr.build(Formatter).format({ foo: 'bar' })
+const parsedValue3 = new Parser(strAttr).parse({ foo: 'bar' })
+const formattedValue3 = new Formatter(strAttr).format({ foo: 'bar' })
 
 const allCasesOfProps = {
   optProp: string().optional(),
