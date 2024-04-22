@@ -80,11 +80,11 @@ await PokemonEntity.build(GetItemCommand)
 
 Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_RequestParameters) for more details):
 
-| Option       |       Type       | Default  | Description                                                                                                                                                                                     |
-| ------------ | :--------------: | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `consistent` |    `boolean`     | `false`  | By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).<br/><br/>Set to `true` to use <b>strongly</b> consistent reads.                   |
-| `attributes` | `Path<Entity>[]` |    -     | To specify a list of attributes to retrieve (improves performances but do not reduce costs).<br/><br/>See [Filtering Attributes](TODO) for more details on how to filter attributes.            |
-| `capacity`   | `CapacityOption` | `"NONE"` | Determines the level of detail about either provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`. |
+| Option       |       Type       | Default  | Description                                                                                                                                                                              |
+| ------------ | :--------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `consistent` |    `boolean`     | `false`  | By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).<br/><br/>Set to `true` to use <b>strongly</b> consistent reads.            |
+| `attributes` | `Path<Entity>[]` |    -     | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See [Filtering Attributes](TODO) for more details on how to filter attributes.   |
+| `capacity`   | `CapacityOption` | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`. |
 
 :::noteExamples
 

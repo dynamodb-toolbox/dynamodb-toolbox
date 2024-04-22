@@ -80,12 +80,12 @@ await PokemonEntity.build(DeleteItemCommand)
 
 Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html#API_DeleteItem_RequestParameters) for more details):
 
-| Option         |               Type                | Default  | Description                                                                                                                                                                                     |
-| -------------- | :-------------------------------: | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for a conditional DeleteItem operation to succeed.<br/><br/>See [Condition](TODO) for more details on how to write conditions.                      |
-| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | Use `returnValues` if you want to get the item attributes as they appeared before they were deleted with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                    |
-| `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                    |
-| `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about either provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`. |
+| Option         |               Type                | Default  | Description                                                                                                                                                                              |
+| -------------- | :-------------------------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for a conditional DeleteItem operation to succeed.<br/><br/>See [Condition](TODO) for more details on how to write conditions.               |
+| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | Use `returnValues` if you want to get the item attributes as they appeared before they were deleted with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.             |
+| `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                             |
+| `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`. |
 
 :::noteExamples
 
