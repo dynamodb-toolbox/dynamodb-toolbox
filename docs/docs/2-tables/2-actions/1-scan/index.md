@@ -22,7 +22,7 @@ const { Items } = await scanCommand.send()
 
 ## Entities
 
-Provides a list of entities to filter (via the [internal `entity` attribute](TODO)), format and type the returned scanned items.
+Provides a list of entities to filter the returned items (via the internal [`entity`](TODO) attribute). Will also format them and type the response.
 
 <!-- It also enables validation of projection expression and filters. and PARSING. -->
 
@@ -69,7 +69,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 :::info
 
-It is advised to provide `entities` before `options` as the former will improve the typing of the latter.
+It is advised to provide `entities` before `options` as the former will constrain the type of the latter.
 
 :::
 
@@ -99,16 +99,18 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
         </tr>
         <tr>
             <td><code>index</code></td>
-            <td align="center"><code>IndexNames&lt;typeof Table&gt;</code></td>
+            <td align="center"><code>string</code></td>
             <td align="center">-</td>
-            <td>The name of a secondary index to scan. This index can be any local secondary index or global secondary index.</td>
+            <td>The name of a secondary index to scan.
+              <br/>
+              <br/>This index can be any local secondary index or global secondary index.</td>
         </tr>
         <tr>
             <td><code>capacity</code></td>
             <td align="center"><code>CapacityOption</code></td>
             <td align="center"><code>"NONE"</code></td>
             <td>
-              Determines the level of detail about either provisioned or on-demand throughput consumption that is returned in the response.
+              Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.
               <br/>
               <br/>Possible values are <code>"NONE"</code>, <code>"TOTAL"</code> and <code>"INDEXES"</code>.
             </td>
@@ -118,53 +120,55 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             <td><code>limit</code></td>
             <td align="center"><code>integer ≥ 1</code></td>
             <td align="center">-</td>
-            <td>The limit. Note that this does not guarantee... (1MB limit)</td>
+            <td>The maximum number of items to evaluate for 1 page.<br/><br/>Note that DynamoDB may return a lower number of items if it reaches the limit of 1MB, or if filters are applied.</td>
         </tr>
         <tr>
             <td><code>exclusiveStartKey</code></td>
             <td align="center"><code>Key</code></td>
             <td align="center">-</td>
-            <td>The startKey. To use in conjonction with the response <code>LastEvaluatedKey</code> property...</td>
+            <td>The primary key of the first item that this operation will evaluate. Use the <code>LastEvaluatedKey</code> from the previous operation.</td>
         </tr>
         <tr>
             <td><code>maxPages</code></td>
             <td align="center"><code>integer ≥ 1</code></td>
             <td align="center"><code>1</code></td>
-            <td>A "meta"-option provided by DynamoDB-Toolbox to retrieve multiple pages in a single promise. <code>Infinity</code> is a valid option.</td>
+            <td>A "meta" option provided by DynamoDB-Toolbox to send multiple requests in a single promise.<br/><br/>Note that <code>Infinity</code> is a valid (albeit dangerous) option.<br/><br/>If two pages or more have been fetched, the responses <code>Count</code> and <code>ScannedCount</code> will be summed, but the <code>ConsumedCapacity</code> will be omitted for the moment.</td>
         </tr>
         <tr>
             <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Filters</b></td>
             <td><code>select</code></td>
             <td align="center"><code>SelectOption</code></td>
-            <td align="center"><code>"ALL_ATTRIBUTES"?</code></td>
-            <td>See TODO. Possible values are:
-              <code>"ALL_ATTRIBUTES"`</code>, <code>"ALL_PROJECTED_ATTRIBUTES"</code> (only available when providing an <code>index</code>), <code>"COUNT"</code><code>"SPECIFIC_ATTRIBUTES"</code> (the only available option if <code>attributes</code> has been be specified)
+            <td align="center">-</td>
+            <td>The strategy for returned attributes. You can retrieve all attributes, specific attributes, the count of matching items, or in the case of an index, some or all of the projected attributes.<br/><br/>Possible values are <code>"ALL_ATTRIBUTES"</code>, <code>"ALL_PROJECTED_ATTRIBUTES"</code> (if <code>index</code> is specified), <code>"COUNT"</code> and <code>"SPECIFIC_ATTRIBUTES"</code> (if <code>attributes</code> are specified)
             </td>
         </tr>
         <tr>
             <td><code>filters</code></td>
             <td align="center"><code>Record&lt;string, Condition&gt;</code></td>
             <td align="center">-</td>
-            <td>Filter to apply. <code>entities</code> MUST be provided. Conditions are provided by entity name.</td>
+            <td>For each entity name, a condition that must be satisfied in order for evaluated items of this entity to be returned (improves performances but does not reduce costs).
+              <br/><br/>See <a href="TODO">Condition</a> for more details on how to write conditions.
+              <br/><br/>Requires <a href="#entities"><code>entities</code></a>.
+            </td>
         </tr>
         <tr>
             <td><code>attributes</code></td>
             <td align="center"><code>string[]</code></td>
             <td align="center">-</td>
-            <td>The attributes to return. <code>entities</code> must be provided?. Paths must be common to all attributes.</td>
+            <td>To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See <a href="TODO">Filtering Attributes</a> for more details on how to filter attributes.<br/><br/>Requires <a href="#entities"><code>entities</code></a>. Paths must be common to all entities.</td>
         </tr>
         <tr>
-            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Threading</b></td>
+            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Parallel</b></td>
             <td><code>segment</code></td>
-            <td align="center"><code>integer ≥ 1</code></td>
+            <td align="center"><code>integer ≥ 0</code></td>
             <td align="center">-</td>
-            <td>For parallel scans. MUST be used in conjunction with <code>totalSegment</code> and MUST be less than or equal to it.</td>
+            <td>Identifies an individual segment to be scanned by an application worker (zero-based).<br/><br/><code>totalSegments</code> must be provided.</td>
         </tr>
         <tr>
             <td><code>totalSegment</code></td>
             <td align="center"><code>integer ≥ 1</code></td>
             <td align="center">-</td>
-            <td>For parallel scans. MUST be used in conjunction with <code>segment</code> option and MUST be greater than or equal to it.</td>
+            <td>Represents the total number of segments into which the Scan operation will be divided.<br/><br/><code>segment</code> must be provided.</td>
         </tr>
     </tbody>
 </table>
@@ -172,17 +176,16 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
 :::noteExamples
 
 <Tabs>
-<TabItem value="consistent" label="Consistent">
+<TabItem value="consistent" label="Strongly consistent">
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
-  // WARNING: Will be charged double
   .options({ consistent: true })
   .send()
 ```
 
 </TabItem>
-<TabItem value="indexed" label="Index">
+<TabItem value="indexed" label="On index">
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
@@ -198,6 +201,26 @@ const { Items } = await PokeTable.build(ScanCommand)
 :::notePaginated
 
 <Tabs>
+<TabItem value="paginated" label="Paginated">
+
+```ts
+let lastEvaluatedKey:
+  | Record<string, unknown>
+  | undefined = undefined
+const command = PokeTable.build(ScanCommand)
+
+do {
+  const page = await command
+    .options({ exclusiveStartKey: lastEvaluatedKey })
+    .send()
+
+  // ...do something with page.Items here...
+
+  lastEvaluatedKey = page.LastEvaluatedKey
+} while (lastEvaluatedKey !== undefined)
+```
+
+</TabItem>
 <TabItem value="db" label="All DB">
 
 ```ts
@@ -217,20 +240,6 @@ const { Items } = await PokeTable.build(ScanCommand)
   // Retrieve all pokemons from the table (beware of RAM issues!)
   .options({ maxPages: Infinity })
   .send()
-```
-
-</TabItem>
-
-<TabItem value="page-stream" label="Paginated">
-
-```ts
-let lastEvaluatedKey:
-  | Record<string, unknown>
-  | undefined = undefined
-
-do {
-  // TODO
-} while (lastEvaluatedKey !== undefined)
 ```
 
 </TabItem>
@@ -279,7 +288,7 @@ const { Count } = await PokeTable.build(ScanCommand)
 
 :::
 
-:::noteSegmented
+:::noteParallel
 
 <Tabs>
 <TabItem value="segment" label="Segment">
@@ -302,13 +311,13 @@ const [
   { Items: segment3 = [] }
 ] = await Promise.all([
   PokeTable.build(ScanCommand)
+    .options({ segment: 0, ...opts })
+    .send(),
+  PokeTable.build(ScanCommand)
     .options({ segment: 1, ...opts })
     .send(),
   PokeTable.build(ScanCommand)
     .options({ segment: 2, ...opts })
-    .send(),
-  PokeTable.build(ScanCommand)
-    .options({ segment: 3, ...opts })
     .send()
 ])
 
