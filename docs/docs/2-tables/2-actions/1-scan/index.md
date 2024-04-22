@@ -24,8 +24,6 @@ const { Items } = await scanCommand.send()
 
 Provides a list of entities to filter the returned items (via the internal [`entity`](TODO) attribute). Will also format them and type the response.
 
-<!-- It also enables validation of projection expression and filters. and PARSING. -->
-
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
 const { Items } = await PokeTable.build(ScanCommand)
@@ -69,7 +67,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 :::info
 
-It is advised to provide `entities` before `options` as the former will constrain the type of the latter.
+It is advised to provide `entities` first as it will constrain the `options` type.
 
 :::
 
@@ -94,7 +92,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             <td>
               By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).
               <br/>
-              <br/>Set to <code>true</code> to use <b>strongly</b> consistent reads.
+              <br/>Set to <code>true</code> to use <b>strongly</b> consistent reads (unavailable on secondary indexes).
             </td>
         </tr>
         <tr>
