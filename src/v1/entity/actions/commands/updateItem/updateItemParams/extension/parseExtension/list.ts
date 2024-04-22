@@ -66,7 +66,7 @@ export const parseListExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = attribute.build(Parser).start(input[$SET], { fill: false, transform })
+        const parser = new Parser(attribute).start(input[$SET], { fill: false, transform })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
@@ -110,7 +110,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = attribute.build(Parser).start(appendedValue, {
+          const parser = new Parser(attribute).start(appendedValue, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
@@ -156,7 +156,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = attribute.build(Parser).start(prependedValue, {
+          const parser = new Parser(attribute).start(prependedValue, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
