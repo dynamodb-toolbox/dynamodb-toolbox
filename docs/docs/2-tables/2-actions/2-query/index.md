@@ -12,7 +12,7 @@ Performs a [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/A
 ## Usage
 
 ```ts
-import { QueryCommand } from '@dynamodb-toolbox/table/actions/query'
+import { QueryCommand } from 'dynamodb-toolbox/table/actions/query'
 
 const queryCommand = PokeTable.build(QueryCommand)
 
@@ -44,7 +44,7 @@ await PokeTable.build(QueryCommand)
 You can use the `Query` type to explicitely type an object as a `QueryCommand` query:
 
 ```ts
-import type { Query } from '@dynamodb-toolbox/table/actions/query'
+import type { Query } from 'dynamodb-toolbox/table/actions/query'
 
 const query: Query<typeof PokeTable> = {
   index: 'byTrainerId',
@@ -86,7 +86,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 You can use the `QueryOptions` type to explicitely type an object as a `QueryCommand` options:
 
 ```ts
-import type { QueryOptions } from '@dynamodb-toolbox/table/actions/query'
+import type { QueryOptions } from 'dynamodb-toolbox/table/actions/query'
 
 const scanOptions: QueryOptions<
   typeof PokeTable,
@@ -347,7 +347,7 @@ If a list of `entities` has been provided, the response `Items` will be formatte
 You can use the `QueryResponse` type to explicitely type an object as a `QueryCommand` response:
 
 ```ts
-import type { QueryResponse } from '@dynamodb-toolbox/table/actions/query'
+import type { QueryResponse } from 'dynamodb-toolbox/table/actions/query'
 
 const scanResponse: QueryResponse<
   typeof PokeTable,

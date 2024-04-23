@@ -12,7 +12,7 @@ Performs a [DeleteItem Operation](https://docs.aws.amazon.com/amazondynamodb/lat
 ## Usage
 
 ```ts
-import { DeleteItemCommand } from '@dynamodb-toolbox/entity/actions/delete'
+import { DeleteItemCommand } from 'dynamodb-toolbox/entity/actions/delete'
 
 const deleteItemCommand = PokemonEntity.build(
   DeleteItemCommand
@@ -37,7 +37,7 @@ await PokemonEntity.build(DeleteItemCommand)
 You can use the `KeyInput` type from the [Parse action](../7-other/1-parse.md) to explicitely type an object as a `DeleteItemCommand` key:
 
 ```ts
-import type { KeyInput } from '@dynamodb-toolbox/entity/actions/tParse'
+import type { KeyInput } from 'dynamodb-toolbox/entity/actions/tParse'
 
 const key: KeyInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1'
@@ -64,7 +64,7 @@ await PokemonEntity.build(DeleteItemCommand)
 You can use the `DeleteItemOptions` type to explicitely type an object as `DeleteItemCommand` options:
 
 ```ts
-import type { DeleteItemOptions } from '@dynamodb-toolbox/entity/actions/delete'
+import type { DeleteItemOptions } from 'dynamodb-toolbox/entity/actions/delete'
 
 const options: DeleteItemOptions<typeof PokemonEntity> = {
   returnValues: 'ALL_OLD',
@@ -125,7 +125,7 @@ The data is returned with the same response syntax as the [DynamoDB DeleteItem A
 You can use the `DeleteItemResponse` type to explicitely type an object as a `DeleteItemCommand` response:
 
 ```ts
-import type { DeleteItemResponse } from '@dynamodb-toolbox/entity/actions/delete'
+import type { DeleteItemResponse } from 'dynamodb-toolbox/entity/actions/delete'
 
 const deleteItemResponse: DeleteItemResponse<
   typeof PokemonEntity,
