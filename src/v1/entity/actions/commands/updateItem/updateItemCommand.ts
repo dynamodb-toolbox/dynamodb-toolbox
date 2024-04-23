@@ -13,7 +13,7 @@ import type {
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { UpdateItemInput } from './types'
-import type { UpdateItemOptions, UpdateItemCommandReturnValuesOption } from './options'
+import type { UpdateItemOptions } from './options'
 import { updateItemParams } from './updateItemParams'
 
 export const $item = Symbol('$item')
@@ -25,9 +25,7 @@ export type $options = typeof $options
 type ReturnedAttributes<
   ENTITY extends EntityV2,
   OPTIONS extends UpdateItemOptions<ENTITY>
-> = UpdateItemCommandReturnValuesOption extends OPTIONS['returnValues']
-  ? undefined
-  : OPTIONS['returnValues'] extends NoneReturnValuesOption
+> = OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
   : OPTIONS['returnValues'] extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
   ?

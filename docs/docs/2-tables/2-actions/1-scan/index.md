@@ -12,7 +12,7 @@ Performs a [Scan Operation](https://docs.aws.amazon.com/amazondynamodb/latest/AP
 ## Usage
 
 ```ts
-import { ScanCommand } from '@dynamodb-toolbox/table/actions/scan'
+import { ScanCommand } from 'dynamodb-toolbox/table/actions/scan'
 
 const scanCommand = PokeTable.build(ScanCommand)
 
@@ -48,7 +48,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 You can use the `ScanOptions` type to explicitely type an object as a `ScanCommand` options:
 
 ```ts
-import type { ScanOptions } from '@dynamodb-toolbox/table/actions/scan'
+import type { ScanOptions } from 'dynamodb-toolbox/table/actions/scan'
 
 const scanOptions: ScanOptions<
   typeof PokeTable,
@@ -336,7 +336,7 @@ If a list of `entities` has been provided, the response `Items` will be formatte
 You can use the `ScanResponse` type to explicitely type an object as a `ScanCommand` response:
 
 ```ts
-import type { ScanResponse } from '@dynamodb-toolbox/table/actions/scan'
+import type { ScanResponse } from 'dynamodb-toolbox/table/actions/scan'
 
 const scanResponse: ScanResponse<
   typeof PokeTable,
