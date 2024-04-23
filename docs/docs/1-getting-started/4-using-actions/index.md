@@ -27,7 +27,7 @@ Although it is slightly more verbose, ensures, light-weight, better code splitti
 Exported through the `entryPoint` in `package.json`.
 
 ```ts
-import { GetItemCommand } from '@dynamodb-toolbox/entity/actions/get'
+import { GetItemCommand } from 'dynamodb-toolbox/entity/actions/get'
 
 const { Item } = await PokemonEntity.build(GetItemCommand)
   .key(key)
@@ -47,7 +47,7 @@ import {
   Entity,
   EntityAction,
   $entity
-} from '@dynamodb-toolbox/entity'
+} from 'dynamodb-toolbox/entity'
 
 export class NameGetter<
   ENTITY extends Entity = Entity
