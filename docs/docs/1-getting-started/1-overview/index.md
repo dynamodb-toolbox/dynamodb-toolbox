@@ -10,7 +10,7 @@ AWS published a SDK, the [document client](https://docs.aws.amazon.com/sdk-for-j
 
 For instance, let’s look at this `UpdateCommand` example from the [DynamoDB docs itself](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.UpdateItem.html):
 
-```tsx
+```ts
 await documentClient.send(
   new UpdateCommand({
     TableName: 'movies-table',
@@ -50,7 +50,7 @@ That's when DynamoDB-Toolbox comes to the rescue 💪 It aims at:
 
 For instance, here is an example of the same `UpdateCommand` with DynamoDB-Toolbox:
 
-```tsx
+```ts
 import {
   Table,
   Entity,

@@ -12,7 +12,7 @@ Performs a [GetItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest
 ## Usage
 
 ```ts
-import { GetItemCommand } from '@dynamodb-toolbox/entity/actions/get'
+import { GetItemCommand } from 'dynamodb-toolbox/entity/actions/get'
 
 const getItemCommand = PokemonEntity.build(GetItemCommand)
 
@@ -35,7 +35,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 You can use the `KeyInput` type from the [Parse action](../7-other/1-parse.md) to explicitely type an object as a `GetItemCommand` key:
 
 ```ts
-import type { KeyInput } from '@dynamodb-toolbox/entity/actions/tParse'
+import type { KeyInput } from 'dynamodb-toolbox/entity/actions/tParse'
 
 const key: KeyInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1'
@@ -64,7 +64,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 You can use the `GetItemOptions` type to explicitely type an object as a `GetItemCommand` options:
 
 ```ts
-import type { GetItemOptions } from '@dynamodb-toolbox/entity/actions/get'
+import type { GetItemOptions } from 'dynamodb-toolbox/entity/actions/get'
 
 const options: PutItemOptions<typeof PokemonEntity> = {
   consistent: true,
@@ -120,7 +120,7 @@ The data is returned with the same response syntax as the [DynamoDB GetItem API]
 You can use the `GetItemResponse` type to explicitely type an object as a `GetItemCommand` response:
 
 ```ts
-import type { GetItemResponse } from '@dynamodb-toolbox/entity/actions/get'
+import type { GetItemResponse } from 'dynamodb-toolbox/entity/actions/get'
 
 const getItemResponse: GetItemResponse<
   typeof PokemonEntity,

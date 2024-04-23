@@ -12,7 +12,7 @@ Performs a [PutItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest
 ## Usage
 
 ```ts
-import { PutItemCommand } from '@dynamodb-toolbox/entity/actions/put'
+import { PutItemCommand } from 'dynamodb-toolbox/entity/actions/put'
 
 const putItemCommand = PokemonEntity.build(PutItemCommand)
 
@@ -41,7 +41,7 @@ await PokemonEntity.build(PutItemCommand)
 You can use the `PutItemInput` type to explicitely type an object as a `PutItemCommand` item:
 
 ```ts
-import type { PutItemInput } from '@dynamodb-toolbox/entity/actions/put'
+import type { PutItemInput } from 'dynamodb-toolbox/entity/actions/put'
 
 const item: PutItemInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1',
@@ -76,7 +76,7 @@ await PokemonEntity.build(PutItemCommand)
 You can use the `PutItemOptions` type to explicitely type an object as a `PutItemCommand` options:
 
 ```ts
-import type { PutItemOptions } from '@dynamodb-toolbox/entity/actions/put'
+import type { PutItemOptions } from 'dynamodb-toolbox/entity/actions/put'
 
 const options: PutItemOptions<typeof PokemonEntity> = {
   returnValues: 'ALL_OLD',
@@ -147,7 +147,7 @@ The data is returned with the same response syntax as the [DynamoDB PutItem API]
 You can use the `PutItemResponse` type to explicitely type an object as a `PutItemCommand` response:
 
 ```ts
-import type { PutItemResponse } from '@dynamodb-toolbox/entity/actions/put'
+import type { PutItemResponse } from 'dynamodb-toolbox/entity/actions/put'
 
 const response: PutItemResponse<
   typeof PokemonEntity,
