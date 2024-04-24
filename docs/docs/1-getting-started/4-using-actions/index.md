@@ -12,7 +12,9 @@ For instance, here is an example of a `GetItem` operation with the v0:
 const { Item } = await PokemonEntity.get(key)
 ```
 
-Instead, only have a `.build` method that is [3 lines long](TODO). Is a gateway to perform [actions](#actions-).
+The issue with this syntax is that methods are not tree-shakable. You could end up bundling an `.update` method that was quite long, even when you don't need it.
+
+In the v1, Tables, Entities and Schemas have a `.build` method that is only [3 lines long](TODO). Is a gateway to perform [actions](#actions-).
 
 Action replace methods. Commands are instances of actions, synchronous actions, e.g. for Parsing and Formatting.
 
@@ -56,14 +58,14 @@ export class NameGetter<
     super(entity)
   }
 
-  run(): ENTITY['name'] {
+  get(): ENTITY['name'] {
     return this[$entity].name
   }
 }
 
 const nameGetter = PokemonEntity.build(NameGetter)
 // => NameGetter<typeof PokemonEntity>
-const pokemonEntityName = nameGetter.run()
+const pokemonEntityName = nameGetter.get()
 // => "POKEMON"
 ```
 
