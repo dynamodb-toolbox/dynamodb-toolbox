@@ -2,7 +2,19 @@
   "name": "dynamodb-toolbox",
   "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
-  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./table": "./dist/table/index.js",
+    "./table/scan": "./dist/table/actions/scanCommand/index.js",
+    "./table/query": "./dist/table/actions/queryCommand/index.js",
+    "./table/parsePrimaryKey": "./dist/table/actions/parsePrimaryKey/index.js",
+    "./entity": "./dist/entity/index.js",
+    "./entity/put": "./dist/entity/actions/commands/putItem/index.js",
+    "./entity/get": "./dist/entity/actions/commands/getItem/index.js",
+    "./entity/update": "./dist/entity/actions/commands/updateItem/index.js",
+    "./entity/delete": "./dist/entity/actions/commands/deleteItem/index.js",
+    "./schema": "./dist/schema/index.js"
+  },
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest ",
