@@ -4,11 +4,9 @@ title: Usage
 
 # Usage
 
-## Classes
-
 Schema > Entity > Table
 
-### Tables
+## Tables
 
 ```ts
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
@@ -29,11 +27,11 @@ export const documentClient = DynamoDBDocumentClient.from(
 )
 ```
 
-### Entities
+## Entities
 
 TODO
 
-### Schemas
+## Schemas
 
 TODO
 
