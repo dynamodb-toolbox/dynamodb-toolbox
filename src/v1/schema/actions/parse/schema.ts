@@ -1,4 +1,4 @@
-import cloneDeep from 'lodash.clonedeep'
+import { cloneDeep } from 'lodash'
 import type { O } from 'ts-toolbelt'
 
 import type { Schema } from 'v1/schema'

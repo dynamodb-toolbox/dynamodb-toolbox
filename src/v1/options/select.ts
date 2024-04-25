@@ -1,4 +1,4 @@
-import isEmpty from 'lodash.isempty'
+import { isEmpty } from 'lodash'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 

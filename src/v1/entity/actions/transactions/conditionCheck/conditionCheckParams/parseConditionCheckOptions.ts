@@ -1,4 +1,4 @@
-import isEmpty from 'lodash.isempty'
+import { isEmpty } from 'lodash'
 
 import type { EntityV2 } from 'v1/entity'
 import { EntityConditionParser, EntityCondition } from 'v1/entity/actions/parseCondition'

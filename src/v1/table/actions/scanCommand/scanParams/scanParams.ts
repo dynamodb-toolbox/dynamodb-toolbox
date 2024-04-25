@@ -1,5 +1,5 @@
 import type { ScanCommandInput } from '@aws-sdk/lib-dynamodb'
-import isEmpty from 'lodash.isempty'
+import { isEmpty } from 'lodash'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { TableV2 } from 'v1/table'
