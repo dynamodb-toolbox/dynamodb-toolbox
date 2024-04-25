@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
-import _pick from 'lodash.pick'
+import { pick as _pick } from 'lodash'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 import type { TableV2 } from 'v1/table'

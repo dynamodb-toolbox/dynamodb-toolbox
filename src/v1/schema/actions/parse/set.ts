@@ -1,4 +1,4 @@
-import cloneDeep from 'lodash.clonedeep'
+import { cloneDeep } from 'lodash'
 
 import type { Schema } from 'v1/schema'
 import type { SetAttribute, SetAttributeElements, ExtendedValue } from 'v1/schema/attributes'

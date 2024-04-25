@@ -1,5 +1,5 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
-import isEmpty from 'lodash.isempty'
+import { isEmpty } from 'lodash'
 
 import { isBoolean } from 'v1/utils/validation'
 import { DynamoDBToolboxError } from 'v1/errors'
