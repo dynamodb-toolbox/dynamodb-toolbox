@@ -1,4 +1,4 @@
-import cloneDeep from 'lodash.clonedeep'
+import { cloneDeep } from 'lodash'
 
 import type { AnyAttribute, ResolveAnyAttribute } from 'v1/schema/attributes/any'
 

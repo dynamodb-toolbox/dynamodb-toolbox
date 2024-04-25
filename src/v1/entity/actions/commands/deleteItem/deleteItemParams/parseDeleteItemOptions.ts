@@ -1,5 +1,5 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
-import isEmpty from 'lodash.isempty'
+import { isEmpty } from 'lodash'
 
 import type { EntityV2 } from 'v1/entity'
 import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
