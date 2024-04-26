@@ -59,7 +59,8 @@ const $primitive: $PrimitiveAttributeTyper = <
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => $primitive(type, overwrite(state, { required: nextRequired })),
     optional: () => $primitive(type, overwrite(state, { required: 'never' })),
-    hidden: () => $primitive(type, overwrite(state, { hidden: true })),
+    hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
+      $primitive(type, overwrite(state, { hidden: nextHidden })),
     key: () => $primitive(type, overwrite(state, { key: true, required: 'always' })),
     savedAs: nextSavedAs => $primitive(type, overwrite(state, { savedAs: nextSavedAs })),
     enum: (...nextEnum) => $primitive(type, update(state, 'enum', nextEnum)),
