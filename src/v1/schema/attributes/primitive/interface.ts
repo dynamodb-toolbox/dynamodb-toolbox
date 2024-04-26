@@ -68,7 +68,9 @@ export interface $PrimitiveAttribute<
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { required: Always; key: true }>>
+  key: <NEXT_KEY extends boolean = true>(
+    nextKey?: NEXT_KEY
+  ) => $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>>
   /**
    * Rename attribute before save commands
    */

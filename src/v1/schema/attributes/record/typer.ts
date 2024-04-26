@@ -60,7 +60,8 @@ const $record: $RecordAttributeTyper = <
     optional: () => $record(keys, elements, overwrite(state, { required: 'never' })),
     hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
       $record(keys, elements, overwrite(state, { hidden: nextHidden })),
-    key: () => $record(keys, elements, overwrite(state, { key: true, required: 'always' })),
+    key: <NEXT_KEY extends boolean = true>(nextKey: NEXT_KEY = true as NEXT_KEY) =>
+      $record(keys, elements, overwrite(state, { key: nextKey, required: 'always' })),
     savedAs: nextSavedAs => $record(keys, elements, overwrite(state, { savedAs: nextSavedAs })),
     keyDefault: nextKeyDefault =>
       $record(
