@@ -41,7 +41,8 @@ const $any: $AnyAttributeTyper = <STATE extends AnyAttributeState = AnyAttribute
     optional: () => $any(overwrite(state, { required: 'never' })),
     hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
       $any(overwrite(state, { hidden: nextHidden })),
-    key: () => $any(overwrite(state, { key: true, required: 'always' })),
+    key: <NEXT_KEY extends boolean = true>(nextKey: NEXT_KEY = true as NEXT_KEY) =>
+      $any(overwrite(state, { key: nextKey, required: 'always' })),
     savedAs: nextSavedAs => $any(overwrite(state, { savedAs: nextSavedAs })),
     castAs: <NEXT_CAST_AS>(nextCastAs = (undefined as unknown) as NEXT_CAST_AS) =>
       $any(overwrite(state, { castAs: nextCastAs })),

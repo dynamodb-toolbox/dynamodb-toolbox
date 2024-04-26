@@ -54,7 +54,8 @@ const $set: $SetAttributeTyper = <
     optional: () => $set(elements, overwrite(state, { required: 'never' })),
     hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
       $set(elements, overwrite(state, { hidden: nextHidden })),
-    key: () => $set(elements, overwrite(state, { key: true, required: 'always' })),
+    key: <NEXT_KEY extends boolean = true>(nextKey: NEXT_KEY = true as NEXT_KEY) =>
+      $set(elements, overwrite(state, { key: nextKey, required: 'always' })),
     savedAs: nextSavedAs => $set(elements, overwrite(state, { savedAs: nextSavedAs })),
     keyDefault: nextKeyDefault =>
       $set(
