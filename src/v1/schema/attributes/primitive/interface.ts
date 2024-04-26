@@ -8,7 +8,7 @@ import type {
 } from 'v1/entity/actions/commands/updateItem/types'
 import type { ParserInput } from 'v1/schema/actions/tParse'
 
-import type { Schema, SchemaAction } from '../../schema'
+import type { Schema } from '../../schema'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
 import type { $type, $enum, $transform } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
@@ -62,7 +62,9 @@ export interface $PrimitiveAttribute<
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { hidden: true }>>
+  hidden: <NEXT_HIDDEN extends boolean = true>(
+    nextHidden?: NEXT_HIDDEN
+  ) => $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */
