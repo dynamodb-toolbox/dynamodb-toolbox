@@ -47,11 +47,11 @@ const $map: $MapAttributeTyper = <
     required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
       nextRequired: NEXT_REQUIRED = ('atLeastOnce' as unknown) as NEXT_REQUIRED
     ) => $map(attributes, overwrite(state, { required: nextRequired })),
-    optional: () => $map(attributes, overwrite(state, { required: 'never' as const })),
+    optional: () => $map(attributes, overwrite(state, { required: 'never' })),
     hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
       $map(attributes, overwrite(state, { hidden: nextHidden })),
-    key: () =>
-      $map(attributes, overwrite(state, { required: 'always' as const, key: true as const })),
+    key: <NEXT_KEY extends boolean = true>(nextKey: NEXT_KEY = true as NEXT_KEY) =>
+      $map(attributes, overwrite(state, { key: nextKey, required: 'always' })),
     savedAs: nextSavedAs => $map(attributes, overwrite(state, { savedAs: nextSavedAs })),
     keyDefault: nextKeyDefault =>
       $map(

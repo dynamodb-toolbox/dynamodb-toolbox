@@ -56,7 +56,9 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $AnyAttribute<O.Overwrite<STATE, { required: Always; key: true }>>
+  key: <NEXT_KEY extends boolean = true>(
+    nextKey?: NEXT_KEY
+  ) => $AnyAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>>
   /**
    * Rename attribute before save commands
    */

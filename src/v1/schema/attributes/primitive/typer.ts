@@ -61,7 +61,8 @@ const $primitive: $PrimitiveAttributeTyper = <
     optional: () => $primitive(type, overwrite(state, { required: 'never' })),
     hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
       $primitive(type, overwrite(state, { hidden: nextHidden })),
-    key: () => $primitive(type, overwrite(state, { key: true, required: 'always' })),
+    key: <NEXT_KEY extends boolean = true>(nextKey: NEXT_KEY = true as NEXT_KEY) =>
+      $primitive(type, overwrite(state, { key: nextKey, required: 'always' })),
     savedAs: nextSavedAs => $primitive(type, overwrite(state, { savedAs: nextSavedAs })),
     enum: (...nextEnum) => $primitive(type, update(state, 'enum', nextEnum)),
     const: constant =>

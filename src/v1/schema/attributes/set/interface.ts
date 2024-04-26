@@ -64,7 +64,9 @@ export interface $SetAttribute<
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: () => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { key: true; required: Always }>>
+  key: <NEXT_KEY extends boolean = true>(
+    nextKey?: NEXT_KEY
+  ) => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>>
   /**
    * Rename attribute before save commands
    */
