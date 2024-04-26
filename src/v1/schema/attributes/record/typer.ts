@@ -58,7 +58,8 @@ const $record: $RecordAttributeTyper = <
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => $record(keys, elements, overwrite(state, { required: nextRequired })),
     optional: () => $record(keys, elements, overwrite(state, { required: 'never' })),
-    hidden: () => $record(keys, elements, overwrite(state, { hidden: true })),
+    hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
+      $record(keys, elements, overwrite(state, { hidden: nextHidden })),
     key: () => $record(keys, elements, overwrite(state, { key: true, required: 'always' })),
     savedAs: nextSavedAs => $record(keys, elements, overwrite(state, { savedAs: nextSavedAs })),
     keyDefault: nextKeyDefault =>

@@ -8,7 +8,7 @@ import type {
 } from 'v1/entity/actions/commands/updateItem/types'
 import type { ParserInput } from 'v1/schema/actions/tParse'
 
-import type { Schema, SchemaAction } from '../../schema'
+import type { Schema } from '../../schema'
 import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
 import type { $type, $elements, $keys } from '../constants/attributeOptions'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
@@ -61,7 +61,9 @@ export interface $RecordAttribute<
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: () => $RecordAttribute<$KEYS, $ELEMENTS, O.Overwrite<STATE, { hidden: true }>>
+  hidden: <NEXT_HIDDEN extends boolean = true>(
+    nextHidden?: NEXT_HIDDEN
+  ) => $RecordAttribute<$KEYS, $ELEMENTS, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
   /**
    * Tag attribute as needed for Primary Key computing
    */

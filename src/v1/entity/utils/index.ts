@@ -1,9 +1,9 @@
 export { addInternalAttributes } from './addInternalAttributes'
-export type { WithInternalAttributes } from './addInternalAttributes'
 export type {
   TimestampsOptions,
+  NarrowTimestampsOptions,
   TimestampsDefaultOptions,
-  NarrowTimestampsOptions
-} from './addTimestampAttributes'
+  WithInternalAttributes
+} from './addInternalAttributes'
 export { doesSchemaValidateTableSchema } from './doesSchemaValidateTableSchema'
 export type { NeedsKeyCompute } from './NeedsKeyCompute'

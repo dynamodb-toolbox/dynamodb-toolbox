@@ -52,7 +52,8 @@ const $set: $SetAttributeTyper = <
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => $set(elements, overwrite(state, { required: nextRequired })),
     optional: () => $set(elements, overwrite(state, { required: 'never' })),
-    hidden: () => $set(elements, overwrite(state, { hidden: true })),
+    hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
+      $set(elements, overwrite(state, { hidden: nextHidden })),
     key: () => $set(elements, overwrite(state, { key: true, required: 'always' })),
     savedAs: nextSavedAs => $set(elements, overwrite(state, { savedAs: nextSavedAs })),
     keyDefault: nextKeyDefault =>

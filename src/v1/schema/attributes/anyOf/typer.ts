@@ -46,7 +46,8 @@ const $anyOf: $AnyOfAttributeTyper = <
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => $anyOf(overwrite(state, { required: nextRequired }), ...elements),
     optional: () => $anyOf(overwrite(state, { required: 'never' }), ...elements),
-    hidden: () => $anyOf(overwrite(state, { hidden: true }), ...elements),
+    hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
+      $anyOf(overwrite(state, { hidden: nextHidden }), ...elements),
     key: () => $anyOf(overwrite(state, { key: true, required: 'always' }), ...elements),
     savedAs: nextSavedAs => $anyOf(overwrite(state, { savedAs: nextSavedAs }), ...elements),
     keyDefault: nextKeyDefault =>

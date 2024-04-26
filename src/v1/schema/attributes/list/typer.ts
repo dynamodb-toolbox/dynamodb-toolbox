@@ -48,7 +48,8 @@ const $list: $ListAttributeTyper = <
       nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
     ) => $list(elements, overwrite(state, { required: nextRequired })),
     optional: () => $list(elements, overwrite(state, { required: 'never' })),
-    hidden: () => $list(elements, overwrite(state, { hidden: true })),
+    hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
+      $list(elements, overwrite(state, { hidden: nextHidden })),
     key: () => $list(elements, overwrite(state, { key: true, required: 'always' })),
     savedAs: nextSavedAs => $list(elements, overwrite(state, { savedAs: nextSavedAs })),
     keyDefault: nextKeyDefault =>
