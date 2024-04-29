@@ -1,7 +1,9 @@
+import { DynamoDBToolboxError } from 'v1/errors'
 import type { Schema } from 'v1/schema'
 import type { TableV2 } from 'v1/table'
 
 import type { $Attribute } from 'v1/schema/attributes'
+import { $savedAs } from 'v1/schema/attributes/constants/attributeOptions'
 import { $get } from 'v1/entity/actions/commands/updateItem/utils'
 import { string } from 'v1/schema/attributes/primitive'
 
@@ -102,6 +104,22 @@ export const addInternalAttributes: InternalAttributesAdder = <
       .savedAs(getTimestampOptionValue(timestamps, 'modified', 'savedAs'))
 
     internalAttributes[modifiedName] = modifiedAttribute
+  }
+
+  for (const [attributeName, attribute] of Object.entries(internalAttributes)) {
+    if (attributeName in schema.attributes) {
+      throw new DynamoDBToolboxError('entity.reservedAttributeName', {
+        message: `'${attributeName}' is a reserved attribute name.`,
+        path: attributeName
+      })
+    }
+
+    if (attribute[$savedAs] !== undefined && schema.savedAttributeNames.has(attribute[$savedAs])) {
+      throw new DynamoDBToolboxError('entity.reservedAttributeSavedAs', {
+        message: `'${attribute.savedAs}' is a reserved attribute alias (savedAs).`,
+        path: attributeName
+      })
+    }
   }
 
   return schema.and(internalAttributes) as WithInternalAttributes<
