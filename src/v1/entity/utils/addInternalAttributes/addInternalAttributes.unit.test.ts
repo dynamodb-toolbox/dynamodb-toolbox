@@ -1,4 +1,5 @@
-import { $get } from 'v1/entity/actions/commands/updateItem'
+import { $get } from 'v1/entity/actions/commands/updateItem/utils'
+import { DynamoDBToolboxError } from 'v1/errors'
 import { schema } from 'v1/schema'
 import { string } from 'v1/schema/attributes'
 import { TableV2 } from 'v1/table'
@@ -306,6 +307,46 @@ describe('addInternalAttributes', () => {
       expect(mySchema.attributes.created).toBeUndefined()
       // @ts-expect-error
       expect(mySchema.attributes.modified).toBeUndefined()
+    })
+  })
+
+  describe('reserved attribute names', () => {
+    it('throws a "reservedAttributeName" error if ', () => {
+      const invalidSchema = schema({
+        entity: string()
+      })
+
+      const invalidCall = () =>
+        addInternalAttributes({
+          schema: invalidSchema,
+          table: myTable,
+          entityAttributeName: 'entity',
+          entityName: 'myEntity',
+          timestamps: true
+        })
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(expect.objectContaining({ code: 'entity.reservedAttributeName' }))
+    })
+
+    it('throws a "reservedAttributeSavedAs" error if ', () => {
+      const invalidSchema = schema({
+        ent: string().savedAs(entityAttributeSavedAs)
+      })
+
+      const invalidCall = () =>
+        addInternalAttributes({
+          schema: invalidSchema,
+          table: myTable,
+          entityAttributeName: 'entity',
+          entityName: 'myEntity',
+          timestamps: true
+        })
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'entity.reservedAttributeSavedAs' })
+      )
     })
   })
 })
