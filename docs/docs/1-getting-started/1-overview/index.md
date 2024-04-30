@@ -54,6 +54,7 @@ For instance, here is an example of the same `UpdateCommand` with DynamoDB-Toolb
 import {
   Table,
   Entity,
+  schema,
   string,
   number,
   map,
@@ -76,14 +77,14 @@ const MovieTable = new Table({
 
 const MovieEntity = new Entity({
   name: 'Movie',
-  attributes: {
+  attributes: schema({
     title: string().key(),
     year: number().key(),
     info: map({
       plot: string(),
       rank: number()
     })
-  },
+  }),
   table: MovieTable
 })
 
