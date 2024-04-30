@@ -33,6 +33,11 @@ const config = {
     locales: ['en']
   },
 
+  markdown: {
+    mermaid: true
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+
   presets: [
     [
       'classic',
@@ -42,7 +47,8 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           // routeBasePath: '/', // Serve the docs at the site's root
           // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/jeremydaly/dynamodb-toolbox/tree/main/docs'
+          editUrl:
+            'https://github.com/jeremydaly/dynamodb-toolbox/tree/main/docs'
         },
         blog: false,
         theme: {
@@ -71,7 +77,8 @@ const config = {
         },
         items: [
           {
-            href: 'https://github.com/jeremydaly/dynamodb-toolbox',
+            href:
+              'https://github.com/jeremydaly/dynamodb-toolbox',
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository'
@@ -103,7 +110,8 @@ const config = {
             items: [
               {
                 label: 'GitHub Discussions',
-                href: 'https://github.com/jeremydaly/dynamodb-toolbox/discussions'
+                href:
+                  'https://github.com/jeremydaly/dynamodb-toolbox/discussions'
               },
               {
                 label: 'Twitter',
@@ -116,11 +124,13 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/jeremydaly/dynamodb-toolbox'
+                href:
+                  'https://github.com/jeremydaly/dynamodb-toolbox'
               },
               {
                 label: 'Issues',
-                href: 'https://github.com/jeremydaly/dynamodb-toolbox/issues'
+                href:
+                  'https://github.com/jeremydaly/dynamodb-toolbox/issues'
               }
             ]
           }
@@ -136,6 +146,9 @@ const config = {
           hideable: true,
           autoCollapseCategories: false
         }
+      },
+      mermaid: {
+        theme: { light: 'default', dark: 'dark' }
       },
       algolia: {
         // The application ID provided by Algolia
