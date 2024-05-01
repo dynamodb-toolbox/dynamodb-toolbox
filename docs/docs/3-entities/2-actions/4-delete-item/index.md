@@ -1,5 +1,7 @@
 ---
 title: DeleteItem
+sidebar_custom_props:
+  sidebarActionType: delete
 ---
 
 import Tabs from '@theme/Tabs';
@@ -34,7 +36,7 @@ await PokemonEntity.build(DeleteItemCommand)
   .send()
 ```
 
-You can use the `KeyInput` type from the [Parse action](../7-other/1-parse.md) to explicitely type an object as a `DeleteItemCommand` key:
+You can use the `KeyInput` type from the [Parse action](../16-parse.md) to explicitely type an object as a `DeleteItemCommand` key:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/tParse'

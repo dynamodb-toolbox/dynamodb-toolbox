@@ -1,5 +1,0 @@
----
-title: Format
----
-
-# Format

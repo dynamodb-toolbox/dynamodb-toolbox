@@ -1,5 +1,7 @@
 ---
 title: GetItem
+sidebar_custom_props:
+  sidebarActionType: read
 ---
 
 import Tabs from '@theme/Tabs';
@@ -32,7 +34,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-You can use the `KeyInput` type from the [Parse action](../7-other/1-parse.md) to explicitely type an object as a `GetItemCommand` key:
+You can use the `KeyInput` type from the [Parse action](../16-parse.md) to explicitely type an object as a `GetItemCommand` key:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/tParse'

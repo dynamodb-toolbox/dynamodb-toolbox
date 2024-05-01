@@ -1,5 +1,7 @@
 ---
 title: UpdateItem
+sidebar_custom_props:
+  sidebarActionType: write
 ---
 
 import Tabs from '@theme/Tabs';

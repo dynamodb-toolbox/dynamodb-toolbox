@@ -1,5 +1,7 @@
 ---
 title: Query
+sidebar_custom_props:
+  sidebarActionType: read
 ---
 
 import Tabs from '@theme/Tabs';
@@ -35,7 +37,7 @@ The partition to query, with optional index and range condition:
 await PokeTable.build(QueryCommand)
   .query({
     index: 'byTrainerId',
-    partition: 'TRAINER_ID:ashKetchum',
+    partition: 'TRAINER:ashKetchum',
     range: { gte: 50 }
   })
   .send()
@@ -48,7 +50,7 @@ import type { Query } from 'dynamodb-toolbox/table/actions/query'
 
 const query: Query<typeof PokeTable> = {
   index: 'byTrainerId',
-  partition: 'TRAINER_ID:ashKetchum1',
+  partition: 'TRAINER:ashKetchum1',
   range: { gte: 50 }
 }
 
@@ -228,7 +230,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 const { Items } = await PokeTable.build(QueryCommand)
   .query({
     index: 'byTrainerId',
-    partition: 'TRAINER_ID:ashKetchum',
+    partition: 'TRAINER:ashKetchum',
     range: { gte: 50 }
   })
   .entities(PokemonEntity)
