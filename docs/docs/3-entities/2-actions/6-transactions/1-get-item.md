@@ -1,5 +1,0 @@
----
-title: GetItem
----
-
-# GetItemTransaction

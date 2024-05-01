@@ -1,5 +1,7 @@
 ---
 title: Scan
+sidebar_custom_props:
+  sidebarActionType: read
 ---
 
 import Tabs from '@theme/Tabs';
