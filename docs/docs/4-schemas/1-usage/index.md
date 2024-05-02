@@ -10,6 +10,8 @@ Closely mirror the capabilities of DynamoDB-Toolbox. You can find out more on wh
 
 Schemas are composable, re-use them accross entities.
 
+Similarly to [zod](https://github.com/colinhacks/zod) or [yup](https://github.com/jquense/yup), attributes are now defined through function builders.
+
 :::info
 
 Schemas are a standalone feature of DynamoDB-Toolbox. You can use them on their own to validate or format data for instance. We have plan to outsource them in their own library someday.
