@@ -1,5 +1,0 @@
----
-title: Primitives
----
-
-# Primitives
