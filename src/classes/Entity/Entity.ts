@@ -721,13 +721,20 @@ class Entity<Name extends string = string,
     ReturnValues extends UpdateOptionsReturnValues = 'NONE',
     Execute extends boolean | undefined = undefined,
     Parse extends boolean | undefined = undefined,
-    StrictSchemaCheck extends boolean | undefined = true>(
-    item: UpdateItem<MethodItemOverlay,
+    StrictSchemaCheck extends boolean | undefined = true,
+    ItemUpdate extends UpdateItem<MethodItemOverlay,
       EntityItemOverlay,
       CompositePrimaryKey,
       Item,
       Attributes,
-      StrictSchemaCheck>,
+      StrictSchemaCheck> = UpdateItem<MethodItemOverlay,
+      EntityItemOverlay,
+      CompositePrimaryKey,
+      Item,
+      Attributes,
+      StrictSchemaCheck>
+  >(
+    item: ItemUpdate,
     options: $UpdateOptions<ResponseAttributes,
       ReturnValues,
       Execute,
@@ -746,7 +753,7 @@ class Entity<Name extends string = string,
             FirstDefined<[MethodItemOverlay, EntityItemOverlay, Pick<Item, Attributes['shown']>]>,
             If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
               A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, ResponseAttributes>]>>>>>>>> {
+              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, keyof ItemUpdate>]>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,

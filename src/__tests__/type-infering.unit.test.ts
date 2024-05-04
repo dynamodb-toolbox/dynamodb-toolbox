@@ -7,18 +7,28 @@ import {
   PutOptions,
   DeleteOptions,
   UpdateOptions,
-  ConditionsOrFilters, AttributeMap, InferEntityItem
+  ConditionsOrFilters,
+  AttributeMap,
+  InferEntityItem
 } from 'classes/Entity/types.js'
 
 import { Table, Entity } from '../index.js'
-import { ReturnConsumedCapacity, ReturnItemCollectionMetrics, Select } from '@aws-sdk/client-dynamodb'
+import {
+  ReturnConsumedCapacity,
+  ReturnItemCollectionMetrics,
+  Select
+} from '@aws-sdk/client-dynamodb'
 import {
   DeleteCommandInput,
   DeleteCommandOutput,
   GetCommandInput,
   GetCommandOutput,
-  PutCommandInput, PutCommandOutput, QueryCommandInput, ScanCommandInput,
-  UpdateCommandInput, UpdateCommandOutput,
+  PutCommandInput,
+  PutCommandOutput,
+  QueryCommandInput,
+  ScanCommandInput,
+  UpdateCommandInput,
+  UpdateCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 import { DocumentClient } from './bootstrap.test.js'
 
@@ -50,22 +60,22 @@ type ExpectedQueryOpts<
   FilteredAttributes extends A.Key = A.Key
 > = Partial<
   ExpectedReadOpts<ResponseAttributes> & {
-  index: string
-  limit: number
-  reverse: boolean
-  entity: string
-  parseAsEntity: string
-  select: Select | `${Select}` | Lowercase<Select>
-  filters: ConditionsOrFilters<FilteredAttributes>
-  eq: string | number | bigint
-  lt: string | number | bigint
-  lte: string | number | bigint
-  gt: string | number | bigint
-  gte: string | number | bigint
-  between: [string, string] | [number, number] | [bigint, bigint]
-  beginsWith: string
-  startKey: {}
-}
+    index: string
+    limit: number
+    reverse: boolean
+    entity: string
+    parseAsEntity: string
+    select: Select | `${Select}` | Lowercase<Select>
+    filters: ConditionsOrFilters<FilteredAttributes>
+    eq: string | number | bigint
+    lt: string | number | bigint
+    lte: string | number | bigint
+    gt: string | number | bigint
+    gte: string | number | bigint
+    between: [string, string] | [number, number] | [bigint, bigint]
+    beginsWith: string
+    startKey: {}
+  }
 >
 
 type ExpectedWriteOpts<
@@ -76,7 +86,10 @@ type ExpectedWriteOpts<
   execute: boolean
   parse: boolean
   conditions: ConditionsOrFilters<Attributes>
-  metrics: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<ReturnItemCollectionMetrics>
+  metrics:
+    | ReturnItemCollectionMetrics
+    | `${ReturnItemCollectionMetrics}`
+    | Lowercase<ReturnItemCollectionMetrics>
   include: string[]
   returnValues: ReturnValues
   strictSchemaCheck: boolean
@@ -184,22 +197,28 @@ describe('Entity', () => {
       }).toThrow()
 
       // @ts-NOT-expect-error
-      expect(()=>new Entity({
-        name: entityName,
-        typeAlias: 'en',
-        attributes: { ...ck, en: 'string' },
-        table
-      } as const)).toThrow()
+      expect(
+        () =>
+          new Entity({
+            name: entityName,
+            typeAlias: 'en',
+            attributes: { ...ck, en: 'string' },
+            table
+          } as const)
+      ).toThrow()
 
       // 🔨 TOIMPROVE: Not sure this is expected behavior: overriding typeAlias doesn't throw
       // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
       // @ts-NOT-expect-error
-      expect(()=>new Entity({
-        name: entityName,
-        typeAlias: 'en',
-        attributes: { ...ck, en: 'string' },
-        table
-      } as const)).toThrow()
+      expect(
+        () =>
+          new Entity({
+            name: entityName,
+            typeAlias: 'en',
+            attributes: { ...ck, en: 'string' },
+            table
+          } as const)
+      ).toThrow()
     })
   })
 
@@ -441,10 +460,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => entNoParse.delete(item)
         type DeleteRawResponse = Awaited<ReturnType<typeof deletePromise>>
-        type TestDeleteRawResponse = A.Equals<
-          DeleteRawResponse,
-          DeleteCommandOutput
-        >
+        type TestDeleteRawResponse = A.Equals<DeleteRawResponse, DeleteCommandOutput>
         const testDeleteRawResponse: TestDeleteRawResponse = 1
         testDeleteRawResponse
       })
@@ -463,10 +479,7 @@ describe('Entity', () => {
         const item = { pk }
         const deletePromise = () => ent.delete(item, { parse: false })
         type DeleteRawResponse = Awaited<ReturnType<typeof deletePromise>>
-        type TestDeleteRawResponse = A.Equals<
-          DeleteRawResponse,
-          DeleteCommandOutput
-        >
+        type TestDeleteRawResponse = A.Equals<DeleteRawResponse, DeleteCommandOutput>
         const testDeleteRawResponse: TestDeleteRawResponse = 1
         testDeleteRawResponse
       })
@@ -685,10 +698,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => entNoParse.update(item)
         type UpdateRawResponse = Awaited<ReturnType<typeof updatePromise>>
-        type TestUpdateRawResponse = A.Equals<
-          UpdateRawResponse,
-          UpdateCommandOutput
-        >
+        type TestUpdateRawResponse = A.Equals<UpdateRawResponse, UpdateCommandOutput>
         const testUpdateRawResponse: TestUpdateRawResponse = 1
         testUpdateRawResponse
       })
@@ -707,10 +717,7 @@ describe('Entity', () => {
         const item = { pk }
         const updatePromise = () => ent.update(item, { parse: false })
         type UpdateRawResponse = Awaited<ReturnType<typeof updatePromise>>
-        type TestUpdateRawResponse = A.Equals<
-          UpdateRawResponse,
-          UpdateCommandOutput
-        >
+        type TestUpdateRawResponse = A.Equals<UpdateRawResponse, UpdateCommandOutput>
         const testUpdateRawResponse: TestUpdateRawResponse = 1
         testUpdateRawResponse
       })
@@ -821,10 +828,7 @@ describe('Entity', () => {
         type QueryNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
-        type TestQueryNextItems = A.Equals<
-          QueryNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestQueryNextItems = A.Equals<QueryNextItems, AttributeMap[] | undefined>
         const testQueryNextItems: TestQueryNextItems = 1
         testQueryNextItems
       })
@@ -853,10 +857,7 @@ describe('Entity', () => {
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
-          ScanNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestScanNextItems = A.Equals<ScanNextItems, AttributeMap[] | undefined>
         const testScanNextItems: TestScanNextItems = 1
         testScanNextItems
       })
@@ -871,10 +872,7 @@ describe('Entity', () => {
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
-          ScanNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestScanNextItems = A.Equals<ScanNextItems, AttributeMap[] | undefined>
         const testScanNextItems: TestScanNextItems = 1
         testScanNextItems
       })
@@ -898,10 +896,7 @@ describe('Entity', () => {
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
-          ScanNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestScanNextItems = A.Equals<ScanNextItems, AttributeMap[] | undefined>
         const testScanNextItems: TestScanNextItems = 1
         testScanNextItems
       })
@@ -916,10 +911,7 @@ describe('Entity', () => {
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
-          ScanNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestScanNextItems = A.Equals<ScanNextItems, AttributeMap[] | undefined>
         const testScanNextItems: TestScanNextItems = 1
         testScanNextItems
       })
@@ -1887,7 +1879,8 @@ describe('Entity', () => {
       attributes: {
         pk: { type: 'string', partitionKey: true, hidden: true },
         sk: { type: 'string', sortKey: true, hidden: true, default: sk },
-        string: { type: 'string' }
+        string: { type: 'string'},
+        number: { type: 'number' }
       },
       table
     } as const)
@@ -1899,14 +1892,14 @@ describe('Entity', () => {
     describe('get method', () => {
       describe('MethodItemOverlay', () => {
         it('composite key should match infered composite key', () => {
-          () => ent.get<MethodItemOverlay>(ck)
+          ;() => ent.get<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck0)
         })
 
         it('filtered attribute should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay>(ck, { attributes: ['pk'] })
+          ;() => ent.get<MethodItemOverlay>(ck, { attributes: ['pk'] })
           ;() => ent.get<MethodItemOverlay>(ck, { attributes: ['pk0'] })
         })
 
@@ -1934,12 +1927,12 @@ describe('Entity', () => {
       describe('MethodItemOverlay + MethodCompositeKeyOverlay', () => {
         it('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
         })
 
         it('filtered attribute should (still) match MethodItemOverlay', () => {
-          () =>
+          ;() =>
             ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0, {
               // @ts-expect-error
               attributes: ['pk']
@@ -1976,13 +1969,13 @@ describe('Entity', () => {
     describe('delete method', () => {
       describe('MethodItemOverlay', () => {
         it('composite key should match infered composite key', () => {
-          () => ent.delete<MethodItemOverlay>(ck)
+          ;() => ent.delete<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck0)
         })
 
         it('condition attributes should match MethodItemOverlay', () => {
-          () =>
+          ;() =>
             ent.delete<MethodItemOverlay>(ck, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2005,12 +1998,12 @@ describe('Entity', () => {
       describe('MethodItemOverlay + MethodCompositeKeyOverlay', () => {
         it('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
         })
 
         it('condition attributes should (still) match MethodItemOverlay', () => {
-          () =>
+          ;() =>
             ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2034,12 +2027,12 @@ describe('Entity', () => {
     describe('put method', () => {
       it('Item should match MethodItemOverlay', () => {
         // @ts-expect-error
-        () => ent.put<MethodItemOverlay>(ck)
+        ;() => ent.put<MethodItemOverlay>(ck)
         ;() => ent.put<MethodItemOverlay>({ ...ck0, num0, str0 })
       })
 
       it('condition attributes should match MethodItemOverlay', () => {
-        () =>
+        ;() =>
           ent.put<MethodItemOverlay>(
             { ...ck0, num0 },
             // @ts-expect-error
@@ -2064,12 +2057,12 @@ describe('Entity', () => {
     describe('update method', () => {
       it('item should match MethodItemOverlay', () => {
         // @ts-expect-error
-        () => ent.update<MethodItemOverlay>(ck)
+        ;() => ent.update<MethodItemOverlay>(ck)
         ;() => ent.update<MethodItemOverlay>({ ...ck0, num0 })
       })
 
       it('condition attributes should match MethodItemOverlay', () => {
-        () =>
+        ;() =>
           ent.update<MethodItemOverlay>(
             { ...ck0, num0 },
             // @ts-expect-error
@@ -2094,44 +2087,148 @@ describe('Entity', () => {
         testUpdateItem
       })
 
-      it('with conditions and returnValues', () => {
-        const updatePromise = () => ent.update(
-          {
-            pk,
-            string: 'some-string'
-          },
-          {
-            execute: true,
-            conditions: [
-              {
-                attr: 'string',
-                exists: true
-              }
-            ],
-            returnValues: 'ALL_NEW',
-          },
-        )
+      it('Attributes match full EntityItem (excl. hidden props) when returnValues is ALL_NEW', () => {
+        const updatePromise = () =>
+          ent.update(
+            {
+              pk,
+              string: 'some-string'
+            },
+            {
+              execute: true,
+              conditions: [
+                {
+                  attr: 'string',
+                  exists: true
+                }
+              ],
+              returnValues: 'ALL_NEW'
+            }
+          )
 
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
-        type TestUpdateParams = A.Equals<
-          UpdateItem,
-          EntityItem<typeof ent> | undefined
-        >
+        type TestUpdateParams = A.Equals<UpdateItem, EntityItem<typeof ent> | undefined>
 
         const testUpdateParams: TestUpdateParams = 1
         testUpdateParams
       })
 
-      it('with invalid conditions attributes', () => {
-        // @ts-expect-error
-        ent.updateParams({ pk }, { conditions: { attr: 'nonExistentAttr', exists: true } })
+      it('Attributes match full EntityItem (excl. hidden props) when returnValues is ALL_OLD', () => {
+        const updatePromise = () =>
+          ent.update(
+            {
+              pk,
+              string: 'some-string'
+            },
+            {
+              execute: true,
+              conditions: [
+                {
+                  attr: 'string',
+                  exists: true
+                }
+              ],
+              returnValues: 'ALL_OLD'
+            }
+          )
+
+        type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
+        type TestUpdateParams = A.Equals<UpdateItem, EntityItem<typeof ent> | undefined>
+
+        const testUpdateParams: TestUpdateParams = 1
+        testUpdateParams
+      })
+
+      it('Attributes match only provided attributes when returnValues is UPDATED_NEW', () => {
+        const updatePromise = () =>
+          ent.update(
+            {
+              pk,
+              string: 'some-string'
+            },
+            {
+              execute: true,
+              conditions: [
+                {
+                  attr: 'string',
+                  exists: true
+                }
+              ],
+              returnValues: 'UPDATED_NEW'
+            }
+          )
+
+        type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
+        type TestUpdateParams = A.Equals<UpdateItem, Pick<EntityItem<typeof ent>, 'string'> | undefined>
+
+        const testUpdateParams: TestUpdateParams = 1
+        testUpdateParams
+      })
+
+      it('Attributes match only provided attributes when returnValues is UPDATED_OLD', () => {
+        const updatePromise = () =>
+          ent.update(
+            {
+              pk,
+              string: 'some-string'
+            },
+            {
+              execute: true,
+              conditions: [
+                {
+                  attr: 'string',
+                  exists: true
+                }
+              ],
+              returnValues: 'UPDATED_OLD'
+            }
+          )
+
+        type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
+        type TestUpdateParams = A.Equals<UpdateItem, Pick<EntityItem<typeof ent>, 'string'> | undefined>
+
+        const testUpdateParams: TestUpdateParams = 1
+        testUpdateParams
+      })
+
+      it('Attributes should not exist when returnValues is NONE', () => {
+        const updatePromise = () =>
+          ent.update(
+            {
+              pk,
+              string: 'some-string'
+            },
+            {
+              execute: true,
+              conditions: [
+                {
+                  attr: 'string',
+                  exists: true
+                }
+              ],
+              returnValues: 'NONE'
+            }
+          )
+
+        // @ts-expect-error - Attributes should not exist
+        type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
+        testUpdateParams
+      })
+
+      it('throws when condition attribute is not valid', () => {
+        expect(() =>
+          // @ts-expect-error
+          ent.updateParams({ pk }, { conditions: { attr: 'nonExistentAttr', exists: true } })
+        ).toThrowErrorMatchingInlineSnapshot(
+          `"'nonExistentAttr' is not a valid attribute within the given entity/table."`
+        )
       })
     })
 
     describe('query method', () => {
       it('condition attributes should match MethodItemOverlay', () => {
         // @ts-expect-error
-        () => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
+        ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
         ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk0'] })
       })
 
@@ -2208,13 +2305,13 @@ describe('Entity', () => {
       describe('EntityOverlay only', () => {
         it('composite key should match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.get(ck)
+          ;() => ent.get(ck)
           ;() => ent.get(ck0)
         })
 
         it('filtered attribute should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.get(ck0, { attributes: ['pk'] })
+          ;() => ent.get(ck0, { attributes: ['pk'] })
           ;() => ent.get(ck0, { attributes: ['pk0'] })
 
           type GetItemOptions = GetOptions<typeof ent>
@@ -2252,7 +2349,7 @@ describe('Entity', () => {
       describe('MethodItemOverlay + EntityCompositeKeyOverlay', () => {
         it('composite key should (still) match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay>(ck)
+          ;() => ent.get<MethodItemOverlay>(ck)
           ;() => ent.get<MethodItemOverlay>(ck0)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck1)
@@ -2260,7 +2357,7 @@ describe('Entity', () => {
 
         it('filtered attribute should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk'] })
+          ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk'] })
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk0'] })
           ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk1'] })
@@ -2278,14 +2375,14 @@ describe('Entity', () => {
       describe('Method Overlay only', () => {
         it('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
         })
 
         it('filtered attribute should (still) match MethodItemOverlay', () => {
-          () =>
+          ;() =>
             ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1, {
               // @ts-expect-error
               attributes: ['pk']
@@ -2315,7 +2412,7 @@ describe('Entity', () => {
       describe('EntityOverlay only', () => {
         it('composite key should match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.delete(ck)
+          ;() => ent.delete(ck)
           ;() => ent.delete(ck0)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck1)
@@ -2323,7 +2420,7 @@ describe('Entity', () => {
 
         it('condition attributes should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.delete(ck0, { conditions: { attr: 'pk', exists: true } })
+          ;() => ent.delete(ck0, { conditions: { attr: 'pk', exists: true } })
           ;() => ent.delete(ck0, { conditions: { attr: 'pk0', exists: true } })
 
           type DeleteItemOptions = DeleteOptions<typeof ent>
@@ -2368,14 +2465,14 @@ describe('Entity', () => {
       describe('MethodItemOverlay + EntityCompositeKeyOverlay', () => {
         it('composite key should (still) match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.delete<MethodItemOverlay>(ck)
+          ;() => ent.delete<MethodItemOverlay>(ck)
           ;() => ent.delete<MethodItemOverlay>(ck0)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck1)
         })
 
         it('condition attributes should match MethodItemOverlay', () => {
-          () =>
+          ;() =>
             ent.delete<MethodItemOverlay>(ck0, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2403,14 +2500,14 @@ describe('Entity', () => {
       describe('Method Overlay only', () => {
         it('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
         })
 
         it('condition attributes should (still) match MethodItemOverlay', () => {
-          () =>
+          ;() =>
             ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2440,7 +2537,7 @@ describe('Entity', () => {
       describe('EntityItemOverlay', () => {
         it('Item should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.put(ck)
+          ;() => ent.put(ck)
           // @ts-expect-error
           ;() => ent.put(ck0)
           ;() => ent.put({ ...ck0, num0 })
@@ -2448,7 +2545,7 @@ describe('Entity', () => {
         })
 
         it('condition attributes should match EntityItemOverlay', () => {
-          () =>
+          ;() =>
             ent.put(
               { ...ck0, num0 },
               // @ts-expect-error
@@ -2495,7 +2592,7 @@ describe('Entity', () => {
       describe('MethodItemOverlay', () => {
         it('Item should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.put<MethodItemOverlay>(ck)
+          ;() => ent.put<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.put<MethodItemOverlay>({ ...ck0, num0 })
           ;() => ent.put<MethodItemOverlay>({ ...ck1, num1 })
@@ -2503,7 +2600,7 @@ describe('Entity', () => {
         })
 
         it('condition attributes should match MethodItemOverlay', () => {
-          () =>
+          ;() =>
             ent.put<MethodItemOverlay>(
               { ...ck1, num1 },
               // @ts-expect-error
@@ -2536,12 +2633,12 @@ describe('Entity', () => {
       describe('EntityOverlay only', () => {
         it('item should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.update(ck)
+          ;() => ent.update(ck)
           ;() => ent.update({ ...ck0, num0 })
         })
 
         it('condition attributes should match EntityItemOverlay', () => {
-          () =>
+          ;() =>
             ent.update(
               { ...ck0, num0 },
               // @ts-expect-error
@@ -2606,7 +2703,9 @@ describe('Entity', () => {
 
           const allOldUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'ALL_OLD' })
-          type AllOldUpdateAttributes = Awaited<ReturnType<typeof allOldUpdatePromise>>['Attributes']
+          type AllOldUpdateAttributes = Awaited<
+            ReturnType<typeof allOldUpdatePromise>
+          >['Attributes']
           type AssertAllOldUpdateAttributes = A.Equals<
             AllOldUpdateAttributes,
             EntityItemOverlay | undefined
@@ -2616,7 +2715,9 @@ describe('Entity', () => {
 
           const allNewUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'ALL_NEW' })
-          type AllNewUpdateAttributes = Awaited<ReturnType<typeof allNewUpdatePromise>>['Attributes']
+          type AllNewUpdateAttributes = Awaited<
+            ReturnType<typeof allNewUpdatePromise>
+          >['Attributes']
           type AssertAllNewUpdateAttributes = A.Equals<
             AllNewUpdateAttributes,
             EntityItemOverlay | undefined
@@ -2629,7 +2730,7 @@ describe('Entity', () => {
       describe('MethodOverlay', () => {
         it('item should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.update<MethodItemOverlay>(ck)
+          ;() => ent.update<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.update<MethodItemOverlay>({ ...ck0, num0 })
           // @ts-expect-error
@@ -2638,7 +2739,7 @@ describe('Entity', () => {
         })
 
         it('condition attributes should match MethodItemOverlay', () => {
-          () =>
+          ;() =>
             ent.update<MethodItemOverlay>(
               { ...ck1, num1 },
               // @ts-expect-error
@@ -2675,7 +2776,7 @@ describe('Entity', () => {
       describe('EntityOverlay only', () => {
         it('condition attributes should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.query('pk', { attributes: ['pk'] })
+          ;() => ent.query('pk', { attributes: ['pk'] })
           ;() => ent.query('pk', { attributes: ['pk0'] })
         })
 
@@ -2708,7 +2809,7 @@ describe('Entity', () => {
       describe('MethodOverlay', () => {
         it('condition attributes should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
+          ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
           // @ts-expect-error
           ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk0'] })
           ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk1'] })
@@ -2727,7 +2828,7 @@ describe('Entity', () => {
     describe('scan method', () => {
       describe('EntityOverlay only', () => {
         it('condition attributes should not necessarily match EntityItemOverlay', () => {
-          () => ent.scan({ attributes: ['pk'] })
+          ;() => ent.scan({ attributes: ['pk'] })
         })
 
         it('returned Items should not necessarily match EntityItemOverlay', () => {
@@ -2741,7 +2842,7 @@ describe('Entity', () => {
 
       describe('MethodOverlay', () => {
         it('condition attributes should not necessarily match MethodItemOverlay', () => {
-          () => ent.scan<MethodItemOverlay>({ attributes: ['pk'] })
+          ;() => ent.scan<MethodItemOverlay>({ attributes: ['pk'] })
         })
 
         it('returned Items should match MethodItemOverlay', () => {
@@ -2760,7 +2861,7 @@ describe('Entity', () => {
           name: 'TestEnity_WithTable',
           attributes: {
             pk: { partitionKey: true },
-            sk: { sortKey: true },
+            sk: { sortKey: true }
           },
           table
         })
@@ -2786,9 +2887,9 @@ describe('Entity', () => {
           name: 'Entity_WithNewTable',
           attributes: {
             pk: { partitionKey: true },
-            sk: { sortKey: true },
+            sk: { sortKey: true }
           },
-          table,
+          table
         })
 
         const entityWithNewTable = entity.setTable(newTable)
