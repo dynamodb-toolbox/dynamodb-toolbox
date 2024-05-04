@@ -1,4 +1,4 @@
-import { A, F } from 'ts-toolbelt'
+import { A } from 'ts-toolbelt'
 
 import {
   EntityItem,
