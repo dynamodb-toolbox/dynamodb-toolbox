@@ -415,6 +415,7 @@ class Entity<Name extends string = string,
       linked,
       Object.assign({}, defaults, item),
       true,
+      false
     )
 
     const {
