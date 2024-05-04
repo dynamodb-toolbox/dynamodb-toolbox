@@ -7,7 +7,7 @@ import {
   PutOptions,
   DeleteOptions,
   UpdateOptions,
-  ConditionsOrFilters, AttributeMap,
+  ConditionsOrFilters, AttributeMap, InferEntityItem
 } from 'classes/Entity/types.js'
 
 import { Table, Entity } from '../index.js'
@@ -2101,7 +2101,7 @@ describe('Entity', () => {
             string: 'some-string'
           },
           {
-            execute: false,
+            execute: true,
             conditions: [
               {
                 attr: 'string',
@@ -2115,7 +2115,7 @@ describe('Entity', () => {
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
         type TestUpdateParams = A.Equals<
           UpdateItem,
-          EntityItem<typeof ent>
+          EntityItem<typeof ent> | undefined
         >
 
         const testUpdateParams: TestUpdateParams = 1
