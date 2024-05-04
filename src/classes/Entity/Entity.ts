@@ -764,14 +764,13 @@ class Entity<Name extends string = string,
                   {
                     [K in CreatedAlias | ModifiedAlias]: string;
                   }
-                  : object
+                  : {}
                   ) &
                   (
                     TypeHidden extends true ?
-                    object :
+                      { } :
                     { [K in TypeAlias]: string }
-                  )
-
+                  ) | undefined
               ]>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
