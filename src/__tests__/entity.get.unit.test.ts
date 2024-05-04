@@ -37,6 +37,19 @@ const TestEntity2 = new Entity({
   table: TestTable2
 } as const)
 
+// https://github.com/jeremydaly/dynamodb-toolbox/issues/734
+const TestEntityWithRequiredAndMappedProperties = new Entity({
+  name: 'TestEntityWithRequiredAndMappedProperties',
+  autoExecute: false,
+  attributes: {
+    pk: { type: 'string', partitionKey: true },
+    sk: { type: 'string', sortKey: true },
+    status: { type: 'string', map: 'F12', required: true },
+    statusNumber: { type: 'number', map: 'F16', required: true, onUpdate: true, dependsOn: 'status', default: ({ status }: any) => status.length},
+  },
+  table: TestTable
+} as const)
+
 describe('get', () => {
   it('gets the key from inputs (sync)', async () => {
     const { TableName, Key } = TestEntity.getParams({ email: 'test-pk', sort: 'test-sk' })
@@ -84,6 +97,12 @@ describe('get', () => {
     const { TableName, Key } = await TestEntity.get({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
+  })
+
+  it('should successfully run when missing non partition key properties', async () => {
+    const { TableName, Key } = TestEntityWithRequiredAndMappedProperties.getParams({ pk: 'test-pk', sk: 'test-sk' })
+    expect(TableName).toBe('test-table')
+    expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   it('fails with undefined input (sync)', () => {
