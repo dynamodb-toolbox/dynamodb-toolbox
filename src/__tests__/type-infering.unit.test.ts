@@ -1373,7 +1373,7 @@ describe('Entity', () => {
         ent.updateParams(item5)
         const updatePromise5 = () => ent.update(item5, { returnValues: 'UPDATED_OLD' })
         type UpdateItem5 = Awaited<ReturnType<typeof updatePromise5>>['Attributes']
-        type TestUpdateItem5 = A.Equals<UpdateItem5, Pick<EntityItem<typeof ent>, Omit<keyof typeof item5>, 'pk' , 'sk'> | undefined>
+        type TestUpdateItem5 = A.Equals<UpdateItem5, ExpectedItem | undefined>
         const testUpdateItem5: TestUpdateItem5 = 1
         testUpdateItem5
 
@@ -1381,7 +1381,7 @@ describe('Entity', () => {
         ent.updateParams(item6)
         const updatePromise6 = () => ent.update(item6, { returnValues: 'UPDATED_NEW' })
         type UpdateItem6 = Awaited<ReturnType<typeof updatePromise6>>['Attributes']
-        type TestUpdateItem6 = A.Equals<UpdateItem6, Pick<EntityItem<typeof ent>, Omit<keyof typeof item6>, 'pk' | 'sk'> | undefined>
+        type TestUpdateItem6 = A.Equals<UpdateItem6, Pick<EntityItem<typeof ent>, ExpectedItem | undefined>>
         const testUpdateItem6: TestUpdateItem6 = 1
         testUpdateItem6
 
@@ -2159,7 +2159,7 @@ describe('Entity', () => {
           )
 
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
-        type TestUpdateParams = A.Equals<UpdateItem, Pick<EntityItem<typeof ent>, 'string'> | undefined>
+        type TestUpdateParams = A.Equals<UpdateItem, Pick<EntityItem<typeof ent>, 'string' | 'entity' | 'modified' | 'created'> | undefined>
 
         const testUpdateParams: TestUpdateParams = 1
         testUpdateParams
@@ -2185,7 +2185,7 @@ describe('Entity', () => {
           )
 
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
-        type TestUpdateParams = A.Equals<UpdateItem, Pick<EntityItem<typeof ent>, 'string'> | undefined>
+        type TestUpdateParams = A.Equals<UpdateItem, Pick<EntityItem<typeof ent>, 'string' | 'entity' | 'modified' | 'created'> | undefined>
 
         const testUpdateParams: TestUpdateParams = 1
         testUpdateParams
