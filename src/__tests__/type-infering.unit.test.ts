@@ -2212,7 +2212,6 @@ describe('Entity', () => {
 
         // @ts-expect-error - Attributes should not exist
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
-        testUpdateParams
       })
 
       it('throws when condition attribute is not valid', () => {

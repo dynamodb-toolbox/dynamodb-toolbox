@@ -753,7 +753,7 @@ class Entity<Name extends string = string,
             FirstDefined<[MethodItemOverlay, EntityItemOverlay, Pick<Item, Attributes['shown']>]>,
             If<B.Or<A.Equals<ReturnValues, 'UPDATED_OLD'>,
               A.Equals<ReturnValues, 'UPDATED_NEW'>>,
-              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<Item, keyof ItemUpdate>]>>>>>>>> {
+              FirstDefined<[MethodItemOverlay, EntityItemOverlay, O.Pick<O.Pick<Item, keyof ItemUpdate>, Attributes['shown']>]>>>>>>>> {
     // Generate the payload
     const updateParams = this.updateParams<MethodItemOverlay,
       ShownItemAttributes,
