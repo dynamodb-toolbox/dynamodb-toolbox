@@ -79,7 +79,7 @@ describe('normalizeData', () => {
     }).toThrow(`Field 'notAField' does not have a mapping or alias`)
   })
 
-  it('fails when partion, sortkey or other required fields have depend attributes not provided', () => {
+  it('fails when partition, sort key or other required fields have depend attributes not provided', () => {
     const ent = new Entity({
       name: 'Test',
       attributes: {
@@ -95,5 +95,34 @@ describe('normalizeData', () => {
     expect(() => ent.updateParams({})).toThrow(
       `Required field 'sk' depends on attribute(s), one or more of which can't be resolved (parent)`
     )
+  })
+
+  it('should not fail for GSI keys', () => {
+
+    const indexedStatus = ['AVAILABLE', 'PENDING'];
+
+    const ent = new Entity({
+      name: 'Test',
+      attributes: {
+        pk: { type: 'string', partitionKey: true },
+        sk: { type: 'string', sortKey: true },
+        GSI1PK: { 
+          type: 'string', 
+          partitionKey: 'GSI1', 
+          dependsOn: ['status'],
+          default: (data: { status: string }) => data.status in indexedStatus ? `SHOW` : undefined,
+        },
+        GSI1SK: {
+          type: 'string',
+          sortKey: 'GSI1',
+          dependsOn: ['status', 'modified'],
+          default: (data: { status: string, modified: string }) => `${data.status}#${data.modified}`,
+        },
+        status: { type: 'string' },
+      },
+      table: DefaultTable,
+    } as const)
+
+    expect(() => ent.updateParams({ pk: 'pk', sk: 'sk' })).not.toThrow()
   })
 })

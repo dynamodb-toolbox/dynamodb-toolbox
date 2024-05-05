@@ -85,7 +85,9 @@ export default () => (
         const map = dependsOn(defaultMap, attr)
         defaultMap = map
       } catch (e) {
-        if (throwOnMissingNonPartitionRequiredProperties && e instanceof DependsOnUndefined && (schema[attr].partitionKey || schema[attr].sortKey || schema[attr].required)) {
+        if (throwOnMissingNonPartitionRequiredProperties 
+          && e instanceof DependsOnUndefined 
+          && (schema[attr].partitionKey === true || schema[attr].sortKey === true || schema[attr].required)) {
           throw new Error(`Required field '${attr}' depends on attribute(s), one or more of which can't be resolved (${schema[attr].dependsOn})`)
         }
         delete defaultMap[attr]
