@@ -99,7 +99,7 @@ describe('normalizeData', () => {
 
   it('should not fail for GSI keys', () => {
 
-    const indexedStatus = ['AVAILABLE', 'PENDING'];
+    const indexedStatus = ['AVAILABLE', 'PENDING']
 
     const ent = new Entity({
       name: 'Test',
