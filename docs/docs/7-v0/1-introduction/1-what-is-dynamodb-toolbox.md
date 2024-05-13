@@ -66,6 +66,8 @@ Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
 
+<!-- NOTE: 'caution' became 'warning' in docusaurus v3 -->
+
 :::caution Please Note
 
 This library **DOES NOT** create DynamoDB Tables for you. You must create the tables yourself (either via the console or some form of Infrastructure as Code).
@@ -76,7 +78,10 @@ This library **DOES NOT** create DynamoDB Tables for you. You must create the ta
 
 ```typescript
 // >=v0.8.0
-import { DynamoDB, DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import {
+  DynamoDB,
+  DynamoDBClient
+} from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 const marshallOptions = {
@@ -86,7 +91,10 @@ const marshallOptions = {
 
 const translateConfig = { marshallOptions }
 
-export const DocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient(), translateConfig)
+export const DocumentClient = DynamoDBDocumentClient.from(
+  new DynamoDBClient(),
+  translateConfig
+)
 
 // <v0.8.0
 import DynamoDB from 'aws-sdk/clients/dynamodb'

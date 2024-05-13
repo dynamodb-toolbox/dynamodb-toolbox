@@ -44,11 +44,11 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve('./sidebars.js')
           // routeBasePath: '/', // Serve the docs at the site's root
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/jeremydaly/dynamodb-toolbox/tree/main/docs'
+          // editUrl:
+          //   'https://github.com/jeremydaly/dynamodb-toolbox/tree/main/docs'
         },
         blog: false,
         theme: {

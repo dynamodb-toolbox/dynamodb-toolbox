@@ -9,7 +9,10 @@ sidebar_custom_props:
 The `Condition` type and `parseCondition` util are useful to type conditions and build condition expressions:
 
 ```tsx
-import { Condition, parseCondition } from 'dynamodb-toolbox'
+import {
+  Condition,
+  ConditionParser
+} from 'dynamodb-toolbox/schema/actions/parseCondition'
 
 const condition: Condition<typeof pokemonEntity> = {
   attr: 'level',

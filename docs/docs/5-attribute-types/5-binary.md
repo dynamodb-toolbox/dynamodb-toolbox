@@ -1,5 +1,5 @@
 ---
-title: Primitives
+title: Binary
 ---
 
 # Primitives

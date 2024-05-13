@@ -1,8 +1,8 @@
 ---
-title: Maps
+title: Map
 ---
 
-# Maps
+# Map
 
 Defines a finite list of key-value pairs. Keys must follow a string schema, while values can be sub-schema of any type:
 

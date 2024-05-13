@@ -6,10 +6,10 @@ sidebar_custom_props:
 
 # Format
 
-`formatSavedItem` transforms a saved item returned by the DynamoDB client to it’s formatted counterpart:
+`Formatter` transforms a saved item returned by the DynamoDB client to it’s formatted counterpart:
 
 ```tsx
-import { formatSavedItem } from 'dynamodb-toolbox';
+import { Formatter } from 'dynamodb-toolbox/schema/actions/format';
 
 // 🙌 Typed as FormattedItem<typeof pokemonEntity>
 const formattedPokemon = pokemonSchema.build(Formatter).format(
