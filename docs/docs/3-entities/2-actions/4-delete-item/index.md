@@ -50,7 +50,7 @@ await PokemonEntity.build(DeleteItemCommand).key(key).send()
 
 ## Options
 
-Additional options:
+Provides additional options:
 
 ```ts
 await PokemonEntity.build(DeleteItemCommand)

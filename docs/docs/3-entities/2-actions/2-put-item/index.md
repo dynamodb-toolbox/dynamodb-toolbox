@@ -62,7 +62,7 @@ Note that `PutItemInput` differs from `ParsedItem` as defaulted and linked attri
 
 ## Options
 
-Additional options:
+Provides additional options:
 
 ```ts
 await PokemonEntity.build(PutItemCommand)
