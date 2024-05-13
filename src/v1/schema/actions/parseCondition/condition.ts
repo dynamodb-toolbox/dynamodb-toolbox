@@ -87,12 +87,14 @@ export type AttributeCondition<
         : never
       : never)
 
-type NumberStringOrBinaryAttributeExtraCondition<
+type SortableAttribute =
+  | PrimitiveAttribute<'string'>
+  | PrimitiveAttribute<'number'>
+  | PrimitiveAttribute<'binary'>
+
+type SortableAttributeExtraCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends
-    | PrimitiveAttribute<'number'>
-    | PrimitiveAttribute<'string'>
-    | PrimitiveAttribute<'binary'>,
+  ATTRIBUTE extends SortableAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
 > = AttrOrSize<ATTRIBUTE_PATH> &
@@ -131,15 +133,8 @@ export type PrimitiveAttributeExtraCondition<
     { eq: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
     | { ne: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
     | { in: (ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH })[] }
-    | (ATTRIBUTE extends
-        | PrimitiveAttribute<'string'>
-        | PrimitiveAttribute<'number'>
-        | PrimitiveAttribute<'binary'>
-        ? NumberStringOrBinaryAttributeExtraCondition<
-            ATTRIBUTE_PATH,
-            ATTRIBUTE,
-            COMPARED_ATTRIBUTE_PATH
-          >
+    | (ATTRIBUTE extends SortableAttribute
+        ? SortableAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
         : never)
     | (ATTRIBUTE extends PrimitiveAttribute<'string'> | PrimitiveAttribute<'binary'>
         ? StringOrBinaryAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>

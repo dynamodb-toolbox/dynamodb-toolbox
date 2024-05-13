@@ -1,8 +1,8 @@
 ---
-title: Lists
+title: List
 ---
 
-# Lists
+# List
 
 Defines a list of sub-schemas of any type:
 

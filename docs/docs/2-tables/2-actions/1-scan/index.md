@@ -35,7 +35,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 ## Options
 
-Additional options:
+Provides additional options:
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
@@ -87,7 +87,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
     </thead>
     <tbody>
         <tr>
-            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}>-</td>
+            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>General</b></td>
             <td><code>consistent</code></td>
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>

@@ -50,7 +50,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 
 ## Options
 
-Additional options:
+Provides additional options:
 
 ```ts
 const { Item } = await PokemonEntity.build(GetItemCommand)

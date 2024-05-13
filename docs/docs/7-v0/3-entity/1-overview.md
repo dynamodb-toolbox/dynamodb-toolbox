@@ -99,13 +99,19 @@ const MyEntity = new Entity({
     user_id: { partitionKey: true },
     sk: { type: 'number', hidden: true, sortKey: true },
     data: { coerce: false, required: true, alias: 'name' },
-    departments: { type: 'set', setType: 'string', map: 'dept' }
+    departments: {
+      type: 'set',
+      setType: 'string',
+      map: 'dept'
+    }
     // ...
   }
 } as const)
 ```
 
 ### Using an `array` for composite keys
+
+<!-- NOTE: 'caution' became 'warning' in docusaurus v3 -->
 
 :::caution Deprecation Notice
 
@@ -141,7 +147,11 @@ const MyEntity = new Entity({
   attributes: {
     user_id: { partitionKey: true },
     sk: { hidden: true, sortKey: true },
-    status: ['sk', 0, { type: 'boolean', save: false, default: true }],
+    status: [
+      'sk',
+      0,
+      { type: 'boolean', save: false, default: true }
+    ],
     date: ['sk', 1, { required: true }]
     // ...
   }
@@ -174,8 +184,10 @@ const MyEntity = new Entity({
     user_id: { partitionKey: true },
     sk: {
       sortKey: true,
-      default: (data: { status: boolean; date_added: string }) =>
-        `sort-${data.status}|${data.date_added}`
+      default: (data: {
+        status: boolean
+        date_added: string
+      }) => `sort-${data.status}|${data.date_added}`
     },
     status: 'boolean',
     date_added: 'string'
@@ -192,7 +204,10 @@ const MyEntity = new Entity({
     user_id: { partitionKey: true },
     sk: {
       sortKey: true,
-      default: (data: { status: boolean; date_added: string }) => {
+      default: (data: {
+        status: boolean
+        date_added: string
+      }) => {
         if (data.status && data.date_added) {
           return data.date_added
         } else {

@@ -238,7 +238,7 @@ pokemonEntity.build(UpdateItemCommand).item({
 
 ## Options
 
-Additional options:
+Provides additional options:
 
 ```ts
 await PokemonEntity.build(UpdateItemCommand)
