@@ -1,8 +1,8 @@
 ---
-title: Record
+title: Record 👷
 ---
 
-# Record
+# Record 👷
 
 A new attribute type that translates to `Partial<Record<KeyType, ValueType>>` in TypeScript. Records differ from maps as they can accept an infinite range of keys and are always partial:
 

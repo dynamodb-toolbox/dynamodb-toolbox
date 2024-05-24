@@ -1,8 +1,8 @@
 ---
-title: Usage
+title: Usage 👷
 ---
 
-# Schema
+# Schema 👷
 
 Entity attributes are specified by using a schemas.
 
@@ -27,7 +27,7 @@ const pokemonName = attribute.string()
 const pokemonName = attr.string()
 ```
 
-You can get the list of available attributes in the [Attributes section](../../5-attribute-types/3-any.md).
+You can get the list of available attributes in the [Attributes section](../../5-attribute-types/1-any.md).
 
 :::info
 

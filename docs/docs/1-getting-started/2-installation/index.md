@@ -1,8 +1,8 @@
 ---
-title: Installation
+title: Installation ⭐️
 ---
 
-# Installation
+# Installation ⭐️
 
 ```bash
 # npm

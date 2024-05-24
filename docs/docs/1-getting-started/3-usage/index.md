@@ -1,16 +1,16 @@
 ---
-title: Usage
+title: Usage ⭐️
 ---
 
 import Mermaid from '@theme/Mermaid';
 
-# Usage
+# Usage ⭐️
 
-DynamoDB-Toolbox exposes mainly three classes:
+DynamoDB-Toolbox mainly exposes three classes:
 
-- [Tables](../../2-tables/1-usage/index.md) that describe the configuration of your DynamoDB Tables
-- [Entities](../../3-entities/1-usage/index.md) that categorize the items contained in your Tables
-- [Schemas](../../4-schemas/1-usage/index.md) that list the attributes of your entities
+- [🏗️ Tables](../../2-tables/1-usage/index.md) that describe the configuration of your DynamoDB Tables.
+- [🐶 Entities](../../3-entities/1-usage/index.md) that categorize the items contained in your Tables.
+- [📐 Schemas](../../4-schemas/1-usage/index.md) that list the attributes of your entities.
 
 ```mermaid
 flowchart LR
@@ -68,7 +68,9 @@ flowchart LR
 ## Instantiation
 
 ```ts
-import { Table, Entity, schema } from 'dynamodb-toolbox'
+import { Table } from 'dynamodb-toolbox/table'
+import { Entity } from 'dynamodb-toolbox/entity'
+import { schema } from 'dynamodb-toolbox/schema'
 
 // Define a Table
 const PokeTable = new Table(...)
@@ -83,17 +85,15 @@ const PokemonEntity = new Entity({
 })
 ```
 
-An entity must belong to a Table, but the same Table can contain items from several entities. DynamoDB-Toolbox is designed with **Single Tables** in mind, but works just as well with multiple tables, it'll still make your life much easier (`batchGet` and `batchWrite` support multiple tables, so we've got you covered).
+An entity must belong to a Table, but the same Table can contain items from several entities. DynamoDB-Toolbox is designed with **Single Tables** in mind, but works just as well with multiple tables, it'll still make your life much easier (batch gets and writes support multiple tables, so we've got you covered).
 
-Once you have defined your Entities. You can start using them in combination with **Actions**.
+Once you have defined your `Tables` and `Entities`. You can start using them in combination with **Actions**.
 
 ## Methods vs Actions
 
-DynamoDB exposes a lot of capabilities (queries, updates, ), which can be quite complex. Bundling that in a single class, bloat. Each interaction in a class method would bloat (typically, UpdateCommands code can be quite long).
+Queries, updates, transactions, batch operations... DynamoDB has a **wide range of features**. Exposing all of them as distinct methods would **bloat the `Entity` and `Tables` classes**. Class methods are not tree-shakable, and why bother bundling the code needed for a feature (which can be quite large) if you don't need it?
 
-The issue with this syntax is that **class methods are not tree-shakable**. Why bother bundling the code of an `.update` method (which can be quite large) if you don't need it?
-
-Instead, `Tables`, `Entities` and `Schemas` have a single `.build` method that is exactly **1-line long** 🤯. It acts as a gateway to perform [Actions](#how-do-actions-work):
+Instead, `Tables`, `Entities` and `Schemas` have a single `.build` method which is exactly **1-line long** 🤯 and acts as a gateway to perform [Actions](#how-do-actions-work):
 
 ```ts
 import { GetItemCommand } from 'dynamodb-toolbox/entity/actions/get'
@@ -109,9 +109,9 @@ The syntax is a bit more verbose that a simple `PokemonEntity.get(key)`, but it 
 
 :::info
 
-Notice how the action is imported through a deep import, thanks to the [`exports` field](https://nodejs.org/api/packages.html#subpath-exports) of the `package.json`, allowing for even better code splitting.
+Notice how the action is imported through a deep import, thanks to the [`exports`](https://nodejs.org/api/packages.html#subpath-exports) field of the `package.json`, allowing for even better code splitting.
 
-Although all classes and actions are exposed in the main `dynamodb-toolbox` path, it is recommended to use the subpath. That's what we'll use in the rest of the documentation.
+Although all classes and actions are exposed in the main entry path, we recommend using subpaths. That's what we'll do in the rest of the documentation.
 
 :::
 
@@ -148,13 +148,13 @@ const pokemonEntityName = nameGetter.get()
 // => "POKEMON"
 ```
 
-As you see, the `.build` methods simply instanciate a new action with its parent as first constructor parameter. Another way to do it would be:
+The `.build` methods simply instanciate a new action with its parent as first constructor parameter. Another way to do it would be:
 
 ```ts
 const nameGetter = new NameGetter(PokemonEntity)
 ```
 
-Although this action-oriented syntax is (we find) less readable than the entity-oriented one, it leads to exactly the same result! Feel free to use it if you prefer 🙌
+Although this action-oriented syntax is (we find) less readable than the entity-oriented one, it leads to exactly the same result: Feel free to use it if you prefer!
 
 Here's a comparison of both syntaxes on the [`GetItemCommand`](/docs/entities/actions/get-item) action:
 

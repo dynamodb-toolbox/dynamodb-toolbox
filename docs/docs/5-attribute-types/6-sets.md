@@ -1,8 +1,8 @@
 ---
-title: Set
+title: Set 👷
 ---
 
-# Set
+# Set 👷
 
 Defines a set of strings, numbers or binaries. Unlike in previous versions, sets are kept as `Set` classes. Let me know if you would prefer using arrays (or being able to choose from both):
 

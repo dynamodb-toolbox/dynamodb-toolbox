@@ -1,11 +1,11 @@
 ---
-title: Usage
+title: Usage 👷
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Table
+# Table 👷
 
 Each **Table** describes the configuration of a deployed DynamoDB Table: Your table's **name**, **primary keys**, **indexes**, and more.
 
@@ -24,7 +24,7 @@ To define a new table, import it into your script:
 ```typescript
 import { Table } from 'dynamodb-toolbox/table'
 
-const pokeTable = new Table({
+const PokeTable = new Table({
   ...
 })
 ```
@@ -51,7 +51,7 @@ const documentClient = DynamoDBDocumentClient.from(
   }
 )
 
-const myTable = new Table({
+const MyTable = new Table({
   documentClient,
   ...
 })
@@ -60,11 +60,11 @@ const myTable = new Table({
 Note that the client needs not to be provided right away. This can be useful if you want to use the `Table` in a separate context in which the client is not needed (like using the [CDK](https://aws.amazon.com/cdk/)):
 
 ```typescript
-const myTable = new Table(...)
+const MyTable = new Table(...)
 
 // Later in the code
 const documentClient = ...
-myTable.documentClient = documentClient
+MyTable.documentClient = documentClient
 ```
 
 ## Specifying Table Definitions
@@ -95,7 +95,7 @@ The table name can be provided with a getter, which can be useful in some contex
 <TabItem value="name-getter" label="Name getter">
 
 ```ts
-const myTable = new Table({
+const MyTable = new Table({
   ...
   // 👇 Only executed at command execution
   name: () => process.env.TABLE_NAME,
@@ -106,7 +106,7 @@ const myTable = new Table({
 <TabItem value="indexes" label="Indexes">
 
 ```ts
-const myTable = new Table({
+const MyTable = new Table({
   ...,
   indexes: {
     byLevel: {
@@ -151,7 +151,7 @@ To allow for appropriate formatting when fetching multiple items in a single ope
 It's default value is `"_et"`, but it can be renamed through the `entityAttributeSavedAs` argument:
 
 ```tsx
-const myTable = new Table({
+const MyTable = new Table({
   ...
   // 👇 defaults to "_et"
   entityAttributeSavedAs: '__entity__',

@@ -1,10 +1,10 @@
 ---
-title: ParsePaths
+title: ParsePaths 👷
 sidebar_custom_props:
   sidebarActionType: util
 ---
 
-# ParsePaths
+# ParsePaths 👷
 
 The `AnyAttributePath` type and `parseProjection` util are useful to type attribute paths and build projection expressions:
 

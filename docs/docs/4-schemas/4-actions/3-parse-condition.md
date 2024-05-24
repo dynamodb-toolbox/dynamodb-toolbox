@@ -1,10 +1,10 @@
 ---
-title: ParseCondition
+title: ParseCondition 👷
 sidebar_custom_props:
   sidebarActionType: util
 ---
 
-# ParseCondition
+# ParseCondition 👷
 
 The `Condition` type and `parseCondition` util are useful to type conditions and build condition expressions:
 
