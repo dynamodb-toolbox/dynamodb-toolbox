@@ -1,7 +1,7 @@
 ---
-title: TransactDelete
+title: TransactDelete 👷
 sidebar_custom_props:
   sidebarActionType: delete
 ---
 
-# DeleteItemTransaction
+# DeleteItemTransaction 👷

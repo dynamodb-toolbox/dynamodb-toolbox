@@ -1,8 +1,8 @@
 ---
-title: Binary
+title: Binary 👷
 ---
 
-# Primitives
+# Primitives 👷
 
 Defines a `string`, `number`, `boolean` or `binary` attribute:
 

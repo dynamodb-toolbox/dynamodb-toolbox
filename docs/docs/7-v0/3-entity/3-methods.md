@@ -216,7 +216,9 @@ To append values to a `list`, use an `object` with an `$append` key and an array
 ```typescript
 await MyEntity.update({
   //  ...
-  sessions: { $append: [{ date: '2020-04-24', duration: 101 }] }
+  sessions: {
+    $append: [{ date: '2020-04-24', duration: 101 }]
+  }
 })
 ```
 

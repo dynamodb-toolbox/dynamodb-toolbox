@@ -1,8 +1,8 @@
 ---
-title: Any
+title: Any 👷
 ---
 
-# Any
+# Any 👷
 
 Define an attribute of any value. No validation will be applied at run-time, and its type will be resolved as `unknown`:
 

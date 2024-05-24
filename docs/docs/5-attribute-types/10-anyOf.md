@@ -1,8 +1,8 @@
 ---
-title: AnyOf
+title: AnyOf 👷
 ---
 
-# AnyOf
+# AnyOf 👷
 
 A new <b>meta-</b>attribute type that represents a union of types, i.e. a range of possible types:
 

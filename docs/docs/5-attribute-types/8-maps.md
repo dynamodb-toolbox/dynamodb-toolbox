@@ -1,8 +1,8 @@
 ---
-title: Map
+title: Map 👷
 ---
 
-# Map
+# Map 👷
 
 Defines a finite list of key-value pairs. Keys must follow a string schema, while values can be sub-schema of any type:
 

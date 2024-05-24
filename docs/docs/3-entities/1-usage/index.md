@@ -1,10 +1,10 @@
 ---
-title: Usage
+title: Usage 👷
 ---
 
-# Entity
+# Entity 👷
 
-Entities represent a **typology of Items** in your Table.
+Entities represent a **typology of Items** in your Table, i.e. have the same schema.
 
 An entity must belong to a Table, but the same Table can contain items from several entities. DynamoDB-Toolbox is designed with **Single Tables** in mind, but works just as well with multiple tables, it'll still make your life much easier (`batchGet` and `batchWrite` support multiple tables, so we've got you covered).
 
@@ -14,13 +14,80 @@ import { Entity, schema } from 'dynamodb-toolbox';
 const PokemonEntity = new Entity({
   name: 'POKEMON',
   table: PokeTable,
-  schema: schema({ ... }),
+  schema: schema(...)
 });
 ```
 
-### Timestamps
+## Schema
 
-DynamoDB-Toolbox automatically adds internal timestamp attributes are also there...
+See the [📐 `Schemas` sections](../../4-schemas/1-usage/index.md) for more details on how to build schemas.
+
+### Matching Table schemas
+
+The schema of an `Entity` may match the schema of its `Table` primary key:
+
+```tsx
+const PokeTable = new Table({
+  partitionKey: { name: 'pk', type: 'string' },
+  sortKey: { name: 'sk', type: 'number' },
+  ...
+})
+
+const PokemonEntity = new Entity({
+  table: PokeTable,
+  schema: schema({
+    pk: string().key(),
+    sk: number().key(),
+    ...
+  }),
+})
+
+// 👇 'savedAs' will also work
+const PokemonEntity = new Entity({
+  table: PokeTable,
+  schema: schema({
+    id: string().key().savedAs('pk'),
+    level: number().key().savedAs('sk'),
+    ...
+  }),
+})
+```
+
+If it doesn't, the `Entity` constructor will require a `computeKey` function to derive the primary key from the item key attributes:
+
+```tsx
+const PokemonEntity = new Entity({
+  table: PokeTable,
+  schema: schema({
+    id: string().key(),
+    level: number().key(),
+    ...
+  }),
+  // 🙌 Type will be correctly inferred!
+  computeKey: ({ id, level }) => ({
+    pokemonId: id,
+    level
+  })
+})
+```
+
+This is useful to compose a key from ...
+
+```tsx
+Example with
+```
+
+## Internal Attributes
+
+### Entity Attribute
+
+### Timestamp Attributes
+
+DynamoDB-Toolbox automatically adds internal timestamp attributes...
+
+`modified` attribute , `created` is updated with the current time in [ISO 8].
+
+Both attributes can be disabled or customized.
 
 You can set the `timestamps` to `false` to disable them (default value is `true`), or fine-tune the `created` and `modified` attributes names:
 
