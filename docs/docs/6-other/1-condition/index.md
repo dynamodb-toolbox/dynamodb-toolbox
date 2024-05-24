@@ -1,11 +1,11 @@
 ---
-title: Condition
+title: Condition 👷
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Condition
+# Condition 👷
 
 Conditions can be used to conditionally write, update or delete an item. Conditions can also be applied to filter or fine-tune the results of a [Query](/docs/tables/actions/query) or a [Scan](/docs/tables/actions/scan).
 

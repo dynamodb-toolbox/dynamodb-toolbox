@@ -1,8 +1,8 @@
 ---
-title: Test tools
+title: Test tools 👷
 ---
 
-# Test Tools
+# Test Tools 👷
 
 As much as I appreciate this chained syntax, it makes mocking hard in unit tests. For this reason, the `v1` exposes a `mockEntity` util to help you mock commands:
 

@@ -1,10 +1,10 @@
 ---
-title: Format
+title: Format 👷
 sidebar_custom_props:
   sidebarActionType: util
 ---
 
-# Format
+# Format 👷
 
 `Formatter` transforms a saved item returned by the DynamoDB client to it’s formatted counterpart:
 
