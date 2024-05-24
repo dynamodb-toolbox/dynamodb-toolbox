@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-toolbox",
-  "description": "A simple set of tools for working with Amazon DynamoDB and the DocumentClient.",
+  "description": "Light-weight and type-safe query builder for DynamoDB and TypeScript.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",

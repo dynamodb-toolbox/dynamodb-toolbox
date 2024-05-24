@@ -1,10 +1,10 @@
 ---
-title: Usage ⭐️
+title: Usage
 ---
 
 import Mermaid from '@theme/Mermaid';
 
-# Usage ⭐️
+# Usage
 
 DynamoDB-Toolbox mainly exposes three classes:
 
@@ -85,13 +85,13 @@ const PokemonEntity = new Entity({
 })
 ```
 
-An entity must belong to a Table, but the same Table can contain items from several entities. DynamoDB-Toolbox is designed with **Single Tables** in mind, but works just as well with multiple tables, it'll still make your life much easier (batch gets and writes support multiple tables, so we've got you covered).
+An entity must belong to a Table, but the same Table can contain items from several entities. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables, it'll still make your life much easier (batch gets and writes support multiple tables, so we've got you covered).
 
 Once you have defined your `Tables` and `Entities`. You can start using them in combination with **Actions**.
 
 ## Methods vs Actions
 
-Queries, updates, transactions, batch operations... DynamoDB has a **wide range of features**. Exposing all of them as distinct methods would **bloat the `Entity` and `Tables` classes**. Class methods are not tree-shakable, and why bother bundling the code needed for a feature (which can be quite large) if you don't need it?
+Queries, updates, transactions, batch operations... DynamoDB has a **wide range of features**. Exposing all of them as distinct methods would **bloat the `Entity` and `Table` classes**. Class methods are not tree-shakable, and why bother bundling the code needed for a feature (which can be quite large) if you don't need it?
 
 Instead, `Tables`, `Entities` and `Schemas` have a single `.build` method which is exactly **1-line long** 🤯 and acts as a gateway to perform [Actions](#how-do-actions-work):
 
@@ -105,13 +105,13 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 
 DynamoDB operations like the [GetItemCommand](../../3-entities/2-actions/1-get-item/index.md) are instances of actions, but DynamoDB-Toolbox also exposes utility actions, e.g. for [parsing](../../3-entities/2-actions/16-parse/index.md) and [formatting](../../3-entities/2-actions/19-format/index.md).
 
-The syntax is a bit more verbose that a simple `PokemonEntity.get(key)`, but it allows for **extensibility**, **better code-splitting** and **lighter bundles** (which is key in the Serverless era) while keeping an intuitive **entity-oriented** and **type-inheriting syntax**.
+The syntax is a bit more verbose that a simple `PokemonEntity.get(key)`, but it allows for **extensibility**, **better code-splitting** and **lighter bundles** while keeping an intuitive **entity-oriented** and **type-inheriting syntax**.
 
 :::info
 
-Notice how the action is imported through a deep import, thanks to the [`exports`](https://nodejs.org/api/packages.html#subpath-exports) field of the `package.json`, allowing for even better code splitting.
+Notice how the action is imported through a deep import, thanks to the [`exports`](https://nodejs.org/api/packages.html#subpath-exports) field of the `package.json`.
 
-Although all classes and actions are exposed in the main entry path, we recommend using subpaths. That's what we'll do in the rest of the documentation.
+Although all classes and actions are exposed in the main entry path, we recommend using subpaths, and that's what we'll do in the rest of the documentation.
 
 :::
 
@@ -148,13 +148,13 @@ const pokemonEntityName = nameGetter.get()
 // => "POKEMON"
 ```
 
-The `.build` methods simply instanciate a new action with its parent as first constructor parameter. Another way to do it would be:
+`PokemonEntity.build` simply instanciates a new action with `PokemonEntity` as the constructor first parameter. Another way to do it would be:
 
 ```ts
 const nameGetter = new NameGetter(PokemonEntity)
 ```
 
-Although this action-oriented syntax is (we find) less readable than the entity-oriented one, it leads to exactly the same result: Feel free to use it if you prefer!
+Although this action-oriented syntax is (we find) less readable than the entity-oriented one, it leads to exactly the same result, so feel free to use it if you prefer!
 
 Here's a comparison of both syntaxes on the [`GetItemCommand`](/docs/entities/actions/get-item) action:
 
@@ -172,3 +172,5 @@ const { Item } = await new GetItemCommand(
   { consistent: true }
 ).send()
 ```
+
+<!-- TODO: Add examples next -->
