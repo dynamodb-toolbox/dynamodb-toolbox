@@ -1,10 +1,10 @@
 ---
-title: Utilities ⭐️
+title: Utilities
 sidebar_custom_props:
   sidebarActionTitle: true
 ---
 
-# Utilities ⭐️
+# Utilities
 
 Table are the following:
 

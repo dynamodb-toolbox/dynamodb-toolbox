@@ -1,10 +1,10 @@
 ---
-title: Parse Primary Key ⭐️
+title: Parse Primary Key
 sidebar_custom_props:
   sidebarActionType: util
 ---
 
-# PrimaryKeyParser ⭐️
+# PrimaryKeyParser
 
 Parses a [Primary Key](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey) for the provided `Table`.
 

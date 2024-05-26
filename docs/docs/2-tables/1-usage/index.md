@@ -1,25 +1,23 @@
 ---
-title: Usage 👷
+title: Usage
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Table 👷
+# Table
 
-Each **Table** describes the configuration of a deployed DynamoDB Table: Your table's **name**, **primary keys**, **indexes**, and more.
+Each **Table** instance describes the configuration of a deployed DynamoDB Table: It's **name**, **primary key**, **secondary indexes**, and more.
 
-They are also used to organize and coordinate operations between **entities**. Tables support a number of actions that allow you to interact with your entities including performing **queries**, **scans**, **batch gets** and **batch writes**.
+<!-- _They are also used to organize and coordinate operations between **entities**. Tables support a number of actions that allow you to interact with your entities including performing **queries**, **scans**, **batch gets** and **batch writes**._ -->
 
 :::info
 
-Note that options provided to the `Table` constructor (including its `name`) MUST match your resources. But the responsibility to actually deploy the Table. This should be done by other means, such as the AWS CLI, Terraform, Cloudformation or your IaC tool of choice.
+The configuration provided to the `Table` constructor must match your resources. But DynamoDB-Toolbox does NOT hold the responsibility of actually deploying them. This should be done by other means, like the [AWS CLI](https://aws.amazon.com/cli/), [Terraform](https://www.terraform.io/) or [Cloudformation](https://aws.amazon.com/cloudformation/).
 
 :::
 
 ## Defining a Table
-
-To define a new table, import it into your script:
 
 ```typescript
 import { Table } from 'dynamodb-toolbox/table'
@@ -29,11 +27,18 @@ const PokeTable = new Table({
 })
 ```
 
-## Injecting the DocumentClient
+`Table` takes a single parameter of type `object` that accepts the following properties:
 
-Tables are also where the document client dependency is injected. DynamoDB-Toolbox works with the v3 of the AWS client:
+## Constructor
+
+### `documentClient`
+
+As mentioned in the [Getting Started section](../../1-getting-started/1-overview/index.md), DynamoDB-Tooblox is an **abstraction layer over the Document Client**, but it does not replace it. A `DocumentClient` instance is explicitely needed for commands to interact with DynamoDB.
+
+You can provide it in the `Table` constructor:
 
 ```typescript
+// From peer dependencies
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
@@ -51,59 +56,162 @@ const documentClient = DynamoDBDocumentClient.from(
   }
 )
 
-const MyTable = new Table({
+const PokeTable = new Table({
   documentClient,
   ...
 })
 ```
 
-Note that the client needs not to be provided right away. This can be useful if you want to use the `Table` in a separate context in which the client is not needed (like using the [CDK](https://aws.amazon.com/cdk/)):
+You can also set it later in the code (but beware that commands will fail if no client has been provided):
 
 ```typescript
-const MyTable = new Table(...)
+const PokeTable = new Table(...)
 
 // Later in the code
 const documentClient = ...
-MyTable.documentClient = documentClient
+PokeTable.documentClient = documentClient
 ```
 
-## Specifying Table Definitions
+### `name`
 
-`Table` takes a single parameter of type `object` that accepts the following properties:
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
-The table name can be provided with a getter, which can be useful in some contexts where you may want to use the class without actually running any command (e.g. tests or deployments):
-
-| Property             |         Type          | Required | Description                                                                                                                        |
-| -------------------- | :-------------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------- |
-| name                 |       `string`        |   yes    | The name of your DynamoDB table (this will be used as the `TableName` property)                                                    |
-| alias                |       `string`        |    no    | An optional alias to reference your table when using "batch" features                                                              |
-| partitionKey         |       `string`        |   yes    | The attribute name of your table's partitionKey                                                                                    |
-| sortKey              |       `string`        |    no    | The attribute name of your table's sortKey                                                                                         |
-| entityField          | `boolean` or `string` |    no    | Disables or overrides entity tracking field name (default: `_et`)                                                                  |
-| attributes           |       `object`        |    no    | Complex type that optionally specifies the name and type of each attributes (see below)                                            |
-| indexes              |       `object`        |    no    | Complex type that optionally specifies the name keys of your secondary indexes (see below)                                         |
-| autoExecute          |       `boolean`       |    no    | Enables automatic execution of the DocumentClient method (default: `true`)                                                         |
-| autoParse            |       `boolean`       |    no    | Enables automatic parsing of returned data when `autoExecute` is `true` (default: `true`)                                          |
-| removeNullAttributes |       `boolean`       |    no    | Removes null and empty (e.g. `''`) attributes instead of setting them to `null` (default: `true`)                                  |
-| DocumentClient       |   `DocumentClient`    |    \*    | A valid instance of the AWS [DocumentClient](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html) |
-
-\* _A Table can be instantiated without a DocumentClient, but most methods require it before execution_
+A `string` (or function returning a `string`) that matches the [name](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.Basics.html#WorkingWithTables.Basics.CreateTable) of your DynamoDB table:
 
 :::noteExamples
 
 <Tabs>
-<TabItem value="name-getter" label="Name getter">
+<TabItem value="fixed" label="Fixed">
 
 ```ts
-const MyTable = new Table({
+const PokeTable = new Table({
+  name: "poke-table",
   ...
-  // 👇 Only executed at command execution
-  name: () => process.env.TABLE_NAME,
 });
 ```
 
 </TabItem>
-<TabItem value="indexes" label="Indexes">
+<TabItem value="env" label="From env">
+
+```ts
+const PokeTable = new Table({
+  name: process.env.POKE_TABLE_NAME,
+  ...
+});
+```
+
+</TabItem>
+<TabItem value="getter" label="Getter">
+
+```ts
+const PokeTable = new Table({
+  // 👇 Only executed at command execution
+  name: () => process.env.POKE_TABLE_NAME,
+  ...
+});
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+### `partitionKey`
+
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
+
+The [partition key](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey) attribute name and type of your DynamoDB table:
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="string" label="String">
+
+```ts
+const MyTable = new Table({
+  ...,
+  partitionKey: {
+    name: "pokemonId",
+    type: "string",
+  }
+})
+```
+
+</TabItem>
+<TabItem value="number" label="Number">
+
+```ts
+const MyTable = new Table({
+  ...,
+  partitionKey: {
+    name: "pokemonId",
+    type: "number",
+  }
+})
+```
+
+</TabItem>
+<TabItem value="binary" label="Binary">
+
+```ts
+const MyTable = new Table({
+  ...,
+  partitionKey: {
+    name: "pokemonId",
+    type: "binary",
+  }
+})
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+### `sortKey`
+
+If present, the [sort key](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey) attribute name and type of your DynamoDB table:
+
+```ts
+const MyTable = new Table({
+  ...,
+  sortKey: {
+    name: "level",
+    type: "number",
+  }
+})
+```
+
+### `indexes`
+
+An object that lists the [secondary indexes](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.SecondaryIndexes) of your DynamoDB Table.
+
+Secondary indexes are represented as key-value pairs, keys being the index names, and values containing:
+
+- The `type` of the secondary index (`"local"` or `"global"`)
+- For global secondary indexes, the `partitionKey` of the index (similar to the main [`partitionKey`](#partitionkey))
+- The `sortKey` of the index (similar to the main [`sortKey`](#sortKey))
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="gsi" label="Global index">
+
+```ts
+const MyTable = new Table({
+  ...,
+  indexes: {
+    byTrainerId: {
+      type: 'global',
+      partitionKey: { name: 'trainerId', type: 'string' },
+      sortKey: { name: 'level', type: 'number' }
+    }
+  }
+})
+```
+
+</TabItem>
+<TabItem value="lsi" label="Local index">
 
 ```ts
 const MyTable = new Table({
@@ -111,21 +219,7 @@ const MyTable = new Table({
   indexes: {
     byLevel: {
       type: 'local',
-      sortKey: {
-        name: 'level',
-        type: 'number'
-      }
-    },
-    byTrainerId: {
-      type: 'global',
-      partitionKey: {
-        name: 'trainerId',
-        type: 'string'
-      },
-      sortKey: {
-        name: 'level',
-        type: 'number'
-      }
+      sortKey: { name: 'level', type: 'number' }
     }
   }
 })
@@ -138,15 +232,15 @@ const MyTable = new Table({
 
 :::info
 
-The **index name** must match the index name on your table as it will be used in queries and other operations. The index must include the table's `entityField` attribute for automatic parsing of returned data.
+When filtered, the projected attributes of a secondary index MUST include the `Table`'s [entity attribute](#entityattributesavedas) for automatic parsing of the returned data.
 
 :::
 
-## Inferring entities in Single Tables
+### `entityAttributeSavedAs`
 
-DynamoDB-Toolbox tags your items with an entity identifier through an internal `entity` string attribute that is filled with your entity name.
+DynamoDB-Toolbox tags your data via an internal and hidden `entity` attribute. Any write command will automatically set its value to the corresponding [`Entity` name](../../3-entities/1-usage/index.md#entity-attribute).
 
-To allow for appropriate formatting when fetching multiple items in a single operation, the key of this attribute in the Table must be the same accross all of its items. That's why it is set at the Table level.
+To allow for appropriate formatting when fetching multiple items of the same `Table` in a single operation (like [Queries](../2-actions/2-query/index.md) or [Scans](../2-actions/1-scan/index.md)), **the key of this attribute must be the same accross all of its items**, so it must be set at the `Table` level.
 
 It's default value is `"_et"`, but it can be renamed through the `entityAttributeSavedAs` argument:
 
@@ -162,6 +256,6 @@ const MyTable = new Table({
 
 :::caution
 
-☝️ This property **cannot be updated** once your Table has its first items (at least not without a data migration first), so choose wisely!
+☝️ This property **cannot be updated** once your Table has its first item (at least not without a data migration first), so choose wisely!
 
 :::
