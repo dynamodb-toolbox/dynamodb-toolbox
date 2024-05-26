@@ -1,5 +1,5 @@
 ---
-title: UpdateItem ⭐️
+title: UpdateItem
 sidebar_custom_props:
   sidebarActionType: write
 ---
@@ -7,7 +7,7 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# UpdateItemCommand ⭐️
+# UpdateItemCommand
 
 Performs a [UpdateItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html) on an entity item.
 
