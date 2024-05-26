@@ -1,5 +1,5 @@
 ---
-title: Query ⭐️
+title: Query
 sidebar_custom_props:
   sidebarActionType: read
 ---
@@ -7,7 +7,7 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# QueryCommand ⭐️
+# QueryCommand
 
 Performs a [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on a `Table`.
 
