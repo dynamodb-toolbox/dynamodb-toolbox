@@ -1,5 +1,5 @@
 ---
-title: GetItem ⭐️
+title: GetItem
 sidebar_custom_props:
   sidebarActionType: read
 ---
@@ -7,7 +7,7 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# GetItemCommand ⭐️
+# GetItemCommand
 
 Performs a [GetItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html) on an entity item.
 

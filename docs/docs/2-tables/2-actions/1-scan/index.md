@@ -1,5 +1,5 @@
 ---
-title: Scan ⭐️
+title: Scan
 sidebar_custom_props:
   sidebarActionType: read
 ---
@@ -7,7 +7,7 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# ScanCommand ⭐️
+# ScanCommand
 
 Performs a [Scan Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html) on a `Table`.
 

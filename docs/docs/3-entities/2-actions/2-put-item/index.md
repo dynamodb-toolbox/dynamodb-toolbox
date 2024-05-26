@@ -1,5 +1,5 @@
 ---
-title: PutItem ⭐️
+title: PutItem
 sidebar_custom_props:
   sidebarActionType: write
 ---
@@ -7,7 +7,7 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# PutItemCommand ⭐️
+# PutItemCommand
 
 Performs a [PutItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html) on an entity item.
 
@@ -34,8 +34,8 @@ await PokemonEntity.build(PutItemCommand)
     pokemonId: 'pikachu1',
     name: 'Pikachu',
     type: 'electric',
-    level: 50
-    // ...
+    level: 50,
+    ...
   })
   .send()
 ```
