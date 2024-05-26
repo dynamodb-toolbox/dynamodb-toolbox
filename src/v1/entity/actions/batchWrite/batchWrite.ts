@@ -21,9 +21,13 @@ import { parseBatchWriteOptions } from './parseBatchWriteOptions'
 export const batchWrite = async (
   requests: BatchWriteItemRequest[],
   options: {
-    /** Options passed to top-level BatchWrite */
+    /**
+     * Options passed to top-level BatchWrite
+     **/
     batchWriteOptions?: BatchWriteOptions
-    /** Optional DynamoDB client. If not provided, the client linked to the first request is used. */
+    /**
+     * Optional DynamoDB client. If not provided, the client linked to the first request is used.
+     **/
     dynamoDBDocumentClient?: DynamoDBDocumentClient
   } = {}
 ): Promise<BatchWriteCommandOutput> => {
