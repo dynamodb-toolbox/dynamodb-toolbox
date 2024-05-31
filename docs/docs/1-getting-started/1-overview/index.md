@@ -74,6 +74,6 @@ await MovieEntity.build(UpdateItemCommand)
   .send()
 ```
 
-And just like that, we went from an obscure 18-line class to a readable and elegant 10-liner 🤩
+And just like that, we went from an obscure 18-line class to a **readable and elegant 10-liner** 🤩
 
 Not bad, eh? Let's dive into it!

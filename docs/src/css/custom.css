@@ -411,3 +411,16 @@ a:hover,
   border: 1px solid #898989;
   color: #898989;
 }
+
+div.theme-admonition details {
+  background: #fff6;
+}
+
+div.theme-admonition details,
+div.theme-admonition div {
+  border-color: #0001;
+}
+
+div.theme-admonition details summary {
+  --docusaurus-details-decoration-color: #000a;
+}
