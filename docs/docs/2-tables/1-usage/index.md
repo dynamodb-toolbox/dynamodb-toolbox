@@ -11,14 +11,6 @@ Each **Table** instance describes the configuration of a deployed DynamoDB Table
 
 <!-- _They are also used to organize and coordinate operations between **entities**. Tables support a number of actions that allow you to interact with your entities including performing **queries**, **scans**, **batch gets** and **batch writes**._ -->
 
-:::info
-
-The configuration provided to the `Table` constructor must match your resources. But DynamoDB-Toolbox does NOT hold the responsibility of actually deploying them. This should be done by other means, like the [AWS CLI](https://aws.amazon.com/cli/), [Terraform](https://www.terraform.io/) or [Cloudformation](https://aws.amazon.com/cloudformation/).
-
-:::
-
-## Defining a Table
-
 ```typescript
 import { Table } from 'dynamodb-toolbox/table'
 
@@ -27,9 +19,15 @@ const PokeTable = new Table({
 })
 ```
 
-`Table` takes a single parameter of type `object` that accepts the following properties:
+:::info
+
+The configuration provided to the `Table` constructor must match your resources. But DynamoDB-Toolbox does NOT hold the responsibility of actually deploying them. This should be done by other means, like the [AWS CLI](https://aws.amazon.com/cli/), [Terraform](https://www.terraform.io/) or [Cloudformation](https://aws.amazon.com/cloudformation/).
+
+:::
 
 ## Constructor
+
+`Table` takes a single parameter of type `object` that accepts the following properties:
 
 ### `documentClient`
 
@@ -238,7 +236,7 @@ When filtered, the projected attributes of a secondary index MUST include the `T
 
 ### `entityAttributeSavedAs`
 
-DynamoDB-Toolbox tags your data via an internal and hidden `entity` attribute. Any write command will automatically set its value to the corresponding [`Entity` name](../../3-entities/1-usage/index.md#entity-attribute).
+DynamoDB-Toolbox tags your data via an internal and hidden [`entity`](../../3-entities/2-internal-attributes/index.md#entity) attribute. Any write command will automatically set its value to the corresponding `Entity`.
 
 To allow for appropriate formatting when fetching multiple items of the same `Table` in a single operation (like [Queries](../2-actions/2-query/index.md) or [Scans](../2-actions/1-scan/index.md)), **the key of this attribute must be the same accross all of its items**, so it must be set at the `Table` level.
 
@@ -247,7 +245,7 @@ It's default value is `"_et"`, but it can be renamed through the `entityAttribut
 ```tsx
 const MyTable = new Table({
   ...
-  // 👇 defaults to "_et"
+  // 👇 defaults to '_et'
   entityAttributeSavedAs: '__entity__',
 });
 ```

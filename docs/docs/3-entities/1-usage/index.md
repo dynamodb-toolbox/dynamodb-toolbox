@@ -1,15 +1,19 @@
 ---
-title: Usage 👷
+title: Usage
 ---
 
-# Entity 👷
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Entities represent a **typology of Items** in your Table, i.e. have the same schema.
+# Entity
 
-An entity must belong to a Table, but the same Table can contain items from several entities. DynamoDB-Toolbox is designed with **Single Tables** in mind, but works just as well with multiple tables, it'll still make your life much easier (`batchGet` and `batchWrite` support multiple tables, so we've got you covered).
+Entities represent a **category of items** in your `Table`.
+
+An entity must belong to a `Table`, but a `Table` can **contain items from several entities**. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables and will still make your life much easier (e.g. for [batch operations](../3-actions/5-batching/index.md) or [transactions](../3-actions/9-transactions/index.md)):
 
 ```tsx
-import { Entity, schema } from 'dynamodb-toolbox';
+import { Entity } from 'dynamodb-toolbox/entity';
+import { schema } from 'dynamodb-toolbox/schema';
 
 const PokemonEntity = new Entity({
   name: 'POKEMON',
@@ -18,15 +22,57 @@ const PokemonEntity = new Entity({
 });
 ```
 
-## Schema
+## Constructor
 
-See the [📐 `Schemas` sections](../../4-schemas/1-usage/index.md) for more details on how to build schemas.
+`Entity` takes a single parameter of type `object` that accepts the following properties:
 
-### Matching Table schemas
+### `name`
 
-The schema of an `Entity` may match the schema of its `Table` primary key:
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
-```tsx
+A `string` that uniquely identifies your entity:
+
+```ts
+const PokemonEntity = new Entity({
+  name: 'POKEMON',
+  ...
+})
+```
+
+:::caution
+
+DynamoDB-Toolbox automatically tags your items with their respective entity names (see [Internal Attributes](../2-internal-attributes/index.md#entity)).
+
+☝️ The consequence is that `name` **cannot be updated** once your `Entity` has its first items\* (at least not without a data migration first), so choose wisely!
+
+<!-- Required for prettier not to prefix * with anti-slash -->
+<!-- prettier-ignore -->
+<sup><i>(* This tag is required for some features to work, so you will also have to add it if you migrate existing data to DynamoDB-Toolbox.)</i></sup>
+
+:::
+
+### `table`
+
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
+
+The [`Table`](../../2-tables/1-usage/index.md) of the `Entity`.
+
+### `schema`
+
+The `schema` of the `Entity`. See the [Schema Section](../../4-schemas/1-usage/index.md) for more details on how to define schemas.
+
+<h4 style={{ fontSize: "large" }}>Matching the Table primary key:</h4>
+
+DynamoDB-Toolbox must check that an entity `schema` matches its `Table` primary key somehow.
+
+In simple cases, both schemas can **simply fit**:
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="direct-match" label="Direct match">
+
+```ts
 const PokeTable = new Table({
   partitionKey: { name: 'pk', type: 'string' },
   sortKey: { name: 'sk', type: 'number' },
@@ -41,182 +87,145 @@ const PokemonEntity = new Entity({
     ...
   }),
 })
+```
 
-// 👇 'savedAs' will also work
+</TabItem>
+<TabItem value="single-partition" label="Single partition">
+
+```ts
+const PokeTable = new Table({
+  partitionKey: { name: 'pk', type: 'string' },
+  sortKey: { name: 'sk', type: 'number' },
+  ...
+})
+
 const PokemonEntity = new Entity({
   table: PokeTable,
   schema: schema({
-    id: string().key().savedAs('pk'),
-    level: number().key().savedAs('sk'),
+    // 👇 constant partition key
+    pk: string().const('POKEMON').key(),
+    sk: number().key(),
+    ...
+  })
+})
+```
+
+</TabItem>
+<TabItem value="saving-as" label="Renaming">
+
+```ts
+const PokeTable = new Table({
+  partitionKey: { name: 'pk', type: 'string' },
+  sortKey: { name: 'sk', type: 'number' },
+  ...
+})
+
+const PokemonEntity = new Entity({
+  table: PokeTable,
+  schema: schema({
+    // 👇 renaming works
+    pokemonId: string().savedAs('pk').key(),
+    level: number().savedAs('sk').key(),
     ...
   }),
 })
 ```
 
-If it doesn't, the `Entity` constructor will require a `computeKey` function to derive the primary key from the item key attributes:
+</TabItem>
+<TabItem value="prefixing" label="Prefixing">
+
+```ts
+import { prefix } from 'dynamodb-toolbox/transformers/prefix'
+
+const PokeTable = new Table({
+  partitionKey: { name: 'pk', type: 'string' },
+  sortKey: { name: 'sk', type: 'number' },
+  ...
+})
+
+const PokemonEntity = new Entity({
+  table: PokeTable,
+  schema: schema({
+    // 👇 saved as `POKEMON#${pokemonId}`
+    pokemonId: string()
+      .transform(prefix('POKEMON'))
+      .savedAs('pk')
+      .key(),
+    level: number().savedAs('sk').key(),
+    ...
+  })
+})
+```
+
+👉 See the [transformers section](#TODO) for more details on transformers.
+
+</TabItem>
+</Tabs>
+
+:::
+
+### `computeKey`
+
+<p style={{ marginTop: '-15px' }}><i>(potentially required, depending on <code>schema</code>)</i></p>
+
+...but **using schemas that don't fit is OK**.
+
+In this case, the `Entity` constructor will require a `computeKey` function to derive the primary key from the `Entity` key attributes.
+
+This can be useful for more complex cases like [mapping several attributes to the same key](#TODO):
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="renaming" label="Renaming">
 
 ```tsx
 const PokemonEntity = new Entity({
   table: PokeTable,
   schema: schema({
-    id: string().key(),
+    pokemonId: string().key(),
     level: number().key(),
     ...
   }),
-  // 🙌 Type will be correctly inferred!
-  computeKey: ({ id, level }) => ({
-    pokemonId: id,
-    level
+  // 🙌 Type are correctly inferred!
+  computeKey: ({ pokemonId, level }) => ({
+    pk: id,
+    sk: level
   })
 })
 ```
 
-This is useful to compose a key from ...
-
-```tsx
-Example with
-```
-
-## Internal Attributes
-
-### Entity Attribute
-
-### Timestamp Attributes
-
-DynamoDB-Toolbox automatically adds internal timestamp attributes...
-
-`modified` attribute , `created` is updated with the current time in [ISO 8].
-
-Both attributes can be disabled or customized.
-
-You can set the `timestamps` to `false` to disable them (default value is `true`), or fine-tune the `created` and `modified` attributes names:
+</TabItem>
+<TabItem value="composing" label="Composing">
 
 ```tsx
 const PokemonEntity = new Entity({
-  ...
-  // 👇 de-activate timestamps altogether
-  timestamps: false
-})
-
-const PokemonEntity = new Entity({
-  ...
-  timestamps: {
-    // 👇 de-activate only `created` attribute
-    created: false,
-    modified: true
-  }
-})
-
-const PokemonEntity = new Entity({
-  ...
-  timestamps: {
-    created: {
-      // 👇 defaults to `created`
-      name: 'creationDate',
-      // 👇 defaults to `_ct`
-      savedAs: '__createdAt__',
-      // 👇 defaults to `false`
-      hidden: true
-    },
-    modified: {
-      // 👇 defaults to `modified`
-      name: 'lastModificationDate',
-      // 👇 defaults to `_md`
-      savedAs: '__lastMod__',
-      // 👇 defaults to `false`
-      hidden: true
-    }
-  }
-})
-```
-
-Note that timestamp options can be partially provided.
-
-## Matching the Table schema
-
-Key attributes are validated against the `Table` schema, both through types and at run-time. There are two ways to match the table schema:
-
-- The simplest one is to have an entity schema that **already matches the table schema** (see the [schemas section](TODO)). The Entity is then considered valid and no other argument is required:
-
-```tsx
-import { string } from 'dynamodb-toolbox';
-
-const pokemonEntity = new EntityV2({
-  name: 'Pokemon',
-  table: myTable, // <= { partitionKey: string, sortKey: string }
+  table: PokeTable,
   schema: schema({
-    // Provide a schema that matches the primary key
-    partitionKey: string().key(),
-    // 🙌 using `savedAs` will also work
-    pokemonId: string().key().savedAs('sortKey'),
+    specifiers: list(string()).key(),
+    sk: number().key(),
     ...
   }),
-});
-```
-
-- If the entity key attributes don't match the table schema, the `Entity` class will require you to add a `computeKey` property which must derive the primary key from them:
-
-```tsx
-const pokemonEntity = new EntityV2({
-  ...
-  table: myTable, // <= { partitionKey: string, sortKey: string }
-  schema: schema({
-    pokemonClass: string().key(),
-    pokemonId: string().key(),
-    ...
-  }),
-  // 🙌 `computeKey` is correctly typed
-  computeKey: ({ pokemonClass, pokemonId }) => ({
-    partitionKey: pokemonClass,
-    sortKey: pokemonId,
-  }),
-});
-```
-
-## Typed Items
-
-```tsx
-import type {
-  FormattedItem,
-  SavedItem
-} from 'dynamodb-toolbox'
-
-const pokemonEntity = new EntityV2({
-  name: 'Pokemon',
-  timestamps: true,
-  table: myTable,
-  schema: schema({
-    pokemonClass: string().key().savedAs('partitionKey'),
-    pokemonId: string().key().savedAs('sortKey'),
-    level: number().default(1),
-    customName: string().optional(),
-    internalField: string().hidden()
+  computeKey: ({ specifiers, sk }) => ({
+    pk: specifiers.join('#'),
+    sk
   })
 })
-
-// What Pokemons will look like in DynamoDB
-type SavedPokemon = SavedItem<typeof pokemonEntity>
-// 🙌 Equivalent to:
-// {
-//   _et: "Pokemon",
-//   _ct: string,
-//   _md: string,
-//   PK: string,
-//   SK: string,
-//   level: number,
-//   customName?: string | undefined,
-//   internalField: string | undefined,
-// }
-
-// What fetched Pokemons will look like in your code
-type FormattedPokemon = FormattedItem<typeof pokemonEntity>
-// 🙌 Equivalent to:
-// {
-//   created: string,
-//   modified: string,
-//   pokemonClass: string,
-//   pokemonId: string,
-//   level: number,
-//   customName?: string | undefined,
-// }
 ```
+
+</TabItem>
+</Tabs>
+
+:::
+
+### `entityAttributeName`
+
+A `string` to specify the name of the internal entity attribute (see [Internal Attributes](../2-internal-attributes/index.md#entity)).
+
+Default value is `"entity"`.
+
+### `timestamps`
+
+A `boolean` or `object` to configure the internal `created` and `modified` attributes (see [Internal Attributes](../2-internal-attributes/index.md#timestamp-attributes)).
+
+Default value is `true`.
