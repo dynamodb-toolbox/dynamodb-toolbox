@@ -86,8 +86,8 @@ The `savedAs` property can be specified at the `Table` level, via the [`entityAt
 
 There are two timestamp attributes. Both of them are string attributes containing timestamps in [ISO 8601 format](https://wikipedia.org/wiki/ISO_8601):
 
-- `created` records when the item was **created**.
-- `modified` records when the item was **last modified**.
+- `created` records when the item was **created**
+- `modified` records when the item was **last modified**
 
 Timestamp attributes are optional. You can opt out by setting off the `timestamps` property:
 
@@ -99,7 +99,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-You can also activate or deactivate them independently:
+You can also manage them independently:
 
 ```tsx
 const PokemonEntity = new Entity({

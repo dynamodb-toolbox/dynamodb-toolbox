@@ -4,30 +4,58 @@ title: Usage 👷
 
 # Schema 👷
 
-Entity attributes are specified by using a schemas.
+A `Schema` is a list of attributes that describe the items of an [`Entity`](../../3-entities/1-usage/index.md).
 
-Closely mirror the capabilities of DynamoDB-Toolbox. You can find out more on which types are available in the [Attributes section](/docs/schemas-and-attributes).
+```tsx
+import { schema } from 'dynamodb-toolbox/schema'
+import { string } from 'dynamodb-toolbox/attribute/string'
+import { number } from 'dynamodb-toolbox/attribute/number'
 
-Schemas are composable, re-use them accross entities.
+const pokemonSchema = schema({
+  pokemonId: string().key(),
+  level: number().default(1),
+  pokemonType: string()
+    .enum('fire', 'water', 'grass')
+    .optional()
+})
 
-Similarly to [zod](https://github.com/colinhacks/zod) or [yup](https://github.com/jquense/yup), attributes are now defined through function builders.
+const PokemonEntity = new Entity({
+  ...,
+  schema: pokemonSchema
+})
+```
 
-You can either import the attribute builders through their dedicated imports, or through the `attribute` or `attr` shorthands. For instance, those declarations will output the same attribute schema:
+**typers**.
+
+As you can see, schemas are composable, re-use them accross entities.
+
+## Typers
+
+You can either import the typers through their dedicated imports, or through the `attribute` or `attr` shorthands. For instance, those declarations will output the same schema:
 
 ```tsx
 // 👇 More tree-shakable
 import { string } from 'dynamodb-toolbox/attribute/string'
 
-const pokemonName = string()
+const nameSchema = string()
 
 // 👇 Less tree-shakable, but single import
 import { attribute, attr } from 'dynamodb-toolbox/attribute'
 
-const pokemonName = attribute.string()
-const pokemonName = attr.string()
+const nameSchema = attribute.string()
+const nameSchema = attr.string()
 ```
 
-You can get the list of available attributes in the [Attributes section](../../5-attribute-types/1-any.md).
+The output of an attribute method is also an attribute, so you can chain methods:
+
+```ts
+const pokemonTypeSchema = string()
+  .enum('fire', 'water', 'grass')
+  .optional()
+  .savedAs('t')
+```
+
+The list of available attribute types closely mirror the capabilities of DynamoDB. You can find out more on which types are available in the [Attributes section](/docs/schemas-and-attributes).
 
 :::info
 
@@ -35,11 +63,11 @@ Schemas are a standalone feature of DynamoDB-Toolbox. You can use them on their 
 
 :::
 
-## Updating warm attributes
+## Options
 
-You can create/update warm attributes by using **dedicated methods** or by providing **option objects**.
+You can update attributes properties by using **dedicated methods** or by providing **option objects**.
 
-The former provides a **slick devX** with autocomplete and shorthands, while the latter theoretically requires **less compute time and memory usage**, although it should be very minor (validation being only applied on freeze):
+The former provides a **slick devX** with autocomplete and shorthands, while the latter theoretically requires **less compute time and memory usage**, although it should be very minor:
 
 ```tsx
 // Using methods
@@ -48,7 +76,7 @@ const pokemonName = string().required('always')
 const pokemonName = string({ required: 'always' })
 ```
 
-## Common options
+## Options
 
 All attributes share the following options:
 
