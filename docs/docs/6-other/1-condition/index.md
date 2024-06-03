@@ -22,7 +22,7 @@ const condition: Condition<typeof PokemonEntity> = {
 
 :::info
 
-Note that although it is an object, only one condition can and will be applied at a time.
+Note that although it is an object, only one condition is applied at a time.
 
 :::
 
@@ -58,7 +58,7 @@ Sorted Types - A sort type is a scalar type that is also sortable. The sort type
 
 :::caution
 
-Again, only one condition can and will be applied at a time. Using `gte` and `lte` simultaneously will **NOT** result in a `between`.
+Again, only one condition is applied at a time. Using `gte` and `lte` simultaneously does **NOT** result in a `between`.
 
 :::
 
@@ -166,7 +166,7 @@ Note that the compared attribute path is type-checked and validated, but wether 
 ```ts
 const invalidCondition: Condition<typeof PokemonEntity> = {
   attr: 'level',
-  // ❌ Will reach DynamoDB and fail
+  // ❌ Reaches DynamoDB and fail
   gte: { attr: 'name' }
 }
 ```

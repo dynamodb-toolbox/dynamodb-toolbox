@@ -8,7 +8,7 @@ sidebar_custom_props:
 
 The `AnyAttributePath` type and `parseProjection` util are useful to type attribute paths and build projection expressions:
 
-```tsx
+```ts
 import {
   AnyAttributePath,
   parseProjection

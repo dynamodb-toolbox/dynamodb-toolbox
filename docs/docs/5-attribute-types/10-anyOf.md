@@ -6,7 +6,7 @@ title: AnyOf 👷
 
 A new <b>meta-</b>attribute type that represents a union of types, i.e. a range of possible types:
 
-```tsx
+```ts
 import { anyOf } from 'dynamodb-toolbox';
 
 const pokemonSchema = schema({
@@ -21,7 +21,7 @@ const pokemonSchema = schema({
 
 In this particular case, an `enum` would have done the trick. However, `anyOf` becomes particularly powerful when used in conjunction with a `map` and the `enum` or `const` directives of a primitive attribute, to implement **polymorphism**:
 
-```tsx
+```ts
 const pokemonSchema = schema({
   ...
   captureState: anyOf([

@@ -8,7 +8,7 @@ sidebar_custom_props:
 
 `Formatter` transforms a saved item returned by the DynamoDB client to it’s formatted counterpart:
 
-```tsx
+```ts
 import { Formatter } from 'dynamodb-toolbox/schema/actions/format';
 
 // 🙌 Typed as FormattedItem<typeof pokemonEntity>
@@ -19,13 +19,13 @@ const formattedPokemon = pokemonSchema.build(Formatter).format(
 );
 ```
 
-Note that **it is a parsing operation**, i.e. it does not require the item to be typed as `SavedItem<typeof myEntity>`, but will throw an error if the saved item is invalid:
+Note that **it is a parsing operation**, i.e. it does not require the item to be typed as `SavedItem<typeof myEntity>`, but throws an error if the saved item is invalid:
 
-```tsx
+```ts
 const formattedPokemon = pokemonSchema.build(Formatter).format({
   ...
   level: 'not a number',
 });
-// ❌ Will raise error:
+// ❌ Raises error:
 // => "Invalid attribute in saved item: level. Should be a number"
 ```

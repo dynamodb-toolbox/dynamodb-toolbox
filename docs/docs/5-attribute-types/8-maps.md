@@ -6,13 +6,13 @@ title: Map 👷
 
 Defines a finite list of key-value pairs. Keys must follow a string schema, while values can be sub-schema of any type:
 
-```tsx
+```ts
 import { map } from 'dynamodb-toolbox';
 
 const pokemonSchema = schema({
   ...
   nestedMagic: map({
-    will: map({
+    does: map({
       work: string().const('!'),
     }),
   }),
@@ -22,7 +22,7 @@ type FormattedPokemon = FormattedItem<typeof pokemonEntity>;
 // => {
 //   ...
 //   nestedMagic: {
-//     will: {
+//     does: {
 //       work: "!"
 //     }
 //   }

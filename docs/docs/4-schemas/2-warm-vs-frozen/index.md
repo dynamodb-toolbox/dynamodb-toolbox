@@ -4,7 +4,7 @@ title: Warm vs Frozen 👷
 
 # Warm vs Frozen 👷
 
-Prior to being wrapped in a `schema` declaration, attributes are called **warm:** They are **not validated** (at run-time) and can be used to build other schemas. By inspecting their types, you will see that they are prefixed with `$`. Once **frozen**, validation is applied and building methods are stripped:
+Prior to being wrapped in a `schema` declaration, attributes are called **warm:** They are **not validated** (at run-time) and can be used to build other schemas. By inspecting their types, you see that they are prefixed with `$`. Once **frozen**, validation is applied and building methods are stripped:
 
 ```ts
 const pokemonName = string()
@@ -16,7 +16,7 @@ const frozenPokemonName = pokemonName.freeze()
 
 The main takeaway is that **warm schemas can be composed** while **frozen schemas cannot**:
 
-```tsx
+```ts
 import { schema } from 'dynamodb-toolbox';
 
 const pokemonName = string();
@@ -48,11 +48,11 @@ const extendSchema = mySchema.and({
 
 :::caution
 
-Conflicts in attribute names or `savedAs` properties will result in an error.
+Conflicts in attribute names or `savedAs` properties result in an error.
 
 :::
 
-The `and` method can also accept a function that will receive the current schema as an argument, in which case, the previous schema is provided as an argument:
+The `and` method can also accept a function that receives the current schema as an argument, in which case, the previous schema is provided as an argument:
 
 ```ts
 const extendSchema = mySchema.and(prevSchema => ({

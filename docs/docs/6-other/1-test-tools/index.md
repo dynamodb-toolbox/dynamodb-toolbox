@@ -6,7 +6,7 @@ title: Test tools 👷
 
 As much as I appreciate this chained syntax, it makes mocking hard in unit tests. For this reason, the `v1` exposes a `mockEntity` util to help you mock commands:
 
-```tsx
+```ts
 import { mockEntity } from 'dynamodb-toolbox';
 
 const mockedPokemonEntity = mockEntity(pokemonEntity);
@@ -38,13 +38,13 @@ mockedPokemonEntity.on(GetItemCommand).reject('Something bad happened');
 
 You can then make assertions on received commands:
 
-```tsx
+```ts
 await pokemonEntity
   .build(GetItemCommand)
   .key({ pokemonId: 'pikachu1' })
   .options({ consistent: true })
   .send()
-// => Will return mocked values!
+// => Returns mocked values!
 
 mockedPokemonEntity.received(GetItemCommand).count()
 // => 1
