@@ -61,7 +61,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ## Entities
 
-Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Will also format them and type the response.
+Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Does also format them and type the response.
 
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
@@ -109,7 +109,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 :::info
 
-It is advised to provide `entities` and `query` first as they will constrain the `options` type.
+It is advised to provide `entities` and `query` first as they constrain the `options` type.
 
 :::
 
@@ -177,7 +177,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             <td><code>exclusiveStartKey</code></td>
             <td align="center"><code>Key</code></td>
             <td align="center">-</td>
-            <td>The primary key of the first item that this operation will evaluate. Use the <code>LastEvaluatedKey</code> from the previous operation.</td>
+            <td>The primary key of the first item that this operation evaluates. Use the <code>LastEvaluatedKey</code> from the previous operation.</td>
         </tr>
         <tr>
             <td><code>maxPages</code></td>
@@ -186,7 +186,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             <td>
               A "meta" option provided by DynamoDB-Toolbox to send multiple requests in a single promise.
               <br/><br/>Note that <code>Infinity</code> is a valid (albeit dangerous) option.
-              <br/><br/>If two pages or more have been fetched, the responses <code>Count</code> and <code>ScannedCount</code> will be summed, but the <code>ConsumedCapacity</code> will be omitted for the moment.
+              <br/><br/>If two pages or more have been fetched, the responses <code>Count</code> and <code>ScannedCount</code> are summed, but the <code>ConsumedCapacity</code> is omitted for the moment.
             </td>
         </tr>
         <tr>
@@ -356,7 +356,7 @@ const { Count } = await PokeTable.build(QueryCommand)
 
 The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_ResponseElements).
 
-If a [`entities`](#entities) have been provided, the response `Items` will be formatted by their respective entities.
+If a [`entities`](#entities) have been provided, the response `Items` are formatted by their respective entities.
 
 You can use the `QueryResponse` type to explicitely type an object as a `QueryCommand` response:
 

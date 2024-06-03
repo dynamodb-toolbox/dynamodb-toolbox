@@ -8,7 +8,7 @@ sidebar_custom_props:
 
 The `Condition` type and `parseCondition` util are useful to type conditions and build condition expressions:
 
-```tsx
+```ts
 import {
   Condition,
   ConditionParser

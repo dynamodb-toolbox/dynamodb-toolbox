@@ -10,7 +10,7 @@ This feature was very handy for "technical" attributes such as composite indexes
 
 However, default value inputs are just impossible to type correctly in TypeScript:
 
-```tsx
+```ts
 const pokemonSchema = schema({
   ...
   level: number(),

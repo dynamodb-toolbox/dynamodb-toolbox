@@ -6,7 +6,7 @@ title: Usage 👷
 
 A `Schema` is a list of attributes that describe the items of an [`Entity`](../../3-entities/1-usage/index.md).
 
-```tsx
+```ts
 import { schema } from 'dynamodb-toolbox/schema'
 import { string } from 'dynamodb-toolbox/attribute/string'
 import { number } from 'dynamodb-toolbox/attribute/number'
@@ -31,9 +31,9 @@ As you can see, schemas are composable, re-use them accross entities.
 
 ## Typers
 
-You can either import the typers through their dedicated imports, or through the `attribute` or `attr` shorthands. For instance, those declarations will output the same schema:
+You can either import the typers through their dedicated imports, or through the `attribute` or `attr` shorthands. For instance, those declarations output the same schema:
 
-```tsx
+```ts
 // 👇 More tree-shakable
 import { string } from 'dynamodb-toolbox/attribute/string'
 
@@ -69,7 +69,7 @@ You can update attributes properties by using **dedicated methods** or by provid
 
 The former provides a **slick devX** with autocomplete and shorthands, while the latter theoretically requires **less compute time and memory usage**, although it should be very minor:
 
-```tsx
+```ts
 // Using methods
 const pokemonName = string().required('always')
 // Using options
@@ -85,7 +85,7 @@ All attributes share the following options:
   - `"never"`: Optional in all commands
   - `"always"`: Required in all commands
 
-```tsx
+```ts
 // Equivalent
 const pokemonName = string().required()
 const pokemonName = string({ required: 'atLeastOnce' })
@@ -103,15 +103,15 @@ A very important breaking change from previous versions is that **root attribute
 
 - `hidden` _(boolean?=true)_ Skip attribute when formatting the returned item of a command:
 
-```tsx
+```ts
 const pokemonName = string().hidden()
 const pokemonName = string({ hidden: true })
 ```
 
 - `key` _(boolean?=true)_ Tag attribute as needed to compute the primary key:
 
-```tsx
-// Note: The method will also modify the `required` property to "always"
+```ts
+// Note: The method also modifies the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const pokemonName = string().key()
 const pokemonName = string({
@@ -122,7 +122,7 @@ const pokemonName = string({
 
 - `savedAs` _(string)_ Previously known as `map`. Rename a root or Map sub-attribute before sending commands:
 
-```tsx
+```ts
 const pokemonName = string().savedAs('_n')
 const pokemonName = string({ savedAs: '_n' })
 ```

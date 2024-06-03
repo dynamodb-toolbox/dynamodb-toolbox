@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 Parses an [Item](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.TablesItemsAttributes) for the provided `Entity`.
 
-Given an input of any type, validates that it respects the schema of the `Entity` and throws an error otherwise (based on the [Schema parser](../../../4-schemas/4-actions/1-parse.md) errors). Will fill with defaults and links, and apply final transformation (i.e. `savedAs` and primitive `transforms`).
+Given an input of any type, validates that it respects the schema of the `Entity` and throws an error otherwise (based on the [Schema parser](../../../4-schemas/4-actions/1-parse.md) errors). Fills with defaults and links, and apply final transformation (i.e. `savedAs` and primitive `transforms`).
 
 By default, the parsing is for `put` operation, but it can be switched to `update` or `key`.
 
@@ -36,7 +36,7 @@ parser.parse({ invalid: 'input' })
 
 ## Typed Parser
 
-By default, the parser input is typed as `unknown`. If you prefer, you can use the `EntityTParser` action. The API is strictly the same but inputs will be hardly typed.
+By default, the parser input is typed as `unknown`. If you prefer, you can use the `EntityTParser` action. The API is strictly the same but inputs are hardly typed.
 
 ```ts
 import { EntityOverParser } from 'dynamodb-toolbox/entity/actions/parse'
@@ -53,7 +53,7 @@ The output is typed as the primary key of the table.
 
 You can use the `PrimaryKey` type to explicitely type an object as a primary key:
 
-```tsx
+```ts
 import type { PrimaryKey } from 'dynamodb-toolbox/table/actions/parsePrimaryKey'
 
 type PokeKey = PrimaryKey<typeof PokeTable>

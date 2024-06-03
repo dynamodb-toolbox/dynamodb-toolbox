@@ -7,9 +7,9 @@ import TabItem from '@theme/TabItem';
 
 # Number
 
-Defines a **number attribute**:
+Defines a [**number attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
-```tsx
+```ts
 import { number } from 'dynamodb-toolbox/attribute/number';
 
 const pokemonSchema = schema({
@@ -36,7 +36,7 @@ Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Po
 - `"always"`: Always required (including updates)
 - `"never"`: Optional
 
-```tsx
+```ts
 // Equivalent
 const levelSchema = number().required()
 const levelSchema = number({
@@ -54,7 +54,7 @@ const levelSchema = number({ required: 'never' })
 
 Skips attribute when formatting items:
 
-```tsx
+```ts
 const levelSchema = number().hidden()
 const levelSchema = number({ hidden: true })
 ```
@@ -65,8 +65,8 @@ const levelSchema = number({ hidden: true })
 
 Tags attribute as needed to compute the primary key:
 
-```tsx
-// Note: The method will also modify the `required` property to "always"
+```ts
+// Note: The method also modifies the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const levelSchema = number().key()
 const levelSchema = number({
@@ -81,7 +81,7 @@ const levelSchema = number({
 
 Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
-```tsx
+```ts
 const levelSchema = number().savedAs('lvl')
 const levelSchema = number({ savedAs: 'lvl' })
 ```
@@ -211,7 +211,7 @@ const addOne = {
   format: (saved: number) => saved - 1
 }
 
-// Will save the value plus one
+// Saves the value plus one
 const levelSchema = number().transform(addOne)
 const levelSchema = number({ transform: addOne })
 ```
