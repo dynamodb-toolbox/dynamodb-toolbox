@@ -4,9 +4,9 @@ title: Error management 👷
 
 # Error Management 👷
 
-When DynamoDB-Toolbox encounters an unexpected input, it will throw an instance of `DynamoDBToolboxError`, which itself extends the native `Error` class with a `code` property:
+When DynamoDB-Toolbox encounters an unexpected input, it throws an instance of `DynamoDBToolboxError`, which itself extends the native `Error` class with a `code` property:
 
-```tsx
+```ts
 await pokemonEntity
   .build(PutItemCommand)
   .item({ ..., level: 'not a number' })
@@ -14,9 +14,9 @@ await pokemonEntity
 // ❌ [parsing.invalidAttributeInput] Attribute level should be a number
 ```
 
-Some `DynamoDBToolboxErrors` also expose a `path` property (mostly in validations) and/or a `payload` property for additional context. If you need to handle them, TypeScript is your best friend, as the `code` property will correctly discriminate the `DynamoDBToolboxError` type:
+Some `DynamoDBToolboxErrors` also expose a `path` property (mostly in validations) and/or a `payload` property for additional context. If you need to handle them, TypeScript is your best friend, as the `code` property correctly discriminates the `DynamoDBToolboxError` type:
 
-```tsx
+```ts
 import { DynamoDBToolboxError } from 'dynamodb-toolbox';
 
 const handleError = (error: Error) => {

@@ -109,9 +109,9 @@ Note that the attribute path is type-checked, but wether its attribute value ext
 ```ts
 await PokemonEntity.build(UpdateItemCommand)
   .item({
-    // ❌ will raise a type error
+    // ❌ Raises a type error
     name: $get('non.existing[0].attribute'),
-    // ...but overriding a number by a string will not 🙈
+    // ...but overriding a number by a string doesn't 🙈
     level: $get('name')
   })
   .send()
@@ -119,7 +119,7 @@ await PokemonEntity.build(UpdateItemCommand)
 
 ### Non-recursive attributes
 
-In the case of non-recursive attributes (primitives and `sets`), updates will completely override their current values:
+In the case of non-recursive attributes (primitives and `sets`), updates completely override their current values:
 
 ```ts
 await PokemonEntity.build(UpdateItemCommand)
@@ -183,7 +183,7 @@ In the case of recursive attributes, e.g. `lists`, `maps` and `records`, updates
 await PokemonEntity.build(UpdateItemCommand)
   .item({
     ...
-    // 👇 list example: Elements 0 and 2 will be updated
+    // 👇 Elements 0 and 2 are updated
     skills: ['thunder', undefined, $remove()],
     // ...similar to
     skills: {
@@ -211,14 +211,14 @@ await PokemonEntity.build(UpdateItemCommand).item({
   ...
   // reset list
   skills: $set(['thunder']),
-  // will clear all other map attributes
+  // Removes all other map attributes
   some: $set({
     nested: {
       field: 'foo',
       otherField: 42
     }
   }),
-  // will clear all other record keys
+  // Removes all other record keys
   bestSkillByType: $set({
     electric: 'thunder'
   })

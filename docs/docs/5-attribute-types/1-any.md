@@ -7,9 +7,9 @@ import TabItem from '@theme/TabItem';
 
 # Any
 
-Defines an attribute containing **any value**. No validation will be applied at run-time, and its type will be resolved as `unknown` by default:
+Defines an attribute containing **any value**. No validation is applied at run-time, and its type is resolved as `unknown` by default:
 
-```tsx
+```ts
 import { any } from 'dynamodb-toolbox/attribute/any';
 
 const pokemonSchema = schema({
@@ -36,7 +36,7 @@ Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Po
 - `"always"`: Always required (including updates)
 - `"never"`: Optional
 
-```tsx
+```ts
 // Equivalent
 const metadataSchema = any().required()
 const metadataSchema = any({ required: 'atLeastOnce' })
@@ -52,7 +52,7 @@ const metadataSchema = any({ required: 'never' })
 
 Skips attribute when formatting items:
 
-```tsx
+```ts
 const metadataSchema = any().hidden()
 const metadataSchema = any({ hidden: true })
 ```
@@ -63,8 +63,8 @@ const metadataSchema = any({ hidden: true })
 
 Tags attribute as needed to compute the primary key:
 
-```tsx
-// Note: The method will also modify the `required` property to "always"
+```ts
+// Note: The method also modifies the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const metadataSchema = any().key()
 const metadataSchema = any({
@@ -79,7 +79,7 @@ const metadataSchema = any({
 
 Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
-```tsx
+```ts
 const metadataSchema = any().savedAs('meta')
 const metadataSchema = any({ savedAs: 'meta' })
 ```
@@ -185,6 +185,6 @@ const pokemonSchema = schema({
 
 Overrides the resolved type of the attribute:
 
-```tsx
+```ts
 const metadataSchema = any().castAs<{ foo: 'bar' }>()
 ```

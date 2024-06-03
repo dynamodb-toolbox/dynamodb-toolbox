@@ -7,9 +7,9 @@ import TabItem from '@theme/TabItem';
 
 # Boolean
 
-Defines a **boolean attribute**:
+Defines a [**boolean attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
-```tsx
+```ts
 import { boolean } from 'dynamodb-toolbox/attribute/boolean';
 
 const pokemonSchema = schema({
@@ -36,7 +36,7 @@ Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Po
 - `"always"`: Always required (including updates)
 - `"never"`: Optional
 
-```tsx
+```ts
 // Equivalent
 const isLegendarySchema = boolean().required()
 const isLegendarySchema = boolean({
@@ -54,7 +54,7 @@ const isLegendarySchema = boolean({ required: 'never' })
 
 Skips attribute when formatting items:
 
-```tsx
+```ts
 const isLegendarySchema = boolean().hidden()
 const isLegendarySchema = boolean({ hidden: true })
 ```
@@ -65,8 +65,8 @@ const isLegendarySchema = boolean({ hidden: true })
 
 Tags attribute as needed to compute the primary key:
 
-```tsx
-// Note: The method will also modify the `required` property to "always"
+```ts
+// Note: The method also modifies the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const isLegendarySchema = boolean().key()
 const isLegendarySchema = boolean({
@@ -81,7 +81,7 @@ const isLegendarySchema = boolean({
 
 Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
-```tsx
+```ts
 const isLegendarySchema = boolean().savedAs('isLeg')
 const isLegendarySchema = boolean({ savedAs: 'isLeg' })
 ```
@@ -208,7 +208,7 @@ const negate = {
   format: (saved: boolean) => !saved
 }
 
-// Will save the negated value
+// Saves the negated value
 const isLegendarySchema = boolean().transform(negate)
 const isLegendarySchema = boolean({ transform: negate })
 ```

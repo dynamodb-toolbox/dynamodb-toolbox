@@ -40,7 +40,7 @@ The output is typed as the primary key of the table.
 
 You can use the `PrimaryKey` type to explicitely type an object as a primary key:
 
-```tsx
+```ts
 import type { PrimaryKey } from 'dynamodb-toolbox/table/actions/parsePrimaryKey'
 
 type PokeKey = PrimaryKey<typeof PokeTable>

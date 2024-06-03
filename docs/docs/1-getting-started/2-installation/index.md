@@ -12,7 +12,7 @@ npm install dynamodb-toolbox
 yarn add dynamodb-toolbox
 ```
 
-DynamoDB-Toolbox has `@aws-sdk/client-dynamodb` and `@aws-sdk/lib-dynamodb` as peer dependencies, so you will have to install them as well:
+DynamoDB-Toolbox has `@aws-sdk/client-dynamodb` and `@aws-sdk/lib-dynamodb` as peer dependencies, so you have to install them as well:
 
 ```bash
 # npm

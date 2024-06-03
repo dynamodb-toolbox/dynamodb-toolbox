@@ -7,9 +7,9 @@ import TabItem from '@theme/TabItem';
 
 # String
 
-Defines a **string attribute**:
+Defines a [**string attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
-```tsx
+```ts
 import { string } from 'dynamodb-toolbox/attribute/string';
 
 const pokemonSchema = schema({
@@ -36,7 +36,7 @@ Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Po
 - `"always"`: Always required (including updates)
 - `"never"`: Optional
 
-```tsx
+```ts
 // Equivalent
 const nameSchema = string().required()
 const nameSchema = string({
@@ -54,7 +54,7 @@ const nameSchema = string({ required: 'never' })
 
 Skips attribute when formatting items:
 
-```tsx
+```ts
 const nameSchema = string().hidden()
 const nameSchema = string({ hidden: true })
 ```
@@ -65,8 +65,8 @@ const nameSchema = string({ hidden: true })
 
 Tags attribute as needed to compute the primary key:
 
-```tsx
-// Note: The method will also modify the `required` property to "always"
+```ts
+// Note: The method also modifies the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const nameSchema = string().key()
 const nameSchema = string({
@@ -81,7 +81,7 @@ const nameSchema = string({
 
 Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
-```tsx
+```ts
 const nameSchema = string().savedAs('n')
 const nameSchema = string({ savedAs: 'n' })
 ```
@@ -213,7 +213,7 @@ const prefix = {
   format: (saved: string) => saved.slice(PREFIX.length)
 }
 
-// Will prefix the value
+// Prefixes the value
 const nameSchema = string().transform(prefix)
 const nameSchema = string({ transform: prefix })
 ```

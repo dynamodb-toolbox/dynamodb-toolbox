@@ -7,9 +7,9 @@ import TabItem from '@theme/TabItem';
 
 # Binary
 
-Defines a **binary attribute**:
+Defines a [**binary attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
-```tsx
+```ts
 import { binary } from 'dynamodb-toolbox/attribute/binary';
 
 const pokemonSchema = schema({
@@ -36,7 +36,7 @@ Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Po
 - `"always"`: Always required (including updates)
 - `"never"`: Optional
 
-```tsx
+```ts
 // Equivalent
 const hashSchema = binary().required()
 const hashSchema = binary({
@@ -54,7 +54,7 @@ const hashSchema = binary({ required: 'never' })
 
 Skips attribute when formatting items:
 
-```tsx
+```ts
 const hashSchema = binary().hidden()
 const hashSchema = binary({ hidden: true })
 ```
@@ -65,8 +65,8 @@ const hashSchema = binary({ hidden: true })
 
 Tags attribute as needed to compute the primary key:
 
-```tsx
-// Note: The method will also modify the `required` property to "always"
+```ts
+// Note: The method also modifies the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const hashSchema = binary().key()
 const hashSchema = binary({
@@ -81,7 +81,7 @@ const hashSchema = binary({
 
 Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
-```tsx
+```ts
 const hashSchema = binary().savedAs('h')
 const hashSchema = binary({ savedAs: 'h' })
 ```
@@ -219,7 +219,7 @@ const prefix = {
   format: (saved: Buffer) => saved.slice(4)
 }
 
-// Will prefix the value
+// Prefixes the value
 const hashSchema = binary().transform(prefix)
 const hashSchema = binary({ transform: prefix })
 ```

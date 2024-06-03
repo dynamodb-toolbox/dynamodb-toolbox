@@ -6,7 +6,7 @@ title: Record 👷
 
 A new attribute type that translates to `Partial<Record<KeyType, ValueType>>` in TypeScript. Records differ from maps as they can accept an infinite range of keys and are always partial:
 
-```tsx
+```ts
 import { record } from 'dynamodb-toolbox';
 
 const pokemonType = string().enum(...);
@@ -27,7 +27,7 @@ type FormattedPokemon = FormattedItem<typeof pokemonEntity>;
 
 Options can be provided as a 3rd argument:
 
-```tsx
+```ts
 const recordAttr = record(string(), number()).hidden()
 const recordAttr = record(string(), number(), {
   hidden: true

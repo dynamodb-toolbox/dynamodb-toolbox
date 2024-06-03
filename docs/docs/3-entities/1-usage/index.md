@@ -9,9 +9,9 @@ import TabItem from '@theme/TabItem';
 
 Entities represent a **category of items** in your `Table`.
 
-An entity must belong to a `Table`, but a `Table` can **contain items from several entities**. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables and will still make your life much easier (e.g. for [batch operations](../3-actions/5-batching/index.md) or [transactions](../3-actions/9-transactions/index.md)):
+An entity must belong to a `Table`, but a `Table` can **contain items from several entities**. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables and still makes your life much easier (e.g. for [batch operations](../3-actions/5-batching/index.md) or [transactions](../3-actions/9-transactions/index.md)):
 
-```tsx
+```ts
 import { Entity } from 'dynamodb-toolbox/entity';
 import { schema } from 'dynamodb-toolbox/schema';
 
@@ -47,7 +47,7 @@ DynamoDB-Toolbox automatically tags your items with their respective entity name
 
 <!-- Required for prettier not to prefix * with anti-slash -->
 <!-- prettier-ignore -->
-<sup><i>(* This tag is required for some features to work, so you will also have to add it if you migrate existing data to DynamoDB-Toolbox.)</i></sup>
+<sup><i>(* This tag is required for some features to work, so you also have to add it if you migrate existing data to DynamoDB-Toolbox.)</i></sup>
 
 :::
 
@@ -168,7 +168,7 @@ const PokemonEntity = new Entity({
 
 ...but **using schemas that don't fit is OK**.
 
-In this case, the `Entity` constructor will require a `computeKey` function to derive the primary key from the `Entity` key attributes.
+In this case, the `Entity` constructor requires a `computeKey` function to derive the primary key from the `Entity` key attributes.
 
 This can be useful for more complex cases like [mapping several attributes to the same key](#TODO):
 
@@ -177,7 +177,7 @@ This can be useful for more complex cases like [mapping several attributes to th
 <Tabs>
 <TabItem value="renaming" label="Renaming">
 
-```tsx
+```ts
 const PokemonEntity = new Entity({
   table: PokeTable,
   schema: schema({
@@ -196,7 +196,7 @@ const PokemonEntity = new Entity({
 </TabItem>
 <TabItem value="composing" label="Composing">
 
-```tsx
+```ts
 const PokemonEntity = new Entity({
   table: PokeTable,
   schema: schema({
