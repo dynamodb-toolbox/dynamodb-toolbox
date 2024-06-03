@@ -1,96 +1,219 @@
 ---
-title: String 👷
+title: String
 ---
 
-# Primitives 👷
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Defines a `string`, `number`, `boolean` or `binary` attribute:
+# String
+
+Defines a **string attribute**:
 
 ```tsx
-import { string, number, boolean, binary } from 'dynamodb-toolbox';
+import { string } from 'dynamodb-toolbox/attribute/string';
 
 const pokemonSchema = schema({
   ...
-  pokemonType: string(),
-  level: number(),
-  isLegendary: boolean(),
-  binEncoded: binary(),
+  name: string(),
 });
 
 type FormattedPokemon = FormattedItem<typeof pokemonEntity>;
 // => {
 //   ...
-//   pokemonType: string
-//   level: number
-//   isLegendary: boolean
-//   binEncoded: Buffer
+//   name: string
 // }
 ```
 
-Similarly to `any` attributes, you can provide default values through the `defaults` option or the `default` methods:
+## Options
+
+### `.required()`
+
+<p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
+
+Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
+
+- <code>"atLeastOnce" <i>(default)</i></code>: Required
+- `"always"`: Always required (including updates)
+- `"never"`: Optional
 
 ```tsx
-// 🙌 Correctly typed!
-const creationDate = string().default(() =>
-  new Date().toISOString()
-)
+// Equivalent
+const nameSchema = string().required()
+const nameSchema = string({
+  required: 'atLeastOnce'
+})
+
+// shorthand for `.required("never")`
+const nameSchema = string().optional()
+const nameSchema = string({ required: 'never' })
+```
+
+### `.hidden()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Skips attribute when formatting items:
+
+```tsx
+const nameSchema = string().hidden()
+const nameSchema = string({ hidden: true })
+```
+
+### `.key()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Tags attribute as needed to compute the primary key:
+
+```tsx
+// Note: The method will also modify the `required` property to "always"
+// (it is often the case in practice, you can still use `.optional()` if needed)
+const nameSchema = string().key()
+const nameSchema = string({
+  key: true,
+  required: 'always'
+})
+```
+
+### `.savedAs(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
+
+Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+
+```tsx
+const nameSchema = string().savedAs('n')
+const nameSchema = string({ savedAs: 'n' })
+```
+
+### `.default(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;string&gt;</code></i></p>
+
+Specifies default values for the attribute. There are three kinds of defaults:
+
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md)).
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md)).
+- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise).
+
+The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise:
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="put" label="Put">
+
+```ts
+const nameSchema = string().default('Pikachu')
 // 👇 Similar to
-const creationDate = string().putDefault(() =>
-  new Date().toISOString()
-)
+const nameSchema = string().putDefault('Pikachu')
 // 👇 ...or
-const creationDate = string({
+const nameSchema = string({
   defaults: {
     key: undefined,
-    put: () => new Date().toISOString(),
+    put: 'Pikachu',
     update: undefined
   }
 })
 
-// 👇 Additionally fill 'creationDate' on updates if needed
-import { $get } from 'dynamodb-toolbox'
+// 🙌 Getters also work!
+const nameSchema = string().default(() => 'Pikachu')
+```
 
-const creationDate = string()
-  .putDefault(() => new Date().toISOString())
-  // (See UpdateItemCommand section for $get description)
-  .updateDefault(() =>
-    $get('creationDate', new Date().toISOString())
-  )
-// 👇 Similar to
-const creationDate = string({
-  defaults: {
-    key: undefined,
-    put: () => new Date().toISOString(),
-    update: () =>
-      $get('creationDate', new Date().toISOString())
-  }
-})
+</TabItem>
+<TabItem value="key" label="Key">
 
-const id = number().key().default(1)
+```ts
+const nameSchema = string().key().default('Pikachu')
 // 👇 Similar to
-const id = number().key().keyDefault(1)
+const nameSchema = string().key().keyDefault('Pikachu')
 // 👇 ...or
-const id = number({
+const nameSchema = string({
   defaults: {
-    key: 1,
+    key: 'Pikachu',
     // put & update defaults are not useful in `key` attributes
     put: undefined,
     update: undefined
+  },
+  key: true,
+  required: 'always'
+})
+```
+
+</TabItem>
+<TabItem value="update" label="Update">
+
+```ts
+// 👇 Records the date at each update
+const lastUpdatedSchema = string().updateDefault(() =>
+  new Date().toISOString()
+)
+// 👇 Similar to
+const lastUpdatedSchema = string({
+  defaults: {
+    key: undefined,
+    put: undefined,
+    update: () => new Date().toISOString()
   }
 })
 ```
 
-Primitive types have an additional `enum` option. For instance, you could provide a finite list of pokemon types:
+</TabItem>
+</Tabs>
 
-```tsx
-const pokemonTypeAttribute = string().enum(
-  'fire',
-  'grass',
-  'water'
-)
+:::
 
-// Shorthand for `.enum("POKEMON").default("POKEMON")`
-const pokemonPartitionKey = string().const('POKEMON')
+### `.link<Schema>(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;string&gt;</code></i></p>
+
+Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
+
+```ts
+const pokemonSchema = schema({
+  level: string()
+}).and(baseSchema => ({
+  captureLevel: string().link<typeof baseSchema>(
+    // 🙌 Correctly typed!
+    item => item.level
+  )
+}))
 ```
 
-> 💡 _For type inference reasons, the `enum` option is only available as a method, not as an object option_
+### `.enum(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>string[]</code></i></p>
+
+Provides a finite range of possible values:
+
+```ts
+const pokemonTypeSchema = string().enum('fire', 'water', ...)
+
+// 👇 Equivalent to `.enum('fire').default('fire')`
+const pokemonTypeSchema = string().const('fire')
+```
+
+:::info
+
+For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+
+:::
+
+### `.transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;string&gt;</code></i></p>
+
+Allows modifying the attribute values during the [transformation step](../4-schemas/4-actions/1-parse.md):
+
+```ts
+const PREFIX = 'POKEMON#'
+
+const prefix = {
+  parse: (input: string) => [PREFIX, input].join(''),
+  format: (saved: string) => saved.slice(PREFIX.length)
+}
+
+// Will prefix the value
+const nameSchema = string().transform(prefix)
+const nameSchema = string({ transform: prefix })
+```

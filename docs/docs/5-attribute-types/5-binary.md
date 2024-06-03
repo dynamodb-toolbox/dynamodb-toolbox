@@ -1,96 +1,225 @@
 ---
-title: Binary 👷
+title: Binary
 ---
 
-# Primitives 👷
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Defines a `string`, `number`, `boolean` or `binary` attribute:
+# Binary
+
+Defines a **binary attribute**:
 
 ```tsx
-import { string, number, boolean, binary } from 'dynamodb-toolbox';
+import { binary } from 'dynamodb-toolbox/attribute/binary';
 
 const pokemonSchema = schema({
   ...
-  pokemonType: string(),
-  level: number(),
-  isLegendary: boolean(),
-  binEncoded: binary(),
+  hash: binary(),
 });
 
 type FormattedPokemon = FormattedItem<typeof pokemonEntity>;
 // => {
 //   ...
-//   pokemonType: string
-//   level: number
-//   isLegendary: boolean
-//   binEncoded: Buffer
+//   hash: Buffer
 // }
 ```
 
-Similarly to `any` attributes, you can provide default values through the `defaults` option or the `default` methods:
+## Options
+
+### `.required()`
+
+<p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
+
+Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
+
+- <code>"atLeastOnce" <i>(default)</i></code>: Required
+- `"always"`: Always required (including updates)
+- `"never"`: Optional
 
 ```tsx
-// 🙌 Correctly typed!
-const creationDate = string().default(() =>
-  new Date().toISOString()
-)
+// Equivalent
+const hashSchema = binary().required()
+const hashSchema = binary({
+  required: 'atLeastOnce'
+})
+
+// shorthand for `.required("never")`
+const hashSchema = binary().optional()
+const hashSchema = binary({ required: 'never' })
+```
+
+### `.hidden()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Skips attribute when formatting items:
+
+```tsx
+const hashSchema = binary().hidden()
+const hashSchema = binary({ hidden: true })
+```
+
+### `.key()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Tags attribute as needed to compute the primary key:
+
+```tsx
+// Note: The method will also modify the `required` property to "always"
+// (it is often the case in practice, you can still use `.optional()` if needed)
+const hashSchema = binary().key()
+const hashSchema = binary({
+  key: true,
+  required: 'always'
+})
+```
+
+### `.savedAs(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
+
+Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+
+```tsx
+const hashSchema = binary().savedAs('h')
+const hashSchema = binary({ savedAs: 'h' })
+```
+
+### `.default(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Buffer&gt;</code></i></p>
+
+Specifies default values for the attribute. There are three kinds of defaults:
+
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md)).
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md)).
+- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise).
+
+The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise:
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="put" label="Put">
+
+```ts
+const bin = Buffer.from('123...')
+
+const hashSchema = binary().default(bin)
 // 👇 Similar to
-const creationDate = string().putDefault(() =>
-  new Date().toISOString()
-)
+const hashSchema = binary().putDefault(bin)
 // 👇 ...or
-const creationDate = string({
+const hashSchema = binary({
   defaults: {
     key: undefined,
-    put: () => new Date().toISOString(),
+    put: bin,
     update: undefined
   }
 })
 
-// 👇 Additionally fill 'creationDate' on updates if needed
-import { $get } from 'dynamodb-toolbox'
+// 🙌 Getters also work!
+const hashSchema = binary().default(() => bin)
+```
 
-const creationDate = string()
-  .putDefault(() => new Date().toISOString())
-  // (See UpdateItemCommand section for $get description)
-  .updateDefault(() =>
-    $get('creationDate', new Date().toISOString())
-  )
-// 👇 Similar to
-const creationDate = string({
-  defaults: {
-    key: undefined,
-    put: () => new Date().toISOString(),
-    update: () =>
-      $get('creationDate', new Date().toISOString())
-  }
-})
+</TabItem>
+<TabItem value="key" label="Key">
 
-const id = number().key().default(1)
+```ts
+const bin = Buffer.from('123...')
+
+const hashSchema = binary().key().default(bin)
 // 👇 Similar to
-const id = number().key().keyDefault(1)
+const hashSchema = binary().key().keyDefault(bin)
 // 👇 ...or
-const id = number({
+const hashSchema = binary({
   defaults: {
-    key: 1,
+    key: bin,
     // put & update defaults are not useful in `key` attributes
     put: undefined,
     update: undefined
+  },
+  key: true,
+  required: 'always'
+})
+```
+
+</TabItem>
+<TabItem value="update" label="Update">
+
+```ts
+const bin = Buffer.from('123...')
+
+const hashSchema = binary().updateDefault(bin)
+// 👇 Similar to
+const hashSchema = binary({
+  defaults: {
+    key: undefined,
+    put: undefined,
+    update: bin
   }
 })
 ```
 
-Primitive types have an additional `enum` option. For instance, you could provide a finite list of pokemon types:
+</TabItem>
+</Tabs>
 
-```tsx
-const pokemonTypeAttribute = string().enum(
-  'fire',
-  'grass',
-  'water'
-)
+:::
 
-// Shorthand for `.enum("POKEMON").default("POKEMON")`
-const pokemonPartitionKey = string().const('POKEMON')
+### `.link<Schema>(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Buffer&gt;</code></i></p>
+
+Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
+
+```ts
+const pokemonSchema = schema({
+  name: string()
+}).and(baseSchema => ({
+  nameHash: binary().link<typeof baseSchema>(
+    // 🙌 Correctly typed!
+    item => Buffer.from(item.name)
+  )
+}))
 ```
 
-> 💡 _For type inference reasons, the `enum` option is only available as a method, not as an object option_
+### `.enum(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Buffer[]</code></i></p>
+
+Provides a finite range of possible values:
+
+```ts
+const binA = Buffer.from('123...')
+const binB = Buffer.from('abc...')
+
+const hashSchema = binary().enum(binA, binB, ...)
+
+// 👇 Equivalent to `.enum(binA).default(binA)`
+const hashSchema = binary().const(binA)
+```
+
+:::info
+
+For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+
+:::
+
+### `.transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Buffer&gt;</code></i></p>
+
+Allows modifying the attribute values during the [transformation step](../4-schemas/4-actions/1-parse.md):
+
+```ts
+var PREFIX = new Buffer(4)
+
+const prefix = {
+  parse: (input: Buffer) => Buffer.concat([PREFIX, input]),
+  format: (saved: Buffer) => saved.slice(4)
+}
+
+// Will prefix the value
+const hashSchema = binary().transform(prefix)
+const hashSchema = binary({ transform: prefix })
+```

@@ -51,21 +51,19 @@ DynamoDB-Toolbox automatically tags your items with their respective entity name
 
 :::
 
+### `schema`
+
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
+
+The `schema` of the `Entity`. See the [Schema Section](../../4-schemas/1-usage/index.md) for more details on how to define schemas.
+
 ### `table`
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
 The [`Table`](../../2-tables/1-usage/index.md) of the `Entity`.
 
-### `schema`
-
-The `schema` of the `Entity`. See the [Schema Section](../../4-schemas/1-usage/index.md) for more details on how to define schemas.
-
-<h4 style={{ fontSize: "large" }}>Matching the Table primary key:</h4>
-
-DynamoDB-Toolbox must check that an entity `schema` matches its `Table` primary key somehow.
-
-In simple cases, both schemas can **simply fit**:
+DynamoDB-Toolbox must check that an entity `schema` matches its `Table` primary key somehow. In simple cases, both schemas can **simply fit**:
 
 :::noteExamples
 
@@ -220,12 +218,8 @@ const PokemonEntity = new Entity({
 
 ### `entityAttributeName`
 
-A `string` to specify the name of the internal entity attribute (see [Internal Attributes](../2-internal-attributes/index.md#entity)).
-
-Default value is `"entity"`.
+A `string` to customize the name of the internal entity attribute (see [Internal Attributes](../2-internal-attributes/index.md#entity)).
 
 ### `timestamps`
 
-A `boolean` or `object` to configure the internal `created` and `modified` attributes (see [Internal Attributes](../2-internal-attributes/index.md#timestamp-attributes)).
-
-Default value is `true`.
+A `boolean` or `object` to customize the internal `created` and `modified` attributes (see [Internal Attributes](../2-internal-attributes/index.md#timestamp-attributes)).
