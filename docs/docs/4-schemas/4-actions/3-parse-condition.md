@@ -14,13 +14,13 @@ import {
   ConditionParser
 } from 'dynamodb-toolbox/schema/actions/parseCondition'
 
-const condition: Condition<typeof pokemonEntity> = {
+const condition: Condition<typeof PokemonEntity> = {
   attr: 'level',
   lte: 42
 }
 
 const parsedCondition = parseCondition(
-  pokemonEntity,
+  PokemonEntity,
   condition
 )
 // => {

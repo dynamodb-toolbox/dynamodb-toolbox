@@ -11,7 +11,7 @@ sidebar_custom_props:
 ```ts
 import { Formatter } from 'dynamodb-toolbox/schema/actions/format';
 
-// 🙌 Typed as FormattedItem<typeof pokemonEntity>
+// 🙌 Typed as FormattedItem<typeof PokemonEntity>
 const formattedPokemon = pokemonSchema.build(Formatter).format(
   savedPokemon,
   // Optional: Filters the formatted item

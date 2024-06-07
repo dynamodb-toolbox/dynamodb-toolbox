@@ -15,17 +15,17 @@ import {
 } from 'dynamodb-toolbox'
 
 const attributes: AnyAttributePath<
-  typeof pokemonEntity
->[] = ['pokemonType', 'levelHistory.currentLevel']
+  typeof PokemonEntity
+>[] = ['pokeType', 'levelHistory.currentLevel']
 
 const parsedProjection = parseProjection(
-  pokemonEntity,
+  PokemonEntity,
   attributes
 )
 // => {
 //   ProjectionExpression: '#p1, #p2.#p3',
 //   ExpressionAttributeNames: {
-//     '#p1': 'pokemonType',
+//     '#p1': 'pokeType',
 //     '#p2': 'levelHistory',
 //     '#p3': 'currentLevel',
 //   },

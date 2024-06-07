@@ -14,7 +14,7 @@ import { number } from 'dynamodb-toolbox/attribute/number'
 const pokemonSchema = schema({
   pokemonId: string().key(),
   level: number().default(1),
-  pokemonType: string()
+  pokeType: string()
     .enum('fire', 'water', 'grass')
     .optional()
 })
@@ -49,7 +49,7 @@ const nameSchema = attr.string()
 The output of an attribute method is also an attribute, so you can chain methods:
 
 ```ts
-const pokemonTypeSchema = string()
+const pokeTypeSchema = string()
   .enum('fire', 'water', 'grass')
   .optional()
   .savedAs('t')
@@ -111,7 +111,7 @@ const pokemonName = string({ hidden: true })
 - `key` _(boolean?=true)_ Tag attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also modifies the `required` property to "always"
+// Note: The method also sets the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const pokemonName = string().key()
 const pokemonName = string({
