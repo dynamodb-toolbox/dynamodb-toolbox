@@ -1,8 +1,8 @@
 ---
-title: Error management 👷
+title: Error management
 ---
 
-# Error Management 👷
+# Error Management
 
 When DynamoDB-Toolbox encounters an unexpected input, it throws an instance of `DynamoDBToolboxError`, which itself extends the native `Error` class with a `code` property:
 

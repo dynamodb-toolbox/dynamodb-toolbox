@@ -1,5 +1,5 @@
 ---
-title: number
+title: string
 sidebar_custom_props:
   code: true
 ---
@@ -7,22 +7,22 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Number
+# String
 
-Defines a [**number attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
+Defines a [**string attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
 ```ts
-import { number } from 'dynamodb-toolbox/attribute/number';
+import { string } from 'dynamodb-toolbox/attribute/string';
 
 const pokemonSchema = schema({
   ...
-  level: number(),
+  name: string(),
 });
 
 type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 // => {
 //   ...
-//   level: number
+//   name: string
 // }
 ```
 
@@ -40,14 +40,14 @@ Tags the attribute as **required** (at root level or within [Maps](./8-maps.md))
 
 ```ts
 // Equivalent
-const levelSchema = number().required()
-const levelSchema = number({
+const nameSchema = string().required()
+const nameSchema = string({
   required: 'atLeastOnce'
 })
 
 // shorthand for `.required("never")`
-const levelSchema = number().optional()
-const levelSchema = number({ required: 'never' })
+const nameSchema = string().optional()
+const nameSchema = string({ required: 'never' })
 ```
 
 ### `.hidden()`
@@ -57,8 +57,8 @@ const levelSchema = number({ required: 'never' })
 Skips the attribute when formatting items:
 
 ```ts
-const levelSchema = number().hidden()
-const levelSchema = number({ hidden: true })
+const nameSchema = string().hidden()
+const nameSchema = string({ hidden: true })
 ```
 
 ### `.key()`
@@ -70,8 +70,8 @@ Tags the attribute as needed to compute the primary key:
 ```ts
 // Note: The method also sets the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
-const levelSchema = number().key()
-const levelSchema = number({
+const nameSchema = string().key()
+const nameSchema = string({
   key: true,
   required: 'always'
 })
@@ -81,16 +81,16 @@ const levelSchema = number({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
 ```ts
-const levelSchema = number().savedAs('lvl')
-const levelSchema = number({ savedAs: 'lvl' })
+const nameSchema = string().savedAs('n')
+const nameSchema = string({ savedAs: 'n' })
 ```
 
 ### `.default(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;number&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;string&gt;</code></i></p>
 
 Specifies default values for the attribute. There are three kinds of defaults:
 
@@ -106,33 +106,33 @@ The `default` method is a shorthand that acts as `keyDefault` on key attributes 
 <TabItem value="put" label="Put">
 
 ```ts
-const levelSchema = number().default(42)
+const nameSchema = string().default('Pikachu')
 // 👇 Similar to
-const levelSchema = number().putDefault(42)
+const nameSchema = string().putDefault('Pikachu')
 // 👇 ...or
-const levelSchema = number({
+const nameSchema = string({
   defaults: {
     key: undefined,
-    put: 42,
+    put: 'Pikachu',
     update: undefined
   }
 })
 
 // 🙌 Getters also work!
-const levelSchema = number().default(() => 42)
+const nameSchema = string().default(() => 'Pikachu')
 ```
 
 </TabItem>
 <TabItem value="key" label="Key">
 
 ```ts
-const levelSchema = number().key().default(42)
+const nameSchema = string().key().default('Pikachu')
 // 👇 Similar to
-const levelSchema = number().key().keyDefault(42)
+const nameSchema = string().key().keyDefault('Pikachu')
 // 👇 ...or
-const levelSchema = number({
+const nameSchema = string({
   defaults: {
-    key: 42,
+    key: 'Pikachu',
     // put & update defaults are not useful in `key` attributes
     put: undefined,
     update: undefined
@@ -146,16 +146,16 @@ const levelSchema = number({
 <TabItem value="update" label="Update">
 
 ```ts
-const updateCountSchema = number()
-  // adds 1 to the attribute at each update
-  .updateDefault($add(1))
-
+// 👇 Records the date at each update
+const lastUpdatedSchema = string().updateDefault(() =>
+  new Date().toISOString()
+)
 // 👇 Similar to
-const updateCountSchema = number({
+const lastUpdatedSchema = string({
   defaults: {
     key: undefined,
     put: undefined,
-    update: $add(1)
+    update: () => new Date().toISOString()
   }
 })
 ```
@@ -167,15 +167,15 @@ const updateCountSchema = number({
 
 ### `.link<Schema>(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, number&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, string&gt;</code></i></p>
 
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
 
 ```ts
 const pokemonSchema = schema({
-  level: number()
-}).and(baseSchema => ({
-  captureLevel: number().link<typeof baseSchema>(
+  level: string()
+}).and(prevSchema => ({
+  captureLevel: string().link<typeof prevSchema>(
     // 🙌 Correctly typed!
     item => item.level
   )
@@ -184,15 +184,15 @@ const pokemonSchema = schema({
 
 ### `.enum(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>number[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>string[]</code></i></p>
 
 Provides a finite range of possible values:
 
 ```ts
-const pokemonGenerationSchema = number().enum(1, 2, 3)
+const pokeTypeSchema = string().enum('fire', 'water', ...)
 
-// 👇 Equivalent to `.enum(1).default(1)`
-const pokemonGenerationSchema = number().const(1)
+// 👇 Equivalent to `.enum('fire').default('fire')`
+const pokeTypeSchema = string().const('fire')
 ```
 
 :::info
@@ -203,17 +203,19 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 ### `.transform(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;number&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;string&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../4-schemas/4-actions/1-parse.md):
+Allows modifying the attribute values during the [transformation step](../4-schemas/14-actions/1-parse.md):
 
 ```ts
-const addOne = {
-  parse: (input: number) => input + 1,
-  format: (saved: number) => saved - 1
+const PREFIX = 'POKEMON#'
+
+const prefix = {
+  parse: (input: string) => [PREFIX, input].join(''),
+  format: (saved: string) => saved.slice(PREFIX.length)
 }
 
-// Saves the value plus one
-const levelSchema = number().transform(addOne)
-const levelSchema = number({ transform: addOne })
+// Prefixes the value
+const nameSchema = string().transform(prefix)
+const nameSchema = string({ transform: prefix })
 ```

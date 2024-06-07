@@ -81,7 +81,7 @@ const hashSchema = binary({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
 ```ts
 const hashSchema = binary().savedAs('h')
@@ -177,8 +177,8 @@ Similar to [`.default(...)`](#default) but allows deriving the default value fro
 ```ts
 const pokemonSchema = schema({
   name: string()
-}).and(baseSchema => ({
-  nameHash: binary().link<typeof baseSchema>(
+}).and(prevSchema => ({
+  nameHash: binary().link<typeof prevSchema>(
     // 🙌 Correctly typed!
     item => Buffer.from(item.name)
   )
@@ -211,7 +211,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Buffer&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../4-schemas/4-actions/1-parse.md):
+Allows modifying the attribute values during the [transformation step](../4-schemas/14-actions/1-parse.md):
 
 ```ts
 var PREFIX = new Buffer(4)

@@ -1,29 +1,39 @@
 ---
-title: Warm vs Frozen 👷
+title: Warm vs Frozen
 ---
 
-# Warm vs Frozen 👷
+# Warm vs Frozen
 
-Prior to being wrapped in a `schema` declaration, attributes are called **warm:** They are **not validated** (at run-time) and can be used to build other schemas. By inspecting their types, you see that they are prefixed with `$`. Once **frozen**, validation is applied and building methods are stripped:
+## Composition
+
+Prior to being wrapped in a `schema` declaration, schemas are called **warm:** They are **not validated** (at run-time) and can be used to build other schemas. By inspecting their types, you will see that they are prefixed with `$`.
+
+Once **frozen**, validation is applied and building methods are stripped:
 
 ```ts
-const pokemonName = string()
+const $nameSchema = string()
 // => $PrimitiveAttribute<"string">
 
-const frozenPokemonName = pokemonName.freeze()
+const nameSchema = $nameSchema.freeze()
 // => PrimitiveAttribute<"string">
+
+// 👇 `schema` uses `.freeze()` under the hood
+const pokemonSchema = schema({
+  name: $nameSchema
+})
+// => Schema<{
+//   name: PrimitiveAttribute<"string">
+// }>
 ```
 
 The main takeaway is that **warm schemas can be composed** while **frozen schemas cannot**:
 
 ```ts
-import { schema } from 'dynamodb-toolbox';
-
-const pokemonName = string();
+const nameSchema = string();
 
 const pokemonSchema = schema({
   // 👍 No problem
-  pokemonName,
+  pokemonName: nameSchema,
   ...
 });
 
@@ -34,12 +44,12 @@ const pokedexSchema = schema({
 });
 ```
 
-## Extending a schema
+## Extension
 
-However, if you need to extend a schema, you can still use the `.and` method:
+However, **you can extend a schema** via its `.and(...)` method:
 
 ```ts
-const extendSchema = mySchema.and({
+const extendedPokemonSchema = pokemonSchema.and({
   newAttribute: string()
 })
 ```
@@ -52,7 +62,7 @@ Conflicts in attribute names or `savedAs` properties result in an error.
 
 :::
 
-The `and` method can also accept a function that receives the current schema as an argument, in which case, the previous schema is provided as an argument:
+The `.and(...)` method also accepts functions that return a (warm) schema. In this case, the previous schema is provided as an argument:
 
 ```ts
 const extendSchema = mySchema.and(prevSchema => ({
@@ -61,4 +71,4 @@ const extendSchema = mySchema.and(prevSchema => ({
 }))
 ```
 
-This is particularly useful when inferring attribute values from other attributes with links (see [Defaults & Links](../3-defaults-and-links/index.md)).
+This is particularly useful for [Defaults & Links](../3-defaults-and-links/index.md).
