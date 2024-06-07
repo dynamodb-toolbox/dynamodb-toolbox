@@ -1,5 +1,7 @@
 ---
-title: Number
+title: number
+sidebar_custom_props:
+  code: true
 ---
 
 import Tabs from '@theme/Tabs';
@@ -17,7 +19,7 @@ const pokemonSchema = schema({
   level: number(),
 });
 
-type FormattedPokemon = FormattedItem<typeof pokemonEntity>;
+type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 // => {
 //   ...
 //   level: number
@@ -30,7 +32,7 @@ type FormattedPokemon = FormattedItem<typeof pokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
 
 - <code>"atLeastOnce" <i>(default)</i></code>: Required
 - `"always"`: Always required (including updates)
@@ -52,7 +54,7 @@ const levelSchema = number({ required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Skips attribute when formatting items:
+Skips the attribute when formatting items:
 
 ```ts
 const levelSchema = number().hidden()
@@ -63,10 +65,10 @@ const levelSchema = number({ hidden: true })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags attribute as needed to compute the primary key:
+Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also modifies the `required` property to "always"
+// Note: The method also sets the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const levelSchema = number().key()
 const levelSchema = number({
@@ -92,9 +94,9 @@ const levelSchema = number({ savedAs: 'lvl' })
 
 Specifies default values for the attribute. There are three kinds of defaults:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md)).
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md)).
-- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise).
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md))
+- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise)
 
 The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise:
 
@@ -165,7 +167,7 @@ const updateCountSchema = number({
 
 ### `.link<Schema>(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;number&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, number&gt;</code></i></p>
 
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
 

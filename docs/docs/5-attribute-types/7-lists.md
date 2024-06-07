@@ -1,5 +1,7 @@
 ---
-title: List
+title: list
+sidebar_custom_props:
+  code: true
 ---
 
 import Tabs from '@theme/Tabs';
@@ -7,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # List
 
-Defines a [**list attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
+Defines a [**list attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes), containing elements of any type:
 
 ```ts
 import { list } from 'dynamodb-toolbox/attribute/list';
@@ -20,30 +22,25 @@ const pokemonSchema = schema({
   pokeTypes: list(pokeTypeSchema),
 });
 
-type FormattedPokemon = FormattedItem<typeof pokemonEntity>;
+type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 // => {
 //   ...
-//   pokeTypes: PokeType[]
+//   pokeTypes: ('fire' | ...)[]
 // }
 ```
 
-:::caution
+List elements must respect some constraints:
 
-List elements can be of any type, but they have some (logical) limitations:
-
-- They are necessarily `required`
-- They inherit the `key` and `hidden` properties of their parent `set`
-- They cannot be renamed, nor have `defaults` or `links`
-
-:::
+- They cannot be `optional` or always required
+- They cannot be `hidden` or `key` (tagging the `list` itself as `key` is enough)
+- They cannot have `default` or `links`
 
 ```ts
-// ❌ All those cases raise a type and a run-time error
+// ❌ Raises a type AND a run-time error
 const strList = list(string().optional())
-const strList = list(string().key())
 const strList = list(string().hidden())
-const strList = list(string().savedAs('foo'))
-const strList = list(string().default('bar'))
+const strList = list(string().key())
+const strList = list(string().default('foo'))
 ```
 
 ## Options
@@ -52,7 +49,7 @@ const strList = list(string().default('bar'))
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
 
 - <code>"atLeastOnce" <i>(default)</i></code>: Required
 - `"always"`: Always required (including updates)
@@ -76,7 +73,7 @@ const pokeTypesSchema = list(..., { required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Skips attribute when formatting items:
+Skips the attribute when formatting items:
 
 ```ts
 const pokeTypesSchema = list(pokeTypeSchema).hidden()
@@ -87,10 +84,10 @@ const pokeTypesSchema = list(..., { hidden: true })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags attribute as needed to compute the primary key:
+Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also modifies the `required` property to "always"
+// Note: The method also sets the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const pokeTypesSchema = list(pokeTypeSchema).key()
 const pokeTypesSchema = list(..., {
@@ -106,8 +103,8 @@ const pokeTypesSchema = list(..., {
 Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
 ```ts
-const pokeTypesSchema = list(pokeTypeSchema).savedAs('pk_t')
-const pokeTypesSchema = list(..., { savedAs: 'pk_t' })
+const pokeTypesSchema = list(pokeTypeSchema).savedAs('pt')
+const pokeTypesSchema = list(..., { savedAs: 'pt' })
 ```
 
 ### `.default(...)`
@@ -116,51 +113,54 @@ const pokeTypesSchema = list(..., { savedAs: 'pk_t' })
 
 Specifies default values for the attribute. There are three kinds of defaults:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md)).
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md)).
-- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise).
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md))
+- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise)
 
 The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise:
 
 :::noteExamples
 
 <Tabs>
-<TabItem value="put" label="Put">
+<TabItem value="put-update" label="Put/Update">
 
 ```ts
-const empty: PokeType[] = []
+const now = () => new Date().toISOString()
 
-const pokeTypesSchema = list(pokeTypeSchema).default(empty)
+const timestampsSchema = list(string())
+  .default(() => [now()])
+  .updateDefault(() => $append(now()))
 // 👇 Similar to
-const pokeTypesSchema = list(...).putDefault(empty)
+const timestampsSchema = list(...)
+  .putDefault(() => [now()])
+  .updateDefault(() => $append(now()))
 // 👇 ...or
-const pokeTypesSchema = list(..., {
+const timestampsSchema = list(..., {
   defaults: {
     key: undefined,
-    put: empty,
-    update: undefined
+    put: () => [now()],
+    update: () => $append(now())
   }
 })
-
-// 🙌 Getters also work!
-const pokeTypesSchema = list(...).default(() => empty)
 ```
 
 </TabItem>
 <TabItem value="key" label="Key">
 
 ```ts
-const empty: PokeType[] = []
+const defaultSpecifiers = ['POKEMON']
 
-const pokeTypesSchema = list(pokeTypeSchema)
+const specifiersSchema = list(string())
   .key()
-  .default(empty)
+  .default(defaultSpecifiers)
 // 👇 Similar to
-const pokeTypesSchema = list(...).key().keyDefault(empty)
+const specifiersSchema = list(...)
+  .key()
+  .keyDefault(defaultSpecifiers)
 // 👇 ...or
-const pokeTypesSchema = list(..., {
+const specifiersSchema = list(..., {
   defaults: {
-    key: empty,
+    key: defaultSpecifiers,
     // put & update defaults are not useful in `key` attributes
     put: undefined,
     update: undefined
@@ -171,41 +171,23 @@ const pokeTypesSchema = list(..., {
 ```
 
 </TabItem>
-<TabItem value="update" label="Update">
-
-```ts
-const updateDatesSchema = list(string()).updateDefault(
-  // Add date at each updates
-  () => $append(new Date().toISOString())
-)
-// 👇 Similar to
-const updateDatesSchema = list({
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: () => $add(new Date().toISOString())
-  }
-})
-```
-
-</TabItem>
 </Tabs>
 
 :::
 
 ### `.link<Schema>(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;ELEMENTS[]&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, ELEMENTS[]&gt;</code></i></p>
 
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
 
 ```ts
 const pokemonSchema = schema({
-  canFly: boolean()
+  pokeTypeSet: set(pokeTypeSchema)
 }).and(baseSchema => ({
-  pokeTypes: list(pokeTypeSchema).link<typeof baseSchema>(
+  pokeTypeList: set(pokeTypeSchema).link<typeof baseSchema>(
     // 🙌 Correctly typed!
-    item => (item.canFly ? ['fly'] : [])
+    ({ pokeTypeSet }) => [...pokeTypeSet.values()]
   )
 }))
 ```
