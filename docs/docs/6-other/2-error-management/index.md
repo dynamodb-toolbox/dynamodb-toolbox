@@ -7,7 +7,7 @@ title: Error management 👷
 When DynamoDB-Toolbox encounters an unexpected input, it throws an instance of `DynamoDBToolboxError`, which itself extends the native `Error` class with a `code` property:
 
 ```ts
-await pokemonEntity
+await PokemonEntity
   .build(PutItemCommand)
   .item({ ..., level: 'not a number' })
   .send();

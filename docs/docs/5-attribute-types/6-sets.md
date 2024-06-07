@@ -1,5 +1,7 @@
 ---
-title: Set
+title: set
+sidebar_custom_props:
+  code: true
 ---
 
 import Tabs from '@theme/Tabs';
@@ -7,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Set
 
-Defines a [**set attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
+Defines a [**set attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Sets can contain [`numbers`](./3-number.md), [`strings`](./4-string.md), or [`binaries`](./5-binary.md):
 
 ```ts
 import { set } from 'dynamodb-toolbox/attribute/set';
@@ -20,30 +22,25 @@ const pokemonSchema = schema({
   pokeTypes: set(pokeTypeSchema),
 });
 
-type FormattedPokemon = FormattedItem<typeof pokemonEntity>;
+type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 // => {
 //   ...
-//   pokeTypes: Set<PokeType>
+//   pokeTypes: Set<'fire' | ...>
 // }
 ```
 
-:::caution
+Set elements must respect some constraints:
 
-Set elements can only be [`numbers`](./3-number.md), [`strings`](./4-string.md) or [`binaries`](./5-binary.md), and have some (logical) limitations:
-
-- They are necessarily `required`
-- They inherit the `key` and `hidden` properties of their parent `set`
-- They cannot be renamed, nor have `defaults` or `links`
-
-:::
+- They cannot be `optional` or always required
+- They cannot be `hidden` or `key` (tagging the `set` itself as `key` is enough)
+- They cannot have `default` or `links`
 
 ```ts
-// ❌ All those cases raise a type and a run-time error
+// ❌ Raises a type AND a run-time error
 const strSet = set(string().optional())
-const strSet = set(string().key())
 const strSet = set(string().hidden())
-const strSet = set(string().savedAs('foo'))
-const strSet = set(string().default('bar'))
+const strSet = set(string().key())
+const strSet = set(string().default('foo'))
 ```
 
 ## Options
@@ -52,7 +49,7 @@ const strSet = set(string().default('bar'))
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
 
 - <code>"atLeastOnce" <i>(default)</i></code>: Required
 - `"always"`: Always required (including updates)
@@ -76,7 +73,7 @@ const pokeTypesSchema = set(..., { required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Skips attribute when formatting items:
+Skips the attribute when formatting items:
 
 ```ts
 const pokeTypesSchema = set(pokeTypeSchema).hidden()
@@ -87,10 +84,10 @@ const pokeTypesSchema = set(..., { hidden: true })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags attribute as needed to compute the primary key:
+Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also modifies the `required` property to "always"
+// Note: The method also sets the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const pokeTypesSchema = set(pokeTypeSchema).key()
 const pokeTypesSchema = set(..., {
@@ -106,8 +103,8 @@ const pokeTypesSchema = set(..., {
 Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
 ```ts
-const pokeTypesSchema = set(pokeTypeSchema).savedAs('pk_t')
-const pokeTypesSchema = set(..., { savedAs: 'pk_t' })
+const pokeTypesSchema = set(pokeTypeSchema).savedAs('pt')
+const pokeTypesSchema = set(..., { savedAs: 'pt' })
 ```
 
 ### `.default(...)`
@@ -116,51 +113,54 @@ const pokeTypesSchema = set(..., { savedAs: 'pk_t' })
 
 Specifies default values for the attribute. There are three kinds of defaults:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md)).
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md)).
-- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise).
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md))
+- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise)
 
 The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise:
 
 :::noteExamples
 
 <Tabs>
-<TabItem value="put" label="Put">
+<TabItem value="put-update" label="Put/Update">
 
 ```ts
-const empty = new Set<PokeType>()
+const now = () => new Date().toISOString()
 
-const pokeTypesSchema = set(pokeTypeSchema).default(empty)
+const timestampsSchema = set(string())
+  .default(() => new Set([now()]))
+  .updateDefault(() => $add(now()))
 // 👇 Similar to
-const pokeTypesSchema = set(...).putDefault(empty)
+const timestampsSchema = set(string())
+  .putDefault(() => new Set([now()]))
+  .updateDefault(() => $add(now()))
 // 👇 ...or
-const pokeTypesSchema = set(..., {
+const timestampsSchema = set({
   defaults: {
     key: undefined,
-    put: empty,
-    update: undefined
+    put: () => new Set([now()]),
+    update: () => $add(now())
   }
 })
-
-// 🙌 Getters also work!
-const pokeTypesSchema = set(...).default(() => empty)
 ```
 
 </TabItem>
 <TabItem value="key" label="Key">
 
 ```ts
-const empty = new Set<PokeType>()
+const defaultSpecifiers = new Set(['POKEMON'])
 
-const pokeTypesSchema = set(pokeTypeSchema)
+const specifiersSchema = set(string())
   .key()
-  .default(empty)
+  .default(defaultSpecifiers)
 // 👇 Similar to
-const pokeTypesSchema = set(...).key().keyDefault(empty)
+const specifiersSchema = set(string())
+  .key()
+  .keyDefault(defaultSpecifiers)
 // 👇 ...or
-const pokeTypesSchema = set(..., {
+const specifiersSchema = set({
   defaults: {
-    key: empty,
+    key: defaultSpecifiers,
     // put & update defaults are not useful in `key` attributes
     put: undefined,
     update: undefined
@@ -171,41 +171,23 @@ const pokeTypesSchema = set(..., {
 ```
 
 </TabItem>
-<TabItem value="update" label="Update">
-
-```ts
-const updateDatesSchema = set(string()).updateDefault(
-  // Add date at each updates
-  () => $add(new Date().toISOString())
-)
-// 👇 Similar to
-const updateDatesSchema = set({
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: () => $add(new Date().toISOString())
-  }
-})
-```
-
-</TabItem>
 </Tabs>
 
 :::
 
 ### `.link<Schema>(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Set&lt;ELEMENTS&gt;&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, Set&lt;ELEMENTS&gt;&gt;</code></i></p>
 
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
 
 ```ts
 const pokemonSchema = schema({
-  canFly: boolean()
+  pokeTypeList: list(pokeTypeSchema)
 }).and(baseSchema => ({
-  pokeTypes: set(pokeTypeSchema).link<typeof baseSchema>(
+  pokeTypeSet: set(pokeTypeSchema).link<typeof baseSchema>(
     // 🙌 Correctly typed!
-    item => new Set(item.canFly ? ['fly'] : [])
+    item => new Set(item.pokeTypeList)
   )
 }))
 ```

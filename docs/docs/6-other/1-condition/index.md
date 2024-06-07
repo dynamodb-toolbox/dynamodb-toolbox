@@ -115,7 +115,7 @@ const levelFrom50To70: Condition<typeof PokemonEntity> = {
 ```ts
 const notElectric: Condition<typeof PokemonEntity> = {
   not: {
-    attr: 'pokemonType',
+    attr: 'pokeType',
     eq: 'electric'
   }
 }
@@ -128,7 +128,7 @@ const notElectric: Condition<typeof PokemonEntity> = {
 const lvlGte50AndElec: Condition<typeof PokemonEntity> = {
   and: [
     { attr: 'level', gte: 50 },
-    { attr: 'pokemonType', eq: 'electric' }
+    { attr: 'pokeType', eq: 'electric' }
   ]
 }
 ```
@@ -140,7 +140,7 @@ const lvlGte50AndElec: Condition<typeof PokemonEntity> = {
 const lvlGte50OrElec: Condition<typeof PokemonEntity> = {
   or: [
     { attr: 'level', gte: 50 },
-    { attr: 'pokemonType', eq: 'electric' }
+    { attr: 'pokeType', eq: 'electric' }
   ]
 }
 ```

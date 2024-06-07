@@ -228,7 +228,7 @@ await PokemonEntity.build(UpdateItemCommand).item({
 Lists benefit from additional `$append` and `$prepend` verbs, which can use references:
 
 ```ts
-pokemonEntity.build(UpdateItemCommand).item({
+PokemonEntity.build(UpdateItemCommand).item({
   ...
   skills: $append(['thunder', 'dragon-tail']),
   levelHistory: $append($get('level')),

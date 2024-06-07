@@ -9,7 +9,7 @@ As much as I appreciate this chained syntax, it makes mocking hard in unit tests
 ```ts
 import { mockEntity } from 'dynamodb-toolbox';
 
-const mockedPokemonEntity = mockEntity(pokemonEntity);
+const mockedPokemonEntity = mockEntity(PokemonEntity);
 
 mockedPokemonEntity.on(GetItemCommand).resolve({
   // 🙌 Type-safe!
@@ -39,8 +39,7 @@ mockedPokemonEntity.on(GetItemCommand).reject('Something bad happened');
 You can then make assertions on received commands:
 
 ```ts
-await pokemonEntity
-  .build(GetItemCommand)
+await PokemonEntity.build(GetItemCommand)
   .key({ pokemonId: 'pikachu1' })
   .options({ consistent: true })
   .send()
