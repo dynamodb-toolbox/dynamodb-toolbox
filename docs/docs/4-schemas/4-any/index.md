@@ -1,5 +1,5 @@
 ---
-title: string
+title: any
 sidebar_custom_props:
   code: true
 ---
@@ -7,22 +7,22 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# String
+# Any
 
-Defines a [**string attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
+Defines an attribute containing **any value**. No validation is applied at run-time, and its type is resolved as `unknown` by default:
 
 ```ts
-import { string } from 'dynamodb-toolbox/attribute/string';
+import { any } from 'dynamodb-toolbox/attribute/any';
 
 const pokemonSchema = schema({
   ...
-  name: string(),
+  metadata: any(),
 });
 
 type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 // => {
 //   ...
-//   name: string
+//   metadata: unknown
 // }
 ```
 
@@ -40,14 +40,12 @@ Tags the attribute as **required** (at root level or within [Maps](./8-maps.md))
 
 ```ts
 // Equivalent
-const nameSchema = string().required()
-const nameSchema = string({
-  required: 'atLeastOnce'
-})
+const metadataSchema = any().required()
+const metadataSchema = any({ required: 'atLeastOnce' })
 
 // shorthand for `.required("never")`
-const nameSchema = string().optional()
-const nameSchema = string({ required: 'never' })
+const metadataSchema = any().optional()
+const metadataSchema = any({ required: 'never' })
 ```
 
 ### `.hidden()`
@@ -57,8 +55,8 @@ const nameSchema = string({ required: 'never' })
 Skips the attribute when formatting items:
 
 ```ts
-const nameSchema = string().hidden()
-const nameSchema = string({ hidden: true })
+const metadataSchema = any().hidden()
+const metadataSchema = any({ hidden: true })
 ```
 
 ### `.key()`
@@ -70,8 +68,8 @@ Tags the attribute as needed to compute the primary key:
 ```ts
 // Note: The method also sets the `required` property to "always"
 // (it is often the case in practice, you can still use `.optional()` if needed)
-const nameSchema = string().key()
-const nameSchema = string({
+const metadataSchema = any().key()
+const metadataSchema = any({
   key: true,
   required: 'always'
 })
@@ -81,16 +79,16 @@ const nameSchema = string({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
 ```ts
-const nameSchema = string().savedAs('n')
-const nameSchema = string({ savedAs: 'n' })
+const metadataSchema = any().savedAs('meta')
+const metadataSchema = any({ savedAs: 'meta' })
 ```
 
 ### `.default(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;string&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;unknown&gt;</code></i></p>
 
 Specifies default values for the attribute. There are three kinds of defaults:
 
@@ -106,33 +104,35 @@ The `default` method is a shorthand that acts as `keyDefault` on key attributes 
 <TabItem value="put" label="Put">
 
 ```ts
-const nameSchema = string().default('Pikachu')
+const metadataSchema = any().default({ any: 'value' })
 // 👇 Similar to
-const nameSchema = string().putDefault('Pikachu')
+const metadataSchema = any().putDefault({ any: 'value' })
 // 👇 ...or
-const nameSchema = string({
+const metadataSchema = any({
   defaults: {
     key: undefined,
-    put: 'Pikachu',
+    put: { any: 'value' },
     update: undefined
   }
 })
 
 // 🙌 Getters also work!
-const nameSchema = string().default(() => 'Pikachu')
+const metadataSchema = any().default(() => ({
+  any: 'value'
+}))
 ```
 
 </TabItem>
 <TabItem value="key" label="Key">
 
 ```ts
-const nameSchema = string().key().default('Pikachu')
+const metadataSchema = any().key().default('myKey')
 // 👇 Similar to
-const nameSchema = string().key().keyDefault('Pikachu')
+const metadataSchema = any().key().keyDefault('myKey')
 // 👇 ...or
-const nameSchema = string({
+const metadataSchema = any({
   defaults: {
-    key: 'Pikachu',
+    key: 'myKey',
     // put & update defaults are not useful in `key` attributes
     put: undefined,
     update: undefined
@@ -146,16 +146,15 @@ const nameSchema = string({
 <TabItem value="update" label="Update">
 
 ```ts
-// 👇 Records the date at each update
-const lastUpdatedSchema = string().updateDefault(() =>
-  new Date().toISOString()
-)
+const metadataSchema = any().updateDefault({
+  updated: true
+})
 // 👇 Similar to
-const lastUpdatedSchema = string({
+const metadataSchema = any({
   defaults: {
     key: undefined,
     put: undefined,
-    update: () => new Date().toISOString()
+    update: { updated: true }
   }
 })
 ```
@@ -167,55 +166,27 @@ const lastUpdatedSchema = string({
 
 ### `.link<Schema>(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, string&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, unknown&gt;</code></i></p>
 
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
 
 ```ts
 const pokemonSchema = schema({
-  level: string()
-}).and(baseSchema => ({
-  captureLevel: string().link<typeof baseSchema>(
+  pokeTypes: string()
+}).and(prevSchema => ({
+  metadata: any().link<typeof prevSchema>(
     // 🙌 Correctly typed!
-    item => item.level
+    item => item.pokeTypes.join('#')
   )
 }))
 ```
 
-### `.enum(...)`
+### `.castAs<Type>()`
 
-<p style={{ marginTop: '-15px' }}><i><code>string[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i>(TypeScript only)</i></p>
 
-Provides a finite range of possible values:
-
-```ts
-const pokeTypeSchema = string().enum('fire', 'water', ...)
-
-// 👇 Equivalent to `.enum('fire').default('fire')`
-const pokeTypeSchema = string().const('fire')
-```
-
-:::info
-
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
-
-:::
-
-### `.transform(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;string&gt;</code></i></p>
-
-Allows modifying the attribute values during the [transformation step](../4-schemas/4-actions/1-parse.md):
+Overrides the resolved type of the attribute:
 
 ```ts
-const PREFIX = 'POKEMON#'
-
-const prefix = {
-  parse: (input: string) => [PREFIX, input].join(''),
-  format: (saved: string) => saved.slice(PREFIX.length)
-}
-
-// Prefixes the value
-const nameSchema = string().transform(prefix)
-const nameSchema = string({ transform: prefix })
+const metadataSchema = any().castAs<{ foo: 'bar' }>()
 ```

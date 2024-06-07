@@ -81,7 +81,7 @@ const isLegendarySchema = boolean({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
 ```ts
 const isLegendarySchema = boolean().savedAs('isLeg')
@@ -171,10 +171,10 @@ Similar to [`.default(...)`](#default) but allows deriving the default value fro
 ```ts
 const pokemonSchema = schema({
   customName: string().optional()
-}).and(baseSchema => ({
-  hasCustomName: boolean().link<typeof baseSchema>(
+}).and(prevSchema => ({
+  hasCustomName: boolean().link<typeof prevSchema>(
     // 🙌 Correctly typed!
-    item => item.customName !== undefined
+    ({ customName }) => customName !== undefined
   )
 }))
 ```
@@ -202,7 +202,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;boolean&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../4-schemas/4-actions/1-parse.md):
+Allows modifying the attribute values during the [transformation step](../4-schemas/14-actions/1-parse.md):
 
 ```ts
 const negate = {

@@ -132,7 +132,7 @@ const pokeTypeSchema = anyOf(
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
 ```ts
 const pokeTypeSchema = anyOf(
@@ -212,9 +212,9 @@ Similar to [`.default(...)`](#default) but allows deriving the default value fro
 const pokemonSchema = schema({
   name: string().optional(),
   level: number()
-}).and(baseSchema => ({
+}).and(prevSchema => ({
   metadata: anyOf(string(), number()).link<
-    typeof baseSchema
+    typeof prevSchema
   >(
     // 🙌 Correctly typed!
     ({ name, level }) => name ?? level

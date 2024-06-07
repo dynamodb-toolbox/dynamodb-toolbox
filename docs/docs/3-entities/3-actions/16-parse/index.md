@@ -11,13 +11,13 @@ import TabItem from '@theme/TabItem';
 
 Parses an [Item](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.TablesItemsAttributes) for the provided `Entity`.
 
-Given an input of any type, validates that it respects the schema of the `Entity` and throws an error otherwise (based on the [Schema parser](../../../4-schemas/4-actions/1-parse.md) errors). Fills with defaults and links, and apply final transformation (i.e. `savedAs` and primitive `transforms`).
+Given an input of any type, validates that it respects the schema of the `Entity` and throws an error otherwise (based on the [Schema parser](../../../4-schemas/14-actions/1-parse.md) errors). Fills with defaults and links, and apply final transformation (i.e. `savedAs` and primitive `transforms`).
 
 By default, the parsing is for `put` operation, but it can be switched to `update` or `key`.
 
 The input is not muted. Additional fields are silently omitted.
 
-For more details on parsing, see the [Schema parser](../../../4-schemas/4-actions/1-parse.md). Errors are the same.
+For more details on parsing, see the [Schema parser](../../../4-schemas/14-actions/1-parse.md). Errors are the same.
 
 ## Usage
 

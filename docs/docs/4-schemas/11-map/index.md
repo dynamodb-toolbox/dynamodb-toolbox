@@ -128,7 +128,7 @@ const nameSchema = map({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within other Maps):
+Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within other Maps):
 
 ```ts
 const nameSchema = map({
@@ -219,11 +219,11 @@ Similar to [`.default(...)`](#default) but allows deriving the default value fro
 ```ts
 const pokemonSchema = schema({
   name: string()
-}).and(baseSchema => ({
+}).and(prevSchema => ({
   parsedName: map({
     firstName: string(),
     lastName: string()
-  }).link<typeof baseSchema>(
+  }).link<typeof prevSchema>(
     // 🙌 Correctly typed!
     ({ name }) => {
       const [firstName, lastName] = name.split(' ')
