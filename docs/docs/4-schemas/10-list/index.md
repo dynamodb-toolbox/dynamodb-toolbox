@@ -100,7 +100,7 @@ const pokeTypesSchema = list(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/4-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
 
 ```ts
 const pokeTypesSchema = list(pokeTypeSchema).savedAs('pt')
@@ -184,8 +184,8 @@ Similar to [`.default(...)`](#default) but allows deriving the default value fro
 ```ts
 const pokemonSchema = schema({
   pokeTypeSet: set(pokeTypeSchema)
-}).and(baseSchema => ({
-  pokeTypeList: set(pokeTypeSchema).link<typeof baseSchema>(
+}).and(prevSchema => ({
+  pokeTypeList: set(pokeTypeSchema).link<typeof prevSchema>(
     // 🙌 Correctly typed!
     ({ pokeTypeSet }) => [...pokeTypeSet.values()]
   )
