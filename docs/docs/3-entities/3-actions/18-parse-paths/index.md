@@ -4,4 +4,4 @@ sidebar_custom_props:
   sidebarActionType: util
 ---
 
-# ParsePaths 👷
+# PathParser 👷

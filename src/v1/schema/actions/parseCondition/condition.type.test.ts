@@ -31,7 +31,6 @@ const assertParentIdCondition: A.Equals<
           | { gte: string | { attr: ATTRIBUTE_PATHS } }
           | { between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }] }
           | { contains: string | { attr: ATTRIBUTE_PATHS } }
-          | { notContains: string | { attr: ATTRIBUTE_PATHS } }
           | { beginsWith: string | { attr: ATTRIBUTE_PATHS } }
         ))
     ),
@@ -69,8 +68,6 @@ const anyCondition: A.Contains<
       | { between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }] }
       | { contains: string | { attr: ATTRIBUTE_PATHS } }
       | { contains: Buffer | { attr: ATTRIBUTE_PATHS } }
-      | { notContains: string | { attr: ATTRIBUTE_PATHS } }
-      | { notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
       | { beginsWith: string | { attr: ATTRIBUTE_PATHS } }
       | { beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } }
     ),
@@ -128,7 +125,6 @@ const assertBinCondition: A.Equals<
           | { gte: Buffer | { attr: ATTRIBUTE_PATHS } }
           | { between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }] }
           | { contains: Buffer | { attr: ATTRIBUTE_PATHS } }
-          | { notContains: Buffer | { attr: ATTRIBUTE_PATHS } }
           | { beginsWith: Buffer | { attr: ATTRIBUTE_PATHS } }
         ))
     ),
