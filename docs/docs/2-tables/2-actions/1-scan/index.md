@@ -11,8 +11,6 @@ import TabItem from '@theme/TabItem';
 
 Performs a [Scan Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html) on a `Table`.
 
-## Usage
-
 ```ts
 import { ScanCommand } from 'dynamodb-toolbox/table/actions/scan'
 
@@ -22,7 +20,9 @@ const params = scanCommand.params()
 const { Items } = await scanCommand.send()
 ```
 
-## Entities
+## Request
+
+### `.entities(...)`
 
 Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Does also format them and type the response.
 
@@ -33,7 +33,7 @@ const { Items } = await PokeTable.build(ScanCommand)
   .send()
 ```
 
-## Options
+### `.options(...)`
 
 Provides additional options:
 

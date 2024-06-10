@@ -11,8 +11,6 @@ import TabItem from '@theme/TabItem';
 
 Performs a [UpdateItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html) on an entity item.
 
-## Usage
-
 ```ts
 import { UpdateItemCommand } from 'dynamodb-toolbox/entity/actions/update'
 
@@ -24,7 +22,9 @@ const params = updateItemCommand.params()
 await updateItemCommand.send()
 ```
 
-## Item
+## Request
+
+### `.item(...)`
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
@@ -236,7 +236,7 @@ PokemonEntity.build(UpdateItemCommand).item({
 });
 ```
 
-## Options
+### `.options(...)`
 
 Provides additional options:
 

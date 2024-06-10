@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Record
 
-Defines a [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) but without an explicit list of keys. Records differ from [Maps](./8-maps.md) as they can accept a potentially infinite range of keys and are always partial:
+Defines a [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) but without an explicit list of keys. Records differ from [Maps](../11-map/index.md) as they can accept a potentially infinite range of keys and are always partial:
 
 ```ts
 import { record } from 'dynamodb-toolbox/attribute/record'
@@ -52,7 +52,7 @@ Record keys share the same constraints and must be of type [`string`](./4-string
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../11-map/index.md)). Possible values are:
 
 - <code>"atLeastOnce" <i>(default)</i></code>: Required
 - `"always"`: Always required (including updates)
@@ -110,7 +110,7 @@ const idsSchema = record(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+Renames the attribute during the [transformation step](../14-actions/1-parse.md) (at root level or within [Maps](../11-map/index.md)):
 
 ```ts
 const weaknessesSchema = record(
@@ -126,8 +126,8 @@ const weaknessesSchema = record(..., { savedAs: 'w' })
 
 Specifies default values for the attribute. There are three kinds of defaults:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md))
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md))
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/3-actions/2-put-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
 - `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise)
 
 The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise:
@@ -190,7 +190,7 @@ const idsSchema = record(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, ATTRIBUTES&gt;</code></i></p>
 
-Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
+Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
 
 ```ts
 const pokemonSchema = schema({

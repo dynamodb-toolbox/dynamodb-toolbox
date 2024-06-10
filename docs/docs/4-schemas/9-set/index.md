@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Set
 
-Defines a [**set attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Sets can contain [`numbers`](./3-number.md), [`strings`](./4-string.md), or [`binaries`](./5-binary.md):
+Defines a [**set attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Sets can contain [`numbers`](../6-number/index.md), [`strings`](../7-string/index.md), or [`binaries`](../8-binary/index.md):
 
 ```ts
 import { set } from 'dynamodb-toolbox/attribute/set';
@@ -49,7 +49,7 @@ const strSet = set(string().default('foo'))
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](./8-maps.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../11-map/index.md)). Possible values are:
 
 - <code>"atLeastOnce" <i>(default)</i></code>: Required
 - `"always"`: Always required (including updates)
@@ -100,7 +100,7 @@ const pokeTypesSchema = set(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../4-schemas/14-actions/1-parse.md) (at root level or within [Maps](./8-maps.md)):
+Renames the attribute during the [transformation step](../14-actions/1-parse.md) (at root level or within [Maps](../11-map/index.md)):
 
 ```ts
 const pokeTypesSchema = set(pokeTypeSchema).savedAs('pt')
@@ -113,8 +113,8 @@ const pokeTypesSchema = set(..., { savedAs: 'pt' })
 
 Specifies default values for the attribute. There are three kinds of defaults:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../3-entities/3-actions/2-put-item/index.md))
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../3-entities/3-actions/3-update-item/index.md))
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/3-actions/2-put-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
 - `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise)
 
 The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise:
@@ -179,7 +179,7 @@ const specifiersSchema = set({
 
 <p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, Set&lt;ELEMENTS&gt;&gt;</code></i></p>
 
-Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../4-schemas/3-defaults-and-links/index.md) for more details:
+Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
 
 ```ts
 const pokemonSchema = schema({
