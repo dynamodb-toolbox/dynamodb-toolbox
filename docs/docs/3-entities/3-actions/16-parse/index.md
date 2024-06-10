@@ -7,7 +7,7 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Parse 👷
+# Parser 👷
 
 Parses an [Item](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.TablesItemsAttributes) for the provided `Entity`.
 

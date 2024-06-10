@@ -18,15 +18,6 @@ import {
 
 import { MyTable } from './table'
 
-const $pokemonNameSchema = string()
-// => $PrimitiveAttribute<"string">
-
-const pokemonNameSchema = $pokemonNameSchema.freeze()
-// => PrimitiveAttribute<"string">
-const pokemonSchema = schema({
-  name: $pokemonNameSchema
-})
-
 export const UserEntity = new EntityV2({
   name: 'User',
   table: MyTable,
