@@ -317,7 +317,7 @@ const { Items } = await PokeTable.build(QueryCommand)
   .entities(PokemonEntity, TrainerEntity)
   .options({
     filters: {
-      POKEMONS: { attr: 'type', eq: 'fire' },
+      POKEMONS: { attr: 'pokeType', eq: 'fire' },
       TRAINERS: { attr: 'age', gt: 18 }
     }
   })

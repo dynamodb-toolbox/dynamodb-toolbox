@@ -54,7 +54,7 @@ export type AttributeCondition<
       ? PrimitiveAttributeExtraCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   /**
-   * @debt feature "Can you apply Contains clauses to Set attributes?"
+   * @debt feature "Develop Contains clauses on Set attributes"
    */
   | (ATTRIBUTE extends ListAttribute
       ? AttributeCondition<
@@ -111,6 +111,7 @@ type SortableAttributeExtraCondition<
       }
   )
 
+// TODO: It's actually only string Attributes
 type StringOrBinaryAttributeExtraCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends PrimitiveAttribute<'string'> | PrimitiveAttribute<'binary'>,
@@ -119,7 +120,6 @@ type StringOrBinaryAttributeExtraCondition<
 > = AttrOrSize<ATTRIBUTE_PATH> &
   (
     | { contains: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
-    | { notContains: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
     | { beginsWith: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
   )
 
@@ -129,8 +129,7 @@ export type PrimitiveAttributeExtraCondition<
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
 > = AttrOrSize<ATTRIBUTE_PATH> & { transform?: boolean } & (
-    | // TO VERIFY: Are EQ | NE | IN applyable to other types than Primitives?
-    { eq: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
+    | { eq: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
     | { ne: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
     | { in: (ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH })[] }
     | (ATTRIBUTE extends SortableAttribute
