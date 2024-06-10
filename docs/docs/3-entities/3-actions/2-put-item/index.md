@@ -11,8 +11,6 @@ import TabItem from '@theme/TabItem';
 
 Performs a [PutItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html) on an entity item.
 
-## Usage
-
 ```ts
 import { PutItemCommand } from 'dynamodb-toolbox/entity/actions/put'
 
@@ -22,7 +20,9 @@ const params = putItemCommand.params()
 await putItemCommand.send()
 ```
 
-## Item
+## Request
+
+### `.item(...)`
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
@@ -60,7 +60,7 @@ Note that `PutItemInput` differs from `ParsedItem` as defaulted and linked attri
 
 :::
 
-## Options
+### `.options(...)`
 
 Provides additional options:
 

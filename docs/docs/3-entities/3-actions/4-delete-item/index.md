@@ -11,8 +11,6 @@ import TabItem from '@theme/TabItem';
 
 Performs a [DeleteItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html) on an entity item.
 
-## Usage
-
 ```ts
 import { DeleteItemCommand } from 'dynamodb-toolbox/entity/actions/delete'
 
@@ -24,7 +22,9 @@ const params = deleteItemCommand.params()
 await deleteItemCommand.send()
 ```
 
-## Key
+## Request
+
+### `.key(...)`
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
@@ -48,7 +48,7 @@ const key: KeyInput<typeof PokemonEntity> = {
 await PokemonEntity.build(DeleteItemCommand).key(key).send()
 ```
 
-## Options
+### `.options(...)`
 
 Provides additional options:
 

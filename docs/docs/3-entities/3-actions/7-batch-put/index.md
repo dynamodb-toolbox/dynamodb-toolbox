@@ -14,8 +14,6 @@ Check the [batching documentation](../5-batching/index.md) to learn how to use `
 
 :::
 
-## Usage
-
 ```ts
 import { batchWrite } from 'dynamodb-toolbox/entity/actions/batchWrite'
 import { BatchPutItemRequest } from 'dynamodb-toolbox/entity/actions/batchPut'
@@ -25,7 +23,9 @@ const request = PokemonEntity.build(BatchPutItemRequest)
 await batchWrite([request, ...otherRequests])
 ```
 
-## Item
+## Request
+
+### `.item(...)`
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 

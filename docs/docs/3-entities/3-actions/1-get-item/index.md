@@ -11,8 +11,6 @@ import TabItem from '@theme/TabItem';
 
 Performs a [GetItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html) on an entity item.
 
-## Usage
-
 ```ts
 import { GetItemCommand } from 'dynamodb-toolbox/entity/actions/get'
 
@@ -22,7 +20,9 @@ const params = getItemCommand.params()
 await getItemCommand.send()
 ```
 
-## Key
+## Request
+
+### `.key(...)`
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
@@ -48,7 +48,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-## Options
+### `.options(...)`
 
 Provides additional options:
 
