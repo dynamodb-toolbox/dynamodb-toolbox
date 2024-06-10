@@ -11,8 +11,6 @@ import TabItem from '@theme/TabItem';
 
 Performs a [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on a `Table`.
 
-## Usage
-
 ```ts
 import { QueryCommand } from 'dynamodb-toolbox/table/actions/query'
 
@@ -22,7 +20,9 @@ const params = queryCommand.params()
 const { Items } = await queryCommand.send()
 ```
 
-## Query
+## Syntax
+
+### `.query(...)`
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
@@ -59,7 +59,7 @@ const { Items } = await PokeTable.build(QueryCommand)
   .send()
 ```
 
-## Entities
+### `.entities(...)`
 
 Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Does also format them and type the response.
 
@@ -71,7 +71,7 @@ const { Items } = await PokeTable.build(QueryCommand)
   .send()
 ```
 
-## Options
+### `.options(...)`
 
 Provides additional options:
 

@@ -14,8 +14,6 @@ Check the [batching documentation](../5-batching/index.md) to learn how to use `
 
 :::
 
-## Usage
-
 ```ts
 import { batchWrite } from 'dynamodb-toolbox/entity/actions/batchWrite'
 import { BatchDeleteItemRequest } from 'dynamodb-toolbox/entity/actions/batchDelete'
@@ -25,7 +23,9 @@ const request = PokemonEntity.build(BatchDeleteItemRequest)
 await batchWrite([request, ...otherRequests])
 ```
 
-## Key
+## Request
+
+### `.key(...)`
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
