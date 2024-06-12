@@ -28,7 +28,7 @@ await updateItemCommand.send()
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
-The item to write:
+The attributes to update, including the key:
 
 ```ts
 import { UpdateItemCommand, $add } from 'dynamodb-toolbox/entity/actions/update'
@@ -49,6 +49,7 @@ import type { UpdateItemInput } from 'dynamodb-toolbox/entity/actions/update'
 
 const item: UpdateItemInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1',
+  level: $add(1),
   ...
 }
 
@@ -270,12 +271,12 @@ await PokemonEntity.build(UpdateItemCommand)
 
 Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#API_UpdateItem_RequestParameters) for more details):
 
-| Option         |               Type                | Default  | Description                                                                                                                                                                                                                                 |
-| -------------- | :-------------------------------: | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for a conditional UpdateItem operation to succeed.<br/><br/>See the [`ConditionParser` action](../17-parse-condition/index.md#building-conditions) for more details on how to write conditions. |
-| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | Use `returnValues` if you want to get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"`, `"UPDATED_NEW"`, `"ALL_NEW"`, `"UPDATED_OLD"` and `"ALL_OLD"`.                 |
-| `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                                                |
-| `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                                    |
+| Option         |               Type                | Default  | Description                                                                                                                                                                                                                      |
+| -------------- | :-------------------------------: | :------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `UpdateItemCommand` to succeed.<br/><br/>See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"`, `"UPDATED_NEW"`, `"ALL_NEW"`, `"UPDATED_OLD"` and `"ALL_OLD"`.                                     |
+| `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                                     |
+| `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                         |
 
 :::noteExamples
 
@@ -289,7 +290,8 @@ await PokemonEntity.build(UpdateItemCommand)
     level: $add(1)
   })
   .options({
-    condition: { attr: 'level', eq: 49 }
+    // 👇 Make sure that 'level' stays <= 99
+    condition: { attr: 'level', lt: 99 }
   })
   .send()
 ```

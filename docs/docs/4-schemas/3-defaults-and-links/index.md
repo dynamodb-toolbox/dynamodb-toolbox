@@ -74,4 +74,4 @@ Similarly to defaults, links come in three flavors:
 
 The `link` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise.
 
-Finally, note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser` action](../14-actions/1-parse.md) for more details).
+Finally, note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../14-actions/1-parse.md) action for more details).
