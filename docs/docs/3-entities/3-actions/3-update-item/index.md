@@ -28,7 +28,7 @@ await updateItemCommand.send()
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
-The item to write:
+The attributes to update, including the key:
 
 ```ts
 import { UpdateItemCommand, $add } from 'dynamodb-toolbox/entity/actions/update'
@@ -49,6 +49,7 @@ import type { UpdateItemInput } from 'dynamodb-toolbox/entity/actions/update'
 
 const item: UpdateItemInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1',
+  level: $add(1),
   ...
 }
 
@@ -289,7 +290,8 @@ await PokemonEntity.build(UpdateItemCommand)
     level: $add(1)
   })
   .options({
-    condition: { attr: 'level', eq: 49 }
+    // 👇 Make sure that 'level' stays <= 99
+    condition: { attr: 'level', lt: 99 }
   })
   .send()
 ```

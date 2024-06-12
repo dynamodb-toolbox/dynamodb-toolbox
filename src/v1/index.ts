@@ -77,6 +77,7 @@ export { GetItemTransaction } from './entity/actions/transactions/transactGetIte
 export { PutItemTransaction } from './entity/actions/transactions/transactPutItem'
 export type { PutItemTransactionOptions } from './entity/actions/transactions/transactPutItem'
 export { UpdateItemTransaction } from './entity/actions/transactions/transactUpdateItem'
+export type { UpdateItemTransactionOptions } from './entity/actions/transactions/transactUpdateItem'
 export { DeleteItemTransaction } from './entity/actions/transactions/transactDeleteItem'
 export type { DeleteItemTransactionOptions } from './entity/actions/transactions/transactDeleteItem'
 export { ConditionCheck } from './entity/actions/transactions/conditionCheck'
