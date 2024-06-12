@@ -20,7 +20,7 @@ const params = queryCommand.params()
 const { Items } = await queryCommand.send()
 ```
 
-## Syntax
+## Request
 
 ### `.query(...)`
 
@@ -28,9 +28,9 @@ const { Items } = await queryCommand.send()
 
 The partition to query, with optional index and range condition:
 
-- `partition`: The partition key to query.
-- <code>index <i>(optional)</i></code>: The name of a secondary index to query.
-- <code>range <i>(optional)</i></code>: If the table or index has a sort key, an optional range condition.
+- `partition`: The partition key to query
+- <code>index <i>(optional)</i></code>: The name of a secondary index to query
+- <code>range <i>(optional)</i></code>: If the table or index has a sort key, an additional <a href="../../entities/actions/parse-condition#range-conditions">Range Condition</a>
 
 ```ts
 // Get 'ashKetchum' pokemons with a level ≥ 50
@@ -206,7 +206,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             <td>
               For each entity name, a condition that must be satisfied in order for evaluated items of this entity to be returned (improves performances but does not reduce costs).
               <br/><br/>Requires <a href="#entities"><code>entities</code></a>.
-              <br/><br/>See the <a href="../../entities/actions/parse-condition"><code>ConditionParser</code> action</a> for more details on how to write conditions.
+              <br/><br/>See the <a href="../../entities/actions/parse-condition#building-conditions"><code>ConditionParser</code> action</a> for more details on how to write conditions.
             </td>
         </tr>
         <tr>
@@ -216,7 +216,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             <td>
               To specify a list of attributes to retrieve (improves performances but does not reduce costs).
               <br/><br/>Requires <a href="#entities"><code>entities</code></a>. Paths must be common to all entities.
-              <br/><br/>See the <a href="../../entities/actions/parse-paths"><code>PathParser</code> action</a> for more details on how to write attribute paths.
+              <br/><br/>See the <a href="../../entities/actions/parse-paths#paths"><code>PathParser</code> action</a> for more details on how to write attribute paths.
             </td>
         </tr>
     </tbody>
