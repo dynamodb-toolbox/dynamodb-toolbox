@@ -34,7 +34,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-You can use the `KeyInput` type from the [`EntityParser` action](../16-parse/index.md) to explicitely type an object as a `GetItemCommand` key:
+You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `GetItemCommand` key:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
@@ -85,7 +85,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
 | Option       |       Type       | Default  | Description                                                                                                                                                                                                               |
 | ------------ | :--------------: | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `consistent` |    `boolean`     | `false`  | By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).<br/><br/>Set to `true` to use <b>strongly</b> consistent reads.                                             |
-| `attributes` | `Path<Entity>[]` |    -     | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See the [`PathParser` action](../18-parse-paths/index.md#paths) for more details on how to write attribute paths. |
+| `attributes` | `Path<Entity>[]` |    -     | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See the [`PathParser`](../18-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
 | `capacity`   | `CapacityOption` | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                  |
 
 :::noteExamples

@@ -54,6 +54,6 @@ const request = PokemonEntity.build(
 
 :::info
 
-Contrary to [`DeleteItems`](../4-delete-item/index.md), batch deletes cannot be [conditioned](../17-parse-condition/index.md), nor return the values of the deleted items.
+Contrary to [`DeleteItemCommands`](../4-delete-item/index.md), batch deletes cannot be [conditioned](../17-parse-condition/index.md), nor return the values of the deleted items.
 
 :::
