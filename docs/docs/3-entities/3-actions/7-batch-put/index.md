@@ -10,7 +10,7 @@ Build a `PutItem` request on an entity item, to be used within [BatchWriteItem o
 
 :::info
 
-Check the [batching documentation](../5-batching/index.md) to learn how to use `BatchPutItemRequests`.
+Check the [Batching Documentation](../5-batching/index.md) to learn how to use `BatchPutItemRequests`.
 
 :::
 
@@ -20,6 +20,7 @@ import { BatchPutItemRequest } from 'dynamodb-toolbox/entity/actions/batchPut'
 
 const request = PokemonEntity.build(BatchPutItemRequest)
 
+const params = request.params()
 await batchWrite([request, ...otherRequests])
 ```
 

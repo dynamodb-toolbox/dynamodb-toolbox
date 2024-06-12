@@ -1,5 +1,5 @@
 ---
-title: Batches 👷
+title: Batching 👷
 sidebar_custom_props:
   sidebarActionTitle: true
 ---

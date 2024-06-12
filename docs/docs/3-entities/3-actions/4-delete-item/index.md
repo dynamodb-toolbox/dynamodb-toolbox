@@ -98,7 +98,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
 await PokemonEntity.build(DeleteItemCommand)
   .key({ pokemonId: 'pikachu1' })
   .options({
-    condition: { attr: 'level', eq: 49 }
+    condition: { attr: 'archived', eq: true }
   })
   .send()
 ```

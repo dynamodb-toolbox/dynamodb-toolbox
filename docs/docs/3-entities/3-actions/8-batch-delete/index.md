@@ -10,7 +10,7 @@ Build a `DeleteItem` request on an entity item, to be used within [BatchWriteIte
 
 :::info
 
-Check the [batching documentation](../5-batching/index.md) to learn how to use `BatchDeleteItemRequests`.
+Check the [Batching Documentation](../5-batching/index.md) to learn how to use `BatchDeleteItemRequests`.
 
 :::
 
@@ -20,6 +20,7 @@ import { BatchDeleteItemRequest } from 'dynamodb-toolbox/entity/actions/batchDel
 
 const request = PokemonEntity.build(BatchDeleteItemRequest)
 
+const params = request.params()
 await batchWrite([request, ...otherRequests])
 ```
 
@@ -34,9 +35,7 @@ The key of the item to delete (i.e. attributes that are tagged as part of the pr
 ```ts
 const request = PokemonEntity.build(
   BatchDeleteItemRequest
-).key({
-  pokemonId: 'pikachu1'
-})
+).key({ pokemonId: 'pikachu1' })
 ```
 
 You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `BatchDeleteItemRequest` key:
