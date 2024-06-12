@@ -91,9 +91,9 @@ const transaction = PokemonEntity.build(
 
 Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html#API_TransactWriteItems_RequestParameters) for more details):
 
-| Option      |               Type                | Default | Description                                                                                                                                                                                                                                   |
-| ----------- | :-------------------------------: | :-----: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition` | `Condition<typeof PokemonEntity>` |    -    | A condition that must be satisfied in order for a conditional DeleteItem transaction to succeed.<br/><br/>See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| Option      |               Type                | Default | Description                                                                                                                                                                                                                          |
+| ----------- | :-------------------------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `condition` | `Condition<typeof PokemonEntity>` |    -    | A condition that must be satisfied in order for the `DeleteItemTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
 
 ```ts
 const transaction = PokemonEntity.build(

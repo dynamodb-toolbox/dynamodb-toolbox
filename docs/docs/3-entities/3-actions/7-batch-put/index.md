@@ -38,7 +38,7 @@ const request = PokemonEntity.build(
 ).item({
   pokemonId: 'pikachu1',
   name: 'Pikachu',
-  type: 'electric',
+  pokeType: 'electric',
   level: 50,
   ...
 })
@@ -62,6 +62,6 @@ const request = PokemonEntity.build(
 
 :::info
 
-Contrary to [`PutItems`](../2-put-item/index.md), batch writes cannot be [conditioned](../17-parse-condition/index.md), nor return the values of the written items.
+Contrary to [`PutItemCommands`](../2-put-item/index.md), batch writes cannot be [conditioned](../17-parse-condition/index.md), nor return the previous values of the written items.
 
 :::

@@ -157,7 +157,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             <td>
               For each entity name, a condition that must be satisfied in order for evaluated items of this entity to be returned (improves performances but does not reduce costs).
               <br/><br/>Requires <a href="#entities"><code>entities</code></a>.
-              <br/><br/>See the <a href="../../entities/actions/parse-condition#building-conditions"><code>ConditionParser</code> action</a> for more details on how to write conditions.
+              <br/><br/>See the <a href="../../entities/actions/parse-condition#building-conditions"><code>ConditionParser</code></a> action for more details on how to write conditions.
             </td>
         </tr>
         <tr>
@@ -167,7 +167,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             <td>
               To specify a list of attributes to retrieve (improves performances but does not reduce costs).
               <br/><br/>Requires <a href="#entities"><code>entities</code></a>. Paths must be common to all entities.
-              <br/><br/>See the <a href="../../entities/actions/parse-paths#paths"><code>PathParser</code> action</a> for more details on how to write attribute paths.
+              <br/><br/>See the <a href="../../entities/actions/parse-paths#paths"><code>PathParser</code></a> action for more details on how to write attribute paths.
             </td>
         </tr>
         <tr>

@@ -75,6 +75,7 @@ export { transactGetItems } from './entity/actions/transactions/transactGetItems
 export { transactWriteItems } from './entity/actions/transactions/transactWriteItems'
 export { GetItemTransaction } from './entity/actions/transactions/transactGetItem'
 export { PutItemTransaction } from './entity/actions/transactions/transactPutItem'
+export type { PutItemTransactionOptions } from './entity/actions/transactions/transactPutItem'
 export { UpdateItemTransaction } from './entity/actions/transactions/transactUpdateItem'
 export { DeleteItemTransaction } from './entity/actions/transactions/transactDeleteItem'
 export type { DeleteItemTransactionOptions } from './entity/actions/transactions/transactDeleteItem'
