@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # ConditionParser
 
-Builds a [Condition Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html) that can be used to condition write operations, or filter the results of a [Query](/docs/tables/actions/query) or a [Scan](/docs/tables/actions/scan):
+Builds a [Condition Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html) that can be used to condition write operations, or filter the results of a [Query](../../../2-tables/2-actions/2-query/index.md) or a [Scan](../../../2-tables/2-actions/1-scan/index.md):
 
 ```ts
 import { ConditionParser } from 'v1/entity/actions/parseCondition'
@@ -59,16 +59,16 @@ const {
 
 ### `setId(...)`
 
-Adds a prefix to expression attribute keys. Useful to avoid conflicts when using severals conditions in a single command:
+Adds a prefix to expression attribute keys. Useful to avoid conflicts when using severals expressions in a single command:
 
 ```ts
 PokemonEntity.build(ConditionParser)
   .parse({ attr: 'level', gte: 50 })
   .toCommandOptions()
 // => {
+//   ConditionExpression: '#c_1 >= :c_1',
 //   ExpressionAttributeNames: { '#c_1': 'sk' },
-//   ExpressionAttributeValues: { ':c_1': 50 },
-//   ConditionExpression: '#c_1 >= :c_1'
+//   ExpressionAttributeValues: { ':c_1': 50 }
 // }
 
 PokemonEntity.build(ConditionParser)
@@ -76,9 +76,9 @@ PokemonEntity.build(ConditionParser)
   .parse({ attr: 'level', gte: 50 })
   .toCommandOptions()
 // => {
+//   ConditionExpression: '#c0_1 >= :c0_1',
 //   ExpressionAttributeNames: { '#c0_1': 'sk' },
-//   ExpressionAttributeValues: { ':c0_1': 50 },
-//   ConditionExpression: '#c0_1 >= :c0_1'
+//   ExpressionAttributeValues: { ':c0_1': 50 }
 // }
 ```
 
@@ -394,6 +394,25 @@ const notElectric: Condition<typeof PokemonEntity> = {
     attr: 'pokeType',
     eq: 'electric'
   }
+}
+```
+
+</TabItem>
+<TabItem value="nested" label="Nested">
+
+```ts
+const nestedCondition: Condition<typeof PokemonEntity> = {
+  and: [
+    {
+      // Level ≥ 50 or ≤ 20...
+      or: [
+        { attr: 'level', gte: 50 },
+        { not: { attr: 'level', gt: 20 } }
+      ]
+    },
+    // ...and pokeType not 'electric'
+    { not: { attr: 'pokeType', eq: 'electric' } }
+  ]
 }
 ```
 

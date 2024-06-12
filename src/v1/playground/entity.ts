@@ -13,7 +13,8 @@ import {
   KeyInput,
   UpdateItemInput,
   prefix,
-  EntityFormatter
+  EntityFormatter,
+  EntityPathParser
 } from 'v1'
 
 import { MyTable } from './table'
@@ -41,7 +42,11 @@ export const UserEntity = new EntityV2({
   }))
 })
 
-const yo = UserEntity.build(EntityFormatter).format({ foo: 'bar' }, { attributes: ['userId'] })
+console.log(
+  UserEntity.build(EntityPathParser).setId('0').parse(['userId', 'age']).toCommandOptions()
+)
+
+// const yo = UserEntity.build(EntityFormatter).format({ foo: 'bar' }, { attributes: ['userId'] })
 
 type UserPutItemInput = PutItemInput<typeof UserEntity>
 type SavedUser = SavedItem<typeof UserEntity>
