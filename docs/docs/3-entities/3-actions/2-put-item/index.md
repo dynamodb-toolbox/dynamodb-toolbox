@@ -94,12 +94,12 @@ await PokemonEntity.build(PutItemCommand)
 
 Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_RequestParameters) for more details):
 
-| Option         |               Type                | Default  | Description                                                                                                                                                                                                          |
-| -------------- | :-------------------------------: | :------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for a conditional PutItem operation to succeed.<br/><br/>See the [`ConditionParser` action](../17-parse-condition/index.md) for more details on how to write conditions. |
-| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | Use `returnValues` if you want to get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                         |
-| `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                         |
-| `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                             |
+| Option         |               Type                | Default  | Description                                                                                                                                                                                                                              |
+| -------------- | :-------------------------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for a conditional PutItem operation to succeed.<br/><br/>See the [`ConditionParser` action](../17-parse-condition/index.md#building-conditions) for more details on how to write conditions. |
+| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | Use `returnValues` if you want to get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                             |
+| `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                                             |
+| `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                                 |
 
 :::noteExamples
 
