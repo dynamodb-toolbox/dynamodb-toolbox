@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-toolbox",
-  "description": "Light-weight and type-safe query builder for DynamoDB and TypeScript.",
+  "description": "Lightweight and type-safe query builder for DynamoDB and TypeScript.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "exports": {
     ".": "./dist/index.js",

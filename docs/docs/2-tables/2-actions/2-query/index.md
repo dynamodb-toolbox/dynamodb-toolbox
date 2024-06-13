@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # QueryCommand
 
-Performs a [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on a `Table`.
+Performs a [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on a `Table`:
 
 ```ts
 import { QueryCommand } from 'dynamodb-toolbox/table/actions/query'

@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # UpdateItemCommand
 
-Performs a [UpdateItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html) on an entity item.
+Performs a [UpdateItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html) on an entity item:
 
 ```ts
 import { UpdateItemCommand } from 'dynamodb-toolbox/entity/actions/update'

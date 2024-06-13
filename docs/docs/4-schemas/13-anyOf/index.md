@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # AnyOf
 
-Defines a union of types, i.e. a range of possible types:
+Defines a **union of types**, i.e. a range of possible types:
 
 ```ts
 import { anyOf } from 'dynamodb-toolbox/attribute/anyOf'

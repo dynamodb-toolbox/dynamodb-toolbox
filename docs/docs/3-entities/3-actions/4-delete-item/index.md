@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # DeleteItemCommand
 
-Performs a [DeleteItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html) on an entity item.
+Performs a [DeleteItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html) on an entity item:
 
 ```ts
 import { DeleteItemCommand } from 'dynamodb-toolbox/entity/actions/delete'
