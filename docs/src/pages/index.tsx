@@ -7,11 +7,10 @@ import { BsBalloonHeartFill } from 'react-icons/bs'
 import { FaGithub, FaHeart } from 'react-icons/fa'
 import { MdOutlineImportContacts } from 'react-icons/md'
 import { SlSpeech } from 'react-icons/sl'
-import Footer from '@theme/Footer'
 
 type Link = { id: string; label: JSX.Element; to: string }
 
-const links: Link[] = [
+const headerLinks: Link[] = [
   {
     id: 'docs',
     label: (
@@ -46,7 +45,26 @@ const links: Link[] = [
         <SlSpeech className="text-lg" /> Contact
       </div>
     ),
-    to: 'mailto:thomasa@theodo.fr'
+    to: 'mailto:thomas.aribart@gmail.com'
+  }
+]
+
+const footerLinks = [
+  {
+    label: 'Contact',
+    to: 'mailto:thomas.aribart@gmail.com'
+  },
+  {
+    label: '@ThomasAribart',
+    to: 'https://twitter.com/aribartt'
+  },
+  {
+    label: '@JeremyDaly',
+    to: 'https://twitter.com/jeremy_daly'
+  },
+  {
+    label: 'Off-by-none (newsletter)',
+    to: 'https://offbynone.io/'
   }
 ]
 
@@ -61,7 +79,7 @@ const Home = (): JSX.Element => (
     </Head>
     <div className="flex flex-col gap-12 md:gap-16">
       <div className="flex flex-wrap py-2 px-4 items-center justify-center text-sm max-w-screen-xl mx-auto md:text-base md:self-end">
-        {links.map(({ id, label, to }) => {
+        {headerLinks.map(({ id, label, to }) => {
           const children = (
             <div className="p-2 opacity-90 hover:opacity-100">
               {label}
@@ -273,8 +291,8 @@ const Home = (): JSX.Element => (
           </Link>
         </div>
       </div>
-      <div>
-        <div className="flex flex-col items-center text-center">
+      <div className="flex flex-col items-center text-center">
+        <div>
           <p className="text text-balance opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
             DynamoDB-Toolbox is a light abstraction layer
             over the Document Client that will{' '}
@@ -348,7 +366,7 @@ const Home = (): JSX.Element => (
               </p>
               <p className="text-sm dark:text-gray-200 leading-6">
                 Our motto is simple:{' '}
-                <b>Ship only what you need</b>.
+                <b>Ship only what you use</b>.
                 {/* TODO: Create a link and mention the lines of code */}
               </p>
             </div>
@@ -356,7 +374,30 @@ const Home = (): JSX.Element => (
         </div>
       </div>
     </div>
-    <Footer />
+    <div className="navbar navbar--dark flex flex-col items-start justify-center py-10 text-sm shadow-xl shadow-black/10">
+      <div className="full-width">
+        <div className="flex justify-around md:justify-center gap-3">
+          {footerLinks.map(item => (
+            <div key={item.to} className="text-center">
+              {item.to.startsWith('http') ? (
+                <a
+                  href={item.to}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link to={item.to}>{item.label}</Link>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="text-center opacity-20 mt-2">
+          &copy; {new Date().getFullYear()} DynamoDB-Toolbox
+        </div>
+      </div>
+    </div>
   </>
 )
 
