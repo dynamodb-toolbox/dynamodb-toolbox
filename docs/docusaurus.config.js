@@ -85,58 +85,6 @@ const config = {
           }
         ]
       },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Documentation',
-            items: [
-              {
-                label: 'What is DynamoDB Toolbox?',
-                to: '/docs/getting-started/overview'
-              },
-              {
-                label: 'Quick Start',
-                to: '/docs/quick-start'
-              },
-              {
-                label: 'Contributing',
-                to: '/docs/contributing/'
-              }
-            ]
-          },
-          {
-            title: 'Community',
-            items: [
-              {
-                label: 'GitHub Discussions',
-                href:
-                  'https://github.com/jeremydaly/dynamodb-toolbox/discussions'
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/jeremy_daly'
-              }
-            ]
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'GitHub',
-                href:
-                  'https://github.com/jeremydaly/dynamodb-toolbox'
-              },
-              {
-                label: 'Issues',
-                href:
-                  'https://github.com/jeremydaly/dynamodb-toolbox/issues'
-              }
-            ]
-          }
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} - Jeremy Daly`
-      },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme
