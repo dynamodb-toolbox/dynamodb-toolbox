@@ -6,13 +6,7 @@ sidebar_custom_props:
 
 # DeleteItemTransaction
 
-Build a `DeleteItem` transaction on an entity item, to be used within [TransactWriteItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
-
-:::info
-
-Check the [Transaction Documentation](../9-transactions/index.md) to learn how to use `DeleteItemTransactions`.
-
-:::
+Build a `DeleteItem` transaction on an entity item, to be used within [TransactWriteItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html):
 
 ```ts
 import { transactWriteItems } from 'dynamodb-toolbox/entity/actions/transactWrite'
@@ -28,6 +22,12 @@ await transactWriteItems([
   ...otherTransactions
 ])
 ```
+
+:::info
+
+Check the [Transaction Documentation](../9-transactions/index.md) to learn how to use `DeleteItemTransactions`.
+
+:::
 
 ## Request
 

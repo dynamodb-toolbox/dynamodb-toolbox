@@ -6,7 +6,7 @@ sidebar_custom_props:
 
 # BatchDeleteItemRequest
 
-Build a `DeleteItem` request on an entity item, to be used within [BatchWriteItem operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html).
+Build a `DeleteItem` request on an entity item, to be used within [BatchWriteItem operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html):
 
 :::info
 

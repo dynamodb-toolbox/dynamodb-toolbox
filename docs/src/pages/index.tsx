@@ -2,13 +2,9 @@
 import Head from '@docusaurus/Head'
 import Link from '@docusaurus/Link'
 import React from 'react'
-import { BsStars } from 'react-icons/bs'
-import {
-  FaGithub,
-  FaHeart,
-  FaPuzzlePiece,
-  FaHandHoldingHeart
-} from 'react-icons/fa'
+import { GiFeather, GiMuscleUp } from 'react-icons/gi'
+import { BsBalloonHeartFill } from 'react-icons/bs'
+import { FaGithub, FaHeart } from 'react-icons/fa'
 import { MdOutlineImportContacts } from 'react-icons/md'
 import { SlSpeech } from 'react-icons/sl'
 import Footer from '@theme/Footer'
@@ -34,15 +30,6 @@ const links: Link[] = [
     ),
     to: 'https://github.com/jeremydaly/dynamodb-toolbox'
   },
-  // {
-  //   id: 'examples',
-  //   label: (
-  //     <div className="flex items-center gap-2">
-  //       <FaRegCopy className="text-lg" /> Examples
-  //     </div>
-  //   ),
-  //   to: 'https://github.com/castore-dev/castore/tree/main/demo/blueprint/src'
-  // },
   {
     id: 'sponsor',
     label: (
@@ -66,7 +53,10 @@ const links: Link[] = [
 const Home = (): JSX.Element => (
   <>
     <Head>
-      <title>DynamoDB Toolbox | DynamoDB made easy</title>
+      <title>
+        DynamoDB-Toolbox | Lightweight and type-safe query
+        builder for DynamoDB
+      </title>
       <meta name="description" content="TODO." />
     </Head>
     <div className="flex flex-col gap-12 md:gap-16">
@@ -90,7 +80,7 @@ const Home = (): JSX.Element => (
           )
         })}
       </div>
-      <div className="flex flex-col items-center gap-3 text-center px-4">
+      <div className="flex flex-col items-center gap-12 text-center px-4">
         <div className="flex gap-2 lg:gap-4 items-center">
           <div className="w-[40px] md:w-[60px] lg:w-[100px]">
             <svg
@@ -248,69 +238,120 @@ const Home = (): JSX.Element => (
             </span>
           </h1>
         </div>
-        <h2 className="font-regular text-2xl max-w-md md:text-3xl lg:text-5xl lg:max-w-2xl">
-          <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r bg-color-gradient">
-            DynamoDB
+        <h2 className="font-light text-2xl max-w-md md:text-3xl lg:text-5xl lg:max-w-2xl">
+          <b className="text-transparent bg-clip-text bg-gradient-to-l bg-color-gradient">
+            Lightweight
+          </b>{' '}
+          and{' '}
+          <b className="text-transparent bg-clip-text bg-gradient-to-r bg-color-gradient">
+            type-safe
+          </b>{' '}
+          <span className="text-underlined font-large">
+            query builder
           </span>{' '}
-          made easy
+          for{' '}
+          <b className="text-transparent bg-clip-text bg-gradient-to-r bg-color-gradient">
+            DynamoDB
+          </b>
         </h2>
-        <p className="text opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
-          DynamoDB is a key-value DB designed to run
-          high-performance applications at any scale.
-        </p>
-        <p className="text opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
-          It automatically scales up and down based on your
-          current traffic, and does not require maintaining
-          connections, which makes it the go-to DB service
-          for serverless developers on AWS.
-        </p>
-        <p className="text opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
-          However, if you’ve ever used it, you will know
-          that the SDK is{' '}
-          <strong>very painful to use</strong>. 😅
-        </p>
-        <p className="text opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
-          ...well, <strong>not anymore</strong> 💪
-        </p>
-        <Link
-          to="./docs/getting-started/overview"
-          className="py-2 px-4 bg-gradient-to-r bg-color-gradient rounded text-white uppercase font-extrabold"
-        >
-          👉 Get Started
-        </Link>
+        <div className="flex flex-col items-center gap-3 text-center px-4">
+          <p className="text text-balance opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
+            For those who love{' '}
+            <a href="https://aws.amazon.com/dynamodb/">
+              DynamoDB
+            </a>{' '}
+            but find the Document Client not that comfy 🛋️
+          </p>
+          <p className="text opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
+            <b>...we've got your back!</b>
+          </p>
+          <Link
+            to="./docs/getting-started/overview"
+            className="py-2 px-4 bg-gradient-to-r bg-color-gradient rounded text-white uppercase font-extrabold"
+          >
+            👉 Get Started
+          </Link>
+        </div>
       </div>
-      <div className="text-lg flex flex-col gap-12 p-8 max-w-[1200px] mx-auto md:flex-row">
-        <div className="flex-1 flex flex-col gap-8 items-center max-w-[400px]">
-          <BsStars className="text-primary-light text-6xl" />
-          <div className="flex flex-col gap-1 text-center">
-            <h3 className="uppercase text-xl font-black">
-              Benefit 1
-            </h3>
-            <p className="text-sm dark:text-gray-200 leading-6">
-              Benefit 1 text...
-            </p>
-          </div>
+      <div>
+        <div className="flex flex-col items-center text-center">
+          <p className="text text-balance opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
+            DynamoDB-Toolbox is a light abstraction layer
+            over the Document Client that will{' '}
+            <b>
+              turn your DynamoDB journey into a ✨ bliss ✨
+            </b>
+          </p>
         </div>
-        <div className="flex-1 flex flex-col gap-8 items-center max-w-[400px]">
-          <FaPuzzlePiece className="text-primary-lightest text-6xl" />
-          <div className="flex flex-col gap-1 text-center">
-            <h3 className="uppercase text-center text-xl font-black">
-              Benefit 2
-            </h3>
-            <p className="text-sm dark:text-gray-200 leading-6">
-              Benefit 2 text...
-            </p>
+        <div className="text-lg flex flex-col gap-12 p-8 max-w-[1200px] mx-auto md:flex-row">
+          <div className="flex-1 flex flex-col gap-8 items-center max-w-[400px]">
+            <BsBalloonHeartFill className="text-primary-light text-6xl" />
+            <div className="flex flex-col gap-1 text-center">
+              <h3 className="uppercase text-xl font-black">
+                Developer friendly
+              </h3>
+              <p className="text-sm dark:text-gray-200 leading-6">
+                DynamoDB-Toolbox does all the{' '}
+                <b>
+                  heavy-lifting of crafting those cumbersome
+                  DynamoDB
+                </b>{' '}
+                requests for you. It make your code{' '}
+                <b>clearer</b>, more <b>succinct</b> and{' '}
+                <b>maintainable</b>.
+              </p>
+              <p className="text-sm dark:text-gray-200 leading-6">
+                Also, we absolutely LOVE TypeScript! If you
+                do too, you're in the right place: We{' '}
+                <b>push type-safety to the limit</b> in
+                everything we do 🙂
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="flex-1 flex flex-col gap-8 items-center max-w-[400px]">
-          <FaHandHoldingHeart className="text-primary-lighter text-6xl" />
-          <div className="flex flex-col gap-1 text-center">
-            <h3 className="uppercase text-center text-xl font-black">
-              Benefit 3
-            </h3>
-            <p className="text-sm dark:text-gray-200 leading-6">
-              Benefit 3 text...
-            </p>
+          <div className="flex-1 flex flex-col gap-8 items-center max-w-[400px]">
+            <GiMuscleUp className="text-primary-light text-6xl" />
+            <div className="flex flex-col gap-1 text-center">
+              <h3 className="uppercase text-center text-xl font-black">
+                Reliable
+              </h3>
+              <p className="text-sm dark:text-gray-200 leading-6">
+                At each interaction with DynamoDB, pushed
+                and fetched items are validated against{' '}
+                <b>schemas you define</b>, guaranteeing the{' '}
+                <b>consistency</b> of your data and the{' '}
+                <b>reliability</b> of your code.
+              </p>
+              <p className="text-sm dark:text-gray-200 leading-6">
+                DynamoDB-Toolbox exposes rich schema syntax
+                that supports a broad range of edge cases
+                like <b>defaults</b>, <b>composition</b>,{' '}
+                <b>transformations</b> and{' '}
+                <b>polymorphism</b>.
+              </p>
+            </div>
+          </div>
+          <div className="flex-1 flex flex-col gap-8 items-center max-w-[400px]">
+            <GiFeather className="text-primary-light text-6xl" />
+            <div className="flex flex-col gap-1 text-center">
+              <h3 className="uppercase text-center text-xl font-black">
+                Lightweight
+              </h3>
+              <p className="text-sm dark:text-gray-200 leading-6">
+                DynamoDB-Toolbox was designed with
+                Serverless in mind. We believe that{' '}
+                <b>bundle sizes matter</b>.
+              </p>
+              <p className="text-sm dark:text-gray-200 leading-6">
+                That's why we made our core features{' '}
+                <b>ultra-lightweight</b>, while keeping the
+                rest <i>opt-in</i> and <b>tree-shakable</b>.
+              </p>
+              <p className="text-sm dark:text-gray-200 leading-6">
+                Our motto is simple:{' '}
+                <b>Ship only what you need</b>.
+                {/* TODO: Create a link and mention the lines of code */}
+              </p>
+            </div>
           </div>
         </div>
       </div>

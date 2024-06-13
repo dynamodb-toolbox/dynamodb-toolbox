@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # PutItemCommand
 
-Performs a [PutItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html) on an entity item.
+Performs a [PutItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html) on an entity item:
 
 ```ts
 import { PutItemCommand } from 'dynamodb-toolbox/entity/actions/put'

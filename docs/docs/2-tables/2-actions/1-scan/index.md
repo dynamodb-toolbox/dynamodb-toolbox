@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # ScanCommand
 
-Performs a [Scan Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html) on a `Table`.
+Performs a [Scan Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html) on a `Table`:
 
 ```ts
 import { ScanCommand } from 'dynamodb-toolbox/table/actions/scan'
