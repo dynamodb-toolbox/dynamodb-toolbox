@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # GetItemCommand
 
-Performs a [GetItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html) on an entity item.
+Performs a [GetItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html) on an entity item:
 
 ```ts
 import { GetItemCommand } from 'dynamodb-toolbox/entity/actions/get'

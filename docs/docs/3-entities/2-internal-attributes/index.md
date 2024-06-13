@@ -9,8 +9,8 @@ import TabItem from '@theme/TabItem';
 
 The `Entity` constructor automatically adds **internal attributes** to your schemas:
 
-- An [Entity Attribute](#entity) (required) that **tags items with the `name` of the entity**.
-- Two [Timestamp Attributes](#timestamp-attributes) (optional) that **record when the item was created and last modified** with timestamps in [ISO 8601 format](https://wikipedia.org/wiki/ISO_8601).
+- An [Entity Attribute](#entity) _(required)_ that **tags items with the `name` of the entity**.
+- Two [Timestamp Attributes](#timestamp-attributes) _(optional)_ that **record when the item was created and last modified** with timestamps in [ISO 8601 format](https://wikipedia.org/wiki/ISO_8601).
 
 If the schema contains a conflicting attribute, the constructor throws a `reservedAttributeName` error. To avoid this, DynamoDB-Toolbox let you customize the name and `savedAs` property of the internal attributes.
 

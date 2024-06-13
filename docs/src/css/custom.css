@@ -10,8 +10,8 @@
   --ifm-color-primary-dark: #1d4d7d;
   --ifm-color-primary-darker: #0e355b;
   --ifm-color-primary-darkest: #06283d;
-  --ifm-color-primary-light: #6b9ee1;
-  --ifm-color-primary-lighter: #85b4f2;
+  --ifm-color-primary-light: #6598db;
+  --ifm-color-primary-lighter: #85baff;
   --ifm-color-primary-lightest: #a2c8f7;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
@@ -134,6 +134,10 @@
   text-transform: uppercase;
 }
 
+.text-balance {
+  text-wrap: balance;
+}
+
 .text-center {
   text-align: center;
 }
@@ -167,6 +171,13 @@
   line-height: 1.25rem;
 }
 
+.text-underlined {
+  text-decoration: underline dashed;
+  text-decoration-color: #ffd700;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 2px;
+}
+
 .leading-6 {
   line-height: 1.5rem;
 }
@@ -183,8 +194,12 @@
   font-weight: 700;
 }
 
-.font-regular {
-  font-weight: 400;
+.font-large {
+  font-weight: 500;
+}
+
+.font-light {
+  font-weight: 200;
 }
 
 .rounded {
@@ -226,7 +241,7 @@ a:hover,
 
 .bg-color-gradient {
   --tw-gradient-stops: var(--ifm-color-primary-light),
-    var(--ifm-color-primary-lightest);
+    var(--ifm-color-primary-lighter);
 }
 
 .w-\[40px\] {
