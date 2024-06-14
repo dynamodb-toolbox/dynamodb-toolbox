@@ -49,6 +49,8 @@ The `Table` primary key is derived from the validated input by applying [`comput
 
 ### `parse(...)`
 
+<p style={{ marginTop: '-15px' }}><i><code>(input: unknown, options?: ParsingOptions) => ParsingOutput&lt;ENTITY&gt;</code></i></p>
+
 Parses an input of any type:
 
 <!-- prettier-ignore -->
@@ -56,7 +58,7 @@ Parses an input of any type:
 const parsed = PokemonEntity.build(EntityParser).parse(input)
 ```
 
-You can provide options as second argument. Available options are:
+You can provide **parsing options** as second argument. Available options are:
 
 | Option           |              Type              | Default | Description                                                                                                                        |
 | ---------------- | :----------------------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -77,7 +79,7 @@ const pokemon = {
   ...
 }
 
-const parsed = PokemonEntity.build(EntityParser).parse(input)
+const parsed = PokemonEntity.build(EntityParser).parse(pokemon)
 ```
 
 </TabItem>
@@ -146,6 +148,8 @@ const savedItem: SavedItem<typeof PokemonEntity> = {
 ```
 
 ### `reparse(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(input: ParsedItem&lt;ENTITY&gt;, options?: ParsingOptions) => ParsingOutput&lt;ENTITY&gt;</code></i></p>
 
 Similar to [`.parse`](#parse), but with the input correctly typed (taking the mode into account) instead of `unknown`:
 
