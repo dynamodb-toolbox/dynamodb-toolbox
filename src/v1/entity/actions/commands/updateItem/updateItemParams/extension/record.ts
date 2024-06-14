@@ -8,9 +8,9 @@ import {
 } from 'v1/schema/actions/parse'
 import { isObject } from 'v1/utils/validation/isObject'
 
-import type { UpdateItemInputExtension } from '../../../types'
-import { $SET, $REMOVE } from '../../../constants'
-import { isSetUpdate } from '../../../utils'
+import type { UpdateItemInputExtension } from '../../types'
+import { $SET, $REMOVE } from '../../constants'
+import { isSetUpdate } from '../../utils'
 
 import { parseUpdateExtension } from './attribute'
 

@@ -44,7 +44,7 @@ const strRecord = record(string(), string().key())
 const strRecord = record(string(), string().default('foo'))
 ```
 
-Record keys share the same constraints and must be of type [`string`](./4-string.md).
+Record keys share the same constraints and must be of type [`string`](../7-string/index.md).
 
 ## Options
 

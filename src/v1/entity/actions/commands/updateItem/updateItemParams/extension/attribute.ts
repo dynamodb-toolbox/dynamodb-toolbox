@@ -2,9 +2,9 @@ import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/
 import type { PrimitiveAttribute, AttributeBasicValue, Attribute } from 'v1/schema/attributes'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { UpdateItemInputExtension } from '../../../types'
-import { $REMOVE } from '../../../constants'
-import { isReferenceUpdate } from '../../../utils'
+import type { UpdateItemInputExtension } from '../../types'
+import { $REMOVE } from '../../constants'
+import { isReferenceUpdate } from '../../utils'
 
 import { parseNumberExtension } from './number'
 import { parseSetExtension } from './set'

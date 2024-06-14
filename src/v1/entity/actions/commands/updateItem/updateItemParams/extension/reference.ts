@@ -4,9 +4,9 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import { isArray } from 'v1/utils/validation/isArray'
 import { isString } from 'v1/utils/validation/isString'
 
-import type { UpdateItemInputExtension, ReferenceExtension } from '../../../types'
-import { $GET } from '../../../constants'
-import { isReferenceUpdate } from '../../../utils'
+import type { UpdateItemInputExtension, ReferenceExtension } from '../../types'
+import { $GET } from '../../constants'
+import { isReferenceUpdate } from '../../utils'
 
 export const parseReferenceExtension: ExtensionParser<
   ReferenceExtension,

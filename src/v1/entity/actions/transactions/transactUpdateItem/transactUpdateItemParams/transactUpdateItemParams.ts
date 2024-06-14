@@ -6,7 +6,7 @@ import type { EntityV2 } from 'v1/entity'
 import { EntityParser } from 'v1/entity/actions/parse'
 import type { UpdateItemInput } from 'v1/entity/actions/commands/updateItem'
 import { parseUpdate } from 'v1/entity/actions/commands/updateItem/updateExpression/parse'
-import { parseUpdateExtension } from 'v1/entity/actions/commands/updateItem/updateItemParams/extension/parseExtension'
+import { parseUpdateExtension } from 'v1/entity/actions/commands/updateItem/updateItemParams/extension'
 
 import type { UpdateItemTransactionOptions } from '../options'
 
