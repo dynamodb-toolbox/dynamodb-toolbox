@@ -4,9 +4,9 @@ import { Parser, ExtensionParser, ExtensionParserOptions } from 'v1/schema/actio
 import { isArray } from 'v1/utils/validation/isArray'
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { UpdateItemInputExtension } from '../../../types'
-import { $SUM, $SUBTRACT, $ADD } from '../../../constants'
-import { isSumUpdate, isSubtractUpdate, isAddUpdate } from '../../../utils'
+import type { UpdateItemInputExtension } from '../../types'
+import { $SUM, $SUBTRACT, $ADD } from '../../constants'
+import { isSumUpdate, isSubtractUpdate, isAddUpdate } from '../../utils'
 
 import { parseReferenceExtension } from './reference'
 

@@ -87,7 +87,7 @@ const PokemonEntity = new Entity({
 
 An entity must belong to a Table, but the same Table can contain items from several entities. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables, it'll still make your life much easier (batch gets and writes support multiple tables, so we've got you covered).
 
-Once you have defined your `Tables` and `Entities`. You can start using them in combination with **Actions**.
+Once you have defined your `Tables` and `Entities`. You can start using them in combination with [Actions](#methods-vs-actions).
 
 ## Methods vs Actions
 
@@ -121,13 +121,12 @@ There are three types of actions: [Table Actions](../../2-tables/2-actions/1-sca
 
 Each type of action is essentially a class that respectively accepts a `Table`, `Entity` or a `Schema` as the first parameter of its constructor, with all other parameters being optional.
 
-For instance, here's the definition of a simple `NameGetter` action that... well, gets the name of an `Entity`:
+For instance, here's the definition of a simple `NameGetter` action that... well, gets the name of an `Entity`\*:
 
 ```ts
 import {
   Entity,
-  EntityAction,
-  $entity
+  EntityAction
 } from 'dynamodb-toolbox/entity'
 
 export class NameGetter<
@@ -138,7 +137,7 @@ export class NameGetter<
   }
 
   get(): ENTITY['name'] {
-    return this[$entity].name
+    return this.entity.name
   }
 }
 
@@ -148,13 +147,13 @@ const pokemonEntityName = nameGetter.get()
 // => "POKEMON"
 ```
 
-`PokemonEntity.build` simply instanciates a new action with `PokemonEntity` as the constructor first parameter. Another way to do it would be:
+`PokemonEntity.build` simply **instanciates a _new_ action** with `PokemonEntity` as the constructor first parameter. Another way to do it would be:
 
 ```ts
 const nameGetter = new NameGetter(PokemonEntity)
 ```
 
-Although this action-oriented syntax is (we find) less readable than the entity-oriented one, it leads to exactly the same result, so feel free to use it if you prefer!
+Although this action-oriented syntax is (we find) **less readable** than the entity-oriented one, it leads to exactly the same result, so feel free to use it if you prefer!
 
 Here's a comparison of both syntaxes on the [`GetItemCommand`](/docs/entities/actions/get-item) action:
 
@@ -172,5 +171,9 @@ const { Item } = await new GetItemCommand(
   { consistent: true }
 ).send()
 ```
+
+<!-- Required for prettier not to prefix * with anti-slash -->
+<!-- prettier-ignore -->
+<sup><i>* Actually, we would need touse the <code>$entity</code> symbol to access the entity, but I kept it simple for the sake of the example.</i></sup>
 
 <!-- TODO: Add examples next -->

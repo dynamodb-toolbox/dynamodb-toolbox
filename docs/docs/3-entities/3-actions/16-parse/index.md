@@ -1,5 +1,5 @@
 ---
-title: Parse 👷
+title: Parse
 sidebar_custom_props:
   sidebarActionType: util
 ---
@@ -7,55 +7,173 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Parser 👷
+# EntityParser
 
-Parses an [Item](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.TablesItemsAttributes) for the provided `Entity`.
-
-Given an input of any type, validates that it respects the schema of the `Entity` and throws an error otherwise (based on the [Schema parser](../../../4-schemas/14-actions/1-parse.md) errors). Fills with defaults and links, and apply final transformation (i.e. `savedAs` and primitive `transforms`).
-
-By default, the parsing is for `put` operation, but it can be switched to `update` or `key`.
-
-The input is not muted. Additional fields are silently omitted.
-
-For more details on parsing, see the [Schema parser](../../../4-schemas/14-actions/1-parse.md). Errors are the same.
-
-## Usage
+Given an input of any type and a mode, validates that it respects the schema of the `Entity`:
 
 ```ts
 import { EntityParser } from 'dynamodb-toolbox/entity/actions/parse'
 
-const parser = PokemonEntity.build(EntityParser)
+const {
+  // 👇 Parsed item + Primary key
+  item,
+  key
+} = PokemonEntity.build(EntityParser).parse(input)
+```
 
-const { item: pikachu, key: pikachuKey } = parser.parse(
-  pikachuInput
+The default mode is `'put'`, but you can switch it to `'update'` or `'key'` if needed:
+
+```ts
+const parsed = PokemonEntity.build(EntityParser).parse(
+  keyInput,
+  // Additional options
+  { mode: 'key' }
 )
-
-parser.parse({ invalid: 'input' })
-// ❌ Throws an 'actions.parsePrimaryKey.invalidKeyPart' error
 ```
 
-## Typed Parser
+:::info
 
-By default, the parser input is typed as `unknown`. If you prefer, you can use the `EntityTParser` action. The API is strictly the same but inputs are hardly typed.
+This action is mostly a **wrapper around the [`SchemaParser`](../../../4-schemas/14-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first (in particular, error codes are the same).
 
+:::
+
+Note that:
+
+- Inputs are not mutated (additional fields are omitted)
+- The mode `defaults` and `links` are applied
+- Transformations (i.e. `savedAs` and `transforms`) are applied
+
+The `Table` primary key is derived from the validated input by applying [`computeKey`](../../1-usage/index.md#computekey) if it exists, or extracted from the transformed input otherwise.
+
+## Methods
+
+### `parse(...)`
+
+Parses an input of any type:
+
+<!-- prettier-ignore -->
 ```ts
-import { EntityOverParser } from 'dynamodb-toolbox/entity/actions/parse'
-
-const tParser = PokemonEntity.build(EntityTParser)
-
-// ❌ Additionally throws a type error
-tParser.parse({ invalid: 'input' })
+const parsed = PokemonEntity.build(EntityParser).parse(input)
 ```
 
-## Output
+You can provide options as second argument. Available options are:
 
-The output is typed as the primary key of the table.
+| Option           |              Type              | Default | Description                                                                                                                        |
+| ---------------- | :----------------------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`           | `'put'`, `'key'` or `'update'` | `'put'` | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.             |
+| `parseExtension` |          _(internal)_          |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `'update'` mode (check example below). |
 
-You can use the `PrimaryKey` type to explicitely type an object as a primary key:
+:::noteExamples
+
+<Tabs>
+<TabItem value="put" label="Put">
+
+<!-- prettier-ignore -->
+```ts
+const pokemon = {
+  pokemonId: 'pikachu1',
+  name: 'Pikachu',
+  types: ['Electric'],
+  ...
+}
+
+const parsed = PokemonEntity.build(EntityParser).parse(input)
+```
+
+</TabItem>
+<TabItem value="key" label="Key">
 
 ```ts
-import type { PrimaryKey } from 'dynamodb-toolbox/table/actions/parsePrimaryKey'
+const { key } = PokemonEntity.build(EntityParser).parse(
+  { pokemonId: 'pikachu1' },
+  { mode: 'key' }
+)
+```
 
-type PokeKey = PrimaryKey<typeof PokeTable>
-// => { partitionKey: string, level: number }
+</TabItem>
+<TabItem value="update" label="Update">
+
+```ts
+const { item } = PokemonEntity.build(EntityParser).parse(
+  { pokemonId: 'bulbasaur1', customName: 'PlantyDino' },
+  { mode: 'update' }
+)
+```
+
+</TabItem>
+<TabItem value="update-extended" label="Update (extended)">
+
+```ts
+import {
+  $add,
+  parseUpdateExtension
+} from 'dynamodb-toolbox/entity/actions/update'
+
+const { item } = PokemonEntity.build(EntityParser).parse(
+  // 👇 `$add` is an extension, so `parseExtension`  is needed
+  { pokemonId: 'pikachu1', customName: $add(1) },
+  { mode: 'update', parseExtension: parseUpdateExtension }
+)
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+You can use the `ParsedItem` type to explicitely type an object as a parsing output:
+
+```ts
+import type { ParsedItem } from 'dynamodb-toolbox/entity/actions/parse'
+
+const parsedItem: ParsedItem<
+  typeof PokemonEntity,
+  // 👇 Optional options
+  { mode: 'key' }
+  // ❌ Throws a type error
+> = { invalid: 'input' }
+```
+
+Note that the `SavedItem` type is actually based on it:
+
+```ts
+import type { SavedItem } from 'dynamodb-toolbox/entity/actions/parse'
+
+const savedItem: SavedItem<typeof PokemonEntity> = {
+  pokemonId: '123'
+  ...
+}
+```
+
+### `reparse(...)`
+
+Similar to [`.parse`](#parse), but with the input correctly typed (taking the mode into account) instead of `unknown`:
+
+```ts
+PokemonEntity.build(EntityParser)
+  // ❌ Throws a type error
+  .reparse({ invalid: 'input' })
+```
+
+You can use the `EntityParserInput` type to explicitely type an object as a parsing input:
+
+```ts
+import type { EntityParserInput } from 'dynamodb-toolbox/entity/actions/parse'
+
+const input: EntityParserInput<
+  typeof PokemonEntity,
+  // 👇 Optional options
+  { mode: 'key' }
+  // ❌ Throws a type error
+> = { invalid: 'input' }
+```
+
+Note that the `KeyInput` type is actually based on it:
+
+```ts
+import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
+
+const keyInput: KeyInput<typeof PokemonEntity> = {
+  pokemonId: 'pikachu1'
+}
 ```
