@@ -32,6 +32,8 @@ const {
 
 ### `parse(...)`
 
+<p style={{ marginTop: '-15px' }}><i><code>(condition: Condition&lt;ENTITY&gt;) => ConditionParser</code></i></p>
+
 Parses a condition. Throws an `invalidCondition` error if the condition is invalid:
 
 ```ts
@@ -43,7 +45,9 @@ PokemonEntity.build(ConditionParser).parse({
 
 Note that the `parse` method should only be used once per instance (for now). See [Building Conditions](#building-conditions) for more details on how to write conditions.
 
-### `toCommandOptions(...)`
+### `toCommandOptions()`
+
+<p style={{ marginTop: '-15px' }}><i><code>() => CommandOptions</code></i></p>
 
 Collapses the `ConditionParser` state to a set of options that can be used in a DynamoDB command:
 
@@ -58,6 +62,8 @@ const {
 ```
 
 ### `setId(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(id: string) => ConditionParser</code></i></p>
 
 Adds a prefix to expression attribute keys. Useful to avoid conflicts when using severals expressions in a single command:
 

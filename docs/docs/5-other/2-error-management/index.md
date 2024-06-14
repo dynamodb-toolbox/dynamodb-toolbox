@@ -11,7 +11,7 @@ await PokemonEntity
   .build(PutItemCommand)
   .item({ ..., level: 'not a number' })
   .send();
-// ❌ [parsing.invalidAttributeInput] Attribute level should be a number
+// ❌ [parsing.invalidAttributeInput] Attribute 'level' should be a number
 ```
 
 Some `DynamoDBToolboxErrors` also expose a `path` property (mostly in validations) and/or a `payload` property for additional context. If you need to handle them, TypeScript is your best friend, as the `code` property correctly discriminates the `DynamoDBToolboxError` type:
