@@ -53,6 +53,7 @@ export { DeleteItemCommand } from './entity/actions/commands/deleteItem'
 export type { DeleteItemOptions, DeleteItemResponse } from './entity/actions/commands/deleteItem'
 export {
   UpdateItemCommand,
+  parseUpdateExtension,
   $set,
   $get,
   $remove,

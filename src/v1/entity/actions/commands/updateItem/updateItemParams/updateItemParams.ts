@@ -8,7 +8,7 @@ import { EntityParser } from 'v1/entity/actions/parse'
 import type { UpdateItemInput } from '../types'
 import type { UpdateItemOptions } from '../options'
 import { parseUpdate } from '../updateExpression'
-import { parseUpdateExtension } from './extension/parseExtension'
+import { parseUpdateExtension } from './extension'
 import { parseUpdateItemOptions } from './parseUpdateItemOptions'
 
 export const updateItemParams = <

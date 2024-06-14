@@ -7,9 +7,9 @@ import { isObject } from 'v1/utils/validation/isObject'
 import { isInteger } from 'v1/utils/validation/isInteger'
 import { isArray } from 'v1/utils/validation/isArray'
 
-import type { UpdateItemInputExtension } from '../../../types'
-import { $SET, $REMOVE, $APPEND, $PREPEND } from '../../../constants'
-import { isSetUpdate, isAppendUpdate, isPrependUpdate } from '../../../utils'
+import type { UpdateItemInputExtension } from '../../types'
+import { $SET, $REMOVE, $APPEND, $PREPEND } from '../../constants'
+import { isSetUpdate, isAppendUpdate, isPrependUpdate } from '../../utils'
 
 import { parseReferenceExtension } from './reference'
 import { parseUpdateExtension } from './attribute'

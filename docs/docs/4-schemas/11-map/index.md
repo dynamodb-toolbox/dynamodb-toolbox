@@ -117,9 +117,9 @@ Note that if child attributes are required to derive the primary key, you must a
 
 ```ts
 const nameSchema = map({
-  // 👇 Will be required in get operations
+  // 👇 Required in get operations
   firstName: string().key(),
-  // 👇 Will not
+  // 👇 NOT required
   lastName: string()
 }).key()
 ```
