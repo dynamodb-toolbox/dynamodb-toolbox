@@ -23,7 +23,7 @@ export type {
 export { PathParser } from './schema/actions/parsePaths'
 export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/parsePaths'
 export { ConditionParser } from './schema/actions/parseCondition'
-export type { Condition } from './schema/actions/parseCondition'
+export type { SchemaCondition } from './schema/actions/parseCondition'
 // TODO: Pick relevant exports
 export * from './schema/attributes'
 

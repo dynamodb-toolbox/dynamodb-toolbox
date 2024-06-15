@@ -8,7 +8,7 @@ import { Schema } from 'v1/schema'
 import { PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema/attributes/primitive'
 import {
   ConditionParser,
-  Condition,
+  SchemaCondition,
   PrimitiveAttributeExtraCondition
 } from 'v1/schema/actions/parseCondition'
 
@@ -66,7 +66,7 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
     transform: undefined
   })
 
-  let condition: Condition = {
+  let condition: SchemaCondition = {
     attr: partitionKey.name,
     eq: partition
   }
