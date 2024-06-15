@@ -38,7 +38,7 @@ export class EntityV2<
   public timestamps: TIMESTAMPS_OPTIONS
   // any is needed for contravariance
   public computeKey?: (
-    keyInput: Schema extends SCHEMA ? any : ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+    keyInput: Schema extends SCHEMA ? any : ParserInput<SCHEMA, { mode: 'key'; fill: false }>
   ) => PrimaryKey<TABLE>
 
   /**
@@ -68,9 +68,7 @@ export class EntityV2<
   } & If<
     NeedsKeyCompute<SCHEMA, TABLE>,
     {
-      computeKey: (
-        keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
-      ) => PrimaryKey<TABLE>
+      computeKey: (keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>) => PrimaryKey<TABLE>
     },
     { computeKey?: undefined }
   >) {
@@ -86,7 +84,6 @@ export class EntityV2<
       })
     }
 
-    // TODO: Simplify now that '.and(...)' method is available?
     this.schema = addInternalAttributes({
       schema,
       table: this.table,

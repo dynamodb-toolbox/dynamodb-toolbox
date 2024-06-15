@@ -25,7 +25,7 @@ export const transactUpdateItemParams = <
   updateItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactUpdateItemParams => {
   const { item, key } = entity.build(EntityParser).parse(input, {
-    operation: 'update',
+    mode: 'update',
     parseExtension: parseUpdateExtension
   })
 

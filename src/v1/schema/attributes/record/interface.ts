@@ -85,7 +85,7 @@ export interface $RecordAttribute<
     nextKeyDefault: ValueOrGetter<
       ParserInput<
         FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >
     >
   ) => $RecordAttribute<
@@ -165,7 +165,7 @@ export interface $RecordAttribute<
         STATE['key'],
         ParserInput<
           FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
-          { operation: 'key'; fill: false }
+          { mode: 'key'; fill: false }
         >,
         ParserInput<
           FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
@@ -202,10 +202,10 @@ export interface $RecordAttribute<
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
       FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
-      { operation: 'key'; fill: false }
+      { mode: 'key'; fill: false }
     >
   ) => $RecordAttribute<
     $KEYS,
@@ -282,14 +282,14 @@ export interface $RecordAttribute<
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
-        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
+        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
         ParserInput<SCHEMA, { fill: false }>
       >
     ) => If<
       STATE['key'],
       ParserInput<
         FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >,
       ParserInput<
         FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>,

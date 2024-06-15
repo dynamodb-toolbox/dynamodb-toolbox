@@ -9,7 +9,7 @@ import { UpdateExpressionParser } from './parser'
 
 export const parseSchemaUpdate = (
   schema: Schema,
-  input: ParsedValue<Schema, { operation: 'update'; extension: UpdateItemInputExtension }>
+  input: ParsedValue<Schema, { mode: 'update'; extension: UpdateItemInputExtension }>
 ): ParsedUpdate => {
   const updateParser = new UpdateExpressionParser(schema)
   updateParser.parseUpdate(input)
@@ -18,5 +18,5 @@ export const parseSchemaUpdate = (
 
 export const parseUpdate = (
   entity: EntityV2,
-  input: ParsedItem<EntityV2, { operation: 'update'; extension: UpdateItemInputExtension }>
+  input: ParsedItem<EntityV2, { mode: 'update'; extension: UpdateItemInputExtension }>
 ): ParsedUpdate => parseSchemaUpdate(entity.schema, input)

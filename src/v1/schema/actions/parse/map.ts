@@ -31,7 +31,7 @@ export type MapAttrParsedValue<
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | OptionalizeUndefinableProperties<
           {
-            [KEY in OPTIONS extends { operation: 'key' }
+            [KEY in OPTIONS extends { mode: 'key' }
               ? O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>
               : keyof ATTRIBUTE['attributes'] & string as OPTIONS extends { transform: false }
               ? KEY
@@ -58,7 +58,7 @@ export function* mapAttributeParser<
 > {
   type Parsed = MapAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
 
-  const { operation = 'put', fill = true, transform = true } = options
+  const { mode = 'put', fill = true, transform = true } = options
   const parsers: Record<
     string,
     Generator<
@@ -74,7 +74,7 @@ export function* mapAttributeParser<
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
     Object.entries(attribute.attributes)
-      .filter(([, attr]) => operation !== 'key' || attr.key)
+      .filter(([, attr]) => mode !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
         parsers[attrName] = attrParser(attr, inputValue[attrName], options)
 

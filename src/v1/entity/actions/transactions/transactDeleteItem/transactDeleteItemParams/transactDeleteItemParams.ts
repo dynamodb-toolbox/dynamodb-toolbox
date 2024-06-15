@@ -19,7 +19,7 @@ export const transactDeleteItemParams = <
   input: KeyInput<ENTITY>,
   deleteItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactDeleteItemParams => {
-  const { key } = entity.build(EntityParser).parse(input, { operation: 'key' })
+  const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const options = parseDeleteItemTransactionOptions(entity, deleteItemTransactionOptions)
 
   return {

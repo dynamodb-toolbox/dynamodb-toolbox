@@ -92,4 +92,4 @@ const playgroundSchema3 = schema({
   anyvalue: any()
 })
 
-type PlaygroundSchema3KeyInput = ParserInput<typeof playgroundSchema3, { operation: 'key' }>
+type PlaygroundSchema3KeyInput = ParserInput<typeof playgroundSchema3, { mode: 'key' }>

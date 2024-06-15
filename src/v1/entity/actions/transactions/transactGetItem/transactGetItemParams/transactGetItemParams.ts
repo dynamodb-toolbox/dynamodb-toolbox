@@ -19,7 +19,7 @@ export const transactGetItemParams = <
   input: KeyInput<ENTITY>,
   getItemTransactionOptions: OPTIONS = {} as OPTIONS
 ): TransactGetItemParams => {
-  const { key } = entity.build(EntityParser).parse(input, { operation: 'key' })
+  const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const options = parseGetItemTransactionOptions(entity, getItemTransactionOptions)
 
   return {
