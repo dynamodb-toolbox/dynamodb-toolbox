@@ -12,7 +12,7 @@ import type {
   ParsedValueDefaultOptions,
   ParsingOptions,
   FromParsingOptions
-} from './types'
+} from './types/options'
 import { attrParser, AttrParsedValue, MustBeDefined } from './attribute'
 
 export type SetAttrParsedValue<

@@ -9,7 +9,7 @@ import type {
   ParsedValueDefaultOptions,
   ParsingOptions,
   FromParsingOptions
-} from './types'
+} from './types/options'
 
 export type AnyAttrParsedValue<
   ATTRIBUTE extends AnyAttribute,
