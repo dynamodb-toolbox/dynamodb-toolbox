@@ -18,7 +18,7 @@ import type {
   ParsedValueDefaultOptions,
   ParsingOptions,
   FromParsingOptions
-} from './types'
+} from './types/options'
 import type { MustBeDefined } from './attribute'
 
 export type PrimitiveAttrParsedValue<

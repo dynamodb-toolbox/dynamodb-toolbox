@@ -3,7 +3,7 @@ import { GetCommandInput, GetCommand, GetCommandOutput } from '@aws-sdk/lib-dyna
 
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
 import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { KeyInput } from 'v1/entity/actions/tParse'
+import type { KeyInput } from 'v1/entity/actions/parse'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { GetItemOptions } from './options'

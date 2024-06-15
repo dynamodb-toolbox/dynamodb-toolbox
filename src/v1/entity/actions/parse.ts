@@ -7,6 +7,7 @@ import {
   ParsedValueOptions,
   ParsedValueDefaultOptions
 } from 'v1/schema/actions/parse'
+import type { ParserInput } from 'v1/schema/actions/parse'
 import { PrimaryKeyParser, PrimaryKey } from 'v1/table/actions/parsePrimaryKey'
 
 export type ParsedItemOptions = Pick<ParsedValueOptions, 'mode' | 'extension'>
@@ -20,7 +21,14 @@ export type ParsedItem<
 
 export type SavedItem<ENTITY extends EntityV2 = EntityV2> = ParsedItem<ENTITY>
 
-export type EntityParseOptions = Pick<ParsingOptions, 'mode' | 'parseExtension'>
+export type EntityParsingOptions = Pick<ParsingOptions, 'mode' | 'parseExtension'>
+
+export type EntityParserInput<
+  ENTITY extends EntityV2 = EntityV2,
+  OPTIONS extends ParsedItemOptions = ParsedItemDefaultOptions
+> = ParserInput<ENTITY['schema'], OPTIONS>
+
+export type KeyInput<ENTITY extends EntityV2> = EntityParserInput<ENTITY, { mode: 'key' }>
 
 const $parser = Symbol('$parser')
 type $parser = typeof $parser
@@ -34,7 +42,7 @@ export class EntityParser<ENTITY extends EntityV2 = EntityV2> extends EntityActi
     this[$parser] = new Parser(entity.schema)
   }
 
-  parse<OPTIONS extends EntityParseOptions>(
+  parse<OPTIONS extends EntityParsingOptions>(
     input: { [KEY: string]: unknown },
     { mode, parseExtension }: OPTIONS = {} as OPTIONS
   ): {
@@ -51,5 +59,15 @@ export class EntityParser<ENTITY extends EntityV2 = EntityV2> extends EntityActi
     const key = new PrimaryKeyParser<ENTITY['table']>(this[$entity].table).parse(keyInput)
 
     return { item: { ...item, ...key }, key }
+  }
+
+  reparse<OPTIONS extends EntityParsingOptions>(
+    input: EntityParserInput<ENTITY, OPTIONS>,
+    options: OPTIONS = {} as OPTIONS
+  ): {
+    item: ParsedItem<ENTITY, FromParsingOptions<OPTIONS>>
+    key: PrimaryKey<ENTITY['table']>
+  } {
+    return this.parse(input, options)
   }
 }

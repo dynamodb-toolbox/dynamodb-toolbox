@@ -4,7 +4,7 @@ import { EntityV2, $entity } from 'v1/entity'
 import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/entity/actions/commands/getItem'
 import { $key, $options } from 'v1/entity/actions/commands/getItem/getItemCommand'
 import { getItemParams } from 'v1/entity/actions/commands/getItem/getItemParams'
-import type { KeyInput } from 'v1/entity/actions/tParse'
+import type { KeyInput } from 'v1/entity/actions/parse'
 import { DynamoDBToolboxError } from 'v1/errors'
 
 import type { MockedEntity } from './entity'

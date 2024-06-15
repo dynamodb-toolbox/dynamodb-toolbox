@@ -1,6 +1,7 @@
 import type { Attribute, AttributeBasicValue } from 'v1/schema/attributes'
 
-import type { ExtensionParser, ParsingMode } from './types'
+import type { ExtensionParser } from './types/extensionParser'
+import type { ParsingMode } from './types/options'
 
 export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
   isExtension: false,

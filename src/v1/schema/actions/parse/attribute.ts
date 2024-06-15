@@ -23,7 +23,7 @@ import type {
   ParsingOptions,
   ParsingDefaultOptions,
   FromParsingOptions
-} from './types'
+} from './types/options'
 import { anyAttrParser, AnyAttrParsedValue } from './any'
 import { primitiveAttrParser, PrimitiveAttrParsedValue } from './primitive'
 import { setAttrParser, SetAttrParsedValue } from './set'

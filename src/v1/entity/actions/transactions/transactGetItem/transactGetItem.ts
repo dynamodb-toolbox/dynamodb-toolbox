@@ -1,7 +1,7 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import type { KeyInput } from 'v1/entity/actions/tParse'
+import type { KeyInput } from 'v1/entity/actions/parse'
 import type { EntityPaths } from 'v1/entity/actions/parsePaths'
 import { DynamoDBToolboxError } from 'v1/errors'
 
