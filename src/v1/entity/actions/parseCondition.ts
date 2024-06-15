@@ -36,4 +36,4 @@ export class EntityConditionParser<
   }
 }
 
-export type EntityCondition<ENTITY extends EntityV2 = EntityV2> = SchemaCondition<ENTITY['schema']>
+export type Condition<ENTITY extends EntityV2 = EntityV2> = SchemaCondition<ENTITY['schema']>

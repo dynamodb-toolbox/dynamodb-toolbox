@@ -96,7 +96,7 @@ export type {
 export { EntityTParser } from './entity/actions/tParse'
 export type { EntityParserInput, KeyInput } from './entity/actions/tParse'
 export { EntityConditionParser } from './entity/actions/parseCondition'
-export type { EntityCondition } from './entity/actions/parseCondition'
+export type { Condition } from './entity/actions/parseCondition'
 
 export * from './errors'
 export * from './test-tools'
