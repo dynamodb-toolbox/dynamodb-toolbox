@@ -1,7 +1,7 @@
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import type { EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
-import type { EntityCondition } from 'v1/entity/actions/parseCondition'
+import type { Condition } from 'v1/entity/actions/parseCondition'
 import type { CapacityOption } from 'v1/options/capacity'
 import type {
   SelectOption,
@@ -22,8 +22,8 @@ export type QueryOptions<
   maxPages?: number
   reverse?: boolean
   filters?: EntityV2[] extends ENTITIES
-    ? Record<string, EntityCondition>
-    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: EntityCondition<ENTITY> }
+    ? Record<string, Condition>
+    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
 } & (QUERY['index'] extends string
   ? {
       // consistent must be false if a secondary index is queried
