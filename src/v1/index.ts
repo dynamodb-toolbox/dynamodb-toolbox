@@ -8,10 +8,9 @@ export type {
   ParsingMode,
   ParsingOptions,
   ParsedValueOptions,
-  FromParsingOptions
+  FromParsingOptions,
+  ParserInput
 } from './schema/actions/parse'
-export { TParser } from './schema/actions/tParse'
-export type { ParserInput } from './schema/actions/tParse'
 export { Formatter } from './schema/actions/format'
 export type {
   FormattedValue,
@@ -91,10 +90,10 @@ export type {
   ParsedItemOptions,
   ParsedItem,
   SavedItem,
-  EntityParseOptions
+  EntityParsingOptions,
+  EntityParserInput,
+  KeyInput
 } from './entity/actions/parse'
-export { EntityTParser } from './entity/actions/tParse'
-export type { EntityParserInput, KeyInput } from './entity/actions/tParse'
 export { EntityConditionParser } from './entity/actions/parseCondition'
 export type { Condition } from './entity/actions/parseCondition'
 

@@ -7,9 +7,10 @@ import type {
   ParsingOptions,
   ParsingDefaultOptions,
   FromParsingOptions
-} from './types'
+} from './types/options'
 import { schemaParser, SchemaParsedValue } from './schema'
 import { attrParser, AttrParsedValue } from './attribute'
+import type { ParserInput } from './types/parserInput'
 
 export type ParsedValue<
   SCHEMA extends Schema | Attribute,
@@ -64,5 +65,12 @@ export class Parser<SCHEMA extends Schema | Attribute> implements SchemaAction<S
     } while (!done)
 
     return value
+  }
+
+  reparse<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
+    inputValue: ParserInput<SCHEMA, FromParsingOptions<OPTIONS>>,
+    options: OPTIONS = {} as OPTIONS
+  ): ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
+    return this.parse(inputValue, options)
   }
 }

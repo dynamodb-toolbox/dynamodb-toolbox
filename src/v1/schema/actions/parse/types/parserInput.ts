@@ -1,33 +1,25 @@
 import type { O } from 'ts-toolbelt'
 
 import type { If } from 'v1/types/if'
-import type { Schema, SchemaAction } from 'v1/schema'
+import type { Schema } from 'v1/schema'
 import type {
+  AtLeastOnce,
+  Always,
+  Never,
   Attribute,
-  ResolveAnyAttribute,
-  ResolvePrimitiveAttribute,
   AnyAttribute,
+  ResolveAnyAttribute,
   PrimitiveAttribute,
+  ResolvePrimitiveAttribute,
   SetAttribute,
   ListAttribute,
   MapAttribute,
   RecordAttribute,
-  AnyOfAttribute,
-  AtLeastOnce,
-  Always,
-  Never
+  AnyOfAttribute
 } from 'v1/schema/attributes'
 import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
 
-import {
-  Parser,
-  ParsedValue,
-  ParsedValueOptions,
-  ParsedValueDefaultOptions,
-  ParsingOptions,
-  ParsingDefaultOptions,
-  FromParsingOptions
-} from '../parse'
+import type { ParsedValueOptions, ParsedValueDefaultOptions } from '../types/options'
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
@@ -118,30 +110,3 @@ export type ParserInput<
   : SCHEMA extends Attribute
   ? AttrParserInput<SCHEMA, OPTIONS>
   : never
-
-export class TParser<SCHEMA extends Schema | Attribute> implements SchemaAction<SCHEMA> {
-  schema: SCHEMA
-  parser: Parser<SCHEMA>
-
-  constructor(schema: SCHEMA) {
-    this.schema = schema
-    this.parser = new Parser(this.schema)
-  }
-
-  start<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
-    inputValue: ParserInput<SCHEMA, FromParsingOptions<OPTIONS>>,
-    options: OPTIONS = {} as OPTIONS
-  ): Generator<
-    ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>,
-    ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
-  > {
-    return this.parser.start(inputValue, options)
-  }
-
-  parse<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
-    inputValue: ParserInput<SCHEMA, FromParsingOptions<OPTIONS>>,
-    options: OPTIONS = {} as OPTIONS
-  ): ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
-    return this.parser.parse(inputValue, options)
-  }
-}
