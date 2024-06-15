@@ -23,7 +23,7 @@ export type SchemaParsedValue<
   ? { [KEY: string]: AttrParsedValue<Attribute, OPTIONS> }
   : OptionalizeUndefinableProperties<
       {
-        [KEY in OPTIONS extends { operation: 'key' }
+        [KEY in OPTIONS extends { mode: 'key' }
           ? O.SelectKeys<SCHEMA['attributes'], { key: true }>
           : keyof SCHEMA['attributes'] & string as OPTIONS extends { transform: false }
           ? KEY
@@ -46,7 +46,7 @@ export function* schemaParser<
   ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>,
   ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
 > {
-  const { operation = 'put', fill = true, transform = true } = options
+  const { mode = 'put', fill = true, transform = true } = options
 
   const parsers: Record<string, Generator<ParsedValue<Attribute, FromParsingOptions<OPTIONS>>>> = {}
   let restEntries: [string, ParsedValue<Attribute, FromParsingOptions<OPTIONS>>][] = []
@@ -57,7 +57,7 @@ export function* schemaParser<
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
     Object.entries(schema.attributes)
-      .filter(([, attr]) => operation !== 'key' || attr.key)
+      .filter(([, attr]) => mode !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
         parsers[attrName] = attrParser(attr, inputValue[attrName], options)
 

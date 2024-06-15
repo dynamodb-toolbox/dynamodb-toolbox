@@ -20,7 +20,7 @@ export const updateItemParams = <
   updateItemOptions: OPTIONS = {} as OPTIONS
 ): UpdateCommandInput => {
   const { item, key } = entity.build(EntityParser).parse(input, {
-    operation: 'update',
+    mode: 'update',
     parseExtension: parseUpdateExtension
   })
 

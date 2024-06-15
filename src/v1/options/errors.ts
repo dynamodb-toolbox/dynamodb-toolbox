@@ -81,7 +81,7 @@ type UnknownOptionErrorBlueprint = ErrorBlueprint<{
   payload: { option: unknown }
 }>
 
-export type OperationsErrorBlueprints =
+export type OptionsErrorBlueprints =
   | IncompleteActionErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
   | InvalidClientRequestTokenOptionErrorBlueprint

@@ -78,7 +78,7 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
    */
   keyDefault: (
     nextKeyDefault: ValueOrGetter<
-      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { operation: 'key'; fill: false }>
+      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>
     >
   ) => $AnyAttribute<
     O.Overwrite<
@@ -143,10 +143,7 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ParserInput<
-          FreezeAnyAttribute<$AnyAttributeState<STATE>>,
-          { operation: 'key'; fill: false }
-        >,
+        ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>,
         ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
       >
     >
@@ -177,11 +174,8 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
-    ) => ParserInput<
-      FreezeAnyAttribute<$AnyAttributeState<STATE>>,
-      { operation: 'key'; fill: false }
-    >
+      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
+    ) => ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>
   ) => $AnyAttribute<
     O.Overwrite<
       STATE,
@@ -245,12 +239,12 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
-        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
+        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
         ParserInput<SCHEMA, { fill: false }>
       >
     ) => If<
       STATE['key'],
-      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { operation: 'key'; fill: false }>,
+      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>,
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
     >
   ) => $AnyAttribute<

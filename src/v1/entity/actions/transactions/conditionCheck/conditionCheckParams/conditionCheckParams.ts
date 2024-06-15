@@ -16,7 +16,7 @@ export const conditionCheckParams = <ENTITY extends EntityV2>(
   input: KeyInput<ENTITY>,
   condition: Condition<ENTITY>
 ): ConditionCheckParams => {
-  const { key } = entity.build(EntityParser).parse(input, { operation: 'key' })
+  const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const parsedCondition = parseConditionCheck(entity, condition)
 
   return {

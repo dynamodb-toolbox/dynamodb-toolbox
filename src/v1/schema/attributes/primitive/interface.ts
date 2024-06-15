@@ -131,7 +131,7 @@ export interface $PrimitiveAttribute<
     nextKeyDefault: ValueOrGetter<
       ParserInput<
         FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >
     >
   ) => $PrimitiveAttribute<
@@ -205,7 +205,7 @@ export interface $PrimitiveAttribute<
         STATE['key'],
         ParserInput<
           FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-          { operation: 'key'; fill: false }
+          { mode: 'key'; fill: false }
         >,
         ParserInput<
           FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
@@ -246,7 +246,7 @@ export interface $PrimitiveAttribute<
           STATE['key'],
           ParserInput<
             FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            { operation: 'key'; fill: false }
+            { mode: 'key'; fill: false }
           >,
           ParserInput<
             FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
@@ -265,10 +265,10 @@ export interface $PrimitiveAttribute<
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      { operation: 'key'; fill: false }
+      { mode: 'key'; fill: false }
     >
   ) => $PrimitiveAttribute<
     TYPE,
@@ -342,14 +342,14 @@ export interface $PrimitiveAttribute<
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
-        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
+        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
         ParserInput<SCHEMA, { fill: false }>
       >
     ) => If<
       STATE['key'],
       ParserInput<
         FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >,
       ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
     >

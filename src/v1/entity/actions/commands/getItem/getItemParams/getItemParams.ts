@@ -13,7 +13,7 @@ export const getItemParams = <ENTITY extends EntityV2, OPTIONS extends GetItemOp
   input: KeyInput<ENTITY>,
   getItemOptions: OPTIONS = {} as OPTIONS
 ): GetCommandInput => {
-  const { key } = entity.build(EntityParser).parse(input, { operation: 'key' })
+  const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const options = parseGetItemOptions(entity, getItemOptions)
 
   return {

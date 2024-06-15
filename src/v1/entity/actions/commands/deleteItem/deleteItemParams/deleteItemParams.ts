@@ -15,7 +15,7 @@ export const deleteItemParams = <
   input: KeyInput<ENTITY>,
   deleteItemOptions: OPTIONS = {} as OPTIONS
 ): DeleteCommandInput => {
-  const { key } = entity.build(EntityParser).parse(input, { operation: 'key' })
+  const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const options = parseDeleteItemOptions(entity, deleteItemOptions)
 
   return {
