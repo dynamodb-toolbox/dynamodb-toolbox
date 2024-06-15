@@ -38,10 +38,7 @@ export class UpdateExpressionParser {
   }
 
   parseUpdate = (
-    input: ParsedValue<
-      Schema | Attribute,
-      { operation: 'update'; extension: UpdateItemInputExtension }
-    >,
+    input: ParsedValue<Schema | Attribute, { mode: 'update'; extension: UpdateItemInputExtension }>,
     currentPath: (string | number)[] = []
   ): void => {
     if (input === undefined) {

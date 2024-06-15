@@ -5,7 +5,7 @@ export type {
   ParsedValue,
   ExtensionParser,
   ExtensionParserOptions,
-  Operation,
+  ParsingMode,
   ParsingOptions,
   ParsedValueOptions,
   FromParsingOptions

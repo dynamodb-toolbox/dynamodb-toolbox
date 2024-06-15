@@ -36,7 +36,7 @@ import { defaultParseExtension, isRequired } from './utils'
 export type MustBeDefined<
   ATTRIBUTE extends Attribute,
   OPTIONS extends ParsedValueOptions
-> = OPTIONS extends { operation: 'update' | 'key' }
+> = OPTIONS extends { mode: 'update' | 'key' }
   ? ATTRIBUTE extends { required: Always }
     ? true
     : false
@@ -78,7 +78,7 @@ export function* attrParser<
   type Parsed = AttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
 
   const {
-    operation = 'put',
+    mode = 'put',
     fill = true,
     transform = true,
     /**
@@ -93,17 +93,15 @@ export function* attrParser<
   if (nextFill && filledValue === undefined) {
     let defaultedValue: Parsed | undefined = undefined
 
-    const operationDefault = attribute.defaults[attribute.key ? 'key' : operation]
-    defaultedValue = isFunction(operationDefault)
-      ? operationDefault()
-      : (cloneDeep(operationDefault) as any)
+    const modeDefault = attribute.defaults[attribute.key ? 'key' : mode]
+    defaultedValue = isFunction(modeDefault) ? modeDefault() : (cloneDeep(modeDefault) as any)
 
     const itemInput = yield defaultedValue as Parsed
 
     let linkedValue: Parsed | undefined = defaultedValue
     if (linkedValue === undefined && itemInput !== undefined) {
-      const operationLink = attribute.links[attribute.key ? 'key' : operation]
-      linkedValue = (isFunction(operationLink) ? operationLink(itemInput) : linkedValue) as any
+      const modeLink = attribute.links[attribute.key ? 'key' : mode]
+      linkedValue = (isFunction(modeLink) ? modeLink(itemInput) : linkedValue) as any
     }
     yield linkedValue as Parsed
 
@@ -134,7 +132,7 @@ export function* attrParser<
     const { path } = attribute
 
     // We don't need to fill
-    if (isRequired(attribute, operation)) {
+    if (isRequired(attribute, mode)) {
       throw new DynamoDBToolboxError('parsing.attributeRequired', {
         message: `Attribute ${path !== undefined ? `'${path}' ` : ''}is required.`,
         path

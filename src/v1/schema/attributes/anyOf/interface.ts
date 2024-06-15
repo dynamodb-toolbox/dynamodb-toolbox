@@ -81,7 +81,7 @@ export interface $AnyOfAttribute<
     nextKeyDefault: ValueOrGetter<
       ParserInput<
         FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >
     >
   ) => $AnyOfAttribute<
@@ -152,7 +152,7 @@ export interface $AnyOfAttribute<
         STATE['key'],
         ParserInput<
           FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>,
-          { operation: 'key'; fill: false }
+          { mode: 'key'; fill: false }
         >,
         ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, { fill: false }>
       >
@@ -185,10 +185,10 @@ export interface $AnyOfAttribute<
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
       FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>,
-      { operation: 'key'; fill: false }
+      { mode: 'key'; fill: false }
     >
   ) => $AnyOfAttribute<
     $ELEMENTS,
@@ -259,14 +259,14 @@ export interface $AnyOfAttribute<
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
-        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
+        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
         ParserInput<SCHEMA, { fill: false }>
       >
     ) => If<
       STATE['key'],
       ParserInput<
         FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >,
       ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>, { fill: false }>
     >

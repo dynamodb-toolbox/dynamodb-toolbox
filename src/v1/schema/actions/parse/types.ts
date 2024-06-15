@@ -34,33 +34,33 @@ export type ExtensionParser<
       basicInput: AttributeBasicValue<EXTENSION> | undefined
     })
 
-export type Operation = 'key' | 'put' | 'update'
+export type ParsingMode = 'key' | 'put' | 'update'
 
 export type ParsingOptions = {
   fill?: boolean
   transform?: boolean
-  operation?: Operation
+  mode?: ParsingMode
   parseExtension?: ExtensionParser
 }
 
 export type ParsingDefaultOptions = {
   fill: true
   transform: true
-  operation: 'put'
+  mode: 'put'
   parseExtension: undefined
 }
 
 export type ParsedValueOptions = {
   fill?: boolean
   transform?: boolean
-  operation?: Operation
+  mode?: ParsingMode
   extension?: Extension
 }
 
 export type ParsedValueDefaultOptions = {
   fill: true
   transform: true
-  operation: 'put'
+  mode: 'put'
   extension: undefined
 }
 
@@ -69,9 +69,7 @@ export type FromParsingOptions<OPTIONS extends ParsingOptions, CONTEXT extends b
   transform: OPTIONS extends { transform: boolean }
     ? OPTIONS['transform']
     : ParsedValueDefaultOptions['transform']
-  operation: OPTIONS extends { operation: Operation }
-    ? OPTIONS['operation']
-    : ParsedValueDefaultOptions['operation']
+  mode: OPTIONS extends { mode: ParsingMode } ? OPTIONS['mode'] : ParsedValueDefaultOptions['mode']
   extension: OPTIONS extends { parseExtension: ExtensionParser }
     ? NonNullable<OPTIONS['parseExtension'][CONTEXT extends true ? $contextExtension : $extension]>
     : ParsedValueDefaultOptions['extension']

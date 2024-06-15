@@ -80,14 +80,14 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
   appendValidAttributeValue = (
     validAttributeValue: ParsedValue<
       Attribute,
-      { operation: 'update'; extension: UpdateItemInputExtension }
+      { mode: 'update'; extension: UpdateItemInputExtension }
     >
   ): void => {
     if (isReferenceUpdate(validAttributeValue)) {
       // TODO: Fix this cast
       const [expression, fallback] = validAttributeValue[$GET] as [
         string,
-        ParsedValue<Attribute, { operation: 'update'; extension: ReferenceExtension }> | undefined
+        ParsedValue<Attribute, { mode: 'update'; extension: ReferenceExtension }> | undefined
       ]
 
       if (fallback === undefined) {

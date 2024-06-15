@@ -59,7 +59,7 @@ type SchemaParserInput<
   : SCHEMA extends Schema
   ? OptionalizeUndefinableProperties<
       {
-        [KEY in OPTIONS extends { operation: 'key' }
+        [KEY in OPTIONS extends { mode: 'key' }
           ? O.SelectKeys<SCHEMA['attributes'], { key: true }>
           : keyof SCHEMA['attributes'] & string]: AttrParserInput<
           SCHEMA['attributes'][KEY],
@@ -89,7 +89,7 @@ type AttrParserInput<
           : ATTRIBUTE extends MapAttribute
           ? OptionalizeUndefinableProperties<
               {
-                [KEY in OPTIONS extends { operation: 'key' }
+                [KEY in OPTIONS extends { mode: 'key' }
                   ? O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>
                   : keyof ATTRIBUTE['attributes'] & string]: AttrParserInput<
                   ATTRIBUTE['attributes'][KEY],

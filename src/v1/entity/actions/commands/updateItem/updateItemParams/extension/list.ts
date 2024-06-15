@@ -48,7 +48,7 @@ function* listElementParser(
   }
 
   return yield* new Parser(attribute.elements).start(inputValue, {
-    operation: 'update',
+    mode: 'update',
     fill: false,
     transform,
     parseExtension: parseUpdateExtension

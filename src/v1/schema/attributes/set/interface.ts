@@ -82,7 +82,7 @@ export interface $SetAttribute<
     nextKeyDefault: ValueOrGetter<
       ParserInput<
         FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >
     >
   ) => $SetAttribute<
@@ -153,7 +153,7 @@ export interface $SetAttribute<
         STATE['key'],
         ParserInput<
           FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>,
-          { operation: 'key'; fill: false }
+          { mode: 'key'; fill: false }
         >,
         ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
       >
@@ -186,10 +186,10 @@ export interface $SetAttribute<
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
       FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>,
-      { operation: 'key'; fill: false }
+      { mode: 'key'; fill: false }
     >
   ) => $SetAttribute<
     $ELEMENTS,
@@ -257,14 +257,14 @@ export interface $SetAttribute<
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
-        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
+        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
         ParserInput<SCHEMA, { fill: false }>
       >
     ) => If<
       STATE['key'],
       ParserInput<
         FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >,
       ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
     >

@@ -80,7 +80,7 @@ export interface $MapAttribute<
     nextKeyDefault: ValueOrGetter<
       ParserInput<
         FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >
     >
   ) => $MapAttribute<
@@ -151,7 +151,7 @@ export interface $MapAttribute<
         STATE['key'],
         ParserInput<
           FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
-          { operation: 'key'; fill: false }
+          { mode: 'key'; fill: false }
         >,
         ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
       >
@@ -184,10 +184,10 @@ export interface $MapAttribute<
    */
   keyLink: <SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { operation: 'key'; fill: false }>
+      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
       FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
-      { operation: 'key'; fill: false }
+      { mode: 'key'; fill: false }
     >
   ) => $MapAttribute<
     $ATTRIBUTES,
@@ -255,14 +255,14 @@ export interface $MapAttribute<
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
-        ParserInput<SCHEMA, { operation: 'key'; fill: false }>,
+        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
         ParserInput<SCHEMA, { fill: false }>
       >
     ) => If<
       STATE['key'],
       ParserInput<
         FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
-        { operation: 'key'; fill: false }
+        { mode: 'key'; fill: false }
       >,
       ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
     >
