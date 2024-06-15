@@ -1,4 +1,4 @@
-import type { Condition } from '../../condition'
+import type { SchemaCondition } from '../../condition'
 
 export type LogicalCombinationOperator = 'and' | 'or'
 
@@ -7,18 +7,18 @@ const logicalCombinationOperatorSet = new Set<LogicalCombinationOperator>(['and'
 export const isLogicalCombinationOperator = (key: string): key is LogicalCombinationOperator =>
   logicalCombinationOperatorSet.has(key as LogicalCombinationOperator)
 
-export type LogicalCombinationCondition = Condition &
+export type LogicalCombinationCondition = SchemaCondition &
   (LogicalCombinationOperator extends infer OPERATOR
     ? OPERATOR extends string
-      ? Extract<Condition, { [KEY in OPERATOR]: unknown }>
+      ? Extract<SchemaCondition, { [KEY in OPERATOR]: unknown }>
       : never
     : never)
 
 type IsLogicalCombinationCondition = (
-  condition: Condition
+  condition: SchemaCondition
 ) => condition is LogicalCombinationCondition
 
 export const isLogicalCombinationCondition: IsLogicalCombinationCondition = (
-  condition: Condition
+  condition: SchemaCondition
 ): condition is LogicalCombinationCondition =>
   Object.keys(condition).some(isLogicalCombinationOperator)

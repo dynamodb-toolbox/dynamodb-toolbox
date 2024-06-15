@@ -1,4 +1,4 @@
-import type { Condition } from '../../condition'
+import type { SchemaCondition } from '../../condition'
 
 import type { ConditionParser } from '../../conditionParser'
 
@@ -28,7 +28,7 @@ export const parseLogicalCombinationCondition: AppendLogicalCombinationCondition
     isLogicalCombinationOperator
   ) as keyof CONDITION & LogicalCombinationOperator
 
-  const childrenConditions = (condition[logicalCombinationOperator] as unknown) as Condition[]
+  const childrenConditions = (condition[logicalCombinationOperator] as unknown) as SchemaCondition[]
   const childrenConditionExpressions: string[] = []
   conditionParser.resetExpression()
   for (const childCondition of childrenConditions) {

@@ -1,6 +1,7 @@
-import type { AnyAttributeCondition, NonLogicalCondition, Condition } from '../../condition'
+import type { AnyAttributeCondition, NonLogicalCondition, SchemaCondition } from '../../condition'
 
 export type InCondition = NonLogicalCondition &
   Extract<AnyAttributeCondition<string, string>, { in: unknown }>
 
-export const isInCondition = (condition: Condition): condition is InCondition => 'in' in condition
+export const isInCondition = (condition: SchemaCondition): condition is InCondition =>
+  'in' in condition
