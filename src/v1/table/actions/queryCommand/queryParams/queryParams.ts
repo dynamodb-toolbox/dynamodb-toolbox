@@ -6,7 +6,7 @@ import { DynamoDBToolboxError } from 'v1/errors'
 import type { TableV2 } from 'v1/table'
 import type { EntityV2 } from 'v1/entity'
 import { EntityPathParser, EntityPaths } from 'v1/entity/actions/parsePaths'
-import { EntityConditionParser, EntityCondition } from 'v1/entity/actions/parseCondition'
+import { EntityConditionParser, Condition } from 'v1/entity/actions/parseCondition'
 
 import { parseCapacityOption } from 'v1/options/capacity'
 import { parseIndexOption } from 'v1/options/index'
@@ -45,7 +45,7 @@ export const queryParams = <
     ...extraOptions
   } = scanOptions
 
-  const filters = (_filters ?? {}) as Record<string, EntityCondition>
+  const filters = (_filters ?? {}) as Record<string, Condition>
   const attributes = _attributes as EntityPaths[] | undefined
 
   const commandOptions: QueryCommandInput = {

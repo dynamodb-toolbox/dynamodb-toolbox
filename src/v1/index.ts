@@ -23,7 +23,7 @@ export type {
 export { PathParser } from './schema/actions/parsePaths'
 export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/parsePaths'
 export { ConditionParser } from './schema/actions/parseCondition'
-export type { Condition } from './schema/actions/parseCondition'
+export type { SchemaCondition } from './schema/actions/parseCondition'
 // TODO: Pick relevant exports
 export * from './schema/attributes'
 
@@ -96,7 +96,7 @@ export type {
 export { EntityTParser } from './entity/actions/tParse'
 export type { EntityParserInput, KeyInput } from './entity/actions/tParse'
 export { EntityConditionParser } from './entity/actions/parseCondition'
-export type { EntityCondition } from './entity/actions/parseCondition'
+export type { Condition } from './entity/actions/parseCondition'
 
 export * from './errors'
 export * from './test-tools'

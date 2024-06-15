@@ -1,4 +1,4 @@
-import type { AnyAttributeCondition, NonLogicalCondition, Condition } from '../../condition'
+import type { AnyAttributeCondition, NonLogicalCondition, SchemaCondition } from '../../condition'
 
 export type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte'
 export type ComparisonOperator = 'eq' | 'ne' | RangeOperator
@@ -15,5 +15,6 @@ export type ComparisonCondition = NonLogicalCondition &
       : never
     : never)
 
-export const isComparisonCondition = (condition: Condition): condition is ComparisonCondition =>
-  Object.keys(condition).some(isComparisonOperator)
+export const isComparisonCondition = (
+  condition: SchemaCondition
+): condition is ComparisonCondition => Object.keys(condition).some(isComparisonOperator)

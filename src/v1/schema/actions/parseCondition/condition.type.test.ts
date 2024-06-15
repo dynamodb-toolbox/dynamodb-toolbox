@@ -4,7 +4,7 @@ import type { Attribute } from 'v1/schema/attributes'
 import type { Paths } from 'v1/schema/actions/parsePaths'
 
 import type {
-  Condition,
+  SchemaCondition,
   NonLogicalCondition,
   AttributeCondition,
   SharedAttributeCondition,
@@ -233,6 +233,6 @@ const assertEntityCondition: A.Contains<
   | { or: NON_LOGICAL_CONDITION[] }
   | { and: NON_LOGICAL_CONDITION[] }
   | { not: NON_LOGICAL_CONDITION },
-  Condition<typeof mySchema>
+  SchemaCondition<typeof mySchema>
 > = 1
 assertEntityCondition

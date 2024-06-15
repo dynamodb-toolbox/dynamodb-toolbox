@@ -12,7 +12,7 @@ import { appendAttributeValue, AppendAttributeValueOptions } from './appendAttri
 import { appendAttributeValueOrPath } from './appendAttributeValueOrPath'
 import { parseCondition } from './parseCondition'
 import { toCommandOptions } from './toCommandOptions'
-import type { Condition } from './condition'
+import type { SchemaCondition } from './condition'
 
 export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
   extends SchemaAction<SCHEMA>
@@ -72,7 +72,7 @@ export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attrib
     return this
   }
 
-  parse(condition: Condition): this {
+  parse(condition: SchemaCondition): this {
     parseCondition(this, condition)
     return this
   }

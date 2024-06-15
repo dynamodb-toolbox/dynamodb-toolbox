@@ -1,6 +1,6 @@
 import { DynamoDBToolboxError } from 'v1/errors'
 
-import type { Condition } from '../condition'
+import type { SchemaCondition } from '../condition'
 import type { ConditionParser } from '../conditionParser'
 import { isComparisonCondition, parseComparisonCondition } from './comparison'
 import { isSingleArgFnCondition, parseSingleArgFnCondition } from './singleArgFn'
@@ -13,7 +13,10 @@ import {
 import { isTwoArgsFnCondition, parseTwoArgsFnCondition } from './twoArgsFn'
 import { isInCondition, parseInCondition } from './in'
 
-export const parseCondition = (conditionParser: ConditionParser, condition: Condition): void => {
+export const parseCondition = (
+  conditionParser: ConditionParser,
+  condition: SchemaCondition
+): void => {
   if (isComparisonCondition(condition)) {
     return parseComparisonCondition(conditionParser, condition)
   }

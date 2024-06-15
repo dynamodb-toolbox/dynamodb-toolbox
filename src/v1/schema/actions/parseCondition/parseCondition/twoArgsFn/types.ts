@@ -1,4 +1,4 @@
-import type { AnyAttributeCondition, NonLogicalCondition, Condition } from '../../condition'
+import type { AnyAttributeCondition, NonLogicalCondition, SchemaCondition } from '../../condition'
 
 export type BeginsWithOperator = 'beginsWith'
 export type TwoArgsFnOperator = 'contains' | 'type' | BeginsWithOperator
@@ -15,5 +15,5 @@ export type TwoArgsFnCondition = NonLogicalCondition &
       : never
     : never)
 
-export const isTwoArgsFnCondition = (condition: Condition): condition is TwoArgsFnCondition =>
+export const isTwoArgsFnCondition = (condition: SchemaCondition): condition is TwoArgsFnCondition =>
   Object.keys(condition).some(isTwoArgsFnOperator)
