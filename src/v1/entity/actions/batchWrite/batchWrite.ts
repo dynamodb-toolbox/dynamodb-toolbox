@@ -1,8 +1,7 @@
 import {
   BatchWriteCommand,
   BatchWriteCommandInput,
-  BatchWriteCommandOutput,
-  DynamoDBDocumentClient
+  BatchWriteCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -20,28 +19,18 @@ import { parseBatchWriteOptions } from './parseBatchWriteOptions'
  */
 export const batchWrite = async (
   requests: BatchWriteItemRequest[],
-  options: {
-    /**
-     * Options passed to top-level BatchWrite
-     **/
-    batchWriteOptions?: BatchWriteOptions
-    /**
-     * Optional DynamoDB client. If not provided, the client linked to the first request is used.
-     **/
-    dynamoDBDocumentClient?: DynamoDBDocumentClient
-  } = {}
+  options: BatchWriteOptions = {}
 ): Promise<BatchWriteCommandOutput> => {
-  const documentClient =
-    options?.dynamoDBDocumentClient ?? requests[0][$entity].table.getDocumentClient()
+  const documentClient = options?.documentClient ?? requests[0]?.[$entity].table.getDocumentClient()
 
-  const commandInput = getBatchWriteCommandInput(requests, options?.batchWriteOptions)
+  const commandInput = getBatchWriteCommandInput(requests, options)
 
   return documentClient.send(new BatchWriteCommand(commandInput))
 }
 
 export const getBatchWriteCommandInput = (
   requests: BatchWriteItemRequest[],
-  batchWriteOptions: BatchWriteOptions = {}
+  options: BatchWriteOptions = {}
 ): BatchWriteCommandInput => {
   const RequestItems: NonNullable<BatchWriteCommandInput>['RequestItems'] = {}
 
@@ -61,7 +50,7 @@ export const getBatchWriteCommandInput = (
     })
   }
 
-  const options = parseBatchWriteOptions(batchWriteOptions)
+  const parsedOptions = parseBatchWriteOptions(options)
 
-  return { RequestItems, ...options }
+  return { RequestItems, ...parsedOptions }
 }
