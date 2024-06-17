@@ -34,6 +34,8 @@ export { QueryCommand } from './table/actions/queryCommand'
 export type { Query, QueryOptions, QueryResponse } from './table/actions/queryCommand'
 export { ScanCommand } from './table/actions/scanCommand'
 export type { ScanOptions, ScanResponse } from './table/actions/scanCommand'
+export { BatchGetTableItemsRequest } from './table/actions/batchGet'
+export type { BatchGetTableItemsOptions } from './table/actions/batchGet'
 export type { IndexNames, IndexSchema } from './table/actions/indexes'
 // TODO: Pick relevant types
 export * from './table/types'
@@ -68,6 +70,7 @@ export type {
   UpdateItemOptions,
   UpdateItemResponse
 } from './entity/actions/commands/updateItem'
+export { BatchGetItemRequest } from './entity/actions/batchGet'
 export { batchWrite } from './entity/actions/batchWrite/batchWrite'
 export { BatchDeleteItemRequest } from './entity/actions/batchWrite/batchDeleteItem'
 export { BatchPutItemRequest } from './entity/actions/batchWrite/batchPutItem'
