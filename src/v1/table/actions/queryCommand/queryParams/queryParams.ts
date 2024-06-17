@@ -131,7 +131,7 @@ export const queryParams = <
       filterExpressions.push(filterExpression)
 
       // TODO: For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist.
-      if (projectionExpression === undefined && attributes !== undefined) {
+      if (attributes !== undefined) {
         const { entityAttributeName } = entity
 
         const {
