@@ -8,18 +8,20 @@ import { $entity, EntityV2 } from 'v1/entity'
 import { EntityPathParser, EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
 import type { BatchGetItemRequest, $key } from 'v1/entity/actions/batchGet'
 
-const $requests = Symbol('$requests')
-type $requests = typeof $requests
+export const $requests = Symbol('$requests')
+export type $requests = typeof $requests
 
-const $options = Symbol('$options')
-type $options = typeof $options
+export const $options = Symbol('$options')
+export type $options = typeof $options
 
-type BatchGetItemRequestProps = Pick<BatchGetItemRequest, $entity | $key | 'params'>
+export type BatchGetItemRequestProps = Pick<BatchGetItemRequest, $entity | $key | 'params'>
 
 export type BatchGetTableItemsOptions<ENTITIES extends EntityV2[] = EntityV2[]> = {
   consistent?: boolean
-  attributes?: EntityPathsIntersection<ENTITIES>[]
-}
+  // For some reason, this union is required to keep the strict type of `options.attributes`
+  // when building a `BatchGetTableItemsRequest` directly inside `batchGet`:
+  // => batchGet(TestTable1.build(BatchGetTableItemsRequest).requests(...).options({ attributes: ['attr'] }))
+} & ({ attributes?: undefined } | { attributes: EntityPathsIntersection<ENTITIES>[] })
 
 type RequestEntities<
   REQUESTS extends BatchGetItemRequestProps[],
@@ -37,27 +39,35 @@ type RequestEntities<
 export class BatchGetTableItemsRequest<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2[] = EntityV2[],
-  REQUESTS extends BatchGetItemRequestProps[] = BatchGetItemRequestProps[]
-> extends TableAction<TABLE> {
+  REQUESTS extends BatchGetItemRequestProps[] = BatchGetItemRequestProps[],
+  OPTIONS extends BatchGetTableItemsOptions<ENTITIES> = BatchGetTableItemsOptions<ENTITIES>
+> extends TableAction<TABLE, ENTITIES> {
   static actionName = 'getTableItemBatch' as const;
 
   [$requests]?: REQUESTS;
-  [$options]?: BatchGetTableItemsOptions<ENTITIES>
+  [$options]: OPTIONS
 
   constructor(
     table: TABLE,
     entities = ([] as unknown) as ENTITIES,
     requests?: REQUESTS,
-    options?: BatchGetTableItemsOptions<ENTITIES>
+    options: OPTIONS = {} as OPTIONS
   ) {
     super(table, entities)
     this[$requests] = requests
     this[$options] = options
   }
 
-  requests<REQUESTS extends BatchGetItemRequestProps[]>(
-    ...requests: REQUESTS
-  ): BatchGetTableItemsRequest<TABLE, RequestEntities<REQUESTS>, REQUESTS> {
+  requests<NEXT_REQUESTS extends BatchGetItemRequestProps[]>(
+    ...requests: NEXT_REQUESTS
+  ): BatchGetTableItemsRequest<
+    TABLE,
+    RequestEntities<NEXT_REQUESTS>,
+    NEXT_REQUESTS,
+    OPTIONS extends BatchGetTableItemsOptions<RequestEntities<NEXT_REQUESTS>>
+      ? OPTIONS
+      : BatchGetTableItemsOptions<RequestEntities<NEXT_REQUESTS>>
+  > {
     const entities: EntityV2[] = []
     const entityNames = new Set<string>()
 
@@ -71,14 +81,17 @@ export class BatchGetTableItemsRequest<
 
     return new BatchGetTableItemsRequest(
       this[$table],
-      entities as RequestEntities<REQUESTS>,
-      requests
+      entities as RequestEntities<NEXT_REQUESTS>,
+      requests,
+      this[$options] as OPTIONS extends BatchGetTableItemsOptions<RequestEntities<NEXT_REQUESTS>>
+        ? OPTIONS
+        : BatchGetTableItemsOptions<RequestEntities<NEXT_REQUESTS>>
     )
   }
 
-  options(
-    nextOptions: BatchGetTableItemsOptions<ENTITIES>
-  ): BatchGetTableItemsRequest<TABLE, ENTITIES, REQUESTS> {
+  options<NEXT_OPTIONS extends BatchGetTableItemsOptions<ENTITIES>>(
+    nextOptions: NEXT_OPTIONS
+  ): BatchGetTableItemsRequest<TABLE, ENTITIES, REQUESTS, NEXT_OPTIONS> {
     return new BatchGetTableItemsRequest(
       this[$table],
       this[$entities],
