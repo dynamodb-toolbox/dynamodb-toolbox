@@ -9,7 +9,7 @@ import { PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema/attrib
 import {
   ConditionParser,
   SchemaCondition,
-  PrimitiveAttributeExtraCondition
+  PrimitiveAttributeCondition
 } from 'v1/schema/actions/parseCondition'
 
 import { queryOperatorSet, Query } from '../types'
@@ -86,7 +86,7 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
       /**
        * @debt type "TODO: Remove this cast"
        */
-    } as unknown) as PrimitiveAttributeExtraCondition<
+    } as unknown) as PrimitiveAttributeCondition<
       string,
       PrimitiveAttribute,
       never,
