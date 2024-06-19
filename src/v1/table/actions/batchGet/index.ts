@@ -1,4 +1,4 @@
-export { BatchGetTableItemsRequest } from './batchGetTableItems'
-export type { BatchGetTableItemsOptions } from './batchGetTableItems'
-export { batchGet } from './batchGet'
-export type { BatchGetOptions } from './batchGet'
+export { BatchGetCommand } from './batchGetCommand'
+export type { BatchGetCommandOptions } from './batchGetCommand'
+export { execute } from './execute'
+export type { ExecuteBatchGetOptions } from './execute'

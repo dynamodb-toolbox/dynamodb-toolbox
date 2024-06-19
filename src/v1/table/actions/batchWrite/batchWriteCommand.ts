@@ -4,27 +4,24 @@ import type { U } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from 'v1/errors'
 import { TableV2, TableAction, $table } from 'v1/table'
 import { EntityV2, $entity } from 'v1/entity'
-import type { BatchPutItemRequest } from 'v1/entity/actions/batchPut'
-import type { BatchDeleteItemRequest } from 'v1/entity/actions/batchDelete'
+import type { BatchPutRequest } from 'v1/entity/actions/batchPut'
+import type { BatchDeleteRequest } from 'v1/entity/actions/batchDelete'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests
 
-export type BatchWriteItemRequestProps = Pick<
-  BatchPutItemRequest | BatchDeleteItemRequest,
-  $entity | 'params'
->
+export type BatchWriteRequestProps = Pick<BatchPutRequest | BatchDeleteRequest, $entity | 'params'>
 
 type RequestEntities<
-  REQUESTS extends BatchWriteItemRequestProps[],
+  REQUESTS extends BatchWriteRequestProps[],
   RESULTS extends EntityV2[] = []
 > = number extends REQUESTS['length']
-  ? U.ListOf<REQUESTS[number]> extends BatchWriteItemRequestProps[]
+  ? U.ListOf<REQUESTS[number]> extends BatchWriteRequestProps[]
     ? RequestEntities<U.ListOf<REQUESTS[number]>>
     : never
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-  ? REQUESTS_HEAD extends BatchWriteItemRequestProps
-    ? REQUESTS_TAIL extends BatchWriteItemRequestProps[]
+  ? REQUESTS_HEAD extends BatchWriteRequestProps
+    ? REQUESTS_TAIL extends BatchWriteRequestProps[]
       ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']
         ? RequestEntities<REQUESTS_TAIL, RESULTS>
         : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD[$entity]]>
@@ -32,10 +29,10 @@ type RequestEntities<
     : never
   : RESULTS
 
-export class BatchWriteTableItemsRequest<
+export class BatchWriteCommand<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2[] = EntityV2[],
-  REQUESTS extends BatchWriteItemRequestProps[] = BatchWriteItemRequestProps[]
+  REQUESTS extends BatchWriteRequestProps[] = BatchWriteRequestProps[]
 > extends TableAction<TABLE, ENTITIES> {
   static actionName = 'batchWrite' as const;
 
@@ -46,9 +43,9 @@ export class BatchWriteTableItemsRequest<
     this[$requests] = requests
   }
 
-  requests<NEXT_REQUESTS extends BatchWriteItemRequestProps[]>(
+  requests<NEXT_REQUESTS extends BatchWriteRequestProps[]>(
     ...requests: NEXT_REQUESTS
-  ): BatchWriteTableItemsRequest<TABLE, RequestEntities<NEXT_REQUESTS>, NEXT_REQUESTS> {
+  ): BatchWriteCommand<TABLE, RequestEntities<NEXT_REQUESTS>, NEXT_REQUESTS> {
     const entities: EntityV2[] = []
     const entityNames = new Set<string>()
 
@@ -60,17 +57,13 @@ export class BatchWriteTableItemsRequest<
       entityNames.add(request[$entity].name)
     }
 
-    return new BatchWriteTableItemsRequest(
-      this[$table],
-      entities as RequestEntities<NEXT_REQUESTS>,
-      requests
-    )
+    return new BatchWriteCommand(this[$table], entities as RequestEntities<NEXT_REQUESTS>, requests)
   }
 
   params(): NonNullable<NonNullable<BatchWriteCommandInput>['RequestItems']>[string] {
     if (this[$requests] === undefined || this[$requests].length === 0) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
-        message: 'BatchWriteTableItemsRequest incomplete: No batchWriteItemRequest supplied'
+        message: 'BatchWriteCommand incomplete: No BatchWriteRequest supplied'
       })
     }
 

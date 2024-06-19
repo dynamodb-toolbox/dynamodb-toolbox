@@ -4,15 +4,15 @@ import {
   DynamoDBToolboxError,
   EntityV2,
   TableV2,
-  BatchPutItemRequest,
-  BatchDeleteItemRequest,
+  BatchPutRequest,
+  BatchDeleteRequest,
   schema,
   string,
   number
 } from 'v1'
 import { $entities } from 'v1/table/table'
 
-import { BatchWriteTableItemsRequest } from './batchWriteTableItems'
+import { BatchWriteCommand } from './batchWriteCommand'
 
 const TestTable = new TableV2({
   name: 'test-table',
@@ -48,67 +48,59 @@ const EntityB = new EntityV2({
   table: TestTable
 })
 
-describe('batchWriteTableItems', () => {
-  it('throws if there is no batchWriteItemRequest', () => {
-    const invalidCallA = () => TestTable.build(BatchWriteTableItemsRequest).params()
+describe('BatchWriteCommand', () => {
+  it('throws if there is no request', () => {
+    const invalidCallA = () => TestTable.build(BatchWriteCommand).params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
 
-    const invalidCallB = () => TestTable.build(BatchWriteTableItemsRequest).requests().params()
+    const invalidCallB = () => TestTable.build(BatchWriteCommand).requests().params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
   it('infers correct type', () => {
-    const tableRequest = TestTable.build(BatchWriteTableItemsRequest).requests(
-      EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' }),
-      EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+    const command = TestTable.build(BatchWriteCommand).requests(
+      EntityA.build(BatchDeleteRequest).key({ pkA: 'a', skA: 'a' }),
+      EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
     )
 
-    type AssertEntities = A.Equals<typeof tableRequest[$entities], [typeof EntityA, typeof EntityB]>
+    type AssertEntities = A.Equals<typeof command[$entities], [typeof EntityA, typeof EntityB]>
     const assertEntities: AssertEntities = 1
     assertEntities
 
-    expect(tableRequest[$entities]).toStrictEqual([EntityA, EntityB])
+    expect(command[$entities]).toStrictEqual([EntityA, EntityB])
   })
 
   it('infers correct type even when receiving an array of requests', () => {
-    const batchItemRequests1 = [
-      EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' }),
-      EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+    const requests = [
+      EntityA.build(BatchDeleteRequest).key({ pkA: 'a', skA: 'a' }),
+      EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
     ]
 
-    const tableRequest = TestTable.build(BatchWriteTableItemsRequest).requests(
-      ...batchItemRequests1
-    )
+    const command = TestTable.build(BatchWriteCommand).requests(...requests)
 
     // We have to do like this because order is not guaranteed
-    type AssertEntitiesAB = A.Equals<
-      typeof tableRequest[$entities],
-      [typeof EntityA, typeof EntityB]
-    >
-    type AssertEntitiesBA = A.Equals<
-      typeof tableRequest[$entities],
-      [typeof EntityB, typeof EntityA]
-    >
+    type AssertEntitiesAB = A.Equals<typeof command[$entities], [typeof EntityA, typeof EntityB]>
+    type AssertEntitiesBA = A.Equals<typeof command[$entities], [typeof EntityB, typeof EntityA]>
     const assertEntities: AssertEntitiesAB | AssertEntitiesBA = 1
     assertEntities
 
-    expect(tableRequest[$entities]).toStrictEqual([EntityA, EntityB])
+    expect(command[$entities]).toStrictEqual([EntityA, EntityB])
   })
 
   it('builds expected input', () => {
-    const input = TestTable.build(BatchWriteTableItemsRequest)
+    const input = TestTable.build(BatchWriteCommand)
       .requests(
-        EntityA.build(BatchPutItemRequest).item({
+        EntityA.build(BatchPutRequest).item({
           pkA: 'a',
           skA: 'a',
           name: 'foo',
           commonAttribute: 'bar'
         }),
-        EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+        EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
       )
       .params()
 

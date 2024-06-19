@@ -7,9 +7,7 @@ import { KeyInput, EntityParser } from 'v1/entity/actions/parse'
 export const $key = Symbol('$key')
 export type $key = typeof $key
 
-export class BatchDeleteItemRequest<
-  ENTITY extends EntityV2 = EntityV2
-> extends EntityAction<ENTITY> {
+export class BatchDeleteRequest<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
   static actionName = 'batchDelete' as const;
 
   [$key]?: KeyInput<ENTITY>
@@ -19,8 +17,8 @@ export class BatchDeleteItemRequest<
     this[$key] = key
   }
 
-  key(nextKey: KeyInput<ENTITY>): BatchDeleteItemRequest<ENTITY> {
-    return new BatchDeleteItemRequest(this[$entity], nextKey)
+  key(nextKey: KeyInput<ENTITY>): BatchDeleteRequest<ENTITY> {
+    return new BatchDeleteRequest(this[$entity], nextKey)
   }
 
   params(): NonNullable<BatchWriteCommandInput['RequestItems']>[string][number] {

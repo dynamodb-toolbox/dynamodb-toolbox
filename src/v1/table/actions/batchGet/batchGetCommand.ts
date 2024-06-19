@@ -7,7 +7,7 @@ import { parseConsistentOption } from 'v1/options/consistent'
 import { TableV2, TableAction, $table, $entities } from 'v1/table'
 import { $entity, EntityV2 } from 'v1/entity'
 import { EntityPathParser, EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
-import type { BatchGetItemRequest } from 'v1/entity/actions/batchGet'
+import type { BatchGetRequest } from 'v1/entity/actions/batchGet'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests
@@ -15,25 +15,25 @@ export type $requests = typeof $requests
 export const $options = Symbol('$options')
 export type $options = typeof $options
 
-export type BatchGetItemRequestProps = Pick<BatchGetItemRequest, $entity | 'params'>
+export type BatchGetRequestProps = Pick<BatchGetRequest, $entity | 'params'>
 
-export type BatchGetTableItemsOptions<ENTITIES extends EntityV2[] = EntityV2[]> = {
+export type BatchGetCommandOptions<ENTITIES extends EntityV2[] = EntityV2[]> = {
   consistent?: boolean
   // For some reason, this union is required to keep the strict type of `options.attributes`
-  // when building a `BatchGetTableItemsRequest` directly inside `batchGet`:
-  // => batchGet(TestTable1.build(BatchGetTableItemsRequest).requests(...).options({ attributes: ['attr'] }))
+  // when building a `BatchGetCommand` directly inside `execute`:
+  // => execute(TestTable1.build(BatchGetCommand).requests(...).options({ attributes: ['attr'] }))
 } & ({ attributes?: undefined } | { attributes: EntityPathsIntersection<ENTITIES>[] })
 
 type RequestEntities<
-  REQUESTS extends BatchGetItemRequestProps[],
+  REQUESTS extends BatchGetRequestProps[],
   RESULTS extends EntityV2[] = []
 > = number extends REQUESTS['length']
-  ? U.ListOf<REQUESTS[number]> extends BatchGetItemRequestProps[]
+  ? U.ListOf<REQUESTS[number]> extends BatchGetRequestProps[]
     ? RequestEntities<U.ListOf<REQUESTS[number]>>
     : never
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-  ? REQUESTS_HEAD extends BatchGetItemRequestProps
-    ? REQUESTS_TAIL extends BatchGetItemRequestProps[]
+  ? REQUESTS_HEAD extends BatchGetRequestProps
+    ? REQUESTS_TAIL extends BatchGetRequestProps[]
       ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']
         ? RequestEntities<REQUESTS_TAIL, RESULTS>
         : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD[$entity]]>
@@ -41,11 +41,11 @@ type RequestEntities<
     : never
   : RESULTS
 
-export class BatchGetTableItemsRequest<
+export class BatchGetCommand<
   TABLE extends TableV2 = TableV2,
   ENTITIES extends EntityV2[] = EntityV2[],
-  REQUESTS extends BatchGetItemRequestProps[] = BatchGetItemRequestProps[],
-  OPTIONS extends BatchGetTableItemsOptions<ENTITIES> = BatchGetTableItemsOptions<ENTITIES>
+  REQUESTS extends BatchGetRequestProps[] = BatchGetRequestProps[],
+  OPTIONS extends BatchGetCommandOptions<ENTITIES> = BatchGetCommandOptions<ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
   static actionName = 'batchGet' as const;
 
@@ -63,15 +63,15 @@ export class BatchGetTableItemsRequest<
     this[$options] = options
   }
 
-  requests<NEXT_REQUESTS extends BatchGetItemRequestProps[]>(
+  requests<NEXT_REQUESTS extends BatchGetRequestProps[]>(
     ...requests: NEXT_REQUESTS
-  ): BatchGetTableItemsRequest<
+  ): BatchGetCommand<
     TABLE,
     RequestEntities<NEXT_REQUESTS>,
     NEXT_REQUESTS,
-    OPTIONS extends BatchGetTableItemsOptions<RequestEntities<NEXT_REQUESTS>>
+    OPTIONS extends BatchGetCommandOptions<RequestEntities<NEXT_REQUESTS>>
       ? OPTIONS
-      : BatchGetTableItemsOptions<RequestEntities<NEXT_REQUESTS>>
+      : BatchGetCommandOptions<RequestEntities<NEXT_REQUESTS>>
   > {
     const entities: EntityV2[] = []
     const entityNames = new Set<string>()
@@ -84,35 +84,30 @@ export class BatchGetTableItemsRequest<
       entityNames.add(request[$entity].name)
     }
 
-    return new BatchGetTableItemsRequest(
+    return new BatchGetCommand(
       this[$table],
       entities as RequestEntities<NEXT_REQUESTS>,
       requests,
-      this[$options] as OPTIONS extends BatchGetTableItemsOptions<RequestEntities<NEXT_REQUESTS>>
+      this[$options] as OPTIONS extends BatchGetCommandOptions<RequestEntities<NEXT_REQUESTS>>
         ? OPTIONS
-        : BatchGetTableItemsOptions<RequestEntities<NEXT_REQUESTS>>
+        : BatchGetCommandOptions<RequestEntities<NEXT_REQUESTS>>
     )
   }
 
-  options<NEXT_OPTIONS extends BatchGetTableItemsOptions<ENTITIES>>(
+  options<NEXT_OPTIONS extends BatchGetCommandOptions<ENTITIES>>(
     nextOptions: NEXT_OPTIONS
-  ): BatchGetTableItemsRequest<TABLE, ENTITIES, REQUESTS, NEXT_OPTIONS> {
-    return new BatchGetTableItemsRequest(
-      this[$table],
-      this[$entities],
-      this[$requests],
-      nextOptions
-    )
+  ): BatchGetCommand<TABLE, ENTITIES, REQUESTS, NEXT_OPTIONS> {
+    return new BatchGetCommand(this[$table], this[$entities], this[$requests], nextOptions)
   }
 
   params(): NonNullable<BatchGetCommandInput['RequestItems']>[string] {
     if (this[$requests] === undefined || this[$requests].length === 0) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
-        message: 'BatchGetTableItemsRequest incomplete: No batchGetItemRequest supplied'
+        message: 'BatchGetCommand incomplete: No BatchGetRequest supplied'
       })
     }
-    const firstGetItemRequest = this[$requests][0]
-    const firstGetItemRequestEntity = firstGetItemRequest[$entity]
+    const firstRequest = this[$requests][0]
+    const firstRequestEntity = firstRequest[$entity]
 
     const { consistent, attributes: _attributes } = this[$options] ?? {}
     const attributes = _attributes as string[] | undefined
@@ -121,12 +116,12 @@ export class BatchGetTableItemsRequest<
 
     // TODO: For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist.
     if (attributes !== undefined) {
-      const { entityAttributeName } = firstGetItemRequestEntity
+      const { entityAttributeName } = firstRequestEntity
 
       const {
         ExpressionAttributeNames: projectionExpressionAttributeNames,
         ProjectionExpression
-      } = firstGetItemRequestEntity
+      } = firstRequestEntity
         .build(EntityPathParser)
         .parse(
           // entityAttributeName is required at all times for formatting
@@ -156,8 +151,8 @@ export class BatchGetTableItemsRequest<
 
     const keys: Record<string, any>[] = []
 
-    for (const batchGetItemRequest of this[$requests]) {
-      const key = batchGetItemRequest.params()
+    for (const request of this[$requests]) {
+      const key = request.params()
       keys.push(key)
     }
 
