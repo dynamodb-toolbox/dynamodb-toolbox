@@ -1,13 +1,14 @@
+import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
+
 import { DynamoDBToolboxError } from 'v1/errors'
 import { EntityV2, EntityAction, $entity } from 'v1/entity'
 import { EntityParser, KeyInput } from 'v1/entity/actions/parse'
-import type { PrimaryKey } from 'v1/table/actions/parsePrimaryKey'
 
 export const $key = Symbol('$key')
 export type $key = typeof $key
 
 export class BatchGetItemRequest<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
-  static actionName = 'getBatch' as const;
+  static actionName = 'batchGet' as const;
 
   [$key]?: KeyInput<ENTITY>
 
@@ -16,11 +17,11 @@ export class BatchGetItemRequest<ENTITY extends EntityV2 = EntityV2> extends Ent
     this[$key] = key
   }
 
-  key(nextKey: EntityV2 extends ENTITY ? any : KeyInput<ENTITY>): BatchGetItemRequest<ENTITY> {
+  key(nextKey: KeyInput<ENTITY>): BatchGetItemRequest<ENTITY> {
     return new BatchGetItemRequest(this[$entity], nextKey)
   }
 
-  params(): { key: PrimaryKey<ENTITY['table']> } {
+  params(): NonNullable<NonNullable<BatchGetCommandInput['RequestItems']>[string]['Keys']>[number] {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'BatchGetItemRequest incomplete: Missing "key" property'
@@ -29,6 +30,6 @@ export class BatchGetItemRequest<ENTITY extends EntityV2 = EntityV2> extends Ent
 
     const { key } = this[$entity].build(EntityParser).parse(this[$key], { mode: 'key' })
 
-    return { key }
+    return key
   }
 }
