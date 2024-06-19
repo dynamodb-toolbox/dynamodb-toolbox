@@ -7,8 +7,7 @@ export const parseInCondition = (
   condition: InCondition
 ): void => {
   const attributePath = condition.size ?? condition.attr
-  const expressionAttributeValues = condition.in
-  const { transform = true } = condition
+  const { transform = true, in: expressionAttributeValues } = condition
 
   conditionParser.resetExpression()
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
