@@ -6,7 +6,7 @@ import { parseConsistentOption } from 'v1/options/consistent'
 import { TableV2, TableAction, $table, $entities } from 'v1/table'
 import { $entity, EntityV2 } from 'v1/entity'
 import { EntityPathParser, EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
-import type { BatchGetItemRequest, $key } from 'v1/entity/actions/batchGet'
+import type { BatchGetItemRequest } from 'v1/entity/actions/batchGet'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests
@@ -14,7 +14,7 @@ export type $requests = typeof $requests
 export const $options = Symbol('$options')
 export type $options = typeof $options
 
-export type BatchGetItemRequestProps = Pick<BatchGetItemRequest, $entity | $key | 'params'>
+export type BatchGetItemRequestProps = Pick<BatchGetItemRequest, $entity | 'params'>
 
 export type BatchGetTableItemsOptions<ENTITIES extends EntityV2[] = EntityV2[]> = {
   consistent?: boolean
@@ -42,7 +42,7 @@ export class BatchGetTableItemsRequest<
   REQUESTS extends BatchGetItemRequestProps[] = BatchGetItemRequestProps[],
   OPTIONS extends BatchGetTableItemsOptions<ENTITIES> = BatchGetTableItemsOptions<ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
-  static actionName = 'getTableItemBatch' as const;
+  static actionName = 'batchGet' as const;
 
   [$requests]?: REQUESTS;
   [$options]: OPTIONS
@@ -100,7 +100,7 @@ export class BatchGetTableItemsRequest<
     )
   }
 
-  params(): NonNullable<NonNullable<BatchGetCommandInput>['RequestItems']>[string] {
+  params(): NonNullable<BatchGetCommandInput['RequestItems']>[string] {
     if (this[$requests] === undefined || this[$requests].length === 0) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'BatchGetTableItemsRequest incomplete: No batchGetItemRequest supplied'
@@ -152,7 +152,7 @@ export class BatchGetTableItemsRequest<
     const keys: Record<string, any>[] = []
 
     for (const batchGetItemRequest of this[$requests]) {
-      const { key } = batchGetItemRequest.params()
+      const key = batchGetItemRequest.params()
       keys.push(key)
     }
 
