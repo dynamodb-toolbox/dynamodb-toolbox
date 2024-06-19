@@ -268,4 +268,22 @@ describe('getBatchGetCommandInput', () => {
 
     expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
   })
+
+  it('passes correct options', async () => {
+    documentClientMock.on(BatchGetCommand).resolves({
+      Responses: { 'test-table-1': [savedItemA] }
+    })
+
+    await batchGet(
+      { documentClient, capacity: 'TOTAL' },
+      TestTable1.build(BatchGetTableItemsRequest).requests(
+        EntityA.build(BatchGetItemRequest).key(keyA)
+      )
+    )
+
+    expect(documentClientMock.calls()).toHaveLength(1)
+    expect(documentClientMock.commandCalls(BatchGetCommand)[0].args[0].input).toMatchObject({
+      ReturnConsumedCapacity: 'TOTAL'
+    })
+  })
 })

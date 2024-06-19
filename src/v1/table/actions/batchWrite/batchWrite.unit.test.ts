@@ -1,3 +1,7 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
+import { AwsStub, mockClient } from 'aws-sdk-client-mock'
+
 import {
   DynamoDBToolboxError,
   EntityV2,
@@ -10,12 +14,17 @@ import {
 } from 'v1'
 
 import { BatchWriteTableItemsRequest } from './batchWriteTableItems'
-import { getBatchWriteCommandInput } from './batchWrite'
+import { batchWrite, getBatchWriteCommandInput } from './batchWrite'
+
+const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
+const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
+let documentClientMock: AwsStub<object, unknown, unknown>
 
 const TestTable1 = new TableV2({
   name: 'test-table-1',
   partitionKey: { type: 'string', name: 'pk' },
-  sortKey: { type: 'string', name: 'sk' }
+  sortKey: { type: 'string', name: 'sk' },
+  documentClient
 })
 
 const EntityA = new EntityV2({
@@ -43,7 +52,8 @@ const EntityB = new EntityV2({
 const TestTable2 = new TableV2({
   name: 'test-table-2',
   partitionKey: { type: 'string', name: 'pk' },
-  sortKey: { type: 'string', name: 'sk' }
+  sortKey: { type: 'string', name: 'sk' },
+  documentClient
 })
 
 const EntityC = new EntityV2({
@@ -56,6 +66,18 @@ const EntityC = new EntityV2({
 })
 
 describe('getBatchWriteCommandInput', () => {
+  beforeAll(() => {
+    documentClientMock = mockClient(documentClient)
+  })
+
+  afterAll(() => {
+    documentClientMock.restore()
+  })
+
+  beforeEach(() => {
+    documentClientMock.reset()
+  })
+
   it('throws if no BatchWriteTableItemsRequest has been provided', () => {
     const invalidCall = () => getBatchWriteCommandInput([])
 
@@ -114,6 +136,23 @@ describe('getBatchWriteCommandInput', () => {
         ],
         'test-table-2': [{ DeleteRequest: { Key: { pk: 'c', sk: 'c' } } }]
       }
+    })
+  })
+
+  it('passes correct options', async () => {
+    documentClientMock.on(BatchWriteCommand).resolves({})
+
+    await batchWrite(
+      { documentClient, capacity: 'TOTAL', metrics: 'SIZE' },
+      TestTable1.build(BatchWriteTableItemsRequest).requests(
+        EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' })
+      )
+    )
+
+    expect(documentClientMock.calls()).toHaveLength(1)
+    expect(documentClientMock.commandCalls(BatchWriteCommand)[0].args[0].input).toMatchObject({
+      ReturnConsumedCapacity: 'TOTAL',
+      ReturnItemCollectionMetrics: 'SIZE'
     })
   })
 })
