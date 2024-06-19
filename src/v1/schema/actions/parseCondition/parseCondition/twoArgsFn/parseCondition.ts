@@ -1,5 +1,5 @@
-import type { Always } from 'v1/schema/attributes'
-import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
+import type { Attribute } from 'v1/schema/attributes'
+import { PrimitiveAttribute, string } from 'v1/schema/attributes/primitive'
 
 import type { ConditionParser } from '../../conditionParser'
 import { TwoArgsFnOperator, isTwoArgsFnOperator, TwoArgsFnCondition } from './types'
@@ -10,45 +10,11 @@ const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
   type: 'attribute_type'
 }
 
-const typeAttribute: PrimitiveAttribute<
-  'string',
-  {
-    required: Always
-    hidden: false
-    key: false
-    savedAs: undefined
-    enum: ['S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M']
-    defaults: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-    links: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-    transform: undefined
-  }
-> = new PrimitiveAttribute({
-  type: 'string',
-  required: 'always',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  enum: ['S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M'],
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  links: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  transform: undefined
-})
+const stringAttribute = string().freeze()
+
+const typeAttribute = string()
+  .enum('S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M')
+  .freeze()
 
 export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   conditionParser: ConditionParser,
@@ -65,11 +31,34 @@ export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
   conditionParser.resetExpression(`${twoArgsFnOperatorExpression[comparisonOperator]}(`)
   const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
   conditionParser.appendToExpression(', ')
+
+  let targetAttribute: Attribute
+  switch (comparisonOperator) {
+    case 'type':
+      targetAttribute = new PrimitiveAttribute({ ...typeAttribute, path: attributePath })
+      break
+    case 'contains':
+      switch (attribute.type) {
+        case 'set':
+        case 'list':
+          targetAttribute = attribute.elements
+          break
+        case 'string':
+          // We accept any string in case of contains
+          targetAttribute = new PrimitiveAttribute({ ...stringAttribute, path: attributePath })
+          break
+        default:
+          targetAttribute = attribute
+      }
+      break
+    default:
+      targetAttribute = attribute
+  }
+
   comparisonOperator === 'type'
-    ? conditionParser.appendAttributeValue(
-        new PrimitiveAttribute({ ...typeAttribute, path: attributePath }),
-        expressionAttributeValue
-      )
-    : conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue, { transform })
+    ? conditionParser.appendAttributeValue(targetAttribute, expressionAttributeValue)
+    : conditionParser.appendAttributeValueOrPath(targetAttribute, expressionAttributeValue, {
+        transform
+      })
   conditionParser.appendToExpression(')')
 }

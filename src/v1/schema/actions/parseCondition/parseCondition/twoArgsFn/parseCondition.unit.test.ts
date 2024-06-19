@@ -1,5 +1,5 @@
 import { schema } from 'v1/schema'
-import { list, map, number, string } from 'v1/schema/attributes'
+import { list, map, number, string, set } from 'v1/schema/attributes'
 
 import { ConditionParser } from '../../conditionParser'
 
@@ -7,7 +7,9 @@ describe('parseCondition - singleArgFn', () => {
   const simpleSchema = schema({
     str: string(),
     otherStr: string(),
-    list: list(number())
+    set: set(string()),
+    list: list(number()),
+    num: number()
   })
 
   it('type', () => {
@@ -20,7 +22,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('contains (value)', () => {
+  it('contains (str - value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'str', contains: 'foo' }).toCommandOptions()
     ).toStrictEqual({
@@ -30,7 +32,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('contains (attribute)', () => {
+  it('contains (str - reference)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -39,6 +41,52 @@ describe('parseCondition - singleArgFn', () => {
     ).toStrictEqual({
       ConditionExpression: 'contains(#c_1, #c_2)',
       ExpressionAttributeNames: { '#c_1': 'str', '#c_2': 'otherStr' },
+      ExpressionAttributeValues: {}
+    })
+  })
+
+  it('contains (list - value)', () => {
+    expect(
+      simpleSchema.build(ConditionParser).parse({ attr: 'list', contains: 42 }).toCommandOptions()
+    ).toStrictEqual({
+      ConditionExpression: 'contains(#c_1, :c_1)',
+      ExpressionAttributeNames: { '#c_1': 'list' },
+      ExpressionAttributeValues: { ':c_1': 42 }
+    })
+  })
+
+  it('contains (list - reference)', () => {
+    expect(
+      simpleSchema
+        .build(ConditionParser)
+        .parse({ attr: 'list', contains: { attr: 'num' } })
+        .toCommandOptions()
+    ).toStrictEqual({
+      ConditionExpression: 'contains(#c_1, #c_2)',
+      ExpressionAttributeNames: { '#c_1': 'list', '#c_2': 'num' },
+      ExpressionAttributeValues: {}
+    })
+  })
+
+  it('contains (set - value)', () => {
+    expect(
+      simpleSchema.build(ConditionParser).parse({ attr: 'set', contains: 'foo' }).toCommandOptions()
+    ).toStrictEqual({
+      ConditionExpression: 'contains(#c_1, :c_1)',
+      ExpressionAttributeNames: { '#c_1': 'set' },
+      ExpressionAttributeValues: { ':c_1': 'foo' }
+    })
+  })
+
+  it('contains (set - reference)', () => {
+    expect(
+      simpleSchema
+        .build(ConditionParser)
+        .parse({ attr: 'set', contains: { attr: 'str' } })
+        .toCommandOptions()
+    ).toStrictEqual({
+      ConditionExpression: 'contains(#c_1, #c_2)',
+      ExpressionAttributeNames: { '#c_1': 'set', '#c_2': 'str' },
       ExpressionAttributeValues: {}
     })
   })
