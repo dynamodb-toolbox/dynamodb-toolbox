@@ -1,4 +1,5 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
+import type { U } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from 'v1/errors'
 import { TableV2, TableAction, $table } from 'v1/table'
@@ -17,7 +18,11 @@ export type BatchWriteItemRequestProps = Pick<
 type RequestEntities<
   REQUESTS extends BatchWriteItemRequestProps[],
   RESULTS extends EntityV2[] = []
-> = REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
+> = number extends REQUESTS['length']
+  ? U.ListOf<REQUESTS[number]> extends BatchWriteItemRequestProps[]
+    ? RequestEntities<U.ListOf<REQUESTS[number]>>
+    : never
+  : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
   ? REQUESTS_HEAD extends BatchWriteItemRequestProps
     ? REQUESTS_TAIL extends BatchWriteItemRequestProps[]
       ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']

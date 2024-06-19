@@ -1,4 +1,5 @@
 import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
+import type { U } from 'ts-toolbelt'
 import { isEmpty } from 'lodash'
 
 import { DynamoDBToolboxError } from 'v1/errors'
@@ -26,7 +27,11 @@ export type BatchGetTableItemsOptions<ENTITIES extends EntityV2[] = EntityV2[]> 
 type RequestEntities<
   REQUESTS extends BatchGetItemRequestProps[],
   RESULTS extends EntityV2[] = []
-> = REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
+> = number extends REQUESTS['length']
+  ? U.ListOf<REQUESTS[number]> extends BatchGetItemRequestProps[]
+    ? RequestEntities<U.ListOf<REQUESTS[number]>>
+    : never
+  : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
   ? REQUESTS_HEAD extends BatchGetItemRequestProps
     ? REQUESTS_TAIL extends BatchGetItemRequestProps[]
       ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']

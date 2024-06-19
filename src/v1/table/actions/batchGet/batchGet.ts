@@ -33,7 +33,13 @@ type BatchGetResponse<REQUESTS extends BatchGetTableItemsRequest[]> = Omit<
 type BatchGetResponses<
   REQUESTS extends BatchGetTableItemsRequest[],
   RESPONSE extends unknown[] = []
-> = REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAILS]
+> = number extends REQUESTS['length']
+  ? (REQUESTS[number] extends infer TABLE_REQUEST
+      ? TABLE_REQUEST extends BatchGetTableItemsRequest
+        ? BatchGetResponseTableItems<NonNullable<TABLE_REQUEST[$requests]>, TABLE_REQUEST[$options]>
+        : never
+      : never)[]
+  : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAILS]
   ? REQUESTS_HEAD extends BatchGetTableItemsRequest
     ? REQUESTS_TAILS extends BatchGetTableItemsRequest[]
       ? BatchGetResponses<
@@ -42,9 +48,7 @@ type BatchGetResponses<
             ...RESPONSE,
             BatchGetResponseTableItems<
               NonNullable<REQUESTS_HEAD[$requests]>,
-              REQUESTS_HEAD extends { [$options]: BatchGetTableItemsOptions }
-                ? REQUESTS_HEAD[$options]
-                : never
+              REQUESTS_HEAD[$options]
             >
           ]
         >
@@ -56,7 +60,25 @@ type BatchGetResponseTableItems<
   REQUESTS extends BatchGetItemRequestProps[],
   OPTIONS extends BatchGetTableItemsOptions,
   ITEMS extends unknown[] = []
-> = REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
+> = number extends REQUESTS['length']
+  ? (
+      | (REQUESTS[number] extends infer ENTITY_REQUEST
+          ? ENTITY_REQUEST extends BatchGetItemRequestProps
+            ? FormattedItem<
+                ENTITY_REQUEST[$entity],
+                {
+                  attributes: OPTIONS extends {
+                    attributes: Paths<ENTITY_REQUEST[$entity]['schema']>[]
+                  }
+                    ? OPTIONS['attributes'][number]
+                    : undefined
+                }
+              >
+            : never
+          : never)
+      | undefined
+    )[]
+  : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
   ? REQUESTS_HEAD extends BatchGetItemRequestProps
     ? REQUESTS_TAIL extends BatchGetItemRequestProps[]
       ? BatchGetResponseTableItems<
@@ -84,21 +106,29 @@ type BatchGetResponseTableItems<
   : ITEMS
 
 export const batchGet = async <
-  HEAD_REQUEST_OR_OPTIONS extends BatchGetTableItemsRequest | BatchGetOptions,
-  TAIL_REQUESTS extends BatchGetTableItemsRequest[]
+  INPUT extends BatchGetTableItemsRequest[] | [BatchGetOptions, ...BatchGetTableItemsRequest[]]
 >(
-  headRequestOrOptions: HEAD_REQUEST_OR_OPTIONS,
-  ...tailRequests: TAIL_REQUESTS
+  ...input: INPUT
 ): Promise<
-  HEAD_REQUEST_OR_OPTIONS extends BatchGetTableItemsRequest
-    ? BatchGetResponse<[HEAD_REQUEST_OR_OPTIONS, ...TAIL_REQUESTS]>
-    : BatchGetResponse<TAIL_REQUESTS>
+  INPUT extends BatchGetTableItemsRequest[]
+    ? BatchGetResponse<INPUT>
+    : INPUT extends [unknown, ...infer TAIL_REQUESTS]
+    ? TAIL_REQUESTS extends BatchGetTableItemsRequest[]
+      ? BatchGetResponse<TAIL_REQUESTS>
+      : never
+    : never
 > => {
-  type RESPONSE = HEAD_REQUEST_OR_OPTIONS extends BatchGetTableItemsRequest
-    ? BatchGetResponse<[HEAD_REQUEST_OR_OPTIONS, ...TAIL_REQUESTS]>
-    : BatchGetResponse<TAIL_REQUESTS>
+  type RESPONSE = INPUT extends BatchGetTableItemsRequest[]
+    ? BatchGetResponse<INPUT>
+    : INPUT extends [unknown, ...infer TAIL_REQUESTS]
+    ? TAIL_REQUESTS extends BatchGetTableItemsRequest[]
+      ? BatchGetResponse<TAIL_REQUESTS>
+      : never
+    : never
 
-  const requests: BatchGetTableItemsRequest[] = tailRequests
+  const [headRequestOrOptions = {}, ...tailRequests] = input
+
+  const requests = tailRequests as BatchGetTableItemsRequest[]
   let options: BatchGetOptions = {}
 
   if (headRequestOrOptions instanceof BatchGetTableItemsRequest) {
