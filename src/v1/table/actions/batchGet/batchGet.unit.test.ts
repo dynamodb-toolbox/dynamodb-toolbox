@@ -209,6 +209,41 @@ describe('getBatchGetCommandInput', () => {
     expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
   })
 
+  it('infers correct type even with arrays of request', async () => {
+    documentClientMock.on(BatchGetCommand).resolves({
+      Responses: {
+        'test-table-1': [savedItemA, savedItemB],
+        'test-table-2': [savedItemC]
+      }
+    })
+
+    const batchItemRequests1 = [
+      EntityA.build(BatchGetItemRequest).key(keyA),
+      EntityB.build(BatchGetItemRequest).key(keyB)
+    ]
+
+    const batchItemRequests2 = [EntityC.build(BatchGetItemRequest).key(keyC)]
+
+    const tableRequests = [
+      TestTable1.build(BatchGetTableItemsRequest).requests(...batchItemRequests1),
+      TestTable2.build(BatchGetTableItemsRequest).requests(...batchItemRequests2)
+    ]
+
+    const { Responses } = await batchGet(...tableRequests)
+
+    type AssertResponse = A.Equals<
+      typeof Responses,
+      (
+        | (FormattedItem<typeof EntityA> | FormattedItem<typeof EntityB> | undefined)[]
+        | (FormattedItem<typeof EntityC> | undefined)[]
+      )[]
+    >
+    const assertResponse: AssertResponse = 1
+    assertResponse
+
+    expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
+  })
+
   it('formats response', async () => {
     documentClientMock.on(BatchGetCommand).resolves({
       Responses: {
@@ -274,12 +309,16 @@ describe('getBatchGetCommandInput', () => {
       Responses: { 'test-table-1': [savedItemA] }
     })
 
-    await batchGet(
+    const { Responses } = await batchGet(
       { documentClient, capacity: 'TOTAL' },
       TestTable1.build(BatchGetTableItemsRequest).requests(
         EntityA.build(BatchGetItemRequest).key(keyA)
       )
     )
+
+    type AssertResponse = A.Equals<typeof Responses, [[FormattedItem<typeof EntityA> | undefined]]>
+    const assertResponse: AssertResponse = 1
+    assertResponse
 
     expect(documentClientMock.calls()).toHaveLength(1)
     expect(documentClientMock.commandCalls(BatchGetCommand)[0].args[0].input).toMatchObject({

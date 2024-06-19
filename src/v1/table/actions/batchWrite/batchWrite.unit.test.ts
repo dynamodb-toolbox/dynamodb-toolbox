@@ -139,6 +139,35 @@ describe('getBatchWriteCommandInput', () => {
     })
   })
 
+  it('accepts arrays of requests', async () => {
+    documentClientMock.on(BatchWriteCommand).resolves({})
+
+    const batchItemRequests1 = [
+      EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' }),
+      EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+    ]
+
+    const batchItemRequests2 = [EntityC.build(BatchDeleteItemRequest).key({ pkC: 'c', skC: 'c' })]
+
+    const tableRequests = [
+      TestTable1.build(BatchWriteTableItemsRequest).requests(...batchItemRequests1),
+      TestTable2.build(BatchWriteTableItemsRequest).requests(...batchItemRequests2)
+    ]
+
+    await batchWrite(...tableRequests)
+
+    expect(documentClientMock.calls()).toHaveLength(1)
+    expect(documentClientMock.commandCalls(BatchWriteCommand)[0].args[0].input).toMatchObject({
+      RequestItems: {
+        'test-table-1': [
+          { DeleteRequest: { Key: { pk: 'a', sk: 'a' } } },
+          { DeleteRequest: { Key: { pk: 'b', sk: 'b' } } }
+        ],
+        'test-table-2': [{ DeleteRequest: { Key: { pk: 'c', sk: 'c' } } }]
+      }
+    })
+  })
+
   it('passes correct options', async () => {
     documentClientMock.on(BatchWriteCommand).resolves({})
 

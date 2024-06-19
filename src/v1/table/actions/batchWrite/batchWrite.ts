@@ -19,10 +19,11 @@ export interface BatchWriteOptions {
 }
 
 export const batchWrite = async (
-  headRequestOrOptions: BatchWriteTableItemsRequest | BatchWriteOptions,
-  ...tailRequests: BatchWriteTableItemsRequest[]
+  ...input: [BatchWriteOptions, ...BatchWriteTableItemsRequest[]] | BatchWriteTableItemsRequest[]
 ): Promise<BatchWriteCommandOutput> => {
-  const requests: BatchWriteTableItemsRequest[] = tailRequests
+  const [headRequestOrOptions = {}, ...tailRequests] = input
+
+  const requests = tailRequests as BatchWriteTableItemsRequest[]
   let options: BatchWriteOptions = {}
 
   if (headRequestOrOptions instanceof BatchWriteTableItemsRequest) {

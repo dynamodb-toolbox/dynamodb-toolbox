@@ -1,3 +1,5 @@
+import type { A } from 'ts-toolbelt'
+
 import {
   DynamoDBToolboxError,
   EntityV2,
@@ -8,6 +10,7 @@ import {
   string,
   number
 } from 'v1'
+import { $entities } from 'v1/table/table'
 
 import { BatchWriteTableItemsRequest } from './batchWriteTableItems'
 
@@ -58,7 +61,45 @@ describe('batchWriteTableItems', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('writes valid input otherwise', () => {
+  it('infers correct type', () => {
+    const tableRequest = TestTable.build(BatchWriteTableItemsRequest).requests(
+      EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' }),
+      EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+    )
+
+    type AssertEntities = A.Equals<typeof tableRequest[$entities], [typeof EntityA, typeof EntityB]>
+    const assertEntities: AssertEntities = 1
+    assertEntities
+
+    expect(tableRequest[$entities]).toStrictEqual([EntityA, EntityB])
+  })
+
+  it('infers correct type even when receiving an array of requests', () => {
+    const batchItemRequests1 = [
+      EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' }),
+      EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+    ]
+
+    const tableRequest = TestTable.build(BatchWriteTableItemsRequest).requests(
+      ...batchItemRequests1
+    )
+
+    // We have to do like this because order is not guaranteed
+    type AssertEntitiesAB = A.Equals<
+      typeof tableRequest[$entities],
+      [typeof EntityA, typeof EntityB]
+    >
+    type AssertEntitiesBA = A.Equals<
+      typeof tableRequest[$entities],
+      [typeof EntityB, typeof EntityA]
+    >
+    const assertEntities: AssertEntitiesAB | AssertEntitiesBA = 1
+    assertEntities
+
+    expect(tableRequest[$entities]).toStrictEqual([EntityA, EntityB])
+  })
+
+  it('builds expected input', () => {
     const input = TestTable.build(BatchWriteTableItemsRequest)
       .requests(
         EntityA.build(BatchPutItemRequest).item({
