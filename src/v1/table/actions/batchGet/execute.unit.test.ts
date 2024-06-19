@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, BatchGetCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, BatchGetCommand as _BatchGetCommand } from '@aws-sdk/lib-dynamodb'
 import { mockClient, AwsStub } from 'aws-sdk-client-mock'
 import { pick } from 'lodash'
 import type { A } from 'ts-toolbelt'
@@ -10,15 +10,15 @@ import {
   TableV2,
   schema,
   string,
-  BatchGetItemRequest,
+  BatchGetRequest,
   number,
   FormattedItem,
   SavedItem,
   KeyInput
 } from 'v1'
 
-import { BatchGetTableItemsRequest } from './batchGetTableItems'
-import { batchGet, getBatchGetCommandInput } from './batchGet'
+import { BatchGetCommand } from './batchGetCommand'
+import { execute, getCommandInput } from './execute'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
@@ -119,7 +119,7 @@ const formattedItemC: FormattedItem<typeof EntityC> = {
   skC: 'c'
 }
 
-describe('getBatchGetCommandInput', () => {
+describe('execute (batchGet)', () => {
   beforeAll(() => {
     documentClientMock = mockClient(documentClient)
   })
@@ -132,22 +132,18 @@ describe('getBatchGetCommandInput', () => {
     documentClientMock.reset()
   })
 
-  it('throws if no batchGetTableItemsRequest has been provided', () => {
-    const invalidCall = () => getBatchGetCommandInput([])
+  it('throws if no command has been provided', () => {
+    const invalidCall = () => getCommandInput([])
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('throws if two batchGetTableItemsRequests have the same Table', () => {
+  it('throws if two commands have the same Table', () => {
     const invalidCall = () =>
-      getBatchGetCommandInput([
-        TestTable1.build(BatchGetTableItemsRequest).requests(
-          EntityA.build(BatchGetItemRequest).key(keyA)
-        ),
-        TestTable1.build(BatchGetTableItemsRequest).requests(
-          EntityB.build(BatchGetItemRequest).key(keyB)
-        )
+      getCommandInput([
+        TestTable1.build(BatchGetCommand).requests(EntityA.build(BatchGetRequest).key(keyA)),
+        TestTable1.build(BatchGetCommand).requests(EntityB.build(BatchGetRequest).key(keyB))
       ])
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
@@ -155,14 +151,12 @@ describe('getBatchGetCommandInput', () => {
   })
 
   it('writes valid input otherwise', () => {
-    const input = getBatchGetCommandInput([
-      TestTable1.build(BatchGetTableItemsRequest).requests(
-        EntityA.build(BatchGetItemRequest).key(keyA),
-        EntityB.build(BatchGetItemRequest).key(keyB)
+    const input = getCommandInput([
+      TestTable1.build(BatchGetCommand).requests(
+        EntityA.build(BatchGetRequest).key(keyA),
+        EntityB.build(BatchGetRequest).key(keyB)
       ),
-      TestTable2.build(BatchGetTableItemsRequest).requests(
-        EntityC.build(BatchGetItemRequest).key(keyC)
-      )
+      TestTable2.build(BatchGetCommand).requests(EntityC.build(BatchGetRequest).key(keyC))
     ])
 
     expect(input).toStrictEqual({
@@ -179,21 +173,19 @@ describe('getBatchGetCommandInput', () => {
   })
 
   it('returns correct response', async () => {
-    documentClientMock.on(BatchGetCommand).resolves({
+    documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemA, savedItemB],
         'test-table-2': [savedItemC]
       }
     })
 
-    const { Responses } = await batchGet(
-      TestTable1.build(BatchGetTableItemsRequest).requests(
-        EntityA.build(BatchGetItemRequest).key(keyA),
-        EntityB.build(BatchGetItemRequest).key(keyB)
+    const { Responses } = await execute(
+      TestTable1.build(BatchGetCommand).requests(
+        EntityA.build(BatchGetRequest).key(keyA),
+        EntityB.build(BatchGetRequest).key(keyB)
       ),
-      TestTable2.build(BatchGetTableItemsRequest).requests(
-        EntityC.build(BatchGetItemRequest).key(keyC)
-      )
+      TestTable2.build(BatchGetCommand).requests(EntityC.build(BatchGetRequest).key(keyC))
     )
 
     type AssertResponse = A.Equals<
@@ -210,26 +202,26 @@ describe('getBatchGetCommandInput', () => {
   })
 
   it('infers correct type even with arrays of request', async () => {
-    documentClientMock.on(BatchGetCommand).resolves({
+    documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemA, savedItemB],
         'test-table-2': [savedItemC]
       }
     })
 
-    const batchItemRequests1 = [
-      EntityA.build(BatchGetItemRequest).key(keyA),
-      EntityB.build(BatchGetItemRequest).key(keyB)
+    const requests1 = [
+      EntityA.build(BatchGetRequest).key(keyA),
+      EntityB.build(BatchGetRequest).key(keyB)
     ]
 
-    const batchItemRequests2 = [EntityC.build(BatchGetItemRequest).key(keyC)]
+    const requests2 = [EntityC.build(BatchGetRequest).key(keyC)]
 
-    const tableRequests = [
-      TestTable1.build(BatchGetTableItemsRequest).requests(...batchItemRequests1),
-      TestTable2.build(BatchGetTableItemsRequest).requests(...batchItemRequests2)
+    const commands = [
+      TestTable1.build(BatchGetCommand).requests(...requests1),
+      TestTable2.build(BatchGetCommand).requests(...requests2)
     ]
 
-    const { Responses } = await batchGet(...tableRequests)
+    const { Responses } = await execute(...commands)
 
     type AssertResponse = A.Equals<
       typeof Responses,
@@ -245,22 +237,22 @@ describe('getBatchGetCommandInput', () => {
   })
 
   it('formats response', async () => {
-    documentClientMock.on(BatchGetCommand).resolves({
+    documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemA, savedItemB],
         'test-table-2': [savedItemC]
       }
     })
 
-    const { Responses } = await batchGet(
-      TestTable1.build(BatchGetTableItemsRequest)
+    const { Responses } = await execute(
+      TestTable1.build(BatchGetCommand)
         .requests(
-          EntityA.build(BatchGetItemRequest).key(keyA),
-          EntityB.build(BatchGetItemRequest).key(keyB)
+          EntityA.build(BatchGetRequest).key(keyA),
+          EntityB.build(BatchGetRequest).key(keyB)
         )
         .options({ attributes: ['commonAttribute'] }),
-      TestTable2.build(BatchGetTableItemsRequest)
-        .requests(EntityC.build(BatchGetItemRequest).key(keyC))
+      TestTable2.build(BatchGetCommand)
+        .requests(EntityC.build(BatchGetRequest).key(keyC))
         .options({ attributes: ['pkC'] })
     )
 
@@ -283,37 +275,33 @@ describe('getBatchGetCommandInput', () => {
     ])
   })
 
-  it('re-orders response item if needed', async () => {
-    documentClientMock.on(BatchGetCommand).resolves({
+  it('re-orders response items if needed', async () => {
+    documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemB, savedItemA],
         'test-table-2': [savedItemC]
       }
     })
 
-    const { Responses } = await batchGet(
-      TestTable1.build(BatchGetTableItemsRequest).requests(
-        EntityA.build(BatchGetItemRequest).key(keyA),
-        EntityB.build(BatchGetItemRequest).key(keyB)
+    const { Responses } = await execute(
+      TestTable1.build(BatchGetCommand).requests(
+        EntityA.build(BatchGetRequest).key(keyA),
+        EntityB.build(BatchGetRequest).key(keyB)
       ),
-      TestTable2.build(BatchGetTableItemsRequest).requests(
-        EntityC.build(BatchGetItemRequest).key(keyC)
-      )
+      TestTable2.build(BatchGetCommand).requests(EntityC.build(BatchGetRequest).key(keyC))
     )
 
     expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
   })
 
   it('passes correct options', async () => {
-    documentClientMock.on(BatchGetCommand).resolves({
+    documentClientMock.on(_BatchGetCommand).resolves({
       Responses: { 'test-table-1': [savedItemA] }
     })
 
-    const { Responses } = await batchGet(
+    const { Responses } = await execute(
       { documentClient, capacity: 'TOTAL' },
-      TestTable1.build(BatchGetTableItemsRequest).requests(
-        EntityA.build(BatchGetItemRequest).key(keyA)
-      )
+      TestTable1.build(BatchGetCommand).requests(EntityA.build(BatchGetRequest).key(keyA))
     )
 
     type AssertResponse = A.Equals<typeof Responses, [[FormattedItem<typeof EntityA> | undefined]]>
@@ -321,7 +309,7 @@ describe('getBatchGetCommandInput', () => {
     assertResponse
 
     expect(documentClientMock.calls()).toHaveLength(1)
-    expect(documentClientMock.commandCalls(BatchGetCommand)[0].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchGetCommand)[0].args[0].input).toMatchObject({
       ReturnConsumedCapacity: 'TOTAL'
     })
   })

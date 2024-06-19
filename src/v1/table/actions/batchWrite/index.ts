@@ -1,3 +1,3 @@
-export { BatchWriteTableItemsRequest } from './batchWriteTableItems'
-export { batchWrite } from './batchWrite'
-export type { BatchWriteOptions } from './batchWrite'
+export { BatchWriteCommand } from './batchWriteCommand'
+export { execute } from './execute'
+export type { ExecuteBatchWriteOptions } from './execute'

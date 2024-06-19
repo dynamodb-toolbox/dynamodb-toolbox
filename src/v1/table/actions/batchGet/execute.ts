@@ -1,5 +1,5 @@
 import {
-  BatchGetCommand,
+  BatchGetCommand as _BatchGetCommand,
   BatchGetCommandInput,
   BatchGetCommandOutput,
   DynamoDBDocumentClient
@@ -13,57 +13,54 @@ import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
 import type { Paths } from 'v1/schema/actions/parsePaths'
 
 import {
-  BatchGetTableItemsRequest,
-  BatchGetItemRequestProps,
-  BatchGetTableItemsOptions,
+  BatchGetCommand,
+  BatchGetRequestProps,
+  BatchGetCommandOptions,
   $requests,
   $options
-} from './batchGetTableItems'
+} from './batchGetCommand'
 
-export interface BatchGetOptions {
+export interface ExecuteBatchGetOptions {
   capacity?: CapacityOption
   documentClient?: DynamoDBDocumentClient
 }
 
-type BatchGetResponse<REQUESTS extends BatchGetTableItemsRequest[]> = Omit<
+type ExecuteBatchGetResponse<COMMAND extends BatchGetCommand[]> = Omit<
   BatchGetCommandOutput,
   'Responses'
-> & { Responses: BatchGetResponses<REQUESTS> }
+> & { Responses: BatchGetResponses<COMMAND> }
 
 type BatchGetResponses<
-  REQUESTS extends BatchGetTableItemsRequest[],
-  RESPONSE extends unknown[] = []
-> = number extends REQUESTS['length']
-  ? (REQUESTS[number] extends infer TABLE_REQUEST
-      ? TABLE_REQUEST extends BatchGetTableItemsRequest
-        ? BatchGetResponseTableItems<NonNullable<TABLE_REQUEST[$requests]>, TABLE_REQUEST[$options]>
+  COMMANDS extends BatchGetCommand[],
+  RESPONSES extends unknown[] = []
+> = number extends COMMANDS['length']
+  ? (COMMANDS[number] extends infer TABLE_COMMAND
+      ? TABLE_COMMAND extends BatchGetCommand
+        ? BatchGetRequestResponses<NonNullable<TABLE_COMMAND[$requests]>, TABLE_COMMAND[$options]>
         : never
       : never)[]
-  : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAILS]
-  ? REQUESTS_HEAD extends BatchGetTableItemsRequest
-    ? REQUESTS_TAILS extends BatchGetTableItemsRequest[]
+  : COMMANDS extends [infer COMMANDS_HEAD, ...infer COMMANDS_TAILS]
+  ? COMMANDS_HEAD extends BatchGetCommand
+    ? COMMANDS_TAILS extends BatchGetCommand[]
       ? BatchGetResponses<
-          REQUESTS_TAILS,
+          COMMANDS_TAILS,
           [
-            ...RESPONSE,
-            BatchGetResponseTableItems<
-              NonNullable<REQUESTS_HEAD[$requests]>,
-              REQUESTS_HEAD[$options]
-            >
+            ...RESPONSES,
+            BatchGetRequestResponses<NonNullable<COMMANDS_HEAD[$requests]>, COMMANDS_HEAD[$options]>
           ]
         >
       : never
     : never
-  : RESPONSE
+  : RESPONSES
 
-type BatchGetResponseTableItems<
-  REQUESTS extends BatchGetItemRequestProps[],
-  OPTIONS extends BatchGetTableItemsOptions,
+type BatchGetRequestResponses<
+  REQUESTS extends BatchGetRequestProps[],
+  OPTIONS extends BatchGetCommandOptions,
   ITEMS extends unknown[] = []
 > = number extends REQUESTS['length']
   ? (
       | (REQUESTS[number] extends infer ENTITY_REQUEST
-          ? ENTITY_REQUEST extends BatchGetItemRequestProps
+          ? ENTITY_REQUEST extends BatchGetRequestProps
             ? FormattedItem<
                 ENTITY_REQUEST[$entity],
                 {
@@ -79,9 +76,9 @@ type BatchGetResponseTableItems<
       | undefined
     )[]
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-  ? REQUESTS_HEAD extends BatchGetItemRequestProps
-    ? REQUESTS_TAIL extends BatchGetItemRequestProps[]
-      ? BatchGetResponseTableItems<
+  ? REQUESTS_HEAD extends BatchGetRequestProps
+    ? REQUESTS_TAIL extends BatchGetRequestProps[]
+      ? BatchGetRequestResponses<
           REQUESTS_TAIL,
           OPTIONS,
           [
@@ -105,64 +102,64 @@ type BatchGetResponseTableItems<
     : never
   : ITEMS
 
-export const batchGet = async <
-  INPUT extends BatchGetTableItemsRequest[] | [BatchGetOptions, ...BatchGetTableItemsRequest[]]
+export const execute = async <
+  COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
 >(
-  ...input: INPUT
+  ..._commands: COMMANDS
 ): Promise<
-  INPUT extends BatchGetTableItemsRequest[]
-    ? BatchGetResponse<INPUT>
-    : INPUT extends [unknown, ...infer TAIL_REQUESTS]
-    ? TAIL_REQUESTS extends BatchGetTableItemsRequest[]
-      ? BatchGetResponse<TAIL_REQUESTS>
+  COMMANDS extends BatchGetCommand[]
+    ? ExecuteBatchGetResponse<COMMANDS>
+    : COMMANDS extends [unknown, ...infer TAIL_REQUESTS]
+    ? TAIL_REQUESTS extends BatchGetCommand[]
+      ? ExecuteBatchGetResponse<TAIL_REQUESTS>
       : never
     : never
 > => {
-  type RESPONSE = INPUT extends BatchGetTableItemsRequest[]
-    ? BatchGetResponse<INPUT>
-    : INPUT extends [unknown, ...infer TAIL_REQUESTS]
-    ? TAIL_REQUESTS extends BatchGetTableItemsRequest[]
-      ? BatchGetResponse<TAIL_REQUESTS>
+  type RESPONSE = COMMANDS extends BatchGetCommand[]
+    ? ExecuteBatchGetResponse<COMMANDS>
+    : COMMANDS extends [unknown, ...infer TAIL_REQUESTS]
+    ? TAIL_REQUESTS extends BatchGetCommand[]
+      ? ExecuteBatchGetResponse<TAIL_REQUESTS>
       : never
     : never
 
-  const [headRequestOrOptions = {}, ...tailRequests] = input
+  const [headCommandOrOptions = {}, ...tailCommands] = _commands
 
-  const requests = tailRequests as BatchGetTableItemsRequest[]
-  let options: BatchGetOptions = {}
+  const commands = tailCommands as BatchGetCommand[]
+  let options: ExecuteBatchGetOptions = {}
 
-  if (headRequestOrOptions instanceof BatchGetTableItemsRequest) {
-    requests.unshift(headRequestOrOptions)
+  if (headCommandOrOptions instanceof BatchGetCommand) {
+    commands.unshift(headCommandOrOptions)
   } else {
-    options = headRequestOrOptions
+    options = headCommandOrOptions
   }
 
-  const firstRequest = requests[0]
-  if (firstRequest === undefined) {
+  const firstCommand = commands[0]
+  if (firstCommand === undefined) {
     throw new DynamoDBToolboxError('actions.incompleteAction', {
-      message: 'batchGet incomplete: No BatchGetTableItemsRequest supplied'
+      message: 'batchGet incomplete: No BatchGetCommand supplied'
     })
   }
 
-  const documentClient = options.documentClient ?? firstRequest[$table].getDocumentClient()
+  const documentClient = options.documentClient ?? firstCommand[$table].getDocumentClient()
 
-  const commandInput = getBatchGetCommandInput(requests, options)
+  const commandInput = getCommandInput(commands, options)
 
   const { Responses: responses, ...rest } = await documentClient.send(
-    new BatchGetCommand(commandInput)
+    new _BatchGetCommand(commandInput)
   )
 
   if (responses === undefined) {
     return rest as RESPONSE
   }
 
-  const formattedResponses = requests.map(request => {
-    const tableName = request[$table].getName()
-    const itemRequests = request[$requests]
-    const { attributes } = (request as BatchGetTableItemsRequest)[$options]
+  const formattedResponses = commands.map(command => {
+    const tableName = command[$table].getName()
+    const requests = command[$requests]
+    const { attributes } = (command as BatchGetCommand)[$options]
 
-    return itemRequests?.map((itemRequest, index) => {
-      const entity = itemRequest[$entity]
+    return requests?.map((request, index) => {
+      const entity = request[$entity]
       const tableResponses = responses[tableName]
 
       if (tableResponses === undefined) {
@@ -188,26 +185,27 @@ export const batchGet = async <
   return { Responses: formattedResponses, ...rest } as RESPONSE
 }
 
-export const getBatchGetCommandInput = (
-  requests: BatchGetTableItemsRequest[],
-  options: BatchGetOptions = {}
+export const getCommandInput = (
+  commands: BatchGetCommand[],
+  options: ExecuteBatchGetOptions = {}
 ): BatchGetCommandInput => {
   const requestItems: NonNullable<BatchGetCommandInput>['RequestItems'] = {}
 
-  if (requests.length === 0) {
+  if (commands.length === 0) {
     throw new DynamoDBToolboxError('actions.incompleteAction', {
-      message: 'batchGet arguments incomplete: No BatchGetTableItemsRequest supplied'
+      message: 'Unable to execute BatchGetCommands: No BatchGetCommand supplied'
     })
   }
 
-  for (const request of requests) {
-    const tableName = request[$table].getName()
+  for (const command of commands) {
+    const tableName = command[$table].getName()
 
     if (tableName in requestItems) {
+      // TODO
       throw new DynamoDBToolboxError('actions.incompleteAction', { message: '' })
     }
 
-    requestItems[tableName] = request.params()
+    requestItems[tableName] = command.params()
   }
 
   const { capacity } = options

@@ -1,5 +1,8 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
+import {
+  DynamoDBDocumentClient,
+  BatchWriteCommand as _BatchWriteCommand
+} from '@aws-sdk/lib-dynamodb'
 import { AwsStub, mockClient } from 'aws-sdk-client-mock'
 
 import {
@@ -9,12 +12,12 @@ import {
   schema,
   string,
   number,
-  BatchDeleteItemRequest,
-  BatchPutItemRequest
+  BatchDeleteRequest,
+  BatchPutRequest
 } from 'v1'
 
-import { BatchWriteTableItemsRequest } from './batchWriteTableItems'
-import { batchWrite, getBatchWriteCommandInput } from './batchWrite'
+import { BatchWriteCommand } from './batchWriteCommand'
+import { execute, getCommandInput } from './execute'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
@@ -65,7 +68,7 @@ const EntityC = new EntityV2({
   table: TestTable2
 })
 
-describe('getBatchWriteCommandInput', () => {
+describe('execute (batchWrite)', () => {
   beforeAll(() => {
     documentClientMock = mockClient(documentClient)
   })
@@ -78,21 +81,21 @@ describe('getBatchWriteCommandInput', () => {
     documentClientMock.reset()
   })
 
-  it('throws if no BatchWriteTableItemsRequest has been provided', () => {
-    const invalidCall = () => getBatchWriteCommandInput([])
+  it('throws if no BatchWriteRequest has been provided', () => {
+    const invalidCall = () => getCommandInput([])
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('throws if two BatchWriteTableItemsRequests have the same Table', () => {
+  it('throws if two BatchWriteRequests have the same Table', () => {
     const invalidCall = () =>
-      getBatchWriteCommandInput([
-        TestTable1.build(BatchWriteTableItemsRequest).requests(
-          EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' })
+      getCommandInput([
+        TestTable1.build(BatchWriteCommand).requests(
+          EntityA.build(BatchDeleteRequest).key({ pkA: 'a', skA: 'a' })
         ),
-        TestTable1.build(BatchWriteTableItemsRequest).requests(
-          EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+        TestTable1.build(BatchWriteCommand).requests(
+          EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
         )
       ])
 
@@ -101,18 +104,18 @@ describe('getBatchWriteCommandInput', () => {
   })
 
   it('writes valid input otherwise', () => {
-    const input = getBatchWriteCommandInput([
-      TestTable1.build(BatchWriteTableItemsRequest).requests(
-        EntityA.build(BatchPutItemRequest).item({
+    const input = getCommandInput([
+      TestTable1.build(BatchWriteCommand).requests(
+        EntityA.build(BatchPutRequest).item({
           pkA: 'a',
           skA: 'a',
           name: 'foo',
           commonAttribute: 'bar'
         }),
-        EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+        EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
       ),
-      TestTable2.build(BatchWriteTableItemsRequest).requests(
-        EntityC.build(BatchDeleteItemRequest).key({ pkC: 'c', skC: 'c' })
+      TestTable2.build(BatchWriteCommand).requests(
+        EntityC.build(BatchDeleteRequest).key({ pkC: 'c', skC: 'c' })
       )
     ])
 
@@ -139,25 +142,25 @@ describe('getBatchWriteCommandInput', () => {
     })
   })
 
-  it('accepts arrays of requests', async () => {
-    documentClientMock.on(BatchWriteCommand).resolves({})
+  it('accepts arrays of commands/requests', async () => {
+    documentClientMock.on(_BatchWriteCommand).resolves({})
 
-    const batchItemRequests1 = [
-      EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' }),
-      EntityB.build(BatchDeleteItemRequest).key({ pkB: 'b', skB: 'b' })
+    const requests1 = [
+      EntityA.build(BatchDeleteRequest).key({ pkA: 'a', skA: 'a' }),
+      EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
     ]
 
-    const batchItemRequests2 = [EntityC.build(BatchDeleteItemRequest).key({ pkC: 'c', skC: 'c' })]
+    const requests2 = [EntityC.build(BatchDeleteRequest).key({ pkC: 'c', skC: 'c' })]
 
-    const tableRequests = [
-      TestTable1.build(BatchWriteTableItemsRequest).requests(...batchItemRequests1),
-      TestTable2.build(BatchWriteTableItemsRequest).requests(...batchItemRequests2)
+    const commands = [
+      TestTable1.build(BatchWriteCommand).requests(...requests1),
+      TestTable2.build(BatchWriteCommand).requests(...requests2)
     ]
 
-    await batchWrite(...tableRequests)
+    await execute(...commands)
 
     expect(documentClientMock.calls()).toHaveLength(1)
-    expect(documentClientMock.commandCalls(BatchWriteCommand)[0].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0].args[0].input).toMatchObject({
       RequestItems: {
         'test-table-1': [
           { DeleteRequest: { Key: { pk: 'a', sk: 'a' } } },
@@ -169,17 +172,17 @@ describe('getBatchWriteCommandInput', () => {
   })
 
   it('passes correct options', async () => {
-    documentClientMock.on(BatchWriteCommand).resolves({})
+    documentClientMock.on(_BatchWriteCommand).resolves({})
 
-    await batchWrite(
+    await execute(
       { documentClient, capacity: 'TOTAL', metrics: 'SIZE' },
-      TestTable1.build(BatchWriteTableItemsRequest).requests(
-        EntityA.build(BatchDeleteItemRequest).key({ pkA: 'a', skA: 'a' })
+      TestTable1.build(BatchWriteCommand).requests(
+        EntityA.build(BatchDeleteRequest).key({ pkA: 'a', skA: 'a' })
       )
     )
 
     expect(documentClientMock.calls()).toHaveLength(1)
-    expect(documentClientMock.commandCalls(BatchWriteCommand)[0].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0].args[0].input).toMatchObject({
       ReturnConsumedCapacity: 'TOTAL',
       ReturnItemCollectionMetrics: 'SIZE'
     })

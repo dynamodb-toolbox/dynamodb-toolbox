@@ -7,7 +7,7 @@ import { EntityParser, KeyInput } from 'v1/entity/actions/parse'
 export const $key = Symbol('$key')
 export type $key = typeof $key
 
-export class BatchGetItemRequest<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
+export class BatchGetRequest<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
   static actionName = 'batchGet' as const;
 
   [$key]?: KeyInput<ENTITY>
@@ -17,14 +17,14 @@ export class BatchGetItemRequest<ENTITY extends EntityV2 = EntityV2> extends Ent
     this[$key] = key
   }
 
-  key(nextKey: KeyInput<ENTITY>): BatchGetItemRequest<ENTITY> {
-    return new BatchGetItemRequest(this[$entity], nextKey)
+  key(nextKey: KeyInput<ENTITY>): BatchGetRequest<ENTITY> {
+    return new BatchGetRequest(this[$entity], nextKey)
   }
 
   params(): NonNullable<NonNullable<BatchGetCommandInput['RequestItems']>[string]['Keys']>[number] {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
-        message: 'BatchGetItemRequest incomplete: Missing "key" property'
+        message: 'BatchGetRequest incomplete: Missing "key" property'
       })
     }
 

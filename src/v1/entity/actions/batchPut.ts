@@ -7,7 +7,7 @@ import { EntityParser, EntityParserInput } from 'v1/entity/actions/parse'
 export const $item = Symbol('$item')
 export type $item = typeof $item
 
-export class BatchPutItemRequest<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
+export class BatchPutRequest<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
   static actionName = 'batchPut' as const;
 
   [$item]?: EntityParserInput<ENTITY>
@@ -17,14 +17,14 @@ export class BatchPutItemRequest<ENTITY extends EntityV2 = EntityV2> extends Ent
     this[$item] = item
   }
 
-  item(nextItem: EntityParserInput<ENTITY>): BatchPutItemRequest<ENTITY> {
-    return new BatchPutItemRequest(this[$entity], nextItem)
+  item(nextItem: EntityParserInput<ENTITY>): BatchPutRequest<ENTITY> {
+    return new BatchPutRequest(this[$entity], nextItem)
   }
 
   params(): NonNullable<BatchWriteCommandInput['RequestItems']>[string][number] {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
-        message: 'BatchPutItemRequest incomplete: Missing "item" property'
+        message: 'BatchPutRequest incomplete: Missing "item" property'
       })
     }
 
