@@ -1,29 +1,28 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import type { RequiredOption, AtLeastOnce } from '../constants/index.js'
 import {
-  $type,
-  $keys,
+  $defaults,
   $elements,
-  $required,
   $hidden,
   $key,
+  $keys,
+  $links,
+  $required,
   $savedAs,
-  $defaults,
-  $links
+  $type
 } from '../constants/attributeOptions.js'
+import type { AtLeastOnce, RequiredOption } from '../constants/index.js'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-
-import type { $RecordAttributeKeys, $RecordAttributeElements } from './types.js'
+import { freezeRecordAttribute } from './freeze.js'
 import type { $RecordAttribute } from './interface.js'
 import {
-  RecordAttributeOptions,
+  RECORD_DEFAULT_OPTIONS,
   RecordAttributeDefaultOptions,
-  RECORD_DEFAULT_OPTIONS
+  RecordAttributeOptions
 } from './options.js'
-import { freezeRecordAttribute } from './freeze.js'
+import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 type $RecordAttributeTyper = <
   $KEYS extends $RecordAttributeKeys,

@@ -1,5 +1,5 @@
-import type { Attribute } from '~/schema/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
+import type { Attribute } from '~/schema/attributes/index.js'
 
 import type { ConditionParser } from './conditionParser.js'
 

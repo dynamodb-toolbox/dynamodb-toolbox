@@ -2,19 +2,19 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import {
-  any,
-  binary,
-  boolean,
   ConditionCheck,
   DynamoDBToolboxError,
   EntityV2,
+  TableV2,
+  any,
+  binary,
+  boolean,
   list,
   map,
   number,
   schema,
   set,
-  string,
-  TableV2
+  string
 } from '~/index.js'
 
 const dynamoDbClient = new DynamoDBClient({})

@@ -1,9 +1,9 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
+import type { EntityV2 } from '~/entity/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
 import { isString } from '~/utils/validation/isString.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { EntityV2 } from '~/entity/index.js'
 
 import type { Index, Key } from './types/index.js'
 

@@ -1,25 +1,25 @@
 import { cloneDeep } from 'lodash'
 
-import type { Schema } from '~/schema/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
+  ExtendedValue,
   PrimitiveAttribute,
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute,
-  ExtendedValue,
   Transformer
 } from '~/schema/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
 
+import type { MustBeDefined } from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
-  ParsedValueOptions,
+  FromParsingOptions,
   ParsedValueDefaultOptions,
-  ParsingOptions,
-  FromParsingOptions
+  ParsedValueOptions,
+  ParsingOptions
 } from './types/options.js'
-import type { MustBeDefined } from './attribute.js'
 
 export type PrimitiveAttrParsedValue<
   ATTRIBUTE extends PrimitiveAttribute,

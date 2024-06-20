@@ -1,20 +1,19 @@
 import type { A } from 'ts-toolbelt'
 
-import { Never, AtLeastOnce, Always } from '../constants/index.js'
-import { string } from '../primitive/index.js'
 import {
-  $type,
   $attributes,
-  $required,
+  $defaults,
   $hidden,
   $key,
+  $links,
+  $required,
   $savedAs,
-  $defaults,
-  $links
+  $type
 } from '../constants/attributeOptions.js'
-
+import { Always, AtLeastOnce, Never } from '../constants/index.js'
+import { string } from '../primitive/index.js'
+import type { $MapAttributeState, MapAttribute } from './interface.js'
 import { map } from './typer.js'
-import type { MapAttribute, $MapAttributeState } from './interface.js'
 
 describe('map', () => {
   const str = string()

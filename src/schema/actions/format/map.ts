@@ -1,19 +1,19 @@
 import type { O } from 'ts-toolbelt'
 
-import type { MapAttribute, AnyAttribute, Never } from '~/schema/attributes/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { AnyAttribute, MapAttribute, Never } from '~/schema/attributes/index.js'
 import type { If, OptionalizeUndefinableProperties } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
 
+import { AttrFormattedValue, MustBeDefined, formatAttrRawValue } from './attribute.js'
 import type {
-  MatchKeys,
   FormatOptions,
-  FormattedValueOptions,
   FormattedValueDefaultOptions,
-  FromFormatOptions
+  FormattedValueOptions,
+  FromFormatOptions,
+  MatchKeys
 } from './types.js'
-import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute.js'
 import { matchProjection } from './utils.js'
 
 export type MapAttrFormattedValue<

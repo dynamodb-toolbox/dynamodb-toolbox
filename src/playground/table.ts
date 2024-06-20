@@ -3,8 +3,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import type { Query } from '~/index.js'
-
-import { TableV2, EntityAttributeSavedAs, PrimaryKey, IndexNames, IndexSchema } from '~/index.js'
+import { EntityAttributeSavedAs, IndexNames, IndexSchema, PrimaryKey, TableV2 } from '~/index.js'
 
 const dynamoDbClient = new DynamoDBClient({})
 

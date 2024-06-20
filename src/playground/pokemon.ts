@@ -1,7 +1,8 @@
-import { EntityV2 } from '~/entity/index.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
-import { schema } from '~/schema/index.js'
+import { EntityV2 } from '~/entity/index.js'
 import { number, string } from '~/schema/attributes/index.js'
+import { schema } from '~/schema/index.js'
+
 import { MyTable } from './table.js'
 
 const PokemonEntity = new EntityV2({

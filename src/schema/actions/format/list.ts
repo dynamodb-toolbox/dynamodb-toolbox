@@ -1,16 +1,16 @@
-import type { If } from '~/types/index.js'
-import type { ListAttribute } from '~/schema/attributes/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import { isArray } from '~/utils/validation/isArray.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { ListAttribute } from '~/schema/attributes/index.js'
+import type { If } from '~/types/index.js'
+import { isArray } from '~/utils/validation/isArray.js'
 
+import { AttrFormattedValue, MustBeDefined, formatAttrRawValue } from './attribute.js'
 import type {
   FormatOptions,
-  FormattedValueOptions,
   FormattedValueDefaultOptions,
+  FormattedValueOptions,
   FromFormatOptions
 } from './types.js'
-import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute.js'
 import { matchProjection } from './utils.js'
 
 export type ListAttrFormattedValue<

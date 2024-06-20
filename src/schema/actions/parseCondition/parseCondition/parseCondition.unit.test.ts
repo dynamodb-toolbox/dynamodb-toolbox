@@ -1,5 +1,5 @@
+import { anyOf, list, map, number, string } from '~/schema/attributes/index.js'
 import { schema } from '~/schema/index.js'
-import { string, number, anyOf, map, list } from '~/schema/attributes/index.js'
 
 import { ConditionParser } from '../conditionParser.js'
 

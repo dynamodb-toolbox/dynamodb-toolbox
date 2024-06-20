@@ -1,18 +1,18 @@
-import type { If } from '~/types/if.js'
-import type { Schema } from '~/schema/index.js'
-import type { ParserInput } from '~/schema/actions/parse/index.js'
-import type { TableV2 } from '~/table/index.js'
-import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { ParserInput } from '~/schema/actions/parse/index.js'
+import type { Schema } from '~/schema/index.js'
+import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
+import type { TableV2 } from '~/table/index.js'
+import type { If } from '~/types/if.js'
 
 import {
-  TimestampsOptions,
-  TimestampsDefaultOptions,
   NarrowTimestampsOptions,
-  doesSchemaValidateTableSchema,
-  addInternalAttributes,
+  NeedsKeyCompute,
+  TimestampsDefaultOptions,
+  TimestampsOptions,
   WithInternalAttributes,
-  NeedsKeyCompute
+  addInternalAttributes,
+  doesSchemaValidateTableSchema
 } from './utils/index.js'
 
 export class EntityV2<

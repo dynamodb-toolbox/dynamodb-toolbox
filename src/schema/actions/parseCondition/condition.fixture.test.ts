@@ -1,16 +1,16 @@
-import { schema } from '~/schema/index.js'
 import {
   any,
-  string,
-  number,
-  boolean,
+  anyOf,
   binary,
-  set,
+  boolean,
   list,
   map,
+  number,
   record,
-  anyOf
+  set,
+  string
 } from '~/schema/attributes/index.js'
+import { schema } from '~/schema/index.js'
 
 export const mySchema = schema({
   parentId: string().key().savedAs('pk'),

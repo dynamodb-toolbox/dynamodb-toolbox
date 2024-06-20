@@ -1,17 +1,16 @@
-import type { Schema } from '~/schema/index.js'
-import type { Attribute, RecordAttribute, AttributeBasicValue } from '~/schema/attributes/index.js'
 import {
-  Parser,
-  ParsedValue,
   ExtensionParser,
-  ExtensionParserOptions
+  ExtensionParserOptions,
+  ParsedValue,
+  Parser
 } from '~/schema/actions/parse/index.js'
+import type { Attribute, AttributeBasicValue, RecordAttribute } from '~/schema/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
+import { $REMOVE, $SET } from '../../constants.js'
 import type { UpdateItemInputExtension } from '../../types.js'
-import { $SET, $REMOVE } from '../../constants.js'
 import { isSetUpdate } from '../../utils.js'
-
 import { parseUpdateExtension } from './attribute.js'
 
 function* recordElementsParser(

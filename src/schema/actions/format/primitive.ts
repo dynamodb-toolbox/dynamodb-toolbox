@@ -1,3 +1,4 @@
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
   PrimitiveAttribute,
   ResolvePrimitiveAttribute,
@@ -6,7 +7,6 @@ import type {
 } from '~/schema/attributes/index.js'
 import type { If } from '~/types/index.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { MustBeDefined } from './attribute.js'
 

@@ -1,14 +1,14 @@
 import type { A } from 'ts-toolbelt'
 
 import {
+  BatchDeleteRequest,
+  BatchPutRequest,
   DynamoDBToolboxError,
   EntityV2,
   TableV2,
-  BatchPutRequest,
-  BatchDeleteRequest,
+  number,
   schema,
-  string,
-  number
+  string
 } from '~/index.js'
 import { $entities } from '~/table/index.js'
 

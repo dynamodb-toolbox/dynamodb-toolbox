@@ -1,11 +1,11 @@
-import type { Attribute, AttributeBasicValue } from '~/schema/attributes/index.js'
-import { Parser, ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { ExtensionParser, ExtensionParserOptions, Parser } from '~/schema/actions/parse/index.js'
+import type { Attribute, AttributeBasicValue } from '~/schema/attributes/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isString } from '~/utils/validation/isString.js'
 
-import type { UpdateItemInputExtension, ReferenceExtension } from '../../types.js'
 import { $GET } from '../../constants.js'
+import type { ReferenceExtension, UpdateItemInputExtension } from '../../types.js'
 import { isReferenceUpdate } from '../../utils.js'
 
 export const parseReferenceExtension: ExtensionParser<

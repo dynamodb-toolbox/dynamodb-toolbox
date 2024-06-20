@@ -5,10 +5,9 @@ import {
   TransactGetCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, $entity } from '~/entity/index.js'
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-
+import { $entity, EntityV2 } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { GetItemTransactionOptions } from '../transactGetItem/options.js'

@@ -1,19 +1,17 @@
 import type { A } from 'ts-toolbelt'
 
-import { Never, AtLeastOnce, Always } from '../constants/index.js'
 import {
-  $type,
-  $required,
+  $castAs,
+  $defaults,
   $hidden,
   $key,
-  $savedAs,
-  $defaults,
   $links,
-  $castAs
+  $required,
+  $savedAs,
+  $type
 } from '../constants/attributeOptions.js'
-
+import { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { $AnyAttributeState, AnyAttribute } from './interface.js'
-
 import { any } from './typer.js'
 
 describe('anyAttribute', () => {

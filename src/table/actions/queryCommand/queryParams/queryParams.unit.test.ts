@@ -1,15 +1,15 @@
 import type { A } from 'ts-toolbelt'
 
 import {
-  TableV2,
   DynamoDBToolboxError,
-  QueryCommand,
   EntityV2,
-  schema,
-  string,
-  number,
   FormattedItem,
-  prefix
+  QueryCommand,
+  TableV2,
+  number,
+  prefix,
+  schema,
+  string
 } from '~/index.js'
 
 const TestTable = new TableV2({

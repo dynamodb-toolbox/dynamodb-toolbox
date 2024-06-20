@@ -1,6 +1,5 @@
 import type { ConditionParser } from '../../conditionParser.js'
-
-import { isComparisonOperator, ComparisonCondition, ComparisonOperator } from './types.js'
+import { ComparisonCondition, ComparisonOperator, isComparisonOperator } from './types.js'
 
 const comparisonOperatorExpression: Record<ComparisonOperator, string> = {
   eq: '=',

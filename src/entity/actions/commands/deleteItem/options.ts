@@ -1,8 +1,8 @@
+import type { Condition } from '~/entity/actions/parseCondition.js'
+import type { EntityV2 } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type { MetricsOption } from '~/options/metrics.js'
-import type { NoneReturnValuesOption, AllOldReturnValuesOption } from '~/options/returnValues.js'
-import type { EntityV2 } from '~/entity/index.js'
-import type { Condition } from '~/entity/actions/parseCondition.js'
+import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 
 export type DeleteItemCommandReturnValuesOption = NoneReturnValuesOption | AllOldReturnValuesOption
 

@@ -1,22 +1,21 @@
 import { overwrite } from '~/utils/overwrite.js'
 
-import type { RequiredOption, AtLeastOnce } from '../constants/index.js'
 import {
-  $type,
+  $defaults,
   $elements,
-  $required,
   $hidden,
   $key,
+  $links,
+  $required,
   $savedAs,
-  $defaults,
-  $links
+  $type
 } from '../constants/attributeOptions.js'
+import type { AtLeastOnce, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-
-import type { $AnyOfAttribute } from './interface.js'
-import type { $AnyOfAttributeElements } from './types.js'
-import { AnyOfAttributeDefaultOptions, ANY_OF_DEFAULT_OPTIONS } from './options.js'
 import { freezeAnyOfAttribute } from './freeze.js'
+import type { $AnyOfAttribute } from './interface.js'
+import { ANY_OF_DEFAULT_OPTIONS, AnyOfAttributeDefaultOptions } from './options.js'
+import type { $AnyOfAttributeElements } from './types.js'
 
 type $AnyOfAttributeTyper = <
   $ELEMENTS extends $AnyOfAttributeElements[],

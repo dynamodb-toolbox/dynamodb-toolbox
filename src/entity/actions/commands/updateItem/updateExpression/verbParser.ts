@@ -1,17 +1,17 @@
-import type { Schema } from '~/schema/index.js'
-import type { Attribute } from '~/schema/attributes/index.js'
 import type { ParsedValue } from '~/schema/actions/parse/index.js'
 import {
+  AppendAttributePathOptions,
   ExpressionParser,
-  appendAttributePath,
-  AppendAttributePathOptions
+  appendAttributePath
 } from '~/schema/actions/utils/appendAttributePath.js'
+import type { Attribute } from '~/schema/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
 
+import { $GET } from '../constants.js'
 import type { ReferenceExtension, UpdateItemInputExtension } from '../types.js'
 import { isReferenceUpdate } from '../utils.js'
-import { $GET } from '../constants.js'
 import type { ParsedUpdate } from './type.js'
 
 export class UpdateExpressionVerbParser implements ExpressionParser {

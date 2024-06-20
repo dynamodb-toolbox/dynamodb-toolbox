@@ -3,7 +3,6 @@ import { isBoolean } from '~/utils/validation/isBoolean.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import { requiredOptionsSet } from '../constants/requiredOptions.js'
-
 import type { SharedAttributeState } from './interface.js'
 
 /**

@@ -1,10 +1,10 @@
 import {
-  TableV2,
-  EntityV2,
-  schema,
-  string,
+  DeleteItemTransaction,
   DynamoDBToolboxError,
-  DeleteItemTransaction
+  EntityV2,
+  TableV2,
+  schema,
+  string
 } from '~/index.js'
 
 const TestTable = new TableV2({

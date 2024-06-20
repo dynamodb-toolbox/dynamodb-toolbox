@@ -1,11 +1,9 @@
 import type { SchemaCondition } from '../../condition.js'
-
 import type { ConditionParser } from '../../conditionParser.js'
-
 import {
-  isLogicalCombinationOperator,
   LogicalCombinationCondition,
-  LogicalCombinationOperator
+  LogicalCombinationOperator,
+  isLogicalCombinationOperator
 } from './types.js'
 
 const logicalCombinationOperatorExpression: Record<LogicalCombinationOperator, string> = {

@@ -1,6 +1,6 @@
 import { isObject } from '~/utils/validation/isObject.js'
 
-import type { TimestampsOptions, TimestampsDefaultOptions } from './options.js'
+import type { TimestampsDefaultOptions, TimestampsOptions } from './options.js'
 
 export type IsTimestampEnabled<
   TIMESTAMP_OPTIONS extends TimestampsOptions,

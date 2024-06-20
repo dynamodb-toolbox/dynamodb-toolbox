@@ -1,11 +1,11 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 import { isEmpty } from 'lodash'
 
-import type { EntityV2 } from '~/entity/index.js'
 import { EntityPathParser } from '~/entity/actions/parsePaths.js'
+import type { EntityV2 } from '~/entity/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
-import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseConsistentOption } from '~/options/consistent.js'
+import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
 import type { GetItemOptions } from '../options.js'
 

@@ -1,7 +1,7 @@
 import type { ErrorBlueprint } from '~/errors/blueprint.js'
 
-import type { AttributeErrorBlueprints } from './attributes/errors.js'
 import type { ActionErrorBlueprints } from './actions/errors.js'
+import type { AttributeErrorBlueprints } from './attributes/errors.js'
 
 type DuplicateAttributeErrorBlueprint = ErrorBlueprint<{
   code: 'schema.duplicateAttributeNames'

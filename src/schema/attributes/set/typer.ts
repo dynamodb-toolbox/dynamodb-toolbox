@@ -1,28 +1,27 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions.js'
 import {
-  $type,
+  $defaults,
   $elements,
-  $required,
   $hidden,
   $key,
+  $links,
+  $required,
   $savedAs,
-  $defaults,
-  $links
+  $type
 } from '../constants/attributeOptions.js'
+import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-
-import type { $SetAttribute } from './interface.js'
-import type { $SetAttributeElements } from './types.js'
-import {
-  SetAttributeOptions,
-  SetAttributeDefaultOptions,
-  SET_ATTRIBUTE_DEFAULT_OPTIONS
-} from './options.js'
 import { freezeSetAttribute } from './freeze.js'
+import type { $SetAttribute } from './interface.js'
+import {
+  SET_ATTRIBUTE_DEFAULT_OPTIONS,
+  SetAttributeDefaultOptions,
+  SetAttributeOptions
+} from './options.js'
+import type { $SetAttributeElements } from './types.js'
 
 type $SetAttributeTyper = <
   $ELEMENTS extends $SetAttributeElements,

@@ -2,19 +2,19 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import {
+  DynamoDBToolboxError,
   EntityV2,
-  schema,
+  GetItemTransaction,
+  TableV2,
   any,
   binary,
   boolean,
-  DynamoDBToolboxError,
   list,
   map,
   number,
-  GetItemTransaction,
+  schema,
   set,
   string,
-  TableV2,
   transactGetItems
 } from '~/index.js'
 

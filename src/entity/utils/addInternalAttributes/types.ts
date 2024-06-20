@@ -1,8 +1,8 @@
+import type { FreezeAttribute } from '~/schema/attributes/freeze.js'
+import type { $Attribute, $PrimitiveAttribute, AtLeastOnce } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { TableV2 } from '~/table/index.js'
 import type { EntityAttributeSavedAs } from '~/table/types/index.js'
-import type { AtLeastOnce, $Attribute, $PrimitiveAttribute } from '~/schema/attributes/index.js'
-import type { FreezeAttribute } from '~/schema/attributes/freeze.js'
 import type { If } from '~/types/if.js'
 
 import type { TimestampsOptions } from './options.js'

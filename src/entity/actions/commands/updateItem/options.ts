@@ -1,8 +1,8 @@
+import type { Condition } from '~/entity/actions/parseCondition.js'
+import type { EntityV2 } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type { MetricsOption } from '~/options/metrics.js'
 import type { ReturnValuesOption } from '~/options/returnValues.js'
-import type { EntityV2 } from '~/entity/index.js'
-import type { Condition } from '~/entity/actions/parseCondition.js'
 
 export type UpdateItemCommandReturnValuesOption = ReturnValuesOption
 

@@ -1,20 +1,19 @@
+import { $get } from '~/entity/actions/commands/updateItem/utils.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { $savedAs } from '~/schema/attributes/constants/attributeOptions.js'
+import type { $Attribute } from '~/schema/attributes/index.js'
+import { string } from '~/schema/attributes/primitive/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { TableV2 } from '~/table/index.js'
 
-import type { $Attribute } from '~/schema/attributes/index.js'
-import { $savedAs } from '~/schema/attributes/constants/attributeOptions.js'
-import { $get } from '~/entity/actions/commands/updateItem/utils.js'
-import { string } from '~/schema/attributes/primitive/index.js'
-
+import type { TimestampsOptions } from './options.js'
 import type {
   $EntityAttribute,
   $TimestampAttribute,
   InternalAttributesAdder,
   WithInternalAttributes
 } from './types.js'
-import type { TimestampsOptions } from './options.js'
-import { isTimestampEnabled, getTimestampOptionValue, TimestampOptionValue } from './utils.js'
+import { TimestampOptionValue, getTimestampOptionValue, isTimestampEnabled } from './utils.js'
 
 export const addInternalAttributes: InternalAttributesAdder = <
   SCHEMA extends Schema,

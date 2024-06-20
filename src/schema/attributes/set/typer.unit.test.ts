@@ -2,21 +2,20 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { Never, AtLeastOnce, Always } from '../constants/index.js'
-import { string } from '../primitive/index.js'
 import {
-  $type,
+  $defaults,
   $elements,
-  $required,
   $hidden,
   $key,
+  $links,
+  $required,
   $savedAs,
-  $defaults,
-  $links
+  $type
 } from '../constants/attributeOptions.js'
-
+import { Always, AtLeastOnce, Never } from '../constants/index.js'
+import { string } from '../primitive/index.js'
+import { $SetAttributeState, SetAttribute } from './interface.js'
 import { set } from './typer.js'
-import { SetAttribute, $SetAttributeState } from './interface.js'
 
 describe('set', () => {
   const path = 'some.path'

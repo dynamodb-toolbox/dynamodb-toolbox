@@ -5,23 +5,23 @@ import {
   $add,
   $append,
   $set,
-  any,
-  binary,
-  boolean,
   ConditionCheck,
   DeleteItemTransaction,
   DynamoDBToolboxError,
   EntityV2,
+  PutItemTransaction,
+  TableV2,
+  UpdateItemTransaction,
+  any,
+  binary,
+  boolean,
   list,
   map,
   number,
-  PutItemTransaction,
   schema,
   set,
   string,
-  transactWriteItems,
-  UpdateItemTransaction,
-  TableV2
+  transactWriteItems
 } from '~/index.js'
 
 import { getTransactWriteCommandInput } from './transactWriteItems.js'

@@ -1,9 +1,9 @@
 import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseCapacityOption } from '~/options/capacity.js'
-import { parseMetricsOption } from '~/options/metrics.js'
 import { parseClientRequestToken } from '~/options/clientRequestToken.js'
+import { parseMetricsOption } from '~/options/metrics.js'
+import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
 import type { TransactWriteOptions } from './options.js'
 

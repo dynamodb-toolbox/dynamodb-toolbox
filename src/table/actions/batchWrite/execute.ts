@@ -1,8 +1,8 @@
 import {
-  BatchWriteCommand as _BatchWriteCommand,
   BatchWriteCommandInput,
   BatchWriteCommandOutput,
-  DynamoDBDocumentClient
+  DynamoDBDocumentClient,
+  BatchWriteCommand as _BatchWriteCommand
 } from '@aws-sdk/lib-dynamodb'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'

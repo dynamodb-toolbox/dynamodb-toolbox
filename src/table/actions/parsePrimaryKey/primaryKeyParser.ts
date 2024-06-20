@@ -1,7 +1,7 @@
-import { TableV2, TableAction, $table } from '~/table/index.js'
-import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import type { ResolveIndexableKeyType, IndexableKeyType, Key } from '~/table/types/index.js'
+import { $table, TableAction, TableV2 } from '~/table/index.js'
+import type { IndexableKeyType, Key, ResolveIndexableKeyType } from '~/table/types/index.js'
+import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 
 /**
  * Returns the TS type of a Table Primary Key

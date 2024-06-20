@@ -1,24 +1,23 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Schema } from '~/schema/index.js'
-import type { Attribute, AttributeValue } from '~/schema/attributes/index.js'
 import type { ParsedValue } from '~/schema/actions/parse/index.js'
-import { isObject } from '~/utils/validation/isObject.js'
+import type { Attribute, AttributeValue } from '~/schema/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
+import { isObject } from '~/utils/validation/isObject.js'
 
+import { $ADD, $APPEND, $DELETE, $PREPEND, $REMOVE, $SET, $SUBTRACT, $SUM } from '../constants.js'
 import type { UpdateItemInputExtension } from '../types.js'
-import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants.js'
 import {
-  isSetUpdate,
-  isReferenceUpdate,
-  isSumUpdate,
-  isSubtractUpdate,
   isAddUpdate,
-  isDeleteUpdate,
   isAppendUpdate,
-  isPrependUpdate
+  isDeleteUpdate,
+  isPrependUpdate,
+  isReferenceUpdate,
+  isSetUpdate,
+  isSubtractUpdate,
+  isSumUpdate
 } from '../utils.js'
-
 import type { ParsedUpdate } from './type.js'
 import { UpdateExpressionVerbParser } from './verbParser.js'
 

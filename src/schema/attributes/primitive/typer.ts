@@ -2,28 +2,27 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { update } from '~/utils/update.js'
 
-import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions.js'
-import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import {
-  $type,
-  $required,
+  $defaults,
+  $enum,
   $hidden,
   $key,
-  $savedAs,
-  $enum,
-  $defaults,
   $links,
-  $transform
+  $required,
+  $savedAs,
+  $transform,
+  $type
 } from '../constants/attributeOptions.js'
-
-import type { $PrimitiveAttribute } from './interface.js'
-import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types.js'
-import {
-  PrimitiveAttributeOptions,
-  PrimitiveAttributeDefaultOptions,
-  PRIMITIVE_DEFAULT_OPTIONS
-} from './options.js'
+import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import { freezePrimitiveAttribute } from './freeze.js'
+import type { $PrimitiveAttribute } from './interface.js'
+import {
+  PRIMITIVE_DEFAULT_OPTIONS,
+  PrimitiveAttributeDefaultOptions,
+  PrimitiveAttributeOptions
+} from './options.js'
+import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types.js'
 
 type $PrimitiveAttributeTyper = <
   $TYPE extends PrimitiveAttributeType,

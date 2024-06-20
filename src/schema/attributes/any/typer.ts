@@ -1,23 +1,22 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions.js'
 import {
-  $type,
-  $required,
+  $castAs,
+  $defaults,
   $hidden,
   $key,
-  $savedAs,
-  $defaults,
   $links,
-  $castAs
+  $required,
+  $savedAs,
+  $type
 } from '../constants/attributeOptions.js'
+import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
-
-import type { $AnyAttribute } from './interface.js'
-import type { AnyAttributeState } from './types.js'
-import { AnyAttributeOptions, AnyAttributeDefaultOptions, ANY_DEFAULT_OPTIONS } from './options.js'
 import { freezeAnyAttribute } from './freeze.js'
+import type { $AnyAttribute } from './interface.js'
+import { ANY_DEFAULT_OPTIONS, AnyAttributeDefaultOptions, AnyAttributeOptions } from './options.js'
+import type { AnyAttributeState } from './types.js'
 
 type $AnyAttributeTyper = <STATE extends AnyAttributeState = AnyAttributeState>(
   state: STATE

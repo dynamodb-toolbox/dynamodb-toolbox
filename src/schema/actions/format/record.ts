@@ -1,18 +1,18 @@
-import type { RecordAttribute, ResolvePrimitiveAttribute } from '~/schema/attributes/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { RecordAttribute, ResolvePrimitiveAttribute } from '~/schema/attributes/index.js'
 import type { If } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type {
-  MatchKeys,
-  FormatOptions,
-  FormattedValueOptions,
-  FormattedValueDefaultOptions,
-  FromFormatOptions
-} from './types.js'
+import { AttrFormattedValue, MustBeDefined, formatAttrRawValue } from './attribute.js'
 import { formatPrimitiveAttrRawValue } from './primitive.js'
-import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute.js'
+import type {
+  FormatOptions,
+  FormattedValueDefaultOptions,
+  FormattedValueOptions,
+  FromFormatOptions,
+  MatchKeys
+} from './types.js'
 import { matchProjection } from './utils.js'
 
 export type RecordAttrFormattedValue<

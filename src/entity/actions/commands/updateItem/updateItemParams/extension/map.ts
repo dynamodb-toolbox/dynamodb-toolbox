@@ -1,8 +1,8 @@
-import type { MapAttribute, AttributeBasicValue } from '~/schema/attributes/index.js'
-import { Parser, ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
+import { ExtensionParser, ExtensionParserOptions, Parser } from '~/schema/actions/parse/index.js'
+import type { AttributeBasicValue, MapAttribute } from '~/schema/attributes/index.js'
 
-import type { UpdateItemInputExtension } from '../../types.js'
 import { $SET } from '../../constants.js'
+import type { UpdateItemInputExtension } from '../../types.js'
 import { isSetUpdate } from '../../utils.js'
 
 export const parseMapExtension = (

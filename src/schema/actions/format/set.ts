@@ -1,16 +1,16 @@
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { SetAttribute } from '~/schema/attributes/index.js'
 import type { If } from '~/types/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { AttrFormattedValue } from './attribute.js'
+import { MustBeDefined, formatAttrRawValue } from './attribute.js'
 import type {
   FormatOptions,
-  FormattedValueOptions,
   FormattedValueDefaultOptions,
+  FormattedValueOptions,
   FromFormatOptions
 } from './types.js'
-import { formatAttrRawValue, MustBeDefined } from './attribute.js'
 
 export type SetAttrFormattedValue<
   ATTRIBUTE extends SetAttribute,

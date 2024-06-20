@@ -1,36 +1,36 @@
 import { cloneDeep } from 'lodash'
 
-import type { Schema } from '~/schema/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
-  Attribute,
+  Always,
   AnyAttribute,
-  PrimitiveAttribute,
-  SetAttribute,
-  ListAttribute,
-  MapAttribute,
-  RecordAttribute,
   AnyOfAttribute,
   AtLeastOnce,
-  Always
+  Attribute,
+  ListAttribute,
+  MapAttribute,
+  PrimitiveAttribute,
+  RecordAttribute,
+  SetAttribute
 } from '~/schema/attributes/index.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Schema } from '~/schema/index.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
+import { AnyAttrParsedValue, anyAttrParser } from './any.js'
+import { AnyOfAttrParsedValue, anyOfAttributeParser } from './anyOf.js'
+import { ListAttrParsedValue, listAttrParser } from './list.js'
+import { MapAttrParsedValue, mapAttributeParser } from './map.js'
 import type { ParsedValue } from './parser.js'
+import { PrimitiveAttrParsedValue, primitiveAttrParser } from './primitive.js'
+import { RecordAttrParsedValue, recordAttributeParser } from './record.js'
+import { SetAttrParsedValue, setAttrParser } from './set.js'
 import type {
-  ParsedValueOptions,
+  FromParsingOptions,
   ParsedValueDefaultOptions,
-  ParsingOptions,
+  ParsedValueOptions,
   ParsingDefaultOptions,
-  FromParsingOptions
+  ParsingOptions
 } from './types/options.js'
-import { anyAttrParser, AnyAttrParsedValue } from './any.js'
-import { primitiveAttrParser, PrimitiveAttrParsedValue } from './primitive.js'
-import { setAttrParser, SetAttrParsedValue } from './set.js'
-import { listAttrParser, ListAttrParsedValue } from './list.js'
-import { mapAttributeParser, MapAttrParsedValue } from './map.js'
-import { recordAttributeParser, RecordAttrParsedValue } from './record.js'
-import { anyOfAttributeParser, AnyOfAttrParsedValue } from './anyOf.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
 export type MustBeDefined<
