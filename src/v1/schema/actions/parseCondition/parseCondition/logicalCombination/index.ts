@@ -1,3 +1,3 @@
-export { isLogicalCombinationCondition } from './types'
-export type { LogicalCombinationCondition } from './types'
-export { parseLogicalCombinationCondition } from './parseCondition'
+export { isLogicalCombinationCondition } from './types.js'
+export type { LogicalCombinationCondition } from './types.js'
+export { parseLogicalCombinationCondition } from './parseCondition.js'

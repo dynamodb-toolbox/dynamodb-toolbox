@@ -1,11 +1,11 @@
 import { isEmpty } from 'lodash'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
-import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityConditionParser } from 'v1/entity/actions/parseCondition.js'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions.js'
 
-import { PutItemTransactionOptions } from '../options'
-import type { TransactPutItemParams } from './transactPutItemParams'
+import { PutItemTransactionOptions } from '../options.js'
+import type { TransactPutItemParams } from './transactPutItemParams.js'
 
 type TransactionOptions = Omit<TransactPutItemParams, 'TableName' | 'Item'>
 

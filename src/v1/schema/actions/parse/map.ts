@@ -1,26 +1,26 @@
 import { cloneDeep } from 'lodash'
 import type { O } from 'ts-toolbelt'
 
-import type { Schema } from 'v1/schema'
+import type { Schema } from 'v1/schema/index.js'
 import type {
   Attribute,
   AnyAttribute,
   MapAttribute,
   ExtendedValue,
   Never
-} from 'v1/schema/attributes'
-import type { If, OptionalizeUndefinableProperties } from 'v1/types'
-import { DynamoDBToolboxError } from 'v1/errors'
-import { isObject } from 'v1/utils/validation/isObject'
+} from 'v1/schema/attributes/index.js'
+import type { If, OptionalizeUndefinableProperties } from 'v1/types/index.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { isObject } from 'v1/utils/validation/isObject.js'
 
-import type { ParsedValue } from './parser'
+import type { ParsedValue } from './parser.js'
 import type {
   ParsedValueOptions,
   ParsedValueDefaultOptions,
   ParsingOptions,
   FromParsingOptions
-} from './types/options'
-import { attrParser, AttrParsedValue, MustBeDefined } from './attribute'
+} from './types/options.js'
+import { attrParser, AttrParsedValue, MustBeDefined } from './attribute.js'
 
 export type MapAttrParsedValue<
   ATTRIBUTE extends MapAttribute,

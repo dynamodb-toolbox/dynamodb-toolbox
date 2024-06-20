@@ -1,6 +1,6 @@
-import { isInteger } from 'v1/utils/validation'
+import { isInteger } from 'v1/utils/validation/isInteger.js'
 
-import { $receivedActions } from './constants'
+import { $receivedActions } from './constants.js'
 
 export class CommandResults<INPUT, OPTIONS> {
   [$receivedActions]: [input?: INPUT, options?: OPTIONS][]

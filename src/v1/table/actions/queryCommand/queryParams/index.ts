@@ -1,1 +1,1 @@
-export { queryParams } from './queryParams'
+export { queryParams } from './queryParams.js'

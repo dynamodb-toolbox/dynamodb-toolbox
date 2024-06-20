@@ -1,36 +1,40 @@
-import type { EntityV2 } from 'v1/entity'
-import type { KeyInput } from 'v1/entity/actions/parse'
-import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/entity/actions/commands/getItem'
-import type { GetItemCommandClass } from 'v1/entity/actions/commands/getItem/getItemCommand'
+import type { EntityV2 } from 'v1/entity/index.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
+import {
+  GetItemCommand,
+  GetItemOptions,
+  GetItemResponse
+} from 'v1/entity/actions/commands/getItem/index.js'
+import type { GetItemCommandClass } from 'v1/entity/actions/commands/getItem/getItemCommand.js'
 import {
   PutItemCommand,
   PutItemInput,
   PutItemOptions,
   PutItemResponse
-} from 'v1/entity/actions/commands/putItem'
-import type { PutItemCommandClass } from 'v1/entity/actions/commands/putItem/putItemCommand'
+} from 'v1/entity/actions/commands/putItem/index.js'
+import type { PutItemCommandClass } from 'v1/entity/actions/commands/putItem/putItemCommand.js'
 import {
   DeleteItemCommand,
   DeleteItemOptions,
   DeleteItemResponse
-} from 'v1/entity/actions/commands/deleteItem'
-import type { DeleteItemCommandClass } from 'v1/entity/actions/commands/deleteItem/deleteItemCommand'
+} from 'v1/entity/actions/commands/deleteItem/index.js'
+import type { DeleteItemCommandClass } from 'v1/entity/actions/commands/deleteItem/deleteItemCommand.js'
 import {
   UpdateItemCommand,
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from 'v1/entity/actions/commands/updateItem'
-import type { UpdateItemCommandClass } from 'v1/entity/actions/commands/updateItem/updateItemCommand'
+} from 'v1/entity/actions/commands/updateItem/index.js'
+import type { UpdateItemCommandClass } from 'v1/entity/actions/commands/updateItem/updateItemCommand.js'
 
-import type { ActionClassMocker, ActionClassResults, ActionName } from './types'
-import { GetItemCommandMock } from './getItemCommand'
-import { PutItemCommandMock } from './putItemCommand'
-import { DeleteItemCommandMock } from './deleteItemCommand'
-import { UpdateItemCommandMock } from './updateItemCommand'
-import { ActionMocker } from './actionMocker'
-import { CommandResults } from './commandResults'
-import { $originalEntity, $mockedImplementations, $receivedActions } from './constants'
+import type { ActionClassMocker, ActionClassResults, ActionName } from './types.js'
+import { GetItemCommandMock } from './getItemCommand.js'
+import { PutItemCommandMock } from './putItemCommand.js'
+import { DeleteItemCommandMock } from './deleteItemCommand.js'
+import { UpdateItemCommandMock } from './updateItemCommand.js'
+import { ActionMocker } from './actionMocker.js'
+import { CommandResults } from './commandResults.js'
+import { $originalEntity, $mockedImplementations, $receivedActions } from './constants.js'
 
 export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
   [$originalEntity]: ENTITY;

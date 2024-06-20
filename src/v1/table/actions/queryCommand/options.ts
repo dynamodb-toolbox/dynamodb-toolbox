@@ -1,15 +1,15 @@
-import type { TableV2 } from 'v1/table'
-import type { EntityV2 } from 'v1/entity'
-import type { EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
-import type { Condition } from 'v1/entity/actions/parseCondition'
-import type { CapacityOption } from 'v1/options/capacity'
+import type { TableV2 } from 'v1/table/index.js'
+import type { EntityV2 } from 'v1/entity/index.js'
+import type { EntityPathsIntersection } from 'v1/entity/actions/parsePaths.js'
+import type { Condition } from 'v1/entity/actions/parseCondition.js'
+import type { CapacityOption } from 'v1/options/capacity.js'
 import type {
   SelectOption,
   AllProjectedAttributesSelectOption,
   SpecificAttributesSelectOption
-} from 'v1/options/select'
+} from 'v1/options/select.js'
 
-import type { Query } from './types'
+import type { Query } from './types.js'
 
 export type QueryOptions<
   TABLE extends TableV2 = TableV2,

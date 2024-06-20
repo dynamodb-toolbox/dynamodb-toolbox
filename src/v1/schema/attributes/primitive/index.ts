@@ -1,15 +1,15 @@
-export { string, boolean, binary, number } from './typer'
+export { string, boolean, binary, number } from './typer.js'
 export type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute,
   Transformer
-} from './types'
+} from './types.js'
 export {
   $PrimitiveAttributeState,
   $PrimitiveAttributeNestedState,
   $PrimitiveAttribute,
   PrimitiveAttribute
-} from './interface'
-export type { FreezePrimitiveAttribute } from './freeze'
-export type { ResolvePrimitiveAttribute } from './resolve'
+} from './interface.js'
+export type { FreezePrimitiveAttribute } from './freeze.js'
+export type { ResolvePrimitiveAttribute } from './resolve.js'

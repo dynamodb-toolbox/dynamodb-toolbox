@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Optional } from './optional'
+import type { Optional } from './optional.js'
 
 export type OptionalizeUndefinableProperties<
   OBJECT extends Record<string, unknown>,

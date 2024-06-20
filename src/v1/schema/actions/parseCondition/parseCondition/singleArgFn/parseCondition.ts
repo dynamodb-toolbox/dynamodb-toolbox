@@ -1,6 +1,6 @@
-import type { ConditionParser } from '../../conditionParser'
+import type { ConditionParser } from '../../conditionParser.js'
 
-import type { SingleArgFnCondition } from './types'
+import type { SingleArgFnCondition } from './types.js'
 
 export const parseSingleArgFnCondition = (
   conditionParser: ConditionParser,

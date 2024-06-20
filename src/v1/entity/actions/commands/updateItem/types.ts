@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
-import type { EntityV2 } from 'v1/entity'
-import type { Schema } from 'v1/schema'
+import type { EntityV2 } from 'v1/entity/index.js'
+import type { Schema } from 'v1/schema/index.js'
 import type {
   Attribute,
   AttributeValue,
@@ -23,10 +23,10 @@ import type {
   AtLeastOnce,
   Always,
   Never
-} from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/parsePaths'
-import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
-import type { If } from 'v1/types/if'
+} from 'v1/schema/attributes/index.js'
+import type { Paths } from 'v1/schema/actions/parsePaths/index.js'
+import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties.js'
+import type { If } from 'v1/types/if.js'
 
 import {
   $HAS_VERB,
@@ -39,7 +39,7 @@ import {
   $DELETE,
   $APPEND,
   $PREPEND
-} from './constants'
+} from './constants.js'
 
 // Distinguishing verbal syntax vs non-verbal for type inference & parsing
 export type Verbal<VALUE> = { [$HAS_VERB]: true } & VALUE

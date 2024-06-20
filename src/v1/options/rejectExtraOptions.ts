@@ -1,4 +1,4 @@
-import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
+import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError.js'
 
 export const rejectExtraOptions = (extraOptions: {}): void => {
   const [extraOption] = Object.keys(extraOptions)

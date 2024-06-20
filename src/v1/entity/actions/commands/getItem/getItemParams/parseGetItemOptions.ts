@@ -1,13 +1,13 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 import { isEmpty } from 'lodash'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityPathParser } from 'v1/entity/actions/parsePaths'
-import { parseCapacityOption } from 'v1/options/capacity'
-import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
-import { parseConsistentOption } from 'v1/options/consistent'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityPathParser } from 'v1/entity/actions/parsePaths.js'
+import { parseCapacityOption } from 'v1/options/capacity.js'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions.js'
+import { parseConsistentOption } from 'v1/options/consistent.js'
 
-import type { GetItemOptions } from '../options'
+import type { GetItemOptions } from '../options.js'
 
 type CommandOptions = Omit<GetCommandInput, 'TableName' | 'Key'>
 

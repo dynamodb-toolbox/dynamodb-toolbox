@@ -8,8 +8,8 @@ import type {
   MapAttribute,
   RecordAttribute,
   AnyOfAttribute
-} from 'v1/schema/attributes'
-import type { Schema } from 'v1/schema'
+} from 'v1/schema/attributes/index.js'
+import type { Schema } from 'v1/schema/index.js'
 
 type AnyAttrPaths<
   ATTRIBUTE extends AnyAttribute,

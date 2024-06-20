@@ -1,9 +1,9 @@
-import type { EntityV2 } from 'v1/entity'
-import { EntityConditionParser } from 'v1/entity/actions/parseCondition'
-import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityConditionParser } from 'v1/entity/actions/parseCondition.js'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions.js'
 
-import type { UpdateItemTransactionOptions } from '../options'
-import type { TransactUpdateItemParams } from './transactUpdateItemParams'
+import type { UpdateItemTransactionOptions } from '../options.js'
+import type { TransactUpdateItemParams } from './transactUpdateItemParams.js'
 
 type TransactionOptions = Omit<TransactUpdateItemParams, 'TableName' | 'Key' | 'UpdateExpression'>
 

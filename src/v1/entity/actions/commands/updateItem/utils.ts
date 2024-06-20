@@ -1,7 +1,7 @@
-import type { Attribute, AttributeValue } from 'v1/schema/attributes'
-import { isObject } from 'v1/utils/validation/isObject'
+import type { Attribute, AttributeValue } from 'v1/schema/attributes/index.js'
+import { isObject } from 'v1/utils/validation/isObject.js'
 
-import type { SET, GET, SUM, SUBTRACT, ADD, DELETE, APPEND, PREPEND, Reference } from './types'
+import type { SET, GET, SUM, SUBTRACT, ADD, DELETE, APPEND, PREPEND, Reference } from './types.js'
 import {
   $HAS_VERB,
   $SET,
@@ -13,7 +13,7 @@ import {
   $DELETE,
   $APPEND,
   $PREPEND
-} from './constants'
+} from './constants.js'
 
 export const $set = <VALUE>(value: VALUE): SET<VALUE> => ({ [$HAS_VERB]: true, [$SET]: value })
 

@@ -1,9 +1,9 @@
 import type { TransactGetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { parseCapacityOption } from 'v1/options/capacity'
-import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
+import { parseCapacityOption } from 'v1/options/capacity.js'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions.js'
 
-import type { TransactGetOptions } from './options'
+import type { TransactGetOptions } from './options.js'
 
 type TransactGetCommandOptions = Partial<Omit<TransactGetCommandInput, 'TransactItems'>>
 

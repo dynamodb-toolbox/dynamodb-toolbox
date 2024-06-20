@@ -1,4 +1,4 @@
-import { isBinary } from './isBinary'
+import { isBinary } from './isBinary.js'
 
 describe('isBinary', () => {
   it('returns true if input is a binary', () => {

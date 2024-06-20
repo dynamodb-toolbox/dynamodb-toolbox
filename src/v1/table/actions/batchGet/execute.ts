@@ -5,12 +5,12 @@ import {
   DynamoDBDocumentClient
 } from '@aws-sdk/lib-dynamodb'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import { CapacityOption, parseCapacityOption } from 'v1/options/capacity'
-import { $table } from 'v1/table/table'
-import { $entity } from 'v1/entity'
-import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { Paths } from 'v1/schema/actions/parsePaths'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { CapacityOption, parseCapacityOption } from 'v1/options/capacity.js'
+import { $table } from 'v1/table/index.js'
+import { $entity } from 'v1/entity/index.js'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format.js'
+import type { Paths } from 'v1/schema/actions/parsePaths/index.js'
 
 import {
   BatchGetCommand,
@@ -18,7 +18,7 @@ import {
   BatchGetCommandOptions,
   $requests,
   $options
-} from './batchGetCommand'
+} from './batchGetCommand.js'
 
 export interface ExecuteBatchGetOptions {
   capacity?: CapacityOption

@@ -1,5 +1,5 @@
-import { DynamoDBToolboxError } from 'v1/errors'
-import { EntityV2, EntityAction, $entity } from 'v1/entity'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { EntityV2, EntityAction, $entity } from 'v1/entity/index.js'
 import {
   Formatter,
   FormatOptions,
@@ -7,7 +7,7 @@ import {
   FormattedValue,
   FormattedValueOptions,
   FormattedValueDefaultOptions
-} from 'v1/schema/actions/format'
+} from 'v1/schema/actions/format/index.js'
 
 /**
  * Returned item of a fetch command (GET, QUERY ...) for a given Entity

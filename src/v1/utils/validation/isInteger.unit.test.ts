@@ -1,4 +1,4 @@
-import { isInteger } from './isInteger'
+import { isInteger } from './isInteger.js'
 
 describe('isInteger', () => {
   it('returns true if input is a number', () => {

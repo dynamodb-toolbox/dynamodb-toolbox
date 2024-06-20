@@ -1,4 +1,8 @@
-import type { AnyAttributeCondition, NonLogicalCondition, SchemaCondition } from '../../condition'
+import type {
+  AnyAttributeCondition,
+  NonLogicalCondition,
+  SchemaCondition
+} from '../../condition.js'
 
 export type SingleArgFnCondition = NonLogicalCondition &
   Extract<AnyAttributeCondition<string, string>, { exists: unknown }>

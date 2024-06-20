@@ -1,13 +1,13 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import type { KeyInput } from 'v1/entity/actions/parse'
-import type { EntityPaths } from 'v1/entity/actions/parsePaths'
-import { DynamoDBToolboxError } from 'v1/errors'
+import { EntityV2, EntityAction, $entity } from 'v1/entity/index.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
+import type { EntityPaths } from 'v1/entity/actions/parsePaths.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { BaseTransaction, GetTransactionParams } from '../types'
-import type { GetItemTransactionOptions } from './options'
-import { transactGetItemParams, TransactGetItemParams } from './transactGetItemParams'
+import type { BaseTransaction, GetTransactionParams } from '../types.js'
+import type { GetItemTransactionOptions } from './options.js'
+import { transactGetItemParams, TransactGetItemParams } from './transactGetItemParams/index.js'
 
 export const $key = Symbol('$key')
 export type $key = typeof $key

@@ -1,3 +1,3 @@
-export { isNotCondition } from './types'
-export type { NotCondition } from './types'
-export { parseNotCondition } from './parseCondition'
+export { isNotCondition } from './types.js'
+export type { NotCondition } from './types.js'
+export { parseNotCondition } from './parseCondition.js'

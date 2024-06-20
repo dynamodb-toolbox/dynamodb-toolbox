@@ -1,20 +1,24 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, $entity } from 'v1/entity'
-import { GetItemCommand, GetItemOptions, GetItemResponse } from 'v1/entity/actions/commands/getItem'
-import { $key, $options } from 'v1/entity/actions/commands/getItem/getItemCommand'
-import { getItemParams } from 'v1/entity/actions/commands/getItem/getItemParams'
-import type { KeyInput } from 'v1/entity/actions/parse'
-import { DynamoDBToolboxError } from 'v1/errors'
+import { EntityV2, $entity } from 'v1/entity/index.js'
+import {
+  GetItemCommand,
+  GetItemOptions,
+  GetItemResponse
+} from 'v1/entity/actions/commands/getItem/index.js'
+import { $key, $options } from 'v1/entity/actions/commands/getItem/getItemCommand.js'
+import { getItemParams } from 'v1/entity/actions/commands/getItem/getItemParams/index.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { MockedEntity } from './entity'
+import type { MockedEntity } from './entity.js'
 import {
   $actionName,
   $originalEntity,
   $mockedEntity,
   $mockedImplementations,
   $receivedActions
-} from './constants'
+} from './constants.js'
 
 export class GetItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,

@@ -1,10 +1,10 @@
-import type { ErrorBlueprint } from 'v1/errors/blueprint'
+import type { ErrorBlueprint } from 'v1/errors/blueprint.js'
 
 import type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
   PrimitiveAttributeEnumValues
-} from './types'
+} from './types.js'
 
 type InvalidEnumValueTypeErrorBlueprint = ErrorBlueprint<{
   code: 'schema.primitiveAttribute.invalidEnumValueType'

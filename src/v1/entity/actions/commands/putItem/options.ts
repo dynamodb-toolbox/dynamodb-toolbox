@@ -1,8 +1,8 @@
-import type { EntityV2 } from 'v1/entity'
-import type { Condition } from 'v1/entity/actions/parseCondition'
-import type { CapacityOption } from 'v1/options/capacity'
-import type { MetricsOption } from 'v1/options/metrics'
-import type { NoneReturnValuesOption, AllOldReturnValuesOption } from 'v1/options/returnValues'
+import type { EntityV2 } from 'v1/entity/index.js'
+import type { Condition } from 'v1/entity/actions/parseCondition.js'
+import type { CapacityOption } from 'v1/options/capacity.js'
+import type { MetricsOption } from 'v1/options/metrics.js'
+import type { NoneReturnValuesOption, AllOldReturnValuesOption } from 'v1/options/returnValues.js'
 
 export type PutItemCommandReturnValuesOption = NoneReturnValuesOption | AllOldReturnValuesOption
 

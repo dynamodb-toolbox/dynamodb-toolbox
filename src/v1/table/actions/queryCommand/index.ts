@@ -1,4 +1,4 @@
-export { QueryCommand } from './queryCommand'
-export type { QueryResponse } from './queryCommand'
-export type { QueryOptions } from './options'
-export type { Query } from './types'
+export { QueryCommand } from './queryCommand.js'
+export type { QueryResponse } from './queryCommand.js'
+export type { QueryOptions } from './options.js'
+export type { Query } from './types.js'

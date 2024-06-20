@@ -1,9 +1,9 @@
-export { any } from './typer'
+export { any } from './typer.js'
 export {
   $AnyAttributeState,
   $AnyAttributeNestedState,
   $AnyAttribute,
   AnyAttribute
-} from './interface'
-export type { FreezeAnyAttribute } from './freeze'
-export type { ResolveAnyAttribute } from './resolve'
+} from './interface.js'
+export type { FreezeAnyAttribute } from './freeze.js'
+export type { ResolveAnyAttribute } from './resolve.js'

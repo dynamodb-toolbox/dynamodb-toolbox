@@ -1,8 +1,8 @@
-import type { Schema } from 'v1/schema'
-import type { Extension, Attribute, AttributeBasicValue } from 'v1/schema/attributes'
+import type { Schema } from 'v1/schema/index.js'
+import type { Extension, Attribute, AttributeBasicValue } from 'v1/schema/attributes/index.js'
 
-import type { $contextExtension, $extension } from '../constants'
-import type { ParsedValue } from '../parser'
+import type { $contextExtension, $extension } from '../constants.js'
+import type { ParsedValue } from '../parser.js'
 
 export type ExtensionParserOptions = { transform?: boolean }
 

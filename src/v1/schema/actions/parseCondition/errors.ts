@@ -1,1 +1,1 @@
-export type { ConditionParserErrorBlueprints } from './parseCondition/errors'
+export type { ConditionParserErrorBlueprints } from './parseCondition/errors.js'

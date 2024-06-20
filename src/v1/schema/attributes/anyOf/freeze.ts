@@ -1,11 +1,11 @@
 import type { O } from 'ts-toolbelt'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import { isArray } from 'v1/utils/validation'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { isArray } from 'v1/utils/validation/isArray.js'
 
-import type { FreezeAttribute } from '../freeze'
-import { validateAttributeProperties } from '../shared/validate'
-import { hasDefinedDefault } from '../shared/hasDefinedDefault'
+import type { FreezeAttribute } from '../freeze.js'
+import { validateAttributeProperties } from '../shared/validate.js'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import {
   $elements,
   $required,
@@ -14,12 +14,12 @@ import {
   $savedAs,
   $defaults,
   $links
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
-import type { SharedAttributeState } from '../shared/interface'
-import type { $AttributeState } from '../types'
-import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types'
-import { $AnyOfAttributeState, AnyOfAttribute } from './interface'
+import type { SharedAttributeState } from '../shared/interface.js'
+import type { $AttributeState } from '../types/index.js'
+import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types.js'
+import { $AnyOfAttributeState, AnyOfAttribute } from './interface.js'
 
 type FreezeElements<
   $ELEMENTS extends $AnyOfAttributeElements[],

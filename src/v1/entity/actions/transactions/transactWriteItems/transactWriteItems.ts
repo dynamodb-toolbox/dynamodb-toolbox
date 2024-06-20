@@ -5,11 +5,11 @@ import {
 } from '@aws-sdk/lib-dynamodb'
 import type { TransactWriteItemsInput } from '@aws-sdk/client-dynamodb'
 
-import { DynamoDBToolboxError } from 'v1/errors'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { WriteItemTransaction } from '../types'
-import type { TransactWriteOptions } from './options'
-import { parseTransactWriteOptions } from './parseTransactWriteOptions'
+import type { WriteItemTransaction } from '../types.js'
+import type { TransactWriteOptions } from './options.js'
+import { parseTransactWriteOptions } from './parseTransactWriteOptions.js'
 
 export const getTransactWriteCommandInput = (
   commands: WriteItemTransaction[],

@@ -1,7 +1,7 @@
-import { schema } from 'v1/schema'
-import { string, number, anyOf, map, list } from 'v1/schema/attributes'
+import { schema } from 'v1/schema/index.js'
+import { string, number, anyOf, map, list } from 'v1/schema/attributes/index.js'
 
-import { ConditionParser } from '../conditionParser'
+import { ConditionParser } from '../conditionParser.js'
 
 /**
  * @debt TODO "validate the attr value is a string"

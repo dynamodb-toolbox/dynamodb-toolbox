@@ -1,4 +1,4 @@
-import type { TableV2 } from '../table'
+import type { TableV2 } from '../table.js'
 
 /**
  * Returns the indexes of a Table

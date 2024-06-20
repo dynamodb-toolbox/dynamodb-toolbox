@@ -434,7 +434,7 @@ const parsedKey: ParsedValue<
 
 ### `reparse(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>(input: ParsedValue&lt;SCHEMA&gt;, options?: ParsingOptions) => ParsedValue&lt;SCHEMA&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>(input: ParserInput&lt;SCHEMA&gt;, options?: ParsingOptions) => ParsedValue&lt;SCHEMA&gt;</code></i></p>
 
 Similar to [`.parse`](#parse), but with the input correctly typed (taking the mode into account) instead of `unknown`:
 

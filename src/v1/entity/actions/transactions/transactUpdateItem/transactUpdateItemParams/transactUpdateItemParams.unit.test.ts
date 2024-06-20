@@ -23,7 +23,7 @@ import {
   $delete,
   $append,
   $prepend
-} from 'v1'
+} from 'v1/index.js'
 
 const TestTable = new TableV2({
   name: 'test-table',

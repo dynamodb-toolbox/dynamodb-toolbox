@@ -1,11 +1,11 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject'
-import { isString } from 'v1/utils/validation/isString'
-import { DynamoDBToolboxError } from 'v1/errors'
-import type { EntityV2 } from 'v1/entity'
+import type { NarrowObject, NarrowObjectRec } from 'v1/types/narrowObject.js'
+import { isString } from 'v1/utils/validation/isString.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import type { EntityV2 } from 'v1/entity/index.js'
 
-import type { Index, Key } from './types'
+import type { Index, Key } from './types/index.js'
 
 export class TableV2<
   PARTITION_KEY extends Key = Key,

@@ -1,9 +1,9 @@
-export { record } from './typer'
+export { record } from './typer.js'
 export type {
   $RecordAttributeState,
   $RecordAttributeNestedState,
   $RecordAttribute,
   RecordAttribute
-} from './interface'
-export type { FreezeRecordAttribute } from './freeze'
-export type { RecordAttributeKeys } from './types'
+} from './interface.js'
+export type { FreezeRecordAttribute } from './freeze.js'
+export type { RecordAttributeKeys } from './types.js'

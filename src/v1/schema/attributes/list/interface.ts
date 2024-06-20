@@ -1,21 +1,21 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If, ValueOrGetter } from 'v1/types'
+import type { If, ValueOrGetter } from 'v1/types/index.js'
 // TODO: Remove this import
 import type {
   AttributeUpdateItemInput,
   UpdateItemInput
-} from 'v1/entity/actions/commands/updateItem/types'
-import type { ParserInput } from 'v1/schema/actions/parse'
+} from 'v1/entity/actions/commands/updateItem/types.js'
+import type { ParserInput } from 'v1/schema/actions/parse/index.js'
 
-import type { Schema } from '../../schema'
-import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants'
-import type { $type, $elements } from '../constants/attributeOptions'
-import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
-import type { Attribute } from '../types'
+import type { Schema } from '../../schema.js'
+import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/index.js'
+import type { $type, $elements } from '../constants/attributeOptions.js'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface.js'
+import type { Attribute } from '../types/index.js'
 
-import type { FreezeListAttribute } from './freeze'
-import type { $ListAttributeElements } from './types'
+import type { FreezeListAttribute } from './freeze.js'
+import type { $ListAttributeElements } from './types.js'
 
 export interface $ListAttributeState<
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements,

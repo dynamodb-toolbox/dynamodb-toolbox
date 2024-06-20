@@ -1,1 +1,1 @@
-export { scanParams } from './scanParams'
+export { scanParams } from './scanParams.js'

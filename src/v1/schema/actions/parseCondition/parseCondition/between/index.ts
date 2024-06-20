@@ -1,3 +1,3 @@
-export { isBetweenCondition } from './types'
-export type { BetweenCondition } from './types'
-export { parseBetweenCondition } from './parseCondition'
+export { isBetweenCondition } from './types.js'
+export type { BetweenCondition } from './types.js'
+export { parseBetweenCondition } from './parseCondition.js'

@@ -1,14 +1,14 @@
 import type { O } from 'ts-toolbelt'
 import { PutCommandInput, PutCommand, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { NoneReturnValuesOption, AllOldReturnValuesOption } from 'v1/options/returnValues'
-import { DynamoDBToolboxError } from 'v1/errors'
+import { EntityV2, EntityAction, $entity } from 'v1/entity/index.js'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format.js'
+import type { NoneReturnValuesOption, AllOldReturnValuesOption } from 'v1/options/returnValues.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { PutItemInput } from './types'
-import type { PutItemOptions } from './options'
-import { putItemParams } from './putItemParams'
+import type { PutItemInput } from './types.js'
+import type { PutItemOptions } from './options.js'
+import { putItemParams } from './putItemParams/index.js'
 
 export const $item = Symbol('$item')
 export type $item = typeof $item

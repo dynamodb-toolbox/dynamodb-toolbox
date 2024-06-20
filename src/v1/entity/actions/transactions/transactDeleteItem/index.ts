@@ -1,2 +1,2 @@
-export { DeleteItemTransaction } from './transactDeleteItem'
-export type { DeleteItemTransactionOptions } from './options'
+export { DeleteItemTransaction } from './transactDeleteItem.js'
+export type { DeleteItemTransactionOptions } from './options.js'

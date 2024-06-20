@@ -1,5 +1,5 @@
-import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
-import { isString } from 'v1/utils/validation/isString'
+import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError.js'
+import { isString } from 'v1/utils/validation/isString.js'
 
 export type ClientRequestToken = string
 

@@ -1,10 +1,10 @@
 import type { O } from 'ts-toolbelt'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import { isStaticDefault } from 'v1/schema/utils/isStaticDefault'
-import { validatorsByPrimitiveType } from 'v1/utils/validation'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { isStaticDefault } from 'v1/schema/utils/isStaticDefault.js'
+import { validatorsByPrimitiveType } from 'v1/utils/validation/validatorsByPrimitiveType.js'
 
-import { validateAttributeProperties } from '../shared/validate'
+import { validateAttributeProperties } from '../shared/validate.js'
 import {
   $type,
   $required,
@@ -15,14 +15,14 @@ import {
   $defaults,
   $links,
   $transform
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
 import type {
   PrimitiveAttributeEnumValues,
   PrimitiveAttributeState,
   PrimitiveAttributeType
-} from './types'
-import { $PrimitiveAttributeState, PrimitiveAttribute } from './interface'
+} from './types.js'
+import { $PrimitiveAttributeState, PrimitiveAttribute } from './interface.js'
 
 export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
   // Applying void O.Update improves type display

@@ -1,2 +1,2 @@
-export { PrimaryKeyParser } from './primaryKeyParser'
-export type { PrimaryKey } from './primaryKeyParser'
+export { PrimaryKeyParser } from './primaryKeyParser.js'
+export type { PrimaryKey } from './primaryKeyParser.js'

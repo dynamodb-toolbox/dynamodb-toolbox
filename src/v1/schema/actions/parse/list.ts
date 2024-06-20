@@ -1,19 +1,19 @@
 import { cloneDeep } from 'lodash'
 
-import type { Schema } from 'v1/schema'
-import type { Attribute, ListAttribute, ExtendedValue } from 'v1/schema/attributes'
-import type { If } from 'v1/types'
-import { isArray } from 'v1/utils/validation/isArray'
-import { DynamoDBToolboxError } from 'v1/errors'
+import type { Schema } from 'v1/schema/index.js'
+import type { Attribute, ListAttribute, ExtendedValue } from 'v1/schema/attributes/index.js'
+import type { If } from 'v1/types/index.js'
+import { isArray } from 'v1/utils/validation/isArray.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { ParsedValue } from './parser'
+import type { ParsedValue } from './parser.js'
 import type {
   ParsedValueOptions,
   ParsedValueDefaultOptions,
   ParsingOptions,
   FromParsingOptions
-} from './types/options'
-import { attrParser, AttrParsedValue, MustBeDefined } from './attribute'
+} from './types/options.js'
+import { attrParser, AttrParsedValue, MustBeDefined } from './attribute.js'
 
 export type ListAttrParsedValue<
   ATTRIBUTE extends ListAttribute,

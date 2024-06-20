@@ -1,4 +1,4 @@
-export { PutItemCommand } from './putItemCommand'
-export type { PutItemResponse } from './putItemCommand'
-export type { PutItemOptions } from './options'
-export type { PutItemInput } from './types'
+export { PutItemCommand } from './putItemCommand.js'
+export type { PutItemResponse } from './putItemCommand.js'
+export type { PutItemOptions } from './options.js'
+export type { PutItemInput } from './types.js'

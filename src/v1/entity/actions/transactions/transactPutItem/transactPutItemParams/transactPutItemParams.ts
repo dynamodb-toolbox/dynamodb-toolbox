@@ -1,11 +1,11 @@
 import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityParser } from 'v1/entity/actions/parse'
-import type { PutItemInput } from 'v1/entity/actions/commands/putItem'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityParser } from 'v1/entity/actions/parse.js'
+import type { PutItemInput } from 'v1/entity/actions/commands/putItem/index.js'
 
-import type { PutItemTransactionOptions } from '../options'
-import { parsePutItemTransactionOptions } from './parsePutItemOptions'
+import type { PutItemTransactionOptions } from '../options.js'
+import { parsePutItemTransactionOptions } from './parsePutItemOptions.js'
 
 export type TransactPutItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Put']

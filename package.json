@@ -70,6 +70,7 @@
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.145.0",
+    "@aws-sdk/lib-dynamodb": "^3.245.0",
     "@types/jest": "^29.2.1",
     "@types/lodash": "^4.17.0",
     "@types/node": "^14.14.16",

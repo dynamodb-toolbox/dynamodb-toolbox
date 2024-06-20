@@ -1,10 +1,10 @@
-import type { $AnyAttributeState } from '../any'
-import type { $PrimitiveAttributeState } from '../primitive'
-import type { $SetAttributeState } from '../set'
-import type { $ListAttributeState } from '../list'
-import type { $MapAttributeState } from '../map'
-import type { $RecordAttributeState } from '../record'
-import type { $AnyOfAttributeState } from '../anyOf'
+import type { $AnyAttributeState } from '../any/index.js'
+import type { $PrimitiveAttributeState } from '../primitive/index.js'
+import type { $SetAttributeState } from '../set/index.js'
+import type { $ListAttributeState } from '../list/index.js'
+import type { $MapAttributeState } from '../map/index.js'
+import type { $RecordAttributeState } from '../record/index.js'
+import type { $AnyOfAttributeState } from '../anyOf/index.js'
 
 /**
  * Any warm attribute state

@@ -1,9 +1,9 @@
-import { DynamoDBToolboxError } from 'v1/errors'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { Never } from '../constants/requiredOptions'
+import type { Never } from '../constants/requiredOptions.js'
 
-import type { SharedAttributeState } from './interface'
-import { validateAttributeProperties } from './validate'
+import type { SharedAttributeState } from './interface.js'
+import { validateAttributeProperties } from './validate.js'
 
 describe('shared properties validation', () => {
   const path = 'some/path'

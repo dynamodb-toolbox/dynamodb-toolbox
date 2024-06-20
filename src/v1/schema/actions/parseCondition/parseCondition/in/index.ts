@@ -1,3 +1,3 @@
-export { isInCondition } from './types'
-export type { InCondition } from './types'
-export { parseInCondition } from './parseCondition'
+export { isInCondition } from './types.js'
+export type { InCondition } from './types.js'
+export { parseInCondition } from './parseCondition.js'

@@ -1,6 +1,6 @@
-import { GetItemCommand, mockEntity } from 'v1'
+import { GetItemCommand, mockEntity } from 'v1/index.js'
 
-import { UserEntity } from '../entity'
+import { UserEntity } from '../entity.js'
 
 const mockedEntity = mockEntity(UserEntity)
 

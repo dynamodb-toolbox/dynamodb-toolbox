@@ -1,9 +1,9 @@
-import type { If } from 'v1/types/if'
-import type { Schema } from 'v1/schema'
-import type { ParserInput } from 'v1/schema/actions/parse'
-import type { TableV2 } from 'v1/table'
-import type { PrimaryKey } from 'v1/table/actions/parsePrimaryKey'
-import { DynamoDBToolboxError } from 'v1/errors'
+import type { If } from 'v1/types/if.js'
+import type { Schema } from 'v1/schema/index.js'
+import type { ParserInput } from 'v1/schema/actions/parse/index.js'
+import type { TableV2 } from 'v1/table/index.js'
+import type { PrimaryKey } from 'v1/table/actions/parsePrimaryKey/index.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
 import {
   TimestampsOptions,
@@ -13,7 +13,7 @@ import {
   addInternalAttributes,
   WithInternalAttributes,
   NeedsKeyCompute
-} from './utils'
+} from './utils/index.js'
 
 export class EntityV2<
   NAME extends string = string,

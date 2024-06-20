@@ -1,1 +1,1 @@
-export { parseUpdateExtension } from './attribute'
+export { parseUpdateExtension } from './attribute.js'

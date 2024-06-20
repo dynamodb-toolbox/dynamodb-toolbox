@@ -1,2 +1,2 @@
-export { conditionCheckParams } from './conditionCheckParams'
-export type { ConditionCheckParams } from './conditionCheckParams'
+export { conditionCheckParams } from './conditionCheckParams.js'
+export type { ConditionCheckParams } from './conditionCheckParams.js'

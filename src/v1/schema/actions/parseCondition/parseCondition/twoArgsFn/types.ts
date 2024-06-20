@@ -1,4 +1,8 @@
-import type { AnyAttributeCondition, NonLogicalCondition, SchemaCondition } from '../../condition'
+import type {
+  AnyAttributeCondition,
+  NonLogicalCondition,
+  SchemaCondition
+} from '../../condition.js'
 
 export type BeginsWithOperator = 'beginsWith'
 export type TwoArgsFnOperator = 'contains' | 'type' | BeginsWithOperator

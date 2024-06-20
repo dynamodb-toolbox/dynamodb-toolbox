@@ -1,4 +1,4 @@
-import type { Schema } from 'v1/schema'
+import type { Schema } from 'v1/schema/index.js'
 import type {
   Attribute,
   AnyAttribute,
@@ -10,8 +10,8 @@ import type {
   AnyOfAttribute,
   ResolvePrimitiveAttribute,
   ResolvedPrimitiveAttribute
-} from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/parsePaths'
+} from 'v1/schema/attributes/index.js'
+import type { Paths } from 'v1/schema/actions/parsePaths/index.js'
 
 export type AnyAttributeCondition<
   ATTRIBUTE_PATH extends string,

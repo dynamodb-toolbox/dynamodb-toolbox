@@ -1,8 +1,8 @@
-import { DynamoDBToolboxError } from 'v1/errors'
-import { map, string } from 'v1/schema/attributes'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { map, string } from 'v1/schema/attributes/index.js'
 
-import { mapAttributeParser } from './map'
-import * as attrParserModule from './attribute'
+import { mapAttributeParser } from './map.js'
+import * as attrParserModule from './attribute.js'
 
 // @ts-ignore
 const attrParser = jest.spyOn(attrParserModule, 'attrParser')

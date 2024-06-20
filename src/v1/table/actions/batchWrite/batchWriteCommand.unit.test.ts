@@ -9,10 +9,10 @@ import {
   schema,
   string,
   number
-} from 'v1'
-import { $entities } from 'v1/table/table'
+} from 'v1/index.js'
+import { $entities } from 'v1/table/index.js'
 
-import { BatchWriteCommand } from './batchWriteCommand'
+import { BatchWriteCommand } from './batchWriteCommand.js'
 
 const TestTable = new TableV2({
   name: 'test-table',

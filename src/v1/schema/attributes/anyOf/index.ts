@@ -1,9 +1,9 @@
-export { anyOf } from './typer'
+export { anyOf } from './typer.js'
 export type {
   $AnyOfAttributeState,
   $AnyOfAttributeNestedState,
   $AnyOfAttribute,
   AnyOfAttribute
-} from './interface'
-export type { FreezeAnyOfAttribute } from './freeze'
-export type { AnyOfAttributeElements } from './types'
+} from './interface.js'
+export type { FreezeAnyOfAttribute } from './freeze.js'
+export type { AnyOfAttributeElements } from './types.js'

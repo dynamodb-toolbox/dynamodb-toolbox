@@ -1,9 +1,9 @@
-import { PrimitiveAttributeType } from 'v1/schema/attributes/primitive/types'
+import { PrimitiveAttributeType } from 'v1/schema/attributes/primitive/types.js'
 
-import { isBinary } from './isBinary'
-import { isBoolean } from './isBoolean'
-import { isNumber } from './isNumber'
-import { isString } from './isString'
+import { isBinary } from './isBinary.js'
+import { isBoolean } from './isBoolean.js'
+import { isNumber } from './isNumber.js'
+import { isString } from './isString.js'
 
 export const validatorsByPrimitiveType: Record<
   PrimitiveAttributeType,

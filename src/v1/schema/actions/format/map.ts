@@ -1,10 +1,10 @@
 import type { O } from 'ts-toolbelt'
 
-import type { MapAttribute, AnyAttribute, Never } from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/parsePaths'
-import type { If, OptionalizeUndefinableProperties } from 'v1/types'
-import { isObject } from 'v1/utils/validation'
-import { DynamoDBToolboxError } from 'v1/errors'
+import type { MapAttribute, AnyAttribute, Never } from 'v1/schema/attributes/index.js'
+import type { Paths } from 'v1/schema/actions/parsePaths/index.js'
+import type { If, OptionalizeUndefinableProperties } from 'v1/types/index.js'
+import { isObject } from 'v1/utils/validation/isObject.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
 import type {
   MatchKeys,
@@ -12,9 +12,9 @@ import type {
   FormattedValueOptions,
   FormattedValueDefaultOptions,
   FromFormatOptions
-} from './types'
-import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute'
-import { matchProjection } from './utils'
+} from './types.js'
+import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute.js'
+import { matchProjection } from './utils.js'
 
 export type MapAttrFormattedValue<
   ATTRIBUTE extends MapAttribute,

@@ -1,9 +1,10 @@
-import { DynamoDBToolboxError } from 'v1/errors'
-import { isBoolean, isString } from 'v1/utils/validation'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { isBoolean } from 'v1/utils/validation/isBoolean.js'
+import { isString } from 'v1/utils/validation/isString.js'
 
-import { requiredOptionsSet } from '../constants/requiredOptions'
+import { requiredOptionsSet } from '../constants/requiredOptions.js'
 
-import type { SharedAttributeState } from './interface'
+import type { SharedAttributeState } from './interface.js'
 
 /**
  * Validates an attribute shared properties

@@ -1,5 +1,5 @@
-import type { ParserInput } from 'v1/schema/actions/parse'
-import type { EntityV2 } from 'v1/entity'
+import type { ParserInput } from 'v1/schema/actions/parse/index.js'
+import type { EntityV2 } from 'v1/entity/index.js'
 
 /**
  * User input of a PUT command for a given Entity

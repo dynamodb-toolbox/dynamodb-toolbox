@@ -1,3 +1,3 @@
-export { BatchWriteCommand } from './batchWriteCommand'
-export { execute } from './execute'
-export type { ExecuteBatchWriteOptions } from './execute'
+export { BatchWriteCommand } from './batchWriteCommand.js'
+export { execute } from './execute.js'
+export type { ExecuteBatchWriteOptions } from './execute.js'

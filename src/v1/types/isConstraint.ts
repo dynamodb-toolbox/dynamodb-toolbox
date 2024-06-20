@@ -1,4 +1,4 @@
-import type { Keep } from './keep'
+import type { Keep } from './keep.js'
 
 // CONSTRAINTS might be a union of constraints
 // `extends` applies in parallel to all the union elements, so the results might be `true | false => boolean`

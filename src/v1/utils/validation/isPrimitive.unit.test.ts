@@ -1,4 +1,4 @@
-import { isPrimitive } from './isPrimitive'
+import { isPrimitive } from './isPrimitive.js'
 
 describe('isPrimitive', () => {
   it('returns true if input is a boolean', () => {

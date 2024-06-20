@@ -1,16 +1,16 @@
 import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 import { isEmpty } from 'lodash'
-import omit from 'lodash/omit'
+import { omit } from 'lodash'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityParser } from 'v1/entity/actions/parse'
-import type { UpdateItemInput } from 'v1/entity/actions/commands/updateItem'
-import { parseUpdate } from 'v1/entity/actions/commands/updateItem/updateExpression/parse'
-import { parseUpdateExtension } from 'v1/entity/actions/commands/updateItem/updateItemParams/extension'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityParser } from 'v1/entity/actions/parse.js'
+import type { UpdateItemInput } from 'v1/entity/actions/commands/updateItem/index.js'
+import { parseUpdate } from 'v1/entity/actions/commands/updateItem/updateExpression/parse.js'
+import { parseUpdateExtension } from 'v1/entity/actions/commands/updateItem/updateItemParams/extension/index.js'
 
-import type { UpdateItemTransactionOptions } from '../options'
+import type { UpdateItemTransactionOptions } from '../options.js'
 
-import { parseUpdateItemTransactionOptions } from './parseUpdateItemOptions'
+import { parseUpdateItemTransactionOptions } from './parseUpdateItemOptions.js'
 
 export type TransactUpdateItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Update']

@@ -1,4 +1,4 @@
-import type { SharedAttributeState } from '../shared/interface'
+import type { SharedAttributeState } from '../shared/interface.js'
 
 export interface PrimitiveAttributeState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType

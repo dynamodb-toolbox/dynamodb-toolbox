@@ -1,6 +1,6 @@
-import type { AtLeastOnce } from '../constants'
-import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive/interface'
-import type { PrimitiveAttributeEnumValues } from '../primitive/types'
+import type { AtLeastOnce } from '../constants/index.js'
+import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive/interface.js'
+import type { PrimitiveAttributeEnumValues } from '../primitive/types.js'
 
 interface SetAttributeElementState {
   required: AtLeastOnce

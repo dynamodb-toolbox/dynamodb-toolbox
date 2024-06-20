@@ -1,7 +1,7 @@
-import type { Attribute } from 'v1/schema/attributes'
-import { Parser } from 'v1/schema/actions/parse'
+import type { Attribute } from 'v1/schema/attributes/index.js'
+import { Parser } from 'v1/schema/actions/parse/index.js'
 
-import type { ConditionParser } from './conditionParser'
+import type { ConditionParser } from './conditionParser.js'
 
 export type AppendAttributeValueOptions = { transform?: boolean }
 

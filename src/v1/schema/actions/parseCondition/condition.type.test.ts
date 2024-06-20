@@ -5,8 +5,8 @@ import type {
   ListAttribute,
   PrimitiveAttribute,
   SetAttribute
-} from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/parsePaths'
+} from 'v1/schema/attributes/index.js'
+import type { Paths } from 'v1/schema/actions/parsePaths/index.js'
 
 import type {
   NonLogicalCondition,
@@ -18,8 +18,8 @@ import type {
   BaseAttributeCondition,
   ConditionType,
   AttrOrSize
-} from './condition'
-import { mySchema } from './condition.fixture.test'
+} from './condition.js'
+import { mySchema } from './condition.fixture.test.js'
 
 type ATTRIBUTES = typeof mySchema['attributes']
 type ATTRIBUTE_PATHS = Paths<typeof mySchema>

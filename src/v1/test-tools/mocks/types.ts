@@ -1,29 +1,32 @@
-import type { EntityV2 } from 'v1/entity'
-import type { KeyInput } from 'v1/entity/actions/parse'
-import type { GetItemOptions, GetItemResponse } from 'v1/entity/actions/commands/getItem'
-import type { GetItemCommandClass } from 'v1/entity/actions/commands/getItem/getItemCommand'
+import type { EntityV2 } from 'v1/entity/index.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
+import type { GetItemOptions, GetItemResponse } from 'v1/entity/actions/commands/getItem/index.js'
+import type { GetItemCommandClass } from 'v1/entity/actions/commands/getItem/getItemCommand.js'
 import type {
   PutItemInput,
   PutItemOptions,
   PutItemResponse
-} from 'v1/entity/actions/commands/putItem'
-import type { PutItemCommandClass } from 'v1/entity/actions/commands/putItem/putItemCommand'
-import type { DeleteItemOptions, DeleteItemResponse } from 'v1/entity/actions/commands/deleteItem'
-import type { DeleteItemCommandClass } from 'v1/entity/actions/commands/deleteItem/deleteItemCommand'
+} from 'v1/entity/actions/commands/putItem/index.js'
+import type { PutItemCommandClass } from 'v1/entity/actions/commands/putItem/putItemCommand.js'
+import type {
+  DeleteItemOptions,
+  DeleteItemResponse
+} from 'v1/entity/actions/commands/deleteItem/index.js'
+import type { DeleteItemCommandClass } from 'v1/entity/actions/commands/deleteItem/deleteItemCommand.js'
 import type {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from 'v1/entity/actions/commands/updateItem'
-import type { UpdateItemCommandClass } from 'v1/entity/actions/commands/updateItem/updateItemCommand'
+} from 'v1/entity/actions/commands/updateItem/index.js'
+import type { UpdateItemCommandClass } from 'v1/entity/actions/commands/updateItem/updateItemCommand.js'
 
-import type { GetItemCommandMock } from './getItemCommand'
-import type { PutItemCommandMock } from './putItemCommand'
-import type { DeleteItemCommandMock } from './deleteItemCommand'
-import type { UpdateItemCommandMock } from './updateItemCommand'
-import type { $actionName } from './constants'
-import type { CommandResults } from './commandResults'
-import type { ActionMocker } from './actionMocker'
+import type { GetItemCommandMock } from './getItemCommand.js'
+import type { PutItemCommandMock } from './putItemCommand.js'
+import type { DeleteItemCommandMock } from './deleteItemCommand.js'
+import type { UpdateItemCommandMock } from './updateItemCommand.js'
+import type { $actionName } from './constants.js'
+import type { CommandResults } from './commandResults.js'
+import type { ActionMocker } from './actionMocker.js'
 
 type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
   ? {

@@ -1,17 +1,17 @@
-import type { If } from 'v1/types'
-import type { ListAttribute } from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/parsePaths'
-import { isArray } from 'v1/utils/validation/isArray'
-import { DynamoDBToolboxError } from 'v1/errors'
+import type { If } from 'v1/types/index.js'
+import type { ListAttribute } from 'v1/schema/attributes/index.js'
+import type { Paths } from 'v1/schema/actions/parsePaths/index.js'
+import { isArray } from 'v1/utils/validation/isArray.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
 import type {
   FormatOptions,
   FormattedValueOptions,
   FormattedValueDefaultOptions,
   FromFormatOptions
-} from './types'
-import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute'
-import { matchProjection } from './utils'
+} from './types.js'
+import { formatAttrRawValue, AttrFormattedValue, MustBeDefined } from './attribute.js'
+import { matchProjection } from './utils.js'
 
 export type ListAttrFormattedValue<
   ATTRIBUTE extends ListAttribute,

@@ -1,4 +1,4 @@
-import type { ErrorBlueprint } from 'v1/errors/blueprint'
+import type { ErrorBlueprint } from 'v1/errors/blueprint.js'
 
 type InvalidKeyPartErrorBlueprint = ErrorBlueprint<{
   code: 'actions.parsePrimaryKey.invalidKeyPart'

@@ -1,24 +1,24 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, $entity } from 'v1/entity'
+import { EntityV2, $entity } from 'v1/entity/index.js'
 import {
   DeleteItemCommand,
   DeleteItemOptions,
   DeleteItemResponse
-} from 'v1/entity/actions/commands/deleteItem'
-import { $key, $options } from 'v1/entity/actions/commands/deleteItem/deleteItemCommand'
-import { deleteItemParams } from 'v1/entity/actions/commands/deleteItem/deleteItemParams'
-import type { KeyInput } from 'v1/entity/actions/parse'
-import { DynamoDBToolboxError } from 'v1/errors'
+} from 'v1/entity/actions/commands/deleteItem/index.js'
+import { $key, $options } from 'v1/entity/actions/commands/deleteItem/deleteItemCommand.js'
+import { deleteItemParams } from 'v1/entity/actions/commands/deleteItem/deleteItemParams/index.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { MockedEntity } from './entity'
+import type { MockedEntity } from './entity.js'
 import {
   $actionName,
   $originalEntity,
   $mockedEntity,
   $mockedImplementations,
   $receivedActions
-} from './constants'
+} from './constants.js'
 
 export class DeleteItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,

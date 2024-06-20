@@ -1,6 +1,6 @@
-import { overwrite } from 'v1/utils/overwrite'
+import { overwrite } from 'v1/utils/overwrite.js'
 
-import type { RequiredOption, AtLeastOnce } from '../constants'
+import type { RequiredOption, AtLeastOnce } from '../constants/index.js'
 import {
   $type,
   $elements,
@@ -10,13 +10,13 @@ import {
   $savedAs,
   $defaults,
   $links
-} from '../constants/attributeOptions'
-import type { SharedAttributeState } from '../shared/interface'
+} from '../constants/attributeOptions.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 
-import type { $AnyOfAttribute } from './interface'
-import type { $AnyOfAttributeElements } from './types'
-import { AnyOfAttributeDefaultOptions, ANY_OF_DEFAULT_OPTIONS } from './options'
-import { freezeAnyOfAttribute } from './freeze'
+import type { $AnyOfAttribute } from './interface.js'
+import type { $AnyOfAttributeElements } from './types.js'
+import { AnyOfAttributeDefaultOptions, ANY_OF_DEFAULT_OPTIONS } from './options.js'
+import { freezeAnyOfAttribute } from './freeze.js'
 
 type $AnyOfAttributeTyper = <
   $ELEMENTS extends $AnyOfAttributeElements[],

@@ -1,9 +1,13 @@
-import { DynamoDBToolboxError } from 'v1/errors'
-import type { NarrowObject } from 'v1/types'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import type { NarrowObject } from 'v1/types/index.js'
 
-import type { SchemaAttributes, $SchemaAttributeNestedStates, Attribute } from './attributes'
-import type { RequiredOption } from './attributes/constants/requiredOptions'
-import type { FreezeAttribute } from './attributes/freeze'
+import type {
+  SchemaAttributes,
+  $SchemaAttributeNestedStates,
+  Attribute
+} from './attributes/index.js'
+import type { RequiredOption } from './attributes/constants/requiredOptions.js'
+import type { FreezeAttribute } from './attributes/freeze.js'
 
 export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
   type: 'schema'

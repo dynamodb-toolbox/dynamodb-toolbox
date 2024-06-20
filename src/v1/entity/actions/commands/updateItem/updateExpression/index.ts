@@ -1,2 +1,2 @@
-export type { ParsedUpdate } from './type'
-export { parseUpdate } from './parse'
+export type { ParsedUpdate } from './type.js'
+export { parseUpdate } from './parse.js'

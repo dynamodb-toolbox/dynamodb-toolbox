@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
-import { Never, AtLeastOnce, Always } from '../constants'
-import { string } from '../primitive'
+import { Never, AtLeastOnce, Always } from '../constants/index.js'
+import { string } from '../primitive/index.js'
 import {
   $type,
   $attributes,
@@ -11,10 +11,10 @@ import {
   $savedAs,
   $defaults,
   $links
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
-import { map } from './typer'
-import type { MapAttribute, $MapAttributeState } from './interface'
+import { map } from './typer.js'
+import type { MapAttribute, $MapAttributeState } from './interface.js'
 
 describe('map', () => {
   const str = string()

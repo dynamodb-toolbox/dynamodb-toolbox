@@ -1,2 +1,2 @@
-export { updateItemParams } from './updateItemParams'
-export { parseUpdateExtension } from './extension'
+export { updateItemParams } from './updateItemParams.js'
+export { parseUpdateExtension } from './extension/index.js'

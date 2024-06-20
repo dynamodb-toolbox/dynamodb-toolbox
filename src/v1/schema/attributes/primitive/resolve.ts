@@ -1,5 +1,5 @@
-import type { PrimitiveAttribute } from './interface'
-import type { ResolvePrimitiveAttributeType } from './types'
+import type { PrimitiveAttribute } from './interface.js'
+import type { ResolvePrimitiveAttributeType } from './types.js'
 
 export type ResolvePrimitiveAttribute<
   ATTRIBUTE extends PrimitiveAttribute

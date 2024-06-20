@@ -1,8 +1,8 @@
-import type { Attribute } from 'v1/schema/attributes'
-import { PrimitiveAttribute, string } from 'v1/schema/attributes/primitive'
+import type { Attribute } from 'v1/schema/attributes/index.js'
+import { PrimitiveAttribute, string } from 'v1/schema/attributes/primitive/index.js'
 
-import type { ConditionParser } from '../../conditionParser'
-import { TwoArgsFnOperator, isTwoArgsFnOperator, TwoArgsFnCondition } from './types'
+import type { ConditionParser } from '../../conditionParser.js'
+import { TwoArgsFnOperator, isTwoArgsFnOperator, TwoArgsFnCondition } from './types.js'
 
 const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
   contains: 'contains',

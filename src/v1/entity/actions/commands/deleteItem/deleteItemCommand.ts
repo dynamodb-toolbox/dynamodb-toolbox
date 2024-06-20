@@ -1,14 +1,14 @@
 import type { O } from 'ts-toolbelt'
 import { DeleteCommandInput, DeleteCommand, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { KeyInput } from 'v1/entity/actions/parse'
-import type { NoneReturnValuesOption, AllOldReturnValuesOption } from 'v1/options/returnValues'
-import { DynamoDBToolboxError } from 'v1/errors'
+import { EntityV2, EntityAction, $entity } from 'v1/entity/index.js'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
+import type { NoneReturnValuesOption, AllOldReturnValuesOption } from 'v1/options/returnValues.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { DeleteItemOptions } from './options'
-import { deleteItemParams } from './deleteItemParams'
+import type { DeleteItemOptions } from './options.js'
+import { deleteItemParams } from './deleteItemParams/index.js'
 
 export const $key = Symbol('$key')
 export type $key = typeof $key

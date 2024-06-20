@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { ResolvePrimitiveAttributeType } from './types'
+import type { ResolvePrimitiveAttributeType } from './types.js'
 
 const assertResolveString: A.Equals<ResolvePrimitiveAttributeType<'string'>, string> = 1
 assertResolveString

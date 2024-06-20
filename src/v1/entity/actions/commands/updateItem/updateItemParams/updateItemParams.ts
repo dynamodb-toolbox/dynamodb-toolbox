@@ -2,14 +2,14 @@ import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 import { isEmpty } from 'lodash'
 import { omit } from 'lodash'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityParser } from 'v1/entity/actions/parse'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityParser } from 'v1/entity/actions/parse.js'
 
-import type { UpdateItemInput } from '../types'
-import type { UpdateItemOptions } from '../options'
-import { parseUpdate } from '../updateExpression'
-import { parseUpdateExtension } from './extension'
-import { parseUpdateItemOptions } from './parseUpdateItemOptions'
+import type { UpdateItemInput } from '../types.js'
+import type { UpdateItemOptions } from '../options.js'
+import { parseUpdate } from '../updateExpression/index.js'
+import { parseUpdateExtension } from './extension/index.js'
+import { parseUpdateItemOptions } from './parseUpdateItemOptions.js'
 
 export const updateItemParams = <
   ENTITY extends EntityV2,

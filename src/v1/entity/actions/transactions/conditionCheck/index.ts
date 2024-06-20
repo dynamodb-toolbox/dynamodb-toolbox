@@ -1,1 +1,1 @@
-export { ConditionCheck } from './conditionCheck'
+export { ConditionCheck } from './conditionCheck.js'

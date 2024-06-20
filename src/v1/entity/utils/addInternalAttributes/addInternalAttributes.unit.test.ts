@@ -1,10 +1,10 @@
-import { $get } from 'v1/entity/actions/commands/updateItem/utils'
-import { DynamoDBToolboxError } from 'v1/errors'
-import { schema } from 'v1/schema'
-import { string } from 'v1/schema/attributes'
-import { TableV2 } from 'v1/table'
+import { $get } from 'v1/entity/actions/commands/updateItem/utils.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { schema } from 'v1/schema/index.js'
+import { string } from 'v1/schema/attributes/index.js'
+import { TableV2 } from 'v1/table/index.js'
 
-import { addInternalAttributes } from './addInternalAttributes'
+import { addInternalAttributes } from './addInternalAttributes.js'
 
 const entityAttributeSavedAs = '__et__'
 

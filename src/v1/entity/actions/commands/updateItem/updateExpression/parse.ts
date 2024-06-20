@@ -1,11 +1,11 @@
-import type { EntityV2 } from 'v1/entity'
-import type { ParsedItem } from 'v1/entity/actions/parse'
-import type { Schema } from 'v1/schema'
-import type { ParsedValue } from 'v1/schema/actions/parse'
+import type { EntityV2 } from 'v1/entity/index.js'
+import type { ParsedItem } from 'v1/entity/actions/parse.js'
+import type { Schema } from 'v1/schema/index.js'
+import type { ParsedValue } from 'v1/schema/actions/parse/index.js'
 
-import type { UpdateItemInputExtension } from '../types'
-import type { ParsedUpdate } from './type'
-import { UpdateExpressionParser } from './parser'
+import type { UpdateItemInputExtension } from '../types.js'
+import type { ParsedUpdate } from './type.js'
+import { UpdateExpressionParser } from './parser.js'
 
 export const parseSchemaUpdate = (
   schema: Schema,

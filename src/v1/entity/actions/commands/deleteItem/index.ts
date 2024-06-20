@@ -1,3 +1,3 @@
-export { DeleteItemCommand } from './deleteItemCommand'
-export type { DeleteItemResponse } from './deleteItemCommand'
-export type { DeleteItemOptions } from './options'
+export { DeleteItemCommand } from './deleteItemCommand.js'
+export type { DeleteItemResponse } from './deleteItemCommand.js'
+export type { DeleteItemOptions } from './options.js'

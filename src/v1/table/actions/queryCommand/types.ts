@@ -1,14 +1,14 @@
 import type { A } from 'ts-toolbelt'
 
-import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema/attributes'
-import type { TableV2 } from 'v1/table'
-import type { IndexableKeyType, LocalIndex, GlobalIndex, Key } from 'v1/table/types'
-import type { IndexNames, IndexSchema } from 'v1/table/actions/indexes'
+import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from 'v1/schema/attributes/index.js'
+import type { TableV2 } from 'v1/table/index.js'
+import type { IndexableKeyType, LocalIndex, GlobalIndex, Key } from 'v1/table/types/index.js'
+import type { IndexNames, IndexSchema } from 'v1/table/actions/indexes.js'
 import type {
   RangeOperator,
   BeginsWithOperator,
   BetweenOperator
-} from 'v1/schema/actions/parseCondition'
+} from 'v1/schema/actions/parseCondition/index.js'
 
 type QueryOperator = RangeOperator | BeginsWithOperator | BetweenOperator
 export const queryOperatorSet = new Set<QueryOperator>([

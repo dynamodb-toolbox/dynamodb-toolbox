@@ -1,20 +1,20 @@
 import type { O } from 'ts-toolbelt'
 import { UpdateCommandInput, UpdateCommand, UpdateCommandOutput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
+import { EntityV2, EntityAction, $entity } from 'v1/entity/index.js'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format.js'
 import type {
   NoneReturnValuesOption,
   UpdatedOldReturnValuesOption,
   UpdatedNewReturnValuesOption,
   AllOldReturnValuesOption,
   AllNewReturnValuesOption
-} from 'v1/options/returnValues'
-import { DynamoDBToolboxError } from 'v1/errors'
+} from 'v1/options/returnValues.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { UpdateItemInput } from './types'
-import type { UpdateItemOptions } from './options'
-import { updateItemParams } from './updateItemParams'
+import type { UpdateItemInput } from './types.js'
+import type { UpdateItemOptions } from './options.js'
+import { updateItemParams } from './updateItemParams/index.js'
 
 export const $item = Symbol('$item')
 export type $item = typeof $item

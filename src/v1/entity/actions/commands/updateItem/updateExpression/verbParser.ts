@@ -1,17 +1,18 @@
-import type { Schema } from 'v1/schema'
-import type { Attribute } from 'v1/schema/attributes'
-import type { ParsedValue } from 'v1/schema/actions/parse'
+import type { Schema } from 'v1/schema/index.js'
+import type { Attribute } from 'v1/schema/attributes/index.js'
+import type { ParsedValue } from 'v1/schema/actions/parse/index.js'
 import {
   ExpressionParser,
   appendAttributePath,
   AppendAttributePathOptions
-} from 'v1/schema/actions/utils/appendAttributePath'
-import { isNumber, isString } from 'v1/utils/validation'
+} from 'v1/schema/actions/utils/appendAttributePath.js'
+import { isNumber } from 'v1/utils/validation/isNumber.js'
+import { isString } from 'v1/utils/validation/isString.js'
 
-import type { ReferenceExtension, UpdateItemInputExtension } from '../types'
-import { isReferenceUpdate } from '../utils'
-import { $GET } from '../constants'
-import type { ParsedUpdate } from './type'
+import type { ReferenceExtension, UpdateItemInputExtension } from '../types.js'
+import { isReferenceUpdate } from '../utils.js'
+import { $GET } from '../constants.js'
+import type { ParsedUpdate } from './type.js'
 
 export class UpdateExpressionVerbParser implements ExpressionParser {
   schema: Schema | Attribute

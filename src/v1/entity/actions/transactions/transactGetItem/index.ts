@@ -1,1 +1,1 @@
-export { GetItemTransaction } from './transactGetItem'
+export { GetItemTransaction } from './transactGetItem.js'

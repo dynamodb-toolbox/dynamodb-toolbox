@@ -1,5 +1,5 @@
-import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
-import { isBoolean } from 'v1/utils/validation/isBoolean'
+import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError.js'
+import { isBoolean } from 'v1/utils/validation/isBoolean.js'
 
 export const parseConsistentOption = (consistent: boolean, index?: string): boolean => {
   if (!isBoolean(consistent)) {

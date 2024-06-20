@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash'
 
-import { DynamoDBToolboxError } from 'v1/errors'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
 export type AllAttributesSelectOption = 'ALL_ATTRIBUTES'
 export type AllProjectedAttributesSelectOption = 'ALL_PROJECTED_ATTRIBUTES'

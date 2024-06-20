@@ -1,4 +1,4 @@
-import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError'
+import { DynamoDBToolboxError } from 'v1/errors/dynamoDBToolboxError.js'
 
 export type NoneCapacityOption = 'NONE'
 export type TotalCapacityOption = 'TOTAL'

@@ -1,17 +1,21 @@
-import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse'
-import type { PrimitiveAttribute, AttributeBasicValue, Attribute } from 'v1/schema/attributes'
-import { DynamoDBToolboxError } from 'v1/errors'
+import type { ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/index.js'
+import type {
+  PrimitiveAttribute,
+  AttributeBasicValue,
+  Attribute
+} from 'v1/schema/attributes/index.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { UpdateItemInputExtension } from '../../types'
-import { $REMOVE } from '../../constants'
-import { isReferenceUpdate } from '../../utils'
+import type { UpdateItemInputExtension } from '../../types.js'
+import { $REMOVE } from '../../constants.js'
+import { isReferenceUpdate } from '../../utils.js'
 
-import { parseNumberExtension } from './number'
-import { parseSetExtension } from './set'
-import { parseListExtension } from './list'
-import { parseMapExtension } from './map'
-import { parseRecordExtension } from './record'
-import { parseReferenceExtension } from './reference'
+import { parseNumberExtension } from './number.js'
+import { parseSetExtension } from './set.js'
+import { parseListExtension } from './list.js'
+import { parseMapExtension } from './map.js'
+import { parseRecordExtension } from './record.js'
+import { parseReferenceExtension } from './reference.js'
 
 export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   attribute: Attribute,

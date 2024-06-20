@@ -4,7 +4,7 @@ import type {
   TransactWriteCommandInput
 } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2, EntityAction } from 'v1/entity'
+import type { EntityV2, EntityAction } from 'v1/entity/index.js'
 
 type GetTransaction = NonNullable<TransactGetCommandInput['TransactItems']>[number]
 

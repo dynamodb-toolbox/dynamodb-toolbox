@@ -1,11 +1,11 @@
 import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
-import { parseCapacityOption } from 'v1/options/capacity'
-import { parseMetricsOption } from 'v1/options/metrics'
-import { parseClientRequestToken } from 'v1/options/clientRequestToken'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions.js'
+import { parseCapacityOption } from 'v1/options/capacity.js'
+import { parseMetricsOption } from 'v1/options/metrics.js'
+import { parseClientRequestToken } from 'v1/options/clientRequestToken.js'
 
-import type { TransactWriteOptions } from './options'
+import type { TransactWriteOptions } from './options.js'
 
 type TransactWriteCommandOptions = Partial<Omit<TransactWriteCommandInput, 'TransactItems'>>
 

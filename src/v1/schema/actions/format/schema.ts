@@ -1,11 +1,11 @@
 import type { O } from 'ts-toolbelt'
 
-import type { OptionalizeUndefinableProperties } from 'v1/types'
-import type { Schema } from 'v1/schema'
-import type { AnyAttribute, Never } from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/parsePaths'
-import { DynamoDBToolboxError } from 'v1/errors'
-import { isObject } from 'v1/utils/validation'
+import type { OptionalizeUndefinableProperties } from 'v1/types/index.js'
+import type { Schema } from 'v1/schema/index.js'
+import type { AnyAttribute, Never } from 'v1/schema/attributes/index.js'
+import type { Paths } from 'v1/schema/actions/parsePaths/index.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { isObject } from 'v1/utils/validation/isObject.js'
 
 import type {
   MatchKeys,
@@ -13,9 +13,9 @@ import type {
   FormattedValueOptions,
   FormattedValueDefaultOptions,
   FromFormatOptions
-} from './types'
-import { formatAttrRawValue, AttrFormattedValue } from './attribute'
-import { matchProjection } from './utils'
+} from './types.js'
+import { formatAttrRawValue, AttrFormattedValue } from './attribute.js'
+import { matchProjection } from './utils.js'
 
 export type SchemaFormattedValue<
   SCHEMA extends Schema,

@@ -1,2 +1,2 @@
-export { transactPutItemParams } from './transactPutItemParams'
-export type { TransactPutItemParams } from './transactPutItemParams'
+export { transactPutItemParams } from './transactPutItemParams.js'
+export type { TransactPutItemParams } from './transactPutItemParams.js'

@@ -1,25 +1,25 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If, ValueOrGetter } from 'v1/types'
+import type { If, ValueOrGetter } from 'v1/types/index.js'
 // TODO: Remove this import
 import type {
   AttributeUpdateItemInput,
   UpdateItemInput
-} from 'v1/entity/actions/commands/updateItem/types'
-import type { ParserInput } from 'v1/schema/actions/parse'
+} from 'v1/entity/actions/commands/updateItem/types.js'
+import type { ParserInput } from 'v1/schema/actions/parse/index.js'
 
-import type { Schema } from '../../schema'
-import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
-import type { $type, $enum, $transform } from '../constants/attributeOptions'
-import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
+import type { Schema } from '../../schema.js'
+import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions.js'
+import type { $type, $enum, $transform } from '../constants/attributeOptions.js'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface.js'
 
 import type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,
   PrimitiveAttributeState,
   Transformer
-} from './types'
-import type { FreezePrimitiveAttribute } from './freeze'
+} from './types.js'
+import type { FreezePrimitiveAttribute } from './freeze.js'
 
 export interface $PrimitiveAttributeState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,

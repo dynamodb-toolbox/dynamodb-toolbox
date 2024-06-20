@@ -10,9 +10,9 @@ import {
   schema,
   FormattedValue,
   ParserInput
-} from 'v1'
-import { Parser } from 'v1/schema/actions/parse'
-import { Formatter } from 'v1/schema/actions/format'
+} from 'v1/index.js'
+import { Parser } from 'v1/schema/actions/parse/index.js'
+import { Formatter } from 'v1/schema/actions/format/index.js'
 
 const playgroundSchema1 = schema({
   reqStr: string(),

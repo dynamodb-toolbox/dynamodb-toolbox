@@ -1,8 +1,8 @@
-import { DynamoDBToolboxError } from 'v1/errors'
-import { string } from 'v1/schema/attributes'
-import { prefix } from 'v1/transformers'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { string } from 'v1/schema/attributes/index.js'
+import { prefix } from 'v1/transformers/prefix.js'
 
-import { formatPrimitiveAttrRawValue } from './primitive'
+import { formatPrimitiveAttrRawValue } from './primitive.js'
 
 describe('parseSavedPrimitiveAttribute', () => {
   it('throws an error if saved value type does not match', () => {

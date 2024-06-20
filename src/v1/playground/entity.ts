@@ -13,11 +13,10 @@ import {
   KeyInput,
   UpdateItemInput,
   prefix,
-  EntityFormatter,
   EntityPathParser
-} from 'v1'
+} from 'v1/index.js'
 
-import { MyTable } from './table'
+import { MyTable } from './table.js'
 
 export const UserEntity = new EntityV2({
   name: 'User',

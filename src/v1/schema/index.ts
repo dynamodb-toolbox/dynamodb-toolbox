@@ -1,1 +1,1 @@
-export { schema, Schema, SchemaAction } from './schema'
+export { schema, Schema, SchemaAction } from './schema.js'

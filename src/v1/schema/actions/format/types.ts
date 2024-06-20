@@ -1,6 +1,6 @@
-import type { Schema } from 'v1/schema'
-import type { Attribute } from 'v1/schema/attributes'
-import type { Paths } from 'v1/schema/actions/parsePaths'
+import type { Schema } from 'v1/schema/index.js'
+import type { Attribute } from 'v1/schema/attributes/index.js'
+import type { Paths } from 'v1/schema/actions/parsePaths/index.js'
 
 export type FormatOptions<SCHEMA extends Schema | Attribute> = {
   attributes?: Paths<SCHEMA>[]

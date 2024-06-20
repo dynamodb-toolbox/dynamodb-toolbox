@@ -1,7 +1,7 @@
-import type { NarrowObject } from 'v1/types/narrowObject'
-import { overwrite } from 'v1/utils/overwrite'
+import type { NarrowObject } from 'v1/types/narrowObject.js'
+import { overwrite } from 'v1/utils/overwrite.js'
 
-import type { RequiredOption, AtLeastOnce } from '../constants'
+import type { RequiredOption, AtLeastOnce } from '../constants/index.js'
 import {
   $type,
   $elements,
@@ -11,14 +11,18 @@ import {
   $savedAs,
   $defaults,
   $links
-} from '../constants/attributeOptions'
-import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
-import type { SharedAttributeState } from '../shared/interface'
+} from '../constants/attributeOptions.js'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 
-import type { $ListAttributeElements } from './types'
-import type { $ListAttribute } from './interface'
-import { ListAttributeOptions, ListAttributeDefaultOptions, LIST_DEFAULT_OPTIONS } from './options'
-import { freezeListAttribute } from './freeze'
+import type { $ListAttributeElements } from './types.js'
+import type { $ListAttribute } from './interface.js'
+import {
+  ListAttributeOptions,
+  ListAttributeDefaultOptions,
+  LIST_DEFAULT_OPTIONS
+} from './options.js'
+import { freezeListAttribute } from './freeze.js'
 
 type $ListAttributeTyper = <
   $ELEMENTS extends $ListAttributeElements,

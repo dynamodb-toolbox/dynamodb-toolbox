@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PutItemCommand } from 'v1'
+import { PutItemCommand } from 'v1/index.js'
 
-import { UserEntity } from '../entity'
+import { UserEntity } from '../entity.js'
 
 const test = async () => {
   const commandB = UserEntity.build(PutItemCommand)

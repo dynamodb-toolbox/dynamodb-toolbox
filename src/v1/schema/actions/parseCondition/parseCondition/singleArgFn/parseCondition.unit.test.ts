@@ -1,7 +1,7 @@
-import { schema } from 'v1/schema'
-import { list, map, number } from 'v1/schema/attributes'
+import { schema } from 'v1/schema/index.js'
+import { list, map, number } from 'v1/schema/attributes/index.js'
 
-import { ConditionParser } from '../../conditionParser'
+import { ConditionParser } from '../../conditionParser.js'
 
 describe('parseCondition - singleArgFn', () => {
   const simpleSchema = schema({

@@ -1,5 +1,5 @@
-import type { Schema, SchemaAction } from 'v1/schema'
-import type { Attribute } from 'v1/schema/attributes'
+import type { Schema, SchemaAction } from 'v1/schema/index.js'
+import type { Attribute } from 'v1/schema/attributes/index.js'
 
 import type {
   ParsedValueOptions,
@@ -7,10 +7,10 @@ import type {
   ParsingOptions,
   ParsingDefaultOptions,
   FromParsingOptions
-} from './types/options'
-import { schemaParser, SchemaParsedValue } from './schema'
-import { attrParser, AttrParsedValue } from './attribute'
-import type { ParserInput } from './types/parserInput'
+} from './types/options.js'
+import { schemaParser, SchemaParsedValue } from './schema.js'
+import { attrParser, AttrParsedValue } from './attribute.js'
+import type { ParserInput } from './types/parserInput.js'
 
 export type ParsedValue<
   SCHEMA extends Schema | Attribute,

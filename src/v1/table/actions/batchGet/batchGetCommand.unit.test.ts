@@ -7,10 +7,10 @@ import {
   string,
   BatchGetRequest,
   number
-} from 'v1'
-import { $entities } from 'v1/table/table'
+} from 'v1/index.js'
+import { $entities } from 'v1/table/table.js'
 
-import { BatchGetCommand } from './batchGetCommand'
+import { BatchGetCommand } from './batchGetCommand.js'
 
 const TestTable = new TableV2({
   name: 'test-table',

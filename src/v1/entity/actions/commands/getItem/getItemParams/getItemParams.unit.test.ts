@@ -1,4 +1,12 @@
-import { TableV2, EntityV2, schema, string, DynamoDBToolboxError, GetItemCommand, prefix } from 'v1'
+import {
+  TableV2,
+  EntityV2,
+  schema,
+  string,
+  DynamoDBToolboxError,
+  GetItemCommand,
+  prefix
+} from 'v1/index.js'
 
 const TestTable = new TableV2({
   name: 'test-table',

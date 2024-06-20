@@ -1,7 +1,7 @@
-import type { Extension } from 'v1/schema/attributes'
-import type { $contextExtension, $extension } from '../constants'
+import type { Extension } from 'v1/schema/attributes/index.js'
 
-import type { ExtensionParser } from './extensionParser'
+import type { $contextExtension, $extension } from '../constants.js'
+import type { ExtensionParser } from './extensionParser.js'
 
 export type ParsingMode = 'key' | 'put' | 'update'
 

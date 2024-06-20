@@ -1,6 +1,6 @@
-import type { ConditionParser } from '../../conditionParser'
+import type { ConditionParser } from '../../conditionParser.js'
 
-import type { BetweenCondition } from './types'
+import type { BetweenCondition } from './types.js'
 
 export const parseBetweenCondition = (
   conditionParser: ConditionParser,

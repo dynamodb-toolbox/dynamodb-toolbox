@@ -1,1 +1,1 @@
-export { DynamoDBToolboxError } from './dynamoDBToolboxError'
+export { DynamoDBToolboxError } from './dynamoDBToolboxError.js'

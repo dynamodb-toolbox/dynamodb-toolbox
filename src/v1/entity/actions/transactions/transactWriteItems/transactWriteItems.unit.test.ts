@@ -22,9 +22,9 @@ import {
   transactWriteItems,
   UpdateItemTransaction,
   TableV2
-} from 'v1'
+} from 'v1/index.js'
 
-import { getTransactWriteCommandInput } from './transactWriteItems'
+import { getTransactWriteCommandInput } from './transactWriteItems.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 

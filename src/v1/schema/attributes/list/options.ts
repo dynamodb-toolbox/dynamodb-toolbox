@@ -1,4 +1,4 @@
-import type { RequiredOption, AtLeastOnce } from '../constants'
+import type { RequiredOption, AtLeastOnce } from '../constants/index.js'
 
 // Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 

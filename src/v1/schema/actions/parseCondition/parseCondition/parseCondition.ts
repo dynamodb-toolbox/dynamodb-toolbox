@@ -1,17 +1,17 @@
-import { DynamoDBToolboxError } from 'v1/errors'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { SchemaCondition } from '../condition'
-import type { ConditionParser } from '../conditionParser'
-import { isComparisonCondition, parseComparisonCondition } from './comparison'
-import { isSingleArgFnCondition, parseSingleArgFnCondition } from './singleArgFn'
-import { isBetweenCondition, parseBetweenCondition } from './between'
-import { isNotCondition, parseNotCondition } from './not'
+import type { SchemaCondition } from '../condition.js'
+import type { ConditionParser } from '../conditionParser.js'
+import { isComparisonCondition, parseComparisonCondition } from './comparison/index.js'
+import { isSingleArgFnCondition, parseSingleArgFnCondition } from './singleArgFn/index.js'
+import { isBetweenCondition, parseBetweenCondition } from './between/index.js'
+import { isNotCondition, parseNotCondition } from './not/index.js'
 import {
   isLogicalCombinationCondition,
   parseLogicalCombinationCondition
-} from './logicalCombination'
-import { isTwoArgsFnCondition, parseTwoArgsFnCondition } from './twoArgsFn'
-import { isInCondition, parseInCondition } from './in'
+} from './logicalCombination/index.js'
+import { isTwoArgsFnCondition, parseTwoArgsFnCondition } from './twoArgsFn/index.js'
+import { isInCondition, parseInCondition } from './in/index.js'
 
 export const parseCondition = (
   conditionParser: ConditionParser,

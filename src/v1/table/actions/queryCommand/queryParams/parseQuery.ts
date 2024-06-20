@@ -2,17 +2,20 @@ import type { O } from 'ts-toolbelt'
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 import { pick as _pick } from 'lodash'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import type { TableV2 } from 'v1/table'
-import { Schema } from 'v1/schema'
-import { PrimitiveAttribute, ResolvedPrimitiveAttribute } from 'v1/schema/attributes/primitive'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import type { TableV2 } from 'v1/table/index.js'
+import { Schema } from 'v1/schema/index.js'
+import {
+  PrimitiveAttribute,
+  ResolvedPrimitiveAttribute
+} from 'v1/schema/attributes/primitive/index.js'
 import {
   ConditionParser,
   SchemaCondition,
   PrimitiveAttributeCondition
-} from 'v1/schema/actions/parseCondition'
+} from 'v1/schema/actions/parseCondition/index.js'
 
-import { queryOperatorSet, Query } from '../types'
+import { queryOperatorSet, Query } from '../types.js'
 
 const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0], 'type'> = {
   required: 'never',

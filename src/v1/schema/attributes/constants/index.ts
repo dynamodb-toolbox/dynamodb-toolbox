@@ -1,2 +1,2 @@
-export { RequiredOption, Never, AtLeastOnce, Always } from './requiredOptions'
-export * from './attributeOptions'
+export { RequiredOption, Never, AtLeastOnce, Always } from './requiredOptions.js'
+export * from './attributeOptions.js'

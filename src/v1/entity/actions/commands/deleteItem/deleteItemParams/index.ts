@@ -1,1 +1,1 @@
-export { deleteItemParams } from './deleteItemParams'
+export { deleteItemParams } from './deleteItemParams.js'

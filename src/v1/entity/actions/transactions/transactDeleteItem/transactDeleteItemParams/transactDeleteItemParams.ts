@@ -1,11 +1,11 @@
 import type { TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityParser } from 'v1/entity/actions/parse'
-import type { KeyInput } from 'v1/entity/actions/parse'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityParser } from 'v1/entity/actions/parse.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
 
-import type { DeleteItemTransactionOptions } from '../options'
-import { parseDeleteItemTransactionOptions } from './parseDeleteItemOptions'
+import type { DeleteItemTransactionOptions } from '../options.js'
+import { parseDeleteItemTransactionOptions } from './parseDeleteItemOptions.js'
 
 export type TransactDeleteItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Delete']

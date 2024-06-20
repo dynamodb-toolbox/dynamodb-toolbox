@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If } from 'v1/types/if'
-import type { Schema } from 'v1/schema'
+import type { If } from 'v1/types/if.js'
+import type { Schema } from 'v1/schema/index.js'
 import type {
   AtLeastOnce,
   Always,
@@ -16,10 +16,10 @@ import type {
   MapAttribute,
   RecordAttribute,
   AnyOfAttribute
-} from 'v1/schema/attributes'
-import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties'
+} from 'v1/schema/attributes/index.js'
+import type { OptionalizeUndefinableProperties } from 'v1/types/optionalizeUndefinableProperties.js'
 
-import type { ParsedValueOptions, ParsedValueDefaultOptions } from '../types/options'
+import type { ParsedValueOptions, ParsedValueDefaultOptions } from '../types/options.js'
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,

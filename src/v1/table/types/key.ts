@@ -1,4 +1,4 @@
-import { IndexableKeyType } from './keyType'
+import { IndexableKeyType } from './keyType.js'
 
 /**
  * Define a partition or sort key of a Table or Table index

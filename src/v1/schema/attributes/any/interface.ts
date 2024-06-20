@@ -1,20 +1,20 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If, ValueOrGetter } from 'v1/types'
+import type { If, ValueOrGetter } from 'v1/types/index.js'
 // TODO: Remove this import
 import type {
   AttributeUpdateItemInput,
   UpdateItemInput
-} from 'v1/entity/actions/commands/updateItem/types'
-import type { ParserInput } from 'v1/schema/actions/parse'
+} from 'v1/entity/actions/commands/updateItem/types.js'
+import type { ParserInput } from 'v1/schema/actions/parse/index.js'
 
-import type { Schema } from '../../schema'
-import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions'
-import type { $type, $castAs } from '../constants/attributeOptions'
-import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface'
+import type { Schema } from '../../schema.js'
+import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/requiredOptions.js'
+import type { $type, $castAs } from '../constants/attributeOptions.js'
+import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface.js'
 
-import type { FreezeAnyAttribute } from './freeze'
-import type { AnyAttributeState } from './types'
+import type { FreezeAnyAttribute } from './freeze.js'
+import type { AnyAttributeState } from './types.js'
 
 export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState>
   extends $SharedAttributeState<STATE> {

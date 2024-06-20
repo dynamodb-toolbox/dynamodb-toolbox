@@ -1,6 +1,6 @@
-import { ResolvedPrimitiveAttribute } from '../primitive'
+import type { ResolvedPrimitiveAttribute } from '../primitive/index.js'
 
-import { RequiredOption } from './requiredOptions'
+import type { RequiredOption } from './requiredOptions.js'
 
 export const $type = Symbol('$type')
 export type $type = typeof $type

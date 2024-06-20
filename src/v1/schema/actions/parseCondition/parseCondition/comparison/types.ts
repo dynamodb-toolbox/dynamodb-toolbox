@@ -1,4 +1,8 @@
-import type { AnyAttributeCondition, NonLogicalCondition, SchemaCondition } from '../../condition'
+import type {
+  AnyAttributeCondition,
+  NonLogicalCondition,
+  SchemaCondition
+} from '../../condition.js'
 
 export type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte'
 export type ComparisonOperator = 'eq' | 'ne' | RangeOperator

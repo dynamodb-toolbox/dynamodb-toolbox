@@ -5,12 +5,12 @@ import {
   DynamoDBDocumentClient
 } from '@aws-sdk/lib-dynamodb'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import { CapacityOption, parseCapacityOption } from 'v1/options/capacity'
-import { MetricsOption, parseMetricsOption } from 'v1/options/metrics'
-import { $table } from 'v1/table/table'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { CapacityOption, parseCapacityOption } from 'v1/options/capacity.js'
+import { MetricsOption, parseMetricsOption } from 'v1/options/metrics.js'
+import { $table } from 'v1/table/index.js'
 
-import { BatchWriteCommand } from './batchWriteCommand'
+import { BatchWriteCommand } from './batchWriteCommand.js'
 
 export interface ExecuteBatchWriteOptions {
   capacity?: CapacityOption

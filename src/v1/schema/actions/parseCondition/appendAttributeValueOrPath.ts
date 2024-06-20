@@ -1,11 +1,11 @@
-import type { Attribute } from 'v1/schema/attributes'
+import type { Attribute } from 'v1/schema/attributes/index.js'
 
 import {
   isAttributePath,
   AppendAttributePathOptions
-} from 'v1/schema/actions/utils/appendAttributePath'
-import type { ConditionParser } from './conditionParser'
-import type { AppendAttributeValueOptions } from './appendAttributeValue'
+} from 'v1/schema/actions/utils/appendAttributePath.js'
+import type { ConditionParser } from './conditionParser.js'
+import type { AppendAttributeValueOptions } from './appendAttributeValue.js'
 
 export const appendAttributeValueOrPath = (
   conditionParser: ConditionParser,

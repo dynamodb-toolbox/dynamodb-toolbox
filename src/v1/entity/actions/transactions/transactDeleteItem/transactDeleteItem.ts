@@ -1,12 +1,15 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, EntityAction, $entity } from 'v1/entity'
-import type { KeyInput } from 'v1/entity/actions/parse'
-import { DynamoDBToolboxError } from 'v1/errors'
+import { EntityV2, EntityAction, $entity } from 'v1/entity/index.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { DeleteItemTransactionOptions } from './options'
-import { transactDeleteItemParams, TransactDeleteItemParams } from './transactDeleteItemParams'
-import type { WriteItemTransaction } from '../types'
+import type { DeleteItemTransactionOptions } from './options.js'
+import {
+  transactDeleteItemParams,
+  TransactDeleteItemParams
+} from './transactDeleteItemParams/index.js'
+import type { WriteItemTransaction } from '../types.js'
 
 export const $key = Symbol('$key')
 export type $key = typeof $key

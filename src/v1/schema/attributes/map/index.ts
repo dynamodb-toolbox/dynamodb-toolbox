@@ -1,8 +1,8 @@
-export { map } from './typer'
+export { map } from './typer.js'
 export {
   $MapAttributeState,
   $MapAttributeNestedState,
   $MapAttribute,
   MapAttribute
-} from './interface'
-export type { FreezeMapAttribute } from './freeze'
+} from './interface.js'
+export type { FreezeMapAttribute } from './freeze.js'

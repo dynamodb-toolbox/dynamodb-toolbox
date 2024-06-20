@@ -5,16 +5,16 @@ import {
   TransactGetCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, $entity } from 'v1/entity'
-import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { EntityPaths } from 'v1/entity/actions/parsePaths'
+import { EntityV2, $entity } from 'v1/entity/index.js'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format.js'
+import type { EntityPaths } from 'v1/entity/actions/parsePaths.js'
 
-import { DynamoDBToolboxError } from 'v1/errors'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { GetItemTransactionOptions } from '../transactGetItem/options'
-import { $options, GetItemTransactionInterface } from '../transactGetItem/transactGetItem'
-import type { TransactGetOptions } from './options'
-import { parseTransactGetOptions } from './parseTransactGetOptions'
+import type { GetItemTransactionOptions } from '../transactGetItem/options.js'
+import { $options, GetItemTransactionInterface } from '../transactGetItem/transactGetItem.js'
+import type { TransactGetOptions } from './options.js'
+import { parseTransactGetOptions } from './parseTransactGetOptions.js'
 
 export const getTransactGetCommandInput = (
   getItemTransactions: GetItemTransactionInterface[],

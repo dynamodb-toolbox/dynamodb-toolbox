@@ -1,2 +1,2 @@
-export { transactUpdateItemParams } from './transactUpdateItemParams'
-export type { TransactUpdateItemParams } from './transactUpdateItemParams'
+export { transactUpdateItemParams } from './transactUpdateItemParams.js'
+export type { TransactUpdateItemParams } from './transactUpdateItemParams.js'

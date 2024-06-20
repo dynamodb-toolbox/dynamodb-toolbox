@@ -1,4 +1,4 @@
-import { schema } from 'v1/schema'
+import { schema } from 'v1/schema/index.js'
 import {
   any,
   string,
@@ -10,7 +10,7 @@ import {
   map,
   record,
   anyOf
-} from 'v1/schema/attributes'
+} from 'v1/schema/attributes/index.js'
 
 export const mySchema = schema({
   parentId: string().key().savedAs('pk'),

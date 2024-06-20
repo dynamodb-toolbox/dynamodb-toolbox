@@ -1,11 +1,11 @@
 import { isEmpty } from 'lodash'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityPathParser } from 'v1/entity/actions/parsePaths'
-import { rejectExtraOptions } from 'v1/options/rejectExtraOptions'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityPathParser } from 'v1/entity/actions/parsePaths.js'
+import { rejectExtraOptions } from 'v1/options/rejectExtraOptions.js'
 
-import type { GetItemTransactionOptions } from '../options'
-import type { TransactGetItemParams } from './transactGetItemParams'
+import type { GetItemTransactionOptions } from '../options.js'
+import type { TransactGetItemParams } from './transactGetItemParams.js'
 
 type TransactionOptions = Omit<TransactGetItemParams, 'TableName' | 'Key'>
 

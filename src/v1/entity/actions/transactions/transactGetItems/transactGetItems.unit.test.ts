@@ -16,9 +16,9 @@ import {
   string,
   TableV2,
   transactGetItems
-} from 'v1'
+} from 'v1/index.js'
 
-import { formatTransactGetResponse, getTransactGetCommandInput } from './transactGetItems'
+import { formatTransactGetResponse, getTransactGetCommandInput } from './transactGetItems.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 

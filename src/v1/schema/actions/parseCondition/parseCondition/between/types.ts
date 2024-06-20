@@ -1,4 +1,8 @@
-import type { AnyAttributeCondition, NonLogicalCondition, SchemaCondition } from '../../condition'
+import type {
+  AnyAttributeCondition,
+  NonLogicalCondition,
+  SchemaCondition
+} from '../../condition.js'
 
 export type BetweenOperator = 'between'
 export type BetweenCondition = NonLogicalCondition &

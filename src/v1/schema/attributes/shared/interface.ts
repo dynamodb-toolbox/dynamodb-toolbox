@@ -1,4 +1,4 @@
-import type { RequiredOption } from '../constants/requiredOptions'
+import type { RequiredOption } from '../constants/requiredOptions.js'
 import type {
   $required,
   $hidden,
@@ -6,7 +6,7 @@ import type {
   $savedAs,
   $defaults,
   $links
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
 export interface SharedAttributeStateConstraint {
   required: RequiredOption

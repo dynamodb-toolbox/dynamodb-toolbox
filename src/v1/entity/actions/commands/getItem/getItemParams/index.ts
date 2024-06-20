@@ -1,1 +1,1 @@
-export { getItemParams } from './getItemParams'
+export { getItemParams } from './getItemParams.js'

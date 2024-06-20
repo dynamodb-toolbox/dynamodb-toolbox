@@ -1,9 +1,9 @@
-import type { SchemaErrorBlueprints } from 'v1/schema/errors'
-import type { EntityErrorBlueprints } from 'v1/entity/errors'
-import type { OptionsErrorBlueprints } from 'v1/options/errors'
-import type { TableErrorBlueprints } from 'v1/table/errors'
+import type { SchemaErrorBlueprints } from 'v1/schema/errors.js'
+import type { EntityErrorBlueprints } from 'v1/entity/errors.js'
+import type { OptionsErrorBlueprints } from 'v1/options/errors.js'
+import type { TableErrorBlueprints } from 'v1/table/errors.js'
 
-import type { ErrorBlueprint } from './blueprint'
+import type { ErrorBlueprint } from './blueprint.js'
 
 type ErrorBlueprints =
   | SchemaErrorBlueprints

@@ -1,3 +1,3 @@
-export { isTwoArgsFnCondition } from './types'
-export type { TwoArgsFnCondition } from './types'
-export { parseTwoArgsFnCondition } from './parseCondition'
+export { isTwoArgsFnCondition } from './types.js'
+export type { TwoArgsFnCondition } from './types.js'
+export { parseTwoArgsFnCondition } from './parseCondition.js'

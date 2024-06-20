@@ -1,10 +1,10 @@
 import type { O } from 'ts-toolbelt'
 
-import { DynamoDBToolboxError } from 'v1/errors'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { FreezeAttribute } from '../freeze'
-import { validateAttributeProperties } from '../shared/validate'
-import { hasDefinedDefault } from '../shared/hasDefinedDefault'
+import type { FreezeAttribute } from '../freeze.js'
+import { validateAttributeProperties } from '../shared/validate.js'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import {
   $elements,
   $required,
@@ -13,11 +13,11 @@ import {
   $savedAs,
   $defaults,
   $links
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
-import type { SharedAttributeState } from '../shared/interface'
-import type { $ListAttributeElements } from './types'
-import { $ListAttributeState, ListAttribute } from './interface'
+import type { SharedAttributeState } from '../shared/interface.js'
+import type { $ListAttributeElements } from './types.js'
+import { $ListAttributeState, ListAttribute } from './interface.js'
 
 export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
   // Applying void O.Update improves type display

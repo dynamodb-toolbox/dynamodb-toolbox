@@ -1,4 +1,4 @@
-import type { Schema } from 'v1/schema'
+import type { Schema } from 'v1/schema/index.js'
 import type {
   Attribute,
   AnyAttribute,
@@ -11,22 +11,22 @@ import type {
   RequiredOption,
   AtLeastOnce,
   Always
-} from 'v1/schema/attributes'
-import { DynamoDBToolboxError } from 'v1/errors'
+} from 'v1/schema/attributes/index.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
 import type {
   FormatOptions,
   FormattedValueOptions,
   FormattedValueDefaultOptions,
   FromFormatOptions
-} from './types'
-import { formatAnyAttrRawValue, AnyAttrFormattedValue } from './any'
-import { formatPrimitiveAttrRawValue, PrimitiveAttrFormattedValue } from './primitive'
-import { formatSavedSetAttribute, SetAttrFormattedValue } from './set'
-import { formatListAttrRawValue, ListAttrFormattedValue } from './list'
-import { formatMapAttrRawValue, MapAttrFormattedValue } from './map'
-import { formatRecordAttrRawValue, RecordAttrFormattedValue } from './record'
-import { formatAnyOfAttrRawValue, AnyOfAttrFormattedValue } from './anyOf'
+} from './types.js'
+import { formatAnyAttrRawValue, AnyAttrFormattedValue } from './any.js'
+import { formatPrimitiveAttrRawValue, PrimitiveAttrFormattedValue } from './primitive.js'
+import { formatSavedSetAttribute, SetAttrFormattedValue } from './set.js'
+import { formatListAttrRawValue, ListAttrFormattedValue } from './list.js'
+import { formatMapAttrRawValue, MapAttrFormattedValue } from './map.js'
+import { formatRecordAttrRawValue, RecordAttrFormattedValue } from './record.js'
+import { formatAnyOfAttrRawValue, AnyOfAttrFormattedValue } from './anyOf.js'
 
 export type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
   required: AtLeastOnce | Always

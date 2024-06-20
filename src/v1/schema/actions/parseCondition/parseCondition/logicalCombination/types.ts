@@ -1,4 +1,4 @@
-import type { SchemaCondition } from '../../condition'
+import type { SchemaCondition } from '../../condition.js'
 
 export type LogicalCombinationOperator = 'and' | 'or'
 

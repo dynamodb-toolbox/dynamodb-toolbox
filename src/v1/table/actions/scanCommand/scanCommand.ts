@@ -7,15 +7,15 @@ import {
 import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import { TableV2, TableAction, $table, $entities } from 'v1/table'
-import type { EntityV2 } from 'v1/entity'
-import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format'
-import type { EntityPaths } from 'v1/entity/actions/parsePaths'
-import type { CountSelectOption } from 'v1/options/select'
-import { isString } from 'v1/utils/validation'
+import { TableV2, TableAction, $table, $entities } from 'v1/table/index.js'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityFormatter, FormattedItem } from 'v1/entity/actions/format.js'
+import type { EntityPaths } from 'v1/entity/actions/parsePaths.js'
+import type { CountSelectOption } from 'v1/options/select.js'
+import { isString } from 'v1/utils/validation/isString.js'
 
-import type { ScanOptions } from './options'
-import { scanParams } from './scanParams'
+import type { ScanOptions } from './options.js'
+import { scanParams } from './scanParams/index.js'
 
 const $options = Symbol('$options')
 type $options = typeof $options

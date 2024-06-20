@@ -14,10 +14,10 @@ import {
   number,
   BatchDeleteRequest,
   BatchPutRequest
-} from 'v1'
+} from 'v1/index.js'
 
-import { BatchWriteCommand } from './batchWriteCommand'
-import { execute, getCommandInput } from './execute'
+import { BatchWriteCommand } from './batchWriteCommand.js'
+import { execute, getCommandInput } from './execute.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)

@@ -15,7 +15,7 @@ import {
   set,
   string,
   TableV2
-} from 'v1'
+} from 'v1/index.js'
 
 const dynamoDbClient = new DynamoDBClient({})
 

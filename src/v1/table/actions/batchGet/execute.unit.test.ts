@@ -15,10 +15,10 @@ import {
   FormattedItem,
   SavedItem,
   KeyInput
-} from 'v1'
+} from 'v1/index.js'
 
-import { BatchGetCommand } from './batchGetCommand'
-import { execute, getCommandInput } from './execute'
+import { BatchGetCommand } from './batchGetCommand.js'
+import { execute, getCommandInput } from './execute.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)

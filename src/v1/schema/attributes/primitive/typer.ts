@@ -1,9 +1,9 @@
-import type { NarrowObject } from 'v1/types/narrowObject'
-import { overwrite } from 'v1/utils/overwrite'
-import { update } from 'v1/utils/update'
+import type { NarrowObject } from 'v1/types/narrowObject.js'
+import { overwrite } from 'v1/utils/overwrite.js'
+import { update } from 'v1/utils/update.js'
 
-import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions'
-import type { InferStateFromOptions } from '../shared/inferStateFromOptions'
+import type { RequiredOption, AtLeastOnce } from '../constants/requiredOptions.js'
+import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import {
   $type,
   $required,
@@ -14,16 +14,16 @@ import {
   $defaults,
   $links,
   $transform
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
-import type { $PrimitiveAttribute } from './interface'
-import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types'
+import type { $PrimitiveAttribute } from './interface.js'
+import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types.js'
 import {
   PrimitiveAttributeOptions,
   PrimitiveAttributeDefaultOptions,
   PRIMITIVE_DEFAULT_OPTIONS
-} from './options'
-import { freezePrimitiveAttribute } from './freeze'
+} from './options.js'
+import { freezePrimitiveAttribute } from './freeze.js'
 
 type $PrimitiveAttributeTyper = <
   $TYPE extends PrimitiveAttributeType,

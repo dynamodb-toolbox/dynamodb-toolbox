@@ -1,4 +1,4 @@
-import type { CapacityOption } from 'v1/options/capacity'
+import type { CapacityOption } from 'v1/options/capacity.js'
 
 /**
  *  Top-level options of a transactGet option

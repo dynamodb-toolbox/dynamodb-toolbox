@@ -1,8 +1,20 @@
 import type { A } from 'ts-toolbelt'
 
-import { schema, any, string, number, boolean, binary, set, list, map, record, anyOf } from 'v1'
+import {
+  schema,
+  any,
+  string,
+  number,
+  boolean,
+  binary,
+  set,
+  list,
+  map,
+  record,
+  anyOf
+} from 'v1/index.js'
 
-import type { Paths } from './paths'
+import type { Paths } from './paths.js'
 
 export const mySchema = schema({
   parentId: string().key().savedAs('pk'),

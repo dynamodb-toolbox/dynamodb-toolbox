@@ -1,13 +1,13 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Schema } from 'v1/schema'
-import type { Attribute, AttributeValue } from 'v1/schema/attributes'
-import type { ParsedValue } from 'v1/schema/actions/parse'
-import { isObject } from 'v1/utils/validation/isObject'
-import { isArray } from 'v1/utils/validation/isArray'
+import type { Schema } from 'v1/schema/index.js'
+import type { Attribute, AttributeValue } from 'v1/schema/attributes/index.js'
+import type { ParsedValue } from 'v1/schema/actions/parse/index.js'
+import { isObject } from 'v1/utils/validation/isObject.js'
+import { isArray } from 'v1/utils/validation/isArray.js'
 
-import type { UpdateItemInputExtension } from '../types'
-import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants'
+import type { UpdateItemInputExtension } from '../types.js'
+import { $SET, $REMOVE, $SUM, $SUBTRACT, $ADD, $DELETE, $APPEND, $PREPEND } from '../constants.js'
 import {
   isSetUpdate,
   isReferenceUpdate,
@@ -17,10 +17,10 @@ import {
   isDeleteUpdate,
   isAppendUpdate,
   isPrependUpdate
-} from '../utils'
+} from '../utils.js'
 
-import type { ParsedUpdate } from './type'
-import { UpdateExpressionVerbParser } from './verbParser'
+import type { ParsedUpdate } from './type.js'
+import { UpdateExpressionVerbParser } from './verbParser.js'
 
 export class UpdateExpressionParser {
   schema: Schema | Attribute

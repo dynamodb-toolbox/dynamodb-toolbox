@@ -1,1 +1,1 @@
-export { putItemParams } from './putItemParams'
+export { putItemParams } from './putItemParams.js'

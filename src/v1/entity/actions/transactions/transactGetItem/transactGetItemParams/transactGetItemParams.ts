@@ -1,11 +1,11 @@
 import type { TransactGetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityParser } from 'v1/entity/actions/parse'
-import type { KeyInput } from 'v1/entity/actions/parse'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityParser } from 'v1/entity/actions/parse.js'
+import type { KeyInput } from 'v1/entity/actions/parse.js'
 
-import type { GetItemTransactionOptions } from '../options'
-import { parseGetItemTransactionOptions } from './parseGetItemOptions'
+import type { GetItemTransactionOptions } from '../options.js'
+import { parseGetItemTransactionOptions } from './parseGetItemOptions.js'
 
 export type TransactGetItemParams = NonNullable<
   NonNullable<TransactGetCommandInput['TransactItems']>[number]['Get']

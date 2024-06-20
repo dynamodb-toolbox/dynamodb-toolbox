@@ -149,7 +149,7 @@ const savedItem: SavedItem<typeof PokemonEntity> = {
 
 ### `reparse(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>(input: ParsedItem&lt;ENTITY&gt;, options?: ParsingOptions) => ParsingOutput&lt;ENTITY&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>(input: ParserInput&lt;ENTITY&gt;, options?: ParsingOptions) => ParsingOutput&lt;ENTITY&gt;</code></i></p>
 
 Similar to [`.parse`](#parse), but with the input correctly typed (taking the mode into account) instead of `unknown`:
 

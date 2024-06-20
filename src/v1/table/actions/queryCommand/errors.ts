@@ -1,1 +1,1 @@
-export type { QueryCommandErrorBlueprints } from './queryParams/errors'
+export type { QueryCommandErrorBlueprints } from './queryParams/errors.js'

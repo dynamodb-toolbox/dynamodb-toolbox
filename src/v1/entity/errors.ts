@@ -1,3 +1,3 @@
-import type { EntityUtilsErrorBlueprints } from './utils/errors'
+import type { EntityUtilsErrorBlueprints } from './utils/errors.js'
 
 export type EntityErrorBlueprints = EntityUtilsErrorBlueprints

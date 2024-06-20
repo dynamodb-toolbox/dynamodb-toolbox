@@ -1,4 +1,4 @@
-import type { $AttributeNestedState, Attribute } from '../types'
+import type { $AttributeNestedState, Attribute } from '../types/index.js'
 
 export interface $MapAttributeAttributeStates {
   [key: string]: $AttributeNestedState

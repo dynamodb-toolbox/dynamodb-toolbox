@@ -1,7 +1,7 @@
-import { schema } from 'v1/schema'
-import { map, list, number } from 'v1/schema/attributes'
+import { schema } from 'v1/schema/index.js'
+import { map, list, number } from 'v1/schema/attributes/index.js'
 
-import { ConditionParser } from '../../conditionParser'
+import { ConditionParser } from '../../conditionParser.js'
 
 describe('parseCondition - comparison', () => {
   const simpleSchema = schema({

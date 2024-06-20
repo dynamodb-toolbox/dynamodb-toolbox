@@ -1,1 +1,1 @@
-export { parseCondition } from './parseCondition'
+export { parseCondition } from './parseCondition.js'

@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import { validateAttributeProperties } from '../shared/validate'
+import { validateAttributeProperties } from '../shared/validate.js'
 import {
   $required,
   $hidden,
@@ -9,10 +9,10 @@ import {
   $defaults,
   $links,
   $castAs
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
-import type { AnyAttributeState } from './types'
-import { $AnyAttributeState, AnyAttribute } from './interface'
+import type { AnyAttributeState } from './types.js'
+import { $AnyAttributeState, AnyAttribute } from './interface.js'
 
 export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
   // Applying void O.Update improves type display

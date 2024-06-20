@@ -1,6 +1,6 @@
-import { CapacityOption } from 'v1/options/capacity'
-import { ClientRequestToken } from 'v1/options/clientRequestToken'
-import { MetricsOption } from 'v1/options/metrics'
+import { CapacityOption } from 'v1/options/capacity.js'
+import { ClientRequestToken } from 'v1/options/clientRequestToken.js'
+import { MetricsOption } from 'v1/options/metrics.js'
 
 /** Top-level options of a transactWrite option */
 export interface TransactWriteOptions {

@@ -1,1 +1,0 @@
-export { prefix } from './prefix'

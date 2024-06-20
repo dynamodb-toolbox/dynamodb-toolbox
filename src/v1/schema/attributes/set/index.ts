@@ -1,9 +1,9 @@
-export { set } from './typer'
+export { set } from './typer.js'
 export {
   $SetAttributeState,
   $SetAttributeNestedState,
   $SetAttribute,
   SetAttribute
-} from './interface'
-export type { FreezeSetAttribute } from './freeze'
-export type { SetAttributeElements } from './types'
+} from './interface.js'
+export type { FreezeSetAttribute } from './freeze.js'
+export type { SetAttributeElements } from './types.js'

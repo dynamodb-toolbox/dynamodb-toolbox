@@ -1,18 +1,22 @@
-import type { Schema } from 'v1/schema'
-import type { Attribute, ListAttribute, AttributeBasicValue } from 'v1/schema/attributes'
-import type { ParsedValue, ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse'
-import { Parser } from 'v1/schema/actions/parse'
-import { DynamoDBToolboxError } from 'v1/errors'
-import { isObject } from 'v1/utils/validation/isObject'
-import { isInteger } from 'v1/utils/validation/isInteger'
-import { isArray } from 'v1/utils/validation/isArray'
+import type { Schema } from 'v1/schema/index.js'
+import type { Attribute, ListAttribute, AttributeBasicValue } from 'v1/schema/attributes/index.js'
+import type {
+  ParsedValue,
+  ExtensionParser,
+  ExtensionParserOptions
+} from 'v1/schema/actions/parse/index.js'
+import { Parser } from 'v1/schema/actions/parse/index.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { isObject } from 'v1/utils/validation/isObject.js'
+import { isInteger } from 'v1/utils/validation/isInteger.js'
+import { isArray } from 'v1/utils/validation/isArray.js'
 
-import type { UpdateItemInputExtension } from '../../types'
-import { $SET, $REMOVE, $APPEND, $PREPEND } from '../../constants'
-import { isSetUpdate, isAppendUpdate, isPrependUpdate } from '../../utils'
+import type { UpdateItemInputExtension } from '../../types.js'
+import { $SET, $REMOVE, $APPEND, $PREPEND } from '../../constants.js'
+import { isSetUpdate, isAppendUpdate, isPrependUpdate } from '../../utils.js'
 
-import { parseReferenceExtension } from './reference'
-import { parseUpdateExtension } from './attribute'
+import { parseReferenceExtension } from './reference.js'
+import { parseUpdateExtension } from './attribute.js'
 
 function* listElementParser(
   attribute: ListAttribute,

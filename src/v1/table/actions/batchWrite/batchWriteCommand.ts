@@ -1,11 +1,11 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 import type { U } from 'ts-toolbelt'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import { TableV2, TableAction, $table } from 'v1/table'
-import { EntityV2, $entity } from 'v1/entity'
-import type { BatchPutRequest } from 'v1/entity/actions/batchPut'
-import type { BatchDeleteRequest } from 'v1/entity/actions/batchDelete'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { TableV2, TableAction, $table } from 'v1/table/index.js'
+import { EntityV2, $entity } from 'v1/entity/index.js'
+import type { BatchPutRequest } from 'v1/entity/actions/batchPut.js'
+import type { BatchDeleteRequest } from 'v1/entity/actions/batchDelete.js'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests

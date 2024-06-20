@@ -1,2 +1,2 @@
-export { transactDeleteItemParams } from './transactDeleteItemParams'
-export type { TransactDeleteItemParams } from './transactDeleteItemParams'
+export { transactDeleteItemParams } from './transactDeleteItemParams.js'
+export type { TransactDeleteItemParams } from './transactDeleteItemParams.js'

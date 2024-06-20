@@ -1,4 +1,4 @@
-import type { ErrorBlueprint } from 'v1/errors/blueprint'
+import type { ErrorBlueprint } from 'v1/errors/blueprint.js'
 
 type InvalidSegmentOptionErrorBlueprint = ErrorBlueprint<{
   code: 'scanCommand.invalidSegmentOption'

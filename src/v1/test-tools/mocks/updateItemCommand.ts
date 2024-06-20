@@ -1,24 +1,24 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, $entity } from 'v1/entity'
+import { EntityV2, $entity } from 'v1/entity/index.js'
 import {
   UpdateItemCommand,
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from 'v1/entity/actions/commands/updateItem'
-import { $item, $options } from 'v1/entity/actions/commands/updateItem/updateItemCommand'
-import { updateItemParams } from 'v1/entity/actions/commands/updateItem/updateItemParams'
-import { DynamoDBToolboxError } from 'v1/errors'
+} from 'v1/entity/actions/commands/updateItem/index.js'
+import { $item, $options } from 'v1/entity/actions/commands/updateItem/updateItemCommand.js'
+import { updateItemParams } from 'v1/entity/actions/commands/updateItem/updateItemParams/index.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { MockedEntity } from './entity'
+import type { MockedEntity } from './entity.js'
 import {
   $actionName,
   $originalEntity,
   $mockedEntity,
   $mockedImplementations,
   $receivedActions
-} from './constants'
+} from './constants.js'
 
 export class UpdateItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,

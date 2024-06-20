@@ -1,20 +1,20 @@
 import { cloneDeep } from 'lodash'
 import type { O } from 'ts-toolbelt'
 
-import type { Schema } from 'v1/schema'
-import type { Attribute, AnyAttribute, Never } from 'v1/schema/attributes'
-import type { OptionalizeUndefinableProperties } from 'v1/types'
-import { isObject } from 'v1/utils/validation/isObject'
-import { DynamoDBToolboxError } from 'v1/errors'
+import type { Schema } from 'v1/schema/index.js'
+import type { Attribute, AnyAttribute, Never } from 'v1/schema/attributes/index.js'
+import type { OptionalizeUndefinableProperties } from 'v1/types/index.js'
+import { isObject } from 'v1/utils/validation/isObject.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
 import type {
   ParsedValueOptions,
   FromParsingOptions,
   ParsingOptions,
   ParsingDefaultOptions
-} from './types/options'
-import type { ParsedValue } from './parser'
-import { attrParser, AttrParsedValue } from './attribute'
+} from './types/options.js'
+import type { ParsedValue } from './parser.js'
+import { attrParser, AttrParsedValue } from './attribute.js'
 
 export type SchemaParsedValue<
   SCHEMA extends Schema,

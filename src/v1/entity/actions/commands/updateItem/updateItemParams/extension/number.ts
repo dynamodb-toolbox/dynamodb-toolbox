@@ -1,14 +1,14 @@
-import type { PrimitiveAttribute, AttributeBasicValue } from 'v1/schema/attributes'
-import { number } from 'v1/schema/attributes/primitive'
-import { Parser, ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse'
-import { isArray } from 'v1/utils/validation/isArray'
-import { DynamoDBToolboxError } from 'v1/errors'
+import type { PrimitiveAttribute, AttributeBasicValue } from 'v1/schema/attributes/index.js'
+import { number } from 'v1/schema/attributes/primitive/index.js'
+import { Parser, ExtensionParser, ExtensionParserOptions } from 'v1/schema/actions/parse/index.js'
+import { isArray } from 'v1/utils/validation/isArray.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { UpdateItemInputExtension } from '../../types'
-import { $SUM, $SUBTRACT, $ADD } from '../../constants'
-import { isSumUpdate, isSubtractUpdate, isAddUpdate } from '../../utils'
+import type { UpdateItemInputExtension } from '../../types.js'
+import { $SUM, $SUBTRACT, $ADD } from '../../constants.js'
+import { isSumUpdate, isSubtractUpdate, isAddUpdate } from '../../utils.js'
 
-import { parseReferenceExtension } from './reference'
+import { parseReferenceExtension } from './reference.js'
 
 export const parseNumberExtension = (
   attribute: PrimitiveAttribute<'number'>,

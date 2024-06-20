@@ -1,7 +1,7 @@
-import type { Attribute, AttributeBasicValue } from 'v1/schema/attributes'
+import type { Attribute, AttributeBasicValue } from 'v1/schema/attributes/index.js'
 
-import type { ExtensionParser } from './types/extensionParser'
-import type { ParsingMode } from './types/options'
+import type { ExtensionParser } from './types/extensionParser.js'
+import type { ParsingMode } from './types/options.js'
 
 export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
   isExtension: false,

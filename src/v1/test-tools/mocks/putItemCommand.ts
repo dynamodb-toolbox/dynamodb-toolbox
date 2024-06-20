@@ -1,24 +1,24 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, $entity } from 'v1/entity'
+import { EntityV2, $entity } from 'v1/entity/index.js'
 import {
   PutItemCommand,
   PutItemInput,
   PutItemOptions,
   PutItemResponse
-} from 'v1/entity/actions/commands/putItem'
-import { putItemParams } from 'v1/entity/actions/commands/putItem/putItemParams'
-import { $item, $options } from 'v1/entity/actions/commands/putItem/putItemCommand'
-import { DynamoDBToolboxError } from 'v1/errors'
+} from 'v1/entity/actions/commands/putItem/index.js'
+import { putItemParams } from 'v1/entity/actions/commands/putItem/putItemParams/index.js'
+import { $item, $options } from 'v1/entity/actions/commands/putItem/putItemCommand.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { MockedEntity } from './entity'
+import type { MockedEntity } from './entity.js'
 import {
   $actionName,
   $originalEntity,
   $mockedEntity,
   $mockedImplementations,
   $receivedActions
-} from './constants'
+} from './constants.js'
 
 export class PutItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,

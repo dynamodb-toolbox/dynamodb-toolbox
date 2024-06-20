@@ -1,9 +1,9 @@
 import type { A } from 'ts-toolbelt'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import { prefix } from 'v1/transformers'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { prefix } from 'v1/transformers/prefix.js'
 
-import { Never, AtLeastOnce, Always } from '../constants'
+import { Never, AtLeastOnce, Always } from '../constants/index.js'
 import {
   $type,
   $required,
@@ -14,10 +14,10 @@ import {
   $defaults,
   $links,
   $transform
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
-import { string, number, boolean, binary } from './typer'
-import type { PrimitiveAttribute, $PrimitiveAttribute } from './interface'
+import { string, number, boolean, binary } from './typer.js'
+import type { PrimitiveAttribute, $PrimitiveAttribute } from './interface.js'
 
 describe('primitiveAttribute', () => {
   const path = 'some.path'

@@ -1,1 +1,1 @@
-export { mockEntity } from './mockEntity'
+export { mockEntity } from './mockEntity.js'

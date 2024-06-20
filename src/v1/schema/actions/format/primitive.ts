@@ -3,12 +3,12 @@ import type {
   ResolvePrimitiveAttribute,
   ResolvedPrimitiveAttribute,
   Transformer
-} from 'v1/schema/attributes'
-import type { If } from 'v1/types'
-import { validatorsByPrimitiveType } from 'v1/utils/validation'
-import { DynamoDBToolboxError } from 'v1/errors'
+} from 'v1/schema/attributes/index.js'
+import type { If } from 'v1/types/index.js'
+import { validatorsByPrimitiveType } from 'v1/utils/validation/validatorsByPrimitiveType.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import type { MustBeDefined } from './attribute'
+import type { MustBeDefined } from './attribute.js'
 
 export type PrimitiveAttrFormattedValue<
   ATTRIBUTE extends PrimitiveAttribute

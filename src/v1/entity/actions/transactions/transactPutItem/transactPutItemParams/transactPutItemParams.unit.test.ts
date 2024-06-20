@@ -12,7 +12,7 @@ import {
   map,
   DynamoDBToolboxError,
   PutItemTransaction
-} from 'v1'
+} from 'v1/index.js'
 
 const TestTable = new TableV2({
   name: 'test-table',

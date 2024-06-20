@@ -1,8 +1,8 @@
-import type { AtLeastOnce } from '../constants'
-import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive'
-import type { PrimitiveAttributeEnumValues } from '../primitive/types'
-import type { $SharedAttributeState } from '../shared/interface'
-import type { $AttributeNestedState } from '../types'
+import type { AtLeastOnce } from '../constants/index.js'
+import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive/index.js'
+import type { PrimitiveAttributeEnumValues } from '../primitive/types.js'
+import type { $SharedAttributeState } from '../shared/interface.js'
+import type { $AttributeNestedState } from '../types/index.js'
 
 export type $RecordAttributeKeys = $PrimitiveAttributeNestedState<
   'string',

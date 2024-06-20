@@ -2,12 +2,12 @@ import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
 import type { U } from 'ts-toolbelt'
 import { isEmpty } from 'lodash'
 
-import { DynamoDBToolboxError } from 'v1/errors'
-import { parseConsistentOption } from 'v1/options/consistent'
-import { TableV2, TableAction, $table, $entities } from 'v1/table'
-import { $entity, EntityV2 } from 'v1/entity'
-import { EntityPathParser, EntityPathsIntersection } from 'v1/entity/actions/parsePaths'
-import type { BatchGetRequest } from 'v1/entity/actions/batchGet'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { parseConsistentOption } from 'v1/options/consistent.js'
+import { TableV2, TableAction, $table, $entities } from 'v1/table/index.js'
+import { $entity, EntityV2 } from 'v1/entity/index.js'
+import { EntityPathParser, EntityPathsIntersection } from 'v1/entity/actions/parsePaths.js'
+import type { BatchGetRequest } from 'v1/entity/actions/batchGet.js'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests

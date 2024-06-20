@@ -1,11 +1,11 @@
-import type { Schema } from 'v1/schema'
-import type { Attribute } from 'v1/schema/attributes'
-import { Parser } from 'v1/schema/actions/parse'
-import { AnyAttribute } from 'v1/schema/attributes/any'
-import { PrimitiveAttribute } from 'v1/schema/attributes/primitive'
-import { DynamoDBToolboxError } from 'v1/errors'
-import { isObject } from 'v1/utils/validation/isObject'
-import { isString } from 'v1/utils/validation/isString'
+import type { Schema } from 'v1/schema/index.js'
+import type { Attribute } from 'v1/schema/attributes/index.js'
+import { Parser } from 'v1/schema/actions/parse/index.js'
+import { AnyAttribute } from 'v1/schema/attributes/any/index.js'
+import { PrimitiveAttribute } from 'v1/schema/attributes/primitive/index.js'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { isObject } from 'v1/utils/validation/isObject.js'
+import { isString } from 'v1/utils/validation/isString.js'
 
 export type AppendAttributePathOptions = { size?: boolean }
 

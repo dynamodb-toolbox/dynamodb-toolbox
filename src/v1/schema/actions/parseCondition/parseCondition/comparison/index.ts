@@ -1,3 +1,3 @@
-export { isComparisonCondition } from './types'
-export type { ComparisonCondition } from './types'
-export { parseComparisonCondition } from './parseCondition'
+export { isComparisonCondition } from './types.js'
+export type { ComparisonCondition } from './types.js'
+export { parseComparisonCondition } from './parseCondition.js'

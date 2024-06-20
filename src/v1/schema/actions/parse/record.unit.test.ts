@@ -1,8 +1,8 @@
-import { DynamoDBToolboxError } from 'v1/errors'
-import { record, string } from 'v1/schema/attributes'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
+import { record, string } from 'v1/schema/attributes/index.js'
 
-import { recordAttributeParser } from './record'
-import * as attrParserModule from './attribute'
+import { recordAttributeParser } from './record.js'
+import * as attrParserModule from './attribute.js'
 
 // @ts-ignore
 const attrParser = jest.spyOn(attrParserModule, 'attrParser')

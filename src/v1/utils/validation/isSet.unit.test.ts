@@ -1,4 +1,4 @@
-import { isSet } from './isSet'
+import { isSet } from './isSet.js'
 
 describe('isSet', () => {
   it('returns true if input is a set', () => {

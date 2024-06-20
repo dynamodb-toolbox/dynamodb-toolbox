@@ -1,9 +1,9 @@
 import { isEmpty } from 'lodash'
 
-import type { EntityV2 } from 'v1/entity'
-import { EntityConditionParser, Condition } from 'v1/entity/actions/parseCondition'
+import type { EntityV2 } from 'v1/entity/index.js'
+import { EntityConditionParser, Condition } from 'v1/entity/actions/parseCondition.js'
 
-import type { ConditionCheckParams } from './conditionCheckParams'
+import type { ConditionCheckParams } from './conditionCheckParams.js'
 
 type TransactionOptions = Omit<ConditionCheckParams, 'TableName' | 'Key'>
 

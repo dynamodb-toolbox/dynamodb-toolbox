@@ -1,4 +1,4 @@
-import { EntityV2, EntityAction, $entity } from 'v1/entity'
+import { EntityV2, EntityAction, $entity } from 'v1/entity/index.js'
 import {
   Parser,
   ParsingOptions,
@@ -6,9 +6,9 @@ import {
   ParsedValue,
   ParsedValueOptions,
   ParsedValueDefaultOptions
-} from 'v1/schema/actions/parse'
-import type { ParserInput } from 'v1/schema/actions/parse'
-import { PrimaryKeyParser, PrimaryKey } from 'v1/table/actions/parsePrimaryKey'
+} from 'v1/schema/actions/parse/index.js'
+import type { ParserInput } from 'v1/schema/actions/parse/index.js'
+import { PrimaryKeyParser, PrimaryKey } from 'v1/table/actions/parsePrimaryKey/index.js'
 
 export type ParsedItemOptions = Pick<ParsedValueOptions, 'mode' | 'extension'>
 

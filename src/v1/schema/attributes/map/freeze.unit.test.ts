@@ -1,10 +1,10 @@
-import { DynamoDBToolboxError } from 'v1/errors'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import { string } from '../primitive'
-import { validateAttributeProperties } from '../shared/validate'
+import { string } from '../primitive/index.js'
+import { validateAttributeProperties } from '../shared/validate.js'
 
-import { map } from './typer'
-import { $attributes } from '../constants'
+import { map } from './typer.js'
+import { $attributes } from '../constants/index.js'
 
 jest.mock('../shared/validate', () => ({
   ...jest.requireActual<Record<string, unknown>>('../shared/validate'),

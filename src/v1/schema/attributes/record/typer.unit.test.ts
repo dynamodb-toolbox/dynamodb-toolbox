@@ -1,9 +1,9 @@
 import type { A } from 'ts-toolbelt'
 
-import { DynamoDBToolboxError } from 'v1/errors'
+import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
-import { Never, AtLeastOnce, Always } from '../constants'
-import { string, number } from '../primitive'
+import { Never, AtLeastOnce, Always } from '../constants/index.js'
+import { string, number } from '../primitive/index.js'
 import {
   $type,
   $keys,
@@ -14,10 +14,10 @@ import {
   $savedAs,
   $defaults,
   $links
-} from '../constants/attributeOptions'
+} from '../constants/attributeOptions.js'
 
-import { record } from './typer'
-import type { RecordAttribute, $RecordAttributeState } from './interface'
+import { record } from './typer.js'
+import type { RecordAttribute, $RecordAttributeState } from './interface.js'
 
 describe('record', () => {
   const path = 'some.path'

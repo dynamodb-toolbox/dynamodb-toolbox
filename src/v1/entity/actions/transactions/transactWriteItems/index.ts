@@ -1,1 +1,1 @@
-export { transactWriteItems } from './transactWriteItems'
+export { transactWriteItems } from './transactWriteItems.js'

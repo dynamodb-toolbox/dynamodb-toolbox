@@ -1,12 +1,12 @@
-import type { Schema } from 'v1/schema'
-import type { TableV2 } from 'v1/table'
-import type { EntityAttributeSavedAs } from 'v1/table/types'
-import type { AtLeastOnce, $Attribute, $PrimitiveAttribute } from 'v1/schema/attributes'
-import type { FreezeAttribute } from 'v1/schema/attributes/freeze'
-import type { If } from 'v1/types/if'
+import type { Schema } from 'v1/schema/index.js'
+import type { TableV2 } from 'v1/table/index.js'
+import type { EntityAttributeSavedAs } from 'v1/table/types/index.js'
+import type { AtLeastOnce, $Attribute, $PrimitiveAttribute } from 'v1/schema/attributes/index.js'
+import type { FreezeAttribute } from 'v1/schema/attributes/freeze.js'
+import type { If } from 'v1/types/if.js'
 
-import type { TimestampsOptions } from './options'
-import type { IsTimestampEnabled, TimestampOptionValue } from './utils'
+import type { TimestampsOptions } from './options.js'
+import type { IsTimestampEnabled, TimestampOptionValue } from './utils.js'
 
 export type WithInternalAttribute<
   SCHEMA extends Schema,
