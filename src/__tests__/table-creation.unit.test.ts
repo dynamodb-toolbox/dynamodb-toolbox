@@ -2,28 +2,30 @@ import Table from '../classes/Table/Table.js'
 import { DocumentClient, DocumentClientWithoutConfig } from './bootstrap.test.js'
 
 describe('Table creation', () => {
-  it('creates table w/ minimum options', async () => {
+  test('creates table w/ minimum options', async () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk'
     })
 
-    expect(TestTable).toEqual(expect.objectContaining({
-      name: 'test-table',
-      Table: expect.objectContaining({
-        partitionKey: 'pk',
-        sortKey: null,
-        entityField: '_et',
-        indexes: {},
-        attributes: { _et: { type: 'string', mappings: {} } }
-      }),
-      autoExecute: true,
-      autoParse: true,
-      entities: []
-    }))
+    expect(TestTable).toEqual(
+      expect.objectContaining({
+        name: 'test-table',
+        Table: expect.objectContaining({
+          partitionKey: 'pk',
+          sortKey: null,
+          entityField: '_et',
+          indexes: {},
+          attributes: { _et: { type: 'string', mappings: {} } }
+        }),
+        autoExecute: true,
+        autoParse: true,
+        entities: []
+      })
+    )
   })
 
-  it('creates table w/ options', async () => {
+  test('creates table w/ options', async () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',
@@ -33,22 +35,24 @@ describe('Table creation', () => {
       autoParse: false
     })
 
-    expect(TestTable).toEqual(expect.objectContaining({
-      name: 'test-table',
-      Table: expect.objectContaining({
-        partitionKey: 'pk',
-        sortKey: 'sk',
-        entityField: 'entity',
-        indexes: {},
-        attributes: { entity: { type: 'string', mappings: {} } }
-      }),
-      autoExecute: false,
-      autoParse: false,
-      entities: []
-    }))
+    expect(TestTable).toEqual(
+      expect.objectContaining({
+        name: 'test-table',
+        Table: expect.objectContaining({
+          partitionKey: 'pk',
+          sortKey: 'sk',
+          entityField: 'entity',
+          indexes: {},
+          attributes: { entity: { type: 'string', mappings: {} } }
+        }),
+        autoExecute: false,
+        autoParse: false,
+        entities: []
+      })
+    )
   })
 
-  it('creates table w/ attributes', async () => {
+  test('creates table w/ attributes', async () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',
@@ -65,30 +69,32 @@ describe('Table creation', () => {
       }
     })
 
-    expect(TestTable).toEqual(expect.objectContaining({
-      name: 'test-table',
-      Table: expect.objectContaining({
-        partitionKey: 'pk',
-        sortKey: null,
-        entityField: '_et',
-        indexes: {},
-        attributes: {
-          stringAttr: { type: 'string', mappings: {} },
-          numberAttr: { type: 'number', mappings: {} },
-          binaryAttr: { type: 'binary', mappings: {} },
-          booleanAttr: { type: 'boolean', mappings: {} },
-          listAttr: { type: 'list', mappings: {} },
-          mapAttr: { type: 'map', mappings: {} },
-          stringSetAttr: { type: 'set', mappings: {} },
-          numberSetAttr: { type: 'set', setType: 'number', mappings: {} },
-          binarySetAttr: { type: 'set', setType: 'binary', mappings: {} },
-          _et: { type: 'string', mappings: {} }
-        }
+    expect(TestTable).toEqual(
+      expect.objectContaining({
+        name: 'test-table',
+        Table: expect.objectContaining({
+          partitionKey: 'pk',
+          sortKey: null,
+          entityField: '_et',
+          indexes: {},
+          attributes: {
+            stringAttr: { type: 'string', mappings: {} },
+            numberAttr: { type: 'number', mappings: {} },
+            binaryAttr: { type: 'binary', mappings: {} },
+            booleanAttr: { type: 'boolean', mappings: {} },
+            listAttr: { type: 'list', mappings: {} },
+            mapAttr: { type: 'map', mappings: {} },
+            stringSetAttr: { type: 'set', mappings: {} },
+            numberSetAttr: { type: 'set', setType: 'number', mappings: {} },
+            binarySetAttr: { type: 'set', setType: 'binary', mappings: {} },
+            _et: { type: 'string', mappings: {} }
+          }
+        })
       })
-    }))
+    )
   })
 
-  it('creates table w/ indexes', async () => {
+  test('creates table w/ indexes', async () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',
@@ -100,29 +106,31 @@ describe('Table creation', () => {
       }
     })
 
-    expect(TestTable).toEqual(expect.objectContaining({
-      name: 'test-table',
-      Table: expect.objectContaining({
-        partitionKey: 'pk',
-        sortKey: null,
-        entityField: '_et',
-        indexes: {
-          GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSI1sk', type: 'GSI' },
-          GSI2: { partitionKey: 'GSI2pk', type: 'GSI' },
-          LSI1: { sortKey: 'LSI1sk', type: 'LSI' },
-          LSI2: { sortKey: 'LSI2sk', type: 'LSI' }
-        },
-        attributes: {
-          _et: { type: 'string', mappings: {} }
-        },
-      }),
-      autoExecute: true,
-      autoParse: true,
-      entities: [],
-    }))
+    expect(TestTable).toEqual(
+      expect.objectContaining({
+        name: 'test-table',
+        Table: expect.objectContaining({
+          partitionKey: 'pk',
+          sortKey: null,
+          entityField: '_et',
+          indexes: {
+            GSI1: { partitionKey: 'GSI1pk', sortKey: 'GSI1sk', type: 'GSI' },
+            GSI2: { partitionKey: 'GSI2pk', type: 'GSI' },
+            LSI1: { sortKey: 'LSI1sk', type: 'LSI' },
+            LSI2: { sortKey: 'LSI2sk', type: 'LSI' }
+          },
+          attributes: {
+            _et: { type: 'string', mappings: {} }
+          }
+        }),
+        autoExecute: true,
+        autoParse: true,
+        entities: []
+      })
+    )
   })
 
-  it('creates table w/ DocumentClient', async () => {
+  test('creates table w/ DocumentClient', async () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',
@@ -130,22 +138,24 @@ describe('Table creation', () => {
     })
 
     expect(TestTable.DocumentClient.constructor.name).toBe('DynamoDBDocumentClient')
-    expect(TestTable).toEqual(expect.objectContaining({
-      name: 'test-table',
-      Table: expect.objectContaining({
-        partitionKey: 'pk',
-        sortKey: null,
-        entityField: '_et',
-        indexes: {},
-        attributes: { _et: { type: 'string', mappings: {} } },
-      }),
-      autoExecute: true,
-      autoParse: true,
-      entities: [],
-    }))
+    expect(TestTable).toEqual(
+      expect.objectContaining({
+        name: 'test-table',
+        Table: expect.objectContaining({
+          partitionKey: 'pk',
+          sortKey: null,
+          entityField: '_et',
+          indexes: {},
+          attributes: { _et: { type: 'string', mappings: {} } }
+        }),
+        autoExecute: true,
+        autoParse: true,
+        entities: []
+      })
+    )
   })
 
-  it('creates table, then add DocumentClient', async () => {
+  test('creates table, then add DocumentClient', async () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk'
@@ -154,22 +164,24 @@ describe('Table creation', () => {
     TestTable.DocumentClient = DocumentClient
 
     expect(TestTable.DocumentClient.constructor.name).toBe('DynamoDBDocumentClient')
-    expect(TestTable).toEqual(expect.objectContaining({
-      name: 'test-table',
-      Table: expect.objectContaining({
-        partitionKey: 'pk',
-        sortKey: null,
-        entityField: '_et',
-        indexes: {},
-        attributes: { _et: { type: 'string', mappings: {} } },
-      }),
-      entities: [],
-      autoExecute: true,
-      autoParse: true,
-    }))
+    expect(TestTable).toEqual(
+      expect.objectContaining({
+        name: 'test-table',
+        Table: expect.objectContaining({
+          partitionKey: 'pk',
+          sortKey: null,
+          entityField: '_et',
+          indexes: {},
+          attributes: { _et: { type: 'string', mappings: {} } }
+        }),
+        entities: [],
+        autoExecute: true,
+        autoParse: true
+      })
+    )
   })
 
-  it('sets translateConfig with marshalOptions for DocumentClient if empty', async () => {
+  test('sets translateConfig with marshalOptions for DocumentClient if empty', async () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',
@@ -178,7 +190,7 @@ describe('Table creation', () => {
 
     expect(TestTable.DocumentClient.config.translateConfig).toEqual({
       marshallOptions: {
-        convertEmptyValues: true,
+        convertEmptyValues: true
       }
     })
   })

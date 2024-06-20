@@ -8,8 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ 14, 16, 18, 20 ]
-    name: Node ${{ matrix.node }}
+        node: [16, 18, 20]
+        typescript:
+          ['~4.7.4', '~4.8.3', '~4.9.5', '~5.0.4', '~5.1.6', '~5.2.2', '~5.3.3', '~5.4.2', 'latest']
+    name: Node ${{ matrix.node }} / TS ${{ matrix.typescript }}
     steps:
       - name: 'Checkout latest code'
         uses: actions/checkout@v3
@@ -21,8 +23,12 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+      - name: Install TS at correct version
+        run: npm i typescript@${{ matrix.typescript }}
+      - name: Run type check
+        run: npm run check-types-v1
       - name: Run tests
-        run: npm run test
+        run: npm run test-v1
 
   check_types:
     name: 'Check types'
@@ -38,26 +44,39 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
-      - name: Build
-        run: npm run build
-      - name: Check types
-        run: npm run check-types
-      - name: Test types
-        run: npm run test-types
+      - name: Check types (v1)
+        run: npm run check-types-v1
 
-  lint:
-    name: 'ESLint'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout latest code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Set up node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-      - name: Run ESLint
-        run: npm run lint
+  # lint:
+  #   name: 'ESLint'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout latest code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
+  #     - name: Set up node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '16'
+  #     - name: Install dependencies
+  #       run: npm ci --legacy-peer-deps
+  #     - name: Run ESLint
+  #       run: npm run lint
+
+  # prettier:
+  #   name: 'Prettier'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout latest code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
+  #     - name: Set up node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '16'
+  #     - name: Install dependencies
+  #       run: npm ci --legacy-peer-deps
+  #     - name: Run Prettier
+  #       run: npm run prettier

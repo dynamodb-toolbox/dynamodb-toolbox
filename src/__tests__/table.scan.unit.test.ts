@@ -21,10 +21,9 @@ const TestEntity = new Entity({
   table: TestTable
 } as const)
 
-
 describe('scan', () => {
   beforeEach(() => {
-    jest.spyOn<any, any>(DocumentClient, 'send').mockResolvedValue({
+    vi.spyOn<any, any>(DocumentClient, 'send').mockResolvedValue({
       Items: [
         {
           pk: 'test-pk',
@@ -39,17 +38,17 @@ describe('scan', () => {
   })
 
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
-  it('scans a table with no options', () => {
+  test('scans a table with no options', () => {
     const result = TestTable.scanParams()
     expect(result).toEqual({
       TableName: 'test-table'
     })
   })
 
-  it('scans a table with meta data', () => {
+  test('scans a table with meta data', () => {
     const result = TestTable.scanParams({ attributes: ['pk'] }, {}, true)
     expect(result).toEqual({
       payload: {
@@ -62,7 +61,7 @@ describe('scan', () => {
     })
   })
 
-  it('scans a table and ignores bad parameters', () => {
+  test('scans a table and ignores bad parameters', () => {
     // @ts-expect-error
     const result = TestTable.scanParams({}, 'test')
     expect(result).toEqual({
@@ -70,7 +69,7 @@ describe('scan', () => {
     })
   })
 
-  it('scans a table with options', () => {
+  test('scans a table with options', () => {
     const result = TestTable.scanParams({
       index: 'GSI1',
       limit: 10,
@@ -112,7 +111,7 @@ describe('scan', () => {
     // console.log(result);
   })
 
-  it('fails on an invalid option', () => {
+  test('fails on an invalid option', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
@@ -121,13 +120,13 @@ describe('scan', () => {
     ).toThrow('Invalid scan options: invalidParam')
   })
 
-  it('fails on an invalid index', () => {
+  test('fails on an invalid index', () => {
     expect(() => TestTable.scanParams({ index: 'test' })).toThrow(
       `'test' is not a valid index name`
     )
   })
 
-  it('fails on an invalid limit', () => {
+  test('fails on an invalid limit', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
@@ -136,7 +135,7 @@ describe('scan', () => {
     ).toThrow(`'limit' must be a positive integer`)
   })
 
-  it('fails on invalid consistent setting', () => {
+  test('fails on invalid consistent setting', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
@@ -145,33 +144,33 @@ describe('scan', () => {
     ).toThrow(`'consistent' requires a boolean`)
   })
 
-  it('fails on invalid select setting', () => {
+  test('fails on invalid select setting', () => {
     // @ts-expect-error
     expect(() => TestTable.scanParams({ select: 'test' })).toThrow(
       `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
     )
   })
 
-  it('fails on invalid capacity setting', () => {
+  test('fails on invalid capacity setting', () => {
     // @ts-expect-error
     expect(() => TestTable.scanParams({ capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
   })
 
-  it('fails on invalid entity', () => {
+  test('fails on invalid entity', () => {
     expect(() => TestTable.scanParams({ entity: 'test' })).toThrow(
       `'entity' must be a string and a valid table Entity name`
     )
   })
 
-  it('fails on invalid startKey', () => {
+  test('fails on invalid startKey', () => {
     expect(() => TestTable.scanParams({ startKey: 'test' })).toThrow(
       `'startKey' requires a valid object`
     )
   })
 
-  it('fails on invalid segments', () => {
+  test('fails on invalid segments', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
@@ -180,7 +179,7 @@ describe('scan', () => {
     ).toThrow(`'segments' must be an integer greater than 1`)
   })
 
-  it('fails on invalid segment', () => {
+  test('fails on invalid segment', () => {
     expect(() =>
       TestTable.scanParams(
         // @ts-expect-error
@@ -191,13 +190,13 @@ describe('scan', () => {
     )
   })
 
-  it('fails if both segments and segment are not included', () => {
+  test('fails if both segments and segment are not included', () => {
     expect(() => TestTable.scanParams({ segments: 10 })).toThrow(
       `Both 'segments' and 'segment' must be provided`
     )
   })
 
-  it('transforms a set into an array when parse is true', async () => {
+  test('transforms a set into an array when parse is true', async () => {
     const result = await TestEntity.scan({
       parse: true
     })
@@ -213,7 +212,7 @@ describe('scan', () => {
     })
   })
 
-  it('returns a set as is when parse is false', async () => {
+  test('returns a set as is when parse is false', async () => {
     const result = await TestEntity.scan({
       parse: false
     })
@@ -229,7 +228,7 @@ describe('scan', () => {
     })
   })
 
-  it('should not return hidden properties', async () => {
+  test('should not return hidden properties', async () => {
     const result = await TestEntity.scan()
 
     expect(result).toEqual({
@@ -237,10 +236,7 @@ describe('scan', () => {
         {
           test: 'some-string',
           entity: 'TestEntity',
-          'testSet': [
-            'test1',
-            'test2'
-          ]
+          testSet: ['test1', 'test2']
         }
       ],
       LastEvaluatedKey: null

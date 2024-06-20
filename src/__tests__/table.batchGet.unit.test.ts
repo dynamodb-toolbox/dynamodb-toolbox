@@ -22,27 +22,27 @@ const TestEntity = new Entity({
 } as const)
 
 describe('batchGet', () => {
-  it('fails when batchGet is empty', () => {
+  test('fails when batchGet is empty', () => {
     expect(() => {
       // @ts-expect-error
       TestTable.batchGetParams()
     }).toThrow(`Item references must contain a valid Table object and Key`)
   })
 
-  it('fails when batchGet items is an empty array', () => {
+  test('fails when batchGet items is an empty array', () => {
     expect(() => {
       TestTable.batchGetParams([])
     }).toThrow(`No items supplied`)
   })
 
-  it('batchGets data from a single table', () => {
+  test('batchGets data from a single table', () => {
     const result = TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }))
     expect(result).toEqual({
       RequestItems: { 'test-table': { Keys: [{ pk: 'test', sk: 'testsk' }] } }
     })
   })
 
-  it('fails when extra options', () => {
+  test('fails when extra options', () => {
     expect(() => {
       TestTable.batchGetParams(
         TestEntity.getBatch({ email: 'test', sort: 'testsk' }),
@@ -52,7 +52,7 @@ describe('batchGet', () => {
     }).toThrow(`Invalid batchGet options: invalid`)
   })
 
-  it('fails when providing an invalid capactiy setting', () => {
+  test('fails when providing an invalid capactiy setting', () => {
     expect(() => {
       TestTable.batchGetParams(TestEntity.getBatch({ email: 'test', sort: 'testsk' }), {
         // @ts-expect-error
@@ -61,7 +61,7 @@ describe('batchGet', () => {
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
-  it('add consistent flag', () => {
+  test('add consistent flag', () => {
     const result = TestTable.batchGetParams(
       TestEntity.getBatch({ email: 'test', sort: 'testsk' }),
       {
@@ -73,7 +73,7 @@ describe('batchGet', () => {
     })
   })
 
-  it('add consistent flag across multiple tables', () => {
+  test('add consistent flag across multiple tables', () => {
     const TestTable2 = new Table({
       name: 'test-table2',
       partitionKey: 'pk',
@@ -109,7 +109,7 @@ describe('batchGet', () => {
     })
   })
 
-  it('fails on invalid consistent setting in object', () => {
+  test('fails on invalid consistent setting in object', () => {
     const TestTable2 = new Table({
       name: 'test-table2',
       partitionKey: 'pk',
@@ -141,7 +141,7 @@ describe('batchGet', () => {
     }).toThrow(`'consistent' values must be booleans (test-table2)`)
   })
 
-  it('fails on consistent setting for unreferenced table', () => {
+  test('fails on consistent setting for unreferenced table', () => {
     expect(() => {
       TestTable.batchGetParams(
         [TestEntity.getBatch({ email: 'test', sort: 'testsk' })],
@@ -151,7 +151,7 @@ describe('batchGet', () => {
     }).toThrow(`There are no items for the table or table alias: test-table2`)
   })
 
-  // it('add consistent flag', () => {
+  // test('add consistent flag', () => {
   //   let result = TestTable.batchGet(
   //     TestEntity.getBatch({ pk: 'test', sk: 'testsk'}),
   //     { consistent: true, execute: false,  attributes: [{ 'TestEntity': ['pk','sk'] }] }

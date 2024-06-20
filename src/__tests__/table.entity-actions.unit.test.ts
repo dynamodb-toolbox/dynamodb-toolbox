@@ -22,29 +22,29 @@ const TestEntity = new Entity({
 } as const)
 
 describe('table.get', () => {
-  it('gets an entity from the table', async () => {
+  test('gets an entity from the table', async () => {
     const result = await TestTable.get('TestEntity', { email: 'val1', sort: 'val2' })
     expect(result).toEqual({ TableName: 'test-table', Key: { pk: 'val1', sk: 'val2' } })
   })
 
-  it('fails on invalid entity when performing a get', () => {
+  test('fails on invalid entity when performing a get', () => {
     expect(TestTable.get('TestEntityX')).rejects.toThrow(`'TestEntityX' is not a valid Entity`)
   })
 })
 
 describe('table.delete', () => {
-  it('deletes an entity from the table', async () => {
+  test('deletes an entity from the table', async () => {
     const result = await TestTable.delete('TestEntity', { email: 'val1', sort: 'val2' })
     expect(result).toEqual({ TableName: 'test-table', Key: { pk: 'val1', sk: 'val2' } })
   })
 
-  it('fails on invalid entity when performing a delete', () => {
+  test('fails on invalid entity when performing a delete', () => {
     expect(TestTable.delete('TestEntityX')).rejects.toThrow(`'TestEntityX' is not a valid Entity`)
   })
 })
 
 describe('table.update', () => {
-  it('updates an entity from the table', async () => {
+  test('updates an entity from the table', async () => {
     const result = await TestTable.update('TestEntity', {
       email: 'val1',
       sort: 'val2',
@@ -57,13 +57,13 @@ describe('table.update', () => {
     )
   })
 
-  it('fails on invalid entity when performing an update', () => {
+  test('fails on invalid entity when performing an update', () => {
     expect(TestTable.update('TestEntityX')).rejects.toThrow(`'TestEntityX' is not a valid Entity`)
   })
 })
 
 describe('table.put', () => {
-  it('puts an entity to the table', async () => {
+  test('puts an entity to the table', async () => {
     const result = await TestTable.put('TestEntity', {
       email: 'val1',
       sort: 'val2',
@@ -75,13 +75,13 @@ describe('table.put', () => {
     expect(result.Item.test).toBe('testing')
   })
 
-  it('fails on invalid entity when performing a put', () => {
+  test('fails on invalid entity when performing a put', () => {
     expect(TestTable.put('TestEntityX')).rejects.toThrow(`'TestEntityX' is not a valid Entity`)
   })
 })
 
 describe('table.parse', () => {
-  it('parses single item', async () => {
+  test('parses single item', async () => {
     const item = await TestTable.parse(TestEntity.name, {
       pk: 'test@test.com',
       sk: 'email',
@@ -96,7 +96,7 @@ describe('table.parse', () => {
     })
   })
 
-  it('fails on invalid entity when performing a parse', () => {
+  test('fails on invalid entity when performing a parse', () => {
     // @ts-expect-error
     expect(TestTable.parse('TestEntityX')).rejects.toThrow(`'TestEntityX' is not a valid Entity`)
   })

@@ -81,7 +81,7 @@ const TestEntityHiddenTypeWithAlias = new Entity({
 })
 
 describe('parse', () => {
-  it('parses single item', () => {
+  test('parses single item', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'email',
@@ -96,7 +96,7 @@ describe('parse', () => {
     })
   })
 
-  it('parses single item and includes certain fields', () => {
+  test('parses single item and includes certain fields', () => {
     const item = TestEntity.parse(
       { pk: 'test@test.com', sk: 'email', test_string: 'test', _et: 'TestEntity' },
       ['email', 'sk']
@@ -107,7 +107,7 @@ describe('parse', () => {
     })
   })
 
-  it('parses single item and hide the entity type', () => {
+  test('parses single item and hide the entity type', () => {
     const item = TestEntityHiddenType.parse({
       pk: 'test@test.com',
       sk: 'email',
@@ -120,7 +120,7 @@ describe('parse', () => {
     })
   })
 
-  it('parses single item with alias and hide the entity type', () => {
+  test('parses single item with alias and hide the entity type', () => {
     const item = TestEntityHiddenTypeWithAlias.parse({
       pk: 'test@test.com',
       sk: 'email',
@@ -133,7 +133,7 @@ describe('parse', () => {
     })
   })
 
-  it('parses multiple items', () => {
+  test('parses multiple items', () => {
     const items = TestEntity.parse([
       { pk: 'test@test.com', sk: 'email', test_string: 'test' },
       { pk: 'test2@test.com', sk: 'email2', test_string: 'test2' }
@@ -152,7 +152,7 @@ describe('parse', () => {
     ])
   })
 
-  it('parses multiple items and incudes certain field', () => {
+  test('parses multiple items and incudes certain field', () => {
     const items = TestEntity.parse(
       [
         { pk: 'test@test.com', sk: 'email', test_string: 'test' },
@@ -172,7 +172,7 @@ describe('parse', () => {
     ])
   })
 
-  it('parses multiple items and hide the entity type', () => {
+  test('parses multiple items and hide the entity type', () => {
     const items = TestEntityHiddenType.parse([
       { pk: 'test@test.com', sk: 'email', _et: 'TestEntity' },
       { pk: 'test2@test.com', sk: 'email2', _et: 'TestEntity' }
@@ -190,7 +190,7 @@ describe('parse', () => {
     ])
   })
 
-  it('parses composite field', () => {
+  test('parses composite field', () => {
     const item = SimpleEntity.parse({
       pk: 'test@test.com',
       sk: 'active#email',
@@ -203,7 +203,7 @@ describe('parse', () => {
     })
   })
 
-  it('parses wrapped numbers', () => {
+  test('parses wrapped numbers', () => {
     const wrap = (value: number) =>
       unmarshall({ valueToUnmarshall: { N: value.toString() } }, { wrapNumbers: true })
         .valueToUnmarshall.value
@@ -222,7 +222,7 @@ describe('parse', () => {
     })
   })
 
-  it('parses bigints', () => {
+  test('parses bigints', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'bigint',
@@ -239,7 +239,7 @@ describe('parse', () => {
     `)
   })
 
-  it('parses bigint sets', () => {
+  test('parses bigint sets', () => {
     const item = TestEntity.parse({
       pk: 'test@test.com',
       sk: 'bigint',

@@ -23,24 +23,24 @@ const TestEntity = new Entity({
   table: TestTable
 })
 
-const deleteParams = jest.spyOn(Entity.prototype, 'deleteParams')
-const putParams = jest.spyOn(Entity.prototype, 'putParams')
-const updateParams = jest.spyOn(Entity.prototype, 'updateParams')
+const deleteParams = vi.spyOn(Entity.prototype, 'deleteParams')
+const putParams = vi.spyOn(Entity.prototype, 'putParams')
+const updateParams = vi.spyOn(Entity.prototype, 'updateParams')
 
 describe('Entity transactional operations', () => {
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('deleteTransaction', () => {
-    it('throws an error when given options that are not conditions or returnValues.', async () => {
+    test('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
         // @ts-expect-error
         TestEntity.deleteTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true })
       }).toThrow(`Invalid delete transaction options: invalidOption`)
     })
 
-    it('allows to provide conditions or returnValues as options.', async () => {
+    test('allows to provide conditions or returnValues as options.', async () => {
       expect(() => {
         TestEntity.deleteTransaction(
           { pk: 'some-pk', sk: 'some-sk' },
@@ -55,7 +55,7 @@ describe('Entity transactional operations', () => {
       }).not.toThrow()
     })
 
-    it('passes the correct parameters to deleteParams.', async () => {
+    test('passes the correct parameters to deleteParams.', async () => {
       TestEntity.deleteTransaction(
         { pk: 'some-pk', sk: 'some-sk' },
         {
@@ -82,7 +82,7 @@ describe('Entity transactional operations', () => {
       )
     })
 
-    it('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
+    test('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
       deleteParams.mockReturnValueOnce({
         TableName: TestTable.name,
         Key: {
@@ -108,7 +108,7 @@ describe('Entity transactional operations', () => {
       })
     })
 
-    it('returns the item in transaction format.', async () => {
+    test('returns the item in transaction format.', async () => {
       deleteParams.mockReturnValueOnce({
         TableName: 'test-table',
         Key: {
@@ -132,14 +132,14 @@ describe('Entity transactional operations', () => {
   })
 
   describe('putTransaction', () => {
-    it('throws an error when given options that are not conditions or returnValues.', async () => {
+    test('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
         // @ts-expect-error
         TestEntity.putTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true })
       }).toThrow(`Invalid put transaction options: invalidOption`)
     })
 
-    it('allows to provide conditions or returnValues as options.', async () => {
+    test('allows to provide conditions or returnValues as options.', async () => {
       expect(() => {
         TestEntity.putTransaction(
           { pk: 'some-pk', sk: 'some-sk' },
@@ -154,7 +154,7 @@ describe('Entity transactional operations', () => {
       }).not.toThrow()
     })
 
-    it('allows adding non mapped fields when strictSchemaCheck is false.', () => {
+    test('allows adding non mapped fields when strictSchemaCheck is false.', () => {
       expect(() =>
         TestEntity.putTransaction(
           {
@@ -169,7 +169,7 @@ describe('Entity transactional operations', () => {
       ).not.toThrow()
     })
 
-    it('omits unmapped attributes when strictSchemaCheck is false.', () => {
+    test('omits unmapped attributes when strictSchemaCheck is false.', () => {
       const {
         Put: { Item }
       } = TestEntity.putTransaction(
@@ -181,7 +181,7 @@ describe('Entity transactional operations', () => {
       expect(Item.unknown).toBeUndefined()
     })
 
-    it('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
+    test('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
       expect(() =>
         TestEntity.putTransaction(
           {
@@ -197,7 +197,7 @@ describe('Entity transactional operations', () => {
       ).toThrow(`Field 'unknown' does not have a mapping or alias`)
     })
 
-    it('passes the correct parameters to putParams.', async () => {
+    test('passes the correct parameters to putParams.', async () => {
       TestEntity.putTransaction(
         { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string' },
         {
@@ -225,7 +225,7 @@ describe('Entity transactional operations', () => {
       )
     })
 
-    it('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
+    test('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
       putParams.mockReturnValueOnce({
         TableName: TestTable.name,
         Item: {
@@ -252,7 +252,7 @@ describe('Entity transactional operations', () => {
       })
     })
 
-    it('returns the item in transaction format.', async () => {
+    test('returns the item in transaction format.', async () => {
       putParams.mockReturnValueOnce({
         TableName: 'test-table',
         Item: {
@@ -282,14 +282,14 @@ describe('Entity transactional operations', () => {
   })
 
   describe('updateTransaction', () => {
-    it('throws an error when given options that are not conditions or returnValues.', async () => {
+    test('throws an error when given options that are not conditions or returnValues.', async () => {
       expect(() => {
         // @ts-expect-error
         TestEntity.updateTransaction({ pk: 'some-pk', sk: 'some-sk' }, { invalidOption: true })
       }).toThrow(`Invalid update transaction options: invalidOption`)
     })
 
-    it('allows to provide conditions or returnValues as options.', async () => {
+    test('allows to provide conditions or returnValues as options.', async () => {
       expect(() => {
         TestEntity.updateTransaction(
           { pk: 'some-pk', sk: 'some-sk' },
@@ -304,7 +304,7 @@ describe('Entity transactional operations', () => {
       }).not.toThrow()
     })
 
-    it('allows adding non mapped fields when strictSchemaCheck is false.', () => {
+    test('allows adding non mapped fields when strictSchemaCheck is false.', () => {
       expect(() =>
         TestEntity.updateTransaction(
           {
@@ -319,7 +319,7 @@ describe('Entity transactional operations', () => {
       ).not.toThrow()
     })
 
-    it('omits unmapped attributes when strictSchemaCheck is false.', () => {
+    test('omits unmapped attributes when strictSchemaCheck is false.', () => {
       const {
         Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
       } = TestEntity.updateTransaction(
@@ -334,7 +334,7 @@ describe('Entity transactional operations', () => {
       expect(ExpressionAttributeValues).toHaveProperty(':testString')
     })
 
-    it('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
+    test('throws an error when adding non mapped fields when strictSchemaCheck is true.', () => {
       expect(() =>
         TestEntity.updateTransaction(
           {
@@ -350,7 +350,7 @@ describe('Entity transactional operations', () => {
       ).toThrow(`Field 'unknown' does not have a mapping or alias`)
     })
 
-    it('passes the correct parameters to updateParams.', async () => {
+    test('passes the correct parameters to updateParams.', async () => {
       TestEntity.updateTransaction(
         { pk: 'some-pk', sk: 'some-sk', testString: 'some-test-string' },
         {
@@ -378,7 +378,7 @@ describe('Entity transactional operations', () => {
       )
     })
 
-    it('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
+    test('transforms ReturnValues into ReturnValuesOnConditionCheckFailure if provided.', async () => {
       updateParams.mockReturnValueOnce({
         TableName: TestTable.name,
         Key: {
@@ -405,7 +405,7 @@ describe('Entity transactional operations', () => {
       })
     })
 
-    it('returns the item in transaction format.', async () => {
+    test('returns the item in transaction format.', async () => {
       updateParams.mockReturnValueOnce({
         TableName: 'test-table',
         Key: {

@@ -1,13 +1,18 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github')
-const darkCodeTheme = require('prism-react-renderer/themes/dracula')
+const lightCodeTheme = require('prism-react-renderer/themes/vsLight')
+const darkCodeTheme = require('prism-react-renderer/themes/vsDark')
+
+// @ts-expect-error bad typing
+lightCodeTheme.plain.backgroundColor = '#f8f8f8'
+// @ts-expect-error bad typing
+darkCodeTheme.plain.backgroundColor = '#242424'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'DynamoDB Toolbox',
-  tagline: 'Single Table Designs have never been this easy!',
+  tagline: 'DynamoDB Toolbox made easy!',
   url: 'https://www.dynamodbtoolbox.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -28,16 +33,22 @@ const config = {
     locales: ['en']
   },
 
+  markdown: {
+    mermaid: true
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+
   presets: [
     [
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve('./sidebars.js')
           // routeBasePath: '/', // Serve the docs at the site's root
           // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/jeremydaly/dynamodb-toolbox/tree/main/docs'
+          // editUrl:
+          //   'https://github.com/jeremydaly/dynamodb-toolbox/tree/main/docs'
         },
         blog: false,
         theme: {
@@ -57,77 +68,22 @@ const config = {
     ({
       image: 'img/dynamodb-toolbox-card.png',
       navbar: {
-        // title: 'DynamoDB Toolbox',
+        hideOnScroll: true,
+        style: 'dark',
+        title: 'DynamoDB Toolbox',
         logo: {
           alt: 'DynamoDB Toolbox',
-          src: 'img/dynamodb-toolbox-logo.svg',
-          srcDark: 'img/dynamodb-toolbox-logo-dark.svg'
+          src: 'img/dynamodb-toolbox-icon.svg'
         },
         items: [
           {
-            type: 'doc',
-            docId: 'introduction/what-is-dynamodb-toolbox',
-            position: 'right',
-            label: 'Documentation'
-          },
-          // { to: '/blog', label: 'Blog', position: 'left' },
-
-          {
-            href: 'https://github.com/jeremydaly/dynamodb-toolbox',
+            href:
+              'https://github.com/jeremydaly/dynamodb-toolbox',
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository'
           }
         ]
-      },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Documentation',
-            items: [
-              {
-                label: 'What is DynamoDB Toolbox?',
-                to: '/docs'
-              },
-              {
-                label: 'Quick Start',
-                to: '/docs/introduction/quick-start'
-              },
-              {
-                label: 'Contributing',
-                to: '/docs/contributing/'
-              }
-            ]
-          },
-          {
-            title: 'Community',
-            items: [
-              {
-                label: 'GitHub Discussions',
-                href: 'https://github.com/jeremydaly/dynamodb-toolbox/discussions'
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/jeremy_daly'
-              }
-            ]
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'GitHub',
-                href: 'https://github.com/jeremydaly/dynamodb-toolbox'
-              },
-              {
-                label: 'Issues',
-                href: 'https://github.com/jeremydaly/dynamodb-toolbox/issues'
-              }
-            ]
-          }
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} - Jeremy Daly`
       },
       prism: {
         theme: lightCodeTheme,
@@ -138,6 +94,9 @@ const config = {
           hideable: true,
           autoCollapseCategories: false
         }
+      },
+      mermaid: {
+        theme: { light: 'default', dark: 'dark' }
       },
       algolia: {
         // The application ID provided by Algolia

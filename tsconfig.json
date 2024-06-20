@@ -5,6 +5,7 @@
     "baseUrl": "src",
     "target": "es2019",
     "rootDir": "src",
+    "outDir": "dist/types",
     "declaration": true,
     "inlineSourceMap": false,
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
@@ -16,10 +17,17 @@
     "listFiles": false /* Print names of files part of the compilation. */,
     "pretty": true /* Stylize errors and messages using color and context. */,
     "lib": ["esnext"],
-    "types": ["node", "jest"],
+    "types": ["node", "vitest/globals"],
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "v1": ["v1"],
+      "v1/*": ["v1/*"]
+    }
   },
   "compileOnSave": false,
-  "exclude": ["node_modules", "dist", "**/*.test-d.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test-d.ts", "docs", "vitest.config.ts"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
 }

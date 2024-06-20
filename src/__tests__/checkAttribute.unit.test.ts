@@ -29,7 +29,7 @@ DefaultTable.addEntity(
 )
 
 describe('checkAttribute', () => {
-  it('checks attribute and returns table attribute', () => {
+  test('checks attribute and returns table attribute', () => {
     expect(checkAttribute('number', DefaultTable.User.schema.attributes)).toBe('number')
     expect(checkAttribute('set', DefaultTable.User.schema.attributes)).toBe('set')
     expect(checkAttribute('set_alias', DefaultTable.User.schema.attributes)).toBe('set')
@@ -60,7 +60,7 @@ describe('checkAttribute', () => {
     expect(checkAttribute('list[1]', DefaultTable.User.schema.attributes)).toBe('list[1]')
   })
 
-  it('returns error on invalid attribute', () => {
+  test('returns error on invalid attribute', () => {
     expect(() => {
       checkAttribute('missing-attribute', DefaultTable.User.schema.attributes)
     }).toThrow(`'missing-attribute' is not a valid attribute within the given entity/table.`)

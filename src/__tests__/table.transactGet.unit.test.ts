@@ -22,20 +22,20 @@ const TestEntity = new Entity({
 } as const)
 
 describe('transactGet', () => {
-  it('fails when transactGet is empty', () => {
+  test('fails when transactGet is empty', () => {
     expect(() => {
       // @ts-expect-error
       TestTable.transactGetParams()
     }).toThrow(`No items supplied`)
   })
 
-  it('fails when transactGet items is an empty array', () => {
+  test('fails when transactGet items is an empty array', () => {
     expect(() => {
       TestTable.transactGetParams([])
     }).toThrow(`No items supplied`)
   })
 
-  it('transactGets data from a single table', () => {
+  test('transactGets data from a single table', () => {
     const result = TestTable.transactGetParams([
       TestEntity.getTransaction({ email: 'test', sort: 'testsk' })
     ])
@@ -48,7 +48,7 @@ describe('transactGet', () => {
     })
   })
 
-  it('fails when extra options', () => {
+  test('fails when extra options', () => {
     expect(() => {
       TestTable.transactGetParams(
         [TestEntity.getTransaction({ email: 'test', sort: 'testsk' })],
@@ -58,7 +58,7 @@ describe('transactGet', () => {
     }).toThrow(`Invalid transactGet options: invalid`)
   })
 
-  it('fails when providing an invalid capacity setting', () => {
+  test('fails when providing an invalid capacity setting', () => {
     expect(() => {
       TestTable.transactGetParams([TestEntity.getTransaction({ email: 'test', sort: 'testsk' })], {
         // @ts-expect-error
@@ -67,7 +67,7 @@ describe('transactGet', () => {
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
-  it('fails when providing an invalid getTransaction item', () => {
+  test('fails when providing an invalid getTransaction item', () => {
     expect(() => {
       TestTable.transactGetParams(
         // @ts-expect-error

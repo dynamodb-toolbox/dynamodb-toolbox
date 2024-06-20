@@ -7,18 +7,27 @@ import {
   PutOptions,
   DeleteOptions,
   UpdateOptions,
-  ConditionsOrFilters, AttributeMap,
+  ConditionsOrFilters,
+  AttributeMap
 } from 'classes/Entity/types.js'
 
 import { Table, Entity } from '../index.js'
-import { ReturnConsumedCapacity, ReturnItemCollectionMetrics, Select } from '@aws-sdk/client-dynamodb'
+import {
+  ReturnConsumedCapacity,
+  ReturnItemCollectionMetrics,
+  Select
+} from '@aws-sdk/client-dynamodb'
 import {
   DeleteCommandInput,
   DeleteCommandOutput,
   GetCommandInput,
   GetCommandOutput,
-  PutCommandInput, PutCommandOutput, QueryCommandInput, ScanCommandInput,
-  UpdateCommandInput, UpdateCommandOutput,
+  PutCommandInput,
+  PutCommandOutput,
+  QueryCommandInput,
+  ScanCommandInput,
+  UpdateCommandInput,
+  UpdateCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 import { DocumentClient } from './bootstrap.test.js'
 
@@ -76,7 +85,10 @@ type ExpectedWriteOpts<
   execute: boolean
   parse: boolean
   conditions: ConditionsOrFilters<Attributes>
-  metrics: ReturnItemCollectionMetrics | `${ReturnItemCollectionMetrics}` | Lowercase<ReturnItemCollectionMetrics>
+  metrics:
+    | ReturnItemCollectionMetrics
+    | `${ReturnItemCollectionMetrics}`
+    | Lowercase<ReturnItemCollectionMetrics>
   include: string[]
   returnValues: ReturnValues
   strictSchemaCheck: boolean
@@ -94,7 +106,7 @@ describe('Entity', () => {
   describe('Entity definition', () => {
     const entityName = 'TestEntity'
 
-    it('should throw if pk is missing', () => {
+    test('should throw if pk is missing', () => {
       expect(() => {
         // Hard to raise error at the moment
         // It would be better to define PK/SK at predictable path
@@ -106,7 +118,7 @@ describe('Entity', () => {
       }).toThrow()
     })
 
-    it('should throw if entity pk has map property', () => {
+    test('should throw if entity pk has map property', () => {
       expect(() => {
         // It would be better to define PK at predictable definition path
         // => To raise error on map property instead of all entity def
@@ -119,7 +131,7 @@ describe('Entity', () => {
       }).toThrow()
     })
 
-    it('should throw if sk has map property', () => {
+    test('should throw if sk has map property', () => {
       expect(() => {
         // It would be better to define SK at predictable definition path
         // => To raise error on map property instead of all entity def
@@ -135,7 +147,7 @@ describe('Entity', () => {
       }).toThrow()
     })
 
-    it('should throw if attribute name is same as alias', () => {
+    test('should throw if attribute name is same as alias', () => {
       const ck = {
         pk: { partitionKey: true },
         sk: { sortKey: true }
@@ -184,22 +196,28 @@ describe('Entity', () => {
       }).toThrow()
 
       // @ts-NOT-expect-error
-      expect(()=>new Entity({
-        name: entityName,
-        typeAlias: 'en',
-        attributes: { ...ck, en: 'string' },
-        table
-      } as const)).toThrow()
+      expect(
+        () =>
+          new Entity({
+            name: entityName,
+            typeAlias: 'en',
+            attributes: { ...ck, en: 'string' },
+            table
+          } as const)
+      ).toThrow()
 
       // 🔨 TOIMPROVE: Not sure this is expected behavior: overriding typeAlias doesn't throw
       // 🔨 TOIMPROVE: we could raise error here by preventing Aliases from attributes keys but it wreaks havoc with Readonly / Writable
       // @ts-NOT-expect-error
-      expect(()=>new Entity({
-        name: entityName,
-        typeAlias: 'en',
-        attributes: { ...ck, en: 'string' },
-        table
-      } as const)).toThrow()
+      expect(
+        () =>
+          new Entity({
+            name: entityName,
+            typeAlias: 'en',
+            attributes: { ...ck, en: 'string' },
+            table
+          } as const)
+      ).toThrow()
     })
   })
 
@@ -273,7 +291,7 @@ describe('Entity', () => {
     }
 
     describe('get method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         ent.getParams({ pk })
         const getPromise = () => ent.get({ pk })
         type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
@@ -295,7 +313,7 @@ describe('Entity', () => {
         testItem
       })
 
-      it('no auto-execution', () => {
+      test('no auto-execution', () => {
         const item = { pk }
         const getPromise = () => entNoExecute.get(item)
         type GetParams = Awaited<ReturnType<typeof getPromise>>
@@ -304,7 +322,7 @@ describe('Entity', () => {
         testGetParams
       })
 
-      it('force execution', () => {
+      test('force execution', () => {
         const item = { pk }
         const getPromise = () => entNoExecute.get(item, { execute: true })
         type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
@@ -313,7 +331,7 @@ describe('Entity', () => {
         testGetItem
       })
 
-      it('force no execution', () => {
+      test('force no execution', () => {
         const item = { pk }
         const getPromise = () => ent.get(item, { execute: false })
         type GetParams = Awaited<ReturnType<typeof getPromise>>
@@ -322,7 +340,7 @@ describe('Entity', () => {
         testGetParams
       })
 
-      it('no auto-parsing', () => {
+      test('no auto-parsing', () => {
         const item = { pk }
         const getPromise = () => entNoParse.get(item)
         type GetRawResponse = Awaited<ReturnType<typeof getPromise>>
@@ -331,7 +349,7 @@ describe('Entity', () => {
         testGetRawResponse
       })
 
-      it('force parsing', () => {
+      test('force parsing', () => {
         const item = { pk }
         const getPromise = () => entNoParse.get(item, { parse: true })
         type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
@@ -340,7 +358,7 @@ describe('Entity', () => {
         testGetItem
       })
 
-      it('force no parsing', () => {
+      test('force no parsing', () => {
         const item = { pk }
         const getPromise = () => ent.get(item, { parse: false })
         type GetRawResponse = Awaited<ReturnType<typeof getPromise>>
@@ -349,7 +367,7 @@ describe('Entity', () => {
         testGetRawResponse
       })
 
-      it('contains no timestamp', () => {
+      test('contains no timestamp', () => {
         const item = { pk }
         const getPromise = () => entNoTimestamps.get(item)
         type GetResponse = Awaited<ReturnType<typeof getPromise>>['Item']
@@ -361,7 +379,7 @@ describe('Entity', () => {
         testGetResponse
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error
         expect(() => ent.getParams({})).toThrow()
         // @ts-expect-error
@@ -370,7 +388,7 @@ describe('Entity', () => {
         expect(() => ent.getParams({ pkMap2 })).toThrow()
       })
 
-      it('with filters', () => {
+      test('with filters', () => {
         ent.getParams({ pk }, { attributes: ['pk'] })
         const filteredGetPromise = () => ent.get({ pk }, { attributes: ['pk'] })
         type FilteredGetItem = Awaited<ReturnType<typeof filteredGetPromise>>['Item']
@@ -384,7 +402,7 @@ describe('Entity', () => {
     })
 
     describe('delete method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const deletePromise1 = () => ent.delete({ pk }, { returnValues: 'ALL_OLD' })
         type DeleteItem1 = Awaited<ReturnType<typeof deletePromise1>>['Attributes']
         type TestDeleteItem1 = A.Equals<DeleteItem1, ExpectedItem | undefined>
@@ -409,7 +427,7 @@ describe('Entity', () => {
         testDeleteItemOptions
       })
 
-      it('no auto-execution', () => {
+      test('no auto-execution', () => {
         const item = { pk }
         const deletePromise = () => entNoExecute.delete(item)
         type DeleteParams = Awaited<ReturnType<typeof deletePromise>>
@@ -418,7 +436,7 @@ describe('Entity', () => {
         testDeleteParams
       })
 
-      it('force execution', () => {
+      test('force execution', () => {
         const item = { pk }
         const deletePromise = () =>
           entNoExecute.delete(item, { execute: true, returnValues: 'ALL_OLD' })
@@ -428,7 +446,7 @@ describe('Entity', () => {
         testDeleteItem
       })
 
-      it('force no execution', () => {
+      test('force no execution', () => {
         const item = { pk }
         const deletePromise = () => ent.delete(item, { execute: false })
         type DeleteParams = Awaited<ReturnType<typeof deletePromise>>
@@ -437,19 +455,16 @@ describe('Entity', () => {
         testDeleteParams
       })
 
-      it('no auto-parsing', () => {
+      test('no auto-parsing', () => {
         const item = { pk }
         const deletePromise = () => entNoParse.delete(item)
         type DeleteRawResponse = Awaited<ReturnType<typeof deletePromise>>
-        type TestDeleteRawResponse = A.Equals<
-          DeleteRawResponse,
-          DeleteCommandOutput
-        >
+        type TestDeleteRawResponse = A.Equals<DeleteRawResponse, DeleteCommandOutput>
         const testDeleteRawResponse: TestDeleteRawResponse = 1
         testDeleteRawResponse
       })
 
-      it('force parsing', () => {
+      test('force parsing', () => {
         const item = { pk }
         const deletePromise = () =>
           entNoParse.delete(item, { parse: true, returnValues: 'ALL_OLD' })
@@ -459,19 +474,16 @@ describe('Entity', () => {
         testDeleteItem
       })
 
-      it('force no parsing', () => {
+      test('force no parsing', () => {
         const item = { pk }
         const deletePromise = () => ent.delete(item, { parse: false })
         type DeleteRawResponse = Awaited<ReturnType<typeof deletePromise>>
-        type TestDeleteRawResponse = A.Equals<
-          DeleteRawResponse,
-          DeleteCommandOutput
-        >
+        type TestDeleteRawResponse = A.Equals<DeleteRawResponse, DeleteCommandOutput>
         const testDeleteRawResponse: TestDeleteRawResponse = 1
         testDeleteRawResponse
       })
 
-      it('contains no timestamp', () => {
+      test('contains no timestamp', () => {
         const item = { pk }
         const deletePromise = () => entNoTimestamps.delete(item, { returnValues: 'ALL_OLD' })
         type DeleteResponse = Awaited<ReturnType<typeof deletePromise>>['Attributes']
@@ -483,7 +495,7 @@ describe('Entity', () => {
         testDeleteResponse
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error
         expect(() => ent.deleteParams({})).toThrow()
         // @ts-expect-error
@@ -492,7 +504,7 @@ describe('Entity', () => {
         expect(() => ent.deleteParams({ pkMap2 })).toThrow()
       })
 
-      it('with conditions', () => {
+      test('with conditions', () => {
         ent.deleteParams({ pk }, { conditions: { attr: 'pk', exists: true } })
         ;() => ent.delete({ pk }, { conditions: { attr: 'pk', exists: true } })
 
@@ -509,7 +521,7 @@ describe('Entity', () => {
     })
 
     describe('put method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const item1 = { pk, hidden: 'test' }
         ent.putParams(item1, { returnValues: 'ALL_OLD' })
         const putPromise1 = () => ent.put({ pk }, { returnValues: 'ALL_OLD' })
@@ -535,7 +547,7 @@ describe('Entity', () => {
         testPutItemOptions
       })
 
-      it('no auto-execution', () => {
+      test('no auto-execution', () => {
         const item = { pk }
         const putPromise = () => entNoExecute.put(item)
         type PutParams = Awaited<ReturnType<typeof putPromise>>
@@ -544,7 +556,7 @@ describe('Entity', () => {
         testPutParams
       })
 
-      it('force execution', () => {
+      test('force execution', () => {
         const item = { pk }
         const putPromise = () => entNoExecute.put(item, { execute: true, returnValues: 'ALL_OLD' })
         type PutItem = Awaited<ReturnType<typeof putPromise>>['Attributes']
@@ -553,7 +565,7 @@ describe('Entity', () => {
         testPutItem
       })
 
-      it('force no execution', () => {
+      test('force no execution', () => {
         const item = { pk }
         const putPromise = () => ent.put(item, { execute: false, returnValues: 'ALL_OLD' })
         type PutParams = Awaited<ReturnType<typeof putPromise>>
@@ -562,7 +574,7 @@ describe('Entity', () => {
         testPutParams
       })
 
-      it('no auto-parsing', () => {
+      test('no auto-parsing', () => {
         const item = { pk }
         const putPromise = () => entNoParse.put(item)
         type PutRawResponse = Awaited<ReturnType<typeof putPromise>>
@@ -571,7 +583,7 @@ describe('Entity', () => {
         testPutRawResponse
       })
 
-      it('force parsing', () => {
+      test('force parsing', () => {
         const item = { pk }
         const putPromise = () => entNoParse.put(item, { parse: true, returnValues: 'ALL_OLD' })
         type PutItem = Awaited<ReturnType<typeof putPromise>>['Attributes']
@@ -580,7 +592,7 @@ describe('Entity', () => {
         testPutItem
       })
 
-      it('force no parsing', () => {
+      test('force no parsing', () => {
         const item = { pk }
         const putPromise = () => ent.put(item, { parse: false })
         type PutRawResponse = Awaited<ReturnType<typeof putPromise>>
@@ -589,7 +601,7 @@ describe('Entity', () => {
         testPutRawResponse
       })
 
-      it('contains no timestamp', () => {
+      test('contains no timestamp', () => {
         const item = { pk }
         const putPromise = () => entNoTimestamps.put(item, { returnValues: 'ALL_OLD' })
         type PutResponse = Awaited<ReturnType<typeof putPromise>>['Attributes']
@@ -601,7 +613,7 @@ describe('Entity', () => {
         testPutResponse
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error
         expect(() => ent.putParams({})).toThrow()
         // @ts-expect-error
@@ -610,7 +622,7 @@ describe('Entity', () => {
         expect(() => ent.putParams({ pkMap2 })).toThrow()
       })
 
-      it('with conditions', () => {
+      test('with conditions', () => {
         ent.putParams({ pk }, { conditions: { attr: 'pk', exists: true } })
         ;() => ent.put({ pk }, { conditions: { attr: 'pk', exists: true } })
 
@@ -624,7 +636,7 @@ describe('Entity', () => {
     })
 
     describe('update method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const item1 = { pk, hidden: 'test' }
         ent.updateParams(item1)
         const updatePromise1 = () => ent.update(item1, { returnValues: 'ALL_OLD' })
@@ -653,7 +665,7 @@ describe('Entity', () => {
         testUpdateItemOptions
       })
 
-      it('no auto-execution', () => {
+      test('no auto-execution', () => {
         const item = { pk }
         const updatePromise = () => entNoExecute.update(item)
         type UpdateParams = Awaited<ReturnType<typeof updatePromise>>
@@ -662,7 +674,7 @@ describe('Entity', () => {
         testUpdateParams
       })
 
-      it('force execution', () => {
+      test('force execution', () => {
         const item = { pk }
         const updatePromise = () =>
           entNoExecute.update(item, { execute: true, returnValues: 'ALL_NEW' })
@@ -672,7 +684,7 @@ describe('Entity', () => {
         testUpdateItem
       })
 
-      it('force no execution', () => {
+      test('force no execution', () => {
         const item = { pk }
         const updatePromise = () => ent.update(item, { execute: false })
         type UpdateParams = Awaited<ReturnType<typeof updatePromise>>
@@ -681,19 +693,16 @@ describe('Entity', () => {
         testUpdateParams
       })
 
-      it('no auto-parsing', () => {
+      test('no auto-parsing', () => {
         const item = { pk }
         const updatePromise = () => entNoParse.update(item)
         type UpdateRawResponse = Awaited<ReturnType<typeof updatePromise>>
-        type TestUpdateRawResponse = A.Equals<
-          UpdateRawResponse,
-          UpdateCommandOutput
-        >
+        type TestUpdateRawResponse = A.Equals<UpdateRawResponse, UpdateCommandOutput>
         const testUpdateRawResponse: TestUpdateRawResponse = 1
         testUpdateRawResponse
       })
 
-      it('force parsing', () => {
+      test('force parsing', () => {
         const item = { pk }
         const updatePromise = () =>
           entNoParse.update(item, { parse: true, returnValues: 'ALL_NEW' })
@@ -703,19 +712,16 @@ describe('Entity', () => {
         testUpdateItem
       })
 
-      it('force no parsing', () => {
+      test('force no parsing', () => {
         const item = { pk }
         const updatePromise = () => ent.update(item, { parse: false })
         type UpdateRawResponse = Awaited<ReturnType<typeof updatePromise>>
-        type TestUpdateRawResponse = A.Equals<
-          UpdateRawResponse,
-          UpdateCommandOutput
-        >
+        type TestUpdateRawResponse = A.Equals<UpdateRawResponse, UpdateCommandOutput>
         const testUpdateRawResponse: TestUpdateRawResponse = 1
         testUpdateRawResponse
       })
 
-      it('contains no timestamp', () => {
+      test('contains no timestamp', () => {
         const item = { pk }
         const updatePromise = () => entNoTimestamps.update(item, { returnValues: 'ALL_NEW' })
         type UpdateItem = Awaited<ReturnType<typeof updatePromise>>['Attributes']
@@ -727,7 +733,7 @@ describe('Entity', () => {
         testUpdateItem
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error
         expect(() => ent.updateParams({})).toThrow()
         // @ts-expect-error
@@ -736,7 +742,7 @@ describe('Entity', () => {
         expect(() => ent.updateParams({ pkMap2 })).toThrow()
       })
 
-      it('with conditions', () => {
+      test('with conditions', () => {
         ent.updateParams({ pk }, { conditions: { attr: 'pk', exists: true } })
         ;() => ent.update({ pk }, { conditions: { attr: 'pk', exists: true } })
 
@@ -750,7 +756,7 @@ describe('Entity', () => {
     })
 
     describe('query method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const queryPromise = () => ent.query('pk')
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
         type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
@@ -773,7 +779,7 @@ describe('Entity', () => {
         testQueryItemsOptions
       })
 
-      it('force execution', () => {
+      test('force execution', () => {
         const queryPromise = () => ent.query('pk', { execute: true })
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
         type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
@@ -788,7 +794,7 @@ describe('Entity', () => {
         testQueryNextItems
       })
 
-      it('force no execution', () => {
+      test('force no execution', () => {
         const queryPromise = () => ent.query('pk', { execute: false, parse: true })
         type QueryInput = Awaited<ReturnType<typeof queryPromise>>
         type TestQueryInput = A.Equals<QueryInput, QueryCommandInput>
@@ -796,7 +802,7 @@ describe('Entity', () => {
         testQueryInput
       })
 
-      it('force parsing', () => {
+      test('force parsing', () => {
         const queryPromise = () => ent.query('pk', { parse: true })
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
         type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
@@ -811,7 +817,7 @@ describe('Entity', () => {
         testQueryNextItems
       })
 
-      it('force no parsing', () => {
+      test('force no parsing', () => {
         const queryPromise = () => ent.query('pk', { parse: false })
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
         type TestQueryItems = A.Equals<QueryItems, AttributeMap[] | undefined>
@@ -821,15 +827,12 @@ describe('Entity', () => {
         type QueryNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof queryPromise>>['next'], undefined>>
         >['Items']
-        type TestQueryNextItems = A.Equals<
-          QueryNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestQueryNextItems = A.Equals<QueryNextItems, AttributeMap[] | undefined>
         const testQueryNextItems: TestQueryNextItems = 1
         testQueryNextItems
       })
 
-      it('contains no timestamp', () => {
+      test('contains no timestamp', () => {
         const queryPromise = () => entNoTimestamps.query('pk')
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
         type TestQueryItems = A.Equals<
@@ -842,7 +845,7 @@ describe('Entity', () => {
     })
 
     describe('scan method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const scanPromise = () => ent.scan()
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
         // TODO: Improve this by parsing table attributes ?
@@ -853,15 +856,12 @@ describe('Entity', () => {
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
-          ScanNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestScanNextItems = A.Equals<ScanNextItems, AttributeMap[] | undefined>
         const testScanNextItems: TestScanNextItems = 1
         testScanNextItems
       })
 
-      it('force execution', () => {
+      test('force execution', () => {
         const scanPromise = () => ent.scan({ execute: true })
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
         type TestScanItems = A.Equals<ScanItems, AttributeMap[] | undefined>
@@ -871,15 +871,12 @@ describe('Entity', () => {
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
-          ScanNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestScanNextItems = A.Equals<ScanNextItems, AttributeMap[] | undefined>
         const testScanNextItems: TestScanNextItems = 1
         testScanNextItems
       })
 
-      it('force no execution', () => {
+      test('force no execution', () => {
         const scanPromise = () => ent.scan({ execute: false, parse: true })
         type ScanInput = Awaited<ReturnType<typeof scanPromise>>
         type TestScanInput = A.Equals<ScanInput, ScanCommandInput>
@@ -887,7 +884,7 @@ describe('Entity', () => {
         testScanInput
       })
 
-      it('force parsing', () => {
+      test('force parsing', () => {
         const scanPromise = () => ent.scan({ parse: true })
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
         // TODO: Improve this by parsing table attributes ?
@@ -898,15 +895,12 @@ describe('Entity', () => {
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
-          ScanNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestScanNextItems = A.Equals<ScanNextItems, AttributeMap[] | undefined>
         const testScanNextItems: TestScanNextItems = 1
         testScanNextItems
       })
 
-      it('force no parsing', () => {
+      test('force no parsing', () => {
         const scanPromise = () => ent.scan({ parse: false })
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
         type TestScanItems = A.Equals<ScanItems, AttributeMap[] | undefined>
@@ -916,10 +910,7 @@ describe('Entity', () => {
         type ScanNextItems = Awaited<
           ReturnType<Exclude<Awaited<ReturnType<typeof scanPromise>>['next'], undefined>>
         >['Items']
-        type TestScanNextItems = A.Equals<
-          ScanNextItems,
-          AttributeMap[] | undefined
-        >
+        type TestScanNextItems = A.Equals<ScanNextItems, AttributeMap[] | undefined>
         const testScanNextItems: TestScanNextItems = 1
         testScanNextItems
       })
@@ -1008,7 +999,7 @@ describe('Entity', () => {
     }
 
     describe('get method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const ck1 = ck
         ent.getParams(ck1)
         const getPromise1 = () => ent.get(ck1)
@@ -1052,7 +1043,7 @@ describe('Entity', () => {
         testItem
       })
 
-      it('filtered attributes', () => {
+      test('filtered attributes', () => {
         ent.getParams(ck, {
           attributes: ['pkMap1', 'skMap1', 'reqAttr', 'optAttr']
         })
@@ -1074,7 +1065,7 @@ describe('Entity', () => {
         ).toThrow()
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error: Missing sort key
         expect(() => ent.getParams({ pk })).toThrow()
 
@@ -1088,7 +1079,7 @@ describe('Entity', () => {
         expect(() => ent.getParams({ pk, skMap1 })).toThrow()
       })
 
-      it('throws when a value has incorrect type', () => {
+      test('throws when a value has incorrect type', () => {
         // 🔨 TOIMPROVE: Not sure this should not throw
         // @ts-expect-error
 
@@ -1102,7 +1093,7 @@ describe('Entity', () => {
     })
 
     describe('delete method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const ck1 = ck
         ent.deleteParams(ck1)
         const deletePromise1 = () => ent.delete(ck1)
@@ -1153,7 +1144,7 @@ describe('Entity', () => {
         testDeleteItemOptions
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error: Missing sort key
         expect(() => ent.deleteParams({ pk })).toThrow()
 
@@ -1171,7 +1162,7 @@ describe('Entity', () => {
         ).toThrow()
       })
 
-      it('throws when a value has incorrect type', () => {
+      test('throws when a value has incorrect type', () => {
         // 🔨 TOIMPROVE: Not sure this should not throw
         // @ts-expect-error
         ent.deleteParams({ pk: ['bad', 'type'], sk })
@@ -1181,7 +1172,7 @@ describe('Entity', () => {
         ent.deleteParams({ pk: { bad: 'type' }, sk })
       })
 
-      it('with conditions', () => {
+      test('with conditions', () => {
         ent.deleteParams(ck, { conditions: { attr: 'pk', exists: true } })
         ;() => ent.delete(ck, { conditions: { attr: 'pk', exists: true } })
 
@@ -1201,7 +1192,7 @@ describe('Entity', () => {
     })
 
     describe('put method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const item1 = { ...ck, ...existAttrs, map1, map3 }
         ent.putParams(item1)
         const putPromise1 = () => ent.put(item1)
@@ -1259,7 +1250,7 @@ describe('Entity', () => {
         testPutItemOptions
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         expect(() =>
           // @ts-expect-error: Missing sort key
           ent.putParams({ pk, ...existAttrs, map1, map3 })
@@ -1281,7 +1272,7 @@ describe('Entity', () => {
         ).toThrow()
       })
 
-      it('throws when required attributes miss', () => {
+      test('throws when required attributes miss', () => {
         // @ts-expect-error
         expect(() => ent.putParams({ ck, map1, map3 })).toThrow()
 
@@ -1292,7 +1283,7 @@ describe('Entity', () => {
         expect(() => ent.putParams({ ck, ...existAttrs, map3 })).toThrow()
       })
 
-      it('throws when a value has incorrect type', () => {
+      test('throws when a value has incorrect type', () => {
         // 🔨 TOIMPROVE: Not sure this should not throw
         // @ts-expect-error
         ent.putParams({ pk: ['bad', 'type'], sk, ...existAttrs, ...maps })
@@ -1306,7 +1297,7 @@ describe('Entity', () => {
         ent.putParams({ ...ck, alwAttr, reqAttr: ['bad', 'type'], ...maps })
       })
 
-      it('with conditions', () => {
+      test('with conditions', () => {
         ent.putParams(
           { ...ck, ...existAttrs, map1, map3 },
           { conditions: { attr: 'pk', exists: true } }
@@ -1336,7 +1327,7 @@ describe('Entity', () => {
     describe('update method', () => {
       const testedParams = { ...ck, alwAttr, map1, map3 }
 
-      it('nominal case', () => {
+      test('nominal case', () => {
         const item1 = { ...testedParams, ...maps }
         ent.updateParams(item1)
         const updatePromise1 = () => ent.update(item1)
@@ -1405,7 +1396,7 @@ describe('Entity', () => {
         testUpdateItemOptions
       })
 
-      it('attribute deletion nominal case', () => {
+      test('attribute deletion nominal case', () => {
         ent.updateParams({ ...testedParams, ...maps, optAttr: null })
         ent.updateParams({
           ...testedParams,
@@ -1414,7 +1405,7 @@ describe('Entity', () => {
         })
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error: Missing partition key
         expect(() => ent.updateParams({ pk, alwAttr, map3 })).toThrow()
 
@@ -1432,7 +1423,7 @@ describe('Entity', () => {
         ).toThrow()
       })
 
-      it('throws when always attributes miss', () => {
+      test('throws when always attributes miss', () => {
         // @ts-expect-error
         expect(() => ent.updateParams({ ...ck, alwAttr })).toThrow()
 
@@ -1440,7 +1431,7 @@ describe('Entity', () => {
         expect(() => ent.updateParams({ ...ck, map3 })).toThrow()
       })
 
-      it('throws when a value has incorrect type', () => {
+      test('throws when a value has incorrect type', () => {
         // 🔨 TOIMPROVE: Not sure this should not throw
         // @ts-expect-error
         ent.updateParams({ ...testedParams, pk: ['bad', 'type'] })
@@ -1454,7 +1445,7 @@ describe('Entity', () => {
         ent.updateParams({ ...testedParams, alwAttr: ['bad', 'type'] })
       })
 
-      it('throws when trying to delete pk or sk', () => {
+      test('throws when trying to delete pk or sk', () => {
         expect(() =>
           // @ts-expect-error
           ent.updateParams({ ...testedParams, pk: null })
@@ -1488,7 +1479,7 @@ describe('Entity', () => {
         ent.updateParams({ ...testedParams, skMap1: null, skMap2 })
       })
 
-      it('throws when trying to delete req/always attr', () => {
+      test('throws when trying to delete req/always attr', () => {
         expect(() =>
           // @ts-expect-error
           ent.updateParams({ ...testedParams, reqAttr: null })
@@ -1527,7 +1518,7 @@ describe('Entity', () => {
         ).toThrow()
       })
 
-      it('throws with bad returnValues parameter', () => {
+      test('throws with bad returnValues parameter', () => {
         expect(() =>
           ent.updateParams(
             { ...ck, alwAttr, map3 },
@@ -1537,7 +1528,7 @@ describe('Entity', () => {
         ).toThrow()
       })
 
-      it('with conditions', () => {
+      test('with conditions', () => {
         ent.updateParams(testedParams, {
           conditions: { attr: 'pk', exists: true }
         })
@@ -1563,7 +1554,7 @@ describe('Entity', () => {
     })
 
     describe('query method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const queryPromise = () => ent.query('pk')
         type QueryItems = Awaited<ReturnType<typeof queryPromise>>['Items']
         type TestQueryItems = A.Equals<QueryItems, ExpectedItem[] | undefined>
@@ -1581,7 +1572,7 @@ describe('Entity', () => {
     })
 
     describe('scan method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const scanPromise = () => ent.scan()
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
         type TestScanItems = A.Equals<ScanItems, AttributeMap[] | undefined>
@@ -1641,7 +1632,7 @@ describe('Entity', () => {
     }
 
     describe('get method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const ck1 = ck
         // Regular PK
         ent.getParams(ck1)
@@ -1670,7 +1661,7 @@ describe('Entity', () => {
         testGetItem3
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error Missing partition
         expect(() => ent.getParams({ sk })).toThrow()
 
@@ -1680,7 +1671,7 @@ describe('Entity', () => {
     })
 
     describe('delete method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const ck1 = ck
         ent.deleteParams(ck1)
         const deletePromise1 = () => ent.delete(ck1)
@@ -1702,7 +1693,7 @@ describe('Entity', () => {
         deletePromise4
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error Missing sort key
         expect(() => ent.deleteParams({ sk })).toThrow()
 
@@ -1712,7 +1703,7 @@ describe('Entity', () => {
     })
 
     describe('put method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const item1 = { pkMap1, skMap1, pkMap2, skMap2 }
         ent.putParams(item1)
         const putPromise1 = () => ent.put(item1)
@@ -1724,7 +1715,7 @@ describe('Entity', () => {
         putPromise2
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error: Missing sort key
         expect(() => ent.putParams({ sk })).toThrow()
 
@@ -1734,7 +1725,7 @@ describe('Entity', () => {
     })
 
     describe('update method', () => {
-      it('nominal case', () => {
+      test('nominal case', () => {
         const item1 = { pkMap1, pkMap2, skMap1, skMap2 }
 
         ent.updateParams(item1)
@@ -1747,7 +1738,7 @@ describe('Entity', () => {
         updatePromise2
       })
 
-      it('throws when primary key is incomplete', () => {
+      test('throws when primary key is incomplete', () => {
         // @ts-expect-error Missing partition key
         expect(() => ent.updateParams({ sk })).toThrow()
 
@@ -1785,7 +1776,7 @@ describe('Entity', () => {
       sk: string
     }
 
-    it('get method', () => {
+    test('get method', () => {
       const ck1 = { sk }
       ent.getParams(ck1)
       const getPromise1 = () => ent.get(ck1)
@@ -1807,17 +1798,17 @@ describe('Entity', () => {
       testItem
     })
 
-    it('delete method', () => {
+    test('delete method', () => {
       ent.deleteParams({ sk })
       ent.deleteParams(ck2)
     })
 
-    it('put method', () => {
+    test('put method', () => {
       ent.putParams({ sk })
       ent.putParams(ck2)
     })
 
-    it('update method', () => {
+    test('update method', () => {
       ent.updateParams({ sk })
       ent.updateParams(ck2)
     })
@@ -1843,22 +1834,22 @@ describe('Entity', () => {
     const testExtends: TestExtends = 1
     testExtends
 
-    it('get method', () => {
+    test('get method', () => {
       ent.getParams({ pk })
       ent.getParams(ck2)
     })
 
-    it('delete method', () => {
+    test('delete method', () => {
       ent.deleteParams({ pk })
       ent.deleteParams(ck2)
     })
 
-    it('put method', () => {
+    test('put method', () => {
       ent.putParams({ pk })
       ent.putParams(ck2)
     })
 
-    it('update method', () => {
+    test('update method', () => {
       ent.updateParams({ pk })
       ent.updateParams(ck2)
     })
@@ -1897,19 +1888,19 @@ describe('Entity', () => {
 
     describe('get method', () => {
       describe('MethodItemOverlay', () => {
-        it('composite key should match infered composite key', () => {
-          () => ent.get<MethodItemOverlay>(ck)
+        test('composite key should match infered composite key', () => {
+          ;() => ent.get<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck0)
         })
 
-        it('filtered attribute should match MethodItemOverlay', () => {
+        test('filtered attribute should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay>(ck, { attributes: ['pk'] })
+          ;() => ent.get<MethodItemOverlay>(ck, { attributes: ['pk'] })
           ;() => ent.get<MethodItemOverlay>(ck, { attributes: ['pk0'] })
         })
 
-        it('returned Item should match MethodItemOverlay, even filtered', () => {
+        test('returned Item should match MethodItemOverlay, even filtered', () => {
           const getPromise = () => ent.get<MethodItemOverlay>(ck)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
           type TestGetItem = A.Equals<GetItem, MethodItemOverlay | undefined>
@@ -1931,14 +1922,14 @@ describe('Entity', () => {
       })
 
       describe('MethodItemOverlay + MethodCompositeKeyOverlay', () => {
-        it('composite key should match MethodCompositeKeyOverlay', () => {
+        test('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
         })
 
-        it('filtered attribute should (still) match MethodItemOverlay', () => {
-          () =>
+        test('filtered attribute should (still) match MethodItemOverlay', () => {
+          ;() =>
             ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0, {
               // @ts-expect-error
               attributes: ['pk']
@@ -1949,7 +1940,7 @@ describe('Entity', () => {
             })
         })
 
-        it('returned Item should match MethodItemOverlay, even filtered', () => {
+        test('returned Item should match MethodItemOverlay, even filtered', () => {
           const getPromise = () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
           type TestGetItem = A.Equals<GetItem, MethodItemOverlay | undefined>
@@ -1974,14 +1965,14 @@ describe('Entity', () => {
 
     describe('delete method', () => {
       describe('MethodItemOverlay', () => {
-        it('composite key should match infered composite key', () => {
-          () => ent.delete<MethodItemOverlay>(ck)
+        test('composite key should match infered composite key', () => {
+          ;() => ent.delete<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck0)
         })
 
-        it('condition attributes should match MethodItemOverlay', () => {
-          () =>
+        test('condition attributes should match MethodItemOverlay', () => {
+          ;() =>
             ent.delete<MethodItemOverlay>(ck, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -1992,7 +1983,7 @@ describe('Entity', () => {
             })
         })
 
-        it('Attributes match MethodItemOverlay', () => {
+        test('Attributes match MethodItemOverlay', () => {
           const deletePromise = () => ent.delete<MethodItemOverlay>(ck)
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
           type TestDeleteItem = A.Equals<DeleteItem, MethodItemOverlay | undefined>
@@ -2002,14 +1993,14 @@ describe('Entity', () => {
       })
 
       describe('MethodItemOverlay + MethodCompositeKeyOverlay', () => {
-        it('composite key should match MethodCompositeKeyOverlay', () => {
+        test('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
         })
 
-        it('condition attributes should (still) match MethodItemOverlay', () => {
-          () =>
+        test('condition attributes should (still) match MethodItemOverlay', () => {
+          ;() =>
             ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2020,7 +2011,7 @@ describe('Entity', () => {
             })
         })
 
-        it('returned Attributes should match MethodItemOverlay', () => {
+        test('returned Attributes should match MethodItemOverlay', () => {
           const deletePromise = () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
           type TestDeleteItem = A.Equals<DeleteItem, MethodItemOverlay | undefined>
@@ -2031,14 +2022,14 @@ describe('Entity', () => {
     })
 
     describe('put method', () => {
-      it('Item should match MethodItemOverlay', () => {
+      test('Item should match MethodItemOverlay', () => {
         // @ts-expect-error
-        () => ent.put<MethodItemOverlay>(ck)
+        ;() => ent.put<MethodItemOverlay>(ck)
         ;() => ent.put<MethodItemOverlay>({ ...ck0, num0, str0 })
       })
 
-      it('condition attributes should match MethodItemOverlay', () => {
-        () =>
+      test('condition attributes should match MethodItemOverlay', () => {
+        ;() =>
           ent.put<MethodItemOverlay>(
             { ...ck0, num0 },
             // @ts-expect-error
@@ -2051,7 +2042,7 @@ describe('Entity', () => {
           )
       })
 
-      it('Attributes match MethodItemOverlay', () => {
+      test('Attributes match MethodItemOverlay', () => {
         const putPromise = () => ent.put<MethodItemOverlay>({ ...ck0, num0 })
         type PutItem = Awaited<ReturnType<typeof putPromise>>['Attributes']
         type TestPutItem = A.Equals<PutItem, MethodItemOverlay | undefined>
@@ -2061,14 +2052,14 @@ describe('Entity', () => {
     })
 
     describe('update method', () => {
-      it('item should match MethodItemOverlay', () => {
+      test('item should match MethodItemOverlay', () => {
         // @ts-expect-error
-        () => ent.update<MethodItemOverlay>(ck)
+        ;() => ent.update<MethodItemOverlay>(ck)
         ;() => ent.update<MethodItemOverlay>({ ...ck0, num0 })
       })
 
-      it('condition attributes should match MethodItemOverlay', () => {
-        () =>
+      test('condition attributes should match MethodItemOverlay', () => {
+        ;() =>
           ent.update<MethodItemOverlay>(
             { ...ck0, num0 },
             // @ts-expect-error
@@ -2081,7 +2072,7 @@ describe('Entity', () => {
           )
       })
 
-      it('Attributes match MethodItemOverlay, when returnValues is not NONE', () => {
+      test('Attributes match MethodItemOverlay, when returnValues is not NONE', () => {
         const updatePromise = () =>
           ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>(
             { ...ck0, num0 },
@@ -2095,13 +2086,13 @@ describe('Entity', () => {
     })
 
     describe('query method', () => {
-      it('condition attributes should match MethodItemOverlay', () => {
+      test('condition attributes should match MethodItemOverlay', () => {
         // @ts-expect-error
-        () => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
+        ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
         ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk0'] })
       })
 
-      it('returned Items should match MethodItemOverlay', () => {
+      test('returned Items should match MethodItemOverlay', () => {
         const queryPromise = () => ent.query<MethodItemOverlay>('pk')
         type QueryItem = Awaited<ReturnType<typeof queryPromise>>['Items']
         type TestQueryItem = A.Equals<QueryItem, MethodItemOverlay[] | undefined>
@@ -2111,7 +2102,7 @@ describe('Entity', () => {
     })
 
     describe('scan method', () => {
-      it('returned Items should match MethodItemOverlay', () => {
+      test('returned Items should match MethodItemOverlay', () => {
         const scanPromise = () => ent.scan<MethodItemOverlay>()
         type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
         type TestScanItems = A.Equals<ScanItems, MethodItemOverlay[] | undefined>
@@ -2172,15 +2163,15 @@ describe('Entity', () => {
 
     describe('get method', () => {
       describe('EntityOverlay only', () => {
-        it('composite key should match EntityCompositeKeyOverlay', () => {
+        test('composite key should match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.get(ck)
+          ;() => ent.get(ck)
           ;() => ent.get(ck0)
         })
 
-        it('filtered attribute should match EntityItemOverlay', () => {
+        test('filtered attribute should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.get(ck0, { attributes: ['pk'] })
+          ;() => ent.get(ck0, { attributes: ['pk'] })
           ;() => ent.get(ck0, { attributes: ['pk0'] })
 
           type GetItemOptions = GetOptions<typeof ent>
@@ -2192,7 +2183,7 @@ describe('Entity', () => {
           testGetItemOptions
         })
 
-        it('returned Item should match EntityItemOverlay, even filtered', () => {
+        test('returned Item should match EntityItemOverlay, even filtered', () => {
           const getPromise = () => ent.get(ck0)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
           type TestGetItem = A.Equals<GetItem, EntityItemOverlay | undefined>
@@ -2216,23 +2207,23 @@ describe('Entity', () => {
       })
 
       describe('MethodItemOverlay + EntityCompositeKeyOverlay', () => {
-        it('composite key should (still) match EntityCompositeKeyOverlay', () => {
+        test('composite key should (still) match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay>(ck)
+          ;() => ent.get<MethodItemOverlay>(ck)
           ;() => ent.get<MethodItemOverlay>(ck0)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck1)
         })
 
-        it('filtered attribute should match MethodItemOverlay', () => {
+        test('filtered attribute should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk'] })
+          ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk'] })
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk0'] })
           ;() => ent.get<MethodItemOverlay>(ck0, { attributes: ['pk1'] })
         })
 
-        it('returned Item should match MethodItemOverlay', () => {
+        test('returned Item should match MethodItemOverlay', () => {
           const getPromise = () => ent.get<MethodItemOverlay>(ck0)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
           type TestGetItem = A.Equals<GetItem, MethodItemOverlay | undefined>
@@ -2242,16 +2233,16 @@ describe('Entity', () => {
       })
 
       describe('Method Overlay only', () => {
-        it('composite key should match MethodCompositeKeyOverlay', () => {
+        test('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           // @ts-expect-error
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           ;() => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
         })
 
-        it('filtered attribute should (still) match MethodItemOverlay', () => {
-          () =>
+        test('filtered attribute should (still) match MethodItemOverlay', () => {
+          ;() =>
             ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1, {
               // @ts-expect-error
               attributes: ['pk']
@@ -2267,7 +2258,7 @@ describe('Entity', () => {
             })
         })
 
-        it('returned Item should match MethodItemOverlay', () => {
+        test('returned Item should match MethodItemOverlay', () => {
           const getPromise = () => ent.get<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
           type GetItem = Awaited<ReturnType<typeof getPromise>>['Item']
           type TestGetItem = A.Equals<GetItem, MethodItemOverlay | undefined>
@@ -2279,17 +2270,17 @@ describe('Entity', () => {
 
     describe('delete method', () => {
       describe('EntityOverlay only', () => {
-        it('composite key should match EntityCompositeKeyOverlay', () => {
+        test('composite key should match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.delete(ck)
+          ;() => ent.delete(ck)
           ;() => ent.delete(ck0)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck1)
         })
 
-        it('condition attributes should match EntityItemOverlay', () => {
+        test('condition attributes should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.delete(ck0, { conditions: { attr: 'pk', exists: true } })
+          ;() => ent.delete(ck0, { conditions: { attr: 'pk', exists: true } })
           ;() => ent.delete(ck0, { conditions: { attr: 'pk0', exists: true } })
 
           type DeleteItemOptions = DeleteOptions<typeof ent>
@@ -2304,7 +2295,7 @@ describe('Entity', () => {
           testDeleteItemOptions
         })
 
-        it('Attributes misses from return type if no or none returnValue option is provided', () => {
+        test('Attributes misses from return type if no or none returnValue option is provided', () => {
           const deletePromiseNone1 = () => ent.delete(ck0)
           type DeleteItemNone1 = Awaited<
             ReturnType<typeof deletePromiseNone1>
@@ -2322,7 +2313,7 @@ describe('Entity', () => {
           deleteItemNone2
         })
 
-        it('Attributes match EntityItemOverlay if ALL_OLD option is provided', () => {
+        test('Attributes match EntityItemOverlay if ALL_OLD option is provided', () => {
           const deletePromise = () => ent.delete(ck0, { returnValues: 'ALL_OLD' })
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
           type TestDeleteItem = A.Equals<DeleteItem, EntityItemOverlay | undefined>
@@ -2332,16 +2323,16 @@ describe('Entity', () => {
       })
 
       describe('MethodItemOverlay + EntityCompositeKeyOverlay', () => {
-        it('composite key should (still) match EntityCompositeKeyOverlay', () => {
+        test('composite key should (still) match EntityCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.delete<MethodItemOverlay>(ck)
+          ;() => ent.delete<MethodItemOverlay>(ck)
           ;() => ent.delete<MethodItemOverlay>(ck0)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay>(ck1)
         })
 
-        it('condition attributes should match MethodItemOverlay', () => {
-          () =>
+        test('condition attributes should match MethodItemOverlay', () => {
+          ;() =>
             ent.delete<MethodItemOverlay>(ck0, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2357,7 +2348,7 @@ describe('Entity', () => {
             })
         })
 
-        it('Returned Attributes should match MethodItemOverlay', () => {
+        test('Returned Attributes should match MethodItemOverlay', () => {
           const deletePromise = () => ent.delete<MethodItemOverlay>(ck0)
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
           type TestDeleteItem = A.Equals<DeleteItem, MethodItemOverlay | undefined>
@@ -2367,16 +2358,16 @@ describe('Entity', () => {
       })
 
       describe('Method Overlay only', () => {
-        it('composite key should match MethodCompositeKeyOverlay', () => {
+        test('composite key should match MethodCompositeKeyOverlay', () => {
           // @ts-expect-error
-          () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
+          ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck)
           // @ts-expect-error
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck0)
           ;() => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
         })
 
-        it('condition attributes should (still) match MethodItemOverlay', () => {
-          () =>
+        test('condition attributes should (still) match MethodItemOverlay', () => {
+          ;() =>
             ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1, {
               // @ts-expect-error
               conditions: { attr: 'pk', exists: true }
@@ -2392,7 +2383,7 @@ describe('Entity', () => {
             })
         })
 
-        it('Returned Attributes should match MethodItemOverlay', () => {
+        test('Returned Attributes should match MethodItemOverlay', () => {
           const deletePromise = () => ent.delete<MethodItemOverlay, MethodCompositeKeyOverlay>(ck1)
           type DeleteItem = Awaited<ReturnType<typeof deletePromise>>['Attributes']
           type TestDeleteItem = A.Equals<DeleteItem, MethodItemOverlay | undefined>
@@ -2404,17 +2395,17 @@ describe('Entity', () => {
 
     describe('put method', () => {
       describe('EntityItemOverlay', () => {
-        it('Item should match EntityItemOverlay', () => {
+        test('Item should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.put(ck)
+          ;() => ent.put(ck)
           // @ts-expect-error
           ;() => ent.put(ck0)
           ;() => ent.put({ ...ck0, num0 })
           ;() => ent.put({ ...ck0, num0, str0 })
         })
 
-        it('condition attributes should match EntityItemOverlay', () => {
-          () =>
+        test('condition attributes should match EntityItemOverlay', () => {
+          ;() =>
             ent.put(
               { ...ck0, num0 },
               // @ts-expect-error
@@ -2431,7 +2422,7 @@ describe('Entity', () => {
           testPutItemOptions
         })
 
-        it('Attributes misses from return type if no or none returnValue option is provided', () => {
+        test('Attributes misses from return type if no or none returnValue option is provided', () => {
           const putPromiseNone1 = () => ent.put({ ...ck0, num0 })
           type PutItemNone1 = Awaited<
             ReturnType<typeof putPromiseNone1>
@@ -2449,7 +2440,7 @@ describe('Entity', () => {
           putItemNone2
         })
 
-        it('Attributes match EntityItemOverlay if ALL_OLD option is provided', () => {
+        test('Attributes match EntityItemOverlay if ALL_OLD option is provided', () => {
           const putPromise = () => ent.put({ ...ck0, num0 }, { returnValues: 'ALL_OLD' })
           type PutItem = Awaited<ReturnType<typeof putPromise>>['Attributes']
           type TestPutItem = A.Equals<PutItem, EntityItemOverlay | undefined>
@@ -2459,17 +2450,17 @@ describe('Entity', () => {
       })
 
       describe('MethodItemOverlay', () => {
-        it('Item should match MethodItemOverlay', () => {
+        test('Item should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.put<MethodItemOverlay>(ck)
+          ;() => ent.put<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.put<MethodItemOverlay>({ ...ck0, num0 })
           ;() => ent.put<MethodItemOverlay>({ ...ck1, num1 })
           ;() => ent.put<MethodItemOverlay>({ ...ck1, num1, str1 })
         })
 
-        it('condition attributes should match MethodItemOverlay', () => {
-          () =>
+        test('condition attributes should match MethodItemOverlay', () => {
+          ;() =>
             ent.put<MethodItemOverlay>(
               { ...ck1, num1 },
               // @ts-expect-error
@@ -2488,7 +2479,7 @@ describe('Entity', () => {
             )
         })
 
-        it('Attributes match MethodItemOverlay', () => {
+        test('Attributes match MethodItemOverlay', () => {
           const putOPromise = () => ent.put<MethodItemOverlay>({ ...ck1, num1 })
           type PutOItem = Awaited<ReturnType<typeof putOPromise>>['Attributes']
           type TestPutOItem = A.Equals<PutOItem, MethodItemOverlay | undefined>
@@ -2500,14 +2491,14 @@ describe('Entity', () => {
 
     describe('update method', () => {
       describe('EntityOverlay only', () => {
-        it('item should match EntityItemOverlay', () => {
+        test('item should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.update(ck)
+          ;() => ent.update(ck)
           ;() => ent.update({ ...ck0, num0 })
         })
 
-        it('condition attributes should match EntityItemOverlay', () => {
-          () =>
+        test('condition attributes should match EntityItemOverlay', () => {
+          ;() =>
             ent.update(
               { ...ck0, num0 },
               // @ts-expect-error
@@ -2527,7 +2518,7 @@ describe('Entity', () => {
           testUpdateItemOptions
         })
 
-        it('Attributes misses from return type if no or none returnValue option is provided', () => {
+        test('Attributes misses from return type if no or none returnValue option is provided', () => {
           const none1UpdatePromise = () => ent.update({ ...ck0, num0 })
           type None1UpdateAttributes = Awaited<
             ReturnType<typeof none1UpdatePromise>
@@ -2545,7 +2536,7 @@ describe('Entity', () => {
           none2UpdateAttributes
         })
 
-        it('Attributes match EntityItemOverlay if UPDATED_OLD, UPDATED_NEW, ALL_OLD & ALL_NEW option is provided', () => {
+        test('Attributes match EntityItemOverlay if UPDATED_OLD, UPDATED_NEW, ALL_OLD & ALL_NEW option is provided', () => {
           const updatedOldUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'UPDATED_OLD' })
           type UpdatedOldUpdateAttributes = Awaited<
@@ -2572,7 +2563,9 @@ describe('Entity', () => {
 
           const allOldUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'ALL_OLD' })
-          type AllOldUpdateAttributes = Awaited<ReturnType<typeof allOldUpdatePromise>>['Attributes']
+          type AllOldUpdateAttributes = Awaited<
+            ReturnType<typeof allOldUpdatePromise>
+          >['Attributes']
           type AssertAllOldUpdateAttributes = A.Equals<
             AllOldUpdateAttributes,
             EntityItemOverlay | undefined
@@ -2582,7 +2575,9 @@ describe('Entity', () => {
 
           const allNewUpdatePromise = () =>
             ent.update({ ...ck0, num0 }, { returnValues: 'ALL_NEW' })
-          type AllNewUpdateAttributes = Awaited<ReturnType<typeof allNewUpdatePromise>>['Attributes']
+          type AllNewUpdateAttributes = Awaited<
+            ReturnType<typeof allNewUpdatePromise>
+          >['Attributes']
           type AssertAllNewUpdateAttributes = A.Equals<
             AllNewUpdateAttributes,
             EntityItemOverlay | undefined
@@ -2593,9 +2588,9 @@ describe('Entity', () => {
       })
 
       describe('MethodOverlay', () => {
-        it('item should match MethodItemOverlay', () => {
+        test('item should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.update<MethodItemOverlay>(ck)
+          ;() => ent.update<MethodItemOverlay>(ck)
           // @ts-expect-error
           ;() => ent.update<MethodItemOverlay>({ ...ck0, num0 })
           // @ts-expect-error
@@ -2603,8 +2598,8 @@ describe('Entity', () => {
           ;() => ent.update<MethodItemOverlay>({ ...ck1, num1 })
         })
 
-        it('condition attributes should match MethodItemOverlay', () => {
-          () =>
+        test('condition attributes should match MethodItemOverlay', () => {
+          ;() =>
             ent.update<MethodItemOverlay>(
               { ...ck1, num1 },
               // @ts-expect-error
@@ -2623,7 +2618,7 @@ describe('Entity', () => {
             )
         })
 
-        it('Attributes match MethodItemOverlay, whatever the returnValues option is', () => {
+        test('Attributes match MethodItemOverlay, whatever the returnValues option is', () => {
           const updateO1Promise = () =>
             ent.update<MethodItemOverlay, any, any, 'UPDATED_NEW'>(
               { ...ck1, num1 },
@@ -2639,13 +2634,13 @@ describe('Entity', () => {
 
     describe('query method', () => {
       describe('EntityOverlay only', () => {
-        it('condition attributes should match EntityItemOverlay', () => {
+        test('condition attributes should match EntityItemOverlay', () => {
           // @ts-expect-error
-          () => ent.query('pk', { attributes: ['pk'] })
+          ;() => ent.query('pk', { attributes: ['pk'] })
           ;() => ent.query('pk', { attributes: ['pk0'] })
         })
 
-        it('returned Items should match EntityItemOverlay, even filtered', () => {
+        test('returned Items should match EntityItemOverlay, even filtered', () => {
           const queryPromise = () => ent.query('pk')
           type QueryItem = Awaited<ReturnType<typeof queryPromise>>['Items']
           type TestQueryItem = A.Equals<QueryItem, EntityItemOverlay[] | undefined>
@@ -2672,15 +2667,15 @@ describe('Entity', () => {
       })
 
       describe('MethodOverlay', () => {
-        it('condition attributes should match MethodItemOverlay', () => {
+        test('condition attributes should match MethodItemOverlay', () => {
           // @ts-expect-error
-          () => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
+          ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk'] })
           // @ts-expect-error
           ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk0'] })
           ;() => ent.query<MethodItemOverlay>('pk', { attributes: ['pk1'] })
         })
 
-        it('returned Items should match MethodItemOverlay', () => {
+        test('returned Items should match MethodItemOverlay', () => {
           const queryPromise = () => ent.query<MethodItemOverlay>('pk')
           type QueryItem = Awaited<ReturnType<typeof queryPromise>>['Items']
           type TestQueryItem = A.Equals<QueryItem, MethodItemOverlay[] | undefined>
@@ -2692,11 +2687,11 @@ describe('Entity', () => {
 
     describe('scan method', () => {
       describe('EntityOverlay only', () => {
-        it('condition attributes should not necessarily match EntityItemOverlay', () => {
-          () => ent.scan({ attributes: ['pk'] })
+        test('condition attributes should not necessarily match EntityItemOverlay', () => {
+          ;() => ent.scan({ attributes: ['pk'] })
         })
 
-        it('returned Items should not necessarily match EntityItemOverlay', () => {
+        test('returned Items should not necessarily match EntityItemOverlay', () => {
           const scanPromise = () => ent.scan()
           type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
           type TestScanItems = A.Equals<ScanItems, AttributeMap[] | undefined>
@@ -2706,11 +2701,11 @@ describe('Entity', () => {
       })
 
       describe('MethodOverlay', () => {
-        it('condition attributes should not necessarily match MethodItemOverlay', () => {
-          () => ent.scan<MethodItemOverlay>({ attributes: ['pk'] })
+        test('condition attributes should not necessarily match MethodItemOverlay', () => {
+          ;() => ent.scan<MethodItemOverlay>({ attributes: ['pk'] })
         })
 
-        it('returned Items should match MethodItemOverlay', () => {
+        test('returned Items should match MethodItemOverlay', () => {
           const scanPromise = () => ent.scan<MethodItemOverlay>()
           type ScanItems = Awaited<ReturnType<typeof scanPromise>>['Items']
           type TestScanItems = A.Equals<ScanItems, MethodItemOverlay[] | undefined>
@@ -2721,12 +2716,12 @@ describe('Entity', () => {
     })
 
     describe('table', () => {
-      it('should have the right type', () => {
+      test('should have the right type', () => {
         const entity = new Entity({
           name: 'TestEnity_WithTable',
           attributes: {
             pk: { partitionKey: true },
-            sk: { sortKey: true },
+            sk: { sortKey: true }
           },
           table
         })
@@ -2741,7 +2736,7 @@ describe('Entity', () => {
     })
 
     describe('setTable', () => {
-      it('should update the type of the table property', () => {
+      test('should update the type of the table property', () => {
         const newTable = new Table({
           name: 'newTable',
           partitionKey: 'pk',
@@ -2752,9 +2747,9 @@ describe('Entity', () => {
           name: 'Entity_WithNewTable',
           attributes: {
             pk: { partitionKey: true },
-            sk: { sortKey: true },
+            sk: { sortKey: true }
           },
-          table,
+          table
         })
 
         const entityWithNewTable = entity.setTable(newTable)

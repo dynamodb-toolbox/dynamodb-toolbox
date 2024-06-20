@@ -15,7 +15,7 @@ const track: TrackingInfo = {
 }
 
 describe('parseCompositeKey', () => {
-  it('converts item config to linked mapping', async () => {
+  test('converts item config to linked mapping', async () => {
     const result = parseCompositeKey('linked', ['sk', 0, { save: false }], track, attributes)
     expect(result).toEqual({
       linked: { save: false, type: 'string', coerce: true, link: 'sk', pos: 0 }
@@ -26,20 +26,20 @@ describe('parseCompositeKey', () => {
     })
   })
 
-  it('fails on missing mapped field', async () => {
+  test('fails on missing mapped field', async () => {
     expect(() => {
       parseCompositeKey('linked', ['skx', 0], track, attributes)
     }).toThrow(`'linked' must reference another field`)
   })
 
-  it('fails on non-numeric position', async () => {
+  test('fails on non-numeric position', async () => {
     expect(() => {
       // @ts-expect-error - expected number but received string
       parseCompositeKey('linked', ['sk', '1'], track, attributes)
     }).toThrow(`'linked' position value must be numeric`)
   })
 
-  it('fails on invalid configuration', async () => {
+  test('fails on invalid configuration', async () => {
     expect(() => {
       // @ts-expect-error - expected CompositeAttributeDefinition but received an invalid configuration
       parseCompositeKey('linked', ['sk', 0, []], track, attributes)

@@ -20,7 +20,7 @@ const TestEntity = new Entity({
 })
 
 describe('putBatch', () => {
-  it('fails when using an undefined schema field and strictSchemaCheck is not provided', () => {
+  test('fails when using an undefined schema field and strictSchemaCheck is not provided', () => {
     expect(() =>
       TestEntity.putBatch({
         email: 'test-pk',
@@ -31,7 +31,7 @@ describe('putBatch', () => {
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
-  it('fails when using an undefined schema field and strictSchemaCheck is true', () => {
+  test('fails when using an undefined schema field and strictSchemaCheck is true', () => {
     expect(() =>
       TestEntity.putBatch(
         {
@@ -47,7 +47,7 @@ describe('putBatch', () => {
     ).toThrow(`Field 'unknown' does not have a mapping or alias`)
   })
 
-  it('creates an item when using an undefined schema field and strictSchemaCheck is false', () => {
+  test('creates an item when using an undefined schema field and strictSchemaCheck is false', () => {
     expect(() =>
       TestEntity.putBatch(
         {
@@ -62,7 +62,7 @@ describe('putBatch', () => {
     ).not.toThrow()
   })
 
-  it('returns the result in the correct format', async () => {
+  test('returns the result in the correct format', async () => {
     const result = TestEntity.putBatch({
       email: 'test-pk',
       sort: 'test-sk',

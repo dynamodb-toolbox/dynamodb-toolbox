@@ -21,7 +21,7 @@ const entity = {
 } as const
 
 describe('parseEntity', () => {
-  it('parses entity definition with all available options', async () => {
+  test('parses entity definition with all available options', async () => {
     const ent = parseEntity(entity)
     expect(ent.name).toBe('TestEntity')
     expect(ent.schema.keys).toEqual({ partitionKey: 'pk', sortKey: 'sk' })
@@ -40,7 +40,7 @@ describe('parseEntity', () => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const nonObjectValues = [null, 'string', true, 1, [], () => {}]
   nonObjectValues.forEach(value => {
-    it(`fails on non-object value: ${value}`, async () => {
+    test(`fails on non-object value: ${value}`, async () => {
       const input: typeof entity = {
         ...entity,
         // @ts-expect-error
@@ -49,11 +49,11 @@ describe('parseEntity', () => {
 
       expect(() => {
         parseEntity(input)
-      }).toThrow('Please provide a valid \'attributes\' object')
+      }).toThrow("Please provide a valid 'attributes' object")
     })
   })
 
-  it('fails on extra config option', async () => {
+  test('fails on extra config option', async () => {
     expect(() => {
       parseEntity(Object.assign({}, entity, { invalidConfig: true }))
     }).toThrow(`Invalid Entity configuration options: invalidConfig`)

@@ -25,7 +25,7 @@ const FormatEntity = new Entity({
 } as const)
 
 describe('format', () => {
-  it('format single item', () => {
+  test('format single item', () => {
     const item = FormatEntity.parse({
       pk: 'test@test.com',
       formatted_field: 'test',

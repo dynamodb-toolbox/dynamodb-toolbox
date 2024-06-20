@@ -24,31 +24,34 @@ const TestEntity = new Entity({
 } as const)
 
 describe('batchWrite', () => {
-  it('fails when batchWrite is empty', () => {
+  test('fails when batchWrite is empty', () => {
     expect(() => {
       // @ts-expect-error
       TestTable.batchWriteParams()
     }).toThrow(`No items supplied`)
   })
 
-  it('fails when batchWrite items is an empty array', () => {
+  test('fails when batchWrite items is an empty array', () => {
     expect(() => {
       TestTable.batchWriteParams([])
     }).toThrow(`No items supplied`)
   })
 
-  it('batchWrites data to a single table', () => {
+  test('batchWrites data to a single table', () => {
     const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' })
     ) as BatchWriteCommandInput
 
-    assert.ok(result?.RequestItems?.['test-table']?.[0]?.PutRequest?.Item !== undefined, 'PutRequest.Item is undefined')
+    assert.ok(
+      result?.RequestItems?.['test-table']?.[0]?.PutRequest?.Item !== undefined,
+      'PutRequest.Item is undefined'
+    )
     expect(result.RequestItems['test-table'][0].PutRequest.Item.pk).toBe('test')
     expect(result.RequestItems['test-table'][0].PutRequest.Item.sk).toBe('testsk')
     expect(result.RequestItems['test-table'][0].PutRequest.Item.test).toBe('test')
   })
 
-  it('fails when extra options', () => {
+  test('fails when extra options', () => {
     expect(() => {
       TestTable.batchWriteParams(
         TestEntity.putBatch({ email: 'test', sort: 'testsk' }),
@@ -58,7 +61,7 @@ describe('batchWrite', () => {
     }).toThrow(`Invalid batchWrite options: invalid`)
   })
 
-  it('fails when providing an invalid capacity setting', () => {
+  test('fails when providing an invalid capacity setting', () => {
     expect(() => {
       TestTable.batchWriteParams(TestEntity.putBatch({ email: 'test', sort: 'testsk' }), {
         // @ts-expect-error
@@ -67,7 +70,7 @@ describe('batchWrite', () => {
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
-  it('fails when providing an invalid metrics setting', () => {
+  test('fails when providing an invalid metrics setting', () => {
     expect(() => {
       TestTable.batchWriteParams(TestEntity.putBatch({ email: 'test', sort: 'testsk' }), {
         // @ts-expect-error
@@ -76,24 +79,25 @@ describe('batchWrite', () => {
     }).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   })
 
-  it('batchWrites data to a single table with options', () => {
+  test('batchWrites data to a single table with options', () => {
     const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       { capacity: 'total', metrics: 'size' }
     ) as BatchWriteCommandInput
 
-
     expect(result.ReturnConsumedCapacity).toBe('TOTAL')
     expect(result.ReturnItemCollectionMetrics).toBe('SIZE')
 
-    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk',
-      test: 'test'
-    }))
+    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk',
+        test: 'test'
+      })
+    )
   })
 
-  it('batchWrites data to a single table with invalid params', () => {
+  test('batchWrites data to a single table with invalid params', () => {
     const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       {},
@@ -101,14 +105,16 @@ describe('batchWrite', () => {
       'test'
     ) as BatchWriteCommandInput
 
-    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk',
-      test: 'test'
-    }))
+    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk',
+        test: 'test'
+      })
+    )
   })
 
-  it('returns meta data', () => {
+  test('returns meta data', () => {
     const result = TestTable.batchWriteParams(
       TestEntity.putBatch({ email: 'test', sort: 'testsk', test: 'test' }),
       {},
@@ -117,37 +123,45 @@ describe('batchWrite', () => {
     ) as { payload: BatchWriteCommandInput; Tables: any }
 
     expect(result).toHaveProperty('Tables')
-    expect(result.payload.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk',
-      test: 'test'
-    }))
+    expect(result.payload.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk',
+        test: 'test'
+      })
+    )
   })
 
-  it('batchWrites data to a single table with multiple items', () => {
+  test('batchWrites data to a single table with multiple items', () => {
     const result = TestTable.batchWriteParams([
       TestEntity.putBatch({ email: 'test', sort: 'testsk1', test: 'test1' }),
       TestEntity.putBatch({ email: 'test', sort: 'testsk2', test: 'test2' }),
       TestEntity.deleteBatch({ email: 'test', sort: 'testsk3' })
     ]) as BatchWriteCommandInput
 
-    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk1',
-      test: 'test1'
-    }))
-    expect(result.RequestItems?.['test-table']?.[1]?.PutRequest?.Item).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk2',
-      test: 'test2'
-    }))
-    expect(result.RequestItems?.['test-table']?.[2]?.DeleteRequest?.Key).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk3'
-    }))
+    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk1',
+        test: 'test1'
+      })
+    )
+    expect(result.RequestItems?.['test-table']?.[1]?.PutRequest?.Item).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk2',
+        test: 'test2'
+      })
+    )
+    expect(result.RequestItems?.['test-table']?.[2]?.DeleteRequest?.Key).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk3'
+      })
+    )
   })
 
-  it('batchWrites data to multiple tables', () => {
+  test('batchWrites data to multiple tables', () => {
     const TestTable2 = new Table({
       name: 'test-table2',
       alias: 'testTable2',
@@ -174,20 +188,26 @@ describe('batchWrite', () => {
       TestEntity2.putBatch({ email: 'test', sort: 'testsk3', test: 'test3' })
     ]) as BatchWriteCommandInput
 
-    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk1',
-      test: 'test1'
-    }))
-    expect(result.RequestItems?.['test-table']?.[1]?.PutRequest?.Item).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk2',
-      test: 'test2'
-    }))
-    expect(result.RequestItems?.['test-table2']?.[0]?.PutRequest?.Item).toEqual(expect.objectContaining({
-      pk: 'test',
-      sk: 'testsk3',
-      test: 'test3'
-    }))
+    expect(result.RequestItems?.['test-table']?.[0]?.PutRequest?.Item).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk1',
+        test: 'test1'
+      })
+    )
+    expect(result.RequestItems?.['test-table']?.[1]?.PutRequest?.Item).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk2',
+        test: 'test2'
+      })
+    )
+    expect(result.RequestItems?.['test-table2']?.[0]?.PutRequest?.Item).toEqual(
+      expect.objectContaining({
+        pk: 'test',
+        sk: 'testsk3',
+        test: 'test3'
+      })
+    )
   })
 })
