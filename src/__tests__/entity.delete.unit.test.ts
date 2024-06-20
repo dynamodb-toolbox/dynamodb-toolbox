@@ -38,19 +38,19 @@ const TestEntity2 = new Entity({
 } as const)
 
 describe('delete', () => {
-  it('deletes the key from inputs (sync)', async () => {
+  test('deletes the key from inputs (sync)', async () => {
     const { TableName, Key } = TestEntity.deleteParams({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('deletes the key from inputs (async)', async () => {
+  test('deletes the key from inputs (async)', async () => {
     const { TableName, Key } = await TestEntity.delete({ email: 'test-pk', sort: 'test-sk' })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('filters out extra data (sync)', async () => {
+  test('filters out extra data (sync)', async () => {
     const { TableName, Key } = TestEntity.deleteParams({
       email: 'test-pk',
       sort: 'test-sk',
@@ -61,7 +61,7 @@ describe('delete', () => {
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('filters out extra data (async)', async () => {
+  test('filters out extra data (async)', async () => {
     const { TableName, Key } = await TestEntity.delete({
       email: 'test-pk',
       sort: 'test-sk',
@@ -72,63 +72,63 @@ describe('delete', () => {
     expect(Key).toEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('coerces key values to correct types (sync)', async () => {
+  test('coerces key values to correct types (sync)', async () => {
     // @ts-expect-error 💥 TODO: Support coerce keyword
     const { TableName, Key } = TestEntity.deleteParams({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
 
-  it('coerces key values to correct types (async)', async () => {
+  test('coerces key values to correct types (async)', async () => {
     // @ts-expect-error 💥 TODO: Support coerce keyword
     const { TableName, Key } = await TestEntity.delete({ email: 1, sort: true })
     expect(TableName).toBe('test-table')
     expect(Key).toEqual({ pk: '1', sk: 'true' })
   })
 
-  it('fails with undefined input (sync)', () => {
+  test('fails with undefined input (sync)', () => {
     // @ts-expect-error
     expect(() => TestEntity.deleteParams()).toThrow(`'pk' or 'email' is required`)
   })
 
-  it('fails with undefined input (async)', async () => {
+  test('fails with undefined input (async)', async () => {
     // @ts-expect-error
     expect(TestEntity.delete()).rejects.toThrow(`'pk' or 'email' is required`)
   })
 
-  it('fails when missing the sortKey (sync)', () => {
+  test('fails when missing the sortKey (sync)', () => {
     // @ts-expect-error
     expect(() => TestEntity.deleteParams({ email: 'test-pk' })).toThrow(
       `'sk' or 'sort' is required`
     )
   })
 
-  it('fails when missing the sortKey (async)', () => {
+  test('fails when missing the sortKey (async)', () => {
     // @ts-expect-error
     expect(TestEntity.delete({ email: 'test-pk' })).rejects.toThrow(`'sk' or 'sort' is required`)
   })
 
-  it('fails when missing partitionKey (no alias) (sync)', () => {
+  test('fails when missing partitionKey (no alias) (sync)', () => {
     // @ts-expect-error
     expect(() => TestEntity2.deleteParams()).toThrow(`'pk' is required`)
   })
 
-  it('fails when missing partitionKey (no alias) (async)', () => {
+  test('fails when missing partitionKey (no alias) (async)', () => {
     // @ts-expect-error
     expect(TestEntity2.delete()).rejects.toThrow(`'pk' is required`)
   })
 
-  it('fails when missing the sortKey (no alias) (sync)', () => {
+  test('fails when missing the sortKey (no alias) (sync)', () => {
     // @ts-expect-error
     expect(() => TestEntity2.deleteParams({ pk: 'test-pk' })).toThrow(`'sk' is required`)
   })
 
-  it('fails when missing the sortKey (no alias) (async)', () => {
+  test('fails when missing the sortKey (no alias) (async)', () => {
     // @ts-expect-error
     expect(TestEntity2.delete({ pk: 'test-pk' })).rejects.toThrow(`'sk' is required`)
   })
 
-  it('allows execute and parse options', () => {
+  test('allows execute and parse options', () => {
     const { TableName, Key } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { execute: false, parse: false }
@@ -137,7 +137,7 @@ describe('delete', () => {
     expect(Key).toEqual({ pk: 'x', sk: 'y' })
   })
 
-  it('fails on extra options', () => {
+  test('fails on extra options', () => {
     expect(() =>
       TestEntity.deleteParams(
         { email: 'x', sort: 'y' },
@@ -147,7 +147,7 @@ describe('delete', () => {
     ).toThrow('Invalid delete options: extra')
   })
 
-  it('fails on invalid capacity option', () => {
+  test('fails on invalid capacity option', () => {
     expect(() =>
       TestEntity.deleteParams(
         { email: 'x', sort: 'y' },
@@ -157,7 +157,7 @@ describe('delete', () => {
     ).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
-  it('fails on invalid metrics option', () => {
+  test('fails on invalid metrics option', () => {
     expect(() =>
       TestEntity.deleteParams(
         { email: 'x', sort: 'y' },
@@ -167,7 +167,7 @@ describe('delete', () => {
     ).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   })
 
-  it('fails on invalid returnValues option', () => {
+  test('fails on invalid returnValues option', () => {
     expect(() =>
       TestEntity.deleteParams(
         { email: 'x', sort: 'y' },
@@ -177,7 +177,7 @@ describe('delete', () => {
     ).toThrow(`'returnValues' must be one of 'NONE' OR 'ALL_OLD'`)
   })
 
-  it('sets capacity options', () => {
+  test('sets capacity options', () => {
     const { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { capacity: 'none' }
@@ -187,7 +187,7 @@ describe('delete', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  it('sets metrics options', () => {
+  test('sets metrics options', () => {
     const { TableName, Key, ReturnItemCollectionMetrics } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { metrics: 'size' }
@@ -197,7 +197,7 @@ describe('delete', () => {
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
   })
 
-  it('sets returnValues options', () => {
+  test('sets returnValues options', () => {
     const { TableName, Key, ReturnValues } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { returnValues: 'ALL_OLD' }
@@ -207,7 +207,7 @@ describe('delete', () => {
     expect(ReturnValues).toBe('ALL_OLD')
   })
 
-  it('sets conditions', () => {
+  test('sets conditions', () => {
     const result = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       { conditions: { attr: 'email', gt: 'test' } }
@@ -222,7 +222,7 @@ describe('delete', () => {
     })
   })
 
-  it('handles extra parameters', () => {
+  test('handles extra parameters', () => {
     const { TableName, Key, ReturnConsumedCapacity } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       {},
@@ -233,7 +233,7 @@ describe('delete', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  it('handles invalid parameter input', () => {
+  test('handles invalid parameter input', () => {
     const { TableName, Key } = TestEntity.deleteParams(
       { email: 'x', sort: 'y' },
       {},
@@ -244,18 +244,18 @@ describe('delete', () => {
     expect(Key).toEqual({ pk: 'x', sk: 'y' })
   })
 
-  it('formats a batch delete response', async () => {
+  test('formats a batch delete response', async () => {
     const result = TestEntity.deleteBatch({ email: 'x', sort: 'y' })
     expect(result).toEqual({ 'test-table': { DeleteRequest: { Key: { pk: 'x', sk: 'y' } } } })
   })
 
-  it('fails if no value is provided to the deleteBatch method', () => {
+  test('fails if no value is provided to the deleteBatch method', () => {
     // @ts-expect-error
     expect(() => TestEntity.deleteBatch()).toThrow(`'pk' or 'email' is required`)
   })
 
   // Adding this for regression testing
-  it('Non-Key Index Generated on Delete #74', async () => {
+  test('Non-Key Index Generated on Delete #74', async () => {
     const FoosTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',

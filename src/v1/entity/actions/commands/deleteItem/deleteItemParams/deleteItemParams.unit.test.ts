@@ -41,7 +41,7 @@ const TestEntity2 = new EntityV2({
 })
 
 describe('delete', () => {
-  it('deletes the key from inputs', async () => {
+  test('deletes the key from inputs', async () => {
     const { TableName, Key } = TestEntity.build(DeleteItemCommand)
       .key({ email: 'test-pk', sort: 'test-sk' })
       .params()
@@ -50,7 +50,7 @@ describe('delete', () => {
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('filters out extra data', async () => {
+  test('filters out extra data', async () => {
     const { Key } = TestEntity.build(DeleteItemCommand)
       .key({
         email: 'test-pk',
@@ -63,7 +63,7 @@ describe('delete', () => {
     expect(Key).not.toHaveProperty('test')
   })
 
-  it('fails with undefined input', () => {
+  test('fails with undefined input', () => {
     expect(() =>
       TestEntity.build(DeleteItemCommand)
         .key(
@@ -74,7 +74,7 @@ describe('delete', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing the sortKey', () => {
+  test('fails when missing the sortKey', () => {
     expect(() =>
       TestEntity.build(DeleteItemCommand)
         .key(
@@ -85,7 +85,7 @@ describe('delete', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing partitionKey (no alias)', () => {
+  test('fails when missing partitionKey (no alias)', () => {
     expect(() =>
       TestEntity2.build(DeleteItemCommand)
         .key(
@@ -96,7 +96,7 @@ describe('delete', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing the sortKey (no alias)', () => {
+  test('fails when missing the sortKey (no alias)', () => {
     expect(() =>
       TestEntity2.build(DeleteItemCommand)
         .key(
@@ -107,7 +107,7 @@ describe('delete', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('sets capacity options', () => {
+  test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestEntity.build(DeleteItemCommand)
       .key({ email: 'x', sort: 'y' })
       .options({ capacity: 'NONE' })
@@ -116,7 +116,7 @@ describe('delete', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  it('fails on invalid capacity option', () => {
+  test('fails on invalid capacity option', () => {
     const invalidCall = () =>
       TestEntity.build(DeleteItemCommand)
         .key({ email: 'x', sort: 'y' })
@@ -130,7 +130,7 @@ describe('delete', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
-  it('sets metrics options', () => {
+  test('sets metrics options', () => {
     const { ReturnItemCollectionMetrics } = TestEntity.build(DeleteItemCommand)
       .key({ email: 'x', sort: 'y' })
       .options({ metrics: 'SIZE' })
@@ -139,7 +139,7 @@ describe('delete', () => {
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
   })
 
-  it('fails on invalid metrics option', () => {
+  test('fails on invalid metrics option', () => {
     const invalidCall = () =>
       TestEntity.build(DeleteItemCommand)
         .key({ email: 'x', sort: 'y' })
@@ -153,7 +153,7 @@ describe('delete', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
   })
 
-  it('sets returnValues options', () => {
+  test('sets returnValues options', () => {
     const { ReturnValues } = TestEntity.build(DeleteItemCommand)
       .key({ email: 'x', sort: 'y' })
       .options({ returnValues: 'ALL_OLD' })
@@ -162,7 +162,7 @@ describe('delete', () => {
     expect(ReturnValues).toBe('ALL_OLD')
   })
 
-  it('fails on invalid returnValues option', () => {
+  test('fails on invalid returnValues option', () => {
     const invalidCall = () =>
       TestEntity.build(DeleteItemCommand)
         .key({ email: 'x', sort: 'y' })
@@ -178,7 +178,7 @@ describe('delete', () => {
     )
   })
 
-  it('fails on extra options', () => {
+  test('fails on extra options', () => {
     const invalidCall = () =>
       TestEntity.build(DeleteItemCommand)
         .key({ email: 'x', sort: 'y' })
@@ -192,7 +192,7 @@ describe('delete', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
-  it('sets condition', () => {
+  test('sets condition', () => {
     const {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
@@ -207,14 +207,14 @@ describe('delete', () => {
     expect(ConditionExpression).toBe('#c_1 > :c_1')
   })
 
-  it('missing key', () => {
+  test('missing key', () => {
     const invalidCall = () => TestEntity.build(DeleteItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('transformed key', () => {
+  test('transformed key', () => {
     const TestEntity3 = new EntityV2({
       name: 'TestEntity',
       schema: schema({

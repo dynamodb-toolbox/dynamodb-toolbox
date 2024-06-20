@@ -4,7 +4,16 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "noEmitHelpers": true,
-    "outDir": "dist/esm"
+    "outDir": "dist/esm",
+    "declaration": false
   },
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test-d.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test-d.ts",
+    "docs",
+    "vitest.config.ts",
+    "**/*.test.ts",
+    "src/v1"
+  ]
 }

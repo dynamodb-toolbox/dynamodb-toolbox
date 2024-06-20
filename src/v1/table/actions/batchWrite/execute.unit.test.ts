@@ -81,14 +81,14 @@ describe('execute (batchWrite)', () => {
     documentClientMock.reset()
   })
 
-  it('throws if no BatchWriteRequest has been provided', () => {
+  test('throws if no BatchWriteRequest has been provided', () => {
     const invalidCall = () => getCommandInput([])
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('throws if two BatchWriteRequests have the same Table', () => {
+  test('throws if two BatchWriteRequests have the same Table', () => {
     const invalidCall = () =>
       getCommandInput([
         TestTable1.build(BatchWriteCommand).requests(
@@ -103,7 +103,7 @@ describe('execute (batchWrite)', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('writes valid input otherwise', () => {
+  test('writes valid input otherwise', () => {
     const input = getCommandInput([
       TestTable1.build(BatchWriteCommand).requests(
         EntityA.build(BatchPutRequest).item({
@@ -142,7 +142,7 @@ describe('execute (batchWrite)', () => {
     })
   })
 
-  it('accepts arrays of commands/requests', async () => {
+  test('accepts arrays of commands/requests', async () => {
     documentClientMock.on(_BatchWriteCommand).resolves({})
 
     const requests1 = [
@@ -171,7 +171,7 @@ describe('execute (batchWrite)', () => {
     })
   })
 
-  it('passes correct options', async () => {
+  test('passes correct options', async () => {
     documentClientMock.on(_BatchWriteCommand).resolves({})
 
     await execute(

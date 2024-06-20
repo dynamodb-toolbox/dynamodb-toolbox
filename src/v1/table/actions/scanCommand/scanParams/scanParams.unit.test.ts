@@ -60,7 +60,7 @@ const Entity2 = new EntityV2({
 })
 
 describe('scan', () => {
-  it('gets the tableName', async () => {
+  test('gets the tableName', async () => {
     const command = TestTable.build(ScanCommand)
     const { TableName } = command.params()
 
@@ -74,7 +74,7 @@ describe('scan', () => {
   })
 
   // Options
-  it('sets capacity options', () => {
+  test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestTable.build(ScanCommand)
       .options({ capacity: 'NONE' })
       .params()
@@ -82,7 +82,7 @@ describe('scan', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  it('fails on invalid capacity option', () => {
+  test('fails on invalid capacity option', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -95,13 +95,13 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
-  it('sets consistent option', () => {
+  test('sets consistent option', () => {
     const { ConsistentRead } = TestTable.build(ScanCommand).options({ consistent: true }).params()
 
     expect(ConsistentRead).toBe(true)
   })
 
-  it('fails on invalid consistent option', () => {
+  test('fails on invalid consistent option', () => {
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -130,7 +130,7 @@ describe('scan', () => {
     )
   })
 
-  it('sets exclusiveStartKey option', () => {
+  test('sets exclusiveStartKey option', () => {
     const { ExclusiveStartKey } = TestTable.build(ScanCommand)
       .options({ exclusiveStartKey: { foo: 'bar' } })
       .params()
@@ -138,13 +138,13 @@ describe('scan', () => {
     expect(ExclusiveStartKey).toStrictEqual({ foo: 'bar' })
   })
 
-  it('sets index option', () => {
+  test('sets index option', () => {
     const { IndexName } = TestTable.build(ScanCommand).options({ index: 'gsi' }).params()
 
     expect(IndexName).toBe('gsi')
   })
 
-  it('fails on invalid index option', () => {
+  test('fails on invalid index option', () => {
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -168,13 +168,13 @@ describe('scan', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'options.invalidIndexOption' }))
   })
 
-  it('sets select option', () => {
+  test('sets select option', () => {
     const { Select } = TestTable.build(ScanCommand).options({ select: 'COUNT' }).params()
 
     expect(Select).toBe('COUNT')
   })
 
-  it('fails on invalid select option', () => {
+  test('fails on invalid select option', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -187,7 +187,7 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidSelectOption' }))
   })
 
-  it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
+  test('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
     const { Select } = TestTable.build(ScanCommand)
       .options({ select: 'ALL_PROJECTED_ATTRIBUTES', index: 'gsi' })
       .params()
@@ -195,7 +195,7 @@ describe('scan', () => {
     expect(Select).toBe('ALL_PROJECTED_ATTRIBUTES')
   })
 
-  it('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
+  test('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         // @ts-expect-error
@@ -206,7 +206,7 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidSelectOption' }))
   })
 
-  it('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
+  test('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
     const { Select } = TestTable.build(ScanCommand)
       .entities(Entity1)
       .options({ attributes: ['age'], select: 'SPECIFIC_ATTRIBUTES' })
@@ -215,7 +215,7 @@ describe('scan', () => {
     expect(Select).toBe('SPECIFIC_ATTRIBUTES')
   })
 
-  it('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
+  test('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .entities(Entity1)
@@ -227,13 +227,13 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidSelectOption' }))
   })
 
-  it('sets limit option', () => {
+  test('sets limit option', () => {
     const { Limit } = TestTable.build(ScanCommand).options({ limit: 3 }).params()
 
     expect(Limit).toBe(3)
   })
 
-  it('fails on invalid limit option', () => {
+  test('fails on invalid limit option', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -246,7 +246,7 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidLimitOption' }))
   })
 
-  it('ignores valid maxPages option', () => {
+  test('ignores valid maxPages option', () => {
     const validCallA = () => TestTable.build(ScanCommand).options({ maxPages: 3 }).params()
     expect(validCallA).not.toThrow()
 
@@ -254,7 +254,7 @@ describe('scan', () => {
     expect(validCallB).not.toThrow()
   })
 
-  it('fails on invalid maxPages option', () => {
+  test('fails on invalid maxPages option', () => {
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -273,7 +273,7 @@ describe('scan', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'options.invalidMaxPagesOption' }))
   })
 
-  it('sets segment and totalSegments options', () => {
+  test('sets segment and totalSegments options', () => {
     const { Segment, TotalSegments } = TestTable.build(ScanCommand)
       .options({ segment: 3, totalSegments: 4 })
       .params()
@@ -282,7 +282,7 @@ describe('scan', () => {
     expect(TotalSegments).toBe(4)
   })
 
-  it('fails on invalid segment and/or totalSegments options', () => {
+  test('fails on invalid segment and/or totalSegments options', () => {
     // segment without totalSegment option
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
@@ -386,7 +386,7 @@ describe('scan', () => {
     )
   })
 
-  it('fails on extra options', () => {
+  test('fails on extra options', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -399,7 +399,7 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
-  it('applies entity _et filter', () => {
+  test('applies entity _et filter', () => {
     const command = TestTable.build(ScanCommand).entities(Entity1)
     const {
       FilterExpression,
@@ -418,7 +418,7 @@ describe('scan', () => {
     assertReturnedItems
   })
 
-  it('applies entity _et AND additional filter', () => {
+  test('applies entity _et AND additional filter', () => {
     const {
       FilterExpression,
       ExpressionAttributeNames,
@@ -443,7 +443,7 @@ describe('scan', () => {
     })
   })
 
-  it('applies two entity filters', () => {
+  test('applies two entity filters', () => {
     const command = TestTable.build(ScanCommand).entities(Entity1, Entity2)
     const {
       FilterExpression,
@@ -468,7 +468,7 @@ describe('scan', () => {
     assertReturnedItems
   })
 
-  it('applies two entity filters AND additional filters', () => {
+  test('applies two entity filters AND additional filters', () => {
     const {
       FilterExpression,
       ExpressionAttributeNames,
@@ -500,7 +500,7 @@ describe('scan', () => {
     })
   })
 
-  it('transforms attributes when applying filters', () => {
+  test('transforms attributes when applying filters', () => {
     const TestEntity3 = new EntityV2({
       name: 'entity3',
       schema: schema({
@@ -540,7 +540,7 @@ describe('scan', () => {
     expect(ExpressionAttributeValues2).toMatchObject({ ':c0_2': 'foo#bar' })
   })
 
-  it('applies entity projection expression', () => {
+  test('applies entity projection expression', () => {
     const command = TestTable.build(ScanCommand)
       .entities(Entity1)
       .options({ attributes: ['age', 'name'] })
@@ -561,7 +561,7 @@ describe('scan', () => {
     })
   })
 
-  it('applies two entity projection expressions', () => {
+  test('applies two entity projection expressions', () => {
     const command = TestTable.build(ScanCommand)
       .entities(Entity1, Entity2)
       .options({

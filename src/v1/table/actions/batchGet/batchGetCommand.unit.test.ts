@@ -47,7 +47,7 @@ const EntityB = new EntityV2({
 })
 
 describe('BatchGetCommand', () => {
-  it('throws if there is no batchGetRequest', () => {
+  test('throws if there is no batchGetRequest', () => {
     const invalidCallA = () => TestTable.build(BatchGetCommand).params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
@@ -59,7 +59,7 @@ describe('BatchGetCommand', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('infers correct type', () => {
+  test('infers correct type', () => {
     const command = TestTable.build(BatchGetCommand).requests(
       EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }),
       EntityB.build(BatchGetRequest).key({ pkB: 'b', skB: 'b' })
@@ -72,7 +72,7 @@ describe('BatchGetCommand', () => {
     expect(command[$entities]).toStrictEqual([EntityA, EntityB])
   })
 
-  it('infers correct type even when receiving an array of requests', () => {
+  test('infers correct type even when receiving an array of requests', () => {
     const requests = [
       EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }),
       EntityB.build(BatchGetRequest).key({ pkB: 'b', skB: 'b' })
@@ -89,7 +89,7 @@ describe('BatchGetCommand', () => {
     expect(command[$entities]).toStrictEqual([EntityA, EntityB])
   })
 
-  it('builds expected input', () => {
+  test('builds expected input', () => {
     const input = TestTable.build(BatchGetCommand)
       .requests(
         EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }),
@@ -105,7 +105,7 @@ describe('BatchGetCommand', () => {
     })
   })
 
-  it('parses consistent options', () => {
+  test('parses consistent options', () => {
     const initialCommand = TestTable.build(BatchGetCommand).requests(
       EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' })
     )
@@ -125,7 +125,7 @@ describe('BatchGetCommand', () => {
     expect(input).toMatchObject({ ConsistentRead: true })
   })
 
-  it('parses attributes options', () => {
+  test('parses attributes options', () => {
     const invalidCall = () =>
       TestTable.build(BatchGetCommand)
         .requests(
@@ -142,7 +142,7 @@ describe('BatchGetCommand', () => {
     )
   })
 
-  it('parses projection expression', () => {
+  test('parses projection expression', () => {
     const completeInput = TestTable.build(BatchGetCommand)
       .requests(EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }))
       .options({ attributes: ['entity', 'pkA', 'skA', 'commonAttribute'] })
@@ -159,7 +159,7 @@ describe('BatchGetCommand', () => {
     })
   })
 
-  it('appends entityAttribute, pk and sk to projection expression', () => {
+  test('appends entityAttribute, pk and sk to projection expression', () => {
     const completeInput = TestTable.build(BatchGetCommand)
       .requests(EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }))
       .options({ attributes: ['commonAttribute'] })

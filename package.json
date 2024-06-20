@@ -3,7 +3,8 @@
   "description": "Lightweight and type-safe query builder for DynamoDB and TypeScript.",
   "author": "Jeremy Daly <jeremy@jeremydaly.com>",
   "main": "dist/cjs/index.js",
-  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -18,23 +19,25 @@
   },
   "type": "module",
   "scripts": {
-    "test": "jest ",
-    "v1-test": "jest v1",
-    "test-cov": "jest  --coverage",
-    "test-ci": "eslint . && npx jest unit --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "test-types": "tsd",
+    "test": "vitest run",
+    "test-v1": "vitest run v1",
     "check-types": "tsc --noEmit",
-    "build:cjs": "tsc -p tsconfig.cjs.json && echo '{ \"type\": \"commonjs\" }' > dist/cjs/package.json",
-    "build:esm": "tsc -p tsconfig.esm.json && echo '{ \"type\": \"module\" }' > dist/esm/package.json",
-    "build": "npm run build:cjs & npm run build:esm",
+    "check-types-v1": "tsc --noEmit -p tsconfig.v1.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:cjs-v1": "tsc -p tsconfig.cjs.v1.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:esm-v1": "tsc -p tsconfig.esm.v1.json",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:types-v1": "tsc -p tsconfig.types.v1.json",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
     "prebuild": "rm -rf dist",
-    "v1-check-types": "tsc --noEmit -p tsconfig.v1.json",
-    "lint": "eslint src/v1",
-    "prettier": "prettier --check 'src/**/*.(js|ts)'",
-    "v1-build": "rm -rf dist && npx tsc -p tsconfig.v1-build.json && npx tsc-alias -p tsconfig.json",
-    "prepare": "npm run v1-build",
-    "prepublishOnly": "npm run v1-test && npm run lint && npm run v1-check-types",
-    "changelog": "git log $(git describe --tags --abbrev=0)..HEAD --oneline"
+    "build-v1": "npm run build:cjs-v1 && npm run build:esm-v1 && npm run build:types-v1",
+    "lint-v1": "eslint src/v1",
+    "prettier-v1": "prettier --check 'src/v1/**/*.(js|ts)'",
+    "prepare": "npm run build",
+    "prepare-v1": "npm run build-v1",
+    "prepublishOnly": "npm run test && npm run check-types",
+    "prepublishOnly-v1": "npm run test-v1 && npm run lint-v1 && npm run check-types-v1"
   },
   "lint-staged": {
     "*.(ts|js)": [
@@ -71,9 +74,8 @@
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.145.0",
     "@aws-sdk/lib-dynamodb": "^3.245.0",
-    "@types/jest": "^29.2.1",
     "@types/lodash": "^4.17.0",
-    "@types/node": "^14.14.16",
+    "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
     "aws-sdk-client-mock": "^4.0.1",
@@ -83,14 +85,14 @@
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-unused-imports": "^2.0.0",
-    "jest": "^29.2.2",
     "prettier": "^2.2.1",
-    "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.2",
     "tsconfig-paths": "^4.1.1",
     "tsd": "^0.23.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "vite": "^5.3.1",
+    "vitest": "^1.6.0"
   },
   "peerDependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",

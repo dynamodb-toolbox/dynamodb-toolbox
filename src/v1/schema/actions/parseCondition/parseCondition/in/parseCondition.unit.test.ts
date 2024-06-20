@@ -10,7 +10,7 @@ describe('parseCondition - in', () => {
     yetAnotherNum: number()
   })
 
-  it('in (values)', () => {
+  test('in (values)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -23,7 +23,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('in (value + attribute)', () => {
+  test('in (value + attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -36,7 +36,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('in (attributes)', () => {
+  test('in (attributes)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -66,7 +66,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('deep maps (values)', () => {
+  test('deep maps (values)', () => {
     expect(
       nestedSchema
         .build(ConditionParser)
@@ -83,7 +83,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('deep maps (attribute + value)', () => {
+  test('deep maps (attribute + value)', () => {
     expect(
       nestedSchema
         .build(ConditionParser)
@@ -105,7 +105,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('deep maps (attributes)', () => {
+  test('deep maps (attributes)', () => {
     expect(
       nestedSchema
         .build(ConditionParser)
@@ -153,7 +153,7 @@ describe('parseCondition - in', () => {
     )
   })
 
-  it('deep maps and lists (values)', () => {
+  test('deep maps and lists (values)', () => {
     expect(
       mapAndList
         .build(ConditionParser)
@@ -171,7 +171,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('deep maps and lists (value + attribute)', () => {
+  test('deep maps and lists (value + attribute)', () => {
     expect(
       mapAndList
         .build(ConditionParser)
@@ -196,7 +196,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('deep maps and lists (attributes)', () => {
+  test('deep maps and lists (attributes)', () => {
     expect(
       mapAndList
         .build(ConditionParser)
@@ -235,7 +235,7 @@ describe('parseCondition - in', () => {
     listC: list(list(list(number())))
   })
 
-  it('deep lists (values)', () => {
+  test('deep lists (values)', () => {
     expect(
       listsSchema
         .build(ConditionParser)
@@ -248,7 +248,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('deep lists (attribute + value)', () => {
+  test('deep lists (attribute + value)', () => {
     expect(
       listsSchema
         .build(ConditionParser)
@@ -264,7 +264,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('deep lists (attributes)', () => {
+  test('deep lists (attributes)', () => {
     expect(
       listsSchema
         .build(ConditionParser)
@@ -280,7 +280,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  it('with size', () => {
+  test('with size', () => {
     expect(
       simpleSchema
         .build(ConditionParser)

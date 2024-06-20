@@ -33,7 +33,7 @@ const attributes = DefaultTable.User.schema.attributes
 const linked = DefaultTable.User.linked
 
 describe('normalizeData', () => {
-  it('converts entity input to table attributes', async () => {
+  test('converts entity input to table attributes', async () => {
     const result = normalizeData()(attributes, linked, {
       pk: 'test',
       set_alias: ['1', '2', '3'],
@@ -56,7 +56,7 @@ describe('normalizeData', () => {
     })
   })
 
-  it('filter out non-mapped fields', async () => {
+  test('filter out non-mapped fields', async () => {
     const result = normalizeData()(
       attributes,
       linked,
@@ -69,7 +69,7 @@ describe('normalizeData', () => {
     })
   })
 
-  it('fails on non-mapped fields', async () => {
+  test('fails on non-mapped fields', async () => {
     expect(() => {
       normalizeData()(attributes, linked, {
         pk: 'test',
@@ -79,15 +79,18 @@ describe('normalizeData', () => {
     }).toThrow(`Field 'notAField' does not have a mapping or alias`)
   })
 
-  it('fails when partition, sort key or other required fields have depend attributes not provided', () => {
+  test('fails when partition, sort key or other required fields have depend attributes not provided', () => {
     const ent = new Entity({
       name: 'Test',
       attributes: {
-        pk: { type: 'string', partitionKey: true, default: 'pk'},
-        sk: { type: 'string', sortKey: true, dependsOn: ['parent'],
-          default: (data: { parent: string }) => `parent#${data.parent}`,
+        pk: { type: 'string', partitionKey: true, default: 'pk' },
+        sk: {
+          type: 'string',
+          sortKey: true,
+          dependsOn: ['parent'],
+          default: (data: { parent: string }) => `parent#${data.parent}`
         },
-        parent: { type: 'string'},
+        parent: { type: 'string' }
       },
       table: DefaultTable
     } as const)
@@ -97,8 +100,7 @@ describe('normalizeData', () => {
     )
   })
 
-  it('should not fail for GSI keys', () => {
-
+  test('should not fail for GSI keys', () => {
     const indexedStatus = ['AVAILABLE', 'PENDING']
 
     const ent = new Entity({
@@ -106,21 +108,21 @@ describe('normalizeData', () => {
       attributes: {
         pk: { type: 'string', partitionKey: true },
         sk: { type: 'string', sortKey: true },
-        GSI1PK: { 
-          type: 'string', 
-          partitionKey: 'GSI1', 
+        GSI1PK: {
+          type: 'string',
+          partitionKey: 'GSI1',
           dependsOn: ['status'],
-          default: (data: { status: string }) => data.status in indexedStatus ? `SHOW` : undefined,
+          default: (data: { status: string }) => (data.status in indexedStatus ? `SHOW` : undefined)
         },
         GSI1SK: {
           type: 'string',
           sortKey: 'GSI1',
           dependsOn: ['status', 'modified'],
-          default: (data: { status: string, modified: string }) => `${data.status}#${data.modified}`,
+          default: (data: { status: string; modified: string }) => `${data.status}#${data.modified}`
         },
-        status: { type: 'string' },
+        status: { type: 'string' }
       },
-      table: DefaultTable,
+      table: DefaultTable
     } as const)
 
     expect(() => ent.updateParams({ pk: 'pk', sk: 'sk' })).not.toThrow()

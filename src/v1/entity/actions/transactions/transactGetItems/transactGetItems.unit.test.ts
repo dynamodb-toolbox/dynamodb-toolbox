@@ -85,7 +85,7 @@ const TestEntity2 = new EntityV2({
 
 describe('transactGetItems', () => {
   beforeEach(() => {
-    jest.spyOn(documentClient, 'send').mockImplementation(() =>
+    vi.spyOn(documentClient, 'send').mockImplementation(() =>
       Promise.resolve({
         Responses: [
           {
@@ -107,14 +107,14 @@ describe('transactGetItems', () => {
   })
 
   afterEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   afterAll(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
-  it('should throw an error if dynamoDBDocumentClient is not found', async () => {
+  test('should throw an error if dynamoDBDocumentClient is not found', async () => {
     const transactions: GetItemTransaction[] = []
     const options = {}
     await expect(transactGetItems(options, ...transactions)).rejects.toThrow(
@@ -122,7 +122,7 @@ describe('transactGetItems', () => {
     )
   })
 
-  it('should send a transaction from a tuple of GetItemTransaction', async () => {
+  test('should send a transaction from a tuple of GetItemTransaction', async () => {
     const options = { dynamoDBDocumentClient: documentClient }
 
     const result = await transactGetItems(
@@ -162,7 +162,7 @@ describe('transactGetItems', () => {
     expect(documentClient.send).toHaveBeenCalledTimes(1)
   })
 
-  it('should send a transaction from an array of GetItemTransaction', async () => {
+  test('should send a transaction from an array of GetItemTransaction', async () => {
     const options = { dynamoDBDocumentClient: documentClient }
     const transactions = [
       TestEntity.build(GetItemTransaction)
@@ -194,14 +194,14 @@ const mockDate = '2023-12-15T16:22:49.834Z'
 
 describe('generateTransactGetCommandInput', () => {
   beforeAll(() => {
-    jest.useFakeTimers().setSystemTime(new Date(mockDate))
+    vi.useFakeTimers().setSystemTime(new Date(mockDate))
   })
 
   afterAll(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
-  it('should throw an error if an invalid option is set', async () => {
+  test('should throw an error if an invalid option is set', async () => {
     const transactions = [
       TestEntity.build(GetItemTransaction).key({
         email: 'titi@example.com',
@@ -220,7 +220,7 @@ describe('generateTransactGetCommandInput', () => {
       expect.objectContaining({ code: 'options.unknownOption' })
     )
   })
-  it('should generate a transaction with the correct parameters', async () => {
+  test('should generate a transaction with the correct parameters', async () => {
     const transactions = [
       TestEntity.build(GetItemTransaction).key({
         email: 'tata@example.com',
@@ -268,7 +268,7 @@ describe('generateTransactGetCommandInput', () => {
 })
 
 describe('formatTransactGetResponse', () => {
-  it('should format a transactGet response', async () => {
+  test('should format a transactGet response', async () => {
     const response = {
       $metadata: {},
       ConsumedCapacity: [
@@ -329,7 +329,7 @@ describe('formatTransactGetResponse', () => {
     })
   })
 
-  it('should format a transactGet with no projected attribute', async () => {
+  test('should format a transactGet with no projected attribute', async () => {
     const response = {
       $metadata: {},
       ConsumedCapacity: [
@@ -358,7 +358,7 @@ describe('formatTransactGetResponse', () => {
     expect(formattedResponse?.[0]).toEqual({})
   })
 
-  it('should format a null response', async () => {
+  test('should format a null response', async () => {
     const response = {
       $metadata: {},
       ConsumedCapacity: [
@@ -381,7 +381,7 @@ describe('formatTransactGetResponse', () => {
     expect(formattedResponse?.[0]).toBeUndefined()
   })
 
-  it('should format an undefined response', async () => {
+  test('should format an undefined response', async () => {
     const response = {
       $metadata: {}
     }
@@ -390,7 +390,7 @@ describe('formatTransactGetResponse', () => {
     expect(formattedResponse).toBeUndefined()
   })
 
-  it('should throw an error if response length is different from transactions length', async () => {
+  test('should throw an error if response length is different from transactions length', async () => {
     const response = {
       $metadata: {},
       ConsumedCapacity: [

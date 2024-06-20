@@ -38,7 +38,7 @@ const TestEntity = new Entity({
 } as const)
 
 describe('query', () => {
-  it('queries a table with no options', async () => {
+  test('queries a table with no options', async () => {
     const result = await TestTable.query('test', { execute: false })
 
     expect(result).toEqual({
@@ -49,7 +49,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with no options using numeric pk', () => {
+  test('queries a table with no options using numeric pk', () => {
     const result = TestTable.queryParams(1)
 
     expect(result).toEqual({
@@ -60,7 +60,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with projections', () => {
+  test('queries a table with projections', () => {
     const result = TestTable.queryParams('test', { attributes: ['pk'] }, {}, true)
 
     expect(result).toEqual({
@@ -76,7 +76,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table and ignores bad parameters', () => {
+  test('queries a table and ignores bad parameters', () => {
     // @ts-expect-error
     const result = TestTable.queryParams('test', {}, 'test')
 
@@ -88,7 +88,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with options', () => {
+  test('queries a table with options', () => {
     const result = TestTable.queryParams('test', {
       index: 'GSI1',
       limit: 10,
@@ -131,7 +131,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with options including a nested attribute filter', () => {
+  test('queries a table with options including a nested attribute filter', () => {
     const result = TestTable.queryParams('test', {
       index: 'GSI1',
       limit: 10,
@@ -175,7 +175,7 @@ describe('query', () => {
     })
   })
 
-  it('fails on an invalid option', () => {
+  test('fails on an invalid option', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
@@ -185,20 +185,20 @@ describe('query', () => {
     ).toThrow('Invalid query options: invalidParam')
   })
 
-  it('fails on an invalid partionKey', () => {
+  test('fails on an invalid partionKey', () => {
     // @ts-expect-error
     expect(() => TestTable.queryParams()).toThrow(
       `Query requires a string, number or binary 'partitionKey' as its first parameter`
     )
   })
 
-  it('fails on an invalid index', () => {
+  test('fails on an invalid index', () => {
     expect(() => TestTable.queryParams('test', { index: 'test' })).toThrow(
       `'test' is not a valid index name`
     )
   })
 
-  it('fails on an invalid limit', () => {
+  test('fails on an invalid limit', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
@@ -208,7 +208,7 @@ describe('query', () => {
     ).toThrow(`'limit' must be a positive integer`)
   })
 
-  it('fails on invalid reverse setting', () => {
+  test('fails on invalid reverse setting', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
@@ -218,7 +218,7 @@ describe('query', () => {
     ).toThrow(`'reverse' requires a boolean`)
   })
 
-  it('fails on invalid consistent setting', () => {
+  test('fails on invalid consistent setting', () => {
     expect(() =>
       TestTable.queryParams(
         'test',
@@ -228,33 +228,33 @@ describe('query', () => {
     ).toThrow(`'consistent' requires a boolean`)
   })
 
-  it('fails on invalid select setting', () => {
+  test('fails on invalid select setting', () => {
     // @ts-expect-error - invalid select
     expect(() => TestTable.queryParams('test', { select: 'test' })).toThrow(
       `'select' must be one of 'ALL_ATTRIBUTES', 'ALL_PROJECTED_ATTRIBUTES', 'SPECIFIC_ATTRIBUTES', OR 'COUNT'`
     )
   })
 
-  it('fails on invalid capacity setting', () => {
+  test('fails on invalid capacity setting', () => {
     // @ts-expect-error - invalid capacity
     expect(() => TestTable.queryParams('test', { capacity: 'test' })).toThrow(
       `'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`
     )
   })
 
-  it('fails on invalid entity', () => {
+  test('fails on invalid entity', () => {
     expect(() => TestTable.queryParams('test', { entity: 'test' })).toThrow(
       `'entity' must be a string and a valid table Entity name`
     )
   })
 
-  it('fails on invalid startKey', () => {
+  test('fails on invalid startKey', () => {
     expect(() => TestTable.queryParams('test', { startKey: 'test' })).toThrow(
       `'startKey' requires a valid object`
     )
   })
 
-  it('queries a table with lt', () => {
+  test('queries a table with lt', () => {
     const result = TestTable.queryParams('test', { lt: 'val' })
 
     expect(result).toEqual({
@@ -265,7 +265,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with eq, even with 0', () => {
+  test('queries a table with eq, even with 0', () => {
     const result = TestTable.queryParams('test', { index: 'GSINumber', eq: 0 })
 
     expect(result).toEqual({
@@ -277,7 +277,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with lt, even falsy (0)', () => {
+  test('queries a table with lt, even falsy (0)', () => {
     const result = TestTable.queryParams('test', { index: 'GSINumber', lt: 0 })
 
     expect(result).toEqual({
@@ -289,7 +289,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with lte', () => {
+  test('queries a table with lte', () => {
     const result = TestTable.queryParams('test', { lte: 'val' })
 
     expect(result).toEqual({
@@ -300,7 +300,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with lte, even falsy (0)', () => {
+  test('queries a table with lte, even falsy (0)', () => {
     const result = TestTable.queryParams('test', { index: 'GSINumber', lte: 0 })
 
     expect(result).toEqual({
@@ -312,7 +312,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with gt', () => {
+  test('queries a table with gt', () => {
     const result = TestTable.queryParams('test', { gt: 'val' })
 
     expect(result).toEqual({
@@ -323,7 +323,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with gt, even falsy (0)', () => {
+  test('queries a table with gt, even falsy (0)', () => {
     const result = TestTable.queryParams('test', { index: 'GSINumber', gt: 0 })
 
     expect(result).toEqual({
@@ -335,7 +335,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with gte', () => {
+  test('queries a table with gte', () => {
     const result = TestTable.queryParams('test', { gte: 'val' })
 
     expect(result).toEqual({
@@ -346,7 +346,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with gte, even falsy (0)', () => {
+  test('queries a table with gte, even falsy (0)', () => {
     const result = TestTable.queryParams('test', { index: 'GSINumber', gte: 0 })
 
     expect(result).toEqual({
@@ -358,7 +358,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with beginsWith', () => {
+  test('queries a table with beginsWith', () => {
     const result = TestTable.queryParams('test', { beginsWith: 'val' })
 
     expect(result).toEqual({
@@ -369,7 +369,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with beginsWith, even falsy ("")', () => {
+  test('queries a table with beginsWith, even falsy ("")', () => {
     const result = TestTable.queryParams('test', { beginsWith: '' })
 
     expect(result).toEqual({
@@ -380,7 +380,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with between', () => {
+  test('queries a table with between', () => {
     const result = TestTable.queryParams('test', { between: ['val', 'val1'] })
 
     expect(result).toEqual({
@@ -391,7 +391,7 @@ describe('query', () => {
     })
   })
 
-  it('queries a table with between, even falsy (0)', () => {
+  test('queries a table with between, even falsy (0)', () => {
     const result = TestTable.queryParams('test', { index: 'GSINumber', between: [0, 0] })
 
     expect(result).toEqual({
@@ -403,43 +403,43 @@ describe('query', () => {
     })
   })
 
-  it('fails on multiple conditions (lt)', () => {
+  test('fails on multiple conditions (lt)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', lt: 'val1' })).toThrow(
       `You can only supply one sortKey condition per query. Already using 'eq'`
     )
   })
 
-  it('fails on multiple conditions (lte)', () => {
+  test('fails on multiple conditions (lte)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', lte: 'val1' })).toThrow(
       `You can only supply one sortKey condition per query. Already using 'eq'`
     )
   })
 
-  it('fails on multiple conditions (gt)', () => {
+  test('fails on multiple conditions (gt)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', gt: 'val1' })).toThrow(
       `You can only supply one sortKey condition per query. Already using 'eq'`
     )
   })
 
-  it('fails on multiple conditions (gte)', () => {
+  test('fails on multiple conditions (gte)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', gte: 'val1' })).toThrow(
       `You can only supply one sortKey condition per query. Already using 'eq'`
     )
   })
 
-  it('fails on multiple conditions (beginsWith)', () => {
+  test('fails on multiple conditions (beginsWith)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', beginsWith: 'val1' })).toThrow(
       `You can only supply one sortKey condition per query. Already using 'eq'`
     )
   })
 
-  it('fails on multiple conditions (between)', () => {
+  test('fails on multiple conditions (between)', () => {
     expect(() => TestTable.queryParams('test', { eq: 'val', between: ['val1', 'val2'] })).toThrow(
       `You can only supply one sortKey condition per query. Already using 'eq'`
     )
   })
 
-  it('fails on in valid between condition', () => {
+  test('fails on in valid between condition', () => {
     expect(() =>
       TestTable.queryParams(
         'test',

@@ -40,7 +40,7 @@ const TestEntity2 = new EntityV2({
 })
 
 describe('delete transaction', () => {
-  it('deletes the key from inputs', async () => {
+  test('deletes the key from inputs', async () => {
     const { TableName, Key } = TestEntity.build(DeleteItemTransaction)
       .key({ email: 'test-pk', sort: 'test-sk' })
       .params()
@@ -49,7 +49,7 @@ describe('delete transaction', () => {
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('filters out extra data', async () => {
+  test('filters out extra data', async () => {
     const { Key } = TestEntity.build(DeleteItemTransaction)
       .key({
         email: 'test-pk',
@@ -62,7 +62,7 @@ describe('delete transaction', () => {
     expect(Key).not.toHaveProperty('test')
   })
 
-  it('fails with undefined input', () => {
+  test('fails with undefined input', () => {
     expect(() =>
       TestEntity.build(DeleteItemTransaction)
         .key(
@@ -73,7 +73,7 @@ describe('delete transaction', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing the sortKey', () => {
+  test('fails when missing the sortKey', () => {
     expect(() =>
       TestEntity.build(DeleteItemTransaction)
         .key(
@@ -84,7 +84,7 @@ describe('delete transaction', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing partitionKey (no alias)', () => {
+  test('fails when missing partitionKey (no alias)', () => {
     expect(() =>
       TestEntity2.build(DeleteItemTransaction)
         .key(
@@ -95,7 +95,7 @@ describe('delete transaction', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing the sortKey (no alias)', () => {
+  test('fails when missing the sortKey (no alias)', () => {
     expect(() =>
       TestEntity2.build(DeleteItemTransaction)
         .key(
@@ -107,7 +107,7 @@ describe('delete transaction', () => {
   })
 
   // Options
-  it('fails on extra options', () => {
+  test('fails on extra options', () => {
     const invalidCall = () =>
       TestEntity.build(DeleteItemTransaction)
         .key({ email: 'x', sort: 'y' })
@@ -121,7 +121,7 @@ describe('delete transaction', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
-  it('sets condition', () => {
+  test('sets condition', () => {
     const {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
@@ -136,7 +136,7 @@ describe('delete transaction', () => {
     expect(ConditionExpression).toBe('#c_1 > :c_1')
   })
 
-  it('missing key', () => {
+  test('missing key', () => {
     const invalidCall = () => TestEntity.build(DeleteItemTransaction).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)

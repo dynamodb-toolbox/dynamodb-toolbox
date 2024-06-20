@@ -57,7 +57,7 @@ const TestEntity = new EntityV2({
 })
 
 describe('condition check transaction', () => {
-  it('sets condition', () => {
+  test('sets condition', () => {
     const {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
@@ -72,14 +72,14 @@ describe('condition check transaction', () => {
     expect(ConditionExpression).toBe('#c_1 > :c_1')
   })
 
-  it('missing key', () => {
+  test('missing key', () => {
     const invalidCall = () => TestEntity.build(ConditionCheck).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('missing condition', () => {
+  test('missing condition', () => {
     const invalidCall = () =>
       TestEntity.build(ConditionCheck).key({ email: 'x', sort: 'y' }).params()
 
@@ -87,7 +87,7 @@ describe('condition check transaction', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('fails with invalid condition', () => {
+  test('fails with invalid condition', () => {
     const invalidCall = () =>
       TestEntity.build(ConditionCheck)
         .key({ email: 'x', sort: 'y' })

@@ -19,7 +19,7 @@ import type { MapAttribute, $MapAttributeState } from './interface.js'
 describe('map', () => {
   const str = string()
 
-  it('returns default map', () => {
+  test('returns default map', () => {
     const mapped = map({ str })
 
     const assertMapAttribute: A.Contains<
@@ -64,7 +64,7 @@ describe('map', () => {
     expect(mapped[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
   })
 
-  it('returns required map (option)', () => {
+  test('returns required map (option)', () => {
     const mappedAtLeastOnce = map({ str }, { required: 'atLeastOnce' })
     const mappedAlways = map({ str }, { required: 'always' })
     const mappedNever = map({ str }, { required: 'never' })
@@ -84,7 +84,7 @@ describe('map', () => {
     expect(mappedNever[$required]).toBe('never')
   })
 
-  it('returns required map (method)', () => {
+  test('returns required map (method)', () => {
     const mappedAtLeastOnce = map({ str }).required()
     const mappedAlways = map({ str }).required('always')
     const mappedNever = map({ str }).required('never')
@@ -108,7 +108,7 @@ describe('map', () => {
     expect(mappedOpt[$required]).toBe('never')
   })
 
-  it('returns hidden map (option)', () => {
+  test('returns hidden map (option)', () => {
     const mapped = map({ str }, { hidden: true })
 
     const assertMapAttribute: A.Contains<typeof mapped, { [$hidden]: true }> = 1
@@ -117,7 +117,7 @@ describe('map', () => {
     expect(mapped[$hidden]).toBe(true)
   })
 
-  it('returns hidden map (method)', () => {
+  test('returns hidden map (method)', () => {
     const mapped = map({ str }).hidden()
 
     const assertMapAttribute: A.Contains<typeof mapped, { [$hidden]: true }> = 1
@@ -126,7 +126,7 @@ describe('map', () => {
     expect(mapped[$hidden]).toBe(true)
   })
 
-  it('returns key map (option)', () => {
+  test('returns key map (option)', () => {
     const mapped = map({ str }, { key: true })
 
     const assertMapAttribute: A.Contains<
@@ -139,7 +139,7 @@ describe('map', () => {
     expect(mapped[$required]).toBe('atLeastOnce')
   })
 
-  it('returns key map (method)', () => {
+  test('returns key map (method)', () => {
     const mapped = map({ str }).key()
 
     const assertMapAttribute: A.Contains<typeof mapped, { [$key]: true; [$required]: Always }> = 1
@@ -149,7 +149,7 @@ describe('map', () => {
     expect(mapped[$required]).toBe('always')
   })
 
-  it('returns savedAs map (option)', () => {
+  test('returns savedAs map (option)', () => {
     const mapped = map({ str }, { savedAs: 'foo' })
 
     const assertMapAttribute: A.Contains<typeof mapped, { [$savedAs]: 'foo' }> = 1
@@ -158,7 +158,7 @@ describe('map', () => {
     expect(mapped[$savedAs]).toBe('foo')
   })
 
-  it('returns savedAs map (method)', () => {
+  test('returns savedAs map (method)', () => {
     const mapped = map({ str }).savedAs('foo')
 
     const assertMapAttribute: A.Contains<typeof mapped, { [$savedAs]: 'foo' }> = 1
@@ -167,7 +167,7 @@ describe('map', () => {
     expect(mapped[$savedAs]).toBe('foo')
   })
 
-  it('returns defaulted map (option)', () => {
+  test('returns defaulted map (option)', () => {
     const mapA = map(
       { str },
       // TOIMPROVE: Try to add type constraints here
@@ -222,7 +222,7 @@ describe('map', () => {
     })
   })
 
-  it('returns defaulted map (method)', () => {
+  test('returns defaulted map (method)', () => {
     const mapA = map({ str }).key().keyDefault({ str: 'foo' })
 
     const assertMapAttribute: A.Contains<
@@ -266,7 +266,7 @@ describe('map', () => {
     })
   })
 
-  it('returns map with PUT default value if it is not key (default shorthand)', () => {
+  test('returns map with PUT default value if it is not key (default shorthand)', () => {
     const mapAttr = map({ str }).default({ str: 'foo' })
 
     const assertMap: A.Contains<
@@ -282,7 +282,7 @@ describe('map', () => {
     })
   })
 
-  it('returns map with KEY default value if it is key (default shorthand)', () => {
+  test('returns map with KEY default value if it is key (default shorthand)', () => {
     const mapAttr = map({ str }).key().default({ str: 'bar' })
 
     const assertMap: A.Contains<
@@ -298,7 +298,7 @@ describe('map', () => {
     })
   })
 
-  it('nested map', () => {
+  test('nested map', () => {
     const mapped = map({
       nested: map({
         nestedAgain: map({

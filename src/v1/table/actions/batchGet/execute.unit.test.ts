@@ -132,14 +132,14 @@ describe('execute (batchGet)', () => {
     documentClientMock.reset()
   })
 
-  it('throws if no command has been provided', () => {
+  test('throws if no command has been provided', () => {
     const invalidCall = () => getCommandInput([])
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('throws if two commands have the same Table', () => {
+  test('throws if two commands have the same Table', () => {
     const invalidCall = () =>
       getCommandInput([
         TestTable1.build(BatchGetCommand).requests(EntityA.build(BatchGetRequest).key(keyA)),
@@ -150,7 +150,7 @@ describe('execute (batchGet)', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('writes valid input otherwise', () => {
+  test('writes valid input otherwise', () => {
     const input = getCommandInput([
       TestTable1.build(BatchGetCommand).requests(
         EntityA.build(BatchGetRequest).key(keyA),
@@ -172,7 +172,7 @@ describe('execute (batchGet)', () => {
     })
   })
 
-  it('returns correct response', async () => {
+  test('returns correct response', async () => {
     documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemA, savedItemB],
@@ -201,7 +201,7 @@ describe('execute (batchGet)', () => {
     expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
   })
 
-  it('infers correct type even with arrays of request', async () => {
+  test('infers correct type even with arrays of request', async () => {
     documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemA, savedItemB],
@@ -236,7 +236,7 @@ describe('execute (batchGet)', () => {
     expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
   })
 
-  it('formats response', async () => {
+  test('formats response', async () => {
     documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemA, savedItemB],
@@ -275,7 +275,7 @@ describe('execute (batchGet)', () => {
     ])
   })
 
-  it('re-orders response items if needed', async () => {
+  test('re-orders response items if needed', async () => {
     documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemB, savedItemA],
@@ -294,7 +294,7 @@ describe('execute (batchGet)', () => {
     expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
   })
 
-  it('passes correct options', async () => {
+  test('passes correct options', async () => {
     documentClientMock.on(_BatchGetCommand).resolves({
       Responses: { 'test-table-1': [savedItemA] }
     })

@@ -23,7 +23,7 @@ describe('primitiveAttribute', () => {
   const path = 'some.path'
 
   describe('string', () => {
-    it('returns default string', () => {
+    test('returns default string', () => {
       const str = string()
 
       const assertStr: A.Contains<
@@ -67,7 +67,7 @@ describe('primitiveAttribute', () => {
       expect(str[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
     })
 
-    it('returns required string (option)', () => {
+    test('returns required string (option)', () => {
       const strAtLeastOnce = string({ required: 'atLeastOnce' })
       const strAlways = string({ required: 'always' })
       const strNever = string({ required: 'never' })
@@ -84,7 +84,7 @@ describe('primitiveAttribute', () => {
       expect(strNever[$required]).toBe('never')
     })
 
-    it('returns required string (method)', () => {
+    test('returns required string (method)', () => {
       const strAtLeastOnce = string().required()
       const strAlways = string().required('always')
       const strNever = string().required('never')
@@ -105,7 +105,7 @@ describe('primitiveAttribute', () => {
       expect(strOpt[$required]).toBe('never')
     })
 
-    it('returns hidden string (option)', () => {
+    test('returns hidden string (option)', () => {
       const str = string({ hidden: true })
 
       const assertStr: A.Contains<typeof str, { [$hidden]: true }> = 1
@@ -114,7 +114,7 @@ describe('primitiveAttribute', () => {
       expect(str[$hidden]).toBe(true)
     })
 
-    it('returns hidden string (method)', () => {
+    test('returns hidden string (method)', () => {
       const str = string().hidden()
 
       const assertStr: A.Contains<typeof str, { [$hidden]: true }> = 1
@@ -123,7 +123,7 @@ describe('primitiveAttribute', () => {
       expect(str[$hidden]).toBe(true)
     })
 
-    it('returns key string (option)', () => {
+    test('returns key string (option)', () => {
       const str = string({ key: true })
 
       const assertStr: A.Contains<typeof str, { [$key]: true; [$required]: AtLeastOnce }> = 1
@@ -133,7 +133,7 @@ describe('primitiveAttribute', () => {
       expect(str[$required]).toBe('atLeastOnce')
     })
 
-    it('returns key string (method)', () => {
+    test('returns key string (method)', () => {
       const str = string().key()
 
       const assertStr: A.Contains<typeof str, { [$key]: true; [$required]: Always }> = 1
@@ -143,7 +143,7 @@ describe('primitiveAttribute', () => {
       expect(str[$required]).toBe('always')
     })
 
-    it('returns savedAs string (option)', () => {
+    test('returns savedAs string (option)', () => {
       const str = string({ savedAs: 'foo' })
 
       const assertStr: A.Contains<typeof str, { [$savedAs]: 'foo' }> = 1
@@ -152,7 +152,7 @@ describe('primitiveAttribute', () => {
       expect(str[$savedAs]).toBe('foo')
     })
 
-    it('returns savedAs string (method)', () => {
+    test('returns savedAs string (method)', () => {
       const str = string().savedAs('foo')
 
       const assertStr: A.Contains<typeof str, { [$savedAs]: 'foo' }> = 1
@@ -161,7 +161,7 @@ describe('primitiveAttribute', () => {
       expect(str[$savedAs]).toBe('foo')
     })
 
-    it('returns string with enum values (method)', () => {
+    test('returns string with enum values (method)', () => {
       const invalidStr = string().enum(
         // @ts-expect-error
         42,
@@ -184,7 +184,7 @@ describe('primitiveAttribute', () => {
       expect(str[$enum]).toStrictEqual(['foo', 'bar'])
     })
 
-    it('returns defaulted string (option)', () => {
+    test('returns defaulted string (option)', () => {
       const invalidStr = string({
         // TOIMPROVE: add type constraints here
         defaults: { put: 42, update: undefined, key: undefined }
@@ -236,7 +236,7 @@ describe('primitiveAttribute', () => {
       expect(strC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
     })
 
-    it('returns defaulted string (method)', () => {
+    test('returns defaulted string (method)', () => {
       const invalidStr = string()
         // @ts-expect-error
         .putDefault(42)
@@ -282,7 +282,7 @@ describe('primitiveAttribute', () => {
       expect(strC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
     })
 
-    it('returns string with PUT default value if it is not key (default shorthand)', () => {
+    test('returns string with PUT default value if it is not key (default shorthand)', () => {
       const str = string().default('hello')
 
       const assertStr: A.Contains<
@@ -294,7 +294,7 @@ describe('primitiveAttribute', () => {
       expect(str[$defaults]).toStrictEqual({ key: undefined, put: 'hello', update: undefined })
     })
 
-    it('returns string with KEY default value if it is key (default shorthand)', () => {
+    test('returns string with KEY default value if it is key (default shorthand)', () => {
       const str = string().key().default('hello')
 
       const assertStr: A.Contains<
@@ -306,7 +306,7 @@ describe('primitiveAttribute', () => {
       expect(str[$defaults]).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
     })
 
-    it('returns string with constant value (method)', () => {
+    test('returns string with constant value (method)', () => {
       const invalidStr = string().const(
         // @ts-expect-error
         42
@@ -342,7 +342,7 @@ describe('primitiveAttribute', () => {
       expect(keyStr[$defaults]).toStrictEqual({ key: 'foo', put: undefined, update: undefined })
     })
 
-    it('returns linked string (method)', () => {
+    test('returns linked string (method)', () => {
       const sayHello = () => 'hello'
       const strA = string().keyLink(sayHello)
       const strB = string().putLink(sayHello)
@@ -373,7 +373,7 @@ describe('primitiveAttribute', () => {
       expect(strC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
     })
 
-    it('returns string with PUT linked value if it is not key (link shorthand)', () => {
+    test('returns string with PUT linked value if it is not key (link shorthand)', () => {
       const sayHello = () => 'hello'
       const str = string().link(sayHello)
 
@@ -386,7 +386,7 @@ describe('primitiveAttribute', () => {
       expect(str[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
     })
 
-    it('returns string with KEY linked value if it is key (link shorthand)', () => {
+    test('returns string with KEY linked value if it is key (link shorthand)', () => {
       const sayHello = () => 'hello'
       const str = string().key().link(sayHello)
 
@@ -399,7 +399,7 @@ describe('primitiveAttribute', () => {
       expect(str[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
     })
 
-    it('default with enum values', () => {
+    test('default with enum values', () => {
       const invalidStr = string().enum('foo', 'bar').default(
         // @ts-expect-error
         'baz'
@@ -438,7 +438,7 @@ describe('primitiveAttribute', () => {
       expect(strB[$enum]).toStrictEqual(['foo', 'bar'])
     })
 
-    it('returns transformed string (option)', () => {
+    test('returns transformed string (option)', () => {
       const transformer = prefix('test')
       const str = string({ transform: transformer })
 
@@ -448,7 +448,7 @@ describe('primitiveAttribute', () => {
       expect(str[$transform]).toBe(transformer)
     })
 
-    it('returns transformed string (method)', () => {
+    test('returns transformed string (method)', () => {
       const transformer = prefix('test')
       const str = string().transform(transformer)
 
@@ -460,7 +460,7 @@ describe('primitiveAttribute', () => {
   })
 
   describe('number', () => {
-    it('returns default number', () => {
+    test('returns default number', () => {
       const num = number()
 
       const assertNum: A.Contains<typeof num, { [$type]: 'number' }> = 1
@@ -471,7 +471,7 @@ describe('primitiveAttribute', () => {
   })
 
   describe('boolean', () => {
-    it('returns default boolean', () => {
+    test('returns default boolean', () => {
       const bool = boolean()
 
       const assertBool: A.Contains<typeof bool, { [$type]: 'boolean' }> = 1
@@ -482,7 +482,7 @@ describe('primitiveAttribute', () => {
   })
 
   describe('binary', () => {
-    it('returns default binary', () => {
+    test('returns default binary', () => {
       const bin = binary()
 
       const assertBin: A.Contains<typeof bin, { [$type]: 'binary' }> = 1

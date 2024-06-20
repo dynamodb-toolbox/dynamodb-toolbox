@@ -22,7 +22,7 @@ describe('list', () => {
   const path = 'some.path'
   const strElement = string()
 
-  it('rejects non-required elements', () => {
+  test('rejects non-required elements', () => {
     const invalidList = list(
       // @ts-expect-error
       string().optional()
@@ -36,7 +36,7 @@ describe('list', () => {
     )
   })
 
-  it('rejects hidden elements', () => {
+  test('rejects hidden elements', () => {
     const invalidList = list(
       // @ts-expect-error
       strElement.hidden()
@@ -50,7 +50,7 @@ describe('list', () => {
     )
   })
 
-  it('rejects elements with savedAs values', () => {
+  test('rejects elements with savedAs values', () => {
     const invalidList = list(
       // @ts-expect-error
       strElement.savedAs('foo')
@@ -64,7 +64,7 @@ describe('list', () => {
     )
   })
 
-  it('rejects elements with default values', () => {
+  test('rejects elements with default values', () => {
     const invalidList = list(
       // @ts-expect-error
       strElement.putDefault('foo')
@@ -78,7 +78,7 @@ describe('list', () => {
     )
   })
 
-  it('rejects elements with linked values', () => {
+  test('rejects elements with linked values', () => {
     const invalidList = list(
       // @ts-expect-error
       strElement.putLink(() => 'foo')
@@ -92,7 +92,7 @@ describe('list', () => {
     )
   })
 
-  it('returns default list', () => {
+  test('returns default list', () => {
     const lst = list(strElement)
 
     const assertList: A.Contains<
@@ -135,7 +135,7 @@ describe('list', () => {
     expect(lst[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
   })
 
-  it('returns required list (option)', () => {
+  test('returns required list (option)', () => {
     const lstAtLeastOnce = list(strElement, { required: 'atLeastOnce' })
     const lstAlways = list(strElement, { required: 'always' })
     const lstNever = list(strElement, { required: 'never' })
@@ -152,7 +152,7 @@ describe('list', () => {
     expect(lstNever[$required]).toBe('never')
   })
 
-  it('returns required list (method)', () => {
+  test('returns required list (method)', () => {
     const lstAtLeastOnce = list(strElement).required()
     const lstAlways = list(strElement).required('always')
     const lstNever = list(strElement).required('never')
@@ -172,7 +172,7 @@ describe('list', () => {
     expect(lstNever[$required]).toBe('never')
   })
 
-  it('returns hidden list (option)', () => {
+  test('returns hidden list (option)', () => {
     const lst = list(strElement, { hidden: true })
 
     const assertList: A.Contains<typeof lst, { [$hidden]: true }> = 1
@@ -181,7 +181,7 @@ describe('list', () => {
     expect(lst[$hidden]).toBe(true)
   })
 
-  it('returns hidden list (method)', () => {
+  test('returns hidden list (method)', () => {
     const lst = list(strElement).hidden()
 
     const assertList: A.Contains<typeof lst, { [$hidden]: true }> = 1
@@ -190,7 +190,7 @@ describe('list', () => {
     expect(lst[$hidden]).toBe(true)
   })
 
-  it('returns key list (option)', () => {
+  test('returns key list (option)', () => {
     const lst = list(strElement, { key: true })
 
     const assertList: A.Contains<typeof lst, { [$key]: true; [$required]: AtLeastOnce }> = 1
@@ -200,7 +200,7 @@ describe('list', () => {
     expect(lst[$required]).toBe('atLeastOnce')
   })
 
-  it('returns key list (method)', () => {
+  test('returns key list (method)', () => {
     const lst = list(strElement).key()
 
     const assertList: A.Contains<typeof lst, { [$key]: true; [$required]: Always }> = 1
@@ -210,7 +210,7 @@ describe('list', () => {
     expect(lst[$required]).toBe('always')
   })
 
-  it('returns savedAs list (option)', () => {
+  test('returns savedAs list (option)', () => {
     const lst = list(strElement, { savedAs: 'foo' })
 
     const assertList: A.Contains<typeof lst, { [$savedAs]: 'foo' }> = 1
@@ -219,7 +219,7 @@ describe('list', () => {
     expect(lst[$savedAs]).toBe('foo')
   })
 
-  it('returns savedAs list (method)', () => {
+  test('returns savedAs list (method)', () => {
     const lst = list(strElement).savedAs('foo')
 
     const assertList: A.Contains<typeof lst, { [$savedAs]: 'foo' }> = 1
@@ -228,7 +228,7 @@ describe('list', () => {
     expect(lst[$savedAs]).toBe('foo')
   })
 
-  it('returns defaulted list (option)', () => {
+  test('returns defaulted list (option)', () => {
     const lstA = list(strElement, {
       // TOIMPROVE: Add type constraints here
       defaults: { key: ['foo'], put: undefined, update: undefined }
@@ -269,7 +269,7 @@ describe('list', () => {
     expect(lstC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: ['baz'] })
   })
 
-  it('returns defaulted list (method)', () => {
+  test('returns defaulted list (method)', () => {
     const lstA = list(strElement).keyDefault(['foo'])
 
     const assertListA: A.Contains<
@@ -301,7 +301,7 @@ describe('list', () => {
     expect(lstC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: ['baz'] })
   })
 
-  it('returns list with PUT default value if it is not key (default shorthand)', () => {
+  test('returns list with PUT default value if it is not key (default shorthand)', () => {
     const listAttr = list(strElement).default(['foo'])
 
     const assertList: A.Contains<
@@ -313,7 +313,7 @@ describe('list', () => {
     expect(listAttr[$defaults]).toStrictEqual({ key: undefined, put: ['foo'], update: undefined })
   })
 
-  it('returns list with KEY default value if it is key (default shorthand)', () => {
+  test('returns list with KEY default value if it is key (default shorthand)', () => {
     const listAttr = list(strElement).key().default(['bar'])
 
     const assertList: A.Contains<
@@ -325,7 +325,7 @@ describe('list', () => {
     expect(listAttr[$defaults]).toStrictEqual({ key: ['bar'], put: undefined, update: undefined })
   })
 
-  it('returns linked list (option)', () => {
+  test('returns linked list (option)', () => {
     const sayHello = () => ['hello']
     const lstA = list(strElement, {
       // TOIMPROVE: Add type constraints here
@@ -367,7 +367,7 @@ describe('list', () => {
     expect(lstC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns linked list (method)', () => {
+  test('returns linked list (method)', () => {
     const sayHello = () => ['hello']
     const lstA = list(strElement).keyLink(sayHello)
 
@@ -400,7 +400,7 @@ describe('list', () => {
     expect(lstC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns list with PUT default value if it is not key (default shorthand)', () => {
+  test('returns list with PUT default value if it is not key (default shorthand)', () => {
     const sayHello = () => ['hello']
     const listAttr = list(strElement).link(sayHello)
 
@@ -413,7 +413,7 @@ describe('list', () => {
     expect(listAttr[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
   })
 
-  it('returns list with KEY default value if it is key (default shorthand)', () => {
+  test('returns list with KEY default value if it is key (default shorthand)', () => {
     const sayHello = () => ['hello']
     const listAttr = list(strElement).key().link(sayHello)
 
@@ -426,7 +426,7 @@ describe('list', () => {
     expect(listAttr[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
   })
 
-  it('list of lists', () => {
+  test('list of lists', () => {
     const lst = list(list(strElement))
 
     const assertList: A.Contains<

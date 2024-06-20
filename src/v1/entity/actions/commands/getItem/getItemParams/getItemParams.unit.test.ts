@@ -47,7 +47,7 @@ const TestEntity2 = new EntityV2({
 })
 
 describe('get', () => {
-  it('gets the key from inputs', async () => {
+  test('gets the key from inputs', async () => {
     const { TableName, Key } = TestEntity.build(GetItemCommand)
       .key({
         email: 'test-pk',
@@ -59,7 +59,7 @@ describe('get', () => {
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('filters out extra data', async () => {
+  test('filters out extra data', async () => {
     const { Key } = TestEntity.build(GetItemCommand)
       .key({
         email: 'test-pk',
@@ -72,7 +72,7 @@ describe('get', () => {
     expect(Key).not.toHaveProperty('test')
   })
 
-  it('fails with undefined input', () => {
+  test('fails with undefined input', () => {
     expect(() =>
       TestEntity.build(GetItemCommand)
         .key(
@@ -83,7 +83,7 @@ describe('get', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing the sortKey', () => {
+  test('fails when missing the sortKey', () => {
     expect(() =>
       TestEntity.build(GetItemCommand)
         .key(
@@ -94,7 +94,7 @@ describe('get', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing partitionKey (no alias)', () => {
+  test('fails when missing partitionKey (no alias)', () => {
     expect(() =>
       TestEntity2.build(GetItemCommand)
         .key(
@@ -105,7 +105,7 @@ describe('get', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing the sortKey (no alias)', () => {
+  test('fails when missing the sortKey (no alias)', () => {
     expect(() =>
       TestEntity2.build(GetItemCommand)
         .key(
@@ -117,7 +117,7 @@ describe('get', () => {
   })
 
   // Options
-  it('sets capacity options', () => {
+  test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestEntity.build(GetItemCommand)
       .key({ email: 'x', sort: 'y' })
       .options({ capacity: 'NONE' })
@@ -126,7 +126,7 @@ describe('get', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  it('fails on invalid capacity option', () => {
+  test('fails on invalid capacity option', () => {
     const invalidCall = () =>
       TestEntity.build(GetItemCommand)
         .key({ email: 'x', sort: 'y' })
@@ -140,7 +140,7 @@ describe('get', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
-  it('sets consistent option', () => {
+  test('sets consistent option', () => {
     const { ConsistentRead } = TestEntity.build(GetItemCommand)
       .key({ email: 'x', sort: 'y' })
       .options({ consistent: true })
@@ -149,7 +149,7 @@ describe('get', () => {
     expect(ConsistentRead).toBe(true)
   })
 
-  it('fails on invalid consistent option', () => {
+  test('fails on invalid consistent option', () => {
     const invalidCall = () =>
       TestEntity.build(GetItemCommand)
         .key({ email: 'x', sort: 'y' })
@@ -165,7 +165,7 @@ describe('get', () => {
     )
   })
 
-  it('fails on extra options', () => {
+  test('fails on extra options', () => {
     const invalidCall = () =>
       TestEntity.build(GetItemCommand)
         .key({ email: 'x', sort: 'y' })
@@ -179,7 +179,7 @@ describe('get', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
-  it('parses attribute projections', () => {
+  test('parses attribute projections', () => {
     const { ExpressionAttributeNames, ProjectionExpression } = TestEntity.build(GetItemCommand)
       .key({ email: 'x', sort: 'y' })
       .options({ attributes: ['email'] })
@@ -189,14 +189,14 @@ describe('get', () => {
     expect(ProjectionExpression).toBe('#p_1')
   })
 
-  it('missing key', () => {
+  test('missing key', () => {
     const invalidCall = () => TestEntity.build(GetItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('transformed key', () => {
+  test('transformed key', () => {
     const TestEntity3 = new EntityV2({
       name: 'TestEntity',
       schema: schema({
@@ -214,13 +214,13 @@ describe('get', () => {
   })
 
   // TODO Create getBatch method and move tests there
-  // it('formats a batch get response', async () => {
+  // test('formats a batch get response', async () => {
   //   let { Table, Key } = TestEntity.getBatch({ email: 'a', sort: 'b' })
   //   expect(Table.name).toBe('test-table')
   //   expect(Key).toEqual({ pk: 'a', sk: 'b' })
   // })
 
-  // it('fails if no value is provided to the getBatch method', () => {
+  // test('fails if no value is provided to the getBatch method', () => {
   //   // @ts-expect-error
   //   expect(() => TestEntity.getBatch()).toThrow(`'pk' or 'email' is required`)
   // })

@@ -48,7 +48,7 @@ const TestEntity2 = new EntityV2({
 })
 
 describe('Get transaction', () => {
-  it('Gets the key from inputs', async () => {
+  test('Gets the key from inputs', async () => {
     const { TableName, Key } = TestEntity.build(GetItemTransaction)
       .key({ email: 'test-pk', sort: 'test-sk' })
       .params()
@@ -57,7 +57,7 @@ describe('Get transaction', () => {
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
-  it('filters out extra data', async () => {
+  test('filters out extra data', async () => {
     const { Key } = TestEntity.build(GetItemTransaction)
       .key({
         email: 'test-pk',
@@ -70,7 +70,7 @@ describe('Get transaction', () => {
     expect(Key).not.toHaveProperty('test')
   })
 
-  it('fails with undefined input', () => {
+  test('fails with undefined input', () => {
     expect(
       () =>
         TestEntity.build(GetItemTransaction)
@@ -83,7 +83,7 @@ describe('Get transaction', () => {
     ).toThrow("Attribute 'email' is required")
   })
 
-  it('fails when missing the sortKey', () => {
+  test('fails when missing the sortKey', () => {
     expect(
       () =>
         TestEntity.build(GetItemTransaction)
@@ -96,7 +96,7 @@ describe('Get transaction', () => {
     ).toThrow("Attribute 'email' is required")
   })
 
-  it('fails when missing partitionKey (no alias)', () => {
+  test('fails when missing partitionKey (no alias)', () => {
     expect(
       () =>
         TestEntity2.build(GetItemTransaction)
@@ -109,7 +109,7 @@ describe('Get transaction', () => {
     ).toThrow("Attribute 'pk' is required")
   })
 
-  it('fails when missing the sortKey (no alias)', () => {
+  test('fails when missing the sortKey (no alias)', () => {
     expect(
       () =>
         TestEntity2.build(GetItemTransaction)
@@ -123,7 +123,7 @@ describe('Get transaction', () => {
   })
 
   // Options
-  it('fails on extra options', () => {
+  test('fails on extra options', () => {
     const invalidCall = () =>
       TestEntity.build(GetItemTransaction)
         .key({ email: 'x', sort: 'y' })
@@ -137,7 +137,7 @@ describe('Get transaction', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
-  it('sets projection', () => {
+  test('sets projection', () => {
     const { ExpressionAttributeNames, ProjectionExpression } = TestEntity.build(GetItemTransaction)
       .key({ email: 'x', sort: 'y' })
       .options({ attributes: ['test', 'sort'] })
@@ -147,7 +147,7 @@ describe('Get transaction', () => {
     expect(ProjectionExpression).toBe('#p_1, #p_2')
   })
 
-  it('missing key', () => {
+  test('missing key', () => {
     const invalidCall = () => TestEntity.build(GetItemTransaction).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)

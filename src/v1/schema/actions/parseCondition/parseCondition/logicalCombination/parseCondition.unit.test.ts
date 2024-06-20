@@ -12,7 +12,7 @@ describe('parseCondition - Logical combination', () => {
     bool: boolean()
   })
 
-  it('combines OR children conditions (value)', () => {
+  test('combines OR children conditions (value)', () => {
     expect(
       mySchema
         .build(ConditionParser)
@@ -30,7 +30,7 @@ describe('parseCondition - Logical combination', () => {
     })
   })
 
-  it('combines OR children conditions (attribute)', () => {
+  test('combines OR children conditions (attribute)', () => {
     expect(
       mySchema
         .build(ConditionParser)
@@ -53,7 +53,7 @@ describe('parseCondition - Logical combination', () => {
     })
   })
 
-  it('combines AND children conditions (value)', () => {
+  test('combines AND children conditions (value)', () => {
     expect(
       mySchema
         .build(ConditionParser)
@@ -71,7 +71,7 @@ describe('parseCondition - Logical combination', () => {
     })
   })
 
-  it('combines AND children conditions (attribute)', () => {
+  test('combines AND children conditions (attribute)', () => {
     expect(
       mySchema
         .build(ConditionParser)
@@ -94,7 +94,7 @@ describe('parseCondition - Logical combination', () => {
     })
   })
 
-  it('combines nested combinations', () => {
+  test('combines nested combinations', () => {
     expect(
       mySchema
         .build(ConditionParser)

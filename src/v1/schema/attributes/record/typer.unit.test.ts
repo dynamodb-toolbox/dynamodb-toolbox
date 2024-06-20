@@ -24,7 +24,7 @@ describe('record', () => {
   const fooBar = string().enum('foo', 'bar')
   const str = string()
 
-  it('rejects non-string keys', () => {
+  test('rejects non-string keys', () => {
     const invalidRecord = record(
       // @ts-expect-error
       number(),
@@ -39,7 +39,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects non-required keys', () => {
+  test('rejects non-required keys', () => {
     const invalidRecord = record(
       // @ts-expect-error
       str.optional(),
@@ -54,7 +54,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects hidden keys', () => {
+  test('rejects hidden keys', () => {
     const invalidRecord = record(
       // @ts-expect-error
       str.hidden(),
@@ -69,7 +69,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects key keys', () => {
+  test('rejects key keys', () => {
     const invalidRecord = record(
       // @ts-expect-error
       str.key(),
@@ -84,7 +84,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects keys with savedAs values', () => {
+  test('rejects keys with savedAs values', () => {
     const invalidRecord = record(
       // @ts-expect-error
       str.savedAs('foo'),
@@ -99,7 +99,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects keys with default values', () => {
+  test('rejects keys with default values', () => {
     const invalidRecord = record(
       // @ts-expect-error
       str.putDefault('foo'),
@@ -114,7 +114,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects keys with linked values', () => {
+  test('rejects keys with linked values', () => {
     const invalidRecord = record(
       // @ts-expect-error
       str.putLink(() => 'foo'),
@@ -129,7 +129,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects non-required elements', () => {
+  test('rejects non-required elements', () => {
     const invalidRecord = record(
       str,
       // @ts-expect-error
@@ -144,7 +144,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects hidden elements', () => {
+  test('rejects hidden elements', () => {
     const invalidRecord = record(
       str,
       // @ts-expect-error
@@ -159,7 +159,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects key elements', () => {
+  test('rejects key elements', () => {
     const invalidRecord = record(
       str,
       // @ts-expect-error
@@ -174,7 +174,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects elements with savedAs values', () => {
+  test('rejects elements with savedAs values', () => {
     const invalidRecord = record(
       str,
       // @ts-expect-error
@@ -189,7 +189,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects elements with default values', () => {
+  test('rejects elements with default values', () => {
     const invalidRecord = record(
       str,
       // @ts-expect-error
@@ -204,7 +204,7 @@ describe('record', () => {
     )
   })
 
-  it('rejects elements with linked values', () => {
+  test('rejects elements with linked values', () => {
     const invalidRecord = record(
       str,
       // @ts-expect-error
@@ -219,7 +219,7 @@ describe('record', () => {
     )
   })
 
-  it('returns default record', () => {
+  test('returns default record', () => {
     const rec = record(fooBar, str)
 
     const assertRec: A.Contains<
@@ -264,7 +264,7 @@ describe('record', () => {
     expect(rec[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
   })
 
-  it('returns required record (option)', () => {
+  test('returns required record (option)', () => {
     const recAtLeastOnce = record(fooBar, str, { required: 'atLeastOnce' })
     const recAlways = record(fooBar, str, { required: 'always' })
     const recNever = record(fooBar, str, { required: 'never' })
@@ -281,7 +281,7 @@ describe('record', () => {
     expect(recNever[$required]).toBe('never')
   })
 
-  it('returns required record (method)', () => {
+  test('returns required record (method)', () => {
     const recAtLeastOnce = record(fooBar, str).required()
     const recAlways = record(fooBar, str).required('always')
     const recNever = record(fooBar, str).required('never')
@@ -301,7 +301,7 @@ describe('record', () => {
     expect(recNever[$required]).toBe('never')
   })
 
-  it('returns hidden record (option)', () => {
+  test('returns hidden record (option)', () => {
     const rec = record(fooBar, str, { hidden: true })
 
     const assertRec: A.Contains<typeof rec, { [$hidden]: true }> = 1
@@ -310,7 +310,7 @@ describe('record', () => {
     expect(rec[$hidden]).toBe(true)
   })
 
-  it('returns hidden record (method)', () => {
+  test('returns hidden record (method)', () => {
     const rec = record(fooBar, str).hidden()
 
     const assertRec: A.Contains<typeof rec, { [$hidden]: true }> = 1
@@ -319,7 +319,7 @@ describe('record', () => {
     expect(rec[$hidden]).toBe(true)
   })
 
-  it('returns key record (option)', () => {
+  test('returns key record (option)', () => {
     const rec = record(fooBar, str, { key: true })
 
     const assertRec: A.Contains<typeof rec, { [$key]: true; [$required]: AtLeastOnce }> = 1
@@ -329,7 +329,7 @@ describe('record', () => {
     expect(rec[$required]).toBe('atLeastOnce')
   })
 
-  it('returns key record (method)', () => {
+  test('returns key record (method)', () => {
     const rec = record(fooBar, str).key()
 
     const assertRec: A.Contains<typeof rec, { [$key]: true; [$required]: Always }> = 1
@@ -339,7 +339,7 @@ describe('record', () => {
     expect(rec[$required]).toBe('always')
   })
 
-  it('returns savedAs record (option)', () => {
+  test('returns savedAs record (option)', () => {
     const rec = record(fooBar, str, { savedAs: 'foo' })
 
     const assertRec: A.Contains<typeof rec, { [$savedAs]: 'foo' }> = 1
@@ -348,7 +348,7 @@ describe('record', () => {
     expect(rec[$savedAs]).toBe('foo')
   })
 
-  it('returns savedAs record (method)', () => {
+  test('returns savedAs record (method)', () => {
     const rec = record(fooBar, str).savedAs('foo')
 
     const assertRec: A.Contains<typeof rec, { [$savedAs]: 'foo' }> = 1
@@ -357,7 +357,7 @@ describe('record', () => {
     expect(rec[$savedAs]).toBe('foo')
   })
 
-  it('returns defaulted record (option)', () => {
+  test('returns defaulted record (option)', () => {
     const rcA = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
       defaults: { key: { foo: 'foo' }, put: undefined, update: undefined }
@@ -398,7 +398,7 @@ describe('record', () => {
     expect(rcC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: { foo: 'bar' } })
   })
 
-  it('returns defaulted record (method)', () => {
+  test('returns defaulted record (method)', () => {
     const rcA = record(fooBar, str).key().keyDefault({ foo: 'foo' })
 
     const assertRecA: A.Contains<
@@ -430,7 +430,7 @@ describe('record', () => {
     expect(rcC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: { foo: 'bar' } })
   })
 
-  it('returns record with PUT default value if it is not key (default shorthand)', () => {
+  test('returns record with PUT default value if it is not key (default shorthand)', () => {
     const rec = record(fooBar, str).default({ foo: 'foo' })
 
     const assertRec: A.Contains<
@@ -442,7 +442,7 @@ describe('record', () => {
     expect(rec[$defaults]).toStrictEqual({ key: undefined, put: { foo: 'foo' }, update: undefined })
   })
 
-  it('returns record with KEY default value if it is key (default shorthand)', () => {
+  test('returns record with KEY default value if it is key (default shorthand)', () => {
     const rec = record(fooBar, str).key().default({ foo: 'foo' })
 
     const assertRec: A.Contains<
@@ -454,7 +454,7 @@ describe('record', () => {
     expect(rec[$defaults]).toStrictEqual({ key: { foo: 'foo' }, put: undefined, update: undefined })
   })
 
-  it('returns linked record (option)', () => {
+  test('returns linked record (option)', () => {
     const sayHello = () => ({ hello: 'world' })
     const rcA = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
@@ -496,7 +496,7 @@ describe('record', () => {
     expect(rcC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns linked record (method)', () => {
+  test('returns linked record (method)', () => {
     const sayHello = () => ({ foo: 'hello' })
     const rcA = record(fooBar, str).key().keyLink(sayHello)
 
@@ -529,7 +529,7 @@ describe('record', () => {
     expect(rcC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns record with PUT linked value if it is not key (link shorthand)', () => {
+  test('returns record with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => ({ foo: 'hello' })
     const rec = record(fooBar, str).link(sayHello)
 
@@ -542,7 +542,7 @@ describe('record', () => {
     expect(rec[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
   })
 
-  it('returns record with KEY linked value if it is key (link shorthand)', () => {
+  test('returns record with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => ({ foo: 'hello' })
     const rec = record(fooBar, str).key().link(sayHello)
 
@@ -555,7 +555,7 @@ describe('record', () => {
     expect(rec[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
   })
 
-  it('record of records', () => {
+  test('record of records', () => {
     const rec = record(fooBar, record(fooBar, str))
 
     const assertRec: A.Contains<

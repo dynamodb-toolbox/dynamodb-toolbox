@@ -21,7 +21,7 @@ describe('parseProjection', () => {
       ).savedAs('_l')
     })
 
-    it('correctly parses projection (root)', () => {
+    test('correctly parses projection (root)', () => {
       expect(
         schemaWithSavedAs.build(PathParser).parse(['savedAs']).toCommandOptions()
       ).toStrictEqual({
@@ -30,7 +30,7 @@ describe('parseProjection', () => {
       })
     })
 
-    it('correctly parses projection (nested)', () => {
+    test('correctly parses projection (nested)', () => {
       expect(
         schemaWithSavedAs.build(PathParser).parse(['savedAs', 'nested.savedAs']).toCommandOptions()
       ).toStrictEqual({
@@ -39,7 +39,7 @@ describe('parseProjection', () => {
       })
     })
 
-    it('correctly parses projection (with id)', () => {
+    test('correctly parses projection (with id)', () => {
       expect(
         schemaWithSavedAs.build(PathParser).setId('1').parse(['savedAs']).toCommandOptions()
       ).toStrictEqual({
@@ -48,7 +48,7 @@ describe('parseProjection', () => {
       })
     })
 
-    it('correctly parses condition (listed)', () => {
+    test('correctly parses condition (listed)', () => {
       expect(
         schemaWithSavedAs
           .build(PathParser)
@@ -66,14 +66,14 @@ describe('parseProjection', () => {
       anyOf: anyOf(number(), map({ str: string() }), map({ num: number().savedAs('_n') }))
     })
 
-    it('correctly parses projection (root)', () => {
+    test('correctly parses projection (root)', () => {
       expect(schemaWithAnyOf.build(PathParser).parse(['anyOf']).toCommandOptions()).toStrictEqual({
         ProjectionExpression: '#p_1',
         ExpressionAttributeNames: { '#p_1': 'anyOf' }
       })
     })
 
-    it('correctly parses projection (nested str)', () => {
+    test('correctly parses projection (nested str)', () => {
       expect(
         schemaWithAnyOf.build(PathParser).parse(['anyOf.str']).toCommandOptions()
       ).toStrictEqual({
@@ -82,7 +82,7 @@ describe('parseProjection', () => {
       })
     })
 
-    it('correctly parses projection (nested num)', () => {
+    test('correctly parses projection (nested num)', () => {
       expect(
         schemaWithAnyOf.build(PathParser).parse(['anyOf.num']).toCommandOptions()
       ).toStrictEqual({

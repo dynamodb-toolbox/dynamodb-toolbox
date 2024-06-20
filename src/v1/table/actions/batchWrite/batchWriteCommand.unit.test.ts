@@ -49,7 +49,7 @@ const EntityB = new EntityV2({
 })
 
 describe('BatchWriteCommand', () => {
-  it('throws if there is no request', () => {
+  test('throws if there is no request', () => {
     const invalidCallA = () => TestTable.build(BatchWriteCommand).params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
@@ -61,7 +61,7 @@ describe('BatchWriteCommand', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('infers correct type', () => {
+  test('infers correct type', () => {
     const command = TestTable.build(BatchWriteCommand).requests(
       EntityA.build(BatchDeleteRequest).key({ pkA: 'a', skA: 'a' }),
       EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
@@ -74,7 +74,7 @@ describe('BatchWriteCommand', () => {
     expect(command[$entities]).toStrictEqual([EntityA, EntityB])
   })
 
-  it('infers correct type even when receiving an array of requests', () => {
+  test('infers correct type even when receiving an array of requests', () => {
     const requests = [
       EntityA.build(BatchDeleteRequest).key({ pkA: 'a', skA: 'a' }),
       EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
@@ -91,7 +91,7 @@ describe('BatchWriteCommand', () => {
     expect(command[$entities]).toStrictEqual([EntityA, EntityB])
   })
 
-  it('builds expected input', () => {
+  test('builds expected input', () => {
     const input = TestTable.build(BatchWriteCommand)
       .requests(
         EntityA.build(BatchPutRequest).item({

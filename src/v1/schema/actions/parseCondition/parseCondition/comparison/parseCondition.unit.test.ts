@@ -9,7 +9,7 @@ describe('parseCondition - comparison', () => {
     otherNum: number()
   })
 
-  it('equal to (value)', () => {
+  test('equal to (value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'num', eq: 42 }).toCommandOptions()
     ).toStrictEqual({
@@ -19,7 +19,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('equal to (attribute)', () => {
+  test('equal to (attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -32,7 +32,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('not equal to (value)', () => {
+  test('not equal to (value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'num', ne: 42 }).toCommandOptions()
     ).toStrictEqual({
@@ -42,7 +42,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('not equal to (attribute)', () => {
+  test('not equal to (attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -55,7 +55,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('greater than (value)', () => {
+  test('greater than (value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'num', gt: 42 }).toCommandOptions()
     ).toStrictEqual({
@@ -65,7 +65,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('greater than (attribute)', () => {
+  test('greater than (attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -78,7 +78,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('greater than or equal to (value)', () => {
+  test('greater than or equal to (value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'num', gte: 42 }).toCommandOptions()
     ).toStrictEqual({
@@ -88,7 +88,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('greater than or equal to (attribute)', () => {
+  test('greater than or equal to (attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -101,7 +101,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('less than (value)', () => {
+  test('less than (value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'num', lt: 42 }).toCommandOptions()
     ).toStrictEqual({
@@ -111,7 +111,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('less than (attribute)', () => {
+  test('less than (attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -124,7 +124,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('less than or equal to (value)', () => {
+  test('less than or equal to (value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'num', lte: 42 }).toCommandOptions()
     ).toStrictEqual({
@@ -134,7 +134,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('less than or equal to (attribute)', () => {
+  test('less than or equal to (attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -156,7 +156,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('deep maps (value)', () => {
+  test('deep maps (value)', () => {
     expect(
       mapSchema
         .build(ConditionParser)
@@ -173,7 +173,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('deep maps (attribute)', () => {
+  test('deep maps (attribute)', () => {
     expect(
       mapSchema
         .build(ConditionParser)
@@ -213,7 +213,7 @@ describe('parseCondition - comparison', () => {
     )
   })
 
-  it('deep maps and lists (value)', () => {
+  test('deep maps and lists (value)', () => {
     expect(
       mapAndListSchema
         .build(ConditionParser)
@@ -231,7 +231,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('deep maps and lists (attribute)', () => {
+  test('deep maps and lists (attribute)', () => {
     expect(
       mapAndListSchema
         .build(ConditionParser)
@@ -261,7 +261,7 @@ describe('parseCondition - comparison', () => {
     listB: list(list(list(number())))
   })
 
-  it('deep lists (value)', () => {
+  test('deep lists (value)', () => {
     expect(
       listSchema.build(ConditionParser).parse({ attr: 'listA[1][2][3]', eq: 42 }).toCommandOptions()
     ).toStrictEqual({
@@ -271,7 +271,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('deep lists (attribute)', () => {
+  test('deep lists (attribute)', () => {
     expect(
       listSchema
         .build(ConditionParser)
@@ -284,7 +284,7 @@ describe('parseCondition - comparison', () => {
     })
   })
 
-  it('with size', () => {
+  test('with size', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ size: 'num', eq: 42 }).toCommandOptions()
     ).toStrictEqual({

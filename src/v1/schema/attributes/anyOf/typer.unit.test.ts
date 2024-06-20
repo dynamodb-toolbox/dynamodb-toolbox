@@ -22,7 +22,7 @@ describe('anyOf', () => {
   const path = 'some.path'
   const str = string()
 
-  it('rejects missing elements', () => {
+  test('rejects missing elements', () => {
     const invalidAnyOf = anyOf()
 
     const invalidCall = () => invalidAnyOf.freeze(path)
@@ -33,7 +33,7 @@ describe('anyOf', () => {
     )
   })
 
-  it('rejects non-required elements', () => {
+  test('rejects non-required elements', () => {
     const invalidAnyOf = anyOf(
       str,
       // @ts-expect-error
@@ -48,7 +48,7 @@ describe('anyOf', () => {
     )
   })
 
-  it('rejects hidden elements', () => {
+  test('rejects hidden elements', () => {
     const invalidAnyOf = anyOf(
       str,
       // @ts-expect-error
@@ -63,7 +63,7 @@ describe('anyOf', () => {
     )
   })
 
-  it('rejects elements with savedAs values', () => {
+  test('rejects elements with savedAs values', () => {
     const invalidAnyOf = anyOf(
       str,
       // @ts-expect-error
@@ -78,7 +78,7 @@ describe('anyOf', () => {
     )
   })
 
-  it('rejects elements with default values', () => {
+  test('rejects elements with default values', () => {
     const invalidAnyOf = anyOf(
       str,
       // @ts-expect-error
@@ -93,7 +93,7 @@ describe('anyOf', () => {
     )
   })
 
-  it('rejects elements with linked values', () => {
+  test('rejects elements with linked values', () => {
     const invalidAnyOf = anyOf(
       str,
       // @ts-expect-error
@@ -108,7 +108,7 @@ describe('anyOf', () => {
     )
   })
 
-  it('returns default anyOf', () => {
+  test('returns default anyOf', () => {
     const anyOfAttr = anyOf(str)
 
     const assertAnyOf: A.Contains<
@@ -160,7 +160,7 @@ describe('anyOf', () => {
   })
 
   // TODO: Reimplement options as potential first argument
-  it('returns required anyOf (method)', () => {
+  test('returns required anyOf (method)', () => {
     const anyOfAtLeastOnce = anyOf(str).required()
     const anyOfAlways = anyOf(str).required('always')
     const anyOfNever = anyOf(str).required('never')
@@ -181,7 +181,7 @@ describe('anyOf', () => {
   })
 
   // TODO: Reimplement options as potential first argument
-  it('returns hidden anyOf (method)', () => {
+  test('returns hidden anyOf (method)', () => {
     const anyOfAttr = anyOf(str).hidden()
 
     const assertAnyOf: A.Contains<typeof anyOfAttr, { [$hidden]: true }> = 1
@@ -191,7 +191,7 @@ describe('anyOf', () => {
   })
 
   // TODO: Reimplement options as potential first argument
-  it('returns key anyOf (method)', () => {
+  test('returns key anyOf (method)', () => {
     const anyOfAttr = anyOf(str).key()
 
     const assertAnyOf: A.Contains<typeof anyOfAttr, { [$key]: true; [$required]: Always }> = 1
@@ -202,7 +202,7 @@ describe('anyOf', () => {
   })
 
   // TODO: Reimplement options as potential first argument
-  it('returns savedAs anyOf (method)', () => {
+  test('returns savedAs anyOf (method)', () => {
     const anyOfAttr = anyOf(str).savedAs('foo')
 
     const assertAnyOf: A.Contains<typeof anyOfAttr, { [$savedAs]: 'foo' }> = 1
@@ -212,7 +212,7 @@ describe('anyOf', () => {
   })
 
   // TODO: Reimplement options as potential first argument
-  it('returns defaulted anyOf (method)', () => {
+  test('returns defaulted anyOf (method)', () => {
     const anyOfAttr = anyOf(str).updateDefault('bar')
 
     const assertAnyOf: A.Contains<
@@ -224,7 +224,7 @@ describe('anyOf', () => {
     expect(anyOfAttr[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: 'bar' })
   })
 
-  it('returns anyOf with PUT default value if it is not key (default shorthand)', () => {
+  test('returns anyOf with PUT default value if it is not key (default shorthand)', () => {
     const anyOfAttr = anyOf(str).default('foo')
 
     const assertAnyOf: A.Contains<
@@ -236,7 +236,7 @@ describe('anyOf', () => {
     expect(anyOfAttr[$defaults]).toStrictEqual({ key: undefined, put: 'foo', update: undefined })
   })
 
-  it('returns anyOf with KEY default value if it is key (default shorthand)', () => {
+  test('returns anyOf with KEY default value if it is key (default shorthand)', () => {
     const anyOfAttr = anyOf(str).key().default('foo')
 
     const assertAnyOf: A.Contains<
@@ -249,7 +249,7 @@ describe('anyOf', () => {
   })
 
   // TODO: Reimplement options as potential first argument
-  it('returns linked anyOf (method)', () => {
+  test('returns linked anyOf (method)', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).updateLink(sayHello)
 
@@ -262,7 +262,7 @@ describe('anyOf', () => {
     expect(anyOfAttr[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns anyOf with PUT linked value if it is not key (link shorthand)', () => {
+  test('returns anyOf with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).link(sayHello)
 
@@ -275,7 +275,7 @@ describe('anyOf', () => {
     expect(anyOfAttr[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
   })
 
-  it('returns anyOf with KEY linked value if it is key (link shorthand)', () => {
+  test('returns anyOf with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).key().link(sayHello)
 
@@ -288,7 +288,7 @@ describe('anyOf', () => {
     expect(anyOfAttr[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
   })
 
-  it('anyOf of anyOfs', () => {
+  test('anyOf of anyOfs', () => {
     const nestedAnyOff = anyOf(str)
     const anyOfAttr = anyOf(nestedAnyOff)
 

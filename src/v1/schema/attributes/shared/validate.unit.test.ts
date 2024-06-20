@@ -40,7 +40,7 @@ describe('shared properties validation', () => {
     }
   }
 
-  it('throws if required option is invalid', () => {
+  test('throws if required option is invalid', () => {
     const invalidRequiredOption = 'invalid'
 
     const invalidCall = () =>
@@ -67,7 +67,7 @@ describe('shared properties validation', () => {
     ).not.toThrow()
   })
 
-  it('throws if hidden option is invalid', () => {
+  test('throws if hidden option is invalid', () => {
     const invalidKeyOption = 'invalid'
 
     const invalidCall = () =>
@@ -91,7 +91,7 @@ describe('shared properties validation', () => {
     ).not.toThrow()
   })
 
-  it('throws if key option is invalid', () => {
+  test('throws if key option is invalid', () => {
     const invalidKeyOption = 'invalid'
 
     const invalidCall = () =>
@@ -113,7 +113,7 @@ describe('shared properties validation', () => {
     expect(() => validateAttributeProperties({ ...validProperties, key: true }, path)).not.toThrow()
   })
 
-  it('throws if savedAs option is invalid', () => {
+  test('throws if savedAs option is invalid', () => {
     const invalidSavedAsOption = 42
 
     const invalidCall = () =>

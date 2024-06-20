@@ -22,7 +22,7 @@ describe('set', () => {
   const path = 'some.path'
   const strElement = string()
 
-  it('rejects non-required elements', () => {
+  test('rejects non-required elements', () => {
     const invalidSet = set(
       // @ts-expect-error
       string().optional()
@@ -36,7 +36,7 @@ describe('set', () => {
     )
   })
 
-  it('rejects hidden elements', () => {
+  test('rejects hidden elements', () => {
     const invalidSet = set(
       // @ts-expect-error
       strElement.hidden()
@@ -50,7 +50,7 @@ describe('set', () => {
     )
   })
 
-  it('rejects elements with savedAs values', () => {
+  test('rejects elements with savedAs values', () => {
     const invalidSet = set(
       // @ts-expect-error
       strElement.savedAs('foo')
@@ -64,7 +64,7 @@ describe('set', () => {
     )
   })
 
-  it('rejects elements with default values', () => {
+  test('rejects elements with default values', () => {
     const invalidSet = set(
       // @ts-expect-error
       strElement.default('foo')
@@ -78,7 +78,7 @@ describe('set', () => {
     )
   })
 
-  it('rejects elements with linked values', () => {
+  test('rejects elements with linked values', () => {
     const invalidSet = set(
       // @ts-expect-error
       strElement.link(() => 'foo')
@@ -92,7 +92,7 @@ describe('set', () => {
     )
   })
 
-  it('returns default set', () => {
+  test('returns default set', () => {
     const st = set(strElement)
 
     const assertSet: A.Contains<
@@ -135,7 +135,7 @@ describe('set', () => {
     expect(st[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
   })
 
-  it('returns required set (option)', () => {
+  test('returns required set (option)', () => {
     const stAtLeastOnce = set(strElement, { required: 'atLeastOnce' })
     const stAlways = set(strElement, { required: 'always' })
     const stNever = set(strElement, { required: 'never' })
@@ -152,7 +152,7 @@ describe('set', () => {
     expect(stNever[$required]).toBe('never')
   })
 
-  it('returns required set (method)', () => {
+  test('returns required set (method)', () => {
     const stAtLeastOnce = set(strElement).required()
     const stAlways = set(strElement).required('always')
     const stNever = set(strElement).required('never')
@@ -173,7 +173,7 @@ describe('set', () => {
     expect(stOpt[$required]).toBe('never')
   })
 
-  it('returns hidden set (option)', () => {
+  test('returns hidden set (option)', () => {
     const st = set(strElement, { hidden: true })
 
     const assertSet: A.Contains<typeof st, { [$hidden]: true }> = 1
@@ -182,7 +182,7 @@ describe('set', () => {
     expect(st[$hidden]).toBe(true)
   })
 
-  it('returns hidden set (method)', () => {
+  test('returns hidden set (method)', () => {
     const st = set(strElement).hidden()
 
     const assertSet: A.Contains<typeof st, { [$hidden]: true }> = 1
@@ -191,7 +191,7 @@ describe('set', () => {
     expect(st[$hidden]).toBe(true)
   })
 
-  it('returns key set (option)', () => {
+  test('returns key set (option)', () => {
     const st = set(strElement, { key: true })
 
     const assertSet: A.Contains<typeof st, { [$key]: true; [$required]: AtLeastOnce }> = 1
@@ -201,7 +201,7 @@ describe('set', () => {
     expect(st[$required]).toBe('atLeastOnce')
   })
 
-  it('returns key set (method)', () => {
+  test('returns key set (method)', () => {
     const st = set(strElement).key()
 
     const assertSet: A.Contains<typeof st, { [$key]: true; [$required]: Always }> = 1
@@ -211,7 +211,7 @@ describe('set', () => {
     expect(st[$required]).toBe('always')
   })
 
-  it('returns savedAs set (option)', () => {
+  test('returns savedAs set (option)', () => {
     const st = set(strElement, { savedAs: 'foo' })
 
     const assertSet: A.Contains<typeof st, { [$savedAs]: 'foo' }> = 1
@@ -220,7 +220,7 @@ describe('set', () => {
     expect(st[$savedAs]).toBe('foo')
   })
 
-  it('returns savedAs set (method)', () => {
+  test('returns savedAs set (method)', () => {
     const st = set(strElement).savedAs('foo')
 
     const assertSet: A.Contains<typeof st, { [$savedAs]: 'foo' }> = 1
@@ -229,7 +229,7 @@ describe('set', () => {
     expect(st[$savedAs]).toBe('foo')
   })
 
-  it('returns defaulted set (option)', () => {
+  test('returns defaulted set (option)', () => {
     const stA = set(strElement, {
       defaults: { key: new Set(['foo']), put: undefined, update: undefined }
     })
@@ -279,7 +279,7 @@ describe('set', () => {
     })
   })
 
-  it('returns defaulted set (method)', () => {
+  test('returns defaulted set (method)', () => {
     const stA = set(strElement).keyDefault(new Set(['foo']))
 
     const assertSetA: A.Contains<
@@ -323,7 +323,7 @@ describe('set', () => {
     })
   })
 
-  it('returns set with PUT default value if it is not key (default shorthand)', () => {
+  test('returns set with PUT default value if it is not key (default shorthand)', () => {
     const st = set(string()).default(new Set(['foo']))
 
     const assertSt: A.Contains<
@@ -339,7 +339,7 @@ describe('set', () => {
     })
   })
 
-  it('returns set with KEY default value if it is key (default shorthand)', () => {
+  test('returns set with KEY default value if it is key (default shorthand)', () => {
     const st = set(string())
       .key()
       .default(new Set(['foo']))
@@ -357,7 +357,7 @@ describe('set', () => {
     })
   })
 
-  it('returns linked set (option)', () => {
+  test('returns linked set (option)', () => {
     const sayHello = () => new Set(['hello'])
 
     const stA = set(strElement, {
@@ -397,7 +397,7 @@ describe('set', () => {
     expect(stC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns linked set (method)', () => {
+  test('returns linked set (method)', () => {
     const sayHello = () => new Set(['hello'])
     const stA = set(strElement).keyLink(sayHello)
 
@@ -430,7 +430,7 @@ describe('set', () => {
     expect(stC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns set with PUT linked value if it is not key (link shorthand)', () => {
+  test('returns set with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => new Set(['hello'])
     const st = set(string()).link(sayHello)
 
@@ -443,7 +443,7 @@ describe('set', () => {
     expect(st[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
   })
 
-  it('returns set with KEY linked value if it is key (link shorthand)', () => {
+  test('returns set with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => new Set(['hello'])
     const st = set(string()).key().link(sayHello)
 

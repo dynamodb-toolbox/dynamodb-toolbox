@@ -3,7 +3,7 @@ import Entity from '../classes/Entity/Entity.js'
 import { DocumentClient } from './bootstrap.test.js'
 
 describe('Misc Tests (development only)', () => {
-  it('uses a numeric pk value', async () => {
+  test('uses a numeric pk value', async () => {
     const table = new Table({
       name: 'test-table',
       partitionKey: 'pk',
@@ -807,7 +807,7 @@ describe('Misc Tests (development only)', () => {
   //     // })
   //   })
 
-  //   // it('creates basic table', () => {
+  //   // test('creates basic table', () => {
   //   //   let Default = new Table({
   //   //     name: 'test-table',
   //   //     partitionKey: 'pk',

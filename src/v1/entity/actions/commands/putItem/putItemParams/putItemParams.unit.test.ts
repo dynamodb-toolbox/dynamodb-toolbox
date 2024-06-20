@@ -113,7 +113,7 @@ const TestEntity5 = new EntityV2({
 })
 
 describe('put', () => {
-  it('creates basic item', () => {
+  test('creates basic item', () => {
     const { Item } = TestEntity.build(PutItemCommand)
       .item({ email: 'test-pk', sort: 'test-sk' })
       .params()
@@ -131,7 +131,7 @@ describe('put', () => {
     })
   })
 
-  it('creates item with aliases', () => {
+  test('creates item with aliases', () => {
     const { Item } = TestEntity.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -143,7 +143,7 @@ describe('put', () => {
     expect(Item).toMatchObject({ test_number: 0 })
   })
 
-  it('creates item with overridden default override', () => {
+  test('creates item with overridden default override', () => {
     const overrideValue = 'different value'
 
     const { Item } = TestEntity.build(PutItemCommand)
@@ -157,7 +157,7 @@ describe('put', () => {
     expect(Item).toMatchObject({ test_string: overrideValue })
   })
 
-  it('creates item with composite field', () => {
+  test('creates item with composite field', () => {
     const { Item } = TestEntity2.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -168,7 +168,7 @@ describe('put', () => {
     expect(Item).not.toHaveProperty('sort')
   })
 
-  it('creates item with filled composite key', () => {
+  test('creates item with filled composite key', () => {
     const { Item } = TestEntity2.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -180,7 +180,7 @@ describe('put', () => {
     expect(Item).toMatchObject({ sk: 'test#test2' })
   })
 
-  it('creates item with overriden composite key', () => {
+  test('creates item with overriden composite key', () => {
     const { Item } = TestEntity2.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -193,7 +193,7 @@ describe('put', () => {
     expect(Item).toMatchObject({ sk: 'override' })
   })
 
-  it('fails if required attribute misses', () => {
+  test('fails if required attribute misses', () => {
     expect(() =>
       TestEntity3.build(PutItemCommand)
         .item(
@@ -204,7 +204,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('ignores additional attribute', () => {
+  test('ignores additional attribute', () => {
     const { Item } = TestEntity.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -217,7 +217,7 @@ describe('put', () => {
     expect(Item).not.toHaveProperty('unknown')
   })
 
-  it('fails when invalid string provided with no coercion', () => {
+  test('fails when invalid string provided with no coercion', () => {
     expect(() =>
       TestEntity.build(PutItemCommand)
         .item({
@@ -230,7 +230,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when invalid boolean provided with no coercion', () => {
+  test('fails when invalid boolean provided with no coercion', () => {
     expect(() =>
       TestEntity.build(PutItemCommand)
         .item({
@@ -243,7 +243,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when invalid number provided with no coercion', () => {
+  test('fails when invalid number provided with no coercion', () => {
     expect(() =>
       TestEntity.build(PutItemCommand)
         .item({
@@ -256,7 +256,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('with valid array', () => {
+  test('with valid array', () => {
     const { Item } = TestEntity.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -270,7 +270,7 @@ describe('put', () => {
     })
   })
 
-  it('fails when invalid array provided', () => {
+  test('fails when invalid array provided', () => {
     expect(() =>
       TestEntity.build(PutItemCommand)
         .item({
@@ -283,7 +283,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('with valid map', () => {
+  test('with valid map', () => {
     const { Item } = TestEntity.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -299,7 +299,7 @@ describe('put', () => {
     })
   })
 
-  it('fails when invalid map provided', () => {
+  test('fails when invalid map provided', () => {
     expect(() =>
       TestEntity.build(PutItemCommand)
         .item({
@@ -312,7 +312,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('with valid set', () => {
+  test('with valid set', () => {
     const { Item } = TestEntity.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -326,7 +326,7 @@ describe('put', () => {
     })
   })
 
-  it('fails when set contains different types', () => {
+  test('fails when set contains different types', () => {
     expect(() =>
       TestEntity.build(PutItemCommand)
         .item({
@@ -339,7 +339,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('fails when missing a required field', () => {
+  test('fails when missing a required field', () => {
     expect(() =>
       TestEntity3.build(PutItemCommand)
         .item(
@@ -350,7 +350,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  it('puts 0 and false to required fields', () => {
+  test('puts 0 and false to required fields', () => {
     const { Item } = TestEntity5.build(PutItemCommand)
       .item({
         pk: 'test-pk',
@@ -365,13 +365,13 @@ describe('put', () => {
     })
   })
 
-  it('correctly aliases pks', () => {
+  test('correctly aliases pks', () => {
     const { Item } = TestEntity4.build(PutItemCommand).item({ id: 3, xyz: '123' }).params()
     expect(Item).toMatchObject({ pk: '3', sk: '3' })
   })
 
   // Options
-  it('sets capacity options', () => {
+  test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestEntity.build(PutItemCommand)
       .item({ email: 'x', sort: 'y' })
       .options({ capacity: 'NONE' })
@@ -380,7 +380,7 @@ describe('put', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  it('fails on invalid capacity option', () => {
+  test('fails on invalid capacity option', () => {
     const invalidCall = () =>
       TestEntity.build(PutItemCommand)
         .item({ email: 'x', sort: 'y' })
@@ -394,7 +394,7 @@ describe('put', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
-  it('sets metrics options', () => {
+  test('sets metrics options', () => {
     const { ReturnItemCollectionMetrics } = TestEntity.build(PutItemCommand)
       .item({ email: 'x', sort: 'y' })
       .options({ metrics: 'SIZE' })
@@ -403,7 +403,7 @@ describe('put', () => {
     expect(ReturnItemCollectionMetrics).toBe('SIZE')
   })
 
-  it('fails on invalid metrics option', () => {
+  test('fails on invalid metrics option', () => {
     const invalidCall = () =>
       TestEntity.build(PutItemCommand)
         .item({ email: 'x', sort: 'y' })
@@ -417,7 +417,7 @@ describe('put', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
   })
 
-  it('sets returnValues options', () => {
+  test('sets returnValues options', () => {
     const { ReturnValues } = TestEntity.build(PutItemCommand)
       .item({ email: 'x', sort: 'y' })
       .options({ returnValues: 'ALL_OLD' })
@@ -426,7 +426,7 @@ describe('put', () => {
     expect(ReturnValues).toBe('ALL_OLD')
   })
 
-  it('fails on invalid returnValues option', () => {
+  test('fails on invalid returnValues option', () => {
     const invalidCall = () =>
       TestEntity.build(PutItemCommand)
         .item({ email: 'x', sort: 'y' })
@@ -442,7 +442,7 @@ describe('put', () => {
     )
   })
 
-  it('fails on extra options', () => {
+  test('fails on extra options', () => {
     const invalidCall = () =>
       TestEntity.build(PutItemCommand)
         .item({ email: 'x', sort: 'y' })
@@ -456,7 +456,7 @@ describe('put', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
-  it('sets condition', () => {
+  test('sets condition', () => {
     const {
       ExpressionAttributeNames,
       ExpressionAttributeValues,
@@ -471,14 +471,14 @@ describe('put', () => {
     expect(ConditionExpression).toBe('#c_1 > :c_1')
   })
 
-  it('missing item', () => {
+  test('missing item', () => {
     const invalidCall = () => TestEntity.build(PutItemCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  it('transformed key/attribute', () => {
+  test('transformed key/attribute', () => {
     const TestEntity3 = new EntityV2({
       name: 'TestEntity',
       schema: schema({

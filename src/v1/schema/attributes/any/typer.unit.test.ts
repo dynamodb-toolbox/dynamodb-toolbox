@@ -17,7 +17,7 @@ import type { $AnyAttributeState, AnyAttribute } from './interface.js'
 import { any } from './typer.js'
 
 describe('anyAttribute', () => {
-  it('returns default string', () => {
+  test('returns default string', () => {
     const anyInstance = any()
 
     const assertAny: A.Contains<
@@ -67,7 +67,7 @@ describe('anyAttribute', () => {
     })
   })
 
-  it('returns required any (option)', () => {
+  test('returns required any (option)', () => {
     const anyAtLeastOnce = any({ required: 'atLeastOnce' })
     const anyAlways = any({ required: 'always' })
     const anyNever = any({ required: 'never' })
@@ -84,7 +84,7 @@ describe('anyAttribute', () => {
     expect(anyNever[$required]).toBe('never')
   })
 
-  it('returns required any (method)', () => {
+  test('returns required any (method)', () => {
     const anyAtLeastOnce = any().required()
     const anyAlways = any().required('always')
     const anyNever = any().required('never')
@@ -105,7 +105,7 @@ describe('anyAttribute', () => {
     expect(anyOpt[$required]).toBe('never')
   })
 
-  it('returns hidden any (option)', () => {
+  test('returns hidden any (option)', () => {
     const anyInstance = any({ hidden: true })
 
     const assertAny: A.Contains<typeof anyInstance, { [$hidden]: true }> = 1
@@ -114,7 +114,7 @@ describe('anyAttribute', () => {
     expect(anyInstance[$hidden]).toBe(true)
   })
 
-  it('returns hidden any (method)', () => {
+  test('returns hidden any (method)', () => {
     const anyInstance = any().hidden()
 
     const assertAny: A.Contains<typeof anyInstance, { [$hidden]: true }> = 1
@@ -123,7 +123,7 @@ describe('anyAttribute', () => {
     expect(anyInstance[$hidden]).toBe(true)
   })
 
-  it('returns key any (option)', () => {
+  test('returns key any (option)', () => {
     const anyInstance = any({ key: true })
 
     const assertAny: A.Contains<typeof anyInstance, { [$key]: true; [$required]: AtLeastOnce }> = 1
@@ -133,7 +133,7 @@ describe('anyAttribute', () => {
     expect(anyInstance[$required]).toBe('atLeastOnce')
   })
 
-  it('returns key any (method)', () => {
+  test('returns key any (method)', () => {
     const anyInstance = any().key()
 
     const assertAny: A.Contains<typeof anyInstance, { [$key]: true; [$required]: Always }> = 1
@@ -143,7 +143,7 @@ describe('anyAttribute', () => {
     expect(anyInstance[$required]).toBe('always')
   })
 
-  it('returns savedAs any (option)', () => {
+  test('returns savedAs any (option)', () => {
     const anyInstance = any({ savedAs: 'foo' })
 
     const assertAny: A.Contains<typeof anyInstance, { [$savedAs]: 'foo' }> = 1
@@ -152,7 +152,7 @@ describe('anyAttribute', () => {
     expect(anyInstance[$savedAs]).toBe('foo')
   })
 
-  it('returns savedAs any (method)', () => {
+  test('returns savedAs any (method)', () => {
     const anyInstance = any().savedAs('foo')
 
     const assertAny: A.Contains<typeof anyInstance, { [$savedAs]: 'foo' }> = 1
@@ -161,7 +161,7 @@ describe('anyAttribute', () => {
     expect(anyInstance[$savedAs]).toBe('foo')
   })
 
-  it('returns castAs any (method)', () => {
+  test('returns castAs any (method)', () => {
     const anyInstance = any().castAs<'foo' | 'bar'>()
 
     const assertAny: A.Contains<typeof anyInstance, { [$castAs]: 'foo' | 'bar' }> = 1
@@ -171,7 +171,7 @@ describe('anyAttribute', () => {
     expect(anyInstance[$castAs]).toBeUndefined()
   })
 
-  it('returns any with default value (option)', () => {
+  test('returns any with default value (option)', () => {
     // TOIMPROVE: Add type constraints here
     const strA = any({ defaults: { key: 'hello', put: undefined, update: undefined } })
     const strB = any({ defaults: { key: undefined, put: 'world', update: undefined } })
@@ -203,7 +203,7 @@ describe('anyAttribute', () => {
     expect(strC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns any with default value (method)', () => {
+  test('returns any with default value (method)', () => {
     const strA = any().keyDefault('hello')
     const strB = any().putDefault('world')
     const sayHello = () => 'hello'
@@ -234,7 +234,7 @@ describe('anyAttribute', () => {
     expect(strC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
   })
 
-  it('returns any with PUT default value if it is not key (default shorthand)', () => {
+  test('returns any with PUT default value if it is not key (default shorthand)', () => {
     const str = any().default('hello')
 
     const assertAny: A.Contains<
@@ -246,7 +246,7 @@ describe('anyAttribute', () => {
     expect(str[$defaults]).toStrictEqual({ key: undefined, put: 'hello', update: undefined })
   })
 
-  it('returns any with KEY default value if it is key (default shorthand)', () => {
+  test('returns any with KEY default value if it is key (default shorthand)', () => {
     const str = any().key().default('hello')
 
     const assertAny: A.Contains<
@@ -258,7 +258,7 @@ describe('anyAttribute', () => {
     expect(str[$defaults]).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
   })
 
-  it('returns any with linked value (option)', () => {
+  test('returns any with linked value (option)', () => {
     // TOIMPROVE: Add type constraints here
     const sayHello = () => 'hello'
     const say42 = () => 42
@@ -292,7 +292,7 @@ describe('anyAttribute', () => {
     expect(strC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayTrue })
   })
 
-  it('returns any with linked value (method)', () => {
+  test('returns any with linked value (method)', () => {
     const sayHello = () => 'hello'
     const say42 = () => 42
     const sayTrue = () => true
@@ -326,7 +326,7 @@ describe('anyAttribute', () => {
     expect(strC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayTrue })
   })
 
-  it('returns any with PUT linked value if it is not key (link shorthand)', () => {
+  test('returns any with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const str = any().link(sayHello)
 
@@ -339,7 +339,7 @@ describe('anyAttribute', () => {
     expect(str[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
   })
 
-  it('returns any with KEY link value if it is key (link shorthand)', () => {
+  test('returns any with KEY link value if it is key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const str = any().key().link(sayHello)
 

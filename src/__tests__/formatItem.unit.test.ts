@@ -42,49 +42,49 @@ DefaultTable.addEntity(
 )
 
 describe('formatItem', () => {
-  it('formats item with no alias', () => {
+  test('formats item with no alias', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       pk: 'test'
     })
     expect(result).toEqual({ pk: 'test' })
   })
 
-  it('formats item with alias', () => {
+  test('formats item with alias', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       list: ['test']
     })
     expect(result).toEqual({ list_alias: ['test'] })
   })
 
-  it('formats item with mapping', () => {
+  test('formats item with mapping', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       list2: ['test']
     })
     expect(result).toEqual({ list_alias2: ['test'] })
   })
 
-  it('formats item with set (alias)', () => {
+  test('formats item with set (alias)', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       set: new Set([1, 2, 3])
     })
     expect(result).toEqual({ set_alias: [1, 2, 3] })
   })
 
-  it('formats item with set (map)', () => {
+  test('formats item with set (map)', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       set2: new Set([1, 2, 3])
     })
     expect(result).toEqual({ set_alias2: [1, 2, 3] })
   })
 
-  it('formats item with linked fields', () => {
+  test('formats item with linked fields', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       sk: 'test1#test2'
     })
     expect(result).toEqual({ sk: 'test1#test2', linked1: 'test1', linked2: 'test2' })
   })
 
-  it('formats item with wrapped numbers', () => {
+  test('formats item with wrapped numbers', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       number: { value: '1' },
       numberSet: new Set([
@@ -130,7 +130,7 @@ describe('formatItem', () => {
     `)
   })
 
-  it('specifies attributes to include', () => {
+  test('specifies attributes to include', () => {
     const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
@@ -140,7 +140,7 @@ describe('formatItem', () => {
     expect(result).toEqual({ pk: 'test' })
   })
 
-  it('specifies attributes to include', () => {
+  test('specifies attributes to include', () => {
     const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
@@ -150,7 +150,7 @@ describe('formatItem', () => {
     expect(result).toEqual({ list_alias: ['test'] })
   })
 
-  it('specifies attributes to include with linked fields', () => {
+  test('specifies attributes to include with linked fields', () => {
     const result = formatItem()(
       DefaultTable.User.schema.attributes,
       DefaultTable.User.linked,
@@ -160,7 +160,7 @@ describe('formatItem', () => {
     expect(result).toEqual({ linked1: 'test1' })
   })
 
-  it('formats item with linked aliased composite field', () => {
+  test('formats item with linked aliased composite field', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       composite1: 'test1#test2'
     })
@@ -171,7 +171,7 @@ describe('formatItem', () => {
     })
   })
 
-  it('formats item with linked mapped composite field', () => {
+  test('formats item with linked mapped composite field', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       composite2: 'test1#test2'
     })
@@ -182,14 +182,14 @@ describe('formatItem', () => {
     })
   })
 
-  it('passes through attribute not specified in entity', () => {
+  test('passes through attribute not specified in entity', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       unspecified: 'value'
     })
     expect(result).toEqual({ unspecified: 'value' })
   })
 
-  it('passes through null attribute', () => {
+  test('passes through null attribute', () => {
     const result = formatItem()(DefaultTable.User.schema.attributes, DefaultTable.User.linked, {
       number: null
     })

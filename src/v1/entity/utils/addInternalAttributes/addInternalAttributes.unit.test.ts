@@ -31,7 +31,7 @@ describe('addInternalAttributes', () => {
       timestamps: true
     })
 
-    it('adds entity attribute', () => {
+    test('adds entity attribute', () => {
       expect(enrichedSchema.attributes.id).toMatchObject({
         path: 'id',
         savedAs: entityAttributeSavedAs,
@@ -56,14 +56,14 @@ describe('addInternalAttributes', () => {
       ).toStrictEqual($get('id', 'myEntity'))
     })
 
-    it('does not mute original schema', () => {
+    test('does not mute original schema', () => {
       // @ts-expect-error
       expect(mySchema.attributes.id).toBeUndefined()
     })
   })
 
   describe('timestamp attributes', () => {
-    it('does not add created attribute if timestamps are disabled', () => {
+    test('does not add created attribute if timestamps are disabled', () => {
       const noTimestampSchema = addInternalAttributes({
         schema: mySchema,
         table: myTable,
@@ -106,7 +106,7 @@ describe('addInternalAttributes', () => {
       expect(modifiedTimestampSchema.attributes.modified).toBeUndefined()
     })
 
-    it('adds created field', () => {
+    test('adds created field', () => {
       const enrichedSchema = addInternalAttributes({
         schema: mySchema,
         table: myTable,
@@ -204,7 +204,7 @@ describe('addInternalAttributes', () => {
       })
     })
 
-    it('adds modified field', () => {
+    test('adds modified field', () => {
       const enrichedSchema = addInternalAttributes({
         schema: mySchema,
         table: myTable,
@@ -302,7 +302,7 @@ describe('addInternalAttributes', () => {
       })
     })
 
-    it('does not mute original schema', () => {
+    test('does not mute original schema', () => {
       // @ts-expect-error
       expect(mySchema.attributes.created).toBeUndefined()
       // @ts-expect-error
@@ -311,7 +311,7 @@ describe('addInternalAttributes', () => {
   })
 
   describe('reserved attribute names', () => {
-    it('throws a "reservedAttributeName" error if ', () => {
+    test('throws a "reservedAttributeName" error if ', () => {
       const invalidSchema = schema({
         entity: string()
       })
@@ -329,7 +329,7 @@ describe('addInternalAttributes', () => {
       expect(invalidCall).toThrow(expect.objectContaining({ code: 'entity.reservedAttributeName' }))
     })
 
-    it('throws a "reservedAttributeSavedAs" error if ', () => {
+    test('throws a "reservedAttributeSavedAs" error if ', () => {
       const invalidSchema = schema({
         ent: string().savedAs(entityAttributeSavedAs)
       })

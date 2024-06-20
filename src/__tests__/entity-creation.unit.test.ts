@@ -2,10 +2,10 @@ import Table from '../classes/Table/Table.js'
 import Entity from '../classes/Entity/Entity.js'
 import { DocumentClient, DocumentClientWithWrappedNumbers } from './bootstrap.test.js'
 
-const tableAddEntity = jest.spyOn(Table.prototype, 'addEntity').mockReturnValue()
+const tableAddEntity = vi.spyOn(Table.prototype, 'addEntity').mockReturnValue()
 
 describe('Entity creation', () => {
-  it('creates basic entity w/ defaults', async () => {
+  test('creates basic entity w/ defaults', async () => {
     const TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -32,7 +32,7 @@ describe('Entity creation', () => {
     expect(TestEntity.typeHidden).toBe(false)
   })
 
-  it('creates basic entity w/o timestamps', () => {
+  test('creates basic entity w/o timestamps', () => {
     const TestEntity = new Entity({
       name: 'TestEntity',
       timestamps: false,
@@ -57,7 +57,7 @@ describe('Entity creation', () => {
     expect(TestEntity._etAlias).toBe('entity')
   })
 
-  it('creates entity that overrides timestamp names', () => {
+  test('creates entity that overrides timestamp names', () => {
     const TestEntity = new Entity({
       name: 'TestEntity',
       created: 'createdAt',
@@ -74,7 +74,7 @@ describe('Entity creation', () => {
     expect(TestEntity.defaults).toHaveProperty('modifiedAt')
   })
 
-  it('creates basic entity with typeHidden set to true', () => {
+  test('creates basic entity with typeHidden set to true', () => {
     const TestEntity = new Entity({
       name: 'TestEntity',
       typeHidden: true,
@@ -86,7 +86,7 @@ describe('Entity creation', () => {
     expect(TestEntity.typeHidden).toBe(true)
   })
 
-  it('creates basic entity w/ required fields', () => {
+  test('creates basic entity w/ required fields', () => {
     const TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -100,7 +100,7 @@ describe('Entity creation', () => {
     expect(TestEntity.required.test2).toEqual(true)
   })
 
-  it('creates entity w/ composite field type defaults and string assignment', () => {
+  test('creates entity w/ composite field type defaults and string assignment', () => {
     const TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -115,7 +115,7 @@ describe('Entity creation', () => {
     expect(TestEntity.linked).toEqual({ pk: ['test', 'test2'] })
   })
 
-  it('creates entity w/ composite field alias', () => {
+  test('creates entity w/ composite field alias', () => {
     const TestEntity = new Entity({
       name: 'TestEntity',
       attributes: {
@@ -127,7 +127,7 @@ describe('Entity creation', () => {
     expect(TestEntity.schema.attributes.test2.map).toBe('test')
   })
 
-  it('creates entity from shared config constant without modifying it', () => {
+  test('creates entity from shared config constant without modifying it', () => {
     const config = {
       name: 'TestEntity',
       attributes: {
@@ -150,14 +150,13 @@ describe('Entity creation', () => {
     expect(config.timestamps).toBe(true)
   })
 
-  it('invokes table.addEntity when created with a table', () => {
+  test('invokes table.addEntity when created with a table', () => {
     const table = new Table({
       name: 'TestTable-2',
       partitionKey: 'pk',
       sortKey: 'sk',
       DocumentClient
     })
-
 
     const TestEntity = new Entity({
       name: 'TestEntity-3',
@@ -171,7 +170,7 @@ describe('Entity creation', () => {
     expect(tableAddEntity).toHaveBeenCalledWith(TestEntity)
   })
 
-  it('fails when creating a entity without a partitionKey', () => {
+  test('fails when creating a entity without a partitionKey', () => {
     const result = () =>
       new Entity({
         name: 'TestEntity',
@@ -180,7 +179,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`Entity requires a partitionKey attribute`)
   })
 
-  it('fails when creating a entity without a name', () => {
+  test('fails when creating a entity without a name', () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -191,7 +190,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`'name' must be defined`)
   })
 
-  it('fails when creating a entity with an invalid attributes object (array)', () => {
+  test('fails when creating a entity with an invalid attributes object (array)', () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -201,7 +200,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`Please provide a valid 'attributes' object`)
   })
 
-  it('fails when creating a entity with an invalid attributes object (string)', () => {
+  test('fails when creating a entity with an invalid attributes object (string)', () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -211,7 +210,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`Please provide a valid 'attributes' object`)
   })
 
-  it('fails when attribute has an invalid type (string style)', () => {
+  test('fails when attribute has an invalid type (string style)', () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -225,7 +224,7 @@ describe('Entity creation', () => {
     )
   })
 
-  it('fails when attribute has an invalid type (object style)', () => {
+  test('fails when attribute has an invalid type (object style)', () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -239,7 +238,7 @@ describe('Entity creation', () => {
     )
   })
 
-  it(`fails when an attribute has invalid 'onUpdate' setting`, () => {
+  test(`fails when an attribute has invalid 'onUpdate' setting`, () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -252,7 +251,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`'onUpdate' must be a boolean`)
   })
 
-  it(`fails when attribute alias duplicates existing property`, () => {
+  test(`fails when attribute alias duplicates existing property`, () => {
     const result = () =>
       new Entity({
         name: 'TestEntity',
@@ -264,7 +263,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`'alias' must be a unique string`)
   })
 
-  it(`fails when an attribute uses 'setType' when not a 'set'`, () => {
+  test(`fails when an attribute uses 'setType' when not a 'set'`, () => {
     const result = () =>
       new Entity({
         name: 'TestEntity',
@@ -276,7 +275,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`'setType' is only valid for type 'set'`)
   })
 
-  it(`fails when attribute uses invalid 'setType'`, () => {
+  test(`fails when attribute uses invalid 'setType'`, () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -289,7 +288,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`Invalid 'setType', must be 'string', 'number', 'bigint', or 'binary'`)
   })
 
-  it(`fails when setting an invalid attribute property type`, () => {
+  test(`fails when setting an invalid attribute property type`, () => {
     const result = () =>
       new Entity({
         name: 'TestEntity',
@@ -301,7 +300,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`'unknown' is not a valid property type`)
   })
 
-  it(`fails when setting an invalid required property`, () => {
+  test(`fails when setting an invalid required property`, () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -314,7 +313,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`'required' must be a boolean or set to 'always'`)
   })
 
-  it(`fails when composite references missing field`, () => {
+  test(`fails when composite references missing field`, () => {
     const result = () =>
       new Entity({
         name: 'TestEntity',
@@ -326,7 +325,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`'test' must reference another field`)
   })
 
-  it(`fails when composite uses non-numeric index`, () => {
+  test(`fails when composite uses non-numeric index`, () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -339,7 +338,7 @@ describe('Entity creation', () => {
     expect(result).toThrow(`'test' position value must be numeric`)
   })
 
-  it(`fails when composite uses invalid type`, () => {
+  test(`fails when composite uses invalid type`, () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -354,7 +353,7 @@ describe('Entity creation', () => {
     )
   })
 
-  it(`fails when composite array length is incorrect`, () => {
+  test(`fails when composite array length is incorrect`, () => {
     const result = () =>
       // @ts-expect-error
       new Entity({
@@ -367,25 +366,25 @@ describe('Entity creation', () => {
     expect(result).toThrow(`Composite key configurations must have 2 or 3 items`)
   })
 
-  it(`fails when missing entity definition`, () => {
+  test(`fails when missing entity definition`, () => {
     // @ts-expect-error
     const result = () => new Entity()
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
-  it(`fails when providing an invalid entity definition`, () => {
+  test(`fails when providing an invalid entity definition`, () => {
     // @ts-expect-error
     const result = () => new Entity('test')
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
-  it(`fails when providing an array as the entity definition`, () => {
+  test(`fails when providing an array as the entity definition`, () => {
     // @ts-expect-error
     const result = () => new Entity([])
     expect(result).toThrow(`Please provide a valid entity definition`)
   })
 
-  it('creates an attribute with an inverseTransformation function', async () => {
+  test('creates an attribute with an inverseTransformation function', async () => {
     const TestTable = new Table({
       name: 'test-table',
       partitionKey: 'pk',
@@ -425,7 +424,7 @@ describe('Entity creation', () => {
     })
   })
 
-  it('requires wrapNumbers if DocumentClient provided', () => {
+  test('requires wrapNumbers if DocumentClient provided', () => {
     const entityDefn = {
       name: 'TestEntity',
       attributes: {

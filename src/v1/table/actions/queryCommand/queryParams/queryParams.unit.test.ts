@@ -67,7 +67,7 @@ const Entity2 = new EntityV2({
 })
 
 describe('query', () => {
-  it('gets the tableName', async () => {
+  test('gets the tableName', async () => {
     const command = TestTable.build(QueryCommand).query({ partition: 'foo' })
     const { TableName } = command.params()
 
@@ -80,7 +80,7 @@ describe('query', () => {
     assertReturnedItems
   })
 
-  it('creates simple query', () => {
+  test('creates simple query', () => {
     const {
       KeyConditionExpression: KeyConditionExpressionA,
       ExpressionAttributeNames: ExpressionAttributeNamesA,
@@ -110,7 +110,7 @@ describe('query', () => {
     })
   })
 
-  it('throws on invalid simple query', () => {
+  test('throws on invalid simple query', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
         .query({
@@ -165,7 +165,7 @@ describe('query', () => {
     expect(invalidCallD).toThrow(expect.objectContaining({ code: 'actions.invalidCondition' }))
   })
 
-  it('creates query on LSI', () => {
+  test('creates query on LSI', () => {
     const {
       IndexName,
       KeyConditionExpression: KeyConditionExpressionA,
@@ -197,7 +197,7 @@ describe('query', () => {
     })
   })
 
-  it('throws on invalid LSI query', () => {
+  test('throws on invalid LSI query', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
         .query({
@@ -272,7 +272,7 @@ describe('query', () => {
     )
   })
 
-  it('creates query on GSI', () => {
+  test('creates query on GSI', () => {
     const {
       IndexName,
       KeyConditionExpression: KeyConditionExpressionA,
@@ -304,7 +304,7 @@ describe('query', () => {
     })
   })
 
-  it('throws on invalid GSI query', () => {
+  test('throws on invalid GSI query', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
         .query({
@@ -380,7 +380,7 @@ describe('query', () => {
   })
 
   // Options
-  it('sets capacity options', () => {
+  test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .options({ capacity: 'NONE' })
@@ -389,7 +389,7 @@ describe('query', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  it('fails on invalid capacity option', () => {
+  test('fails on invalid capacity option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -403,7 +403,7 @@ describe('query', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
-  it('sets consistent option', () => {
+  test('sets consistent option', () => {
     const { ConsistentRead } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .options({ consistent: true })
@@ -412,7 +412,7 @@ describe('query', () => {
     expect(ConsistentRead).toBe(true)
   })
 
-  it('sets exclusiveStartKey option', () => {
+  test('sets exclusiveStartKey option', () => {
     const { ExclusiveStartKey } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .options({ exclusiveStartKey: { foo: 'bar' } })
@@ -422,7 +422,7 @@ describe('query', () => {
   })
 
   // TO MOVE IN QUERY TEST?
-  it('sets index in query', () => {
+  test('sets index in query', () => {
     const { IndexName } = TestTable.build(QueryCommand)
       .query({ index: 'gsi', partition: 'foo' })
       .params()
@@ -431,7 +431,7 @@ describe('query', () => {
   })
 
   // TO MOVE IN QUERY TEST?
-  it('fails on invalid index', () => {
+  test('fails on invalid index', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
         .query({
@@ -457,7 +457,7 @@ describe('query', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'options.invalidIndexOption' }))
   })
 
-  it('sets select option', () => {
+  test('sets select option', () => {
     const { Select } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .options({ select: 'COUNT' })
@@ -466,7 +466,7 @@ describe('query', () => {
     expect(Select).toBe('COUNT')
   })
 
-  it('fails on invalid select option', () => {
+  test('fails on invalid select option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -480,7 +480,7 @@ describe('query', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidSelectOption' }))
   })
 
-  it('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
+  test('sets "ALL_PROJECTED_ATTRIBUTES" select option if an index is provided', () => {
     const { Select } = TestTable.build(QueryCommand)
       .query({ index: 'gsi', partition: 'foo' })
       .options({ select: 'ALL_PROJECTED_ATTRIBUTES' })
@@ -489,7 +489,7 @@ describe('query', () => {
     expect(Select).toBe('ALL_PROJECTED_ATTRIBUTES')
   })
 
-  it('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
+  test('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -501,7 +501,7 @@ describe('query', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidSelectOption' }))
   })
 
-  it('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
+  test('accepts "SPECIFIC_ATTRIBUTES" select option if a projection expression has been provided', () => {
     const { Select } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .entities(Entity1)
@@ -511,7 +511,7 @@ describe('query', () => {
     expect(Select).toBe('SPECIFIC_ATTRIBUTES')
   })
 
-  it('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
+  test('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -524,7 +524,7 @@ describe('query', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidSelectOption' }))
   })
 
-  it('sets limit option', () => {
+  test('sets limit option', () => {
     const { Limit } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .options({ limit: 3 })
@@ -533,7 +533,7 @@ describe('query', () => {
     expect(Limit).toBe(3)
   })
 
-  it('fails on invalid limit option', () => {
+  test('fails on invalid limit option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -547,7 +547,7 @@ describe('query', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidLimitOption' }))
   })
 
-  it('ignores valid maxPages option', () => {
+  test('ignores valid maxPages option', () => {
     const validCallA = () =>
       TestTable.build(QueryCommand).query({ partition: 'foo' }).options({ maxPages: 3 }).params()
     expect(validCallA).not.toThrow()
@@ -560,7 +560,7 @@ describe('query', () => {
     expect(validCallB).not.toThrow()
   })
 
-  it('fails on invalid maxPages option', () => {
+  test('fails on invalid maxPages option', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -581,7 +581,7 @@ describe('query', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'options.invalidMaxPagesOption' }))
   })
 
-  it('sets reverse option', () => {
+  test('sets reverse option', () => {
     const { ScanIndexForward } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .options({ reverse: true })
@@ -589,7 +589,7 @@ describe('query', () => {
     expect(ScanIndexForward).toBe(false)
   })
 
-  it('fails on invalid reverse option', () => {
+  test('fails on invalid reverse option', () => {
     // segment without totalSegment option
     const invalidCall = () =>
       TestTable.build(QueryCommand)
@@ -604,7 +604,7 @@ describe('query', () => {
     )
   })
 
-  it('applies entity _et filter', () => {
+  test('applies entity _et filter', () => {
     const command = TestTable.build(QueryCommand).query({ partition: 'foo' }).entities(Entity1)
     const {
       FilterExpression,
@@ -623,7 +623,7 @@ describe('query', () => {
     assertReturnedItems
   })
 
-  it('applies entity _et AND additional filter', () => {
+  test('applies entity _et AND additional filter', () => {
     const {
       FilterExpression,
       ExpressionAttributeNames,
@@ -649,7 +649,7 @@ describe('query', () => {
     })
   })
 
-  it('applies two entity filters', () => {
+  test('applies two entity filters', () => {
     const command = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .entities(Entity1, Entity2)
@@ -676,7 +676,7 @@ describe('query', () => {
     assertReturnedItems
   })
 
-  it('applies two entity filters AND additional filters', () => {
+  test('applies two entity filters AND additional filters', () => {
     const {
       FilterExpression,
       ExpressionAttributeNames,
@@ -709,7 +709,7 @@ describe('query', () => {
     })
   })
 
-  it('transforms attributes when applying filters', () => {
+  test('transforms attributes when applying filters', () => {
     const TestEntity3 = new EntityV2({
       name: 'entity3',
       schema: schema({
@@ -751,7 +751,7 @@ describe('query', () => {
     expect(ExpressionAttributeValues2).toMatchObject({ ':c1_2': 'foo#bar' })
   })
 
-  it('applies entity projection expression', () => {
+  test('applies entity projection expression', () => {
     const command = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .entities(Entity1)
@@ -773,7 +773,7 @@ describe('query', () => {
     })
   })
 
-  it('applies two entity projection expressions', () => {
+  test('applies two entity projection expressions', () => {
     const command = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .entities(Entity1, Entity2)
@@ -801,7 +801,7 @@ describe('query', () => {
     })
   })
 
-  it('fails on extra options', () => {
+  test('fails on extra options', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })

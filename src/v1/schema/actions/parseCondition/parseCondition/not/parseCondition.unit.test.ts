@@ -9,7 +9,7 @@ describe('parseCondition - Not', () => {
     otherNum: number()
   })
 
-  it('negates child condition (value)', () => {
+  test('negates child condition (value)', () => {
     expect(
       mySchema
         .build(ConditionParser)
@@ -22,7 +22,7 @@ describe('parseCondition - Not', () => {
     })
   })
 
-  it('negates child condition (attribute)', () => {
+  test('negates child condition (attribute)', () => {
     expect(
       mySchema
         .build(ConditionParser)

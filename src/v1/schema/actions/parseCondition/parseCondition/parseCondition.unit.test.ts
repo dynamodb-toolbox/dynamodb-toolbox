@@ -21,7 +21,7 @@ describe('parseCondition', () => {
       ).savedAs('_l')
     })
 
-    it('correctly parses condition (root)', () => {
+    test('correctly parses condition (root)', () => {
       expect(
         schemaWithSavedAs
           .build(ConditionParser)
@@ -34,7 +34,7 @@ describe('parseCondition', () => {
       })
     })
 
-    it('correctly parses condition (nested)', () => {
+    test('correctly parses condition (nested)', () => {
       expect(
         schemaWithSavedAs
           .build(ConditionParser)
@@ -47,7 +47,7 @@ describe('parseCondition', () => {
       })
     })
 
-    it('correctly parses condition (with id)', () => {
+    test('correctly parses condition (with id)', () => {
       expect(
         schemaWithSavedAs
           .build(ConditionParser)
@@ -61,7 +61,7 @@ describe('parseCondition', () => {
       })
     })
 
-    it('correctly parses condition (listed)', () => {
+    test('correctly parses condition (listed)', () => {
       expect(
         schemaWithSavedAs
           .build(ConditionParser)
@@ -85,7 +85,7 @@ describe('parseCondition', () => {
       )
     })
 
-    it('correctly parses condition (root)', () => {
+    test('correctly parses condition (root)', () => {
       expect(
         schemaWithAnyOf
           .build(ConditionParser)
@@ -98,7 +98,7 @@ describe('parseCondition', () => {
       })
     })
 
-    it('correctly parses condition (nested num)', () => {
+    test('correctly parses condition (nested num)', () => {
       expect(
         schemaWithAnyOf
           .build(ConditionParser)
@@ -111,7 +111,7 @@ describe('parseCondition', () => {
       })
     })
 
-    it('correctly parses condition (nested str)', () => {
+    test('correctly parses condition (nested str)', () => {
       expect(
         schemaWithAnyOf
           .build(ConditionParser)

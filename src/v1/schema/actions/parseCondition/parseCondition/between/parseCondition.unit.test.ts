@@ -10,7 +10,7 @@ describe('parseCondition - between', () => {
     yetAnotherNum: number()
   })
 
-  it('between (values)', () => {
+  test('between (values)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -23,7 +23,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('between (value + attribute)', () => {
+  test('between (value + attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -39,7 +39,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('between (attributes)', () => {
+  test('between (attributes)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -55,7 +55,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('deep maps (values)', () => {
+  test('deep maps (values)', () => {
     const sch = schema({
       map: map({
         nestedA: map({
@@ -97,7 +97,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('deep maps (attribute + value)', () => {
+  test('deep maps (attribute + value)', () => {
     expect(
       deepMapsSchema
         .build(ConditionParser)
@@ -119,7 +119,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('deep maps (attributes)', () => {
+  test('deep maps (attributes)', () => {
     expect(
       deepMapsSchema
         .build(ConditionParser)
@@ -167,7 +167,7 @@ describe('parseCondition - between', () => {
     )
   })
 
-  it('deep maps and lists (values)', () => {
+  test('deep maps and lists (values)', () => {
     expect(
       deepMapsAndListsSchema
         .build(ConditionParser)
@@ -188,7 +188,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('deep maps and lists (value + attribute)', () => {
+  test('deep maps and lists (value + attribute)', () => {
     expect(
       deepMapsAndListsSchema
         .build(ConditionParser)
@@ -213,7 +213,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('deep maps and lists (attributes)', () => {
+  test('deep maps and lists (attributes)', () => {
     expect(
       deepMapsAndListsSchema
         .build(ConditionParser)
@@ -252,7 +252,7 @@ describe('parseCondition - between', () => {
     listC: list(list(list(number())))
   })
 
-  it('deep lists (values)', () => {
+  test('deep lists (values)', () => {
     expect(
       deepListsSchema
         .build(ConditionParser)
@@ -265,7 +265,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('deep lists (attribute + value)', () => {
+  test('deep lists (attribute + value)', () => {
     expect(
       deepListsSchema
         .build(ConditionParser)
@@ -281,7 +281,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('deep lists (attributes)', () => {
+  test('deep lists (attributes)', () => {
     expect(
       deepListsSchema
         .build(ConditionParser)
@@ -297,7 +297,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  it('with size', () => {
+  test('with size', () => {
     expect(
       simpleSchema
         .build(ConditionParser)

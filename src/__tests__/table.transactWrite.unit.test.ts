@@ -23,20 +23,20 @@ const TestEntity = new Entity({
 } as const)
 
 describe('transactWrite', () => {
-  it('fails when transactWrite is empty', () => {
+  test('fails when transactWrite is empty', () => {
     expect(() => {
       // @ts-expect-error
       TestTable.transactWriteParams()
     }).toThrow(`No items supplied`)
   })
 
-  it('fails when transactWrite items is an empty array', () => {
+  test('fails when transactWrite items is an empty array', () => {
     expect(() => {
       TestTable.transactWriteParams([])
     }).toThrow(`No items supplied`)
   })
 
-  it('transactWrite put, update, delete data', () => {
+  test('transactWrite put, update, delete data', () => {
     const result = TestTable.transactWriteParams([
       TestEntity.putTransaction({ email: 'test', sort: 'testsk1', test: 'test' }),
       TestEntity.updateTransaction({ email: 'test', sort: 'testsk2', test: 'test' }),
@@ -51,7 +51,7 @@ describe('transactWrite', () => {
     expect(result.TransactItems[2]?.Delete?.Key?.sk).toBe('testsk3')
   })
 
-  it('fails when extra options', () => {
+  test('fails when extra options', () => {
     expect(() => {
       TestTable.transactWriteParams(
         [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
@@ -61,7 +61,7 @@ describe('transactWrite', () => {
     }).toThrow(`Invalid transactWrite options: invalid`)
   })
 
-  it('fails when providing an invalid capacity setting', () => {
+  test('fails when providing an invalid capacity setting', () => {
     expect(() => {
       TestTable.transactWriteParams(
         [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
@@ -71,7 +71,7 @@ describe('transactWrite', () => {
     }).toThrow(`'capacity' must be one of 'NONE','TOTAL', OR 'INDEXES'`)
   })
 
-  it('fails when providing an invalid metrics setting', () => {
+  test('fails when providing an invalid metrics setting', () => {
     expect(() => {
       TestTable.transactWriteParams(
         [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
@@ -81,7 +81,7 @@ describe('transactWrite', () => {
     }).toThrow(`'metrics' must be one of 'NONE' OR 'SIZE'`)
   })
 
-  it('allows to provide custom params', () => {
+  test('allows to provide custom params', () => {
     const result = TestTable.transactWriteParams(
       [TestEntity.putTransaction({ email: 'test', sort: 'testsk' })],
       {

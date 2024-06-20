@@ -1,3 +1,5 @@
+import type { MockedFunction } from 'vitest'
+
 import { DynamoDBToolboxError } from 'v1/errors/index.js'
 
 import { string } from '../primitive/index.js'
@@ -6,12 +8,12 @@ import { validateAttributeProperties } from '../shared/validate.js'
 import { map } from './typer.js'
 import { $attributes } from '../constants/index.js'
 
-jest.mock('../shared/validate', () => ({
-  ...jest.requireActual<Record<string, unknown>>('../shared/validate'),
-  validateAttributeProperties: jest.fn()
+vi.mock('../shared/validate', () => ({
+  ...vi.importActual<Record<string, unknown>>('../shared/validate'),
+  validateAttributeProperties: vi.fn()
 }))
 
-const validateAttributePropertiesMock = validateAttributeProperties as jest.MockedFunction<
+const validateAttributePropertiesMock = validateAttributeProperties as MockedFunction<
   typeof validateAttributeProperties
 >
 
@@ -27,18 +29,18 @@ describe('map properties freeze', () => {
     validateAttributePropertiesMock.mockClear()
   })
 
-  it('applies validateAttributeProperties on mapInstance', () => {
+  test('applies validateAttributeProperties on mapInstance', () => {
     mapInstance.freeze(pathMock)
 
     // Once + 2 attributes
     expect(validateAttributePropertiesMock).toHaveBeenCalledTimes(3)
   })
 
-  it('applies freezeAttribute on attributes', () => {
-    mapInstance[$attributes][string1Name].freeze = jest.fn(
+  test('applies freezeAttribute on attributes', () => {
+    mapInstance[$attributes][string1Name].freeze = vi.fn(
       mapInstance[$attributes][string1Name].freeze
     )
-    mapInstance[$attributes][string2Name].freeze = jest.fn(
+    mapInstance[$attributes][string2Name].freeze = vi.fn(
       mapInstance[$attributes][string2Name].freeze
     )
     mapInstance.freeze(pathMock)
@@ -51,7 +53,7 @@ describe('map properties freeze', () => {
     )
   })
 
-  it('throws if map attribute has duplicate savedAs', () => {
+  test('throws if map attribute has duplicate savedAs', () => {
     const invalidCallA = () => map({ a: stringAttr, b: stringAttr.savedAs('a') }).freeze(pathMock)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)

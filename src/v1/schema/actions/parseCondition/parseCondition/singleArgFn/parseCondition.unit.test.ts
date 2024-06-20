@@ -8,7 +8,7 @@ describe('parseCondition - singleArgFn', () => {
     num: number()
   })
 
-  it('exists', () => {
+  test('exists', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'num', exists: true }).toCommandOptions()
     ).toStrictEqual({
@@ -18,7 +18,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('not exists', () => {
+  test('not exists', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'num', exists: false }).toCommandOptions()
     ).toStrictEqual({
@@ -36,7 +36,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('deep maps', () => {
+  test('deep maps', () => {
     expect(
       mapSchema
         .build(ConditionParser)
@@ -64,7 +64,7 @@ describe('parseCondition - singleArgFn', () => {
     list: list(list(list(number())))
   })
 
-  it('deep maps and lists', () => {
+  test('deep maps and lists', () => {
     expect(
       listSchema
         .build(ConditionParser)
@@ -82,7 +82,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('deep lists', () => {
+  test('deep lists', () => {
     expect(
       listSchema
         .build(ConditionParser)

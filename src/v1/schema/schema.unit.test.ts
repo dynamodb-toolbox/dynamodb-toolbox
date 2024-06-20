@@ -5,7 +5,7 @@ import { boolean, binary, number, string, set, list, map } from './attributes/in
 import type { FreezeAttribute } from './attributes/freeze.js'
 
 describe('schema', () => {
-  it('primitives', () => {
+  test('primitives', () => {
     const reqStr = string()
     const hidBool = boolean().hidden()
     const defNum = number().putDefault(42)
@@ -48,7 +48,7 @@ describe('schema', () => {
     })
   })
 
-  it('maps', () => {
+  test('maps', () => {
     const str = string()
     const flatMap = map({ str })
     const nestedMap = map({
@@ -82,7 +82,7 @@ describe('schema', () => {
     })
   })
 
-  it('list', () => {
+  test('list', () => {
     const str = string()
     const optList = list(str).optional()
     const nestedList = list(list(str))
@@ -119,7 +119,7 @@ describe('schema', () => {
     })
   })
 
-  it('sets', () => {
+  test('sets', () => {
     const str = string()
     const optSet = set(str).optional()
     const reqSet = set(str)

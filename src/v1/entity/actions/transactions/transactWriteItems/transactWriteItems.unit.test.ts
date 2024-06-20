@@ -91,14 +91,14 @@ const TestEntity2 = new EntityV2({
 
 describe('transactWriteItems', () => {
   beforeAll(() => {
-    jest.spyOn(documentClient, 'send').mockImplementation(jest.fn())
+    vi.spyOn(documentClient, 'send').mockImplementation(vi.fn())
   })
 
   afterAll(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
-  it('should throw an error if dynamoDBDocumentClient is not found', async () => {
+  test('should throw an error if dynamoDBDocumentClient is not found', async () => {
     const transactions: PutItemTransaction[] = []
     const options = {}
     await expect(transactWriteItems(transactions, options)).rejects.toThrow(
@@ -106,7 +106,7 @@ describe('transactWriteItems', () => {
     )
   })
 
-  it('should send a transaction with the correct parameters', async () => {
+  test('should send a transaction with the correct parameters', async () => {
     const transactions = [
       TestEntity.build(PutItemTransaction).item({
         email: 'titi@example.com',
@@ -128,14 +128,14 @@ const mockDate = '2023-12-15T16:22:49.834Z'
 
 describe('generateTransactWriteCommandInput', () => {
   beforeAll(() => {
-    jest.useFakeTimers().setSystemTime(new Date(mockDate))
+    vi.useFakeTimers().setSystemTime(new Date(mockDate))
   })
 
   afterAll(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
-  it('should throw an error if an invalid option is set', async () => {
+  test('should throw an error if an invalid option is set', async () => {
     const transactions = [
       TestEntity.build(PutItemTransaction).item({
         email: 'titi@example.com',
@@ -154,7 +154,7 @@ describe('generateTransactWriteCommandInput', () => {
       expect.objectContaining({ code: 'options.unknownOption' })
     )
   })
-  it('should generate a transaction with the correct parameters', async () => {
+  test('should generate a transaction with the correct parameters', async () => {
     const transactions = [
       TestEntity.build(ConditionCheck)
         .key({

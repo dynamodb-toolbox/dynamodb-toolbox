@@ -12,7 +12,7 @@ describe('parseCondition - singleArgFn', () => {
     num: number()
   })
 
-  it('type', () => {
+  test('type', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'list', type: 'L' }).toCommandOptions()
     ).toStrictEqual({
@@ -22,7 +22,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('contains (str - value)', () => {
+  test('contains (str - value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'str', contains: 'foo' }).toCommandOptions()
     ).toStrictEqual({
@@ -32,7 +32,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('contains (str - reference)', () => {
+  test('contains (str - reference)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -45,7 +45,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('contains (list - value)', () => {
+  test('contains (list - value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'list', contains: 42 }).toCommandOptions()
     ).toStrictEqual({
@@ -55,7 +55,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('contains (list - reference)', () => {
+  test('contains (list - reference)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -68,7 +68,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('contains (set - value)', () => {
+  test('contains (set - value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'set', contains: 'foo' }).toCommandOptions()
     ).toStrictEqual({
@@ -78,7 +78,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('contains (set - reference)', () => {
+  test('contains (set - reference)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -91,7 +91,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('beginsWith (value)', () => {
+  test('beginsWith (value)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -104,7 +104,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('beginsWith (attribute)', () => {
+  test('beginsWith (attribute)', () => {
     expect(
       simpleSchema
         .build(ConditionParser)
@@ -130,7 +130,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('deep maps (value)', () => {
+  test('deep maps (value)', () => {
     expect(
       mapSchema
         .build(ConditionParser)
@@ -147,7 +147,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('deep maps (attribute)', () => {
+  test('deep maps (attribute)', () => {
     expect(
       mapSchema
         .build(ConditionParser)
@@ -187,7 +187,7 @@ describe('parseCondition - singleArgFn', () => {
     )
   })
 
-  it('deep maps and lists (value)', () => {
+  test('deep maps and lists (value)', () => {
     expect(
       mapAndList
         .build(ConditionParser)
@@ -208,7 +208,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('deep maps and lists (attribute)', () => {
+  test('deep maps and lists (attribute)', () => {
     expect(
       mapAndList
         .build(ConditionParser)
@@ -238,7 +238,7 @@ describe('parseCondition - singleArgFn', () => {
     listB: list(list(list(string())))
   })
 
-  it('deep lists (value)', () => {
+  test('deep lists (value)', () => {
     expect(
       listsSchema
         .build(ConditionParser)
@@ -251,7 +251,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  it('deep lists (attribute)', () => {
+  test('deep lists (attribute)', () => {
     expect(
       listsSchema
         .build(ConditionParser)

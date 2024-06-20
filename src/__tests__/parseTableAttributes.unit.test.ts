@@ -7,7 +7,7 @@ const attrs: TableAttributes = {
 }
 
 describe('parseTableAttributes', () => {
-  it('parse simple attributes', async () => {
+  test('parse simple attributes', async () => {
     expect(parseTableAttributes(attrs, 'pk', 'sk')).toEqual({
       pk: { type: 'string', mappings: {} },
       sk: { type: 'string', mappings: {} }
@@ -23,7 +23,7 @@ describe('parseTableAttributes', () => {
     )
   })
 
-  it('fails when partitionKey is an invalid type', async () => {
+  test('fails when partitionKey is an invalid type', async () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { pk: 'map' }), 'pk', 'sk')
     }).toThrow(
@@ -31,7 +31,7 @@ describe('parseTableAttributes', () => {
     )
   })
 
-  it('fails when sortKey is an invalid type', async () => {
+  test('fails when sortKey is an invalid type', async () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { sk: 'map' }), 'pk', 'sk')
     }).toThrow(
@@ -39,7 +39,7 @@ describe('parseTableAttributes', () => {
     )
   })
 
-  it('fails when attribute is an invalid type', async () => {
+  test('fails when attribute is an invalid type', async () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { test: 'not-a-type' }), 'pk', 'sk')
     }).toThrow(
@@ -47,7 +47,7 @@ describe('parseTableAttributes', () => {
     )
   })
 
-  it('fails when partitionKey is an invalid type (in object config)', async () => {
+  test('fails when partitionKey is an invalid type (in object config)', async () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { pk: { type: 'map' } }), 'pk', 'sk')
     }).toThrow(
@@ -55,7 +55,7 @@ describe('parseTableAttributes', () => {
     )
   })
 
-  it('fails when sortKey is an invalid type (in object config)', async () => {
+  test('fails when sortKey is an invalid type (in object config)', async () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { sk: { type: 'map' } }), 'pk', 'sk')
     }).toThrow(
@@ -63,7 +63,7 @@ describe('parseTableAttributes', () => {
     )
   })
 
-  it('fails when attribute is an invalid type (in an object config)', async () => {
+  test('fails when attribute is an invalid type (in an object config)', async () => {
     expect(() => {
       parseTableAttributes(Object.assign({}, attrs, { test: { type: 'not-a-type' } }), 'pk', 'sk')
     }).toThrow(
@@ -71,7 +71,7 @@ describe('parseTableAttributes', () => {
     )
   })
 
-  it(`fails when attribute contains setType but isn't a set`, async () => {
+  test(`fails when attribute contains setType but isn't a set`, async () => {
     expect(() => {
       parseTableAttributes(
         Object.assign({}, attrs, { test: { type: 'string', setType: 'string' } }),
@@ -81,7 +81,7 @@ describe('parseTableAttributes', () => {
     }).toThrow(`'setType' is only valid for type 'set'`)
   })
 
-  it(`fails when attribute contains invalid setType`, async () => {
+  test(`fails when attribute contains invalid setType`, async () => {
     expect(() => {
       parseTableAttributes(
         Object.assign({}, attrs, { test: { type: 'set', setType: 'invalid' } }),
@@ -91,7 +91,7 @@ describe('parseTableAttributes', () => {
     }).toThrow(`Invalid 'setType', must be 'string', 'number', 'bigint' or 'binary'`)
   })
 
-  it('fails when attribute has an invalid config option', async () => {
+  test('fails when attribute has an invalid config option', async () => {
     expect(() => {
       parseTableAttributes(
         Object.assign({}, attrs, { test: { type: 'string', invalid: 'invalid' } }),

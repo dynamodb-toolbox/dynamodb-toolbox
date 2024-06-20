@@ -5,7 +5,7 @@ import { setAttrParser } from './set.js'
 import * as attrParserModule from './attribute.js'
 
 // @ts-ignore
-const attrParser = jest.spyOn(attrParserModule, 'attrParser')
+const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
 const setAttr = set(string()).freeze('path')
 
@@ -14,14 +14,14 @@ describe('parseSetAttributeClonedInput', () => {
     attrParser.mockClear()
   })
 
-  it('throws an error if input is not a set', () => {
+  test('throws an error if input is not a set', () => {
     const invalidCall = () => setAttrParser(setAttr, { foo: 'bar' }, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  it('applies parseAttributeClonesInput on input elements otherwise (and pass options)', () => {
+  test('applies parseAttributeClonesInput on input elements otherwise (and pass options)', () => {
     const options = { some: 'options' }
     const parser = setAttrParser(
       setAttr,
