@@ -21,12 +21,11 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "paths": {
-      "v1": ["v1"],
-      "v1/*": ["v1/*"]
+      "~/*": ["*"]
     }
   },
   "compileOnSave": false,
-  "exclude": ["node_modules", "dist", "**/*.test-d.ts", "docs", "vitest.config.ts"],
+  "exclude": ["node_modules", "dist", "docs", "vitest.config.ts"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   }

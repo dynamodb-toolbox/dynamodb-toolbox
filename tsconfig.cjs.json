@@ -6,13 +6,5 @@
     "outDir": "dist/cjs",
     "declaration": false
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test-d.ts",
-    "docs",
-    "vitest.config.ts",
-    "**/*.test.ts",
-    "src/v1"
-  ]
+  "exclude": ["node_modules", "dist", "docs", "vitest.config.ts", "**/*.test.ts"]
 }
