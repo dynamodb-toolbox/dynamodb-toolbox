@@ -1,13 +1,13 @@
 import type {
-  Attribute,
   AnyAttribute,
-  PrimitiveAttribute,
-  ResolvePrimitiveAttribute,
-  SetAttribute,
+  AnyOfAttribute,
+  Attribute,
   ListAttribute,
   MapAttribute,
+  PrimitiveAttribute,
   RecordAttribute,
-  AnyOfAttribute
+  ResolvePrimitiveAttribute,
+  SetAttribute
 } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 

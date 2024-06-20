@@ -1,19 +1,19 @@
 import type { Attribute, AttributeValue } from '~/schema/attributes/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import type { SET, GET, SUM, SUBTRACT, ADD, DELETE, APPEND, PREPEND, Reference } from './types.js'
 import {
-  $HAS_VERB,
-  $SET,
-  $GET,
-  $REMOVE,
-  $SUM,
-  $SUBTRACT,
   $ADD,
-  $DELETE,
   $APPEND,
-  $PREPEND
+  $DELETE,
+  $GET,
+  $HAS_VERB,
+  $PREPEND,
+  $REMOVE,
+  $SET,
+  $SUBTRACT,
+  $SUM
 } from './constants.js'
+import type { ADD, APPEND, DELETE, GET, PREPEND, Reference, SET, SUBTRACT, SUM } from './types.js'
 
 export const $set = <VALUE>(value: VALUE): SET<VALUE> => ({ [$HAS_VERB]: true, [$SET]: value })
 

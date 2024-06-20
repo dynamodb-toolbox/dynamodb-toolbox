@@ -5,5 +5,9 @@
   "bracketSpacing": true,
   "printWidth": 100,
   "semi": false,
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "importOrder": ["^~/(.*)$", "^[./]"],
+  "importOrderSortSpecifiers": true,
+  "importOrderGroupNamespaceSpecifiers": true,
+  "importOrderSeparation": true
 }

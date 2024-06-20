@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  number,
-  string,
-  map,
-  set,
-  any,
-  schema,
+  EntityPathParser,
   EntityV2,
-  PutItemInput,
-  SavedItem,
   FormattedItem,
   KeyInput,
+  PutItemInput,
+  SavedItem,
   UpdateItemInput,
+  any,
+  map,
+  number,
   prefix,
-  EntityPathParser
+  schema,
+  set,
+  string
 } from '~/index.js'
 
 import { MyTable } from './table.js'

@@ -1,25 +1,25 @@
 import type { A } from 'ts-toolbelt'
 
+import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type {
   Attribute,
   ListAttribute,
   PrimitiveAttribute,
   SetAttribute
 } from '~/schema/attributes/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
 
+import { mySchema } from './condition.fixture.test.js'
 import type {
-  NonLogicalCondition,
-  SchemaCondition,
+  AttrOrSize,
   AttributeCondition,
-  PrimitiveAttributeCondition,
-  SetAttributeCondition,
-  ListAttributeCondition,
   BaseAttributeCondition,
   ConditionType,
-  AttrOrSize
+  ListAttributeCondition,
+  NonLogicalCondition,
+  PrimitiveAttributeCondition,
+  SchemaCondition,
+  SetAttributeCondition
 } from './condition.js'
-import { mySchema } from './condition.fixture.test.js'
 
 type ATTRIBUTES = typeof mySchema['attributes']
 type ATTRIBUTE_PATHS = Paths<typeof mySchema>

@@ -1,10 +1,10 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Or } from '~/types/or.js'
-import type { Schema } from '~/schema/index.js'
 import type { Always } from '~/schema/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { TableV2 } from '~/table/index.js'
 import type { IndexableKeyType, Key } from '~/table/types/index.js'
+import type { Or } from '~/types/or.js'
 
 type NeedsKeyPartCompute<
   SCHEMA extends Schema,

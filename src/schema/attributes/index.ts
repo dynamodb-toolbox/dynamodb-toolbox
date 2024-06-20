@@ -1,3 +1,11 @@
+import { any } from './any/index.js'
+import { anyOf } from './anyOf/index.js'
+import { list } from './list/index.js'
+import { map } from './map/index.js'
+import { binary, boolean, number, string } from './primitive/index.js'
+import { record } from './record/index.js'
+import { set } from './set/index.js'
+
 export * from './any/index.js'
 export * from './primitive/index.js'
 export * from './set/index.js'
@@ -8,14 +16,6 @@ export * from './anyOf/index.js'
 
 export * from './constants/index.js'
 export * from './types/index.js'
-
-import { any } from './any/index.js'
-import { binary, boolean, number, string } from './primitive/index.js'
-import { set } from './set/index.js'
-import { list } from './list/index.js'
-import { map } from './map/index.js'
-import { record } from './record/index.js'
-import { anyOf } from './anyOf/index.js'
 
 export const attribute: {
   any: typeof any

@@ -1,6 +1,5 @@
-import type { TableV2 } from '~/table/index.js'
-
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
+import type { TableV2 } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 export const parseIndexOption = (table: TableV2, index: string): string => {

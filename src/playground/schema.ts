@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  FormattedValue,
+  ParserInput,
+  any,
   binary,
   boolean,
-  number,
-  string,
-  map,
   list,
-  any,
+  map,
+  number,
   schema,
-  FormattedValue,
-  ParserInput
+  string
 } from '~/index.js'
-import { Parser } from '~/schema/actions/parse/index.js'
 import { Formatter } from '~/schema/actions/format/index.js'
+import { Parser } from '~/schema/actions/parse/index.js'
 
 const playgroundSchema1 = schema({
   reqStr: string(),

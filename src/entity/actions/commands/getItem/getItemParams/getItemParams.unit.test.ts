@@ -1,11 +1,11 @@
 import {
-  TableV2,
-  EntityV2,
-  schema,
-  string,
   DynamoDBToolboxError,
+  EntityV2,
   GetItemCommand,
-  prefix
+  TableV2,
+  prefix,
+  schema,
+  string
 } from '~/index.js'
 
 const TestTable = new TableV2({

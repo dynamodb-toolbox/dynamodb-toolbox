@@ -1,5 +1,5 @@
-import { schema } from '~/schema/index.js'
 import { list, map, number } from '~/schema/attributes/index.js'
+import { schema } from '~/schema/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'
 

@@ -1,6 +1,5 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityV2, $entity } from '~/entity/index.js'
 import {
   UpdateItemCommand,
   UpdateItemInput,
@@ -9,16 +8,17 @@ import {
 } from '~/entity/actions/commands/updateItem/index.js'
 import { $item, $options } from '~/entity/actions/commands/updateItem/updateItemCommand.js'
 import { updateItemParams } from '~/entity/actions/commands/updateItem/updateItemParams/index.js'
+import { $entity, EntityV2 } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { MockedEntity } from './entity.js'
 import {
   $actionName,
-  $originalEntity,
   $mockedEntity,
   $mockedImplementations,
+  $originalEntity,
   $receivedActions
 } from './constants.js'
+import type { MockedEntity } from './entity.js'
 
 export class UpdateItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,

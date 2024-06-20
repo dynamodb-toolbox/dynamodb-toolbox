@@ -1,8 +1,8 @@
+import { ExtensionParser, ExtensionParserOptions, Parser } from '~/schema/actions/parse/index.js'
 import type { AttributeBasicValue, SetAttribute } from '~/schema/attributes/index.js'
-import { Parser, ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 
-import type { UpdateItemInputExtension } from '../../types.js'
 import { $ADD, $DELETE } from '../../constants.js'
+import type { UpdateItemInputExtension } from '../../types.js'
 import { isAddUpdate, isDeleteUpdate } from '../../utils.js'
 
 export const parseSetExtension = (

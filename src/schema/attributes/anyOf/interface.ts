@@ -1,19 +1,18 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If, ValueOrGetter } from '~/types/index.js'
 // TODO: Remove this import
 import type {
   AttributeUpdateItemInput,
   UpdateItemInput
 } from '~/entity/actions/commands/updateItem/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
+import type { If, ValueOrGetter } from '~/types/index.js'
 
 import type { Schema } from '../../schema.js'
-import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/index.js'
-import type { $type, $elements } from '../constants/attributeOptions.js'
+import type { $elements, $type } from '../constants/attributeOptions.js'
+import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
-
 import type { FreezeAnyOfAttribute } from './freeze.js'
 import type { $AnyOfAttributeElements } from './types.js'
 

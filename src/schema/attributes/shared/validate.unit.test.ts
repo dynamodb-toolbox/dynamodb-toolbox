@@ -1,7 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Never } from '../constants/requiredOptions.js'
-
 import type { SharedAttributeState } from './interface.js'
 import { validateAttributeProperties } from './validate.js'
 

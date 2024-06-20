@@ -1,8 +1,8 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { record, string } from '~/schema/attributes/index.js'
 
-import { recordAttributeParser } from './record.js'
 import * as attrParserModule from './attribute.js'
+import { recordAttributeParser } from './record.js'
 
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')

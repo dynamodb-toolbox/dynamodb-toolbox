@@ -1,23 +1,23 @@
 import {
-  BatchGetCommand as _BatchGetCommand,
   BatchGetCommandInput,
   BatchGetCommandOutput,
-  DynamoDBDocumentClient
+  DynamoDBDocumentClient,
+  BatchGetCommand as _BatchGetCommand
 } from '@aws-sdk/lib-dynamodb'
 
+import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
+import { $entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { CapacityOption, parseCapacityOption } from '~/options/capacity.js'
-import { $table } from '~/table/index.js'
-import { $entity } from '~/entity/index.js'
-import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import { $table } from '~/table/index.js'
 
 import {
-  BatchGetCommand,
-  BatchGetRequestProps,
-  BatchGetCommandOptions,
+  $options,
   $requests,
-  $options
+  BatchGetCommand,
+  BatchGetCommandOptions,
+  BatchGetRequestProps
 } from './batchGetCommand.js'
 
 export interface ExecuteBatchGetOptions {

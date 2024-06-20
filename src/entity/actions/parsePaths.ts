@@ -1,5 +1,5 @@
+import { EntityAction, EntityV2 } from '~/entity/index.js'
 import { PathParser, Paths } from '~/schema/actions/parsePaths/index.js'
-import { EntityV2, EntityAction } from '~/entity/index.js'
 
 const $pathParser = Symbol('$pathParser')
 type $pathParser = typeof $pathParser

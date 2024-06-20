@@ -1,4 +1,4 @@
-import type { IndexedErrors, ErrorCodes } from './allErrors.js'
+import type { ErrorCodes, IndexedErrors } from './allErrors.js'
 
 type ErrorArgs<ERROR_CODE extends ErrorCodes> = (IndexedErrors[ERROR_CODE]['hasPath'] extends false
   ? { path?: string }

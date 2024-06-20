@@ -6,14 +6,14 @@ import {
 import { AwsStub, mockClient } from 'aws-sdk-client-mock'
 
 import {
+  BatchDeleteRequest,
+  BatchPutRequest,
   DynamoDBToolboxError,
   EntityV2,
   TableV2,
-  schema,
-  string,
   number,
-  BatchDeleteRequest,
-  BatchPutRequest
+  schema,
+  string
 } from '~/index.js'
 
 import { BatchWriteCommand } from './batchWriteCommand.js'

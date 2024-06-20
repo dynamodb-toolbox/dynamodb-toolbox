@@ -1,20 +1,20 @@
 import type { O } from 'ts-toolbelt'
 
-import type { OptionalizeUndefinableProperties } from '~/types/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { AnyAttribute, Never } from '~/schema/attributes/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { AnyAttribute, Never } from '~/schema/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
+import type { OptionalizeUndefinableProperties } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
+import { AttrFormattedValue, formatAttrRawValue } from './attribute.js'
 import type {
-  MatchKeys,
   FormatOptions,
-  FormattedValueOptions,
   FormattedValueDefaultOptions,
-  FromFormatOptions
+  FormattedValueOptions,
+  FromFormatOptions,
+  MatchKeys
 } from './types.js'
-import { formatAttrRawValue, AttrFormattedValue } from './attribute.js'
 import { matchProjection } from './utils.js'
 
 export type SchemaFormattedValue<

@@ -1,17 +1,17 @@
 import type { A } from 'ts-toolbelt'
 
 import {
-  schema,
   any,
-  string,
-  number,
-  boolean,
+  anyOf,
   binary,
-  set,
+  boolean,
   list,
   map,
+  number,
   record,
-  anyOf
+  schema,
+  set,
+  string
 } from '~/index.js'
 
 import type { Paths } from './paths.js'

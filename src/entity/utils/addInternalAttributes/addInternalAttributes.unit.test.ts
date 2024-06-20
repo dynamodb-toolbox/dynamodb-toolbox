@@ -1,7 +1,7 @@
 import { $get } from '~/entity/actions/commands/updateItem/utils.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { schema } from '~/schema/index.js'
 import { string } from '~/schema/attributes/index.js'
+import { schema } from '~/schema/index.js'
 import { TableV2 } from '~/table/index.js'
 
 import { addInternalAttributes } from './addInternalAttributes.js'

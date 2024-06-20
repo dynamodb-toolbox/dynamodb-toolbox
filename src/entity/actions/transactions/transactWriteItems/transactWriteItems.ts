@@ -1,9 +1,9 @@
+import type { TransactWriteItemsInput } from '@aws-sdk/client-dynamodb'
 import {
   DynamoDBDocumentClient,
   TransactWriteCommand,
   TransactWriteCommandOutput
 } from '@aws-sdk/lib-dynamodb'
-import type { TransactWriteItemsInput } from '@aws-sdk/client-dynamodb'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 

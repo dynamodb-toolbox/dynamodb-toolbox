@@ -1,17 +1,17 @@
-import type { Schema } from '~/schema/index.js'
+import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type {
-  Attribute,
   AnyAttribute,
-  PrimitiveAttribute,
-  SetAttribute,
+  AnyOfAttribute,
+  Attribute,
   ListAttribute,
   MapAttribute,
+  PrimitiveAttribute,
   RecordAttribute,
-  AnyOfAttribute,
   ResolvePrimitiveAttribute,
-  ResolvedPrimitiveAttribute
+  ResolvedPrimitiveAttribute,
+  SetAttribute
 } from '~/schema/attributes/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { Schema } from '~/schema/index.js'
 
 export type AnyAttributeCondition<
   ATTRIBUTE_PATH extends string,

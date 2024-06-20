@@ -1,9 +1,9 @@
 import type { ErrorBlueprint } from '~/errors/blueprint.js'
 
 import type {
+  PrimitiveAttributeEnumValues,
   PrimitiveAttributeType,
-  ResolvePrimitiveAttributeType,
-  PrimitiveAttributeEnumValues
+  ResolvePrimitiveAttributeType
 } from './types.js'
 
 type InvalidEnumValueTypeErrorBlueprint = ErrorBlueprint<{

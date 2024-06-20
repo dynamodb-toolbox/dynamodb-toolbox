@@ -1,14 +1,14 @@
 import { cloneDeep } from 'lodash'
 
-import type { Schema } from '~/schema/index.js'
 import type { AnyAttribute, ExtendedValue } from '~/schema/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 
 import type { ParsedValue } from './parser.js'
 import type {
-  ParsedValueOptions,
+  FromParsingOptions,
   ParsedValueDefaultOptions,
-  ParsingOptions,
-  FromParsingOptions
+  ParsedValueOptions,
+  ParsingOptions
 } from './types/options.js'
 
 export type AnyAttrParsedValue<

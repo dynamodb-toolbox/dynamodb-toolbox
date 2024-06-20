@@ -1,24 +1,24 @@
 import { cloneDeep } from 'lodash'
 
-import type { Schema } from '~/schema/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
   Attribute,
+  ExtendedValue,
   RecordAttribute,
-  RecordAttributeKeys,
-  ExtendedValue
+  RecordAttributeKeys
 } from '~/schema/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
+import { AttrParsedValue, MustBeDefined, attrParser } from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
-  ParsedValueOptions,
+  FromParsingOptions,
   ParsedValueDefaultOptions,
-  ParsingOptions,
-  FromParsingOptions
+  ParsedValueOptions,
+  ParsingOptions
 } from './types/options.js'
-import { attrParser, AttrParsedValue, MustBeDefined } from './attribute.js'
 
 export type RecordAttrParsedValue<
   ATTRIBUTE extends RecordAttribute,

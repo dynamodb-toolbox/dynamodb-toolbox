@@ -1,5 +1,5 @@
-import type { EntityV2 } from '~/entity/index.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
+import type { EntityV2 } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
 import type { UpdateItemTransactionOptions } from '../options.js'

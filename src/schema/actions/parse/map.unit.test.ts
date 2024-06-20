@@ -1,8 +1,8 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { map, string } from '~/schema/attributes/index.js'
 
-import { mapAttributeParser } from './map.js'
 import * as attrParserModule from './attribute.js'
+import { mapAttributeParser } from './map.js'
 
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')

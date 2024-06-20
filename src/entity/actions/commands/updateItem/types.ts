@@ -1,44 +1,44 @@
 import type { O } from 'ts-toolbelt'
 
 import type { EntityV2 } from '~/entity/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type {
+  Always,
+  AnyAttribute,
+  AnyOfAttribute,
+  AtLeastOnce,
   Attribute,
   AttributeValue,
-  ResolveAnyAttribute,
-  ResolvePrimitiveAttribute,
   Item,
-  AnyAttribute,
-  PrimitiveAttribute,
-  PrimitiveAttributeValue,
-  SetAttribute,
-  SetAttributeValue,
   ListAttribute,
   ListAttributeValue,
   MapAttribute,
   MapAttributeValue,
+  Never,
+  PrimitiveAttribute,
+  PrimitiveAttributeValue,
   RecordAttribute,
   RecordAttributeValue,
-  AnyOfAttribute,
-  AtLeastOnce,
-  Always,
-  Never
+  ResolveAnyAttribute,
+  ResolvePrimitiveAttribute,
+  SetAttribute,
+  SetAttributeValue
 } from '~/schema/attributes/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
+import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
+import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
 
 import {
-  $HAS_VERB,
-  $SET,
-  $GET,
-  $REMOVE,
-  $SUM,
-  $SUBTRACT,
   $ADD,
-  $DELETE,
   $APPEND,
-  $PREPEND
+  $DELETE,
+  $GET,
+  $HAS_VERB,
+  $PREPEND,
+  $REMOVE,
+  $SET,
+  $SUBTRACT,
+  $SUM
 } from './constants.js'
 
 // Distinguishing verbal syntax vs non-verbal for type inference & parsing

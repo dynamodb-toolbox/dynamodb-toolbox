@@ -2,16 +2,16 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { SchemaCondition } from '../condition.js'
 import type { ConditionParser } from '../conditionParser.js'
-import { isComparisonCondition, parseComparisonCondition } from './comparison/index.js'
-import { isSingleArgFnCondition, parseSingleArgFnCondition } from './singleArgFn/index.js'
 import { isBetweenCondition, parseBetweenCondition } from './between/index.js'
-import { isNotCondition, parseNotCondition } from './not/index.js'
+import { isComparisonCondition, parseComparisonCondition } from './comparison/index.js'
+import { isInCondition, parseInCondition } from './in/index.js'
 import {
   isLogicalCombinationCondition,
   parseLogicalCombinationCondition
 } from './logicalCombination/index.js'
+import { isNotCondition, parseNotCondition } from './not/index.js'
+import { isSingleArgFnCondition, parseSingleArgFnCondition } from './singleArgFn/index.js'
 import { isTwoArgsFnCondition, parseTwoArgsFnCondition } from './twoArgsFn/index.js'
-import { isInCondition, parseInCondition } from './in/index.js'
 
 export const parseCondition = (
   conditionParser: ConditionParser,

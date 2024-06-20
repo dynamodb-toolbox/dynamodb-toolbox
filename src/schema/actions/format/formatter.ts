@@ -1,14 +1,14 @@
-import type { Schema, SchemaAction } from '~/schema/index.js'
 import type { Attribute } from '~/schema/attributes/index.js'
+import type { Schema, SchemaAction } from '~/schema/index.js'
 
+import { AttrFormattedValue, formatAttrRawValue } from './attribute.js'
+import { SchemaFormattedValue, formatSchemaRawValue } from './schema.js'
 import type {
   FormatOptions,
-  FormattedValueOptions,
   FormattedValueDefaultOptions,
+  FormattedValueOptions,
   FromFormatOptions
 } from './types.js'
-import { formatAttrRawValue, AttrFormattedValue } from './attribute.js'
-import { formatSchemaRawValue, SchemaFormattedValue } from './schema.js'
 
 /**
  * Returns the type of formatted values for a given Schema or Attribute

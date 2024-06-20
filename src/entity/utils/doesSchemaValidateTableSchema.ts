@@ -1,6 +1,6 @@
+import type { Schema } from '~/schema/index.js'
 import type { TableV2 } from '~/table/index.js'
 import type { Key } from '~/table/types/index.js'
-import type { Schema } from '~/schema/index.js'
 
 const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean => {
   if (key === undefined) return true

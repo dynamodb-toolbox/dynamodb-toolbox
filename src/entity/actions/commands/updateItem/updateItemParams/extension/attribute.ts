@@ -1,21 +1,20 @@
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 import type {
-  PrimitiveAttribute,
+  Attribute,
   AttributeBasicValue,
-  Attribute
+  PrimitiveAttribute
 } from '~/schema/attributes/index.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { UpdateItemInputExtension } from '../../types.js'
 import { $REMOVE } from '../../constants.js'
+import type { UpdateItemInputExtension } from '../../types.js'
 import { isReferenceUpdate } from '../../utils.js'
-
-import { parseNumberExtension } from './number.js'
-import { parseSetExtension } from './set.js'
 import { parseListExtension } from './list.js'
 import { parseMapExtension } from './map.js'
+import { parseNumberExtension } from './number.js'
 import { parseRecordExtension } from './record.js'
 import { parseReferenceExtension } from './reference.js'
+import { parseSetExtension } from './set.js'
 
 export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   attribute: Attribute,

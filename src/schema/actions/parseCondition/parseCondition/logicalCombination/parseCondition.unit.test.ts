@@ -1,5 +1,5 @@
+import { boolean, number, string } from '~/schema/attributes/index.js'
 import { schema } from '~/schema/index.js'
-import { number, string, boolean } from '~/schema/attributes/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'
 

@@ -1,13 +1,13 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from '~/entity/index.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
+import type { EntityV2 } from '~/entity/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
-import { parseReturnValuesOption } from '~/options/returnValues.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
+import { parseReturnValuesOption } from '~/options/returnValues.js'
 
-import { updateItemCommandReturnValuesOptionsSet, UpdateItemOptions } from '../options.js'
+import { UpdateItemOptions, updateItemCommandReturnValuesOptionsSet } from '../options.js'
 
 type CommandOptions = Omit<UpdateCommandInput, 'TableName' | 'Item' | 'Key'>
 

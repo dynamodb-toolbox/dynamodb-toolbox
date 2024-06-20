@@ -3,21 +3,20 @@ import type { A } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
-import { Never, AtLeastOnce, Always } from '../constants/index.js'
 import {
-  $type,
-  $required,
+  $defaults,
+  $enum,
   $hidden,
   $key,
-  $savedAs,
-  $enum,
-  $defaults,
   $links,
-  $transform
+  $required,
+  $savedAs,
+  $transform,
+  $type
 } from '../constants/attributeOptions.js'
-
-import { string, number, boolean, binary } from './typer.js'
-import type { PrimitiveAttribute, $PrimitiveAttribute } from './interface.js'
+import { Always, AtLeastOnce, Never } from '../constants/index.js'
+import type { $PrimitiveAttribute, PrimitiveAttribute } from './interface.js'
+import { binary, boolean, number, string } from './typer.js'
 
 describe('primitiveAttribute', () => {
   const path = 'some.path'

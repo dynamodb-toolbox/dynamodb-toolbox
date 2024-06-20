@@ -1,13 +1,13 @@
-import type { TableV2 } from '~/table/index.js'
-import type { EntityV2 } from '~/entity/index.js'
-import type { EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
 import type { Condition } from '~/entity/actions/parseCondition.js'
+import type { EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
+import type { EntityV2 } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type {
-  SelectOption,
   AllProjectedAttributesSelectOption,
+  SelectOption,
   SpecificAttributesSelectOption
 } from '~/options/select.js'
+import type { TableV2 } from '~/table/index.js'
 
 import type { Query } from './types.js'
 

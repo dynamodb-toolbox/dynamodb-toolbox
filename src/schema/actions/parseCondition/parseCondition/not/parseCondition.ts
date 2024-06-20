@@ -1,5 +1,4 @@
 import type { ConditionParser } from '../../conditionParser.js'
-
 import type { NotCondition } from './types.js'
 
 export const parseNotCondition = (

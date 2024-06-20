@@ -1,6 +1,6 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import { EntityV2, EntityAction } from '~/entity/index.js'
+import { EntityAction, EntityV2 } from '~/entity/index.js'
 import { ConditionParser, SchemaCondition } from '~/schema/actions/parseCondition/index.js'
 
 const $conditionParser = Symbol('$conditionParser')

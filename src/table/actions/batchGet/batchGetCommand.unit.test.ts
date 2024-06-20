@@ -1,12 +1,13 @@
 import type { A } from 'ts-toolbelt'
+
 import {
+  BatchGetRequest,
   DynamoDBToolboxError,
   EntityV2,
   TableV2,
+  number,
   schema,
-  string,
-  BatchGetRequest,
-  number
+  string
 } from '~/index.js'
 import { $entities } from '~/table/table.js'
 

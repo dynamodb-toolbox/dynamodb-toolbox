@@ -1,19 +1,19 @@
 import {
-  TableV2,
+  DynamoDBToolboxError,
   EntityV2,
-  schema,
+  PutItemCommand,
+  TableV2,
   any,
   binary,
-  string,
-  number,
   boolean,
-  set,
   list,
   map,
+  number,
+  prefix,
   record,
-  DynamoDBToolboxError,
-  PutItemCommand,
-  prefix
+  schema,
+  set,
+  string
 } from '~/index.js'
 
 const TestTable = new TableV2({

@@ -1,10 +1,10 @@
 import type { $AnyAttributeState, FreezeAnyAttribute } from './any/index.js'
-import type { $PrimitiveAttributeState, FreezePrimitiveAttribute } from './primitive/index.js'
-import type { $SetAttributeState, FreezeSetAttribute } from './set/index.js'
+import type { $AnyOfAttributeState, FreezeAnyOfAttribute } from './anyOf/index.js'
 import type { $ListAttributeState, FreezeListAttribute } from './list/index.js'
 import type { $MapAttributeState, FreezeMapAttribute } from './map/index.js'
+import type { $PrimitiveAttributeState, FreezePrimitiveAttribute } from './primitive/index.js'
 import type { $RecordAttributeState, FreezeRecordAttribute } from './record/index.js'
-import type { $AnyOfAttributeState, FreezeAnyOfAttribute } from './anyOf/index.js'
+import type { $SetAttributeState, FreezeSetAttribute } from './set/index.js'
 import type { $AttributeState } from './types/index.js'
 
 export type FreezeAttribute<

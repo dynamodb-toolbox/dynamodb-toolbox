@@ -1,11 +1,11 @@
-import type { AtLeastOnce } from '../constants/index.js'
 import type {
-  $required,
-  $hidden,
-  $savedAs,
   $defaults,
-  $links
+  $hidden,
+  $links,
+  $required,
+  $savedAs
 } from '../constants/attributeOptions.js'
+import type { AtLeastOnce } from '../constants/index.js'
 import type { $AttributeNestedState } from '../types/index.js'
 
 export type $ListAttributeElements = $AttributeNestedState & {

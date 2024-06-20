@@ -2,22 +2,21 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { RequiredOption } from '../constants/requiredOptions.js'
-import type { FreezeAttribute } from '../freeze.js'
-import { validateAttributeProperties } from '../shared/validate.js'
 import {
   $attributes,
-  $required,
+  $defaults,
   $hidden,
   $key,
-  $savedAs,
-  $defaults,
-  $links
+  $links,
+  $required,
+  $savedAs
 } from '../constants/attributeOptions.js'
-
+import type { RequiredOption } from '../constants/requiredOptions.js'
+import type { FreezeAttribute } from '../freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import type { $MapAttributeAttributeStates } from './types.js'
+import { validateAttributeProperties } from '../shared/validate.js'
 import { $MapAttributeState, MapAttribute } from './interface.js'
+import type { $MapAttributeAttributeStates } from './types.js'
 
 export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
   // Applying void O.Update improves type display

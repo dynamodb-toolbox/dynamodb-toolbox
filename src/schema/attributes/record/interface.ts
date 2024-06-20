@@ -1,25 +1,24 @@
 import type { O } from 'ts-toolbelt'
 
-import type { If, ValueOrGetter } from '~/types/index.js'
 // TODO: Remove this import
 import type {
   AttributeUpdateItemInput,
   UpdateItemInput
 } from '~/entity/actions/commands/updateItem/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
+import type { If, ValueOrGetter } from '~/types/index.js'
 
 import type { Schema } from '../../schema.js'
-import type { RequiredOption, AtLeastOnce, Never, Always } from '../constants/index.js'
-import type { $type, $elements, $keys } from '../constants/attributeOptions.js'
+import type { $elements, $keys, $type } from '../constants/attributeOptions.js'
+import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
-
-import type {
-  $RecordAttributeKeys,
-  RecordAttributeKeys,
-  $RecordAttributeElements
-} from './types.js'
 import type { FreezeRecordAttribute } from './freeze.js'
+import type {
+  $RecordAttributeElements,
+  $RecordAttributeKeys,
+  RecordAttributeKeys
+} from './types.js'
 
 export interface $RecordAttributeState<
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,

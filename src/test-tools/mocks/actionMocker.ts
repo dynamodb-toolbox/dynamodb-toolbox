@@ -1,7 +1,7 @@
 import { isString } from '~/utils/validation/isString.js'
 
-import type { ActionName } from './types.js'
 import { $actionName, $mockedEntity, $mockedImplementations } from './constants.js'
+import type { ActionName } from './types.js'
 
 // NOTE: Those types come from @aws-sdk
 interface Error {

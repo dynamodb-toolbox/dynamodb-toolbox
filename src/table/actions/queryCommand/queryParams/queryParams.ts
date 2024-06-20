@@ -1,23 +1,22 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 import { isEmpty } from 'lodash'
 
-import { isBoolean } from '~/utils/validation/isBoolean.js'
-import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { TableV2 } from '~/table/index.js'
-import type { EntityV2 } from '~/entity/index.js'
+import { Condition, EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import { EntityPathParser, EntityPaths } from '~/entity/actions/parsePaths.js'
-import { EntityConditionParser, Condition } from '~/entity/actions/parseCondition.js'
-
+import type { EntityV2 } from '~/entity/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
-import { parseIndexOption } from '~/options/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
+import { parseIndexOption } from '~/options/index.js'
 import { parseLimitOption } from '~/options/limit.js'
 import { parseMaxPagesOption } from '~/options/maxPages.js'
-import { parseSelectOption } from '~/options/select.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
+import { parseSelectOption } from '~/options/select.js'
+import type { TableV2 } from '~/table/index.js'
+import { isBoolean } from '~/utils/validation/isBoolean.js'
 
-import type { Query } from '../types.js'
 import type { QueryOptions } from '../options.js'
+import type { Query } from '../types.js'
 import { parseQuery } from './parseQuery.js'
 
 export const queryParams = <

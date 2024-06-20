@@ -1,5 +1,4 @@
 import type { ConditionParser } from '../../conditionParser.js'
-
 import type { InCondition } from './types.js'
 
 export const parseInCondition = (

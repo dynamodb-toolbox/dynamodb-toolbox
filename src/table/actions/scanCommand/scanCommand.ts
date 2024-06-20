@@ -1,17 +1,17 @@
-import type { O } from 'ts-toolbelt'
+import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
 import {
   ScanCommandInput,
-  ScanCommand as _ScanCommand,
-  ScanCommandOutput
+  ScanCommandOutput,
+  ScanCommand as _ScanCommand
 } from '@aws-sdk/lib-dynamodb'
-import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
+import type { O } from 'ts-toolbelt'
 
-import { TableV2, TableAction, $table, $entities } from '~/table/index.js'
-import type { EntityV2 } from '~/entity/index.js'
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
+import type { EntityV2 } from '~/entity/index.js'
 import type { CountSelectOption } from '~/options/select.js'
+import { $entities, $table, TableAction, TableV2 } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import type { ScanOptions } from './options.js'

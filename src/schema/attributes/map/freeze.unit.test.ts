@@ -2,11 +2,10 @@ import type { MockedFunction } from 'vitest'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
+import { $attributes } from '../constants/index.js'
 import { string } from '../primitive/index.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-
 import { map } from './typer.js'
-import { $attributes } from '../constants/index.js'
 
 vi.mock('../shared/validate', () => ({
   ...vi.importActual<Record<string, unknown>>('../shared/validate'),

@@ -2,12 +2,12 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import {
-  TableV2,
-  EntityV2,
-  schema,
-  string,
   DynamoDBToolboxError,
-  GetItemTransaction
+  EntityV2,
+  GetItemTransaction,
+  TableV2,
+  schema,
+  string
 } from '~/index.js'
 
 const dynamoDbClient = new DynamoDBClient({})

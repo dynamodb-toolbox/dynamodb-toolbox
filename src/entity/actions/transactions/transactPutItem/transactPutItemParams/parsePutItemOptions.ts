@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash'
 
-import type { EntityV2 } from '~/entity/index.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
+import type { EntityV2 } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
 import { PutItemTransactionOptions } from '../options.js'

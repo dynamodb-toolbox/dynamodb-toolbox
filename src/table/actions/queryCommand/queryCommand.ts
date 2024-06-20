@@ -1,23 +1,23 @@
-import type { O } from 'ts-toolbelt'
+import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
 import {
   QueryCommandInput,
-  QueryCommand as _QueryCommand,
-  QueryCommandOutput
+  QueryCommandOutput,
+  QueryCommand as _QueryCommand
 } from '@aws-sdk/lib-dynamodb'
-import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
+import type { O } from 'ts-toolbelt'
 
-import { TableV2, TableAction, $entities, $table } from '~/table/index.js'
-import type { EntityV2 } from '~/entity/index.js'
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-import type { CountSelectOption } from '~/options/select.js'
+import type { EntityV2 } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { CountSelectOption } from '~/options/select.js'
+import { $entities, $table, TableAction, TableV2 } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import type { QueryOptions } from './options.js'
-import type { Query } from './types.js'
 import { queryParams } from './queryParams/index.js'
+import type { Query } from './types.js'
 
 const $query = Symbol('$query')
 type $query = typeof $query

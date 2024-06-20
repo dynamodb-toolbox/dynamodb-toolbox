@@ -1,20 +1,20 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, BatchGetCommand as _BatchGetCommand } from '@aws-sdk/lib-dynamodb'
-import { mockClient, AwsStub } from 'aws-sdk-client-mock'
+import { AwsStub, mockClient } from 'aws-sdk-client-mock'
 import { pick } from 'lodash'
 import type { A } from 'ts-toolbelt'
 
 import {
+  BatchGetRequest,
   DynamoDBToolboxError,
   EntityV2,
-  TableV2,
-  schema,
-  string,
-  BatchGetRequest,
-  number,
   FormattedItem,
+  KeyInput,
   SavedItem,
-  KeyInput
+  TableV2,
+  number,
+  schema,
+  string
 } from '~/index.js'
 
 import { BatchGetCommand } from './batchGetCommand.js'
