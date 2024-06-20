@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Builds a [Condition Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html) that can be used to condition write operations, or filter the results of a [Query](../../../2-tables/2-actions/2-query/index.md) or a [Scan](../../../2-tables/2-actions/1-scan/index.md):
 
 ```ts
-import { ConditionParser } from 'v1/entity/actions/parseCondition.js'
+import { ConditionParser } from '~/entity/actions/parseCondition.js'
 
 // 👇 To be used in DynamoDB commands
 const {
@@ -93,7 +93,7 @@ PokemonEntity.build(ConditionParser)
 The condition syntax from DynamoDB-Toolbox follows the [DynamoDB specifications](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.OperatorsAndFunctions.html), while making it **type-safe** and much **simpler**:
 
 ```ts
-import type { Condition } from 'v1/entity/actions/parseCondition.js'
+import type { Condition } from '~/entity/actions/parseCondition.js'
 
 const condition: Condition<typeof PokemonEntity> = {
   attr: 'level',

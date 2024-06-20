@@ -9,7 +9,7 @@ sidebar_custom_props:
 Builds a [Projection Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html) that can be used to filter the returned attributes of a read operation like a [GetItem](../1-get-item/index.md), [Query](/docs/tables/actions/query) or [Scan](/docs/tables/actions/scan):
 
 ```ts
-import { PathParser } from 'v1/entity/actions/parsePaths.js'
+import { PathParser } from '~/entity/actions/parsePaths.js'
 
 // 👇 To be used in DynamoDB commands
 const {
@@ -88,7 +88,7 @@ The path syntax from DynamoDB-Toolbox follows the [DynamoDB specifications](http
 import type {
   Path,
   PathIntersection
-} from 'v1/entity/actions/parsePaths.js'
+} from '~/entity/actions/parsePaths.js'
 
 type PokemonPath = Path<typeof PokemonEntity>
 const namePath: PokemonPath = 'name'
