@@ -1,5 +1,5 @@
-import React from 'react'
 import DocSidebarItem from '@theme-original/DocSidebarItem'
+import React from 'react'
 
 // This component is needed to apply custom style to sidebar action items according to their type
 // See https://docusaurus.io/docs/swizzling#wrapping

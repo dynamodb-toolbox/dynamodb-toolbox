@@ -2,9 +2,9 @@
 import Head from '@docusaurus/Head'
 import Link from '@docusaurus/Link'
 import React from 'react'
-import { GiFeather, GiMuscleUp } from 'react-icons/gi'
 import { BsBalloonHeartFill } from 'react-icons/bs'
 import { FaGithub, FaHeart } from 'react-icons/fa'
+import { GiFeather, GiMuscleUp } from 'react-icons/gi'
 import { MdOutlineImportContacts } from 'react-icons/md'
 import { SlSpeech } from 'react-icons/sl'
 
