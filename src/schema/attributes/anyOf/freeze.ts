@@ -3,15 +3,7 @@ import type { O } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import {
-  $defaults,
-  $elements,
-  $hidden,
-  $key,
-  $links,
-  $required,
-  $savedAs
-} from '../constants/attributeOptions.js'
+import { $elements, $state } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -38,29 +30,19 @@ type FreezeElements<
 export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
-    AnyOfAttribute<
-      FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>,
-      {
-        required: $ANY_OF_ATTRIBUTE[$required]
-        hidden: $ANY_OF_ATTRIBUTE[$hidden]
-        key: $ANY_OF_ATTRIBUTE[$key]
-        savedAs: $ANY_OF_ATTRIBUTE[$savedAs]
-        defaults: $ANY_OF_ATTRIBUTE[$defaults]
-        links: $ANY_OF_ATTRIBUTE[$links]
-      }
-    >,
+    AnyOfAttribute<$ANY_OF_ATTRIBUTE[$state], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>,
     never,
     never
   >
 
 type AnyOfAttributeFreezer = <
-  $ELEMENTS extends $AnyOfAttributeElements[],
-  STATE extends SharedAttributeState
+  STATE extends SharedAttributeState,
+  $ELEMENTS extends $AnyOfAttributeElements[]
 >(
-  elements: $ELEMENTS,
   state: STATE,
+  elements: $ELEMENTS,
   path?: string
-) => FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>>
+) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>
 
 /**
  * Freezes a warm `anyOf` attribute
@@ -71,13 +53,13 @@ type AnyOfAttributeFreezer = <
  * @return void
  */
 export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
-  $ELEMENTS extends $AnyOfAttributeElements[],
-  STATE extends SharedAttributeState
+  STATE extends SharedAttributeState,
+  $ELEMENTS extends $AnyOfAttributeElements[]
 >(
-  elements: $ELEMENTS,
   state: STATE,
+  elements: $ELEMENTS,
   path?: string
-): FreezeAnyOfAttribute<$AnyOfAttributeState<$ELEMENTS, STATE>> => {
+): FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>> => {
   validateAttributeProperties(state, path)
 
   if (!isArray(elements)) {
@@ -99,7 +81,9 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
   }
 
   elements.forEach(element => {
-    if (element[$required] !== 'atLeastOnce' && element[$required] !== 'always') {
+    const { required, hidden, savedAs } = element[$state]
+
+    if (required !== 'atLeastOnce' && required !== 'always') {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.optionalElements', {
         message: `Invalid anyOf elements${
           path !== undefined ? ` at path '${path}'` : ''
@@ -108,7 +92,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
       })
     }
 
-    if (element[$hidden] !== false) {
+    if (hidden !== false) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.hiddenElements', {
         message: `Invalid anyOf elements${
           path !== undefined ? ` at path '${path}'` : ''
@@ -117,7 +101,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
       })
     }
 
-    if (element[$savedAs] !== undefined) {
+    if (savedAs !== undefined) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.savedAsElements', {
         message: `Invalid anyOf elements${
           path !== undefined ? ` at path '${path}'` : ''

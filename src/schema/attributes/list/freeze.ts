@@ -2,15 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import {
-  $defaults,
-  $elements,
-  $hidden,
-  $key,
-  $links,
-  $required,
-  $savedAs
-} from '../constants/attributeOptions.js'
+import { $elements, $state } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -21,29 +13,19 @@ import type { $ListAttributeElements } from './types.js'
 export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
-    ListAttribute<
-      FreezeAttribute<$LIST_ATTRIBUTE[$elements]>,
-      {
-        required: $LIST_ATTRIBUTE[$required]
-        hidden: $LIST_ATTRIBUTE[$hidden]
-        key: $LIST_ATTRIBUTE[$key]
-        savedAs: $LIST_ATTRIBUTE[$savedAs]
-        defaults: $LIST_ATTRIBUTE[$defaults]
-        links: $LIST_ATTRIBUTE[$links]
-      }
-    >,
+    ListAttribute<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements]>>,
     never,
     never
   >
 
 type ListAttributeFreezer = <
-  $ELEMENTS extends $ListAttributeElements,
-  STATE extends SharedAttributeState
+  STATE extends SharedAttributeState,
+  $ELEMENTS extends $ListAttributeElements
 >(
-  $elements: $ELEMENTS,
   state: STATE,
+  $elements: $ELEMENTS,
   path?: string
-) => FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>>
+) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>
 
 /**
  * Freezes a warm `list` attribute
@@ -54,16 +36,18 @@ type ListAttributeFreezer = <
  * @return void
  */
 export const freezeListAttribute: ListAttributeFreezer = <
-  $ELEMENTS extends $ListAttributeElements,
-  STATE extends SharedAttributeState
+  STATE extends SharedAttributeState,
+  $ELEMENTS extends $ListAttributeElements
 >(
-  elements: $ELEMENTS,
   state: STATE,
+  elements: $ELEMENTS,
   path?: string
-): FreezeListAttribute<$ListAttributeState<$ELEMENTS, STATE>> => {
+): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>> => {
   validateAttributeProperties(state, path)
 
-  if (elements[$required] !== 'atLeastOnce' && elements[$required] !== 'always') {
+  const { required, hidden, savedAs } = elements[$state]
+
+  if (required !== 'atLeastOnce' && required !== 'always') {
     throw new DynamoDBToolboxError('schema.listAttribute.optionalElements', {
       message: `Invalid list elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -72,7 +56,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
     })
   }
 
-  if (elements[$hidden] !== false) {
+  if (hidden !== false) {
     throw new DynamoDBToolboxError('schema.listAttribute.hiddenElements', {
       message: `Invalid list elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -81,7 +65,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
     })
   }
 
-  if (elements[$savedAs] !== undefined) {
+  if (savedAs !== undefined) {
     throw new DynamoDBToolboxError('schema.listAttribute.savedAsElements', {
       message: `Invalid list elements at path ${
         path !== undefined ? ` at path '${path}'` : ''

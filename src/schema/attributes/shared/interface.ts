@@ -1,11 +1,3 @@
-import type {
-  $defaults,
-  $hidden,
-  $key,
-  $links,
-  $required,
-  $savedAs
-} from '../constants/attributeOptions.js'
 import type { RequiredOption } from '../constants/requiredOptions.js'
 
 export interface SharedAttributeStateConstraint {
@@ -23,17 +15,6 @@ export interface SharedAttributeStateConstraint {
     put: undefined | unknown
     update: undefined | unknown
   }
-}
-
-export interface $SharedAttributeState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint
-> {
-  [$required]: STATE['required']
-  [$hidden]: STATE['hidden']
-  [$key]: STATE['key']
-  [$savedAs]: STATE['savedAs']
-  [$defaults]: STATE['defaults']
-  [$links]: STATE['links']
 }
 
 export interface SharedAttributeState<

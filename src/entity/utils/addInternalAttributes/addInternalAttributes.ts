@@ -1,6 +1,6 @@
 import { $get } from '~/entity/actions/commands/updateItem/utils.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { $savedAs } from '~/schema/attributes/constants/attributeOptions.js'
+import { $state } from '~/schema/attributes/constants/attributeOptions.js'
 import type { $Attribute } from '~/schema/attributes/index.js'
 import { string } from '~/schema/attributes/primitive/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -113,7 +113,8 @@ export const addInternalAttributes: InternalAttributesAdder = <
       })
     }
 
-    if (attribute[$savedAs] !== undefined && schema.savedAttributeNames.has(attribute[$savedAs])) {
+    const { savedAs: attributeSavedAs } = attribute[$state]
+    if (attributeSavedAs !== undefined && schema.savedAttributeNames.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('entity.reservedAttributeSavedAs', {
         message: `'${attribute.savedAs}' is a reserved attribute alias (savedAs).`,
         path: attributeName

@@ -7,36 +7,48 @@ import type {
 } from '~/entity/actions/commands/updateItem/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
+import { overwrite } from '~/utils/overwrite.js'
 
 import type { Schema } from '../../schema.js'
-import type { $attributes, $type } from '../constants/attributeOptions.js'
+import { $attributes, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface.js'
-import type { FreezeMapAttribute } from './freeze.js'
+import type { SharedAttributeState } from '../shared/interface.js'
+import { FreezeMapAttribute, freezeMapAttribute } from './freeze.js'
 import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types.js'
 
 export interface $MapAttributeState<
-  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
-  STATE extends SharedAttributeState = SharedAttributeState
-> extends $SharedAttributeState<STATE> {
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
+> {
   [$type]: 'map'
+  [$state]: STATE
   [$attributes]: $ATTRIBUTES
 }
 
 export interface $MapAttributeNestedState<
-  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
-  STATE extends SharedAttributeState = SharedAttributeState
-> extends $MapAttributeState<$ATTRIBUTES, STATE> {
-  freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
+> extends $MapAttributeState<STATE, $ATTRIBUTES> {
+  freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>
 }
 
 /**
  * MapAttribute attribute interface
  */
-export interface $MapAttribute<
-  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates,
-  STATE extends SharedAttributeState = SharedAttributeState
-> extends $MapAttributeNestedState<$ATTRIBUTES, STATE> {
+export class $MapAttribute<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
+> implements $MapAttributeNestedState<STATE, $ATTRIBUTES> {
+  [$type]: 'map';
+  [$state]: STATE;
+  [$attributes]: $ATTRIBUTES
+
+  constructor(state: STATE, attributes: $ATTRIBUTES) {
+    this[$type] = 'map'
+    this[$state] = state
+    this[$attributes] = attributes
+  }
+
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -45,45 +57,62 @@ export interface $MapAttribute<
    *
    * @param nextRequired RequiredOption
    */
-  required: <NEXT_REQUIRED extends RequiredOption = AtLeastOnce>(
-    nextRequired?: NEXT_REQUIRED
-  ) => $MapAttribute<$ATTRIBUTES, O.Overwrite<STATE, { required: NEXT_REQUIRED }>>
+  required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+    nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
+  ): $MapAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ATTRIBUTES> {
+    return new $MapAttribute(overwrite(this[$state], { required: nextRequired }), this[$attributes])
+  }
+
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $MapAttribute<$ATTRIBUTES, O.Overwrite<STATE, { required: Never }>>
+  optional(): $MapAttribute<O.Overwrite<STATE, { required: Never }>, $ATTRIBUTES> {
+    return this.required('never')
+  }
+
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: <NEXT_HIDDEN extends boolean = true>(
-    nextHidden?: NEXT_HIDDEN
-  ) => $MapAttribute<$ATTRIBUTES, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
+  hidden<NEXT_HIDDEN extends boolean = true>(
+    nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
+  ): $MapAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ATTRIBUTES> {
+    return new $MapAttribute(overwrite(this[$state], { hidden: nextHidden }), this[$attributes])
+  }
+
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: <NEXT_KEY extends boolean = true>(
-    nextKey?: NEXT_KEY
-  ) => $MapAttribute<$ATTRIBUTES, O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>>
+  key<NEXT_KEY extends boolean = true>(
+    nextKey: NEXT_KEY = true as NEXT_KEY
+  ): $MapAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ATTRIBUTES> {
+    return new $MapAttribute(
+      overwrite(this[$state], { key: nextKey, required: 'always' }),
+      this[$attributes]
+    )
+  }
+
   /**
    * Rename attribute before save commands
    */
-  savedAs: <NEXT_SAVED_AS extends string | undefined>(
+  savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => $MapAttribute<$ATTRIBUTES, O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>>
+  ): $MapAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ATTRIBUTES> {
+    return new $MapAttribute(overwrite(this[$state], { savedAs: nextSavedAs }), this[$attributes])
+  }
+
   /**
    * Provide a default value for attribute in Primary Key computing
    *
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
-  keyDefault: (
+  keyDefault(
     nextKeyDefault: ValueOrGetter<
       ParserInput<
-        FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
+        FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>,
         { mode: 'key'; fill: false }
       >
     >
-  ) => $MapAttribute<
-    $ATTRIBUTES,
+  ): $MapAttribute<
     O.Overwrite<
       STATE,
       {
@@ -93,19 +122,31 @@ export interface $MapAttribute<
           update: STATE['defaults']['update']
         }
       }
-    >
-  >
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: nextKeyDefault,
+          put: this[$state].defaults.put,
+          update: this[$state].defaults.update
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
   /**
    * Provide a default value for attribute in PUT commands
    *
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
-  putDefault: (
+  putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
+      ParserInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { fill: false }>
     >
-  ) => $MapAttribute<
-    $ATTRIBUTES,
+  ): $MapAttribute<
     O.Overwrite<
       STATE,
       {
@@ -115,19 +156,31 @@ export interface $MapAttribute<
           update: STATE['defaults']['update']
         }
       }
-    >
-  >
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: this[$state].defaults.key,
+          put: nextPutDefault,
+          update: this[$state].defaults.update
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
   /**
    * Provide a default value for attribute in UPDATE commands
    *
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
-  updateDefault: (
+  updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>
+      AttributeUpdateItemInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, true>
     >
-  ) => $MapAttribute<
-    $ATTRIBUTES,
+  ): $MapAttribute<
     O.Overwrite<
       STATE,
       {
@@ -137,26 +190,38 @@ export interface $MapAttribute<
           update: unknown
         }
       }
-    >
-  >
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: this[$state].defaults.key,
+          put: this[$state].defaults.put,
+          update: nextUpdateDefault
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
   /**
    * Provide a default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
    * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  default: (
+  default(
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
         ParserInput<
-          FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
+          FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>,
           { mode: 'key'; fill: false }
         >,
-        ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
+        ParserInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { fill: false }>
       >
     >
-  ) => $MapAttribute<
-    $ATTRIBUTES,
+  ): $MapAttribute<
     O.Overwrite<
       STATE,
       {
@@ -174,22 +239,40 @@ export interface $MapAttribute<
           }
         >
       }
-    >
-  >
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        defaults: this[$state].key
+          ? {
+              key: nextDefault,
+              put: this[$state].defaults.put,
+              update: this[$state].defaults.update
+            }
+          : {
+              key: this[$state].defaults.key,
+              put: nextDefault,
+              update: this[$state].defaults.update
+            }
+      }),
+      this[$attributes]
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in Primary Key computing
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink: <SCHEMA extends Schema>(
+  keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
-      FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
+      FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>,
       { mode: 'key'; fill: false }
     >
-  ) => $MapAttribute<
-    $ATTRIBUTES,
+  ): $MapAttribute<
     O.Overwrite<
       STATE,
       {
@@ -199,19 +282,31 @@ export interface $MapAttribute<
           update: STATE['links']['update']
         }
       }
-    >
-  >
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: nextKeyLink,
+          put: this[$state].links.put,
+          update: this[$state].links.update
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in PUT commands
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink: <SCHEMA extends Schema>(
+  putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
-  ) => $MapAttribute<
-    $ATTRIBUTES,
+    ) => ParserInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { fill: false }>
+  ): $MapAttribute<
     O.Overwrite<
       STATE,
       {
@@ -221,19 +316,31 @@ export interface $MapAttribute<
           update: STATE['links']['update']
         }
       }
-    >
-  >
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: this[$state].links.key,
+          put: nextPutLink,
+          update: this[$state].links.update
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in UPDATE commands
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink: <SCHEMA extends Schema>(
+  updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, true>
-  ) => $MapAttribute<
-    $ATTRIBUTES,
+    ) => AttributeUpdateItemInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, true>
+  ): $MapAttribute<
     O.Overwrite<
       STATE,
       {
@@ -243,14 +350,27 @@ export interface $MapAttribute<
           update: unknown
         }
       }
-    >
-  >
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: this[$state].links.key,
+          put: this[$state].links.put,
+          update: nextUpdateLink
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link: <SCHEMA extends Schema>(
+  link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
@@ -260,13 +380,12 @@ export interface $MapAttribute<
     ) => If<
       STATE['key'],
       ParserInput<
-        FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>,
+        FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>,
         { mode: 'key'; fill: false }
       >,
-      ParserInput<FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>, { fill: false }>
+      ParserInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { fill: false }>
     >
-  ) => $MapAttribute<
-    $ATTRIBUTES,
+  ): $MapAttribute<
     O.Overwrite<
       STATE,
       {
@@ -284,13 +403,35 @@ export interface $MapAttribute<
           }
         >
       }
-    >
-  >
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        links: this[$state].key
+          ? {
+              key: nextLink,
+              put: this[$state].links.put,
+              update: this[$state].links.update
+            }
+          : {
+              key: this[$state].links.key,
+              put: nextLink,
+              update: this[$state].links.update
+            }
+      }),
+      this[$attributes]
+    )
+  }
+
+  freeze(path?: string): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>> {
+    return freezeMapAttribute(this[$state], this[$attributes], path)
+  }
 }
 
 export class MapAttribute<
-  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes,
-  STATE extends SharedAttributeState = SharedAttributeState
+  STATE extends SharedAttributeState = SharedAttributeState,
+  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
 > implements SharedAttributeState<STATE> {
   type: 'map'
   path?: string

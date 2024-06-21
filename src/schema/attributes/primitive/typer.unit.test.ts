@@ -3,17 +3,7 @@ import type { A } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
-import {
-  $defaults,
-  $enum,
-  $hidden,
-  $key,
-  $links,
-  $required,
-  $savedAs,
-  $transform,
-  $type
-} from '../constants/attributeOptions.js'
+import { $state, $type } from '../constants/attributeOptions.js'
 import { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { $PrimitiveAttribute, PrimitiveAttribute } from './interface.js'
 import { binary, boolean, number, string } from './typer.js'
@@ -25,29 +15,42 @@ describe('primitiveAttribute', () => {
     test('returns default string', () => {
       const str = string()
 
-      const assertStr: A.Contains<
-        typeof str,
+      const assertType: A.Equals<typeof str[$type], 'string'> = 1
+      assertType
+      expect(str[$type]).toBe('string')
+
+      const assertState: A.Equals<
+        typeof str[$state],
         {
-          [$type]: 'string'
-          [$required]: AtLeastOnce
-          [$hidden]: false
-          [$savedAs]: undefined
-          [$key]: false
-          [$enum]: undefined
-          [$defaults]: {
+          required: AtLeastOnce
+          hidden: false
+          savedAs: undefined
+          key: false
+          enum: undefined
+          defaults: {
             key: undefined
             put: undefined
             update: undefined
           }
-          [$links]: {
+          links: {
             key: undefined
             put: undefined
             update: undefined
           }
-          [$transform]: undefined
+          transform: undefined
         }
       > = 1
-      assertStr
+      assertState
+      expect(str[$state]).toStrictEqual({
+        required: 'atLeastOnce',
+        hidden: false,
+        key: false,
+        savedAs: undefined,
+        enum: undefined,
+        defaults: { key: undefined, put: undefined, update: undefined },
+        links: { key: undefined, put: undefined, update: undefined },
+        transform: undefined
+      })
 
       const assertExtends: A.Extends<typeof str, $PrimitiveAttribute> = 1
       assertExtends
@@ -55,15 +58,6 @@ describe('primitiveAttribute', () => {
       const frozenStr = str.freeze(path)
       const assertFrozenExtends: A.Extends<typeof frozenStr, PrimitiveAttribute> = 1
       assertFrozenExtends
-
-      expect(str[$type]).toBe('string')
-      expect(str[$required]).toBe('atLeastOnce')
-      expect(str[$hidden]).toBe(false)
-      expect(str[$savedAs]).toBe(undefined)
-      expect(str[$key]).toBe(false)
-      expect(str[$enum]).toBe(undefined)
-      expect(str[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
-      expect(str[$links]).toStrictEqual({ key: undefined, put: undefined, update: undefined })
     })
 
     test('returns required string (option)', () => {
@@ -71,16 +65,19 @@ describe('primitiveAttribute', () => {
       const strAlways = string({ required: 'always' })
       const strNever = string({ required: 'never' })
 
-      const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { [$required]: AtLeastOnce }> = 1
+      const assertAtLeastOnce: A.Contains<
+        typeof strAtLeastOnce[$state],
+        { required: AtLeastOnce }
+      > = 1
       assertAtLeastOnce
-      const assertAlways: A.Contains<typeof strAlways, { [$required]: Always }> = 1
+      const assertAlways: A.Contains<typeof strAlways[$state], { required: Always }> = 1
       assertAlways
-      const assertNever: A.Contains<typeof strNever, { [$required]: Never }> = 1
+      const assertNever: A.Contains<typeof strNever[$state], { required: Never }> = 1
       assertNever
 
-      expect(strAtLeastOnce[$required]).toBe('atLeastOnce')
-      expect(strAlways[$required]).toBe('always')
-      expect(strNever[$required]).toBe('never')
+      expect(strAtLeastOnce[$state].required).toBe('atLeastOnce')
+      expect(strAlways[$state].required).toBe('always')
+      expect(strNever[$state].required).toBe('never')
     })
 
     test('returns required string (method)', () => {
@@ -89,75 +86,78 @@ describe('primitiveAttribute', () => {
       const strNever = string().required('never')
       const strOpt = string().optional()
 
-      const assertAtLeastOnce: A.Contains<typeof strAtLeastOnce, { [$required]: AtLeastOnce }> = 1
+      const assertAtLeastOnce: A.Contains<
+        typeof strAtLeastOnce[$state],
+        { required: AtLeastOnce }
+      > = 1
       assertAtLeastOnce
-      const assertAlways: A.Contains<typeof strAlways, { [$required]: Always }> = 1
+      const assertAlways: A.Contains<typeof strAlways[$state], { required: Always }> = 1
       assertAlways
-      const assertNever: A.Contains<typeof strNever, { [$required]: Never }> = 1
+      const assertNever: A.Contains<typeof strNever[$state], { required: Never }> = 1
       assertNever
-      const assertOpt: A.Contains<typeof strOpt, { [$required]: Never }> = 1
+      const assertOpt: A.Contains<typeof strOpt[$state], { required: Never }> = 1
       assertOpt
 
-      expect(strAtLeastOnce[$required]).toBe('atLeastOnce')
-      expect(strAlways[$required]).toBe('always')
-      expect(strNever[$required]).toBe('never')
-      expect(strOpt[$required]).toBe('never')
+      expect(strAtLeastOnce[$state].required).toBe('atLeastOnce')
+      expect(strAlways[$state].required).toBe('always')
+      expect(strNever[$state].required).toBe('never')
+      expect(strOpt[$state].required).toBe('never')
     })
 
     test('returns hidden string (option)', () => {
       const str = string({ hidden: true })
 
-      const assertStr: A.Contains<typeof str, { [$hidden]: true }> = 1
+      const assertStr: A.Contains<typeof str[$state], { hidden: true }> = 1
       assertStr
 
-      expect(str[$hidden]).toBe(true)
+      expect(str[$state].hidden).toBe(true)
     })
 
     test('returns hidden string (method)', () => {
       const str = string().hidden()
 
-      const assertStr: A.Contains<typeof str, { [$hidden]: true }> = 1
+      const assertStr: A.Contains<typeof str[$state], { hidden: true }> = 1
       assertStr
 
-      expect(str[$hidden]).toBe(true)
+      expect(str[$state].hidden).toBe(true)
     })
 
     test('returns key string (option)', () => {
       const str = string({ key: true })
 
-      const assertStr: A.Contains<typeof str, { [$key]: true; [$required]: AtLeastOnce }> = 1
+      const assertStr: A.Contains<typeof str[$state], { key: true; required: AtLeastOnce }> = 1
       assertStr
 
-      expect(str[$key]).toBe(true)
-      expect(str[$required]).toBe('atLeastOnce')
+      expect(str[$state].key).toBe(true)
+      expect(str[$state].required).toBe('atLeastOnce')
     })
 
     test('returns key string (method)', () => {
       const str = string().key()
 
-      const assertStr: A.Contains<typeof str, { [$key]: true; [$required]: Always }> = 1
+      const assertStr: A.Contains<typeof str[$state], { key: true; required: Always }> = 1
       assertStr
 
-      expect(str[$key]).toBe(true)
-      expect(str[$required]).toBe('always')
+      expect(str[$state].key).toBe(true)
+      expect(str[$state].required).toBe('always')
     })
 
     test('returns savedAs string (option)', () => {
       const str = string({ savedAs: 'foo' })
 
-      const assertStr: A.Contains<typeof str, { [$savedAs]: 'foo' }> = 1
+      const assertStr: A.Contains<typeof str[$state], { savedAs: 'foo' }> = 1
       assertStr
 
-      expect(str[$savedAs]).toBe('foo')
+      expect(str[$state].savedAs).toBe('foo')
     })
 
     test('returns savedAs string (method)', () => {
       const str = string().savedAs('foo')
 
-      const assertStr: A.Contains<typeof str, { [$savedAs]: 'foo' }> = 1
+      const assertStr: A.Contains<typeof str[$state], { savedAs: 'foo' }> = 1
       assertStr
 
-      expect(str[$savedAs]).toBe('foo')
+      expect(str[$state].savedAs).toBe('foo')
     })
 
     test('returns string with enum values (method)', () => {
@@ -177,10 +177,10 @@ describe('primitiveAttribute', () => {
 
       const str = string().enum('foo', 'bar')
 
-      const assertStr: A.Contains<typeof str, { [$enum]: ['foo', 'bar'] }> = 1
+      const assertStr: A.Contains<typeof str[$state], { enum: ['foo', 'bar'] }> = 1
       assertStr
 
-      expect(str[$enum]).toStrictEqual(['foo', 'bar'])
+      expect(str[$state].enum).toStrictEqual(['foo', 'bar'])
     })
 
     test('returns defaulted string (option)', () => {
@@ -211,28 +211,40 @@ describe('primitiveAttribute', () => {
       const strC = string({ defaults: { key: undefined, put: undefined, update: sayHello } })
 
       const assertStrA: A.Contains<
-        typeof strA,
-        { [$defaults]: { key: string; put: undefined; update: undefined } }
+        typeof strA[$state],
+        { defaults: { key: string; put: undefined; update: undefined } }
       > = 1
       assertStrA
 
-      expect(strA[$defaults]).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
+      expect(strA[$state].defaults).toStrictEqual({
+        key: 'hello',
+        put: undefined,
+        update: undefined
+      })
 
       const assertStrB: A.Contains<
-        typeof strB,
-        { [$defaults]: { key: undefined; put: string; update: undefined } }
+        typeof strB[$state],
+        { defaults: { key: undefined; put: string; update: undefined } }
       > = 1
       assertStrB
 
-      expect(strB[$defaults]).toStrictEqual({ key: undefined, put: 'world', update: undefined })
+      expect(strB[$state].defaults).toStrictEqual({
+        key: undefined,
+        put: 'world',
+        update: undefined
+      })
 
       const assertStrC: A.Contains<
-        typeof strC,
-        { [$defaults]: { key: undefined; put: undefined; update: () => string } }
+        typeof strC[$state],
+        { defaults: { key: undefined; put: undefined; update: () => string } }
       > = 1
       assertStrC
 
-      expect(strC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+      expect(strC[$state].defaults).toStrictEqual({
+        key: undefined,
+        put: undefined,
+        update: sayHello
+      })
     })
 
     test('returns defaulted string (method)', () => {
@@ -257,52 +269,72 @@ describe('primitiveAttribute', () => {
       const strC = string().updateDefault(sayHello)
 
       const assertStrA: A.Contains<
-        typeof strA,
-        { [$defaults]: { key: unknown; put: undefined; update: undefined } }
+        typeof strA[$state],
+        { defaults: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertStrA
 
-      expect(strA[$defaults]).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
+      expect(strA[$state].defaults).toStrictEqual({
+        key: 'hello',
+        put: undefined,
+        update: undefined
+      })
 
       const assertStrB: A.Contains<
-        typeof strB,
-        { [$defaults]: { key: undefined; put: unknown; update: undefined } }
+        typeof strB[$state],
+        { defaults: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertStrB
 
-      expect(strB[$defaults]).toStrictEqual({ key: undefined, put: 'world', update: undefined })
+      expect(strB[$state].defaults).toStrictEqual({
+        key: undefined,
+        put: 'world',
+        update: undefined
+      })
 
       const assertStrC: A.Contains<
-        typeof strC,
-        { [$defaults]: { key: undefined; put: undefined; update: unknown } }
+        typeof strC[$state],
+        { defaults: { key: undefined; put: undefined; update: unknown } }
       > = 1
       assertStrC
 
-      expect(strC[$defaults]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+      expect(strC[$state].defaults).toStrictEqual({
+        key: undefined,
+        put: undefined,
+        update: sayHello
+      })
     })
 
     test('returns string with PUT default value if it is not key (default shorthand)', () => {
       const str = string().default('hello')
 
       const assertStr: A.Contains<
-        typeof str,
-        { [$defaults]: { key: undefined; put: unknown; update: undefined } }
+        typeof str[$state],
+        { defaults: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertStr
 
-      expect(str[$defaults]).toStrictEqual({ key: undefined, put: 'hello', update: undefined })
+      expect(str[$state].defaults).toStrictEqual({
+        key: undefined,
+        put: 'hello',
+        update: undefined
+      })
     })
 
     test('returns string with KEY default value if it is key (default shorthand)', () => {
       const str = string().key().default('hello')
 
       const assertStr: A.Contains<
-        typeof str,
-        { [$defaults]: { key: unknown; put: undefined; update: undefined } }
+        typeof str[$state],
+        { defaults: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertStr
 
-      expect(str[$defaults]).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
+      expect(str[$state].defaults).toStrictEqual({
+        key: 'hello',
+        put: undefined,
+        update: undefined
+      })
     })
 
     test('returns string with constant value (method)', () => {
@@ -321,24 +353,32 @@ describe('primitiveAttribute', () => {
       const nonKeyStr = string().const('foo')
 
       const assertNonKeyStr: A.Contains<
-        typeof nonKeyStr,
-        { [$enum]: ['foo']; [$defaults]: { key: undefined; put: unknown; update: undefined } }
+        typeof nonKeyStr[$state],
+        { enum: ['foo']; defaults: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertNonKeyStr
 
-      expect(nonKeyStr[$enum]).toStrictEqual(['foo'])
-      expect(nonKeyStr[$defaults]).toStrictEqual({ key: undefined, put: 'foo', update: undefined })
+      expect(nonKeyStr[$state].enum).toStrictEqual(['foo'])
+      expect(nonKeyStr[$state].defaults).toStrictEqual({
+        key: undefined,
+        put: 'foo',
+        update: undefined
+      })
 
       const keyStr = string().key().const('foo')
 
       const assertKeyStr: A.Contains<
-        typeof keyStr,
-        { [$enum]: ['foo']; [$defaults]: { key: unknown; put: undefined; update: undefined } }
+        typeof keyStr[$state],
+        { enum: ['foo']; defaults: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertKeyStr
 
-      expect(keyStr[$enum]).toStrictEqual(['foo'])
-      expect(keyStr[$defaults]).toStrictEqual({ key: 'foo', put: undefined, update: undefined })
+      expect(keyStr[$state].enum).toStrictEqual(['foo'])
+      expect(keyStr[$state].defaults).toStrictEqual({
+        key: 'foo',
+        put: undefined,
+        update: undefined
+      })
     })
 
     test('returns linked string (method)', () => {
@@ -348,28 +388,28 @@ describe('primitiveAttribute', () => {
       const strC = string().updateLink(sayHello)
 
       const assertStrA: A.Contains<
-        typeof strA,
-        { [$links]: { key: unknown; put: undefined; update: undefined } }
+        typeof strA[$state],
+        { links: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertStrA
 
-      expect(strA[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+      expect(strA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
 
       const assertStrB: A.Contains<
-        typeof strB,
-        { [$links]: { key: undefined; put: unknown; update: undefined } }
+        typeof strB[$state],
+        { links: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertStrB
 
-      expect(strB[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+      expect(strB[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
 
       const assertStrC: A.Contains<
-        typeof strC,
-        { [$links]: { key: undefined; put: undefined; update: unknown } }
+        typeof strC[$state],
+        { links: { key: undefined; put: undefined; update: unknown } }
       > = 1
       assertStrC
 
-      expect(strC[$links]).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+      expect(strC[$state].links).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
     })
 
     test('returns string with PUT linked value if it is not key (link shorthand)', () => {
@@ -377,12 +417,12 @@ describe('primitiveAttribute', () => {
       const str = string().link(sayHello)
 
       const assertStr: A.Contains<
-        typeof str,
-        { [$links]: { key: undefined; put: unknown; update: undefined } }
+        typeof str[$state],
+        { links: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertStr
 
-      expect(str[$links]).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+      expect(str[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
     })
 
     test('returns string with KEY linked value if it is key (link shorthand)', () => {
@@ -390,12 +430,12 @@ describe('primitiveAttribute', () => {
       const str = string().key().link(sayHello)
 
       const assertStr: A.Contains<
-        typeof str,
-        { [$links]: { key: unknown; put: undefined; update: undefined } }
+        typeof str[$state],
+        { links: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertStr
 
-      expect(str[$links]).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+      expect(str[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
     })
 
     test('default with enum values', () => {
@@ -419,42 +459,42 @@ describe('primitiveAttribute', () => {
       const strB = string().enum('foo', 'bar').default(sayFoo)
 
       const assertStrA: A.Contains<
-        typeof strA,
-        { [$defaults]: { put: unknown }; [$enum]: ['foo', 'bar'] }
+        typeof strA[$state],
+        { defaults: { put: unknown }; enum: ['foo', 'bar'] }
       > = 1
       assertStrA
 
-      expect(strA[$defaults]).toMatchObject({ put: 'foo' })
-      expect(strA[$enum]).toStrictEqual(['foo', 'bar'])
+      expect(strA[$state].defaults).toMatchObject({ put: 'foo' })
+      expect(strA[$state].enum).toStrictEqual(['foo', 'bar'])
 
       const assertStrB: A.Contains<
-        typeof strB,
-        { [$defaults]: { put: unknown }; [$enum]: ['foo', 'bar'] }
+        typeof strB[$state],
+        { defaults: { put: unknown }; enum: ['foo', 'bar'] }
       > = 1
       assertStrB
 
-      expect(strB[$defaults]).toMatchObject({ put: sayFoo })
-      expect(strB[$enum]).toStrictEqual(['foo', 'bar'])
+      expect(strB[$state].defaults).toMatchObject({ put: sayFoo })
+      expect(strB[$state].enum).toStrictEqual(['foo', 'bar'])
     })
 
     test('returns transformed string (option)', () => {
       const transformer = prefix('test')
       const str = string({ transform: transformer })
 
-      const assertStr: A.Contains<typeof str, { [$transform]: unknown }> = 1
+      const assertStr: A.Contains<typeof str[$state], { transform: unknown }> = 1
       assertStr
 
-      expect(str[$transform]).toBe(transformer)
+      expect(str[$state].transform).toBe(transformer)
     })
 
     test('returns transformed string (method)', () => {
       const transformer = prefix('test')
       const str = string().transform(transformer)
 
-      const assertStr: A.Contains<typeof str, { [$transform]: unknown }> = 1
+      const assertStr: A.Contains<typeof str[$state], { transform: unknown }> = 1
       assertStr
 
-      expect(str[$transform]).toBe(transformer)
+      expect(str[$state].transform).toBe(transformer)
     })
   })
 

@@ -4,17 +4,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 
-import {
-  $defaults,
-  $enum,
-  $hidden,
-  $key,
-  $links,
-  $required,
-  $savedAs,
-  $transform,
-  $type
-} from '../constants/attributeOptions.js'
+import { $state, $type } from '../constants/attributeOptions.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import { $PrimitiveAttributeState, PrimitiveAttribute } from './interface.js'
 import type {
@@ -26,22 +16,7 @@ import type {
 export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
-    PrimitiveAttribute<
-      $PRIMITIVE_ATTRIBUTE[$type],
-      {
-        required: $PRIMITIVE_ATTRIBUTE[$required]
-        hidden: $PRIMITIVE_ATTRIBUTE[$hidden]
-        key: $PRIMITIVE_ATTRIBUTE[$key]
-        savedAs: $PRIMITIVE_ATTRIBUTE[$savedAs]
-        enum: Extract<
-          $PRIMITIVE_ATTRIBUTE[$enum],
-          PrimitiveAttributeEnumValues<$PRIMITIVE_ATTRIBUTE[$type]>
-        >
-        defaults: $PRIMITIVE_ATTRIBUTE[$defaults]
-        links: $PRIMITIVE_ATTRIBUTE[$links]
-        transform: $PRIMITIVE_ATTRIBUTE[$transform]
-      }
-    >,
+    PrimitiveAttribute<$PRIMITIVE_ATTRIBUTE[$type], $PRIMITIVE_ATTRIBUTE[$state]>,
     never,
     never
   >

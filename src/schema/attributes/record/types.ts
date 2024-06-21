@@ -1,7 +1,7 @@
+import type { $state } from '../constants/attributeOptions.js'
 import type { AtLeastOnce } from '../constants/index.js'
 import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive/index.js'
 import type { PrimitiveAttributeEnumValues } from '../primitive/types.js'
-import type { $SharedAttributeState } from '../shared/interface.js'
 import type { $AttributeNestedState } from '../types/index.js'
 
 export type $RecordAttributeKeys = $PrimitiveAttributeNestedState<
@@ -26,8 +26,8 @@ export type $RecordAttributeKeys = $PrimitiveAttributeNestedState<
   }
 >
 
-export type $RecordAttributeElements = $AttributeNestedState &
-  $SharedAttributeState<{
+export type $RecordAttributeElements = $AttributeNestedState & {
+  [$state]: {
     required: AtLeastOnce
     hidden: false
     key: false
@@ -42,6 +42,7 @@ export type $RecordAttributeElements = $AttributeNestedState &
       put: undefined
       update: undefined
     }
-  }>
+  }
+}
 
 export type RecordAttributeKeys = PrimitiveAttribute<'string'>
