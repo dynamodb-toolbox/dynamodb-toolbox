@@ -2,17 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import {
-  $defaults,
-  $elements,
-  $hidden,
-  $key,
-  $keys,
-  $links,
-  $required,
-  $savedAs,
-  $type
-} from '../constants/attributeOptions.js'
+import { $elements, $keys, $state, $type } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -24,31 +14,24 @@ export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeStat
   // Applying void O.Update improves type display
   O.Update<
     RecordAttribute<
+      $RECORD_ATTRIBUTE[$state],
       FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
-      FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>,
-      {
-        required: $RECORD_ATTRIBUTE[$required]
-        hidden: $RECORD_ATTRIBUTE[$hidden]
-        key: $RECORD_ATTRIBUTE[$key]
-        savedAs: $RECORD_ATTRIBUTE[$savedAs]
-        defaults: $RECORD_ATTRIBUTE[$defaults]
-        links: $RECORD_ATTRIBUTE[$links]
-      }
+      FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
     >,
     never,
     never
   >
 
 type RecordAttributeFreezer = <
+  STATE extends SharedAttributeState,
   $KEYS extends $RecordAttributeKeys,
-  $ELEMENTS extends $RecordAttributeElements,
-  STATE extends SharedAttributeState
+  $ELEMENTS extends $RecordAttributeElements
 >(
+  state: STATE,
   keys: $KEYS,
   elements: $ELEMENTS,
-  state: STATE,
   path?: string
-) => FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>>
+) => FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>
 
 /**
  * Freezes a warm `record` attribute
@@ -60,16 +43,20 @@ type RecordAttributeFreezer = <
  * @return void
  */
 export const freezeRecordAttribute: RecordAttributeFreezer = <
+  STATE extends SharedAttributeState,
   $KEYS extends $RecordAttributeKeys,
-  $ELEMENTS extends $RecordAttributeElements,
-  STATE extends SharedAttributeState
+  $ELEMENTS extends $RecordAttributeElements
 >(
+  state: STATE,
   keys: $KEYS,
   elements: $ELEMENTS,
-  state: STATE,
   path?: string
-): FreezeRecordAttribute<$RecordAttributeState<$KEYS, $ELEMENTS, STATE>> => {
+): FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>> => {
   validateAttributeProperties(state, path)
+
+  const { key: keysKey, required: keysRequired, hidden: keysHidden, savedAs: keysSavedAs } = keys[
+    $state
+  ]
 
   if (keys[$type] !== 'string') {
     throw new DynamoDBToolboxError('schema.recordAttribute.invalidKeys', {
@@ -81,7 +68,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   }
 
   // Checking $key before $required as $key implies attribute is always $required
-  if (keys[$key] !== false) {
+  if (keysKey !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.keyKeys', {
       message: `Invalid record keys${
         path !== undefined ? ` at path '${path}'` : ''
@@ -90,7 +77,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (keys[$required] !== 'atLeastOnce') {
+  if (keysRequired !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.recordAttribute.optionalKeys', {
       message: `Invalid record keys${
         path !== undefined ? ` at path '${path}'` : ''
@@ -99,7 +86,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (keys[$hidden] !== false) {
+  if (keysHidden !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.hiddenKeys', {
       message: `Invalid record keys${
         path !== undefined ? ` at path '${path}'` : ''
@@ -108,7 +95,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (keys[$savedAs] !== undefined) {
+  if (keysSavedAs !== undefined) {
     throw new DynamoDBToolboxError('schema.recordAttribute.savedAsKeys', {
       message: `Invalid record keys${
         path !== undefined ? ` at path '${path}'` : ''
@@ -126,8 +113,15 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
+  const {
+    key: elementsKey,
+    required: elementsRequired,
+    hidden: elementsHidden,
+    savedAs: elementsSavedAs
+  } = elements[$state]
+
   // Checking $key before $required as $key implies attribute is always $required
-  if (elements[$key] !== false) {
+  if (elementsKey !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.keyElements', {
       message: `Invalid record elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -136,7 +130,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (elements[$required] !== 'atLeastOnce') {
+  if (elementsRequired !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.recordAttribute.optionalElements', {
       message: `Invalid record elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -145,7 +139,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (elements[$hidden] !== false) {
+  if (elementsHidden !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.hiddenElements', {
       message: `Invalid record elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -154,7 +148,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (elements[$savedAs] !== undefined) {
+  if (elementsSavedAs !== undefined) {
     throw new DynamoDBToolboxError('schema.recordAttribute.savedAsElements', {
       message: `Invalid record elements${
         path !== undefined ? ` at path '${path}'` : ''

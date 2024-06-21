@@ -7,18 +7,18 @@ import type {
 } from '~/entity/actions/commands/updateItem/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
+import { overwrite } from '~/utils/overwrite.js'
 
 import type { Schema } from '../../schema.js'
-import type { $castAs, $type } from '../constants/attributeOptions.js'
+import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface.js'
-import type { FreezeAnyAttribute } from './freeze.js'
+import type { SharedAttributeState } from '../shared/interface.js'
+import { FreezeAnyAttribute, freezeAnyAttribute } from './freeze.js'
 import type { AnyAttributeState } from './types.js'
 
-export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState>
-  extends $SharedAttributeState<STATE> {
+export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState> {
   [$type]: 'any'
-  [$castAs]: STATE['castAs']
+  [$state]: STATE
 }
 
 export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
@@ -27,10 +27,18 @@ export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyA
 }
 
 /**
- * Any attribute interface
+ * Any attribute (warm)
  */
-export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
-  extends $AnyAttributeNestedState<STATE> {
+export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
+  implements $AnyAttributeNestedState<STATE> {
+  [$type]: 'any';
+  [$state]: STATE
+
+  constructor(state: STATE) {
+    this[$type] = 'any'
+    this[$state] = state
+  }
+
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -39,47 +47,65 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
    *
    * @param nextRequired RequiredOption
    */
-  required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
-    nextRequired?: NEXT_IS_REQUIRED
-  ) => $AnyAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>>
+  required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+    nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
+  ): $AnyAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
+    return new $AnyAttribute(overwrite(this[$state], { required: nextRequired }))
+  }
+
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $AnyAttribute<O.Overwrite<STATE, { required: Never }>>
+  optional(): $AnyAttribute<O.Overwrite<STATE, { required: Never }>> {
+    return this.required('never')
+  }
+
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: <NEXT_HIDDEN extends boolean = true>(
-    nextHidden?: NEXT_HIDDEN
-  ) => $AnyAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
+  hidden<NEXT_HIDDEN extends boolean = true>(
+    nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
+  ): $AnyAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
+    return new $AnyAttribute(overwrite(this[$state], { hidden: nextHidden }))
+  }
+
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: <NEXT_KEY extends boolean = true>(
-    nextKey?: NEXT_KEY
-  ) => $AnyAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>>
+  key<NEXT_KEY extends boolean = true>(
+    nextKey: NEXT_KEY = true as NEXT_KEY
+  ): $AnyAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
+    return new $AnyAttribute(overwrite(this[$state], { key: nextKey, required: 'always' }))
+  }
+
   /**
    * Rename attribute before save commands
    */
-  savedAs: <NEXT_SAVED_AS extends string | undefined>(
+  savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => $AnyAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>>
+  ): $AnyAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
+    return new $AnyAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
+  }
+
   /**
    * Cast attribute TS type
    */
-  castAs: <NEXT_CAST_AS>(
-    nextCastAs?: NEXT_CAST_AS
-  ) => $AnyAttribute<O.Overwrite<STATE, { castAs: NEXT_CAST_AS }>>
+  castAs<NEXT_CAST_AS>(
+    nextCastAs = (undefined as unknown) as NEXT_CAST_AS
+  ): $AnyAttribute<O.Overwrite<STATE, { castAs: NEXT_CAST_AS }>> {
+    return new $AnyAttribute(overwrite(this[$state], { castAs: nextCastAs }))
+  }
+
   /**
    * Provide a default value for attribute in Primary Key computing
    *
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
-  keyDefault: (
+  keyDefault(
     nextKeyDefault: ValueOrGetter<
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>
     >
-  ) => $AnyAttribute<
+  ): $AnyAttribute<
     O.Overwrite<
       STATE,
       {
@@ -90,17 +116,28 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         }
       }
     >
-  >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: nextKeyDefault as unknown,
+          put: this[$state].defaults.put,
+          update: this[$state].defaults.update
+        }
+      })
+    )
+  }
+
   /**
    * Provide a default value for attribute in PUT commands
    *
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
-  putDefault: (
+  putDefault(
     nextPutDefault: ValueOrGetter<
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
     >
-  ) => $AnyAttribute<
+  ): $AnyAttribute<
     O.Overwrite<
       STATE,
       {
@@ -111,17 +148,28 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         }
       }
     >
-  >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: this[$state].defaults.key,
+          put: nextPutDefault as unknown,
+          update: this[$state].defaults.update
+        }
+      })
+    )
+  }
+
   /**
    * Provide a default value for attribute in UPDATE commands
    *
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
-  updateDefault: (
+  updateDefault(
     nextUpdateDefault: ValueOrGetter<
       AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
     >
-  ) => $AnyAttribute<
+  ): $AnyAttribute<
     O.Overwrite<
       STATE,
       {
@@ -132,13 +180,24 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         }
       }
     >
-  >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: this[$state].defaults.key,
+          put: this[$state].defaults.put,
+          update: nextUpdateDefault as unknown
+        }
+      })
+    )
+  }
+
   /**
    * Provide a default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
    * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  default: (
+  default(
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
@@ -146,7 +205,7 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
       >
     >
-  ) => $AnyAttribute<
+  ): $AnyAttribute<
     O.Overwrite<
       STATE,
       {
@@ -165,17 +224,20 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         >
       }
     >
-  >
+  > {
+    return this[$state].key ? this.keyDefault(nextDefault) : this.putDefault(nextDefault)
+  }
+
   /**
    * Provide a **linked** default value for attribute in Primary Key computing
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink: <SCHEMA extends Schema>(
+  keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>
-  ) => $AnyAttribute<
+  ): $AnyAttribute<
     O.Overwrite<
       STATE,
       {
@@ -186,17 +248,28 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         }
       }
     >
-  >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: nextKeyLink as unknown,
+          put: this[$state].links.put,
+          update: this[$state].links.update
+        }
+      })
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in PUT commands
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink: <SCHEMA extends Schema>(
+  putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ParserInput<SCHEMA, { fill: false }>
     ) => ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
-  ) => $AnyAttribute<
+  ): $AnyAttribute<
     O.Overwrite<
       STATE,
       {
@@ -207,17 +280,28 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         }
       }
     >
-  >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: this[$state].links.key,
+          put: nextPutLink as unknown,
+          update: this[$state].links.update
+        }
+      })
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in UPDATE commands
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink: <SCHEMA extends Schema>(
+  updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
-  ) => $AnyAttribute<
+  ): $AnyAttribute<
     O.Overwrite<
       STATE,
       {
@@ -228,13 +312,24 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         }
       }
     >
-  >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: this[$state].links.key,
+          put: this[$state].links.put,
+          update: nextUpdateLink as unknown
+        }
+      })
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link: <SCHEMA extends Schema>(
+  link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
@@ -246,7 +341,7 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>,
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
     >
-  ) => $AnyAttribute<
+  ): $AnyAttribute<
     O.Overwrite<
       STATE,
       {
@@ -265,7 +360,27 @@ export interface $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeSta
         >
       }
     >
-  >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        links: this[$state].key
+          ? {
+              key: nextLink as unknown,
+              put: this[$state].links.put,
+              update: this[$state].links.update
+            }
+          : {
+              key: this[$state].links.key,
+              put: nextLink as unknown,
+              update: this[$state].links.update
+            }
+      })
+    )
+  }
+
+  freeze(path?: string): FreezeAnyAttribute<$AnyAttributeState<STATE>> {
+    return freezeAnyAttribute(this[$state], path)
+  }
 }
 
 export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>

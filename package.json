@@ -26,9 +26,11 @@
     "prebuild": "rm -rf dist",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint",
+    "test": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint",
     "test-type": "tsc --noEmit",
     "test-format": "prettier --check 'src/**/*.(js|ts)'",
     "test-unit": "vitest run",
+    "test-unit-watch": "vitest",
     "test-lint": "eslint ."
   },
   "lint-staged": {

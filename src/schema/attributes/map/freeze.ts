@@ -2,15 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import {
-  $attributes,
-  $defaults,
-  $hidden,
-  $key,
-  $links,
-  $required,
-  $savedAs
-} from '../constants/attributeOptions.js'
+import { $attributes, $state } from '../constants/attributeOptions.js'
 import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -22,18 +14,11 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
   // Applying void O.Update improves type display
   O.Update<
     MapAttribute<
+      $MAP_ATTRIBUTE[$state],
       {
         [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
           $MAP_ATTRIBUTE[$attributes][KEY]
         >
-      },
-      {
-        required: $MAP_ATTRIBUTE[$required]
-        hidden: $MAP_ATTRIBUTE[$hidden]
-        key: $MAP_ATTRIBUTE[$key]
-        savedAs: $MAP_ATTRIBUTE[$savedAs]
-        defaults: $MAP_ATTRIBUTE[$defaults]
-        links: $MAP_ATTRIBUTE[$links]
       }
     >,
     never,
@@ -41,13 +26,13 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
   >
 
 type MapAttributeFreezer = <
-  $ATTRIBUTES extends $MapAttributeAttributeStates,
-  STATE extends SharedAttributeState
+  STATE extends SharedAttributeState,
+  $ATTRIBUTES extends $MapAttributeAttributeStates
 >(
-  attribute: $ATTRIBUTES,
   state: STATE,
+  attribute: $ATTRIBUTES,
   path?: string
-) => FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>>
+) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>
 
 /**
  * Freezes a warm `map` attribute
@@ -58,13 +43,13 @@ type MapAttributeFreezer = <
  * @return void
  */
 export const freezeMapAttribute: MapAttributeFreezer = <
-  $ATTRIBUTES extends $MapAttributeAttributeStates,
-  STATE extends SharedAttributeState
+  STATE extends SharedAttributeState,
+  $ATTRIBUTES extends $MapAttributeAttributeStates
 >(
-  attributes: $ATTRIBUTES,
   state: STATE,
+  attributes: $ATTRIBUTES,
   path?: string
-): FreezeMapAttribute<$MapAttributeState<$ATTRIBUTES, STATE>> => {
+): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>> => {
   validateAttributeProperties(state, path)
 
   const attributesSavedAs = new Set<string>()
@@ -84,7 +69,11 @@ export const freezeMapAttribute: MapAttributeFreezer = <
   for (const attributeName in attributes) {
     const attribute = attributes[attributeName]
 
-    const attributeSavedAs = attribute[$savedAs] ?? attributeName
+    const {
+      savedAs: attributeSavedAs = attributeName,
+      key: attributeKey,
+      required: attributeRequired
+    } = attribute[$state]
     if (attributesSavedAs.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('schema.mapAttribute.duplicateSavedAs', {
         message: `Invalid map attributes${
@@ -96,11 +85,11 @@ export const freezeMapAttribute: MapAttributeFreezer = <
     }
     attributesSavedAs.add(attributeSavedAs)
 
-    if (attribute[$key]) {
+    if (attributeKey) {
       keyAttributeNames.add(attributeName)
     }
 
-    requiredAttributeNames[attribute[$required]].add(attributeName)
+    requiredAttributeNames[attributeRequired].add(attributeName)
 
     frozenAttributes[attributeName] = attribute.freeze(
       [path, attributeName].join('.')

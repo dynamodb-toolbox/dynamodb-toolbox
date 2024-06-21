@@ -7,38 +7,48 @@ import type {
 } from '~/entity/actions/commands/updateItem/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
+import { overwrite } from '~/utils/overwrite.js'
 
 import type { Schema } from '../../schema.js'
-import type { $elements, $type } from '../constants/attributeOptions.js'
+import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { $SharedAttributeState, SharedAttributeState } from '../shared/interface.js'
-import type { FreezeSetAttribute } from './freeze.js'
+import type { SharedAttributeState } from '../shared/interface.js'
+import { FreezeSetAttribute, freezeSetAttribute } from './freeze.js'
 import type { $SetAttributeElements, SetAttributeElements } from './types.js'
 
 export interface $SetAttributeState<
-  $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
-  STATE extends SharedAttributeState = SharedAttributeState
-> extends $SharedAttributeState<STATE> {
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
+> {
   [$type]: 'set'
+  [$state]: STATE
   [$elements]: $ELEMENTS
 }
 
 export interface $SetAttributeNestedState<
-  $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
-  STATE extends SharedAttributeState = SharedAttributeState
-> extends $SetAttributeState<$ELEMENTS, STATE> {
-  freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
+> extends $SetAttributeState<STATE, $ELEMENTS> {
+  freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>
 }
 
 /**
  * Set attribute interface
  */
-export interface $SetAttribute<
-  $ELEMENTS extends $SetAttributeElements = $SetAttributeElements,
-  STATE extends SharedAttributeState = SharedAttributeState
-> extends $SetAttributeNestedState<$ELEMENTS, STATE> {
-  [$type]: 'set'
+export class $SetAttribute<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
+> implements $SetAttributeNestedState<STATE, $ELEMENTS> {
+  [$type]: 'set';
+  [$state]: STATE;
   [$elements]: $ELEMENTS
+
+  constructor(state: STATE, elements: $ELEMENTS) {
+    this[$type] = 'set'
+    this[$state] = state
+    this[$elements] = elements
+  }
+
   /**
    * Tag attribute as required. Possible values are:
    * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
@@ -47,45 +57,62 @@ export interface $SetAttribute<
    *
    * @param nextRequired RequiredOption
    */
-  required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
-    nextRequired?: NEXT_IS_REQUIRED
-  ) => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>>
+  required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+    nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
+  ): $SetAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ELEMENTS> {
+    return new $SetAttribute(overwrite(this[$state], { required: nextRequired }), this[$elements])
+  }
+
   /**
    * Shorthand for `required('never')`
    */
-  optional: () => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { required: Never }>>
+  optional(): $SetAttribute<O.Overwrite<STATE, { required: Never }>, $ELEMENTS> {
+    return this.required('never')
+  }
+
   /**
    * Hide attribute after fetch commands and formatting
    */
-  hidden: <NEXT_HIDDEN extends boolean = true>(
-    nextHidden?: NEXT_HIDDEN
-  ) => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>>
+  hidden<NEXT_HIDDEN extends boolean = true>(
+    nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
+  ): $SetAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ELEMENTS> {
+    return new $SetAttribute(overwrite(this[$state], { hidden: nextHidden }), this[$elements])
+  }
+
   /**
    * Tag attribute as needed for Primary Key computing
    */
-  key: <NEXT_KEY extends boolean = true>(
-    nextKey?: NEXT_KEY
-  ) => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>>
+  key<NEXT_KEY extends boolean = true>(
+    nextKey: NEXT_KEY = true as NEXT_KEY
+  ): $SetAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ELEMENTS> {
+    return new $SetAttribute(
+      overwrite(this[$state], { key: nextKey, required: 'always' }),
+      this[$elements]
+    )
+  }
+
   /**
    * Rename attribute before save commands
    */
-  savedAs: <NEXT_SAVED_AS extends string | undefined>(
+  savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ) => $SetAttribute<$ELEMENTS, O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>>
+  ): $SetAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ELEMENTS> {
+    return new $SetAttribute(overwrite(this[$state], { savedAs: nextSavedAs }), this[$elements])
+  }
+
   /**
    * Provide a default value for attribute in Primary Key computing
    *
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
-  keyDefault: (
+  keyDefault(
     nextKeyDefault: ValueOrGetter<
       ParserInput<
-        FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>,
+        FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>,
         { mode: 'key'; fill: false }
       >
     >
-  ) => $SetAttribute<
-    $ELEMENTS,
+  ): $SetAttribute<
     O.Overwrite<
       STATE,
       {
@@ -95,19 +122,31 @@ export interface $SetAttribute<
           update: STATE['defaults']['update']
         }
       }
-    >
-  >
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: nextKeyDefault,
+          put: this[$state].defaults.put,
+          update: this[$state].defaults.update
+        }
+      }),
+      this[$elements]
+    )
+  }
+
   /**
    * Provide a default value for attribute in PUT commands
    *
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
-  putDefault: (
+  putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
+      ParserInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { fill: false }>
     >
-  ) => $SetAttribute<
-    $ELEMENTS,
+  ): $SetAttribute<
     O.Overwrite<
       STATE,
       {
@@ -117,19 +156,31 @@ export interface $SetAttribute<
           update: STATE['defaults']['update']
         }
       }
-    >
-  >
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: this[$state].defaults.key,
+          put: nextPutDefault,
+          update: this[$state].defaults.update
+        }
+      }),
+      this[$elements]
+    )
+  }
+
   /**
    * Provide a default value for attribute in UPDATE commands
    *
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
-  updateDefault: (
+  updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, true>
+      AttributeUpdateItemInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, true>
     >
-  ) => $SetAttribute<
-    $ELEMENTS,
+  ): $SetAttribute<
     O.Overwrite<
       STATE,
       {
@@ -139,26 +190,38 @@ export interface $SetAttribute<
           update: unknown
         }
       }
-    >
-  >
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        defaults: {
+          key: this[$state].defaults.key,
+          put: this[$state].defaults.put,
+          update: nextUpdateDefault
+        }
+      }),
+      this[$elements]
+    )
+  }
+
   /**
    * Provide a default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
    * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  default: (
+  default(
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
         ParserInput<
-          FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>,
+          FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>,
           { mode: 'key'; fill: false }
         >,
-        ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
+        ParserInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { fill: false }>
       >
     >
-  ) => $SetAttribute<
-    $ELEMENTS,
+  ): $SetAttribute<
     O.Overwrite<
       STATE,
       {
@@ -176,22 +239,25 @@ export interface $SetAttribute<
           }
         >
       }
-    >
-  >
+    >,
+    $ELEMENTS
+  > {
+    return this[$state].key ? this.keyDefault(nextDefault) : this.putDefault(nextDefault)
+  }
+
   /**
    * Provide a **linked** default value for attribute in Primary Key computing
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink: <SCHEMA extends Schema>(
+  keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
-      FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>,
+      FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>,
       { mode: 'key'; fill: false }
     >
-  ) => $SetAttribute<
-    $ELEMENTS,
+  ): $SetAttribute<
     O.Overwrite<
       STATE,
       {
@@ -201,19 +267,31 @@ export interface $SetAttribute<
           update: STATE['links']['update']
         }
       }
-    >
-  >
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: nextKeyLink,
+          put: this[$state].links.put,
+          update: this[$state].links.update
+        }
+      }),
+      this[$elements]
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in PUT commands
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink: <SCHEMA extends Schema>(
+  putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
-  ) => $SetAttribute<
-    $ELEMENTS,
+    ) => ParserInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+  ): $SetAttribute<
     O.Overwrite<
       STATE,
       {
@@ -223,19 +301,31 @@ export interface $SetAttribute<
           update: STATE['links']['update']
         }
       }
-    >
-  >
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: this[$state].links.key,
+          put: nextPutLink,
+          update: this[$state].links.update
+        }
+      }),
+      this[$elements]
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in UPDATE commands
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink: <SCHEMA extends Schema>(
+  updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, true>
-  ) => $SetAttribute<
-    $ELEMENTS,
+    ) => AttributeUpdateItemInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, true>
+  ): $SetAttribute<
     O.Overwrite<
       STATE,
       {
@@ -245,14 +335,27 @@ export interface $SetAttribute<
           update: unknown
         }
       }
-    >
-  >
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        links: {
+          key: this[$state].links.key,
+          put: this[$state].links.put,
+          update: nextUpdateLink
+        }
+      }),
+      this[$elements]
+    )
+  }
+
   /**
    * Provide a **linked** default value for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link: <SCHEMA extends Schema>(
+  link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<
         STATE['key'],
@@ -262,13 +365,12 @@ export interface $SetAttribute<
     ) => If<
       STATE['key'],
       ParserInput<
-        FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>,
+        FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>,
         { mode: 'key'; fill: false }
       >,
-      ParserInput<FreezeSetAttribute<$SetAttributeState<$ELEMENTS, STATE>>, { fill: false }>
+      ParserInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { fill: false }>
     >
-  ) => $SetAttribute<
-    $ELEMENTS,
+  ): $SetAttribute<
     O.Overwrite<
       STATE,
       {
@@ -286,13 +388,27 @@ export interface $SetAttribute<
           }
         >
       }
-    >
-  >
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        links: this[$state].key
+          ? { key: nextLink, put: this[$state].links.put, update: this[$state].links.update }
+          : { key: this[$state].links.key, put: nextLink, update: this[$state].links.update }
+      }),
+      this[$elements]
+    )
+  }
+
+  freeze(path?: string): FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>> {
+    return freezeSetAttribute(this[$state], this[$elements], path)
+  }
 }
 
 export class SetAttribute<
-  ELEMENTS extends SetAttributeElements = SetAttributeElements,
-  STATE extends SharedAttributeState = SharedAttributeState
+  STATE extends SharedAttributeState = SharedAttributeState,
+  ELEMENTS extends SetAttributeElements = SetAttributeElements
 > implements SharedAttributeState<STATE> {
   type: 'set'
   path?: string

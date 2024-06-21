@@ -1,169 +1,13 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
-import { overwrite } from '~/utils/overwrite.js'
-import { update } from '~/utils/update.js'
 
-import {
-  $defaults,
-  $enum,
-  $hidden,
-  $key,
-  $links,
-  $required,
-  $savedAs,
-  $transform,
-  $type
-} from '../constants/attributeOptions.js'
-import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
-import { freezePrimitiveAttribute } from './freeze.js'
-import type { $PrimitiveAttribute } from './interface.js'
+import { $PrimitiveAttribute } from './interface.js'
 import {
   PRIMITIVE_DEFAULT_OPTIONS,
   PrimitiveAttributeDefaultOptions,
   PrimitiveAttributeOptions
 } from './options.js'
-import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types.js'
-
-type $PrimitiveAttributeTyper = <
-  $TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<$TYPE> = PrimitiveAttributeState<$TYPE>
->(
-  type: $TYPE,
-  state: STATE
-) => $PrimitiveAttribute<$TYPE, STATE>
-
-/**
- * Define a new "primitive" attribute, i.e. string, number, binary or boolean
- *
- * @param options _(optional)_ Primitive Options
- */
-const $primitive: $PrimitiveAttributeTyper = <
-  $TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<$TYPE> = PrimitiveAttributeState<$TYPE>
->(
-  type: $TYPE,
-  state: STATE
-) => {
-  const $primitiveAttribute: $PrimitiveAttribute<$TYPE, STATE> = {
-    [$type]: type,
-    [$required]: state.required,
-    [$hidden]: state.hidden,
-    [$key]: state.key,
-    [$savedAs]: state.savedAs,
-    [$enum]: state.enum,
-    [$defaults]: state.defaults,
-    [$links]: state.links,
-    [$transform]: state.transform,
-    required: <NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
-      nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-    ) => $primitive(type, overwrite(state, { required: nextRequired })),
-    optional: () => $primitive(type, overwrite(state, { required: 'never' })),
-    hidden: <NEXT_HIDDEN extends boolean = true>(nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN) =>
-      $primitive(type, overwrite(state, { hidden: nextHidden })),
-    key: <NEXT_KEY extends boolean = true>(nextKey: NEXT_KEY = true as NEXT_KEY) =>
-      $primitive(type, overwrite(state, { key: nextKey, required: 'always' })),
-    savedAs: nextSavedAs => $primitive(type, overwrite(state, { savedAs: nextSavedAs })),
-    enum: (...nextEnum) => $primitive(type, update(state, 'enum', nextEnum)),
-    const: constant =>
-      $primitive(
-        type,
-        overwrite(state, {
-          enum: [constant],
-          defaults: state.key
-            ? { key: constant, put: state.defaults.put, update: state.defaults.update }
-            : { key: state.defaults.key, put: constant, update: state.defaults.update }
-        })
-      ),
-    transform: transformer => $primitive(type, overwrite(state, { transform: transformer })),
-    keyDefault: nextKeyDefault =>
-      $primitive(
-        type,
-        overwrite(state, {
-          defaults: {
-            key: nextKeyDefault,
-            put: state.defaults.put,
-            update: state.defaults.update
-          }
-        })
-      ),
-    putDefault: nextPutDefault =>
-      $primitive(
-        type,
-        overwrite(state, {
-          defaults: {
-            key: state.defaults.key,
-            put: nextPutDefault,
-            update: state.defaults.update
-          }
-        })
-      ),
-    updateDefault: nextUpdateDefault =>
-      $primitive(
-        type,
-        overwrite(state, {
-          defaults: {
-            key: state.defaults.key,
-            put: state.defaults.put,
-            update: nextUpdateDefault
-          }
-        })
-      ),
-    default: nextDefault =>
-      $primitive(
-        type,
-        overwrite(state, {
-          defaults: state.key
-            ? { key: nextDefault, put: state.defaults.put, update: state.defaults.update }
-            : { key: state.defaults.key, put: nextDefault, update: state.defaults.update }
-        })
-      ),
-    keyLink: nextKeyLink =>
-      $primitive(
-        type,
-        overwrite(state, {
-          links: {
-            key: nextKeyLink,
-            put: state.links.put,
-            update: state.links.update
-          }
-        })
-      ),
-    putLink: nextPutLink =>
-      $primitive(
-        type,
-        overwrite(state, {
-          links: {
-            key: state.links.key,
-            put: nextPutLink,
-            update: state.links.update
-          }
-        })
-      ),
-    updateLink: nextUpdateLink =>
-      $primitive(
-        type,
-        overwrite(state, {
-          links: {
-            key: state.links.key,
-            put: state.links.put,
-            update: nextUpdateLink
-          }
-        })
-      ),
-    link: nextLink =>
-      $primitive(
-        type,
-        overwrite(state, {
-          links: state.key
-            ? { key: nextLink, put: state.links.put, update: state.links.update }
-            : { key: state.links.key, put: nextLink, update: state.links.update }
-        })
-      ),
-    freeze: path => freezePrimitiveAttribute(type, state, path)
-  }
-
-  return $primitiveAttribute
-}
+import type { PrimitiveAttributeType } from './types.js'
 
 type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
   OPTIONS extends Partial<PrimitiveAttributeOptions> = PrimitiveAttributeOptions
@@ -209,7 +53,7 @@ const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory = <
     { enum: undefined }
   >
 
-  return $primitive(type, state)
+  return new $PrimitiveAttribute(type, state)
 }
 
 /**
