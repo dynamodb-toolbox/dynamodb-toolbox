@@ -261,6 +261,7 @@ await MyEntity.update({
       title: 'Developer', // update metadata.title
       'contact.name': 'Jane Smith', // update metadata.contact.name
       'contact.addresses[0]': '123 Main Street' // update the first array item in metadata.contact.addresses
+      'contact.phone': null // remove metadata.contact.phone field
     }
   }
 })
