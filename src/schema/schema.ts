@@ -63,20 +63,18 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
     additionalAttr:
       | NarrowObject<$ADDITIONAL_ATTRIBUTES>
       | ((schema: Schema<ATTRIBUTES>) => NarrowObject<$ADDITIONAL_ATTRIBUTES>)
-  ): Schema<
-    {
-      [KEY in
-        | keyof ATTRIBUTES
-        | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
-        ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY]>
-        : KEY extends keyof ATTRIBUTES
+  ): Schema<{
+    [KEY in
+      | keyof ATTRIBUTES
+      | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
+      ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY]>
+      : KEY extends keyof ATTRIBUTES
         ? ATTRIBUTES[KEY]
         : never
-    }
-  > {
-    const additionalAttributes = (typeof additionalAttr === 'function'
-      ? additionalAttr(this)
-      : additionalAttr) as $SchemaAttributeNestedStates
+  }> {
+    const additionalAttributes = (
+      typeof additionalAttr === 'function' ? additionalAttr(this) : additionalAttr
+    ) as $SchemaAttributeNestedStates
 
     const nextAttributes = { ...this.attributes } as SchemaAttributes
 
@@ -93,17 +91,15 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
     }
 
     return new Schema(
-      nextAttributes as NarrowObject<
-        {
-          [KEY in
-            | keyof ATTRIBUTES
-            | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
-            ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY]>
-            : KEY extends keyof ATTRIBUTES
+      nextAttributes as NarrowObject<{
+        [KEY in
+          | keyof ATTRIBUTES
+          | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
+          ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY]>
+          : KEY extends keyof ATTRIBUTES
             ? ATTRIBUTES[KEY]
             : never
-        }
-      >
+      }>
     )
   }
 
@@ -128,9 +124,9 @@ export const schema: SchemaTyper = <
   $MAP_ATTRIBUTE_ATTRIBUTES extends $SchemaAttributeNestedStates = {}
 >(
   attributes: NarrowObject<$MAP_ATTRIBUTE_ATTRIBUTES>
-): Schema<
-  { [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]> }
-> => new Schema<{}>({}).and(attributes)
+): Schema<{
+  [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]>
+}> => new Schema<{}>({}).and(attributes)
 
 export class SchemaAction<SCHEMA extends Schema | Attribute = Schema | Attribute> {
   schema: SCHEMA

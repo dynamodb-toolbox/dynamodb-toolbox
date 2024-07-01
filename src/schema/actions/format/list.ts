@@ -25,8 +25,8 @@ export type ListAttrFormattedValue<
             ? OPTIONS['attributes'] extends `[${number}]`
               ? undefined
               : OPTIONS['attributes'] extends `[${number}]${infer CHILDREN_FILTERED_ATTRIBUTES}`
-              ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['elements']>>
-              : never
+                ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['elements']>>
+                : never
             : undefined
           partial: OPTIONS['partial']
         }

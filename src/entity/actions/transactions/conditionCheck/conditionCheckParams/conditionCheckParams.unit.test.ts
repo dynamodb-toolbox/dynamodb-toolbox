@@ -58,14 +58,11 @@ const TestEntity = new EntityV2({
 
 describe('condition check transaction', () => {
   test('sets condition', () => {
-    const {
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = TestEntity.build(ConditionCheck)
-      .key({ email: 'x', sort: 'y' })
-      .condition({ attr: 'email', gt: 'test' })
-      .params()
+    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
+      TestEntity.build(ConditionCheck)
+        .key({ email: 'x', sort: 'y' })
+        .condition({ attr: 'email', gt: 'test' })
+        .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })

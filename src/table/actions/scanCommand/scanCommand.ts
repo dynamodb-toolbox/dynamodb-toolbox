@@ -29,17 +29,17 @@ type ReturnedItems<
   : (EntityV2[] extends ENTITIES
       ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
-      ? ENTITY extends EntityV2
-        ? FormattedItem<
-            ENTITY,
-            {
-              attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
-                ? OPTIONS['attributes'][number]
-                : undefined
-            }
-          >
-        : never
-      : never)[]
+        ? ENTITY extends EntityV2
+          ? FormattedItem<
+              ENTITY,
+              {
+                attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
+                  ? OPTIONS['attributes'][number]
+                  : undefined
+              }
+            >
+          : never
+        : never)[]
 
 export type ScanResponse<
   TABLE extends TableV2,
@@ -65,7 +65,7 @@ export class ScanCommand<
 
   constructor(
     table: TABLE,
-    entities = ([] as unknown) as ENTITIES,
+    entities = [] as unknown as ENTITIES,
     options: OPTIONS = {} as OPTIONS
   ) {
     super(table, entities)

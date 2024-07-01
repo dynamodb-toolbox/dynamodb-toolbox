@@ -83,31 +83,31 @@ export type AttrPaths<
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
   : ATTRIBUTE extends PrimitiveAttribute
-  ? PrimitiveAttrPaths<ATTRIBUTE>
-  : ATTRIBUTE extends SetAttribute
-  ? SetAttrPaths<ATTRIBUTE>
-  : ATTRIBUTE extends ListAttribute
-  ? ListAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-  : ATTRIBUTE extends MapAttribute
-  ? MapAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-  : ATTRIBUTE extends RecordAttribute
-  ? RecordAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-  : ATTRIBUTE extends AnyOfAttribute
-  ? AnyOfAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-  : never
+    ? PrimitiveAttrPaths<ATTRIBUTE>
+    : ATTRIBUTE extends SetAttribute
+      ? SetAttrPaths<ATTRIBUTE>
+      : ATTRIBUTE extends ListAttribute
+        ? ListAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
+        : ATTRIBUTE extends MapAttribute
+          ? MapAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
+          : ATTRIBUTE extends RecordAttribute
+            ? RecordAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
+            : ATTRIBUTE extends AnyOfAttribute
+              ? AnyOfAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
+              : never
 
 export type SchemaPaths<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
   ? string
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
-  ? ATTRIBUTE_PATH extends string
-    ? ATTRIBUTE_PATH | AttrPaths<SCHEMA['attributes'][ATTRIBUTE_PATH], ATTRIBUTE_PATH>
+    ? ATTRIBUTE_PATH extends string
+      ? ATTRIBUTE_PATH | AttrPaths<SCHEMA['attributes'][ATTRIBUTE_PATH], ATTRIBUTE_PATH>
+      : never
     : never
-  : never
 
 // string is there to simplify type-constraint checks when using Paths
 export type Paths<SCHEMA extends Schema | Attribute = Schema | Attribute> = string &
   (SCHEMA extends Schema
     ? SchemaPaths<SCHEMA>
     : SCHEMA extends Attribute
-    ? AttrPaths<SCHEMA>
-    : never)
+      ? AttrPaths<SCHEMA>
+      : never)

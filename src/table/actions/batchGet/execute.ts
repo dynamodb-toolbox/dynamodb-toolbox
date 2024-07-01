@@ -40,18 +40,21 @@ type BatchGetResponses<
         : never
       : never)[]
   : COMMANDS extends [infer COMMANDS_HEAD, ...infer COMMANDS_TAILS]
-  ? COMMANDS_HEAD extends BatchGetCommand
-    ? COMMANDS_TAILS extends BatchGetCommand[]
-      ? BatchGetResponses<
-          COMMANDS_TAILS,
-          [
-            ...RESPONSES,
-            BatchGetRequestResponses<NonNullable<COMMANDS_HEAD[$requests]>, COMMANDS_HEAD[$options]>
-          ]
-        >
+    ? COMMANDS_HEAD extends BatchGetCommand
+      ? COMMANDS_TAILS extends BatchGetCommand[]
+        ? BatchGetResponses<
+            COMMANDS_TAILS,
+            [
+              ...RESPONSES,
+              BatchGetRequestResponses<
+                NonNullable<COMMANDS_HEAD[$requests]>,
+                COMMANDS_HEAD[$options]
+              >
+            ]
+          >
+        : never
       : never
-    : never
-  : RESPONSES
+    : RESPONSES
 
 type BatchGetRequestResponses<
   REQUESTS extends BatchGetRequestProps[],
@@ -76,31 +79,31 @@ type BatchGetRequestResponses<
       | undefined
     )[]
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-  ? REQUESTS_HEAD extends BatchGetRequestProps
-    ? REQUESTS_TAIL extends BatchGetRequestProps[]
-      ? BatchGetRequestResponses<
-          REQUESTS_TAIL,
-          OPTIONS,
-          [
-            ...ITEMS,
-            (
-              | FormattedItem<
-                  REQUESTS_HEAD[$entity],
-                  {
-                    attributes: OPTIONS extends {
-                      attributes: Paths<REQUESTS_HEAD[$entity]['schema']>[]
+    ? REQUESTS_HEAD extends BatchGetRequestProps
+      ? REQUESTS_TAIL extends BatchGetRequestProps[]
+        ? BatchGetRequestResponses<
+            REQUESTS_TAIL,
+            OPTIONS,
+            [
+              ...ITEMS,
+              (
+                | FormattedItem<
+                    REQUESTS_HEAD[$entity],
+                    {
+                      attributes: OPTIONS extends {
+                        attributes: Paths<REQUESTS_HEAD[$entity]['schema']>[]
+                      }
+                        ? OPTIONS['attributes'][number]
+                        : undefined
                     }
-                      ? OPTIONS['attributes'][number]
-                      : undefined
-                  }
-                >
-              | undefined
-            )
-          ]
-        >
+                  >
+                | undefined
+              )
+            ]
+          >
+        : never
       : never
-    : never
-  : ITEMS
+    : ITEMS
 
 export const execute = async <
   COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
@@ -110,18 +113,18 @@ export const execute = async <
   COMMANDS extends BatchGetCommand[]
     ? ExecuteBatchGetResponse<COMMANDS>
     : COMMANDS extends [unknown, ...infer TAIL_REQUESTS]
-    ? TAIL_REQUESTS extends BatchGetCommand[]
-      ? ExecuteBatchGetResponse<TAIL_REQUESTS>
+      ? TAIL_REQUESTS extends BatchGetCommand[]
+        ? ExecuteBatchGetResponse<TAIL_REQUESTS>
+        : never
       : never
-    : never
 > => {
   type RESPONSE = COMMANDS extends BatchGetCommand[]
     ? ExecuteBatchGetResponse<COMMANDS>
     : COMMANDS extends [unknown, ...infer TAIL_REQUESTS]
-    ? TAIL_REQUESTS extends BatchGetCommand[]
-      ? ExecuteBatchGetResponse<TAIL_REQUESTS>
+      ? TAIL_REQUESTS extends BatchGetCommand[]
+        ? ExecuteBatchGetResponse<TAIL_REQUESTS>
+        : never
       : never
-    : never
 
   const [headCommandOrOptions = {}, ...tailCommands] = _commands
 

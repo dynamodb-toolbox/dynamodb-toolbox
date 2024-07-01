@@ -4,6 +4,5 @@ interface ErrorBlueprintConstraint {
   payload: unknown
 }
 
-export type ErrorBlueprint<
-  BLUEPRINT extends ErrorBlueprintConstraint = ErrorBlueprintConstraint
-> = BLUEPRINT
+export type ErrorBlueprint<BLUEPRINT extends ErrorBlueprintConstraint = ErrorBlueprintConstraint> =
+  BLUEPRINT

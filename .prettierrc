@@ -1,11 +1,11 @@
 {
   "singleQuote": true,
   "trailingComma": "none",
-  "jsxBracketSameLine": false,
   "bracketSpacing": true,
   "printWidth": 100,
   "semi": false,
   "arrowParens": "avoid",
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "importOrder": ["^~/(.*)$", "^[./]"],
   "importOrderSortSpecifiers": true,
   "importOrderGroupNamespaceSpecifiers": true,

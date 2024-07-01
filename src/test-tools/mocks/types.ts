@@ -33,8 +33,8 @@ type ClassStaticProperties<CLASSES> = CLASSES extends infer CLASS
       [KEY in keyof CLASS as KEY extends 'prototype'
         ? never
         : CLASS[KEY] extends (...args: unknown[]) => unknown
-        ? never
-        : KEY]: CLASS[KEY]
+          ? never
+          : KEY]: CLASS[KEY]
     }
   : never
 
@@ -56,12 +56,12 @@ export type ActionClassResults<
 > = ACTION_CLASS extends GetItemCommandClass
   ? CommandResults<KeyInput<ENTITY>, GetItemOptions<ENTITY>>
   : ACTION_CLASS extends PutItemCommandClass
-  ? CommandResults<PutItemInput<ENTITY>, PutItemOptions<ENTITY>>
-  : ACTION_CLASS extends DeleteItemCommandClass
-  ? CommandResults<KeyInput<ENTITY>, DeleteItemOptions<ENTITY>>
-  : ACTION_CLASS extends UpdateItemCommandClass
-  ? CommandResults<UpdateItemInput<ENTITY>, UpdateItemOptions<ENTITY>>
-  : never
+    ? CommandResults<PutItemInput<ENTITY>, PutItemOptions<ENTITY>>
+    : ACTION_CLASS extends DeleteItemCommandClass
+      ? CommandResults<KeyInput<ENTITY>, DeleteItemOptions<ENTITY>>
+      : ACTION_CLASS extends UpdateItemCommandClass
+        ? CommandResults<UpdateItemInput<ENTITY>, UpdateItemOptions<ENTITY>>
+        : never
 
 export type ActionClassMocker<
   ENTITY extends EntityV2,
@@ -73,24 +73,24 @@ export type ActionClassMocker<
 > = ACTION_CLASS extends GetItemCommandClass
   ? ActionMocker<'get', KeyInput<ENTITY>, GetItemOptions<ENTITY>, Partial<GetItemResponse<ENTITY>>>
   : ACTION_CLASS extends PutItemCommandClass
-  ? ActionMocker<
-      'put',
-      PutItemInput<ENTITY>,
-      PutItemOptions<ENTITY>,
-      Partial<PutItemResponse<ENTITY>>
-    >
-  : ACTION_CLASS extends DeleteItemCommandClass
-  ? ActionMocker<
-      'delete',
-      KeyInput<ENTITY>,
-      DeleteItemOptions<ENTITY>,
-      Partial<DeleteItemResponse<ENTITY>>
-    >
-  : ACTION_CLASS extends UpdateItemCommandClass
-  ? ActionMocker<
-      'update',
-      UpdateItemInput<ENTITY>,
-      UpdateItemOptions<ENTITY>,
-      Partial<UpdateItemResponse<ENTITY>>
-    >
-  : never
+    ? ActionMocker<
+        'put',
+        PutItemInput<ENTITY>,
+        PutItemOptions<ENTITY>,
+        Partial<PutItemResponse<ENTITY>>
+      >
+    : ACTION_CLASS extends DeleteItemCommandClass
+      ? ActionMocker<
+          'delete',
+          KeyInput<ENTITY>,
+          DeleteItemOptions<ENTITY>,
+          Partial<DeleteItemResponse<ENTITY>>
+        >
+      : ACTION_CLASS extends UpdateItemCommandClass
+        ? ActionMocker<
+            'update',
+            UpdateItemInput<ENTITY>,
+            UpdateItemOptions<ENTITY>,
+            Partial<UpdateItemResponse<ENTITY>>
+          >
+        : never

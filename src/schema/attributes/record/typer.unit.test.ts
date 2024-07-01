@@ -211,12 +211,12 @@ describe('record', () => {
   test('returns default record', () => {
     const rec = record(fooBar, str)
 
-    const assertType: A.Equals<typeof rec[$type], 'record'> = 1
+    const assertType: A.Equals<(typeof rec)[$type], 'record'> = 1
     assertType
     expect(rec[$type]).toBe('record')
 
     const assertState: A.Contains<
-      typeof rec[$state],
+      (typeof rec)[$state],
       {
         required: AtLeastOnce
         hidden: false
@@ -244,11 +244,11 @@ describe('record', () => {
       links: { key: undefined, put: undefined, update: undefined }
     })
 
-    const assertKeys: A.Equals<typeof rec[$keys], typeof fooBar> = 1
+    const assertKeys: A.Equals<(typeof rec)[$keys], typeof fooBar> = 1
     assertKeys
     expect(rec[$keys]).toBe(fooBar)
 
-    const assertElements: A.Equals<typeof rec[$elements], typeof str> = 1
+    const assertElements: A.Equals<(typeof rec)[$elements], typeof str> = 1
     assertElements
     expect(rec[$elements]).toBe(str)
 
@@ -266,13 +266,13 @@ describe('record', () => {
     const recNever = record(fooBar, str, { required: 'never' })
 
     const assertAtLeastOnce: A.Contains<
-      typeof recAtLeastOnce[$state],
+      (typeof recAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof recAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof recAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof recNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof recNever)[$state], { required: Never }> = 1
     assertNever
 
     expect(recAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -287,15 +287,15 @@ describe('record', () => {
     const recOpt = record(fooBar, str).optional()
 
     const assertAtLeastOnce: A.Contains<
-      typeof recAtLeastOnce[$state],
+      (typeof recAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof recAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof recAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof recNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof recNever)[$state], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<typeof recOpt[$state], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof recOpt)[$state], { required: Never }> = 1
     assertOpt
 
     expect(recAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -306,7 +306,7 @@ describe('record', () => {
   test('returns hidden record (option)', () => {
     const rec = record(fooBar, str, { hidden: true })
 
-    const assertRec: A.Contains<typeof rec[$state], { hidden: true }> = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { hidden: true }> = 1
     assertRec
 
     expect(rec[$state].hidden).toBe(true)
@@ -315,7 +315,7 @@ describe('record', () => {
   test('returns hidden record (method)', () => {
     const rec = record(fooBar, str).hidden()
 
-    const assertRec: A.Contains<typeof rec[$state], { hidden: true }> = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { hidden: true }> = 1
     assertRec
 
     expect(rec[$state].hidden).toBe(true)
@@ -324,7 +324,7 @@ describe('record', () => {
   test('returns key record (option)', () => {
     const rec = record(fooBar, str, { key: true })
 
-    const assertRec: A.Contains<typeof rec[$state], { key: true; required: AtLeastOnce }> = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { key: true; required: AtLeastOnce }> = 1
     assertRec
 
     expect(rec[$state].key).toBe(true)
@@ -334,7 +334,7 @@ describe('record', () => {
   test('returns key record (method)', () => {
     const rec = record(fooBar, str).key()
 
-    const assertRec: A.Contains<typeof rec[$state], { key: true; required: Always }> = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { key: true; required: Always }> = 1
     assertRec
 
     expect(rec[$state].key).toBe(true)
@@ -344,7 +344,7 @@ describe('record', () => {
   test('returns savedAs record (option)', () => {
     const rec = record(fooBar, str, { savedAs: 'foo' })
 
-    const assertRec: A.Contains<typeof rec[$state], { savedAs: 'foo' }> = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { savedAs: 'foo' }> = 1
     assertRec
 
     expect(rec[$state].savedAs).toBe('foo')
@@ -353,7 +353,7 @@ describe('record', () => {
   test('returns savedAs record (method)', () => {
     const rec = record(fooBar, str).savedAs('foo')
 
-    const assertRec: A.Contains<typeof rec[$state], { savedAs: 'foo' }> = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { savedAs: 'foo' }> = 1
     assertRec
 
     expect(rec[$state].savedAs).toBe('foo')
@@ -366,7 +366,7 @@ describe('record', () => {
     })
 
     const assertRecA: A.Contains<
-      typeof rcA[$state],
+      (typeof rcA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertRecA
@@ -383,7 +383,7 @@ describe('record', () => {
     })
 
     const assertRecB: A.Contains<
-      typeof rcB[$state],
+      (typeof rcB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertRecB
@@ -400,7 +400,7 @@ describe('record', () => {
     })
 
     const assertRecC: A.Contains<
-      typeof rcC[$state],
+      (typeof rcC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertRecC
@@ -416,7 +416,7 @@ describe('record', () => {
     const rcA = record(fooBar, str).key().keyDefault({ foo: 'foo' })
 
     const assertRecA: A.Contains<
-      typeof rcA[$state],
+      (typeof rcA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertRecA
@@ -430,7 +430,7 @@ describe('record', () => {
     const rcB = record(fooBar, str).putDefault({ bar: 'bar' })
 
     const assertRecB: A.Contains<
-      typeof rcB[$state],
+      (typeof rcB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertRecB
@@ -444,7 +444,7 @@ describe('record', () => {
     const rcC = record(fooBar, str).updateDefault({ foo: 'bar' })
 
     const assertRecC: A.Contains<
-      typeof rcC[$state],
+      (typeof rcC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertRecC
@@ -460,7 +460,7 @@ describe('record', () => {
     const rec = record(fooBar, str).default({ foo: 'foo' })
 
     const assertRec: A.Contains<
-      typeof rec[$state],
+      (typeof rec)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertRec
@@ -476,7 +476,7 @@ describe('record', () => {
     const rec = record(fooBar, str).key().default({ foo: 'foo' })
 
     const assertRec: A.Contains<
-      typeof rec[$state],
+      (typeof rec)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertRec
@@ -496,7 +496,7 @@ describe('record', () => {
     })
 
     const assertRecA: A.Contains<
-      typeof rcA[$state],
+      (typeof rcA)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertRecA
@@ -509,7 +509,7 @@ describe('record', () => {
     })
 
     const assertRecB: A.Contains<
-      typeof rcB[$state],
+      (typeof rcB)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertRecB
@@ -522,7 +522,7 @@ describe('record', () => {
     })
 
     const assertRecC: A.Contains<
-      typeof rcC[$state],
+      (typeof rcC)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertRecC
@@ -535,7 +535,7 @@ describe('record', () => {
     const rcA = record(fooBar, str).key().keyLink(sayHello)
 
     const assertRecA: A.Contains<
-      typeof rcA[$state],
+      (typeof rcA)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertRecA
@@ -545,7 +545,7 @@ describe('record', () => {
     const rcB = record(fooBar, str).putLink(sayHello)
 
     const assertRecB: A.Contains<
-      typeof rcB[$state],
+      (typeof rcB)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertRecB
@@ -555,7 +555,7 @@ describe('record', () => {
     const rcC = record(fooBar, str).updateLink(sayHello)
 
     const assertRecC: A.Contains<
-      typeof rcC[$state],
+      (typeof rcC)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertRecC
@@ -568,7 +568,7 @@ describe('record', () => {
     const rec = record(fooBar, str).link(sayHello)
 
     const assertRec: A.Contains<
-      typeof rec[$state],
+      (typeof rec)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertRec
@@ -581,7 +581,7 @@ describe('record', () => {
     const rec = record(fooBar, str).key().link(sayHello)
 
     const assertRec: A.Contains<
-      typeof rec[$state],
+      (typeof rec)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertRec

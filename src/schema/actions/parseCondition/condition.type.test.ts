@@ -21,7 +21,7 @@ import type {
   SetAttributeCondition
 } from './condition.js'
 
-type ATTRIBUTES = typeof mySchema['attributes']
+type ATTRIBUTES = (typeof mySchema)['attributes']
 type ATTRIBUTE_PATHS = Paths<typeof mySchema>
 
 type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>

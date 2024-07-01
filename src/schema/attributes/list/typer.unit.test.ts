@@ -85,12 +85,12 @@ describe('list', () => {
   test('returns default list', () => {
     const lst = list(strElement)
 
-    const assertType: A.Equals<typeof lst[$type], 'list'> = 1
+    const assertType: A.Equals<(typeof lst)[$type], 'list'> = 1
     assertType
     expect(lst[$type]).toBe('list')
 
     const assertState: A.Equals<
-      typeof lst[$state],
+      (typeof lst)[$state],
       {
         required: AtLeastOnce
         hidden: false
@@ -110,7 +110,7 @@ describe('list', () => {
       links: { key: undefined, put: undefined, update: undefined }
     })
 
-    const assertElmts: A.Equals<typeof lst[$elements], typeof strElement> = 1
+    const assertElmts: A.Equals<(typeof lst)[$elements], typeof strElement> = 1
     assertElmts
     expect(lst[$elements]).toBe(strElement)
 
@@ -128,13 +128,13 @@ describe('list', () => {
     const lstNever = list(strElement, { required: 'never' })
 
     const assertAtLeastOnce: A.Contains<
-      typeof lstAtLeastOnce[$state],
+      (typeof lstAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof lstAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof lstAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof lstNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof lstNever)[$state], { required: Never }> = 1
     assertNever
 
     expect(lstAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -149,15 +149,15 @@ describe('list', () => {
     const lstOpt = list(strElement).optional()
 
     const assertAtLeastOnce: A.Contains<
-      typeof lstAtLeastOnce[$state],
+      (typeof lstAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof lstAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof lstAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof lstNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof lstNever)[$state], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<typeof lstOpt[$state], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof lstOpt)[$state], { required: Never }> = 1
     assertOpt
 
     expect(lstAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -168,7 +168,7 @@ describe('list', () => {
   test('returns hidden list (option)', () => {
     const lst = list(strElement, { hidden: true })
 
-    const assertList: A.Contains<typeof lst[$state], { hidden: true }> = 1
+    const assertList: A.Contains<(typeof lst)[$state], { hidden: true }> = 1
     assertList
 
     expect(lst[$state].hidden).toBe(true)
@@ -177,7 +177,7 @@ describe('list', () => {
   test('returns hidden list (method)', () => {
     const lst = list(strElement).hidden()
 
-    const assertList: A.Contains<typeof lst[$state], { hidden: true }> = 1
+    const assertList: A.Contains<(typeof lst)[$state], { hidden: true }> = 1
     assertList
 
     expect(lst[$state].hidden).toBe(true)
@@ -186,7 +186,7 @@ describe('list', () => {
   test('returns key list (option)', () => {
     const lst = list(strElement, { key: true })
 
-    const assertList: A.Contains<typeof lst[$state], { key: true; required: AtLeastOnce }> = 1
+    const assertList: A.Contains<(typeof lst)[$state], { key: true; required: AtLeastOnce }> = 1
     assertList
 
     expect(lst[$state].key).toBe(true)
@@ -196,7 +196,7 @@ describe('list', () => {
   test('returns key list (method)', () => {
     const lst = list(strElement).key()
 
-    const assertList: A.Contains<typeof lst[$state], { key: true; required: Always }> = 1
+    const assertList: A.Contains<(typeof lst)[$state], { key: true; required: Always }> = 1
     assertList
 
     expect(lst[$state].key).toBe(true)
@@ -206,7 +206,7 @@ describe('list', () => {
   test('returns savedAs list (option)', () => {
     const lst = list(strElement, { savedAs: 'foo' })
 
-    const assertList: A.Contains<typeof lst[$state], { savedAs: 'foo' }> = 1
+    const assertList: A.Contains<(typeof lst)[$state], { savedAs: 'foo' }> = 1
     assertList
 
     expect(lst[$state].savedAs).toBe('foo')
@@ -215,7 +215,7 @@ describe('list', () => {
   test('returns savedAs list (method)', () => {
     const lst = list(strElement).savedAs('foo')
 
-    const assertList: A.Contains<typeof lst[$state], { savedAs: 'foo' }> = 1
+    const assertList: A.Contains<(typeof lst)[$state], { savedAs: 'foo' }> = 1
     assertList
 
     expect(lst[$state].savedAs).toBe('foo')
@@ -228,7 +228,7 @@ describe('list', () => {
     })
 
     const assertListA: A.Contains<
-      typeof lstA[$state],
+      (typeof lstA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertListA
@@ -241,7 +241,7 @@ describe('list', () => {
     })
 
     const assertListB: A.Contains<
-      typeof lstB[$state],
+      (typeof lstB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertListB
@@ -254,7 +254,7 @@ describe('list', () => {
     })
 
     const assertListC: A.Contains<
-      typeof lstC[$state],
+      (typeof lstC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertListC
@@ -266,7 +266,7 @@ describe('list', () => {
     const lstA = list(strElement).keyDefault(['foo'])
 
     const assertListA: A.Contains<
-      typeof lstA[$state],
+      (typeof lstA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertListA
@@ -276,7 +276,7 @@ describe('list', () => {
     const lstB = list(strElement).putDefault(['bar'])
 
     const assertListB: A.Contains<
-      typeof lstB[$state],
+      (typeof lstB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertListB
@@ -286,7 +286,7 @@ describe('list', () => {
     const lstC = list(strElement).updateDefault(['baz'])
 
     const assertListC: A.Contains<
-      typeof lstC[$state],
+      (typeof lstC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertListC
@@ -298,7 +298,7 @@ describe('list', () => {
     const listAttr = list(strElement).default(['foo'])
 
     const assertList: A.Contains<
-      typeof listAttr[$state],
+      (typeof listAttr)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertList
@@ -314,7 +314,7 @@ describe('list', () => {
     const listAttr = list(strElement).key().default(['bar'])
 
     const assertList: A.Contains<
-      typeof listAttr[$state],
+      (typeof listAttr)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertList
@@ -334,7 +334,7 @@ describe('list', () => {
     })
 
     const assertListA: A.Contains<
-      typeof lstA[$state],
+      (typeof lstA)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertListA
@@ -347,7 +347,7 @@ describe('list', () => {
     })
 
     const assertListB: A.Contains<
-      typeof lstB[$state],
+      (typeof lstB)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertListB
@@ -360,7 +360,7 @@ describe('list', () => {
     })
 
     const assertListC: A.Contains<
-      typeof lstC[$state],
+      (typeof lstC)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertListC
@@ -373,7 +373,7 @@ describe('list', () => {
     const lstA = list(strElement).keyLink(sayHello)
 
     const assertListA: A.Contains<
-      typeof lstA[$state],
+      (typeof lstA)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertListA
@@ -383,7 +383,7 @@ describe('list', () => {
     const lstB = list(strElement).putLink(sayHello)
 
     const assertListB: A.Contains<
-      typeof lstB[$state],
+      (typeof lstB)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertListB
@@ -393,7 +393,7 @@ describe('list', () => {
     const lstC = list(strElement).updateLink(sayHello)
 
     const assertListC: A.Contains<
-      typeof lstC[$state],
+      (typeof lstC)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertListC
@@ -406,7 +406,7 @@ describe('list', () => {
     const listAttr = list(strElement).link(sayHello)
 
     const assertList: A.Contains<
-      typeof listAttr[$state],
+      (typeof listAttr)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertList
@@ -423,7 +423,7 @@ describe('list', () => {
     const listAttr = list(strElement).key().link(sayHello)
 
     const assertList: A.Contains<
-      typeof listAttr[$state],
+      (typeof listAttr)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertList

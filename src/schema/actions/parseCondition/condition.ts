@@ -175,18 +175,18 @@ type AnyOfAttributeCondition<
   AnyOfAttribute extends ATTRIBUTE
     ? never
     : ATTRIBUTE['elements'][number] extends infer ELEMENT
-    ? ELEMENT extends Attribute
-      ? AttributeCondition<ATTRIBUTE_PATH, ELEMENT, COMPARED_ATTRIBUTE_PATH>
+      ? ELEMENT extends Attribute
+        ? AttributeCondition<ATTRIBUTE_PATH, ELEMENT, COMPARED_ATTRIBUTE_PATH>
+        : never
       : never
-    : never
 
 export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
   ? AnyAttributeCondition<string, string>
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
-  ? ATTRIBUTE_PATH extends string
-    ? AttributeCondition<ATTRIBUTE_PATH, SCHEMA['attributes'][ATTRIBUTE_PATH], Paths<SCHEMA>>
+    ? ATTRIBUTE_PATH extends string
+      ? AttributeCondition<ATTRIBUTE_PATH, SCHEMA['attributes'][ATTRIBUTE_PATH], Paths<SCHEMA>>
+      : never
     : never
-  : never
 
 export type SchemaCondition<SCHEMA extends Schema = Schema> =
   | NonLogicalCondition<SCHEMA>

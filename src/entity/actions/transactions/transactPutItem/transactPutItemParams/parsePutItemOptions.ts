@@ -19,11 +19,10 @@ export const parsePutItemTransactionOptions = <ENTITY extends EntityV2>(
   rejectExtraOptions(extraOptions)
 
   if (condition !== undefined) {
-    const {
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = entity.build(EntityConditionParser).parse(condition).toCommandOptions()
+    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
+      .build(EntityConditionParser)
+      .parse(condition)
+      .toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames

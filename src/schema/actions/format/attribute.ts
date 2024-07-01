@@ -40,18 +40,18 @@ export type AttrFormattedValue<
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrFormattedValue<ATTRIBUTE>
   : ATTRIBUTE extends PrimitiveAttribute
-  ? PrimitiveAttrFormattedValue<ATTRIBUTE>
-  : ATTRIBUTE extends SetAttribute
-  ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends ListAttribute
-  ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends Schema | MapAttribute
-  ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends RecordAttribute
-  ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends AnyOfAttribute
-  ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS>
-  : never
+    ? PrimitiveAttrFormattedValue<ATTRIBUTE>
+    : ATTRIBUTE extends SetAttribute
+      ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS>
+      : ATTRIBUTE extends ListAttribute
+        ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS>
+        : ATTRIBUTE extends Schema | MapAttribute
+          ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS>
+          : ATTRIBUTE extends RecordAttribute
+            ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS>
+            : ATTRIBUTE extends AnyOfAttribute
+              ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS>
+              : never
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 

@@ -30,7 +30,8 @@ export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyA
  * Any attribute (warm)
  */
 export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
-  implements $AnyAttributeNestedState<STATE> {
+  implements $AnyAttributeNestedState<STATE>
+{
   [$type]: 'any';
   [$state]: STATE
 
@@ -91,7 +92,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * Cast attribute TS type
    */
   castAs<NEXT_CAST_AS>(
-    nextCastAs = (undefined as unknown) as NEXT_CAST_AS
+    nextCastAs = undefined as unknown as NEXT_CAST_AS
   ): $AnyAttribute<O.Overwrite<STATE, { castAs: NEXT_CAST_AS }>> {
     return new $AnyAttribute(overwrite(this[$state], { castAs: nextCastAs }))
   }
@@ -384,7 +385,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
 }
 
 export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
-  implements SharedAttributeState<STATE> {
+  implements SharedAttributeState<STATE>
+{
   type: 'any'
   path?: string
   required: STATE['required']

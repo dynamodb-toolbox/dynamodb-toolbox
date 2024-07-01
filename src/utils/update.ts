@@ -10,4 +10,4 @@ export const update: Updater = <OBJECT extends object, PROPERTY extends string, 
   object: OBJECT,
   property: PROPERTY,
   newValue: NEW_VALUE
-) => ({ ...object, [property]: newValue } as O.Update<OBJECT, PROPERTY, NEW_VALUE>)
+) => ({ ...object, [property]: newValue }) as O.Update<OBJECT, PROPERTY, NEW_VALUE>

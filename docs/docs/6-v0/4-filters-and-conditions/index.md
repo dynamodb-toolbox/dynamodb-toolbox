@@ -89,8 +89,16 @@ MyTable.query(
         ],
         [
           { attr: 'interests', contains: 'nodejs' },
-          { or: true, attr: 'interests', contains: 'dynamodb' },
-          { or: true, attr: 'interests', contains: 'serverless' }
+          {
+            or: true,
+            attr: 'interests',
+            contains: 'dynamodb'
+          },
+          {
+            or: true,
+            attr: 'interests',
+            contains: 'serverless'
+          }
         ]
       ]
     ]

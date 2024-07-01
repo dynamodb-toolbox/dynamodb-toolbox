@@ -18,8 +18,8 @@ export type ParsedValue<
 > = SCHEMA extends Schema
   ? SchemaParsedValue<SCHEMA, OPTIONS>
   : SCHEMA extends Attribute
-  ? AttrParsedValue<SCHEMA, OPTIONS>
-  : never
+    ? AttrParsedValue<SCHEMA, OPTIONS>
+    : never
 
 export class Parser<SCHEMA extends Schema | Attribute> implements SchemaAction<SCHEMA> {
   schema: SCHEMA

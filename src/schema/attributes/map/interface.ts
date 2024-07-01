@@ -38,7 +38,8 @@ export interface $MapAttributeNestedState<
 export class $MapAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
-> implements $MapAttributeNestedState<STATE, $ATTRIBUTES> {
+> implements $MapAttributeNestedState<STATE, $ATTRIBUTES>
+{
   [$type]: 'map';
   [$state]: STATE;
   [$attributes]: $ATTRIBUTES
@@ -432,7 +433,8 @@ export class $MapAttribute<
 export class MapAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
-> implements SharedAttributeState<STATE> {
+> implements SharedAttributeState<STATE>
+{
   type: 'map'
   path?: string
   attributes: ATTRIBUTES

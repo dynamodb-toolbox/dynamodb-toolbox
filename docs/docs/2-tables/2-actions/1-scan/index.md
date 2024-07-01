@@ -223,9 +223,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 <TabItem value="paginated" label="Paginated">
 
 ```ts
-let lastEvaluatedKey:
-  | Record<string, unknown>
-  | undefined = undefined
+let lastEvaluatedKey: Record<string, unknown> | undefined
 const command = PokeTable.build(ScanCommand)
 
 do {

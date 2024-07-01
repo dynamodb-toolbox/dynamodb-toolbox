@@ -15,12 +15,12 @@ describe('primitiveAttribute', () => {
     test('returns default string', () => {
       const str = string()
 
-      const assertType: A.Equals<typeof str[$type], 'string'> = 1
+      const assertType: A.Equals<(typeof str)[$type], 'string'> = 1
       assertType
       expect(str[$type]).toBe('string')
 
       const assertState: A.Equals<
-        typeof str[$state],
+        (typeof str)[$state],
         {
           required: AtLeastOnce
           hidden: false
@@ -66,13 +66,13 @@ describe('primitiveAttribute', () => {
       const strNever = string({ required: 'never' })
 
       const assertAtLeastOnce: A.Contains<
-        typeof strAtLeastOnce[$state],
+        (typeof strAtLeastOnce)[$state],
         { required: AtLeastOnce }
       > = 1
       assertAtLeastOnce
-      const assertAlways: A.Contains<typeof strAlways[$state], { required: Always }> = 1
+      const assertAlways: A.Contains<(typeof strAlways)[$state], { required: Always }> = 1
       assertAlways
-      const assertNever: A.Contains<typeof strNever[$state], { required: Never }> = 1
+      const assertNever: A.Contains<(typeof strNever)[$state], { required: Never }> = 1
       assertNever
 
       expect(strAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -87,15 +87,15 @@ describe('primitiveAttribute', () => {
       const strOpt = string().optional()
 
       const assertAtLeastOnce: A.Contains<
-        typeof strAtLeastOnce[$state],
+        (typeof strAtLeastOnce)[$state],
         { required: AtLeastOnce }
       > = 1
       assertAtLeastOnce
-      const assertAlways: A.Contains<typeof strAlways[$state], { required: Always }> = 1
+      const assertAlways: A.Contains<(typeof strAlways)[$state], { required: Always }> = 1
       assertAlways
-      const assertNever: A.Contains<typeof strNever[$state], { required: Never }> = 1
+      const assertNever: A.Contains<(typeof strNever)[$state], { required: Never }> = 1
       assertNever
-      const assertOpt: A.Contains<typeof strOpt[$state], { required: Never }> = 1
+      const assertOpt: A.Contains<(typeof strOpt)[$state], { required: Never }> = 1
       assertOpt
 
       expect(strAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -107,7 +107,7 @@ describe('primitiveAttribute', () => {
     test('returns hidden string (option)', () => {
       const str = string({ hidden: true })
 
-      const assertStr: A.Contains<typeof str[$state], { hidden: true }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { hidden: true }> = 1
       assertStr
 
       expect(str[$state].hidden).toBe(true)
@@ -116,7 +116,7 @@ describe('primitiveAttribute', () => {
     test('returns hidden string (method)', () => {
       const str = string().hidden()
 
-      const assertStr: A.Contains<typeof str[$state], { hidden: true }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { hidden: true }> = 1
       assertStr
 
       expect(str[$state].hidden).toBe(true)
@@ -125,7 +125,7 @@ describe('primitiveAttribute', () => {
     test('returns key string (option)', () => {
       const str = string({ key: true })
 
-      const assertStr: A.Contains<typeof str[$state], { key: true; required: AtLeastOnce }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { key: true; required: AtLeastOnce }> = 1
       assertStr
 
       expect(str[$state].key).toBe(true)
@@ -135,7 +135,7 @@ describe('primitiveAttribute', () => {
     test('returns key string (method)', () => {
       const str = string().key()
 
-      const assertStr: A.Contains<typeof str[$state], { key: true; required: Always }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { key: true; required: Always }> = 1
       assertStr
 
       expect(str[$state].key).toBe(true)
@@ -145,7 +145,7 @@ describe('primitiveAttribute', () => {
     test('returns savedAs string (option)', () => {
       const str = string({ savedAs: 'foo' })
 
-      const assertStr: A.Contains<typeof str[$state], { savedAs: 'foo' }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { savedAs: 'foo' }> = 1
       assertStr
 
       expect(str[$state].savedAs).toBe('foo')
@@ -154,7 +154,7 @@ describe('primitiveAttribute', () => {
     test('returns savedAs string (method)', () => {
       const str = string().savedAs('foo')
 
-      const assertStr: A.Contains<typeof str[$state], { savedAs: 'foo' }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { savedAs: 'foo' }> = 1
       assertStr
 
       expect(str[$state].savedAs).toBe('foo')
@@ -177,7 +177,7 @@ describe('primitiveAttribute', () => {
 
       const str = string().enum('foo', 'bar')
 
-      const assertStr: A.Contains<typeof str[$state], { enum: ['foo', 'bar'] }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { enum: ['foo', 'bar'] }> = 1
       assertStr
 
       expect(str[$state].enum).toStrictEqual(['foo', 'bar'])
@@ -211,7 +211,7 @@ describe('primitiveAttribute', () => {
       const strC = string({ defaults: { key: undefined, put: undefined, update: sayHello } })
 
       const assertStrA: A.Contains<
-        typeof strA[$state],
+        (typeof strA)[$state],
         { defaults: { key: string; put: undefined; update: undefined } }
       > = 1
       assertStrA
@@ -223,7 +223,7 @@ describe('primitiveAttribute', () => {
       })
 
       const assertStrB: A.Contains<
-        typeof strB[$state],
+        (typeof strB)[$state],
         { defaults: { key: undefined; put: string; update: undefined } }
       > = 1
       assertStrB
@@ -235,7 +235,7 @@ describe('primitiveAttribute', () => {
       })
 
       const assertStrC: A.Contains<
-        typeof strC[$state],
+        (typeof strC)[$state],
         { defaults: { key: undefined; put: undefined; update: () => string } }
       > = 1
       assertStrC
@@ -269,7 +269,7 @@ describe('primitiveAttribute', () => {
       const strC = string().updateDefault(sayHello)
 
       const assertStrA: A.Contains<
-        typeof strA[$state],
+        (typeof strA)[$state],
         { defaults: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertStrA
@@ -281,7 +281,7 @@ describe('primitiveAttribute', () => {
       })
 
       const assertStrB: A.Contains<
-        typeof strB[$state],
+        (typeof strB)[$state],
         { defaults: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertStrB
@@ -293,7 +293,7 @@ describe('primitiveAttribute', () => {
       })
 
       const assertStrC: A.Contains<
-        typeof strC[$state],
+        (typeof strC)[$state],
         { defaults: { key: undefined; put: undefined; update: unknown } }
       > = 1
       assertStrC
@@ -309,7 +309,7 @@ describe('primitiveAttribute', () => {
       const str = string().default('hello')
 
       const assertStr: A.Contains<
-        typeof str[$state],
+        (typeof str)[$state],
         { defaults: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertStr
@@ -325,7 +325,7 @@ describe('primitiveAttribute', () => {
       const str = string().key().default('hello')
 
       const assertStr: A.Contains<
-        typeof str[$state],
+        (typeof str)[$state],
         { defaults: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertStr
@@ -353,7 +353,7 @@ describe('primitiveAttribute', () => {
       const nonKeyStr = string().const('foo')
 
       const assertNonKeyStr: A.Contains<
-        typeof nonKeyStr[$state],
+        (typeof nonKeyStr)[$state],
         { enum: ['foo']; defaults: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertNonKeyStr
@@ -368,7 +368,7 @@ describe('primitiveAttribute', () => {
       const keyStr = string().key().const('foo')
 
       const assertKeyStr: A.Contains<
-        typeof keyStr[$state],
+        (typeof keyStr)[$state],
         { enum: ['foo']; defaults: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertKeyStr
@@ -388,7 +388,7 @@ describe('primitiveAttribute', () => {
       const strC = string().updateLink(sayHello)
 
       const assertStrA: A.Contains<
-        typeof strA[$state],
+        (typeof strA)[$state],
         { links: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertStrA
@@ -396,7 +396,7 @@ describe('primitiveAttribute', () => {
       expect(strA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
 
       const assertStrB: A.Contains<
-        typeof strB[$state],
+        (typeof strB)[$state],
         { links: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertStrB
@@ -404,7 +404,7 @@ describe('primitiveAttribute', () => {
       expect(strB[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
 
       const assertStrC: A.Contains<
-        typeof strC[$state],
+        (typeof strC)[$state],
         { links: { key: undefined; put: undefined; update: unknown } }
       > = 1
       assertStrC
@@ -417,7 +417,7 @@ describe('primitiveAttribute', () => {
       const str = string().link(sayHello)
 
       const assertStr: A.Contains<
-        typeof str[$state],
+        (typeof str)[$state],
         { links: { key: undefined; put: unknown; update: undefined } }
       > = 1
       assertStr
@@ -430,7 +430,7 @@ describe('primitiveAttribute', () => {
       const str = string().key().link(sayHello)
 
       const assertStr: A.Contains<
-        typeof str[$state],
+        (typeof str)[$state],
         { links: { key: unknown; put: undefined; update: undefined } }
       > = 1
       assertStr
@@ -459,7 +459,7 @@ describe('primitiveAttribute', () => {
       const strB = string().enum('foo', 'bar').default(sayFoo)
 
       const assertStrA: A.Contains<
-        typeof strA[$state],
+        (typeof strA)[$state],
         { defaults: { put: unknown }; enum: ['foo', 'bar'] }
       > = 1
       assertStrA
@@ -468,7 +468,7 @@ describe('primitiveAttribute', () => {
       expect(strA[$state].enum).toStrictEqual(['foo', 'bar'])
 
       const assertStrB: A.Contains<
-        typeof strB[$state],
+        (typeof strB)[$state],
         { defaults: { put: unknown }; enum: ['foo', 'bar'] }
       > = 1
       assertStrB
@@ -481,7 +481,7 @@ describe('primitiveAttribute', () => {
       const transformer = prefix('test')
       const str = string({ transform: transformer })
 
-      const assertStr: A.Contains<typeof str[$state], { transform: unknown }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { transform: unknown }> = 1
       assertStr
 
       expect(str[$state].transform).toBe(transformer)
@@ -491,7 +491,7 @@ describe('primitiveAttribute', () => {
       const transformer = prefix('test')
       const str = string().transform(transformer)
 
-      const assertStr: A.Contains<typeof str[$state], { transform: unknown }> = 1
+      const assertStr: A.Contains<(typeof str)[$state], { transform: unknown }> = 1
       assertStr
 
       expect(str[$state].transform).toBe(transformer)

@@ -40,14 +40,14 @@ export type ExtendedValue<
 > = '*' extends TYPE
   ? EXTENSIONS['value']
   : EXTENSIONS extends infer EXTENSION
-  ? EXTENSION extends Extension
-    ? EXTENSION['type'] extends infer EXTENSION_TYPE
-      ? EXTENSION_TYPE extends TYPE | '*'
-        ? EXTENSION['value']
+    ? EXTENSION extends Extension
+      ? EXTENSION['type'] extends infer EXTENSION_TYPE
+        ? EXTENSION_TYPE extends TYPE | '*'
+          ? EXTENSION['value']
+          : never
         : never
       : never
     : never
-  : never
 
 export type PrimitiveAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, PrimitiveAttributeType>
@@ -67,9 +67,8 @@ export type ListAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'list'>
   | ListAttributeBasicValue<EXTENSION>
 
-export type ListAttributeBasicValue<
-  EXTENSION extends Extension = never
-> = AttributeValue<EXTENSION>[]
+export type ListAttributeBasicValue<EXTENSION extends Extension = never> =
+  AttributeValue<EXTENSION>[]
 
 export type MapAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'map'>

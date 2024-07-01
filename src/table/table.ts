@@ -94,7 +94,7 @@ export class TableAction<
   [$table]: TABLE;
   [$entities]: ENTITIES
 
-  constructor(table: TABLE, entities = ([] as unknown) as ENTITIES) {
+  constructor(table: TABLE, entities = [] as unknown as ENTITIES) {
     this[$table] = table
     this[$entities] = entities
   }

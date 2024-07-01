@@ -27,34 +27,32 @@ type PrimitiveAttributeTyperFactory = <TYPE extends PrimitiveAttributeType>(
   type: TYPE
 ) => PrimitiveAttributeTyper<TYPE>
 
-const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory = <
-  TYPE extends PrimitiveAttributeType
->(
-  type: TYPE
-) => <OPTIONS extends Partial<PrimitiveAttributeOptions> = PrimitiveAttributeOptions>(
-  primitiveOptions = {} as NarrowObject<OPTIONS>
-) => {
-  const state = {
-    ...PRIMITIVE_DEFAULT_OPTIONS,
-    ...primitiveOptions,
-    defaults: {
-      ...PRIMITIVE_DEFAULT_OPTIONS.defaults,
-      ...primitiveOptions.defaults
-    },
-    links: {
-      ...PRIMITIVE_DEFAULT_OPTIONS.links,
-      ...primitiveOptions.links
-    },
-    enum: undefined
-  } as InferStateFromOptions<
-    PrimitiveAttributeOptions,
-    PrimitiveAttributeDefaultOptions,
-    OPTIONS,
-    { enum: undefined }
-  >
+const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory =
+  <TYPE extends PrimitiveAttributeType>(type: TYPE) =>
+  <OPTIONS extends Partial<PrimitiveAttributeOptions> = PrimitiveAttributeOptions>(
+    primitiveOptions = {} as NarrowObject<OPTIONS>
+  ) => {
+    const state = {
+      ...PRIMITIVE_DEFAULT_OPTIONS,
+      ...primitiveOptions,
+      defaults: {
+        ...PRIMITIVE_DEFAULT_OPTIONS.defaults,
+        ...primitiveOptions.defaults
+      },
+      links: {
+        ...PRIMITIVE_DEFAULT_OPTIONS.links,
+        ...primitiveOptions.links
+      },
+      enum: undefined
+    } as InferStateFromOptions<
+      PrimitiveAttributeOptions,
+      PrimitiveAttributeDefaultOptions,
+      OPTIONS,
+      { enum: undefined }
+    >
 
-  return new $PrimitiveAttribute(type, state)
-}
+    return new $PrimitiveAttribute(type, state)
+  }
 
 /**
  * Define a new string attribute

@@ -16,7 +16,8 @@ export type $condition = typeof $condition
 
 export class ConditionCheck<ENTITY extends EntityV2 = EntityV2>
   extends EntityAction<ENTITY>
-  implements WriteItemTransaction<ENTITY, 'ConditionCheck'> {
+  implements WriteItemTransaction<ENTITY, 'ConditionCheck'>
+{
   static actionName = 'conditionCheck' as const
 
   private [$key]?: KeyInput<ENTITY>

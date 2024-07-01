@@ -44,8 +44,8 @@ type ValidAnyOfAttrValueRec<
       : never
     : never
   : [RESULTS] extends [never]
-  ? unknown
-  : RESULTS
+    ? unknown
+    : RESULTS
 
 export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOptions>(
   attribute: AnyOfAttribute,

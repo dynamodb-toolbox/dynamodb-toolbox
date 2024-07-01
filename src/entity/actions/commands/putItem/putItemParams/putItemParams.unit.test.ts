@@ -457,14 +457,11 @@ describe('put', () => {
   })
 
   test('sets condition', () => {
-    const {
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = TestEntity.build(PutItemCommand)
-      .item({ email: 'x', sort: 'y' })
-      .options({ condition: { attr: 'email', gt: 'test' } })
-      .params()
+    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
+      TestEntity.build(PutItemCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({ condition: { attr: 'email', gt: 'test' } })
+        .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })
@@ -496,36 +493,32 @@ describe('put', () => {
       table: TestTable
     })
 
-    const {
-      Item,
-      ConditionExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity3.build(PutItemCommand)
-      .item({
-        email: 'foo@bar.mail',
-        sort: 'y',
-        transformedStr: 'str',
-        transformedSet: new Set(['set']),
-        transformedList: ['list'],
-        transformedMap: { str: 'map' },
-        transformedRecord: { recordKey: 'recordValue' }
-      })
-      .options({
-        condition: {
-          and: [
-            { attr: 'email', eq: 'test', transform: false },
-            { attr: 'transformedStr', eq: 'str', transform: false },
-            /**
-             * @debt feature "Can you apply Contains clauses to Set attributes?"
-             */
-            // { attr: 'transformedSet', contains: 'SET' }
-            { attr: 'transformedMap.str', eq: 'map', transform: false },
-            { attr: 'transformedRecord.key', eq: 'value', transform: false }
-          ]
-        }
-      })
-      .params()
+    const { Item, ConditionExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity3.build(PutItemCommand)
+        .item({
+          email: 'foo@bar.mail',
+          sort: 'y',
+          transformedStr: 'str',
+          transformedSet: new Set(['set']),
+          transformedList: ['list'],
+          transformedMap: { str: 'map' },
+          transformedRecord: { recordKey: 'recordValue' }
+        })
+        .options({
+          condition: {
+            and: [
+              { attr: 'email', eq: 'test', transform: false },
+              { attr: 'transformedStr', eq: 'str', transform: false },
+              /**
+               * @debt feature "Can you apply Contains clauses to Set attributes?"
+               */
+              // { attr: 'transformedSet', contains: 'SET' }
+              { attr: 'transformedMap.str', eq: 'map', transform: false },
+              { attr: 'transformedRecord.key', eq: 'value', transform: false }
+            ]
+          }
+        })
+        .params()
 
     expect(Item).toMatchObject({
       pk: 'EMAIL#foo@bar.mail',

@@ -77,8 +77,7 @@ const config = {
         },
         items: [
           {
-            href:
-              'https://github.com/jeremydaly/dynamodb-toolbox',
+            href: 'https://github.com/jeremydaly/dynamodb-toolbox',
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository'

@@ -17,17 +17,16 @@ export type PrimitiveAttributeType = 'string' | 'boolean' | 'number' | 'binary'
  *
  * @param TYPE Primitive Type
  */
-export type ResolvePrimitiveAttributeType<
-  TYPE extends PrimitiveAttributeType
-> = TYPE extends 'string'
-  ? string
-  : TYPE extends 'number'
-  ? number
-  : TYPE extends 'boolean'
-  ? boolean
-  : TYPE extends 'binary'
-  ? Buffer
-  : never
+export type ResolvePrimitiveAttributeType<TYPE extends PrimitiveAttributeType> =
+  TYPE extends 'string'
+    ? string
+    : TYPE extends 'number'
+      ? number
+      : TYPE extends 'boolean'
+        ? boolean
+        : TYPE extends 'binary'
+          ? Buffer
+          : never
 
 /**
  * TS type of any Primitive Attribute

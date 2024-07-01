@@ -18,11 +18,10 @@ export const parseDeleteItemTransactionOptions = <ENTITY extends EntityV2>(
   const { condition, ...extraOptions } = deleteItemTransactionOptions
 
   if (condition !== undefined) {
-    const {
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = entity.build(EntityConditionParser).parse(condition).toCommandOptions()
+    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
+      .build(EntityConditionParser)
+      .parse(condition)
+      .toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       transactionOptions.ExpressionAttributeNames = ExpressionAttributeNames

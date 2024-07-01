@@ -25,7 +25,9 @@ Retrieve the `user_id`,`status`, and `created` attributes for the `User` entity:
 ```typescript
 MyTable.query(
   // ...,
-  { attributes: [{ User: ['user_id', 'status', 'created'] }] }
+  {
+    attributes: [{ User: ['user_id', 'status', 'created'] }]
+  }
 )
 ```
 
@@ -35,7 +37,13 @@ Retrieve the `pk`, `sk`, and `type` attributes for all items, the `user_id` for 
 MyTable.query(
   // ...
   {
-    attributes: ['pk', 'sk', 'type', { User: ['user_id'] }, { Order: ['status', 'created'] }]
+    attributes: [
+      'pk',
+      'sk',
+      'type',
+      { User: ['user_id'] },
+      { Order: ['status', 'created'] }
+    ]
   }
 )
 ```

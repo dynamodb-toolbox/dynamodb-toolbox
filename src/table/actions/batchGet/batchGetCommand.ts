@@ -32,14 +32,14 @@ type RequestEntities<
     ? RequestEntities<U.ListOf<REQUESTS[number]>>
     : never
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-  ? REQUESTS_HEAD extends BatchGetRequestProps
-    ? REQUESTS_TAIL extends BatchGetRequestProps[]
-      ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']
-        ? RequestEntities<REQUESTS_TAIL, RESULTS>
-        : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD[$entity]]>
+    ? REQUESTS_HEAD extends BatchGetRequestProps
+      ? REQUESTS_TAIL extends BatchGetRequestProps[]
+        ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']
+          ? RequestEntities<REQUESTS_TAIL, RESULTS>
+          : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD[$entity]]>
+        : never
       : never
-    : never
-  : RESULTS
+    : RESULTS
 
 export class BatchGetCommand<
   TABLE extends TableV2 = TableV2,
@@ -54,7 +54,7 @@ export class BatchGetCommand<
 
   constructor(
     table: TABLE,
-    entities = ([] as unknown) as ENTITIES,
+    entities = [] as unknown as ENTITIES,
     requests?: REQUESTS,
     options: OPTIONS = {} as OPTIONS
   ) {
@@ -118,18 +118,16 @@ export class BatchGetCommand<
     if (attributes !== undefined) {
       const { entityAttributeName } = firstRequestEntity
 
-      const {
-        ExpressionAttributeNames: projectionExpressionAttributeNames,
-        ProjectionExpression
-      } = firstRequestEntity
-        .build(EntityPathParser)
-        .parse(
-          // entityAttributeName is required at all times for formatting
-          attributes.includes(entityAttributeName)
-            ? attributes
-            : [entityAttributeName, ...attributes]
-        )
-        .toCommandOptions()
+      const { ExpressionAttributeNames: projectionExpressionAttributeNames, ProjectionExpression } =
+        firstRequestEntity
+          .build(EntityPathParser)
+          .parse(
+            // entityAttributeName is required at all times for formatting
+            attributes.includes(entityAttributeName)
+              ? attributes
+              : [entityAttributeName, ...attributes]
+          )
+          .toCommandOptions()
 
       Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
       projectionExpression = ProjectionExpression

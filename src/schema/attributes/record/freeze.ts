@@ -54,9 +54,12 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 ): FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>> => {
   validateAttributeProperties(state, path)
 
-  const { key: keysKey, required: keysRequired, hidden: keysHidden, savedAs: keysSavedAs } = keys[
-    $state
-  ]
+  const {
+    key: keysKey,
+    required: keysRequired,
+    hidden: keysHidden,
+    savedAs: keysSavedAs
+  } = keys[$state]
 
   if (keys[$type] !== 'string') {
     throw new DynamoDBToolboxError('schema.recordAttribute.invalidKeys', {

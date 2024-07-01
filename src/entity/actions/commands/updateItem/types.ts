@@ -123,8 +123,8 @@ type MustBeDefined<
     ? true
     : false
   : ATTRIBUTE extends { required: Always }
-  ? true
-  : false
+    ? true
+    : false
 
 type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: Never }
   ? true
@@ -143,22 +143,22 @@ export type UpdateItemInput<
 > = EntityV2 extends SCHEMA
   ? Item<UpdateItemInputExtension>
   : Schema extends SCHEMA
-  ? Item<UpdateItemInputExtension>
-  : SCHEMA extends Schema
-  ? OptionalizeUndefinableProperties<
-      {
-        [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
-          SCHEMA['attributes'][KEY],
-          REQUIRED_DEFAULTS,
-          Paths<SCHEMA>
+    ? Item<UpdateItemInputExtension>
+    : SCHEMA extends Schema
+      ? OptionalizeUndefinableProperties<
+          {
+            [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
+              SCHEMA['attributes'][KEY],
+              REQUIRED_DEFAULTS,
+              Paths<SCHEMA>
+            >
+          },
+          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+          O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
         >
-      },
-      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-      O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
-    >
-  : SCHEMA extends EntityV2
-  ? UpdateItemInput<SCHEMA['schema'], REQUIRED_DEFAULTS>
-  : never
+      : SCHEMA extends EntityV2
+        ? UpdateItemInput<SCHEMA['schema'], REQUIRED_DEFAULTS>
+        : never
 
 export type Reference<
   ATTRIBUTE extends Attribute,
@@ -179,30 +179,30 @@ type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute e
       | (ATTRIBUTE extends AnyAttribute
           ? ResolveAnyAttribute<ATTRIBUTE> | unknown
           : ATTRIBUTE extends PrimitiveAttribute
-          ? ResolvePrimitiveAttribute<ATTRIBUTE>
-          : ATTRIBUTE extends SetAttribute
-          ? Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>
-          : ATTRIBUTE extends ListAttribute
-          ? AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
-          : ATTRIBUTE extends MapAttribute
-          ? OptionalizeUndefinableProperties<
-              {
-                [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemCompleteInput<
-                  ATTRIBUTE['attributes'][KEY]
-                >
-              },
-              // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-              O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
-            >
-          : ATTRIBUTE extends RecordAttribute
-          ? {
-              [KEY in ResolvePrimitiveAttribute<
-                ATTRIBUTE['keys']
-              >]?: AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>
-            }
-          : ATTRIBUTE extends AnyOfAttribute
-          ? AttributeUpdateItemCompleteInput<ATTRIBUTE['elements'][number]>
-          : never)
+            ? ResolvePrimitiveAttribute<ATTRIBUTE>
+            : ATTRIBUTE extends SetAttribute
+              ? Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>
+              : ATTRIBUTE extends ListAttribute
+                ? AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                : ATTRIBUTE extends MapAttribute
+                  ? OptionalizeUndefinableProperties<
+                      {
+                        [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemCompleteInput<
+                          ATTRIBUTE['attributes'][KEY]
+                        >
+                      },
+                      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+                      O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+                    >
+                  : ATTRIBUTE extends RecordAttribute
+                    ? {
+                        [KEY in ResolvePrimitiveAttribute<
+                          ATTRIBUTE['keys']
+                        >]?: AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>
+                      }
+                    : ATTRIBUTE extends AnyOfAttribute
+                      ? AttributeUpdateItemCompleteInput<ATTRIBUTE['elements'][number]>
+                      : never)
 
 /**
  * User input of an UPDATE command for a given Attribute
@@ -232,127 +232,123 @@ export type AttributeUpdateItemInput<
       | (ATTRIBUTE extends AnyAttribute
           ? ResolveAnyAttribute<ATTRIBUTE> | unknown
           : ATTRIBUTE extends PrimitiveAttribute
-          ?
-              | ResolvePrimitiveAttribute<ATTRIBUTE>
-              | (ATTRIBUTE extends PrimitiveAttribute<'number'>
-                  ?
-                      | ADD<number>
-                      | SUM<
-                          // Not using Reference<...> for improved type display
-                          | number
-                          | GET<
-                              [
-                                ref: SCHEMA_ATTRIBUTE_PATHS,
-                                fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                              ]
-                            >,
-                          // Not using Reference<...> for improved type display
-                          | number
-                          | GET<
-                              [
-                                ref: SCHEMA_ATTRIBUTE_PATHS,
-                                fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                              ]
+            ?
+                | ResolvePrimitiveAttribute<ATTRIBUTE>
+                | (ATTRIBUTE extends PrimitiveAttribute<'number'>
+                    ?
+                        | ADD<number>
+                        | SUM<
+                            // Not using Reference<...> for improved type display
+                            | number
+                            | GET<
+                                [
+                                  ref: SCHEMA_ATTRIBUTE_PATHS,
+                                  fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                                ]
+                              >,
+                            // Not using Reference<...> for improved type display
+                            | number
+                            | GET<
+                                [
+                                  ref: SCHEMA_ATTRIBUTE_PATHS,
+                                  fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                                ]
+                              >
+                          >
+                        | SUBTRACT<
+                            // Not using Reference<...> for improved type display
+                            | number
+                            | GET<
+                                [
+                                  ref: SCHEMA_ATTRIBUTE_PATHS,
+                                  fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                                ]
+                              >,
+                            // Not using Reference<...> for improved type display
+                            | number
+                            | GET<
+                                [
+                                  ref: SCHEMA_ATTRIBUTE_PATHS,
+                                  fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                                ]
+                              >
+                          >
+                    : never)
+            : ATTRIBUTE extends SetAttribute
+              ?
+                  | Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>
+                  | ADD<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
+                  | DELETE<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
+              : ATTRIBUTE extends ListAttribute
+                ?
+                    | NonVerbal<{
+                        [INDEX in number]?:
+                          | AttributeUpdateItemInput<
+                              ATTRIBUTE['elements'],
+                              REQUIRED_DEFAULTS,
+                              SCHEMA_ATTRIBUTE_PATHS
                             >
-                        >
-                      | SUBTRACT<
-                          // Not using Reference<...> for improved type display
-                          | number
-                          | GET<
-                              [
-                                ref: SCHEMA_ATTRIBUTE_PATHS,
-                                fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                              ]
-                            >,
-                          // Not using Reference<...> for improved type display
-                          | number
-                          | GET<
-                              [
-                                ref: SCHEMA_ATTRIBUTE_PATHS,
-                                fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                              ]
-                            >
-                        >
-                  : never)
-          : ATTRIBUTE extends SetAttribute
-          ?
-              | Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>
-              | ADD<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
-              | DELETE<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
-          : ATTRIBUTE extends ListAttribute
-          ?
-              | NonVerbal<
-                  {
-                    [INDEX in number]?:
-                      | AttributeUpdateItemInput<
-                          ATTRIBUTE['elements'],
-                          REQUIRED_DEFAULTS,
-                          SCHEMA_ATTRIBUTE_PATHS
-                        >
-                      | $REMOVE
-                  }
-                >
-              | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]>
-              | APPEND<
-                  // Not using Reference<...> for improved type display
-                  | GET<
-                      [
-                        ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?:
-                          | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
-                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                      ]
-                    >
-                  | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
-                >
-              | PREPEND<
-                  | GET<
-                      [
-                        ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?:
-                          | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
-                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                      ]
-                    >
-                  | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
-                >
-          : ATTRIBUTE extends MapAttribute
-          ?
-              | NonVerbal<
-                  OptionalizeUndefinableProperties<
-                    {
-                      [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
-                        ATTRIBUTE['attributes'][KEY],
-                        REQUIRED_DEFAULTS,
-                        SCHEMA_ATTRIBUTE_PATHS
+                          | $REMOVE
+                      }>
+                    | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]>
+                    | APPEND<
+                        // Not using Reference<...> for improved type display
+                        | GET<
+                            [
+                              ref: SCHEMA_ATTRIBUTE_PATHS,
+                              fallback?:
+                                | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                                | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                            ]
+                          >
+                        | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
                       >
-                    },
-                    // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-                    O.SelectKeys<
-                      ATTRIBUTE['attributes'],
-                      AnyAttribute & { required: AtLeastOnce | Never }
-                    >
-                  >
-                >
-              | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
-          : ATTRIBUTE extends RecordAttribute
-          ?
-              | NonVerbal<
-                  {
-                    [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
-                      | AttributeUpdateItemInput<
-                          ATTRIBUTE['elements'],
+                    | PREPEND<
+                        | GET<
+                            [
+                              ref: SCHEMA_ATTRIBUTE_PATHS,
+                              fallback?:
+                                | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                                | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                            ]
+                          >
+                        | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                      >
+                : ATTRIBUTE extends MapAttribute
+                  ?
+                      | NonVerbal<
+                          OptionalizeUndefinableProperties<
+                            {
+                              [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
+                                ATTRIBUTE['attributes'][KEY],
+                                REQUIRED_DEFAULTS,
+                                SCHEMA_ATTRIBUTE_PATHS
+                              >
+                            },
+                            // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+                            O.SelectKeys<
+                              ATTRIBUTE['attributes'],
+                              AnyAttribute & { required: AtLeastOnce | Never }
+                            >
+                          >
+                        >
+                      | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
+                  : ATTRIBUTE extends RecordAttribute
+                    ?
+                        | NonVerbal<{
+                            [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
+                              | AttributeUpdateItemInput<
+                                  ATTRIBUTE['elements'],
+                                  REQUIRED_DEFAULTS,
+                                  SCHEMA_ATTRIBUTE_PATHS
+                                >
+                              | $REMOVE
+                          }>
+                        | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
+                    : ATTRIBUTE extends AnyOfAttribute
+                      ? AttributeUpdateItemInput<
+                          ATTRIBUTE['elements'][number],
                           REQUIRED_DEFAULTS,
                           SCHEMA_ATTRIBUTE_PATHS
                         >
-                      | $REMOVE
-                  }
-                >
-              | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
-          : ATTRIBUTE extends AnyOfAttribute
-          ? AttributeUpdateItemInput<
-              ATTRIBUTE['elements'][number],
-              REQUIRED_DEFAULTS,
-              SCHEMA_ATTRIBUTE_PATHS
-            >
-          : never)
+                      : never)

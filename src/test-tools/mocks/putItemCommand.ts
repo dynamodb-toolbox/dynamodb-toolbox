@@ -23,7 +23,8 @@ import type { MockedEntity } from './entity.js'
 export class PutItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
-> implements PutItemCommand<ENTITY, OPTIONS> {
+> implements PutItemCommand<ENTITY, OPTIONS>
+{
   static actionName = 'put' as const
   static [$actionName] = 'put' as const;
 
@@ -75,7 +76,7 @@ export class PutItemCommandMock<
         })
       }
 
-      return (implementation(this[$item], this[$options]) as unknown) as PutItemResponse<
+      return implementation(this[$item], this[$options]) as unknown as PutItemResponse<
         ENTITY,
         OPTIONS
       >

@@ -22,7 +22,8 @@ export class DeleteItemTransaction<
     OPTIONS extends DeleteItemTransactionOptions<ENTITY> = DeleteItemTransactionOptions<ENTITY>
   >
   extends EntityAction<ENTITY>
-  implements WriteItemTransaction<ENTITY, 'Delete'> {
+  implements WriteItemTransaction<ENTITY, 'Delete'>
+{
   static actionName = 'transactDelete' as const;
 
   [$key]?: KeyInput<ENTITY>;

@@ -189,9 +189,22 @@ The optional second argument accepts an `options` object. The following options 
 ```typescript
 const result = await Default.batchWrite(
   [
-    MyTable.User.putBatch({ family: 'Brady', name: 'Carol', age: 40, roles: ['mother', 'wife'] }),
-    MyTable.User.putBatch({ family: 'Brady', name: 'Mike', age: 42, roles: ['father', 'husband'] }),
-    MyTable.Pet.deleteBatch({ family: 'Brady', name: 'Tiger' })
+    MyTable.User.putBatch({
+      family: 'Brady',
+      name: 'Carol',
+      age: 40,
+      roles: ['mother', 'wife']
+    }),
+    MyTable.User.putBatch({
+      family: 'Brady',
+      name: 'Mike',
+      age: 42,
+      roles: ['father', 'husband']
+    }),
+    MyTable.Pet.deleteBatch({
+      family: 'Brady',
+      name: 'Tiger'
+    })
   ],
   {
     capacity: 'total',

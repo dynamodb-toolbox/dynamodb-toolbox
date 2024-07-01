@@ -300,15 +300,14 @@ await PokemonEntity.build(UpdateItemCommand)
 <TabItem value="return-values" label="Return values">
 
 ```ts
-const {
-  Attributes: prevPikachu
-} = await PokemonEntity.build(UpdateItemCommand)
-  .item({
-    pokemonId: 'pikachu1',
-    level: $add(1)
-  })
-  .options({ returnValues: 'ALL_OLD' })
-  .send()
+const { Attributes: prevPikachu } =
+  await PokemonEntity.build(UpdateItemCommand)
+    .item({
+      pokemonId: 'pikachu1',
+      level: $add(1)
+    })
+    .options({ returnValues: 'ALL_OLD' })
+    .send()
 ```
 
 </TabItem>

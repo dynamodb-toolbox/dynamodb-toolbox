@@ -44,8 +44,8 @@ type AnyOfAttrFormattedValueRec<
       : never
     : never
   : [RESULTS] extends [never]
-  ? unknown
-  : RESULTS
+    ? unknown
+    : RESULTS
 
 export const formatAnyOfAttrRawValue = <
   ATTRIBUTE extends AnyOfAttribute,

@@ -18,14 +18,14 @@ type FreezeElements<
 > = $AnyOfAttributeElements[] extends $ELEMENTS
   ? AnyOfAttributeElements[]
   : $ELEMENTS extends [infer $ELEMENTS_HEAD, ...infer $ELEMENTS_TAIL]
-  ? $ELEMENTS_TAIL extends $AnyOfAttributeElements[]
-    ? $ELEMENTS_HEAD extends $AttributeState
-      ? FreezeAttribute<$ELEMENTS_HEAD> extends AnyOfAttributeElements
-        ? FreezeElements<$ELEMENTS_TAIL, [...RESULTS, FreezeAttribute<$ELEMENTS_HEAD>]>
+    ? $ELEMENTS_TAIL extends $AnyOfAttributeElements[]
+      ? $ELEMENTS_HEAD extends $AttributeState
+        ? FreezeAttribute<$ELEMENTS_HEAD> extends AnyOfAttributeElements
+          ? FreezeElements<$ELEMENTS_TAIL, [...RESULTS, FreezeAttribute<$ELEMENTS_HEAD>]>
+          : FreezeElements<$ELEMENTS_TAIL, RESULTS>
         : FreezeElements<$ELEMENTS_TAIL, RESULTS>
-      : FreezeElements<$ELEMENTS_TAIL, RESULTS>
-    : never
-  : RESULTS
+      : never
+    : RESULTS
 
 export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> =
   // Applying void O.Update improves type display

@@ -85,12 +85,12 @@ describe('set', () => {
   test('returns default set', () => {
     const st = set(strElement)
 
-    const assertType: A.Equals<typeof st[$type], 'set'> = 1
+    const assertType: A.Equals<(typeof st)[$type], 'set'> = 1
     assertType
     expect(st[$type]).toBe('set')
 
     const assertState: A.Equals<
-      typeof st[$state],
+      (typeof st)[$state],
       {
         required: AtLeastOnce
         hidden: false
@@ -118,7 +118,7 @@ describe('set', () => {
       links: { key: undefined, put: undefined, update: undefined }
     })
 
-    const assertElmt: A.Equals<typeof st[$elements], typeof strElement> = 1
+    const assertElmt: A.Equals<(typeof st)[$elements], typeof strElement> = 1
     assertElmt
     expect(st[$elements]).toBe(strElement)
 
@@ -135,11 +135,12 @@ describe('set', () => {
     const stAlways = set(strElement, { required: 'always' })
     const stNever = set(strElement, { required: 'never' })
 
-    const assertAtLeastOnce: A.Contains<typeof stAtLeastOnce[$state], { required: AtLeastOnce }> = 1
+    const assertAtLeastOnce: A.Contains<(typeof stAtLeastOnce)[$state], { required: AtLeastOnce }> =
+      1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof stAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof stAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof stNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof stNever)[$state], { required: Never }> = 1
     assertNever
 
     expect(stAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -153,13 +154,14 @@ describe('set', () => {
     const stNever = set(strElement).required('never')
     const stOpt = set(strElement).optional()
 
-    const assertAtLeastOnce: A.Contains<typeof stAtLeastOnce[$state], { required: AtLeastOnce }> = 1
+    const assertAtLeastOnce: A.Contains<(typeof stAtLeastOnce)[$state], { required: AtLeastOnce }> =
+      1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof stAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof stAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof stNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof stNever)[$state], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<typeof stOpt[$state], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof stOpt)[$state], { required: Never }> = 1
     assertOpt
 
     expect(stAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -171,7 +173,7 @@ describe('set', () => {
   test('returns hidden set (option)', () => {
     const st = set(strElement, { hidden: true })
 
-    const assertSet: A.Contains<typeof st[$state], { hidden: true }> = 1
+    const assertSet: A.Contains<(typeof st)[$state], { hidden: true }> = 1
     assertSet
 
     expect(st[$state].hidden).toBe(true)
@@ -180,7 +182,7 @@ describe('set', () => {
   test('returns hidden set (method)', () => {
     const st = set(strElement).hidden()
 
-    const assertSet: A.Contains<typeof st[$state], { hidden: true }> = 1
+    const assertSet: A.Contains<(typeof st)[$state], { hidden: true }> = 1
     assertSet
 
     expect(st[$state].hidden).toBe(true)
@@ -189,7 +191,7 @@ describe('set', () => {
   test('returns key set (option)', () => {
     const st = set(strElement, { key: true })
 
-    const assertSet: A.Contains<typeof st[$state], { key: true; required: AtLeastOnce }> = 1
+    const assertSet: A.Contains<(typeof st)[$state], { key: true; required: AtLeastOnce }> = 1
     assertSet
 
     expect(st[$state].key).toBe(true)
@@ -199,7 +201,7 @@ describe('set', () => {
   test('returns key set (method)', () => {
     const st = set(strElement).key()
 
-    const assertSet: A.Contains<typeof st[$state], { key: true; required: Always }> = 1
+    const assertSet: A.Contains<(typeof st)[$state], { key: true; required: Always }> = 1
     assertSet
 
     expect(st[$state].key).toBe(true)
@@ -209,7 +211,7 @@ describe('set', () => {
   test('returns savedAs set (option)', () => {
     const st = set(strElement, { savedAs: 'foo' })
 
-    const assertSet: A.Contains<typeof st[$state], { savedAs: 'foo' }> = 1
+    const assertSet: A.Contains<(typeof st)[$state], { savedAs: 'foo' }> = 1
     assertSet
 
     expect(st[$state].savedAs).toBe('foo')
@@ -218,7 +220,7 @@ describe('set', () => {
   test('returns savedAs set (method)', () => {
     const st = set(strElement).savedAs('foo')
 
-    const assertSet: A.Contains<typeof st[$state], { savedAs: 'foo' }> = 1
+    const assertSet: A.Contains<(typeof st)[$state], { savedAs: 'foo' }> = 1
     assertSet
 
     expect(st[$state].savedAs).toBe('foo')
@@ -230,7 +232,7 @@ describe('set', () => {
     })
 
     const assertSetA: A.Contains<
-      typeof stA[$state],
+      (typeof stA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertSetA
@@ -246,7 +248,7 @@ describe('set', () => {
     })
 
     const assertSetB: A.Contains<
-      typeof stB[$state],
+      (typeof stB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertSetB
@@ -262,7 +264,7 @@ describe('set', () => {
     })
 
     const assertSetC: A.Contains<
-      typeof stC[$state],
+      (typeof stC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertSetC
@@ -278,7 +280,7 @@ describe('set', () => {
     const stA = set(strElement).keyDefault(new Set(['foo']))
 
     const assertSetA: A.Contains<
-      typeof stA[$state],
+      (typeof stA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertSetA
@@ -292,7 +294,7 @@ describe('set', () => {
     const stB = set(strElement).putDefault(new Set(['bar']))
 
     const assertSetB: A.Contains<
-      typeof stB[$state],
+      (typeof stB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertSetB
@@ -306,7 +308,7 @@ describe('set', () => {
     const stC = set(strElement).updateDefault(new Set(['baz']))
 
     const assertSetC: A.Contains<
-      typeof stC[$state],
+      (typeof stC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertSetC
@@ -322,7 +324,7 @@ describe('set', () => {
     const st = set(string()).default(new Set(['foo']))
 
     const assertSt: A.Contains<
-      typeof st[$state],
+      (typeof st)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertSt
@@ -340,7 +342,7 @@ describe('set', () => {
       .default(new Set(['foo']))
 
     const assertSt: A.Contains<
-      typeof st[$state],
+      (typeof st)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertSt
@@ -360,7 +362,7 @@ describe('set', () => {
     })
 
     const assertSetA: A.Contains<
-      typeof stA[$state],
+      (typeof stA)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertSetA
@@ -372,7 +374,7 @@ describe('set', () => {
     })
 
     const assertSetB: A.Contains<
-      typeof stB[$state],
+      (typeof stB)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertSetB
@@ -384,7 +386,7 @@ describe('set', () => {
     })
 
     const assertSetC: A.Contains<
-      typeof stC[$state],
+      (typeof stC)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertSetC
@@ -397,7 +399,7 @@ describe('set', () => {
     const stA = set(strElement).keyLink(sayHello)
 
     const assertSetA: A.Contains<
-      typeof stA[$state],
+      (typeof stA)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertSetA
@@ -407,7 +409,7 @@ describe('set', () => {
     const stB = set(strElement).putLink(sayHello)
 
     const assertSetB: A.Contains<
-      typeof stB[$state],
+      (typeof stB)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertSetB
@@ -417,7 +419,7 @@ describe('set', () => {
     const stC = set(strElement).updateLink(sayHello)
 
     const assertSetC: A.Contains<
-      typeof stC[$state],
+      (typeof stC)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertSetC
@@ -430,7 +432,7 @@ describe('set', () => {
     const st = set(string()).link(sayHello)
 
     const assertSt: A.Contains<
-      typeof st[$state],
+      (typeof st)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertSt
@@ -443,7 +445,7 @@ describe('set', () => {
     const st = set(string()).key().link(sayHello)
 
     const assertSt: A.Contains<
-      typeof st[$state],
+      (typeof st)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertSt

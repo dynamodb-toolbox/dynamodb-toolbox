@@ -29,19 +29,19 @@ type MustBeDefined<
     ? true
     : false
   : ATTRIBUTE extends { required: AtLeastOnce | Always } & (
-      | {
-          key: true
-          defaults: { key: undefined }
-          links: { key: undefined }
-        }
-      | {
-          key: false
-          defaults: { put: undefined }
-          links: { put: undefined }
-        }
-    )
-  ? true
-  : false
+        | {
+            key: true
+            defaults: { key: undefined }
+            links: { key: undefined }
+          }
+        | {
+            key: false
+            defaults: { put: undefined }
+            links: { put: undefined }
+          }
+      )
+    ? true
+    : false
 
 type SchemaParserInput<
   SCHEMA extends Schema,
@@ -49,19 +49,19 @@ type SchemaParserInput<
 > = Schema extends SCHEMA
   ? { [KEY: string]: AttrParserInput<Attribute, OPTIONS> }
   : SCHEMA extends Schema
-  ? OptionalizeUndefinableProperties<
-      {
-        [KEY in OPTIONS extends { mode: 'key' }
-          ? O.SelectKeys<SCHEMA['attributes'], { key: true }>
-          : keyof SCHEMA['attributes'] & string]: AttrParserInput<
-          SCHEMA['attributes'][KEY],
-          OPTIONS
-        >
-      },
-      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-      O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
-    >
-  : never
+    ? OptionalizeUndefinableProperties<
+        {
+          [KEY in OPTIONS extends { mode: 'key' }
+            ? O.SelectKeys<SCHEMA['attributes'], { key: true }>
+            : keyof SCHEMA['attributes'] & string]: AttrParserInput<
+            SCHEMA['attributes'][KEY],
+            OPTIONS
+          >
+        },
+        // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+        O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
+      >
+    : never
 
 type AttrParserInput<
   ATTRIBUTE extends Attribute,
@@ -73,34 +73,34 @@ type AttrParserInput<
       | (ATTRIBUTE extends AnyAttribute
           ? ResolveAnyAttribute<ATTRIBUTE>
           : ATTRIBUTE extends PrimitiveAttribute
-          ? ResolvePrimitiveAttribute<ATTRIBUTE>
-          : ATTRIBUTE extends SetAttribute
-          ? Set<AttrParserInput<ATTRIBUTE['elements'], OPTIONS>>
-          : ATTRIBUTE extends ListAttribute
-          ? AttrParserInput<ATTRIBUTE['elements'], OPTIONS>[]
-          : ATTRIBUTE extends MapAttribute
-          ? OptionalizeUndefinableProperties<
-              {
-                [KEY in OPTIONS extends { mode: 'key' }
-                  ? O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>
-                  : keyof ATTRIBUTE['attributes'] & string]: AttrParserInput<
-                  ATTRIBUTE['attributes'][KEY],
-                  OPTIONS
-                >
-              },
-              // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-              O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
-            >
-          : ATTRIBUTE extends RecordAttribute
-          ? {
-              [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttrParserInput<
-                ATTRIBUTE['elements'],
-                OPTIONS
-              >
-            }
-          : ATTRIBUTE extends AnyOfAttribute
-          ? AttrParserInput<ATTRIBUTE['elements'][number], OPTIONS>
-          : never)
+            ? ResolvePrimitiveAttribute<ATTRIBUTE>
+            : ATTRIBUTE extends SetAttribute
+              ? Set<AttrParserInput<ATTRIBUTE['elements'], OPTIONS>>
+              : ATTRIBUTE extends ListAttribute
+                ? AttrParserInput<ATTRIBUTE['elements'], OPTIONS>[]
+                : ATTRIBUTE extends MapAttribute
+                  ? OptionalizeUndefinableProperties<
+                      {
+                        [KEY in OPTIONS extends { mode: 'key' }
+                          ? O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>
+                          : keyof ATTRIBUTE['attributes'] & string]: AttrParserInput<
+                          ATTRIBUTE['attributes'][KEY],
+                          OPTIONS
+                        >
+                      },
+                      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+                      O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+                    >
+                  : ATTRIBUTE extends RecordAttribute
+                    ? {
+                        [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttrParserInput<
+                          ATTRIBUTE['elements'],
+                          OPTIONS
+                        >
+                      }
+                    : ATTRIBUTE extends AnyOfAttribute
+                      ? AttrParserInput<ATTRIBUTE['elements'][number], OPTIONS>
+                      : never)
 
 export type ParserInput<
   SCHEMA extends Schema | Attribute,
@@ -108,5 +108,5 @@ export type ParserInput<
 > = SCHEMA extends Schema
   ? SchemaParserInput<SCHEMA, OPTIONS>
   : SCHEMA extends Attribute
-  ? AttrParserInput<SCHEMA, OPTIONS>
-  : never
+    ? AttrParserInput<SCHEMA, OPTIONS>
+    : never

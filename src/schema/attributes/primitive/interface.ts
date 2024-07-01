@@ -43,7 +43,8 @@ export interface $PrimitiveAttributeNestedState<
 export class $PrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> implements $PrimitiveAttributeNestedState<TYPE, STATE> {
+> implements $PrimitiveAttributeNestedState<TYPE, STATE>
+{
   [$type]: TYPE;
   [$state]: STATE
 
@@ -509,7 +510,8 @@ export class $PrimitiveAttribute<
 export class PrimitiveAttribute<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
   STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> implements SharedAttributeState<STATE> {
+> implements SharedAttributeState<STATE>
+{
   type: TYPE
   path?: string
   required: STATE['required']

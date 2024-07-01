@@ -12,12 +12,10 @@ Builds a [Projection Expression](https://docs.aws.amazon.com/amazondynamodb/late
 import { PathParser } from '~/entity/actions/parsePaths.js'
 
 // 👇 To be used in DynamoDB commands
-const {
-  ProjectionExpression,
-  ExpressionAttributeNames
-} = PokemonEntity.build(PathParser)
-  .parse(['name', 'level'])
-  .toCommandOptions()
+const { ProjectionExpression, ExpressionAttributeNames } =
+  PokemonEntity.build(PathParser)
+    .parse(['name', 'level'])
+    .toCommandOptions()
 ```
 
 ## Methods
@@ -41,12 +39,10 @@ Note that the `parse` method should only be used once per instance (for now). Se
 Collapses the `PathParser` state to a set of options that can be used in a DynamoDB command:
 
 ```ts
-const {
-  ProjectionExpression,
-  ExpressionAttributeNames
-} = PokemonEntity.build(PathParser)
-  .parse(['name', 'level'])
-  .toCommandOptions()
+const { ProjectionExpression, ExpressionAttributeNames } =
+  PokemonEntity.build(PathParser)
+    .parse(['name', 'level'])
+    .toCommandOptions()
 ```
 
 ### `setId(...)`

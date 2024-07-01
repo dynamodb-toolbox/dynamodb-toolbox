@@ -23,7 +23,8 @@ import type { MockedEntity } from './entity.js'
 export class GetItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
-> implements GetItemCommand<ENTITY, OPTIONS> {
+> implements GetItemCommand<ENTITY, OPTIONS>
+{
   static actionName = 'get' as const
   static [$actionName] = 'get' as const;
 

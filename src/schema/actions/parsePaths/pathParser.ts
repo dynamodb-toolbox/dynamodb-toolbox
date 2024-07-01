@@ -8,7 +8,8 @@ import { Schema, SchemaAction } from '~/schema/index.js'
 
 export class PathParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
   extends SchemaAction<SCHEMA>
-  implements ExpressionParser {
+  implements ExpressionParser
+{
   expressionAttributePrefix: `p${string}_`
   expressionAttributeNames: string[]
   expression: string
@@ -62,9 +63,8 @@ export class PathParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
     const ExpressionAttributeNames: Record<string, string> = {}
 
     this.expressionAttributeNames.forEach((expressionAttributeName, index) => {
-      ExpressionAttributeNames[
-        `#${this.expressionAttributePrefix}${index + 1}`
-      ] = expressionAttributeName
+      ExpressionAttributeNames[`#${this.expressionAttributePrefix}${index + 1}`] =
+        expressionAttributeName
     })
 
     const ProjectionExpression = this.expression
