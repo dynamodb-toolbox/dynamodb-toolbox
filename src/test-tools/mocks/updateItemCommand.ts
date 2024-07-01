@@ -8,7 +8,7 @@ import {
 } from '~/entity/actions/commands/updateItem/index.js'
 import { $item, $options } from '~/entity/actions/commands/updateItem/updateItemCommand.js'
 import { updateItemParams } from '~/entity/actions/commands/updateItem/updateItemParams/index.js'
-import { $entity, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import {
@@ -21,7 +21,7 @@ import {
 import type { MockedEntity } from './entity.js'
 
 export class UpdateItemCommandMock<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > implements UpdateItemCommand<ENTITY, OPTIONS>
 {

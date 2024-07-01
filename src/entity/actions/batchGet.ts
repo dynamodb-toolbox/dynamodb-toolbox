@@ -1,13 +1,13 @@
 import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityParser, KeyInput } from '~/entity/actions/parse.js'
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 export const $key = Symbol('$key')
 export type $key = typeof $key
 
-export class BatchGetRequest<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
+export class BatchGetRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName = 'batchGet' as const;
 
   [$key]?: KeyInput<ENTITY>

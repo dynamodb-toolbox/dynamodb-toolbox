@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 
 import { Condition, EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import { EntityPathParser, EntityPaths } from '~/entity/actions/parsePaths.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { parseConsistentOption } from '~/options/consistent.js'
@@ -12,14 +12,14 @@ import { parseLimitOption } from '~/options/limit.js'
 import { parseMaxPagesOption } from '~/options/maxPages.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
 
 import type { ScanOptions } from '../options.js'
 
 export const scanParams = <
-  TABLE extends TableV2,
-  ENTITIES extends EntityV2[],
+  TABLE extends Table,
+  ENTITIES extends Entity[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
 >(
   table: TABLE,

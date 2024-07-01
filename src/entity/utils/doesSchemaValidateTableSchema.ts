@@ -1,5 +1,5 @@
 import type { Schema } from '~/schema/index.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import type { Key } from '~/table/types/index.js'
 
 const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean => {
@@ -17,7 +17,7 @@ const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean =>
   )
 }
 
-export const doesSchemaValidateTableSchema = (schema: Schema, table: TableV2): boolean => {
+export const doesSchemaValidateTableSchema = (schema: Schema, table: Table): boolean => {
   const { partitionKey, sortKey } = table
 
   return (

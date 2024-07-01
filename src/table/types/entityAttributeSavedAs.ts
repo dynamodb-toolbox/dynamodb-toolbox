@@ -1,3 +1,3 @@
-import { TableV2 } from '../table.js'
+import { Table } from '../table.js'
 
-export type EntityAttributeSavedAs<TABLE extends TableV2> = TABLE['entityAttributeSavedAs']
+export type EntityAttributeSavedAs<TABLE extends Table> = TABLE['entityAttributeSavedAs']

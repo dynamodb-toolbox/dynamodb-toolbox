@@ -2,7 +2,7 @@ import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 import { isEmpty } from 'lodash'
 
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
@@ -12,7 +12,7 @@ import { DeleteItemOptions, deleteItemCommandReturnValuesOptionsSet } from '../o
 
 type CommandOptions = Omit<DeleteCommandInput, 'TableName' | 'Key'>
 
-export const parseDeleteItemOptions = <ENTITY extends EntityV2>(
+export const parseDeleteItemOptions = <ENTITY extends Entity>(
   entity: ENTITY,
   deleteItemOptions: DeleteItemOptions<ENTITY>
 ): CommandOptions => {

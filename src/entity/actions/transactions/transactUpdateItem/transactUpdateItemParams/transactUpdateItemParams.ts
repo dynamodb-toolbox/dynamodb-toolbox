@@ -6,7 +6,7 @@ import type { UpdateItemInput } from '~/entity/actions/commands/updateItem/index
 import { parseUpdate } from '~/entity/actions/commands/updateItem/updateExpression/parse.js'
 import { parseUpdateExtension } from '~/entity/actions/commands/updateItem/updateItemParams/extension/index.js'
 import { EntityParser } from '~/entity/actions/parse.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 
 import type { UpdateItemTransactionOptions } from '../options.js'
 import { parseUpdateItemTransactionOptions } from './parseUpdateItemOptions.js'
@@ -16,7 +16,7 @@ export type TransactUpdateItemParams = NonNullable<
 >
 
 export const transactUpdateItemParams = <
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   OPTIONS extends UpdateItemTransactionOptions<ENTITY>
 >(
   entity: ENTITY,

@@ -1,4 +1,4 @@
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import {
   FormatOptions,
@@ -16,14 +16,14 @@ import {
  * @return Object
  */
 export type FormattedItem<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends FormattedValueOptions<ENTITY['schema']> = FormattedValueDefaultOptions
 > = FormattedValue<ENTITY['schema'], OPTIONS>
 
 export const $formatter = Symbol('$formatter')
 export type $formatter = typeof $formatter
 
-export class EntityFormatter<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
+export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'format';
   [$formatter]: Formatter<ENTITY['schema']>
 

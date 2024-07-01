@@ -27,7 +27,7 @@ export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
 export * from './schema/attributes/index.js'
 
 // tables
-export { TableV2 } from './table/index.js'
+export { Table } from './table/index.js'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey/index.js'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey/index.js'
 export { QueryCommand } from './table/actions/queryCommand/index.js'
@@ -49,7 +49,7 @@ export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 export * from './table/types/index.js'
 
 // entities
-export { EntityV2 } from './entity/index.js'
+export { Entity } from './entity/index.js'
 export { GetItemCommand } from './entity/actions/commands/getItem/index.js'
 export type { GetItemOptions, GetItemResponse } from './entity/actions/commands/getItem/index.js'
 export { PutItemCommand } from './entity/actions/commands/putItem/index.js'

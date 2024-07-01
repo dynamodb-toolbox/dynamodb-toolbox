@@ -2,7 +2,7 @@ import type { O } from 'ts-toolbelt'
 
 import type { Always } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import type { IndexableKeyType, Key } from '~/table/types/index.js'
 import type { Or } from '~/types/or.js'
 
@@ -32,7 +32,7 @@ type NeedsKeyPartCompute<
  */
 export type NeedsKeyCompute<
   SCHEMA extends Schema,
-  TABLE extends TableV2
+  TABLE extends Table
 > = Key extends TABLE['sortKey']
   ? NeedsKeyPartCompute<SCHEMA, TABLE['partitionKey']['name'], TABLE['partitionKey']['type']>
   : NonNullable<TABLE['sortKey']> extends Key

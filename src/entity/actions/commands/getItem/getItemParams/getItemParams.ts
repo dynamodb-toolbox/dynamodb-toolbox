@@ -2,12 +2,12 @@ import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityParser } from '~/entity/actions/parse.js'
 import type { KeyInput } from '~/entity/actions/parse.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 
 import type { GetItemOptions } from '../options.js'
 import { parseGetItemOptions } from './parseGetItemOptions.js'
 
-export const getItemParams = <ENTITY extends EntityV2, OPTIONS extends GetItemOptions<ENTITY>>(
+export const getItemParams = <ENTITY extends Entity, OPTIONS extends GetItemOptions<ENTITY>>(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
   getItemOptions: OPTIONS = {} as OPTIONS

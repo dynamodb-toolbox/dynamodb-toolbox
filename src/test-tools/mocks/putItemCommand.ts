@@ -8,7 +8,7 @@ import {
 } from '~/entity/actions/commands/putItem/index.js'
 import { $item, $options } from '~/entity/actions/commands/putItem/putItemCommand.js'
 import { putItemParams } from '~/entity/actions/commands/putItem/putItemParams/index.js'
-import { $entity, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import {
@@ -21,7 +21,7 @@ import {
 import type { MockedEntity } from './entity.js'
 
 export class PutItemCommandMock<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > implements PutItemCommand<ENTITY, OPTIONS>
 {

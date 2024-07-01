@@ -1,7 +1,7 @@
 import type { FreezeAttribute } from '~/schema/attributes/freeze.js'
 import type { $Attribute, $PrimitiveAttribute, AtLeastOnce } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import type { EntityAttributeSavedAs } from '~/table/types/index.js'
 import type { If } from '~/types/if.js'
 
@@ -20,10 +20,7 @@ export type WithInternalAttribute<
       : never
 }>
 
-export type $EntityAttribute<
-  TABLE extends TableV2,
-  ENTITY_NAME extends string
-> = $PrimitiveAttribute<
+export type $EntityAttribute<TABLE extends Table, ENTITY_NAME extends string> = $PrimitiveAttribute<
   'string',
   {
     required: AtLeastOnce
@@ -47,7 +44,7 @@ export type $EntityAttribute<
 
 export type WithEntityAttribute<
   SCHEMA extends Schema,
-  TABLE extends TableV2,
+  TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string
 > = string extends ENTITY_NAME
@@ -125,7 +122,7 @@ export type WithTimestampAttributes<
 
 export type WithInternalAttributes<
   SCHEMA extends Schema,
-  TABLE extends TableV2,
+  TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
   TIMESTAMP_OPTIONS extends TimestampsOptions
@@ -141,7 +138,7 @@ export type WithInternalAttributes<
 
 export type InternalAttributesAdder = <
   SCHEMA extends Schema,
-  TABLE extends TableV2,
+  TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
   TIMESTAMP_OPTIONS extends TimestampsOptions

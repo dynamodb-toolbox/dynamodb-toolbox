@@ -13,7 +13,7 @@ import {
   ResolvedPrimitiveAttribute
 } from '~/schema/attributes/primitive/index.js'
 import { Schema } from '~/schema/index.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 
 import { Query, queryOperatorSet } from '../types.js'
 
@@ -41,7 +41,7 @@ const pick = _pick as <OBJECT extends object, KEYS extends string[]>(
   keys: KEYS
 ) => O.Pick<OBJECT, KEYS[number]>
 
-export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
+export const parseQuery = <TABLE extends Table, QUERY extends Query<TABLE>>(
   table: TABLE,
   query: QUERY
 ): Pick<

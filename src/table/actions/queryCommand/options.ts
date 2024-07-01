@@ -1,19 +1,19 @@
 import type { Condition } from '~/entity/actions/parseCondition.js'
 import type { EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type {
   AllProjectedAttributesSelectOption,
   SelectOption,
   SpecificAttributesSelectOption
 } from '~/options/select.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 
 import type { Query } from './types.js'
 
 export type QueryOptions<
-  TABLE extends TableV2 = TableV2,
-  ENTITIES extends EntityV2[] = EntityV2[],
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
   QUERY extends Query<TABLE> = Query<TABLE>
 > = {
   capacity?: CapacityOption
@@ -21,7 +21,7 @@ export type QueryOptions<
   limit?: number
   maxPages?: number
   reverse?: boolean
-  filters?: EntityV2[] extends ENTITIES
+  filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
 } & (QUERY['index'] extends string

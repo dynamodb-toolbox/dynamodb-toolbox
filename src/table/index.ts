@@ -1,1 +1,1 @@
-export { TableV2, TableAction, $table, $entities } from './table.js'
+export { Table, TableAction, $table, $entities } from './table.js'

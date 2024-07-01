@@ -1,7 +1,7 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import type { UpdateItemInput } from '~/entity/actions/commands/updateItem/index.js'
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { WriteItemTransaction } from '../types.js'
@@ -18,7 +18,7 @@ export const $options = Symbol('$options')
 export type $options = typeof $options
 
 export class UpdateItemTransaction<
-    ENTITY extends EntityV2 = EntityV2,
+    ENTITY extends Entity = Entity,
     OPTIONS extends UpdateItemTransactionOptions<ENTITY> = UpdateItemTransactionOptions<ENTITY>
   >
   extends EntityAction<ENTITY>

@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type {
   Always,
@@ -138,9 +138,9 @@ type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: N
  * @return Object
  */
 export type UpdateItemInput<
-  SCHEMA extends EntityV2 | Schema = EntityV2,
+  SCHEMA extends Entity | Schema = Entity,
   REQUIRED_DEFAULTS extends boolean = false
-> = EntityV2 extends SCHEMA
+> = Entity extends SCHEMA
   ? Item<UpdateItemInputExtension>
   : Schema extends SCHEMA
     ? Item<UpdateItemInputExtension>
@@ -156,7 +156,7 @@ export type UpdateItemInput<
           // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
           O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
         >
-      : SCHEMA extends EntityV2
+      : SCHEMA extends Entity
         ? UpdateItemInput<SCHEMA['schema'], REQUIRED_DEFAULTS>
         : never
 

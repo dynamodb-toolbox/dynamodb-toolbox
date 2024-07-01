@@ -1,4 +1,4 @@
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import {
   FromParsingOptions,
   ParsedValue,
@@ -15,25 +15,25 @@ export type ParsedItemOptions = Pick<ParsedValueOptions, 'mode' | 'extension'>
 export type ParsedItemDefaultOptions = Pick<ParsedValueDefaultOptions, 'mode' | 'extension'>
 
 export type ParsedItem<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends ParsedItemOptions = ParsedItemDefaultOptions
 > = ParsedValue<ENTITY['schema'], OPTIONS>
 
-export type SavedItem<ENTITY extends EntityV2 = EntityV2> = ParsedItem<ENTITY>
+export type SavedItem<ENTITY extends Entity = Entity> = ParsedItem<ENTITY>
 
 export type EntityParsingOptions = Pick<ParsingOptions, 'mode' | 'parseExtension'>
 
 export type EntityParserInput<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends ParsedItemOptions = ParsedItemDefaultOptions
 > = ParserInput<ENTITY['schema'], OPTIONS>
 
-export type KeyInput<ENTITY extends EntityV2> = EntityParserInput<ENTITY, { mode: 'key' }>
+export type KeyInput<ENTITY extends Entity> = EntityParserInput<ENTITY, { mode: 'key' }>
 
 const $parser = Symbol('$parser')
 type $parser = typeof $parser
 
-export class EntityParser<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
+export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'parse';
   [$parser]: Parser<ENTITY['schema']>
 

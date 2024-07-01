@@ -2,7 +2,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import type { If } from '~/types/if.js'
 
 import {
@@ -15,9 +15,9 @@ import {
   doesSchemaValidateTableSchema
 } from './utils/index.js'
 
-export class EntityV2<
+export class Entity<
   NAME extends string = string,
-  TABLE extends TableV2 = TableV2,
+  TABLE extends Table = Table,
   SCHEMA extends Schema = Schema,
   ENTITY_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
   TIMESTAMPS_OPTIONS extends TimestampsOptions = string extends NAME
@@ -105,7 +105,7 @@ export class EntityV2<
 export const $entity = Symbol('$entity')
 export type $entity = typeof $entity
 
-export class EntityAction<ENTITY extends EntityV2 = EntityV2> {
+export class EntityAction<ENTITY extends Entity = Entity> {
   static actionName: string;
 
   [$entity]: ENTITY

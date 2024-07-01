@@ -1,4 +1,4 @@
-import type { TableV2 } from '../table.js'
+import type { Table } from '../table.js'
 
 /**
  * Returns the indexes of a Table
@@ -6,7 +6,7 @@ import type { TableV2 } from '../table.js'
  * @param TABLE Table
  * @return Object
  */
-export type IndexNames<TABLE extends TableV2 = TableV2> = Extract<keyof TABLE['indexes'], string>
+export type IndexNames<TABLE extends Table = Table> = Extract<keyof TABLE['indexes'], string>
 
 /**
  * Returns a specific index of a Table
@@ -16,6 +16,6 @@ export type IndexNames<TABLE extends TableV2 = TableV2> = Extract<keyof TABLE['i
  * @return Object
  */
 export type IndexSchema<
-  TABLE extends TableV2 = TableV2,
+  TABLE extends Table = Table,
   INDEX_NAME extends IndexNames<TABLE> = IndexNames<TABLE>
 > = TABLE['indexes'][INDEX_NAME]

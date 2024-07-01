@@ -25,7 +25,7 @@ import {
 } from '~/entity/actions/commands/updateItem/index.js'
 import type { UpdateItemCommandClass } from '~/entity/actions/commands/updateItem/updateItemCommand.js'
 import type { KeyInput } from '~/entity/actions/parse.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 
 import { ActionMocker } from './actionMocker.js'
 import { CommandResults } from './commandResults.js'
@@ -36,7 +36,7 @@ import { PutItemCommandMock } from './putItemCommand.js'
 import type { ActionClassMocker, ActionClassResults, ActionName } from './types.js'
 import { UpdateItemCommandMock } from './updateItemCommand.js'
 
-export class MockedEntity<ENTITY extends EntityV2 = EntityV2> {
+export class MockedEntity<ENTITY extends Entity = Entity> {
   [$originalEntity]: ENTITY;
 
   [$mockedImplementations]: Partial<{

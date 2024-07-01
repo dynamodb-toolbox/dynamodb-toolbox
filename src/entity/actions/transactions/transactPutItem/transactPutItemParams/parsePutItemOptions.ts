@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash'
 
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
 import { PutItemTransactionOptions } from '../options.js'
@@ -9,7 +9,7 @@ import type { TransactPutItemParams } from './transactPutItemParams.js'
 
 type TransactionOptions = Omit<TransactPutItemParams, 'TableName' | 'Item'>
 
-export const parsePutItemTransactionOptions = <ENTITY extends EntityV2>(
+export const parsePutItemTransactionOptions = <ENTITY extends Entity>(
   entity: ENTITY,
   putItemTransactionOptions: PutItemTransactionOptions<ENTITY>
 ): TransactionOptions => {

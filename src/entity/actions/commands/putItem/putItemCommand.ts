@@ -2,7 +2,7 @@ import { PutCommand, PutCommandInput, PutCommandOutput } from '@aws-sdk/lib-dyna
 import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 
@@ -17,7 +17,7 @@ export const $options = Symbol('$options')
 export type $options = typeof $options
 
 type ReturnedAttributes<
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   OPTIONS extends PutItemOptions<ENTITY>
 > = OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
@@ -26,7 +26,7 @@ type ReturnedAttributes<
     : never
 
 export type PutItemResponse<
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > = O.Merge<
   Omit<PutCommandOutput, 'Attributes'>,
@@ -34,7 +34,7 @@ export type PutItemResponse<
 >
 
 export class PutItemCommand<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
   static actionName = 'put' as const;

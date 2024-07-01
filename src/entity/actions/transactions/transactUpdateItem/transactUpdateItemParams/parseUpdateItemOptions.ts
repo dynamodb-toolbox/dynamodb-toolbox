@@ -1,5 +1,5 @@
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
 import type { UpdateItemTransactionOptions } from '../options.js'
@@ -7,7 +7,7 @@ import type { TransactUpdateItemParams } from './transactUpdateItemParams.js'
 
 type TransactionOptions = Omit<TransactUpdateItemParams, 'TableName' | 'Key' | 'UpdateExpression'>
 
-export const parseUpdateItemTransactionOptions = <ENTITY extends EntityV2>(
+export const parseUpdateItemTransactionOptions = <ENTITY extends Entity>(
   entity: ENTITY,
   updateItemTransactionOptions: UpdateItemTransactionOptions<ENTITY>
 ): TransactionOptions => {

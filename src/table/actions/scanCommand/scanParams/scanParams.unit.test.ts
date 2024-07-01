@@ -2,17 +2,17 @@ import type { A } from 'ts-toolbelt'
 
 import {
   DynamoDBToolboxError,
-  EntityV2,
+  Entity,
   FormattedItem,
   ScanCommand,
-  TableV2,
+  Table,
   number,
   prefix,
   schema,
   string
 } from '~/index.js'
 
-const TestTable = new TableV2({
+const TestTable = new Table({
   name: 'test-table',
   partitionKey: {
     type: 'string',
@@ -37,7 +37,7 @@ const TestTable = new TableV2({
   }
 })
 
-const Entity1 = new EntityV2({
+const Entity1 = new Entity({
   name: 'entity1',
   schema: schema({
     userPoolId: string().key().savedAs('pk'),
@@ -48,7 +48,7 @@ const Entity1 = new EntityV2({
   table: TestTable
 })
 
-const Entity2 = new EntityV2({
+const Entity2 = new Entity({
   name: 'entity2',
   schema: schema({
     productGroupId: string().key().savedAs('pk'),
@@ -489,7 +489,7 @@ describe('scan', () => {
   })
 
   test('transforms attributes when applying filters', () => {
-    const TestEntity3 = new EntityV2({
+    const TestEntity3 = new Entity({
       name: 'entity3',
       schema: schema({
         email: string().key().savedAs('pk'),

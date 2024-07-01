@@ -2,7 +2,7 @@ import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import type { KeyInput } from '~/entity/actions/parse.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { BaseTransaction, GetTransactionParams } from '../types.js'
@@ -16,7 +16,7 @@ export const $options = Symbol('$options')
 export type $options = typeof $options
 
 export interface GetItemTransactionInterface<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends GetItemTransactionOptions<ENTITY> = {
     attributes?: EntityPaths<ENTITY>[]
   }
@@ -31,7 +31,7 @@ export interface GetItemTransactionInterface<
 }
 
 export class GetItemTransaction<
-    ENTITY extends EntityV2 = EntityV2,
+    ENTITY extends Entity = Entity,
     OPTIONS extends GetItemTransactionOptions<ENTITY> = GetItemTransactionOptions<ENTITY>
   >
   extends EntityAction<ENTITY>

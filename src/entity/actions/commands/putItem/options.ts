@@ -1,5 +1,5 @@
 import type { Condition } from '~/entity/actions/parseCondition.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type { MetricsOption } from '~/options/metrics.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
@@ -11,7 +11,7 @@ export const putItemCommandReturnValuesOptionsSet = new Set<PutItemCommandReturn
   'ALL_OLD'
 ])
 
-export interface PutItemOptions<ENTITY extends EntityV2 = EntityV2> {
+export interface PutItemOptions<ENTITY extends Entity = Entity> {
   capacity?: CapacityOption
   metrics?: MetricsOption
   returnValues?: PutItemCommandReturnValuesOption

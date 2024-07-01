@@ -1,6 +1,6 @@
 import type { Condition } from '~/entity/actions/parseCondition.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 
-export interface UpdateItemTransactionOptions<ENTITY extends EntityV2 = EntityV2> {
+export interface UpdateItemTransactionOptions<ENTITY extends Entity = Entity> {
   condition?: Condition<ENTITY>
 }

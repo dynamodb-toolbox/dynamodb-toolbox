@@ -1,7 +1,7 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
@@ -11,7 +11,7 @@ import { UpdateItemOptions, updateItemCommandReturnValuesOptionsSet } from '../o
 
 type CommandOptions = Omit<UpdateCommandInput, 'TableName' | 'Item' | 'Key'>
 
-export const parseUpdateItemOptions = <ENTITY extends EntityV2>(
+export const parseUpdateItemOptions = <ENTITY extends Entity>(
   entity: ENTITY,
   updateItemOptions: UpdateItemOptions<ENTITY>
 ): CommandOptions => {

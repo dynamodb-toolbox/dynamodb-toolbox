@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import { $table, TableAction, TableV2 } from '~/table/index.js'
+import { $table, Table, TableAction } from '~/table/index.js'
 import type { IndexableKeyType, Key, ResolveIndexableKeyType } from '~/table/types/index.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 
@@ -9,7 +9,7 @@ import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimit
  * @param TABLE Table
  * @return Object
  */
-export type PrimaryKey<TABLE extends TableV2 = TableV2> = TableV2 extends TABLE
+export type PrimaryKey<TABLE extends Table = Table> = Table extends TABLE
   ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>
   : Key extends TABLE['sortKey']
     ? {
@@ -29,7 +29,7 @@ export type PrimaryKey<TABLE extends TableV2 = TableV2> = TableV2 extends TABLE
         }
       : never
 
-export class PrimaryKeyParser<TABLE extends TableV2 = TableV2> extends TableAction<TABLE> {
+export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<TABLE> {
   static actionName = 'parsePrimaryKey' as const
 
   constructor(table: TABLE) {

@@ -1,14 +1,14 @@
 import {
   DeleteItemCommand,
   DynamoDBToolboxError,
-  EntityV2,
-  TableV2,
+  Entity,
+  Table,
   prefix,
   schema,
   string
 } from '~/index.js'
 
-const TestTable = new TableV2({
+const TestTable = new Table({
   name: 'test-table',
   partitionKey: {
     type: 'string',
@@ -20,7 +20,7 @@ const TestTable = new TableV2({
   }
 })
 
-const TestEntity = new EntityV2({
+const TestEntity = new Entity({
   name: 'TestEntity',
   schema: schema({
     email: string().key().savedAs('pk'),
@@ -30,7 +30,7 @@ const TestEntity = new EntityV2({
   table: TestTable
 })
 
-const TestEntity2 = new EntityV2({
+const TestEntity2 = new Entity({
   name: 'TestEntity',
   schema: schema({
     pk: string().key(),
@@ -212,7 +212,7 @@ describe('delete', () => {
   })
 
   test('transformed key', () => {
-    const TestEntity3 = new EntityV2({
+    const TestEntity3 = new Entity({
       name: 'TestEntity',
       schema: schema({
         email: string().key().savedAs('pk').transform(prefix('EMAIL')),

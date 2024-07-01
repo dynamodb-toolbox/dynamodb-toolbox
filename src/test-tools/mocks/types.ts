@@ -18,7 +18,7 @@ import type {
 } from '~/entity/actions/commands/updateItem/index.js'
 import type { UpdateItemCommandClass } from '~/entity/actions/commands/updateItem/updateItemCommand.js'
 import type { KeyInput } from '~/entity/actions/parse.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 
 import type { ActionMocker } from './actionMocker.js'
 import type { CommandResults } from './commandResults.js'
@@ -47,7 +47,7 @@ type ActionMock =
 export type ActionName = ClassStaticProperties<ActionMock>[$actionName]
 
 export type ActionClassResults<
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   ACTION_CLASS extends
     | GetItemCommandClass
     | PutItemCommandClass
@@ -64,7 +64,7 @@ export type ActionClassResults<
         : never
 
 export type ActionClassMocker<
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   ACTION_CLASS extends
     | GetItemCommandClass
     | PutItemCommandClass

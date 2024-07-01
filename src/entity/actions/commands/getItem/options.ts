@@ -1,8 +1,8 @@
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 
-export interface GetItemOptions<ENTITY extends EntityV2 = EntityV2> {
+export interface GetItemOptions<ENTITY extends Entity = Entity> {
   capacity?: CapacityOption
   consistent?: boolean
   attributes?: EntityPaths<ENTITY>[]

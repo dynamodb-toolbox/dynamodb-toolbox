@@ -2,13 +2,13 @@ import { $get } from '~/entity/actions/commands/updateItem/utils.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { string } from '~/schema/attributes/index.js'
 import { schema } from '~/schema/index.js'
-import { TableV2 } from '~/table/index.js'
+import { Table } from '~/table/index.js'
 
 import { addInternalAttributes } from './addInternalAttributes.js'
 
 const entityAttributeSavedAs = '__et__'
 
-const myTable = new TableV2({
+const myTable = new Table({
   name: 'myTable',
   partitionKey: {
     name: 'partitionKey',

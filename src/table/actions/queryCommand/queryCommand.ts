@@ -9,10 +9,10 @@ import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CountSelectOption } from '~/options/select.js'
-import { $entities, $table, TableAction, TableV2 } from '~/table/index.js'
+import { $entities, $table, Table, TableAction } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import type { QueryOptions } from './options.js'
@@ -26,16 +26,16 @@ export const $options = Symbol('$options')
 type $options = typeof $options
 
 type ReturnedItems<
-  TABLE extends TableV2,
+  TABLE extends Table,
   QUERY extends Query<TABLE>,
-  ENTITIES extends EntityV2[],
+  ENTITIES extends Entity[],
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
-  : (EntityV2[] extends ENTITIES
+  : (Entity[] extends ENTITIES
       ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
-        ? ENTITY extends EntityV2
+        ? ENTITY extends Entity
           ? FormattedItem<
               ENTITY,
               {
@@ -48,9 +48,9 @@ type ReturnedItems<
         : never)[]
 
 export type QueryResponse<
-  TABLE extends TableV2,
+  TABLE extends Table,
   QUERY extends Query<TABLE>,
-  ENTITIES extends EntityV2[],
+  ENTITIES extends Entity[],
   OPTIONS extends QueryOptions<TABLE, ENTITIES>
 > = O.Merge<
   Omit<QueryCommandOutput, 'Items' | '$metadata'>,
@@ -62,8 +62,8 @@ export type QueryResponse<
 >
 
 export class QueryCommand<
-  TABLE extends TableV2 = TableV2,
-  ENTITIES extends EntityV2[] = EntityV2[],
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
   QUERY extends Query<TABLE> = Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
 > extends TableAction<TABLE, ENTITIES> {
@@ -83,7 +83,7 @@ export class QueryCommand<
     this[$options] = options
   }
 
-  entities<NEXT_ENTITIES extends EntityV2[]>(
+  entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): QueryCommand<
     TABLE,

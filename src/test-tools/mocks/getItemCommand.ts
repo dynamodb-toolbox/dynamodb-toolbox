@@ -8,7 +8,7 @@ import {
   GetItemResponse
 } from '~/entity/actions/commands/getItem/index.js'
 import type { KeyInput } from '~/entity/actions/parse.js'
-import { $entity, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import {
@@ -21,7 +21,7 @@ import {
 import type { MockedEntity } from './entity.js'
 
 export class GetItemCommandMock<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > implements GetItemCommand<ENTITY, OPTIONS>
 {
