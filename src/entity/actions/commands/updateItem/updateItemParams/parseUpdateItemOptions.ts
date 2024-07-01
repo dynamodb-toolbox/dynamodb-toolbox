@@ -12,10 +12,12 @@ import type { UpdateItemOptions } from '../options.js'
 
 type CommandOptions = Omit<UpdateCommandInput, 'TableName' | 'Item' | 'Key'>
 
-export const parseUpdateItemOptions = <ENTITY extends Entity>(
+type UpdateItemOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   updateItemOptions: UpdateItemOptions<ENTITY>
-): CommandOptions => {
+) => CommandOptions
+
+export const parseUpdateItemOptions: UpdateItemOptionsParser = (entity, updateItemOptions) => {
   const commandOptions: CommandOptions = {}
 
   const { capacity, metrics, returnValues, condition, ...extraOptions } = updateItemOptions

@@ -19,7 +19,17 @@ import { isInteger } from '~/utils/validation/isInteger.js'
 
 import type { ScanOptions } from '../options.js'
 
-export const scanParams = <
+type ScanParamsGetter = <
+  TABLE extends Table,
+  ENTITIES extends Entity[],
+  OPTIONS extends ScanOptions<TABLE, ENTITIES>
+>(
+  table: TABLE,
+  entities?: ENTITIES,
+  scanOptions?: OPTIONS
+) => ScanCommandInput
+
+export const scanParams: ScanParamsGetter = <
   TABLE extends Table,
   ENTITIES extends Entity[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
@@ -27,7 +37,7 @@ export const scanParams = <
   table: TABLE,
   entities = [] as unknown as ENTITIES,
   scanOptions: OPTIONS = {} as OPTIONS
-): ScanCommandInput => {
+) => {
   const {
     capacity,
     consistent,

@@ -11,10 +11,17 @@ const comparisonOperatorExpression: Record<ComparisonOperator, string> = {
   lte: '<='
 }
 
-export const parseComparisonCondition = <CONDITION extends ComparisonCondition>(
+type ComparisonConditionParser = <CONDITION extends ComparisonCondition>(
   conditionParser: ConditionParser,
   condition: CONDITION
-): void => {
+) => void
+
+export const parseComparisonCondition: ComparisonConditionParser = <
+  CONDITION extends ComparisonCondition
+>(
+  conditionParser: ConditionParser,
+  condition: CONDITION
+) => {
   const comparisonOperator = Object.keys(condition).find(isComparisonOperator) as keyof CONDITION &
     ComparisonOperator
 

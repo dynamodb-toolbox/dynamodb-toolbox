@@ -22,14 +22,23 @@ export type SetAttrFormattedValue<
       | If<MustBeDefined<ATTRIBUTE>, never, undefined>
       | Set<AttrFormattedValue<ATTRIBUTE['elements'], { partial: OPTIONS['partial'] }>>
 
-export const formatSavedSetAttribute = <
+type SetAttrRawValueFormatter = <
+  ATTRIBUTE extends SetAttribute,
+  OPTIONS extends FormatOptions<ATTRIBUTE>
+>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown,
+  options?: OPTIONS
+) => SetAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
+export const formatSavedSetAttribute: SetAttrRawValueFormatter = <
   ATTRIBUTE extends SetAttribute,
   OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): SetAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+) => {
   type Formatted = SetAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
 
   if (!isSet(rawValue)) {

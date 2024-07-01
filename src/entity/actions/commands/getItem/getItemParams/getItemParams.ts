@@ -7,11 +7,20 @@ import type { Entity } from '~/entity/index.js'
 import type { GetItemOptions } from '../options.js'
 import { parseGetItemOptions } from './parseGetItemOptions.js'
 
-export const getItemParams = <ENTITY extends Entity, OPTIONS extends GetItemOptions<ENTITY>>(
+type GetItemParamsGetter = <ENTITY extends Entity, OPTIONS extends GetItemOptions<ENTITY>>(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
-  getItemOptions: OPTIONS = {} as OPTIONS
-): GetCommandInput => {
+  getItemOptions?: OPTIONS
+) => GetCommandInput
+
+export const getItemParams: GetItemParamsGetter = <
+  ENTITY extends Entity,
+  OPTIONS extends GetItemOptions<ENTITY>
+>(
+  entity: ENTITY,
+  input: KeyInput<ENTITY>,
+  getItemOptions = {} as OPTIONS
+) => {
   const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const options = parseGetItemOptions(entity, getItemOptions)
 

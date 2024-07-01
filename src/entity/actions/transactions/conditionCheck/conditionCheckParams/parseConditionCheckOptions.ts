@@ -8,10 +8,12 @@ import type { ConditionCheckParams } from './conditionCheckParams.js'
 
 type TransactionOptions = Omit<ConditionCheckParams, 'TableName' | 'Key'>
 
-export const parseConditionCheck = <ENTITY extends Entity>(
+type ConditionCheckOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   condition: Condition<ENTITY>
-): TransactionOptions => {
+) => TransactionOptions
+
+export const parseConditionCheckOptions: ConditionCheckOptionsParser = (entity, condition) => {
   const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
     .build(EntityConditionParser)
     .parse(condition)

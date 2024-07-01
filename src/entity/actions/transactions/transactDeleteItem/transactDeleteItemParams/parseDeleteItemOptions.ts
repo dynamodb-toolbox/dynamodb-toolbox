@@ -9,10 +9,15 @@ import type { TransactDeleteItemParams } from './transactDeleteItemParams.js'
 
 type TransactionOptions = Omit<TransactDeleteItemParams, 'TableName' | 'Key'>
 
-export const parseDeleteItemTransactionOptions = <ENTITY extends Entity>(
+type DeleteItemTransactionOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   deleteItemTransactionOptions: DeleteItemTransactionOptions<ENTITY>
-): TransactionOptions => {
+) => TransactionOptions
+
+export const parseDeleteItemTransactionOptions: DeleteItemTransactionOptionsParser = (
+  entity,
+  deleteItemTransactionOptions
+) => {
   const transactionOptions: TransactionOptions = {}
 
   const { condition, ...extraOptions } = deleteItemTransactionOptions

@@ -13,10 +13,12 @@ import type { PutItemOptions } from '../options.js'
 
 type CommandOptions = Omit<PutCommandInput, 'TableName' | 'Item'>
 
-export const parsePutItemOptions = <ENTITY extends Entity>(
+type PutItemOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   putItemOptions: PutItemOptions<ENTITY>
-): CommandOptions => {
+) => CommandOptions
+
+export const parsePutItemOptions: PutItemOptionsParser = (entity, putItemOptions) => {
   const commandOptions: CommandOptions = {}
 
   const { capacity, metrics, returnValues, condition, ...extraOptions } = putItemOptions

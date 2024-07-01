@@ -37,14 +37,23 @@ export type ListAttrFormattedValue<
   ? never
   : If<MustBeDefined<ATTRIBUTE>, never, undefined> | FORMATTED_ELEMENTS[]
 
-export const formatListAttrRawValue = <
+type ListAttrRawValueFormatter = <
+  ATTRIBUTE extends ListAttribute,
+  OPTIONS extends FormatOptions<ATTRIBUTE>
+>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown,
+  options?: OPTIONS
+) => ListAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
+export const formatListAttrRawValue: ListAttrRawValueFormatter = <
   ATTRIBUTE extends ListAttribute,
   OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): ListAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+) => {
   type Formatted = ListAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
 
   if (!isArray(rawValue)) {

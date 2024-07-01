@@ -7,10 +7,15 @@ import type { TransactUpdateItemParams } from './transactUpdateItemParams.js'
 
 type TransactionOptions = Omit<TransactUpdateItemParams, 'TableName' | 'Key' | 'UpdateExpression'>
 
-export const parseUpdateItemTransactionOptions = <ENTITY extends Entity>(
+type UpdateItemTransactionOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   updateItemTransactionOptions: UpdateItemTransactionOptions<ENTITY>
-): TransactionOptions => {
+) => TransactionOptions
+
+export const parseUpdateItemTransactionOptions: UpdateItemTransactionOptionsParser = (
+  entity,
+  updateItemTransactionOptions
+) => {
   const transactionOptions: TransactionOptions = {}
 
   const { condition, ...extraOptions } = updateItemTransactionOptions

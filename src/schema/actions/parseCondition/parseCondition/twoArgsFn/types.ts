@@ -9,8 +9,11 @@ export type TwoArgsFnOperator = 'contains' | 'type' | BeginsWithOperator
 
 const twoArgsFnOperatorSet = new Set<TwoArgsFnOperator>(['contains', 'beginsWith', 'type'])
 
-export const isTwoArgsFnOperator = (key: string): key is TwoArgsFnOperator =>
-  twoArgsFnOperatorSet.has(key as TwoArgsFnOperator)
+type IsTwoArgsFnOperatorAsserter = (key: string) => key is TwoArgsFnOperator
+
+export const isTwoArgsFnOperator: IsTwoArgsFnOperatorAsserter = (
+  key: string
+): key is TwoArgsFnOperator => twoArgsFnOperatorSet.has(key as TwoArgsFnOperator)
 
 export type TwoArgsFnCondition = NonLogicalCondition &
   (TwoArgsFnOperator extends infer OPERATOR
@@ -19,5 +22,8 @@ export type TwoArgsFnCondition = NonLogicalCondition &
       : never
     : never)
 
-export const isTwoArgsFnCondition = (condition: SchemaCondition): condition is TwoArgsFnCondition =>
-  Object.keys(condition).some(isTwoArgsFnOperator)
+type IsTwoArgsFnConditionAsserter = (condition: SchemaCondition) => condition is TwoArgsFnCondition
+
+export const isTwoArgsFnCondition: IsTwoArgsFnConditionAsserter = (
+  condition
+): condition is TwoArgsFnCondition => Object.keys(condition).some(isTwoArgsFnOperator)

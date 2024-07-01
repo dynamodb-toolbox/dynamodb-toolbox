@@ -5,23 +5,25 @@ import type { KeyInput } from '~/entity/actions/parse.js'
 import type { Condition } from '~/entity/actions/parseCondition.js'
 import type { Entity } from '~/entity/index.js'
 
-import { parseConditionCheck } from './parseConditionCheckOptions.js'
+import { parseConditionCheckOptions } from './parseConditionCheckOptions.js'
 
 export type ConditionCheckParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['ConditionCheck']
 >
 
-export const conditionCheckParams = <ENTITY extends Entity>(
+type ConditionCheckParamsGetter = <ENTITY extends Entity>(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
   condition: Condition<ENTITY>
-): ConditionCheckParams => {
+) => ConditionCheckParams
+
+export const conditionCheckParams: ConditionCheckParamsGetter = (entity, input, condition) => {
   const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
-  const parsedCondition = parseConditionCheck(entity, condition)
+  const options = parseConditionCheckOptions(entity, condition)
 
   return {
     TableName: entity.table.getName(),
     Key: key,
-    ...parsedCondition
+    ...options
   }
 }

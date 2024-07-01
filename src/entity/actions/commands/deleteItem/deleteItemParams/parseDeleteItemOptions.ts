@@ -13,10 +13,12 @@ import type { DeleteItemOptions } from '../options.js'
 
 type CommandOptions = Omit<DeleteCommandInput, 'TableName' | 'Key'>
 
-export const parseDeleteItemOptions = <ENTITY extends Entity>(
+type DeleteItemOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   deleteItemOptions: DeleteItemOptions<ENTITY>
-): CommandOptions => {
+) => CommandOptions
+
+export const parseDeleteItemOptions: DeleteItemOptionsParser = (entity, deleteItemOptions) => {
   const commandOptions: CommandOptions = {}
 
   const { capacity, metrics, returnValues, condition, ...extraOptions } = deleteItemOptions

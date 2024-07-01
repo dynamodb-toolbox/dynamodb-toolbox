@@ -11,14 +11,23 @@ export type TransactGetItemParams = NonNullable<
   NonNullable<TransactGetCommandInput['TransactItems']>[number]['Get']
 >
 
-export const transactGetItemParams = <
+type TransactGetItemParamsGetter = <
+  ENTITY extends Entity,
+  OPTIONS extends GetItemTransactionOptions<ENTITY>
+>(
+  entity: ENTITY,
+  input: KeyInput<ENTITY>,
+  getItemTransactionOptions?: OPTIONS
+) => TransactGetItemParams
+
+export const transactGetItemParams: TransactGetItemParamsGetter = <
   ENTITY extends Entity,
   OPTIONS extends GetItemTransactionOptions<ENTITY>
 >(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
   getItemTransactionOptions: OPTIONS = {} as OPTIONS
-): TransactGetItemParams => {
+) => {
   const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const options = parseGetItemTransactionOptions(entity, getItemTransactionOptions)
 

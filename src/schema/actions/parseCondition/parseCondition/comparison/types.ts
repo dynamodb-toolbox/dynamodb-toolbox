@@ -9,8 +9,11 @@ export type ComparisonOperator = 'eq' | 'ne' | RangeOperator
 
 const comparisonOperatorSet = new Set<ComparisonOperator>(['eq', 'ne', 'gt', 'gte', 'lt', 'lte'])
 
-export const isComparisonOperator = (key: string): key is ComparisonOperator =>
-  comparisonOperatorSet.has(key as ComparisonOperator)
+type IsComparisonOperatorAsserter = (key: string) => key is ComparisonOperator
+
+export const isComparisonOperator: IsComparisonOperatorAsserter = (
+  key
+): key is ComparisonOperator => comparisonOperatorSet.has(key as ComparisonOperator)
 
 export type ComparisonCondition = NonLogicalCondition &
   (ComparisonOperator extends infer OPERATOR
@@ -19,6 +22,10 @@ export type ComparisonCondition = NonLogicalCondition &
       : never
     : never)
 
-export const isComparisonCondition = (
+type IsComparisonConditionAsserter = (
   condition: SchemaCondition
+) => condition is ComparisonCondition
+
+export const isComparisonCondition: IsComparisonConditionAsserter = (
+  condition
 ): condition is ComparisonCondition => Object.keys(condition).some(isComparisonOperator)

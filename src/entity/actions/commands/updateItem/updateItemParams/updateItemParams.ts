@@ -11,11 +11,20 @@ import { parseUpdate } from '../updateExpression/index.js'
 import { parseUpdateExtension } from './extension/index.js'
 import { parseUpdateItemOptions } from './parseUpdateItemOptions.js'
 
-export const updateItemParams = <ENTITY extends Entity, OPTIONS extends UpdateItemOptions<ENTITY>>(
+type UpdateItemParamsGetter = <ENTITY extends Entity, OPTIONS extends UpdateItemOptions<ENTITY>>(
+  entity: ENTITY,
+  input: UpdateItemInput<ENTITY>,
+  updateItemOptions?: OPTIONS
+) => UpdateCommandInput
+
+export const updateItemParams: UpdateItemParamsGetter = <
+  ENTITY extends Entity,
+  OPTIONS extends UpdateItemOptions<ENTITY>
+>(
   entity: ENTITY,
   input: UpdateItemInput<ENTITY>,
   updateItemOptions: OPTIONS = {} as OPTIONS
-): UpdateCommandInput => {
+) => {
   const { item, key } = entity.build(EntityParser).parse(input, {
     mode: 'update',
     parseExtension: parseUpdateExtension

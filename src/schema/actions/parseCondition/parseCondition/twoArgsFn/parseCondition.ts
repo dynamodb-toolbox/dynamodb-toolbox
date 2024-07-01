@@ -17,7 +17,14 @@ const typeAttribute = string()
   .enum('S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M')
   .freeze()
 
-export const parseTwoArgsFnCondition = <CONDITION extends TwoArgsFnCondition>(
+type TwoArgsFnConditionParser = <CONDITION extends TwoArgsFnCondition>(
+  conditionParser: ConditionParser,
+  condition: CONDITION
+) => void
+
+export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
+  CONDITION extends TwoArgsFnCondition
+>(
   conditionParser: ConditionParser,
   condition: CONDITION
 ): void => {

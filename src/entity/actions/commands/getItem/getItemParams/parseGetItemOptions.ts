@@ -11,10 +11,12 @@ import type { GetItemOptions } from '../options.js'
 
 type CommandOptions = Omit<GetCommandInput, 'TableName' | 'Key'>
 
-export const parseGetItemOptions = <ENTITY extends Entity>(
+type GetItemOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   getItemOptions: GetItemOptions<ENTITY>
-): CommandOptions => {
+) => CommandOptions
+
+export const parseGetItemOptions: GetItemOptionsParser = (entity, getItemOptions) => {
   const commandOptions: CommandOptions = {}
 
   const { capacity, consistent, attributes, ...extraOptions } = getItemOptions

@@ -84,14 +84,23 @@ export type MapAttrFormattedValue<
                 O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
               >)
 
-export const formatMapAttrRawValue = <
+type MapAttrRawValueFormatter = <
+  ATTRIBUTE extends MapAttribute,
+  OPTIONS extends FormatOptions<ATTRIBUTE>
+>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown,
+  options?: OPTIONS
+) => MapAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
+export const formatMapAttrRawValue: MapAttrRawValueFormatter = <
   ATTRIBUTE extends MapAttribute,
   OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): MapAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+) => {
   type Formatted = MapAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
 
   if (!isObject(rawValue)) {
