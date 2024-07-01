@@ -14,7 +14,8 @@ import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
-import { FreezeListAttribute, freezeListAttribute } from './freeze.js'
+import { freezeListAttribute } from './freeze.js'
+import type { FreezeListAttribute } from './freeze.js'
 import type { $ListAttributeElements } from './types.js'
 
 export interface $ListAttributeState<

@@ -7,7 +7,8 @@ import type { Schema } from '~/schema/index.js'
 import type { OptionalizeUndefinableProperties } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { AttrParsedValue, attrParser } from './attribute.js'
+import { attrParser } from './attribute.js'
+import type { AttrParsedValue } from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,

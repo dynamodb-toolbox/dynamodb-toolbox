@@ -16,14 +16,21 @@ import type {
 import type { Schema } from '~/schema/index.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
-import { AnyAttrParsedValue, anyAttrParser } from './any.js'
-import { AnyOfAttrParsedValue, anyOfAttributeParser } from './anyOf.js'
-import { ListAttrParsedValue, listAttrParser } from './list.js'
-import { MapAttrParsedValue, mapAttributeParser } from './map.js'
+import { anyAttrParser } from './any.js'
+import type { AnyAttrParsedValue } from './any.js'
+import { anyOfAttributeParser } from './anyOf.js'
+import type { AnyOfAttrParsedValue } from './anyOf.js'
+import { listAttrParser } from './list.js'
+import type { ListAttrParsedValue } from './list.js'
+import { mapAttributeParser } from './map.js'
+import type { MapAttrParsedValue } from './map.js'
 import type { ParsedValue } from './parser.js'
-import { PrimitiveAttrParsedValue, primitiveAttrParser } from './primitive.js'
-import { RecordAttrParsedValue, recordAttributeParser } from './record.js'
-import { SetAttrParsedValue, setAttrParser } from './set.js'
+import { primitiveAttrParser } from './primitive.js'
+import type { PrimitiveAttrParsedValue } from './primitive.js'
+import { recordAttributeParser } from './record.js'
+import type { RecordAttrParsedValue } from './record.js'
+import { setAttrParser } from './set.js'
+import type { SetAttrParsedValue } from './set.js'
 import type {
   FromParsingOptions,
   ParsedValueDefaultOptions,

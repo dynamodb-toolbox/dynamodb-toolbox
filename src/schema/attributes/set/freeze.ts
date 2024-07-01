@@ -2,12 +2,14 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $elements, $state } from '../constants/attributeOptions.js'
+import { $state } from '../constants/attributeOptions.js'
+import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { $SetAttributeState, SetAttribute } from './interface.js'
+import { SetAttribute } from './interface.js'
+import type { $SetAttributeState } from './interface.js'
 import type { $SetAttributeElements } from './types.js'
 
 export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =

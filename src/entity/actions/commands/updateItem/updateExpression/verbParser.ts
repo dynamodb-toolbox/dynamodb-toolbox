@@ -1,8 +1,8 @@
 import type { ParsedValue } from '~/schema/actions/parse/index.js'
-import {
+import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
+import type {
   AppendAttributePathOptions,
-  ExpressionParser,
-  appendAttributePath
+  ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
 import type { Attribute } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'

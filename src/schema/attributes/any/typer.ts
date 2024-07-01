@@ -2,7 +2,8 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import { $AnyAttribute } from './interface.js'
-import { ANY_DEFAULT_OPTIONS, AnyAttributeDefaultOptions, AnyAttributeOptions } from './options.js'
+import { ANY_DEFAULT_OPTIONS } from './options.js'
+import type { AnyAttributeDefaultOptions, AnyAttributeOptions } from './options.js'
 
 type AnyAttributeTyper = <OPTIONS extends Partial<AnyAttributeOptions> = AnyAttributeOptions>(
   options?: NarrowObject<OPTIONS>

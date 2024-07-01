@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash'
 
-import { Condition, EntityConditionParser } from '~/entity/actions/parseCondition.js'
+import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
+import type { Condition } from '~/entity/actions/parseCondition.js'
 import type { Entity } from '~/entity/index.js'
 
 import type { ConditionCheckParams } from './conditionCheckParams.js'

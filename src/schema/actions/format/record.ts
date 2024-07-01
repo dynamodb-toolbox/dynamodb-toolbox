@@ -4,7 +4,8 @@ import type { RecordAttribute, ResolvePrimitiveAttribute } from '~/schema/attrib
 import type { If } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { AttrFormattedValue, MustBeDefined, formatAttrRawValue } from './attribute.js'
+import { formatAttrRawValue } from './attribute.js'
+import type { AttrFormattedValue, MustBeDefined } from './attribute.js'
 import { formatPrimitiveAttrRawValue } from './primitive.js'
 import type {
   FormatOptions,

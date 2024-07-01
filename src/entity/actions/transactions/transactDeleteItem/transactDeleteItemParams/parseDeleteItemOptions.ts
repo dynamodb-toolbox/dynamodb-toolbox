@@ -4,7 +4,7 @@ import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
-import { DeleteItemTransactionOptions } from '../options.js'
+import type { DeleteItemTransactionOptions } from '../options.js'
 import type { TransactDeleteItemParams } from './transactDeleteItemParams.js'
 
 type TransactionOptions = Omit<TransactDeleteItemParams, 'TableName' | 'Key'>

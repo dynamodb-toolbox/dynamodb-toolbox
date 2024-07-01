@@ -6,7 +6,8 @@ import type { AnyAttribute, MapAttribute, Never } from '~/schema/attributes/inde
 import type { If, OptionalizeUndefinableProperties } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { AttrFormattedValue, MustBeDefined, formatAttrRawValue } from './attribute.js'
+import { formatAttrRawValue } from './attribute.js'
+import type { AttrFormattedValue, MustBeDefined } from './attribute.js'
 import type {
   FormatOptions,
   FormattedValueDefaultOptions,

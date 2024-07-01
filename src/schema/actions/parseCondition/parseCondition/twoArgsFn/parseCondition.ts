@@ -2,7 +2,8 @@ import type { Attribute } from '~/schema/attributes/index.js'
 import { PrimitiveAttribute, string } from '~/schema/attributes/primitive/index.js'
 
 import type { ConditionParser } from '../../conditionParser.js'
-import { TwoArgsFnCondition, TwoArgsFnOperator, isTwoArgsFnOperator } from './types.js'
+import { isTwoArgsFnOperator } from './types.js'
+import type { TwoArgsFnCondition, TwoArgsFnOperator } from './types.js'
 
 const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
   contains: 'contains',

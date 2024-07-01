@@ -8,7 +8,8 @@ import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseReturnValuesOption } from '~/options/returnValues.js'
 
-import { PutItemOptions, putItemCommandReturnValuesOptionsSet } from '../options.js'
+import { putItemCommandReturnValuesOptionsSet } from '../options.js'
+import type { PutItemOptions } from '../options.js'
 
 type CommandOptions = Omit<PutCommandInput, 'TableName' | 'Item'>
 

@@ -3,7 +3,8 @@ import {
   DynamoDBDocumentClient,
   BatchWriteCommand as _BatchWriteCommand
 } from '@aws-sdk/lib-dynamodb'
-import { AwsStub, mockClient } from 'aws-sdk-client-mock'
+import type { AwsStub } from 'aws-sdk-client-mock'
+import { mockClient } from 'aws-sdk-client-mock'
 
 import {
   BatchDeleteRequest,

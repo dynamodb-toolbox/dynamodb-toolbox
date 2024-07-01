@@ -1,10 +1,11 @@
-import {
+import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
+import type {
   AppendAttributePathOptions,
-  ExpressionParser,
-  appendAttributePath
+  ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
 import type { Attribute } from '~/schema/attributes/index.js'
-import { Schema, SchemaAction } from '~/schema/index.js'
+import { SchemaAction } from '~/schema/index.js'
+import type { Schema } from '~/schema/index.js'
 
 export class PathParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
   extends SchemaAction<SCHEMA>

@@ -14,7 +14,8 @@ import type { Schema } from '../../schema.js'
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import { FreezePrimitiveAttribute, freezePrimitiveAttribute } from './freeze.js'
+import { freezePrimitiveAttribute } from './freeze.js'
+import type { FreezePrimitiveAttribute } from './freeze.js'
 import type {
   PrimitiveAttributeState,
   PrimitiveAttributeType,

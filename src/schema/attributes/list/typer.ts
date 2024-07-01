@@ -2,11 +2,8 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import { $ListAttribute } from './interface.js'
-import {
-  LIST_DEFAULT_OPTIONS,
-  ListAttributeDefaultOptions,
-  ListAttributeOptions
-} from './options.js'
+import { LIST_DEFAULT_OPTIONS } from './options.js'
+import type { ListAttributeDefaultOptions, ListAttributeOptions } from './options.js'
 import type { $ListAttributeElements } from './types.js'
 
 type ListAttributeTyper = <

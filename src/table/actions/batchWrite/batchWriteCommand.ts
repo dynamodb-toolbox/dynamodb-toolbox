@@ -3,9 +3,11 @@ import type { U } from 'ts-toolbelt'
 
 import type { BatchDeleteRequest } from '~/entity/actions/batchDelete.js'
 import type { BatchPutRequest } from '~/entity/actions/batchPut.js'
-import { $entity, Entity } from '~/entity/index.js'
+import { $entity } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { $table, Table, TableAction } from '~/table/index.js'
+import { $table, TableAction } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests

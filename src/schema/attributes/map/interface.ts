@@ -13,7 +13,8 @@ import type { Schema } from '../../schema.js'
 import { $attributes, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import { FreezeMapAttribute, freezeMapAttribute } from './freeze.js'
+import { freezeMapAttribute } from './freeze.js'
+import type { FreezeMapAttribute } from './freeze.js'
 import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types.js'
 
 export interface $MapAttributeState<

@@ -28,7 +28,7 @@ import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
 import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
 
-import {
+import type {
   $ADD,
   $APPEND,
   $DELETE,

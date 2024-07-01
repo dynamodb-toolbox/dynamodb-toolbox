@@ -1,12 +1,14 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import type { PutItemInput } from '~/entity/actions/commands/putItem/index.js'
-import { $entity, Entity, EntityAction } from '~/entity/index.js'
+import { $entity, EntityAction } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { WriteItemTransaction } from '../types.js'
 import type { PutItemTransactionOptions } from './options.js'
-import { TransactPutItemParams, transactPutItemParams } from './transactPutItemParams/index.js'
+import { transactPutItemParams } from './transactPutItemParams/index.js'
+import type { TransactPutItemParams } from './transactPutItemParams/index.js'
 
 export const $item = Symbol('$item')
 export type $item = typeof $item

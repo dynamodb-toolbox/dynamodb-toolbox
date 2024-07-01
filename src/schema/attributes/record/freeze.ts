@@ -2,12 +2,14 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $elements, $keys, $state, $type } from '../constants/attributeOptions.js'
+import { $state, $type } from '../constants/attributeOptions.js'
+import type { $elements, $keys } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { $RecordAttributeState, RecordAttribute } from './interface.js'
+import { RecordAttribute } from './interface.js'
+import type { $RecordAttributeState } from './interface.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =

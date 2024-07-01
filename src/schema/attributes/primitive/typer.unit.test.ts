@@ -4,7 +4,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
-import { Always, AtLeastOnce, Never } from '../constants/index.js'
+import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { $PrimitiveAttribute, PrimitiveAttribute } from './interface.js'
 import { binary, boolean, number, string } from './typer.js'
 

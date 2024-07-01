@@ -1,11 +1,12 @@
-import { $entity, Entity, EntityAction } from '~/entity/index.js'
+import { $entity, EntityAction } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import {
+import { Formatter } from '~/schema/actions/format/index.js'
+import type {
   FormatOptions,
   FormattedValue,
   FormattedValueDefaultOptions,
   FormattedValueOptions,
-  Formatter,
   FromFormatOptions
 } from '~/schema/actions/format/index.js'
 

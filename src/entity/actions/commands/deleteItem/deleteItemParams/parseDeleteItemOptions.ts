@@ -8,7 +8,8 @@ import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseReturnValuesOption } from '~/options/returnValues.js'
 
-import { DeleteItemOptions, deleteItemCommandReturnValuesOptionsSet } from '../options.js'
+import { deleteItemCommandReturnValuesOptionsSet } from '../options.js'
+import type { DeleteItemOptions } from '../options.js'
 
 type CommandOptions = Omit<DeleteCommandInput, 'TableName' | 'Key'>
 

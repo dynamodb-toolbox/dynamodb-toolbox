@@ -1,7 +1,5 @@
-import {
-  AppendAttributePathOptions,
-  isAttributePath
-} from '~/schema/actions/utils/appendAttributePath.js'
+import { isAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
+import type { AppendAttributePathOptions } from '~/schema/actions/utils/appendAttributePath.js'
 import type { Attribute } from '~/schema/attributes/index.js'
 
 import type { AppendAttributeValueOptions } from './appendAttributeValue.js'

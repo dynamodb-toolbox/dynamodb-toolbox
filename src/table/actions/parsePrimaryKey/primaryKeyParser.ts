@@ -1,5 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import { $table, Table, TableAction } from '~/table/index.js'
+import { $table, TableAction } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import type { IndexableKeyType, Key, ResolveIndexableKeyType } from '~/table/types/index.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 

@@ -3,13 +3,15 @@ import type { O } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import { $elements, $state } from '../constants/attributeOptions.js'
+import { $state } from '../constants/attributeOptions.js'
+import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { $AttributeState } from '../types/index.js'
-import { $AnyOfAttributeState, AnyOfAttribute } from './interface.js'
+import { AnyOfAttribute } from './interface.js'
+import type { $AnyOfAttributeState } from './interface.js'
 import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types.js'
 
 type FreezeElements<

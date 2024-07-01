@@ -2,11 +2,8 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import { $RecordAttribute } from './interface.js'
-import {
-  RECORD_DEFAULT_OPTIONS,
-  RecordAttributeDefaultOptions,
-  RecordAttributeOptions
-} from './options.js'
+import { RECORD_DEFAULT_OPTIONS } from './options.js'
+import type { RecordAttributeDefaultOptions, RecordAttributeOptions } from './options.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 type RecordAttributeTyper = <

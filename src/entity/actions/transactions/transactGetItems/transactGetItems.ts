@@ -1,17 +1,17 @@
 import type { TransactGetItemsInput } from '@aws-sdk/client-dynamodb'
-import {
-  DynamoDBDocumentClient,
-  TransactGetCommand,
-  TransactGetCommandOutput
-} from '@aws-sdk/lib-dynamodb'
+import { TransactGetCommand } from '@aws-sdk/lib-dynamodb'
+import type { DynamoDBDocumentClient, TransactGetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
+import { EntityFormatter } from '~/entity/actions/format.js'
+import type { FormattedItem } from '~/entity/actions/format.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-import { $entity, Entity } from '~/entity/index.js'
+import { $entity } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { GetItemTransactionOptions } from '../transactGetItem/options.js'
-import { $options, GetItemTransactionInterface } from '../transactGetItem/transactGetItem.js'
+import { $options } from '../transactGetItem/transactGetItem.js'
+import type { GetItemTransactionInterface } from '../transactGetItem/transactGetItem.js'
 import type { TransactGetOptions } from './options.js'
 import { parseTransactGetOptions } from './parseTransactGetOptions.js'
 
