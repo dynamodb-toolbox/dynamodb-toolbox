@@ -40,7 +40,8 @@ export interface $AnyOfAttributeNestedState<
 export class $AnyOfAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
-> implements $AnyOfAttributeNestedState<STATE, $ELEMENTS> {
+> implements $AnyOfAttributeNestedState<STATE, $ELEMENTS>
+{
   [$type]: 'anyOf';
   [$state]: STATE;
   [$elements]: $ELEMENTS
@@ -422,7 +423,8 @@ export class $AnyOfAttribute<
 export class AnyOfAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends Attribute[] = Attribute[]
-> implements SharedAttributeState<STATE> {
+> implements SharedAttributeState<STATE>
+{
   type: 'anyOf'
   path?: string
   elements: ELEMENTS

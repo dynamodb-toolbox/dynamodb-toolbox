@@ -66,7 +66,7 @@ describe('BatchGetCommand', () => {
       EntityB.build(BatchGetRequest).key({ pkB: 'b', skB: 'b' })
     )
 
-    type AssertEntities = A.Equals<typeof command[$entities], [typeof EntityA, typeof EntityB]>
+    type AssertEntities = A.Equals<(typeof command)[$entities], [typeof EntityA, typeof EntityB]>
     const assertEntities: AssertEntities = 1
     assertEntities
 
@@ -82,8 +82,8 @@ describe('BatchGetCommand', () => {
     const command = TestTable.build(BatchGetCommand).requests(...requests)
 
     // We have to do like this because order is not guaranteed
-    type AssertEntitiesAB = A.Equals<typeof command[$entities], [typeof EntityA, typeof EntityB]>
-    type AssertEntitiesBA = A.Equals<typeof command[$entities], [typeof EntityB, typeof EntityA]>
+    type AssertEntitiesAB = A.Equals<(typeof command)[$entities], [typeof EntityA, typeof EntityB]>
+    type AssertEntitiesBA = A.Equals<(typeof command)[$entities], [typeof EntityB, typeof EntityA]>
     const assertEntities: AssertEntitiesAB | AssertEntitiesBA = 1
     assertEntities
 

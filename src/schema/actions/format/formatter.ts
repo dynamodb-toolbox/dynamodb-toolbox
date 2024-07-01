@@ -22,11 +22,12 @@ export type FormattedValue<
 > = SCHEMA extends Schema
   ? SchemaFormattedValue<SCHEMA, OPTIONS>
   : SCHEMA extends Attribute
-  ? AttrFormattedValue<SCHEMA, OPTIONS>
-  : never
+    ? AttrFormattedValue<SCHEMA, OPTIONS>
+    : never
 
 export class Formatter<SCHEMA extends Schema | Attribute = Schema | Attribute>
-  implements SchemaAction<SCHEMA> {
+  implements SchemaAction<SCHEMA>
+{
   schema: SCHEMA
 
   constructor(schema: SCHEMA) {

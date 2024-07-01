@@ -38,7 +38,8 @@ export interface $SetAttributeNestedState<
 export class $SetAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
-> implements $SetAttributeNestedState<STATE, $ELEMENTS> {
+> implements $SetAttributeNestedState<STATE, $ELEMENTS>
+{
   [$type]: 'set';
   [$state]: STATE;
   [$elements]: $ELEMENTS
@@ -409,7 +410,8 @@ export class $SetAttribute<
 export class SetAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends SetAttributeElements = SetAttributeElements
-> implements SharedAttributeState<STATE> {
+> implements SharedAttributeState<STATE>
+{
   type: 'set'
   path?: string
   elements: ELEMENTS

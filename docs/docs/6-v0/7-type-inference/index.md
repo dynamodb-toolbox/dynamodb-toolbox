@@ -47,7 +47,10 @@ type CustomCompositeKey = {
   sk: string
 }
 
-const { Item } = await MyEntity.get<CustomItem, CustomCompositeKey>({
+const { Item } = await MyEntity.get<
+  CustomItem,
+  CustomCompositeKey
+>({
   pk: 'pk',
   sk: 'sk' // ✅ CustomCompositeKey expected
 }) // ✅ Item is of type: undefined | CustomItem
@@ -69,8 +72,14 @@ await MyEntity.delete<CustomItem, { foo: "bar" }>({ foo: "bar" }) // ✅ Entity 
 Write operations `condition` and read operations `attributes` options are also typed as the applied overlay keys and filter the response properties:
 
 ```typescript
-const { Item } = await MyEntity.get({ pk, sk }, { attributes: ['incorrect'] }) // ❌ Errors
-const { Item } = await MyEntity.get({ pk, sk }, { attributes: ['name'] }) // ✅ Item is of type { name: string }
+const { Item } = await MyEntity.get(
+  { pk, sk },
+  { attributes: ['incorrect'] }
+) // ❌ Errors
+const { Item } = await MyEntity.get(
+  { pk, sk },
+  { attributes: ['name'] }
+) // ✅ Item is of type { name: string }
 ```
 
 ## Utility Types
@@ -99,7 +108,10 @@ if (!isSuperadmin(user)) {
   queryOptions.beginsWith = 'USER'
 }
 
-const { Item } = await MyEntity.query(pk, { attributes: ['name', 'age'], ...queryOptions })
+const { Item } = await MyEntity.query(pk, {
+  attributes: ['name', 'age'],
+  ...queryOptions
+})
 ```
 
 Sadly, in TS this throws an error, as `getOptions` is typed as `{}`. Using a non-generic `GetOptions` type also throws an error as the entity attribute names are hardly typed, and `string` is not assignable to the `attributes` or `conditions` options.
@@ -115,5 +127,8 @@ if (!isSuperadmin(user)) {
   queryOptions.beginsWith = 'USER'
 }
 
-const { Item } = await MyEntity.query(pk, { attributes: ['name', 'age'], ...queryOptions })
+const { Item } = await MyEntity.query(pk, {
+  attributes: ['name', 'age'],
+  ...queryOptions
+})
 ```

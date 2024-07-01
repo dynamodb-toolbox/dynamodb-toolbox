@@ -107,12 +107,11 @@ await PokemonEntity.build(DeleteItemCommand)
 <TabItem value="return-values" label="Return values">
 
 ```ts
-const {
-  Attributes: prevPikachu
-} = await PokemonEntity.build(DeleteItemCommand)
-  .key({ pokemonId: 'pikachu1' })
-  .options({ returnValues: 'ALL_OLD' })
-  .send()
+const { Attributes: prevPikachu } =
+  await PokemonEntity.build(DeleteItemCommand)
+    .key({ pokemonId: 'pikachu1' })
+    .options({ returnValues: 'ALL_OLD' })
+    .send()
 ```
 
 </TabItem>

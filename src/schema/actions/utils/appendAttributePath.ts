@@ -96,9 +96,8 @@ export const appendAttributePath = (
         if (isChildAttributeInList) {
           expressionPath += childAttributeAccessor
         } else {
-          const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
-            childAttributeAccessor
-          )
+          const expressionAttributeNameIndex =
+            parser.expressionAttributeNames.push(childAttributeAccessor)
           expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
         }
 

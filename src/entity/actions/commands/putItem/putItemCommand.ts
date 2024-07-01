@@ -22,8 +22,8 @@ type ReturnedAttributes<
 > = OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
   : OPTIONS['returnValues'] extends AllOldReturnValuesOption
-  ? FormattedItem<ENTITY> | undefined
-  : never
+    ? FormattedItem<ENTITY> | undefined
+    : never
 
 export type PutItemResponse<
   ENTITY extends EntityV2,

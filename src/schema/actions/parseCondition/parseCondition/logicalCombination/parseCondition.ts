@@ -26,7 +26,7 @@ export const parseLogicalCombinationCondition: AppendLogicalCombinationCondition
     isLogicalCombinationOperator
   ) as keyof CONDITION & LogicalCombinationOperator
 
-  const childrenConditions = (condition[logicalCombinationOperator] as unknown) as SchemaCondition[]
+  const childrenConditions = condition[logicalCombinationOperator] as unknown as SchemaCondition[]
   const childrenConditionExpressions: string[] = []
   conditionParser.resetExpression()
   for (const childCondition of childrenConditions) {

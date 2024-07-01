@@ -47,7 +47,8 @@ export class $RecordAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
-> implements $RecordAttributeNestedState<STATE, $KEYS, $ELEMENTS> {
+> implements $RecordAttributeNestedState<STATE, $KEYS, $ELEMENTS>
+{
   [$type]: 'record';
   [$state]: STATE;
   [$keys]: $KEYS;
@@ -467,7 +468,8 @@ export class RecordAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   KEYS extends RecordAttributeKeys = RecordAttributeKeys,
   ELEMENTS extends Attribute = Attribute
-> implements SharedAttributeState<STATE> {
+> implements SharedAttributeState<STATE>
+{
   type: 'record'
   path?: string
   keys: KEYS

@@ -83,13 +83,13 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
       transform: undefined
     })
 
-    const sortKeyCondition = ({
+    const sortKeyCondition = {
       attr: sortKey.name,
       ...pick(range, [...queryOperatorSet])
       /**
        * @debt type "TODO: Remove this cast"
        */
-    } as unknown) as PrimitiveAttributeCondition<
+    } as unknown as PrimitiveAttributeCondition<
       string,
       PrimitiveAttribute,
       never,
@@ -103,11 +103,8 @@ export const parseQuery = <TABLE extends TableV2, QUERY extends Query<TABLE>>(
 
   const conditionParser = new ConditionParser(indexSchema, '0')
   conditionParser.parse(condition)
-  const {
-    ConditionExpression,
-    ExpressionAttributeNames,
-    ExpressionAttributeValues
-  } = conditionParser.toCommandOptions()
+  const { ConditionExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+    conditionParser.toCommandOptions()
 
   return {
     KeyConditionExpression: ConditionExpression,

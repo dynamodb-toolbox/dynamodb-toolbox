@@ -39,7 +39,8 @@ export interface $ListAttributeNestedState<
 export class $ListAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
-> implements $ListAttributeNestedState<STATE, $ELEMENTS> {
+> implements $ListAttributeNestedState<STATE, $ELEMENTS>
+{
   [$type]: 'list';
   [$state]: STATE;
   [$elements]: $ELEMENTS
@@ -418,7 +419,8 @@ export class $ListAttribute<
 export class ListAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends Attribute = Attribute
-> implements SharedAttributeState<STATE> {
+> implements SharedAttributeState<STATE>
+{
   type: 'list'
   path?: string
   elements: ELEMENTS

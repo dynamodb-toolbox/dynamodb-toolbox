@@ -12,15 +12,13 @@ export type WithInternalAttribute<
   SCHEMA extends Schema,
   ATTRIBUTE_NAME extends string,
   $ATTRIBUTE extends $Attribute
-> = Schema<
-  {
-    [KEY in keyof SCHEMA['attributes'] | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
-      ? FreezeAttribute<$ATTRIBUTE>
-      : KEY extends keyof SCHEMA['attributes']
+> = Schema<{
+  [KEY in keyof SCHEMA['attributes'] | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
+    ? FreezeAttribute<$ATTRIBUTE>
+    : KEY extends keyof SCHEMA['attributes']
       ? SCHEMA['attributes'][KEY]
       : never
-  }
->
+}>
 
 export type $EntityAttribute<
   TABLE extends TableV2,
@@ -134,12 +132,12 @@ export type WithInternalAttributes<
 > = string extends ENTITY_NAME
   ? SCHEMA
   : TIMESTAMP_OPTIONS extends false
-  ? WithEntityAttribute<SCHEMA, TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>
-  : WithTimestampAttributes<
-      WithEntityAttribute<SCHEMA, TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>,
-      ENTITY_NAME,
-      TIMESTAMP_OPTIONS
-    >
+    ? WithEntityAttribute<SCHEMA, TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>
+    : WithTimestampAttributes<
+        WithEntityAttribute<SCHEMA, TABLE, ENTITY_ATTRIBUTE_NAME, ENTITY_NAME>,
+        ENTITY_NAME,
+        TIMESTAMP_OPTIONS
+      >
 
 export type InternalAttributesAdder = <
   SCHEMA extends Schema,

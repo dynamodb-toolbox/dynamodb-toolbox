@@ -380,14 +380,11 @@ describe('put transaction', () => {
   })
 
   test('sets condition', () => {
-    const {
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = TestEntity.build(PutItemTransaction)
-      .item({ email: 'x', sort: 'y' })
-      .options({ condition: { attr: 'email', gt: 'test' } })
-      .params()
+    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
+      TestEntity.build(PutItemTransaction)
+        .item({ email: 'x', sort: 'y' })
+        .options({ condition: { attr: 'email', gt: 'test' } })
+        .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })

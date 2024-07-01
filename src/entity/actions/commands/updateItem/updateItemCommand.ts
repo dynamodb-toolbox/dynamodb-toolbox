@@ -28,21 +28,21 @@ type ReturnedAttributes<
 > = OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
   : OPTIONS['returnValues'] extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
-  ?
-      | FormattedItem<
-          ENTITY,
-          {
-            partial: OPTIONS['returnValues'] extends
-              | UpdatedOldReturnValuesOption
-              | UpdatedNewReturnValuesOption
-              ? true
-              : false
-          }
-        >
-      | undefined
-  : OPTIONS['returnValues'] extends AllNewReturnValuesOption | AllOldReturnValuesOption
-  ? FormattedItem<ENTITY> | undefined
-  : never
+    ?
+        | FormattedItem<
+            ENTITY,
+            {
+              partial: OPTIONS['returnValues'] extends
+                | UpdatedOldReturnValuesOption
+                | UpdatedNewReturnValuesOption
+                ? true
+                : false
+            }
+          >
+        | undefined
+    : OPTIONS['returnValues'] extends AllNewReturnValuesOption | AllOldReturnValuesOption
+      ? FormattedItem<ENTITY> | undefined
+      : never
 
 export type UpdateItemResponse<
   ENTITY extends EntityV2,
@@ -102,9 +102,9 @@ export class UpdateItemCommand<
 
     const { returnValues } = this[$options]
 
-    const formattedItem = (new EntityFormatter(this[$entity]).format(attributes, {
+    const formattedItem = new EntityFormatter(this[$entity]).format(attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
-    }) as unknown) as ReturnedAttributes<ENTITY, OPTIONS>
+    }) as unknown as ReturnedAttributes<ENTITY, OPTIONS>
 
     return {
       Attributes: formattedItem,

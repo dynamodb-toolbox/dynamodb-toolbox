@@ -37,15 +37,15 @@ type ReturnedItem<
 > = EntityV2 extends ENTITY
   ? Record<string, unknown>
   : OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
-  ? FormattedItem<
-      ENTITY,
-      {
-        attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
-          ? OPTIONS['attributes'][number]
-          : undefined
-      }
-    >
-  : FormattedItem<ENTITY>
+    ? FormattedItem<
+        ENTITY,
+        {
+          attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
+            ? OPTIONS['attributes'][number]
+            : undefined
+        }
+      >
+    : FormattedItem<ENTITY>
 
 type ReturnedItemFromTransaction<TRANSACTION extends GetItemTransactionInterface> =
   // Trick with TypeScript to make the return item types work correctly
@@ -65,12 +65,11 @@ type ReturnedItemsRec<
       : never
     : never
   : RESULTS extends []
-  ? (FormattedItem | undefined)[]
-  : RESULTS
+    ? (FormattedItem | undefined)[]
+    : RESULTS
 
-type ReturnedItems<
-  TRANSACTIONS extends GetItemTransactionInterface[]
-> = ReturnedItemsRec<TRANSACTIONS>
+type ReturnedItems<TRANSACTIONS extends GetItemTransactionInterface[]> =
+  ReturnedItemsRec<TRANSACTIONS>
 
 export const formatTransactGetResponse = <TRANSACTIONS extends GetItemTransactionInterface[]>(
   response: TransactGetCommandOutput,

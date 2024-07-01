@@ -41,8 +41,8 @@ export type MustBeDefined<
     ? true
     : false
   : ATTRIBUTE extends { required: AtLeastOnce | Always }
-  ? true
-  : false
+    ? true
+    : false
 
 export type AttrParsedValue<
   ATTRIBUTE extends Attribute,
@@ -50,18 +50,18 @@ export type AttrParsedValue<
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrParsedValue<ATTRIBUTE, OPTIONS>
   : ATTRIBUTE extends PrimitiveAttribute
-  ? PrimitiveAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends SetAttribute
-  ? SetAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends ListAttribute
-  ? ListAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends MapAttribute
-  ? MapAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends RecordAttribute
-  ? RecordAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends AnyOfAttribute
-  ? AnyOfAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : never
+    ? PrimitiveAttrParsedValue<ATTRIBUTE, OPTIONS>
+    : ATTRIBUTE extends SetAttribute
+      ? SetAttrParsedValue<ATTRIBUTE, OPTIONS>
+      : ATTRIBUTE extends ListAttribute
+        ? ListAttrParsedValue<ATTRIBUTE, OPTIONS>
+        : ATTRIBUTE extends MapAttribute
+          ? MapAttrParsedValue<ATTRIBUTE, OPTIONS>
+          : ATTRIBUTE extends RecordAttribute
+            ? RecordAttrParsedValue<ATTRIBUTE, OPTIONS>
+            : ATTRIBUTE extends AnyOfAttribute
+              ? AnyOfAttrParsedValue<ATTRIBUTE, OPTIONS>
+              : never
 
 export function* attrParser<
   ATTRIBUTE extends Attribute,
@@ -84,7 +84,7 @@ export function* attrParser<
     /**
      * @debt type "Maybe there's a way not to have to cast here"
      */
-    parseExtension = (defaultParseExtension as unknown) as NonNullable<OPTIONS['parseExtension']>
+    parseExtension = defaultParseExtension as unknown as NonNullable<OPTIONS['parseExtension']>
   } = options
 
   let filledValue: Parsed | undefined = inputValue as any

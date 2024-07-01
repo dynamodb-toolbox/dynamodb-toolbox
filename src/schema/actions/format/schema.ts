@@ -28,53 +28,53 @@ export type SchemaFormattedValue<
 > = Schema extends SCHEMA
   ? { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
-  [MATCHING_KEYS] extends [never]
-  ? never
-  : OPTIONS extends { partial: true }
-  ? {
-      // Keep only non-hidden attributes
-      [KEY in O.SelectKeys<
-        // Pick only filtered keys
-        O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
-        { hidden: false }
-      >]?: AttrFormattedValue<
-        SCHEMA['attributes'][KEY],
-        {
-          partial: OPTIONS['partial']
-          attributes: OPTIONS extends { attributes: string }
-            ? KEY extends OPTIONS['attributes']
-              ? undefined
-              : OPTIONS['attributes'] extends `${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-              ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<SCHEMA['attributes'][KEY]>>
-              : never
-            : undefined
+    [MATCHING_KEYS] extends [never]
+    ? never
+    : OPTIONS extends { partial: true }
+      ? {
+          // Keep only non-hidden attributes
+          [KEY in O.SelectKeys<
+            // Pick only filtered keys
+            O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
+            { hidden: false }
+          >]?: AttrFormattedValue<
+            SCHEMA['attributes'][KEY],
+            {
+              partial: OPTIONS['partial']
+              attributes: OPTIONS extends { attributes: string }
+                ? KEY extends OPTIONS['attributes']
+                  ? undefined
+                  : OPTIONS['attributes'] extends `${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+                    ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<SCHEMA['attributes'][KEY]>>
+                    : never
+                : undefined
+            }
+          >
         }
-      >
-    }
-  : OptionalizeUndefinableProperties<
-      {
-        // Keep only non-hidden attributes
-        [KEY in O.SelectKeys<
-          // Pick only filtered keys
-          O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
-          { hidden: false }
-        >]: AttrFormattedValue<
-          SCHEMA['attributes'][KEY],
+      : OptionalizeUndefinableProperties<
           {
-            partial: OPTIONS['partial']
-            attributes: OPTIONS extends { attributes: string }
-              ? KEY extends OPTIONS['attributes']
-                ? undefined
-                : OPTIONS['attributes'] extends `${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<SCHEMA['attributes'][KEY]>>
-                : never
-              : undefined
-          }
+            // Keep only non-hidden attributes
+            [KEY in O.SelectKeys<
+              // Pick only filtered keys
+              O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
+              { hidden: false }
+            >]: AttrFormattedValue<
+              SCHEMA['attributes'][KEY],
+              {
+                partial: OPTIONS['partial']
+                attributes: OPTIONS extends { attributes: string }
+                  ? KEY extends OPTIONS['attributes']
+                    ? undefined
+                    : OPTIONS['attributes'] extends `${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+                      ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<SCHEMA['attributes'][KEY]>>
+                      : never
+                  : undefined
+              }
+            >
+          },
+          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+          O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
         >
-      },
-      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-      O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
-    >
 
 export const formatSchemaRawValue = <SCHEMA extends Schema, OPTIONS extends FormatOptions<SCHEMA>>(
   schema: SCHEMA,

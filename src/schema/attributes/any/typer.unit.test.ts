@@ -9,12 +9,12 @@ describe('anyAttribute', () => {
   test('returns default any', () => {
     const anyInstance = any()
 
-    const assertType: A.Equals<typeof anyInstance[$type], 'any'> = 1
+    const assertType: A.Equals<(typeof anyInstance)[$type], 'any'> = 1
     assertType
     expect(anyInstance[$type]).toBe('any')
 
     const assertState: A.Equals<
-      typeof anyInstance[$state],
+      (typeof anyInstance)[$state],
       {
         required: AtLeastOnce
         hidden: false
@@ -50,13 +50,13 @@ describe('anyAttribute', () => {
     const anyNever = any({ required: 'never' })
 
     const assertAtLeastOnce: A.Contains<
-      typeof anyAtLeastOnce[$state],
+      (typeof anyAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof anyAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof anyAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof anyNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof anyNever)[$state], { required: Never }> = 1
     assertNever
 
     expect(anyAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -71,15 +71,15 @@ describe('anyAttribute', () => {
     const anyOpt = any().optional()
 
     const assertAtLeastOnce: A.Contains<
-      typeof anyAtLeastOnce[$state],
+      (typeof anyAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof anyAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof anyAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof anyNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof anyNever)[$state], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<typeof anyOpt[$state], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof anyOpt)[$state], { required: Never }> = 1
     assertOpt
 
     expect(anyAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -91,7 +91,7 @@ describe('anyAttribute', () => {
   test('returns hidden any (option)', () => {
     const anyInstance = any({ hidden: true })
 
-    const assertAny: A.Contains<typeof anyInstance[$state], { hidden: true }> = 1
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { hidden: true }> = 1
     assertAny
 
     expect(anyInstance[$state].hidden).toBe(true)
@@ -100,7 +100,7 @@ describe('anyAttribute', () => {
   test('returns hidden any (method)', () => {
     const anyInstance = any().hidden()
 
-    const assertAny: A.Contains<typeof anyInstance[$state], { hidden: true }> = 1
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { hidden: true }> = 1
     assertAny
 
     expect(anyInstance[$state].hidden).toBe(true)
@@ -110,7 +110,7 @@ describe('anyAttribute', () => {
     const anyInstance = any({ key: true })
 
     const assertAny: A.Contains<
-      typeof anyInstance[$state],
+      (typeof anyInstance)[$state],
       { key: true; required: AtLeastOnce }
     > = 1
     assertAny
@@ -122,7 +122,7 @@ describe('anyAttribute', () => {
   test('returns key any (method)', () => {
     const anyInstance = any().key()
 
-    const assertAny: A.Contains<typeof anyInstance[$state], { key: true; required: Always }> = 1
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { key: true; required: Always }> = 1
     assertAny
 
     expect(anyInstance[$state].key).toBe(true)
@@ -132,7 +132,7 @@ describe('anyAttribute', () => {
   test('returns savedAs any (option)', () => {
     const anyInstance = any({ savedAs: 'foo' })
 
-    const assertAny: A.Contains<typeof anyInstance[$state], { savedAs: 'foo' }> = 1
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { savedAs: 'foo' }> = 1
     assertAny
 
     expect(anyInstance[$state].savedAs).toBe('foo')
@@ -141,7 +141,7 @@ describe('anyAttribute', () => {
   test('returns savedAs any (method)', () => {
     const anyInstance = any().savedAs('foo')
 
-    const assertAny: A.Contains<typeof anyInstance[$state], { savedAs: 'foo' }> = 1
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { savedAs: 'foo' }> = 1
     assertAny
 
     expect(anyInstance[$state].savedAs).toBe('foo')
@@ -150,7 +150,7 @@ describe('anyAttribute', () => {
   test('returns castAs any (method)', () => {
     const anyInstance = any().castAs<'foo' | 'bar'>()
 
-    const assertAny: A.Contains<typeof anyInstance[$state], { castAs: 'foo' | 'bar' }> = 1
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { castAs: 'foo' | 'bar' }> = 1
     assertAny
 
     // Keeps cast type at type level only
@@ -165,7 +165,7 @@ describe('anyAttribute', () => {
     const strC = any({ defaults: { key: undefined, put: undefined, update: sayHello } })
 
     const assertAnyA: A.Contains<
-      typeof strA[$state],
+      (typeof strA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAnyA
@@ -173,7 +173,7 @@ describe('anyAttribute', () => {
     expect(strA[$state].defaults).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
 
     const assertAnyB: A.Contains<
-      typeof strB[$state],
+      (typeof strB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAnyB
@@ -181,7 +181,7 @@ describe('anyAttribute', () => {
     expect(strB[$state].defaults).toStrictEqual({ key: undefined, put: 'world', update: undefined })
 
     const assertAnyC: A.Contains<
-      typeof strC[$state],
+      (typeof strC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertAnyC
@@ -200,7 +200,7 @@ describe('anyAttribute', () => {
     const strC = any().updateDefault(sayHello)
 
     const assertAnyA: A.Contains<
-      typeof strA[$state],
+      (typeof strA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAnyA
@@ -208,7 +208,7 @@ describe('anyAttribute', () => {
     expect(strA[$state].defaults).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
 
     const assertAnyB: A.Contains<
-      typeof strB[$state],
+      (typeof strB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAnyB
@@ -216,7 +216,7 @@ describe('anyAttribute', () => {
     expect(strB[$state].defaults).toStrictEqual({ key: undefined, put: 'world', update: undefined })
 
     const assertAnyC: A.Contains<
-      typeof strC[$state],
+      (typeof strC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertAnyC
@@ -232,7 +232,7 @@ describe('anyAttribute', () => {
     const str = any().default('hello')
 
     const assertAny: A.Contains<
-      typeof str[$state],
+      (typeof str)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAny
@@ -244,7 +244,7 @@ describe('anyAttribute', () => {
     const str = any().key().default('hello')
 
     const assertAny: A.Contains<
-      typeof str[$state],
+      (typeof str)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAny
@@ -262,7 +262,7 @@ describe('anyAttribute', () => {
     const strC = any({ links: { key: undefined, put: undefined, update: sayTrue } })
 
     const assertAnyA: A.Contains<
-      typeof strA[$state],
+      (typeof strA)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAnyA
@@ -270,7 +270,7 @@ describe('anyAttribute', () => {
     expect(strA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
 
     const assertAnyB: A.Contains<
-      typeof strB[$state],
+      (typeof strB)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAnyB
@@ -278,7 +278,7 @@ describe('anyAttribute', () => {
     expect(strB[$state].links).toStrictEqual({ key: undefined, put: say42, update: undefined })
 
     const assertAnyC: A.Contains<
-      typeof strC[$state],
+      (typeof strC)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertAnyC
@@ -296,7 +296,7 @@ describe('anyAttribute', () => {
     const strC = any().updateLink(sayTrue)
 
     const assertAnyA: A.Contains<
-      typeof strA[$state],
+      (typeof strA)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAnyA
@@ -304,7 +304,7 @@ describe('anyAttribute', () => {
     expect(strA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
 
     const assertAnyB: A.Contains<
-      typeof strB[$state],
+      (typeof strB)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAnyB
@@ -312,7 +312,7 @@ describe('anyAttribute', () => {
     expect(strB[$state].links).toStrictEqual({ key: undefined, put: say42, update: undefined })
 
     const assertAnyC: A.Contains<
-      typeof strC[$state],
+      (typeof strC)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertAnyC
@@ -325,7 +325,7 @@ describe('anyAttribute', () => {
     const str = any().link(sayHello)
 
     const assertAny: A.Contains<
-      typeof str[$state],
+      (typeof str)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAny
@@ -338,7 +338,7 @@ describe('anyAttribute', () => {
     const str = any().key().link(sayHello)
 
     const assertAny: A.Contains<
-      typeof str[$state],
+      (typeof str)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAny

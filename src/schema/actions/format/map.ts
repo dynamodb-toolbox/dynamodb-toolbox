@@ -27,39 +27,18 @@ export type MapAttrFormattedValue<
 > = MapAttribute extends ATTRIBUTE
   ? { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
-  [MATCHING_KEYS] extends [never]
-  ? never
-  :
-      | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-      | (OPTIONS extends { partial: true }
-          ? {
-              // Keep only non-hidden attributes
-              [KEY in O.SelectKeys<
-                // Pick only filtered keys
-                O.Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
-                { hidden: false }
-              >]?: AttrFormattedValue<
-                ATTRIBUTE['attributes'][KEY],
-                {
-                  partial: OPTIONS['partial']
-                  attributes: OPTIONS extends { attributes: string }
-                    ? `.${KEY}` extends OPTIONS['attributes']
-                      ? undefined
-                      : OPTIONS['attributes'] extends `.${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                      ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['attributes'][KEY]>>
-                      : never
-                    : undefined
-                }
-              >
-            }
-          : OptionalizeUndefinableProperties<
-              {
+    [MATCHING_KEYS] extends [never]
+    ? never
+    :
+        | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+        | (OPTIONS extends { partial: true }
+            ? {
                 // Keep only non-hidden attributes
                 [KEY in O.SelectKeys<
                   // Pick only filtered keys
                   O.Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
                   { hidden: false }
-                >]: AttrFormattedValue<
+                >]?: AttrFormattedValue<
                   ATTRIBUTE['attributes'][KEY],
                   {
                     partial: OPTIONS['partial']
@@ -67,15 +46,42 @@ export type MapAttrFormattedValue<
                       ? `.${KEY}` extends OPTIONS['attributes']
                         ? undefined
                         : OPTIONS['attributes'] extends `.${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                        ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['attributes'][KEY]>>
-                        : never
+                          ? Extract<
+                              CHILDREN_FILTERED_ATTRIBUTES,
+                              Paths<ATTRIBUTE['attributes'][KEY]>
+                            >
+                          : never
                       : undefined
                   }
                 >
-              },
-              // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-              O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
-            >)
+              }
+            : OptionalizeUndefinableProperties<
+                {
+                  // Keep only non-hidden attributes
+                  [KEY in O.SelectKeys<
+                    // Pick only filtered keys
+                    O.Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
+                    { hidden: false }
+                  >]: AttrFormattedValue<
+                    ATTRIBUTE['attributes'][KEY],
+                    {
+                      partial: OPTIONS['partial']
+                      attributes: OPTIONS extends { attributes: string }
+                        ? `.${KEY}` extends OPTIONS['attributes']
+                          ? undefined
+                          : OPTIONS['attributes'] extends `.${KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+                            ? Extract<
+                                CHILDREN_FILTERED_ATTRIBUTES,
+                                Paths<ATTRIBUTE['attributes'][KEY]>
+                              >
+                            : never
+                        : undefined
+                    }
+                  >
+                },
+                // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+                O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+              >)
 
 export const formatMapAttrRawValue = <
   ATTRIBUTE extends MapAttribute,

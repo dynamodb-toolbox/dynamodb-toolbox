@@ -36,11 +36,10 @@ export const parseUpdateItemOptions = <ENTITY extends EntityV2>(
   }
 
   if (condition !== undefined) {
-    const {
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = entity.build(EntityConditionParser).parse(condition).toCommandOptions()
+    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
+      .build(EntityConditionParser)
+      .parse(condition)
+      .toCommandOptions()
 
     commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
     commandOptions.ExpressionAttributeValues = ExpressionAttributeValues

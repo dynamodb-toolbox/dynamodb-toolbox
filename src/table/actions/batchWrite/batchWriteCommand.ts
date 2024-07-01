@@ -20,14 +20,14 @@ type RequestEntities<
     ? RequestEntities<U.ListOf<REQUESTS[number]>>
     : never
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-  ? REQUESTS_HEAD extends BatchWriteRequestProps
-    ? REQUESTS_TAIL extends BatchWriteRequestProps[]
-      ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']
-        ? RequestEntities<REQUESTS_TAIL, RESULTS>
-        : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD[$entity]]>
+    ? REQUESTS_HEAD extends BatchWriteRequestProps
+      ? REQUESTS_TAIL extends BatchWriteRequestProps[]
+        ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']
+          ? RequestEntities<REQUESTS_TAIL, RESULTS>
+          : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD[$entity]]>
+        : never
       : never
-    : never
-  : RESULTS
+    : RESULTS
 
 export class BatchWriteCommand<
   TABLE extends TableV2 = TableV2,
@@ -38,7 +38,7 @@ export class BatchWriteCommand<
 
   [$requests]?: REQUESTS
 
-  constructor(table: TABLE, entities = ([] as unknown) as ENTITIES, requests?: REQUESTS) {
+  constructor(table: TABLE, entities = [] as unknown as ENTITIES, requests?: REQUESTS) {
     super(table, entities)
     this[$requests] = requests
   }

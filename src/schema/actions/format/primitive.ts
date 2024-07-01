@@ -10,11 +10,10 @@ import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimit
 
 import type { MustBeDefined } from './attribute.js'
 
-export type PrimitiveAttrFormattedValue<
-  ATTRIBUTE extends PrimitiveAttribute
-> = PrimitiveAttribute extends ATTRIBUTE
-  ? ResolvedPrimitiveAttribute
-  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvePrimitiveAttribute<ATTRIBUTE>
+export type PrimitiveAttrFormattedValue<ATTRIBUTE extends PrimitiveAttribute> =
+  PrimitiveAttribute extends ATTRIBUTE
+    ? ResolvedPrimitiveAttribute
+    : If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvePrimitiveAttribute<ATTRIBUTE>
 
 export const formatPrimitiveAttrRawValue = <ATTRIBUTE extends PrimitiveAttribute>(
   attribute: ATTRIBUTE,

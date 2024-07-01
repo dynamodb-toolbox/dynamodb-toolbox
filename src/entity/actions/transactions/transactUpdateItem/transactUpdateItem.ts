@@ -22,7 +22,8 @@ export class UpdateItemTransaction<
     OPTIONS extends UpdateItemTransactionOptions<ENTITY> = UpdateItemTransactionOptions<ENTITY>
   >
   extends EntityAction<ENTITY>
-  implements WriteItemTransaction<ENTITY, 'Update'> {
+  implements WriteItemTransaction<ENTITY, 'Update'>
+{
   static actionName = 'transactUpdate' as const;
 
   [$item]?: UpdateItemInput<ENTITY>;

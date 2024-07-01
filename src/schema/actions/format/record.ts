@@ -26,29 +26,29 @@ export type RecordAttrFormattedValue<
 > = RecordAttribute extends ATTRIBUTE
   ? { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
-  [MATCHING_KEYS] extends [never]
-  ? never
-  :
-      | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-      | {
-          [KEY in MATCHING_KEYS]?: AttrFormattedValue<
-            ATTRIBUTE['elements'],
-            {
-              partial: OPTIONS['partial']
-              attributes: OPTIONS extends { attributes: string }
-                ? MATCHING_KEYS extends infer FILTERED_KEY
-                  ? FILTERED_KEY extends string
-                    ? `.${FILTERED_KEY}` extends OPTIONS['attributes']
-                      ? undefined
-                      : OPTIONS['attributes'] extends `.${FILTERED_KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                      ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['elements']>>
-                      : undefined
+    [MATCHING_KEYS] extends [never]
+    ? never
+    :
+        | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+        | {
+            [KEY in MATCHING_KEYS]?: AttrFormattedValue<
+              ATTRIBUTE['elements'],
+              {
+                partial: OPTIONS['partial']
+                attributes: OPTIONS extends { attributes: string }
+                  ? MATCHING_KEYS extends infer FILTERED_KEY
+                    ? FILTERED_KEY extends string
+                      ? `.${FILTERED_KEY}` extends OPTIONS['attributes']
+                        ? undefined
+                        : OPTIONS['attributes'] extends `.${FILTERED_KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
+                          ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['elements']>>
+                          : undefined
+                      : never
                     : never
-                  : never
-                : undefined
-            }
-          >
-        }
+                  : undefined
+              }
+            >
+          }
 
 export const formatRecordAttrRawValue = <
   ATTRIBUTE extends RecordAttribute,

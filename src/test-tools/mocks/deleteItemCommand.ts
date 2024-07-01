@@ -23,7 +23,8 @@ import type { MockedEntity } from './entity.js'
 export class DeleteItemCommandMock<
   ENTITY extends EntityV2 = EntityV2,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
-> implements DeleteItemCommand<ENTITY, OPTIONS> {
+> implements DeleteItemCommand<ENTITY, OPTIONS>
+{
   static actionName = 'delete' as const
   static [$actionName] = 'delete' as const;
 
@@ -75,7 +76,7 @@ export class DeleteItemCommandMock<
         })
       }
 
-      return (implementation(this[$key], this[$options]) as unknown) as DeleteItemResponse<
+      return implementation(this[$key], this[$options]) as unknown as DeleteItemResponse<
         ENTITY,
         OPTIONS
       >

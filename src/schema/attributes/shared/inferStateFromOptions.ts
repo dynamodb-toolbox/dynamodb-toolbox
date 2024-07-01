@@ -27,8 +27,7 @@ export type InferStateFromOptions<
         keyof OPTIONS_CONSTRAINTS,
         keyof AttributeOptions
       >]: InferStateValueFromOption<OPTIONS_CONSTRAINTS, DEFAULT_OPTIONS, OPTIONS, KEY>
-    } &
-      ADDITIONAL_OPTIONS,
+    } & ADDITIONAL_OPTIONS,
     never,
     never
   >

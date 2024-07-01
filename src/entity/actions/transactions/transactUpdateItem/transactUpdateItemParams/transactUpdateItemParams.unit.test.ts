@@ -203,17 +203,14 @@ describe('update transaction', () => {
   })
 
   test('allows overriding default field values', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_string: 'test string'
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_string: 'test string'
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_string' })
@@ -729,18 +726,15 @@ describe('update transaction', () => {
   })
 
   test('performs number and set add updates', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_number_default: $add(10),
-        test_number_set: $add(new Set([1, 2, 3]))
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_number_default: $add(10),
+          test_number_set: $add(new Set([1, 2, 3]))
+        })
+        .params()
 
     expect(UpdateExpression).toContain('ADD #a_1 :a_1, #a_2 :a_2')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -782,19 +776,16 @@ describe('update transaction', () => {
   })
 
   test('creates sets', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_string_set: new Set(['1', '2', '3']),
-        test_number_set: new Set([1, 2, 3]),
-        test_binary_set: new Set([Buffer.from('1'), Buffer.from('2'), Buffer.from('3')])
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_string_set: new Set(['1', '2', '3']),
+          test_number_set: new Set([1, 2, 3]),
+          test_binary_set: new Set([Buffer.from('1'), Buffer.from('2'), Buffer.from('3')])
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -810,18 +801,15 @@ describe('update transaction', () => {
   })
 
   test('performs a delete update on set', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_string_set: $delete(new Set(['1', '2', '3'])),
-        test_number_set: $delete(new Set([1, 2, 3]))
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_string_set: $delete(new Set(['1', '2', '3'])),
+          test_number_set: $delete(new Set([1, 2, 3]))
+        })
+        .params()
 
     expect(UpdateExpression).toContain('DELETE #d_1 :d_1, #d_2 :d_2')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -850,17 +838,14 @@ describe('update transaction', () => {
   })
 
   test('overrides existing list', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: $set(['test1', 'test2'])
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_list: $set(['test1', 'test2'])
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_list' })
@@ -883,18 +868,15 @@ describe('update transaction', () => {
   })
 
   test('updates specific items in a list', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: { 2: 'Test2' },
-        test_list_nested: { 1: { value: 'foo' } }
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_list: { 2: 'Test2' },
+          test_list_nested: { 1: { value: 'foo' } }
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1[2] = :s_1, #s_2[1].#s_3 = :s_2')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -1053,17 +1035,14 @@ describe('update transaction', () => {
   })
 
   test('updates elements within a list', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: [undefined, $remove(), 'test']
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_list: [undefined, $remove(), 'test']
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1[2] = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_list' })
@@ -1230,17 +1209,14 @@ describe('update transaction', () => {
   })
 
   test('updates nested data in a map', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: { optional: 1 }
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_map: { optional: 1 }
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1.#s_2 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -1377,17 +1353,14 @@ describe('update transaction', () => {
   })
 
   test('override whole map if set is used', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: $set({ optional: 1 })
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_map: $set({ optional: 1 })
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_map' })
@@ -1429,17 +1402,14 @@ describe('update transaction', () => {
   })
 
   test('updates nested data in a record', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_record: { foo: 1 }
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_record: { foo: 1 }
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1.#s_2 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -1576,17 +1546,14 @@ describe('update transaction', () => {
   })
 
   test('override whole record if set is used', () => {
-    const {
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_record: $set({ foo: 1 })
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_record: $set({ foo: 1 })
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_record' })
@@ -1704,14 +1671,11 @@ describe('update transaction', () => {
   })
 
   test('sets conditions', () => {
-    const {
-      ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      ConditionExpression
-    } = TestEntity.build(UpdateItemTransaction)
-      .item({ email: 'x', sort: 'y' })
-      .options({ condition: { attr: 'email', gt: 'test' } })
-      .params()
+    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
+      TestEntity.build(UpdateItemTransaction)
+        .item({ email: 'x', sort: 'y' })
+        .options({ condition: { attr: 'email', gt: 'test' } })
+        .params()
 
     expect(ConditionExpression).toBe('#c_1 > :c_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#c_1': 'pk' })
@@ -1796,19 +1760,15 @@ describe('update transaction', () => {
   })
 
   test('transformed key/attribute (partial - 2)', () => {
-    const {
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity5.build(UpdateItemTransaction)
-      .item({
-        email: 'foo@bar.mail',
-        sort: 'y',
-        transformedSet: $delete(new Set(['set'])),
-        transformedList: $append(['list'])
-      })
-      .params()
+    const { Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity5.build(UpdateItemTransaction)
+        .item({
+          email: 'foo@bar.mail',
+          sort: 'y',
+          transformedSet: $delete(new Set(['set'])),
+          transformedList: $append(['list'])
+        })
+        .params()
 
     expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
     expect(UpdateExpression).toContain('SET #s_1 = list_append(#s_1, :s_1)')
@@ -1824,21 +1784,17 @@ describe('update transaction', () => {
   })
 
   test('transformed key/attribute (complete)', () => {
-    const {
-      Key,
-      UpdateExpression,
-      ExpressionAttributeNames,
-      ExpressionAttributeValues
-    } = TestEntity5.build(UpdateItemTransaction)
-      .item({
-        email: 'foo@bar.mail',
-        sort: 'y',
-        transformedSet: new Set(['set']),
-        transformedList: $set(['list']),
-        transformedMap: $set({ str: 'map' }),
-        transformedRecord: $set({ recordKey: 'recordValue' })
-      })
-      .params()
+    const { Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity5.build(UpdateItemTransaction)
+        .item({
+          email: 'foo@bar.mail',
+          sort: 'y',
+          transformedSet: new Set(['set']),
+          transformedList: $set(['list']),
+          transformedMap: $set({ str: 'map' }),
+          transformedRecord: $set({ recordKey: 'recordValue' })
+        })
+        .params()
 
     expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
     expect(UpdateExpression).toContain('SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3, #s_4 = :s_4')

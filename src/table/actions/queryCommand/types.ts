@@ -50,18 +50,19 @@ type SecondaryIndexQuery<
         range?: QueryRange<INDEX_SCHEMA['sortKey']['type']>
       }
     : INDEX_SCHEMA extends LocalIndex
-    ? {
-        partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
-        range?: QueryRange<INDEX_SCHEMA['sortKey']['type']>
-      }
-    : never)
+      ? {
+          partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
+          range?: QueryRange<INDEX_SCHEMA['sortKey']['type']>
+        }
+      : never)
 >
 
-type SecondaryIndexQueries<TABLE extends TableV2> = IndexNames<TABLE> extends infer INDEX_NAME
-  ? INDEX_NAME extends IndexNames<TABLE>
-    ? SecondaryIndexQuery<TABLE, INDEX_NAME>
+type SecondaryIndexQueries<TABLE extends TableV2> =
+  IndexNames<TABLE> extends infer INDEX_NAME
+    ? INDEX_NAME extends IndexNames<TABLE>
+      ? SecondaryIndexQuery<TABLE, INDEX_NAME>
+      : never
     : never
-  : never
 
 type PrimaryIndexQuery<TABLE extends TableV2> = A.Compute<
   {
@@ -72,11 +73,11 @@ type PrimaryIndexQuery<TABLE extends TableV2> = A.Compute<
         range?: never
       }
     : NonNullable<TABLE['sortKey']> extends Key
-    ? {
-        partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
-        range?: QueryRange<NonNullable<TABLE['sortKey']>['type']>
-      }
-    : never)
+      ? {
+          partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
+          range?: QueryRange<NonNullable<TABLE['sortKey']>['type']>
+        }
+      : never)
 >
 
 export type Query<TABLE extends TableV2> = PrimaryIndexQuery<TABLE> | SecondaryIndexQueries<TABLE>

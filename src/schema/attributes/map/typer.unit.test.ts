@@ -12,12 +12,12 @@ describe('map', () => {
   test('returns default map', () => {
     const mapped = map({ str })
 
-    const assertType: A.Equals<typeof mapped[$type], 'map'> = 1
+    const assertType: A.Equals<(typeof mapped)[$type], 'map'> = 1
     assertType
     expect(mapped[$type]).toBe('map')
 
     const assertState: A.Equals<
-      typeof mapped[$state],
+      (typeof mapped)[$state],
       {
         required: AtLeastOnce
         hidden: false
@@ -45,7 +45,7 @@ describe('map', () => {
       links: { key: undefined, put: undefined, update: undefined }
     })
 
-    const assertAttr: A.Equals<typeof mapped[$attributes], { str: typeof str }> = 1
+    const assertAttr: A.Equals<(typeof mapped)[$attributes], { str: typeof str }> = 1
     assertAttr
     expect(mapped[$attributes]).toStrictEqual({ str })
 
@@ -63,16 +63,16 @@ describe('map', () => {
     const mappedNever = map({ str }, { required: 'never' })
 
     const assertMapAttributeAtLeastOnce: A.Contains<
-      typeof mappedAtLeastOnce[$state],
+      (typeof mappedAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertMapAttributeAtLeastOnce
     const assertMapAttributeAlways: A.Contains<
-      typeof mappedAlways[$state],
+      (typeof mappedAlways)[$state],
       { required: Always }
     > = 1
     assertMapAttributeAlways
-    const assertMapAttributeNever: A.Contains<typeof mappedNever[$state], { required: Never }> = 1
+    const assertMapAttributeNever: A.Contains<(typeof mappedNever)[$state], { required: Never }> = 1
     assertMapAttributeNever
 
     expect(mappedAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -87,18 +87,18 @@ describe('map', () => {
     const mappedOpt = map({ str }).optional()
 
     const assertMapAttributeAtLeastOnce: A.Contains<
-      typeof mappedAtLeastOnce[$state],
+      (typeof mappedAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertMapAttributeAtLeastOnce
     const assertMapAttributeAlways: A.Contains<
-      typeof mappedAlways[$state],
+      (typeof mappedAlways)[$state],
       { required: Always }
     > = 1
     assertMapAttributeAlways
-    const assertMapAttributeNever: A.Contains<typeof mappedNever[$state], { required: Never }> = 1
+    const assertMapAttributeNever: A.Contains<(typeof mappedNever)[$state], { required: Never }> = 1
     assertMapAttributeNever
-    const assertMapAttributeOpt: A.Contains<typeof mappedOpt[$state], { required: Never }> = 1
+    const assertMapAttributeOpt: A.Contains<(typeof mappedOpt)[$state], { required: Never }> = 1
     assertMapAttributeOpt
 
     expect(mappedAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -110,7 +110,7 @@ describe('map', () => {
   test('returns hidden map (option)', () => {
     const mapped = map({ str }, { hidden: true })
 
-    const assertMapAttribute: A.Contains<typeof mapped[$state], { hidden: true }> = 1
+    const assertMapAttribute: A.Contains<(typeof mapped)[$state], { hidden: true }> = 1
     assertMapAttribute
 
     expect(mapped[$state].hidden).toBe(true)
@@ -119,7 +119,7 @@ describe('map', () => {
   test('returns hidden map (method)', () => {
     const mapped = map({ str }).hidden()
 
-    const assertMapAttribute: A.Contains<typeof mapped[$state], { hidden: true }> = 1
+    const assertMapAttribute: A.Contains<(typeof mapped)[$state], { hidden: true }> = 1
     assertMapAttribute
 
     expect(mapped[$state].hidden).toBe(true)
@@ -129,7 +129,7 @@ describe('map', () => {
     const mapped = map({ str }, { key: true })
 
     const assertMapAttribute: A.Contains<
-      typeof mapped[$state],
+      (typeof mapped)[$state],
       { key: true; required: AtLeastOnce }
     > = 1
     assertMapAttribute
@@ -141,7 +141,8 @@ describe('map', () => {
   test('returns key map (method)', () => {
     const mapped = map({ str }).key()
 
-    const assertMapAttribute: A.Contains<typeof mapped[$state], { key: true; required: Always }> = 1
+    const assertMapAttribute: A.Contains<(typeof mapped)[$state], { key: true; required: Always }> =
+      1
     assertMapAttribute
 
     expect(mapped[$state].key).toBe(true)
@@ -151,7 +152,7 @@ describe('map', () => {
   test('returns savedAs map (option)', () => {
     const mapped = map({ str }, { savedAs: 'foo' })
 
-    const assertMapAttribute: A.Contains<typeof mapped[$state], { savedAs: 'foo' }> = 1
+    const assertMapAttribute: A.Contains<(typeof mapped)[$state], { savedAs: 'foo' }> = 1
     assertMapAttribute
 
     expect(mapped[$state].savedAs).toBe('foo')
@@ -160,7 +161,7 @@ describe('map', () => {
   test('returns savedAs map (method)', () => {
     const mapped = map({ str }).savedAs('foo')
 
-    const assertMapAttribute: A.Contains<typeof mapped[$state], { savedAs: 'foo' }> = 1
+    const assertMapAttribute: A.Contains<(typeof mapped)[$state], { savedAs: 'foo' }> = 1
     assertMapAttribute
 
     expect(mapped[$state].savedAs).toBe('foo')
@@ -174,7 +175,7 @@ describe('map', () => {
     )
 
     const assertMapAttribute: A.Contains<
-      typeof mapA[$state],
+      (typeof mapA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertMapAttribute
@@ -192,7 +193,7 @@ describe('map', () => {
     )
 
     const assertMapB: A.Contains<
-      typeof mapB[$state],
+      (typeof mapB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertMapB
@@ -209,7 +210,7 @@ describe('map', () => {
     )
 
     const assertMapC: A.Contains<
-      typeof mapC[$state],
+      (typeof mapC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertMapC
@@ -225,7 +226,7 @@ describe('map', () => {
     const mapA = map({ str }).key().keyDefault({ str: 'foo' })
 
     const assertMapAttribute: A.Contains<
-      typeof mapA[$state],
+      (typeof mapA)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertMapAttribute
@@ -239,7 +240,7 @@ describe('map', () => {
     const mapB = map({ str }).putDefault({ str: 'bar' })
 
     const assertMapB: A.Contains<
-      typeof mapB[$state],
+      (typeof mapB)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertMapB
@@ -253,7 +254,7 @@ describe('map', () => {
     const mapC = map({ str }).updateDefault({ str: 'baz' })
 
     const assertMapC: A.Contains<
-      typeof mapC[$state],
+      (typeof mapC)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertMapC
@@ -269,7 +270,7 @@ describe('map', () => {
     const mapAttr = map({ str }).default({ str: 'foo' })
 
     const assertMap: A.Contains<
-      typeof mapAttr[$state],
+      (typeof mapAttr)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertMap
@@ -285,7 +286,7 @@ describe('map', () => {
     const mapAttr = map({ str }).key().default({ str: 'bar' })
 
     const assertMap: A.Contains<
-      typeof mapAttr[$state],
+      (typeof mapAttr)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertMap

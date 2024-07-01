@@ -101,16 +101,16 @@ describe('anyOf', () => {
   test('returns default anyOf', () => {
     const anyOfAttr = anyOf(str)
 
-    const assertType: A.Equals<typeof anyOfAttr[$type], 'anyOf'> = 1
+    const assertType: A.Equals<(typeof anyOfAttr)[$type], 'anyOf'> = 1
     assertType
     expect(anyOfAttr[$type]).toBe('anyOf')
 
-    const assertElements: A.Equals<typeof anyOfAttr[$elements], [typeof str]> = 1
+    const assertElements: A.Equals<(typeof anyOfAttr)[$elements], [typeof str]> = 1
     assertElements
     expect(anyOfAttr[$elements]).toStrictEqual([str])
 
     const assertState: A.Equals<
-      typeof anyOfAttr[$state],
+      (typeof anyOfAttr)[$state],
       {
         required: AtLeastOnce
         hidden: false
@@ -154,15 +154,15 @@ describe('anyOf', () => {
     const anyOfOpt = anyOf(str).optional()
 
     const assertAtLeastOnce: A.Contains<
-      typeof anyOfAtLeastOnce[$state],
+      (typeof anyOfAtLeastOnce)[$state],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<typeof anyOfAlways[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof anyOfAlways)[$state], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<typeof anyOfNever[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof anyOfNever)[$state], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<typeof anyOfOpt[$state], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof anyOfOpt)[$state], { required: Never }> = 1
     assertOpt
 
     expect(anyOfAtLeastOnce[$state].required).toBe('atLeastOnce')
@@ -174,7 +174,7 @@ describe('anyOf', () => {
   test('returns hidden anyOf (method)', () => {
     const anyOfAttr = anyOf(str).hidden()
 
-    const assertAnyOf: A.Contains<typeof anyOfAttr[$state], { hidden: true }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { hidden: true }> = 1
     assertAnyOf
 
     expect(anyOfAttr[$state].hidden).toBe(true)
@@ -184,7 +184,7 @@ describe('anyOf', () => {
   test('returns key anyOf (method)', () => {
     const anyOfAttr = anyOf(str).key()
 
-    const assertAnyOf: A.Contains<typeof anyOfAttr[$state], { key: true; required: Always }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { key: true; required: Always }> = 1
     assertAnyOf
 
     expect(anyOfAttr[$state].key).toBe(true)
@@ -195,7 +195,7 @@ describe('anyOf', () => {
   test('returns savedAs anyOf (method)', () => {
     const anyOfAttr = anyOf(str).savedAs('foo')
 
-    const assertAnyOf: A.Contains<typeof anyOfAttr[$state], { savedAs: 'foo' }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { savedAs: 'foo' }> = 1
     assertAnyOf
 
     expect(anyOfAttr[$state].savedAs).toBe('foo')
@@ -206,7 +206,7 @@ describe('anyOf', () => {
     const anyOfAttr = anyOf(str).updateDefault('bar')
 
     const assertAnyOf: A.Contains<
-      typeof anyOfAttr[$state],
+      (typeof anyOfAttr)[$state],
       { defaults: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertAnyOf
@@ -222,7 +222,7 @@ describe('anyOf', () => {
     const anyOfAttr = anyOf(str).default('foo')
 
     const assertAnyOf: A.Contains<
-      typeof anyOfAttr[$state],
+      (typeof anyOfAttr)[$state],
       { defaults: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAnyOf
@@ -238,7 +238,7 @@ describe('anyOf', () => {
     const anyOfAttr = anyOf(str).key().default('foo')
 
     const assertAnyOf: A.Contains<
-      typeof anyOfAttr[$state],
+      (typeof anyOfAttr)[$state],
       { defaults: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAnyOf
@@ -256,7 +256,7 @@ describe('anyOf', () => {
     const anyOfAttr = anyOf(str).updateLink(sayHello)
 
     const assertAnyOf: A.Contains<
-      typeof anyOfAttr[$state],
+      (typeof anyOfAttr)[$state],
       { links: { key: undefined; put: undefined; update: unknown } }
     > = 1
     assertAnyOf
@@ -273,7 +273,7 @@ describe('anyOf', () => {
     const anyOfAttr = anyOf(str).link(sayHello)
 
     const assertAnyOf: A.Contains<
-      typeof anyOfAttr[$state],
+      (typeof anyOfAttr)[$state],
       { links: { key: undefined; put: unknown; update: undefined } }
     > = 1
     assertAnyOf
@@ -290,7 +290,7 @@ describe('anyOf', () => {
     const anyOfAttr = anyOf(str).key().link(sayHello)
 
     const assertAnyOf: A.Contains<
-      typeof anyOfAttr[$state],
+      (typeof anyOfAttr)[$state],
       { links: { key: unknown; put: undefined; update: undefined } }
     > = 1
     assertAnyOf
@@ -306,7 +306,7 @@ describe('anyOf', () => {
     const nestedAnyOff = anyOf(str)
     const anyOfAttr = anyOf(nestedAnyOff)
 
-    const assertAnyOf: A.Equals<typeof anyOfAttr[$elements], [typeof nestedAnyOff]> = 1
+    const assertAnyOf: A.Equals<(typeof anyOfAttr)[$elements], [typeof nestedAnyOff]> = 1
     assertAnyOf
   })
 })

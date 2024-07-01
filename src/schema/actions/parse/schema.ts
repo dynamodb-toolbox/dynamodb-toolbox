@@ -28,8 +28,8 @@ export type SchemaParsedValue<
           : keyof SCHEMA['attributes'] & string as OPTIONS extends { transform: false }
           ? KEY
           : SCHEMA['attributes'][KEY] extends { savedAs: string }
-          ? SCHEMA['attributes'][KEY]['savedAs']
-          : KEY]: AttrParsedValue<SCHEMA['attributes'][KEY], OPTIONS>
+            ? SCHEMA['attributes'][KEY]['savedAs']
+            : KEY]: AttrParsedValue<SCHEMA['attributes'][KEY], OPTIONS>
       },
       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
       O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>

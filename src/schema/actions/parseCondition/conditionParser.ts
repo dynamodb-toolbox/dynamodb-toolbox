@@ -16,7 +16,8 @@ import { toCommandOptions } from './toCommandOptions.js'
 
 export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
   extends SchemaAction<SCHEMA>
-  implements ExpressionParser {
+  implements ExpressionParser
+{
   expressionAttributePrefix: `c${string}_`
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]

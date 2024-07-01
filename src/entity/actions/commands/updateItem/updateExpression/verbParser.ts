@@ -122,16 +122,14 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     const ExpressionAttributeNames: ParsedUpdate['ExpressionAttributeNames'] = {}
 
     this.expressionAttributeNames.forEach((expressionAttributeName, index) => {
-      ExpressionAttributeNames[
-        `#${this.expressionAttributePrefix}${index + 1}`
-      ] = expressionAttributeName
+      ExpressionAttributeNames[`#${this.expressionAttributePrefix}${index + 1}`] =
+        expressionAttributeName
     })
 
     const ExpressionAttributeValues: ParsedUpdate['ExpressionAttributeValues'] = {}
     this.expressionAttributeValues.forEach((expressionAttributeValue, index) => {
-      ExpressionAttributeValues[
-        `:${this.expressionAttributePrefix}${index + 1}`
-      ] = expressionAttributeValue
+      ExpressionAttributeValues[`:${this.expressionAttributePrefix}${index + 1}`] =
+        expressionAttributeValue
     })
 
     const UpdateExpression = this.expression

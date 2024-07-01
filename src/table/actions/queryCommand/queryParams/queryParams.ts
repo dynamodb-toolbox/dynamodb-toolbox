@@ -26,7 +26,7 @@ export const queryParams = <
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
 >(
   table: TABLE,
-  entities = ([] as unknown) as ENTITIES,
+  entities = [] as unknown as ENTITIES,
   query: QUERY,
   scanOptions: OPTIONS = {} as OPTIONS
 ): QueryCommandInput => {
