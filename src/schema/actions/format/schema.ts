@@ -77,11 +77,20 @@ export type SchemaFormattedValue<
           O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
         >
 
-export const formatSchemaRawValue = <SCHEMA extends Schema, OPTIONS extends FormatOptions<SCHEMA>>(
+type SchemaRawValueFormatter = <SCHEMA extends Schema, OPTIONS extends FormatOptions<SCHEMA>>(
+  schema: SCHEMA,
+  rawValue: unknown,
+  options?: OPTIONS
+) => SchemaFormattedValue<SCHEMA, FromFormatOptions<SCHEMA, OPTIONS>>
+
+export const formatSchemaRawValue: SchemaRawValueFormatter = <
+  SCHEMA extends Schema,
+  OPTIONS extends FormatOptions<SCHEMA>
+>(
   schema: SCHEMA,
   rawValue: unknown,
   { attributes, partial = false }: OPTIONS = {} as OPTIONS
-): SchemaFormattedValue<SCHEMA, FromFormatOptions<SCHEMA, OPTIONS>> => {
+) => {
   type Formatted = SchemaFormattedValue<SCHEMA, FromFormatOptions<SCHEMA, OPTIONS>>
 
   if (!isObject(rawValue)) {

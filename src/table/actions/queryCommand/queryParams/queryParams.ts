@@ -21,7 +21,19 @@ import type { QueryOptions } from '../options.js'
 import type { Query } from '../types.js'
 import { parseQuery } from './parseQuery.js'
 
-export const queryParams = <
+type QueryParamsGetter = <
+  TABLE extends Table,
+  ENTITIES extends Entity[],
+  QUERY extends Query<TABLE>,
+  OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
+>(
+  table: TABLE,
+  entities: ENTITIES,
+  query: QUERY,
+  scanOptions?: OPTIONS
+) => QueryCommandInput
+
+export const queryParams: QueryParamsGetter = <
   TABLE extends Table,
   ENTITIES extends Entity[],
   QUERY extends Query<TABLE>,
@@ -31,7 +43,7 @@ export const queryParams = <
   entities = [] as unknown as ENTITIES,
   query: QUERY,
   scanOptions: OPTIONS = {} as OPTIONS
-): QueryCommandInput => {
+) => {
   const { index } = query
   const {
     capacity,

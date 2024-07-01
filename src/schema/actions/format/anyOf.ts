@@ -48,14 +48,23 @@ type AnyOfAttrFormattedValueRec<
     ? unknown
     : RESULTS
 
-export const formatAnyOfAttrRawValue = <
+type AnyOfAttrRawValueFormatter = <
+  ATTRIBUTE extends AnyOfAttribute,
+  OPTIONS extends FormatOptions<ATTRIBUTE>
+>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown,
+  options?: OPTIONS
+) => AnyOfAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
+export const formatAnyOfAttrRawValue: AnyOfAttrRawValueFormatter = <
   ATTRIBUTE extends AnyOfAttribute,
   OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): AnyOfAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+) => {
   type Formatted = AnyOfAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
 
   let formattedValue: unknown = undefined

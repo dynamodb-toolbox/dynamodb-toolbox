@@ -102,11 +102,11 @@ type BatchGetRequestResponses<
       : never
     : ITEMS
 
-export const execute = async <
+type BatchGetCommandExecutor = <
   COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
 >(
   ..._commands: COMMANDS
-): Promise<
+) => Promise<
   COMMANDS extends BatchGetCommand[]
     ? ExecuteBatchGetResponse<COMMANDS>
     : COMMANDS extends [unknown, ...infer TAIL_REQUESTS]
@@ -114,7 +114,13 @@ export const execute = async <
         ? ExecuteBatchGetResponse<TAIL_REQUESTS>
         : never
       : never
-> => {
+>
+
+export const execute: BatchGetCommandExecutor = async <
+  COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
+>(
+  ..._commands: COMMANDS
+) => {
   type RESPONSE = COMMANDS extends BatchGetCommand[]
     ? ExecuteBatchGetResponse<COMMANDS>
     : COMMANDS extends [unknown, ...infer TAIL_REQUESTS]

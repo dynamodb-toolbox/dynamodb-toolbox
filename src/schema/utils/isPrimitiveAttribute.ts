@@ -11,5 +11,9 @@ const primitiveAttributeTypeSet = new Set<PrimitiveAttributeType>([
   'binary'
 ])
 
-export const isPrimitiveAttribute = (attribute: Attribute): attribute is PrimitiveAttribute =>
+type IsPrimitiveAttributeAsserter = (attribute: Attribute) => attribute is PrimitiveAttribute
+
+export const isPrimitiveAttribute: IsPrimitiveAttributeAsserter = (
+  attribute
+): attribute is PrimitiveAttribute =>
   primitiveAttributeTypeSet.has(attribute.type as PrimitiveAttributeType)

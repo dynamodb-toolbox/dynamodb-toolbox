@@ -11,14 +11,23 @@ export type TransactDeleteItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Delete']
 >
 
-export const transactDeleteItemParams = <
+type TransactDeleteItemParamsGetter = <
+  ENTITY extends Entity,
+  OPTIONS extends DeleteItemTransactionOptions<ENTITY>
+>(
+  entity: ENTITY,
+  input: KeyInput<ENTITY>,
+  deleteItemTransactionOptions?: OPTIONS
+) => TransactDeleteItemParams
+
+export const transactDeleteItemParams: TransactDeleteItemParamsGetter = <
   ENTITY extends Entity,
   OPTIONS extends DeleteItemTransactionOptions<ENTITY>
 >(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
   deleteItemTransactionOptions: OPTIONS = {} as OPTIONS
-): TransactDeleteItemParams => {
+) => {
   const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const options = parseDeleteItemTransactionOptions(entity, deleteItemTransactionOptions)
 

@@ -15,10 +15,17 @@ export type PrimitiveAttrFormattedValue<ATTRIBUTE extends PrimitiveAttribute> =
     ? ResolvedPrimitiveAttribute
     : If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvePrimitiveAttribute<ATTRIBUTE>
 
-export const formatPrimitiveAttrRawValue = <ATTRIBUTE extends PrimitiveAttribute>(
+type PrimitiveAttrRawValueFormatter = <ATTRIBUTE extends PrimitiveAttribute>(
   attribute: ATTRIBUTE,
   rawValue: unknown
-): PrimitiveAttrFormattedValue<ATTRIBUTE> => {
+) => PrimitiveAttrFormattedValue<ATTRIBUTE>
+
+export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
+  ATTRIBUTE extends PrimitiveAttribute
+>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown
+) => {
   type Formatted = PrimitiveAttrFormattedValue<ATTRIBUTE>
 
   const validator = validatorsByPrimitiveType[attribute.type]

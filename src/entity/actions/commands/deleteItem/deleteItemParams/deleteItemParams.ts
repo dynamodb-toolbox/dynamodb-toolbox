@@ -7,11 +7,20 @@ import type { Entity } from '~/entity/index.js'
 import type { DeleteItemOptions } from '../options.js'
 import { parseDeleteItemOptions } from './parseDeleteItemOptions.js'
 
-export const deleteItemParams = <ENTITY extends Entity, OPTIONS extends DeleteItemOptions<ENTITY>>(
+type DeleteItemParamsGetter = <ENTITY extends Entity, OPTIONS extends DeleteItemOptions<ENTITY>>(
+  entity: ENTITY,
+  input: KeyInput<ENTITY>,
+  deleteItemOptions?: OPTIONS
+) => DeleteCommandInput
+
+export const deleteItemParams: DeleteItemParamsGetter = <
+  ENTITY extends Entity,
+  OPTIONS extends DeleteItemOptions<ENTITY>
+>(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
   deleteItemOptions: OPTIONS = {} as OPTIONS
-): DeleteCommandInput => {
+) => {
   const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
   const options = parseDeleteItemOptions(entity, deleteItemOptions)
 

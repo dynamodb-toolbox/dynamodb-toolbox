@@ -7,11 +7,20 @@ import type { PutItemOptions } from '../options.js'
 import type { PutItemInput } from '../types.js'
 import { parsePutItemOptions } from './parsePutItemOptions.js'
 
-export const putItemParams = <ENTITY extends Entity, OPTIONS extends PutItemOptions<ENTITY>>(
+type PutItemParamsGetter = <ENTITY extends Entity, OPTIONS extends PutItemOptions<ENTITY>>(
+  entity: ENTITY,
+  input: PutItemInput<ENTITY>,
+  putItemOptions?: OPTIONS
+) => PutCommandInput
+
+export const putItemParams: PutItemParamsGetter = <
+  ENTITY extends Entity,
+  OPTIONS extends PutItemOptions<ENTITY>
+>(
   entity: ENTITY,
   input: PutItemInput<ENTITY>,
   putItemOptions: OPTIONS = {} as OPTIONS
-): PutCommandInput => {
+) => {
   const { item } = entity.build(EntityParser).parse(input)
   const options = parsePutItemOptions(entity, putItemOptions)
 

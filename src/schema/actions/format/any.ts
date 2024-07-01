@@ -6,7 +6,9 @@ export type AnyAttrFormattedValue<ATTRIBUTE extends AnyAttribute> = AnyAttribute
   ? unknown
   : ResolveAnyAttribute<ATTRIBUTE>
 
-export const formatAnyAttrRawValue = <ATTRIBUTE extends AnyAttribute>(
+type AnyAttrRawValueFormatter = <ATTRIBUTE extends AnyAttribute>(
   _: ATTRIBUTE,
   rawValue: unknown
-): AnyAttrFormattedValue<ATTRIBUTE> => cloneDeep(rawValue)
+) => AnyAttrFormattedValue<ATTRIBUTE>
+
+export const formatAnyAttrRawValue: AnyAttrRawValueFormatter = (_, rawValue) => cloneDeep(rawValue)

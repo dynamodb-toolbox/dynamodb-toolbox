@@ -51,14 +51,23 @@ export type RecordAttrFormattedValue<
             >
           }
 
-export const formatRecordAttrRawValue = <
+type RecordAttrRawValueFormatter = <
+  ATTRIBUTE extends RecordAttribute,
+  OPTIONS extends FormatOptions<ATTRIBUTE>
+>(
+  attribute: ATTRIBUTE,
+  rawValue: unknown,
+  options?: OPTIONS
+) => RecordAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+
+export const formatRecordAttrRawValue: RecordAttrRawValueFormatter = <
   ATTRIBUTE extends RecordAttribute,
   OPTIONS extends FormatOptions<ATTRIBUTE>
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): RecordAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
+) => {
   type Formatted = RecordAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
 
   if (!isObject(rawValue)) {

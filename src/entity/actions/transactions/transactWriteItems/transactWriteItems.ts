@@ -22,22 +22,28 @@ export const getTransactWriteCommandInput = (
   }
 }
 
+type TransactWriteItemsExecutor = <TRANSACTIONS extends WriteItemTransaction[]>(
+  /** Array of Write Item transactions */
+  transactions: TRANSACTIONS,
+  options?: {
+    /**
+     * Optional DynamoDB client. If not provided, the client linked to the first transaction is used.
+     **/
+    dynamoDBDocumentClient?: DynamoDBDocumentClient
+    /**
+     * Options passed to top-level  TransactWriteItems
+     **/
+    transactWriteOptions?: TransactWriteOptions
+  }
+) => Promise<TransactWriteCommandOutput>
+
 /**
  * Send a collection of `WriteItemTransactions`
  *
  * @param transactions
  * @param options
  */
-export const transactWriteItems = async <TRANSACTIONS extends WriteItemTransaction[]>(
-  /** Array of Write Item transactions */
-  transactions: TRANSACTIONS,
-  options?: {
-    /** Optional DynamoDB client. If not provided, the client linked to the first transaction is used. */
-    dynamoDBDocumentClient?: DynamoDBDocumentClient
-    /** Options passed to top-level  TransactWriteItems */
-    transactWriteOptions?: TransactWriteOptions
-  }
-): Promise<TransactWriteCommandOutput> => {
+export const transactWriteItems: TransactWriteItemsExecutor = async (transactions, options) => {
   const dynamoDBDocumentClient =
     options?.dynamoDBDocumentClient || transactions?.[0]?.get()?.documentClient
 

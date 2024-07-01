@@ -40,13 +40,15 @@ const pick = _pick as <OBJECT extends object, KEYS extends string[]>(
   keys: KEYS
 ) => O.Pick<OBJECT, KEYS[number]>
 
-export const parseQuery = <TABLE extends Table, QUERY extends Query<TABLE>>(
+type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   table: TABLE,
   query: QUERY
-): Pick<
+) => Pick<
   QueryCommandInput,
   'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'
-> => {
+>
+
+export const parseQuery: QueryParser = (table, query) => {
   const { index, partition, range } = query
   const { partitionKey = table.partitionKey, sortKey } =
     index !== undefined ? table.indexes[index] : table

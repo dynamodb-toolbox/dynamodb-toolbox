@@ -71,10 +71,17 @@ type ReturnedItemsRec<
 type ReturnedItems<TRANSACTIONS extends GetItemTransactionInterface[]> =
   ReturnedItemsRec<TRANSACTIONS>
 
-export const formatTransactGetResponse = <TRANSACTIONS extends GetItemTransactionInterface[]>(
+type TransactGetResponseFormatter = <TRANSACTIONS extends GetItemTransactionInterface[]>(
   response: TransactGetCommandOutput,
   ...transactions: TRANSACTIONS
-): ReturnedItems<TRANSACTIONS> | undefined => {
+) => ReturnedItems<TRANSACTIONS> | undefined
+
+export const formatTransactGetResponse: TransactGetResponseFormatter = <
+  TRANSACTIONS extends GetItemTransactionInterface[]
+>(
+  response: TransactGetCommandOutput,
+  ...transactions: TRANSACTIONS
+) => {
   if (response.Responses === undefined) {
     return undefined
   }
@@ -103,13 +110,7 @@ export const formatTransactGetResponse = <TRANSACTIONS extends GetItemTransactio
   return formattedResponses as ReturnedItems<TRANSACTIONS>
 }
 
-/**
- * Send a collection of `GetItemTransaction`
- *
- * @param options Object { dynamoDBDocumentClient: Optional DynamoDBDocumentClient, transactGetOptions: Optional TransactGetOptions }
- * @param transactions Destructured array of Get Item transactions
- */
-export const transactGetItems = async <TRANSACTIONS extends GetItemTransactionInterface[]>(
+type TransactGetItemsExecutor = <TRANSACTIONS extends GetItemTransactionInterface[]>(
   options: {
     /** Optional DynamoDB client. If not provided, the client linked to the first transaction is used. */
     dynamoDBDocumentClient?: DynamoDBDocumentClient
@@ -118,11 +119,19 @@ export const transactGetItems = async <TRANSACTIONS extends GetItemTransactionIn
   },
   /** Array of Get Item transactions */
   ...transactions: TRANSACTIONS
-): Promise<
+) => Promise<
   Omit<TransactGetCommandOutput, 'Responses'> & {
     Responses: ReturnedItems<TRANSACTIONS> | undefined
   }
-> => {
+>
+
+/**
+ * Send a collection of `GetItemTransaction`
+ *
+ * @param options Object { dynamoDBDocumentClient: Optional DynamoDBDocumentClient, transactGetOptions: Optional TransactGetOptions }
+ * @param transactions Destructured array of Get Item transactions
+ */
+export const transactGetItems: TransactGetItemsExecutor = async (options, ...transactions) => {
   const dynamoDBDocumentClient =
     options?.dynamoDBDocumentClient || transactions?.[0]?.get()?.documentClient
 
@@ -138,7 +147,7 @@ export const transactGetItems = async <TRANSACTIONS extends GetItemTransactionIn
     )
   )
 
-  const formattedResponses = formatTransactGetResponse<TRANSACTIONS>(response, ...transactions)
+  const formattedResponses = formatTransactGetResponse(response, ...transactions)
 
   return {
     ...response,

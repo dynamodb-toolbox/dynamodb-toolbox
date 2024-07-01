@@ -11,14 +11,23 @@ export type TransactPutItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Put']
 >
 
-export const transactPutItemParams = <
+type TransactPutItemParamsGetter = <
+  ENTITY extends Entity,
+  OPTIONS extends PutItemTransactionOptions<ENTITY>
+>(
+  entity: ENTITY,
+  input: PutItemInput<ENTITY>,
+  putItemTransactionOptions?: OPTIONS
+) => TransactPutItemParams
+
+export const transactPutItemParams: TransactPutItemParamsGetter = <
   ENTITY extends Entity,
   OPTIONS extends PutItemTransactionOptions<ENTITY>
 >(
   entity: ENTITY,
   input: PutItemInput<ENTITY>,
   putItemTransactionOptions: OPTIONS = {} as OPTIONS
-): TransactPutItemParams => {
+) => {
   const { item } = entity.build(EntityParser).parse(input)
   const options = parsePutItemTransactionOptions(entity, putItemTransactionOptions)
 

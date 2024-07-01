@@ -15,14 +15,23 @@ export type TransactUpdateItemParams = NonNullable<
   NonNullable<TransactWriteCommandInput['TransactItems']>[number]['Update']
 >
 
-export const transactUpdateItemParams = <
+type TransactUpdateItemParamsGetter = <
+  ENTITY extends Entity,
+  OPTIONS extends UpdateItemTransactionOptions<ENTITY>
+>(
+  entity: ENTITY,
+  input: UpdateItemInput<ENTITY>,
+  updateItemTransactionOptions?: OPTIONS
+) => TransactUpdateItemParams
+
+export const transactUpdateItemParams: TransactUpdateItemParamsGetter = <
   ENTITY extends Entity,
   OPTIONS extends UpdateItemTransactionOptions<ENTITY>
 >(
   entity: ENTITY,
   input: UpdateItemInput<ENTITY>,
   updateItemTransactionOptions: OPTIONS = {} as OPTIONS
-): TransactUpdateItemParams => {
+) => {
   const { item, key } = entity.build(EntityParser).parse(input, {
     mode: 'update',
     parseExtension: parseUpdateExtension

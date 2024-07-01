@@ -9,10 +9,15 @@ import type { TransactGetItemParams } from './transactGetItemParams.js'
 
 type TransactionOptions = Omit<TransactGetItemParams, 'TableName' | 'Key'>
 
-export const parseGetItemTransactionOptions = <ENTITY extends Entity>(
+type GetItemTransactionOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   GetItemTransactionOptions: GetItemTransactionOptions<ENTITY>
-): TransactionOptions => {
+) => TransactionOptions
+
+export const parseGetItemTransactionOptions: GetItemTransactionOptionsParser = (
+  entity,
+  GetItemTransactionOptions
+) => {
   const transactionOptions: TransactionOptions = {}
 
   const { attributes, ...extraOptions } = GetItemTransactionOptions

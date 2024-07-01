@@ -9,10 +9,15 @@ import type { TransactPutItemParams } from './transactPutItemParams.js'
 
 type TransactionOptions = Omit<TransactPutItemParams, 'TableName' | 'Item'>
 
-export const parsePutItemTransactionOptions = <ENTITY extends Entity>(
+type PutItemTransactionOptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   putItemTransactionOptions: PutItemTransactionOptions<ENTITY>
-): TransactionOptions => {
+) => TransactionOptions
+
+export const parsePutItemTransactionOptions: PutItemTransactionOptionsParser = (
+  entity,
+  putItemTransactionOptions
+) => {
   const commandOptions: TransactionOptions = {}
 
   const { condition, ...extraOptions } = putItemTransactionOptions
