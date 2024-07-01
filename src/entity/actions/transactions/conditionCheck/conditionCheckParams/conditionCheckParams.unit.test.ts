@@ -4,8 +4,8 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import {
   ConditionCheck,
   DynamoDBToolboxError,
-  EntityV2,
-  TableV2,
+  Entity,
+  Table,
   any,
   binary,
   boolean,
@@ -21,7 +21,7 @@ const dynamoDbClient = new DynamoDBClient({})
 
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
-const TestTable = new TableV2({
+const TestTable = new Table({
   name: 'test-table',
   partitionKey: {
     type: 'string',
@@ -34,7 +34,7 @@ const TestTable = new TableV2({
   documentClient
 })
 
-const TestEntity = new EntityV2({
+const TestEntity = new Entity({
   name: 'TestEntity',
   schema: schema({
     email: string().key().savedAs('pk'),

@@ -3,9 +3,9 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import {
   DynamoDBToolboxError,
-  EntityV2,
+  Entity,
   GetItemTransaction,
-  TableV2,
+  Table,
   any,
   binary,
   boolean,
@@ -24,7 +24,7 @@ const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
-const TestTable = new TableV2({
+const TestTable = new Table({
   name: 'test-table',
   partitionKey: {
     type: 'string',
@@ -37,7 +37,7 @@ const TestTable = new TableV2({
   documentClient
 })
 
-const TestEntity = new EntityV2({
+const TestEntity = new Entity({
   name: 'TestEntity',
   schema: schema({
     email: string().key().savedAs('pk'),
@@ -59,13 +59,13 @@ const TestEntity = new EntityV2({
   table: TestTable
 })
 
-const TestTable2 = new TableV2({
+const TestTable2 = new Table({
   name: 'test-table-2',
   partitionKey: { type: 'string', name: 'pk' },
   documentClient
 })
 
-const TestEntity2 = new EntityV2({
+const TestEntity2 = new Entity({
   name: 'TestEntity2',
   schema: schema({
     email: string().key().savedAs('pk'),

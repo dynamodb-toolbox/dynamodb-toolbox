@@ -1,10 +1,10 @@
-import { EntityAction, EntityV2 } from '~/entity/index.js'
+import { Entity, EntityAction } from '~/entity/index.js'
 import { PathParser, Paths } from '~/schema/actions/parsePaths/index.js'
 
 const $pathParser = Symbol('$pathParser')
 type $pathParser = typeof $pathParser
 
-export class EntityPathParser<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
+export class EntityPathParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'parsePaths';
   [$pathParser]: PathParser<ENTITY['schema']>
 
@@ -31,14 +31,14 @@ export class EntityPathParser<ENTITY extends EntityV2 = EntityV2> extends Entity
   }
 }
 
-export type EntityPaths<ENTITY extends EntityV2 = EntityV2> = Paths<ENTITY['schema']>
+export type EntityPaths<ENTITY extends Entity = Entity> = Paths<ENTITY['schema']>
 
 export type EntityPathsIntersection<
-  ENTITIES extends EntityV2[] = EntityV2[],
+  ENTITIES extends Entity[] = Entity[],
   RESULTS extends string = string
 > = ENTITIES extends [infer ENTITIES_HEAD, ...infer ENTITIES_TAIL]
-  ? ENTITIES_HEAD extends EntityV2
-    ? ENTITIES_TAIL extends EntityV2[]
+  ? ENTITIES_HEAD extends Entity
+    ? ENTITIES_TAIL extends Entity[]
       ? EntityPathsIntersection<ENTITIES_TAIL, RESULTS & EntityPaths<ENTITIES_HEAD>>
       : never
     : never

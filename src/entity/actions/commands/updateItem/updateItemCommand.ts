@@ -2,7 +2,7 @@ import { UpdateCommand, UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk
 import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
   AllNewReturnValuesOption,
@@ -23,7 +23,7 @@ export const $options = Symbol('$options')
 export type $options = typeof $options
 
 type ReturnedAttributes<
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   OPTIONS extends UpdateItemOptions<ENTITY>
 > = OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
@@ -45,7 +45,7 @@ type ReturnedAttributes<
       : never
 
 export type UpdateItemResponse<
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > = O.Merge<
   Omit<UpdateCommandOutput, 'Attributes'>,
@@ -53,7 +53,7 @@ export type UpdateItemResponse<
 >
 
 export class UpdateItemCommand<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
   static actionName = 'update' as const;

@@ -4,8 +4,8 @@ import {
   BatchDeleteRequest,
   BatchPutRequest,
   DynamoDBToolboxError,
-  EntityV2,
-  TableV2,
+  Entity,
+  Table,
   number,
   schema,
   string
@@ -14,7 +14,7 @@ import { $entities } from '~/table/index.js'
 
 import { BatchWriteCommand } from './batchWriteCommand.js'
 
-const TestTable = new TableV2({
+const TestTable = new Table({
   name: 'test-table',
   partitionKey: {
     type: 'string',
@@ -26,7 +26,7 @@ const TestTable = new TableV2({
   }
 })
 
-const EntityA = new EntityV2({
+const EntityA = new Entity({
   name: 'EntityA',
   schema: schema({
     pkA: string().key().savedAs('pk'),
@@ -37,7 +37,7 @@ const EntityA = new EntityV2({
   table: TestTable
 })
 
-const EntityB = new EntityV2({
+const EntityB = new Entity({
   name: 'EntityB',
   schema: schema({
     pkB: string().key().savedAs('pk'),

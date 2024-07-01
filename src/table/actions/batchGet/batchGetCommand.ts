@@ -4,10 +4,10 @@ import type { U } from 'ts-toolbelt'
 
 import type { BatchGetRequest } from '~/entity/actions/batchGet.js'
 import { EntityPathParser, EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
-import { $entity, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
-import { $entities, $table, TableAction, TableV2 } from '~/table/index.js'
+import { $entities, $table, Table, TableAction } from '~/table/index.js'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests
@@ -17,7 +17,7 @@ export type $options = typeof $options
 
 export type BatchGetRequestProps = Pick<BatchGetRequest, $entity | 'params'>
 
-export type BatchGetCommandOptions<ENTITIES extends EntityV2[] = EntityV2[]> = {
+export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
   consistent?: boolean
   // For some reason, this union is required to keep the strict type of `options.attributes`
   // when building a `BatchGetCommand` directly inside `execute`:
@@ -26,7 +26,7 @@ export type BatchGetCommandOptions<ENTITIES extends EntityV2[] = EntityV2[]> = {
 
 type RequestEntities<
   REQUESTS extends BatchGetRequestProps[],
-  RESULTS extends EntityV2[] = []
+  RESULTS extends Entity[] = []
 > = number extends REQUESTS['length']
   ? U.ListOf<REQUESTS[number]> extends BatchGetRequestProps[]
     ? RequestEntities<U.ListOf<REQUESTS[number]>>
@@ -42,8 +42,8 @@ type RequestEntities<
     : RESULTS
 
 export class BatchGetCommand<
-  TABLE extends TableV2 = TableV2,
-  ENTITIES extends EntityV2[] = EntityV2[],
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
   REQUESTS extends BatchGetRequestProps[] = BatchGetRequestProps[],
   OPTIONS extends BatchGetCommandOptions<ENTITIES> = BatchGetCommandOptions<ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
@@ -73,7 +73,7 @@ export class BatchGetCommand<
       ? OPTIONS
       : BatchGetCommandOptions<RequestEntities<NEXT_REQUESTS>>
   > {
-    const entities: EntityV2[] = []
+    const entities: Entity[] = []
     const entityNames = new Set<string>()
 
     for (const request of requests) {

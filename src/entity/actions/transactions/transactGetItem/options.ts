@@ -1,6 +1,6 @@
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 
-export type GetItemTransactionOptions<ENTITY extends EntityV2 = EntityV2> = {
+export type GetItemTransactionOptions<ENTITY extends Entity = Entity> = {
   attributes?: EntityPaths<ENTITY>[]
 }

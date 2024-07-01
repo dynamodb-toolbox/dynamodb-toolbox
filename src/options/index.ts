@@ -1,8 +1,8 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
-export const parseIndexOption = (table: TableV2, index: string): string => {
+export const parseIndexOption = (table: Table, index: string): string => {
   if (!isString(index)) {
     throw new DynamoDBToolboxError('options.invalidIndexOption', {
       message: `Invalid index option: '${String(index)}'. 'index' must be a string.`,

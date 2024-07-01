@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import { omit } from 'lodash'
 
 import { EntityParser } from '~/entity/actions/parse.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 
 import type { UpdateItemOptions } from '../options.js'
 import type { UpdateItemInput } from '../types.js'
@@ -11,10 +11,7 @@ import { parseUpdate } from '../updateExpression/index.js'
 import { parseUpdateExtension } from './extension/index.js'
 import { parseUpdateItemOptions } from './parseUpdateItemOptions.js'
 
-export const updateItemParams = <
-  ENTITY extends EntityV2,
-  OPTIONS extends UpdateItemOptions<ENTITY>
->(
+export const updateItemParams = <ENTITY extends Entity, OPTIONS extends UpdateItemOptions<ENTITY>>(
   entity: ENTITY,
   input: UpdateItemInput<ENTITY>,
   updateItemOptions: OPTIONS = {} as OPTIONS

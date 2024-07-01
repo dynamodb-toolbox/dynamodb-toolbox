@@ -3,7 +3,7 @@ import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
 import type { KeyInput } from '~/entity/actions/parse.js'
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { getItemParams } from './getItemParams/index.js'
@@ -16,7 +16,7 @@ export const $options = Symbol('$options')
 export type $options = typeof $options
 
 export type GetItemResponse<
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > = O.Merge<
   Omit<GetCommandOutput, 'Item'>,
@@ -33,7 +33,7 @@ export type GetItemResponse<
 >
 
 export class GetItemCommand<
-  ENTITY extends EntityV2 = EntityV2,
+  ENTITY extends Entity = Entity,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
 > extends EntityAction<ENTITY> {
   static actionName = 'get' as const;

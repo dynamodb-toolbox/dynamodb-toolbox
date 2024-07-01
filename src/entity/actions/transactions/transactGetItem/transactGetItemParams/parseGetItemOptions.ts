@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash'
 
 import { EntityPathParser } from '~/entity/actions/parsePaths.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
 import type { GetItemTransactionOptions } from '../options.js'
@@ -9,7 +9,7 @@ import type { TransactGetItemParams } from './transactGetItemParams.js'
 
 type TransactionOptions = Omit<TransactGetItemParams, 'TableName' | 'Key'>
 
-export const parseGetItemTransactionOptions = <ENTITY extends EntityV2>(
+export const parseGetItemTransactionOptions = <ENTITY extends Entity>(
   entity: ENTITY,
   GetItemTransactionOptions: GetItemTransactionOptions<ENTITY>
 ): TransactionOptions => {

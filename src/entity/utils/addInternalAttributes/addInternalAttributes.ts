@@ -4,7 +4,7 @@ import { $state } from '~/schema/attributes/constants/attributeOptions.js'
 import type { $Attribute } from '~/schema/attributes/index.js'
 import { string } from '~/schema/attributes/primitive/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 
 import type { TimestampsOptions } from './options.js'
 import type {
@@ -17,7 +17,7 @@ import { TimestampOptionValue, getTimestampOptionValue, isTimestampEnabled } fro
 
 export const addInternalAttributes: InternalAttributesAdder = <
   SCHEMA extends Schema,
-  TABLE extends TableV2,
+  TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_NAME extends string,
   TIMESTAMP_OPTIONS extends TimestampsOptions

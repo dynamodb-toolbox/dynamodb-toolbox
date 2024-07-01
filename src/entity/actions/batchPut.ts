@@ -1,13 +1,13 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityParser, EntityParserInput } from '~/entity/actions/parse.js'
-import { $entity, EntityAction, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity, EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 export const $item = Symbol('$item')
 export type $item = typeof $item
 
-export class BatchPutRequest<ENTITY extends EntityV2 = EntityV2> extends EntityAction<ENTITY> {
+export class BatchPutRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName = 'batchPut' as const;
 
   [$item]?: EntityParserInput<ENTITY>

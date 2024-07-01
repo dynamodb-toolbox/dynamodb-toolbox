@@ -7,7 +7,7 @@ import type {
 } from '~/schema/actions/parseCondition/index.js'
 import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from '~/schema/attributes/index.js'
 import type { IndexNames, IndexSchema } from '~/table/actions/indexes.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import type { GlobalIndex, IndexableKeyType, Key, LocalIndex } from '~/table/types/index.js'
 
 type QueryOperator = RangeOperator | BeginsWithOperator | BetweenOperator
@@ -38,7 +38,7 @@ type QueryRange<
   | (KEY_TYPE extends 'string' ? Record<BeginsWithOperator, ATTRIBUTE_VALUE> : never)
 
 type SecondaryIndexQuery<
-  TABLE extends TableV2,
+  TABLE extends Table,
   INDEX_NAME extends IndexNames<TABLE>,
   INDEX_SCHEMA extends IndexSchema<TABLE> = IndexSchema<TABLE, INDEX_NAME>
 > = A.Compute<
@@ -57,14 +57,14 @@ type SecondaryIndexQuery<
       : never)
 >
 
-type SecondaryIndexQueries<TABLE extends TableV2> =
+type SecondaryIndexQueries<TABLE extends Table> =
   IndexNames<TABLE> extends infer INDEX_NAME
     ? INDEX_NAME extends IndexNames<TABLE>
       ? SecondaryIndexQuery<TABLE, INDEX_NAME>
       : never
     : never
 
-type PrimaryIndexQuery<TABLE extends TableV2> = A.Compute<
+type PrimaryIndexQuery<TABLE extends Table> = A.Compute<
   {
     index?: never
   } & (Key extends TABLE['sortKey']
@@ -80,4 +80,4 @@ type PrimaryIndexQuery<TABLE extends TableV2> = A.Compute<
       : never)
 >
 
-export type Query<TABLE extends TableV2> = PrimaryIndexQuery<TABLE> | SecondaryIndexQueries<TABLE>
+export type Query<TABLE extends Table> = PrimaryIndexQuery<TABLE> | SecondaryIndexQueries<TABLE>

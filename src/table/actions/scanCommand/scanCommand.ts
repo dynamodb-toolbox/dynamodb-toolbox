@@ -9,9 +9,9 @@ import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import type { CountSelectOption } from '~/options/select.js'
-import { $entities, $table, TableAction, TableV2 } from '~/table/index.js'
+import { $entities, $table, Table, TableAction } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import type { ScanOptions } from './options.js'
@@ -21,15 +21,15 @@ const $options = Symbol('$options')
 type $options = typeof $options
 
 type ReturnedItems<
-  TABLE extends TableV2,
-  ENTITIES extends EntityV2[],
+  TABLE extends Table,
+  ENTITIES extends Entity[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
 > = OPTIONS['select'] extends CountSelectOption
   ? undefined
-  : (EntityV2[] extends ENTITIES
+  : (Entity[] extends ENTITIES
       ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
-        ? ENTITY extends EntityV2
+        ? ENTITY extends Entity
           ? FormattedItem<
               ENTITY,
               {
@@ -42,8 +42,8 @@ type ReturnedItems<
         : never)[]
 
 export type ScanResponse<
-  TABLE extends TableV2,
-  ENTITIES extends EntityV2[],
+  TABLE extends Table,
+  ENTITIES extends Entity[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
 > = O.Merge<
   Omit<ScanCommandOutput, 'Items' | '$metadata'>,
@@ -55,8 +55,8 @@ export type ScanResponse<
 >
 
 export class ScanCommand<
-  TABLE extends TableV2 = TableV2,
-  ENTITIES extends EntityV2[] = EntityV2[],
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
   static actionName = 'scan' as const;
@@ -72,7 +72,7 @@ export class ScanCommand<
     this[$options] = options
   }
 
-  entities<NEXT_ENTITIES extends EntityV2[]>(
+  entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>> {
     return new ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>(

@@ -9,8 +9,8 @@ import {
   BatchDeleteRequest,
   BatchPutRequest,
   DynamoDBToolboxError,
-  EntityV2,
-  TableV2,
+  Entity,
+  Table,
   number,
   schema,
   string
@@ -23,14 +23,14 @@ const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 let documentClientMock: AwsStub<object, unknown, unknown>
 
-const TestTable1 = new TableV2({
+const TestTable1 = new Table({
   name: 'test-table-1',
   partitionKey: { type: 'string', name: 'pk' },
   sortKey: { type: 'string', name: 'sk' },
   documentClient
 })
 
-const EntityA = new EntityV2({
+const EntityA = new Entity({
   name: 'EntityA',
   schema: schema({
     pkA: string().key().savedAs('pk'),
@@ -41,7 +41,7 @@ const EntityA = new EntityV2({
   table: TestTable1
 })
 
-const EntityB = new EntityV2({
+const EntityB = new Entity({
   name: 'EntityB',
   schema: schema({
     pkB: string().key().savedAs('pk'),
@@ -52,14 +52,14 @@ const EntityB = new EntityV2({
   table: TestTable1
 })
 
-const TestTable2 = new TableV2({
+const TestTable2 = new Table({
   name: 'test-table-2',
   partitionKey: { type: 'string', name: 'pk' },
   sortKey: { type: 'string', name: 'sk' },
   documentClient
 })
 
-const EntityC = new EntityV2({
+const EntityC = new Entity({
   name: 'EntityC',
   schema: schema({
     pkC: string().key().savedAs('pk'),

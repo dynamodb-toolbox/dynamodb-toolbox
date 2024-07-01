@@ -1,13 +1,13 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import type { Index, Key } from './types/index.js'
 
-export class TableV2<
+export class Table<
   PARTITION_KEY extends Key = Key,
   SORT_KEY extends Key = Key,
   INDEXES extends Record<string, Index> = Key extends PARTITION_KEY ? Record<string, Index> : {},
@@ -85,10 +85,7 @@ export type $table = typeof $table
 export const $entities = Symbol('$entities')
 export type $entities = typeof $entities
 
-export class TableAction<
-  TABLE extends TableV2 = TableV2,
-  ENTITIES extends EntityV2[] = EntityV2[]
-> {
+export class TableAction<TABLE extends Table = Table, ENTITIES extends Entity[] = Entity[]> {
   static actionName: string;
 
   [$table]: TABLE;

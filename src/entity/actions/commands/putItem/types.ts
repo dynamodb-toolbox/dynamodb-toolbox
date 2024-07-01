@@ -1,4 +1,4 @@
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 
 /**
@@ -7,4 +7,4 @@ import type { ParserInput } from '~/schema/actions/parse/index.js'
  * @param ENTITY Entity
  * @return Object
  */
-export type PutItemInput<ENTITY extends EntityV2> = ParserInput<ENTITY['schema']>
+export type PutItemInput<ENTITY extends Entity> = ParserInput<ENTITY['schema']>

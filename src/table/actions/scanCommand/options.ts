@@ -1,6 +1,6 @@
 import type { Condition } from '~/entity/actions/parseCondition.js'
 import type { EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
-import type { EntityV2 } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type {
   AllProjectedAttributesSelectOption,
@@ -8,17 +8,14 @@ import type {
   SpecificAttributesSelectOption
 } from '~/options/select.js'
 import type { IndexNames } from '~/table/actions/indexes.js'
-import type { TableV2 } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 
-export type ScanOptions<
-  TABLE extends TableV2 = TableV2,
-  ENTITIES extends EntityV2[] = EntityV2[]
-> = {
+export type ScanOptions<TABLE extends Table = Table, ENTITIES extends Entity[] = Entity[]> = {
   capacity?: CapacityOption
   exclusiveStartKey?: Record<string, unknown>
   limit?: number
   maxPages?: number
-  filters?: EntityV2[] extends ENTITIES
+  filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
 } & (

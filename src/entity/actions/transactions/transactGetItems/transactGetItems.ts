@@ -7,7 +7,7 @@ import {
 
 import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
-import { $entity, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { GetItemTransactionOptions } from '../transactGetItem/options.js'
@@ -32,9 +32,9 @@ export const getTransactGetCommandInput = (
 }
 
 type ReturnedItem<
-  ENTITY extends EntityV2,
+  ENTITY extends Entity,
   OPTIONS extends GetItemTransactionOptions<ENTITY> = {}
-> = EntityV2 extends ENTITY
+> = Entity extends ENTITY
   ? Record<string, unknown>
   : OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
     ? FormattedItem<

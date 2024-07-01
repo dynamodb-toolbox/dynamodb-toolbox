@@ -3,9 +3,9 @@ import type { U } from 'ts-toolbelt'
 
 import type { BatchDeleteRequest } from '~/entity/actions/batchDelete.js'
 import type { BatchPutRequest } from '~/entity/actions/batchPut.js'
-import { $entity, EntityV2 } from '~/entity/index.js'
+import { $entity, Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { $table, TableAction, TableV2 } from '~/table/index.js'
+import { $table, Table, TableAction } from '~/table/index.js'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests
@@ -14,7 +14,7 @@ export type BatchWriteRequestProps = Pick<BatchPutRequest | BatchDeleteRequest, 
 
 type RequestEntities<
   REQUESTS extends BatchWriteRequestProps[],
-  RESULTS extends EntityV2[] = []
+  RESULTS extends Entity[] = []
 > = number extends REQUESTS['length']
   ? U.ListOf<REQUESTS[number]> extends BatchWriteRequestProps[]
     ? RequestEntities<U.ListOf<REQUESTS[number]>>
@@ -30,8 +30,8 @@ type RequestEntities<
     : RESULTS
 
 export class BatchWriteCommand<
-  TABLE extends TableV2 = TableV2,
-  ENTITIES extends EntityV2[] = EntityV2[],
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
   REQUESTS extends BatchWriteRequestProps[] = BatchWriteRequestProps[]
 > extends TableAction<TABLE, ENTITIES> {
   static actionName = 'batchWrite' as const;
@@ -46,7 +46,7 @@ export class BatchWriteCommand<
   requests<NEXT_REQUESTS extends BatchWriteRequestProps[]>(
     ...requests: NEXT_REQUESTS
   ): BatchWriteCommand<TABLE, RequestEntities<NEXT_REQUESTS>, NEXT_REQUESTS> {
-    const entities: EntityV2[] = []
+    const entities: Entity[] = []
     const entityNames = new Set<string>()
 
     for (const request of requests) {

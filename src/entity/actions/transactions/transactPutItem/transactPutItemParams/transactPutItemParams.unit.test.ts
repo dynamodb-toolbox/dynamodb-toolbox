@@ -1,8 +1,8 @@
 import {
   DynamoDBToolboxError,
-  EntityV2,
+  Entity,
   PutItemTransaction,
-  TableV2,
+  Table,
   any,
   binary,
   boolean,
@@ -14,7 +14,7 @@ import {
   string
 } from '~/index.js'
 
-const TestTable = new TableV2({
+const TestTable = new Table({
   name: 'test-table',
   partitionKey: {
     type: 'string',
@@ -26,7 +26,7 @@ const TestTable = new TableV2({
   }
 })
 
-const TestEntity = new EntityV2({
+const TestEntity = new Entity({
   name: 'TestEntity',
   schema: schema({
     email: string().key().savedAs('pk'),
@@ -48,12 +48,12 @@ const TestEntity = new EntityV2({
   table: TestTable
 })
 
-const TestTable2 = new TableV2({
+const TestTable2 = new Table({
   name: 'test-table',
   partitionKey: { type: 'string', name: 'pk' }
 })
 
-const TestEntity2 = new EntityV2({
+const TestEntity2 = new Entity({
   name: 'TestEntity2',
   schema: schema({
     email: string().key().savedAs('pk'),
@@ -71,7 +71,7 @@ const TestEntity2 = new EntityV2({
   table: TestTable2
 })
 
-const TestEntity3 = new EntityV2({
+const TestEntity3 = new Entity({
   name: 'TestEntity3',
   schema: schema({
     email: string().key().savedAs('pk'),
@@ -81,13 +81,13 @@ const TestEntity3 = new EntityV2({
   table: TestTable2
 })
 
-const TestTable3 = new TableV2({
+const TestTable3 = new Table({
   name: 'TestTable3',
   partitionKey: { type: 'string', name: 'pk' },
   sortKey: { type: 'string', name: 'sk' }
 })
 
-const TestEntity4 = new EntityV2({
+const TestEntity4 = new Entity({
   name: 'TestEntity4',
   schema: schema({
     id: number().key().savedAs('pk'),
@@ -98,7 +98,7 @@ const TestEntity4 = new EntityV2({
   table: TestTable3
 })
 
-const TestEntity5 = new EntityV2({
+const TestEntity5 = new Entity({
   name: 'TestEntity5',
   schema: schema({
     pk: string().key(),
