@@ -4,7 +4,8 @@ import type { If } from '~/types/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
 import type { AttrFormattedValue } from './attribute.js'
-import { MustBeDefined, formatAttrRawValue } from './attribute.js'
+import { formatAttrRawValue } from './attribute.js'
+import type { MustBeDefined } from './attribute.js'
 import type {
   FormatOptions,
   FormattedValueDefaultOptions,

@@ -14,7 +14,8 @@ import { $elements, $keys, $state, $type } from '../constants/attributeOptions.j
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
-import { FreezeRecordAttribute, freezeRecordAttribute } from './freeze.js'
+import { freezeRecordAttribute } from './freeze.js'
+import type { FreezeRecordAttribute } from './freeze.js'
 import type {
   $RecordAttributeElements,
   $RecordAttributeKeys,

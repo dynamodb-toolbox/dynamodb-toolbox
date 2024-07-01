@@ -1,5 +1,6 @@
 import { $AnyOfAttribute } from './interface.js'
-import { ANY_OF_DEFAULT_OPTIONS, AnyOfAttributeDefaultOptions } from './options.js'
+import { ANY_OF_DEFAULT_OPTIONS } from './options.js'
+import type { AnyOfAttributeDefaultOptions } from './options.js'
 import type { $AnyOfAttributeElements } from './types.js'
 
 type AnyOfAttributeTyper = <ELEMENTS extends $AnyOfAttributeElements[]>(

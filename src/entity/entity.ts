@@ -5,14 +5,13 @@ import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 import type { Table } from '~/table/index.js'
 import type { If } from '~/types/if.js'
 
-import {
+import { addInternalAttributes, doesSchemaValidateTableSchema } from './utils/index.js'
+import type {
   NarrowTimestampsOptions,
   NeedsKeyCompute,
   TimestampsDefaultOptions,
   TimestampsOptions,
-  WithInternalAttributes,
-  addInternalAttributes,
-  doesSchemaValidateTableSchema
+  WithInternalAttributes
 } from './utils/index.js'
 
 export class Entity<

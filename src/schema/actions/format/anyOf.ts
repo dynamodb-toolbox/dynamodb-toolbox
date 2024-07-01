@@ -3,7 +3,8 @@ import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type { AnyOfAttribute, Attribute } from '~/schema/attributes/index.js'
 import type { If } from '~/types/index.js'
 
-import { AttrFormattedValue, MustBeDefined, formatAttrRawValue } from './attribute.js'
+import { formatAttrRawValue } from './attribute.js'
+import type { AttrFormattedValue, MustBeDefined } from './attribute.js'
 import type {
   FormatOptions,
   FormattedValueDefaultOptions,

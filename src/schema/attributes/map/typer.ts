@@ -2,7 +2,8 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import { $MapAttribute } from './interface.js'
-import { MAP_DEFAULT_OPTIONS, MapAttributeDefaultOptions, MapAttributeOptions } from './options.js'
+import { MAP_DEFAULT_OPTIONS } from './options.js'
+import type { MapAttributeDefaultOptions, MapAttributeOptions } from './options.js'
 import type { $MapAttributeAttributeStates } from './types.js'
 
 type MapAttributeTyper = <

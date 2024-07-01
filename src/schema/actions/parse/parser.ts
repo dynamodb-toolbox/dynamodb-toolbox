@@ -1,8 +1,10 @@
 import type { Attribute } from '~/schema/attributes/index.js'
 import type { Schema, SchemaAction } from '~/schema/index.js'
 
-import { AttrParsedValue, attrParser } from './attribute.js'
-import { SchemaParsedValue, schemaParser } from './schema.js'
+import { attrParser } from './attribute.js'
+import type { AttrParsedValue } from './attribute.js'
+import { schemaParser } from './schema.js'
+import type { SchemaParsedValue } from './schema.js'
 import type {
   FromParsingOptions,
   ParsedValueDefaultOptions,

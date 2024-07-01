@@ -1,7 +1,9 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityParser, KeyInput } from '~/entity/actions/parse.js'
-import { $entity, Entity, EntityAction } from '~/entity/index.js'
+import type { KeyInput } from '~/entity/actions/parse.js'
+import { EntityParser } from '~/entity/actions/parse.js'
+import { $entity, EntityAction } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 export const $key = Symbol('$key')

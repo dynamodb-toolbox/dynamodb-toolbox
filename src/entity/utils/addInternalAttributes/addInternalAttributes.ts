@@ -13,7 +13,8 @@ import type {
   InternalAttributesAdder,
   WithInternalAttributes
 } from './types.js'
-import { TimestampOptionValue, getTimestampOptionValue, isTimestampEnabled } from './utils.js'
+import { getTimestampOptionValue, isTimestampEnabled } from './utils.js'
+import type { TimestampOptionValue } from './utils.js'
 
 export const addInternalAttributes: InternalAttributesAdder = <
   SCHEMA extends Schema,

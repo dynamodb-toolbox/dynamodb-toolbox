@@ -1,5 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { ExtensionParser, ExtensionParserOptions, Parser } from '~/schema/actions/parse/index.js'
+import { Parser } from '~/schema/actions/parse/index.js'
+import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 import type { Attribute, AttributeBasicValue } from '~/schema/attributes/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isString } from '~/utils/validation/isString.js'

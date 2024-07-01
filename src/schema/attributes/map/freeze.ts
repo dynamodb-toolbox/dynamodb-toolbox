@@ -2,12 +2,14 @@ import type { O } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $attributes, $state } from '../constants/attributeOptions.js'
+import { $state } from '../constants/attributeOptions.js'
+import type { $attributes } from '../constants/attributeOptions.js'
 import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { $MapAttributeState, MapAttribute } from './interface.js'
+import { MapAttribute } from './interface.js'
+import type { $MapAttributeState } from './interface.js'
 import type { $MapAttributeAttributeStates } from './types.js'
 
 export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =

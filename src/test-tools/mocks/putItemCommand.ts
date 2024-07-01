@@ -1,14 +1,15 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import {
-  PutItemCommand,
+import { PutItemCommand } from '~/entity/actions/commands/putItem/index.js'
+import type {
   PutItemInput,
   PutItemOptions,
   PutItemResponse
 } from '~/entity/actions/commands/putItem/index.js'
 import { $item, $options } from '~/entity/actions/commands/putItem/putItemCommand.js'
 import { putItemParams } from '~/entity/actions/commands/putItem/putItemParams/index.js'
-import { $entity, Entity } from '~/entity/index.js'
+import { $entity } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import {

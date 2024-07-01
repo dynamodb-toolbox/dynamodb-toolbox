@@ -8,7 +8,7 @@ import type {
   SetAttribute
 } from '~/schema/attributes/index.js'
 
-import { mySchema } from './condition.fixture.test.js'
+import type { mySchema } from './condition.fixture.test.js'
 import type {
   AttrOrSize,
   AttributeCondition,

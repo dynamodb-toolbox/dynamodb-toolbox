@@ -4,9 +4,10 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 
-import { $state, $type } from '../constants/attributeOptions.js'
+import type { $state, $type } from '../constants/attributeOptions.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { $PrimitiveAttributeState, PrimitiveAttribute } from './interface.js'
+import { PrimitiveAttribute } from './interface.js'
+import type { $PrimitiveAttributeState } from './interface.js'
 import type {
   PrimitiveAttributeEnumValues,
   PrimitiveAttributeState,

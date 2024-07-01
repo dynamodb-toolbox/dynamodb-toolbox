@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { $state, $type } from '../constants/attributeOptions.js'
-import { Always, AtLeastOnce, Never } from '../constants/index.js'
+import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { $AnyAttributeState, AnyAttribute } from './interface.js'
 import { any } from './typer.js'
 

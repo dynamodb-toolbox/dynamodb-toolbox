@@ -1,4 +1,5 @@
-import { ExtensionParser, ExtensionParserOptions, Parser } from '~/schema/actions/parse/index.js'
+import { Parser } from '~/schema/actions/parse/index.js'
+import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 import type { AttributeBasicValue, MapAttribute } from '~/schema/attributes/index.js'
 
 import { $SET } from '../../constants.js'

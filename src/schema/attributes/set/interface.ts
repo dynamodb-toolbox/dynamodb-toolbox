@@ -13,7 +13,8 @@ import type { Schema } from '../../schema.js'
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import { FreezeSetAttribute, freezeSetAttribute } from './freeze.js'
+import { freezeSetAttribute } from './freeze.js'
+import type { FreezeSetAttribute } from './freeze.js'
 import type { $SetAttributeElements, SetAttributeElements } from './types.js'
 
 export interface $SetAttributeState<

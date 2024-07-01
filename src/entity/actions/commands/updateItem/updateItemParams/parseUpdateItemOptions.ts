@@ -7,7 +7,8 @@ import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseReturnValuesOption } from '~/options/returnValues.js'
 
-import { UpdateItemOptions, updateItemCommandReturnValuesOptionsSet } from '../options.js'
+import { updateItemCommandReturnValuesOptionsSet } from '../options.js'
+import type { UpdateItemOptions } from '../options.js'
 
 type CommandOptions = Omit<UpdateCommandInput, 'TableName' | 'Item' | 'Key'>
 

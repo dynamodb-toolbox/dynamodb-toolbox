@@ -1,8 +1,10 @@
 import type { Attribute } from '~/schema/attributes/index.js'
 import type { Schema, SchemaAction } from '~/schema/index.js'
 
-import { AttrFormattedValue, formatAttrRawValue } from './attribute.js'
-import { SchemaFormattedValue, formatSchemaRawValue } from './schema.js'
+import { formatAttrRawValue } from './attribute.js'
+import type { AttrFormattedValue } from './attribute.js'
+import { formatSchemaRawValue } from './schema.js'
+import type { SchemaFormattedValue } from './schema.js'
 import type {
   FormatOptions,
   FormattedValueDefaultOptions,

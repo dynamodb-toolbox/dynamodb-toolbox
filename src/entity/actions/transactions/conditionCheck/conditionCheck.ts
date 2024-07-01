@@ -2,11 +2,13 @@ import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import type { KeyInput } from '~/entity/actions/parse.js'
 import type { Condition } from '~/entity/actions/parseCondition.js'
-import { $entity, Entity, EntityAction } from '~/entity/index.js'
+import { $entity, EntityAction } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { WriteItemTransaction } from '../types.js'
-import { ConditionCheckParams, conditionCheckParams } from './conditionCheckParams/index.js'
+import { conditionCheckParams } from './conditionCheckParams/index.js'
+import type { ConditionCheckParams } from './conditionCheckParams/index.js'
 
 export const $key = Symbol('$key')
 export type $key = typeof $key

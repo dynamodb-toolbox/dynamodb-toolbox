@@ -4,7 +4,7 @@ import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
-import { PutItemTransactionOptions } from '../options.js'
+import type { PutItemTransactionOptions } from '../options.js'
 import type { TransactPutItemParams } from './transactPutItemParams.js'
 
 type TransactionOptions = Omit<TransactPutItemParams, 'TableName' | 'Item'>

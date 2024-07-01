@@ -1,8 +1,8 @@
-import {
+import { Parser } from '~/schema/actions/parse/index.js'
+import type {
   ExtensionParser,
   ExtensionParserOptions,
-  ParsedValue,
-  Parser
+  ParsedValue
 } from '~/schema/actions/parse/index.js'
 import type { Attribute, AttributeBasicValue, RecordAttribute } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'

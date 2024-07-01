@@ -1,8 +1,9 @@
 import type { O } from 'ts-toolbelt'
 
-import { $state } from '../constants/attributeOptions.js'
+import type { $state } from '../constants/attributeOptions.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { $AnyAttributeState, AnyAttribute } from './interface.js'
+import { AnyAttribute } from './interface.js'
+import type { $AnyAttributeState } from './interface.js'
 import type { AnyAttributeState } from './types.js'
 
 export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =

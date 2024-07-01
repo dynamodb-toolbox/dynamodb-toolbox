@@ -1,24 +1,21 @@
 import type { DeleteItemCommandClass } from '~/entity/actions/commands/deleteItem/deleteItemCommand.js'
-import {
-  DeleteItemCommand,
+import { DeleteItemCommand } from '~/entity/actions/commands/deleteItem/index.js'
+import type {
   DeleteItemOptions,
   DeleteItemResponse
 } from '~/entity/actions/commands/deleteItem/index.js'
 import type { GetItemCommandClass } from '~/entity/actions/commands/getItem/getItemCommand.js'
-import {
-  GetItemCommand,
-  GetItemOptions,
-  GetItemResponse
-} from '~/entity/actions/commands/getItem/index.js'
-import {
-  PutItemCommand,
+import { GetItemCommand } from '~/entity/actions/commands/getItem/index.js'
+import type { GetItemOptions, GetItemResponse } from '~/entity/actions/commands/getItem/index.js'
+import { PutItemCommand } from '~/entity/actions/commands/putItem/index.js'
+import type {
   PutItemInput,
   PutItemOptions,
   PutItemResponse
 } from '~/entity/actions/commands/putItem/index.js'
 import type { PutItemCommandClass } from '~/entity/actions/commands/putItem/putItemCommand.js'
-import {
-  UpdateItemCommand,
+import { UpdateItemCommand } from '~/entity/actions/commands/updateItem/index.js'
+import type {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse

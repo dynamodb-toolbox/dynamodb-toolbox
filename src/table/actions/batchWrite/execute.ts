@@ -1,13 +1,15 @@
-import {
+import { BatchWriteCommand as _BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
+import type {
   BatchWriteCommandInput,
   BatchWriteCommandOutput,
-  DynamoDBDocumentClient,
-  BatchWriteCommand as _BatchWriteCommand
+  DynamoDBDocumentClient
 } from '@aws-sdk/lib-dynamodb'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { CapacityOption, parseCapacityOption } from '~/options/capacity.js'
-import { MetricsOption, parseMetricsOption } from '~/options/metrics.js'
+import { parseCapacityOption } from '~/options/capacity.js'
+import type { CapacityOption } from '~/options/capacity.js'
+import { parseMetricsOption } from '~/options/metrics.js'
+import type { MetricsOption } from '~/options/metrics.js'
 import { $table } from '~/table/index.js'
 
 import { BatchWriteCommand } from './batchWriteCommand.js'

@@ -11,7 +11,8 @@ import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { AttrParsedValue, MustBeDefined, attrParser } from './attribute.js'
+import { attrParser } from './attribute.js'
+import type { AttrParsedValue, MustBeDefined } from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,

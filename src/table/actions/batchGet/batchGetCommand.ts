@@ -3,11 +3,14 @@ import { isEmpty } from 'lodash'
 import type { U } from 'ts-toolbelt'
 
 import type { BatchGetRequest } from '~/entity/actions/batchGet.js'
-import { EntityPathParser, EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
-import { $entity, Entity } from '~/entity/index.js'
+import { EntityPathParser } from '~/entity/actions/parsePaths.js'
+import type { EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
+import { $entity } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
-import { $entities, $table, Table, TableAction } from '~/table/index.js'
+import { $entities, $table, TableAction } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 
 export const $requests = Symbol('$requests')
 export type $requests = typeof $requests

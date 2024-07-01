@@ -3,7 +3,6 @@ import type { A } from 'ts-toolbelt'
 import {
   DynamoDBToolboxError,
   Entity,
-  FormattedItem,
   QueryCommand,
   Table,
   number,
@@ -11,6 +10,7 @@ import {
   schema,
   string
 } from '~/index.js'
+import type { FormattedItem } from '~/index.js'
 
 const TestTable = new Table({
   name: 'test-table',

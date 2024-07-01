@@ -1,9 +1,12 @@
-import { DeleteCommand, DeleteCommandInput, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
+import { DeleteCommand } from '@aws-sdk/lib-dynamodb'
+import type { DeleteCommandInput, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
 import type { O } from 'ts-toolbelt'
 
-import { EntityFormatter, FormattedItem } from '~/entity/actions/format.js'
+import { EntityFormatter } from '~/entity/actions/format.js'
+import type { FormattedItem } from '~/entity/actions/format.js'
 import type { KeyInput } from '~/entity/actions/parse.js'
-import { $entity, Entity, EntityAction } from '~/entity/index.js'
+import { $entity, EntityAction } from '~/entity/index.js'
+import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 

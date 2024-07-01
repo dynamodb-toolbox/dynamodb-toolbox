@@ -2,11 +2,8 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import { $PrimitiveAttribute } from './interface.js'
-import {
-  PRIMITIVE_DEFAULT_OPTIONS,
-  PrimitiveAttributeDefaultOptions,
-  PrimitiveAttributeOptions
-} from './options.js'
+import { PRIMITIVE_DEFAULT_OPTIONS } from './options.js'
+import type { PrimitiveAttributeDefaultOptions, PrimitiveAttributeOptions } from './options.js'
 import type { PrimitiveAttributeType } from './types.js'
 
 type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <

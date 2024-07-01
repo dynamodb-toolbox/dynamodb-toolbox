@@ -7,7 +7,8 @@ import type { Schema } from '~/schema/index.js'
 import type { OptionalizeUndefinableProperties } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { AttrFormattedValue, formatAttrRawValue } from './attribute.js'
+import { formatAttrRawValue } from './attribute.js'
+import type { AttrFormattedValue } from './attribute.js'
 import type {
   FormatOptions,
   FormattedValueDefaultOptions,

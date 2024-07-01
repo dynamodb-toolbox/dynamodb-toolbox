@@ -32,7 +32,8 @@
     // TODO: remove this rule when all the code is fully migrated to TS, atm it just produces a lot of noise
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-types": "warn",
-    "@typescript-eslint/no-non-null-assertion": "warn"
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "@typescript-eslint/consistent-type-imports": "error"
   },
   "globals": {
     "expect": true,
