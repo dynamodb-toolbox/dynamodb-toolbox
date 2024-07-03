@@ -8,9 +8,9 @@ import Mermaid from '@theme/Mermaid';
 
 DynamoDB-Toolbox mainly exposes three classes:
 
-- [🏗️ Tables](../../2-tables/1-usage/index.md) that describe the configuration of your DynamoDB Tables.
-- [🐶 Entities](../../3-entities/1-usage/index.md) that categorize the items contained in your Tables.
-- [📐 Schemas](../../4-schemas/1-usage/index.md) that list the attributes of your entities.
+- 🏗️ [Tables](../../2-tables/1-usage/index.md) that describe the configuration of your DynamoDB Tables
+- 🐶 [Entities](../../3-entities/1-usage/index.md) that categorize the items contained in your Tables
+- 📐 [Schemas](../../4-schemas/1-usage/index.md) that list the attributes of your entities
 
 ```mermaid
 flowchart LR
@@ -141,16 +141,16 @@ export class NameGetter<
   }
 }
 
-const nameGetter = PokemonEntity.build(NameGetter)
+const pokeNameGetter = PokemonEntity.build(NameGetter)
 // => NameGetter<typeof PokemonEntity>
-const pokemonEntityName = nameGetter.get()
+const pokemonEntityName = pokeNameGetter.get()
 // => "POKEMON"
 ```
 
 `PokemonEntity.build` simply **instanciates a _new_ action** with `PokemonEntity` as the constructor first parameter. Another way to do it would be:
 
 ```ts
-const nameGetter = new NameGetter(PokemonEntity)
+const pokeNameGetter = new NameGetter(PokemonEntity)
 ```
 
 Although this action-oriented syntax is (we find) **less readable** than the entity-oriented one, it leads to exactly the same result, so feel free to use it if you prefer!

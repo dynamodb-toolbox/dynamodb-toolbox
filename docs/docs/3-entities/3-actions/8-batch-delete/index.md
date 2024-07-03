@@ -4,24 +4,14 @@ sidebar_custom_props:
   sidebarActionType: delete
 ---
 
-# BatchDeleteItemRequest
+# BatchDeleteRequest
 
-Build a `DeleteItem` request on an entity item, to be used within [BatchWriteItem operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html):
-
-:::info
-
-Check the [Batching Documentation](../5-batching/index.md) to learn how to use `BatchDeleteItemRequests`.
-
-:::
+Builds a request to delete an entity item, to be used within [`BatchWriteCommands`](../../../2-tables/2-actions/5-batch-write/index.md):
 
 ```ts
-import { batchWrite } from 'dynamodb-toolbox/entity/actions/batchWrite'
-import { BatchDeleteItemRequest } from 'dynamodb-toolbox/entity/actions/batchDelete'
+import { BatchDeleteRequest } from 'dynamodb-toolbox/entity/actions/batchDelete'
 
-const request = PokemonEntity.build(BatchDeleteItemRequest)
-
-const params = request.params()
-await batchWrite([request, ...otherRequests])
+const request = PokemonEntity.build(BatchDeleteRequest)
 ```
 
 ## Request
@@ -33,12 +23,12 @@ await batchWrite([request, ...otherRequests])
 The key of the item to delete (i.e. attributes that are tagged as part of the primary key):
 
 ```ts
-const request = PokemonEntity.build(
-  BatchDeleteItemRequest
-).key({ pokemonId: 'pikachu1' })
+const request = PokemonEntity.build(BatchDeleteRequest).key(
+  { pokemonId: 'pikachu1' }
+)
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `BatchDeleteItemRequest` key:
+You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `BatchDeleteRequest` key:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
@@ -47,9 +37,9 @@ const key: KeyInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1'
 }
 
-const request = PokemonEntity.build(
-  BatchDeleteItemRequest
-).key(key)
+const request = PokemonEntity.build(BatchDeleteRequest).key(
+  key
+)
 ```
 
 :::info

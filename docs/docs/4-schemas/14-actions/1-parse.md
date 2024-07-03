@@ -462,7 +462,7 @@ const keyInput: ParserInput<
 
 <p style={{ marginTop: '-15px' }}><i><code>(input: unknown, options?: ParsingOptions) => Generator&lt;ParsedValue&lt;SCHEMA&gt;&gt;</code></i></p>
 
-Similar to [`.parse`](#parse), but will return the underlying [Generator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator) to inspect the intermediate results of the parsing steps:
+Similar to [`.parse`](#parse), but returns the underlying [Generator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator) to inspect the intermediate results of the parsing steps:
 
 :::noteExamples
 

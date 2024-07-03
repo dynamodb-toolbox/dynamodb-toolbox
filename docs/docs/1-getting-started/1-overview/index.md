@@ -10,7 +10,7 @@ title: Overview
 
 ---
 
-It provides as a light abstraction layer over the SDK that will **turn your DynamoDB journey into a ✨ bliss ✨**:
+It provides as a light abstraction layer over the SDK that **turns your DynamoDB journey into a ✨ bliss ✨**:
 
 - 🤗 **Simpler queries**: DynamoDB-Toolbox does all the heavy-lifting of crafting those **cumbersome DynamoDB requests**. It make your code **clearer**, **more succinct** and **easier to maintain**.
 - 📐 **Data validation**: Both pushed and fetched items are **validated** against your schemas, which guarantees the **consistency** of your data and the **reliability** of your code.

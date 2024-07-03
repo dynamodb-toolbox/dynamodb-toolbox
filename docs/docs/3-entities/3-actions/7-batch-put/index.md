@@ -4,24 +4,14 @@ sidebar_custom_props:
   sidebarActionType: write
 ---
 
-# BatchPutItemRequest
+# BatchPutRequest
 
-Build a `PutItem` request on an entity item, to be used within [BatchWriteItem operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html).
-
-:::info
-
-Check the [Batching Documentation](../5-batching/index.md) to learn how to use `BatchPutItemRequests`.
-
-:::
+Builds a request to put an entity item, to be used within [`BatchWriteCommands`](../../../2-tables/2-actions/5-batch-write/index.md):
 
 ```ts
-import { batchWrite } from 'dynamodb-toolbox/entity/actions/batchWrite'
-import { BatchPutItemRequest } from 'dynamodb-toolbox/entity/actions/batchPut'
+import { BatchPutRequest } from 'dynamodb-toolbox/entity/actions/batchPut'
 
-const request = PokemonEntity.build(BatchPutItemRequest)
-
-const params = request.params()
-await batchWrite([request, ...otherRequests])
+const request = PokemonEntity.build(BatchPutRequest)
 ```
 
 ## Request
@@ -33,9 +23,7 @@ await batchWrite([request, ...otherRequests])
 The item to write:
 
 ```ts
-const request = PokemonEntity.build(
-  BatchPutItemRequest
-).item({
+const request = PokemonEntity.build(BatchPutRequest).item({
   pokemonId: 'pikachu1',
   name: 'Pikachu',
   pokeType: 'electric',
@@ -44,7 +32,7 @@ const request = PokemonEntity.build(
 })
 ```
 
-You can use the `PutItemInput` type from the [`PutItemCommand`](../2-put-item/index.md) action to explicitely type an object as a `BatchPutItemRequest` item:
+You can use the `PutItemInput` type from the [`PutItemCommand`](../2-put-item/index.md) action to explicitely type an object as a `BatchPutRequest` item:
 
 ```ts
 import type { PutItemInput } from 'dynamodb-toolbox/entity/actions/put'
@@ -55,9 +43,8 @@ const item: PutItemInput<typeof PokemonEntity> = {
   ...
 }
 
-const request = PokemonEntity.build(
-  BatchPutItemRequest
-).item(item)
+const request =
+  PokemonEntity.build(BatchPutRequest).item(item)
 ```
 
 :::info
