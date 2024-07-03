@@ -90,7 +90,7 @@ You can use the `QueryOptions` type to explicitely type an object as a `QueryCom
 ```ts
 import type { QueryOptions } from 'dynamodb-toolbox/table/actions/query'
 
-const scanOptions: QueryOptions<
+const queryOptions: QueryOptions<
   typeof PokeTable,
   // 👇 Optional entities
   [typeof PokemonEntity, typeof TrainerEntity]
@@ -103,7 +103,7 @@ const scanOptions: QueryOptions<
 const { Items } = await PokeTable.build(QueryCommand)
   .query(query)
   .entities(PokemonEntity, TrainerEntity)
-  .options(scanOptions)
+  .options(queryOptions)
   .send()
 ```
 

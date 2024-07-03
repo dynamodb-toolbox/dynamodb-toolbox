@@ -295,9 +295,9 @@ const Home = (): JSX.Element => (
         <div>
           <p className="text text-balance opacity-90 max-w-[500px] lg:text-xl lg:max-w-[600px]">
             DynamoDB-Toolbox is a light abstraction layer
-            over the Document Client that will{' '}
+            over the Document Client that{' '}
             <b>
-              turn your DynamoDB journey into a ✨ bliss ✨
+              turns your DynamoDB journey into a ✨ bliss ✨
             </b>
           </p>
         </div>

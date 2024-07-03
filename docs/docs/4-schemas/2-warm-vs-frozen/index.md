@@ -6,7 +6,7 @@ title: Warm vs Frozen
 
 ## Composition
 
-Prior to being wrapped in a `schema` declaration, schemas are called **warm:** They are **not validated** (at run-time) and can be used to build other schemas. By inspecting their types, you will see that they are prefixed with `$`.
+Prior to being wrapped in a `schema` declaration, schemas are called **warm:** They are **not validated** (at run-time) and can be used to build other schemas. By inspecting their types, you can see that they are prefixed with `$`.
 
 Once **frozen**, validation is applied and building methods are stripped:
 

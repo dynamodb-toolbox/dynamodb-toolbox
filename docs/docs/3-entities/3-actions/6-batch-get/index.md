@@ -1,11 +1,48 @@
 ---
-title: BatchGet 👷
+title: BatchGet
 sidebar_custom_props:
   sidebarActionType: read
 ---
 
-# BatchGetItemRequest 👷
+# BatchGetRequest
 
-Build a BatchGetItem Request on an entity item, to perform a [BatchGetItem Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html).
+Builds a request to get an entity item, to be used within [`BatchGetCommands`](../../../2-tables/2-actions/4-batch-get/index.md):
 
-TO IMPLEMENT 👷
+```ts
+import { BatchGetRequest } from 'dynamodb-toolbox/entity/actions/batchGet'
+
+const request = PokemonEntity.build(BatchGetRequest)
+```
+
+## Request
+
+### `.key(...)`
+
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
+
+The key of the item to get (i.e. attributes that are tagged as part of the primary key):
+
+```ts
+const request = PokemonEntity.build(BatchGetRequest).key({
+  pokemonId: 'pikachu1'
+})
+```
+
+You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `BatchGetRequest` key:
+
+```ts
+import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
+
+const key: KeyInput<typeof PokemonEntity> = {
+  pokemonId: 'pikachu1'
+}
+
+const request =
+  PokemonEntity.build(BatchGetRequest).key(key)
+```
+
+:::info
+
+Contrary to [`GetItemCommands`](../1-get-item/index.md), batch gets cannot be [conditioned](../17-parse-condition/index.md).
+
+:::
