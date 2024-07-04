@@ -6,26 +6,17 @@ sidebar_custom_props:
 
 # PutItemTransaction
 
-Build a `PutItem` transaction on an entity item, to be used within [TransactWriteItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html):
+Builds a transaction to put an entity item, to be used within [TransactWriteItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html):
 
 ```ts
-import { transactWriteItems } from 'dynamodb-toolbox/entity/actions/transactWrite'
+import { execute } from 'dynamodb-toolbox/entity/actions/transactWrite'
 import { PutItemTransaction } from 'dynamodb-toolbox/entity/actions/transactPut'
 
 const transaction = PokemonEntity.build(PutItemTransaction)
 
 const params = transaction.params()
-await transactWriteItems([
-  transaction,
-  ...otherTransactions
-])
+await execute([transaction, ...otherTransactions])
 ```
-
-:::info
-
-Check the [Transaction Documentation](../9-transactions/index.md) to learn how to use `PutItemTransactions`.
-
-:::
 
 ## Request
 
@@ -53,7 +44,7 @@ import type { PutItemInput } from 'dynamodb-toolbox/entity/actions/put'
 
 const item: PutItemInput<typeof PokemonEntity> = {
   pokemonId: 'pikachu1',
-  name: 'Pikachu'
+  name: 'Pikachu',
   ...
 }
 

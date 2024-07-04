@@ -6,15 +6,6 @@ type IncompleteActionErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
-type InconsistentNumberOfItemsErrorBlueprint = ErrorBlueprint<{
-  code: 'actions.inconsistentNumberOfItems'
-  hasPath: false
-  payload: {
-    received: number
-    expected: number
-  }
-}>
-
 type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
   code: 'actions.missingDocumentClient'
   hasPath: false
@@ -93,5 +84,4 @@ export type OptionsErrorBlueprints =
   | InvalidReturnValuesOptionErrorBlueprint
   | InvalidSelectOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
-  | InconsistentNumberOfItemsErrorBlueprint
   | MissingDocumentClientErrorBlueprint

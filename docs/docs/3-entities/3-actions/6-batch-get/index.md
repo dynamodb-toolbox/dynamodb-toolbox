@@ -40,9 +40,3 @@ const key: KeyInput<typeof PokemonEntity> = {
 const request =
   PokemonEntity.build(BatchGetRequest).key(key)
 ```
-
-:::info
-
-Contrary to [`GetItemCommands`](../1-get-item/index.md), batch gets cannot be [conditioned](../17-parse-condition/index.md).
-
-:::
