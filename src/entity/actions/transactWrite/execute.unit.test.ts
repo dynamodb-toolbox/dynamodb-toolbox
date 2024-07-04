@@ -6,12 +6,12 @@ import {
   $append,
   $set,
   ConditionCheck,
-  DeleteItemTransaction,
+  DeleteTransaction,
   DynamoDBToolboxError,
   Entity,
-  PutItemTransaction,
+  PutTransaction,
   Table,
-  UpdateItemTransaction,
+  UpdateTransaction,
   any,
   binary,
   boolean,
@@ -20,11 +20,11 @@ import {
   number,
   schema,
   set,
-  string,
-  transactWriteItems
+  string
 } from '~/index.js'
 
-import { getTransactWriteCommandInput } from './transactWriteItems.js'
+import { getCommandInput } from './execute.js'
+import { execute } from './index.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 
@@ -99,26 +99,25 @@ describe('transactWriteItems', () => {
   })
 
   test('should throw an error if dynamoDBDocumentClient is not found', async () => {
-    const transactions: PutItemTransaction[] = []
-    const options = {}
-    await expect(transactWriteItems(transactions, options)).rejects.toThrow(
-      'DynamoDBDocumentClient not found'
+    await expect(execute()).rejects.toThrow(DynamoDBToolboxError)
+    await expect(execute()).rejects.toThrow(
+      expect.objectContaining({ code: 'actions.incompleteAction' })
     )
   })
 
   test('should send a transaction with the correct parameters', async () => {
     const transactions = [
-      TestEntity.build(PutItemTransaction).item({
+      TestEntity.build(PutTransaction).item({
         email: 'titi@example.com',
         sort: 'titi'
       }),
-      TestEntity2.build(PutItemTransaction).item({
+      TestEntity2.build(PutTransaction).item({
         email: 'toto@example.com'
       })
     ]
-    const options = { dynamoDBDocumentClient: documentClient }
+    const options = { documentClient }
 
-    await transactWriteItems(transactions, options)
+    await execute(options, ...transactions)
 
     expect(documentClient.send).toHaveBeenCalledTimes(1)
   })
@@ -137,17 +136,18 @@ describe('generateTransactWriteCommandInput', () => {
 
   test('should throw an error if an invalid option is set', async () => {
     const transactions = [
-      TestEntity.build(PutItemTransaction).item({
+      TestEntity.build(PutTransaction).item({
         email: 'titi@example.com',
         sort: 'titi'
       })
     ]
 
     const invalidTransactWriteCommandInputGeneration = () =>
-      getTransactWriteCommandInput(transactions, {
+      getCommandInput(
+        transactions,
         // @ts-expect-error
-        extra: true
-      })
+        { extra: true }
+      )
 
     expect(invalidTransactWriteCommandInputGeneration).toThrow(DynamoDBToolboxError)
     expect(invalidTransactWriteCommandInputGeneration).toThrow(
@@ -162,7 +162,7 @@ describe('generateTransactWriteCommandInput', () => {
           sort: 'tata'
         })
         .condition({ attr: 'count', gt: 4 }),
-      TestEntity.build(PutItemTransaction).item({
+      TestEntity.build(PutTransaction).item({
         email: 'titi@example.com',
         sort: 'titi',
         test_any: 'any',
@@ -176,25 +176,25 @@ describe('generateTransactWriteCommandInput', () => {
         test_number_set: new Set([1, 2, 3]),
         test_binary_set: new Set([Buffer.from('a'), Buffer.from('b')])
       }),
-      TestEntity.build(DeleteItemTransaction).key({
+      TestEntity.build(DeleteTransaction).key({
         email: 'tata@example.com',
         sort: 'tata'
       }),
-      TestEntity.build(UpdateItemTransaction).item({
+      TestEntity.build(UpdateTransaction).item({
         email: 'titi@example.com',
         sort: 'titi',
         count: $add(3),
         test_map: $set({ str: 'B' }),
         test_list: $append(['toutou'])
       }),
-      TestEntity2.build(PutItemTransaction).item({
+      TestEntity2.build(PutTransaction).item({
         email: 'toto@example.com',
         test_composite: 'hey',
         test_composite2: 'ho'
       })
     ]
 
-    const transactWriteCommandInput = getTransactWriteCommandInput(transactions, {
+    const transactWriteCommandInput = getCommandInput(transactions, {
       clientRequestToken: 'string',
       capacity: 'NONE',
       metrics: 'SIZE'

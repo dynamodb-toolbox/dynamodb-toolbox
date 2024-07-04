@@ -4,22 +4,20 @@ import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import type { Condition } from '~/entity/actions/parseCondition.js'
 import type { Entity } from '~/entity/index.js'
 
-import type { ConditionCheckParams } from './conditionCheckParams.js'
+import type { TransactWriteItem } from '../transactWrite/transaction.js'
 
-type TransactionOptions = Omit<ConditionCheckParams, 'TableName' | 'Key'>
-
-type ConditionCheckOptionsParser = <ENTITY extends Entity>(
+type OptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
   condition: Condition<ENTITY>
-) => TransactionOptions
+) => Omit<NonNullable<TransactWriteItem['ConditionCheck']>, 'TableName' | 'Key'>
 
-export const parseConditionCheckOptions: ConditionCheckOptionsParser = (entity, condition) => {
+export const parseOptions: OptionsParser = (entity, condition) => {
   const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
     .build(EntityConditionParser)
     .parse(condition)
     .toCommandOptions()
 
-  const transactionOptions: TransactionOptions = { ConditionExpression }
+  const transactionOptions: ReturnType<OptionsParser> = { ConditionExpression }
 
   if (!isEmpty(ExpressionAttributeNames)) {
     transactionOptions.ExpressionAttributeNames = ExpressionAttributeNames

@@ -23,14 +23,8 @@ const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
 const TestTable = new Table({
   name: 'test-table',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  },
-  sortKey: {
-    type: 'string',
-    name: 'sk'
-  },
+  partitionKey: { type: 'string', name: 'pk' },
+  sortKey: { type: 'string', name: 'sk' },
   documentClient
 })
 
@@ -62,7 +56,7 @@ describe('condition check transaction', () => {
       TestEntity.build(ConditionCheck)
         .key({ email: 'x', sort: 'y' })
         .condition({ attr: 'email', gt: 'test' })
-        .params()
+        .params().ConditionCheck
 
     expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })

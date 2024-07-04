@@ -22,6 +22,20 @@ export interface ExecuteBatchGetOptions {
   documentClient?: DynamoDBDocumentClient
 }
 
+type ExecuteBatchGet = <
+  COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
+>(
+  ..._commands: COMMANDS
+) => Promise<
+  COMMANDS extends BatchGetCommand[]
+    ? ExecuteBatchGetResponse<COMMANDS>
+    : COMMANDS extends [unknown, ...infer REQUESTS_TAIL]
+      ? REQUESTS_TAIL extends BatchGetCommand[]
+        ? ExecuteBatchGetResponse<REQUESTS_TAIL>
+        : never
+      : never
+>
+
 type ExecuteBatchGetResponse<COMMAND extends BatchGetCommand[]> = Omit<
   BatchGetCommandOutput,
   'Responses'
@@ -102,30 +116,16 @@ type BatchGetRequestResponses<
       : never
     : ITEMS
 
-type BatchGetCommandExecutor = <
-  COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
->(
-  ..._commands: COMMANDS
-) => Promise<
-  COMMANDS extends BatchGetCommand[]
-    ? ExecuteBatchGetResponse<COMMANDS>
-    : COMMANDS extends [unknown, ...infer TAIL_REQUESTS]
-      ? TAIL_REQUESTS extends BatchGetCommand[]
-        ? ExecuteBatchGetResponse<TAIL_REQUESTS>
-        : never
-      : never
->
-
-export const execute: BatchGetCommandExecutor = async <
+export const execute: ExecuteBatchGet = async <
   COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
 >(
   ..._commands: COMMANDS
 ) => {
   type RESPONSE = COMMANDS extends BatchGetCommand[]
     ? ExecuteBatchGetResponse<COMMANDS>
-    : COMMANDS extends [unknown, ...infer TAIL_REQUESTS]
-      ? TAIL_REQUESTS extends BatchGetCommand[]
-        ? ExecuteBatchGetResponse<TAIL_REQUESTS>
+    : COMMANDS extends [unknown, ...infer REQUESTS_TAIL]
+      ? REQUESTS_TAIL extends BatchGetCommand[]
+        ? ExecuteBatchGetResponse<REQUESTS_TAIL>
         : never
       : never
 

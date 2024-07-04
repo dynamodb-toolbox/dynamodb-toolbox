@@ -1,24 +1,23 @@
+import type { Condition } from '~/entity/actions/parseCondition.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
-import type { UpdateItemTransactionOptions } from '../options.js'
-import type { TransactUpdateItemParams } from './transactUpdateItemParams.js'
+import type { TransactWriteItem } from '../transactWrite/transaction.js'
 
-type TransactionOptions = Omit<TransactUpdateItemParams, 'TableName' | 'Key' | 'UpdateExpression'>
+export interface UpdateTransactionOptions<ENTITY extends Entity = Entity> {
+  condition?: Condition<ENTITY>
+}
 
-type UpdateItemTransactionOptionsParser = <ENTITY extends Entity>(
+type OptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
-  updateItemTransactionOptions: UpdateItemTransactionOptions<ENTITY>
-) => TransactionOptions
+  options: UpdateTransactionOptions<ENTITY>
+) => Omit<NonNullable<TransactWriteItem['Update']>, 'TableName' | 'Key' | 'UpdateExpression'>
 
-export const parseUpdateItemTransactionOptions: UpdateItemTransactionOptionsParser = (
-  entity,
-  updateItemTransactionOptions
-) => {
-  const transactionOptions: TransactionOptions = {}
+export const parseOptions: OptionsParser = (entity, options) => {
+  const transactionOptions: ReturnType<OptionsParser> = {}
 
-  const { condition, ...extraOptions } = updateItemTransactionOptions
+  const { condition, ...extraOptions } = options
   rejectExtraOptions(extraOptions)
 
   if (condition !== undefined) {

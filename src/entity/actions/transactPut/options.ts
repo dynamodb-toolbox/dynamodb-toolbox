@@ -1,26 +1,26 @@
 import { isEmpty } from 'lodash'
 
+import type { Condition } from '~/entity/actions/parseCondition.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
-import type { DeleteItemTransactionOptions } from '../options.js'
-import type { TransactDeleteItemParams } from './transactDeleteItemParams.js'
+import type { TransactWriteItem } from '../transactWrite/transaction.js'
 
-type TransactionOptions = Omit<TransactDeleteItemParams, 'TableName' | 'Key'>
+export interface PutTransactionOptions<ENTITY extends Entity = Entity> {
+  condition?: Condition<ENTITY>
+}
 
-type DeleteItemTransactionOptionsParser = <ENTITY extends Entity>(
+type OptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
-  deleteItemTransactionOptions: DeleteItemTransactionOptions<ENTITY>
-) => TransactionOptions
+  options: PutTransactionOptions<ENTITY>
+) => Omit<NonNullable<TransactWriteItem['Put']>, 'TableName' | 'Item'>
 
-export const parseDeleteItemTransactionOptions: DeleteItemTransactionOptionsParser = (
-  entity,
-  deleteItemTransactionOptions
-) => {
-  const transactionOptions: TransactionOptions = {}
+export const parseOptions: OptionsParser = (entity, options) => {
+  const transactionOptions: ReturnType<OptionsParser> = {}
 
-  const { condition, ...extraOptions } = deleteItemTransactionOptions
+  const { condition, ...extraOptions } = options
+  rejectExtraOptions(extraOptions)
 
   if (condition !== undefined) {
     const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
@@ -38,8 +38,6 @@ export const parseDeleteItemTransactionOptions: DeleteItemTransactionOptionsPars
 
     transactionOptions.ConditionExpression = ConditionExpression
   }
-
-  rejectExtraOptions(extraOptions)
 
   return transactionOptions
 }
