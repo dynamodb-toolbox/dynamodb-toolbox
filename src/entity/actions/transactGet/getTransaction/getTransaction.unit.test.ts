@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { DynamoDBToolboxError, Entity, GetItemTransaction, Table, schema, string } from '~/index.js'
+import { DynamoDBToolboxError, Entity, GetTransaction, Table, schema, string } from '~/index.js'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -9,14 +9,8 @@ const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
 const TestTable = new Table({
   name: 'test-table',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  },
-  sortKey: {
-    type: 'string',
-    name: 'sk'
-  },
+  partitionKey: { type: 'string', name: 'pk' },
+  sortKey: { type: 'string', name: 'sk' },
   documentClient
 })
 
@@ -42,23 +36,23 @@ const TestEntity2 = new Entity({
 
 describe('Get transaction', () => {
   test('Gets the key from inputs', async () => {
-    const { TableName, Key } = TestEntity.build(GetItemTransaction)
+    const { TableName, Key } = TestEntity.build(GetTransaction)
       .key({ email: 'test-pk', sort: 'test-sk' })
-      .params()
+      .params().Get
 
     expect(TableName).toBe('test-table')
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   test('filters out extra data', async () => {
-    const { Key } = TestEntity.build(GetItemTransaction)
+    const { Key } = TestEntity.build(GetTransaction)
       .key({
         email: 'test-pk',
         sort: 'test-sk',
         // @ts-expect-error
         test: 'test'
       })
-      .params()
+      .params().Get
 
     expect(Key).not.toHaveProperty('test')
   })
@@ -66,7 +60,7 @@ describe('Get transaction', () => {
   test('fails with undefined input', () => {
     expect(
       () =>
-        TestEntity.build(GetItemTransaction)
+        TestEntity.build(GetTransaction)
           .key(
             // @ts-expect-error
             {}
@@ -79,7 +73,7 @@ describe('Get transaction', () => {
   test('fails when missing the sortKey', () => {
     expect(
       () =>
-        TestEntity.build(GetItemTransaction)
+        TestEntity.build(GetTransaction)
           .key(
             // @ts-expect-error
             { pk: 'test-pk' }
@@ -92,7 +86,7 @@ describe('Get transaction', () => {
   test('fails when missing partitionKey (no alias)', () => {
     expect(
       () =>
-        TestEntity2.build(GetItemTransaction)
+        TestEntity2.build(GetTransaction)
           .key(
             // @ts-expect-error
             {}
@@ -105,7 +99,7 @@ describe('Get transaction', () => {
   test('fails when missing the sortKey (no alias)', () => {
     expect(
       () =>
-        TestEntity2.build(GetItemTransaction)
+        TestEntity2.build(GetTransaction)
           .key(
             // @ts-expect-error
             { pk: 'test-pk' }
@@ -118,7 +112,7 @@ describe('Get transaction', () => {
   // Options
   test('fails on extra options', () => {
     const invalidCall = () =>
-      TestEntity.build(GetItemTransaction)
+      TestEntity.build(GetTransaction)
         .key({ email: 'x', sort: 'y' })
         .options({
           // @ts-expect-error
@@ -131,17 +125,17 @@ describe('Get transaction', () => {
   })
 
   test('sets projection', () => {
-    const { ExpressionAttributeNames, ProjectionExpression } = TestEntity.build(GetItemTransaction)
+    const { ExpressionAttributeNames, ProjectionExpression } = TestEntity.build(GetTransaction)
       .key({ email: 'x', sort: 'y' })
       .options({ attributes: ['test', 'sort'] })
-      .params()
+      .params().Get
 
     expect(ExpressionAttributeNames).toEqual({ '#p_1': 'test', '#p_2': 'sk' })
     expect(ProjectionExpression).toBe('#p_1, #p_2')
   })
 
   test('missing key', () => {
-    const invalidCall = () => TestEntity.build(GetItemTransaction).params()
+    const invalidCall = () => TestEntity.build(GetTransaction).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))

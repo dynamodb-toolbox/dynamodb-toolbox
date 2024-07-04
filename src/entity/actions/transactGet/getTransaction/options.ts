@@ -1,27 +1,25 @@
 import { isEmpty } from 'lodash'
 
 import { EntityPathParser } from '~/entity/actions/parsePaths.js'
+import type { EntityPaths } from '~/entity/actions/parsePaths.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
-import type { GetItemTransactionOptions } from '../options.js'
-import type { TransactGetItemParams } from './transactGetItemParams.js'
+import type { TransactGetItem } from '../transaction.js'
 
-type TransactionOptions = Omit<TransactGetItemParams, 'TableName' | 'Key'>
+export type GetTransactionOptions<ENTITY extends Entity = Entity> =
+  | { attributes?: undefined }
+  | { attributes: EntityPaths<ENTITY>[] }
 
-type GetItemTransactionOptionsParser = <ENTITY extends Entity>(
+type OptionsParser = <ENTITY extends Entity>(
   entity: ENTITY,
-  GetItemTransactionOptions: GetItemTransactionOptions<ENTITY>
-) => TransactionOptions
+  GetItemTransactionOptions: GetTransactionOptions<ENTITY>
+) => Omit<NonNullable<TransactGetItem['Get']>, 'TableName' | 'Key'>
 
-export const parseGetItemTransactionOptions: GetItemTransactionOptionsParser = (
-  entity,
-  GetItemTransactionOptions
-) => {
-  const transactionOptions: TransactionOptions = {}
+export const parseOptions: OptionsParser = (entity, options) => {
+  const transactionOptions: ReturnType<OptionsParser> = {}
 
-  const { attributes, ...extraOptions } = GetItemTransactionOptions
-
+  const { attributes, ...extraOptions } = options
   rejectExtraOptions(extraOptions)
 
   if (attributes !== undefined) {
