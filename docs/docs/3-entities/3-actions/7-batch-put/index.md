@@ -12,6 +12,8 @@ Builds a request to put an entity item, to be used within [`BatchWriteCommands`]
 import { BatchPutRequest } from 'dynamodb-toolbox/entity/actions/batchPut'
 
 const request = PokemonEntity.build(BatchPutRequest)
+
+const params = request.params()
 ```
 
 ## Request
