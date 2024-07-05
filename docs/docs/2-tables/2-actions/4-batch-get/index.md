@@ -168,7 +168,7 @@ const commands: (
   OtherTable.build(BatchGetCommand).requests(...)
 ]
 
-await execute(commands)
+await execute(...commands)
 ```
 
 </TabItem>

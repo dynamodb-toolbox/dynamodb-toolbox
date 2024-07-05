@@ -146,7 +146,7 @@ describe('execute (batchGet)', () => {
       ])
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.invalidAction' }))
   })
 
   test('writes valid input otherwise', () => {

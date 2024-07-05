@@ -109,7 +109,7 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 const documentClient = new DynamoDBDocumentClient(...)
 
-const { Response } = await execute(
+await execute(
   { documentClient },
   ...batchWriteCommands
 )
