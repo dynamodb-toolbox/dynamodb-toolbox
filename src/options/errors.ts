@@ -6,6 +6,12 @@ type IncompleteActionErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+type InvalidActionErrorBlueprint = ErrorBlueprint<{
+  code: 'actions.invalidAction'
+  hasPath: false
+  payload: undefined
+}>
+
 type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
   code: 'actions.missingDocumentClient'
   hasPath: false
@@ -74,6 +80,7 @@ type UnknownOptionErrorBlueprint = ErrorBlueprint<{
 
 export type OptionsErrorBlueprints =
   | IncompleteActionErrorBlueprint
+  | InvalidActionErrorBlueprint
   | InvalidCapacityOptionErrorBlueprint
   | InvalidClientRequestTokenOptionErrorBlueprint
   | InvalidConsistentOptionErrorBlueprint

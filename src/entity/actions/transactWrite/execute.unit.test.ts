@@ -89,7 +89,7 @@ const TestEntity2 = new Entity({
   table: TestTable2
 })
 
-describe('transactWriteItems', () => {
+describe('execute', () => {
   beforeAll(() => {
     vi.spyOn(documentClient, 'send').mockImplementation(vi.fn())
   })

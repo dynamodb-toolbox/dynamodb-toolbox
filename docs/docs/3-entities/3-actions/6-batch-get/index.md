@@ -12,6 +12,8 @@ Builds a request to get an entity item, to be used within [`BatchGetCommands`](.
 import { BatchGetRequest } from 'dynamodb-toolbox/entity/actions/batchGet'
 
 const request = PokemonEntity.build(BatchGetRequest)
+
+const params = request.params()
 ```
 
 ## Request

@@ -64,8 +64,9 @@ export const getCommandInput = (
     const tableName = command[$table].getName()
 
     if (tableName in requestItems) {
-      // TODO
-      throw new DynamoDBToolboxError('actions.incompleteAction', { message: '' })
+      throw new DynamoDBToolboxError('actions.invalidAction', {
+        message: `Two BatchWriteCommands detected for table: ${tableName}. Please provide only one BatchWriteCommand per table`
+      })
     }
 
     requestItems[tableName] = command.params()

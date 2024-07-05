@@ -26,6 +26,8 @@ const pokeCmd = PokeTable.build(BatchWriteCommand).requests(
   PokemonEntity.build(BatchPutRequest).item(charizard)
 )
 
+const params = pokeCmd.params()
+
 const ashCmd = OtherTable.build(BatchWriteCommand).requests(
   TrainerEntity.build(BatchDeleteRequest).key(ashKey)
 )

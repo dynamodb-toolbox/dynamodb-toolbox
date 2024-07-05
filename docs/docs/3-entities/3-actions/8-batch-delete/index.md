@@ -12,6 +12,8 @@ Builds a request to delete an entity item, to be used within [`BatchWriteCommand
 import { BatchDeleteRequest } from 'dynamodb-toolbox/entity/actions/batchDelete'
 
 const request = PokemonEntity.build(BatchDeleteRequest)
+
+const params = request.params()
 ```
 
 ## Request
