@@ -1,10 +1,10 @@
 import { isEmpty, omit } from 'lodash'
 import type { O } from 'ts-toolbelt'
 
-import type { UpdateItemInput } from '~/entity/actions/commands/updateItem/index.js'
-import { parseUpdate } from '~/entity/actions/commands/updateItem/updateExpression/parse.js'
-import { parseUpdateExtension } from '~/entity/actions/commands/updateItem/updateItemParams/extension/index.js'
 import { EntityParser } from '~/entity/actions/parse.js'
+import type { UpdateItemInput } from '~/entity/actions/update/index.js'
+import { parseUpdate } from '~/entity/actions/update/updateExpression/parse.js'
+import { parseUpdateExtension } from '~/entity/actions/update/updateItemParams/extension/index.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'

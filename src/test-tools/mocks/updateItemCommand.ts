@@ -1,13 +1,13 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { UpdateItemCommand } from '~/entity/actions/commands/updateItem/index.js'
+import { UpdateItemCommand } from '~/entity/actions/update/index.js'
 import type {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from '~/entity/actions/commands/updateItem/index.js'
-import { $item, $options } from '~/entity/actions/commands/updateItem/updateItemCommand.js'
-import { updateItemParams } from '~/entity/actions/commands/updateItem/updateItemParams/index.js'
+} from '~/entity/actions/update/index.js'
+import { $item, $options } from '~/entity/actions/update/updateItemCommand.js'
+import { updateItemParams } from '~/entity/actions/update/updateItemParams/index.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'

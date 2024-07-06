@@ -1,8 +1,8 @@
 import type { AttributeValue } from '@aws-sdk/client-dynamodb'
 import type { O } from 'ts-toolbelt'
 
-import type { PutItemInput } from '~/entity/actions/commands/putItem/index.js'
 import { EntityParser } from '~/entity/actions/parse.js'
+import type { PutItemInput } from '~/entity/actions/put/index.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
