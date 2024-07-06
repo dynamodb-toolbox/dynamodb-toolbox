@@ -1,5 +1,20 @@
 // schema
 export { schema, Schema, SchemaAction } from './schema/index.js'
+export { attr, attribute } from './schema/attributes/index.js'
+export { any, AnyAttribute, $AnyAttribute } from './schema/attributes/any/index.js'
+export {
+  boolean,
+  number,
+  string,
+  binary,
+  PrimitiveAttribute,
+  $PrimitiveAttribute
+} from './schema/attributes/primitive/index.js'
+export { set, SetAttribute, $SetAttribute } from './schema/attributes/set/index.js'
+export { list, ListAttribute, $ListAttribute } from './schema/attributes/list/index.js'
+export { map, MapAttribute, $MapAttribute } from './schema/attributes/map/index.js'
+export { record, RecordAttribute, $RecordAttribute } from './schema/attributes/record/index.js'
+export { anyOf, AnyOfAttribute, $AnyOfAttribute } from './schema/attributes/anyOf/index.js'
 export { Parser } from './schema/actions/parse/index.js'
 export type {
   ParsedValue,
@@ -23,17 +38,15 @@ export { PathParser } from './schema/actions/parsePaths/index.js'
 export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/parsePaths/index.js'
 export { ConditionParser } from './schema/actions/parseCondition/index.js'
 export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
-// TODO: Pick relevant exports
-export * from './schema/attributes/index.js'
 
 // tables
 export { Table } from './table/index.js'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey/index.js'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey/index.js'
-export { QueryCommand } from './table/actions/queryCommand/index.js'
-export type { Query, QueryOptions, QueryResponse } from './table/actions/queryCommand/index.js'
-export { ScanCommand } from './table/actions/scanCommand/index.js'
-export type { ScanOptions, ScanResponse } from './table/actions/scanCommand/index.js'
+export { QueryCommand } from './table/actions/query/index.js'
+export type { Query, QueryOptions, QueryResponse } from './table/actions/query/index.js'
+export { ScanCommand } from './table/actions/scan/index.js'
+export type { ScanOptions, ScanResponse } from './table/actions/scan/index.js'
 export { BatchGetCommand, execute as executeBatchGet } from './table/actions/batchGet/index.js'
 export type {
   BatchGetCommandOptions,
@@ -45,24 +58,15 @@ export {
 } from './table/actions/batchWrite/index.js'
 export type { ExecuteBatchWriteOptions } from './table/actions/batchWrite/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
-// TODO: Pick relevant types
-export * from './table/types/index.js'
 
 // entities
 export { Entity } from './entity/index.js'
-export { GetItemCommand } from './entity/actions/commands/getItem/index.js'
-export type { GetItemOptions, GetItemResponse } from './entity/actions/commands/getItem/index.js'
-export { PutItemCommand } from './entity/actions/commands/putItem/index.js'
-export type {
-  PutItemInput,
-  PutItemOptions,
-  PutItemResponse
-} from './entity/actions/commands/putItem/index.js'
-export { DeleteItemCommand } from './entity/actions/commands/deleteItem/index.js'
-export type {
-  DeleteItemOptions,
-  DeleteItemResponse
-} from './entity/actions/commands/deleteItem/index.js'
+export { GetItemCommand } from './entity/actions/get/index.js'
+export type { GetItemOptions, GetItemResponse } from './entity/actions/get/index.js'
+export { PutItemCommand } from './entity/actions/put/index.js'
+export type { PutItemInput, PutItemOptions, PutItemResponse } from './entity/actions/put/index.js'
+export { DeleteItemCommand } from './entity/actions/delete/index.js'
+export type { DeleteItemOptions, DeleteItemResponse } from './entity/actions/delete/index.js'
 export {
   UpdateItemCommand,
   parseUpdateExtension,
@@ -75,12 +79,12 @@ export {
   $delete,
   $append,
   $prepend
-} from './entity/actions/commands/updateItem/index.js'
+} from './entity/actions/update/index.js'
 export type {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from './entity/actions/commands/updateItem/index.js'
+} from './entity/actions/update/index.js'
 export { BatchGetRequest } from './entity/actions/batchGet.js'
 export { BatchDeleteRequest } from './entity/actions/batchDelete.js'
 export { BatchPutRequest } from './entity/actions/batchPut.js'
@@ -112,8 +116,8 @@ export type {
 export { EntityConditionParser } from './entity/actions/parseCondition.js'
 export type { Condition } from './entity/actions/parseCondition.js'
 
-export * from './errors/index.js'
-export * from './test-tools/index.js'
+export { DynamoDBToolboxError } from './errors/index.js'
+export { mockEntity } from './test-tools/index.js'
 
 // transformers
 export { prefix } from './transformers/prefix.js'

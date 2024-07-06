@@ -1,9 +1,9 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { $key, $options } from '~/entity/actions/commands/getItem/getItemCommand.js'
-import { getItemParams } from '~/entity/actions/commands/getItem/getItemParams/index.js'
-import { GetItemCommand } from '~/entity/actions/commands/getItem/index.js'
-import type { GetItemOptions, GetItemResponse } from '~/entity/actions/commands/getItem/index.js'
+import { $key, $options } from '~/entity/actions/get/getItemCommand.js'
+import { getItemParams } from '~/entity/actions/get/getItemParams/index.js'
+import { GetItemCommand } from '~/entity/actions/get/index.js'
+import type { GetItemOptions, GetItemResponse } from '~/entity/actions/get/index.js'
 import type { KeyInput } from '~/entity/actions/parse.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'

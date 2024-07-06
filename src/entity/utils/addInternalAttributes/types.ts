@@ -2,7 +2,6 @@ import type { FreezeAttribute } from '~/schema/attributes/freeze.js'
 import type { $Attribute, $PrimitiveAttribute, AtLeastOnce } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
-import type { EntityAttributeSavedAs } from '~/table/types/index.js'
 import type { If } from '~/types/if.js'
 
 import type { TimestampsOptions } from './options.js'
@@ -26,7 +25,7 @@ export type $EntityAttribute<TABLE extends Table, ENTITY_NAME extends string> = 
     required: AtLeastOnce
     hidden: true
     key: false
-    savedAs: EntityAttributeSavedAs<TABLE>
+    savedAs: TABLE['entityAttributeSavedAs']
     enum: [ENTITY_NAME]
     defaults: {
       key: undefined

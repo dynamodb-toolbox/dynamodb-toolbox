@@ -1,4 +1,4 @@
-import { $get } from '~/entity/actions/commands/updateItem/utils.js'
+import { $get } from '~/entity/actions/update/utils.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { string } from '~/schema/attributes/index.js'
 import { schema } from '~/schema/index.js'

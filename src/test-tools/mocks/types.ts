@@ -1,23 +1,16 @@
-import type { DeleteItemCommandClass } from '~/entity/actions/commands/deleteItem/deleteItemCommand.js'
-import type {
-  DeleteItemOptions,
-  DeleteItemResponse
-} from '~/entity/actions/commands/deleteItem/index.js'
-import type { GetItemCommandClass } from '~/entity/actions/commands/getItem/getItemCommand.js'
-import type { GetItemOptions, GetItemResponse } from '~/entity/actions/commands/getItem/index.js'
-import type {
-  PutItemInput,
-  PutItemOptions,
-  PutItemResponse
-} from '~/entity/actions/commands/putItem/index.js'
-import type { PutItemCommandClass } from '~/entity/actions/commands/putItem/putItemCommand.js'
+import type { DeleteItemCommandClass } from '~/entity/actions/delete/deleteItemCommand.js'
+import type { DeleteItemOptions, DeleteItemResponse } from '~/entity/actions/delete/index.js'
+import type { GetItemCommandClass } from '~/entity/actions/get/getItemCommand.js'
+import type { GetItemOptions, GetItemResponse } from '~/entity/actions/get/index.js'
+import type { KeyInput } from '~/entity/actions/parse.js'
+import type { PutItemInput, PutItemOptions, PutItemResponse } from '~/entity/actions/put/index.js'
+import type { PutItemCommandClass } from '~/entity/actions/put/putItemCommand.js'
 import type {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
-} from '~/entity/actions/commands/updateItem/index.js'
-import type { UpdateItemCommandClass } from '~/entity/actions/commands/updateItem/updateItemCommand.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
+} from '~/entity/actions/update/index.js'
+import type { UpdateItemCommandClass } from '~/entity/actions/update/updateItemCommand.js'
 import type { Entity } from '~/entity/index.js'
 
 import type { ActionMocker } from './actionMocker.js'

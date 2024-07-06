@@ -1,10 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
 // TODO: Remove this import
-import type {
-  AttributeUpdateItemInput,
-  UpdateItemInput
-} from '~/entity/actions/commands/updateItem/types.js'
+import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import { overwrite } from '~/utils/overwrite.js'
