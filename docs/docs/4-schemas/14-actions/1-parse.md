@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Parser
 
-Given an input of any type and a mode, validates that **it respects the schema**:
+Given an input of any type and a mode, validates that **it respects the schema** and apply transformations:
 
 ```ts
 import { Parser } from 'dynamodb-toolbox/schema/actions/parse'

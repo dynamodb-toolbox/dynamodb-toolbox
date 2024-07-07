@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # EntityParser
 
-Given an input of any type and a mode, validates that it respects the schema of the `Entity`:
+Given an input of any type and a mode, validates that it respects the schema of the `Entity` and apply transformations:
 
 ```ts
 import { EntityParser } from 'dynamodb-toolbox/entity/actions/parse'
@@ -33,7 +33,7 @@ const parsed = PokemonEntity.build(EntityParser).parse(
 
 :::info
 
-This action is mostly a **wrapper around the [`SchemaParser`](../../../4-schemas/14-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first (in particular, error codes are the same).
+This action is mostly a **wrapper around the [`SchemaParser`](../../../4-schemas/14-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first.
 
 :::
 

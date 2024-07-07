@@ -10,6 +10,12 @@ import type {
   FromFormatOptions
 } from '~/schema/actions/format/index.js'
 
+export type FormattedItemOptions<ENTITY extends Entity = Entity> = FormattedValueOptions<
+  ENTITY['schema']
+>
+
+type FormattedItemOptionsDefault = FormattedValueDefaultOptions
+
 /**
  * Returned item of a fetch command (GET, QUERY ...) for a given Entity
  *
@@ -18,11 +24,15 @@ import type {
  */
 export type FormattedItem<
   ENTITY extends Entity = Entity,
-  OPTIONS extends FormattedValueOptions<ENTITY['schema']> = FormattedValueDefaultOptions
+  OPTIONS extends FormattedItemOptions<ENTITY> = FormattedItemOptionsDefault
 > = FormattedValue<ENTITY['schema'], OPTIONS>
 
-export const $formatter = Symbol('$formatter')
-export type $formatter = typeof $formatter
+export type EntityFormattingOptions<ENTITY extends Entity = Entity> = FormatOptions<
+  ENTITY['schema']
+>
+
+const $formatter = Symbol('$formatter')
+type $formatter = typeof $formatter
 
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'format';
@@ -33,7 +43,7 @@ export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityActio
     this[$formatter] = new Formatter(entity.schema)
   }
 
-  format<OPTIONS extends FormatOptions<ENTITY['schema']>>(
+  format<OPTIONS extends EntityFormattingOptions<ENTITY>>(
     item: { [KEY: string]: unknown },
     options: OPTIONS = {} as OPTIONS
   ): FormattedItem<ENTITY, FromFormatOptions<ENTITY['schema'], OPTIONS>> {

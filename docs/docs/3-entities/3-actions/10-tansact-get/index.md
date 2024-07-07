@@ -95,14 +95,6 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
 | ------------ | :--------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `attributes` | `Path<Entity>[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See the [`PathParser`](../18-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
 
-```ts
-PokemonEntity.build(GetTransaction)
-  .key(...)
-  .options({
-    attributes: ['name', 'level']
-  })
-```
-
 ## Execution
 
 ```ts
