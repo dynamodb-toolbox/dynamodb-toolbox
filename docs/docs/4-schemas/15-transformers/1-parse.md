@@ -1,5 +1,5 @@
 ---
-title: prefix
+title: prefix 👷
 sidebar_custom_props:
   code: true
 ---

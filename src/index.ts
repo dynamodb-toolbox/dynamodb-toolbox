@@ -103,15 +103,19 @@ export { ConditionCheck } from './entity/actions/transactCheck/index.js'
 export { EntityPathParser } from './entity/actions/parsePaths.js'
 export type { EntityPaths } from './entity/actions/parsePaths.js'
 export { EntityFormatter } from './entity/actions/format.js'
-export type { FormattedItem } from './entity/actions/format.js'
+export type {
+  EntityFormattingOptions,
+  FormattedItem,
+  FormattedItemOptions
+} from './entity/actions/format.js'
 export { EntityParser } from './entity/actions/parse.js'
 export type {
-  ParsedItemOptions,
-  ParsedItem,
-  SavedItem,
   EntityParsingOptions,
   EntityParserInput,
-  KeyInput
+  KeyInput,
+  ParsedItem,
+  ParsedItemOptions,
+  SavedItem
 } from './entity/actions/parse.js'
 export { EntityConditionParser } from './entity/actions/parseCondition.js'
 export type { Condition } from './entity/actions/parseCondition.js'

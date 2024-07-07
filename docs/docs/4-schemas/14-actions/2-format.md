@@ -1,31 +1,98 @@
 ---
-title: Format 👷
+title: Format
 sidebar_custom_props:
   sidebarActionType: util
 ---
 
-# Format 👷
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-`Formatter` transforms a saved item returned by the DynamoDB client to it’s formatted counterpart:
+# Formatter
+
+Given a saved item, validates that **it respects the schema** and formats it:
 
 ```ts
-import { Formatter } from 'dynamodb-toolbox/schema/actions/format';
+import { Formatter } from 'dynamodb-toolbox/schema/actions/format'
 
-// 🙌 Typed as FormattedItem<typeof PokemonEntity>
-const formattedPokemon = pokemonSchema.build(Formatter).format(
-  savedPokemon,
-  // Optional: Filters the formatted item
-  { attributes: [...], partial: boolean },
-);
+const formattedPikachu = pokemonSchema
+  .build(Formatter)
+  .format(savedPikachu)
 ```
 
-Note that **it is a parsing operation**, i.e. it does not require the item to be typed as `SavedItem<typeof myEntity>`, but throws an error if the saved item is invalid:
+Note that:
+
+- Inputs are not mutated (additional and `hidden` fields are omitted)
+- The formatting will throw an error if the saved item is invalid
+- Transformations (i.e. `savedAs` and `transforms`) are applied in reverse
+
+## Methods
+
+### `format(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(savedValue: unknown, options?: FormattingOptions) => FormattedValue&lt;SCHEMA&gt;</code></i></p>
+
+Formats a saved item:
+
+<!-- prettier-ignore -->
+```ts
+const formattedValue = pokemonSchema.build(Formatter).format(savedValue)
+```
+
+You can provide **formatting options** as second argument. Available options are:
+
+| Option       |       Type       | Default | Description                                                                                                                                                                                                                |
+| ------------ | :--------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `partial`    |    `boolean`     | `false` | Allow every attribute (root or nested) to be optional while formatting.                                                                                                                                                    |
+| `attributes` | `Path<Entity>[]` |    -    | To specify a list of attributes to format (other attributes will be omitted).<br/><br/>See the [`PathParser`](../../3-entities/3-actions/18-parse-paths/index.md) action for more details on how to write attribute paths. |
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="partial" label="Partial">
 
 ```ts
-const formattedPokemon = pokemonSchema.build(Formatter).format({
+const saved = {
+  pokemonId: 'pikachu1',
+  name: 'Pikachu'
+}
+
+// 🙌 Typed as `DeepPartial<Pokemon>`
+const formatted = pokemonSchema
+  .build(Formatter)
+  .format(saved, { partial: true })
+```
+
+</TabItem>
+<TabItem value="attributes" label="Attributes">
+
+```ts
+const saved = {
+  pokemonId: 'pikachu1',
+  name: 'Pikachu',
+  level: 42,
   ...
-  level: 'not a number',
-});
-// ❌ Raises error:
-// => "Invalid attribute in saved item: level. Should be a number"
+}
+
+// 🙌 Typed as `Pick<Pokemon, 'name' | 'level'>`
+const formatted = pokemonSchema.build(
+  Formatter
+).format(saved, { attributes: ['name', 'level'] })
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+You can use the `FormattedValue` type to explicitely type an object as a formatting output:
+
+```ts
+import type { FormattedValue } from 'dynamodb-toolbox/schema/actions/format'
+
+const formattedValue: FormattedValue<
+  typeof pokemonSchema,
+  // 👇 Optional options
+  { partial: false; attributes: 'name' | 'level' }
+  // ❌ Throws a type error
+> = { invalid: 'output' }
 ```
