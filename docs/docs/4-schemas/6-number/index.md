@@ -217,3 +217,5 @@ const addOne = {
 const levelSchema = number().transform(addOne)
 const levelSchema = number({ transform: addOne })
 ```
+
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../15-transformers/1-usage.md), so feel free to use them!
