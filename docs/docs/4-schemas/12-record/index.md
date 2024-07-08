@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Record
 
-Defines a [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) but without an explicit list of keys. Records differ from [Maps](../11-map/index.md) as they can accept a potentially infinite range of keys and are always partial:
+Defines a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../11-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
 
 ```ts
 import { record } from 'dynamodb-toolbox/attribute/record'

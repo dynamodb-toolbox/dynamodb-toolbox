@@ -118,9 +118,9 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-### Non-recursive attributes
+### Non-nested attributes
 
-In the case of non-recursive attributes (primitives and `sets`), updates completely override their current values:
+In the case of non-nested attributes (primitives and `sets`), updates completely override their current values:
 
 ```ts
 await PokemonEntity.build(UpdateItemCommand)
@@ -175,9 +175,9 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-### Recursive attributes
+### Nested attributes
 
-In the case of recursive attributes, e.g. `lists`, `maps` and `records`, updates are **partial by default**. You can use the `$set` verb to specify a complete override:
+In the case of nested attributes, e.g. `lists`, `maps` and `records`, updates are **partial by default**. You can use the `$set` verb to specify a complete override:
 
 ```ts
 // 👇 Partial overrides
