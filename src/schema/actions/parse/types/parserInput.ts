@@ -14,7 +14,7 @@ import type {
   ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   SetAttribute
-} from '~/schema/attributes/index.js'
+} from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
 import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'

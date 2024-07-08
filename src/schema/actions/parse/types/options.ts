@@ -1,4 +1,4 @@
-import type { Extension } from '~/schema/attributes/index.js'
+import type { Extension } from '~/attributes/index.js'
 
 import type { $contextExtension, $extension } from '../constants.js'
 import type { ExtensionParser } from './extensionParser.js'

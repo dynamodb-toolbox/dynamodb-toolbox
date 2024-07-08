@@ -1,4 +1,4 @@
-import type { Attribute } from '~/schema/attributes/index.js'
+import type { Attribute } from '~/attributes/index.js'
 import type { Schema, SchemaAction } from '~/schema/index.js'
 
 import { attrParser } from './attribute.js'

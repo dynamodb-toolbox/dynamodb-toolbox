@@ -1,14 +1,14 @@
 import { cloneDeep } from 'lodash'
 import type { O } from 'ts-toolbelt'
 
-import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
   AnyAttribute,
   Attribute,
   ExtendedValue,
   MapAttribute,
   Never
-} from '~/schema/attributes/index.js'
+} from '~/attributes/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, OptionalizeUndefinableProperties } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'

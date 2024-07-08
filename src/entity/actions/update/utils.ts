@@ -1,4 +1,4 @@
-import type { Attribute, AttributeValue } from '~/schema/attributes/index.js'
+import type { Attribute, AttributeValue } from '~/attributes/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import {

@@ -1,10 +1,10 @@
+import type { Attribute, AttributeBasicValue, RecordAttribute } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type {
   ExtensionParser,
   ExtensionParserOptions,
   ParsedValue
 } from '~/schema/actions/parse/index.js'
-import type { Attribute, AttributeBasicValue, RecordAttribute } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 

@@ -1,3 +1,4 @@
+import type { Attribute, AttributeBasicValue, ListAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
   ExtensionParser,
@@ -5,7 +6,6 @@ import type {
   ParsedValue
 } from '~/schema/actions/parse/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { Attribute, AttributeBasicValue, ListAttribute } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isInteger } from '~/utils/validation/isInteger.js'

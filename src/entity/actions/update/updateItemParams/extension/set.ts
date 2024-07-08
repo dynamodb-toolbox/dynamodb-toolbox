@@ -1,6 +1,6 @@
+import type { AttributeBasicValue, SetAttribute } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
-import type { AttributeBasicValue, SetAttribute } from '~/schema/attributes/index.js'
 
 import { $ADD, $DELETE } from '../../constants.js'
 import type { UpdateItemInputExtension } from '../../types.js'

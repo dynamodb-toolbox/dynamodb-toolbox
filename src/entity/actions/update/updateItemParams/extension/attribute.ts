@@ -1,10 +1,6 @@
+import type { Attribute, AttributeBasicValue, PrimitiveAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
-import type {
-  Attribute,
-  AttributeBasicValue,
-  PrimitiveAttribute
-} from '~/schema/attributes/index.js'
 
 import { $REMOVE } from '../../constants.js'
 import type { UpdateItemInputExtension } from '../../types.js'

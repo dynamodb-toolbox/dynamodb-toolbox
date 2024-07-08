@@ -1,8 +1,8 @@
+import { $state } from '~/attributes/constants/attributeOptions.js'
+import type { $Attribute } from '~/attributes/index.js'
+import { string } from '~/attributes/primitive/index.js'
 import { $get } from '~/entity/actions/update/utils.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { $state } from '~/schema/attributes/constants/attributeOptions.js'
-import type { $Attribute } from '~/schema/attributes/index.js'
-import { string } from '~/schema/attributes/primitive/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 

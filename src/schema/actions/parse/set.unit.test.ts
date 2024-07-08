@@ -1,5 +1,5 @@
+import { set, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { set, string } from '~/schema/attributes/index.js'
 
 import * as attrParserModule from './attribute.js'
 import { setAttrParser } from './set.js'

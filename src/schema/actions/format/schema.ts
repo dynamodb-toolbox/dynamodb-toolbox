@@ -1,8 +1,8 @@
 import type { O } from 'ts-toolbelt'
 
+import type { AnyAttribute, Never } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import type { AnyAttribute, Never } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { OptionalizeUndefinableProperties } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'

@@ -1,7 +1,6 @@
-// schema
-export { schema, Schema, SchemaAction } from './schema/index.js'
-export { attr, attribute } from './schema/attributes/index.js'
-export { any, AnyAttribute, $AnyAttribute } from './schema/attributes/any/index.js'
+// attributes
+export { attr, attribute } from './attributes/index.js'
+export { any, AnyAttribute, $AnyAttribute } from './attributes/any/index.js'
 export {
   boolean,
   number,
@@ -9,12 +8,15 @@ export {
   binary,
   PrimitiveAttribute,
   $PrimitiveAttribute
-} from './schema/attributes/primitive/index.js'
-export { set, SetAttribute, $SetAttribute } from './schema/attributes/set/index.js'
-export { list, ListAttribute, $ListAttribute } from './schema/attributes/list/index.js'
-export { map, MapAttribute, $MapAttribute } from './schema/attributes/map/index.js'
-export { record, RecordAttribute, $RecordAttribute } from './schema/attributes/record/index.js'
-export { anyOf, AnyOfAttribute, $AnyOfAttribute } from './schema/attributes/anyOf/index.js'
+} from './attributes/primitive/index.js'
+export { set, SetAttribute, $SetAttribute } from './attributes/set/index.js'
+export { list, ListAttribute, $ListAttribute } from './attributes/list/index.js'
+export { map, MapAttribute, $MapAttribute } from './attributes/map/index.js'
+export { record, RecordAttribute, $RecordAttribute } from './attributes/record/index.js'
+export { anyOf, AnyOfAttribute, $AnyOfAttribute } from './attributes/anyOf/index.js'
+
+// schema
+export { schema, Schema, SchemaAction } from './schema/index.js'
 export { Parser } from './schema/actions/parse/index.js'
 export type {
   ParsedValue,

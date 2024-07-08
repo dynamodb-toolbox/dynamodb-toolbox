@@ -1,4 +1,4 @@
-import type { Transformer } from '~/schema/attributes/index.js'
+import type { Transformer } from '~/attributes/index.js'
 
 type Prefixer = (prefix: string, options?: { delimiter?: string }) => Transformer<string, string>
 

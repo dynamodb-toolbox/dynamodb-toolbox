@@ -1,4 +1,4 @@
-import type { PrimitiveAttributeType } from '~/schema/attributes/primitive/types.js'
+import type { PrimitiveAttributeType } from '~/attributes/primitive/types.js'
 
 import { isBinary } from './isBinary.js'
 import { isBoolean } from './isBoolean.js'

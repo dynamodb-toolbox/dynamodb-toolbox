@@ -9,7 +9,7 @@ import {
   record,
   set,
   string
-} from '~/schema/attributes/index.js'
+} from '~/attributes/index.js'
 import { schema } from '~/schema/index.js'
 
 export const mySchema = schema({

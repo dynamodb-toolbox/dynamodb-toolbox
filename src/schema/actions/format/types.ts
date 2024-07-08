@@ -1,5 +1,5 @@
+import type { Attribute } from '~/attributes/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import type { Attribute } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 
 export type FormatOptions<SCHEMA extends Schema | Attribute> = {

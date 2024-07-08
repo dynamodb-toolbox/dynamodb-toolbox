@@ -1,4 +1,4 @@
-import { boolean, number, string } from '~/schema/attributes/index.js'
+import { boolean, number, string } from '~/attributes/index.js'
 import { schema } from '~/schema/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'

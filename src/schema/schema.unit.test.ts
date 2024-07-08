@@ -1,7 +1,8 @@
 import type { A } from 'ts-toolbelt'
 
-import type { FreezeAttribute } from './attributes/freeze.js'
-import { binary, boolean, list, map, number, set, string } from './attributes/index.js'
+import type { FreezeAttribute } from '~/attributes/freeze.js'
+import { binary, boolean, list, map, number, set, string } from '~/attributes/index.js'
+
 import { schema } from './schema.js'
 
 describe('schema', () => {

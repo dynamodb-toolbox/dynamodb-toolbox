@@ -1,6 +1,6 @@
+import type { RecordAttribute, ResolvePrimitiveAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import type { RecordAttribute, ResolvePrimitiveAttribute } from '~/schema/attributes/index.js'
 import type { If } from '~/types/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 

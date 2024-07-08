@@ -1,12 +1,12 @@
 import type { A } from 'ts-toolbelt'
 
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type {
   Attribute,
   ListAttribute,
   PrimitiveAttribute,
   SetAttribute
-} from '~/schema/attributes/index.js'
+} from '~/attributes/index.js'
+import type { Paths } from '~/schema/actions/parsePaths/index.js'
 
 import type { mySchema } from './condition.fixture.test.js'
 import type {

@@ -1,9 +1,9 @@
+import type { Attribute } from '~/attributes/index.js'
 import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
 import type {
   AppendAttributePathOptions,
   ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
-import type { Attribute } from '~/schema/attributes/index.js'
 import { SchemaAction } from '~/schema/index.js'
 import type { Schema } from '~/schema/index.js'
 
