@@ -225,3 +225,5 @@ const prefix = {
 const hashSchema = binary().transform(prefix)
 const hashSchema = binary({ transform: prefix })
 ```
+
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../15-transformers/1-usage.md), so feel free to use them!

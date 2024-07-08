@@ -208,7 +208,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 Allows modifying the attribute values during the [transformation step](../14-actions/1-parse.md):
 
 ```ts
-const PREFIX = 'POKEMON#'
+const PREFIX = 'PREFIX#'
 
 const prefix = {
   parse: (input: string) => [PREFIX, input].join(''),
@@ -216,6 +216,8 @@ const prefix = {
 }
 
 // Prefixes the value
-const nameSchema = string().transform(prefix)
-const nameSchema = string({ transform: prefix })
+const prefixedStrSchema = string().transform(prefix)
+const prefixedStrSchema = string({ transform: prefix })
 ```
+
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../15-transformers/1-usage.md) (including [`prefix`](../15-transformers/2-parse.md)), so feel free to use them!
