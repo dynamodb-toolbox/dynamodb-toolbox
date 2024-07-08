@@ -8,7 +8,7 @@ import type {
   RecordAttribute,
   ResolvePrimitiveAttribute,
   SetAttribute
-} from '~/schema/attributes/index.js'
+} from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 
 type AnyAttrPaths<

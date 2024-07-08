@@ -1,4 +1,4 @@
-import type { Attribute, AttributeBasicValue } from '~/schema/attributes/index.js'
+import type { Attribute, AttributeBasicValue } from '~/attributes/index.js'
 
 import type { ExtensionParser } from './types/extensionParser.js'
 import type { ParsingMode } from './types/options.js'

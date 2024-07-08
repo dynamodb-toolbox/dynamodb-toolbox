@@ -1,6 +1,6 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Always } from '~/schema/attributes/index.js'
+import type { Always } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { IndexableKeyType, Key } from '~/table/types/index.js'

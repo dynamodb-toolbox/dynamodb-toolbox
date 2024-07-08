@@ -3,48 +3,48 @@ import type { O } from 'ts-toolbelt'
 // TODO: Remove this import
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import type { Schema } from '../../schema.js'
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
-import { freezeListAttribute } from './freeze.js'
-import type { FreezeListAttribute } from './freeze.js'
-import type { $ListAttributeElements } from './types.js'
+import { freezeAnyOfAttribute } from './freeze.js'
+import type { FreezeAnyOfAttribute } from './freeze.js'
+import type { $AnyOfAttributeElements } from './types.js'
 
-export interface $ListAttributeState<
+export interface $AnyOfAttributeState<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
+  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > {
-  [$type]: 'list'
+  [$type]: 'anyOf'
   [$state]: STATE
   [$elements]: $ELEMENTS
 }
 
-export interface $ListAttributeNestedState<
+export interface $AnyOfAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
-> extends $ListAttributeState<STATE, $ELEMENTS> {
-  freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>
+  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
+> extends $AnyOfAttributeState<STATE, $ELEMENTS> {
+  freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>
 }
 
 /**
- * List attribute interface
+ * AnyOf attribute interface
  */
-export class $ListAttribute<
+export class $AnyOfAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
-> implements $ListAttributeNestedState<STATE, $ELEMENTS>
+  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
+> implements $AnyOfAttributeNestedState<STATE, $ELEMENTS>
 {
-  [$type]: 'list';
+  [$type]: 'anyOf';
   [$state]: STATE;
   [$elements]: $ELEMENTS
 
   constructor(state: STATE, elements: $ELEMENTS) {
-    this[$type] = 'list'
+    this[$type] = 'anyOf'
     this[$state] = state
     this[$elements] = elements
   }
@@ -59,14 +59,14 @@ export class $ListAttribute<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $ListAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ELEMENTS> {
-    return new $ListAttribute(overwrite(this[$state], { required: nextRequired }), this[$elements])
+  ): $AnyOfAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ELEMENTS> {
+    return new $AnyOfAttribute(overwrite(this[$state], { required: nextRequired }), this[$elements])
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $ListAttribute<O.Overwrite<STATE, { required: Never }>, $ELEMENTS> {
+  optional(): $AnyOfAttribute<O.Overwrite<STATE, { required: Never }>, $ELEMENTS> {
     return this.required('never')
   }
 
@@ -75,8 +75,8 @@ export class $ListAttribute<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $ListAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ELEMENTS> {
-    return new $ListAttribute(overwrite(this[$state], { hidden: nextHidden }), this[$elements])
+  ): $AnyOfAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ELEMENTS> {
+    return new $AnyOfAttribute(overwrite(this[$state], { hidden: nextHidden }), this[$elements])
   }
 
   /**
@@ -84,8 +84,8 @@ export class $ListAttribute<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $ListAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ELEMENTS> {
-    return new $ListAttribute(
+  ): $AnyOfAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ELEMENTS> {
+    return new $AnyOfAttribute(
       overwrite(this[$state], { key: nextKey, required: 'always' }),
       this[$elements]
     )
@@ -96,8 +96,8 @@ export class $ListAttribute<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $ListAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ELEMENTS> {
-    return new $ListAttribute(overwrite(this[$state], { savedAs: nextSavedAs }), this[$elements])
+  ): $AnyOfAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ELEMENTS> {
+    return new $AnyOfAttribute(overwrite(this[$state], { savedAs: nextSavedAs }), this[$elements])
   }
 
   /**
@@ -108,11 +108,11 @@ export class $ListAttribute<
   keyDefault(
     nextKeyDefault: ValueOrGetter<
       ParserInput<
-        FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>,
+        FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
         { mode: 'key'; fill: false }
       >
     >
-  ): $ListAttribute<
+  ): $AnyOfAttribute<
     O.Overwrite<
       STATE,
       {
@@ -125,7 +125,7 @@ export class $ListAttribute<
     >,
     $ELEMENTS
   > {
-    return new $ListAttribute(
+    return new $AnyOfAttribute(
       overwrite(this[$state], {
         defaults: {
           key: nextKeyDefault as unknown,
@@ -144,9 +144,9 @@ export class $ListAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+      ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { fill: false }>
     >
-  ): $ListAttribute<
+  ): $AnyOfAttribute<
     O.Overwrite<
       STATE,
       {
@@ -159,7 +159,7 @@ export class $ListAttribute<
     >,
     $ELEMENTS
   > {
-    return new $ListAttribute(
+    return new $AnyOfAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
@@ -178,9 +178,9 @@ export class $ListAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, true>
+      AttributeUpdateItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, true>
     >
-  ): $ListAttribute<
+  ): $AnyOfAttribute<
     O.Overwrite<
       STATE,
       {
@@ -193,7 +193,7 @@ export class $ListAttribute<
     >,
     $ELEMENTS
   > {
-    return new $ListAttribute(
+    return new $AnyOfAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
@@ -215,13 +215,13 @@ export class $ListAttribute<
       If<
         STATE['key'],
         ParserInput<
-          FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>,
+          FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
           { mode: 'key'; fill: false }
         >,
-        ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+        ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { fill: false }>
       >
     >
-  ): $ListAttribute<
+  ): $AnyOfAttribute<
     O.Overwrite<
       STATE,
       {
@@ -254,10 +254,10 @@ export class $ListAttribute<
     nextKeyLink: (
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
-      FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>,
+      FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
       { mode: 'key'; fill: false }
     >
-  ): $ListAttribute<
+  ): $AnyOfAttribute<
     O.Overwrite<
       STATE,
       {
@@ -270,7 +270,7 @@ export class $ListAttribute<
     >,
     $ELEMENTS
   > {
-    return new $ListAttribute(
+    return new $AnyOfAttribute(
       overwrite(this[$state], {
         links: {
           key: nextKeyLink as unknown,
@@ -290,8 +290,8 @@ export class $ListAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
-  ): $ListAttribute<
+    ) => ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+  ): $AnyOfAttribute<
     O.Overwrite<
       STATE,
       {
@@ -304,7 +304,7 @@ export class $ListAttribute<
     >,
     $ELEMENTS
   > {
-    return new $ListAttribute(
+    return new $AnyOfAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
@@ -324,8 +324,11 @@ export class $ListAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, true>
-  ): $ListAttribute<
+    ) => AttributeUpdateItemInput<
+      FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
+      true
+    >
+  ): $AnyOfAttribute<
     O.Overwrite<
       STATE,
       {
@@ -338,7 +341,7 @@ export class $ListAttribute<
     >,
     $ELEMENTS
   > {
-    return new $ListAttribute(
+    return new $AnyOfAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
@@ -365,12 +368,12 @@ export class $ListAttribute<
     ) => If<
       STATE['key'],
       ParserInput<
-        FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>,
+        FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
         { mode: 'key'; fill: false }
       >,
-      ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+      ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { fill: false }>
     >
-  ): $ListAttribute<
+  ): $AnyOfAttribute<
     O.Overwrite<
       STATE,
       {
@@ -391,7 +394,7 @@ export class $ListAttribute<
     >,
     $ELEMENTS
   > {
-    return new $ListAttribute(
+    return new $AnyOfAttribute(
       overwrite(this[$state], {
         links: this[$state].key
           ? {
@@ -409,17 +412,17 @@ export class $ListAttribute<
     )
   }
 
-  freeze(path?: string): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>> {
-    return freezeListAttribute(this[$state], this[$elements], path)
+  freeze(path?: string): FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>> {
+    return freezeAnyOfAttribute(this[$state], this[$elements], path)
   }
 }
 
-export class ListAttribute<
+export class AnyOfAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  ELEMENTS extends Attribute = Attribute
+  ELEMENTS extends Attribute[] = Attribute[]
 > implements SharedAttributeState<STATE>
 {
-  type: 'list'
+  type: 'anyOf'
   path?: string
   elements: ELEMENTS
   required: STATE['required']
@@ -430,7 +433,7 @@ export class ListAttribute<
   links: STATE['links']
 
   constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
-    this.type = 'list'
+    this.type = 'anyOf'
     this.path = path
     this.elements = elements
     this.required = state.required

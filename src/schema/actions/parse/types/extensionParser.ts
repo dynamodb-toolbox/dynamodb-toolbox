@@ -1,4 +1,4 @@
-import type { Attribute, AttributeBasicValue, Extension } from '~/schema/attributes/index.js'
+import type { Attribute, AttributeBasicValue, Extension } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 
 import type { $contextExtension, $extension } from '../constants.js'

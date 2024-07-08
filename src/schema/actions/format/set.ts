@@ -1,5 +1,5 @@
+import type { SetAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { SetAttribute } from '~/schema/attributes/index.js'
 import type { If } from '~/types/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
 

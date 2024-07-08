@@ -2,14 +2,14 @@ import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 import { pick as _pick } from 'lodash'
 import type { O } from 'ts-toolbelt'
 
+import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
+import type { ResolvedPrimitiveAttribute } from '~/attributes/primitive/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type {
   PrimitiveAttributeCondition,
   SchemaCondition
 } from '~/schema/actions/parseCondition/index.js'
-import { PrimitiveAttribute } from '~/schema/attributes/primitive/index.js'
-import type { ResolvedPrimitiveAttribute } from '~/schema/attributes/primitive/index.js'
 import { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 

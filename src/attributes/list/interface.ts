@@ -3,52 +3,50 @@ import type { O } from 'ts-toolbelt'
 // TODO: Remove this import
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import { overwrite } from '~/utils/overwrite.js'
-import { update } from '~/utils/update.js'
 
-import type { Schema } from '../../schema.js'
-import { $state, $type } from '../constants/attributeOptions.js'
-import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { $elements, $state, $type } from '../constants/attributeOptions.js'
+import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import { freezePrimitiveAttribute } from './freeze.js'
-import type { FreezePrimitiveAttribute } from './freeze.js'
-import type {
-  PrimitiveAttributeState,
-  PrimitiveAttributeType,
-  ResolvePrimitiveAttributeType,
-  Transformer
-} from './types.js'
+import type { Attribute } from '../types/index.js'
+import { freezeListAttribute } from './freeze.js'
+import type { FreezeListAttribute } from './freeze.js'
+import type { $ListAttributeElements } from './types.js'
 
-export interface $PrimitiveAttributeState<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
+export interface $ListAttributeState<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > {
-  [$type]: TYPE
+  [$type]: 'list'
   [$state]: STATE
+  [$elements]: $ELEMENTS
 }
 
-export interface $PrimitiveAttributeNestedState<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> extends $PrimitiveAttributeState<TYPE, STATE> {
-  freeze: (path?: string) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+export interface $ListAttributeNestedState<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
+> extends $ListAttributeState<STATE, $ELEMENTS> {
+  freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>
 }
 
 /**
- * Primitive attribute interface
+ * List attribute interface
  */
-export class $PrimitiveAttribute<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> implements $PrimitiveAttributeNestedState<TYPE, STATE>
+export class $ListAttribute<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
+> implements $ListAttributeNestedState<STATE, $ELEMENTS>
 {
-  [$type]: TYPE;
-  [$state]: STATE
+  [$type]: 'list';
+  [$state]: STATE;
+  [$elements]: $ELEMENTS
 
-  constructor(type: TYPE, state: STATE) {
-    this[$type] = type
+  constructor(state: STATE, elements: $ELEMENTS) {
+    this[$type] = 'list'
     this[$state] = state
+    this[$elements] = elements
   }
 
   /**
@@ -61,14 +59,14 @@ export class $PrimitiveAttribute<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { required: nextRequired }))
+  ): $ListAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ELEMENTS> {
+    return new $ListAttribute(overwrite(this[$state], { required: nextRequired }), this[$elements])
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { required: Never }>> {
+  optional(): $ListAttribute<O.Overwrite<STATE, { required: Never }>, $ELEMENTS> {
     return this.required('never')
   }
 
@@ -77,8 +75,8 @@ export class $PrimitiveAttribute<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { hidden: nextHidden }))
+  ): $ListAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ELEMENTS> {
+    return new $ListAttribute(overwrite(this[$state], { hidden: nextHidden }), this[$elements])
   }
 
   /**
@@ -86,10 +84,10 @@ export class $PrimitiveAttribute<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new $PrimitiveAttribute(
-      this[$type],
-      overwrite(this[$state], { key: nextKey, required: 'always' })
+  ): $ListAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ELEMENTS> {
+    return new $ListAttribute(
+      overwrite(this[$state], { key: nextKey, required: 'always' }),
+      this[$elements]
     )
   }
 
@@ -98,66 +96,8 @@ export class $PrimitiveAttribute<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { savedAs: nextSavedAs }))
-  }
-
-  /**
-   * Provide a finite list of possible values for attribute
-   * (For typing reasons, enums are only available as attribute methods, not as input options)
-   *
-   * @param enum Possible values
-   * @example
-   * string().enum('foo', 'bar')
-   */
-  enum<NEXT_ENUM extends ResolvePrimitiveAttributeType<TYPE>[]>(
-    ...nextEnum: NEXT_ENUM
-  ): /**
-   * @debt type "O.Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $PrimitiveAttribute<TYPE, O.Update<STATE, 'enum', NEXT_ENUM>> {
-    return new $PrimitiveAttribute(this[$type], update(this[$state], 'enum', nextEnum))
-  }
-
-  /**
-   * Shorthand for `enum(constantValue).default(constantValue)`
-   *
-   * @param constantValue Constant value
-   * @example
-   * string().const('foo')
-   */
-  const<CONSTANT extends ResolvePrimitiveAttributeType<TYPE>>(
-    constant: CONSTANT
-  ): $PrimitiveAttribute<
-    TYPE,
-    O.Overwrite<
-      STATE,
-      {
-        enum: [CONSTANT]
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
-  > {
-    return new $PrimitiveAttribute(
-      this[$type],
-      overwrite(this[$state], {
-        enum: [constant],
-        defaults: this[$state].key
-          ? { key: constant, put: this[$state].defaults.put, update: this[$state].defaults.update }
-          : { key: this[$state].defaults.key, put: constant, update: this[$state].defaults.update }
-      })
-    )
+  ): $ListAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ELEMENTS> {
+    return new $ListAttribute(overwrite(this[$state], { savedAs: nextSavedAs }), this[$elements])
   }
 
   /**
@@ -168,12 +108,11 @@ export class $PrimitiveAttribute<
   keyDefault(
     nextKeyDefault: ValueOrGetter<
       ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>,
         { mode: 'key'; fill: false }
       >
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $ListAttribute<
     O.Overwrite<
       STATE,
       {
@@ -183,17 +122,18 @@ export class $PrimitiveAttribute<
           update: STATE['defaults']['update']
         }
       }
-    >
+    >,
+    $ELEMENTS
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $ListAttribute(
       overwrite(this[$state], {
         defaults: {
-          key: nextKeyDefault,
+          key: nextKeyDefault as unknown,
           put: this[$state].defaults.put,
           update: this[$state].defaults.update
         }
-      })
+      }),
+      this[$elements]
     )
   }
 
@@ -204,10 +144,9 @@ export class $PrimitiveAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
+      ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $ListAttribute<
     O.Overwrite<
       STATE,
       {
@@ -217,17 +156,18 @@ export class $PrimitiveAttribute<
           update: STATE['defaults']['update']
         }
       }
-    >
+    >,
+    $ELEMENTS
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $ListAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
-          put: nextPutDefault,
+          put: nextPutDefault as unknown,
           update: this[$state].defaults.update
         }
-      })
+      }),
+      this[$elements]
     )
   }
 
@@ -238,13 +178,9 @@ export class $PrimitiveAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        true
-      >
+      AttributeUpdateItemInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, true>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $ListAttribute<
     O.Overwrite<
       STATE,
       {
@@ -254,17 +190,18 @@ export class $PrimitiveAttribute<
           update: unknown
         }
       }
-    >
+    >,
+    $ELEMENTS
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $ListAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
           put: this[$state].defaults.put,
-          update: nextUpdateDefault
+          update: nextUpdateDefault as unknown
         }
-      })
+      }),
+      this[$elements]
     )
   }
 
@@ -278,17 +215,13 @@ export class $PrimitiveAttribute<
       If<
         STATE['key'],
         ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>,
           { mode: 'key'; fill: false }
         >,
-        ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-          { fill: false }
-        >
+        ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
       >
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $ListAttribute<
     O.Overwrite<
       STATE,
       {
@@ -306,36 +239,10 @@ export class $PrimitiveAttribute<
           }
         >
       }
-    >
+    >,
+    $ELEMENTS
   > {
     return this[$state].key ? this.keyDefault(nextDefault) : this.putDefault(nextDefault)
-  }
-
-  /**
-   * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
-   *
-   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
-   */
-  transform(
-    transformer: Transformer<
-      Extract<
-        If<
-          STATE['key'],
-          ParserInput<
-            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            { mode: 'key'; fill: false }
-          >,
-          ParserInput<
-            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            { fill: false }
-          >
-        >,
-        ResolvePrimitiveAttributeType<TYPE>
-      >,
-      ResolvePrimitiveAttributeType<TYPE>
-    >
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { transform: unknown }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { transform: transformer }))
   }
 
   /**
@@ -347,11 +254,10 @@ export class $PrimitiveAttribute<
     nextKeyLink: (
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+      FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>,
       { mode: 'key'; fill: false }
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $ListAttribute<
     O.Overwrite<
       STATE,
       {
@@ -361,17 +267,18 @@ export class $PrimitiveAttribute<
           update: STATE['links']['update']
         }
       }
-    >
+    >,
+    $ELEMENTS
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $ListAttribute(
       overwrite(this[$state], {
         links: {
-          key: nextKeyLink,
+          key: nextKeyLink as unknown,
           put: this[$state].links.put,
           update: this[$state].links.update
         }
-      })
+      }),
+      this[$elements]
     )
   }
 
@@ -383,12 +290,8 @@ export class $PrimitiveAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      { fill: false }
-    >
-  ): $PrimitiveAttribute<
-    TYPE,
+    ) => ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+  ): $ListAttribute<
     O.Overwrite<
       STATE,
       {
@@ -398,17 +301,18 @@ export class $PrimitiveAttribute<
           update: STATE['links']['update']
         }
       }
-    >
+    >,
+    $ELEMENTS
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $ListAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
-          put: nextPutLink,
+          put: nextPutLink as unknown,
           update: this[$state].links.update
         }
-      })
+      }),
+      this[$elements]
     )
   }
 
@@ -420,12 +324,8 @@ export class $PrimitiveAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      true
-    >
-  ): $PrimitiveAttribute<
-    TYPE,
+    ) => AttributeUpdateItemInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, true>
+  ): $ListAttribute<
     O.Overwrite<
       STATE,
       {
@@ -435,17 +335,18 @@ export class $PrimitiveAttribute<
           update: unknown
         }
       }
-    >
+    >,
+    $ELEMENTS
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $ListAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
           put: this[$state].links.put,
-          update: nextUpdateLink
+          update: nextUpdateLink as unknown
         }
-      })
+      }),
+      this[$elements]
     )
   }
 
@@ -464,13 +365,12 @@ export class $PrimitiveAttribute<
     ) => If<
       STATE['key'],
       ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>,
         { mode: 'key'; fill: false }
       >,
-      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
+      ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $ListAttribute<
     O.Overwrite<
       STATE,
       {
@@ -488,57 +388,57 @@ export class $PrimitiveAttribute<
           }
         >
       }
-    >
+    >,
+    $ELEMENTS
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $ListAttribute(
       overwrite(this[$state], {
         links: this[$state].key
-          ? { key: nextLink, put: this[$state].links.put, update: this[$state].links.update }
-          : { key: this[$state].links.key, put: nextLink, update: this[$state].links.update }
-      })
+          ? {
+              key: nextLink as unknown,
+              put: this[$state].links.put,
+              update: this[$state].links.update
+            }
+          : {
+              key: this[$state].links.key,
+              put: nextLink as unknown,
+              update: this[$state].links.update
+            }
+      }),
+      this[$elements]
     )
   }
 
-  freeze(path?: string): FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>> {
-    return freezePrimitiveAttribute(this[$type], this[$state], path)
+  freeze(path?: string): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>> {
+    return freezeListAttribute(this[$state], this[$elements], path)
   }
 }
 
-export class PrimitiveAttribute<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
+export class ListAttribute<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  ELEMENTS extends Attribute = Attribute
 > implements SharedAttributeState<STATE>
 {
-  type: TYPE
+  type: 'list'
   path?: string
+  elements: ELEMENTS
   required: STATE['required']
   hidden: STATE['hidden']
   key: STATE['key']
   savedAs: STATE['savedAs']
   defaults: STATE['defaults']
   links: STATE['links']
-  enum: STATE['enum']
-  transform: STATE['transform']
 
-  constructor({
-    type,
-    path,
-    ...state
-  }: STATE & {
-    path?: string
-    type: TYPE
-  }) {
-    this.type = type
+  constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
+    this.type = 'list'
     this.path = path
+    this.elements = elements
     this.required = state.required
     this.hidden = state.hidden
     this.key = state.key
     this.savedAs = state.savedAs
     this.defaults = state.defaults
     this.links = state.links
-    this.enum = state.enum
-    this.transform = state.transform
   }
 
   // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas

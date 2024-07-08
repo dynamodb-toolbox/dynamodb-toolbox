@@ -1,5 +1,5 @@
-import type { FreezeAttribute } from '~/schema/attributes/freeze.js'
-import type { $Attribute, $PrimitiveAttribute, AtLeastOnce } from '~/schema/attributes/index.js'
+import type { FreezeAttribute } from '~/attributes/freeze.js'
+import type { $Attribute, $PrimitiveAttribute, AtLeastOnce } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { If } from '~/types/if.js'

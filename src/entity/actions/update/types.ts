@@ -1,7 +1,5 @@
 import type { O } from 'ts-toolbelt'
 
-import type { Entity } from '~/entity/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type {
   Always,
   AnyAttribute,
@@ -23,7 +21,9 @@ import type {
   ResolvePrimitiveAttribute,
   SetAttribute,
   SetAttributeValue
-} from '~/schema/attributes/index.js'
+} from '~/attributes/index.js'
+import type { Entity } from '~/entity/index.js'
+import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
 import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'

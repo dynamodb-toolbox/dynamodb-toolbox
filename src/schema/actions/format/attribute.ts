@@ -1,4 +1,3 @@
-import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
   Always,
   AnyAttribute,
@@ -11,7 +10,8 @@ import type {
   RecordAttribute,
   RequiredOption,
   SetAttribute
-} from '~/schema/attributes/index.js'
+} from '~/attributes/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 
 import { formatAnyAttrRawValue } from './any.js'

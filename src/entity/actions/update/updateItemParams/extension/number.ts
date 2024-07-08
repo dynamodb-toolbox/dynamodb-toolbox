@@ -1,8 +1,8 @@
+import type { AttributeBasicValue, PrimitiveAttribute } from '~/attributes/index.js'
+import { number } from '~/attributes/primitive/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
-import type { AttributeBasicValue, PrimitiveAttribute } from '~/schema/attributes/index.js'
-import { number } from '~/schema/attributes/primitive/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { $ADD, $SUBTRACT, $SUM } from '../../constants.js'

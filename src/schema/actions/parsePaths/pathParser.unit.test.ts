@@ -1,4 +1,4 @@
-import { anyOf, list, map, number, string } from '~/schema/attributes/index.js'
+import { anyOf, list, map, number, string } from '~/attributes/index.js'
 import { schema } from '~/schema/index.js'
 
 import { PathParser } from './pathParser.js'

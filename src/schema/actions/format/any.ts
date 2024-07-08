@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 
-import type { AnyAttribute, ResolveAnyAttribute } from '~/schema/attributes/any/index.js'
+import type { AnyAttribute, ResolveAnyAttribute } from '~/attributes/any/index.js'
 
 export type AnyAttrFormattedValue<ATTRIBUTE extends AnyAttribute> = AnyAttribute extends ATTRIBUTE
   ? unknown

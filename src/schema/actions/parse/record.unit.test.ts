@@ -1,5 +1,5 @@
+import { record, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { record, string } from '~/schema/attributes/index.js'
 
 import * as attrParserModule from './attribute.js'
 import { recordAttributeParser } from './record.js'

@@ -1,6 +1,6 @@
+import { string } from '~/attributes/index.js'
 import { $get } from '~/entity/actions/update/utils.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { string } from '~/schema/attributes/index.js'
 import { schema } from '~/schema/index.js'
 import { Table } from '~/table/index.js'
 

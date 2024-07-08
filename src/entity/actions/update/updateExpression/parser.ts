@@ -1,7 +1,7 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
+import type { Attribute, AttributeValue } from '~/attributes/index.js'
 import type { ParsedValue } from '~/schema/actions/parse/index.js'
-import type { Attribute, AttributeValue } from '~/schema/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
