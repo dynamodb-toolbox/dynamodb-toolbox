@@ -1,5 +1,4 @@
 import type { ScanCommandInput } from '@aws-sdk/lib-dynamodb'
-import { isEmpty } from 'lodash'
 
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import type { Condition } from '~/entity/actions/parseCondition.js'
@@ -15,6 +14,7 @@ import { parseMaxPagesOption } from '~/options/maxPages.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
 import type { Table } from '~/table/index.js'
+import { isEmpty } from '~/utils/isEmpty.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
 
 import type { ScanOptions } from '../options.js'

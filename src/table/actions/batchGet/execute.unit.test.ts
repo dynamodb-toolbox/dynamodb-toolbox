@@ -2,7 +2,6 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, BatchGetCommand as _BatchGetCommand } from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
 import type { AwsStub } from 'aws-sdk-client-mock'
-import { pick } from 'lodash'
 import type { A } from 'ts-toolbelt'
 
 import {
@@ -15,6 +14,7 @@ import {
   string
 } from '~/index.js'
 import type { FormattedItem, KeyInput, SavedItem } from '~/index.js'
+import { pick } from '~/utils/pick.js'
 
 import { BatchGetCommand } from './batchGetCommand.js'
 import { execute, getCommandInput } from './execute.js'

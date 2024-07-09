@@ -1,9 +1,9 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
-import { isEmpty } from 'lodash'
-import { omit } from 'lodash'
 
 import { EntityParser } from '~/entity/actions/parse.js'
 import type { Entity } from '~/entity/index.js'
+import { isEmpty } from '~/utils/isEmpty.js'
+import { omit } from '~/utils/omit.js'
 
 import type { UpdateItemOptions } from '../options.js'
 import type { UpdateItemInput } from '../types.js'
@@ -34,7 +34,7 @@ export const updateItemParams: UpdateItemParamsGetter = <
     ExpressionAttributeNames: updateExpressionAttributeNames,
     ExpressionAttributeValues: updateExpressionAttributeValues,
     ...update
-  } = parseUpdate(entity, omit(item, Object.keys(key)))
+  } = parseUpdate(entity, omit(item, ...Object.keys(key)))
 
   const {
     ExpressionAttributeNames: optionsExpressionAttributeNames,
