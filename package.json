@@ -147,6 +147,11 @@
       "require": "./dist/cjs/entity/actions/transactGet/index.js",
       "types": "./dist/types/entity/actions/transactGet/index.d.ts"
     },
+    "./entity/actions/transactWrite": {
+      "import": "./dist/esm/entity/actions/transactWrite/index.js",
+      "require": "./dist/cjs/entity/actions/transactWrite/index.js",
+      "types": "./dist/types/entity/actions/transactWrite/index.d.ts"
+    },
     "./entity/actions/transactPut": {
       "import": "./dist/esm/entity/actions/transactPut/index.js",
       "require": "./dist/cjs/entity/actions/transactPut/index.js",
@@ -186,6 +191,16 @@
       "import": "./dist/esm/entity/actions/format.js",
       "require": "./dist/cjs/entity/actions/format.js",
       "types": "./dist/types/entity/actions/format.d.ts"
+    },
+    "./test-tools": {
+      "import": "./dist/esm/test-tools/index.js",
+      "require": "./dist/cjs/test-tools/index.js",
+      "types": "./dist/types/test-tools/index.d.ts"
+    },
+    "./errors": {
+      "import": "./dist/esm/errors/index.js",
+      "require": "./dist/cjs/errors/index.js",
+      "types": "./dist/types/errors/index.d.ts"
     }
   },
   "scripts": {
