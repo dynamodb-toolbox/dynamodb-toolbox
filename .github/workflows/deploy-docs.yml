@@ -1,14 +1,9 @@
 name: Deploy Docs to GitHub Pages
 
 on:
-  # This job runs when a new release is published
+  # This job runs when a new release is released
   release:
-    types: [published]
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - 'docs/**'
+    types: [released]
 
 jobs:
   deploy:
