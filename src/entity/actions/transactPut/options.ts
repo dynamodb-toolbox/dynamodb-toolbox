@@ -1,9 +1,8 @@
-import { isEmpty } from 'lodash'
-
 import type { Condition } from '~/entity/actions/parseCondition.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
+import { isEmpty } from '~/utils/isEmpty.js'
 
 import type { TransactWriteItem } from '../transactWrite/transaction.js'
 

@@ -1,6 +1,4 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
-import { pick as _pick } from 'lodash'
-import type { O } from 'ts-toolbelt'
 
 import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
 import type { ResolvedPrimitiveAttribute } from '~/attributes/primitive/index.js'
@@ -12,6 +10,7 @@ import type {
 } from '~/schema/actions/parseCondition/index.js'
 import { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
+import { pick } from '~/utils/pick.js'
 
 import { queryOperatorSet } from '../types.js'
 import type { Query } from '../types.js'
@@ -34,11 +33,6 @@ const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0]
   enum: undefined,
   transform: undefined
 }
-
-const pick = _pick as <OBJECT extends object, KEYS extends string[]>(
-  object: OBJECT,
-  keys: KEYS
-) => O.Pick<OBJECT, KEYS[number]>
 
 type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   table: TABLE,
@@ -86,7 +80,7 @@ export const parseQuery: QueryParser = (table, query) => {
 
     const sortKeyCondition = {
       attr: sortKey.name,
-      ...pick(range, [...queryOperatorSet])
+      ...pick(range, ...queryOperatorSet)
       /**
        * @debt type "TODO: Remove this cast"
        */

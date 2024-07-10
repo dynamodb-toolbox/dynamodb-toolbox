@@ -1,5 +1,3 @@
-import { cloneDeep } from 'lodash'
-
 import type {
   ExtendedValue,
   PrimitiveAttribute,
@@ -10,6 +8,7 @@ import type {
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
+import { cloneDeep } from '~/utils/cloneDeep.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 
 import type { MustBeDefined } from './attribute.js'

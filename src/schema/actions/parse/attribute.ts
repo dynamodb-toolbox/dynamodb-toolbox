@@ -1,5 +1,3 @@
-import { cloneDeep } from 'lodash'
-
 import type {
   Always,
   AnyAttribute,
@@ -14,6 +12,7 @@ import type {
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
+import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
 import { anyAttrParser } from './any.js'

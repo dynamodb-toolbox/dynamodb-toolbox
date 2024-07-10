@@ -1,9 +1,8 @@
-import { cloneDeep } from 'lodash'
-
 import type { Attribute, ExtendedValue, ListAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
+import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { attrParser } from './attribute.js'

@@ -1,4 +1,3 @@
-import { isEmpty, omit } from 'lodash'
 import type { O } from 'ts-toolbelt'
 
 import { EntityParser } from '~/entity/actions/parse.js'
@@ -8,6 +7,8 @@ import { parseUpdateExtension } from '~/entity/actions/update/updateItemParams/e
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { isEmpty } from '~/utils/isEmpty.js'
+import { omit } from '~/utils/omit.js'
 
 import type {
   TransactWriteItem,
@@ -67,7 +68,7 @@ export class UpdateTransaction<
       ExpressionAttributeNames: updateExpressionAttributeNames,
       ExpressionAttributeValues: updateExpressionAttributeValues,
       UpdateExpression
-    } = parseUpdate(this[$entity], omit(item, Object.keys(key)))
+    } = parseUpdate(this[$entity], omit(item, ...Object.keys(key)))
 
     const {
       ExpressionAttributeNames: optionsExpressionAttributeNames,

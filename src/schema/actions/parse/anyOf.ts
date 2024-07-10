@@ -1,5 +1,3 @@
-import { cloneDeep } from 'lodash'
-
 import type {
   AnyOfAttribute,
   AnyOfAttributeElements,
@@ -9,6 +7,7 @@ import type {
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
+import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import { attrParser } from './attribute.js'
 import type { AttrParsedValue, MustBeDefined } from './attribute.js'

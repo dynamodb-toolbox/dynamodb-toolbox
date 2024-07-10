@@ -1,9 +1,8 @@
-import { isEmpty } from 'lodash'
-
 import { EntityPathParser } from '~/entity/actions/parsePaths.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
+import { isEmpty } from '~/utils/isEmpty.js'
 
 import type { TransactGetItem } from '../transaction.js'
 

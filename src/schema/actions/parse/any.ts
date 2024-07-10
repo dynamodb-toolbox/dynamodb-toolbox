@@ -1,7 +1,6 @@
-import { cloneDeep } from 'lodash'
-
 import type { AnyAttribute, ExtendedValue } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
+import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import type { ParsedValue } from './parser.js'
 import type {
