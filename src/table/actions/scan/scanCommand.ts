@@ -4,20 +4,18 @@ import type { ScanCommandInput, ScanCommandOutput } from '@aws-sdk/lib-dynamodb'
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import type { O } from 'ts-toolbelt'
 
-import { EntityFormatter } from '~/entity/actions/format.js'
-import type { FormattedItem } from '~/entity/actions/format.js'
-import type { EntityPaths } from '~/entity/actions/parsePaths.js'
+import { EntityFormatter } from '~/entity/actions/format/index.js'
+import type { FormattedItem } from '~/entity/actions/format/index.js'
+import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CountSelectOption } from '~/options/select.js'
 import { $entities, $table, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
+import { $options } from './constants.js'
 import type { ScanOptions } from './options.js'
 import { scanParams } from './scanParams/index.js'
-
-const $options = Symbol('$options')
-type $options = typeof $options
 
 type ReturnedItems<
   TABLE extends Table,

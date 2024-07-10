@@ -10,6 +10,8 @@ import type {
   FromFormatOptions
 } from '~/schema/actions/format/index.js'
 
+import { $formatter } from './constants.js'
+
 export type FormattedItemOptions<ENTITY extends Entity = Entity> = FormattedValueOptions<
   ENTITY['schema']
 >
@@ -30,9 +32,6 @@ export type FormattedItem<
 export type EntityFormattingOptions<ENTITY extends Entity = Entity> = FormatOptions<
   ENTITY['schema']
 >
-
-const $formatter = Symbol('$formatter')
-type $formatter = typeof $formatter
 
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'format';

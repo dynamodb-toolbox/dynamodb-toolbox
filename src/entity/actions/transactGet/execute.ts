@@ -5,16 +5,16 @@ import type {
   TransactGetCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 
-import { EntityFormatter } from '~/entity/actions/format.js'
-import type { FormattedItem } from '~/entity/actions/format.js'
-import type { EntityPaths } from '~/entity/actions/parsePaths.js'
+import type { FormattedItem } from '~/entity/actions/format/index.js'
+import { EntityFormatter } from '~/entity/actions/format/index.js'
+import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import { $entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 
-import { $options } from './getTransaction/getTransaction.js'
+import { $options } from './getTransaction/constants.js'
 import { GetTransaction } from './getTransaction/getTransaction.js'
 
 type GetTransactionProps = Pick<GetTransaction, $entity | $options | 'params'>

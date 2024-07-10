@@ -198,19 +198,19 @@
       "types": "./dist/types/entity/actions/delete/index.d.ts"
     },
     "./entity/actions/batchGet": {
-      "import": "./dist/esm/entity/actions/batchGet.js",
-      "require": "./dist/cjs/entity/actions/batchGet.js",
-      "types": "./dist/types/entity/actions/batchGet.d.ts"
+      "import": "./dist/esm/entity/actions/batchGet/index.js",
+      "require": "./dist/cjs/entity/actions/batchGet/index.js",
+      "types": "./dist/types/entity/actions/batchGet/index.d.ts"
     },
     "./entity/actions/batchPut": {
-      "import": "./dist/esm/entity/actions/batchPut.js",
-      "require": "./dist/cjs/entity/actions/batchPut.js",
-      "types": "./dist/types/entity/actions/batchPut.d.ts"
+      "import": "./dist/esm/entity/actions/batchPut/index.js",
+      "require": "./dist/cjs/entity/actions/batchPut/index.js",
+      "types": "./dist/types/entity/actions/batchPut/index.d.ts"
     },
     "./entity/actions/batchDelete": {
-      "import": "./dist/esm/entity/actions/batchDelete.js",
-      "require": "./dist/cjs/entity/actions/batchDelete.js",
-      "types": "./dist/types/entity/actions/batchDelete.d.ts"
+      "import": "./dist/esm/entity/actions/batchDelete/index.js",
+      "require": "./dist/cjs/entity/actions/batchDelete/index.js",
+      "types": "./dist/types/entity/actions/batchDelete/index.d.ts"
     },
     "./entity/actions/transactGet": {
       "import": "./dist/esm/entity/actions/transactGet/index.js",
@@ -243,24 +243,24 @@
       "types": "./dist/types/entity/actions/transactCheck/index.d.ts"
     },
     "./entity/actions/parse": {
-      "import": "./dist/esm/entity/actions/parse.js",
-      "require": "./dist/cjs/entity/actions/parse.js",
-      "types": "./dist/types/entity/actions/parse.d.ts"
+      "import": "./dist/esm/entity/actions/parse/index.js",
+      "require": "./dist/cjs/entity/actions/parse/index.js",
+      "types": "./dist/types/entity/actions/parse/index.d.ts"
     },
     "./entity/actions/parseCondition": {
-      "import": "./dist/esm/entity/actions/parseCondition.js",
-      "require": "./dist/cjs/entity/actions/parseCondition.js",
-      "types": "./dist/types/entity/actions/parseCondition.d.ts"
+      "import": "./dist/esm/entity/actions/parseCondition/index.js",
+      "require": "./dist/cjs/entity/actions/parseCondition/index.js",
+      "types": "./dist/types/entity/actions/parseCondition/index.d.ts"
     },
     "./entity/actions/parsePaths": {
-      "import": "./dist/esm/entity/actions/parsePaths.js",
-      "require": "./dist/cjs/entity/actions/parsePaths.js",
-      "types": "./dist/types/entity/actions/parsePaths.d.ts"
+      "import": "./dist/esm/entity/actions/parsePaths/index.js",
+      "require": "./dist/cjs/entity/actions/parsePaths/index.js",
+      "types": "./dist/types/entity/actions/parsePaths/index.d.ts"
     },
     "./entity/actions/format": {
-      "import": "./dist/esm/entity/actions/format.js",
-      "require": "./dist/cjs/entity/actions/format.js",
-      "types": "./dist/types/entity/actions/format.d.ts"
+      "import": "./dist/esm/entity/actions/format/index.js",
+      "require": "./dist/cjs/entity/actions/format/index.js",
+      "types": "./dist/types/entity/actions/format/index.d.ts"
     },
     "./test-tools": {
       "import": "./dist/esm/test-tools/index.js",

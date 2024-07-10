@@ -1,10 +1,10 @@
 import type { GetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { $key, $options } from '~/entity/actions/get/getItemCommand.js'
+import { $key, $options } from '~/entity/actions/get/constants.js'
 import { getItemParams } from '~/entity/actions/get/getItemParams/index.js'
 import { GetItemCommand } from '~/entity/actions/get/index.js'
 import type { GetItemOptions, GetItemResponse } from '~/entity/actions/get/index.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'

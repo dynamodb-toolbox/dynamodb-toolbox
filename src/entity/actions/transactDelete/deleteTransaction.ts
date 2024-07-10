@@ -1,7 +1,7 @@
 import type { O } from 'ts-toolbelt'
 
-import { EntityParser } from '~/entity/actions/parse.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
+import { EntityParser } from '~/entity/actions/parse/index.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -11,14 +11,9 @@ import type {
   TransactWriteItem,
   WriteTransactionImplementation
 } from '../transactWrite/transaction.js'
+import { $key, $options } from './constants.js'
 import type { DeleteTransactionOptions } from './options.js'
 import { parseOptions } from './options.js'
-
-export const $key = Symbol('$key')
-export type $key = typeof $key
-
-export const $options = Symbol('$options')
-export type $options = typeof $options
 
 export class DeleteTransaction<
     ENTITY extends Entity = Entity,

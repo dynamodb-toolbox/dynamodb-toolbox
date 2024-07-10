@@ -1,5 +1,5 @@
-import type { Condition } from '~/entity/actions/parseCondition.js'
-import type { EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
+import type { Condition } from '~/entity/actions/parseCondition/index.js'
+import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type {

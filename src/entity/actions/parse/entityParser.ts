@@ -12,6 +12,8 @@ import type { ParserInput } from '~/schema/actions/parse/index.js'
 import { PrimaryKeyParser } from '~/table/actions/parsePrimaryKey/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 
+import { $parser } from './constants.js'
+
 export type ParsedItemOptions = Pick<ParsedValueOptions, 'mode' | 'extension'>
 
 export type ParsedItemDefaultOptions = Pick<ParsedValueDefaultOptions, 'mode' | 'extension'>
@@ -31,9 +33,6 @@ export type EntityParserInput<
 > = ParserInput<ENTITY['schema'], OPTIONS>
 
 export type KeyInput<ENTITY extends Entity> = EntityParserInput<ENTITY, { mode: 'key' }>
-
-const $parser = Symbol('$parser')
-type $parser = typeof $parser
 
 export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'parse';

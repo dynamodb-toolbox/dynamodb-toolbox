@@ -1,7 +1,7 @@
 import type { AttributeValue } from '@aws-sdk/client-dynamodb'
 import type { O } from 'ts-toolbelt'
 
-import { EntityParser } from '~/entity/actions/parse.js'
+import { EntityParser } from '~/entity/actions/parse/index.js'
 import type { PutItemInput } from '~/entity/actions/put/index.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
@@ -12,14 +12,9 @@ import type {
   TransactWriteItem,
   WriteTransactionImplementation
 } from '../transactWrite/transaction.js'
+import { $item, $options } from './constants.js'
 import type { PutTransactionOptions } from './options.js'
 import { parseOptions } from './options.js'
-
-export const $item = Symbol('$item')
-export type $item = typeof $item
-
-export const $options = Symbol('$options')
-export type $options = typeof $options
 
 export class PutTransaction<
     ENTITY extends Entity = Entity,

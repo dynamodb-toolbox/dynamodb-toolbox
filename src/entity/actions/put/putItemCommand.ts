@@ -2,22 +2,17 @@ import { PutCommand } from '@aws-sdk/lib-dynamodb'
 import type { PutCommandInput, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 import type { O } from 'ts-toolbelt'
 
-import { EntityFormatter } from '~/entity/actions/format.js'
-import type { FormattedItem } from '~/entity/actions/format.js'
+import { EntityFormatter } from '~/entity/actions/format/index.js'
+import type { FormattedItem } from '~/entity/actions/format/index.js'
 import { $entity, EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 
+import { $item, $options } from './constants.js'
 import type { PutItemOptions } from './options.js'
 import { putItemParams } from './putItemParams/index.js'
 import type { PutItemInput } from './types.js'
-
-export const $item = Symbol('$item')
-export type $item = typeof $item
-
-export const $options = Symbol('$options')
-export type $options = typeof $options
 
 type ReturnedAttributes<
   ENTITY extends Entity,

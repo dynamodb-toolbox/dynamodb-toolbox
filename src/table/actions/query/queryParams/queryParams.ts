@@ -1,9 +1,9 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
-import type { Condition } from '~/entity/actions/parseCondition.js'
-import { EntityPathParser } from '~/entity/actions/parsePaths.js'
-import type { EntityPaths } from '~/entity/actions/parsePaths.js'
+import { EntityConditionParser } from '~/entity/actions/parseCondition/index.js'
+import type { Condition } from '~/entity/actions/parseCondition/index.js'
+import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
+import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'

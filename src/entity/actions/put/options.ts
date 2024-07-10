@@ -1,4 +1,4 @@
-import type { Condition } from '~/entity/actions/parseCondition.js'
+import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type { MetricsOption } from '~/options/metrics.js'

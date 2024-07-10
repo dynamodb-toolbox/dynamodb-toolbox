@@ -1,4 +1,4 @@
-import type { ParsedItem } from '~/entity/actions/parse.js'
+import type { ParsedItem } from '~/entity/actions/parse/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { ParsedValue } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'

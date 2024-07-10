@@ -87,9 +87,9 @@ export type {
   UpdateItemOptions,
   UpdateItemResponse
 } from './entity/actions/update/index.js'
-export { BatchGetRequest } from './entity/actions/batchGet.js'
-export { BatchDeleteRequest } from './entity/actions/batchDelete.js'
-export { BatchPutRequest } from './entity/actions/batchPut.js'
+export { BatchGetRequest } from './entity/actions/batchGet/index.js'
+export { BatchDeleteRequest } from './entity/actions/batchDelete/index.js'
+export { BatchPutRequest } from './entity/actions/batchPut/index.js'
 export { execute as executeTransactGet } from './entity/actions/transactGet/index.js'
 export type { ExecuteTransactGetOptions } from './entity/actions/transactGet/index.js'
 export { GetTransaction } from './entity/actions/transactGet/index.js'
@@ -102,15 +102,15 @@ export type { UpdateTransactionOptions } from './entity/actions/transactUpdate/i
 export { DeleteTransaction } from './entity/actions/transactDelete/index.js'
 export type { DeleteTransactionOptions } from './entity/actions/transactDelete/index.js'
 export { ConditionCheck } from './entity/actions/transactCheck/index.js'
-export { EntityPathParser } from './entity/actions/parsePaths.js'
-export type { EntityPaths } from './entity/actions/parsePaths.js'
-export { EntityFormatter } from './entity/actions/format.js'
+export { EntityPathParser } from './entity/actions/parsePaths/index.js'
+export type { EntityPaths } from './entity/actions/parsePaths/index.js'
+export { EntityFormatter } from './entity/actions/format/index.js'
 export type {
   EntityFormattingOptions,
   FormattedItem,
   FormattedItemOptions
-} from './entity/actions/format.js'
-export { EntityParser } from './entity/actions/parse.js'
+} from './entity/actions/format/index.js'
+export { EntityParser } from './entity/actions/parse/index.js'
 export type {
   EntityParsingOptions,
   EntityParserInput,
@@ -118,9 +118,9 @@ export type {
   ParsedItem,
   ParsedItemOptions,
   SavedItem
-} from './entity/actions/parse.js'
-export { EntityConditionParser } from './entity/actions/parseCondition.js'
-export type { Condition } from './entity/actions/parseCondition.js'
+} from './entity/actions/parse/index.js'
+export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
+export type { Condition } from './entity/actions/parseCondition/index.js'
 
 export { DynamoDBToolboxError } from './errors/index.js'
 export { mockEntity } from './test-tools/index.js'

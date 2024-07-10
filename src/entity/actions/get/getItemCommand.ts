@@ -2,21 +2,16 @@ import { GetCommand } from '@aws-sdk/lib-dynamodb'
 import type { GetCommandInput, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 import type { O } from 'ts-toolbelt'
 
-import { EntityFormatter } from '~/entity/actions/format.js'
-import type { FormattedItem } from '~/entity/actions/format.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
+import { EntityFormatter } from '~/entity/actions/format/index.js'
+import type { FormattedItem } from '~/entity/actions/format/index.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { $entity, EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
+import { $key, $options } from './constants.js'
 import { getItemParams } from './getItemParams/index.js'
 import type { GetItemOptions } from './options.js'
-
-export const $key = Symbol('$key')
-export type $key = typeof $key
-
-export const $options = Symbol('$options')
-export type $options = typeof $options
 
 export type GetItemResponse<
   ENTITY extends Entity,

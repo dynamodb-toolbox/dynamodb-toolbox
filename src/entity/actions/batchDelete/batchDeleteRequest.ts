@@ -1,13 +1,12 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { KeyInput } from '~/entity/actions/parse.js'
-import { EntityParser } from '~/entity/actions/parse.js'
+import { EntityParser } from '~/entity/actions/parse/index.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { $entity, EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-export const $key = Symbol('$key')
-export type $key = typeof $key
+import { $key } from './constants.js'
 
 export class BatchDeleteRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName = 'batchDelete' as const;

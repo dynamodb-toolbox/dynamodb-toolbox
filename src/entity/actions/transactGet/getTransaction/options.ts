@@ -1,5 +1,5 @@
-import { EntityPathParser } from '~/entity/actions/parsePaths.js'
-import type { EntityPaths } from '~/entity/actions/parsePaths.js'
+import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
+import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { isEmpty } from '~/utils/isEmpty.js'

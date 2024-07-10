@@ -1,10 +1,10 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { $key, $options } from '~/entity/actions/delete/deleteItemCommand.js'
+import { $key, $options } from '~/entity/actions/delete/constants'
 import { deleteItemParams } from '~/entity/actions/delete/deleteItemParams/index.js'
 import { DeleteItemCommand } from '~/entity/actions/delete/index.js'
 import type { DeleteItemOptions, DeleteItemResponse } from '~/entity/actions/delete/index.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'

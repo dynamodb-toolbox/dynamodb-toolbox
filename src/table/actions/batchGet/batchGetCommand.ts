@@ -1,9 +1,9 @@
 import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
 import type { U } from 'ts-toolbelt'
 
-import type { BatchGetRequest } from '~/entity/actions/batchGet.js'
-import { EntityPathParser } from '~/entity/actions/parsePaths.js'
-import type { EntityPathsIntersection } from '~/entity/actions/parsePaths.js'
+import type { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
+import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
+import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.js'
 import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -12,11 +12,7 @@ import { $entities, $table, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
-export const $requests = Symbol('$requests')
-export type $requests = typeof $requests
-
-export const $options = Symbol('$options')
-export type $options = typeof $options
+import { $options, $requests } from './constants.js'
 
 export type BatchGetRequestProps = Pick<BatchGetRequest, $entity | 'params'>
 
