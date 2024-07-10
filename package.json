@@ -1,11 +1,81 @@
 {
   "name": "dynamodb-toolbox",
   "description": "Lightweight and type-safe query builder for DynamoDB and TypeScript.",
-  "author": "Jeremy Daly <jeremy@jeremydaly.com>",
+  "homepage": "https://dynamodb-toolbox.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeremydaly/dynamodb-toolbox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jeremydaly/dynamodb-toolbox/issues"
+  },
+  "keywords": [
+    "dynamodb",
+    "query-builder",
+    "aws",
+    "serverless",
+    "nosql"
+  ],
+  "license": "MIT",
+  "contributors": [
+    "ThomasAribart <thomasa@theodo.fr>",
+    "Naor Peled <me@naor.dev>"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
-  "type": "module",
+  "dependencies": {
+    "ts-toolbelt": "^9.6.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.145.0",
+    "@aws-sdk/lib-dynamodb": "^3.245.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "aws-sdk-client-mock": "^4.0.1",
+    "coveralls": "^3.1.0",
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-unused-imports": "^3.2.0",
+    "prettier": "^3.3.2",
+    "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.10",
+    "tsconfig-paths": "^4.1.1",
+    "tsd": "^0.23.0",
+    "typescript": "^4.7.4",
+    "vite": "^5.3.1",
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^1.6.0"
+  },
+  "peerDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  },
+  "scripts": {
+    "build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
+    "build:types": "tsc -p tsconfig.types.json && tsc-alias -p tsconfig.types.json",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
+    "prebuild": "rm -rf dist",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint",
+    "test": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint",
+    "test-type": "tsc --noEmit",
+    "test-format": "prettier --check 'src/**/*.(js|ts)'",
+    "test-unit": "vitest run",
+    "test-unit-watch": "vitest",
+    "test-lint": "eslint ."
+  },
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
@@ -202,78 +272,5 @@
       "require": "./dist/cjs/errors/index.js",
       "types": "./dist/types/errors/index.d.ts"
     }
-  },
-  "scripts": {
-    "build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
-    "build:types": "tsc -p tsconfig.types.json && tsc-alias -p tsconfig.types.json",
-    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
-    "prebuild": "rm -rf dist",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint",
-    "test": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint",
-    "test-type": "tsc --noEmit",
-    "test-format": "prettier --check 'src/**/*.(js|ts)'",
-    "test-unit": "vitest run",
-    "test-unit-watch": "vitest",
-    "test-lint": "eslint ."
-  },
-  "lint-staged": {
-    "*.(ts|js)": [
-      "prettier --write"
-    ]
-  },
-  "license": "MIT",
-  "contributors": [
-    "ThomasAribart <thomasa@theodo.fr>",
-    "Naor Peled <me@naor.dev>"
-  ],
-  "dependencies": {
-    "ts-toolbelt": "^9.6.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jeremydaly/dynamodb-toolbox.git"
-  },
-  "keywords": [
-    "serverless",
-    "aws",
-    "dynamodb",
-    "nosql"
-  ],
-  "bugs": {
-    "url": "https://github.com/jeremydaly/dynamodb-toolbox/issues"
-  },
-  "homepage": "https://github.com/jeremydaly/dynamodb-toolbox#readme",
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "devDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.145.0",
-    "@aws-sdk/lib-dynamodb": "^3.245.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/node": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "aws-sdk-client-mock": "^4.0.1",
-    "coveralls": "^3.1.0",
-    "eslint": "^8.2.0",
-    "eslint-config-prettier": "^8.6.0",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
-    "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-unused-imports": "^3.2.0",
-    "prettier": "^3.3.2",
-    "ts-node": "^10.9.1",
-    "tsc-alias": "^1.8.10",
-    "tsconfig-paths": "^4.1.1",
-    "tsd": "^0.23.0",
-    "typescript": "^4.7.4",
-    "vite": "^5.3.1",
-    "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.6.0"
-  },
-  "peerDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.0.0",
-    "@aws-sdk/lib-dynamodb": "^3.0.0"
   }
 }
