@@ -1,13 +1,12 @@
 import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { KeyInput } from '~/entity/actions/parse.js'
-import { EntityParser } from '~/entity/actions/parse.js'
-import { $entity, EntityAction } from '~/entity/index.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
+import { EntityParser } from '~/entity/actions/parse/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-export const $key = Symbol('$key')
-export type $key = typeof $key
+import { $key } from './constants.js'
 
 export class BatchGetRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName = 'batchGet' as const;
@@ -20,7 +19,7 @@ export class BatchGetRequest<ENTITY extends Entity = Entity> extends EntityActio
   }
 
   key(nextKey: KeyInput<ENTITY>): BatchGetRequest<ENTITY> {
-    return new BatchGetRequest(this[$entity], nextKey)
+    return new BatchGetRequest(this.entity, nextKey)
   }
 
   params(): NonNullable<NonNullable<BatchGetCommandInput['RequestItems']>[string]['Keys']>[number] {
@@ -30,7 +29,7 @@ export class BatchGetRequest<ENTITY extends Entity = Entity> extends EntityActio
       })
     }
 
-    const { key } = this[$entity].build(EntityParser).parse(this[$key], { mode: 'key' })
+    const { key } = this.entity.build(EntityParser).parse(this[$key], { mode: 'key' })
 
     return key
   }

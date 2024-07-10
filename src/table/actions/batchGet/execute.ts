@@ -5,17 +5,16 @@ import type {
   DynamoDBDocumentClient
 } from '@aws-sdk/lib-dynamodb'
 
-import { EntityFormatter } from '~/entity/actions/format.js'
-import type { FormattedItem } from '~/entity/actions/format.js'
-import { $entity } from '~/entity/index.js'
+import { EntityFormatter } from '~/entity/actions/format/index.js'
+import type { FormattedItem } from '~/entity/actions/format/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import { $table } from '~/table/index.js'
 
-import { $options, $requests, BatchGetCommand } from './batchGetCommand.js'
+import { BatchGetCommand } from './batchGetCommand.js'
 import type { BatchGetCommandOptions, BatchGetRequestProps } from './batchGetCommand.js'
+import { $options, $requests } from './constants.js'
 
 export interface ExecuteBatchGetOptions {
   capacity?: CapacityOption
@@ -76,10 +75,10 @@ type BatchGetRequestResponses<
       | (REQUESTS[number] extends infer ENTITY_REQUEST
           ? ENTITY_REQUEST extends BatchGetRequestProps
             ? FormattedItem<
-                ENTITY_REQUEST[$entity],
+                ENTITY_REQUEST['entity'],
                 {
                   attributes: OPTIONS extends {
-                    attributes: Paths<ENTITY_REQUEST[$entity]['schema']>[]
+                    attributes: Paths<ENTITY_REQUEST['entity']['schema']>[]
                   }
                     ? OPTIONS['attributes'][number]
                     : undefined
@@ -99,10 +98,10 @@ type BatchGetRequestResponses<
               ...ITEMS,
               (
                 | FormattedItem<
-                    REQUESTS_HEAD[$entity],
+                    REQUESTS_HEAD['entity'],
                     {
                       attributes: OPTIONS extends {
-                        attributes: Paths<REQUESTS_HEAD[$entity]['schema']>[]
+                        attributes: Paths<REQUESTS_HEAD['entity']['schema']>[]
                       }
                         ? OPTIONS['attributes'][number]
                         : undefined
@@ -147,7 +146,7 @@ export const execute: ExecuteBatchGet = async <
     })
   }
 
-  const documentClient = options.documentClient ?? firstCommand[$table].getDocumentClient()
+  const documentClient = options.documentClient ?? firstCommand.table.getDocumentClient()
 
   const commandInput = getCommandInput(commands, options)
 
@@ -160,12 +159,12 @@ export const execute: ExecuteBatchGet = async <
   }
 
   const formattedResponses = commands.map(command => {
-    const tableName = command[$table].getName()
+    const tableName = command.table.getName()
     const requests = command[$requests]
     const { attributes } = (command as BatchGetCommand)[$options]
 
     return requests?.map((request, index) => {
-      const entity = request[$entity]
+      const entity = request.entity
       const tableResponses = responses[tableName]
 
       if (tableResponses === undefined) {
@@ -204,7 +203,7 @@ export const getCommandInput = (
   }
 
   for (const command of commands) {
-    const tableName = command[$table].getName()
+    const tableName = command.table.getName()
 
     if (tableName in requestItems) {
       throw new DynamoDBToolboxError('actions.invalidAction', {

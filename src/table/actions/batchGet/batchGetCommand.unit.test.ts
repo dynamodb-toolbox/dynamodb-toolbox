@@ -9,20 +9,14 @@ import {
   schema,
   string
 } from '~/index.js'
-import { $entities } from '~/table/table.js'
+import { $entities } from '~/table/index.js'
 
 import { BatchGetCommand } from './batchGetCommand.js'
 
 const TestTable = new Table({
   name: 'test-table',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  },
-  sortKey: {
-    type: 'string',
-    name: 'sk'
-  }
+  partitionKey: { type: 'string', name: 'pk' },
+  sortKey: { type: 'string', name: 'sk' }
 })
 
 const EntityA = new Entity({

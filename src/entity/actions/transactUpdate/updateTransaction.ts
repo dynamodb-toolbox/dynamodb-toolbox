@@ -1,10 +1,9 @@
 import type { O } from 'ts-toolbelt'
 
-import { EntityParser } from '~/entity/actions/parse.js'
+import { EntityParser } from '~/entity/actions/parse/index.js'
 import type { UpdateItemInput } from '~/entity/actions/update/index.js'
 import { parseUpdate } from '~/entity/actions/update/updateExpression/parse.js'
 import { parseUpdateExtension } from '~/entity/actions/update/updateItemParams/extension/index.js'
-import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
@@ -15,14 +14,9 @@ import type {
   WriteTransactionImplementation
 } from '../transactWrite/transaction.js'
 import { WriteTransaction } from '../transactWrite/transaction.js'
+import { $item, $options } from './constants.js'
 import { parseOptions } from './options.js'
 import type { UpdateTransactionOptions } from './options.js'
-
-export const $item = Symbol('$item')
-export type $item = typeof $item
-
-export const $options = Symbol('$options')
-export type $options = typeof $options
 
 export class UpdateTransaction<
     ENTITY extends Entity = Entity,
@@ -43,13 +37,13 @@ export class UpdateTransaction<
   }
 
   item(nextItem: UpdateItemInput<ENTITY>): UpdateTransaction<ENTITY> {
-    return new UpdateTransaction(this[$entity], nextItem, this[$options])
+    return new UpdateTransaction(this.entity, nextItem, this[$options])
   }
 
   options<NEXT_OPTIONS extends UpdateTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ): UpdateTransaction<ENTITY, NEXT_OPTIONS> {
-    return new UpdateTransaction(this[$entity], this[$item], nextOptions)
+    return new UpdateTransaction(this.entity, this[$item], nextOptions)
   }
 
   params(): O.Required<TransactWriteItem, 'Update'> {
@@ -59,7 +53,7 @@ export class UpdateTransaction<
       })
     }
 
-    const { item, key } = this[$entity].build(EntityParser).parse(this[$item], {
+    const { item, key } = this.entity.build(EntityParser).parse(this[$item], {
       mode: 'update',
       parseExtension: parseUpdateExtension
     })
@@ -68,13 +62,13 @@ export class UpdateTransaction<
       ExpressionAttributeNames: updateExpressionAttributeNames,
       ExpressionAttributeValues: updateExpressionAttributeValues,
       UpdateExpression
-    } = parseUpdate(this[$entity], omit(item, ...Object.keys(key)))
+    } = parseUpdate(this.entity, omit(item, ...Object.keys(key)))
 
     const {
       ExpressionAttributeNames: optionsExpressionAttributeNames,
       ExpressionAttributeValues: optionsExpressionAttributeValues,
       ...options
-    } = parseOptions(this[$entity], this[$options])
+    } = parseOptions(this.entity, this[$options])
 
     const ExpressionAttributeNames = {
       ...optionsExpressionAttributeNames,
@@ -88,7 +82,7 @@ export class UpdateTransaction<
 
     return {
       Update: {
-        TableName: this[$entity].table.getName(),
+        TableName: this.entity.table.getName(),
         Key: key,
         UpdateExpression,
         ...options,

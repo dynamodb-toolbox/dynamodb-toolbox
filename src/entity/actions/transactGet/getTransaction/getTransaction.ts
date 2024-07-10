@@ -1,20 +1,15 @@
 import type { O } from 'ts-toolbelt'
 
-import { EntityParser } from '~/entity/actions/parse.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
-import { $entity, EntityAction } from '~/entity/index.js'
+import { EntityParser } from '~/entity/actions/parse/index.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { TransactGetItem } from '../transaction.js'
+import { $key, $options } from './constants.js'
 import type { GetTransactionOptions } from './options.js'
 import { parseOptions } from './options.js'
-
-export const $key = Symbol('$key')
-export type $key = typeof $key
-
-export const $options = Symbol('$options')
-export type $options = typeof $options
 
 export class GetTransaction<
   ENTITY extends Entity = Entity,
@@ -32,13 +27,13 @@ export class GetTransaction<
   }
 
   key(nextKey: KeyInput<ENTITY>): GetTransaction<ENTITY> {
-    return new GetTransaction(this[$entity], nextKey, this[$options])
+    return new GetTransaction(this.entity, nextKey, this[$options])
   }
 
   options<NEXT_OPTIONS extends GetTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ): GetTransaction<ENTITY, NEXT_OPTIONS> {
-    return new GetTransaction(this[$entity], this[$key], nextOptions)
+    return new GetTransaction(this.entity, this[$key], nextOptions)
   }
 
   params(): O.NonNullable<TransactGetItem, 'Get'> {
@@ -48,12 +43,12 @@ export class GetTransaction<
       })
     }
 
-    const { key } = this[$entity].build(EntityParser).parse(this[$key], { mode: 'key' })
-    const options = parseOptions(this[$entity], this[$options])
+    const { key } = this.entity.build(EntityParser).parse(this[$key], { mode: 'key' })
+    const options = parseOptions(this.entity, this[$options])
 
     return {
       Get: {
-        TableName: this[$entity].table.getName(),
+        TableName: this.entity.table.getName(),
         Key: key,
         ...options
       }

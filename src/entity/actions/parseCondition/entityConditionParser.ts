@@ -5,8 +5,7 @@ import type { Entity } from '~/entity/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
 
-const $conditionParser = Symbol('$conditionParser')
-type $conditionParser = typeof $conditionParser
+import { $conditionParser } from './constants.js'
 
 export class EntityConditionParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'parseCondition';

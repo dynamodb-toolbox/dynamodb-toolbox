@@ -1,4 +1,4 @@
-import { $entity, EntityAction } from '~/entity/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Formatter } from '~/schema/actions/format/index.js'
@@ -9,6 +9,8 @@ import type {
   FormattedValueOptions,
   FromFormatOptions
 } from '~/schema/actions/format/index.js'
+
+import { $formatter } from './constants.js'
 
 export type FormattedItemOptions<ENTITY extends Entity = Entity> = FormattedValueOptions<
   ENTITY['schema']
@@ -31,9 +33,6 @@ export type EntityFormattingOptions<ENTITY extends Entity = Entity> = FormatOpti
   ENTITY['schema']
 >
 
-const $formatter = Symbol('$formatter')
-type $formatter = typeof $formatter
-
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'format';
   [$formatter]: Formatter<ENTITY['schema']>
@@ -52,8 +51,8 @@ export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityActio
     } catch (error) {
       if (!DynamoDBToolboxError.match(error, 'formatter.')) throw error
 
-      const partitionKey = item[this[$entity].table.partitionKey.name]
-      const sortKey = this[$entity].table.sortKey && item[this[$entity].table.sortKey.name]
+      const partitionKey = item[this.entity.table.partitionKey.name]
+      const sortKey = this.entity.table.sortKey && item[this.entity.table.sortKey.name]
       if (partitionKey === undefined && sortKey === undefined) {
         throw error
       }

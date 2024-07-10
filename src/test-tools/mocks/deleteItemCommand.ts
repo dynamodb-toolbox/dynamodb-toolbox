@@ -1,11 +1,10 @@
 import type { DeleteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { $key, $options } from '~/entity/actions/delete/deleteItemCommand.js'
+import { $key, $options } from '~/entity/actions/delete/constants'
 import { deleteItemParams } from '~/entity/actions/delete/deleteItemParams/index.js'
 import { DeleteItemCommand } from '~/entity/actions/delete/index.js'
 import type { DeleteItemOptions, DeleteItemResponse } from '~/entity/actions/delete/index.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
-import { $entity } from '~/entity/index.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
@@ -24,9 +23,9 @@ export class DeleteItemCommandMock<
 > implements DeleteItemCommand<ENTITY, OPTIONS>
 {
   static actionName = 'delete' as const
-  static [$actionName] = 'delete' as const;
+  static [$actionName] = 'delete' as const
 
-  [$entity]: ENTITY;
+  entity: ENTITY;
   [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS;
   [$mockedEntity]: MockedEntity<ENTITY>
@@ -36,7 +35,7 @@ export class DeleteItemCommandMock<
     key?: KeyInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this[$entity] = mockedEntity[$originalEntity]
+    this.entity = mockedEntity[$originalEntity]
     this[$mockedEntity] = mockedEntity
     this[$key] = key
     this[$options] = options
@@ -59,7 +58,7 @@ export class DeleteItemCommandMock<
       })
     }
 
-    return deleteItemParams(this[$entity], this[$key], this[$options])
+    return deleteItemParams(this.entity, this[$key], this[$options])
   }
 
   async send(): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
@@ -80,6 +79,6 @@ export class DeleteItemCommandMock<
       >
     }
 
-    return new DeleteItemCommand(this[$entity], this[$key], this[$options]).send()
+    return new DeleteItemCommand(this.entity, this[$key], this[$options]).send()
   }
 }

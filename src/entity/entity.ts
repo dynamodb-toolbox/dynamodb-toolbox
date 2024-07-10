@@ -101,15 +101,8 @@ export class Entity<
   }
 }
 
-export const $entity = Symbol('$entity')
-export type $entity = typeof $entity
-
 export class EntityAction<ENTITY extends Entity = Entity> {
-  static actionName: string;
+  static actionName: string
 
-  [$entity]: ENTITY
-
-  constructor(entity: ENTITY) {
-    this[$entity] = entity
-  }
+  constructor(public entity: ENTITY) {}
 }

@@ -4,7 +4,7 @@ import type { DeleteItemOptions, DeleteItemResponse } from '~/entity/actions/del
 import type { GetItemCommandClass } from '~/entity/actions/get/getItemCommand.js'
 import { GetItemCommand } from '~/entity/actions/get/index.js'
 import type { GetItemOptions, GetItemResponse } from '~/entity/actions/get/index.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { PutItemCommand } from '~/entity/actions/put/index.js'
 import type { PutItemInput, PutItemOptions, PutItemResponse } from '~/entity/actions/put/index.js'
 import type { PutItemCommandClass } from '~/entity/actions/put/putItemCommand.js'

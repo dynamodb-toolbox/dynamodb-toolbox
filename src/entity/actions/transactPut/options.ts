@@ -1,5 +1,5 @@
-import type { Condition } from '~/entity/actions/parseCondition.js'
-import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
+import type { Condition } from '~/entity/actions/parseCondition/index.js'
+import { EntityConditionParser } from '~/entity/actions/parseCondition/index.js'
 import type { Entity } from '~/entity/index.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { isEmpty } from '~/utils/isEmpty.js'

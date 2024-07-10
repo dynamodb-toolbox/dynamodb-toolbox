@@ -1,14 +1,13 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
+import { $item, $options } from '~/entity/actions/update/constants.js'
 import { UpdateItemCommand } from '~/entity/actions/update/index.js'
 import type {
   UpdateItemInput,
   UpdateItemOptions,
   UpdateItemResponse
 } from '~/entity/actions/update/index.js'
-import { $item, $options } from '~/entity/actions/update/updateItemCommand.js'
 import { updateItemParams } from '~/entity/actions/update/updateItemParams/index.js'
-import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
@@ -27,9 +26,9 @@ export class UpdateItemCommandMock<
 > implements UpdateItemCommand<ENTITY, OPTIONS>
 {
   static actionName = 'update' as const
-  static [$actionName] = 'update' as const;
+  static [$actionName] = 'update' as const
 
-  [$entity]: ENTITY;
+  entity: ENTITY;
   [$item]?: UpdateItemInput<ENTITY>
   item: (nextItem: UpdateItemInput<ENTITY>) => UpdateItemCommandMock<ENTITY, OPTIONS>;
   [$options]: OPTIONS
@@ -44,7 +43,7 @@ export class UpdateItemCommandMock<
     item?: UpdateItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this[$entity] = mockedEntity[$originalEntity]
+    this.entity = mockedEntity[$originalEntity]
     this[$mockedEntity] = mockedEntity
     this[$item] = item
     this[$options] = options
@@ -61,7 +60,7 @@ export class UpdateItemCommandMock<
       })
     }
 
-    return updateItemParams(this[$entity], this[$item], this[$options])
+    return updateItemParams(this.entity, this[$item], this[$options])
   }
 
   send = async (): Promise<UpdateItemResponse<ENTITY, OPTIONS>> => {
@@ -82,6 +81,6 @@ export class UpdateItemCommandMock<
       >
     }
 
-    return new UpdateItemCommand(this[$entity], this[$item], this[$options]).send()
+    return new UpdateItemCommand(this.entity, this[$item], this[$options]).send()
   }
 }

@@ -1,9 +1,8 @@
 import type { O } from 'ts-toolbelt'
 
-import { EntityParser } from '~/entity/actions/parse.js'
-import type { KeyInput } from '~/entity/actions/parse.js'
-import type { Condition } from '~/entity/actions/parseCondition.js'
-import { $entity } from '~/entity/index.js'
+import { EntityParser } from '~/entity/actions/parse/index.js'
+import type { KeyInput } from '~/entity/actions/parse/index.js'
+import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
@@ -12,13 +11,8 @@ import type {
   TransactWriteItem,
   WriteTransactionImplementation
 } from '../transactWrite/transaction.js'
+import { $condition, $key } from './constants.js'
 import { parseOptions } from './options.js'
-
-export const $key = Symbol('$key')
-export type $key = typeof $key
-
-export const $condition = Symbol('$condition')
-export type $condition = typeof $condition
 
 export class ConditionCheck<ENTITY extends Entity = Entity>
   extends WriteTransaction<ENTITY>
@@ -36,11 +30,11 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
   }
 
   key(nextKey: KeyInput<ENTITY>): ConditionCheck<ENTITY> {
-    return new ConditionCheck(this[$entity], nextKey, this[$condition])
+    return new ConditionCheck(this.entity, nextKey, this[$condition])
   }
 
   condition(nextCondition: Condition<ENTITY>): ConditionCheck<ENTITY> {
-    return new ConditionCheck(this[$entity], this[$key], nextCondition)
+    return new ConditionCheck(this.entity, this[$key], nextCondition)
   }
 
   params(): O.Required<TransactWriteItem, 'ConditionCheck'> {
@@ -56,12 +50,12 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
       })
     }
 
-    const { key } = this[$entity].build(EntityParser).parse(this[$key], { mode: 'key' })
-    const options = parseOptions(this[$entity], this[$condition])
+    const { key } = this.entity.build(EntityParser).parse(this[$key], { mode: 'key' })
+    const options = parseOptions(this.entity, this[$condition])
 
     return {
       ConditionCheck: {
-        TableName: this[$entity].table.getName(),
+        TableName: this.entity.table.getName(),
         Key: key,
         ...options
       }

@@ -1,13 +1,12 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityParserInput } from '~/entity/actions/parse.js'
-import { EntityParser } from '~/entity/actions/parse.js'
-import { $entity, EntityAction } from '~/entity/index.js'
+import type { EntityParserInput } from '~/entity/actions/parse/index.js'
+import { EntityParser } from '~/entity/actions/parse/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-export const $item = Symbol('$item')
-export type $item = typeof $item
+import { $item } from './constants.js'
 
 export class BatchPutRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName = 'batchPut' as const;
@@ -20,7 +19,7 @@ export class BatchPutRequest<ENTITY extends Entity = Entity> extends EntityActio
   }
 
   item(nextItem: EntityParserInput<ENTITY>): BatchPutRequest<ENTITY> {
-    return new BatchPutRequest(this[$entity], nextItem)
+    return new BatchPutRequest(this.entity, nextItem)
   }
 
   params(): NonNullable<BatchWriteCommandInput['RequestItems']>[string][number] {
@@ -30,7 +29,7 @@ export class BatchPutRequest<ENTITY extends Entity = Entity> extends EntityActio
       })
     }
 
-    const { item } = this[$entity].build(EntityParser).parse(this[$item])
+    const { item } = this.entity.build(EntityParser).parse(this[$item])
 
     return { PutRequest: { Item: item } }
   }

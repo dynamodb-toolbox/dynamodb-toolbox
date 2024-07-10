@@ -1,6 +1,6 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityConditionParser } from '~/entity/actions/parseCondition.js'
+import { EntityConditionParser } from '~/entity/actions/parseCondition/index.js'
 import type { Entity } from '~/entity/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'

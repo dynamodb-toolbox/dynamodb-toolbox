@@ -1,4 +1,4 @@
-import type { EntityPaths } from '~/entity/actions/parsePaths.js'
+import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 

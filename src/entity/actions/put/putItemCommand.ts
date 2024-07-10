@@ -2,22 +2,17 @@ import { PutCommand } from '@aws-sdk/lib-dynamodb'
 import type { PutCommandInput, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 import type { O } from 'ts-toolbelt'
 
-import { EntityFormatter } from '~/entity/actions/format.js'
-import type { FormattedItem } from '~/entity/actions/format.js'
-import { $entity, EntityAction } from '~/entity/index.js'
+import { EntityFormatter } from '~/entity/actions/format/index.js'
+import type { FormattedItem } from '~/entity/actions/format/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 
+import { $item, $options } from './constants.js'
 import type { PutItemOptions } from './options.js'
 import { putItemParams } from './putItemParams/index.js'
 import type { PutItemInput } from './types.js'
-
-export const $item = Symbol('$item')
-export type $item = typeof $item
-
-export const $options = Symbol('$options')
-export type $options = typeof $options
 
 type ReturnedAttributes<
   ENTITY extends Entity,
@@ -52,13 +47,13 @@ export class PutItemCommand<
   }
 
   item(nextItem: PutItemInput<ENTITY>): PutItemCommand<ENTITY, OPTIONS> {
-    return new PutItemCommand(this[$entity], nextItem, this[$options])
+    return new PutItemCommand(this.entity, nextItem, this[$options])
   }
 
   options<NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ): PutItemCommand<ENTITY, NEXT_OPTIONS> {
-    return new PutItemCommand(this[$entity], this[$item], nextOptions)
+    return new PutItemCommand(this.entity, this[$item], nextOptions)
   }
 
   params(): PutCommandInput {
@@ -68,13 +63,13 @@ export class PutItemCommand<
       })
     }
 
-    return putItemParams(this[$entity], this[$item], this[$options])
+    return putItemParams(this.entity, this[$item], this[$options])
   }
 
   async send(): Promise<PutItemResponse<ENTITY, OPTIONS>> {
     const putItemParams = this.params()
 
-    const commandOutput = await this[$entity].table
+    const commandOutput = await this.entity.table
       .getDocumentClient()
       .send(new PutCommand(putItemParams))
 
@@ -84,7 +79,7 @@ export class PutItemCommand<
       return restCommandOutput
     }
 
-    const formattedItem = new EntityFormatter(this[$entity]).format(attributes)
+    const formattedItem = new EntityFormatter(this.entity).format(attributes)
 
     return {
       Attributes: formattedItem as any,

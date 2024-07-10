@@ -1,5 +1,6 @@
 import type { Attribute } from '~/attributes/index.js'
-import type { Schema, SchemaAction } from '~/schema/index.js'
+import { SchemaAction } from '~/schema/index.js'
+import type { Schema } from '~/schema/index.js'
 
 import { attrParser } from './attribute.js'
 import type { AttrParsedValue } from './attribute.js'
@@ -23,11 +24,9 @@ export type ParsedValue<
     ? AttrParsedValue<SCHEMA, OPTIONS>
     : never
 
-export class Parser<SCHEMA extends Schema | Attribute> implements SchemaAction<SCHEMA> {
-  schema: SCHEMA
-
+export class Parser<SCHEMA extends Schema | Attribute> extends SchemaAction<SCHEMA> {
   constructor(schema: SCHEMA) {
-    this.schema = schema
+    super(schema)
   }
 
   start<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
