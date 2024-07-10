@@ -4,17 +4,16 @@ import type { U } from 'ts-toolbelt'
 import type { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
 import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
 import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.js'
-import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
-import { $entities, $table, TableAction } from '~/table/index.js'
+import { $entities, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
 import { $options, $requests } from './constants.js'
 
-export type BatchGetRequestProps = Pick<BatchGetRequest, $entity | 'params'>
+export type BatchGetRequestProps = Pick<BatchGetRequest, 'entity' | 'params'>
 
 export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
   consistent?: boolean
@@ -33,9 +32,9 @@ type RequestEntities<
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
     ? REQUESTS_HEAD extends BatchGetRequestProps
       ? REQUESTS_TAIL extends BatchGetRequestProps[]
-        ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']
+        ? REQUESTS_HEAD['entity']['name'] extends RESULTS[number]['name']
           ? RequestEntities<REQUESTS_TAIL, RESULTS>
-          : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD[$entity]]>
+          : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD['entity']]>
         : never
       : never
     : RESULTS
@@ -76,15 +75,15 @@ export class BatchGetCommand<
     const entityNames = new Set<string>()
 
     for (const request of requests) {
-      if (entityNames.has(request[$entity].name)) {
+      if (entityNames.has(request.entity.name)) {
         continue
       }
-      entities.push(request[$entity])
-      entityNames.add(request[$entity].name)
+      entities.push(request.entity)
+      entityNames.add(request.entity.name)
     }
 
     return new BatchGetCommand(
-      this[$table],
+      this.table,
       entities as RequestEntities<NEXT_REQUESTS>,
       requests,
       this[$options] as OPTIONS extends BatchGetCommandOptions<RequestEntities<NEXT_REQUESTS>>
@@ -96,7 +95,7 @@ export class BatchGetCommand<
   options<NEXT_OPTIONS extends BatchGetCommandOptions<ENTITIES>>(
     nextOptions: NEXT_OPTIONS
   ): BatchGetCommand<TABLE, ENTITIES, REQUESTS, NEXT_OPTIONS> {
-    return new BatchGetCommand(this[$table], this[$entities], this[$requests], nextOptions)
+    return new BatchGetCommand(this.table, this[$entities], this[$requests], nextOptions)
   }
 
   params(): NonNullable<BatchGetCommandInput['RequestItems']>[string] {
@@ -106,7 +105,7 @@ export class BatchGetCommand<
       })
     }
     const firstRequest = this[$requests][0]
-    const firstRequestEntity = firstRequest[$entity]
+    const firstRequestEntity = firstRequest.entity
 
     const { consistent, attributes: _attributes } = this[$options] ?? {}
     const attributes = _attributes as string[] | undefined
@@ -132,7 +131,7 @@ export class BatchGetCommand<
       projectionExpression = ProjectionExpression
 
       //  table partitionKey and sortKey are required at all times for response re-ordering
-      const { partitionKey, sortKey } = this[$table]
+      const { partitionKey, sortKey } = this.table
 
       const filteredAttributes = new Set<string>(Object.values(expressionAttributeNames))
       if (!filteredAttributes.has(partitionKey.name)) {

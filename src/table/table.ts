@@ -5,6 +5,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
 import { isString } from '~/utils/validation/isString.js'
 
+import { $entities } from './constants.js'
 import type { Index, Key } from './types/index.js'
 
 export class Table<
@@ -79,20 +80,15 @@ export class Table<
   }
 }
 
-export const $table = Symbol('$table')
-export type $table = typeof $table
-
-export const $entities = Symbol('$entities')
-export type $entities = typeof $entities
-
 export class TableAction<TABLE extends Table = Table, ENTITIES extends Entity[] = Entity[]> {
   static actionName: string;
 
-  [$table]: TABLE;
   [$entities]: ENTITIES
 
-  constructor(table: TABLE, entities = [] as unknown as ENTITIES) {
-    this[$table] = table
+  constructor(
+    public table: TABLE,
+    entities = [] as unknown as ENTITIES
+  ) {
     this[$entities] = entities
   }
 }

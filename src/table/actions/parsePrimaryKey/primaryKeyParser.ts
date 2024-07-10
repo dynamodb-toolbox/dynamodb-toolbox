@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import { $table, TableAction } from '~/table/index.js'
+import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 import type { IndexableKeyType, Key, ResolveIndexableKeyType } from '~/table/types/index.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
@@ -38,7 +38,7 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
   }
 
   parse(keyInput: { [KEY: string]: unknown }): PrimaryKey<TABLE> {
-    const table = this[$table]
+    const table = this.table
     const { partitionKey, sortKey } = table
 
     const primaryKey: { [KEY: string]: unknown } = {}

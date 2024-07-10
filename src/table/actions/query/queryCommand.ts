@@ -10,7 +10,7 @@ import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CountSelectOption } from '~/options/select.js'
-import { $entities, $table, TableAction } from '~/table/index.js'
+import { $entities, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -95,7 +95,7 @@ export class QueryCommand<
         ? OPTIONS
         : QueryOptions<TABLE, NEXT_ENTITIES>
     >(
-      this[$table],
+      this.table,
       nextEntities,
       this[$query],
       this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
@@ -107,13 +107,13 @@ export class QueryCommand<
   query<NEXT_QUERY extends Query<TABLE>>(
     nextQuery: NEXT_QUERY
   ): QueryCommand<TABLE, ENTITIES, NEXT_QUERY, OPTIONS> {
-    return new QueryCommand(this[$table], this[$entities], nextQuery, this[$options])
+    return new QueryCommand(this.table, this[$entities], nextQuery, this[$options])
   }
 
   options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
     nextOptions: NEXT_OPTIONS
   ): QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS> {
-    return new QueryCommand(this[$table], this[$entities], this[$query], nextOptions)
+    return new QueryCommand(this.table, this[$entities], this[$query], nextOptions)
   }
 
   params = (): QueryCommandInput => {
@@ -123,7 +123,7 @@ export class QueryCommand<
       })
     }
 
-    return queryParams(this[$table], this[$entities], this[$query], this[$options])
+    return queryParams(this.table, this[$entities], this[$query], this[$options])
   }
 
   async send(): Promise<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
@@ -160,10 +160,10 @@ export class QueryCommand<
         ScannedCount: pageScannedCount,
         ConsumedCapacity: pageConsumedCapacity,
         $metadata: pageMetadata
-      } = await this[$table].getDocumentClient().send(new _QueryCommand(pageQueryParams))
+      } = await this.table.getDocumentClient().send(new _QueryCommand(pageQueryParams))
 
       for (const item of items) {
-        const itemEntityName = item[this[$table].entityAttributeSavedAs]
+        const itemEntityName = item[this.table.entityAttributeSavedAs]
 
         if (!isString(itemEntityName)) {
           continue

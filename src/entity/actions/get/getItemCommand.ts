@@ -5,7 +5,7 @@ import type { O } from 'ts-toolbelt'
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
 import type { KeyInput } from '~/entity/actions/parse/index.js'
-import { $entity, EntityAction } from '~/entity/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
@@ -46,13 +46,13 @@ export class GetItemCommand<
   }
 
   key(nextKey: KeyInput<ENTITY>): GetItemCommand<ENTITY, OPTIONS> {
-    return new GetItemCommand(this[$entity], nextKey, this[$options])
+    return new GetItemCommand(this.entity, nextKey, this[$options])
   }
 
   options<NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ): GetItemCommand<ENTITY, NEXT_OPTIONS> {
-    return new GetItemCommand(this[$entity], this[$key], nextOptions)
+    return new GetItemCommand(this.entity, this[$key], nextOptions)
   }
 
   params(): GetCommandInput {
@@ -62,13 +62,13 @@ export class GetItemCommand<
       })
     }
 
-    return getItemParams(this[$entity], this[$key], this[$options])
+    return getItemParams(this.entity, this[$key], this[$options])
   }
 
   async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
-    const commandOutput = await this[$entity].table
+    const commandOutput = await this.entity.table
       .getDocumentClient()
       .send(new GetCommand(getItemParams))
 
@@ -80,7 +80,7 @@ export class GetItemCommand<
 
     const { attributes } = this[$options]
 
-    const formattedItem = new EntityFormatter(this[$entity]).format(item, { attributes })
+    const formattedItem = new EntityFormatter(this.entity).format(item, { attributes })
 
     return {
       Item: formattedItem as any,

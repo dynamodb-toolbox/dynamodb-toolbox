@@ -4,7 +4,6 @@ import { $item, $options } from '~/entity/actions/put/constants.js'
 import { PutItemCommand } from '~/entity/actions/put/index.js'
 import type { PutItemInput, PutItemOptions, PutItemResponse } from '~/entity/actions/put/index.js'
 import { putItemParams } from '~/entity/actions/put/putItemParams/index.js'
-import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
@@ -23,9 +22,9 @@ export class PutItemCommandMock<
 > implements PutItemCommand<ENTITY, OPTIONS>
 {
   static actionName = 'put' as const
-  static [$actionName] = 'put' as const;
+  static [$actionName] = 'put' as const
 
-  [$entity]: ENTITY;
+  entity: ENTITY;
   [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS;
   [$mockedEntity]: MockedEntity<ENTITY>
@@ -35,7 +34,7 @@ export class PutItemCommandMock<
     item?: PutItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this[$entity] = mockedEntity[$originalEntity]
+    this.entity = mockedEntity[$originalEntity]
     this[$mockedEntity] = mockedEntity
     this[$item] = item
     this[$options] = options
@@ -58,7 +57,7 @@ export class PutItemCommandMock<
       })
     }
 
-    return putItemParams(this[$entity], this[$item], this[$options])
+    return putItemParams(this.entity, this[$item], this[$options])
   }
 
   async send(): Promise<PutItemResponse<ENTITY, OPTIONS>> {
@@ -79,6 +78,6 @@ export class PutItemCommandMock<
       >
     }
 
-    return new PutItemCommand(this[$entity], this[$item], this[$options]).send()
+    return new PutItemCommand(this.entity, this[$item], this[$options]).send()
   }
 }

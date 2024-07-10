@@ -8,7 +8,6 @@ import type {
 import type { FormattedItem } from '~/entity/actions/format/index.js'
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
-import { $entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import { parseCapacityOption } from '~/options/capacity.js'
@@ -17,7 +16,7 @@ import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { $options } from './getTransaction/constants.js'
 import { GetTransaction } from './getTransaction/getTransaction.js'
 
-type GetTransactionProps = Pick<GetTransaction, $entity | $options | 'params'>
+type GetTransactionProps = Pick<GetTransaction, 'entity' | $options | 'params'>
 
 export interface ExecuteTransactGetOptions {
   documentClient?: DynamoDBDocumentClient
@@ -66,12 +65,12 @@ type TansactGetResponses<
       : RESPONSES
 
 type TansactGetResponse<TRANSACTION extends GetTransactionProps> = {
-  Item?: TRANSACTION[$options]['attributes'] extends EntityPaths<TRANSACTION[$entity]>[]
+  Item?: TRANSACTION[$options]['attributes'] extends EntityPaths<TRANSACTION['entity']>[]
     ? FormattedItem<
-        TRANSACTION[$entity],
+        TRANSACTION['entity'],
         { attributes: TRANSACTION[$options]['attributes'][number] }
       >
-    : FormattedItem<TRANSACTION[$entity]>
+    : FormattedItem<TRANSACTION['entity']>
 }
 
 type TransactGetResponseFormatter = <TRANSACTIONS extends GetTransactionProps[]>(
@@ -87,7 +86,7 @@ export const formatResponses: TransactGetResponseFormatter = <
 ) =>
   responses.map(({ Item: item }, index) => {
     const transaction = transactions[index]
-    const transactionEntity = transaction[$entity]
+    const transactionEntity = transaction.entity
     const { attributes } = transaction[$options]
 
     return {
@@ -129,8 +128,7 @@ export const execute: ExecuteTransactGet = async <
   }
 
   const { documentClient: optionsDocumentClient, ...restOptions } = options
-  const documentClient =
-    optionsDocumentClient ?? firstTransaction[$entity].table.getDocumentClient()
+  const documentClient = optionsDocumentClient ?? firstTransaction.entity.table.getDocumentClient()
 
   const { Responses, ...restResponse } = await documentClient.send(
     new TransactGetCommand(getCommandInput(transactions, restOptions))

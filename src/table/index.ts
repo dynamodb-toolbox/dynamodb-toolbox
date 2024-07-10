@@ -1,1 +1,2 @@
-export { Table, TableAction, $table, $entities } from './table.js'
+export { Table, TableAction } from './table.js'
+export { $entities } from './constants.js'

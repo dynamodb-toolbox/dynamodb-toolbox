@@ -1,5 +1,6 @@
 import type { Attribute } from '~/attributes/index.js'
-import type { Schema, SchemaAction } from '~/schema/index.js'
+import { SchemaAction } from '~/schema/index.js'
+import type { Schema } from '~/schema/index.js'
 
 import { formatAttrRawValue } from './attribute.js'
 import type { AttrFormattedValue } from './attribute.js'
@@ -27,13 +28,11 @@ export type FormattedValue<
     ? AttrFormattedValue<SCHEMA, OPTIONS>
     : never
 
-export class Formatter<SCHEMA extends Schema | Attribute = Schema | Attribute>
-  implements SchemaAction<SCHEMA>
-{
-  schema: SCHEMA
-
+export class Formatter<
+  SCHEMA extends Schema | Attribute = Schema | Attribute
+> extends SchemaAction<SCHEMA> {
   constructor(schema: SCHEMA) {
-    this.schema = schema
+    super(schema)
   }
 
   format<OPTIONS extends FormatOptions<SCHEMA>>(

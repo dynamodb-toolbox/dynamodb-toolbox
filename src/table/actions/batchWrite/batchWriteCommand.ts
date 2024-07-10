@@ -3,15 +3,14 @@ import type { U } from 'ts-toolbelt'
 
 import type { BatchDeleteRequest } from '~/entity/actions/batchDelete/index.js'
 import type { BatchPutRequest } from '~/entity/actions/batchPut/index.js'
-import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { $table, TableAction } from '~/table/index.js'
+import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 
 import { $requests } from './constants.js'
 
-export type BatchWriteRequestProps = Pick<BatchPutRequest | BatchDeleteRequest, $entity | 'params'>
+export type BatchWriteRequestProps = Pick<BatchPutRequest | BatchDeleteRequest, 'entity' | 'params'>
 
 type RequestEntities<
   REQUESTS extends BatchWriteRequestProps[],
@@ -23,9 +22,9 @@ type RequestEntities<
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
     ? REQUESTS_HEAD extends BatchWriteRequestProps
       ? REQUESTS_TAIL extends BatchWriteRequestProps[]
-        ? REQUESTS_HEAD[$entity]['name'] extends RESULTS[number]['name']
+        ? REQUESTS_HEAD['entity']['name'] extends RESULTS[number]['name']
           ? RequestEntities<REQUESTS_TAIL, RESULTS>
-          : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD[$entity]]>
+          : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD['entity']]>
         : never
       : never
     : RESULTS
@@ -51,14 +50,14 @@ export class BatchWriteCommand<
     const entityNames = new Set<string>()
 
     for (const request of requests) {
-      if (entityNames.has(request[$entity].name)) {
+      if (entityNames.has(request.entity.name)) {
         continue
       }
-      entities.push(request[$entity])
-      entityNames.add(request[$entity].name)
+      entities.push(request.entity)
+      entityNames.add(request.entity.name)
     }
 
-    return new BatchWriteCommand(this[$table], entities as RequestEntities<NEXT_REQUESTS>, requests)
+    return new BatchWriteCommand(this.table, entities as RequestEntities<NEXT_REQUESTS>, requests)
   }
 
   params(): NonNullable<NonNullable<BatchWriteCommandInput>['RequestItems']>[string] {

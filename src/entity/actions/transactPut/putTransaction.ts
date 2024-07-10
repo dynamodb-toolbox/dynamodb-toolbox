@@ -3,7 +3,6 @@ import type { O } from 'ts-toolbelt'
 
 import { EntityParser } from '~/entity/actions/parse/index.js'
 import type { PutItemInput } from '~/entity/actions/put/index.js'
-import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
@@ -35,13 +34,13 @@ export class PutTransaction<
   }
 
   item(nextItem: PutItemInput<ENTITY>): PutTransaction<ENTITY> {
-    return new PutTransaction(this[$entity], nextItem, this[$options])
+    return new PutTransaction(this.entity, nextItem, this[$options])
   }
 
   options<NEXT_OPTIONS extends PutTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ): PutTransaction<ENTITY, NEXT_OPTIONS> {
-    return new PutTransaction(this[$entity], this[$item], nextOptions)
+    return new PutTransaction(this.entity, this[$item], nextOptions)
   }
 
   params(): O.Required<TransactWriteItem, 'Put'> {
@@ -51,12 +50,12 @@ export class PutTransaction<
       })
     }
 
-    const { item } = this[$entity].build(EntityParser).parse(this[$item])
-    const options = parseOptions(this[$entity], this[$options])
+    const { item } = this.entity.build(EntityParser).parse(this[$item])
+    const options = parseOptions(this.entity, this[$options])
 
     return {
       Put: {
-        TableName: this[$entity].table.getName(),
+        TableName: this.entity.table.getName(),
         Item: item as Record<string, AttributeValue>,
         ...options
       }

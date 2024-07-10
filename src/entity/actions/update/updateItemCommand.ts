@@ -4,7 +4,7 @@ import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
-import { $entity, EntityAction } from '~/entity/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
@@ -66,13 +66,13 @@ export class UpdateItemCommand<
   }
 
   item(nextItem: UpdateItemInput<ENTITY>): UpdateItemCommand<ENTITY, OPTIONS> {
-    return new UpdateItemCommand(this[$entity], nextItem, this[$options])
+    return new UpdateItemCommand(this.entity, nextItem, this[$options])
   }
 
   options<NEXT_OPTIONS extends UpdateItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ): UpdateItemCommand<ENTITY, NEXT_OPTIONS> {
-    return new UpdateItemCommand(this[$entity], this[$item], nextOptions)
+    return new UpdateItemCommand(this.entity, this[$item], nextOptions)
   }
 
   params(): UpdateCommandInput {
@@ -82,13 +82,13 @@ export class UpdateItemCommand<
       })
     }
 
-    return updateItemParams(this[$entity], this[$item], this[$options])
+    return updateItemParams(this.entity, this[$item], this[$options])
   }
 
   async send(): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
-    const commandOutput = await this[$entity].table
+    const commandOutput = await this.entity.table
       .getDocumentClient()
       .send(new UpdateCommand(getItemParams))
 
@@ -100,7 +100,7 @@ export class UpdateItemCommand<
 
     const { returnValues } = this[$options]
 
-    const formattedItem = new EntityFormatter(this[$entity]).format(attributes, {
+    const formattedItem = new EntityFormatter(this.entity).format(attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
     }) as unknown as ReturnedAttributes<ENTITY, OPTIONS>
 

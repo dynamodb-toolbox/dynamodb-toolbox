@@ -5,7 +5,7 @@ import type { O } from 'ts-toolbelt'
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
 import type { KeyInput } from '~/entity/actions/parse/index.js'
-import { $entity, EntityAction } from '~/entity/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
@@ -47,13 +47,13 @@ export class DeleteItemCommand<
   }
 
   key(nextKey: KeyInput<ENTITY>): DeleteItemCommand<ENTITY, OPTIONS> {
-    return new DeleteItemCommand(this[$entity], nextKey, this[$options])
+    return new DeleteItemCommand(this.entity, nextKey, this[$options])
   }
 
   options<NEXT_OPTIONS extends DeleteItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS
   ): DeleteItemCommand<ENTITY, NEXT_OPTIONS> {
-    return new DeleteItemCommand(this[$entity], this[$key], nextOptions)
+    return new DeleteItemCommand(this.entity, this[$key], nextOptions)
   }
 
   params(): DeleteCommandInput {
@@ -63,13 +63,13 @@ export class DeleteItemCommand<
       })
     }
 
-    return deleteItemParams(this[$entity], this[$key], this[$options])
+    return deleteItemParams(this.entity, this[$key], this[$options])
   }
 
   async send(): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
     const deleteItemParams = this.params()
 
-    const commandOutput = await this[$entity].table
+    const commandOutput = await this.entity.table
       .getDocumentClient()
       .send(new DeleteCommand(deleteItemParams))
 
@@ -79,7 +79,7 @@ export class DeleteItemCommand<
       return restCommandOutput
     }
 
-    const formattedItem = new EntityFormatter(this[$entity]).format(attributes)
+    const formattedItem = new EntityFormatter(this.entity).format(attributes)
 
     return {
       Attributes: formattedItem as any,

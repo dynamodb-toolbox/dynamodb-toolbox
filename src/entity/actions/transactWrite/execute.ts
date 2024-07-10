@@ -5,7 +5,6 @@ import type {
   TransactWriteCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 
-import { $entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
@@ -80,8 +79,7 @@ export const execute = async (
   }
 
   const { documentClient: optionsDocumentClient, ...restOptions } = options
-  const documentClient =
-    optionsDocumentClient ?? firstTransaction[$entity].table.getDocumentClient()
+  const documentClient = optionsDocumentClient ?? firstTransaction.entity.table.getDocumentClient()
 
   return documentClient.send(new TransactWriteCommand(getCommandInput(transactions, restOptions)))
 }

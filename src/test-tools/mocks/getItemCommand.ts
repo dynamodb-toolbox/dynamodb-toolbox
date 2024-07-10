@@ -5,7 +5,6 @@ import { getItemParams } from '~/entity/actions/get/getItemParams/index.js'
 import { GetItemCommand } from '~/entity/actions/get/index.js'
 import type { GetItemOptions, GetItemResponse } from '~/entity/actions/get/index.js'
 import type { KeyInput } from '~/entity/actions/parse/index.js'
-import { $entity } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
@@ -24,9 +23,9 @@ export class GetItemCommandMock<
 > implements GetItemCommand<ENTITY, OPTIONS>
 {
   static actionName = 'get' as const
-  static [$actionName] = 'get' as const;
+  static [$actionName] = 'get' as const
 
-  [$entity]: ENTITY;
+  entity: ENTITY;
   [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS;
   [$mockedEntity]: MockedEntity<ENTITY>
@@ -36,7 +35,7 @@ export class GetItemCommandMock<
     key?: KeyInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
   ) {
-    this[$entity] = mockedEntity[$originalEntity]
+    this.entity = mockedEntity[$originalEntity]
     this[$mockedEntity] = mockedEntity
     this[$key] = key
     this[$options] = options
@@ -59,7 +58,7 @@ export class GetItemCommandMock<
       })
     }
 
-    return getItemParams(this[$entity], this[$key], this[$options])
+    return getItemParams(this.entity, this[$key], this[$options])
   }
 
   async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
@@ -77,6 +76,6 @@ export class GetItemCommandMock<
       return implementation(this[$key], this[$options]) as any
     }
 
-    return new GetItemCommand(this[$entity], this[$key], this[$options]).send()
+    return new GetItemCommand(this.entity, this[$key], this[$options]).send()
   }
 }

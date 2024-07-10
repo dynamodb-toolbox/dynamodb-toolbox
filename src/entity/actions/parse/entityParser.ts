@@ -1,4 +1,4 @@
-import { $entity, EntityAction } from '~/entity/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type {
@@ -56,8 +56,8 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
     const validKeyInput = parser.next().value
     const item = parser.next().value
 
-    const keyInput = this[$entity].computeKey ? this[$entity].computeKey(validKeyInput) : item
-    const key = new PrimaryKeyParser<ENTITY['table']>(this[$entity].table).parse(keyInput)
+    const keyInput = this.entity.computeKey ? this.entity.computeKey(validKeyInput) : item
+    const key = new PrimaryKeyParser<ENTITY['table']>(this.entity.table).parse(keyInput)
 
     return { item: { ...item, ...key }, key }
   }

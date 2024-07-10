@@ -2,7 +2,7 @@ import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityParser } from '~/entity/actions/parse/index.js'
 import type { KeyInput } from '~/entity/actions/parse/index.js'
-import { $entity, EntityAction } from '~/entity/index.js'
+import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
@@ -19,7 +19,7 @@ export class BatchDeleteRequest<ENTITY extends Entity = Entity> extends EntityAc
   }
 
   key(nextKey: KeyInput<ENTITY>): BatchDeleteRequest<ENTITY> {
-    return new BatchDeleteRequest(this[$entity], nextKey)
+    return new BatchDeleteRequest(this.entity, nextKey)
   }
 
   params(): NonNullable<BatchWriteCommandInput['RequestItems']>[string][number] {
@@ -29,7 +29,7 @@ export class BatchDeleteRequest<ENTITY extends Entity = Entity> extends EntityAc
       })
     }
 
-    const { key } = this[$entity].build(EntityParser).parse(this[$key], { mode: 'key' })
+    const { key } = this.entity.build(EntityParser).parse(this[$key], { mode: 'key' })
 
     return { DeleteRequest: { Key: key } }
   }

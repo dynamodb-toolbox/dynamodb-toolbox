@@ -128,9 +128,5 @@ export const schema: SchemaTyper = <
 }> => new Schema<{}>({}).and(attributes)
 
 export class SchemaAction<SCHEMA extends Schema | Attribute = Schema | Attribute> {
-  schema: SCHEMA
-
-  constructor(schema: SCHEMA) {
-    this.schema = schema
-  }
+  constructor(public schema: SCHEMA) {}
 }

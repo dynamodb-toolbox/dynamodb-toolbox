@@ -10,7 +10,6 @@ import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import type { MetricsOption } from '~/options/metrics.js'
-import { $table } from '~/table/index.js'
 
 import { BatchWriteCommand } from './batchWriteCommand.js'
 
@@ -41,7 +40,7 @@ export const execute = async (
     })
   }
 
-  const documentClient = options.documentClient ?? firstCommand[$table].getDocumentClient()
+  const documentClient = options.documentClient ?? firstCommand.table.getDocumentClient()
 
   const commandInput = getCommandInput(commands, options)
 
@@ -61,7 +60,7 @@ export const getCommandInput = (
   }
 
   for (const command of commands) {
-    const tableName = command[$table].getName()
+    const tableName = command.table.getName()
 
     if (tableName in requestItems) {
       throw new DynamoDBToolboxError('actions.invalidAction', {
