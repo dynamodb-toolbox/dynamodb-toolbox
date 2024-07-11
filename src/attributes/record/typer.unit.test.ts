@@ -4,7 +4,8 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { $elements, $keys, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import { number, string } from '../primitive/index.js'
+import { number } from '../number/index.js'
+import { string } from '../string/index.js'
 import type { $RecordAttributeState, RecordAttribute } from './interface.js'
 import { record } from './typer.js'
 

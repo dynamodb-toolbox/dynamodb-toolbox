@@ -1,5 +1,5 @@
 import type { AttributeBasicValue, PrimitiveAttribute } from '~/attributes/index.js'
-import { number } from '~/attributes/primitive/index.js'
+import { number } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'

@@ -5,7 +5,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { $state, $type } from '../constants/attributeOptions.js'
 import { $elements } from '../constants/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import { string } from '../primitive/index.js'
+import { string } from '../string/index.js'
 import type { $AnyOfAttributeState, AnyOfAttribute } from './interface.js'
 import { anyOf } from './typer.js'
 

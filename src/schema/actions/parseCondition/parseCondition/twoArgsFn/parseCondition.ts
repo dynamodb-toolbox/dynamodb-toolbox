@@ -1,5 +1,6 @@
 import type { Attribute } from '~/attributes/index.js'
-import { PrimitiveAttribute, string } from '~/attributes/primitive/index.js'
+import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
+import { string } from '~/attributes/string/index.js'
 
 import type { ConditionParser } from '../../conditionParser.js'
 import { isTwoArgsFnOperator } from './types.js'

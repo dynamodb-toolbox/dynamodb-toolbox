@@ -3,7 +3,7 @@ import type { A } from 'ts-toolbelt'
 import { $attributes, $type } from '../constants/attributeOptions.js'
 import { $state } from '../constants/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import { string } from '../primitive/index.js'
+import { string } from '../string/index.js'
 import type { $MapAttributeState, MapAttribute } from './interface.js'
 import { map } from './typer.js'
 
