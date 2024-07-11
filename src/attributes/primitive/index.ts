@@ -1,4 +1,3 @@
-export { string, boolean, binary, number } from './typer.js'
 export type {
   PrimitiveAttributeType,
   ResolvePrimitiveAttributeType,

@@ -92,10 +92,25 @@
       "require": "./dist/cjs/attributes/any/index.js",
       "types": "./dist/types/attributes/any/index.d.ts"
     },
-    "./attributes/primitive": {
-      "import": "./dist/esm/attributes/primitive/index.js",
-      "require": "./dist/cjs/attributes/primitive/index.js",
-      "types": "./dist/types/attributes/primitive/index.d.ts"
+    "./attributes/boolean": {
+      "import": "./dist/esm/attributes/boolean/index.js",
+      "require": "./dist/cjs/attributes/boolean/index.js",
+      "types": "./dist/types/attributes/boolean/index.d.ts"
+    },
+    "./attributes/number": {
+      "import": "./dist/esm/attributes/number/index.js",
+      "require": "./dist/cjs/attributes/number/index.js",
+      "types": "./dist/types/attributes/number/index.d.ts"
+    },
+    "./attributes/string": {
+      "import": "./dist/esm/attributes/string/index.js",
+      "require": "./dist/cjs/attributes/string/index.js",
+      "types": "./dist/types/attributes/string/index.d.ts"
+    },
+    "./attributes/binary": {
+      "import": "./dist/esm/attributes/binary/index.js",
+      "require": "./dist/cjs/attributes/binary/index.js",
+      "types": "./dist/types/attributes/binary/index.d.ts"
     },
     "./attributes/set": {
       "import": "./dist/esm/attributes/set/index.js",

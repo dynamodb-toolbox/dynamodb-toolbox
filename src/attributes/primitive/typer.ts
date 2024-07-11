@@ -24,7 +24,7 @@ type PrimitiveAttributeTyperFactory = <TYPE extends PrimitiveAttributeType>(
   type: TYPE
 ) => PrimitiveAttributeTyper<TYPE>
 
-const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory =
+export const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory =
   <TYPE extends PrimitiveAttributeType>(type: TYPE) =>
   <OPTIONS extends Partial<PrimitiveAttributeOptions> = PrimitiveAttributeOptions>(
     primitiveOptions = {} as NarrowObject<OPTIONS>
@@ -50,31 +50,3 @@ const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory =
 
     return new $PrimitiveAttribute(type, state)
   }
-
-/**
- * Define a new string attribute
- *
- * @param options _(optional)_ String Options
- */
-export const string = primitiveAttributeTyperFactory('string')
-
-/**
- * Define a new number attribute
- *
- * @param options _(optional)_ Number Options
- */
-export const number = primitiveAttributeTyperFactory('number')
-
-/**
- * Define a new binary attribute
- *
- * @param options _(optional)_ Binary Options
- */
-export const binary = primitiveAttributeTyperFactory('binary')
-
-/**
- * Define a new boolean attribute
- *
- * @param options _(optional)_ Boolean Options
- */
-export const boolean = primitiveAttributeTyperFactory('boolean')

@@ -1,14 +1,11 @@
 // attributes
 export { attr, attribute } from './attributes/index.js'
 export { any, AnyAttribute, $AnyAttribute } from './attributes/any/index.js'
-export {
-  boolean,
-  number,
-  string,
-  binary,
-  PrimitiveAttribute,
-  $PrimitiveAttribute
-} from './attributes/primitive/index.js'
+export { boolean } from './attributes/boolean/index.js'
+export { number } from './attributes/number/index.js'
+export { string } from './attributes/string/index.js'
+export { binary } from './attributes/binary/index.js'
+export { PrimitiveAttribute, $PrimitiveAttribute } from './attributes/primitive/index.js'
 export { set, SetAttribute, $SetAttribute } from './attributes/set/index.js'
 export { list, ListAttribute, $ListAttribute } from './attributes/list/index.js'
 export { map, MapAttribute, $MapAttribute } from './attributes/map/index.js'
