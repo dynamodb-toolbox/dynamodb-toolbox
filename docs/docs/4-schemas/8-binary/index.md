@@ -22,7 +22,7 @@ const pokemonSchema = schema({
 type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 // => {
 //   ...
-//   hash: Buffer
+//   hash: Uint8Array
 // }
 ```
 
@@ -90,7 +90,7 @@ const hashSchema = binary({ savedAs: 'h' })
 
 ### `.default(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Buffer&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Uint8Array&gt;</code></i></p>
 
 Specifies default values for the attribute. There are three kinds of defaults:
 
@@ -106,7 +106,7 @@ The `default` method is a shorthand that acts as `keyDefault` on key attributes 
 <TabItem value="put" label="Put">
 
 ```ts
-const bin = Buffer.from('123...')
+const bin = new Uint8Array([1, 2, 3])
 
 const hashSchema = binary().default(bin)
 // 👇 Similar to
@@ -128,7 +128,7 @@ const hashSchema = binary().default(() => bin)
 <TabItem value="key" label="Key">
 
 ```ts
-const bin = Buffer.from('123...')
+const bin = new Uint8Array([1, 2, 3])
 
 const hashSchema = binary().key().default(bin)
 // 👇 Similar to
@@ -150,7 +150,7 @@ const hashSchema = binary({
 <TabItem value="update" label="Update">
 
 ```ts
-const bin = Buffer.from('123...')
+const bin = new Uint8Array([1, 2, 3])
 
 const hashSchema = binary().updateDefault(bin)
 // 👇 Similar to
@@ -170,30 +170,32 @@ const hashSchema = binary({
 
 ### `.link<Schema>(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, Buffer&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, Uint8Array&gt;</code></i></p>
 
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
 
 ```ts
+const encoder = new TextEncoder()
+
 const pokemonSchema = schema({
   name: string()
 }).and(prevSchema => ({
   nameHash: binary().link<typeof prevSchema>(
     // 🙌 Correctly typed!
-    item => Buffer.from(item.name)
+    item => encoder.encode(item.name)
   )
 }))
 ```
 
 ### `.enum(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Buffer[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Uint8Array[]</code></i></p>
 
 Provides a finite range of possible values:
 
 ```ts
-const binA = Buffer.from('123...')
-const binB = Buffer.from('abc...')
+const binA = new Uint8Array([1, 2, 3])
+const binB = new Uint8Array([4, 5, 6])
 
 const hashSchema = binary().enum(binA, binB, ...)
 
@@ -209,16 +211,24 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 ### `.transform(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Buffer&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Uint8Array&gt;</code></i></p>
 
 Allows modifying the attribute values during the [transformation step](../14-actions/1-parse.md):
 
 ```ts
-var PREFIX = new Buffer(4)
+var PREFIX = new Uint8Array([1, 2, 3])
 
 const prefix = {
-  parse: (input: Buffer) => Buffer.concat([PREFIX, input]),
-  format: (saved: Buffer) => saved.slice(4)
+  parse: (input: Uint8Array) => {
+    const concat = new Uint8Array(
+      PREFIX.length + input.length
+    )
+    concat.set(PREFIX)
+    concat.set(input, PREFIX.length)
+
+    return concat
+  },
+  format: (saved: Uint8Array) => saved.slice(PREFIX.length)
 }
 
 // Prefixes the value

@@ -25,7 +25,7 @@ export type ResolvePrimitiveAttributeType<TYPE extends PrimitiveAttributeType> =
       : TYPE extends 'boolean'
         ? boolean
         : TYPE extends 'binary'
-          ? Buffer
+          ? Uint8Array
           : never
 
 /**

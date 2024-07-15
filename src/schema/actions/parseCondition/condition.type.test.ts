@@ -102,14 +102,19 @@ const assertBinCondition: A.Equals<
     (
       | BaseAttributeCondition<'bin'>
       | ({ transform?: boolean } & (
-          | { eq: Buffer | { attr: ATTRIBUTE_PATHS } }
-          | { ne: Buffer | { attr: ATTRIBUTE_PATHS } }
-          | { in: (Buffer | { attr: ATTRIBUTE_PATHS })[] }
-          | { lt: Buffer | { attr: ATTRIBUTE_PATHS } }
-          | { lte: Buffer | { attr: ATTRIBUTE_PATHS } }
-          | { gt: Buffer | { attr: ATTRIBUTE_PATHS } }
-          | { gte: Buffer | { attr: ATTRIBUTE_PATHS } }
-          | { between: [Buffer | { attr: ATTRIBUTE_PATHS }, Buffer | { attr: ATTRIBUTE_PATHS }] }
+          | { eq: Uint8Array | { attr: ATTRIBUTE_PATHS } }
+          | { ne: Uint8Array | { attr: ATTRIBUTE_PATHS } }
+          | { in: (Uint8Array | { attr: ATTRIBUTE_PATHS })[] }
+          | { lt: Uint8Array | { attr: ATTRIBUTE_PATHS } }
+          | { lte: Uint8Array | { attr: ATTRIBUTE_PATHS } }
+          | { gt: Uint8Array | { attr: ATTRIBUTE_PATHS } }
+          | { gte: Uint8Array | { attr: ATTRIBUTE_PATHS } }
+          | {
+              between: [
+                Uint8Array | { attr: ATTRIBUTE_PATHS },
+                Uint8Array | { attr: ATTRIBUTE_PATHS }
+              ]
+            }
         ))
     )
 > = 1

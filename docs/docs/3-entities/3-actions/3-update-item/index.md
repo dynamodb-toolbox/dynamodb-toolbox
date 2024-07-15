@@ -130,7 +130,7 @@ await PokemonEntity.build(UpdateItemCommand)
     isLegendary: true,
     nextLevel: 42,
     name: 'Pikachu',
-    binEncoded: Buffer.from(...),
+    binEncoded: new Uint8Array(...),
     skills: new Set(['thunder'])
   })
   .send()

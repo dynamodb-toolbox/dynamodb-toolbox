@@ -18,7 +18,7 @@ describe('isPrimitive', () => {
   })
 
   test('returns true if input is a binary', () => {
-    expect(isPrimitive(Buffer.from('binary'))).toBe(true)
+    expect(isPrimitive(new Uint8Array([1, 2, 3]))).toBe(true)
   })
 
   test('returns false if input is not a primitive', () => {

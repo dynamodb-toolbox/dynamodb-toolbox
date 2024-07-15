@@ -61,7 +61,7 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
     /**
      * @debt type "TODO: Make validator act as primitive typeguard"
      */
-    primaryKey[partitionKey.name] = partitionKeyValue as number | string | Buffer
+    primaryKey[partitionKey.name] = partitionKeyValue as number | string | Uint8Array
 
     if (sortKey === undefined) {
       return primaryKey as PrimaryKey<TABLE>
@@ -85,7 +85,7 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
     /**
      * @debt type "TODO: Make validator act as primitive typeguard"
      */
-    primaryKey[sortKey.name] = sortKeyValue as number | string | Buffer
+    primaryKey[sortKey.name] = sortKeyValue as number | string | Uint8Array
 
     return primaryKey as PrimaryKey<TABLE>
   }
