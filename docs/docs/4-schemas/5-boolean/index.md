@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Defines a [**boolean attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
 ```ts
-import { boolean } from 'dynamodb-toolbox/attribute/boolean';
+import { boolean } from 'dynamodb-toolbox/attributes/boolean';
 
 const pokemonSchema = schema({
   ...

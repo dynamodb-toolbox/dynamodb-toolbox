@@ -193,7 +193,7 @@ Secondary indexes are represented as key-value pairs, keys being the index names
 :::noteExamples
 
 <Tabs>
-<TabItem value="gsi" label="Global index">
+<TabItem value="gsi" label="Global Index">
 
 ```ts
 const MyTable = new Table({
@@ -209,7 +209,7 @@ const MyTable = new Table({
 ```
 
 </TabItem>
-<TabItem value="lsi" label="Local index">
+<TabItem value="lsi" label="Local Index">
 
 ```ts
 const MyTable = new Table({

@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Defines a [**string attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
 ```ts
-import { string } from 'dynamodb-toolbox/attribute/string';
+import { string } from 'dynamodb-toolbox/attributes/string';
 
 const pokemonSchema = schema({
   ...
@@ -220,4 +220,4 @@ const prefixedStrSchema = string().transform(prefix)
 const prefixedStrSchema = string({ transform: prefix })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../15-transformers/1-usage.md) (including [`prefix`](../15-transformers/2-parse.md)), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../15-transformers/1-usage.md) (including [`prefix`](../15-transformers/2-prefix.md)), so feel free to use them!

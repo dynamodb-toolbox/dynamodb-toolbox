@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Defines a **union of types**, i.e. a range of possible types:
 
 ```ts
-import { anyOf } from 'dynamodb-toolbox/attribute/anyOf'
+import { anyOf } from 'dynamodb-toolbox/attributes/anyOf'
 
 const pokemonSchema = schema({
   ...

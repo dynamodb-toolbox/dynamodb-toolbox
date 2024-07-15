@@ -29,34 +29,34 @@ type ExecuteTransactGet = <
   ..._transactions: TRANSACTIONS
 ) => Promise<
   TRANSACTIONS extends GetTransactionProps[]
-    ? ExecuteTansactGetResponse<TRANSACTIONS>
+    ? ExecuteTransactGetResponse<TRANSACTIONS>
     : TRANSACTIONS extends [unknown, ...infer TRANSACTIONS_TAIL]
       ? TRANSACTIONS_TAIL extends GetTransactionProps[]
-        ? ExecuteTansactGetResponse<TRANSACTIONS_TAIL>
+        ? ExecuteTransactGetResponse<TRANSACTIONS_TAIL>
         : never
       : never
 >
 
-type ExecuteTansactGetResponse<TRANSACTIONS extends GetTransactionProps[]> = Omit<
+type ExecuteTransactGetResponse<TRANSACTIONS extends GetTransactionProps[]> = Omit<
   TransactGetCommandOutput,
   'Responses'
-> & { Responses?: TansactGetResponses<TRANSACTIONS> }
+> & { Responses?: TransactGetResponses<TRANSACTIONS> }
 
-type TansactGetResponses<
+type TransactGetResponses<
   TRANSACTIONS extends GetTransactionProps[],
   RESPONSES extends unknown[] = []
 > = number extends TRANSACTIONS['length']
   ? (TRANSACTIONS[number] extends infer TRANSACTION
       ? TRANSACTION extends GetTransactionProps
-        ? TansactGetResponse<TRANSACTION>
+        ? TransactGetResponse<TRANSACTION>
         : never
       : never)[]
   : TRANSACTIONS extends [infer TRANSACTIONS_HEAD, ...infer TRANSACTIONS_TAIL]
     ? TRANSACTIONS_HEAD extends GetTransactionProps
       ? TRANSACTIONS_TAIL extends GetTransactionProps[]
-        ? TansactGetResponses<
+        ? TransactGetResponses<
             TRANSACTIONS_TAIL,
-            [...RESPONSES, TansactGetResponse<TRANSACTIONS_HEAD>]
+            [...RESPONSES, TransactGetResponse<TRANSACTIONS_HEAD>]
           >
         : never
       : never
@@ -64,7 +64,7 @@ type TansactGetResponses<
       ? (FormattedItem | undefined)[]
       : RESPONSES
 
-type TansactGetResponse<TRANSACTION extends GetTransactionProps> = {
+type TransactGetResponse<TRANSACTION extends GetTransactionProps> = {
   Item?: TRANSACTION[$options]['attributes'] extends EntityPaths<TRANSACTION['entity']>[]
     ? FormattedItem<
         TRANSACTION['entity'],
@@ -76,7 +76,7 @@ type TansactGetResponse<TRANSACTION extends GetTransactionProps> = {
 type TransactGetResponseFormatter = <TRANSACTIONS extends GetTransactionProps[]>(
   responses: NonNullable<TransactGetCommandOutput['Responses']>,
   ...transactions: TRANSACTIONS
-) => TansactGetResponses<TRANSACTIONS> | undefined
+) => TransactGetResponses<TRANSACTIONS> | undefined
 
 export const formatResponses: TransactGetResponseFormatter = <
   TRANSACTIONS extends GetTransactionProps[]
@@ -94,7 +94,7 @@ export const formatResponses: TransactGetResponseFormatter = <
         ? new EntityFormatter(transactionEntity).format(item, attributes ? { attributes } : {})
         : undefined
     }
-  }) as TansactGetResponses<TRANSACTIONS>
+  }) as TransactGetResponses<TRANSACTIONS>
 
 export const execute: ExecuteTransactGet = async <
   TRANSACTIONS extends GetTransactionProps[] | [ExecuteTransactGetOptions, ...GetTransactionProps[]]
@@ -102,10 +102,10 @@ export const execute: ExecuteTransactGet = async <
   ..._transactions: TRANSACTIONS
 ) => {
   type RESPONSE = TRANSACTIONS extends GetTransactionProps[]
-    ? ExecuteTansactGetResponse<TRANSACTIONS>
+    ? ExecuteTransactGetResponse<TRANSACTIONS>
     : TRANSACTIONS extends [unknown, ...infer TRANSACTIONS_TAIL]
       ? TRANSACTIONS_TAIL extends GetTransactionProps[]
-        ? ExecuteTansactGetResponse<TRANSACTIONS_TAIL>
+        ? ExecuteTransactGetResponse<TRANSACTIONS_TAIL>
         : never
       : never
 

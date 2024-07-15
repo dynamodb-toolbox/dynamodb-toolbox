@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Defines an attribute containing **any value**. No validation is applied at run-time, and its type is resolved as `unknown` by default:
 
 ```ts
-import { any } from 'dynamodb-toolbox/attribute/any';
+import { any } from 'dynamodb-toolbox/attributes/any';
 
 const pokemonSchema = schema({
   ...
@@ -181,7 +181,7 @@ const pokemonSchema = schema({
 }))
 ```
 
-### `.castAs<Type>()`
+### `.castAs<TYPE>()`
 
 <p style={{ marginTop: '-15px' }}><i>(TypeScript only)</i></p>
 

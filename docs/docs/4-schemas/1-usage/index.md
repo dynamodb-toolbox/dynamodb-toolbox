@@ -8,8 +8,8 @@ A `Schema` is a list of attributes that describe the items of an [`Entity`](../.
 
 ```ts
 import { schema } from 'dynamodb-toolbox/schema'
-import { string } from 'dynamodb-toolbox/attribute/string'
-import { number } from 'dynamodb-toolbox/attribute/number'
+import { string } from 'dynamodb-toolbox/attributes/string'
+import { number } from 'dynamodb-toolbox/attributes/number'
 
 const pokemonSchema = schema({
   pokemonId: string().key(),
@@ -33,12 +33,15 @@ Schema attributes can be imported by their **dedicated exports**, or through the
 
 ```ts
 // 👇 More tree-shakable
-import { string } from 'dynamodb-toolbox/attribute/string'
+import { string } from 'dynamodb-toolbox/attributes/string'
 
 const nameAttr = string()
 
 // 👇 Less tree-shakable, but single import
-import { attribute, attr } from 'dynamodb-toolbox/attribute'
+import {
+  attribute,
+  attr
+} from 'dynamodb-toolbox/attributes'
 
 const nameAttr = attribute.string()
 const nameAttr = attr.string()
