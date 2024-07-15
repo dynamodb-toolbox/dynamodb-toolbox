@@ -166,7 +166,7 @@ describe('generateTransactWriteCommandInput', () => {
         email: 'titi@example.com',
         sort: 'titi',
         test_any: 'any',
-        test_binary: Buffer.from('a'),
+        test_binary: new Uint8Array([1]),
         test_string: 'test string',
         count: 5,
         test_boolean: true,
@@ -174,7 +174,7 @@ describe('generateTransactWriteCommandInput', () => {
         test_map: { str: 'A' },
         test_string_set: new Set(['titi', 'tata']),
         test_number_set: new Set([1, 2, 3]),
-        test_binary_set: new Set([Buffer.from('a'), Buffer.from('b')])
+        test_binary_set: new Set([new Uint8Array([2]), new Uint8Array([3])])
       }),
       TestEntity.build(DeleteTransaction).key({
         email: 'tata@example.com',
@@ -230,8 +230,8 @@ describe('generateTransactWriteCommandInput', () => {
               pk: 'titi@example.com',
               sk: 'titi',
               test_any: 'any',
-              test_binary: Buffer.from('a'),
-              test_binary_set: new Set([Buffer.from('a'), Buffer.from('b')]),
+              test_binary: new Uint8Array([1]),
+              test_binary_set: new Set([new Uint8Array([2]), new Uint8Array([3])]),
               test_boolean: true,
               test_list: ['titi', 'tata'],
               test_map: {

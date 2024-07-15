@@ -783,7 +783,7 @@ describe('update', () => {
           sort: 'test-sk',
           test_string_set: new Set(['1', '2', '3']),
           test_number_set: new Set([1, 2, 3]),
-          test_binary_set: new Set([Buffer.from('1'), Buffer.from('2'), Buffer.from('3')])
+          test_binary_set: new Set([new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])])
         })
         .params()
 
@@ -796,7 +796,7 @@ describe('update', () => {
     expect(ExpressionAttributeValues).toMatchObject({
       ':s_1': new Set(['1', '2', '3']),
       ':s_2': new Set([1, 2, 3]),
-      ':s_3': new Set([Buffer.from('1'), Buffer.from('2'), Buffer.from('3')])
+      ':s_3': new Set([new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])])
     })
   })
 

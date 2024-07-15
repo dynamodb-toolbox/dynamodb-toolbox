@@ -14,5 +14,5 @@ export type ResolveIndexableKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYP
   : KEY_TYPE extends 'number'
     ? number
     : KEY_TYPE extends 'binary'
-      ? Buffer
+      ? Uint8Array
       : never
