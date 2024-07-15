@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Defines a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../11-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
 
 ```ts
-import { record } from 'dynamodb-toolbox/attribute/record'
+import { record } from 'dynamodb-toolbox/attributes/record'
 
 const pokeTypeSchema = string().enum('fire', ...)
 

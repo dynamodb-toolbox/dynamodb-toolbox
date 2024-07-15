@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Defines a [**number attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
 ```ts
-import { number } from 'dynamodb-toolbox/attribute/number';
+import { number } from 'dynamodb-toolbox/attributes/number';
 
 const pokemonSchema = schema({
   ...
@@ -148,14 +148,14 @@ const levelSchema = number({
 ```ts
 const updateCountSchema = number()
   // adds 1 to the attribute at each update
-  .updateDefault($add(1))
+  .updateDefault(() => $add(1))
 
 // 👇 Similar to
 const updateCountSchema = number({
   defaults: {
     key: undefined,
     put: undefined,
-    update: $add(1)
+    update: () => $add(1)
   }
 })
 ```

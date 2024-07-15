@@ -26,7 +26,7 @@ const createdSchema = string().default(() =>
 
 const updatesCountSchema = number()
   .putDefault(1)
-  .updateDefault($add(1))
+  .updateDefault(() => $add(1))
 ```
 
 ## Links
@@ -62,7 +62,7 @@ const pokemonSchema = schema({
 
 :::note
 
-This is only required if you need type inference. In vanilla JS, `link` can be used directly in the original schema.
+This is only required if you need type inference. In vanilla JS, `links` can be used directly in the original schema.
 
 :::
 

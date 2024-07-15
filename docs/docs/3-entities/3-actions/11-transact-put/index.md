@@ -18,7 +18,7 @@ const params = transaction.params()
 await execute(transaction, ...otherTransactions)
 ```
 
-`PutTransactions` can be executed in conjunction with [`UpdateTransactions`](../12-tansact-update/index.md), [`DeleteTransactions`](../13-tansact-delete/index.md) and [`ConditionChecks`](../14-condition-check/index.md).
+`PutTransactions` can be executed in conjunction with [`UpdateTransactions`](../12-transact-update/index.md), [`DeleteTransactions`](../13-transact-delete/index.md) and [`ConditionChecks`](../14-condition-check/index.md).
 
 :::info
 

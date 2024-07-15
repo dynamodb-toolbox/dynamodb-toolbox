@@ -12,8 +12,8 @@ import TabItem from '@theme/TabItem';
 Defines a [**list attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes), containing elements of any type:
 
 ```ts
-import { list } from 'dynamodb-toolbox/attribute/list';
-import { string } from 'dynamodb-toolbox/attribute/string';
+import { list } from 'dynamodb-toolbox/attributes/list';
+import { string } from 'dynamodb-toolbox/attributes/string';
 
 const pokeTypeSchema = string().enum('fire', ...)
 

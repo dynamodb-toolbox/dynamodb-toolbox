@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Defines a [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes), i.e. a finite list of key-value pairs. Child attributes can have any type:
 
 ```ts
-import { map } from 'dynamodb-toolbox/attribute/map'
+import { map } from 'dynamodb-toolbox/attributes/map'
 
 const pokemonSchema = schema({
   ...

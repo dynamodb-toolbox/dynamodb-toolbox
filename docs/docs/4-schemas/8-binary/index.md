@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 Defines a [**binary attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
 ```ts
-import { binary } from 'dynamodb-toolbox/attribute/binary';
+import { binary } from 'dynamodb-toolbox/attributes/binary';
 
 const pokemonSchema = schema({
   ...

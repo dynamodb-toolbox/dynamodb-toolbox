@@ -12,8 +12,8 @@ import TabItem from '@theme/TabItem';
 Defines a [**set attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Sets can contain [`numbers`](../6-number/index.md), [`strings`](../7-string/index.md), or [`binaries`](../8-binary/index.md):
 
 ```ts
-import { set } from 'dynamodb-toolbox/attribute/set';
-import { string } from 'dynamodb-toolbox/attribute/string';
+import { set } from 'dynamodb-toolbox/attributes/set';
+import { string } from 'dynamodb-toolbox/attributes/string';
 
 const pokeTypeSchema = string().enum('fire', ...)
 
