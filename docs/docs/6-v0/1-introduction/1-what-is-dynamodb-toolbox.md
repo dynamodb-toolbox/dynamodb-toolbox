@@ -31,7 +31,7 @@ If you like working with ORMs, that's great, and you should definitely give thes
 - **Batch Operations:** Full support for batch operations with a simpler interface to work with multiple entities and tables.
 - **Transactions:** Full support for transaction with a simpler interface to work with multiple entities and tables.
 - **Default Value Dependency Graphs:** Create dynamic attribute defaults by chaining other dynamic attribute defaults together.
-- **TypeScript Support:** v0.4 of this library provides strong typing support AND type inference 😍. Inferred type can still overriden with [Overlays](/docs/type-inference/#overlays). Some [Utility Types](/docs/type-inference/#utility-types) are also exposed. Additional work is still required to support schema validation & typings.
+- **TypeScript Support:** v0.4 of this library provides strong typing support AND type inference 😍. Inferred type can still overriden with [Overlays](../7-type-inference/index.md#overlays). Some [Utility Types](../7-type-inference/index.md#utility-types) are also exposed. Additional work is still required to support schema validation & typings.
 
 ## Conventions and Motivations
 

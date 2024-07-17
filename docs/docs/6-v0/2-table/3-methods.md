@@ -31,15 +31,15 @@ The second argument is an `options` object that specifies the details of your qu
 | gte           |  same as `sortKey`  | Specifies `sortKey` condition to be _greater than or equal to_ supplied value. (KeyConditionExpression)                                                                                                                                                                                          |
 | between       |       `array`       | Specifies `sortKey` condition to be _between_ the supplied values. Array should have two values matching the `sortKey` type. (KeyConditionExpression)                                                                                                                                            |
 | beginsWith    |  same as `sortKey`  | Specifies `sortKey` condition to _begin with_ the supplied values. (KeyConditionExpression)                                                                                                                                                                                                      |
-| filters       | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](/docs/filters-and-conditions). (FilterExpression)                                                                                                                             |
-| attributes    | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](/docs/projection-expressions) below (ProjectionExpression)                                                                                                                |
+| filters       | `array` or `object` | A complex `object` or `array` of objects that specifies the query's filter condition. See [Filters and Conditions](../4-filters-and-conditions/index.md). (FilterExpression)                                                                                                                     |
+| attributes    | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](../5-projection-expressions/index.md) below (ProjectionExpression)                                                                                                        |
 | startKey      |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate (if you're querying a secondary index, the keys for the primary index will also need to be included in the object - see `LastEvaluatedKey` result for details). (ExclusiveStartKey) |
 | entity        |      `string`       | The name of a table Entity to evaluate `filters` and `attributes` against.                                                                                                                                                                                                                       |
 | parseAsEntity |      `string`       | The name of the entity to parse the results as.                                                                                                                                                                                                                                                  |
 | execute       |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                                                             |
 | parse         |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                                                                    |
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 ```typescript
 const result = await MyTable.query(
@@ -76,8 +76,8 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 | consistent    |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                                                     |
 | capacity      |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                               |
 | select        |      `string`       | The attributes to be returned in the result. One of either `all_attributes`, `all_projected_attributes`, `specific_attributes`, or `count` (Select)                                                        |
-| filters       | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](/docs/filters-and-conditions). (FilterExpression)                                        |
-| attributes    | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](/docs/projection-expressions) below (ProjectionExpression)                          |
+| filters       | `array` or `object` | A complex `object` or `array` of objects that specifies the scan's filter condition. See [Filters and Conditions](../4-filters-and-conditions/index.md). (FilterExpression)                                |
+| attributes    | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](../5-projection-expressions/index.md) below (ProjectionExpression)                  |
 | startKey      |      `object`       | An object that contains the `partitionKey` and `sortKey` of the first item that this operation will evaluate. (ExclusiveStartKey)                                                                          |
 | segments      |      `number`       | For a parallel `scan` request, `segments` represents the total number of segments into which the `scan` operation will be divided. (TotalSegments)                                                         |
 | segment       |      `number`       | For a parallel `scan` request, `segment` identifies an individual segment to be scanned by an application worker. (Segment)                                                                                |
@@ -86,7 +86,7 @@ The `scan()` method accepts two arguments. The first argument is an `options` ob
 | execute       |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                       |
 | parse         |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                              |
 
-If you prefer to specify your own parameters, the optional second argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional second argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 ```typescript
 const result = await MyTable.scan({
@@ -113,13 +113,13 @@ The `batchGet` method accepts three arguments. The first is an `array` of item k
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding BatchGetItem API references in parentheses):
 
-| Option     |               Type                | Description                                                                                                                                                                       |
-| ---------- | :-------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead)                                                                                                                            |
-| capacity   |             `string`              | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                      |
-| attributes |  `array` or `object` (see below)  | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](/docs/projection-expressions) below (ProjectionExpression) |
-| execute    |             `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                              |
-| parse      |             `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                     |
+| Option     |               Type                | Description                                                                                                                                                                               |
+| ---------- | :-------------------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| consistent | `boolean` or `object` (see below) | Enable a consistent read of the items (ConsistentRead)                                                                                                                                    |
+| capacity   |             `string`              | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                              |
+| attributes |  `array` or `object` (see below)  | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](../5-projection-expressions/index.md) below (ProjectionExpression) |
+| execute    |             `boolean`             | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                      |
+| parse      |             `boolean`             | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                             |
 
 ### Specifying options for multiple tables
 
@@ -138,7 +138,7 @@ const results = await MyTable.batchGet(
 )
 ```
 
-Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use the same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](/docs/projection-expressions) formatting.
+Setting either value without the `object` structure will set the option for all referenced tables. If you are referencing multiple tables and using the `attributes` option, then you must use the same `object` method to specify the table `name` or `alias`. The value should follow the standard [Projection Expression](../5-projection-expressions/index.md) formatting.
 
 ```typescript
 const results = await MyTable.batchGet(
@@ -159,7 +159,7 @@ const results = await MyTable.batchGet(
 )
 ```
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 <h3>Return Data</h3>
 
@@ -213,7 +213,7 @@ const result = await Default.batchWrite(
 )
 ```
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 <h3>Return Data</h3>
 
@@ -252,7 +252,7 @@ const results = await MyTable.transactGet(
 )
 ```
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 <h3>Return Data</h3>
 
@@ -293,7 +293,7 @@ const result = await Default.transactWrite(
 )
 ```
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 <h3>Return Data</h3>
 
@@ -307,28 +307,28 @@ The following methods allow you to execute `Entity` methods directly from your `
 
 #### parse(entity, input [,include])
 
-Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](/docs/entity/methods#parse) for additional parameters and behavior. In TS, type inference is not applied.
+Executes the `parse` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `parse` method](../3-entity/3-methods.md#parse) for additional parameters and behavior. In TS, type inference is not applied.
 
 ### get
 
 #### get(entity, key [,options] [,parameters])
 
-Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](/docs/entity/methods#get) for additional parameters and behavior. In TS, type inference is not applied.
+Executes the `get` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `get` method](../3-entity/3-methods.md#get) for additional parameters and behavior. In TS, type inference is not applied.
 
 ### delete
 
 #### delete(entity, key [,options] [,parameters])
 
-Executes the `delete` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `delete` method](/docs/entity/methods#delete) for additional parameters and behavior.
+Executes the `delete` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `delete` method](../3-entity/3-methods.md#delete) for additional parameters and behavior.
 
 ### put
 
 #### put(entity, item [,options] [,parameters])
 
-Executes the `put` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `put` method](/docs/entity/methods#put) for additional parameters and behavior.
+Executes the `put` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `put` method](../3-entity/3-methods.md#put) for additional parameters and behavior.
 
 ### update
 
 #### update(entity, key [,options] [,parameters])
 
-Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](/docs/entity/methods#update) for additional parameters and behavior.
+Executes the `update` method of the supplied `entity`. The `entity` must be a `string` that references the name of an Entity associated with the table. See the [Entity `update` method](../3-entity/3-methods.md#update) for additional parameters and behavior.

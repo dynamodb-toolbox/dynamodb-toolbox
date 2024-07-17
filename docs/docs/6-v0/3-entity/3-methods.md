@@ -34,15 +34,15 @@ The `get` method accepts three arguments. The first argument accepts an `object`
 
 The optional second argument accepts an `options` object. The following options are all optional (corresponding GetItem API references in parentheses):
 
-| Option     |        Type         | Description                                                                                                                                                                       |
-| ---------- | :-----------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                            |
-| capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                      |
-| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](/docs/projection-expressions) below (ProjectionExpression) |
-| execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                              |
-| parse      |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                     |
+| Option     |        Type         | Description                                                                                                                                                                               |
+| ---------- | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| consistent |      `boolean`      | Enable a consistent read of the items (ConsistentRead)                                                                                                                                    |
+| capacity   |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                              |
+| attributes | `array` or `object` | An `array` or array of complex `objects` that specify which attributes should be returned. See [Projection Expression](../5-projection-expressions/index.md) below (ProjectionExpression) |
+| execute    |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                      |
+| parse      |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                             |
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 ```typescript
 const { Item } = await MyEntity.get({
@@ -51,7 +51,7 @@ const { Item } = await MyEntity.get({
 })
 ```
 
-In TS, the primary key, `attributes` option and response types are dynamically inferred. See [Type Inference](/docs/type-inference) for more details.
+In TS, the primary key, `attributes` option and response types are dynamically inferred. See [Type Inference](../7-type-inference/index.md) for more details.
 
 ## delete
 
@@ -67,14 +67,14 @@ The optional second argument accepts an `options` object. The following options 
 
 | Option       |        Type         | Description                                                                                                                                                                                                                                           |
 | ------------ | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](/docs/filters-and-conditions). (ConditionExpression)                                                         |
+| conditions   | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to delete the item. See [Filters and Conditions](../4-filters-and-conditions/index.md). (ConditionExpression)                                                 |
 | capacity     |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics      |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
 | returnValues |      `string`       | Determines whether to return item attributes as they appeared before they were deleted. One of either `none` or `all_old`. (ReturnValues)                                                                                                             |
 | execute      |      `boolean`      | Enables/disables automatic execution of the DocumentClient method (default: _inherited from Entity_)                                                                                                                                                  |
 | parse        |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 ```typescript
 await MyEntity.delete(
@@ -86,7 +86,7 @@ await MyEntity.delete(
 )
 ```
 
-In TS, the primary key, `conditions` option and response types are dynamically inferred. See [Type Inference](/docs/type-inference) for more details.
+In TS, the primary key, `conditions` option and response types are dynamically inferred. See [Type Inference](../7-type-inference/index.md) for more details.
 
 ## put
 
@@ -102,7 +102,7 @@ The optional second argument accepts an `options` object. The following options 
 
 | Option            |        Type         | Description                                                                                                                                                                                                                                           |
 | ----------------- | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| conditions        | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](/docs/filters-and-conditions). (ConditionExpression)                                                            |
+| conditions        | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to put the item. See [Filters and Conditions](../4-filters-and-conditions/index.md). (ConditionExpression)                                                    |
 | capacity          |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics           |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
 | returnValues      |      `string`       | Determines whether to return item attributes as they appeared before a new item was added. One of either `none` or `all_old`. (ReturnValues)                                                                                                          |
@@ -110,7 +110,7 @@ The optional second argument accepts an `options` object. The following options 
 | parse             |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 | strictSchemaCheck |      `boolean`      | Determines whether to throw an error or filter returned attributes when unmapped fields are provided in the request                                                                                                                                   |
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 ```typescript
 await MyEntity.put({
@@ -123,7 +123,7 @@ await MyEntity.put({
 })
 ```
 
-In TS, the input item, `conditions` option and response types are dynamically inferred. See [Type Inference](/docs/type-inference) for more details.
+In TS, the input item, `conditions` option and response types are dynamically inferred. See [Type Inference](../7-type-inference/index.md) for more details.
 
 ## update
 
@@ -139,7 +139,7 @@ The optional second argument accepts an `options` object. The following options 
 
 | Option            |        Type         | Description                                                                                                                                                                                                                                           |
 | ----------------- | :-----------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| conditions        | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](/docs/filters-and-conditions). (ConditionExpression)                                                         |
+| conditions        | `array` or `object` | A complex `object` or `array` of objects that specifies the conditions that must be met to update the item. See [Filters and Conditions](../4-filters-and-conditions/index.md). (ConditionExpression)                                                 |
 | capacity          |      `string`       | Return the amount of consumed capacity. One of either `none`, `total`, or `indexes` (ReturnConsumedCapacity)                                                                                                                                          |
 | metrics           |      `string`       | Return item collection metrics. If set to `size`, the response includes statistics about item collections, if any, that were modified during the operation are returned in the response. One of either `none` or `size` (ReturnItemCollectionMetrics) |
 | returnValues      |      `string`       | Determines whether to return item attributes as they appeared before or after the item was updated. One of either `none`, `all_old`, `updated_old`, `all_new`, `updated_new`. (ReturnValues)                                                          |
@@ -147,7 +147,7 @@ The optional second argument accepts an `options` object. The following options 
 | parse             |      `boolean`      | Enables/disables automatic parsing of returned data when `autoExecute` evaluates to `true` (default: _inherited from Entity_)                                                                                                                         |
 | strictSchemaCheck |      `boolean`      | Determines whether to throw an error or filter returned attributes when unmapped fields are provided in the request                                                                                                                                   |
 
-If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters and clauses. [See Adding custom parameters and clauses](/docs/custom-parameters) for more information.
+If you prefer to specify your own parameters, the optional third argument allows you to add custom parameters and clauses. [See Adding custom parameters and clauses](../6-custom-parameters/index.md) for more information.
 
 **But wait, there's more!** The `UpdateExpression` lets you do all kinds of crazy things like `REMOVE` attributes, `ADD` values to numbers and sets, and manipulate arrays. The DynamoDB Toolbox has simple ways to deal with all these different operations by properly formatting your input data.
 
@@ -163,7 +163,7 @@ await MyEntity.update({
 })
 ```
 
-In TS, the input item, `conditions` option and response types are dynamically inferred. See [Type Inference](/docs/type-inference) for more details.
+In TS, the input item, `conditions` option and response types are dynamically inferred. See [Type Inference](../7-type-inference/index.md) for more details.
 
 ### Removing an attribute
 
@@ -286,17 +286,17 @@ await MyEntity.update({
 
 #### query(partitionKey [,options] [,parameters])
 
-Executes the `query` method on the parent Table. This method accepts the same parameters as the [Table `query` method](/docs/table/methods#query) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB queries, this method **does not** guarantee that only items of the current entity type will be returned.
+Executes the `query` method on the parent Table. This method accepts the same parameters as the [Table `query` method](../2-table/3-methods.md#query) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB queries, this method **does not** guarantee that only items of the current entity type will be returned.
 
-In TS, the `attributes` option and response types are dynamically inferred. See [Type Inference](/docs/type-inference) for more details.
+In TS, the `attributes` option and response types are dynamically inferred. See [Type Inference](../7-type-inference/index.md) for more details.
 
 ## scan
 
 #### scan([options] [,parameters])
 
-Executes the `scan` method on the parent Table. This method accepts the same parameters as the [Table `scan` method](/docs/table/methods#scan) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB scans, this method **does not** guarantee that only items of the current entity type will be returned.
+Executes the `scan` method on the parent Table. This method accepts the same parameters as the [Table `scan` method](../2-table/3-methods.md#scan) and automatically sets the `entity` option to the current entity. Due to the nature of DynamoDB scans, this method **does not** guarantee that only items of the current entity type will be returned.
 
-In TS, the `attributes` option and response types are dynamically inferred. See [Type Inference](/docs/type-inference) for more details.
+In TS, the `attributes` option and response types are dynamically inferred. See [Type Inference](../7-type-inference/index.md) for more details.
 
 ## setTable
 
