@@ -6,6 +6,10 @@ on:
     types: [released]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+
 jobs:
   deploy:
     name: Deploy to GitHub Pages

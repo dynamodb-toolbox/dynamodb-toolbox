@@ -4,10 +4,10 @@
   "homepage": "https://dynamodb-toolbox.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jeremydaly/dynamodb-toolbox.git"
+    "url": "git+https://github.com/dynamodb-toolbox/dynamodb-toolbox.git"
   },
   "bugs": {
-    "url": "https://github.com/jeremydaly/dynamodb-toolbox/issues"
+    "url": "https://github.com/dynamodb-toolbox/dynamodb-toolbox/issues"
   },
   "keywords": [
     "dynamodb",
