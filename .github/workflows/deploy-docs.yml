@@ -4,6 +4,7 @@ on:
   # This job runs when a new release is released
   release:
     types: [released]
+  workflow_dispatch:
 
 jobs:
   deploy:
