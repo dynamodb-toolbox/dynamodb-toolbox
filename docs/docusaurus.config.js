@@ -21,7 +21,7 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'jeremydaly', // Usually your GitHub org/user name.
+  organizationName: 'dynamodb-toolbox', // Usually your GitHub org/user name.
   projectName: 'dynamodb-toolbox', // Usually your repo name.
   trailingSlash: false,
 
@@ -45,10 +45,6 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js')
-          // routeBasePath: '/', // Serve the docs at the site's root
-          // Remove this to remove the "edit this page" links.
-          // editUrl:
-          //   'https://github.com/jeremydaly/dynamodb-toolbox/tree/main/docs'
         },
         blog: false,
         theme: {
@@ -77,7 +73,7 @@ const config = {
         },
         items: [
           {
-            href: 'https://github.com/jeremydaly/dynamodb-toolbox',
+            href: 'https://github.com/dynamodb-toolbox/dynamodb-toolbox',
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository'

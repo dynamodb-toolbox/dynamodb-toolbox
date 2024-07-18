@@ -27,7 +27,7 @@ const headerLinks: Link[] = [
         <FaGithub className="text-lg" /> GitHub
       </div>
     ),
-    to: 'https://github.com/jeremydaly/dynamodb-toolbox'
+    to: 'https://github.com/dynamodb-toolbox/dynamodb-toolbox'
   },
   {
     id: 'sponsor',
