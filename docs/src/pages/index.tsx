@@ -56,11 +56,15 @@ const footerLinks = [
   },
   {
     label: '@ThomasAribart',
-    to: 'https://twitter.com/aribartt'
+    to: 'https://x.com/aribartt'
   },
   {
     label: '@JeremyDaly',
-    to: 'https://twitter.com/jeremy_daly'
+    to: 'https://x.com/jeremy_daly'
+  },
+  {
+    label: '@TheHecticByte',
+    to: 'https://x.com/TheHecticByte'
   },
   {
     label: 'Off-by-none (newsletter)',
