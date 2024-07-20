@@ -1,6 +1,6 @@
 ---
 sidebar_position: 8
-title: Migration Guide 👷
+title: Migration Guide
 ---
 
 import Tabs from '@theme/Tabs';
@@ -482,7 +482,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
     </thead>
     <tbody>
         <tr>
-            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Fetching</b></td>
+            <td rowSpan="2" align="center" class="vertical"><b>Fetching</b></td>
             <td><code>.scan(...)</code></td>
             <td><a href="/docs/tables/actions/scan"><code>ScanCommand</code></a></td>
             <td>Performs a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html">Scan Operation</a> on a <code>Table</code></td>
@@ -493,7 +493,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Performs a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html">Query Operation</a> on a <code>Table</code></td>
         </tr>
         <tr>
-            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Batching</b></td>
+            <td rowSpan="2" align="center" class="vertical"><b>Batching</b></td>
             <td><code>.batchGet(...)</code></td>
             <td><a href="/docs/tables/actions/batch-get"><code>BatchGetCommand</code></a></td>
             <td>Groups one or several <a href="/docs/entities/actions/batch-get"><code>BatchGetRequest</code></a> from the <code>Table</code> entities to execute a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html"><code>BatchGetItem</code></a></td>
@@ -504,7 +504,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Groups one or several <a href="/docs/entities/actions/batch-put"><code>BatchPutRequest</code></a> and <a href="/docs/entities/actions/batch-delete"><code>BatchDeleteRequest</code></a> from the <code>Table</code> entities to execute a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html">BatchWriteItem</a> operation</td>
         </tr>
         <tr>
-            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Transactions</b></td>
+            <td rowSpan="2" align="center" class="vertical"><b>Transactions</b></td>
             <td><code>.transactGet(...)</code></td>
             <td><a href="/docs/entities/actions/transact-get"><code>GetTransaction</code></a></td>
             <td>Builds a transaction to get an entity item, to be used within <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html">TransactGetItems operations</a></td>
@@ -530,7 +530,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
     </thead>
     <tbody>
         <tr>
-            <td rowspan="4" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>General</b></td>
+            <td rowSpan="4" align="center" class="vertical"><b>General</b></td>
             <td><code>.get(...)</code></td>
             <td><a href="/docs/entities/actions/get-item"><code>GetItemCommand</code></a></td>
             <td>Performs a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html">GetItem Operation</a> on an entity item</td>
@@ -551,7 +551,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Performs a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html">DeleteItem Operation</a> on an entity item</td>
         </tr>
         <tr>
-            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Batching</b></td>
+            <td rowSpan="3" align="center" class="vertical"><b>Batching</b></td>
             <td><code>.getBatch(...)</code></td>
             <td><a href="/docs/entities/actions/batch-get"><code>BatchGetRequest</code></a></td>
             <td>Builds a request to get an entity item, to be used within <a href="/docs/tables/actions/batch-get"><code>BatchGetCommands</code></a></td>
@@ -567,7 +567,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Builds a request to delete an entity item, to be used within <a href="/docs/tables/actions/batch-write"><code>BatchWriteCommands</code></a></td>
         </tr>
         <tr>
-            <td rowspan="5" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Transactions</b></td>
+            <td rowSpan="5" align="center" class="vertical"><b>Transactions</b></td>
             <td><code>.getTransaction(...)</code></td>
             <td><a href="/docs/entities/actions/transact-get"><code>GetTransaction</code></a></td>
             <td>Builds a transaction to get an entity item, to be used within <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html">TransactGetItems operations</a></td>
@@ -593,7 +593,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Builds a condition to check against an entity item for the transaction to succeed, to be used within <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html">TransactWriteItems operations</a></td>
         </tr>
         <tr>
-            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Fetching</b></td>
+            <td rowSpan="2" align="center" class="vertical"><b>Fetching</b></td>
             <td><code>.scan(...)</code></td>
             <td>-</td>
             <td>Not implemented yet, use the Table <a href="/docs/tables/actions/scan"><code>ScanCommand</code></a> instead</td>
