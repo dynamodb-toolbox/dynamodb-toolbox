@@ -127,7 +127,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </thead>
     <tbody>
         <tr>
-            <td rowspan="4" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>General</b></td>
+            <td rowSpan="4" align="center" class="vertical"><b>General</b></td>
             <td><code>consistent</code></td>
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>
@@ -164,7 +164,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             </td>
         </tr>
         <tr>
-            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Pagination</b></td>
+            <td rowSpan="3" align="center" class="vertical"><b>Pagination</b></td>
             <td><code>limit</code></td>
             <td align="center"><code>integer ≥ 1</code></td>
             <td align="center">-</td>
@@ -190,7 +190,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             </td>
         </tr>
         <tr>
-            <td rowspan="3" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Filters</b></td>
+            <td rowSpan="3" align="center" class="vertical"><b>Filters</b></td>
             <td><code>select</code></td>
             <td align="center"><code>SelectOption</code></td>
             <td align="center">-</td>

@@ -236,7 +236,7 @@ When filtered, the projected attributes of a secondary index MUST include the `T
 
 ### `entityAttributeSavedAs`
 
-DynamoDB-Toolbox tags your data via an internal and hidden [`entity`](../../3-entities/2-internal-attributes/index.md#entity) attribute. Any write command automatically sets its value to the corresponding `Entity`.
+DynamoDB-Toolbox tags your data via an internal and hidden [`entity`](../../3-entities/2-internal-attributes/index.md#entity) attribute. Any write command automatically sets its value to the corresponding `Entity` name.
 
 To allow for appropriate formatting when fetching multiple items of the same `Table` in a single operation (like [Queries](../2-actions/2-query/index.md) or [Scans](../2-actions/1-scan/index.md)), **the key of this attribute must be the same accross all of its items**, so it must be set at the `Table` level.
 

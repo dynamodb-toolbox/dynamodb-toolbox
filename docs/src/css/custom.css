@@ -477,3 +477,17 @@ div.theme-admonition div {
 div.theme-admonition details summary {
   --docusaurus-details-decoration-color: #000a;
 }
+
+.vertical {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+}
+
+/* Trick for Safari detection, check https://stackoverflow.com/questions/16348489/is-there-a-way-to-apply-styles-to-safari-only */
+_::-webkit-full-page-media,
+_:future,
+:root .vertical {
+  /* writing-mode doesn't work in safari */
+  writing-mode: horizontal-tb;
+  transform: rotate(-90deg);
+}
