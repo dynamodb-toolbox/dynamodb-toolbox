@@ -26,7 +26,7 @@ This action is mostly a **wrapper around the schema [`Formatter`](../../../4-sch
 
 Note that:
 
-- Inputs are not mutated (additional and `hidden` fields are omitted)
+- Additional and `hidden` fields are omitted, but inputs are not mutated
 - The formatting will throw an error if the saved item is invalid
 - Transformations (i.e. `savedAs` and `transforms`) are applied in reverse
 
@@ -43,7 +43,7 @@ Formats a saved item:
 const formattedItem = PokemonEntity.build(EntityFormatter).format(savedItem)
 ```
 
-You can provide **formatting options** as second argument. Available options are:
+You can provide **formatting options** as a second argument. Available options:
 
 | Option       |       Type       | Default | Description                                                                                                                                                                                              |
 | ------------ | :--------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -89,7 +89,7 @@ const formatted = PokemonEntity.build(
 
 :::
 
-You can use the `FormattedItem` type to explicitely type an object as a formatting output:
+You can use the `FormattedItem` type to explicitly type an object as a formatting output object:
 
 ```ts
 import type { FormattedItem } from 'dynamodb-toolbox/entity/actions/format'

@@ -22,7 +22,7 @@ await execute(transaction, ...otherTransactions)
 
 :::info
 
-Check the [Transaction Documentation](../9-transactions/index.md#transactwrite) to learn more on the `execute` function.
+Check the [Transaction Documentation](../9-transactions/index.md#transactwrite) to learn more about the `execute` function.
 
 :::
 
@@ -40,7 +40,7 @@ const transaction = PokemonEntity.build(
 ).key({ pokemonId: 'pikachu1' })
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `BatchDeleteItemRequest` key:
+You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitly type an object as a `BatchDeleteItemRequest` key object:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
@@ -68,7 +68,7 @@ const transaction = PokemonEntity.build(
   })
 ```
 
-You can use the `DeleteTransactionOptions` type to explicitely type an object as a `DeleteTransaction` options:
+You can use the `DeleteTransactionOptions` type to explicitly type an object as a `DeleteTransaction` options object:
 
 ```ts
 import type { DeleteTransactionOptions } from 'dynamodb-toolbox/entity/actions/transactDelete'
@@ -86,7 +86,7 @@ const transaction = PokemonEntity.build(
   .options(options)
 ```
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html#API_TransactWriteItems_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html#API_TransactWriteItems_RequestParameters) for more details):
 
 | Option      |               Type                | Default | Description                                                                                                                                                                                                                      |
 | ----------- | :-------------------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

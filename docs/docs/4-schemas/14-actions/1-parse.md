@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Parser
 
-Given an input of any type and a mode, validates that **it respects the schema** and apply transformations:
+Given an input of any type and a mode, validates that **it respects the schema** and applies transformations:
 
 ```ts
 import { Parser } from 'dynamodb-toolbox/schema/actions/parse'
@@ -19,7 +19,7 @@ const validPokemon = pokemonSchema
   .parse(pokemon)
 ```
 
-The default mode is `'put'`, but you can switch it to `'update'` or `'key'` if needed:
+The default mode is `put`, but you can switch it to `update` or `key` if needed:
 
 ```ts
 const validKey = pokemonSchema.build(Parser).parse(
@@ -351,14 +351,14 @@ Parses an input of any type:
 const parsedValue = pokemonSchema.build(Parser).parse(input)
 ```
 
-You can provide options as second argument. Available options are:
+You can provide options as a second argument. Available options:
 
 | Option           |              Type              | Default | Description                                                                                                                        |
 | ---------------- | :----------------------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `fill`           |           `boolean`            | `true`  | Wether to complete the input (with `defaults` and `links`) prior to validation or not.                                             |
-| `transform`      |           `boolean`            | `true`  | Wether to transform the input (with `savedAs` and `transform`) after validation or not.                                            |
-| `mode`           | `'put'`, `'key'` or `'update'` | `'put'` | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.             |
-| `parseExtension` |          _(internal)_          |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `'update'` mode (check example below). |
+| `fill`           |           `boolean`            | `true`  | Whether to complete the input (with `defaults` and `links`) prior to validation or not.                                             |
+| `transform`      |           `boolean`            | `true`  | Whether to transform the input (with `savedAs` and `transform`) after validation or not.                                            |
+| `mode`           | `put`, `key` or `update` | `put` | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.             |
+| `parseExtension` |          _(internal)_          |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
 
 :::noteExamples
 
@@ -419,7 +419,7 @@ const validUpdate = pokemonSchema.build(Parser).parse(
 
 :::
 
-You can use the `ParsedValue` type to explicitely type an object as a parsing output:
+You can use the `ParsedValue` type to explicitly type an object as a parsing output object:
 
 ```ts
 import type { ParsedValue } from 'dynamodb-toolbox/schema/actions/parse'
@@ -445,7 +445,7 @@ pokemonSchema
   .reparse({ invalid: 'input' })
 ```
 
-You can use the `ParserInput` type to explicitely type an object as a parsing input:
+You can use the `ParserInput` type to explicitly type an object as a parsing input object:
 
 ```ts
 import type { ParserInput } from 'dynamodb-toolbox/schema/actions/parse'

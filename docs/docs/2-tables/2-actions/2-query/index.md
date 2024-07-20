@@ -43,7 +43,7 @@ await PokeTable.build(QueryCommand)
   .send()
 ```
 
-You can use the `Query` type to explicitely type an object as a `QueryCommand` query:
+You can use the `Query` type to explicitly type an object as a `QueryCommand` query object:
 
 ```ts
 import type { Query } from 'dynamodb-toolbox/table/actions/query'
@@ -61,7 +61,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ### `.entities(...)`
 
-Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Does also format them and type the response.
+Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Also formats them and types the response.
 
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
@@ -85,7 +85,7 @@ const { Items } = await PokeTable.build(QueryCommand)
   .send()
 ```
 
-You can use the `QueryOptions` type to explicitely type an object as a `QueryCommand` options:
+You can use the `QueryOptions` type to explicitly type an object as a `QueryCommand` options object:
 
 ```ts
 import type { QueryOptions } from 'dynamodb-toolbox/table/actions/query'
@@ -113,7 +113,7 @@ It is advised to provide `entities` and `query` first as they constrain the `opt
 
 :::
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_RequestParameters) for more details):
 
 <table>
     <thead>
@@ -348,15 +348,13 @@ const { Count } = await PokeTable.build(QueryCommand)
 
 :::
 
-:::
-
 ## Response
 
-The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_ResponseElements).
+The data is returned with the same response syntax as from the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_ResponseElements).
 
 If a [`entities`](#entities) have been provided, the response `Items` are formatted by their respective entities.
 
-You can use the `QueryResponse` type to explicitely type an object as a `QueryCommand` response:
+You can use the `QueryResponse` type to explicitly type an object as a `QueryCommand` response object:
 
 ```ts
 import type { QueryResponse } from 'dynamodb-toolbox/table/actions/query'

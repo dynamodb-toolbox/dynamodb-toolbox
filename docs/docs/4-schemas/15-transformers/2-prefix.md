@@ -14,7 +14,7 @@ import { prefix } from 'dynamodb-toolbox/transformers/prefix'
 const prefixedSchema = string().transform(prefix('PREFIX'))
 ```
 
-The default delimiter is `'#'`, but you can override it:
+The default delimiter is `#`, but you can override it:
 
 ```ts
 import { prefix } from 'dynamodb-toolbox/transformers/prefix'

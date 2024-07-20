@@ -105,7 +105,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 
 DynamoDB operations like the [GetItemCommand](../../3-entities/3-actions/1-get-item/index.md) are instances of actions, but DynamoDB-Toolbox also exposes utility actions, e.g. for [parsing](../../3-entities/3-actions/16-parse/index.md) and [formatting](../../3-entities/3-actions/19-format/index.md).
 
-The syntax is a bit more verbose that a simple `PokemonEntity.get(key)`, but it allows for **extensibility**, **better code-splitting** and **lighter bundles** while keeping an intuitive **entity-oriented** and **type-inheriting syntax**.
+The syntax is a bit more verbose than a simple `PokemonEntity.get(key)`, but it allows for **extensibility**, **better code-splitting** and **lighter bundles** while keeping an intuitive **entity-oriented** and **type-inheriting syntax**.
 
 :::info
 
@@ -153,7 +153,7 @@ const pokemonEntityName = pokeNameGetter.get()
 const pokeNameGetter = new NameGetter(PokemonEntity)
 ```
 
-Although this action-oriented syntax is (we find) **less readable** than the entity-oriented one, it leads to exactly the same result, so feel free to use it if you prefer!
+Although, we find, this action-oriented syntax is **less readable** than the entity-oriented one, it leads to exactly the same result, so feel free to use it if you prefer!
 
 Here's a comparison of both syntaxes on the [`GetItemCommand`](/docs/entities/actions/get-item) action:
 

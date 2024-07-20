@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 # Table
 
-Each **Table** instance describes the configuration of a deployed DynamoDB Table: It's **name**, **primary key**, **secondary indexes**, and more.
+Each **Table** instance describes the configuration of a deployed DynamoDB Table: Its **name**, **primary key**, **secondary indexes**, and more.
 
 <!-- _They are also used to organize and coordinate operations between **entities**. Tables support a number of actions that allow you to interact with your entities including performing **queries**, **scans**, **batch gets** and **batch writes**._ -->
 
@@ -27,11 +27,11 @@ The configuration provided to the `Table` constructor must match your resources.
 
 ## Constructor
 
-`Table` takes a single parameter of type `object` that accepts the following properties:
+`Table` takes a single parameter of type `object` and accepts the following properties:
 
 ### `documentClient`
 
-As mentioned in the [Getting Started section](../../1-getting-started/1-overview/index.md), DynamoDB-Tooblox is an **abstraction layer over the Document Client**, but it does not replace it. A `DocumentClient` instance is explicitely needed for commands to interact with DynamoDB.
+As mentioned in the [Getting Started section](../../1-getting-started/1-overview/index.md), DynamoDB-Tooblox is an **abstraction layer over the Document Client**, but it does not replace it. A `DocumentClient` instance is explicitly needed for commands to interact with DynamoDB.
 
 You can provide it in the `Table` constructor:
 
@@ -240,7 +240,7 @@ DynamoDB-Toolbox tags your data via an internal and hidden [`entity`](../../3-en
 
 To allow for appropriate formatting when fetching multiple items of the same `Table` in a single operation (like [Queries](../2-actions/2-query/index.md) or [Scans](../2-actions/1-scan/index.md)), **the key of this attribute must be the same accross all of its items**, so it must be set at the `Table` level.
 
-It's default value is `"_et"`, but it can be renamed through the `entityAttributeSavedAs` argument:
+Its default value is `_et`, but it can be renamed through the `entityAttributeSavedAs` argument:
 
 ```ts
 const MyTable = new Table({

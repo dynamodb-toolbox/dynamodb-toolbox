@@ -96,7 +96,7 @@ const command = PokeTable.build(BatchGetCommand).options({
 })
 ```
 
-You can use the `BatchGetCommandOptions` type to explicitely type an object as a `BatchGetCommand` options:
+You can use the `BatchGetCommandOptions` type to explicitly type an object as a `BatchGetCommand` options object:
 
 ```ts
 import type { BatchGetCommandOptions } from 'dynamodb-toolbox/table/actions/batchGet'
@@ -120,7 +120,7 @@ It is advised to provide `requests` first as they constrain the `options` type.
 
 :::
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html#API_BatchGetItem_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html#API_BatchGetItem_RequestParameters) for more details):
 
 | Option       |    Type    | Default | Description                                                                                                                                                                                                                                                                                                                                 |
 | ------------ | :--------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -184,7 +184,7 @@ The `execute` function accepts an additional object as a first argument for **op
 await execute(options, ...batchGetCommands)
 ```
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html#API_BatchGetItem_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html#API_BatchGetItem_RequestParameters) for more details):
 
 | Option           |       Type       | Default  | Description                                                                                                                                                                              |
 | ---------------- | :--------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -224,7 +224,7 @@ const { Response } = await execute(
 
 ### Response
 
-The data is returned with the same response syntax as the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html#API_BatchGetItem_ResponseSyntax), except for the `Responses` property.
+The data is returned with the same response syntax as from the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html#API_BatchGetItem_ResponseSyntax), except for the `Responses` property.
 
 Instead of a map of arrays indexed by table name, DynamoDB-Toolbox returns an **array of arrays**, where each sub-array contains the items of a `BatchGetCommand`. Both commands and items are returned in the **same order they were provided**, and items are formatted by their respective entities.
 

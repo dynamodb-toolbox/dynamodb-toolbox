@@ -71,7 +71,7 @@ The `execute` function accepts an additional object as a first argument for **op
 await execute(options, ...batchWriteCommands)
 ```
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html#API_BatchWriteItem_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html#API_BatchWriteItem_RequestParameters) for more details):
 
 | Option           |       Type       | Default  | Description                                                                                                                                                                              |
 | ---------------- | :--------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -122,4 +122,4 @@ await execute(
 
 ### Response
 
-The data is returned with the same response syntax as the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html#API_BatchWriteItem_ResponseSyntax).
+The data is returned with the same response syntax as from the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html#API_BatchWriteItem_ResponseSyntax).

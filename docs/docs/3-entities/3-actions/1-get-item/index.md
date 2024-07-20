@@ -34,7 +34,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `GetItemCommand` key:
+You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitly type an object as a `GetItemCommand` key object:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
@@ -63,7 +63,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-You can use the `GetItemOptions` type to explicitely type an object as a `GetItemCommand` options:
+You can use the `GetItemOptions` type to explicitly type an object as a `GetItemCommand` options object:
 
 ```ts
 import type { GetItemOptions } from 'dynamodb-toolbox/entity/actions/get'
@@ -80,7 +80,7 @@ await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_RequestParameters) for more details):
 
 | Option       |       Type       | Default  | Description                                                                                                                                                                                                               |
 | ------------ | :--------------: | :------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -117,9 +117,9 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 
 ## Response
 
-The data is returned with the same response syntax as the [DynamoDB GetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_ResponseElements). If present, the returned item is formatted by the Entity.
+The data is returned with the same response syntax as from the [DynamoDB GetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_ResponseElements). If present, the returned item is formatted by the Entity.
 
-You can use the `GetItemResponse` type to explicitely type an object as a `GetItemCommand` response:
+You can use the `GetItemResponse` type to explicitly type an object as a `GetItemCommand` response object:
 
 ```ts
 import type { GetItemResponse } from 'dynamodb-toolbox/entity/actions/get'

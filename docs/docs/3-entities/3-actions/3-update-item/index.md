@@ -42,7 +42,7 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-You can use the `UpdateItemInput` type to explicitely type an object as a `UpdateItemCommand` item:
+You can use the `UpdateItemInput` type to explicitly type an object as a `UpdateItemCommand` item object:
 
 ```ts
 import type { UpdateItemInput } from 'dynamodb-toolbox/entity/actions/update'
@@ -89,7 +89,7 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-Self-references are possible. You can also **provide a fallback** as second argument (which can also be a reference) in case the specified attribute path misses from the item:
+Self-references are possible. You can also **provide a fallback** as a second argument (which can also be a reference) in case the specified attribute path misses from the item:
 
 ```ts
 await PokemonEntity.build(UpdateItemCommand)
@@ -105,7 +105,7 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-Note that the attribute path is type-checked, but wether its attribute value extends the updated attribute value is **not** for the moment, so be extra-careful:
+Note that the attribute path is type-checked, but whether its attribute value extends the updated attribute value is **not** for the moment, so be extra-careful:
 
 ```ts
 await PokemonEntity.build(UpdateItemCommand)
@@ -252,7 +252,7 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-You can use the `UpdateItemOptions` type to explicitely type an object as an `UpdateItemCommand` options:
+You can use the `UpdateItemOptions` type to explicitly type an object as an `UpdateItemCommand` options object:
 
 ```ts
 import type { UpdateItemOptions } from 'dynamodb-toolbox/entity/actions/update'
@@ -269,7 +269,7 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#API_UpdateItem_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#API_UpdateItem_RequestParameters) for more details):
 
 | Option         |               Type                | Default  | Description                                                                                                                                                                                                                      |
 | -------------- | :-------------------------------: | :------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -317,9 +317,9 @@ const { Attributes: prevPikachu } =
 
 ## Response
 
-The data is returned with the same response syntax as the [DynamoDB UpdateItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#API_UpdateItem_ResponseElements). If present, the returned attributes are formatted by the Entity.
+The data is returned with the same response syntax as from the [DynamoDB UpdateItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#API_UpdateItem_ResponseElements). If present, the returned attributes are formatted by the Entity.
 
-You can use the `UpdateItemResponse` type to explicitely type an object as a `UpdateItemCommand` response:
+You can use the `UpdateItemResponse` type to explicitly type an object as a `UpdateItemCommand` response object:
 
 ```ts
 import type { UpdateItemResponse } from 'dynamodb-toolbox/entity/actions/update'

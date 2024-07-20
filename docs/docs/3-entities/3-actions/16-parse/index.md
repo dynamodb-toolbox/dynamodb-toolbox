@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # EntityParser
 
-Given an input of any type and a mode, validates that it respects the schema of the `Entity` and apply transformations:
+Given an input of any type and a mode, validates that it respects the schema of the `Entity` and applies transformations:
 
 ```ts
 import { EntityParser } from 'dynamodb-toolbox/entity/actions/parse'
@@ -21,7 +21,7 @@ const {
 } = PokemonEntity.build(EntityParser).parse(input)
 ```
 
-The default mode is `'put'`, but you can switch it to `'update'` or `'key'` if needed:
+The default mode is `put`, but you can switch it to `update` or `key` if needed:
 
 ```ts
 const parsed = PokemonEntity.build(EntityParser).parse(
@@ -39,7 +39,7 @@ This action is mostly a **wrapper around the [`SchemaParser`](../../../4-schemas
 
 Note that:
 
-- Inputs are not mutated (additional fields are omitted)
+- Additional fields are omitted, but inputs are not mutated
 - The mode `defaults` and `links` are applied
 - Transformations (i.e. `savedAs` and `transforms`) are applied
 
@@ -58,12 +58,12 @@ Parses an input of any type:
 const parsed = PokemonEntity.build(EntityParser).parse(input)
 ```
 
-You can provide **parsing options** as second argument. Available options are:
+You can provide **parsing options** as a second argument. Available options:
 
 | Option           |              Type              | Default | Description                                                                                                                        |
 | ---------------- | :----------------------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `mode`           | `'put'`, `'key'` or `'update'` | `'put'` | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.             |
-| `parseExtension` |          _(internal)_          |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `'update'` mode (check example below). |
+| `mode`           | `put`, `key` or `update` | `put` | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.             |
+| `parseExtension` |          _(internal)_          |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
 
 :::noteExamples
 
@@ -123,7 +123,7 @@ const { item } = PokemonEntity.build(EntityParser).parse(
 
 :::
 
-You can use the `ParsedItem` type to explicitely type an object as a parsing output:
+You can use the `ParsedItem` type to explicitly type an object as a parsing output object:
 
 ```ts
 import type { ParsedItem } from 'dynamodb-toolbox/entity/actions/parse'
@@ -159,7 +159,7 @@ PokemonEntity.build(EntityParser)
   .reparse({ invalid: 'input' })
 ```
 
-You can use the `EntityParserInput` type to explicitely type an object as a parsing input:
+You can use the `EntityParserInput` type to explicitly type an object as a parsing input object:
 
 ```ts
 import type { EntityParserInput } from 'dynamodb-toolbox/entity/actions/parse'

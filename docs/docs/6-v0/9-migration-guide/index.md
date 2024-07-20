@@ -41,7 +41,7 @@ const MyTable = new Table({
 
 ### Indexes
 
-In the same way, index attributes now have a `type` property as well as an explicit `type` (`'global'` or `'local'`):
+In the same way, index attributes now have a `type` property as well as an explicit `type` (`global` or `local`):
 
 <Tabs>
 <TabItem value="gsi" label="Global Index">
@@ -109,7 +109,7 @@ Finally, table `attributes` have not been re-implemented yet (but you can still 
 
 The `typeAlias` has been renamed to `entityAttributeName`, and the `typeHidden` has been removed: The internal `entity` attribute is now always hidden.
 
-If you explicitely need an `entity` attribute equivalent, you can include a dedicated attribute to your schema (e.g. [`string().const('someConst')`](../../4-schemas/7-string/index.md#enum)).
+If you explicitly need an `entity` attribute equivalent, you can include a dedicated attribute to your schema (e.g. [`string().const('someConst')`](../../4-schemas/7-string/index.md#enum)).
 
 ```diff
 const PokemonEntity = new Entity({
