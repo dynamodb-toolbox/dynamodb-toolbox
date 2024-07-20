@@ -22,7 +22,7 @@ await execute(transaction, ...otherTransactions)
 
 :::info
 
-Check the [Transaction Documentation](../9-transactions/index.md#transactwrite) to learn more on the `execute` function.
+Check the [Transaction Documentation](../9-transactions/index.md#transactwrite) to learn more about the `execute` function.
 
 :::
 
@@ -46,7 +46,7 @@ const transaction = PokemonEntity.build(ConditionCheck).key(
 )
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `ConditionCheck` key:
+You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitly type an object as a `ConditionCheck` key object:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'

@@ -24,7 +24,7 @@ const { Items } = await scanCommand.send()
 
 ### `.entities(...)`
 
-Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Does also format them and type the response.
+Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Also formats them and types the response.
 
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
@@ -47,7 +47,7 @@ const { Items } = await PokeTable.build(ScanCommand)
   .send()
 ```
 
-You can use the `ScanOptions` type to explicitely type an object as a `ScanCommand` options:
+You can use the `ScanOptions` type to explicitly type an object as a `ScanCommand` options object:
 
 ```ts
 import type { ScanOptions } from 'dynamodb-toolbox/table/actions/scan'
@@ -73,7 +73,7 @@ It is advised to provide `entities` first as it constrains the `options` type.
 
 :::
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestParameters) for more details):
 
 <table>
     <thead>
@@ -171,7 +171,7 @@ Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.
             </td>
         </tr>
         <tr>
-            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Parallel</b></td>
+            <td rowspan="2" align="center" style={{ writingMode: "vertical-lr", transform: "rotate(180deg)" }}><b>Parallelism</b></td>
             <td><code>segment</code></td>
             <td align="center"><code>integer ≥ 0</code></td>
             <td align="center">-</td>
@@ -348,11 +348,11 @@ const allItems = [...segment1, ...segment2, ...segment3]
 
 ## Response
 
-The data is returned with the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_ResponseElements).
+The data is returned with the same response syntax as from the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_ResponseElements).
 
 If [`entities`](#entities) have been provided, the response `Items` are formatted by their respective entities.
 
-You can use the `ScanResponse` type to explicitely type an object as a `ScanCommand` response:
+You can use the `ScanResponse` type to explicitly type an object as a `ScanCommand` response object:
 
 ```ts
 import type { ScanResponse } from 'dynamodb-toolbox/table/actions/scan'

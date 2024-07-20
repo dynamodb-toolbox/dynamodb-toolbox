@@ -30,7 +30,7 @@ const request = PokemonEntity.build(BatchGetRequest).key({
 })
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `BatchGetRequest` key:
+You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitly type an object as a `BatchGetRequest` key object:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'

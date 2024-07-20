@@ -65,7 +65,7 @@ const {
 
 <p style={{ marginTop: '-15px' }}><i><code>(id: string) => ConditionParser</code></i></p>
 
-Adds a prefix to expression attribute keys. Useful to avoid conflicts when using severals expressions in a single command:
+Adds a prefix to expression attribute keys. Useful to avoid conflicts when using several expressions in a single command:
 
 ```ts
 PokemonEntity.build(ConditionParser)
@@ -259,7 +259,7 @@ const pokeTypeCheck: Condition<typeof PokemonEntity> = {
 
 ### Range conditions
 
-Range conditions evaluate wether an attribute of sortable type (i.e. [number](../../../4-schemas/6-number/index.md), [string](../../../4-schemas/7-string/index.md) or [binary](../../../4-schemas/8-binary/index.md)) is **within a certain range**.
+Range conditions evaluate whether an attribute of sortable type (i.e. [number](../../../4-schemas/6-number/index.md), [string](../../../4-schemas/7-string/index.md) or [binary](../../../4-schemas/8-binary/index.md)) is **within a certain range**.
 
 :::info
 
@@ -442,7 +442,7 @@ const atMaxLevel: Condition<typeof PokemonEntity> = {
 
 :::caution
 
-Note that the compared attribute path is type-checked and validated, but wether its type CAN be compared is **not** for the moment, so be extra-careful:
+Note that the compared attribute path is type-checked and validated, but whether its type CAN be compared is **not** for the moment, so be extra-careful:
 
 ```ts
 const invalidCondition: Condition<typeof PokemonEntity> = {

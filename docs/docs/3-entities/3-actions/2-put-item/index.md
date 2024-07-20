@@ -40,7 +40,7 @@ await PokemonEntity.build(PutItemCommand)
   .send()
 ```
 
-You can use the `PutItemInput` type to explicitely type an object as a `PutItemCommand` item:
+You can use the `PutItemInput` type to explicitly type an object as a `PutItemCommand` item object:
 
 ```ts
 import type { PutItemInput } from 'dynamodb-toolbox/entity/actions/put'
@@ -75,7 +75,7 @@ await PokemonEntity.build(PutItemCommand)
   .send()
 ```
 
-You can use the `PutItemOptions` type to explicitely type an object as a `PutItemCommand` options:
+You can use the `PutItemOptions` type to explicitly type an object as a `PutItemCommand` options object:
 
 ```ts
 import type { PutItemOptions } from 'dynamodb-toolbox/entity/actions/put'
@@ -92,7 +92,7 @@ await PokemonEntity.build(PutItemCommand)
   .send()
 ```
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_RequestParameters) for more details):
 
 | Option         |               Type                | Default  | Description                                                                                                                                                                                                                   |
 | -------------- | :-------------------------------: | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -144,9 +144,9 @@ const { Attributes: prevPikachu } =
 
 ## Response
 
-The data is returned with the same response syntax as the [DynamoDB PutItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_ResponseElements). If present, the returned item is formatted by the Entity.
+The data is returned with the same response syntax as from the [DynamoDB PutItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_ResponseElements). If present, the returned item is formatted by the Entity.
 
-You can use the `PutItemResponse` type to explicitely type an object as a `PutItemCommand` response:
+You can use the `PutItemResponse` type to explicitly type an object as a `PutItemCommand` response object:
 
 ```ts
 import type { PutItemResponse } from 'dynamodb-toolbox/entity/actions/put'

@@ -34,7 +34,7 @@ const request = PokemonEntity.build(BatchPutRequest).item({
 })
 ```
 
-You can use the `PutItemInput` type from the [`PutItemCommand`](../2-put-item/index.md) action to explicitely type an object as a `BatchPutRequest` item:
+You can use the `PutItemInput` type from the [`PutItemCommand`](../2-put-item/index.md) action to explicitly type an object as a `BatchPutRequest` item object:
 
 ```ts
 import type { PutItemInput } from 'dynamodb-toolbox/entity/actions/put'

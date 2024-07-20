@@ -49,7 +49,7 @@ const { ProjectionExpression, ExpressionAttributeNames } =
 
 <p style={{ marginTop: '-15px' }}><i><code>(id: string) => ConditionParser</code></i></p>
 
-Adds a prefix to expression attribute keys. Useful to avoid conflicts when using severals expressions in a single command:
+Adds a prefix to expression attribute keys. Useful to avoid conflicts when using several expressions in a single command:
 
 ```ts
 PokemonEntity.build(PathParser)

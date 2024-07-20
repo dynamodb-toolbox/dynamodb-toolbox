@@ -315,11 +315,11 @@ const Home = (): JSX.Element => (
               <p className="text-sm dark:text-gray-200 leading-6">
                 DynamoDB-Toolbox does all the{' '}
                 <b>
-                  heavy-lifting of crafting those cumbersome
+                  heavy-lifting of crafting those complex
                   DynamoDB
                 </b>{' '}
-                requests for you. It make your code{' '}
-                <b>clearer</b>, more <b>succinct</b> and{' '}
+                requests for you. It makes your code{' '}
+                <b>clearer</b>, more <b>consise</b> and{' '}
                 <b>maintainable</b>.
               </p>
               <p className="text-sm dark:text-gray-200 leading-6">

@@ -66,7 +66,7 @@ DynamoDB-Toolbox attribute types closely mirror the capabilities of DynamoDB. Se
 
 :::
 
-Note that some attribute types are **nested**, i.e. defined with other attributes. For instance, here's a list of string:
+Note that some attribute types can be **nested**, i.e. defined with other attributes. For instance, here's a list of string:
 
 ```ts
 const nameAttr = string()
@@ -75,7 +75,7 @@ const namesAttr = list(nameAttr)
 
 :::info
 
-Schemas are a standalone feature of DynamoDB-Toolbox (you can use them separately to [parse](../14-actions/1-parse.md) and [format](../14-actions/2-format.md) data for instance) and might event be moved in a separate library one day.
+Schemas are a standalone feature of DynamoDB-Toolbox (you can use them separately to [parse](../14-actions/1-parse.md) and [format](../14-actions/2-format.md) data for instance) and might even be moved into a separate library one day.
 
 :::
 

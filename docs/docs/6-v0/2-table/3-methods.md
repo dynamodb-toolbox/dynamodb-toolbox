@@ -57,7 +57,7 @@ const result = await MyTable.query(
 
 <h3>Return Data</h3>
 
-The data is returned with the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `query` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
+The data is returned with the same response syntax as from the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `query` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
 
 ## scan
 
@@ -99,7 +99,7 @@ const result = await MyTable.scan({
 
 <h3>Return Data</h3>
 
-The data is returned with the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `scan` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
+The data is returned with the same response syntax as from the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Items` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `scan` method again using the same parameters and passing the `LastEvaluatedKey` in as the `ExclusiveStartKey`. This is a convenience method for paginating the results.
 
 ## batchGet
 
@@ -163,7 +163,7 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 <h3>Return Data</h3>
 
-The data is returned with the same response syntax as the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `batchGet` method again using the same options and passing any `UnprocessedKeys` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
+The data is returned with the same response syntax as from the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data. If the response is parsed by the library, a `.next()` method will be available on the returned object. Calling this function will call the `batchGet` method again using the same options and passing any `UnprocessedKeys` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
 
 ## batchWrite
 
@@ -217,7 +217,7 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 <h3>Return Data</h3>
 
-The data is returned with the same response syntax as the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html). If `autoExecute` and `autoParse` are enabled, a `.next()` method will be available on the returned object. Calling this function will call the `batchWrite` method again using the same options and passing any `UnprocessedItems` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
+The data is returned with the same response syntax as from the [DynamoDB BatchWriteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html). If `autoExecute` and `autoParse` are enabled, a `.next()` method will be available on the returned object. Calling this function will call the `batchWrite` method again using the same options and passing any `UnprocessedItems` in as the `RequestItems`. This is a convenience method for retrying unprocessed keys.
 
 ## transactGet
 
@@ -256,7 +256,7 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 <h3>Return Data</h3>
 
-The data is returned with the same response syntax as the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data.
+The data is returned with the same response syntax as from the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html). In TS, type inference is not applied. If `autoExecute` and `autoParse` are enabled, any `Responses` data returned will be parsed into its corresponding Entity's aliases. Otherwise, the DocumentClient will return the unmarshalled data.
 
 ## transactWrite
 
@@ -297,7 +297,7 @@ If you prefer to specify your own parameters, the optional third argument allows
 
 <h3>Return Data</h3>
 
-The data is returned with the same response syntax as the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
+The data is returned with the same response syntax as from the [DynamoDB TransactWriteItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
 
 ## Entity Convenience Methods
 

@@ -51,7 +51,7 @@ const request = PokemonEntity.build(GetTransaction).key({
 })
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitely type an object as a `GetTransaction` key:
+You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitly type an object as a `GetTransaction` key object:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
@@ -76,7 +76,7 @@ const transaction = PokemonEntity.build(GetTransaction)
   })
 ```
 
-You can use the `GetTransactionOptions` type to explicitely type an object as a `GetTransaction` options:
+You can use the `GetTransactionOptions` type to explicitly type an object as a `GetTransaction` options object:
 
 ```ts
 import type { GetTransactionOptions } from 'dynamodb-toolbox/entity/actions/transactGet'
@@ -89,7 +89,7 @@ const transaction = PokemonEntity.build(PutTransaction)
   .options(options)
 ```
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html#API_TransactGetItems_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html#API_TransactGetItems_RequestParameters) for more details):
 
 | Option       |       Type       | Default | Description                                                                                                                                                                                                               |
 | ------------ | :--------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -147,7 +147,7 @@ The `execute` function accepts an additional object as a first argument for **op
 await execute(options, ...batchGetCommands)
 ```
 
-Available options are (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html#API_TransactGetItems_RequestParameters) for more details):
+Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html#API_TransactGetItems_RequestParameters) for more details):
 
 | Option           |       Type       | Default  | Description                                                                                                                                                                              |
 | ---------------- | :--------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -187,4 +187,4 @@ const { Response } = await execute(
 
 ### Response
 
-The data is returned with the same response syntax as the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html#API_TransactGetItems_ResponseSyntax). Items are formatted by their respective entities.
+The data is returned with the same response syntax as from the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html#API_TransactGetItems_ResponseSyntax). Items are formatted by their respective entities.

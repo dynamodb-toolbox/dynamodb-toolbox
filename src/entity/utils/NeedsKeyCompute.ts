@@ -24,7 +24,7 @@ type NeedsKeyPartCompute<
       : false
 
 /**
- * Wether the provided schema matches the primary key of a given table
+ * Whether the provided schema matches the primary key of a given table
  *
  * @param SCHEMA Schema
  * @param TABLE Table
