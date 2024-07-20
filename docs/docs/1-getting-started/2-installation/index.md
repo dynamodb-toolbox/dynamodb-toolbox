@@ -30,3 +30,4 @@ yarn add @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
 
 :::info
 Already have `@aws-sdk/client-dynamodb` and `@aws-sdk/lib-dynamodb` as part of your runtime and using a bundler? We recommend marking these dependencies as external to not have several copies of them
+:::
