@@ -155,7 +155,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-👉 See the [transformers section](#TODO) for more details on transformers.
+👉 See the [transformers section](../../4-schemas/15-transformers/1-usage.md) for more details on transformers.
 
 </TabItem>
 </Tabs>
@@ -170,7 +170,7 @@ const PokemonEntity = new Entity({
 
 In this case, the `Entity` constructor requires a `computeKey` function to derive the primary key from the `Entity` key attributes.
 
-This can be useful for more complex cases like [mapping several attributes to the same key](#TODO):
+This can be useful for more complex cases like mapping several attributes to the same key:
 
 :::noteExamples
 
