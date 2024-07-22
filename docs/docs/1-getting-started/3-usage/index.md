@@ -155,7 +155,7 @@ const pokeNameGetter = new NameGetter(PokemonEntity)
 
 Although, we find, this action-oriented syntax is **less readable** than the entity-oriented one, it leads to exactly the same result, so feel free to use it if you prefer!
 
-Here's a comparison of both syntaxes on the [`GetItemCommand`](/docs/entities/actions/get-item) action:
+Here's a comparison of both syntaxes on the [`GetItemCommand`](../../3-entities/3-actions/1-get-item/index.md) action:
 
 ```ts
 // 👇 Entity-oriented

@@ -77,9 +77,12 @@ const Home = (): JSX.Element => (
     <Head>
       <title>
         DynamoDB-Toolbox | Lightweight and type-safe query
-        builder for DynamoDB
+        builder for DynamoDB and TypeScript
       </title>
-      <meta name="description" content="TODO." />
+      <meta
+        name="description"
+        content="Lightweight and type-safe query builder for DynamoDB and TypeScript"
+      />
     </Head>
     <div className="flex flex-col gap-12 md:gap-16">
       <div className="flex flex-wrap py-2 px-4 items-center justify-center text-sm max-w-screen-xl mx-auto md:text-base md:self-end">
@@ -371,7 +374,6 @@ const Home = (): JSX.Element => (
               <p className="text-sm dark:text-gray-200 leading-6">
                 Our motto is simple:{' '}
                 <b>Ship only what you use</b>.
-                {/* TODO: Create a link and mention the lines of code */}
               </p>
             </div>
           </div>

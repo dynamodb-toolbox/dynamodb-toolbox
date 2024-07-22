@@ -42,5 +42,5 @@ You can use the `PrimaryKey` type to explicitly type an object as a primary key 
 import type { PrimaryKey } from 'dynamodb-toolbox/table/actions/parsePrimaryKey'
 
 type PokeKey = PrimaryKey<typeof PokeTable>
-// => { partitionKey: string, level: number }
+// => { partitionKey: string, sortKey: number }
 ```
