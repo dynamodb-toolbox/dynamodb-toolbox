@@ -46,7 +46,7 @@ const pokemonSchema = schema({
 })
 ```
 
-The solution is to make use of the `.and(...)` method (see [Extending Schemas](../2-warm-vs-frozen/index.md#extension)) and build the schema **in two steps**:
+The solution is to make good use of the `.and(...)` method (see [Extending Schemas](../2-warm-vs-frozen/index.md#extension)) and build the schema **in two steps**:
 
 ```ts
 const pokemonSchema = schema({
@@ -72,6 +72,6 @@ Similarly to defaults, links come in three flavors:
 - `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
 - `keyLink`: Overrides other links on key attributes (ignored otherwise)
 
-The `link` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise.
+The `link` method is a shorthand that acts as `keyLink` on key attributes and `putLink` otherwise.
 
 Finally, note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../14-actions/1-parse.md) action for more details).
