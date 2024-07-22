@@ -96,23 +96,23 @@ const config = {
       algolia: {
         // The application ID provided by Algolia
         appId: 'XS94BW9P52',
-
         // Public API key: it is safe to commit it
         apiKey: 'c95bd6f22598598ec831d3ba7aa5ac7c',
-
         indexName: 'dynamodbtoolbox',
-
         // Optional: see doc section below
         contextualSearch: true,
-
         // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
         // externalUrlRegex: 'external\\.com|domain\\.com',
-
         // Optional: Algolia search parameters
         // searchParameters: {},
-
         // Optional: path for search page that enabled by default (`false` to disable it)
         searchPagePath: 'search'
+      },
+      announcementBar: {
+        id: 'v1_announcement',
+        content:
+          '🙌 <b>The v1 of DynamoDB-Toolbox is OUT!</b> 🙌<br/><div><a href="/docs/getting-started/overview">Get started</a> • <a href="/docs/v0/migration-guide">Migrate</a> • <a href="/docs/v0/introduction/what-is-dynamodb-toolbox">v0 docs</a></div>',
+        isCloseable: true
       }
     })
 }
