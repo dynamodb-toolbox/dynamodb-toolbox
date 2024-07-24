@@ -187,7 +187,7 @@ const PokemonEntity = new Entity({
   }),
   // 🙌 Type are correctly inferred!
   computeKey: ({ pokemonId, level }) => ({
-    pk: id,
+    pk: pokemonId,
     sk: level
   })
 })
