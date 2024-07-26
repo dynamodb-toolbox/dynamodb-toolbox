@@ -1,4 +1,4 @@
-import type { O } from 'ts-toolbelt'
+import type { Compute } from '~/types/compute.js'
 
 import type { AttributeOptions } from '../constants/attributeOptions.js'
 
@@ -19,15 +19,13 @@ export type InferStateFromOptions<
   DEFAULT_OPTIONS extends OPTIONS_CONSTRAINTS,
   OPTIONS extends Partial<OPTIONS_CONSTRAINTS>,
   ADDITIONAL_OPTIONS extends object = {}
-> =
-  // Applying void O.Update improves type display
-  O.Update<
-    {
-      [KEY in Extract<
-        keyof OPTIONS_CONSTRAINTS,
-        keyof AttributeOptions
-      >]: InferStateValueFromOption<OPTIONS_CONSTRAINTS, DEFAULT_OPTIONS, OPTIONS, KEY>
-    } & ADDITIONAL_OPTIONS,
-    never,
-    never
-  >
+> = Compute<
+  {
+    [KEY in Extract<keyof OPTIONS_CONSTRAINTS, keyof AttributeOptions>]: InferStateValueFromOption<
+      OPTIONS_CONSTRAINTS,
+      DEFAULT_OPTIONS,
+      OPTIONS,
+      KEY
+    >
+  } & ADDITIONAL_OPTIONS
+>

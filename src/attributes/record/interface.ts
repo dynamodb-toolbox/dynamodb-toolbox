@@ -1,10 +1,9 @@
-import type { O } from 'ts-toolbelt'
-
 // TODO: Remove this import
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $keys, $state, $type } from '../constants/attributeOptions.js'
@@ -69,7 +68,7 @@ export class $RecordAttribute<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $RecordAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $KEYS, $ELEMENTS> {
+  ): $RecordAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
       overwrite(this[$state], { required: nextRequired }),
       this[$keys],
@@ -80,7 +79,7 @@ export class $RecordAttribute<
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $RecordAttribute<O.Overwrite<STATE, { required: Never }>, $KEYS, $ELEMENTS> {
+  optional(): $RecordAttribute<Overwrite<STATE, { required: Never }>, $KEYS, $ELEMENTS> {
     return this.required('never')
   }
 
@@ -89,7 +88,7 @@ export class $RecordAttribute<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $RecordAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $KEYS, $ELEMENTS> {
+  ): $RecordAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
       overwrite(this[$state], { hidden: nextHidden }),
       this[$keys],
@@ -102,7 +101,7 @@ export class $RecordAttribute<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $RecordAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $KEYS, $ELEMENTS> {
+  ): $RecordAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
       overwrite(this[$state], { key: nextKey, required: 'always' }),
       this[$keys],
@@ -115,7 +114,7 @@ export class $RecordAttribute<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $RecordAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $KEYS, $ELEMENTS> {
+  ): $RecordAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
       overwrite(this[$state], { savedAs: nextSavedAs }),
       this[$keys],
@@ -136,7 +135,7 @@ export class $RecordAttribute<
       >
     >
   ): $RecordAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -175,7 +174,7 @@ export class $RecordAttribute<
       >
     >
   ): $RecordAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -214,7 +213,7 @@ export class $RecordAttribute<
       >
     >
   ): $RecordAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -260,7 +259,7 @@ export class $RecordAttribute<
       >
     >
   ): $RecordAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: If<
@@ -297,7 +296,7 @@ export class $RecordAttribute<
       { mode: 'key'; fill: false }
     >
   ): $RecordAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -336,7 +335,7 @@ export class $RecordAttribute<
       { fill: false }
     >
   ): $RecordAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -375,7 +374,7 @@ export class $RecordAttribute<
       true
     >
   ): $RecordAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -425,7 +424,7 @@ export class $RecordAttribute<
       >
     >
   ): $RecordAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: If<

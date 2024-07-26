@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import type { $state } from '../constants/attributeOptions.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import { AnyAttribute } from './interface.js'
@@ -7,8 +5,8 @@ import type { $AnyAttributeState } from './interface.js'
 import type { AnyAttributeState } from './types.js'
 
 export type FreezeAnyAttribute<$ANY_ATTRIBUTE extends $AnyAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<AnyAttribute<$ANY_ATTRIBUTE[$state]>, never, never>
+  // '& {}' Improves type display
+  AnyAttribute<$ANY_ATTRIBUTE[$state]> & {}
 
 type AnyAttributeFreezer = <STATE extends AnyAttributeState>(
   state: STATE,

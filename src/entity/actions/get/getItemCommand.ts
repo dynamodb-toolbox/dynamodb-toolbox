@@ -1,6 +1,5 @@
 import { GetCommand } from '@aws-sdk/lib-dynamodb'
 import type { GetCommandInput, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
-import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
@@ -8,6 +7,7 @@ import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Merge } from '~/types/merge.js'
 
 import { $key, $options } from './constants.js'
 import { getItemParams } from './getItemParams/index.js'
@@ -16,7 +16,7 @@ import type { GetItemOptions } from './options.js'
 export type GetItemResponse<
   ENTITY extends Entity,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
-> = O.Merge<
+> = Merge<
   Omit<GetCommandOutput, 'Item'>,
   {
     Item?: FormattedItem<

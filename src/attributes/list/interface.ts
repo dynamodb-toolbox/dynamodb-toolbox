@@ -1,10 +1,9 @@
-import type { O } from 'ts-toolbelt'
-
 // TODO: Remove this import
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
@@ -59,14 +58,14 @@ export class $ListAttribute<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $ListAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ELEMENTS> {
+  ): $ListAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ELEMENTS> {
     return new $ListAttribute(overwrite(this[$state], { required: nextRequired }), this[$elements])
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $ListAttribute<O.Overwrite<STATE, { required: Never }>, $ELEMENTS> {
+  optional(): $ListAttribute<Overwrite<STATE, { required: Never }>, $ELEMENTS> {
     return this.required('never')
   }
 
@@ -75,7 +74,7 @@ export class $ListAttribute<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $ListAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ELEMENTS> {
+  ): $ListAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ELEMENTS> {
     return new $ListAttribute(overwrite(this[$state], { hidden: nextHidden }), this[$elements])
   }
 
@@ -84,7 +83,7 @@ export class $ListAttribute<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $ListAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ELEMENTS> {
+  ): $ListAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ELEMENTS> {
     return new $ListAttribute(
       overwrite(this[$state], { key: nextKey, required: 'always' }),
       this[$elements]
@@ -96,7 +95,7 @@ export class $ListAttribute<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $ListAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ELEMENTS> {
+  ): $ListAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ELEMENTS> {
     return new $ListAttribute(overwrite(this[$state], { savedAs: nextSavedAs }), this[$elements])
   }
 
@@ -113,7 +112,7 @@ export class $ListAttribute<
       >
     >
   ): $ListAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -147,7 +146,7 @@ export class $ListAttribute<
       ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
     >
   ): $ListAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -181,7 +180,7 @@ export class $ListAttribute<
       AttributeUpdateItemInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, true>
     >
   ): $ListAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -222,7 +221,7 @@ export class $ListAttribute<
       >
     >
   ): $ListAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: If<
@@ -258,7 +257,7 @@ export class $ListAttribute<
       { mode: 'key'; fill: false }
     >
   ): $ListAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -292,7 +291,7 @@ export class $ListAttribute<
       putItemInput: ParserInput<SCHEMA, { fill: false }>
     ) => ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
   ): $ListAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -326,7 +325,7 @@ export class $ListAttribute<
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, true>
   ): $ListAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -371,7 +370,7 @@ export class $ListAttribute<
       ParserInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { fill: false }>
     >
   ): $ListAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: If<

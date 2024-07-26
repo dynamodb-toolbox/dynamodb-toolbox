@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { $state } from '../constants/attributeOptions.js'
@@ -12,20 +10,13 @@ import { MapAttribute } from './interface.js'
 import type { $MapAttributeState } from './interface.js'
 import type { $MapAttributeAttributeStates } from './types.js'
 
-export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    MapAttribute<
-      $MAP_ATTRIBUTE[$state],
-      {
-        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
-          $MAP_ATTRIBUTE[$attributes][KEY]
-        >
-      }
-    >,
-    never,
-    never
-  >
+export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> = MapAttribute<
+  $MAP_ATTRIBUTE[$state],
+  {
+    [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<$MAP_ATTRIBUTE[$attributes][KEY]>
+  }
+  // '& {}' Improves type display
+> & {}
 
 type MapAttributeFreezer = <
   STATE extends SharedAttributeState,

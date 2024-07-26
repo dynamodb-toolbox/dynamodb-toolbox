@@ -1,10 +1,9 @@
-import type { O } from 'ts-toolbelt'
-
 import type { Always } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { IndexableKeyType, Key } from '~/table/types/index.js'
 import type { Or } from '~/types/or.js'
+import type { SelectKeys } from '~/types/selectKeys'
 
 type NeedsKeyPartCompute<
   SCHEMA extends Schema,
@@ -16,7 +15,7 @@ type NeedsKeyPartCompute<
     { type: KEY_PART_TYPE; required: Always; key: true; savedAs: undefined }
   >
     ? false
-    : O.SelectKeys<
+    : SelectKeys<
           SCHEMA['attributes'],
           { type: KEY_PART_TYPE; required: Always; key: true; savedAs: KEY_PART_NAME }
         > extends never

@@ -1,10 +1,9 @@
-import type { O } from 'ts-toolbelt'
-
 // TODO: Remove this import
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import { $attributes, $state, $type } from '../constants/attributeOptions.js'
@@ -58,14 +57,14 @@ export class $MapAttribute<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $MapAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ATTRIBUTES> {
+  ): $MapAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ATTRIBUTES> {
     return new $MapAttribute(overwrite(this[$state], { required: nextRequired }), this[$attributes])
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $MapAttribute<O.Overwrite<STATE, { required: Never }>, $ATTRIBUTES> {
+  optional(): $MapAttribute<Overwrite<STATE, { required: Never }>, $ATTRIBUTES> {
     return this.required('never')
   }
 
@@ -74,7 +73,7 @@ export class $MapAttribute<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $MapAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ATTRIBUTES> {
+  ): $MapAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ATTRIBUTES> {
     return new $MapAttribute(overwrite(this[$state], { hidden: nextHidden }), this[$attributes])
   }
 
@@ -83,7 +82,7 @@ export class $MapAttribute<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $MapAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ATTRIBUTES> {
+  ): $MapAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this[$state], { key: nextKey, required: 'always' }),
       this[$attributes]
@@ -95,7 +94,7 @@ export class $MapAttribute<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $MapAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ATTRIBUTES> {
+  ): $MapAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ATTRIBUTES> {
     return new $MapAttribute(overwrite(this[$state], { savedAs: nextSavedAs }), this[$attributes])
   }
 
@@ -112,7 +111,7 @@ export class $MapAttribute<
       >
     >
   ): $MapAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -146,7 +145,7 @@ export class $MapAttribute<
       ParserInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { fill: false }>
     >
   ): $MapAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -180,7 +179,7 @@ export class $MapAttribute<
       AttributeUpdateItemInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, true>
     >
   ): $MapAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -221,7 +220,7 @@ export class $MapAttribute<
       >
     >
   ): $MapAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: If<
@@ -272,7 +271,7 @@ export class $MapAttribute<
       { mode: 'key'; fill: false }
     >
   ): $MapAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -306,7 +305,7 @@ export class $MapAttribute<
       putItemInput: ParserInput<SCHEMA, { fill: false }>
     ) => ParserInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { fill: false }>
   ): $MapAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -340,7 +339,7 @@ export class $MapAttribute<
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, true>
   ): $MapAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -385,7 +384,7 @@ export class $MapAttribute<
       ParserInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { fill: false }>
     >
   ): $MapAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: If<

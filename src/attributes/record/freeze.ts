@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
@@ -13,16 +11,12 @@ import type { $RecordAttributeState } from './interface.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    RecordAttribute<
-      $RECORD_ATTRIBUTE[$state],
-      FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
-      FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
-    >,
-    never,
-    never
-  >
+  RecordAttribute<
+    $RECORD_ATTRIBUTE[$state],
+    FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
+    FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
+    // '& {}' Improves type display
+  > & {}
 
 type RecordAttributeFreezer = <
   STATE extends SharedAttributeState,

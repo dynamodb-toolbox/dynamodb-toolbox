@@ -1,6 +1,5 @@
 import { DeleteCommand } from '@aws-sdk/lib-dynamodb'
 import type { DeleteCommandInput, DeleteCommandOutput } from '@aws-sdk/lib-dynamodb'
-import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
@@ -9,6 +8,7 @@ import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
+import type { Merge } from '~/types/merge.js'
 
 import { $key, $options } from './constants.js'
 import { deleteItemParams } from './deleteItemParams/index.js'
@@ -26,7 +26,7 @@ type ReturnedAttributes<
 export type DeleteItemResponse<
   ENTITY extends Entity,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
-> = O.Merge<
+> = Merge<
   Omit<DeleteCommandOutput, 'Attributes'>,
   { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> | undefined }
 >

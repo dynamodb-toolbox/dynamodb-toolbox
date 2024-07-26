@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import type {
   Always,
   AnyAttribute,
@@ -18,6 +16,7 @@ import type {
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
 import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
+import type { SelectKeys } from '~/types/selectKeys.js'
 
 import type { ParsedValueDefaultOptions, ParsedValueOptions } from '../types/options.js'
 
@@ -52,14 +51,14 @@ type SchemaParserInput<
     ? OptionalizeUndefinableProperties<
         {
           [KEY in OPTIONS extends { mode: 'key' }
-            ? O.SelectKeys<SCHEMA['attributes'], { key: true }>
+            ? SelectKeys<SCHEMA['attributes'], { key: true }>
             : keyof SCHEMA['attributes'] & string]: AttrParserInput<
             SCHEMA['attributes'][KEY],
             OPTIONS
           >
         },
         // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-        O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
+        SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
       >
     : never
 
@@ -82,14 +81,14 @@ type AttrParserInput<
                   ? OptionalizeUndefinableProperties<
                       {
                         [KEY in OPTIONS extends { mode: 'key' }
-                          ? O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>
+                          ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
                           : keyof ATTRIBUTE['attributes'] & string]: AttrParserInput<
                           ATTRIBUTE['attributes'][KEY],
                           OPTIONS
                         >
                       },
                       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-                      O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+                      SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
                     >
                   : ATTRIBUTE extends RecordAttribute
                     ? {

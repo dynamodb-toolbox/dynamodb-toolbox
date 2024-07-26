@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { $state } from '../constants/attributeOptions.js'
@@ -12,13 +10,11 @@ import { SetAttribute } from './interface.js'
 import type { $SetAttributeState } from './interface.js'
 import type { $SetAttributeElements } from './types.js'
 
-export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    SetAttribute<$SET_ATTRIBUTE[$state], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>,
-    never,
-    never
-  >
+export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> = SetAttribute<
+  $SET_ATTRIBUTE[$state],
+  FreezeAttribute<$SET_ATTRIBUTE[$elements]>
+  // '& {}' Improves type display
+> & {}
 
 type SetAttributeFreezer = <
   STATE extends SharedAttributeState,
