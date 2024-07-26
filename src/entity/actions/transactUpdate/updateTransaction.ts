@@ -1,11 +1,10 @@
-import type { O } from 'ts-toolbelt'
-
 import { EntityParser } from '~/entity/actions/parse/index.js'
 import type { UpdateItemInput } from '~/entity/actions/update/index.js'
 import { parseUpdate } from '~/entity/actions/update/updateExpression/parse.js'
 import { parseUpdateExtension } from '~/entity/actions/update/updateItemParams/extension/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Require } from '~/types/require.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { omit } from '~/utils/omit.js'
 
@@ -46,7 +45,7 @@ export class UpdateTransaction<
     return new UpdateTransaction(this.entity, this[$item], nextOptions)
   }
 
-  params(): O.Required<TransactWriteItem, 'Update'> {
+  params(): Require<TransactWriteItem, 'Update'> {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'UpdateTransaction incomplete: Missing "item" property'

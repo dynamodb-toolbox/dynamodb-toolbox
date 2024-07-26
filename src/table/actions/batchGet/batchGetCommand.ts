@@ -1,5 +1,4 @@
 import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
-import type { U } from 'ts-toolbelt'
 
 import type { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
 import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
@@ -9,6 +8,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
+import type { ListOf } from '~/types/listOf.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
 import { $options, $requests } from './constants.js'
@@ -26,8 +26,8 @@ type RequestEntities<
   REQUESTS extends BatchGetRequestProps[],
   RESULTS extends Entity[] = []
 > = number extends REQUESTS['length']
-  ? U.ListOf<REQUESTS[number]> extends BatchGetRequestProps[]
-    ? RequestEntities<U.ListOf<REQUESTS[number]>>
+  ? ListOf<REQUESTS[number]> extends BatchGetRequestProps[]
+    ? RequestEntities<ListOf<REQUESTS[number]>>
     : never
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
     ? REQUESTS_HEAD extends BatchGetRequestProps

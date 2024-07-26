@@ -27,9 +27,6 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
-  "dependencies": {
-    "ts-toolbelt": "^9.6.0"
-  },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.145.0",
     "@aws-sdk/lib-dynamodb": "^3.245.0",
@@ -46,6 +43,7 @@
     "eslint-plugin-unused-imports": "^3.2.0",
     "prettier": "^3.3.2",
     "ts-node": "^10.9.1",
+    "ts-toolbelt": "^9.6.0",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.1.1",
     "tsd": "^0.23.0",

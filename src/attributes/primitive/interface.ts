@@ -1,11 +1,10 @@
-import type { O } from 'ts-toolbelt'
-
 // TODO: Remove this import
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
+import type { Update } from '~/types/update.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { update } from '~/utils/update.js'
 
@@ -115,7 +114,7 @@ export class $PrimitiveAttribute<
     ...nextEnum: NEXT_ENUM
   ): /**
    * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $PrimitiveAttribute<TYPE, O.Update<STATE, 'enum', NEXT_ENUM>> {
+   */ $PrimitiveAttribute<TYPE, Update<STATE, 'enum', NEXT_ENUM>> {
     return new $PrimitiveAttribute(this[$type], update(this[$state], 'enum', nextEnum))
   }
 

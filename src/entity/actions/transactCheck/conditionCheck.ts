@@ -1,10 +1,9 @@
-import type { O } from 'ts-toolbelt'
-
 import { EntityParser } from '~/entity/actions/parse/index.js'
 import type { KeyInput } from '~/entity/actions/parse/index.js'
 import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Require } from '~/types/require.js'
 
 import { WriteTransaction } from '../transactWrite/transaction.js'
 import type {
@@ -37,7 +36,7 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
     return new ConditionCheck(this.entity, this[$key], nextCondition)
   }
 
-  params(): O.Required<TransactWriteItem, 'ConditionCheck'> {
+  params(): Require<TransactWriteItem, 'ConditionCheck'> {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'ConditionCheck incomplete: Missing "key" property'
