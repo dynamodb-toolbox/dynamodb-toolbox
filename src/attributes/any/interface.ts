@@ -1,10 +1,9 @@
-import type { O } from 'ts-toolbelt'
-
 // TODO: Remove this import
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
@@ -48,14 +47,14 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $AnyAttribute<O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
+  ): $AnyAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
     return new $AnyAttribute(overwrite(this[$state], { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $AnyAttribute<O.Overwrite<STATE, { required: Never }>> {
+  optional(): $AnyAttribute<Overwrite<STATE, { required: Never }>> {
     return this.required('never')
   }
 
@@ -64,7 +63,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $AnyAttribute<O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
+  ): $AnyAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
     return new $AnyAttribute(overwrite(this[$state], { hidden: nextHidden }))
   }
 
@@ -73,7 +72,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $AnyAttribute<O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
+  ): $AnyAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
     return new $AnyAttribute(overwrite(this[$state], { key: nextKey, required: 'always' }))
   }
 
@@ -82,7 +81,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $AnyAttribute<O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
+  ): $AnyAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
     return new $AnyAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
   }
 
@@ -91,7 +90,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   castAs<NEXT_CAST_AS>(
     nextCastAs = undefined as unknown as NEXT_CAST_AS
-  ): $AnyAttribute<O.Overwrite<STATE, { castAs: NEXT_CAST_AS }>> {
+  ): $AnyAttribute<Overwrite<STATE, { castAs: NEXT_CAST_AS }>> {
     return new $AnyAttribute(overwrite(this[$state], { castAs: nextCastAs }))
   }
 
@@ -105,7 +104,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>
     >
   ): $AnyAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -137,7 +136,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
     >
   ): $AnyAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -169,7 +168,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
     >
   ): $AnyAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -205,7 +204,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       >
     >
   ): $AnyAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: If<
@@ -237,7 +236,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>
   ): $AnyAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -269,7 +268,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       putItemInput: ParserInput<SCHEMA, { fill: false }>
     ) => ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
   ): $AnyAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -301,7 +300,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
   ): $AnyAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -341,7 +340,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
     >
   ): $AnyAttribute<
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: If<

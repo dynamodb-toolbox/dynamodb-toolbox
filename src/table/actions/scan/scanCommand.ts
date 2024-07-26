@@ -2,7 +2,6 @@ import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
 import { ScanCommand as _ScanCommand } from '@aws-sdk/lib-dynamodb'
 import type { ScanCommandInput, ScanCommandOutput } from '@aws-sdk/lib-dynamodb'
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
-import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
@@ -11,6 +10,7 @@ import type { Entity } from '~/entity/index.js'
 import type { CountSelectOption } from '~/options/select.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
+import type { Merge } from '~/types/merge.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import { $options } from './constants.js'
@@ -42,7 +42,7 @@ export type ScanResponse<
   TABLE extends Table,
   ENTITIES extends Entity[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES>
-> = O.Merge<
+> = Merge<
   Omit<ScanCommandOutput, 'Items' | '$metadata'>,
   {
     Items?: ReturnedItems<TABLE, ENTITIES, OPTIONS>

@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
@@ -29,13 +27,11 @@ type FreezeElements<
       : never
     : RESULTS
 
-export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    AnyOfAttribute<$ANY_OF_ATTRIBUTE[$state], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>,
-    never,
-    never
-  >
+export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> = AnyOfAttribute<
+  $ANY_OF_ATTRIBUTE[$state],
+  FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>
+  // '& {}' Improves type display
+> & {}
 
 type AnyOfAttributeFreezer = <
   STATE extends SharedAttributeState,

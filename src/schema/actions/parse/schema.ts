@@ -1,9 +1,8 @@
-import type { O } from 'ts-toolbelt'
-
 import type { AnyAttribute, Attribute, Never } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { OptionalizeUndefinableProperties } from '~/types/index.js'
+import type { SelectKeys } from '~/types/selectKeys.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -25,7 +24,7 @@ export type SchemaParsedValue<
   : OptionalizeUndefinableProperties<
       {
         [KEY in OPTIONS extends { mode: 'key' }
-          ? O.SelectKeys<SCHEMA['attributes'], { key: true }>
+          ? SelectKeys<SCHEMA['attributes'], { key: true }>
           : keyof SCHEMA['attributes'] & string as OPTIONS extends { transform: false }
           ? KEY
           : SCHEMA['attributes'][KEY] extends { savedAs: string }
@@ -33,7 +32,7 @@ export type SchemaParsedValue<
             : KEY]: AttrParsedValue<SCHEMA['attributes'][KEY], OPTIONS>
       },
       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-      O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
+      SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
     >
 
 export function* schemaParser<

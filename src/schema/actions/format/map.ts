@@ -1,9 +1,8 @@
-import type { O } from 'ts-toolbelt'
-
 import type { AnyAttribute, MapAttribute, Never } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type { If, OptionalizeUndefinableProperties } from '~/types/index.js'
+import type { SelectKeys } from '~/types/selectKeys.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { formatAttrRawValue } from './attribute.js'
@@ -35,9 +34,9 @@ export type MapAttrFormattedValue<
         | (OPTIONS extends { partial: true }
             ? {
                 // Keep only non-hidden attributes
-                [KEY in O.SelectKeys<
+                [KEY in SelectKeys<
                   // Pick only filtered keys
-                  O.Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
+                  Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
                   { hidden: false }
                 >]?: AttrFormattedValue<
                   ATTRIBUTE['attributes'][KEY],
@@ -59,9 +58,9 @@ export type MapAttrFormattedValue<
             : OptionalizeUndefinableProperties<
                 {
                   // Keep only non-hidden attributes
-                  [KEY in O.SelectKeys<
+                  [KEY in SelectKeys<
                     // Pick only filtered keys
-                    O.Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
+                    Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
                     { hidden: false }
                   >]: AttrFormattedValue<
                     ATTRIBUTE['attributes'][KEY],
@@ -81,7 +80,7 @@ export type MapAttrFormattedValue<
                   >
                 },
                 // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-                O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+                SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
               >)
 
 type MapAttrRawValueFormatter = <

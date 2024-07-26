@@ -1,6 +1,5 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import type { UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk/lib-dynamodb'
-import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
@@ -14,6 +13,7 @@ import type {
   UpdatedNewReturnValuesOption,
   UpdatedOldReturnValuesOption
 } from '~/options/returnValues.js'
+import type { Merge } from '~/types/merge.js'
 
 import { $item, $options } from './constants.js'
 import type { UpdateItemOptions } from './options.js'
@@ -45,7 +45,7 @@ type ReturnedAttributes<
 export type UpdateItemResponse<
   ENTITY extends Entity,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
-> = O.Merge<
+> = Merge<
   Omit<UpdateCommandOutput, 'Attributes'>,
   { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
 >

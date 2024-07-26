@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { $state } from '../constants/attributeOptions.js'
@@ -12,13 +10,11 @@ import { ListAttribute } from './interface.js'
 import type { $ListAttributeState } from './interface.js'
 import type { $ListAttributeElements } from './types.js'
 
-export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    ListAttribute<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements]>>,
-    never,
-    never
-  >
+export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> = ListAttribute<
+  $LIST_ATTRIBUTE[$state],
+  FreezeAttribute<$LIST_ATTRIBUTE[$elements]>
+  // '& {}' Improves type display
+> & {}
 
 type ListAttributeFreezer = <
   STATE extends SharedAttributeState,

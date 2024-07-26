@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
@@ -8,19 +6,11 @@ import type { $state, $type } from '../constants/attributeOptions.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import { PrimitiveAttribute } from './interface.js'
 import type { $PrimitiveAttributeState } from './interface.js'
-import type {
-  PrimitiveAttributeEnumValues,
-  PrimitiveAttributeState,
-  PrimitiveAttributeType
-} from './types.js'
+import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types.js'
 
 export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
-  // Applying void O.Update improves type display
-  O.Update<
-    PrimitiveAttribute<$PRIMITIVE_ATTRIBUTE[$type], $PRIMITIVE_ATTRIBUTE[$state]>,
-    never,
-    never
-  >
+  // '& {}' Improves type display
+  PrimitiveAttribute<$PRIMITIVE_ATTRIBUTE[$type], $PRIMITIVE_ATTRIBUTE[$state]> & {}
 
 type PrimitiveAttributeFreezer = <
   TYPE extends PrimitiveAttributeType,
@@ -41,7 +31,7 @@ type PrimitiveAttributeFreezer = <
  */
 export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
   TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState
+  STATE extends PrimitiveAttributeState<TYPE>
 >(
   type: TYPE,
   state: STATE,
@@ -51,7 +41,7 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
 
   const typeValidator = validatorsByPrimitiveType[type]
 
-  const { enum: enumValues, ...restState } = state
+  const { enum: enumValues } = state
   enumValues?.forEach(enumValue => {
     const isEnumValueValid = typeValidator(enumValue)
     if (!isEnumValueValid) {
@@ -89,10 +79,5 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     }
   }
 
-  return new PrimitiveAttribute({
-    path,
-    type,
-    enum: state.enum as Extract<STATE['enum'], PrimitiveAttributeEnumValues<TYPE>>,
-    ...restState
-  })
+  return new PrimitiveAttribute({ path, type, ...state })
 }

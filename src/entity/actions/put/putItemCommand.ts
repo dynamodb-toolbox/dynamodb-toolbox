@@ -1,6 +1,5 @@
 import { PutCommand } from '@aws-sdk/lib-dynamodb'
 import type { PutCommandInput, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
-import type { O } from 'ts-toolbelt'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
@@ -8,6 +7,7 @@ import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
+import type { Merge } from '~/types/merge.js'
 
 import { $item, $options } from './constants.js'
 import type { PutItemOptions } from './options.js'
@@ -26,7 +26,7 @@ type ReturnedAttributes<
 export type PutItemResponse<
   ENTITY extends Entity,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
-> = O.Merge<
+> = Merge<
   Omit<PutCommandOutput, 'Attributes'>,
   { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
 >

@@ -5,6 +5,7 @@ import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { update } from '~/utils/update.js'
 
@@ -61,14 +62,14 @@ export class $PrimitiveAttribute<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
+  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
     return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { required: Never }>> {
+  optional(): $PrimitiveAttribute<TYPE, Overwrite<STATE, { required: Never }>> {
     return this.required('never')
   }
 
@@ -77,7 +78,7 @@ export class $PrimitiveAttribute<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
+  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
     return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { hidden: nextHidden }))
   }
 
@@ -86,7 +87,7 @@ export class $PrimitiveAttribute<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
+  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
     return new $PrimitiveAttribute(
       this[$type],
       overwrite(this[$state], { key: nextKey, required: 'always' })
@@ -98,7 +99,7 @@ export class $PrimitiveAttribute<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
+  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
     return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { savedAs: nextSavedAs }))
   }
 
@@ -113,7 +114,7 @@ export class $PrimitiveAttribute<
   enum<NEXT_ENUM extends ResolvePrimitiveAttributeType<TYPE>[]>(
     ...nextEnum: NEXT_ENUM
   ): /**
-   * @debt type "O.Overwrite widens NEXT_ENUM type to its type constraint for some reason"
+   * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
    */ $PrimitiveAttribute<TYPE, O.Update<STATE, 'enum', NEXT_ENUM>> {
     return new $PrimitiveAttribute(this[$type], update(this[$state], 'enum', nextEnum))
   }
@@ -129,7 +130,7 @@ export class $PrimitiveAttribute<
     constant: CONSTANT
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         enum: [CONSTANT]
@@ -174,7 +175,7 @@ export class $PrimitiveAttribute<
     >
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -208,7 +209,7 @@ export class $PrimitiveAttribute<
     >
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -245,7 +246,7 @@ export class $PrimitiveAttribute<
     >
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: {
@@ -289,7 +290,7 @@ export class $PrimitiveAttribute<
     >
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         defaults: If<
@@ -334,7 +335,7 @@ export class $PrimitiveAttribute<
       >,
       ResolvePrimitiveAttributeType<TYPE>
     >
-  ): $PrimitiveAttribute<TYPE, O.Overwrite<STATE, { transform: unknown }>> {
+  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { transform: unknown }>> {
     return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { transform: transformer }))
   }
 
@@ -352,7 +353,7 @@ export class $PrimitiveAttribute<
     >
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -389,7 +390,7 @@ export class $PrimitiveAttribute<
     >
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -426,7 +427,7 @@ export class $PrimitiveAttribute<
     >
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: {
@@ -471,7 +472,7 @@ export class $PrimitiveAttribute<
     >
   ): $PrimitiveAttribute<
     TYPE,
-    O.Overwrite<
+    Overwrite<
       STATE,
       {
         links: If<

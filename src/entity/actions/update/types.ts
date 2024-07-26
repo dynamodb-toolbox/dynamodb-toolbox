@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import type {
   Always,
   AnyAttribute,
@@ -27,6 +25,7 @@ import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
 import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
+import type { SelectKeys } from '~/types/selectKeys.js'
 
 import type {
   $ADD,
@@ -154,7 +153,7 @@ export type UpdateItemInput<
             >
           },
           // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-          O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
+          SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
         >
       : SCHEMA extends Entity
         ? UpdateItemInput<SCHEMA['schema'], REQUIRED_DEFAULTS>
@@ -192,7 +191,7 @@ type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute e
                         >
                       },
                       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-                      O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+                      SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
                     >
                   : ATTRIBUTE extends RecordAttribute
                     ? {
@@ -326,7 +325,7 @@ export type AttributeUpdateItemInput<
                               >
                             },
                             // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-                            O.SelectKeys<
+                            SelectKeys<
                               ATTRIBUTE['attributes'],
                               AnyAttribute & { required: AtLeastOnce | Never }
                             >

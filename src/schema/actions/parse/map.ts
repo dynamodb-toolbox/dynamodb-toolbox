@@ -1,5 +1,3 @@
-import type { O } from 'ts-toolbelt'
-
 import type {
   AnyAttribute,
   Attribute,
@@ -10,6 +8,7 @@ import type {
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, OptionalizeUndefinableProperties } from '~/types/index.js'
+import type { SelectKeys } from '~/types/selectKeys.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -33,7 +32,7 @@ export type MapAttrParsedValue<
       | OptionalizeUndefinableProperties<
           {
             [KEY in OPTIONS extends { mode: 'key' }
-              ? O.SelectKeys<ATTRIBUTE['attributes'], { key: true }>
+              ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
               : keyof ATTRIBUTE['attributes'] & string as OPTIONS extends { transform: false }
               ? KEY
               : ATTRIBUTE['attributes'][KEY] extends { savedAs: string }
@@ -41,7 +40,7 @@ export type MapAttrParsedValue<
                 : KEY]: AttrParsedValue<ATTRIBUTE['attributes'][KEY], OPTIONS>
           },
           // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-          O.SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+          SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
         >
       | ExtendedValue<NonNullable<OPTIONS['extension']>, 'map'>
 

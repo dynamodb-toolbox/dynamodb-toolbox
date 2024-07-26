@@ -1,10 +1,9 @@
-import type { O } from 'ts-toolbelt'
-
 import type { AnyAttribute, Never } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { OptionalizeUndefinableProperties } from '~/types/index.js'
+import type { SelectKeys } from '~/types/selectKeys.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { formatAttrRawValue } from './attribute.js'
@@ -34,9 +33,9 @@ export type SchemaFormattedValue<
     : OPTIONS extends { partial: true }
       ? {
           // Keep only non-hidden attributes
-          [KEY in O.SelectKeys<
+          [KEY in SelectKeys<
             // Pick only filtered keys
-            O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
+            Pick<SCHEMA['attributes'], MATCHING_KEYS>,
             { hidden: false }
           >]?: AttrFormattedValue<
             SCHEMA['attributes'][KEY],
@@ -55,9 +54,9 @@ export type SchemaFormattedValue<
       : OptionalizeUndefinableProperties<
           {
             // Keep only non-hidden attributes
-            [KEY in O.SelectKeys<
+            [KEY in SelectKeys<
               // Pick only filtered keys
-              O.Pick<SCHEMA['attributes'], MATCHING_KEYS>,
+              Pick<SCHEMA['attributes'], MATCHING_KEYS>,
               { hidden: false }
             >]: AttrFormattedValue<
               SCHEMA['attributes'][KEY],
@@ -74,7 +73,7 @@ export type SchemaFormattedValue<
             >
           },
           // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-          O.SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
+          SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
         >
 
 type SchemaRawValueFormatter = <SCHEMA extends Schema, OPTIONS extends FormatOptions<SCHEMA>>(
