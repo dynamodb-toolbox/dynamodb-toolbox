@@ -1,5 +1,3 @@
-import type { A } from 'ts-toolbelt'
-
 import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from '~/attributes/index.js'
 import type {
   BeginsWithOperator,
@@ -9,6 +7,7 @@ import type {
 import type { IndexNames, IndexSchema } from '~/table/actions/indexes.js'
 import type { Table } from '~/table/index.js'
 import type { GlobalIndex, IndexableKeyType, Key, LocalIndex } from '~/table/types/index.js'
+import type { ComputeDeep } from '~/types/compute.js'
 
 type QueryOperator = RangeOperator | BeginsWithOperator | BetweenOperator
 export const queryOperatorSet = new Set<QueryOperator>([
@@ -41,7 +40,7 @@ type SecondaryIndexQuery<
   TABLE extends Table,
   INDEX_NAME extends IndexNames<TABLE>,
   INDEX_SCHEMA extends IndexSchema<TABLE> = IndexSchema<TABLE, INDEX_NAME>
-> = A.Compute<
+> = ComputeDeep<
   { index: INDEX_NAME } & (INDEX_SCHEMA extends GlobalIndex
     ? {
         partition: ResolvePrimitiveAttribute<
@@ -64,7 +63,7 @@ type SecondaryIndexQueries<TABLE extends Table> =
       : never
     : never
 
-type PrimaryIndexQuery<TABLE extends Table> = A.Compute<
+type PrimaryIndexQuery<TABLE extends Table> = ComputeDeep<
   {
     index?: never
   } & (Key extends TABLE['sortKey']

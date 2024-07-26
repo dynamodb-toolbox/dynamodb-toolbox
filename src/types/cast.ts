@@ -1,0 +1,1 @@
+export type Cast<VALUE, CONSTRAINT> = VALUE extends CONSTRAINT ? VALUE : CONSTRAINT

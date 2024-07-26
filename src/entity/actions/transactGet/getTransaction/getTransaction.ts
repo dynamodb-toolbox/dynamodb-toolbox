@@ -1,10 +1,9 @@
-import type { O } from 'ts-toolbelt'
-
 import { EntityParser } from '~/entity/actions/parse/index.js'
 import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { NonNull } from '~/types/nonNull.js'
 
 import type { TransactGetItem } from '../transaction.js'
 import { $key, $options } from './constants.js'
@@ -36,7 +35,7 @@ export class GetTransaction<
     return new GetTransaction(this.entity, this[$key], nextOptions)
   }
 
-  params(): O.NonNullable<TransactGetItem, 'Get'> {
+  params(): NonNull<TransactGetItem, 'Get'> {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'GetTransaction incomplete: Missing "key" property'

@@ -1,10 +1,10 @@
 import type { AttributeValue } from '@aws-sdk/client-dynamodb'
-import type { O } from 'ts-toolbelt'
 
 import { EntityParser } from '~/entity/actions/parse/index.js'
 import type { PutItemInput } from '~/entity/actions/put/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Require } from '~/types/require.js'
 
 import { WriteTransaction } from '../transactWrite/transaction.js'
 import type {
@@ -43,7 +43,7 @@ export class PutTransaction<
     return new PutTransaction(this.entity, this[$item], nextOptions)
   }
 
-  params(): O.Required<TransactWriteItem, 'Put'> {
+  params(): Require<TransactWriteItem, 'Put'> {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'PutTransaction incomplete: Missing "item" property'

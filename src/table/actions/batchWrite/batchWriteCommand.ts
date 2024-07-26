@@ -1,5 +1,4 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
-import type { U } from 'ts-toolbelt'
 
 import type { BatchDeleteRequest } from '~/entity/actions/batchDelete/index.js'
 import type { BatchPutRequest } from '~/entity/actions/batchPut/index.js'
@@ -7,6 +6,7 @@ import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
+import type { ListOf } from '~/types/listOf.js'
 
 import { $requests } from './constants.js'
 
@@ -16,8 +16,8 @@ type RequestEntities<
   REQUESTS extends BatchWriteRequestProps[],
   RESULTS extends Entity[] = []
 > = number extends REQUESTS['length']
-  ? U.ListOf<REQUESTS[number]> extends BatchWriteRequestProps[]
-    ? RequestEntities<U.ListOf<REQUESTS[number]>>
+  ? ListOf<REQUESTS[number]> extends BatchWriteRequestProps[]
+    ? RequestEntities<ListOf<REQUESTS[number]>>
     : never
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
     ? REQUESTS_HEAD extends BatchWriteRequestProps
