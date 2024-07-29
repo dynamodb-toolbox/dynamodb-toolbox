@@ -110,5 +110,3 @@ export class UpdateItemCommand<
     }
   }
 }
-
-export type UpdateItemCommandClass = typeof UpdateItemCommand

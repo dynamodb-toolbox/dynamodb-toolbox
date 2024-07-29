@@ -120,7 +120,6 @@ export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'
 
 export { DynamoDBToolboxError } from './errors/index.js'
-export { mockEntity } from './test-tools/index.js'
 
 // transformers
 export { prefix } from './transformers/prefix.js'

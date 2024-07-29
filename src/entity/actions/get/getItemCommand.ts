@@ -88,5 +88,3 @@ export class GetItemCommand<
     }
   }
 }
-
-export type GetItemCommandClass = typeof GetItemCommand

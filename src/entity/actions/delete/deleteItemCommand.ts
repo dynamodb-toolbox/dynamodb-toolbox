@@ -87,5 +87,3 @@ export class DeleteItemCommand<
     }
   }
 }
-
-export type DeleteItemCommandClass = typeof DeleteItemCommand

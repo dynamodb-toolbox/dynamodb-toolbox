@@ -172,5 +172,3 @@ export class ScanCommand<
     }
   }
 }
-
-export type ScanCommandClass = typeof ScanCommand

@@ -87,5 +87,3 @@ export class PutItemCommand<
     }
   }
 }
-
-export type PutItemCommandClass = typeof PutItemCommand
