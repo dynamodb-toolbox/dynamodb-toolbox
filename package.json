@@ -275,6 +275,11 @@
       "require": "./dist/cjs/entity/actions/format/index.js",
       "types": "./dist/types/entity/actions/format/index.d.ts"
     },
+    "./entity/actions/spy": {
+      "import": "./dist/esm/entity/actions/spy/index.js",
+      "require": "./dist/cjs/entity/actions/spy/index.js",
+      "types": "./dist/types/entity/actions/spy/index.d.ts"
+    },
     "./errors": {
       "import": "./dist/esm/errors/index.js",
       "require": "./dist/cjs/errors/index.js",
