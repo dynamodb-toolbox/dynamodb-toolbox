@@ -3,8 +3,10 @@ import type { PutCommandInput, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
+import { $sentArgs } from '~/entity/constants.js'
+import { sender } from '~/entity/decorator.js'
+import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
-import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 import type { Merge } from '~/types/merge.js'
@@ -32,9 +34,12 @@ export type PutItemResponse<
 >
 
 export class PutItemCommand<
-  ENTITY extends Entity = Entity,
-  OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
-> extends EntityAction<ENTITY> {
+    ENTITY extends Entity = Entity,
+    OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
+  >
+  extends EntityAction<ENTITY>
+  implements EntitySendableAction<ENTITY>
+{
   static actionName = 'put' as const;
 
   [$item]?: PutItemInput<ENTITY>;
@@ -56,16 +61,23 @@ export class PutItemCommand<
     return new PutItemCommand(this.entity, this[$item], nextOptions)
   }
 
-  params(): PutCommandInput {
+  [$sentArgs](): [PutItemInput<ENTITY>, PutItemOptions<ENTITY>] {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'PutItemCommand incomplete: Missing "item" property'
       })
     }
 
-    return putItemParams(this.entity, this[$item], this[$options])
+    return [this[$item], this[$options]]
   }
 
+  params(): PutCommandInput {
+    const [item, options] = this[$sentArgs]()
+
+    return putItemParams(this.entity, item, options)
+  }
+
+  @sender()
   async send(): Promise<PutItemResponse<ENTITY, OPTIONS>> {
     const putItemParams = this.params()
 

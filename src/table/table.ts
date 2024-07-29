@@ -63,10 +63,10 @@ export class Table<
     }
   }
 
-  build<TABLE_COMMAND_CLASS extends TableAction<this> = TableAction<this>>(
-    commandClass: new (table: this) => TABLE_COMMAND_CLASS
-  ): TABLE_COMMAND_CLASS {
-    return new commandClass(this)
+  build<ACTION extends TableAction<this> = TableAction<this>>(
+    Action: new (table: this) => ACTION
+  ): ACTION {
+    return new Action(this)
   }
 
   getDocumentClient = (): DynamoDBDocumentClient => {
