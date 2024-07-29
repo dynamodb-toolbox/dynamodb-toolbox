@@ -4,6 +4,7 @@
     "moduleResolution": "NodeNext",
     "baseUrl": "src",
     "target": "es2019",
+    "experimentalDecorators": true,
     "rootDir": "src",
     "outDir": "dist/types",
     "declaration": true,

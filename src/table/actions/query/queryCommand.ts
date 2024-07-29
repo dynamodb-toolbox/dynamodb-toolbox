@@ -210,5 +210,3 @@ export class QueryCommand<
     }
   }
 }
-
-export type QueryCommandClass = typeof QueryCommand

@@ -54,5 +54,3 @@ export class GetTransaction<
     }
   }
 }
-
-export type GetTransactionClass = typeof GetTransaction

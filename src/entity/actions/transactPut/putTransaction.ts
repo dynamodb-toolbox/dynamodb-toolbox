@@ -62,5 +62,3 @@ export class PutTransaction<
     }
   }
 }
-
-export type PutTransactionClass = typeof PutTransaction

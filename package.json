@@ -275,10 +275,10 @@
       "require": "./dist/cjs/entity/actions/format/index.js",
       "types": "./dist/types/entity/actions/format/index.d.ts"
     },
-    "./test-tools": {
-      "import": "./dist/esm/test-tools/index.js",
-      "require": "./dist/cjs/test-tools/index.js",
-      "types": "./dist/types/test-tools/index.d.ts"
+    "./entity/actions/spy": {
+      "import": "./dist/esm/entity/actions/spy/index.js",
+      "require": "./dist/cjs/entity/actions/spy/index.js",
+      "types": "./dist/types/entity/actions/spy/index.d.ts"
     },
     "./errors": {
       "import": "./dist/esm/errors/index.js",

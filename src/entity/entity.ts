@@ -5,6 +5,7 @@ import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 import type { Table } from '~/table/index.js'
 import type { If } from '~/types/if.js'
 
+import { $interceptor, $sentArgs } from './constants.js'
 import { addInternalAttributes, doesSchemaValidateTableSchema } from './utils/index.js'
 import type {
   NarrowTimestampsOptions,
@@ -38,19 +39,10 @@ export class Entity<
   // any is needed for contravariance
   public computeKey?: (
     keyInput: Schema extends SCHEMA ? any : ParserInput<SCHEMA, { mode: 'key'; fill: false }>
-  ) => PrimaryKey<TABLE>
+  ) => PrimaryKey<TABLE>;
 
-  /**
-   * Define an Entity for a given table
-   *
-   * @param name string
-   * @param table Table
-   * @param schema Schema
-   * @param computeKey _(optional)_ Transforms key input to primary key
-   * @param putDefaults _(optional)_ Computes computed defaults
-   * @param timestamps _(optional)_ Activates internal `created` & `modified` attributes (defaults to `true`)
-   * @param entityAttributeName _(optional)_ Renames internal entity name string attribute (defaults to `entity`)
-   */
+  [$interceptor]?: (action: EntitySendableAction) => any
+
   constructor({
     name,
     table,
@@ -94,10 +86,10 @@ export class Entity<
     this.computeKey = computeKey as any
   }
 
-  build<ACTION_CLASS extends EntityAction<this> = EntityAction<this>>(
-    actionClass: new (entity: this) => ACTION_CLASS
-  ): ACTION_CLASS {
-    return new actionClass(this)
+  build<ACTION extends EntityAction<this> = EntityAction<this>>(
+    Action: new (entity: this) => ACTION
+  ): ACTION {
+    return new Action(this)
   }
 }
 
@@ -105,4 +97,9 @@ export class EntityAction<ENTITY extends Entity = Entity> {
   static actionName: string
 
   constructor(public entity: ENTITY) {}
+}
+
+export interface EntitySendableAction<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
+  [$sentArgs](): any[]
+  send(): Promise<any>
 }

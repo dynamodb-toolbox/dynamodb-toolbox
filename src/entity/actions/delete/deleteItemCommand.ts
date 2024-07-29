@@ -4,8 +4,10 @@ import type { DeleteCommandInput, DeleteCommandOutput } from '@aws-sdk/lib-dynam
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
 import type { KeyInput } from '~/entity/actions/parse/index.js'
+import { $sentArgs } from '~/entity/constants.js'
+import { sender } from '~/entity/decorator.js'
+import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
-import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 import type { Merge } from '~/types/merge.js'
@@ -32,13 +34,16 @@ export type DeleteItemResponse<
 >
 
 export class DeleteItemCommand<
-  ENTITY extends Entity = Entity,
-  OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
-> extends EntityAction<ENTITY> {
+    ENTITY extends Entity = Entity,
+    OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
+  >
+  extends EntityAction<ENTITY>
+  implements EntitySendableAction<ENTITY>
+{
   static actionName = 'delete' as const;
 
   [$key]?: KeyInput<ENTITY>;
-  [$options]?: OPTIONS
+  [$options]: OPTIONS
 
   constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
@@ -56,16 +61,21 @@ export class DeleteItemCommand<
     return new DeleteItemCommand(this.entity, this[$key], nextOptions)
   }
 
-  params(): DeleteCommandInput {
+  [$sentArgs](): [KeyInput<ENTITY>, DeleteItemOptions<ENTITY>] {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'DeleteItemCommand incomplete: Missing "key" property'
       })
     }
 
-    return deleteItemParams(this.entity, this[$key], this[$options])
+    return [this[$key], this[$options]]
   }
 
+  params(): DeleteCommandInput {
+    return deleteItemParams(this.entity, ...this[$sentArgs]())
+  }
+
+  @sender()
   async send(): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
     const deleteItemParams = this.params()
 
@@ -87,5 +97,3 @@ export class DeleteItemCommand<
     }
   }
 }
-
-export type DeleteItemCommandClass = typeof DeleteItemCommand

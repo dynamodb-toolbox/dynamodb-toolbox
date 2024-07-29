@@ -4,8 +4,10 @@ import type { GetCommandInput, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
 import type { KeyInput } from '~/entity/actions/parse/index.js'
+import { $sentArgs } from '~/entity/constants.js'
+import { sender } from '~/entity/decorator.js'
+import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
-import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Merge } from '~/types/merge.js'
 
@@ -31,9 +33,12 @@ export type GetItemResponse<
 >
 
 export class GetItemCommand<
-  ENTITY extends Entity = Entity,
-  OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
-> extends EntityAction<ENTITY> {
+    ENTITY extends Entity = Entity,
+    OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
+  >
+  extends EntityAction<ENTITY>
+  implements EntitySendableAction<ENTITY>
+{
   static actionName = 'get' as const;
 
   [$key]?: KeyInput<ENTITY>;
@@ -55,16 +60,21 @@ export class GetItemCommand<
     return new GetItemCommand(this.entity, this[$key], nextOptions)
   }
 
-  params(): GetCommandInput {
+  [$sentArgs](): [KeyInput<ENTITY>, GetItemOptions<ENTITY>] {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'GetItemCommand incomplete: Missing "key" property'
       })
     }
 
-    return getItemParams(this.entity, this[$key], this[$options])
+    return [this[$key], this[$options]]
   }
 
+  params(): GetCommandInput {
+    return getItemParams(this.entity, ...this[$sentArgs]())
+  }
+
+  @sender()
   async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
@@ -88,5 +98,3 @@ export class GetItemCommand<
     }
   }
 }
-
-export type GetItemCommandClass = typeof GetItemCommand

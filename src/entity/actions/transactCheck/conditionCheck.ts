@@ -61,5 +61,3 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
     }
   }
 }
-
-export type ConditionCheckClass = typeof ConditionCheck

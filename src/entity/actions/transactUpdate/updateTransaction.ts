@@ -91,5 +91,3 @@ export class UpdateTransaction<
     }
   }
 }
-
-export type UpdateTransactionClass = typeof UpdateTransaction

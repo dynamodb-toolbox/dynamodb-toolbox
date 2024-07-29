@@ -9,5 +9,6 @@
   "importOrder": ["^~/(.*)$", "^[./]"],
   "importOrderSortSpecifiers": true,
   "importOrderGroupNamespaceSpecifiers": true,
-  "importOrderSeparation": true
+  "importOrderSeparation": true,
+  "importOrderParserPlugins": ["typescript", "decorators"]
 }

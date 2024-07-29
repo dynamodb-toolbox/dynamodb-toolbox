@@ -3,8 +3,10 @@ import type { UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk/lib-dynam
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
+import { $sentArgs } from '~/entity/constants.js'
+import { sender } from '~/entity/decorator.js'
+import type { Entity, EntitySendableAction } from '~/entity/entity'
 import { EntityAction } from '~/entity/index.js'
-import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
   AllNewReturnValuesOption,
@@ -51,9 +53,12 @@ export type UpdateItemResponse<
 >
 
 export class UpdateItemCommand<
-  ENTITY extends Entity = Entity,
-  OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
-> extends EntityAction<ENTITY> {
+    ENTITY extends Entity = Entity,
+    OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
+  >
+  extends EntityAction<ENTITY>
+  implements EntitySendableAction<ENTITY>
+{
   static actionName = 'update' as const;
 
   [$item]?: UpdateItemInput<ENTITY>;
@@ -75,16 +80,23 @@ export class UpdateItemCommand<
     return new UpdateItemCommand(this.entity, this[$item], nextOptions)
   }
 
-  params(): UpdateCommandInput {
+  [$sentArgs](): [UpdateItemInput<ENTITY>, UpdateItemOptions<ENTITY>] {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'UpdateItemCommand incomplete: Missing "item" property'
       })
     }
 
-    return updateItemParams(this.entity, this[$item], this[$options])
+    return [this[$item], this[$options]]
   }
 
+  params(): UpdateCommandInput {
+    const [item, options] = this[$sentArgs]()
+
+    return updateItemParams(this.entity, item, options)
+  }
+
+  @sender()
   async send(): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
@@ -110,5 +122,3 @@ export class UpdateItemCommand<
     }
   }
 }
-
-export type UpdateItemCommandClass = typeof UpdateItemCommand

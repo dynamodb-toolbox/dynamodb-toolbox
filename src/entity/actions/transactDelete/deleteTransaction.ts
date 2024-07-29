@@ -60,5 +60,3 @@ export class DeleteTransaction<
     }
   }
 }
-
-export type DeleteTransactionClass = typeof DeleteTransaction
