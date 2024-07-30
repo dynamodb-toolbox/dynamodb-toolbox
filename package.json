@@ -185,6 +185,11 @@
       "require": "./dist/cjs/table/actions/parsePrimaryKey/index.js",
       "types": "./dist/types/table/actions/parsePrimaryKey/index.d.ts"
     },
+    "./table/actions/spy": {
+      "import": "./dist/esm/table/actions/spy/index.js",
+      "require": "./dist/cjs/table/actions/spy/index.js",
+      "types": "./dist/types/table/actions/spy/index.d.ts"
+    },
     "./entity": {
       "import": "./dist/esm/entity/index.js",
       "require": "./dist/cjs/entity/index.js",
