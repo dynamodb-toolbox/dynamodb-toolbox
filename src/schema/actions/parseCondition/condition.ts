@@ -99,8 +99,9 @@ export type PrimitiveAttributeCondition<
     | (ATTRIBUTE extends PrimitiveAttribute<'string'>
         ? StringAttributeCondition<COMPARED_ATTRIBUTE_PATH>
         : never)
-    // TODO: This is a bit annoying but PrimitiveAttribute is not the union of primitive Attributes (BooleanAttribute, StringAttribute etc...)
-    // So we have to do this for general case:
+    /**
+     * @debt type "Annoying: PrimitiveAttribute is not the union of primitive Attributes (BooleanAttribute, StringAttribute etc...). So we have to do this for general case."
+     */
     | (PrimitiveAttribute extends ATTRIBUTE
         ? RangeCondition<SortableAttribute, string> | StringAttributeCondition<string>
         : never)
@@ -119,7 +120,6 @@ export type ListAttributeCondition<
   ATTRIBUTE extends ListAttribute,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
-  // TODO: Does `contain` work on non-primitive attributes?
   | (ATTRIBUTE['elements'] extends infer ELEMENTS
       ? ELEMENTS extends PrimitiveAttribute
         ? AttrOrSize<ATTRIBUTE_PATH> & {

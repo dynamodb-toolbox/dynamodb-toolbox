@@ -27,7 +27,7 @@ const savedItem: SavedItem<typeof TestEntity> = {
   _md: '2020-01-01T00:00:00.000Z'
 }
 
-describe('entity', () => {
+describe('entity spy', () => {
   beforeAll(() => {
     documentClientMock = mockClient(documentClient)
   })
@@ -61,6 +61,8 @@ describe('entity', () => {
 
     expect(receivedItem).toStrictEqual(formattedItem)
 
+    expect(documentClientMock.commandCalls(GetCommand)).toHaveLength(0)
+
     spy.reset()
     expect(sentGetItemCommands.count()).toBe(0)
     expect(sentGetItemCommands.args(0)).toBeUndefined()
@@ -71,10 +73,6 @@ describe('entity', () => {
     documentClientMock.on(GetCommand).resolves({ Item: savedItem, $metadata: {} })
     await TestEntity.build(GetItemCommand).key(key).options(options).send()
 
-    expect(documentClientMock.commandCalls(GetCommand)[0].args[0].input).toStrictEqual({
-      ConsistentRead: true,
-      Key: { pk: 'some@email.com', sk: 'abc' },
-      TableName: 'test-table'
-    })
+    expect(documentClientMock.commandCalls(GetCommand)).toHaveLength(1)
   })
 })

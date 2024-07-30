@@ -112,7 +112,9 @@ export class BatchGetCommand<
     let projectionExpression: string | undefined = undefined
     const expressionAttributeNames: Record<string, string> = {}
 
-    // TODO: For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist.
+    /**
+     * @debt feature "For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist."
+     */
     if (attributes !== undefined) {
       const { entityAttributeName } = firstRequestEntity
 

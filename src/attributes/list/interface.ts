@@ -1,4 +1,6 @@
-// TODO: Remove this import
+/**
+ * @debt circular "Remove & prevent imports from entity to schema"
+ */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'

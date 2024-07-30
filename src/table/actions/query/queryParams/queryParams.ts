@@ -143,7 +143,9 @@ export const queryParams: QueryParamsGetter = <
       Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
       filterExpressions.push(filterExpression)
 
-      // TODO: For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist.
+      /**
+       * @debt feature "For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist."
+       */
       if (attributes !== undefined) {
         const { entityAttributeName } = entity
 

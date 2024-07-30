@@ -4,7 +4,7 @@ import { schema } from '~/schema/index.js'
 import { PathParser } from './pathParser.js'
 
 /**
- * @debt TODO "validate the attr value is a string"
+ * @debt test "validate the attr value is a string"
  */
 
 describe('parseProjection', () => {
