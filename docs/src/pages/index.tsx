@@ -322,7 +322,7 @@ const Home = (): JSX.Element => (
                   DynamoDB
                 </b>{' '}
                 requests for you. It makes your code{' '}
-                <b>clearer</b>, more <b>consise</b> and{' '}
+                <b>clearer</b>, more <b>concise</b> and{' '}
                 <b>maintainable</b>.
               </p>
               <p className="text-sm dark:text-gray-200 leading-6">
