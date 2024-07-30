@@ -48,7 +48,9 @@ export class UpdateExpressionParser {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
-      // TODO: Fix this cast
+      /**
+       * @debt type "Fix this cast"
+       */
       this.set.appendValidAttributeValue(input[$SET])
       return
     }
@@ -68,7 +70,9 @@ export class UpdateExpressionParser {
     }
 
     if (isSumUpdate(input)) {
-      // TODO: Fix this cast
+      /**
+       * @debt type "Fix this cast"
+       */
       const [left, right] = input[$SUM] as [
         AttributeValue<UpdateItemInputExtension>,
         AttributeValue<UpdateItemInputExtension>
@@ -83,7 +87,9 @@ export class UpdateExpressionParser {
     }
 
     if (isSubtractUpdate(input)) {
-      // TODO: Fix this cast
+      /**
+       * @debt type "Fix this cast"
+       */
       const [left, right] = input[$SUBTRACT] as [
         AttributeValue<UpdateItemInputExtension>,
         AttributeValue<UpdateItemInputExtension>
@@ -101,7 +107,9 @@ export class UpdateExpressionParser {
       this.add.beginNewInstruction()
       this.add.appendValidAttributePath(currentPath)
       this.add.appendToExpression(' ')
-      // TODO: Fix this cast
+      /**
+       * @debt type "Fix this cast"
+       */
       this.add.appendValidAttributeValue(input[$ADD] as AttributeValue<UpdateItemInputExtension>)
       return
     }
@@ -110,7 +118,9 @@ export class UpdateExpressionParser {
       this.delete.beginNewInstruction()
       this.delete.appendValidAttributePath(currentPath)
       this.delete.appendToExpression(' ')
-      // TODO: Fix this cast
+      /**
+       * @debt type "Fix this cast"
+       */
       this.delete.appendValidAttributeValue(
         input[$DELETE] as AttributeValue<UpdateItemInputExtension>
       )
@@ -123,7 +133,9 @@ export class UpdateExpressionParser {
       this.set.appendToExpression(' = list_append(')
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(', ')
-      // TODO: Fix this cast
+      /**
+       * @debt type "Fix this cast"
+       */
       this.set.appendValidAttributeValue(input[$APPEND] as AttributeValue<UpdateItemInputExtension>)
       this.set.appendToExpression(')')
       return
@@ -133,7 +145,9 @@ export class UpdateExpressionParser {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = list_append(')
-      // TODO: Fix this cast
+      /**
+       * @debt type "Fix this cast"
+       */
       this.set.appendValidAttributeValue(
         input[$PREPEND] as AttributeValue<UpdateItemInputExtension>
       )

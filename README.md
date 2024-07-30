@@ -24,7 +24,7 @@ DynamoDB-Toolbox is a light abstraction layer over the DocumentClient that **tur
 
 ## Features <!-- omit in toc -->
 
-🤗 **Simpler queries**: DynamoDB-Toolbox does all the heavy-lifting of crafting those **complex DynamoDB requests**. It makes your code **clearer**, **more consise** and **easier to maintain**.
+🤗 **Simpler queries**: DynamoDB-Toolbox does all the heavy-lifting of crafting those **complex DynamoDB requests**. It makes your code **clearer**, **more concise** and **easier to maintain**.
 
 📐 **Data validation**: Both pushed and fetched items are **validated** against your schemas, which guarantees the **consistency** of your data and the **reliability** of your code.
 

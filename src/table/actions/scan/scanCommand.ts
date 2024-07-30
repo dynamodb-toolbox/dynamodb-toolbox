@@ -8,8 +8,10 @@ import type { FormattedItem } from '~/entity/actions/format/index.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CountSelectOption } from '~/options/select.js'
+import { $sentArgs } from '~/table/constants.js'
+import { sender } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
-import type { Table } from '~/table/index.js'
+import type { Table, TableSendableAction } from '~/table/table.js'
 import type { Merge } from '~/types/merge.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -52,10 +54,13 @@ export type ScanResponse<
 >
 
 export class ScanCommand<
-  TABLE extends Table = Table,
-  ENTITIES extends Entity[] = Entity[],
-  OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
-> extends TableAction<TABLE, ENTITIES> {
+    TABLE extends Table = Table,
+    ENTITIES extends Entity[] = Entity[],
+    OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
+  >
+  extends TableAction<TABLE, ENTITIES>
+  implements TableSendableAction<TABLE>
+{
   static actionName = 'scan' as const;
 
   [$options]: OPTIONS
@@ -86,9 +91,22 @@ export class ScanCommand<
     return new ScanCommand(this.table, this[$entities], nextOptions)
   }
 
-  params = (): ScanCommandInput => scanParams(this.table, this[$entities], this[$options])
+  [$sentArgs](): [Entity[], ScanOptions<TABLE, Entity[]>] {
+    return [
+      this[$entities],
+      /**
+       * @debt type "Make any ScanOptions<...> instance extend base ScanOptions"
+       */
+      this[$options] as ScanOptions<TABLE, Entity[]>
+    ]
+  }
 
-  send = async (): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> => {
+  params(): ScanCommandInput {
+    return scanParams(this.table, ...this[$sentArgs]())
+  }
+
+  @sender()
+  async send(): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> {
     const scanParams = this.params()
 
     const formattersByName: Record<string, EntityFormatter> = {}

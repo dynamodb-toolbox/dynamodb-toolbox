@@ -5,6 +5,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
 import { isString } from '~/utils/validation/isString.js'
 
+import { $interceptor, $sentArgs } from './constants.js'
 import { $entities } from './constants.js'
 import type { Index, Key } from './types/index.js'
 
@@ -19,7 +20,9 @@ export class Table<
   public partitionKey: PARTITION_KEY
   public sortKey?: SORT_KEY
   public indexes: INDEXES
-  public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS
+  public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS;
+
+  [$interceptor]?: (action: TableSendableAction) => any
 
   /**
    * Define a Table
@@ -91,4 +94,9 @@ export class TableAction<TABLE extends Table = Table, ENTITIES extends Entity[] 
   ) {
     this[$entities] = entities
   }
+}
+
+export interface TableSendableAction<TABLE extends Table = Table> extends TableAction<TABLE> {
+  [$sentArgs](): any[]
+  send(): Promise<any>
 }

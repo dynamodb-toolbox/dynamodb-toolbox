@@ -9,8 +9,10 @@ import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CountSelectOption } from '~/options/select.js'
+import { $sentArgs } from '~/table/constants.js'
+import { sender } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
-import type { Table } from '~/table/index.js'
+import type { Table, TableSendableAction } from '~/table/table.js'
 import type { Merge } from '~/types/merge.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -56,11 +58,14 @@ export type QueryResponse<
 >
 
 export class QueryCommand<
-  TABLE extends Table = Table,
-  ENTITIES extends Entity[] = Entity[],
-  QUERY extends Query<TABLE> = Query<TABLE>,
-  OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
-> extends TableAction<TABLE, ENTITIES> {
+    TABLE extends Table = Table,
+    ENTITIES extends Entity[] = Entity[],
+    QUERY extends Query<TABLE> = Query<TABLE>,
+    OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
+  >
+  extends TableAction<TABLE, ENTITIES>
+  implements TableSendableAction<TABLE>
+{
   static actionName = 'query' as const;
 
   [$query]?: QUERY;
@@ -116,16 +121,28 @@ export class QueryCommand<
     return new QueryCommand(this.table, this[$entities], this[$query], nextOptions)
   }
 
-  params = (): QueryCommandInput => {
+  [$sentArgs](): [Entity[], Query<TABLE>, QueryOptions<TABLE, Entity[], Query<TABLE>>] {
     if (!this[$query]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'QueryCommand incomplete: Missing "query" property'
       })
     }
 
-    return queryParams(this.table, this[$entities], this[$query], this[$options])
+    return [
+      this[$entities],
+      this[$query],
+      /**
+       * @debt type "Make any QueryOptions<...> instance extend base QueryOptions"
+       */
+      this[$options] as QueryOptions<TABLE, Entity[], Query<TABLE>>
+    ]
   }
 
+  params = (): QueryCommandInput => {
+    return queryParams(this.table, ...this[$sentArgs]())
+  }
+
+  @sender()
   async send(): Promise<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
     const queryParams = this.params()
 

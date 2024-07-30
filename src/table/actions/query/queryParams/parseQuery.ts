@@ -82,7 +82,7 @@ export const parseQuery: QueryParser = (table, query) => {
       attr: sortKey.name,
       ...pick(range, ...queryOperatorSet)
       /**
-       * @debt type "TODO: Remove this cast"
+       * @debt type "Remove this cast"
        */
     } as unknown as PrimitiveAttributeCondition<
       string,

@@ -1610,7 +1610,7 @@ describe('update', () => {
   })
 
   /**
-   * @debt TODO "Test anyOf attribute"
+   * @debt test "Test anyOf attribute"
    */
 
   test('uses an alias', async () => {
