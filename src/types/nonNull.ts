@@ -6,7 +6,7 @@ type NonNullValues<O> = {
 
 /**
  * Make some fields of `O` not nullable (deeply or not)
- * (Optional fields will be left untouched & `undefined`)
+ * (Optional fields & `undefined` are left untouched)
  */
 export type NonNull<OBJECT extends object, KEYS extends keyof OBJECT = keyof OBJECT> = Merge<
   Omit<OBJECT, KEYS>,

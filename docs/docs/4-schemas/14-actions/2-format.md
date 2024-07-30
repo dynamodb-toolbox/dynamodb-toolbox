@@ -22,7 +22,7 @@ const formattedPikachu = pokemonSchema
 Note that:
 
 - Additional and `hidden` fields are omitted, but inputs are not mutated
-- The formatting will throw an error if the saved item is invalid
+- The formatting throw an error if the saved item is invalid
 - Transformations (i.e. `savedAs` and `transforms`) are applied in reverse
 
 ## Methods
@@ -40,10 +40,10 @@ const formattedValue = pokemonSchema.build(Formatter).format(savedValue)
 
 You can provide **formatting options** as a second argument. Available options:
 
-| Option       |       Type       | Default | Description                                                                                                                                                                                                                |
-| ------------ | :--------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `partial`    |    `boolean`     | `false` | Allow every attribute (root or nested) to be optional while formatting.                                                                                                                                                    |
-| `attributes` | `Path<Entity>[]` |    -    | To specify a list of attributes to format (other attributes will be omitted).<br/><br/>See the [`PathParser`](../../3-entities/3-actions/18-parse-paths/index.md) action for more details on how to write attribute paths. |
+| Option       |       Type       | Default | Description                                                                                                                                                                                                            |
+| ------------ | :--------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `partial`    |    `boolean`     | `false` | Allow every attribute (root or nested) to be optional while formatting.                                                                                                                                                |
+| `attributes` | `Path<Entity>[]` |    -    | To specify a list of attributes to format (other attributes are omitted).<br/><br/>See the [`PathParser`](../../3-entities/3-actions/18-parse-paths/index.md) action for more details on how to write attribute paths. |
 
 :::noteExamples
 

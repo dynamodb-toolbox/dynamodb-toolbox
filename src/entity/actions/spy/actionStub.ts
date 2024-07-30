@@ -62,7 +62,7 @@ export class EntityActionStub<ENTITY extends Entity, ACTION extends EntitySendab
   mock(
     mock: (
       ...args: ReturnType<ACTION[$sentArgs]>
-    ) => ReturnType<ACTION['send']> | Awaited<ReturnType<ACTION['send']>>
+    ) => ReturnType<ACTION['send']> | Awaited<ReturnType<ACTION['send']>> | undefined
   ): EntitySpy<ENTITY> {
     this[$spy][$mocks][this[$actionName]] = mock
 

@@ -2,9 +2,9 @@ import { $interceptor, $sentArgs } from '~/table/constants.js'
 import { TableAction } from '~/table/index.js'
 import type { Table, TableSendableAction } from '~/table/table.js'
 
+import { TableActionInspector } from './actionInspector'
 import { TableActionStub } from './actionStub.js'
 import { $mocks, $sentActions } from './constants.js'
-import { TableSentActions } from './sentActions.js'
 
 export class TableSpy<TABLE extends Table = Table> extends TableAction<TABLE> {
   static actionName: 'spy';
@@ -50,8 +50,8 @@ export class TableSpy<TABLE extends Table = Table> extends TableAction<TABLE> {
 
   sent<ACTION extends TableSendableAction<TABLE> = TableSendableAction<TABLE>>(
     Action: new (entity: TABLE) => ACTION
-  ): TableSentActions<TABLE, ACTION> {
-    return new TableSentActions(this, Action)
+  ): TableActionInspector<TABLE, ACTION> {
+    return new TableActionInspector(this, Action)
   }
 
   restore(): void {

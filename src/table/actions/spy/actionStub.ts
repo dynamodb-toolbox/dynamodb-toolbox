@@ -62,7 +62,7 @@ export class TableActionStub<TABLE extends Table, ACTION extends TableSendableAc
   mock(
     mock: (
       ...args: ReturnType<ACTION[$sentArgs]>
-    ) => ReturnType<ACTION['send']> | Awaited<ReturnType<ACTION['send']>>
+    ) => ReturnType<ACTION['send']> | Awaited<ReturnType<ACTION['send']>> | undefined
   ): TableSpy<TABLE> {
     this[$spy][$mocks][this[$actionName]] = mock
 

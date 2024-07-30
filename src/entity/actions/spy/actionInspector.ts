@@ -1,16 +1,19 @@
-import type { $sentArgs } from '~/table/constants.js'
-import type { Table, TableSendableAction } from '~/table/table.js'
+import type { $sentArgs } from '~/entity/constants.js'
+import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
 
 import { $actionName, $spy } from './/constants.js'
 import { $sentActions } from './constants.js'
-import type { TableSpy } from './spy.js'
+import type { EntitySpy } from './spy.js'
 
-export class TableSentActions<TABLE extends Table, ACTION extends TableSendableAction<TABLE>> {
-  [$spy]: TableSpy<TABLE>;
+export class EntityActionInspector<
+  ENTITY extends Entity,
+  ACTION extends EntitySendableAction<ENTITY>
+> {
+  [$spy]: EntitySpy<ENTITY>;
   [$actionName]: string
 
-  constructor(spy: TableSpy<TABLE>, Action: new (entity: TABLE) => ACTION) {
+  constructor(spy: EntitySpy<ENTITY>, Action: new (entity: ENTITY) => ACTION) {
     this[$spy] = spy
     this[$actionName] = (Action as unknown as { actionName: string }).actionName
   }

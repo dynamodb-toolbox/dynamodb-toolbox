@@ -64,7 +64,7 @@ export const parseReferenceExtension: ExtensionParser<
 
         const parsedValue = {
           [$GET]: [
-            // NOTE: Reference validation will be done in UpdateExpressionParser
+            // NOTE: Reference validation is done in UpdateExpressionParser
             reference,
             ...(fallbackParser !== undefined ? [fallbackParser.next().value] : [])
           ]
@@ -77,7 +77,7 @@ export const parseReferenceExtension: ExtensionParser<
 
         const transformedValue = {
           [$GET]: [
-            // NOTE: Reference validation will be done in UpdateExpressionParser
+            // NOTE: Reference validation is done in UpdateExpressionParser
             reference,
             ...(fallbackParser !== undefined ? [fallbackParser.next().value] : [])
           ]
