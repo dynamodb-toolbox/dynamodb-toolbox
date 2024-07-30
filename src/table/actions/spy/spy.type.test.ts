@@ -39,12 +39,6 @@ const assertMock: A.Equals<
       query: Query<typeof TestTable>,
       options: QueryOptions<typeof TestTable, Entity[], Query<typeof TestTable>>
     ) =>
-      | QueryResponse<
-          typeof TestTable,
-          Query<typeof TestTable>,
-          Entity[],
-          QueryOptions<typeof TestTable, Entity[], Query<typeof TestTable>>
-        >
       | Promise<
           QueryResponse<
             typeof TestTable,
@@ -53,6 +47,13 @@ const assertMock: A.Equals<
             QueryOptions<typeof TestTable, Entity[], Query<typeof TestTable>>
           >
         >
+      | QueryResponse<
+          typeof TestTable,
+          Query<typeof TestTable>,
+          Entity[],
+          QueryOptions<typeof TestTable, Entity[], Query<typeof TestTable>>
+        >
+      | undefined
   ) => typeof spy
 > = 1
 assertMock

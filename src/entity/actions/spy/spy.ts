@@ -2,9 +2,9 @@ import { $interceptor, $sentArgs } from '~/entity/constants.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
 
+import { EntityActionInspector } from './actionInspector.js'
 import { EntityActionStub } from './actionStub.js'
 import { $mocks, $sentActions } from './constants.js'
-import { EntitySentActions } from './sentActions.js'
 
 export class EntitySpy<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static actionName: 'spy';
@@ -50,8 +50,8 @@ export class EntitySpy<ENTITY extends Entity = Entity> extends EntityAction<ENTI
 
   sent<ACTION extends EntitySendableAction<ENTITY> = EntitySendableAction<ENTITY>>(
     Action: new (entity: ENTITY) => ACTION
-  ): EntitySentActions<ENTITY, ACTION> {
-    return new EntitySentActions(this, Action)
+  ): EntityActionInspector<ENTITY, ACTION> {
+    return new EntityActionInspector(this, Action)
   }
 
   restore(): void {

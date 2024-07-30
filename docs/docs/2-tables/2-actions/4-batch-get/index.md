@@ -77,7 +77,7 @@ const requests: BatchGetRequest<typeof PokemonEntity>[] = [
 ]
 
 const command =
-  PokeTable.build(BatchGetCommand).requests(requests)
+  PokeTable.build(BatchGetCommand).requests(...requests)
 ```
 
 </TabItem>
