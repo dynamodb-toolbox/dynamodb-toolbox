@@ -56,6 +56,7 @@ export {
   execute as executeBatchWrite
 } from './table/actions/batchWrite/index.js'
 export type { ExecuteBatchWriteOptions } from './table/actions/batchWrite/index.js'
+export { TableSpy } from './table/actions/spy/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 
 // entities
@@ -118,6 +119,7 @@ export type {
 } from './entity/actions/parse/index.js'
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'
+export { EntitySpy } from './entity/actions/spy/index.js'
 
 export { DynamoDBToolboxError } from './errors/index.js'
 
