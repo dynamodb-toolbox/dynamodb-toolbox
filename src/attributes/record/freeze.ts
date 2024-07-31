@@ -1,4 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Update } from '~/types/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { $elements, $keys } from '../constants/attributeOptions.js'
@@ -11,12 +12,16 @@ import type { $RecordAttributeState } from './interface.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =
-  RecordAttribute<
-    $RECORD_ATTRIBUTE[$state],
-    FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
-    FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
-    // '& {}' Improves type display
-  > & {}
+  // Applying void Update improves type display
+  Update<
+    RecordAttribute<
+      $RECORD_ATTRIBUTE[$state],
+      FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
+      FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
+    >,
+    never,
+    never
+  >
 
 type RecordAttributeFreezer = <
   STATE extends SharedAttributeState,

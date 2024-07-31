@@ -8,6 +8,6 @@ type Replace<PREV_VALUE, CONSTRAINT, NEXT_VALUE> = {
 /**
  * Update in `OBJECT` the fields of key `KEYS` with `VALUE`.
  */
-export declare type Update<OBJECT extends object, KEYS extends string | number | symbol, VALUE> = {
+export type Update<OBJECT extends object, KEYS extends string | number | symbol, VALUE> = {
   [KEY in keyof OBJECT]: KEY extends KEYS ? Replace<VALUE, never, OBJECT[KEY]> : OBJECT[KEY]
 } & {}
