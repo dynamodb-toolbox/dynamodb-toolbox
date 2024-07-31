@@ -1,4 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Update } from '~/types/update.js'
 
 import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
@@ -10,11 +11,13 @@ import { ListAttribute } from './interface.js'
 import type { $ListAttributeState } from './interface.js'
 import type { $ListAttributeElements } from './types.js'
 
-export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> = ListAttribute<
-  $LIST_ATTRIBUTE[$state],
-  FreezeAttribute<$LIST_ATTRIBUTE[$elements]>
-  // '& {}' Improves type display
-> & {}
+export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
+  // Applying void Update improves type display
+  Update<
+    ListAttribute<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements]>>,
+    never,
+    never
+  >
 
 type ListAttributeFreezer = <
   STATE extends SharedAttributeState,

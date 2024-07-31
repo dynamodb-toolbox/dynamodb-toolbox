@@ -1,4 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Update } from '~/types/update.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { $state } from '../constants/attributeOptions.js'
@@ -27,11 +28,13 @@ type FreezeElements<
       : never
     : RESULTS
 
-export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> = AnyOfAttribute<
-  $ANY_OF_ATTRIBUTE[$state],
-  FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>
-  // '& {}' Improves type display
-> & {}
+export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> =
+  // Applying void O.Update improves type display
+  Update<
+    AnyOfAttribute<$ANY_OF_ATTRIBUTE[$state], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>,
+    never,
+    never
+  >
 
 type AnyOfAttributeFreezer = <
   STATE extends SharedAttributeState,

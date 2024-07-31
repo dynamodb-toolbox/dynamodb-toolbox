@@ -1,5 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
+import type { Update } from '~/types/update.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 
 import type { $state, $type } from '../constants/attributeOptions.js'
@@ -9,8 +10,12 @@ import type { $PrimitiveAttributeState } from './interface.js'
 import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types.js'
 
 export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
-  // '& {}' Improves type display
-  PrimitiveAttribute<$PRIMITIVE_ATTRIBUTE[$type], $PRIMITIVE_ATTRIBUTE[$state]> & {}
+  // Applying void Update improves type display
+  Update<
+    PrimitiveAttribute<$PRIMITIVE_ATTRIBUTE[$type], $PRIMITIVE_ATTRIBUTE[$state]>,
+    never,
+    never
+  >
 
 type PrimitiveAttributeFreezer = <
   TYPE extends PrimitiveAttributeType,

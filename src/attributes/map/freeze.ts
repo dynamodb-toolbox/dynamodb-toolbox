@@ -1,4 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Update } from '~/types/update.js'
 
 import { $state } from '../constants/attributeOptions.js'
 import type { $attributes } from '../constants/attributeOptions.js'
@@ -10,13 +11,20 @@ import { MapAttribute } from './interface.js'
 import type { $MapAttributeState } from './interface.js'
 import type { $MapAttributeAttributeStates } from './types.js'
 
-export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> = MapAttribute<
-  $MAP_ATTRIBUTE[$state],
-  {
-    [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<$MAP_ATTRIBUTE[$attributes][KEY]>
-  }
-  // '& {}' Improves type display
-> & {}
+export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
+  // Applying void Update improves type display
+  Update<
+    MapAttribute<
+      $MAP_ATTRIBUTE[$state],
+      {
+        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
+          $MAP_ATTRIBUTE[$attributes][KEY]
+        >
+      }
+    >,
+    never,
+    never
+  >
 
 type MapAttributeFreezer = <
   STATE extends SharedAttributeState,
