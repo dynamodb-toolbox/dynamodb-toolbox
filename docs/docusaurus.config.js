@@ -95,10 +95,10 @@ const config = {
       },
       algolia: {
         // The application ID provided by Algolia
-        appId: 'XS94BW9P52',
+        appId: 'S31SNLJ987',
         // Public API key: it is safe to commit it
-        apiKey: 'c95bd6f22598598ec831d3ba7aa5ac7c',
-        indexName: 'dynamodbtoolbox',
+        apiKey: '8573fcba6d2890dad283ffef336aaf4b',
+        indexName: 'documentation-search',
         // Optional: see doc section below
         contextualSearch: true,
         // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
