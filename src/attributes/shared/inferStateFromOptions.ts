@@ -1,4 +1,4 @@
-import type { Compute } from '~/types/compute.js'
+import type { Update } from '~/types/update.js'
 
 import type { AttributeOptions } from '../constants/attributeOptions.js'
 
@@ -19,7 +19,7 @@ export type InferStateFromOptions<
   DEFAULT_OPTIONS extends OPTIONS_CONSTRAINTS,
   OPTIONS extends Partial<OPTIONS_CONSTRAINTS>,
   ADDITIONAL_OPTIONS extends object = {}
-> = Compute<
+> = Update<
   {
     [KEY in Extract<keyof OPTIONS_CONSTRAINTS, keyof AttributeOptions>]: InferStateValueFromOption<
       OPTIONS_CONSTRAINTS,
@@ -27,5 +27,7 @@ export type InferStateFromOptions<
       OPTIONS,
       KEY
     >
-  } & ADDITIONAL_OPTIONS
+  } & ADDITIONAL_OPTIONS,
+  never,
+  never
 >
