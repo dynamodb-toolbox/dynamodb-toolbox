@@ -33,6 +33,7 @@
 
 .navbar {
   background-color: #303846;
+  height: unset;
 }
 
 .inline-block {
@@ -97,6 +98,11 @@
 
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
 }
 
 .py-10 {
