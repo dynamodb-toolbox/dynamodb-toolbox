@@ -380,9 +380,9 @@ const Home = (): JSX.Element => (
         </div>
       </div>
     </div>
-    <div className="navbar navbar--dark flex flex-col items-start justify-center py-10 text-sm shadow-xl shadow-black/10">
+    <div className="navbar navbar--dark flex flex-col items-start justify-center py-5 text-sm shadow-xl shadow-black/10">
       <div className="full-width">
-        <div className="flex justify-around md:justify-center gap-3">
+        <div className="flex justify-around md:justify-center md:flex-row flex-col gap-3">
           {footerLinks.map(item => (
             <div key={item.to} className="text-center">
               {item.to.startsWith('http') ? (
