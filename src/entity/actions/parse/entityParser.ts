@@ -21,9 +21,10 @@ export type ParsedItemDefaultOptions = Pick<ParsedValueDefaultOptions, 'mode' | 
 export type ParsedItem<
   ENTITY extends Entity = Entity,
   OPTIONS extends ParsedItemOptions = ParsedItemDefaultOptions
-> = ParsedValue<ENTITY['schema'], OPTIONS>
+> = ParsedValue<ENTITY['schema'], OPTIONS & { transform: true; fill: true }>
 
-export type SavedItem<ENTITY extends Entity = Entity> = ParsedItem<ENTITY>
+export type SavedItem<ENTITY extends Entity = Entity> = ParsedItem<ENTITY> &
+  PrimaryKey<ENTITY['table']>
 
 export type EntityParsingOptions = Pick<ParsingOptions, 'mode' | 'parseExtension'>
 
@@ -66,7 +67,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
     input: EntityParserInput<ENTITY, OPTIONS>,
     options: OPTIONS = {} as OPTIONS
   ): {
-    item: ParsedItem<ENTITY, FromParsingOptions<OPTIONS>>
+    item: ParsedItem<ENTITY, FromParsingOptions<OPTIONS>> & PrimaryKey<ENTITY['table']>
     key: PrimaryKey<ENTITY['table']>
   } {
     return this.parse(input, options)
