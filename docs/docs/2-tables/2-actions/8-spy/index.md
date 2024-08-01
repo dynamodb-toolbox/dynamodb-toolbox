@@ -22,7 +22,6 @@ const tableSpy = PokeTable.build(TableSpy)
 tableSpy.on(ScanCommand).resolve({ Items: mockedItems })
 
 const { Items } = await PokeTable.build(ScanCommand)
-  .entities(PokemonEntity)
   .options({ consistent: true })
   .send()
 

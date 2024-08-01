@@ -14,6 +14,12 @@ All attribute types support providing default values. There are three kinds of d
 
 The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise.
 
+:::info
+
+☝️ In order for the `.default(...)` shorthand to work properly on key attributes, make sure to use it **after** calling `.key()`.
+
+:::
+
 Here are some simple examples:
 
 ```ts
@@ -74,4 +80,10 @@ Similarly to defaults, links come in three flavors:
 
 The `link` method is a shorthand that acts as `keyLink` on key attributes and `putLink` otherwise.
 
-Finally, note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../14-actions/1-parse.md) action for more details).
+:::info
+
+☝️ In order for the `.link(...)` shorthand to work properly on key attributes, make sure to use it **after** calling `.key()`.
+
+:::
+
+Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../14-actions/1-parse.md) action for more details).
