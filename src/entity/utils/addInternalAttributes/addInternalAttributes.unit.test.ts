@@ -1,3 +1,6 @@
+import type { A } from 'ts-toolbelt'
+
+import type { AtLeastOnce } from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/utils.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -27,17 +30,45 @@ describe('addInternalAttributes', () => {
       schema: mySchema,
       table: myTable,
       entityAttributeName: 'id',
+      entityAttributeHidden: false,
       entityName: 'myEntity',
       timestamps: true
     })
 
     test('adds entity attribute', () => {
+      const assertEntityAttribute: A.Equals<
+        typeof enrichedSchema.attributes.id,
+        {
+          path?: string | undefined
+          type: 'string'
+          required: AtLeastOnce
+          hidden: false
+          key: false
+          savedAs: '__et__'
+          enum: ['myEntity']
+          defaults: {
+            key: undefined
+            put: unknown
+            update: unknown
+          }
+          links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          transform: undefined
+        }
+      > = 1
+      assertEntityAttribute
+
       expect(enrichedSchema.attributes.id).toMatchObject({
         path: 'id',
-        savedAs: entityAttributeSavedAs,
         type: 'string',
+        required: 'atLeastOnce',
+        hidden: false,
+        key: false,
+        savedAs: entityAttributeSavedAs,
         enum: ['myEntity'],
-        hidden: true,
         defaults: {
           key: undefined,
           put: 'myEntity'
@@ -68,19 +99,25 @@ describe('addInternalAttributes', () => {
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'id',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: false
       })
 
       // @ts-expect-error
       expect(noTimestampSchema.attributes.created).toBeUndefined()
+      const assertNoCreated: A.Extends<typeof noTimestampSchema.attributes, { created: any }> = 0
+      assertNoCreated
       // @ts-expect-error
       expect(noTimestampSchema.attributes.modified).toBeUndefined()
+      const assertNoModified: A.Extends<typeof noTimestampSchema.attributes, { modified: any }> = 0
+      assertNoModified
 
-      const createdTimestampSchema = addInternalAttributes({
+      const noCreatedTimestampSchema = addInternalAttributes({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'id',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: {
           created: false,
@@ -89,12 +126,18 @@ describe('addInternalAttributes', () => {
       })
 
       // @ts-expect-error
-      expect(createdTimestampSchema.attributes.created).toBeUndefined()
+      expect(noCreatedTimestampSchema.attributes.created).toBeUndefined()
+      const assertNoCreated2: A.Extends<
+        typeof noCreatedTimestampSchema.attributes,
+        { created: any }
+      > = 0
+      assertNoCreated2
 
-      const modifiedTimestampSchema = addInternalAttributes({
+      const noModifiedTimestampSchema = addInternalAttributes({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'id',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: {
           created: true,
@@ -103,7 +146,12 @@ describe('addInternalAttributes', () => {
       })
 
       // @ts-expect-error
-      expect(modifiedTimestampSchema.attributes.modified).toBeUndefined()
+      expect(noModifiedTimestampSchema.attributes.modified).toBeUndefined()
+      const assertNoModified2: A.Extends<
+        typeof noModifiedTimestampSchema.attributes,
+        { modified: any }
+      > = 0
+      assertNoModified2
     })
 
     test('adds created field', () => {
@@ -111,6 +159,7 @@ describe('addInternalAttributes', () => {
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: {
           created: true,
@@ -118,12 +167,39 @@ describe('addInternalAttributes', () => {
         }
       })
 
+      const assertCreatedAttribute: A.Equals<
+        typeof enrichedSchema.attributes.created,
+        {
+          path?: string | undefined
+          type: 'string'
+          required: AtLeastOnce
+          hidden: false
+          key: false
+          savedAs: '_ct'
+          enum: undefined
+          defaults: {
+            key: undefined
+            put: unknown
+            update: unknown
+          }
+          links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          transform: undefined
+        }
+      > = 1
+      assertCreatedAttribute
+
       expect(enrichedSchema.attributes.created).toMatchObject({
         path: 'created',
-        savedAs: '_ct',
         type: 'string',
-        enum: undefined,
+        required: 'atLeastOnce',
         hidden: false,
+        key: false,
+        savedAs: '_ct',
+        enum: undefined,
         defaults: {
           key: undefined,
           put: expect.any(Function),
@@ -141,21 +217,49 @@ describe('addInternalAttributes', () => {
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: {
           created: {
-            savedAs: 'c'
+            savedAs: 'c' as const
           },
           modified: false
         }
       })
 
+      const assertPartialCustomCreatedAttribute: A.Equals<
+        typeof partialCustomSchema.attributes.created,
+        {
+          path?: string | undefined
+          type: 'string'
+          required: AtLeastOnce
+          hidden: false
+          key: false
+          savedAs: 'c'
+          enum: undefined
+          defaults: {
+            key: undefined
+            put: unknown
+            update: unknown
+          }
+          links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          transform: undefined
+        }
+      > = 1
+      assertPartialCustomCreatedAttribute
+
       expect(partialCustomSchema.attributes.created).toMatchObject({
         path: 'created',
-        savedAs: 'c',
         type: 'string',
-        enum: undefined,
+        required: 'atLeastOnce',
         hidden: false,
+        key: false,
+        savedAs: 'c',
+        enum: undefined,
         defaults: {
           key: undefined,
           put: expect.any(Function),
@@ -173,23 +277,51 @@ describe('addInternalAttributes', () => {
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: {
           created: {
-            name: '__created__',
-            savedAs: 'c',
+            name: '__created__' as const,
+            savedAs: 'c' as const,
             hidden: true
           },
           modified: false
         }
       })
 
+      const assertCustomCreatedAttribute: A.Equals<
+        (typeof customSchema.attributes)['__created__'],
+        {
+          path?: string | undefined
+          type: 'string'
+          required: AtLeastOnce
+          hidden: true
+          key: false
+          savedAs: 'c'
+          enum: undefined
+          defaults: {
+            key: undefined
+            put: unknown
+            update: unknown
+          }
+          links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          transform: undefined
+        }
+      > = 1
+      assertCustomCreatedAttribute
+
       expect(customSchema.attributes['__created__']).toMatchObject({
         path: '__created__',
-        savedAs: 'c',
         type: 'string',
-        enum: undefined,
+        required: 'atLeastOnce',
         hidden: true,
+        key: false,
+        savedAs: 'c',
+        enum: undefined,
         defaults: {
           key: undefined,
           put: expect.any(Function),
@@ -209,6 +341,7 @@ describe('addInternalAttributes', () => {
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: {
           created: false,
@@ -216,12 +349,39 @@ describe('addInternalAttributes', () => {
         }
       })
 
+      const assertModifiedAttribute: A.Equals<
+        typeof enrichedSchema.attributes.modified,
+        {
+          path?: string | undefined
+          type: 'string'
+          required: AtLeastOnce
+          hidden: false
+          key: false
+          savedAs: '_md'
+          enum: undefined
+          defaults: {
+            key: undefined
+            put: unknown
+            update: unknown
+          }
+          links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          transform: undefined
+        }
+      > = 1
+      assertModifiedAttribute
+
       expect(enrichedSchema.attributes.modified).toMatchObject({
         path: 'modified',
-        savedAs: '_md',
         type: 'string',
-        enum: undefined,
+        required: 'atLeastOnce',
         hidden: false,
+        key: false,
+        savedAs: '_md',
+        enum: undefined,
         defaults: {
           key: undefined,
           put: expect.any(Function),
@@ -239,14 +399,40 @@ describe('addInternalAttributes', () => {
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: {
           created: false,
           modified: {
-            savedAs: 'm'
+            savedAs: 'm' as const
           }
         }
       })
+
+      const assertPartialCustomModifiedAttribute: A.Equals<
+        typeof partialCustomSchema.attributes.modified,
+        {
+          path?: string | undefined
+          type: 'string'
+          required: AtLeastOnce
+          hidden: false
+          key: false
+          savedAs: 'm'
+          enum: undefined
+          defaults: {
+            key: undefined
+            put: unknown
+            update: unknown
+          }
+          links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          transform: undefined
+        }
+      > = 1
+      assertPartialCustomModifiedAttribute
 
       expect(partialCustomSchema.attributes.modified).toMatchObject({
         path: 'modified',
@@ -271,16 +457,42 @@ describe('addInternalAttributes', () => {
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
+        entityAttributeHidden: true,
         entityName: 'myEntity',
         timestamps: {
           created: false,
           modified: {
-            name: '__modified__',
-            savedAs: 'm',
+            name: '__modified__' as const,
+            savedAs: 'm' as const,
             hidden: true
           }
         }
       })
+
+      const assertCustomModifiedAttribute: A.Equals<
+        (typeof customSchema.attributes)['__modified__'],
+        {
+          path?: string | undefined
+          type: 'string'
+          required: AtLeastOnce
+          hidden: true
+          key: false
+          savedAs: 'm'
+          enum: undefined
+          defaults: {
+            key: undefined
+            put: unknown
+            update: unknown
+          }
+          links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          transform: undefined
+        }
+      > = 1
+      assertCustomModifiedAttribute
 
       expect(customSchema.attributes['__modified__']).toMatchObject({
         path: '__modified__',
@@ -321,6 +533,7 @@ describe('addInternalAttributes', () => {
           schema: invalidSchema,
           table: myTable,
           entityAttributeName: 'entity',
+          entityAttributeHidden: true,
           entityName: 'myEntity',
           timestamps: true
         })
@@ -339,6 +552,7 @@ describe('addInternalAttributes', () => {
           schema: invalidSchema,
           table: myTable,
           entityAttributeName: 'entity',
+          entityAttributeHidden: true,
           entityName: 'myEntity',
           timestamps: true
         })

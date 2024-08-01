@@ -70,17 +70,22 @@ This attribute is **required** for some features to work, like allowing for appr
 - The `name` of an `Entity` **cannot be updated** once it has its first items (at least not without a data migration).
 - When migrating existing data to DynamoDB-Toolbox, you also have to add it to your items first.
 
-By default, the attribute is named `entity`. It can be overridden via the `entityAttributeName` property:
+By default, the attribute is `hidden` and named `entity`. This can be overridden via the `entityAttributeHidden` and `entityAttributeName` properties:
 
 ```ts
 const PokemonEntity = new Entity({
   name: 'Pokemon',
+  entityAttributeHidden: false,
   entityAttributeName: 'item',
   ...
 })
 ```
 
-The `savedAs` property can be specified at the `Table` level, via the [`entityAttributeSavedAs`](../../2-tables/1-usage/index.md) property.
+:::info
+
+The `savedAs` property must be specified at the `Table` level, via the [`entityAttributeSavedAs`](../../2-tables/1-usage/index.md) property.
+
+:::
 
 ## Timestamp Attributes
 

@@ -22,7 +22,8 @@ export class Entity<
   ENTITY_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
   TIMESTAMPS_OPTIONS extends TimestampsOptions = string extends NAME
     ? TimestampsOptions
-    : TimestampsDefaultOptions
+    : TimestampsDefaultOptions,
+  ENTITY_ATTRIBUTE_HIDDEN extends boolean = string extends NAME ? boolean : true
 > {
   public type: 'entity'
   public name: NAME
@@ -31,10 +32,15 @@ export class Entity<
     SCHEMA,
     TABLE,
     ENTITY_ATTRIBUTE_NAME,
+    ENTITY_ATTRIBUTE_HIDDEN,
     NAME,
     TIMESTAMPS_OPTIONS
   >
+  /**
+   * @debt v2 "merge in a single `entityAttribute` options object like `timestamps`. Also true for generics"
+   */
   public entityAttributeName: ENTITY_ATTRIBUTE_NAME
+  public entityAttributeHidden: ENTITY_ATTRIBUTE_HIDDEN
   public timestamps: TIMESTAMPS_OPTIONS
   // any is needed for contravariance
   public computeKey?: (
@@ -49,12 +55,14 @@ export class Entity<
     schema,
     computeKey,
     entityAttributeName = 'entity' as ENTITY_ATTRIBUTE_NAME,
+    entityAttributeHidden = true as ENTITY_ATTRIBUTE_HIDDEN,
     timestamps = true as NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   }: {
     name: NAME
     table: TABLE
     schema: SCHEMA
     entityAttributeName?: ENTITY_ATTRIBUTE_NAME
+    entityAttributeHidden?: ENTITY_ATTRIBUTE_HIDDEN
     timestamps?: NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   } & If<
     NeedsKeyCompute<SCHEMA, TABLE>,
@@ -67,6 +75,7 @@ export class Entity<
     this.name = name
     this.table = table
     this.entityAttributeName = entityAttributeName
+    this.entityAttributeHidden = entityAttributeHidden
     this.timestamps = timestamps as TIMESTAMPS_OPTIONS
 
     if (computeKey === undefined && !doesSchemaValidateTableSchema(schema, table)) {
@@ -79,6 +88,7 @@ export class Entity<
       schema,
       table: this.table,
       entityAttributeName: this.entityAttributeName,
+      entityAttributeHidden: this.entityAttributeHidden,
       entityName: this.name,
       timestamps: this.timestamps
     })
