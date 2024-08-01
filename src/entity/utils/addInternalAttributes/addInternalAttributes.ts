@@ -20,32 +20,38 @@ export const addInternalAttributes: InternalAttributesAdder = <
   SCHEMA extends Schema,
   TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
+  ENTITY_ATTRIBUTE_HIDDEN extends boolean,
   ENTITY_NAME extends string,
   TIMESTAMP_OPTIONS extends TimestampsOptions
 >({
   schema,
   table,
   entityAttributeName,
+  entityAttributeHidden,
   entityName,
   timestamps
 }: {
   schema: SCHEMA
   table: TABLE
   entityAttributeName: ENTITY_ATTRIBUTE_NAME
+  entityAttributeHidden: ENTITY_ATTRIBUTE_HIDDEN
   entityName: ENTITY_NAME
   timestamps: TIMESTAMP_OPTIONS
 }) => {
   const internalAttributes: Record<string, $Attribute> = {}
 
-  const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME> = string({
+  const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN> = string({
     required: 'atLeastOnce',
-    hidden: true,
     defaults: {
       key: undefined,
       put: entityName,
       update: () => $get(entityAttributeName, entityName)
     }
   })
+    /**
+     * @debt type "when provided in options, 'hidden' is not correctly inferred"
+     */
+    .hidden(entityAttributeHidden)
     .enum(entityName as ENTITY_NAME)
     /**
      * @debt type "when provided in options, savedAs is inferred as potentially undefined"
@@ -127,6 +133,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
     SCHEMA,
     TABLE,
     ENTITY_ATTRIBUTE_NAME,
+    ENTITY_ATTRIBUTE_HIDDEN,
     ENTITY_NAME,
     TIMESTAMP_OPTIONS
   >

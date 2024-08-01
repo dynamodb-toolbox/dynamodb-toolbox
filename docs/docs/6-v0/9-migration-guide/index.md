@@ -107,9 +107,7 @@ Finally, table `attributes` have not been re-implemented yet (but you can still 
 
 ### Entity attribute
 
-The `typeAlias` has been renamed to `entityAttributeName`, and the `typeHidden` has been removed: The internal `entity` attribute is now always hidden.
-
-If you explicitly need an `entity` attribute equivalent, you can include a dedicated attribute to your schema (e.g. [`string().const('someConst')`](../../4-schemas/7-string/index.md#enum)).
+The `typeAlias` and `typeHidden` have respectively been renamed to `entityAttributeName` and `entityAttributeHidden`:
 
 ```diff
 const PokemonEntity = new Entity({
@@ -117,6 +115,7 @@ const PokemonEntity = new Entity({
 - typeAlias: 'ent',
 - typeHidden: true,
 + entityAttributeName: 'ent',
++ entityAttributeHidden: true,
 })
 ```
 
