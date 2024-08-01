@@ -56,7 +56,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `capacity`           | `CapacityOption` | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`. |
 | `metrics`            | `MetricsOption`  | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                             |
 | `clientRequestToken` |     `string`     |    -     | Providing a `clientRequestToken` makes the execution idempotent, meaning that multiple identical calls have the same effect as one single call.                                          |
-| `documentClient`     | `DocumentClient` |    -     | By default, the `documentClient` attached to the `Table` of the first `BatchWriteCommand` is used to execute the operation.<br/><br/>Use this option to override this behavior.          |
+| `documentClient`     | `DocumentClient` |    -     | By default, the `documentClient` attached to the `Table` of the first `WriteTransaction` is used to execute the operation.<br/><br/>Use this option to override this behavior.           |
 
 :::noteExamples
 

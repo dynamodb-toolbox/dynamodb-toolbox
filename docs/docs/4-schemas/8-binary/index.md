@@ -92,13 +92,7 @@ const hashSchema = binary({ savedAs: 'h' })
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Uint8Array&gt;</code></i></p>
 
-Specifies default values for the attribute. There are three kinds of defaults:
-
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/3-actions/2-put-item/index.md))
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
-- `keyDefault`: Overrides other defaults on [key](#key) attributes (ignored otherwise)
-
-The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise:
+Specifies default values for the attribute. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
 
 :::noteExamples
 

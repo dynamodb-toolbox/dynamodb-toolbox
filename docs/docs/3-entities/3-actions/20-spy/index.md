@@ -22,6 +22,7 @@ const entitySpy = PokemonEntity.build(EntitySpy)
 entitySpy.on(GetItemCommand).resolve({ Item: pokeMock })
 
 const { Item } = await PokemonEntity.build(GetItemCommand)
+  .key(key)
   .options({ consistent: true })
   .send()
 
