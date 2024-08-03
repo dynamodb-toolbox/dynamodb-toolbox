@@ -1,19 +1,17 @@
 import type { Table } from '../table.js'
 
 /**
- * Returns the indexes of a Table
- *
+ * Returns the indexes of a table
  * @param TABLE Table
- * @return Object
+ * @returns Object
  */
 export type IndexNames<TABLE extends Table = Table> = Extract<keyof TABLE['indexes'], string>
 
 /**
- * Returns a specific index of a Table
- *
+ * Returns a specific index of a table
  * @param TABLE Table
  * @param INDEX_NAME String
- * @return Object
+ * @returns Object
  */
 export type IndexSchema<
   TABLE extends Table = Table,

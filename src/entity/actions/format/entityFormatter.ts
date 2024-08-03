@@ -19,10 +19,9 @@ export type FormattedItemOptions<ENTITY extends Entity = Entity> = FormattedValu
 type FormattedItemOptionsDefault = FormattedValueDefaultOptions
 
 /**
- * Returned item of a fetch command (GET, QUERY ...) for a given Entity
- *
+ * Returned item of a fetch command (GET, QUERY ...) for a given entity
  * @param Entity Entity
- * @return Object
+ * @returns Object
  */
 export type FormattedItem<
   ENTITY extends Entity = Entity,

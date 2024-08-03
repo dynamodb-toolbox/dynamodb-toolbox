@@ -14,10 +14,9 @@ import type {
 } from './types.js'
 
 /**
- * Returns the type of formatted values for a given Schema or Attribute
- *
+ * Returns the type of formatted values for a given schema or attribute
  * @param Schema Schema | Attribute
- * @return Value
+ * @returns Value
  */
 export type FormattedValue<
   SCHEMA extends Schema | Attribute,

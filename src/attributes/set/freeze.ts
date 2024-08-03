@@ -30,11 +30,10 @@ type SetAttributeFreezer = <
 
 /**
  * Validates a set instance
- *
  * @param state Attribute options
  * @param elements Attribute elements
  * @param path Path of the instance in the related schema (string)
- * @return void
+ * @returns void
  */
 export const freezeSetAttribute: SetAttributeFreezer = <
   STATE extends SharedAttributeState,

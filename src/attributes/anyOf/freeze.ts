@@ -47,11 +47,10 @@ type AnyOfAttributeFreezer = <
 
 /**
  * Freezes a warm `anyOf` attribute
- *
- * @param elements Attribute elements
  * @param state Attribute options
+ * @param elements Attribute elements
  * @param path Path of the instance in the related schema (string)
- * @return void
+ * @returns void
  */
 export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
   STATE extends SharedAttributeState,

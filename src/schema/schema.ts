@@ -114,10 +114,9 @@ type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeNestedStates = {}>(
 ) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
 
 /**
- * Defines an Entity schema
- *
+ * Defines an entity schema
  * @param attributes Dictionary of warm attributes
- * @return Schema
+ * @returns Schema
  */
 export const schema: SchemaTyper = <
   $MAP_ATTRIBUTE_ATTRIBUTES extends $SchemaAttributeNestedStates = {}

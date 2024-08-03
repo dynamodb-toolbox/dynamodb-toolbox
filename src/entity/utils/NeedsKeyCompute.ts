@@ -24,10 +24,9 @@ type NeedsKeyPartCompute<
 
 /**
  * Whether the provided schema matches the primary key of a given table
- *
  * @param SCHEMA Schema
  * @param TABLE Table
- * @return Boolean
+ * @returns Boolean
  */
 export type NeedsKeyCompute<
   SCHEMA extends Schema,

@@ -36,12 +36,11 @@ type RecordAttributeFreezer = <
 
 /**
  * Freezes a warm `record` attribute
- *
+ * @param state Attribute options
  * @param keys Attribute keys
  * @param elements Attribute elements
- * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
- * @return void
+ * @returns void
  */
 export const freezeRecordAttribute: RecordAttributeFreezer = <
   STATE extends SharedAttributeState,

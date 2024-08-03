@@ -37,11 +37,10 @@ type MapAttributeFreezer = <
 
 /**
  * Freezes a warm `map` attribute
- *
- * @param attributes Attribute elements
  * @param state Attribute options
+ * @param attributes Attribute elements
  * @param path Path of the instance in the related schema (string)
- * @return void
+ * @returns void
  */
 export const freezeMapAttribute: MapAttributeFreezer = <
   STATE extends SharedAttributeState,

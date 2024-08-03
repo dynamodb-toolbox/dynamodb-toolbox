@@ -5,10 +5,9 @@ import type { IndexableKeyType, Key, ResolveIndexableKeyType } from '~/table/typ
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 
 /**
- * Returns the TS type of a Table Primary Key
- *
+ * Returns the TS type of the table's Primary Key
  * @param TABLE Table
- * @return Object
+ * @returns Object
  */
 export type PrimaryKey<TABLE extends Table = Table> = Table extends TABLE
   ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>

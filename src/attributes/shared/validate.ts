@@ -7,10 +7,9 @@ import type { SharedAttributeState } from './interface.js'
 
 /**
  * Validates an attribute shared properties
- *
  * @param attribute Attribute
  * @param path Path of the instance in the related schema (string)
- * @return void
+ * @returns void
  */
 export const validateAttributeProperties = (
   attribute: SharedAttributeState,

@@ -13,10 +13,9 @@ export interface GlobalIndex {
 }
 
 /**
- * Define an index of a Table
- *
+ * Define an index of a table
  * @param KEY_NAME Key attribute name
  * @param KEY_TYPE Key value type
- * @return Key
+ * @returns Key
  */
 export type Index = LocalIndex | GlobalIndex

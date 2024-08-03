@@ -28,11 +28,10 @@ type PrimitiveAttributeFreezer = <
 
 /**
  * Freezes a warm `boolean`, `number`,  `string` or `binary` attribute
- *
  * @param type Attribute type
  * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
- * @return void
+ * @returns void
  */
 export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
   TYPE extends PrimitiveAttributeType,

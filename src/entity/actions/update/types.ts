@@ -130,11 +130,10 @@ type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: N
   : false
 
 /**
- * User input of an UPDATE command for a given Entity or Schema
- *
+ * User input of an UPDATE command for a given entity or schema
  * @param Schema Entity | Schema
  * @param RequireIndependentDefaults Boolean
- * @return Object
+ * @returns Object
  */
 export type UpdateItemInput<
   SCHEMA extends Entity | Schema = Entity,
@@ -204,11 +203,10 @@ type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute e
                       : never)
 
 /**
- * User input of an UPDATE command for a given Attribute
- *
+ * User input of an UPDATE command for a given attribute
  * @param Attribute Attribute
  * @param RequireIndependentDefaults Boolean
- * @return Any
+ * @returns Any
  */
 export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute = Attribute,

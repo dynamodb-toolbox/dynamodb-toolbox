@@ -30,11 +30,10 @@ type ListAttributeFreezer = <
 
 /**
  * Freezes a warm `list` attribute
- *
  * @param elements Attribute elements
  * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
- * @return void
+ * @returns void
  */
 export const freezeListAttribute: ListAttributeFreezer = <
   STATE extends SharedAttributeState,
