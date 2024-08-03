@@ -13,3 +13,4 @@ dist
 
 # dev env settings
 .vscode
+.idea

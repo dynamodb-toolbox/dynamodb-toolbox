@@ -7,9 +7,10 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "prettier"
-  ],
-  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports", "prettier"],
+    "prettier",
+    "plugin:jsdoc/recommended"
+ ],
+  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports", "prettier", "jsdoc"],
   "parser": "@typescript-eslint/parser",
   "root": true,
   "parserOptions": {
@@ -27,6 +28,28 @@
       }
     ],
     "semi": ["error", "never"],
+    "jsdoc/require-jsdoc": [
+      "error",
+      {
+        "contexts": [
+          "TSTypeAliasDeclaration",
+          "TSInterfaceDeclaration",
+          "TSMethodSignature",
+          "TSDeclareFunction",
+          "TSEnumDeclaration"
+        ],
+        "require": {
+          "ArrowFunctionExpression": true,
+          "ClassDeclaration": true,
+          "ClassExpression": true,
+          "FunctionDeclaration": true,
+          "FunctionExpression": true,
+          "MethodDefinition": true
+        }
+      }
+    ],
+    "jsdoc/require-param-type": "off",
+    "jsdoc/require-returns-type": "off",
     // TODO: remove this rule when all the code is fully migrated to TS, atm it just produces a lot of noise
     "@typescript-eslint/ban-ts-comment": "off",
     // TODO: remove this rule when all the code is fully migrated to TS, atm it just produces a lot of noise
@@ -34,6 +57,12 @@
     "@typescript-eslint/ban-types": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/consistent-type-imports": "error"
+  },
+  "settings": {
+    "jsdoc": {
+      "ignorePrivate": true,
+      "ignoreInternal": true
+    }
   },
   "globals": {
     "expect": true,
