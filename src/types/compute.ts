@@ -5,7 +5,7 @@ export type Compute<OBJECT extends object> = {
 }
 
 type BuiltIn =
-  | Function
+  | (() => any)
   | Error
   | Date
   | { readonly [Symbol.toStringTag]: string }
