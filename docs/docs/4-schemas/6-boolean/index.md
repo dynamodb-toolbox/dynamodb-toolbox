@@ -30,7 +30,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 ### `.required()`
 
-<p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
 Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
 
@@ -53,7 +53,7 @@ const isLegendarySchema = boolean({ required: 'never' })
 
 ### `.hidden()`
 
-<p style={{ marginTop: '-15px' }}><i><code>boolean</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
 Skips the attribute when formatting items:
 
@@ -64,7 +64,7 @@ const isLegendarySchema = boolean({ hidden: true })
 
 ### `.key()`
 
-<p style={{ marginTop: '-15px' }}><i><code>boolean</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
 Tags the attribute as needed to compute the primary key:
 

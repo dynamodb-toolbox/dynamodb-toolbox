@@ -44,7 +44,7 @@ const pokemonSchema = schema({
 
 ### `.required()`
 
-<p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
 Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
 
@@ -65,7 +65,7 @@ const nullishSchema = nul({ required: 'never' })
 
 ### `.hidden()`
 
-<p style={{ marginTop: '-15px' }}><i><code>boolean</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
 Skips the attribute when formatting items:
 
@@ -76,7 +76,7 @@ const nullishSchema = nul({ hidden: true })
 
 ### `.key()`
 
-<p style={{ marginTop: '-15px' }}><i><code>boolean</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
 Tags the attribute as needed to compute the primary key:
 
@@ -103,7 +103,7 @@ const nullishSchema = nul({ savedAs: '_n' })
 
 ### `.default(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;boolean&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;null&gt;</code></i></p>
 
 Specifies default values for the attribute. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
 
@@ -174,7 +174,7 @@ Although they are not very useful, `nul` is a primitive, and as such inherits fr
 
 ### `.link<Schema>(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, boolean&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, null&gt;</code></i></p>
 
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
 
@@ -199,7 +199,7 @@ Although they are not very useful, `nul` is a primitive, and as such inherits fr
 
 ### `.enum(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>boolean[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>null[]</code></i></p>
 
 Provides a finite range of possible values:
 
@@ -224,7 +224,7 @@ Although they are not very useful, `nul` is a primitive, and as such inherits fr
 
 ### `.transform(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;boolean&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;null&gt;</code></i></p>
 
 Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md).
 
