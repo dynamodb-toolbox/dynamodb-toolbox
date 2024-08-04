@@ -94,10 +94,11 @@ export const formatAttrRawValue = <
   switch (attribute.type) {
     case 'any':
       return formatAnyAttrRawValue(attribute, rawValue) as Formatted
-    case 'string':
-    case 'binary':
+    case 'null':
     case 'boolean':
     case 'number':
+    case 'string':
+    case 'binary':
       return formatPrimitiveAttrRawValue(attribute, rawValue) as Formatted
     case 'set':
       return formatSavedSetAttribute(attribute, rawValue, options) as Formatted

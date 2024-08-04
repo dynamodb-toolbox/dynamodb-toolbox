@@ -1,6 +1,7 @@
 // attributes
 export { attr, attribute } from './attributes/index.js'
 export { any, AnyAttribute, $AnyAttribute } from './attributes/any/index.js'
+export { nul } from './attributes/nul/index.js'
 export { boolean } from './attributes/boolean/index.js'
 export { number } from './attributes/number/index.js'
 export { string } from './attributes/string/index.js'

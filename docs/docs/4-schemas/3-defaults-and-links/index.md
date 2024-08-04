@@ -86,4 +86,4 @@ The `link` method is a shorthand that acts as `keyLink` on key attributes and `p
 
 :::
 
-Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../14-actions/1-parse.md) action for more details).
+Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../15-actions/1-parse.md) action for more details).

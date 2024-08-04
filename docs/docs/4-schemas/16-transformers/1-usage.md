@@ -4,7 +4,7 @@ title: Usage
 
 # Transformers
 
-Transformers allow modifying a primitive attribute value during the [transformation step](../14-actions/1-parse.md):
+Transformers allow modifying a primitive attribute value during the [transformation step](../15-actions/1-parse.md):
 
 ```ts
 import type { Transformer } from 'dynamodb-toolbox/transformers'

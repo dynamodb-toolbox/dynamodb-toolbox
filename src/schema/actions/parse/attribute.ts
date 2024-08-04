@@ -160,10 +160,11 @@ export function* attrParser<
   switch (attribute.type) {
     case 'any':
       return yield* anyAttrParser(attribute, basicInput, nextOpts) as any
+    case 'null':
     case 'boolean':
-    case 'binary':
     case 'number':
     case 'string':
+    case 'binary':
       return yield* primitiveAttrParser(attribute, basicInput, nextOpts) as any
     case 'set':
       return yield* setAttrParser(attribute, basicInput, nextOpts) as any

@@ -10,15 +10,16 @@ export interface PrimitiveAttributeState<
 /**
  * Possible Primitive Attribute type
  */
-export type PrimitiveAttributeType = 'string' | 'boolean' | 'number' | 'binary'
+export type PrimitiveAttributeType = 'null' | 'string' | 'boolean' | 'number' | 'binary'
 
 /**
  * Returns the corresponding TS type of a Primitive Attribute type
  *
  * @param TYPE Primitive Type
  */
-export type ResolvePrimitiveAttributeType<TYPE extends PrimitiveAttributeType> =
-  TYPE extends 'string'
+export type ResolvePrimitiveAttributeType<TYPE extends PrimitiveAttributeType> = TYPE extends 'null'
+  ? null
+  : TYPE extends 'string'
     ? string
     : TYPE extends 'number'
       ? number

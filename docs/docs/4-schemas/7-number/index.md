@@ -32,20 +32,19 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../11-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
 
-- <code>"atLeastOnce" <i>(default)</i></code>: Required
-- `"always"`: Always required (including updates)
-- `"never"`: Optional
+- <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
+- `'always'`: Always required (including updates)
+- `'never'`: Optional
 
 ```ts
 // Equivalent
+const levelSchema = number()
 const levelSchema = number().required()
-const levelSchema = number({
-  required: 'atLeastOnce'
-})
+const levelSchema = number({ required: 'atLeastOnce' })
 
-// shorthand for `.required("never")`
+// shorthand for `.required('never')`
 const levelSchema = number().optional()
 const levelSchema = number({ required: 'never' })
 ```
@@ -68,7 +67,7 @@ const levelSchema = number({ hidden: true })
 Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also sets the `required` property to "always"
+// Note: The method also sets the `required` property to 'always'
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const levelSchema = number().key()
 const levelSchema = number({
@@ -81,7 +80,7 @@ const levelSchema = number({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../14-actions/1-parse.md) (at root level or within [Maps](../11-map/index.md)):
+Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
 
 ```ts
 const levelSchema = number().savedAs('lvl')
@@ -199,7 +198,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;number&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../14-actions/1-parse.md):
+Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md):
 
 ```ts
 const addOne = {
@@ -212,4 +211,4 @@ const levelSchema = number().transform(addOne)
 const levelSchema = number({ transform: addOne })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../15-transformers/1-usage.md), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../16-transformers/1-usage.md), so feel free to use them!

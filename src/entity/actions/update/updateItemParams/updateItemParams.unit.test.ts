@@ -13,10 +13,12 @@ import {
   Table,
   UpdateItemCommand,
   any,
+  anyOf,
   binary,
   boolean,
   list,
   map,
+  nul,
   number,
   prefix,
   record,
@@ -45,7 +47,7 @@ const TestEntity = new Entity({
     test_string_coerce: string().optional(),
     count: number().optional().savedAs('test_number'),
     test_boolean: boolean().optional(),
-    test_boolean_coerce: boolean().optional(),
+    test_nullable_boolean: anyOf(boolean(), nul()).optional(),
     test_list: list(string()).optional(),
     test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
     test_list_coerce: list(any()).optional(),
@@ -298,6 +300,24 @@ describe('update', () => {
     const attributeValues = Object.values(ExpressionAttributeValues)
 
     expect(attributeValues).not.toContain('test_string')
+  })
+
+  test('accets null on nullable fields', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues = {}
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-pk',
+        test_nullable_boolean: null
+      })
+      .params()
+
+    expect(UpdateExpression).toContain('SET #s_1 = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_nullable_boolean' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': null })
   })
 
   test('accepts references', () => {

@@ -32,20 +32,19 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../11-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
 
-- <code>"atLeastOnce" <i>(default)</i></code>: Required
-- `"always"`: Always required (including updates)
-- `"never"`: Optional
+- <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
+- `'always'`: Always required (including updates)
+- `'never'`: Optional
 
 ```ts
 // Equivalent
+const nameSchema = string()
 const nameSchema = string().required()
-const nameSchema = string({
-  required: 'atLeastOnce'
-})
+const nameSchema = string({ required: 'atLeastOnce' })
 
-// shorthand for `.required("never")`
+// shorthand for `.required('never')`
 const nameSchema = string().optional()
 const nameSchema = string({ required: 'never' })
 ```
@@ -68,7 +67,7 @@ const nameSchema = string({ hidden: true })
 Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also sets the `required` property to "always"
+// Note: The method also sets the `required` property to 'always'
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const nameSchema = string().key()
 const nameSchema = string({
@@ -81,7 +80,7 @@ const nameSchema = string({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../14-actions/1-parse.md) (at root level or within [Maps](../11-map/index.md)):
+Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
 
 ```ts
 const nameSchema = string().savedAs('n')
@@ -199,7 +198,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;string&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../14-actions/1-parse.md):
+Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md):
 
 ```ts
 const PREFIX = 'PREFIX#'
@@ -214,4 +213,4 @@ const prefixedStrSchema = string().transform(prefix)
 const prefixedStrSchema = string({ transform: prefix })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../15-transformers/1-usage.md) (including [`prefix`](../15-transformers/2-prefix.md)), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../16-transformers/1-usage.md) (including [`prefix`](../16-transformers/2-prefix.md)), so feel free to use them!

@@ -4,6 +4,7 @@ import { binary } from './binary/index.js'
 import { boolean } from './boolean/index.js'
 import { list } from './list/index.js'
 import { map } from './map/index.js'
+import { nul } from './nul/index.js'
 import { number } from './number/index.js'
 import { record } from './record/index.js'
 import { set } from './set/index.js'
@@ -11,6 +12,7 @@ import { string } from './string/index.js'
 
 export * from './any/index.js'
 export * from './primitive/index.js'
+export * from './nul/index.js'
 export * from './boolean/index.js'
 export * from './number/index.js'
 export * from './string/index.js'
@@ -26,10 +28,11 @@ export * from './types/index.js'
 
 export const attribute: {
   any: typeof any
-  binary: typeof binary
+  nul: typeof nul
   boolean: typeof boolean
   number: typeof number
   string: typeof string
+  binary: typeof binary
   set: typeof set
   list: typeof list
   map: typeof map
@@ -37,10 +40,11 @@ export const attribute: {
   anyOf: typeof anyOf
 } = {
   any,
-  binary,
+  nul,
   boolean,
   number,
   string,
+  binary,
   set,
   list,
   map,
