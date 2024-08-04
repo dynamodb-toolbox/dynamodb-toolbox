@@ -32,20 +32,21 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../11-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
 
-- <code>"atLeastOnce" <i>(default)</i></code>: Required
-- `"always"`: Always required (including updates)
-- `"never"`: Optional
+- <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
+- `'always'`: Always required (including updates)
+- `'never'`: Optional
 
 ```ts
 // Equivalent
+const isLegendarySchema = boolean()
 const isLegendarySchema = boolean().required()
 const isLegendarySchema = boolean({
   required: 'atLeastOnce'
 })
 
-// shorthand for `.required("never")`
+// shorthand for `.required('never')`
 const isLegendarySchema = boolean().optional()
 const isLegendarySchema = boolean({ required: 'never' })
 ```
@@ -68,7 +69,7 @@ const isLegendarySchema = boolean({ hidden: true })
 Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also sets the `required` property to "always"
+// Note: The method also sets the `required` property to 'always'
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const isLegendarySchema = boolean().key()
 const isLegendarySchema = boolean({
@@ -81,7 +82,7 @@ const isLegendarySchema = boolean({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../14-actions/1-parse.md) (at root level or within [Maps](../11-map/index.md)):
+Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
 
 ```ts
 const isLegendarySchema = boolean().savedAs('isLeg')
@@ -177,7 +178,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean[]</code></i></p>
 
-`boolean` is a primitive, and as such inherits from the `.enum` option and `.const` shorthand (although it is not very useful 😅):
+Provides a finite range of possible values:
 
 ```ts
 const isLegendarySchema = boolean().enum(true, false)
@@ -192,11 +193,17 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 :::
 
+:::note
+
+Although it is not very useful, `boolean` is a primitive, and as such inherits from the `.enum` and `.const` options.
+
+:::
+
 ### `.transform(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;boolean&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../14-actions/1-parse.md):
+Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md):
 
 ```ts
 const negate = {
@@ -209,4 +216,4 @@ const isLegendarySchema = boolean().transform(negate)
 const isLegendarySchema = boolean({ transform: negate })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../15-transformers/1-usage.md), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../16-transformers/1-usage.md), so feel free to use them!

@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Record
 
-Defines a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../11-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
+Defines a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../12-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
 
 ```ts
 import { record } from 'dynamodb-toolbox/attributes/record'
@@ -44,7 +44,7 @@ const strRecord = record(string(), string().key())
 const strRecord = record(string(), string().default('foo'))
 ```
 
-Record keys share the same constraints and must be of type [`string`](../7-string/index.md).
+Record keys share the same constraints and must be of type [`string`](../8-string/index.md).
 
 ## Options
 
@@ -52,14 +52,18 @@ Record keys share the same constraints and must be of type [`string`](../7-strin
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../11-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
 
-- <code>"atLeastOnce" <i>(default)</i></code>: Required
-- `"always"`: Always required (including updates)
-- `"never"`: Optional
+- <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
+- `'always'`: Always required (including updates)
+- `'never'`: Optional
 
 ```ts
 // Equivalent
+const weaknessesSchema = record(
+  string().enum('fire', ...),
+  number()
+)
 const weaknessesSchema = record(
   string().enum('fire', ...),
   number()
@@ -71,7 +75,7 @@ const weaknessesSchema = record(
   { required: 'atLeastOnce' }
 )
 
-// shorthand for `.required("never")`
+// shorthand for `.required('never')`
 const weaknessesSchema = record(...).optional()
 const weaknessesSchema = map(..., { required: 'never' })
 ```
@@ -97,7 +101,7 @@ const weaknessesSchema = record(..., { hidden: true })
 Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also sets the `required` property to "always"
+// Note: The method also sets the `required` property to 'always'
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const idsSchema = record(string(), string()).key()
 const idsSchema = record(..., {
@@ -110,7 +114,7 @@ const idsSchema = record(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../14-actions/1-parse.md) (at root level or within [Maps](../11-map/index.md)):
+Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
 
 ```ts
 const weaknessesSchema = record(

@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Set
 
-Defines a [**set attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Sets can contain [`numbers`](../6-number/index.md), [`strings`](../7-string/index.md), or [`binaries`](../8-binary/index.md):
+Defines a [**set attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Sets can contain [`numbers`](../7-number/index.md), [`strings`](../8-string/index.md), or [`binaries`](../9-binary/index.md):
 
 ```ts
 import { set } from 'dynamodb-toolbox/attributes/set';
@@ -49,14 +49,15 @@ const strSet = set(string().default('foo'))
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../11-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
 
-- <code>"atLeastOnce" <i>(default)</i></code>: Required
-- `"always"`: Always required (including updates)
-- `"never"`: Optional
+- <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
+- `'always'`: Always required (including updates)
+- `'never'`: Optional
 
 ```ts
 // Equivalent
+const pokeTypesSchema = set(pokeTypeSchema)
 const pokeTypesSchema = set(pokeTypeSchema).required()
 const pokeTypesSchema = set(
   pokeTypeSchema,
@@ -64,7 +65,7 @@ const pokeTypesSchema = set(
   { required: 'atLeastOnce' }
 )
 
-// shorthand for `.required("never")`
+// shorthand for `.required('never')`
 const pokeTypesSchema = set(pokeTypeSchema).optional()
 const pokeTypesSchema = set(..., { required: 'never' })
 ```
@@ -87,7 +88,7 @@ const pokeTypesSchema = set(..., { hidden: true })
 Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also sets the `required` property to "always"
+// Note: The method also sets the `required` property to 'always'
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const pokeTypesSchema = set(pokeTypeSchema).key()
 const pokeTypesSchema = set(..., {
@@ -100,7 +101,7 @@ const pokeTypesSchema = set(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../14-actions/1-parse.md) (at root level or within [Maps](../11-map/index.md)):
+Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
 
 ```ts
 const pokeTypesSchema = set(pokeTypeSchema).savedAs('pt')

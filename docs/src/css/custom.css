@@ -508,8 +508,8 @@ div[role='banner'] {
   );
   border-bottom: none;
   color: white;
+}
 
-  button {
-    color: white;
-  }
+div[role='banner'] button {
+  color: white;
 }

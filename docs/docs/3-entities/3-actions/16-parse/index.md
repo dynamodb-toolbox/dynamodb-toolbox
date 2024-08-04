@@ -33,7 +33,7 @@ const parsed = PokemonEntity.build(EntityParser).parse(
 
 :::info
 
-This action is mostly a **wrapper around the [`SchemaParser`](../../../4-schemas/14-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first.
+This action is mostly a **wrapper around the [`SchemaParser`](../../../4-schemas/15-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first.
 
 :::
 
@@ -60,10 +60,10 @@ const parsed = PokemonEntity.build(EntityParser).parse(input)
 
 You can provide **parsing options** as a second argument. Available options:
 
-| Option           |              Type              | Default | Description                                                                                                                        |
-| ---------------- | :----------------------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `mode`           | `put`, `key` or `update` | `put` | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.             |
-| `parseExtension` |          _(internal)_          |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
+| Option           |           Type           | Default | Description                                                                                                                      |
+| ---------------- | :----------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`           | `put`, `key` or `update` |  `put`  | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.           |
+| `parseExtension` |       _(internal)_       |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
 
 :::noteExamples
 

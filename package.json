@@ -90,6 +90,11 @@
       "require": "./dist/cjs/attributes/any/index.js",
       "types": "./dist/types/attributes/any/index.d.ts"
     },
+    "./attributes/nul": {
+      "import": "./dist/esm/attributes/nul/index.js",
+      "require": "./dist/cjs/attributes/nul/index.js",
+      "types": "./dist/types/attributes/nul/index.d.ts"
+    },
     "./attributes/boolean": {
       "import": "./dist/esm/attributes/boolean/index.js",
       "require": "./dist/cjs/attributes/boolean/index.js",

@@ -4,10 +4,12 @@ import {
   PutItemCommand,
   Table,
   any,
+  anyOf,
   binary,
   boolean,
   list,
   map,
+  nul,
   number,
   prefix,
   record,
@@ -34,18 +36,19 @@ const TestEntity = new Entity({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test_any: any().optional(),
-    test_binary: binary().optional(),
-    test_string: string().putDefault('test string'),
-    count: number().optional().savedAs('test_number'),
-    test_number_defaulted: number().putDefault(0),
     test_boolean: boolean().optional(),
+    test_number_defaulted: number().putDefault(0),
+    test_string: string().putDefault('test string'),
+    test_binary: binary().optional(),
+    count: number().optional().savedAs('test_number'),
     test_list: list(string()).optional(),
     test_map: map({
       str: string()
     }).optional(),
     test_string_set: set(string()).optional(),
     test_number_set: set(number()).optional(),
-    test_binary_set: set(binary()).optional()
+    test_binary_set: set(binary()).optional(),
+    test_nullable_string: anyOf(string(), nul()).optional()
   }).and(baseSchema => ({
     test_string_2: string().putLink<typeof baseSchema>(({ test_string }) => test_string)
   })),
@@ -254,6 +257,31 @@ describe('put', () => {
         })
         .params()
     ).toThrow(DynamoDBToolboxError)
+  })
+
+  test('fails when null provided to non-nullable attribute', () => {
+    expect(() =>
+      TestEntity.build(PutItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_string: null
+        })
+        .params()
+    ).toThrow(DynamoDBToolboxError)
+  })
+
+  test('acceps null provided to nullable attribute', () => {
+    const { Item } = TestEntity.build(PutItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_nullable_string: null
+      })
+      .params()
+
+    expect(Item).toMatchObject({ test_nullable_string: null })
   })
 
   test('with valid array', () => {

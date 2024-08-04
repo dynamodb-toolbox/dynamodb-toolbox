@@ -59,23 +59,24 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>
 
 Tags the attribute as **required** (at root level or within other Maps). Possible values are:
 
-- <code>"atLeastOnce" <i>(default)</i></code>: Required
-- `"always"`: Always required (including updates)
-- `"never"`: Optional
+- <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
+- `'always'`: Always required (including updates)
+- `'never'`: Optional
 
 ```ts
 // Equivalent
 const nameSchema = map({
   firstName: string(),
   lastName: string()
-}).required()
+})
+const nameSchema = map({ ... }).required()
 const nameSchema = map(
   { ... },
   // Options can be provided as 2nd argument
   { required: 'atLeastOnce' }
 )
 
-// shorthand for `.required("never")`
+// shorthand for `.required('never')`
 const nameSchema = map({ ... }).optional()
 const nameSchema = map({ ... }, { required: 'never' })
 ```
@@ -101,7 +102,7 @@ const nameSchema = map({ ... }, { hidden: true })
 Tags the attribute as needed to compute the primary key:
 
 ```ts
-// Note: The method also sets the `required` property to "always"
+// Note: The method also sets the `required` property to 'always'
 // (it is often the case in practice, you can still use `.optional()` if needed)
 const nameSchema = map({
   firstName: string(),
@@ -128,7 +129,7 @@ const nameSchema = map({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../14-actions/1-parse.md) (at root level or within other Maps):
+Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within other Maps):
 
 ```ts
 const nameSchema = map({

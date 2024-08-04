@@ -62,9 +62,9 @@ export class $RecordAttribute<
 
   /**
    * Tag attribute as required. Possible values are:
-   * - `"atLeastOnce"` _(default)_: Required in PUTs, optional in UPDATEs
-   * - `"never"`: Optional in PUTs and UPDATEs
-   * - `"always"`: Required in PUTs and UPDATEs
+   * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
+   * - `'never'`: Optional in PUTs and UPDATEs
+   * - `'always'`: Required in PUTs and UPDATEs
    *
    * @param nextRequired RequiredOption
    */

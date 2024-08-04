@@ -155,7 +155,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-👉 See the [transformers section](../../4-schemas/15-transformers/1-usage.md) for more details on transformers.
+👉 See the [transformers section](../../4-schemas/16-transformers/1-usage.md) for more details on transformers.
 
 </TabItem>
 </Tabs>
