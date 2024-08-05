@@ -56,9 +56,9 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   validateAttributeProperties(state, path)
 
   const {
-    key: keysKey,
     required: keysRequired,
     hidden: keysHidden,
+    key: keysKey,
     savedAs: keysSavedAs
   } = keys[$state]
 

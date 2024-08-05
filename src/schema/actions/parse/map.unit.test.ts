@@ -9,7 +9,7 @@ const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
 const mapAttr = map({ foo: string(), bar: string() }).freeze('path')
 
-describe('parseMapAttributeClonedInput', () => {
+describe('mapAttributeParser', () => {
   beforeEach(() => {
     attrParser.mockClear()
   })
@@ -21,7 +21,7 @@ describe('parseMapAttributeClonedInput', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  test('applies parseAttributeClonesInput on input properties otherwise (and pass options)', () => {
+  test('applies attrParser on input properties otherwise (and pass options)', () => {
     const options = { some: 'options' }
     const parser = mapAttributeParser(
       mapAttr,

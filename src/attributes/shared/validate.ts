@@ -56,7 +56,7 @@ export const validateAttributeProperties = (
       path,
       payload: {
         propertyName: 'key',
-        received: attributeRequired
+        received: attributeHidden
       }
     })
   }
@@ -70,7 +70,7 @@ export const validateAttributeProperties = (
       path,
       payload: {
         propertyName: 'savedAs',
-        received: attributeRequired
+        received: attributeSavedAs
       }
     })
   }

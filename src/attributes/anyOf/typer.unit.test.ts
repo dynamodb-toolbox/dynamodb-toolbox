@@ -133,8 +133,8 @@ describe('anyOf', () => {
     expect(anyOfAttr[$state]).toStrictEqual({
       required: 'atLeastOnce',
       key: false,
-      savedAs: undefined,
       hidden: false,
+      savedAs: undefined,
       defaults: { key: undefined, put: undefined, update: undefined },
       links: { key: undefined, put: undefined, update: undefined }
     })

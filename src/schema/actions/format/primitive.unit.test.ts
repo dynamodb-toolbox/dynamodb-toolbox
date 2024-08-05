@@ -4,7 +4,7 @@ import { prefix } from '~/transformers/prefix.js'
 
 import { formatPrimitiveAttrRawValue } from './primitive.js'
 
-describe('parseSavedPrimitiveAttribute', () => {
+describe('formatPrimitiveAttrRawValue', () => {
   test('throws an error if saved value type does not match', () => {
     const str = string().freeze('path')
 

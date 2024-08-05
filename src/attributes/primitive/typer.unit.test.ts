@@ -28,8 +28,8 @@ describe('primitiveAttribute', () => {
         {
           required: AtLeastOnce
           hidden: false
-          savedAs: undefined
           key: false
+          savedAs: undefined
           enum: undefined
           defaults: {
             key: undefined
