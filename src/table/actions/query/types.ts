@@ -46,7 +46,9 @@ type SecondaryIndexQuery<
         partition: ResolvePrimitiveAttribute<
           PrimitiveAttribute<INDEX_SCHEMA['partitionKey']['type']>
         >
-        range?: QueryRange<INDEX_SCHEMA['sortKey']['type']>
+        range?: INDEX_SCHEMA['sortKey'] extends Key
+          ? QueryRange<INDEX_SCHEMA['sortKey']['type']>
+          : undefined
       }
     : INDEX_SCHEMA extends LocalIndex
       ? {
