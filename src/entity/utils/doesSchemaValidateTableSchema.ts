@@ -2,7 +2,7 @@ import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { Key } from '~/table/types/index.js'
 
-const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean => {
+export const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean => {
   if (key === undefined) return true
 
   const keyAttribute =

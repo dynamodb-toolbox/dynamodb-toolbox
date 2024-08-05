@@ -18,8 +18,8 @@ describe('anyAttribute', () => {
       {
         required: AtLeastOnce
         hidden: false
-        savedAs: undefined
         key: false
+        savedAs: undefined
         defaults: { key: undefined; put: undefined; update: undefined }
         links: { key: undefined; put: undefined; update: undefined }
         castAs: unknown
@@ -29,8 +29,8 @@ describe('anyAttribute', () => {
     expect(anyInstance[$state]).toStrictEqual({
       required: 'atLeastOnce',
       hidden: false,
-      savedAs: undefined,
       key: false,
+      savedAs: undefined,
       defaults: { key: undefined, put: undefined, update: undefined },
       links: { key: undefined, put: undefined, update: undefined },
       castAs: undefined

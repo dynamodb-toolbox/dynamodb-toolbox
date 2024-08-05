@@ -42,9 +42,7 @@ const TestEntity = new Entity({
     test_binary: binary().optional(),
     count: number().optional().savedAs('test_number'),
     test_list: list(string()).optional(),
-    test_map: map({
-      str: string()
-    }).optional(),
+    test_map: map({ str: string() }).optional(),
     test_string_set: set(string()).optional(),
     test_number_set: set(number()).optional(),
     test_binary_set: set(binary()).optional(),
@@ -136,11 +134,7 @@ describe('put', () => {
 
   test('creates item with aliases', () => {
     const { Item } = TestEntity.build(PutItemCommand)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        count: 0
-      })
+      .item({ email: 'test-pk', sort: 'test-sk', count: 0 })
       .params()
 
     expect(Item).toMatchObject({ test_number: 0 })
@@ -150,11 +144,7 @@ describe('put', () => {
     const overrideValue = 'different value'
 
     const { Item } = TestEntity.build(PutItemCommand)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_string: overrideValue
-      })
+      .item({ email: 'test-pk', sort: 'test-sk', test_string: overrideValue })
       .params()
 
     expect(Item).toMatchObject({ test_string: overrideValue })
@@ -162,10 +152,7 @@ describe('put', () => {
 
   test('creates item with composite field', () => {
     const { Item } = TestEntity2.build(PutItemCommand)
-      .item({
-        email: 'test-pk',
-        test_composite: 'test'
-      })
+      .item({ email: 'test-pk', test_composite: 'test' })
       .params()
 
     expect(Item).not.toHaveProperty('sort')

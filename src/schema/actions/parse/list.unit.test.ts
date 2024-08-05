@@ -9,7 +9,7 @@ const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
 const listAttr = list(string()).freeze('path')
 
-describe('parseListAttributeClonedInput', () => {
+describe('listAttrParser', () => {
   beforeEach(() => {
     attrParser.mockClear()
   })
@@ -21,7 +21,7 @@ describe('parseListAttributeClonedInput', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  test('applies parseAttributeClonesInput on input elements otherwise (and pass options)', () => {
+  test('applies attrParser on input elements otherwise (and pass options)', () => {
     const options = { some: 'options' }
     const parser = listAttrParser(
       listAttr,

@@ -440,6 +440,7 @@ describe('addInternalAttributes', () => {
         type: 'string',
         enum: undefined,
         hidden: false,
+        key: false,
         defaults: {
           key: undefined,
           put: expect.any(Function),
@@ -500,6 +501,7 @@ describe('addInternalAttributes', () => {
         type: 'string',
         enum: undefined,
         hidden: true,
+        key: false,
         defaults: {
           key: undefined,
           put: expect.any(Function),

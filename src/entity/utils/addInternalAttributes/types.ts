@@ -66,8 +66,8 @@ export type $TimestampAttribute<
   'string',
   {
     required: AtLeastOnce
-    hidden: HIDDEN
     key: false
+    hidden: HIDDEN
     savedAs: SAVED_AS
     enum: undefined
     defaults: {
