@@ -201,6 +201,21 @@ const MyTable = new Table({
   indexes: {
     byTrainerId: {
       type: 'global',
+      partitionKey: { name: 'trainerId', type: 'string' }
+    }
+  }
+})
+```
+
+</TabItem>
+<TabItem value="gsi-sort-key" label="Global Index (+ sort key)">
+
+```ts
+const MyTable = new Table({
+  ...,
+  indexes: {
+    byTrainerId: {
+      type: 'global',
       partitionKey: { name: 'trainerId', type: 'string' },
       sortKey: { name: 'level', type: 'number' }
     }
@@ -228,9 +243,9 @@ const MyTable = new Table({
 
 :::
 
-:::info
+:::caution
 
-When filtered, the projected attributes of a secondary index MUST include the `Table`'s [entity attribute](#entityattributesavedas) for automatic parsing of the returned data.
+When whitelisted, the projected attributes of a secondary index MUST include the `Table`'s [entity attribute](#entityattributesavedas) for automatic parsing of the returned data.
 
 :::
 

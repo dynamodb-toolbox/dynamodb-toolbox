@@ -24,15 +24,6 @@ export class Table<
 
   [$interceptor]?: (action: TableSendableAction) => any
 
-  /**
-   * Define a Table
-   *
-   * @param documentClient _(optional)_ DynamoDBDocumentClient
-   * @param name string
-   * @param partitionKey Partition key
-   * @param sortKey _(optional)_ Sort key
-   * @param entityAttributeSavedAs _(optional)_ Entity name attribute savedAs (defaults to `'_et'`)
-   */
   constructor({
     documentClient,
     name,

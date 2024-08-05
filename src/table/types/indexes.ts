@@ -9,7 +9,7 @@ export interface LocalIndex {
 export interface GlobalIndex {
   type: 'global'
   partitionKey: Key
-  sortKey: Key
+  sortKey?: Key
 }
 
 /**
