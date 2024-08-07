@@ -2,7 +2,7 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
 import { $SetAttribute } from './interface.js'
-import { SET_ATTRIBUTE_DEFAULT_OPTIONS } from './options.js'
+import { SET_DEFAULT_OPTIONS } from './options.js'
 import type { SetAttributeDefaultOptions, SetAttributeOptions } from './options.js'
 import type { $SetAttributeElements } from './types.js'
 
@@ -39,10 +39,10 @@ export const set: SetAttributeTyper = <
   ELEMENTS
 > => {
   const state = {
-    ...SET_ATTRIBUTE_DEFAULT_OPTIONS,
+    ...SET_DEFAULT_OPTIONS,
     ...options,
-    defaults: { ...SET_ATTRIBUTE_DEFAULT_OPTIONS.defaults, ...options?.defaults },
-    links: { ...SET_ATTRIBUTE_DEFAULT_OPTIONS.links, ...options?.links }
+    defaults: { ...SET_DEFAULT_OPTIONS.defaults, ...options?.defaults },
+    links: { ...SET_DEFAULT_OPTIONS.links, ...options?.links }
   } as InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
 
   return new $SetAttribute(state, elements)

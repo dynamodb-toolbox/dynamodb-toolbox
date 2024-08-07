@@ -60,7 +60,7 @@ export type SetAttributeDefaultOptions = {
   }
 }
 
-export const SET_ATTRIBUTE_DEFAULT_OPTIONS: SetAttributeDefaultOptions = {
+export const SET_DEFAULT_OPTIONS: SetAttributeDefaultOptions = {
   required: 'atLeastOnce',
   hidden: false,
   key: false,
