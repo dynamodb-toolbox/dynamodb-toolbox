@@ -13,12 +13,13 @@ import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
+import type { Validator } from '../types/validator.js'
 import { freezeListAttribute } from './freeze.js'
 import type { FreezeListAttribute } from './freeze.js'
-import type { $ListAttributeElements } from './types.js'
+import type { $ListAttributeElements, ListAttributeState } from './types.js'
 
 export interface $ListAttributeState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends ListAttributeState = ListAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > {
   [$type]: 'list'
@@ -27,7 +28,7 @@ export interface $ListAttributeState<
 }
 
 export interface $ListAttributeNestedState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends ListAttributeState = ListAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > extends $ListAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>
@@ -37,7 +38,7 @@ export interface $ListAttributeNestedState<
  * List attribute interface
  */
 export class $ListAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends ListAttributeState = ListAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > implements $ListAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -413,13 +414,179 @@ export class $ListAttribute<
     )
   }
 
+  /**
+   * Provide a custom validator for attribute in Primary Key computing
+   *
+   * @param nextKeyValidator `(keyAttributeInput) => void`
+   */
+  keyValidate(
+    nextKeyValidator: Validator<
+      ParserInput<
+        FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>,
+        { mode: 'key'; fill: false }
+      >,
+      FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>
+    >
+  ): $ListAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $ListAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      }),
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands
+   *
+   * @param nextPutValidator `(putAttributeInput) => void`
+   */
+  putValidate(
+    nextPutValidator: Validator<
+      ParserInput<FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>, { fill: false }>,
+      FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>
+    >
+  ): $ListAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $ListAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      }),
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in UPDATE commands
+   *
+   * @param nextUpdateValidator `(updateAttributeInput) => void`
+   */
+  updateValidate(
+    nextUpdateValidator: Validator<
+      AttributeUpdateItemInput<FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>, true>,
+      FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>
+    >
+  ): $ListAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $ListAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      }),
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextValidator `(key/putAttributeInput) => void`
+   */
+  validate(
+    nextValidator: Validator<
+      If<
+        STATE['key'],
+        ParserInput<
+          FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>,
+          { mode: 'key'; fill: false }
+        >,
+        ParserInput<FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>, { fill: false }>
+      >,
+      FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>
+    >
+  ): $ListAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $ListAttribute(
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
+      }),
+      this[$elements]
+    )
+  }
+
   freeze(path?: string): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>> {
     return freezeListAttribute(this[$state], this[$elements], path)
   }
 }
 
 export class ListAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends ListAttributeState = ListAttributeState,
   ELEMENTS extends Attribute = Attribute
 > implements SharedAttributeState<STATE>
 {
@@ -432,6 +599,7 @@ export class ListAttribute<
   savedAs: STATE['savedAs']
   defaults: STATE['defaults']
   links: STATE['links']
+  validators: STATE['validators']
 
   constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
     this.type = 'list'
@@ -443,6 +611,7 @@ export class ListAttribute<
     this.savedAs = state.savedAs
     this.defaults = state.defaults
     this.links = state.links
+    this.validators = state.validators
   }
 
   // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas

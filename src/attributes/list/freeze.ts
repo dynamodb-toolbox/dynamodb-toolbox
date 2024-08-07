@@ -5,10 +5,10 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import { ListAttribute } from './interface.js'
 import type { $ListAttributeState } from './interface.js'
+import type { ListAttributeState } from './types.js'
 import type { $ListAttributeElements } from './types.js'
 
 export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
@@ -20,7 +20,7 @@ export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
   >
 
 type ListAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends ListAttributeState,
   $ELEMENTS extends $ListAttributeElements
 >(
   state: STATE,
@@ -37,7 +37,7 @@ type ListAttributeFreezer = <
  * @return void
  */
 export const freezeListAttribute: ListAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends ListAttributeState,
   $ELEMENTS extends $ListAttributeElements
 >(
   state: STATE,

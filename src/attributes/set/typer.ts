@@ -42,7 +42,8 @@ export const set: SetAttributeTyper = <
     ...SET_DEFAULT_OPTIONS,
     ...options,
     defaults: { ...SET_DEFAULT_OPTIONS.defaults, ...options?.defaults },
-    links: { ...SET_DEFAULT_OPTIONS.links, ...options?.links }
+    links: { ...SET_DEFAULT_OPTIONS.links, ...options?.links },
+    validators: { ...SET_DEFAULT_OPTIONS.validators, ...options?.validators }
   } as InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
 
   return new $SetAttribute(state, elements)

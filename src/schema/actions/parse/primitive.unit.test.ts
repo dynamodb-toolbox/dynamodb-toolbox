@@ -17,6 +17,9 @@ describe('primitiveAttrParser', () => {
       .validate(input => input === 'foo')
       .freeze('root')
 
+    const { value: parsed } = primitiveAttrParser(strA, 'foo', { fill: false }).next()
+    expect(parsed).toBe('foo')
+
     const invalidCallA = () => primitiveAttrParser(strA, 'bar', { fill: false }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)

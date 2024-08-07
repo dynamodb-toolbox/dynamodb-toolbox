@@ -5,6 +5,8 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
+import type { Validator } from '../types/validator.js'
+import type { FreezeSetAttribute } from './freeze.js'
 import type { $SetAttributeState, SetAttribute } from './interface.js'
 import { set } from './typer.js'
 
@@ -106,6 +108,11 @@ describe('set', () => {
           put: undefined
           update: undefined
         }
+        validators: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertState
@@ -115,7 +122,8 @@ describe('set', () => {
       hidden: false,
       savedAs: undefined,
       defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined }
+      links: { key: undefined, put: undefined, update: undefined },
+      validators: { key: undefined, put: undefined, update: undefined }
     })
 
     const assertElmt: A.Equals<(typeof st)[$elements], typeof strElement> = 1
@@ -451,5 +459,146 @@ describe('set', () => {
     assertSt
 
     expect(st[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+  })
+
+  test('returns set with validator (option)', () => {
+    // TOIMPROVE: Add type constraints here
+    const pass = () => true
+    const setA = set(string(), { validators: { key: pass, put: undefined, update: undefined } })
+    const setB = set(string(), { validators: { key: undefined, put: pass, update: undefined } })
+    const setC = set(string(), { validators: { key: undefined, put: undefined, update: pass } })
+
+    const assertSetA: A.Contains<
+      (typeof setA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertSetA
+
+    expect(setA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertSetB: A.Contains<
+      (typeof setB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertSetB
+
+    expect(setB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertSetC: A.Contains<
+      (typeof setC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertSetC
+
+    expect(setC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+  })
+
+  test('returns set with validator (method)', () => {
+    const pass = () => true
+
+    const setA = set(string()).keyValidate(pass)
+    const setB = set(string()).putValidate(pass)
+    const setC = set(string()).updateValidate(pass)
+
+    const assertSetA: A.Contains<
+      (typeof setA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertSetA
+
+    expect(setA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertSetB: A.Contains<
+      (typeof setB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertSetB
+
+    expect(setB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertSetC: A.Contains<
+      (typeof setC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertSetC
+
+    expect(setC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+
+    const prevSet = set(string())
+    prevSet.validate((...args) => {
+      const assertArgs: A.Equals<typeof args, [Set<string>, FreezeSetAttribute<typeof prevSet>]> = 1
+      assertArgs
+
+      return true
+    })
+
+    const prevOptSet = set(string()).optional()
+    prevOptSet.validate((...args) => {
+      const assertArgs: A.Equals<
+        typeof args,
+        [Set<string> | undefined, FreezeSetAttribute<typeof prevOptSet>]
+      > = 1
+      assertArgs
+
+      return true
+    })
+  })
+
+  test('returns set with PUT validator if it is not key (validate shorthand)', () => {
+    const pass = () => true
+    const _set = set(string()).validate(pass)
+
+    const assertSet: A.Contains<
+      (typeof _set)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertSet
+
+    expect(_set[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+  })
+
+  test('returns set with KEY validator if it is key (link shorthand)', () => {
+    const pass = () => true
+    const _set = set(string()).key().validate(pass)
+
+    const assertSet: A.Contains<
+      (typeof _set)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertSet
+
+    expect(_set[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
   })
 })
