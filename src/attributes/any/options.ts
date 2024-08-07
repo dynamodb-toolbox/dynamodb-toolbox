@@ -1,4 +1,5 @@
 import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
+import type { Validator } from '../types/validator.js'
 
 // Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
@@ -38,6 +39,14 @@ export interface AnyAttributeOptions {
     put: undefined | unknown
     update: undefined | unknown
   }
+  /**
+   * Provide custom **validators** for attribute
+   */
+  validators: {
+    key: undefined | Validator
+    put: undefined | Validator
+    update: undefined | Validator
+  }
 }
 
 export type AnyAttributeDefaultOptions = {
@@ -55,6 +64,11 @@ export type AnyAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
+  validators: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
 export const ANY_DEFAULT_OPTIONS: AnyAttributeDefaultOptions = {
@@ -68,6 +82,11 @@ export const ANY_DEFAULT_OPTIONS: AnyAttributeDefaultOptions = {
     update: undefined
   },
   links: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
+  validators: {
     key: undefined,
     put: undefined,
     update: undefined

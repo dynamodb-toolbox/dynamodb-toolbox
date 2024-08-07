@@ -6,11 +6,13 @@ import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
+import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import type { Validator } from '../types/validator.js'
 import { freezeAnyAttribute } from './freeze.js'
 import type { FreezeAnyAttribute } from './freeze.js'
 import type { AnyAttributeState } from './types.js'
@@ -363,17 +365,171 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   > {
     return new $AnyAttribute(
       overwrite(this[$state], {
-        links: this[$state].key
-          ? {
-              key: nextLink as unknown,
-              put: this[$state].links.put,
-              update: this[$state].links.update
-            }
-          : {
-              key: this[$state].links.key,
-              put: nextLink as unknown,
-              update: this[$state].links.update
-            }
+        links: ifThenElse(
+          this[$state].key,
+          {
+            key: nextLink as unknown,
+            put: this[$state].links.put,
+            update: this[$state].links.update
+          },
+          {
+            key: this[$state].links.key,
+            put: nextLink as unknown,
+            update: this[$state].links.update
+          }
+        )
+      })
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in Primary Key computing
+   *
+   * @param nextKeyValidator `(keyAttributeInput) => void`
+   */
+  keyValidate(
+    nextKeyValidator: Validator<
+      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>,
+      FreezeAnyAttribute<$AnyAttributeState<STATE>>
+    >
+  ): $AnyAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
+      }
+    >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      })
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands
+   *
+   * @param nextPutValidator `(putAttributeInput) => void`
+   */
+  putValidate(
+    nextPutValidator: Validator<
+      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>,
+      FreezeAnyAttribute<$AnyAttributeState<STATE>>
+    >
+  ): $AnyAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
+      }
+    >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      })
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in UPDATE commands
+   *
+   * @param nextUpdateValidator `(updateAttributeInput) => void`
+   */
+  updateValidate(
+    nextUpdateValidator: Validator<
+      AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
+      FreezeAnyAttribute<$AnyAttributeState<STATE>>
+    >
+  ): $AnyAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
+      }
+    >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      })
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextValidator `(key/putAttributeInput) => void`
+   */
+  validate(
+    nextValidator: Validator<
+      If<
+        STATE['key'],
+        ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>,
+        ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
+      >,
+      FreezeAnyAttribute<$AnyAttributeState<STATE>>
+    >
+  ): $AnyAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
       })
     )
   }
@@ -394,6 +550,7 @@ export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   savedAs: STATE['savedAs']
   defaults: STATE['defaults']
   links: STATE['links']
+  validators: STATE['validators']
   castAs: STATE['castAs']
 
   constructor({ path, ...state }: STATE & { path?: string }) {
@@ -405,6 +562,7 @@ export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     this.savedAs = state.savedAs
     this.defaults = state.defaults
     this.links = state.links
+    this.validators = state.validators
     this.castAs = state.castAs
   }
 

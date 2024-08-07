@@ -31,6 +31,7 @@ export type $EntityAttribute<
     key: false
     savedAs: TABLE['entityAttributeSavedAs']
     enum: [ENTITY_NAME]
+    transform: undefined
     defaults: {
       key: undefined
       put: unknown
@@ -41,7 +42,11 @@ export type $EntityAttribute<
       put: undefined
       update: undefined
     }
-    transform: undefined
+    validators: {
+      key: undefined
+      put: undefined
+      update: undefined
+    }
   }
 >
 
@@ -70,6 +75,7 @@ export type $TimestampAttribute<
     hidden: HIDDEN
     savedAs: SAVED_AS
     enum: undefined
+    transform: undefined
     defaults: {
       key: undefined
       put: unknown
@@ -80,7 +86,11 @@ export type $TimestampAttribute<
       put: undefined
       update: undefined
     }
-    transform: undefined
+    validators: {
+      key: undefined
+      put: undefined
+      update: undefined
+    }
   }
 >
 

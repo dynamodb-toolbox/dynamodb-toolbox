@@ -1,4 +1,5 @@
 import type { ResolvedPrimitiveAttribute } from '../primitive/index.js'
+import type { Validator } from '../types/validator.js'
 import type { RequiredOption } from './requiredOptions.js'
 
 export const $type = Symbol('$type')
@@ -30,6 +31,11 @@ export type AttributeOptions = {
     key: undefined | unknown
     put: undefined | unknown
     update: undefined | unknown
+  }
+  validators: {
+    key: undefined | Validator
+    put: undefined | Validator
+    update: undefined | Validator
   }
   enum: ResolvedPrimitiveAttribute[] | undefined
   castAs: unknown

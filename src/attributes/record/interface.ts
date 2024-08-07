@@ -6,6 +6,7 @@ import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
+import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $keys, $state, $type } from '../constants/attributeOptions.js'
@@ -449,9 +450,11 @@ export class $RecordAttribute<
   > {
     return new $RecordAttribute(
       overwrite(this[$state], {
-        links: this[$state].key
-          ? { key: nextLink, put: this[$state].links.put, update: this[$state].links.update }
-          : { key: this[$state].links.key, put: nextLink, update: this[$state].links.update }
+        links: ifThenElse(
+          this[$state].key,
+          { key: nextLink, put: this[$state].links.put, update: this[$state].links.update },
+          { key: this[$state].links.key, put: nextLink, update: this[$state].links.update }
+        )
       }),
       this[$keys],
       this[$elements]

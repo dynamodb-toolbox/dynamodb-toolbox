@@ -10,6 +10,8 @@ import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { nul } from '../nul/typer.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
+import type { Validator } from '../types/validator.js'
+import type { FreezePrimitiveAttribute } from './freeze.js'
 import type { $PrimitiveAttribute, PrimitiveAttribute } from './interface.js'
 
 describe('primitiveAttribute', () => {
@@ -31,6 +33,7 @@ describe('primitiveAttribute', () => {
           key: false
           savedAs: undefined
           enum: undefined
+          transform: undefined
           defaults: {
             key: undefined
             put: undefined
@@ -41,7 +44,11 @@ describe('primitiveAttribute', () => {
             put: undefined
             update: undefined
           }
-          transform: undefined
+          validators: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
         }
       > = 1
       assertState
@@ -51,9 +58,10 @@ describe('primitiveAttribute', () => {
         key: false,
         savedAs: undefined,
         enum: undefined,
+        transform: undefined,
         defaults: { key: undefined, put: undefined, update: undefined },
         links: { key: undefined, put: undefined, update: undefined },
-        transform: undefined
+        validators: { key: undefined, put: undefined, update: undefined }
       })
 
       const assertExtends: A.Extends<typeof str, $PrimitiveAttribute> = 1
@@ -251,6 +259,26 @@ describe('primitiveAttribute', () => {
       })
     })
 
+    test('returns transformed string (option)', () => {
+      const transformer = prefix('test')
+      const str = string({ transform: transformer })
+
+      const assertStr: A.Contains<(typeof str)[$state], { transform: unknown }> = 1
+      assertStr
+
+      expect(str[$state].transform).toBe(transformer)
+    })
+
+    test('returns transformed string (method)', () => {
+      const transformer = prefix('test')
+      const str = string().transform(transformer)
+
+      const assertStr: A.Contains<(typeof str)[$state], { transform: unknown }> = 1
+      assertStr
+
+      expect(str[$state].transform).toBe(transformer)
+    })
+
     test('returns defaulted string (method)', () => {
       const invalidStr = string()
         // @ts-expect-error
@@ -339,6 +367,45 @@ describe('primitiveAttribute', () => {
         put: undefined,
         update: undefined
       })
+    })
+
+    test('default with enum values', () => {
+      const invalidStr = string().enum('foo', 'bar').default(
+        // @ts-expect-error
+        'baz'
+      )
+
+      const invalidCall = () => invalidStr.freeze(path)
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({
+          code: 'schema.primitiveAttribute.invalidDefaultValueRange',
+          path
+        })
+      )
+
+      const strA = string().enum('foo', 'bar').default('foo')
+      const sayFoo = (): 'foo' => 'foo'
+      const strB = string().enum('foo', 'bar').default(sayFoo)
+
+      const assertStrA: A.Contains<
+        (typeof strA)[$state],
+        { defaults: { put: unknown }; enum: ['foo', 'bar'] }
+      > = 1
+      assertStrA
+
+      expect(strA[$state].defaults).toMatchObject({ put: 'foo' })
+      expect(strA[$state].enum).toStrictEqual(['foo', 'bar'])
+
+      const assertStrB: A.Contains<
+        (typeof strB)[$state],
+        { defaults: { put: unknown }; enum: ['foo', 'bar'] }
+      > = 1
+      assertStrB
+
+      expect(strB[$state].defaults).toMatchObject({ put: sayFoo })
+      expect(strB[$state].enum).toStrictEqual(['foo', 'bar'])
     })
 
     test('returns string with constant value (method)', () => {
@@ -442,63 +509,148 @@ describe('primitiveAttribute', () => {
       expect(str[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
     })
 
-    test('default with enum values', () => {
-      const invalidStr = string().enum('foo', 'bar').default(
-        // @ts-expect-error
-        'baz'
-      )
-
-      const invalidCall = () => invalidStr.freeze(path)
-
-      expect(invalidCall).toThrow(DynamoDBToolboxError)
-      expect(invalidCall).toThrow(
-        expect.objectContaining({
-          code: 'schema.primitiveAttribute.invalidDefaultValueRange',
-          path
-        })
-      )
-
-      const strA = string().enum('foo', 'bar').default('foo')
-      const sayFoo = (): 'foo' => 'foo'
-      const strB = string().enum('foo', 'bar').default(sayFoo)
+    test('returns string with validator (option)', () => {
+      // TOIMPROVE: Add type constraints here
+      const pass = () => true
+      const strA = string({ validators: { key: pass, put: undefined, update: undefined } })
+      const strB = string({ validators: { key: undefined, put: pass, update: undefined } })
+      const strC = string({ validators: { key: undefined, put: undefined, update: pass } })
 
       const assertStrA: A.Contains<
         (typeof strA)[$state],
-        { defaults: { put: unknown }; enum: ['foo', 'bar'] }
+        { validators: { key: Validator; put: undefined; update: undefined } }
       > = 1
       assertStrA
 
-      expect(strA[$state].defaults).toMatchObject({ put: 'foo' })
-      expect(strA[$state].enum).toStrictEqual(['foo', 'bar'])
+      expect(strA[$state].validators).toStrictEqual({
+        key: pass,
+        put: undefined,
+        update: undefined
+      })
 
       const assertStrB: A.Contains<
         (typeof strB)[$state],
-        { defaults: { put: unknown }; enum: ['foo', 'bar'] }
+        { validators: { key: undefined; put: Validator; update: undefined } }
       > = 1
       assertStrB
 
-      expect(strB[$state].defaults).toMatchObject({ put: sayFoo })
-      expect(strB[$state].enum).toStrictEqual(['foo', 'bar'])
+      expect(strB[$state].validators).toStrictEqual({
+        key: undefined,
+        put: pass,
+        update: undefined
+      })
+
+      const assertStrC: A.Contains<
+        (typeof strC)[$state],
+        { validators: { key: undefined; put: undefined; update: Validator } }
+      > = 1
+      assertStrC
+
+      expect(strC[$state].validators).toStrictEqual({
+        key: undefined,
+        put: undefined,
+        update: pass
+      })
     })
 
-    test('returns transformed string (option)', () => {
-      const transformer = prefix('test')
-      const str = string({ transform: transformer })
+    test('returns string with validator (method)', () => {
+      const pass = () => true
 
-      const assertStr: A.Contains<(typeof str)[$state], { transform: unknown }> = 1
-      assertStr
+      const strA = string().keyValidate(pass)
+      const strB = string().putValidate(pass)
+      const strC = string().updateValidate(pass)
 
-      expect(str[$state].transform).toBe(transformer)
+      const assertStrA: A.Contains<
+        (typeof strA)[$state],
+        { validators: { key: Validator; put: undefined; update: undefined } }
+      > = 1
+      assertStrA
+
+      expect(strA[$state].validators).toStrictEqual({
+        key: pass,
+        put: undefined,
+        update: undefined
+      })
+
+      const assertStrB: A.Contains<
+        (typeof strB)[$state],
+        { validators: { key: undefined; put: Validator; update: undefined } }
+      > = 1
+      assertStrB
+
+      expect(strB[$state].validators).toStrictEqual({
+        key: undefined,
+        put: pass,
+        update: undefined
+      })
+
+      const assertStrC: A.Contains<
+        (typeof strC)[$state],
+        { validators: { key: undefined; put: undefined; update: Validator } }
+      > = 1
+      assertStrC
+
+      expect(strC[$state].validators).toStrictEqual({
+        key: undefined,
+        put: undefined,
+        update: pass
+      })
+
+      const prevString = string()
+      prevString.validate((...args) => {
+        const assertArgs: A.Equals<
+          typeof args,
+          [string, FreezePrimitiveAttribute<typeof prevString>]
+        > = 1
+        assertArgs
+
+        return true
+      })
+
+      const prevOptString = string().optional()
+      prevOptString.validate((...args) => {
+        const assertArgs: A.Equals<
+          typeof args,
+          [string | undefined, FreezePrimitiveAttribute<typeof prevOptString>]
+        > = 1
+        assertArgs
+
+        return true
+      })
     })
 
-    test('returns transformed string (method)', () => {
-      const transformer = prefix('test')
-      const str = string().transform(transformer)
+    test('returns string with PUT validator if it is not key (validate shorthand)', () => {
+      const pass = () => true
+      const str = string().validate(pass)
 
-      const assertStr: A.Contains<(typeof str)[$state], { transform: unknown }> = 1
+      const assertStr: A.Contains<
+        (typeof str)[$state],
+        { validators: { key: undefined; put: Validator; update: undefined } }
+      > = 1
       assertStr
 
-      expect(str[$state].transform).toBe(transformer)
+      expect(str[$state].validators).toStrictEqual({
+        key: undefined,
+        put: pass,
+        update: undefined
+      })
+    })
+
+    test('returns string with KEY validator if it is key (link shorthand)', () => {
+      const pass = () => true
+      const str = string().key().validate(pass)
+
+      const assertStr: A.Contains<
+        (typeof str)[$state],
+        { validators: { key: Validator; put: undefined; update: undefined } }
+      > = 1
+      assertStr
+
+      expect(str[$state].validators).toStrictEqual({
+        key: pass,
+        put: undefined,
+        update: undefined
+      })
     })
   })
 

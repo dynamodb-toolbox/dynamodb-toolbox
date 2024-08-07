@@ -4,8 +4,6 @@ import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
-import { isObject } from '~/utils/validation/isObject.js'
-import { isString } from '~/utils/validation/isString.js'
 
 export type AppendAttributePathOptions = { size?: boolean }
 
@@ -36,6 +34,11 @@ const defaultAnyAttribute = new AnyAttribute({
     put: undefined,
     update: undefined
   },
+  validators: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  },
   castAs: undefined
 })
 
@@ -45,6 +48,8 @@ const defaultNumberAttribute = new PrimitiveAttribute({
   hidden: false,
   key: false,
   savedAs: undefined,
+  enum: undefined,
+  transform: undefined,
   defaults: {
     key: undefined,
     put: undefined,
@@ -55,8 +60,11 @@ const defaultNumberAttribute = new PrimitiveAttribute({
     put: undefined,
     update: undefined
   },
-  enum: undefined,
-  transform: undefined
+  validators: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  }
 })
 
 class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'actions.invalidExpressionAttributePath'> {
@@ -69,9 +77,6 @@ class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'actions.
 }
 
 const isListAccessor = (accessor: string): accessor is `[${number}]` => /\[\d+\]/g.test(accessor)
-
-export const isAttributePath = (candidate: unknown): candidate is { attr: string } =>
-  isObject(candidate) && 'attr' in candidate && isString(candidate.attr)
 
 export const appendAttributePath = (
   parser: ExpressionParser,

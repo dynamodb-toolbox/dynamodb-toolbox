@@ -9,6 +9,7 @@ import type {
   ParsedValueOptions,
   ParsingOptions
 } from './types/options.js'
+import { runCustomValidation } from './utils.js'
 
 export type AnyAttrParsedValue<
   ATTRIBUTE extends AnyAttribute,
@@ -21,7 +22,7 @@ export function* anyAttrParser<
   ATTRIBUTE extends AnyAttribute,
   OPTIONS extends ParsingOptions = ParsingOptions
 >(
-  _: ATTRIBUTE,
+  attribute: ATTRIBUTE,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
@@ -41,6 +42,7 @@ export function* anyAttrParser<
   }
 
   const parsedValue = linkedValue ?? cloneDeep(inputValue)
+  runCustomValidation(attribute, parsedValue, options)
 
   if (transform) {
     yield parsedValue

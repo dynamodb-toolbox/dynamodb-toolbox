@@ -19,6 +19,7 @@ import type {
   ParsedValueOptions,
   ParsingOptions
 } from './types/options.js'
+import { runCustomValidation } from './utils.js'
 
 export type PrimitiveAttrParsedValue<
   ATTRIBUTE extends PrimitiveAttribute,
@@ -103,6 +104,8 @@ export function* primitiveAttrParser<
    * @debt type "validator should act as typeguard"
    */
   const parsedValue = linkedValue as ResolvedPrimitiveAttribute
+  runCustomValidation(attribute, parsedValue, options)
+
   if (transform) {
     yield parsedValue as Parsed
   } else {

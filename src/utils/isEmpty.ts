@@ -1,2 +1,1 @@
-export const isEmpty = (candidate: object | unknown[]): boolean =>
-  Object.keys(candidate).length === 0
+export const isEmpty = (input: object | unknown[]): boolean => Object.keys(input).length === 0
