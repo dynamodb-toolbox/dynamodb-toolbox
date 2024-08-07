@@ -40,6 +40,10 @@ export const primitiveAttributeTyperFactory: PrimitiveAttributeTyperFactory =
         ...PRIMITIVE_DEFAULT_OPTIONS.links,
         ...primitiveOptions.links
       },
+      validators: {
+        ...PRIMITIVE_DEFAULT_OPTIONS.validators,
+        ...primitiveOptions.validators
+      },
       enum: undefined
     } as InferStateFromOptions<
       PrimitiveAttributeOptions,

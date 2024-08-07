@@ -1,10 +1,16 @@
 import type { SharedAttributeState } from '../shared/interface.js'
+import type { Validator } from '../types/validator.js'
 
 export interface PrimitiveAttributeState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
 > extends SharedAttributeState {
   enum: PrimitiveAttributeEnumValues<TYPE>
   transform: undefined | unknown
+  validators: {
+    key: undefined | Validator
+    put: undefined | Validator
+    update: undefined | Validator
+  }
 }
 
 /**

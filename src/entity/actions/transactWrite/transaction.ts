@@ -15,5 +15,5 @@ export interface WriteTransactionImplementation<ENTITY extends Entity = Entity>
 }
 
 export const isWriteTransactionImplementation = (
-  candidate: unknown
-): candidate is WriteTransactionImplementation => candidate instanceof WriteTransaction
+  input: unknown
+): input is WriteTransactionImplementation => input instanceof WriteTransaction

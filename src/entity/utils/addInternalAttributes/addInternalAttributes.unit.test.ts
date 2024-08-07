@@ -56,6 +56,11 @@ describe('addInternalAttributes', () => {
             put: undefined
             update: undefined
           }
+          validators: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
           transform: undefined
         }
       > = 1
@@ -187,6 +192,11 @@ describe('addInternalAttributes', () => {
             put: undefined
             update: undefined
           }
+          validators: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
           transform: undefined
         }
       > = 1
@@ -243,6 +253,11 @@ describe('addInternalAttributes', () => {
             update: unknown
           }
           links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          validators: {
             key: undefined
             put: undefined
             update: undefined
@@ -309,6 +324,11 @@ describe('addInternalAttributes', () => {
             put: undefined
             update: undefined
           }
+          validators: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
           transform: undefined
         }
       > = 1
@@ -365,6 +385,11 @@ describe('addInternalAttributes', () => {
             update: unknown
           }
           links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          validators: {
             key: undefined
             put: undefined
             update: undefined
@@ -429,6 +454,11 @@ describe('addInternalAttributes', () => {
             put: undefined
             update: undefined
           }
+          validators: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
           transform: undefined
         }
       > = 1
@@ -486,6 +516,11 @@ describe('addInternalAttributes', () => {
             update: unknown
           }
           links: {
+            key: undefined
+            put: undefined
+            update: undefined
+          }
+          validators: {
             key: undefined
             put: undefined
             update: undefined

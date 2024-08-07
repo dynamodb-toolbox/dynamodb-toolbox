@@ -105,8 +105,8 @@ export type UpdateItemInputExtension =
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRED_DEFAULTS extends boolean = false
-> = REQUIRED_DEFAULTS extends false
+  REQUIRE_DEFAULTS extends boolean = false
+> = REQUIRE_DEFAULTS extends false
   ? ATTRIBUTE extends { required: Always } & (
       | {
           key: true
@@ -133,12 +133,12 @@ type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: N
  * User input of an UPDATE command for a given Entity or Schema
  *
  * @param Schema Entity | Schema
- * @param RequireIndependentDefaults Boolean
+ * @param RequireDefaults Boolean
  * @return Object
  */
 export type UpdateItemInput<
   SCHEMA extends Entity | Schema = Entity,
-  REQUIRED_DEFAULTS extends boolean = false
+  REQUIRE_DEFAULTS extends boolean = false
 > = Entity extends SCHEMA
   ? Item<UpdateItemInputExtension>
   : Schema extends SCHEMA
@@ -148,7 +148,7 @@ export type UpdateItemInput<
           {
             [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
               SCHEMA['attributes'][KEY],
-              REQUIRED_DEFAULTS,
+              REQUIRE_DEFAULTS,
               Paths<SCHEMA>
             >
           },
@@ -156,7 +156,7 @@ export type UpdateItemInput<
           SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
         >
       : SCHEMA extends Entity
-        ? UpdateItemInput<SCHEMA['schema'], REQUIRED_DEFAULTS>
+        ? UpdateItemInput<SCHEMA['schema'], REQUIRE_DEFAULTS>
         : never
 
 export type Reference<
@@ -207,17 +207,17 @@ type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute e
  * User input of an UPDATE command for a given Attribute
  *
  * @param Attribute Attribute
- * @param RequireIndependentDefaults Boolean
+ * @param RequireDefaults Boolean
  * @return Any
  */
 export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute = Attribute,
-  REQUIRED_DEFAULTS extends boolean = false,
+  REQUIRE_DEFAULTS extends boolean = false,
   SCHEMA_ATTRIBUTE_PATHS extends string = string
 > = Attribute extends ATTRIBUTE
   ? AttributeValue<UpdateItemInputExtension> | undefined
   :
-      | If<MustBeDefined<ATTRIBUTE, REQUIRED_DEFAULTS>, never, undefined>
+      | If<MustBeDefined<ATTRIBUTE, REQUIRE_DEFAULTS>, never, undefined>
       | If<CanBeRemoved<ATTRIBUTE>, $REMOVE, never>
       // Not using Reference<...> for improved type display
       | GET<
@@ -284,7 +284,7 @@ export type AttributeUpdateItemInput<
                         [INDEX in number]?:
                           | AttributeUpdateItemInput<
                               ATTRIBUTE['elements'],
-                              REQUIRED_DEFAULTS,
+                              REQUIRE_DEFAULTS,
                               SCHEMA_ATTRIBUTE_PATHS
                             >
                           | $REMOVE
@@ -320,7 +320,7 @@ export type AttributeUpdateItemInput<
                             {
                               [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
                                 ATTRIBUTE['attributes'][KEY],
-                                REQUIRED_DEFAULTS,
+                                REQUIRE_DEFAULTS,
                                 SCHEMA_ATTRIBUTE_PATHS
                               >
                             },
@@ -338,7 +338,7 @@ export type AttributeUpdateItemInput<
                             [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
                               | AttributeUpdateItemInput<
                                   ATTRIBUTE['elements'],
-                                  REQUIRED_DEFAULTS,
+                                  REQUIRE_DEFAULTS,
                                   SCHEMA_ATTRIBUTE_PATHS
                                 >
                               | $REMOVE
@@ -347,7 +347,7 @@ export type AttributeUpdateItemInput<
                     : ATTRIBUTE extends AnyOfAttribute
                       ? AttributeUpdateItemInput<
                           ATTRIBUTE['elements'][number],
-                          REQUIRED_DEFAULTS,
+                          REQUIRE_DEFAULTS,
                           SCHEMA_ATTRIBUTE_PATHS
                         >
                       : never)

@@ -1,4 +1,5 @@
 import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
+import type { Validator } from '../types/validator.js'
 
 // Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
 
@@ -25,6 +26,7 @@ export type PrimitiveAttributeOptions = {
    * Rename attribute before save commands
    */
   savedAs: string | undefined
+  transform: undefined | unknown
   /**
    * Provide default values for attribute
    */
@@ -41,7 +43,14 @@ export type PrimitiveAttributeOptions = {
     put: undefined | unknown
     update: undefined | unknown
   }
-  transform: undefined | unknown
+  /**
+   * Provide custom **validators** for attribute
+   */
+  validators: {
+    key: undefined | Validator
+    put: undefined | Validator
+    update: undefined | Validator
+  }
 }
 
 export type PrimitiveAttributeDefaultOptions = {
@@ -49,6 +58,7 @@ export type PrimitiveAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
+  transform: undefined
   defaults: {
     key: undefined
     put: undefined
@@ -59,7 +69,11 @@ export type PrimitiveAttributeDefaultOptions = {
     put: undefined
     update: undefined
   }
-  transform: undefined
+  validators: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
 }
 
 export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
@@ -67,6 +81,7 @@ export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
+  transform: undefined,
   defaults: {
     key: undefined,
     put: undefined,
@@ -77,5 +92,9 @@ export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
     put: undefined,
     update: undefined
   },
-  transform: undefined
+  validators: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  }
 }

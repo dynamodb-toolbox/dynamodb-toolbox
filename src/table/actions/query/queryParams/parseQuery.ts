@@ -20,6 +20,8 @@ const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0]
   key: false,
   hidden: false,
   savedAs: undefined,
+  enum: undefined,
+  transform: undefined,
   defaults: {
     key: undefined,
     put: undefined,
@@ -30,8 +32,11 @@ const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0]
     put: undefined,
     update: undefined
   },
-  enum: undefined,
-  transform: undefined
+  validators: {
+    key: undefined,
+    put: undefined,
+    update: undefined
+  }
 }
 
 type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(

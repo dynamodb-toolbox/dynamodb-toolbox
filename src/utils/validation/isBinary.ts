@@ -1,2 +1,1 @@
-export const isBinary = (candidate: unknown): candidate is Uint8Array =>
-  candidate instanceof Uint8Array
+export const isBinary = (input: unknown): input is Uint8Array => input instanceof Uint8Array

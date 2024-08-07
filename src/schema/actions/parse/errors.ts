@@ -24,7 +24,17 @@ type InvalidAttributeInputErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+type CustomValidationFAiledErrorBlueprint = ErrorBlueprint<{
+  code: 'parsing.customValidationFailed'
+  hasPath: true
+  payload: {
+    received: unknown
+    validationResult: unknown
+  }
+}>
+
 export type ParserErrorBlueprints =
   | InvalidItemErrorBlueprint
   | AttributeRequiredErrorBlueprint
   | InvalidAttributeInputErrorBlueprint
+  | CustomValidationFAiledErrorBlueprint

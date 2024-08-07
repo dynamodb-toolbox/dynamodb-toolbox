@@ -3,6 +3,7 @@ import type { AtLeastOnce } from '../constants/index.js'
 import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive/index.js'
 import type { PrimitiveAttributeEnumValues } from '../primitive/types.js'
 import type { $AttributeNestedState } from '../types/index.js'
+import type { Validator } from '../types/validator.js'
 
 export type $RecordAttributeKeys = $PrimitiveAttributeNestedState<
   'string',
@@ -12,6 +13,7 @@ export type $RecordAttributeKeys = $PrimitiveAttributeNestedState<
     key: false
     savedAs: undefined
     enum: PrimitiveAttributeEnumValues<'string'>
+    transform: undefined | unknown
     defaults: {
       key: undefined
       put: undefined
@@ -22,7 +24,11 @@ export type $RecordAttributeKeys = $PrimitiveAttributeNestedState<
       put: undefined
       update: undefined
     }
-    transform: undefined | unknown
+    validators: {
+      key: undefined | Validator
+      put: undefined | Validator
+      update: undefined | Validator
+    }
   }
 >
 

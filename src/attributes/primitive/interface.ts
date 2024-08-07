@@ -7,12 +7,14 @@ import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import type { Update } from '~/types/update.js'
+import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { update } from '~/utils/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import type { Validator } from '../types/validator.js'
 import { freezePrimitiveAttribute } from './freeze.js'
 import type { FreezePrimitiveAttribute } from './freeze.js'
 import type {
@@ -155,11 +157,40 @@ export class $PrimitiveAttribute<
       this[$type],
       overwrite(this[$state], {
         enum: [constant],
-        defaults: this[$state].key
-          ? { key: constant, put: this[$state].defaults.put, update: this[$state].defaults.update }
-          : { key: this[$state].defaults.key, put: constant, update: this[$state].defaults.update }
+        defaults: ifThenElse(
+          this[$state].key,
+          { key: constant, put: this[$state].defaults.put, update: this[$state].defaults.update },
+          { key: this[$state].defaults.key, put: constant, update: this[$state].defaults.update }
+        )
       })
     )
+  }
+
+  /**
+   * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
+   */
+  transform(
+    transformer: Transformer<
+      Extract<
+        If<
+          STATE['key'],
+          ParserInput<
+            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+            { mode: 'key'; fill: false }
+          >,
+          ParserInput<
+            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+            { fill: false }
+          >
+        >,
+        ResolvePrimitiveAttributeType<TYPE>
+      >,
+      ResolvePrimitiveAttributeType<TYPE>
+    >
+  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { transform: unknown }>> {
+    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { transform: transformer }))
   }
 
   /**
@@ -311,33 +342,6 @@ export class $PrimitiveAttribute<
     >
   > {
     return this[$state].key ? this.keyDefault(nextDefault) : this.putDefault(nextDefault)
-  }
-
-  /**
-   * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
-   *
-   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
-   */
-  transform(
-    transformer: Transformer<
-      Extract<
-        If<
-          STATE['key'],
-          ParserInput<
-            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            { mode: 'key'; fill: false }
-          >,
-          ParserInput<
-            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            { fill: false }
-          >
-        >,
-        ResolvePrimitiveAttributeType<TYPE>
-      >,
-      ResolvePrimitiveAttributeType<TYPE>
-    >
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { transform: unknown }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { transform: transformer }))
   }
 
   /**
@@ -495,9 +499,183 @@ export class $PrimitiveAttribute<
     return new $PrimitiveAttribute(
       this[$type],
       overwrite(this[$state], {
-        links: this[$state].key
-          ? { key: nextLink, put: this[$state].links.put, update: this[$state].links.update }
-          : { key: this[$state].links.key, put: nextLink, update: this[$state].links.update }
+        links: ifThenElse(
+          this[$state].key,
+          { key: nextLink, put: this[$state].links.put, update: this[$state].links.update },
+          { key: this[$state].links.key, put: nextLink, update: this[$state].links.update }
+        )
+      })
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in Primary Key computing
+   *
+   * @param nextKeyValidator `(keyAttributeInput) => void`
+   */
+  keyValidate(
+    nextKeyValidator: Validator<
+      ParserInput<
+        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        { mode: 'key'; fill: false }
+      >,
+      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+    >
+  ): $PrimitiveAttribute<
+    TYPE,
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
+      }
+    >
+  > {
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      })
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands
+   *
+   * @param nextPutValidator `(putAttributeInput) => void`
+   */
+  putValidate(
+    nextPutValidator: Validator<
+      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>,
+      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+    >
+  ): $PrimitiveAttribute<
+    TYPE,
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
+      }
+    >
+  > {
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      })
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in UPDATE commands
+   *
+   * @param nextUpdateValidator `(updateAttributeInput) => void`
+   */
+  updateValidate(
+    nextUpdateValidator: Validator<
+      AttributeUpdateItemInput<
+        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        true
+      >,
+      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+    >
+  ): $PrimitiveAttribute<
+    TYPE,
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
+      }
+    >
+  > {
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      })
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextValidator `(key/putAttributeInput) => void`
+   */
+  validate(
+    nextValidator: Validator<
+      If<
+        STATE['key'],
+        ParserInput<
+          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          { mode: 'key'; fill: false }
+        >,
+        ParserInput<
+          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          { fill: false }
+        >
+      >,
+      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+    >
+  ): $PrimitiveAttribute<
+    TYPE,
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >
+  > {
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
       })
     )
   }
@@ -518,10 +696,11 @@ export class PrimitiveAttribute<
   hidden: STATE['hidden']
   key: STATE['key']
   savedAs: STATE['savedAs']
-  defaults: STATE['defaults']
-  links: STATE['links']
   enum: STATE['enum']
   transform: STATE['transform']
+  defaults: STATE['defaults']
+  links: STATE['links']
+  validators: STATE['validators']
 
   constructor({
     type,
@@ -537,10 +716,11 @@ export class PrimitiveAttribute<
     this.hidden = state.hidden
     this.key = state.key
     this.savedAs = state.savedAs
-    this.defaults = state.defaults
-    this.links = state.links
     this.enum = state.enum
     this.transform = state.transform
+    this.defaults = state.defaults
+    this.links = state.links
+    this.validators = state.validators
   }
 
   // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
