@@ -48,6 +48,10 @@ export const list: ListAttributeTyper = <
     links: {
       ...LIST_DEFAULT_OPTIONS.links,
       ...options?.links
+    },
+    validators: {
+      ...LIST_DEFAULT_OPTIONS.validators,
+      ...options?.validators
     }
   } as InferStateFromOptions<ListAttributeOptions, ListAttributeDefaultOptions, OPTIONS>
 

@@ -5,6 +5,8 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
+import type { Validator } from '../types/validator.js'
+import type { FreezeListAttribute } from './freeze.js'
 import type { $ListAttributeState, ListAttribute } from './interface.js'
 import { list } from './typer.js'
 
@@ -98,6 +100,7 @@ describe('list', () => {
         savedAs: undefined
         defaults: { key: undefined; put: undefined; update: undefined }
         links: { key: undefined; put: undefined; update: undefined }
+        validators: { key: undefined; put: undefined; update: undefined }
       }
     > = 1
     assertState
@@ -107,7 +110,8 @@ describe('list', () => {
       hidden: false,
       savedAs: undefined,
       defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined }
+      links: { key: undefined, put: undefined, update: undefined },
+      validators: { key: undefined, put: undefined, update: undefined }
     })
 
     const assertElmts: A.Equals<(typeof lst)[$elements], typeof strElement> = 1
@@ -430,6 +434,147 @@ describe('list', () => {
 
     expect(listAttr[$state].links).toStrictEqual({
       key: sayHello,
+      put: undefined,
+      update: undefined
+    })
+  })
+
+  test('returns list with validator (option)', () => {
+    // TOIMPROVE: Add type constraints here
+    const pass = () => true
+    const listA = list(string(), { validators: { key: pass, put: undefined, update: undefined } })
+    const listB = list(string(), { validators: { key: undefined, put: pass, update: undefined } })
+    const listC = list(string(), { validators: { key: undefined, put: undefined, update: pass } })
+
+    const assertListA: A.Contains<
+      (typeof listA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertListA
+
+    expect(listA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertListB: A.Contains<
+      (typeof listB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertListB
+
+    expect(listB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertListC: A.Contains<
+      (typeof listC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertListC
+
+    expect(listC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+  })
+
+  test('returns list with validator (method)', () => {
+    const pass = () => true
+
+    const listA = list(string()).keyValidate(pass)
+    const listB = list(string()).putValidate(pass)
+    const listC = list(string()).updateValidate(pass)
+
+    const assertListA: A.Contains<
+      (typeof listA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertListA
+
+    expect(listA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertListB: A.Contains<
+      (typeof listB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertListB
+
+    expect(listB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertListC: A.Contains<
+      (typeof listC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertListC
+
+    expect(listC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+
+    const prevList = list(string())
+    prevList.validate((...args) => {
+      const assertArgs: A.Equals<typeof args, [string[], FreezeListAttribute<typeof prevList>]> = 1
+      assertArgs
+
+      return true
+    })
+
+    const prevOptList = list(string()).optional()
+    prevOptList.validate((...args) => {
+      const assertArgs: A.Equals<
+        typeof args,
+        [string[] | undefined, FreezeListAttribute<typeof prevOptList>]
+      > = 1
+      assertArgs
+
+      return true
+    })
+  })
+
+  test('returns list with PUT validator if it is not key (validate shorthand)', () => {
+    const pass = () => true
+    const _list = list(string()).validate(pass)
+
+    const assertList: A.Contains<
+      (typeof _list)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertList
+
+    expect(_list[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+  })
+
+  test('returns list with KEY validator if it is key (link shorthand)', () => {
+    const pass = () => true
+    const _list = list(string()).key().validate(pass)
+
+    const assertList: A.Contains<
+      (typeof _list)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertList
+
+    expect(_list[$state].validators).toStrictEqual({
+      key: pass,
       put: undefined,
       update: undefined
     })

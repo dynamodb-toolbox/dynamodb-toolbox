@@ -12,12 +12,14 @@ import { overwrite } from '~/utils/overwrite.js'
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import type { Validator } from '../types/validator.js'
 import { freezeSetAttribute } from './freeze.js'
 import type { FreezeSetAttribute } from './freeze.js'
+import type { SetAttributeState } from './types'
 import type { $SetAttributeElements, SetAttributeElements } from './types.js'
 
 export interface $SetAttributeState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SetAttributeState = SetAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > {
   [$type]: 'set'
@@ -26,7 +28,7 @@ export interface $SetAttributeState<
 }
 
 export interface $SetAttributeNestedState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SetAttributeState = SetAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > extends $SetAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>
@@ -36,7 +38,7 @@ export interface $SetAttributeNestedState<
  * Set attribute interface
  */
 export class $SetAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SetAttributeState = SetAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > implements $SetAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -404,13 +406,179 @@ export class $SetAttribute<
     )
   }
 
+  /**
+   * Provide a custom validator for attribute in Primary Key computing
+   *
+   * @param nextKeyValidator `(keyAttributeInput) => void`
+   */
+  keyValidate(
+    nextKeyValidator: Validator<
+      ParserInput<
+        FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>,
+        { mode: 'key'; fill: false }
+      >,
+      FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
+    >
+  ): $SetAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      }),
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands
+   *
+   * @param nextPutValidator `(putAttributeInput) => void`
+   */
+  putValidate(
+    nextPutValidator: Validator<
+      ParserInput<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { fill: false }>,
+      FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
+    >
+  ): $SetAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      }),
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in UPDATE commands
+   *
+   * @param nextUpdateValidator `(updateAttributeInput) => void`
+   */
+  updateValidate(
+    nextUpdateValidator: Validator<
+      AttributeUpdateItemInput<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, true>,
+      FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
+    >
+  ): $SetAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      }),
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextValidator `(key/putAttributeInput) => void`
+   */
+  validate(
+    nextValidator: Validator<
+      If<
+        STATE['key'],
+        ParserInput<
+          FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>,
+          { mode: 'key'; fill: false }
+        >,
+        ParserInput<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { fill: false }>
+      >,
+      FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
+    >
+  ): $SetAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $SetAttribute(
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
+      }),
+      this[$elements]
+    )
+  }
+
   freeze(path?: string): FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>> {
     return freezeSetAttribute(this[$state], this[$elements], path)
   }
 }
 
 export class SetAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SetAttributeState = SetAttributeState,
   ELEMENTS extends SetAttributeElements = SetAttributeElements
 > implements SharedAttributeState<STATE>
 {
@@ -423,6 +591,7 @@ export class SetAttribute<
   savedAs: STATE['savedAs']
   defaults: STATE['defaults']
   links: STATE['links']
+  validators: STATE['validators']
 
   constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
     this.type = 'set'
@@ -434,6 +603,7 @@ export class SetAttribute<
     this.savedAs = state.savedAs
     this.defaults = state.defaults
     this.links = state.links
+    this.validators = state.validators
   }
 
   // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas

@@ -14,6 +14,7 @@ import type {
   ParsedValueOptions,
   ParsingOptions
 } from './types/options.js'
+import { runCustomValidation } from './utils.js'
 
 export type ListAttrParsedValue<
   ATTRIBUTE extends ListAttribute,
@@ -84,6 +85,7 @@ export function* listAttrParser<
   }
 
   const parsedValue = parsers.map(parser => parser.next().value)
+  runCustomValidation(attribute, parsedValue, options)
 
   if (transform) {
     yield parsedValue as Parsed

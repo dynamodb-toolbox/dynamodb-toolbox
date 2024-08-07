@@ -2,7 +2,9 @@ import type {
   AnyAttribute,
   Attribute,
   AttributeBasicValue,
-  PrimitiveAttribute
+  ListAttribute,
+  PrimitiveAttribute,
+  SetAttribute
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isString } from '~/utils/validation/isString.js'
@@ -26,7 +28,7 @@ export const isRequired = (attribute: Attribute, mode: ParsingMode): boolean => 
 }
 
 export const runCustomValidation = (
-  attribute: AnyAttribute | PrimitiveAttribute,
+  attribute: AnyAttribute | PrimitiveAttribute | SetAttribute | ListAttribute,
   inputValue: unknown,
   options: ParsingOptions = {}
 ): void => {

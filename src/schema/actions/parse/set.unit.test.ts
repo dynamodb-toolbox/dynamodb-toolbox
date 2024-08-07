@@ -50,4 +50,37 @@ describe('setAttrParser', () => {
     expect(transformedState.done).toBe(true)
     expect(transformedState.value).toStrictEqual(new Set(['foo', 'bar']))
   })
+
+  test('applies validation if any', () => {
+    const setA = set(string())
+      .validate(input => input.has('foo'))
+      .freeze('root')
+
+    const { value: parsed } = setAttrParser(setA, new Set(['foo', 'bar']), { fill: false }).next()
+    expect(parsed).toStrictEqual(new Set(['foo', 'bar']))
+
+    const invalidCallA = () => setAttrParser(setA, new Set(['bar']), { fill: false }).next()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({
+        code: 'parsing.customValidationFailed',
+        message: "Custom validation for attribute 'root' failed."
+      })
+    )
+
+    const setB = set(string())
+      .validate(input => (input.has('foo') ? true : 'Oh no...'))
+      .freeze('root')
+
+    const invalidCallB = () => setAttrParser(setB, new Set(['bar']), { fill: false }).next()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({
+        code: 'parsing.customValidationFailed',
+        message: "Custom validation for attribute 'root' failed with message: Oh no...."
+      })
+    )
+  })
 })

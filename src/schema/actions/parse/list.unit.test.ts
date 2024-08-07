@@ -50,4 +50,37 @@ describe('listAttrParser', () => {
     expect(transformedState.done).toBe(true)
     expect(transformedState.value).toStrictEqual(['foo', 'bar'])
   })
+
+  test('applies validation if any', () => {
+    const listA = list(string())
+      .validate(input => input.includes('foo'))
+      .freeze('root')
+
+    const { value: parsed } = listAttrParser(listA, ['foo', 'bar'], { fill: false }).next()
+    expect(parsed).toStrictEqual(['foo', 'bar'])
+
+    const invalidCallA = () => listAttrParser(listA, ['bar'], { fill: false }).next()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({
+        code: 'parsing.customValidationFailed',
+        message: "Custom validation for attribute 'root' failed."
+      })
+    )
+
+    const listB = list(string())
+      .validate(input => (input.includes('foo') ? true : 'Oh no...'))
+      .freeze('root')
+
+    const invalidCallB = () => listAttrParser(listB, ['bar'], { fill: false }).next()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({
+        code: 'parsing.customValidationFailed',
+        message: "Custom validation for attribute 'root' failed with message: Oh no...."
+      })
+    )
+  })
 })
