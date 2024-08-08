@@ -16,10 +16,10 @@ import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import { freezeListAttribute } from './freeze.js'
 import type { FreezeListAttribute } from './freeze.js'
-import type { $ListAttributeElements, ListAttributeState } from './types.js'
+import type { $ListAttributeElements } from './types.js'
 
 export interface $ListAttributeState<
-  STATE extends ListAttributeState = ListAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > {
   [$type]: 'list'
@@ -28,7 +28,7 @@ export interface $ListAttributeState<
 }
 
 export interface $ListAttributeNestedState<
-  STATE extends ListAttributeState = ListAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > extends $ListAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>
@@ -38,7 +38,7 @@ export interface $ListAttributeNestedState<
  * List attribute interface
  */
 export class $ListAttribute<
-  STATE extends ListAttributeState = ListAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > implements $ListAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -586,7 +586,7 @@ export class $ListAttribute<
 }
 
 export class ListAttribute<
-  STATE extends ListAttributeState = ListAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends Attribute = Attribute
 > implements SharedAttributeState<STATE>
 {

@@ -19,6 +19,7 @@ import type {
   ParsedValueOptions,
   ParsingOptions
 } from './types/options.js'
+import { applyCustomValidation } from './utils.js'
 
 export type RecordAttrParsedValue<
   ATTRIBUTE extends RecordAttribute,
@@ -118,6 +119,7 @@ export function* recordAttributeParser<
       .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
       .filter(([, element]) => element !== undefined)
   )
+  applyCustomValidation(attribute, parsedValue, options)
 
   if (transform) {
     yield parsedValue as Parsed

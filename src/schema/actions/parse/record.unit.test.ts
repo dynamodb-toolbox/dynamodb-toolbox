@@ -53,4 +53,39 @@ describe('recordAttributeParser', () => {
     expect(transformedState.done).toBe(true)
     expect(transformedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
   })
+
+  test('applies validation if any', () => {
+    const recordA = record(string(), string())
+      .validate(input => 'foo' in input)
+      .freeze('root')
+
+    const { value: parsed } = recordAttributeParser(recordA, { foo: 'bar' }, { fill: false }).next()
+    expect(parsed).toStrictEqual({ foo: 'bar' })
+
+    const invalidCallA = () =>
+      recordAttributeParser(recordA, { bar: 'foo' }, { fill: false }).next()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({
+        code: 'parsing.customValidationFailed',
+        message: "Custom validation for attribute 'root' failed."
+      })
+    )
+
+    const recordB = record(string(), string())
+      .validate(input => ('foo' in input ? true : 'Oh no...'))
+      .freeze('root')
+
+    const invalidCallB = () =>
+      recordAttributeParser(recordB, { bar: 'foo' }, { fill: false }).next()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({
+        code: 'parsing.customValidationFailed',
+        message: "Custom validation for attribute 'root' failed with message: Oh no...."
+      })
+    )
+  })
 })

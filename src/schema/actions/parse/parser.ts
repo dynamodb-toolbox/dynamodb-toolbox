@@ -1,4 +1,5 @@
 import type { Attribute } from '~/attributes/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import { SchemaAction } from '~/schema/index.js'
 import type { Schema } from '~/schema/index.js'
 
@@ -73,5 +74,22 @@ export class Parser<SCHEMA extends Schema | Attribute> extends SchemaAction<SCHE
     options: OPTIONS = {} as OPTIONS
   ): ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
     return this.parse(inputValue, options)
+  }
+
+  validate<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
+    inputValue: unknown,
+    options: OPTIONS = {} as OPTIONS
+  ): inputValue is ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
+    try {
+      this.parse(inputValue, options)
+    } catch (error) {
+      if (error instanceof DynamoDBToolboxError && DynamoDBToolboxError.match(error, 'parsing.')) {
+        return false
+      }
+
+      throw error
+    }
+
+    return true
   }
 }

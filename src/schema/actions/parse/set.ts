@@ -14,7 +14,7 @@ import type {
   ParsedValueOptions,
   ParsingOptions
 } from './types/options.js'
-import { runCustomValidation } from './utils.js'
+import { applyCustomValidation } from './utils.js'
 
 export type SetAttrParsedValue<
   ATTRIBUTE extends SetAttribute,
@@ -82,7 +82,7 @@ export function* setAttrParser<ATTRIBUTE extends SetAttribute, OPTIONS extends P
   }
 
   const parsedValue = new Set(parsers.map(parser => parser.next().value))
-  runCustomValidation(attribute, parsedValue, options)
+  applyCustomValidation(attribute, parsedValue, options)
 
   if (transform) {
     yield parsedValue as Parsed

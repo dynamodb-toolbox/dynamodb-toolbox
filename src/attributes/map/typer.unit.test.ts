@@ -3,7 +3,10 @@ import type { A } from 'ts-toolbelt'
 import { $attributes, $type } from '../constants/attributeOptions.js'
 import { $state } from '../constants/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
+import { number } from '../number/index.js'
 import { string } from '../string/index.js'
+import type { Validator } from '../types/validator.js'
+import type { FreezeMapAttribute } from './freeze.js'
 import type { $MapAttributeState, MapAttribute } from './interface.js'
 import { map } from './typer.js'
 
@@ -34,6 +37,11 @@ describe('map', () => {
           put: undefined
           update: undefined
         }
+        validators: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertState
@@ -43,7 +51,8 @@ describe('map', () => {
       savedAs: undefined,
       hidden: false,
       defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined }
+      links: { key: undefined, put: undefined, update: undefined },
+      validators: { key: undefined, put: undefined, update: undefined }
     })
 
     const assertAttr: A.Equals<(typeof mapped)[$attributes], { str: typeof str }> = 1
@@ -294,6 +303,159 @@ describe('map', () => {
 
     expect(mapAttr[$state].defaults).toStrictEqual({
       key: { str: 'bar' },
+      put: undefined,
+      update: undefined
+    })
+  })
+
+  test('returns map with validator (option)', () => {
+    // TOIMPROVE: Add type constraints here
+    const pass = () => true
+    const mapA = map(
+      { str: string(), num: number() },
+      { validators: { key: pass, put: undefined, update: undefined } }
+    )
+    const mapB = map(
+      { str: string(), num: number() },
+      { validators: { key: undefined, put: pass, update: undefined } }
+    )
+    const mapC = map(
+      { str: string(), num: number() },
+      { validators: { key: undefined, put: undefined, update: pass } }
+    )
+
+    const assertMapA: A.Contains<
+      (typeof mapA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertMapA
+
+    expect(mapA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertMapB: A.Contains<
+      (typeof mapB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertMapB
+
+    expect(mapB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertMapC: A.Contains<
+      (typeof mapC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertMapC
+
+    expect(mapC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+  })
+
+  test('returns map with validator (method)', () => {
+    const pass = () => true
+
+    const mapA = map({ str: string(), num: number() }).keyValidate(pass)
+    const mapB = map({ str: string(), num: number() }).putValidate(pass)
+    const mapC = map({ str: string(), num: number() }).updateValidate(pass)
+
+    const assertMapA: A.Contains<
+      (typeof mapA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertMapA
+
+    expect(mapA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertMapB: A.Contains<
+      (typeof mapB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertMapB
+
+    expect(mapB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertMapC: A.Contains<
+      (typeof mapC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertMapC
+
+    expect(mapC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+
+    const prevMap = map({ str: string(), num: number() })
+    prevMap.validate((...args) => {
+      const assertArgs: A.Equals<
+        typeof args,
+        [{ str: string; num: number }, FreezeMapAttribute<typeof prevMap>]
+      > = 1
+      assertArgs
+
+      return true
+    })
+
+    const prevOptMap = map({ str: string(), num: number() }).optional()
+    prevOptMap.validate((...args) => {
+      const assertArgs: A.Equals<
+        typeof args,
+        [{ str: string; num: number } | undefined, FreezeMapAttribute<typeof prevOptMap>]
+      > = 1
+      assertArgs
+
+      return true
+    })
+  })
+
+  test('returns map with PUT validator if it is not key (validate shorthand)', () => {
+    const pass = () => true
+    const _map = map({ str: string(), num: number() }).validate(pass)
+
+    const assertMap: A.Contains<
+      (typeof _map)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertMap
+
+    expect(_map[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+  })
+
+  test('returns map with KEY validator if it is key (link shorthand)', () => {
+    const pass = () => true
+    const _map = map({ str: string(), num: number() }).key().validate(pass)
+
+    const assertMap: A.Contains<
+      (typeof _map)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertMap
+
+    expect(_map[$state].validators).toStrictEqual({
+      key: pass,
       put: undefined,
       update: undefined
     })

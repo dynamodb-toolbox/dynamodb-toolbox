@@ -13,6 +13,7 @@ import { $elements, $keys, $state, $type } from '../constants/attributeOptions.j
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
+import type { Validator } from '../types/validator.js'
 import { freezeRecordAttribute } from './freeze.js'
 import type { FreezeRecordAttribute } from './freeze.js'
 import type {
@@ -461,6 +462,189 @@ export class $RecordAttribute<
     )
   }
 
+  /**
+   * Provide a custom validator for attribute in Primary Key computing
+   *
+   * @param nextKeyValidator `(keyAttributeInput) => void`
+   */
+  keyValidate(
+    nextKeyValidator: Validator<
+      ParserInput<
+        FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
+        { mode: 'key'; fill: false }
+      >,
+      FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
+    >
+  ): $RecordAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $KEYS,
+    $ELEMENTS
+  > {
+    return new $RecordAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      }),
+      this[$keys],
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands
+   *
+   * @param nextPutValidator `(putAttributeInput) => void`
+   */
+  putValidate(
+    nextPutValidator: Validator<
+      ParserInput<
+        FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
+        { fill: false }
+      >,
+      FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
+    >
+  ): $RecordAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $KEYS,
+    $ELEMENTS
+  > {
+    return new $RecordAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      }),
+      this[$keys],
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in UPDATE commands
+   *
+   * @param nextUpdateValidator `(updateAttributeInput) => void`
+   */
+  updateValidate(
+    nextUpdateValidator: Validator<
+      AttributeUpdateItemInput<
+        FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
+        true
+      >,
+      FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
+    >
+  ): $RecordAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
+      }
+    >,
+    $KEYS,
+    $ELEMENTS
+  > {
+    return new $RecordAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      }),
+      this[$keys],
+      this[$elements]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextValidator `(key/putAttributeInput) => void`
+   */
+  validate(
+    nextValidator: Validator<
+      If<
+        STATE['key'],
+        ParserInput<
+          FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
+          { mode: 'key'; fill: false }
+        >,
+        ParserInput<
+          FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
+          { fill: false }
+        >
+      >,
+      FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
+    >
+  ): $RecordAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >,
+    $KEYS,
+    $ELEMENTS
+  > {
+    return new $RecordAttribute(
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
+      }),
+      this[$keys],
+      this[$elements]
+    )
+  }
+
   freeze(path?: string): FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>> {
     return freezeRecordAttribute(this[$state], this[$keys], this[$elements], path)
   }
@@ -482,6 +666,7 @@ export class RecordAttribute<
   savedAs: STATE['savedAs']
   defaults: STATE['defaults']
   links: STATE['links']
+  validators: STATE['validators']
 
   constructor({
     path,
@@ -499,6 +684,7 @@ export class RecordAttribute<
     this.savedAs = state.savedAs
     this.defaults = state.defaults
     this.links = state.links
+    this.validators = state.validators
   }
 
   // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas

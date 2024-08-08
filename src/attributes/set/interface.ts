@@ -15,11 +15,10 @@ import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
 import { freezeSetAttribute } from './freeze.js'
 import type { FreezeSetAttribute } from './freeze.js'
-import type { SetAttributeState } from './types'
 import type { $SetAttributeElements, SetAttributeElements } from './types.js'
 
 export interface $SetAttributeState<
-  STATE extends SetAttributeState = SetAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > {
   [$type]: 'set'
@@ -28,7 +27,7 @@ export interface $SetAttributeState<
 }
 
 export interface $SetAttributeNestedState<
-  STATE extends SetAttributeState = SetAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > extends $SetAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>
@@ -38,7 +37,7 @@ export interface $SetAttributeNestedState<
  * Set attribute interface
  */
 export class $SetAttribute<
-  STATE extends SetAttributeState = SetAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > implements $SetAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -578,7 +577,7 @@ export class $SetAttribute<
 }
 
 export class SetAttribute<
-  STATE extends SetAttributeState = SetAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends SetAttributeElements = SetAttributeElements
 > implements SharedAttributeState<STATE>
 {

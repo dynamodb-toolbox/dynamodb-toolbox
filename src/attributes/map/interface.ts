@@ -12,6 +12,7 @@ import { overwrite } from '~/utils/overwrite.js'
 import { $attributes, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import type { Validator } from '../types/validator.js'
 import { freezeMapAttribute } from './freeze.js'
 import type { FreezeMapAttribute } from './freeze.js'
 import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types.js'
@@ -429,6 +430,172 @@ export class $MapAttribute<
     )
   }
 
+  /**
+   * Provide a custom validator for attribute in Primary Key computing
+   *
+   * @param nextKeyValidator `(keyAttributeInput) => void`
+   */
+  keyValidate(
+    nextKeyValidator: Validator<
+      ParserInput<
+        FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>,
+        { mode: 'key'; fill: false }
+      >,
+      FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
+    >
+  ): $MapAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands
+   *
+   * @param nextPutValidator `(putAttributeInput) => void`
+   */
+  putValidate(
+    nextPutValidator: Validator<
+      ParserInput<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, { fill: false }>,
+      FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
+    >
+  ): $MapAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in UPDATE commands
+   *
+   * @param nextUpdateValidator `(updateAttributeInput) => void`
+   */
+  updateValidate(
+    nextUpdateValidator: Validator<
+      AttributeUpdateItemInput<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, true>,
+      FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
+    >
+  ): $MapAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
+      }
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      }),
+      this[$attributes]
+    )
+  }
+
+  /**
+   * Provide a custom validator for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextValidator `(key/putAttributeInput) => void`
+   */
+  validate(
+    nextValidator: Validator<
+      If<
+        STATE['key'],
+        ParserInput<
+          FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>,
+          { mode: 'key'; fill: false }
+        >,
+        ParserInput<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, { fill: false }>
+      >,
+      FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
+    >
+  ): $MapAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >,
+    $ATTRIBUTES
+  > {
+    return new $MapAttribute(
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
+      }),
+      this[$attributes]
+    )
+  }
+
   freeze(path?: string): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>> {
     return freezeMapAttribute(this[$state], this[$attributes], path)
   }
@@ -448,6 +615,7 @@ export class MapAttribute<
   savedAs: STATE['savedAs']
   defaults: STATE['defaults']
   links: STATE['links']
+  validators: STATE['validators']
 
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<RequiredOption, Set<string>>
@@ -462,6 +630,7 @@ export class MapAttribute<
     this.savedAs = state.savedAs
     this.defaults = state.defaults
     this.links = state.links
+    this.validators = state.validators
 
     const keyAttributeNames = new Set<string>()
     const requiredAttributeNames: Record<RequiredOption, Set<string>> = {

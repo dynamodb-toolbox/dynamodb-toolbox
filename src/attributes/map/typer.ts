@@ -37,7 +37,8 @@ export const map: MapAttributeTyper = <
     ...MAP_DEFAULT_OPTIONS,
     ...options,
     defaults: { ...MAP_DEFAULT_OPTIONS.defaults, ...options?.defaults },
-    links: { ...MAP_DEFAULT_OPTIONS.links, ...options?.links }
+    links: { ...MAP_DEFAULT_OPTIONS.links, ...options?.links },
+    validators: { ...MAP_DEFAULT_OPTIONS.validators, ...options?.validators }
   } as InferStateFromOptions<MapAttributeOptions, MapAttributeDefaultOptions, OPTIONS>
 
   return new $MapAttribute(state, attributes)

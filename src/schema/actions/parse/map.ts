@@ -21,6 +21,7 @@ import type {
   ParsedValueOptions,
   ParsingOptions
 } from './types/options.js'
+import { applyCustomValidation } from './utils.js'
 
 export type MapAttrParsedValue<
   ATTRIBUTE extends MapAttribute,
@@ -131,6 +132,8 @@ export function* mapAttributeParser<
       .map(([attrName, attr]) => [attrName, attr.next().value])
       .filter(([, attrValue]) => attrValue !== undefined)
   )
+  applyCustomValidation(attribute, parsedValue, options)
+
   if (transform) {
     yield parsedValue
   } else {

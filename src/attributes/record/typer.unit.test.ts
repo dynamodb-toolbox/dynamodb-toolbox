@@ -6,6 +6,8 @@ import { $elements, $keys, $state, $type } from '../constants/attributeOptions.j
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
+import type { Validator } from '../types/validator.js'
+import type { FreezeRecordAttribute } from './freeze.js'
 import type { $RecordAttributeState, RecordAttribute } from './interface.js'
 import { record } from './typer.js'
 
@@ -216,7 +218,7 @@ describe('record', () => {
     assertType
     expect(rec[$type]).toBe('record')
 
-    const assertState: A.Contains<
+    const assertState: A.Equals<
       (typeof rec)[$state],
       {
         required: AtLeastOnce
@@ -233,6 +235,11 @@ describe('record', () => {
           put: undefined
           update: undefined
         }
+        validators: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertState
@@ -242,7 +249,8 @@ describe('record', () => {
       hidden: false,
       savedAs: undefined,
       defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined }
+      links: { key: undefined, put: undefined, update: undefined },
+      validators: { key: undefined, put: undefined, update: undefined }
     })
 
     const assertKeys: A.Equals<(typeof rec)[$keys], typeof fooBar> = 1
@@ -588,6 +596,156 @@ describe('record', () => {
     assertRec
 
     expect(rec[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+  })
+
+  test('returns record with validator (option)', () => {
+    // TOIMPROVE: Add type constraints here
+    const pass = () => true
+    const recordA = record(string(), number(), {
+      validators: { key: pass, put: undefined, update: undefined }
+    })
+    const recordB = record(string(), number(), {
+      validators: { key: undefined, put: pass, update: undefined }
+    })
+    const recordC = record(string(), number(), {
+      validators: { key: undefined, put: undefined, update: pass }
+    })
+
+    const assertRecordA: A.Contains<
+      (typeof recordA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertRecordA
+
+    expect(recordA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertRecordB: A.Contains<
+      (typeof recordB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertRecordB
+
+    expect(recordB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertRecordC: A.Contains<
+      (typeof recordC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertRecordC
+
+    expect(recordC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+  })
+
+  test('returns record with validator (method)', () => {
+    const pass = () => true
+
+    const recordA = record(string(), number()).keyValidate(pass)
+    const recordB = record(string(), number()).putValidate(pass)
+    const recordC = record(string(), number()).updateValidate(pass)
+
+    const assertRecordA: A.Contains<
+      (typeof recordA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertRecordA
+
+    expect(recordA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertRecordB: A.Contains<
+      (typeof recordB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertRecordB
+
+    expect(recordB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertRecordC: A.Contains<
+      (typeof recordC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertRecordC
+
+    expect(recordC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+
+    const prevRecord = record(string(), number())
+    prevRecord.validate((...args) => {
+      const assertArgs: A.Equals<
+        typeof args,
+        [{ [x in string]?: number }, FreezeRecordAttribute<typeof prevRecord>]
+      > = 1
+      assertArgs
+
+      return true
+    })
+
+    const prevOptMap = record(string(), number()).optional()
+    prevOptMap.validate((...args) => {
+      const assertArgs: A.Equals<
+        typeof args,
+        [{ [x in string]?: number } | undefined, FreezeRecordAttribute<typeof prevOptMap>]
+      > = 1
+      assertArgs
+
+      return true
+    })
+  })
+
+  test('returns record with PUT validator if it is not key (validate shorthand)', () => {
+    const pass = () => true
+    const _record = record(string(), number()).validate(pass)
+
+    const assertRecord: A.Contains<
+      (typeof _record)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertRecord
+
+    expect(_record[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+  })
+
+  test('returns record with KEY validator if it is key (link shorthand)', () => {
+    const pass = () => true
+    const _record = record(string(), number()).key().validate(pass)
+
+    const assertRecord: A.Contains<
+      (typeof _record)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertRecord
+
+    expect(_record[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
   })
 
   test('record of records', () => {
