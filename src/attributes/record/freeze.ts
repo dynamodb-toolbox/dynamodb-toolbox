@@ -5,11 +5,14 @@ import { $state, $type } from '../constants/attributeOptions.js'
 import type { $elements, $keys } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import { RecordAttribute } from './interface.js'
 import type { $RecordAttributeState } from './interface.js'
-import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
+import type {
+  $RecordAttributeElements,
+  $RecordAttributeKeys,
+  RecordAttributeState
+} from './types.js'
 
 export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =
   // Applying void Update improves type display
@@ -24,7 +27,7 @@ export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeStat
   >
 
 type RecordAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends RecordAttributeState,
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements
 >(
@@ -44,7 +47,7 @@ type RecordAttributeFreezer = <
  * @return void
  */
 export const freezeRecordAttribute: RecordAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends RecordAttributeState,
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements
 >(

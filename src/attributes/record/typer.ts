@@ -56,6 +56,10 @@ export const record: RecordAttributeTyper = <
     links: {
       ...RECORD_DEFAULT_OPTIONS.links,
       ...options?.links
+    },
+    validators: {
+      ...RECORD_DEFAULT_OPTIONS.validators,
+      ...options?.validators
     }
   } as InferStateFromOptions<RecordAttributeOptions, RecordAttributeDefaultOptions, OPTIONS>
 

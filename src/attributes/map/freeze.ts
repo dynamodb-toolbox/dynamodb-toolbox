@@ -5,11 +5,10 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $attributes } from '../constants/attributeOptions.js'
 import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
-import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import { MapAttribute } from './interface.js'
 import type { $MapAttributeState } from './interface.js'
-import type { $MapAttributeAttributeStates } from './types.js'
+import type { $MapAttributeAttributeStates, MapAttributeState } from './types.js'
 
 export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
   // Applying void Update improves type display
@@ -27,7 +26,7 @@ export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
   >
 
 type MapAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends MapAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates
 >(
   state: STATE,
@@ -44,7 +43,7 @@ type MapAttributeFreezer = <
  * @return void
  */
 export const freezeMapAttribute: MapAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends MapAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates
 >(
   state: STATE,
