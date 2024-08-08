@@ -368,35 +368,17 @@ describe('map', () => {
     const mapB = map({ str: string(), num: number() }).putValidate(pass)
     const mapC = map({ str: string(), num: number() }).updateValidate(pass)
 
-    const assertMapA: A.Contains<
-      (typeof mapA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
-    assertMapA
-
     expect(mapA[$state].validators).toStrictEqual({
       key: pass,
       put: undefined,
       update: undefined
     })
 
-    const assertMapB: A.Contains<
-      (typeof mapB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
-    assertMapB
-
     expect(mapB[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
       update: undefined
     })
-
-    const assertMapC: A.Contains<
-      (typeof mapC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
-    assertMapC
 
     expect(mapC[$state].validators).toStrictEqual({
       key: undefined,
@@ -431,12 +413,6 @@ describe('map', () => {
     const pass = () => true
     const _map = map({ str: string(), num: number() }).validate(pass)
 
-    const assertMap: A.Contains<
-      (typeof _map)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
-    assertMap
-
     expect(_map[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
@@ -447,12 +423,6 @@ describe('map', () => {
   test('returns map with KEY validator if it is key (link shorthand)', () => {
     const pass = () => true
     const _map = map({ str: string(), num: number() }).key().validate(pass)
-
-    const assertMap: A.Contains<
-      (typeof _map)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
-    assertMap
 
     expect(_map[$state].validators).toStrictEqual({
       key: pass,

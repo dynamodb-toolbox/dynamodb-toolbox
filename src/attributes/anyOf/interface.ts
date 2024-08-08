@@ -420,7 +420,7 @@ export class $AnyOfAttribute<
   /**
    * Provide a custom validator for attribute in Primary Key computing
    *
-   * @param nextKeyValidator `(keyAttributeInput) => void`
+   * @param nextKeyValidator `(keyAttributeInput) => boolean | string`
    */
   keyValidate(
     nextKeyValidator: Validator<
@@ -430,27 +430,12 @@ export class $AnyOfAttribute<
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<STATE, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      }),
+      {
+        ...this[$state],
+        validators: { ...this[$state].validators, key: nextKeyValidator }
+      },
       this[$elements]
     )
   }
@@ -458,34 +443,19 @@ export class $AnyOfAttribute<
   /**
    * Provide a custom validator for attribute in PUT commands
    *
-   * @param nextPutValidator `(putAttributeInput) => void`
+   * @param nextPutValidator `(putAttributeInput) => boolean | string`
    */
   putValidate(
     nextPutValidator: Validator<
       ParserInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { fill: false }>,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<STATE, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      }),
+      {
+        ...this[$state],
+        validators: { ...this[$state].validators, put: nextPutValidator }
+      },
       this[$elements]
     )
   }
@@ -493,34 +463,19 @@ export class $AnyOfAttribute<
   /**
    * Provide a custom validator for attribute in UPDATE commands
    *
-   * @param nextUpdateValidator `(updateAttributeInput) => void`
+   * @param nextUpdateValidator `(updateAttributeInput) => boolean | string`
    */
   updateValidate(
     nextUpdateValidator: Validator<
       AttributeUpdateItemInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, true>,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<STATE, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      }),
+      {
+        ...this[$state],
+        validators: { ...this[$state].validators, update: nextUpdateValidator }
+      },
       this[$elements]
     )
   }
@@ -528,7 +483,7 @@ export class $AnyOfAttribute<
   /**
    * Provide a custom validator for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
-   * @param nextValidator `(key/putAttributeInput) => void`
+   * @param nextValidator `(key/putAttributeInput) => boolean | string`
    */
   validate(
     nextValidator: Validator<
@@ -542,45 +497,8 @@ export class $AnyOfAttribute<
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >,
-    $ELEMENTS
-  > {
-    return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      }),
-      this[$elements]
-    )
+  ): $AnyOfAttribute<STATE, $ELEMENTS> {
+    return this[$state].key ? this.keyValidate(nextValidator) : this.putValidate(nextValidator)
   }
 
   freeze(path?: string): FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>> {
