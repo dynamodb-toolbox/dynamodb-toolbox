@@ -169,8 +169,8 @@ import {
 await PokemonEntity.build(UpdateItemCommand)
   .item({
     ...
-    skills: $add('thunder', 'dragon-tail'),
-    types: $delete('flight')
+    skills: $add(new Set(['thunder', 'dragon-tail'])),
+    types: $delete(new Set(['flight']))
   })
   .send()
 ```
