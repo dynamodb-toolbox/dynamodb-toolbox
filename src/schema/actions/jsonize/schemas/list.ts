@@ -1,22 +1,71 @@
 import { any } from '~/attributes/any/index.js'
-import { anyOf } from '~/attributes/anyOf/index.js'
-import { list } from '~/attributes/list/index.js'
 import { map } from '~/attributes/map/index.js'
-import { record } from '~/attributes/record/index.js'
 import { string } from '~/attributes/string/index.js'
 
-import { defaulterSchema, jsonAttrOptionSchemas, linkerSchema } from './common.js'
+import { jsonAttrParser } from './attribute.js'
+import { jsonAttrOptionSchemas } from './common.js'
 
-/**
- * @debt feature "Validate element types + constraints & default value types with `.validate` (lazily re-use attrRepresentationSchema)"
- */
 export const jsonListAttrSchema = map({
   type: string().const('list'),
   ...jsonAttrOptionSchemas,
-  elements: any(),
-  defaults: record(
-    string().enum('put', 'key', 'update'),
-    anyOf(map({ type: string().const('value'), value: list(any()) }), defaulterSchema)
-  ).optional(),
-  links: record(string().enum('put', 'key', 'update'), linkerSchema).optional()
+  elements: any()
+}).validate(input => {
+  const { elements } = input
+
+  // Elements should be valid attribute
+  if (!jsonAttrParser.validate(elements)) {
+    return false
+  }
+
+  // Elements should follow `list` constraints
+  const areConstraintsVerified = [
+    elements.required === undefined || elements.required === 'atLeastOnce',
+    elements.hidden === undefined || elements.hidden === false,
+    elements.savedAs === undefined,
+    elements.defaults?.key === undefined,
+    elements.defaults?.put === undefined,
+    elements.defaults?.update === undefined,
+    elements.links?.key === undefined,
+    elements.links?.put === undefined,
+    elements.links?.update === undefined
+  ].every(Boolean)
+
+  if (!areConstraintsVerified) {
+    return false
+  }
+
+  /**
+   * @debt feature "Defaults of type 'value' should follow attribute definition: Implement once attributes fromJSON exists"
+   */
+  // if (input.defaults !== undefined) {
+  //   const { defaults, ...restInput } = input
+
+  //   let attrParser: Parser<Attribute> | undefined
+
+  //   for (const mode of ['put', 'key', 'update'] as const) {
+  //     const modeDefault = defaults[mode]
+
+  //     if (modeDefault === undefined || modeDefault.defaulterType !== 'value') {
+  //       continue
+  //     }
+
+  //     if (attrParser === undefined) {
+  //       attrParser = new Parser(fromJSON(restInput))
+  //     }
+
+  //     if (
+  //       !attrParser.validate(modeDefault.value, {
+  //         mode,
+  //         fill: false,
+  //         transform: false,
+  //         parseExtension: mode === 'update' ? parseUpdateExtension : undefined
+  //       })
+  //     ) {
+  //       console.log('did not validate')
+  //       return false
+  //     }
+  //   }
+  // }
+
+  return true
 })
