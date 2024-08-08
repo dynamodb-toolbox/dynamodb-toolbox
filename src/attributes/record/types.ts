@@ -32,23 +32,25 @@ export type $RecordAttributeKeys = $PrimitiveAttributeNestedState<
   }
 >
 
-export type $RecordAttributeElements = $AttributeNestedState & {
-  [$state]: {
-    required: AtLeastOnce
-    hidden: false
-    key: false
-    savedAs: undefined
-    defaults: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-    links: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
+export type RecordAttributeElementConstraints = {
+  required: AtLeastOnce
+  hidden: false
+  key: false
+  savedAs: undefined
+  defaults: {
+    key: undefined
+    put: undefined
+    update: undefined
   }
+  links: {
+    key: undefined
+    put: undefined
+    update: undefined
+  }
+}
+
+export type $RecordAttributeElements = $AttributeNestedState & {
+  [$state]: RecordAttributeElementConstraints
 }
 
 export type RecordAttributeKeys = PrimitiveAttribute<'string'>

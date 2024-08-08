@@ -2,6 +2,7 @@ import type { Attribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { SchemaAction } from '~/schema/index.js'
 import type { Schema } from '~/schema/index.js'
+import type { Merge } from '~/types/merge.js'
 
 import { attrParser } from './attribute.js'
 import type { AttrParsedValue } from './attribute.js'
@@ -76,12 +77,20 @@ export class Parser<SCHEMA extends Schema | Attribute> extends SchemaAction<SCHE
     return this.parse(inputValue, options)
   }
 
-  validate<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
+  validate<
+    OPTIONS extends Pick<ParsingOptions, 'mode' | 'parseExtension'> = Pick<
+      ParsingDefaultOptions,
+      'mode' | 'parseExtension'
+    >
+  >(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
-  ): inputValue is ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
+  ): inputValue is ParsedValue<
+    SCHEMA,
+    FromParsingOptions<Merge<{ fill: false; transform: false }, OPTIONS>>
+  > {
     try {
-      this.parse(inputValue, options)
+      this.parse(inputValue, { ...options, fill: false, transform: false })
     } catch (error) {
       if (error instanceof DynamoDBToolboxError && DynamoDBToolboxError.match(error, 'parsing.')) {
         return false

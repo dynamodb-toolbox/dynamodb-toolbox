@@ -1,7 +1,9 @@
 import { ANY_DEFAULT_OPTIONS } from '~/attributes/any/options.js'
 import { ANY_OF_DEFAULT_OPTIONS } from '~/attributes/anyOf/options.js'
+import type { AnyOfAttributeElementConstraints } from '~/attributes/anyOf/types.js'
 import type { Attribute, PrimitiveAttributeType } from '~/attributes/index.js'
 import { LIST_DEFAULT_OPTIONS } from '~/attributes/list/options.js'
+import type { ListAttributeElementConstraints } from '~/attributes/list/types.js'
 import { MAP_DEFAULT_OPTIONS } from '~/attributes/map/options.js'
 import { PRIMITIVE_DEFAULT_OPTIONS } from '~/attributes/primitive/options.js'
 import { RECORD_DEFAULT_OPTIONS } from '~/attributes/record/options.js'
@@ -47,7 +49,7 @@ export const jsonizeAttribute = (attr: Attribute): JSONizedAttr => {
         ...(attr.savedAs !== undefined ? { savedAs: attr.savedAs } : {}),
         elements: jsonizeAttribute(attr.elements)
         // We need to cast as `JSONizedAttr` is not assignable to set elements
-      } as Extract<JSONizedAttr, { type: 'set' | 'list' }>
+      } as Extract<JSONizedAttr, { type: 'set' }>
     case 'list':
       return {
         type: 'list',
@@ -55,7 +57,8 @@ export const jsonizeAttribute = (attr: Attribute): JSONizedAttr => {
         ...(attr.hidden !== LIST_DEFAULT_OPTIONS.hidden ? { hidden: attr.hidden } : {}),
         ...(attr.key !== LIST_DEFAULT_OPTIONS.key ? { key: attr.key } : {}),
         ...(attr.savedAs !== undefined ? { savedAs: attr.savedAs } : {}),
-        elements: jsonizeAttribute(attr.elements)
+        elements: jsonizeAttribute(attr.elements) as JSONizedAttr &
+          Partial<ListAttributeElementConstraints>
       }
     case 'map':
       return {
@@ -89,7 +92,8 @@ export const jsonizeAttribute = (attr: Attribute): JSONizedAttr => {
         ...(attr.hidden !== ANY_OF_DEFAULT_OPTIONS.hidden ? { hidden: attr.hidden } : {}),
         ...(attr.key !== ANY_OF_DEFAULT_OPTIONS.key ? { key: attr.key } : {}),
         ...(attr.savedAs !== undefined ? { savedAs: attr.savedAs } : {}),
-        elements: attr.elements.map(jsonizeAttribute)
+        elements: attr.elements.map(jsonizeAttribute) as (JSONizedAttr &
+          Partial<AnyOfAttributeElementConstraints>)[]
       }
   }
 }
