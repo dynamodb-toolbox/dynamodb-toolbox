@@ -21,10 +21,9 @@ import type {
   $RecordAttributeKeys,
   RecordAttributeKeys
 } from './types.js'
-import type { RecordAttributeState } from './types.js'
 
 export interface $RecordAttributeState<
-  STATE extends RecordAttributeState = RecordAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > {
@@ -35,7 +34,7 @@ export interface $RecordAttributeState<
 }
 
 export interface $RecordAttributeNestedState<
-  STATE extends RecordAttributeState = RecordAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > extends $RecordAttributeState<STATE, $KEYS, $ELEMENTS> {
@@ -46,7 +45,7 @@ export interface $RecordAttributeNestedState<
  * Record attribute interface
  */
 export class $RecordAttribute<
-  STATE extends RecordAttributeState = RecordAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > implements $RecordAttributeNestedState<STATE, $KEYS, $ELEMENTS>
@@ -652,7 +651,7 @@ export class $RecordAttribute<
 }
 
 export class RecordAttribute<
-  STATE extends RecordAttributeState = RecordAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   KEYS extends RecordAttributeKeys = RecordAttributeKeys,
   ELEMENTS extends Attribute = Attribute
 > implements SharedAttributeState<STATE>

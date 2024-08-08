@@ -15,14 +15,10 @@ import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
 import { freezeMapAttribute } from './freeze.js'
 import type { FreezeMapAttribute } from './freeze.js'
-import type {
-  $MapAttributeAttributeStates,
-  MapAttributeAttributes,
-  MapAttributeState
-} from './types.js'
+import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types.js'
 
 export interface $MapAttributeState<
-  STATE extends MapAttributeState = MapAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > {
   [$type]: 'map'
@@ -31,7 +27,7 @@ export interface $MapAttributeState<
 }
 
 export interface $MapAttributeNestedState<
-  STATE extends MapAttributeState = MapAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > extends $MapAttributeState<STATE, $ATTRIBUTES> {
   freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>
@@ -41,7 +37,7 @@ export interface $MapAttributeNestedState<
  * MapAttribute attribute interface
  */
 export class $MapAttribute<
-  STATE extends MapAttributeState = MapAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > implements $MapAttributeNestedState<STATE, $ATTRIBUTES>
 {
@@ -606,7 +602,7 @@ export class $MapAttribute<
 }
 
 export class MapAttribute<
-  STATE extends MapAttributeState = MapAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
 > implements SharedAttributeState<STATE>
 {

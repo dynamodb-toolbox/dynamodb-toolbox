@@ -16,10 +16,10 @@ import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import { freezeAnyOfAttribute } from './freeze.js'
 import type { FreezeAnyOfAttribute } from './freeze.js'
-import type { $AnyOfAttributeElements, AnyOfAttributeState } from './types.js'
+import type { $AnyOfAttributeElements } from './types.js'
 
 export interface $AnyOfAttributeState<
-  STATE extends AnyOfAttributeState = AnyOfAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > {
   [$type]: 'anyOf'
@@ -28,7 +28,7 @@ export interface $AnyOfAttributeState<
 }
 
 export interface $AnyOfAttributeNestedState<
-  STATE extends AnyOfAttributeState = AnyOfAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > extends $AnyOfAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>
@@ -38,7 +38,7 @@ export interface $AnyOfAttributeNestedState<
  * AnyOf attribute interface
  */
 export class $AnyOfAttribute<
-  STATE extends AnyOfAttributeState = AnyOfAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > implements $AnyOfAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -589,7 +589,7 @@ export class $AnyOfAttribute<
 }
 
 export class AnyOfAttribute<
-  STATE extends AnyOfAttributeState = AnyOfAttributeState,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends Attribute[] = Attribute[]
 > implements SharedAttributeState<STATE>
 {

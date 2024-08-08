@@ -6,15 +6,12 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { $AttributeState } from '../types/index.js'
 import { AnyOfAttribute } from './interface.js'
 import type { $AnyOfAttributeState } from './interface.js'
-import type {
-  $AnyOfAttributeElements,
-  AnyOfAttributeElements,
-  AnyOfAttributeState
-} from './types.js'
+import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types.js'
 
 type FreezeElements<
   $ELEMENTS extends $AnyOfAttributeElements[],
@@ -40,7 +37,7 @@ export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState>
   >
 
 type AnyOfAttributeFreezer = <
-  STATE extends AnyOfAttributeState,
+  STATE extends SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[]
 >(
   state: STATE,
@@ -57,7 +54,7 @@ type AnyOfAttributeFreezer = <
  * @return void
  */
 export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
-  STATE extends AnyOfAttributeState,
+  STATE extends SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[]
 >(
   state: STATE,

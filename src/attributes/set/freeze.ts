@@ -5,11 +5,11 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import { SetAttribute } from './interface.js'
 import type { $SetAttributeState } from './interface.js'
 import type { $SetAttributeElements } from './types.js'
-import type { SetAttributeState } from './types.js'
 
 export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
   // Applying void Update improves type display
@@ -20,7 +20,7 @@ export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
   >
 
 type SetAttributeFreezer = <
-  STATE extends SetAttributeState,
+  STATE extends SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements
 >(
   state: STATE,
@@ -37,7 +37,7 @@ type SetAttributeFreezer = <
  * @return void
  */
 export const freezeSetAttribute: SetAttributeFreezer = <
-  STATE extends SetAttributeState,
+  STATE extends SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements
 >(
   state: STATE,

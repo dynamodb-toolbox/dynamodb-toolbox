@@ -1,4 +1,5 @@
 import type { RequiredOption } from '../constants/requiredOptions.js'
+import type { Validator } from '../types/validator.js'
 
 export interface SharedAttributeStateConstraint {
   required: RequiredOption
@@ -15,6 +16,11 @@ export interface SharedAttributeStateConstraint {
     put: undefined | unknown
     update: undefined | unknown
   }
+  validators: {
+    key: undefined | Validator
+    put: undefined | Validator
+    update: undefined | Validator
+  }
 }
 
 export interface SharedAttributeState<
@@ -26,4 +32,5 @@ export interface SharedAttributeState<
   savedAs: STATE['savedAs']
   defaults: STATE['defaults']
   links: STATE['links']
+  validators: STATE['validators']
 }
