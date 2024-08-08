@@ -18,6 +18,7 @@ import type {
   ParsedValueOptions,
   ParsingOptions
 } from './types/options.js'
+import { applyCustomValidation } from './utils.js'
 
 export type AnyOfAttrParsedValue<
   ATTRIBUTE extends AnyOfAttribute,
@@ -110,6 +111,7 @@ export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOp
       }
     })
   }
+  applyCustomValidation(attribute, parsedValue, options)
 
   if (transform) {
     yield parsedValue

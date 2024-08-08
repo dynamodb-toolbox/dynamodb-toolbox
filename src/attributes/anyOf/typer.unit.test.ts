@@ -5,7 +5,10 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { $state, $type } from '../constants/attributeOptions.js'
 import { $elements } from '../constants/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
+import { number } from '../number/index.js'
 import { string } from '../string/index.js'
+import type { Validator } from '../types/validator.js'
+import type { FreezeAnyOfAttribute } from './freeze.js'
 import type { $AnyOfAttributeState, AnyOfAttribute } from './interface.js'
 import { anyOf } from './typer.js'
 
@@ -127,6 +130,11 @@ describe('anyOf', () => {
           put: undefined
           update: undefined
         }
+        validators: {
+          key: undefined
+          put: undefined
+          update: undefined
+        }
       }
     > = 1
     assertState
@@ -136,7 +144,8 @@ describe('anyOf', () => {
       hidden: false,
       savedAs: undefined,
       defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined }
+      links: { key: undefined, put: undefined, update: undefined },
+      validators: { key: undefined, put: undefined, update: undefined }
     })
 
     const assertExtends: A.Extends<typeof anyOfAttr, $AnyOfAttributeState> = 1
@@ -298,6 +307,107 @@ describe('anyOf', () => {
 
     expect(anyOfAttr[$state].links).toStrictEqual({
       key: sayHello,
+      put: undefined,
+      update: undefined
+    })
+  })
+
+  // TODO: Reimplement options as potential first argument
+  test('returns anyOf with validator (method)', () => {
+    const pass = () => true
+
+    const anyOfA = anyOf(string(), number()).keyValidate(pass)
+    const anyOfB = anyOf(string(), number()).putValidate(pass)
+    const anyOfC = anyOf(string(), number()).updateValidate(pass)
+
+    const assertAnyOfA: A.Contains<
+      (typeof anyOfA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertAnyOfA
+
+    expect(anyOfA[$state].validators).toStrictEqual({
+      key: pass,
+      put: undefined,
+      update: undefined
+    })
+
+    const assertAnyOfB: A.Contains<
+      (typeof anyOfB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertAnyOfB
+
+    expect(anyOfB[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+
+    const assertAnyOfC: A.Contains<
+      (typeof anyOfC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertAnyOfC
+
+    expect(anyOfC[$state].validators).toStrictEqual({
+      key: undefined,
+      put: undefined,
+      update: pass
+    })
+
+    const prevAnyOf = anyOf(string(), number())
+    prevAnyOf.validate((...args) => {
+      const assertArgs: A.Equals<
+        typeof args,
+        [string | number, FreezeAnyOfAttribute<typeof prevAnyOf>]
+      > = 1
+      assertArgs
+
+      return true
+    })
+
+    const prevOptAnyOf = anyOf(string(), number()).optional()
+    prevOptAnyOf.validate((...args) => {
+      const assertArgs: A.Equals<
+        typeof args,
+        [string | number | undefined, FreezeAnyOfAttribute<typeof prevOptAnyOf>]
+      > = 1
+      assertArgs
+
+      return true
+    })
+  })
+
+  test('returns anyOf with PUT validator if it is not key (validate shorthand)', () => {
+    const pass = () => true
+    const _anyOf = anyOf(string(), number()).validate(pass)
+
+    const assertAnyOf: A.Contains<
+      (typeof _anyOf)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertAnyOf
+
+    expect(_anyOf[$state].validators).toStrictEqual({
+      key: undefined,
+      put: pass,
+      update: undefined
+    })
+  })
+
+  test('returns anyOf with KEY validator if it is key (link shorthand)', () => {
+    const pass = () => true
+    const _anyOf = anyOf(string(), number()).key().validate(pass)
+
+    const assertAnyOf: A.Contains<
+      (typeof _anyOf)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertAnyOf
+
+    expect(_anyOf[$state].validators).toStrictEqual({
+      key: pass,
       put: undefined,
       update: undefined
     })

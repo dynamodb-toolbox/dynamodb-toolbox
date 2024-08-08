@@ -50,4 +50,37 @@ describe('mapAttributeParser', () => {
     expect(transformedState.done).toBe(true)
     expect(transformedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
   })
+
+  test('applies validation if any', () => {
+    const mapA = map({ str: string() })
+      .validate(input => input.str === 'foo')
+      .freeze('root')
+
+    const { value: parsed } = mapAttributeParser(mapA, { str: 'foo' }, { fill: false }).next()
+    expect(parsed).toStrictEqual({ str: 'foo' })
+
+    const invalidCallA = () => mapAttributeParser(mapA, { str: 'bar' }, { fill: false }).next()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({
+        code: 'parsing.customValidationFailed',
+        message: "Custom validation for attribute 'root' failed."
+      })
+    )
+
+    const mapB = map({ str: string() })
+      .validate(input => (input.str === 'foo' ? true : 'Oh no...'))
+      .freeze('root')
+
+    const invalidCallB = () => mapAttributeParser(mapB, { str: 'bar' }, { fill: false }).next()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({
+        code: 'parsing.customValidationFailed',
+        message: "Custom validation for attribute 'root' failed with message: Oh no...."
+      })
+    )
+  })
 })

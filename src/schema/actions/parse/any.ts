@@ -9,7 +9,7 @@ import type {
   ParsedValueOptions,
   ParsingOptions
 } from './types/options.js'
-import { runCustomValidation } from './utils.js'
+import { applyCustomValidation } from './utils.js'
 
 export type AnyAttrParsedValue<
   ATTRIBUTE extends AnyAttribute,
@@ -42,7 +42,7 @@ export function* anyAttrParser<
   }
 
   const parsedValue = linkedValue ?? cloneDeep(inputValue)
-  runCustomValidation(attribute, parsedValue, options)
+  applyCustomValidation(attribute, parsedValue, options)
 
   if (transform) {
     yield parsedValue
