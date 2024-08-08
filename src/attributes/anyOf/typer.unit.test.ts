@@ -7,7 +7,6 @@ import { $elements } from '../constants/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
-import type { Validator } from '../types/validator.js'
 import type { FreezeAnyOfAttribute } from './freeze.js'
 import type { $AnyOfAttributeState, AnyOfAttribute } from './interface.js'
 import { anyOf } from './typer.js'
@@ -320,35 +319,17 @@ describe('anyOf', () => {
     const anyOfB = anyOf(string(), number()).putValidate(pass)
     const anyOfC = anyOf(string(), number()).updateValidate(pass)
 
-    const assertAnyOfA: A.Contains<
-      (typeof anyOfA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
-    assertAnyOfA
-
     expect(anyOfA[$state].validators).toStrictEqual({
       key: pass,
       put: undefined,
       update: undefined
     })
 
-    const assertAnyOfB: A.Contains<
-      (typeof anyOfB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
-    assertAnyOfB
-
     expect(anyOfB[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
       update: undefined
     })
-
-    const assertAnyOfC: A.Contains<
-      (typeof anyOfC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
-    assertAnyOfC
 
     expect(anyOfC[$state].validators).toStrictEqual({
       key: undefined,
@@ -383,12 +364,6 @@ describe('anyOf', () => {
     const pass = () => true
     const _anyOf = anyOf(string(), number()).validate(pass)
 
-    const assertAnyOf: A.Contains<
-      (typeof _anyOf)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
-    assertAnyOf
-
     expect(_anyOf[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
@@ -399,12 +374,6 @@ describe('anyOf', () => {
   test('returns anyOf with KEY validator if it is key (link shorthand)', () => {
     const pass = () => true
     const _anyOf = anyOf(string(), number()).key().validate(pass)
-
-    const assertAnyOf: A.Contains<
-      (typeof _anyOf)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
-    assertAnyOf
 
     expect(_anyOf[$state].validators).toStrictEqual({
       key: pass,

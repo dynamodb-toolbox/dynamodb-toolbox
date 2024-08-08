@@ -16,11 +16,6 @@ export interface SharedAttributeStateConstraint {
     put: undefined | unknown
     update: undefined | unknown
   }
-  validators: {
-    key: undefined | Validator
-    put: undefined | Validator
-    update: undefined | Validator
-  }
 }
 
 export interface SharedAttributeState<
@@ -32,5 +27,9 @@ export interface SharedAttributeState<
   savedAs: STATE['savedAs']
   defaults: STATE['defaults']
   links: STATE['links']
-  validators: STATE['validators']
+  validators: {
+    key: undefined | Validator
+    put: undefined | Validator
+    update: undefined | Validator
+  }
 }

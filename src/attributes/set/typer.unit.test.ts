@@ -512,35 +512,17 @@ describe('set', () => {
     const setB = set(string()).putValidate(pass)
     const setC = set(string()).updateValidate(pass)
 
-    const assertSetA: A.Contains<
-      (typeof setA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
-    assertSetA
-
     expect(setA[$state].validators).toStrictEqual({
       key: pass,
       put: undefined,
       update: undefined
     })
 
-    const assertSetB: A.Contains<
-      (typeof setB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
-    assertSetB
-
     expect(setB[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
       update: undefined
     })
-
-    const assertSetC: A.Contains<
-      (typeof setC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
-    assertSetC
 
     expect(setC[$state].validators).toStrictEqual({
       key: undefined,
@@ -572,12 +554,6 @@ describe('set', () => {
     const pass = () => true
     const _set = set(string()).validate(pass)
 
-    const assertSet: A.Contains<
-      (typeof _set)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
-    assertSet
-
     expect(_set[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
@@ -588,12 +564,6 @@ describe('set', () => {
   test('returns set with KEY validator if it is key (link shorthand)', () => {
     const pass = () => true
     const _set = set(string()).key().validate(pass)
-
-    const assertSet: A.Contains<
-      (typeof _set)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
-    assertSet
 
     expect(_set[$state].validators).toStrictEqual({
       key: pass,

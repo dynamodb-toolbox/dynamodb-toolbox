@@ -560,35 +560,17 @@ describe('primitiveAttribute', () => {
       const strB = string().putValidate(pass)
       const strC = string().updateValidate(pass)
 
-      const assertStrA: A.Contains<
-        (typeof strA)[$state],
-        { validators: { key: Validator; put: undefined; update: undefined } }
-      > = 1
-      assertStrA
-
       expect(strA[$state].validators).toStrictEqual({
         key: pass,
         put: undefined,
         update: undefined
       })
 
-      const assertStrB: A.Contains<
-        (typeof strB)[$state],
-        { validators: { key: undefined; put: Validator; update: undefined } }
-      > = 1
-      assertStrB
-
       expect(strB[$state].validators).toStrictEqual({
         key: undefined,
         put: pass,
         update: undefined
       })
-
-      const assertStrC: A.Contains<
-        (typeof strC)[$state],
-        { validators: { key: undefined; put: undefined; update: Validator } }
-      > = 1
-      assertStrC
 
       expect(strC[$state].validators).toStrictEqual({
         key: undefined,
@@ -623,12 +605,6 @@ describe('primitiveAttribute', () => {
       const pass = () => true
       const str = string().validate(pass)
 
-      const assertStr: A.Contains<
-        (typeof str)[$state],
-        { validators: { key: undefined; put: Validator; update: undefined } }
-      > = 1
-      assertStr
-
       expect(str[$state].validators).toStrictEqual({
         key: undefined,
         put: pass,
@@ -639,12 +615,6 @@ describe('primitiveAttribute', () => {
     test('returns string with KEY validator if it is key (link shorthand)', () => {
       const pass = () => true
       const str = string().key().validate(pass)
-
-      const assertStr: A.Contains<
-        (typeof str)[$state],
-        { validators: { key: Validator; put: undefined; update: undefined } }
-      > = 1
-      assertStr
 
       expect(str[$state].validators).toStrictEqual({
         key: pass,
