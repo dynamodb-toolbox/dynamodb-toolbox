@@ -33,7 +33,7 @@ const parsed = PokemonEntity.build(EntityParser).parse(
 
 :::info
 
-This action is mostly a **wrapper around the [`SchemaParser`](../../../4-schemas/15-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first.
+This action is mostly a **wrapper around the [`SchemaParser`](../../../4-schemas/16-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first.
 
 :::
 

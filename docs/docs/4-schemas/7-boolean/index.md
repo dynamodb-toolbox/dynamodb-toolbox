@@ -32,7 +32,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -82,12 +82,56 @@ const isLegendarySchema = boolean({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const isLegendarySchema = boolean().savedAs('isLeg')
 const isLegendarySchema = boolean({ savedAs: 'isLeg' })
 ```
+
+### `.enum(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean[]</code></i></p>
+
+Provides a finite range of possible values:
+
+```ts
+const isLegendarySchema = boolean().enum(true, false)
+
+// 👇 Equivalent to `.enum(false).default(false)`
+const isLegendarySchema = boolean().const(false)
+```
+
+:::info
+
+For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+
+:::
+
+:::note
+
+Although it is not very useful, `boolean` is a primitive, and as such inherits from the `.enum` and `.const` options.
+
+:::
+
+### `.transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;boolean&gt;</code></i></p>
+
+Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
+
+```ts
+const negate = {
+  parse: (input: boolean) => !input,
+  format: (saved: boolean) => !saved
+}
+
+// Saves the negated value
+const isLegendarySchema = boolean().transform(negate)
+const isLegendarySchema = boolean({ transform: negate })
+```
+
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md), so feel free to use them!
 
 ### `.default(...)`
 
@@ -174,46 +218,31 @@ const pokemonSchema = schema({
 }))
 ```
 
-### `.enum(...)`
+### `.validate(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>boolean[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;boolean&gt;</code></i></p>
 
-Provides a finite range of possible values:
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
 
-```ts
-const isLegendarySchema = boolean().enum(true, false)
-
-// 👇 Equivalent to `.enum(false).default(false)`
-const isLegendarySchema = boolean().const(false)
-```
-
-:::info
-
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
-
-:::
-
-:::note
-
-Although it is not very useful, `boolean` is a primitive, and as such inherits from the `.enum` and `.const` options.
-
-:::
-
-### `.transform(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;boolean&gt;</code></i></p>
-
-Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md):
+:::noteExamples
 
 ```ts
-const negate = {
-  parse: (input: boolean) => !input,
-  format: (saved: boolean) => !saved
-}
-
-// Saves the negated value
-const isLegendarySchema = boolean().transform(negate)
-const isLegendarySchema = boolean({ transform: negate })
+const trueOrUndefinedSchema = boolean()
+  .optional()
+  .validate(input => input !== false)
+// 👇 Similar to
+const trueOrUndefinedSchema = boolean()
+  .optional()
+  .putValidate(input => input !== false)
+// 👇 ...or
+const trueOrUndefinedSchema = boolean({
+  validators: {
+    key: undefined,
+    put: input => input !== false,
+    update: undefined
+  },
+  required: 'never'
+})
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../16-transformers/1-usage.md), so feel free to use them!
+:::

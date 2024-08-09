@@ -32,7 +32,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -80,12 +80,63 @@ const hashSchema = binary({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const hashSchema = binary().savedAs('h')
 const hashSchema = binary({ savedAs: 'h' })
 ```
+
+### `.enum(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Uint8Array[]</code></i></p>
+
+Provides a finite range of possible values:
+
+```ts
+const binA = new Uint8Array([1, 2, 3])
+const binB = new Uint8Array([4, 5, 6])
+
+const hashSchema = binary().enum(binA, binB, ...)
+
+// 👇 Equivalent to `.enum(binA).default(binA)`
+const hashSchema = binary().const(binA)
+```
+
+:::info
+
+For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+
+:::
+
+### `.transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Uint8Array&gt;</code></i></p>
+
+Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
+
+```ts
+var PREFIX = new Uint8Array([1, 2, 3])
+
+const prefix = {
+  parse: (input: Uint8Array) => {
+    const concat = new Uint8Array(
+      PREFIX.length + input.length
+    )
+    concat.set(PREFIX)
+    concat.set(input, PREFIX.length)
+
+    return concat
+  },
+  format: (saved: Uint8Array) => saved.slice(PREFIX.length)
+}
+
+// Prefixes the value
+const hashSchema = binary().transform(prefix)
+const hashSchema = binary({ transform: prefix })
+```
+
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md), so feel free to use them!
 
 ### `.default(...)`
 
@@ -180,53 +231,30 @@ const pokemonSchema = schema({
 }))
 ```
 
-### `.enum(...)`
+### `.validate(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>Uint8Array[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;Uint8Array&gt;</code></i></p>
 
-Provides a finite range of possible values:
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+
+:::noteExamples
 
 ```ts
-const binA = new Uint8Array([1, 2, 3])
-const binB = new Uint8Array([4, 5, 6])
-
-const hashSchema = binary().enum(binA, binB, ...)
-
-// 👇 Equivalent to `.enum(binA).default(binA)`
-const hashSchema = binary().const(binA)
+const longBinSchema = binary().validate(
+  input => input.length > 3
+)
+// 👇 Similar to
+const longBinSchema = binary().putValidate(
+  input => input.length > 3
+)
+// 👇 ...or
+const longBinSchema = binary({
+  validators: {
+    key: undefined,
+    put: input => input.length > 3,
+    update: undefined
+  }
+})
 ```
-
-:::info
-
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
 
 :::
-
-### `.transform(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Uint8Array&gt;</code></i></p>
-
-Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md):
-
-```ts
-var PREFIX = new Uint8Array([1, 2, 3])
-
-const prefix = {
-  parse: (input: Uint8Array) => {
-    const concat = new Uint8Array(
-      PREFIX.length + input.length
-    )
-    concat.set(PREFIX)
-    concat.set(input, PREFIX.length)
-
-    return concat
-  },
-  format: (saved: Uint8Array) => saved.slice(PREFIX.length)
-}
-
-// Prefixes the value
-const hashSchema = binary().transform(prefix)
-const hashSchema = binary({ transform: prefix })
-```
-
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../16-transformers/1-usage.md), so feel free to use them!

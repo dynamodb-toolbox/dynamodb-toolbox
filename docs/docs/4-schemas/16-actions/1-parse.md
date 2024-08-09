@@ -353,12 +353,12 @@ const parsedValue = pokemonSchema.build(Parser).parse(input)
 
 You can provide options as a second argument. Available options:
 
-| Option           |              Type              | Default | Description                                                                                                                        |
-| ---------------- | :----------------------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `fill`           |           `boolean`            | `true`  | Whether to complete the input (with `defaults` and `links`) prior to validation or not.                                             |
-| `transform`      |           `boolean`            | `true`  | Whether to transform the input (with `savedAs` and `transform`) after validation or not.                                            |
-| `mode`           | `put`, `key` or `update` | `put` | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.             |
-| `parseExtension` |          _(internal)_          |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
+| Option           |           Type           | Default | Description                                                                                                                      |
+| ---------------- | :----------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------- |
+| `fill`           |        `boolean`         | `true`  | Whether to complete the input (with `defaults` and `links`) prior to validation or not.                                          |
+| `transform`      |        `boolean`         | `true`  | Whether to transform the input (with `savedAs` and `transform`) after validation or not.                                         |
+| `mode`           | `put`, `key` or `update` |  `put`  | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.           |
+| `parseExtension` |       _(internal)_       |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
 
 :::noteExamples
 
@@ -511,3 +511,87 @@ const parsedPokemon = parsingGenerator.next().value
 </Tabs>
 
 :::
+
+### `validate(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(input: unknown, options?: ValidationOptions) => boolean</code></i></p>
+
+Runs only the **parsing step** of the parsing workflow on the provided input. Returns `true` if the input is valid, catches any parsing error and returns `false` otherwise:
+
+```ts
+const isValid = pokemonSchema.build(Parser).validate(input)
+```
+
+Note that `.validate(...)` acts as a [typeguard](https://www.typescriptlang.org/docs/handbook/advanced-types.html):
+
+```ts
+if (pokemonSchema.build(Parser).validate(input)) {
+  // 🙌 Typed as `Pokemon`!
+  const { level, name } = input
+  ...
+}
+```
+
+Available options:
+
+| Option           |           Type           | Default | Description                                                                                                                      |
+| ---------------- | :----------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`           | `put`, `key` or `update` |  `put`  | The mode of the parsing: Impacts requiredness during validation.                                                                 |
+| `parseExtension` |       _(internal)_       |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="put" label="Put">
+
+<!-- prettier-ignore -->
+```ts
+const pokemon = {
+  pokemonId: 'pikachu1',
+  name: 'Pikachu',
+  types: ['Electric'],
+  ...
+}
+
+const isValid = pokemonSchema.build(Parser).validate(pokemon)
+```
+
+</TabItem>
+<TabItem value="key" label="Key">
+
+```ts
+const isValid = pokemonSchema
+  .build(Parser)
+  .validate({ pokemonId: 'pikachu1' }, { mode: 'key' })
+```
+
+</TabItem>
+<TabItem value="update" label="Update">
+
+```ts
+const isValid = pokemonSchema
+  .build(Parser)
+  .validate(
+    { pokemonId: 'bulbasaur1', customName: 'PlantyDino' },
+    { mode: 'update' }
+  )
+```
+
+</TabItem>
+<TabItem value="update-extended" label="Update (extended)">
+
+```ts
+import {
+  $add,
+  parseUpdateExtension
+} from 'dynamodb-toolbox/entity/actions/update'
+
+const isValid = pokemonSchema.build(Parser).validate(
+  // 👇 `$add` is an extension, so `parseExtension`  is needed
+  { pokemonId: 'pikachu1', customName: $add(1) },
+  { mode: 'update', parseExtension: parseUpdateExtension }
+)
+```
+
+</TabItem>
+</Tabs>
