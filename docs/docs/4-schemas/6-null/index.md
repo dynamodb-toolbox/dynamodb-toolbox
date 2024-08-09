@@ -29,7 +29,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 :::info
 
-Not very useful on itself, `nul` is more likely to be used in conjunction with [`anyOf`](../14-anyOf/index.md) to define **nullable** attributes:
+Not very useful on itself, `nul` is more likely to be used in conjunction with [`anyOf`](../15-anyOf/index.md) to define **nullable** attributes:
 
 ```ts
 const pokemonSchema = schema({
@@ -46,7 +46,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -94,12 +94,49 @@ const nullishSchema = nul({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const nullishSchema = nul().savedAs('_n')
 const nullishSchema = nul({ savedAs: '_n' })
 ```
+
+### `.enum(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>null[]</code></i></p>
+
+Provides a finite range of possible values:
+
+```ts
+const nullishSchema = nul().enum(null)
+
+// 👇 Equivalent to `.enum(null).default(null)`
+const nullishSchema = nul().const(null)
+```
+
+:::info
+
+For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+
+:::
+
+:::note
+
+Although they are not very useful, `nul` is a primitive, and as such inherits from the `.enum` and `.const` options.
+
+:::
+
+### `.transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;null&gt;</code></i></p>
+
+Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md).
+
+:::note
+
+Although it is not very useful, `nul` is a primitive, and as such inherits from the `.transform` option.
+
+:::
 
 ### `.default(...)`
 
@@ -197,39 +234,14 @@ Although they are not very useful, `nul` is a primitive, and as such inherits fr
 
 :::
 
-### `.enum(...)`
+### `.validate(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>null[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;null&gt;</code></i></p>
 
-Provides a finite range of possible values:
-
-```ts
-const nullishSchema = nul().enum(null)
-
-// 👇 Equivalent to `.enum(null).default(null)`
-const nullishSchema = nul().const(null)
-```
-
-:::info
-
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
-
-:::
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details.
 
 :::note
 
-Although they are not very useful, `nul` is a primitive, and as such inherits from the `.enum` and `.const` options.
-
-:::
-
-### `.transform(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;null&gt;</code></i></p>
-
-Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md).
-
-:::note
-
-Although it is not very useful, `nul` is a primitive, and as such inherits from the `.transform` option.
+Although they are not very useful, `nul` is a primitive, and as such inherits from the `.validate` options.
 
 :::

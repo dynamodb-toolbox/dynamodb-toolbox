@@ -81,7 +81,7 @@ const union = anyOf(number(), string().default('foo'))
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -132,7 +132,7 @@ const pokeTypeSchema = anyOf(
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const pokeTypeSchema = anyOf(
@@ -215,3 +215,25 @@ const pokemonSchema = schema({
   )
 }))
 ```
+
+### `.validate(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;ELEMENTS&gt;</code></i></p>
+
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+
+:::noteExamples
+
+```ts
+const nonEmptyListSchema = anyOf(
+  list(string()),
+  list(number())
+).validate(input => input.length > 0)
+// 👇 Similar to
+const nonEmptyListSchema = anyOf(
+  list(string()),
+  list(number())
+).putValidate(input => input.length > 0)
+```
+
+:::

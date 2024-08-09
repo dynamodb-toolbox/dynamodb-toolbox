@@ -155,7 +155,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-👉 See the [transformers section](../../4-schemas/16-transformers/1-usage.md) for more details on transformers.
+👉 See the [transformers section](../../4-schemas/17-transformers/1-usage.md) for more details on transformers.
 
 </TabItem>
 </Tabs>
@@ -185,7 +185,7 @@ const PokemonEntity = new Entity({
     level: number().key(),
     ...
   }),
-  // 🙌 Type are correctly inferred!
+  // 🙌 Types are correctly inferred!
   computeKey: ({ pokemonId, level }) => ({
     pk: pokemonId,
     sk: level

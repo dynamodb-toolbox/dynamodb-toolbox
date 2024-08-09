@@ -32,7 +32,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -80,7 +80,7 @@ const metadataSchema = any({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const metadataSchema = any().savedAs('meta')
@@ -175,6 +175,34 @@ const pokemonSchema = schema({
   )
 }))
 ```
+
+### `.validate(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;unknown&gt;</code></i></p>
+
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+
+:::noteExamples
+
+```ts
+const metadataSchema = any().validate(
+  input => typeof input === 'object'
+)
+// 👇 Similar to
+const metadataSchema = any().putValidate(
+  input => typeof input === 'object'
+)
+// 👇 ...or
+const metadataSchema = any({
+  validators: {
+    key: undefined,
+    put: input => typeof input === 'object',
+    update: undefined
+  }
+})
+```
+
+:::
 
 ### `.castAs<TYPE>()`
 

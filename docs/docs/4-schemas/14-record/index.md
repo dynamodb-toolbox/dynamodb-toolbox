@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Record
 
-Defines a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../12-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
+Defines a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../13-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
 
 ```ts
 import { record } from 'dynamodb-toolbox/attributes/record'
@@ -44,7 +44,7 @@ const strRecord = record(string(), string().key())
 const strRecord = record(string(), string().default('foo'))
 ```
 
-Record keys share the same constraints and must be of type [`string`](../8-string/index.md).
+Record keys share the same constraints and must be of type [`string`](../9-string/index.md).
 
 ## Options
 
@@ -52,7 +52,7 @@ Record keys share the same constraints and must be of type [`string`](../8-strin
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -114,7 +114,7 @@ const idsSchema = record(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const weaknessesSchema = record(
@@ -205,3 +205,33 @@ const pokemonSchema = schema({
   )
 }))
 ```
+
+### `.validate(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;ATTRIBUTES&gt;</code></i></p>
+
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+
+:::noteExamples
+
+```ts
+const nonEmptyRecordSchema = record(
+  string(),
+  string()
+).validate(input => Object.keys(input).length > 0)
+// 👇 Similar to
+const nonEmptyRecordSchema = record(
+  string(),
+  string()
+).putValidate(input => Object.keys(input).length > 0)
+// 👇 ...or
+const nonEmptyRecordSchema = record(string(), string(), {
+  validators: {
+    key: undefined,
+    put: input => input.length > 0,
+    update: undefined
+  }
+})
+```
+
+:::

@@ -32,7 +32,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -80,12 +80,50 @@ const levelSchema = number({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const levelSchema = number().savedAs('lvl')
 const levelSchema = number({ savedAs: 'lvl' })
 ```
+
+### `.enum(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>number[]</code></i></p>
+
+Provides a finite range of possible values:
+
+```ts
+const pokemonGenerationSchema = number().enum(1, 2, 3)
+
+// 👇 Equivalent to `.enum(1).default(1)`
+const pokemonGenerationSchema = number().const(1)
+```
+
+:::info
+
+For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+
+:::
+
+### `.transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;number&gt;</code></i></p>
+
+Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
+
+```ts
+const addOne = {
+  parse: (input: number) => input + 1,
+  format: (saved: number) => saved - 1
+}
+
+// Saves the value plus one
+const levelSchema = number().transform(addOne)
+const levelSchema = number({ transform: addOne })
+```
+
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md), so feel free to use them!
 
 ### `.default(...)`
 
@@ -175,40 +213,30 @@ const pokemonSchema = schema({
 }))
 ```
 
-### `.enum(...)`
+### `.validate(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>number[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;number&gt;</code></i></p>
 
-Provides a finite range of possible values:
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+
+:::noteExamples
 
 ```ts
-const pokemonGenerationSchema = number().enum(1, 2, 3)
-
-// 👇 Equivalent to `.enum(1).default(1)`
-const pokemonGenerationSchema = number().const(1)
+const integerSchema = number().validate(input =>
+  Number.isInteger(input)
+)
+// 👇 Similar to
+const integerSchema = number().putValidate(input =>
+  Number.isInteger(input)
+)
+// 👇 ...or
+const integerSchema = number({
+  validators: {
+    key: undefined,
+    put: input => Number.isInteger(input),
+    update: undefined
+  }
+})
 ```
-
-:::info
-
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
 
 :::
-
-### `.transform(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;number&gt;</code></i></p>
-
-Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md):
-
-```ts
-const addOne = {
-  parse: (input: number) => input + 1,
-  format: (saved: number) => saved - 1
-}
-
-// Saves the value plus one
-const levelSchema = number().transform(addOne)
-const levelSchema = number({ transform: addOne })
-```
-
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../16-transformers/1-usage.md), so feel free to use them!

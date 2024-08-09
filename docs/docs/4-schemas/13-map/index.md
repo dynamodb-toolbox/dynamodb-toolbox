@@ -129,7 +129,7 @@ const nameSchema = map({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within other Maps):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within other Maps):
 
 ```ts
 const nameSchema = map({
@@ -227,3 +227,39 @@ const pokemonSchema = schema({
   )
 }))
 ```
+
+### `.validate(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;CHILD_ATTRIBUTES&gt;</code></i></p>
+
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+
+:::noteExamples
+
+```ts
+const nonEmptyMapSchema = map({
+  str: string().optional(),
+  num: number().optional()
+}).validate(input => Object.keys(input).length > 0)
+// 👇 Similar to
+const nonEmptyMapSchema = map({
+  str: string().optional(),
+  num: number().optional()
+}).putValidate(input => Object.keys(input).length > 0)
+// 👇 ...or
+const nonEmptyMapSchema = map(
+  {
+    str: string().optional(),
+    num: number().optional()
+  },
+  {
+    validators: {
+      key: undefined,
+      put: input => input.length > 0,
+      update: undefined
+    }
+  }
+)
+```
+
+:::

@@ -32,7 +32,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../12-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -80,12 +80,52 @@ const nameSchema = string({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../15-actions/1-parse.md) (at root level or within [Maps](../12-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const nameSchema = string().savedAs('n')
 const nameSchema = string({ savedAs: 'n' })
 ```
+
+### `.enum(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>string[]</code></i></p>
+
+Provides a finite range of possible values:
+
+```ts
+const pokeTypeSchema = string().enum('fire', 'water', ...)
+
+// 👇 Equivalent to `.enum('fire').default('fire')`
+const pokeTypeSchema = string().const('fire')
+```
+
+:::info
+
+For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+
+:::
+
+### `.transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;string&gt;</code></i></p>
+
+Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
+
+```ts
+const PREFIX = 'PREFIX#'
+
+const prefix = {
+  parse: (input: string) => [PREFIX, input].join(''),
+  format: (saved: string) => saved.slice(PREFIX.length)
+}
+
+// Prefixes the value
+const prefixedStrSchema = string().transform(prefix)
+const prefixedStrSchema = string({ transform: prefix })
+```
+
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md) (including [`prefix`](../17-transformers/2-prefix.md)), so feel free to use them!
 
 ### `.default(...)`
 
@@ -175,42 +215,30 @@ const pokemonSchema = schema({
 }))
 ```
 
-### `.enum(...)`
+### `.validate(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>string[]</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>Validator&lt;string&gt;</code></i></p>
 
-Provides a finite range of possible values:
+Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+
+:::noteExamples
 
 ```ts
-const pokeTypeSchema = string().enum('fire', 'water', ...)
-
-// 👇 Equivalent to `.enum('fire').default('fire')`
-const pokeTypeSchema = string().const('fire')
+const longStrSchema = string().validate(
+  input => input.length > 3
+)
+// 👇 Similar to
+const longStrSchema = string().putValidate(
+  input => input.length > 3
+)
+// 👇 ...or
+const longStrSchema = string({
+  validators: {
+    key: undefined,
+    put: input => input.length > 3,
+    update: undefined
+  }
+})
 ```
-
-:::info
-
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
 
 :::
-
-### `.transform(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;string&gt;</code></i></p>
-
-Allows modifying the attribute values during the [transformation step](../15-actions/1-parse.md):
-
-```ts
-const PREFIX = 'PREFIX#'
-
-const prefix = {
-  parse: (input: string) => [PREFIX, input].join(''),
-  format: (saved: string) => saved.slice(PREFIX.length)
-}
-
-// Prefixes the value
-const prefixedStrSchema = string().transform(prefix)
-const prefixedStrSchema = string({ transform: prefix })
-```
-
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../16-transformers/1-usage.md) (including [`prefix`](../16-transformers/2-prefix.md)), so feel free to use them!
