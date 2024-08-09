@@ -6,7 +6,7 @@ import { PRIMITIVE_DEFAULT_OPTIONS } from './options.js'
 import type { PrimitiveAttributeDefaultOptions, PrimitiveAttributeOptions } from './options.js'
 import type { PrimitiveAttributeType } from './types.js'
 
-type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
+export type PrimitiveAttributeTyper<TYPE extends PrimitiveAttributeType> = <
   OPTIONS extends Partial<PrimitiveAttributeOptions> = PrimitiveAttributeOptions
 >(
   primitiveOptions?: NarrowObject<OPTIONS>

@@ -4,5 +4,12 @@
     "outDir": "dist/types",
     "emitDeclarationOnly": true
   },
-  "exclude": ["node_modules", "dist", "docs", "vitest.config.ts", "**/*.test.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "docs",
+    "vitest.config.ts",
+    "**/*.test.ts",
+    "src/schema/actions/jsonize"
+  ]
 }

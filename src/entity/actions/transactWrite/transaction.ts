@@ -14,6 +14,8 @@ export interface WriteTransactionImplementation<ENTITY extends Entity = Entity>
   params: () => TransactWriteItem
 }
 
-export const isWriteTransactionImplementation = (
-  input: unknown
+type IsWriteTransactionImplementation = (input: unknown) => input is WriteTransactionImplementation
+
+export const isWriteTransactionImplementation: IsWriteTransactionImplementation = (
+  input
 ): input is WriteTransactionImplementation => input instanceof WriteTransaction
