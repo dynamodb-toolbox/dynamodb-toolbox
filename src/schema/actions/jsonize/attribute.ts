@@ -13,7 +13,7 @@ import type { JSONizedAttr } from './schemas/index.js'
 
 export const jsonizeAttribute = (attr: Attribute): JSONizedAttr => {
   /**
-   * @debt feature "handle defaults, links & transformers"
+   * @debt feature "handle defaults, links, transformers & validators"
    */
   switch (attr.type) {
     case 'any':
