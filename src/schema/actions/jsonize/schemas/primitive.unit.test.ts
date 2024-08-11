@@ -21,7 +21,7 @@ describe('jsonize - primitive schema', () => {
   test('accepts primitive with valid default value', () => {
     const jsonStrAttr: JSONizedAttr = {
       type: 'string',
-      defaults: { put: { defaulterType: 'value', value: 'foo' } }
+      defaults: { put: { defaulterId: 'value', value: 'foo' } }
     }
 
     expect(jsonAttrParser.validate(jsonStrAttr)).toBe(true)
@@ -30,7 +30,7 @@ describe('jsonize - primitive schema', () => {
   test.todo('rejects primitive with invalid default value', () => {
     const jsonStrAttr: JSONizedAttr = {
       type: 'string',
-      defaults: { put: { defaulterType: 'value', value: 42 } }
+      defaults: { put: { defaulterId: 'value', value: 42 } }
     }
 
     expect(jsonAttrParser.validate(jsonStrAttr)).toBe(false)

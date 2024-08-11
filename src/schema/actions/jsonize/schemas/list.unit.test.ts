@@ -40,7 +40,7 @@ describe('jsonize - list schema', () => {
     const jsonListAttr: JSONizedAttr = {
       type: 'list',
       elements: { type: 'string' },
-      defaults: { put: { defaulterType: 'value', value: 'string' } }
+      defaults: { put: { defaulterId: 'value', value: 'string' } }
     }
 
     expect(jsonAttrParser.validate(jsonListAttr)).toBe(true)
@@ -50,7 +50,7 @@ describe('jsonize - list schema', () => {
     const jsonListAttr: JSONizedAttr = {
       type: 'list',
       elements: { type: 'string' },
-      defaults: { put: { defaulterType: 'value', value: 42 } }
+      defaults: { put: { defaulterId: 'value', value: 42 } }
     }
 
     expect(jsonAttrParser.validate(jsonListAttr)).toBe(false)

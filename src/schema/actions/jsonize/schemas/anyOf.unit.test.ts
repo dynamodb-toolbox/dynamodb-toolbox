@@ -46,7 +46,7 @@ describe('jsonize - anyOf schema', () => {
     const jsonAnyOfAttr: JSONizedAttr = {
       type: 'anyOf',
       elements: [{ type: 'string' }, { type: 'number' }],
-      defaults: { put: { defaulterType: 'value', value: 'string' } }
+      defaults: { put: { defaulterId: 'value', value: 'string' } }
     }
 
     expect(jsonAttrParser.validate(jsonAnyOfAttr)).toBe(true)
@@ -56,7 +56,7 @@ describe('jsonize - anyOf schema', () => {
     const jsonAnyOfAttr: JSONizedAttr = {
       type: 'anyOf',
       elements: [{ type: 'string' }, { type: 'number' }],
-      defaults: { put: { defaulterType: 'value', value: 42 } }
+      defaults: { put: { defaulterId: 'value', value: 42 } }
     }
 
     expect(jsonAttrParser.validate(jsonAnyOfAttr)).toBe(false)

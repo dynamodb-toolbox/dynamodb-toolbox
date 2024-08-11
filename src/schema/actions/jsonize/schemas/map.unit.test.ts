@@ -44,7 +44,7 @@ describe('jsonize - map schema', () => {
       attributes: { str: { type: 'string' }, num: { type: 'number' } },
       defaults: {
         put: {
-          defaulterType: 'value',
+          defaulterId: 'value',
           value: { str: 'string', num: 42 }
         }
       }
@@ -59,7 +59,7 @@ describe('jsonize - map schema', () => {
       attributes: { str: { type: 'string' }, num: { type: 'number' } },
       defaults: {
         put: {
-          defaulterType: 'value',
+          defaulterId: 'value',
           value: { str: 'string', num: '42' }
         }
       }

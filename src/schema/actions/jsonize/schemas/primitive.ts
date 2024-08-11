@@ -1,3 +1,4 @@
+import { anyOf } from '~/attributes/anyOf/index.js'
 import { boolean } from '~/attributes/boolean/index.js'
 import { list } from '~/attributes/list/index.js'
 import { map } from '~/attributes/map/index.js'
@@ -25,10 +26,22 @@ export const jsonNumberAttrSchema = map({
   enum: list(number()).optional()
 })
 
+const strTransformersSchema = anyOf(
+  map({
+    transformerId: string().const('prefix'),
+    prefix: string(),
+    delimiter: string().optional()
+  }),
+  map({
+    transformerId: string().const('custom')
+  })
+).optional()
+
 export const jsonStringAttrSchema = map({
   type: string().const('string'),
   ...jsonAttrOptionSchemas,
-  enum: list(string()).optional()
+  enum: list(string()).optional(),
+  transform: strTransformersSchema
 })
 
 export const jsonBinaryAttrSchema = map({
