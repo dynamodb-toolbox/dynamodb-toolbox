@@ -57,4 +57,24 @@ describe('jsonizePrimitiveAttribute', () => {
       transform: { transformerId: 'custom' }
     })
   })
+
+  test('correctly exports defaulted attribute', () => {
+    const attr = string().default('foo').freeze()
+
+    expect(jsonizePrimitiveAttribute(attr)).toStrictEqual({
+      type: 'string',
+      defaults: { put: { defaulterId: 'value', value: 'foo' } }
+    })
+  })
+
+  test('correctly exports defaulted attribute (custom default)', () => {
+    const attr = string()
+      .default(() => 'foo')
+      .freeze()
+
+    expect(jsonizePrimitiveAttribute(attr)).toStrictEqual({
+      type: 'string',
+      defaults: { put: { defaulterId: 'custom' } }
+    })
+  })
 })

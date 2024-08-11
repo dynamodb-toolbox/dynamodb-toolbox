@@ -30,7 +30,7 @@ const strTransformersSchema = anyOf(
   map({
     transformerId: string().const('prefix'),
     prefix: string(),
-    delimiter: string().optional()
+    delimiter: string()
   }),
   map({
     transformerId: string().const('custom')
