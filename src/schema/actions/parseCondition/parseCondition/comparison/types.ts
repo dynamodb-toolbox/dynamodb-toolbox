@@ -5,9 +5,10 @@ import type {
 } from '../../condition.js'
 
 export type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte'
-export type ComparisonOperator = 'eq' | 'ne' | RangeOperator
+export type EqualityOperator = 'eq'
+export type ComparisonOperator = 'ne' | EqualityOperator | RangeOperator
 
-const comparisonOperatorSet = new Set<ComparisonOperator>(['eq', 'ne', 'gt', 'gte', 'lt', 'lte'])
+const comparisonOperatorSet = new Set<ComparisonOperator>(['ne', 'eq', 'gt', 'gte', 'lt', 'lte'])
 
 type IsComparisonOperatorAsserter = (key: string) => key is ComparisonOperator
 

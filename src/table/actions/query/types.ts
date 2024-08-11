@@ -2,6 +2,7 @@ import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from '~/attributes
 import type {
   BeginsWithOperator,
   BetweenOperator,
+  EqualityOperator,
   RangeOperator
 } from '~/schema/actions/parseCondition/index.js'
 import type { IndexNames, IndexSchema } from '~/table/actions/indexes.js'
@@ -9,8 +10,9 @@ import type { Table } from '~/table/index.js'
 import type { GlobalIndex, IndexableKeyType, Key, LocalIndex } from '~/table/types/index.js'
 import type { ComputeDeep } from '~/types/compute.js'
 
-type QueryOperator = RangeOperator | BeginsWithOperator | BetweenOperator
+type QueryOperator = EqualityOperator | RangeOperator | BeginsWithOperator | BetweenOperator
 export const queryOperatorSet = new Set<QueryOperator>([
+  'eq',
   'gt',
   'gte',
   'lt',
@@ -34,6 +36,7 @@ type QueryRange<
         : never
       : never)
   | Record<BetweenOperator, [ATTRIBUTE_VALUE, ATTRIBUTE_VALUE]>
+  | Record<EqualityOperator, ATTRIBUTE_VALUE>
   | (KEY_TYPE extends 'string' ? Record<BeginsWithOperator, ATTRIBUTE_VALUE> : never)
 
 type SecondaryIndexQuery<
