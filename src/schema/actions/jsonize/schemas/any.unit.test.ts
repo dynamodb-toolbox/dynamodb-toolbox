@@ -11,7 +11,7 @@ describe('jsonize - any schema', () => {
   test('accepts anyOf with any default value', () => {
     const jsonAnyAttr: JSONizedAttr = {
       type: 'any',
-      defaults: { put: { defaulterType: 'value', value: 'string' } }
+      defaults: { put: { defaulterId: 'value', value: 'string' } }
     }
 
     expect(jsonAttrParser.validate(jsonAnyAttr)).toBe(true)

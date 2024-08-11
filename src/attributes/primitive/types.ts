@@ -1,4 +1,5 @@
 import type { SharedAttributeState } from '../shared/interface.js'
+import type { $transformerId } from './constants.js'
 
 export interface PrimitiveAttributeState<
   TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
@@ -48,4 +49,16 @@ export interface Transformer<
 > {
   parse: (inputValue: INPUT) => OUTPUT
   format: (savedValue: OUTPUT) => PARSED_OUTPUT
+}
+
+export interface JSONizableTransformer<
+  JSONIZED extends { transformerId: string } & object = { transformerId: string } & object,
+  INPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,
+  OUTPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,
+  PARSED_OUTPUT extends ResolvedPrimitiveAttribute = OUTPUT
+> extends Transformer<INPUT, OUTPUT, PARSED_OUTPUT> {
+  [$transformerId]: JSONIZED['transformerId']
+  parse: (inputValue: INPUT) => OUTPUT
+  format: (savedValue: OUTPUT) => PARSED_OUTPUT
+  jsonize: () => JSONIZED
 }

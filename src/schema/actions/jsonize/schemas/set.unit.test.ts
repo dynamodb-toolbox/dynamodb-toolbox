@@ -28,7 +28,7 @@ describe('jsonize - set schema', () => {
     const jsonSetAttr: JSONizedAttr = {
       type: 'set',
       elements: { type: 'string' },
-      defaults: { put: { defaulterType: 'value', value: ['foo', 'bar'] } }
+      defaults: { put: { defaulterId: 'value', value: ['foo', 'bar'] } }
     }
 
     expect(jsonAttrParser.validate(jsonSetAttr)).toBe(true)
@@ -38,7 +38,7 @@ describe('jsonize - set schema', () => {
     const jsonSetAttr: JSONizedAttr = {
       type: 'set',
       elements: { type: 'string' },
-      defaults: { put: { defaulterType: 'value', value: ['foo', 'bar', 42] } }
+      defaults: { put: { defaulterId: 'value', value: ['foo', 'bar', 42] } }
     }
 
     expect(jsonAttrParser.validate(jsonSetAttr)).toBe(false)

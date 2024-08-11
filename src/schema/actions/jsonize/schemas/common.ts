@@ -16,14 +16,14 @@ export const savedAsSchema = string().optional()
 export const defaultsSchema = record(
   string().enum('put', 'key', 'update'),
   anyOf(
-    map({ defaulterType: string().const('value'), value: any() }),
-    map({ defaulterType: string().const('custom') })
+    map({ defaulterId: string().const('value'), value: any() }),
+    map({ defaulterId: string().const('custom') })
   )
 ).optional()
 
 export const linksSchema = record(
   string().enum('put', 'key', 'update'),
-  map({ linkerType: string().const('custom') })
+  map({ linkerId: string().const('custom') })
 ).optional()
 
 export const jsonAttrOptionSchemas = {

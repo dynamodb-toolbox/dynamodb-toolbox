@@ -59,7 +59,7 @@ describe('jsonize - record schema', () => {
       elements: { type: 'string' },
       defaults: {
         put: {
-          defaulterType: 'value',
+          defaulterId: 'value',
           value: { str: 'string' }
         }
       }
@@ -75,7 +75,7 @@ describe('jsonize - record schema', () => {
       elements: { type: 'string' },
       defaults: {
         put: {
-          defaulterType: 'value',
+          defaulterId: 'value',
           value: { num: 42 }
         }
       }

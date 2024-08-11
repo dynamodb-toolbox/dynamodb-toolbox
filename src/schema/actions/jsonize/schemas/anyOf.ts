@@ -46,7 +46,7 @@ export const jsonAnyOfAttrSchema = map({
   //   for (const mode of ['put', 'key', 'update'] as const) {
   //     const modeDefault = defaults[mode]
 
-  //     if (modeDefault === undefined || modeDefault.defaulterType !== 'value') {
+  //     if (modeDefault === undefined || modeDefault.defaulterId !== 'value') {
   //       continue
   //     }
 
