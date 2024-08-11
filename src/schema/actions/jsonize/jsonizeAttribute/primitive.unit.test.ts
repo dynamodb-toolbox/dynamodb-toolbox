@@ -1,4 +1,4 @@
-import { string } from '~/attributes/index.js'
+import { binary, string } from '~/attributes/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
 import { jsonizePrimitiveAttribute } from './primitive'
@@ -36,6 +36,16 @@ describe('jsonizePrimitiveAttribute', () => {
     const attr = string().savedAs('foo').freeze()
 
     expect(jsonizePrimitiveAttribute(attr)).toStrictEqual({ type: 'string', savedAs: 'foo' })
+  })
+
+  test('correctly exports enumed attribute', () => {
+    const str = string().enum('foo', 'bar').freeze()
+    expect(jsonizePrimitiveAttribute(str)).toStrictEqual({ type: 'string', enum: ['foo', 'bar'] })
+
+    const bin = binary()
+      .enum(new Uint8Array([1, 2, 3]), new Uint8Array([4, 5, 6]))
+      .freeze()
+    expect(jsonizePrimitiveAttribute(bin)).toStrictEqual({ type: 'binary', enum: ['AQID', 'BAUG'] })
   })
 
   test('correctly exports transformed attribute (JSONizable transformer)', () => {

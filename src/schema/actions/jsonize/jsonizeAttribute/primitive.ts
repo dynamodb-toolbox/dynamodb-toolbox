@@ -18,12 +18,11 @@ const isJSONizableTransformer = (transformer: unknown): transformer is JSONizabl
 export const jsonizePrimitiveAttribute = (attr: PrimitiveAttribute): JSONizedAttr => {
   const jsonizedDefaults = jsonizeDefaults(attr)
 
-  return {
+  const jsonizedAttr = {
     type: attr.type,
     ...(attr.required !== PRIMITIVE_DEFAULT_OPTIONS.required ? { required: attr.required } : {}),
     ...(attr.hidden !== PRIMITIVE_DEFAULT_OPTIONS.hidden ? { hidden: attr.hidden } : {}),
     ...(attr.key !== PRIMITIVE_DEFAULT_OPTIONS.key ? { key: attr.key } : {}),
-    ...(attr.enum !== undefined ? { enum: attr.enum } : {}),
     ...(attr.savedAs !== undefined ? { savedAs: attr.savedAs } : {}),
     ...(attr.transform !== undefined
       ? {
@@ -35,4 +34,15 @@ export const jsonizePrimitiveAttribute = (attr: PrimitiveAttribute): JSONizedAtt
     ...(!isEmpty(jsonizedDefaults) ? { defaults: jsonizedDefaults } : {})
     // We need to cast as `.enum` is not coupled to `.type`
   } as Extract<JSONizedAttr, { type: PrimitiveAttributeType }>
+
+  if (attr.enum) {
+    if (attr.type === 'binary') {
+      const textDecoder = new TextDecoder('utf8')
+      jsonizedAttr.enum = (attr.enum as Uint8Array[]).map(value => btoa(textDecoder.decode(value)))
+    } else {
+      jsonizedAttr.enum = attr.enum as string[] | number[] | boolean[] | null[]
+    }
+  }
+
+  return jsonizedAttr
 }
