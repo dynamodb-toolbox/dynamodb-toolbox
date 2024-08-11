@@ -30,7 +30,7 @@ The partition to query, with optional index and range condition:
 
 - `partition`: The partition key to query
 - <code>index <i>(optional)</i></code>: The name of a secondary index to query
-- <code>range <i>(optional)</i></code>: If the table or index has a sort key, an additional <a href="../../entities/actions/parse-condition#range-conditions">Range Condition</a>
+- <code>range <i>(optional)</i></code>: If the table or index has a sort key, an additional <a href="../../entities/actions/parse-condition#range-conditions">Range or Equality Condition</a>
 
 ```ts
 // Get 'ashKetchum' pokemons with a level ≥ 50

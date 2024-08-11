@@ -85,15 +85,33 @@ describe('query', () => {
       ExpressionAttributeNames: ExpressionAttributeNamesB,
       ExpressionAttributeValues: ExpressionAttributeValuesB
     } = TestTable.build(QueryCommand)
-      .query({ partition: 'foo', range: { gte: 'bar' } })
+      .query({ partition: 'foo', range: { eq: 'bar' } })
       .params()
 
-    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
+    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (#c0_2 = :c0_2)')
     expect(ExpressionAttributeNamesB).toMatchObject({
       '#c0_1': TestTable.partitionKey.name,
       '#c0_2': TestTable.sortKey?.name
     })
     expect(ExpressionAttributeValuesB).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 'bar'
+    })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo', range: { gte: 'bar' } })
+      .params()
+
+    expect(KeyConditionExpressionC).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
+    expect(ExpressionAttributeNamesC).toMatchObject({
+      '#c0_1': TestTable.partitionKey.name,
+      '#c0_2': TestTable.sortKey?.name
+    })
+    expect(ExpressionAttributeValuesC).toMatchObject({
       ':c0_1': 'foo',
       ':c0_2': 'bar'
     })
@@ -145,7 +163,7 @@ describe('query', () => {
           partition: 'foo',
           range: {
             // @ts-expect-error
-            eq: 'bar'
+            neq: 'bar'
           }
         })
         .params()
@@ -172,15 +190,33 @@ describe('query', () => {
       ExpressionAttributeNames: ExpressionAttributeNamesB,
       ExpressionAttributeValues: ExpressionAttributeValuesB
     } = TestTable.build(QueryCommand)
-      .query({ index: 'lsi', partition: 'foo', range: { gte: 42 } })
+      .query({ index: 'lsi', partition: 'foo', range: { eq: 42 } })
       .params()
 
-    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
+    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (#c0_2 = :c0_2)')
     expect(ExpressionAttributeNamesB).toMatchObject({
       '#c0_1': TestTable.partitionKey.name,
       '#c0_2': TestTable.indexes.lsi.sortKey.name
     })
     expect(ExpressionAttributeValuesB).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 42
+    })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'lsi', partition: 'foo', range: { gte: 42 } })
+      .params()
+
+    expect(KeyConditionExpressionC).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
+    expect(ExpressionAttributeNamesC).toMatchObject({
+      '#c0_1': TestTable.partitionKey.name,
+      '#c0_2': TestTable.indexes.lsi.sortKey.name
+    })
+    expect(ExpressionAttributeValuesC).toMatchObject({
       ':c0_1': 'foo',
       ':c0_2': 42
     })
@@ -234,7 +270,7 @@ describe('query', () => {
           partition: 'foo',
           range: {
             // @ts-expect-error
-            eq: 42
+            neq: 42
           }
         })
         .params()
@@ -339,15 +375,30 @@ describe('query', () => {
       ExpressionAttributeNames: ExpressionAttributeNamesB,
       ExpressionAttributeValues: ExpressionAttributeValuesB
     } = TestTable.build(QueryCommand)
-      .query({ index: 'gsiComposite', partition: 'foo', range: { beginsWith: 'bar' } })
+      .query({ index: 'gsiComposite', partition: 'foo', range: { eq: 'bar' } })
       .params()
 
-    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (begins_with(#c0_2, :c0_2))')
+    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (#c0_2 = :c0_2)')
     expect(ExpressionAttributeNamesB).toMatchObject({
       '#c0_1': TestTable.indexes.gsiComposite.partitionKey.name,
       '#c0_2': TestTable.indexes.gsiComposite.sortKey.name
     })
     expect(ExpressionAttributeValuesB).toMatchObject({ ':c0_1': 'foo', ':c0_2': 'bar' })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'gsiComposite', partition: 'foo', range: { beginsWith: 'bar' } })
+      .params()
+
+    expect(KeyConditionExpressionC).toBe('(#c0_1 = :c0_1) AND (begins_with(#c0_2, :c0_2))')
+    expect(ExpressionAttributeNamesC).toMatchObject({
+      '#c0_1': TestTable.indexes.gsiComposite.partitionKey.name,
+      '#c0_2': TestTable.indexes.gsiComposite.sortKey.name
+    })
+    expect(ExpressionAttributeValuesC).toMatchObject({ ':c0_1': 'foo', ':c0_2': 'bar' })
   })
 
   test('throws on invalid GSI query', () => {
@@ -398,7 +449,7 @@ describe('query', () => {
           partition: 'foo',
           range: {
             // @ts-expect-error
-            eq: 'foo'
+            neq: 'foo'
           }
         })
         .params()

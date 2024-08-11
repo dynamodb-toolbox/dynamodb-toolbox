@@ -263,7 +263,7 @@ Range conditions evaluate whether an attribute of sortable type (i.e. [number](.
 
 :::info
 
-Range conditions are the only conditions accepted in [`Query` ranges](../../../2-tables/2-actions/2-query/index.md#query).
+Apart from the [`eq` value condition](#value-conditions), only range conditions are accepted in [`Query` ranges](../../../2-tables/2-actions/2-query/index.md#query).
 
 :::
 
