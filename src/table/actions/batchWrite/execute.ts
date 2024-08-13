@@ -10,6 +10,7 @@ import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import type { MetricsOption } from '~/options/metrics.js'
+import { isEmpty } from '~/utils/isEmpty.js'
 
 import { BatchWriteCommand } from './batchWriteCommand.js'
 
@@ -17,6 +18,7 @@ export interface ExecuteBatchWriteOptions {
   capacity?: CapacityOption
   metrics?: MetricsOption
   documentClient?: DynamoDBDocumentClient
+  maxAttempts?: number
 }
 
 export const execute = async (
@@ -42,9 +44,50 @@ export const execute = async (
 
   const documentClient = options.documentClient ?? firstCommand.table.getDocumentClient()
 
-  const commandInput = getCommandInput(commands, options)
+  const { maxAttempts = 1 } = options
+  const { RequestItems: initialRequestItems, ...commandOptions } = getCommandInput(
+    commands,
+    options
+  )
 
-  return documentClient.send(new _BatchWriteCommand(commandInput))
+  let attemptCount = 0
+  let requestItems: BatchWriteCommandInput['RequestItems'] = initialRequestItems
+  let unprocessedItems: BatchWriteCommandOutput['UnprocessedItems'] = {}
+  let consumedCapacity: BatchWriteCommandOutput['ConsumedCapacity'] = undefined
+  let collectionMetrics: BatchWriteCommandOutput['ItemCollectionMetrics'] = undefined
+  let responseMetadata: BatchWriteCommandOutput['$metadata'] = {}
+
+  do {
+    attemptCount += 1
+
+    const {
+      UnprocessedItems: attemptUnprocessedItems = {},
+      ConsumedCapacity: attemptConsumedCapacity,
+      ItemCollectionMetrics: attemptCollectionMetrics,
+      $metadata: attemptMetadata
+    } = await documentClient.send(
+      new _BatchWriteCommand({ RequestItems: requestItems, ...commandOptions })
+    )
+
+    requestItems = attemptUnprocessedItems
+    unprocessedItems = attemptUnprocessedItems
+    consumedCapacity = attemptConsumedCapacity
+    collectionMetrics = attemptCollectionMetrics
+    responseMetadata = attemptMetadata
+  } while (attemptCount < maxAttempts && !isEmpty(unprocessedItems))
+
+  return {
+    ...(unprocessedItems !== undefined ? { UnprocessedItems: unprocessedItems } : {}),
+    $metadata: {},
+    // return ConsumedCapacity, ItemCollectionMetrics & $metadata only if one attempt has been tried
+    ...(attemptCount === 1
+      ? {
+          ...(consumedCapacity !== undefined ? { ConsumedCapacity: consumedCapacity } : {}),
+          ...(collectionMetrics !== undefined ? { ItemCollectionMetrics: collectionMetrics } : {}),
+          ...(responseMetadata !== undefined ? { $metadata: responseMetadata } : {})
+        }
+      : {})
+  }
 }
 
 export const getCommandInput = (
