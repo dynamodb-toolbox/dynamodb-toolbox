@@ -88,7 +88,7 @@ export const appendAttributePath = (
   const expressionAttributePrefix = parser.expressionAttributePrefix
   let parentAttribute: Schema | Attribute = parser.schema
   let expressionPath = ''
-  let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|\w+(?=(\.|$|\[))/g)]
+  let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|[\w-]+(?=(\.|$|\[))/g)]
 
   while (attributeMatches.length > 0) {
     const attributeMatch = attributeMatches.shift() as RegExpMatchArray
