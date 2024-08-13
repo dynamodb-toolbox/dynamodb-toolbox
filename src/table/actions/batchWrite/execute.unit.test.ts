@@ -5,6 +5,7 @@ import {
 } from '@aws-sdk/lib-dynamodb'
 import type { AwsStub } from 'aws-sdk-client-mock'
 import { mockClient } from 'aws-sdk-client-mock'
+import MockDate from 'mockdate'
 
 import {
   BatchDeleteRequest,
@@ -72,10 +73,12 @@ const EntityC = new Entity({
 describe('execute (batchWrite)', () => {
   beforeAll(() => {
     documentClientMock = mockClient(documentClient)
+    MockDate.set(new Date())
   })
 
   afterAll(() => {
     documentClientMock.restore()
+    MockDate.reset()
   })
 
   beforeEach(() => {
@@ -186,6 +189,84 @@ describe('execute (batchWrite)', () => {
     expect(documentClientMock.commandCalls(_BatchWriteCommand)[0].args[0].input).toMatchObject({
       ReturnConsumedCapacity: 'TOTAL',
       ReturnItemCollectionMetrics: 'SIZE'
+    })
+  })
+
+  test('correctly retries if maxAttempts is specified', async () => {
+    const batchDeleteRequestA = EntityA.build(BatchDeleteRequest).key({ pkA: 'a', skA: 'a' })
+    const batchPutRequestA = EntityA.build(BatchPutRequest).item({
+      pkA: 'a',
+      skA: 'a',
+      name: 'foo',
+      commonAttribute: 'bar'
+    })
+    const batchDeleteRequestB = EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
+    const batchPutRequestB = EntityB.build(BatchPutRequest).item({
+      pkB: 'c',
+      skB: 'c',
+      age: 42,
+      commonAttribute: 'bar'
+    })
+
+    const command = TestTable1.build(BatchWriteCommand).requests(
+      batchDeleteRequestA,
+      batchPutRequestA,
+      batchDeleteRequestB,
+      batchPutRequestB
+    )
+
+    documentClientMock
+      .on(_BatchWriteCommand)
+      .resolvesOnce({
+        UnprocessedItems: {
+          [TestTable1.getName()]: [
+            batchPutRequestA.params(),
+            batchDeleteRequestB.params(),
+            batchPutRequestB.params()
+          ]
+        }
+      })
+      .resolvesOnce({
+        UnprocessedItems: {
+          [TestTable1.getName()]: [batchDeleteRequestB.params(), batchPutRequestB.params()]
+        }
+      })
+      .resolvesOnce({
+        UnprocessedItems: {
+          [TestTable1.getName()]: [batchPutRequestB.params()]
+        }
+      })
+
+    const { UnprocessedItems } = await execute({ maxAttempts: 3 }, command)
+
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)).toHaveLength(3)
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0].args[0].input).toMatchObject({
+      RequestItems: {
+        [TestTable1.getName()]: [
+          batchDeleteRequestA.params(),
+          batchPutRequestA.params(),
+          batchDeleteRequestB.params(),
+          batchPutRequestB.params()
+        ]
+      }
+    })
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[1].args[0].input).toMatchObject({
+      RequestItems: {
+        [TestTable1.getName()]: [
+          batchPutRequestA.params(),
+          batchDeleteRequestB.params(),
+          batchPutRequestB.params()
+        ]
+      }
+    })
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[2].args[0].input).toMatchObject({
+      RequestItems: {
+        [TestTable1.getName()]: [batchDeleteRequestB.params(), batchPutRequestB.params()]
+      }
+    })
+
+    expect(UnprocessedItems).toStrictEqual({
+      [TestTable1.getName()]: [batchPutRequestB.params()]
     })
   })
 })
