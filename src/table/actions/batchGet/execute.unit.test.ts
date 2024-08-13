@@ -2,6 +2,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, BatchGetCommand as _BatchGetCommand } from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
 import type { AwsStub } from 'aws-sdk-client-mock'
+import MockDate from 'mockdate'
 import type { A } from 'ts-toolbelt'
 
 import {
@@ -121,10 +122,12 @@ const formattedItemC: FormattedItem<typeof EntityC> = {
 describe('execute (batchGet)', () => {
   beforeAll(() => {
     documentClientMock = mockClient(documentClient)
+    MockDate.set(new Date())
   })
 
   afterAll(() => {
     documentClientMock.restore()
+    MockDate.reset()
   })
 
   beforeEach(() => {
@@ -310,6 +313,77 @@ describe('execute (batchGet)', () => {
     expect(documentClientMock.calls()).toHaveLength(1)
     expect(documentClientMock.commandCalls(_BatchGetCommand)[0].args[0].input).toMatchObject({
       ReturnConsumedCapacity: 'TOTAL'
+    })
+  })
+
+  test('correctly retries if maxAttempts is specified', async () => {
+    const batchGetRequestA = EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' })
+    const batchGetRequestB = EntityA.build(BatchGetRequest).key({ pkA: 'b', skA: 'b' })
+    const batchGetRequestC = EntityB.build(BatchGetRequest).key({ pkB: 'c', skB: 'c' })
+    const batchGetRequestD = EntityB.build(BatchGetRequest).key({ pkB: 'd', skB: 'd' })
+
+    const command = TestTable1.build(BatchGetCommand).requests(
+      batchGetRequestA,
+      batchGetRequestB,
+      batchGetRequestC,
+      batchGetRequestD
+    )
+
+    const { Keys: keys = [], ...restCommand } = command.params()
+
+    documentClientMock
+      .on(_BatchGetCommand)
+      .resolvesOnce({
+        UnprocessedKeys: {
+          [TestTable1.getName()]: { Keys: keys.slice(1), ...restCommand }
+        }
+      })
+      .resolvesOnce({
+        UnprocessedKeys: {
+          [TestTable1.getName()]: { Keys: keys.slice(2), ...restCommand }
+        }
+      })
+      .resolvesOnce({
+        UnprocessedKeys: {
+          [TestTable1.getName()]: { Keys: keys.slice(3), ...restCommand }
+        }
+      })
+
+    const { UnprocessedKeys } = await execute({ maxAttempts: 3 }, command)
+
+    expect(documentClientMock.commandCalls(_BatchGetCommand)).toHaveLength(3)
+    expect(documentClientMock.commandCalls(_BatchGetCommand)[0].args[0].input).toMatchObject({
+      RequestItems: {
+        [TestTable1.getName()]: {
+          Keys: [
+            batchGetRequestA.params(),
+            batchGetRequestB.params(),
+            batchGetRequestC.params(),
+            batchGetRequestD.params()
+          ],
+          ...restCommand
+        }
+      }
+    })
+    expect(documentClientMock.commandCalls(_BatchGetCommand)[1].args[0].input).toMatchObject({
+      RequestItems: {
+        [TestTable1.getName()]: {
+          Keys: [batchGetRequestB.params(), batchGetRequestC.params(), batchGetRequestD.params()],
+          ...restCommand
+        }
+      }
+    })
+    expect(documentClientMock.commandCalls(_BatchGetCommand)[2].args[0].input).toMatchObject({
+      RequestItems: {
+        [TestTable1.getName()]: {
+          Keys: [batchGetRequestC.params(), batchGetRequestD.params()],
+          ...restCommand
+        }
+      }
+    })
+
+    expect(UnprocessedKeys).toStrictEqual({
+      [TestTable1.getName()]: { Keys: keys.slice(3), ...restCommand }
     })
   })
 })

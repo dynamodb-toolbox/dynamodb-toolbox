@@ -11,6 +11,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import { isEmpty } from '~/utils/isEmpty.js'
 
 import { BatchGetCommand } from './batchGetCommand.js'
 import type { BatchGetCommandOptions, BatchGetRequestProps } from './batchGetCommand.js'
@@ -19,6 +20,7 @@ import { $options, $requests } from './constants.js'
 export interface ExecuteBatchGetOptions {
   capacity?: CapacityOption
   documentClient?: DynamoDBDocumentClient
+  maxAttempts?: number
 }
 
 type ExecuteBatchGet = <
@@ -148,46 +150,97 @@ export const execute: ExecuteBatchGet = async <
 
   const documentClient = options.documentClient ?? firstCommand.table.getDocumentClient()
 
-  const commandInput = getCommandInput(commands, options)
-
-  const { Responses: responses, ...rest } = await documentClient.send(
-    new _BatchGetCommand(commandInput)
+  const { maxAttempts = 1 } = options
+  const { RequestItems: initialRequestItems, ...commandOptions } = getCommandInput(
+    commands,
+    options
   )
 
-  if (responses === undefined) {
-    return rest as RESPONSE
+  let attemptCount = 0
+  let requestItems: BatchGetCommandInput['RequestItems'] = initialRequestItems
+  let responses: BatchGetCommandOutput['Responses'] = undefined
+  let unprocessedKeys: BatchGetCommandOutput['UnprocessedKeys'] = {}
+  let consumedCapacity: BatchGetCommandOutput['ConsumedCapacity'] = undefined
+  let responseMetadata: BatchGetCommandOutput['$metadata'] = {}
+
+  do {
+    attemptCount += 1
+
+    const {
+      Responses: attemptResponses,
+      UnprocessedKeys: attemptUnprocessedKeys = {},
+      ConsumedCapacity: attemptConsumedCapacity,
+      $metadata: attemptMetadata
+    } = await documentClient.send(
+      new _BatchGetCommand({ RequestItems: requestItems, ...commandOptions })
+    )
+
+    if (attemptResponses !== undefined) {
+      if (responses === undefined) {
+        responses = {}
+      }
+
+      for (const [tableName, tableResponses] of Object.entries(attemptResponses)) {
+        if (responses[tableName] === undefined) {
+          responses[tableName] = tableResponses
+        } else {
+          responses[tableName].push(...tableResponses)
+        }
+      }
+    }
+
+    requestItems = attemptUnprocessedKeys
+    unprocessedKeys = attemptUnprocessedKeys
+    consumedCapacity = attemptConsumedCapacity
+    responseMetadata = attemptMetadata
+  } while (attemptCount < maxAttempts && !isEmpty(unprocessedKeys))
+
+  let formattedResponses: ((FormattedItem | undefined)[] | undefined)[] | undefined = undefined
+
+  if (responses !== undefined) {
+    formattedResponses = commands.map(command => {
+      const tableName = command.table.getName()
+      const requests = command[$requests]
+      const { attributes } = (command as BatchGetCommand)[$options]
+
+      return requests?.map((request, index) => {
+        const entity = request.entity
+        // We know responses is defined
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const tableResponses = responses![tableName]
+
+        if (tableResponses === undefined) {
+          return undefined
+        }
+
+        // We know RequestItems & Keys exist
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const itemKey = initialRequestItems![tableName].Keys![index]
+
+        const savedItem = tableResponses.find(tableResponse =>
+          Object.entries(itemKey).every(([key, value]) => tableResponse[key] === value)
+        )
+
+        if (savedItem === undefined) {
+          return undefined
+        }
+
+        return entity.build(EntityFormatter).format(savedItem, { attributes })
+      })
+    })
   }
 
-  const formattedResponses = commands.map(command => {
-    const tableName = command.table.getName()
-    const requests = command[$requests]
-    const { attributes } = (command as BatchGetCommand)[$options]
-
-    return requests?.map((request, index) => {
-      const entity = request.entity
-      const tableResponses = responses[tableName]
-
-      if (tableResponses === undefined) {
-        return undefined
-      }
-
-      // We know RequestItems & Keys exist
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const itemKey = commandInput.RequestItems![tableName].Keys![index]
-
-      const savedItem = tableResponses.find(tableResponse =>
-        Object.entries(itemKey).every(([key, value]) => tableResponse[key] === value)
-      )
-
-      if (savedItem === undefined) {
-        return undefined
-      }
-
-      return entity.build(EntityFormatter).format(savedItem, { attributes })
-    })
-  })
-
-  return { Responses: formattedResponses, ...rest } as RESPONSE
+  return {
+    ...(formattedResponses !== undefined ? { Responses: formattedResponses } : {}),
+    ...(unprocessedKeys !== undefined ? { UnprocessedKeys: unprocessedKeys } : {}),
+    // return ConsumedCapacity & $metadata only if one attempt has been tried
+    ...(attemptCount === 1
+      ? {
+          ...(consumedCapacity !== undefined ? { ConsumedCapacity: consumedCapacity } : {}),
+          ...(responseMetadata !== undefined ? { $metadata: responseMetadata } : {})
+        }
+      : {})
+  } as RESPONSE
 }
 
 export const getCommandInput = (
