@@ -38,6 +38,8 @@ export { PathParser } from './schema/actions/parsePaths/index.js'
 export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/parsePaths/index.js'
 export { ConditionParser } from './schema/actions/parseCondition/index.js'
 export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
+export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
+export type { FormattedItemJSONSchema } from './schema/actions/jsonSchemer/index.js'
 
 // tables
 export { Table } from './table/index.js'
