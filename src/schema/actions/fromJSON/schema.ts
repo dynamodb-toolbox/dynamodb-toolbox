@@ -1,4 +1,4 @@
-import { jsonizedSchemaSchema } from '~/schema/actions/jsonize/schemas/index.js'
+import { jsonizedSchemaSchema } from '~/schema/actions/jsonize/schema/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import { schema } from '~/schema/index.js'

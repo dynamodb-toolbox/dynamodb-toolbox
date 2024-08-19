@@ -1,23 +1,32 @@
 import { any } from '~/attributes/any/index.js'
+import { boolean } from '~/attributes/boolean/index.js'
+import { list } from '~/attributes/list/index.js'
 import { map } from '~/attributes/map/index.js'
 import { string } from '~/attributes/string/index.js'
 
-import { jsonAttrParser } from './attribute.js'
-import { jsonAttrOptionSchemas } from './common.js'
+import { jsonizedAttrParser } from './attribute.js'
+import { jsonizedAttrOptionSchemas } from './common.js'
 
-export const jsonListAttrSchema = map({
-  type: string().const('list'),
-  ...jsonAttrOptionSchemas,
+export const jsonizedRecordAttrSchema = map({
+  type: string().const('record'),
+  ...jsonizedAttrOptionSchemas,
+  keys: map({
+    type: string().const('string'),
+    required: string().optional().const('atLeastOnce'),
+    hidden: boolean().optional().const(false),
+    key: boolean().optional().const(false),
+    enum: list(string()).optional()
+  }),
   elements: any()
 }).validate(input => {
   const { elements } = input
 
-  // Elements should be valid attribute
-  if (!jsonAttrParser.validate(elements)) {
+  // Elements should be valid attributes
+  if (!jsonizedAttrParser.validate(elements)) {
     return false
   }
 
-  // Elements should follow `list` constraints
+  // Elements should follow `record` constraints
   const areConstraintsVerified = [
     elements.required === undefined || elements.required === 'atLeastOnce',
     elements.hidden === undefined || elements.hidden === false,

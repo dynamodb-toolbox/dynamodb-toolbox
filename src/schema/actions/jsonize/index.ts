@@ -1,2 +1,2 @@
-export { JSONizer } from './jsonize'
-export type { JSONizedSchema, JSONizedAttr } from './schemas/index.js'
+export { JSONizer } from './jsonize.js'
+export type { JSONizedSchema, JSONizedAttr } from './schema/index.js'

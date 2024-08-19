@@ -5,14 +5,14 @@ import { map } from '~/attributes/map/index.js'
 import { number } from '~/attributes/number/index.js'
 import { string } from '~/attributes/string/index.js'
 
-import { jsonAttrOptionSchemas } from './common.js'
+import { jsonizedAttrOptionSchemas } from './common.js'
 
 /**
  * @debt feature "Validate default value types w. `validate(...)`"
  */
-export const setAttrJSONRepresentationSchema = map({
+export const jsonizedSetAttrSchema = map({
   type: string().const('set'),
-  ...jsonAttrOptionSchemas,
+  ...jsonizedAttrOptionSchemas,
   elements: anyOf(
     map({
       type: string().const('number'),

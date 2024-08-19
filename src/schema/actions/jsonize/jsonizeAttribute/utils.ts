@@ -1,7 +1,7 @@
 import type { Attribute } from '~/attributes/index.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
-import type { JSONizedAttr } from '../schemas/index.js'
+import type { JSONizedAttr } from '../schema/index.js'
 
 export const jsonizeDefaults = (attr: Attribute): NonNullable<JSONizedAttr['defaults']> => {
   const jsonizedDefaults: NonNullable<JSONizedAttr['defaults']> = {}

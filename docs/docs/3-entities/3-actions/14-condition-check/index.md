@@ -61,6 +61,8 @@ const transaction =
 
 ### `.condition(...)`
 
+<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
+
 The condition to check against:
 
 ```ts

@@ -3,7 +3,7 @@ import { ANY_OF_DEFAULT_OPTIONS } from '~/attributes/anyOf/options.js'
 import type { AnyOfAttributeElementConstraints } from '~/attributes/anyOf/types.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
-import type { JSONizedAttr } from '../schemas/index.js'
+import type { JSONizedAttr } from '../schema/index.js'
 import { jsonizeAttribute } from './attribute.js'
 import { jsonizeDefaults } from './utils.js'
 

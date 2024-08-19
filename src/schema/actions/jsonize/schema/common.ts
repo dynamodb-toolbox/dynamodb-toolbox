@@ -6,14 +6,14 @@ import { map } from '~/attributes/map/index.js'
 import { record } from '~/attributes/record/index.js'
 import { string } from '~/attributes/string/index.js'
 
-export const requiredSchema = string()
+export const jsonizedRequiredSchema = string()
   .enum(...requiredOptionsArray)
   .optional()
-export const hiddenSchema = boolean().optional()
-export const keySchema = boolean().optional()
-export const savedAsSchema = string().optional()
+export const jsonizedHiddenSchema = boolean().optional()
+export const jsonizedKeySchema = boolean().optional()
+export const jsonizedSavedAsSchema = string().optional()
 
-export const defaultsSchema = record(
+export const jsonizedDefaultsSchema = record(
   string().enum('put', 'key', 'update'),
   anyOf(
     map({ defaulterId: string().const('value'), value: any() }),
@@ -21,16 +21,16 @@ export const defaultsSchema = record(
   )
 ).optional()
 
-export const linksSchema = record(
+export const jsonizedLinksSchema = record(
   string().enum('put', 'key', 'update'),
   map({ linkerId: string().const('custom') })
 ).optional()
 
-export const jsonAttrOptionSchemas = {
-  required: requiredSchema,
-  hidden: hiddenSchema,
-  key: keySchema,
-  savedAs: savedAsSchema,
-  defaults: defaultsSchema,
-  links: linksSchema
+export const jsonizedAttrOptionSchemas = {
+  required: jsonizedRequiredSchema,
+  hidden: jsonizedHiddenSchema,
+  key: jsonizedKeySchema,
+  savedAs: jsonizedSavedAsSchema,
+  defaults: jsonizedDefaultsSchema,
+  links: jsonizedLinksSchema
 }

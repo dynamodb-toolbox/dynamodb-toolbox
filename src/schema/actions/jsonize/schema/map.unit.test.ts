@@ -1,18 +1,18 @@
-import { jsonAttrParser } from './attribute.js'
+import { jsonizedAttrParser } from './attribute.js'
 import type { JSONizedAttr } from './attribute.js'
 
 describe('jsonize - map schema', () => {
   test('accepts valid map definition', () => {
-    const jsonMapAttr: JSONizedAttr = {
+    const jsonizedMapAttr: JSONizedAttr = {
       type: 'map',
       attributes: { str: { type: 'string' }, num: { type: 'number' } }
     }
 
-    expect(jsonAttrParser.validate(jsonMapAttr)).toBe(true)
+    expect(jsonizedAttrParser.validate(jsonizedMapAttr)).toBe(true)
   })
 
   test('rejects map with invalid element attribute', () => {
-    const jsonMapAttr: JSONizedAttr = {
+    const jsonizedMapAttr: JSONizedAttr = {
       type: 'map',
       attributes: {
         str: {
@@ -23,11 +23,11 @@ describe('jsonize - map schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonMapAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedMapAttr)).toBe(false)
   })
 
   test('rejects map with invalid element constraint', () => {
-    const jsonMapAttr: JSONizedAttr = {
+    const jsonizedMapAttr: JSONizedAttr = {
       type: 'map',
       attributes: {
         str: { type: 'string' },
@@ -35,11 +35,11 @@ describe('jsonize - map schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonMapAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedMapAttr)).toBe(false)
   })
 
   test('accepts map with valid default value', () => {
-    const jsonMapAttr: JSONizedAttr = {
+    const jsonizedMapAttr: JSONizedAttr = {
       type: 'map',
       attributes: { str: { type: 'string' }, num: { type: 'number' } },
       defaults: {
@@ -50,11 +50,11 @@ describe('jsonize - map schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonMapAttr)).toBe(true)
+    expect(jsonizedAttrParser.validate(jsonizedMapAttr)).toBe(true)
   })
 
   test.todo('rejects map with invalid default value', () => {
-    const jsonMapAttr: JSONizedAttr = {
+    const jsonizedMapAttr: JSONizedAttr = {
       type: 'map',
       attributes: { str: { type: 'string' }, num: { type: 'number' } },
       defaults: {
@@ -65,6 +65,6 @@ describe('jsonize - map schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonMapAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedMapAttr)).toBe(false)
   })
 })

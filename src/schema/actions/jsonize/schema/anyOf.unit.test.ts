@@ -1,18 +1,18 @@
-import { jsonAttrParser } from './attribute.js'
+import { jsonizedAttrParser } from './attribute.js'
 import type { JSONizedAttr } from './attribute.js'
 
 describe('jsonize - anyOf schema', () => {
   test('accepts valid anyOf definition', () => {
-    const jsonAnyOfAttr: JSONizedAttr = {
+    const jsonizedAnyOfAttr: JSONizedAttr = {
       type: 'anyOf',
       elements: [{ type: 'string' }, { type: 'number' }]
     }
 
-    expect(jsonAttrParser.validate(jsonAnyOfAttr)).toBe(true)
+    expect(jsonizedAttrParser.validate(jsonizedAnyOfAttr)).toBe(true)
   })
 
   test('rejects anyOf with invalid element attribute', () => {
-    const jsonAnyOfAttr: JSONizedAttr = {
+    const jsonizedAnyOfAttr: JSONizedAttr = {
       type: 'anyOf',
       elements: [
         {
@@ -23,11 +23,11 @@ describe('jsonize - anyOf schema', () => {
       ]
     }
 
-    expect(jsonAttrParser.validate(jsonAnyOfAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedAnyOfAttr)).toBe(false)
   })
 
   test('rejects anyOf with invalid element constraint', () => {
-    const jsonAnyOfAttr: JSONizedAttr = {
+    const jsonizedAnyOfAttr: JSONizedAttr = {
       type: 'anyOf',
       elements: [
         {
@@ -39,17 +39,17 @@ describe('jsonize - anyOf schema', () => {
       ]
     }
 
-    expect(jsonAttrParser.validate(jsonAnyOfAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedAnyOfAttr)).toBe(false)
   })
 
   test('accepts anyOf with valid default value', () => {
-    const jsonAnyOfAttr: JSONizedAttr = {
+    const jsonizedAnyOfAttr: JSONizedAttr = {
       type: 'anyOf',
       elements: [{ type: 'string' }, { type: 'number' }],
       defaults: { put: { defaulterId: 'value', value: 'string' } }
     }
 
-    expect(jsonAttrParser.validate(jsonAnyOfAttr)).toBe(true)
+    expect(jsonizedAttrParser.validate(jsonizedAnyOfAttr)).toBe(true)
   })
 
   test.todo('rejects anyOf with invalid default value', () => {
@@ -59,6 +59,6 @@ describe('jsonize - anyOf schema', () => {
       defaults: { put: { defaulterId: 'value', value: 42 } }
     }
 
-    expect(jsonAttrParser.validate(jsonAnyOfAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonAnyOfAttr)).toBe(false)
   })
 })

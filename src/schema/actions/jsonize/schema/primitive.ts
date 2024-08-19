@@ -6,23 +6,23 @@ import { nul } from '~/attributes/nul/index.js'
 import { number } from '~/attributes/number/index.js'
 import { string } from '~/attributes/string/index.js'
 
-import { jsonAttrOptionSchemas } from './common.js'
+import { jsonizedAttrOptionSchemas } from './common.js'
 
-export const jsonNullAttrSchema = map({
+export const jsonizedNullAttrSchema = map({
   type: string().const('null'),
-  ...jsonAttrOptionSchemas,
+  ...jsonizedAttrOptionSchemas,
   enum: list(nul()).optional()
 })
 
-export const jsonBooleanAttrSchema = map({
+export const jsonizedBooleanAttrSchema = map({
   type: string().const('boolean'),
-  ...jsonAttrOptionSchemas,
+  ...jsonizedAttrOptionSchemas,
   enum: list(boolean()).optional()
 })
 
-export const jsonNumberAttrSchema = map({
+export const jsonizedNumberAttrSchema = map({
   type: string().const('number'),
-  ...jsonAttrOptionSchemas,
+  ...jsonizedAttrOptionSchemas,
   enum: list(number()).optional()
 })
 
@@ -37,15 +37,15 @@ const strTransformersSchema = anyOf(
   })
 ).optional()
 
-export const jsonStringAttrSchema = map({
+export const jsonizedStringAttrSchema = map({
   type: string().const('string'),
-  ...jsonAttrOptionSchemas,
+  ...jsonizedAttrOptionSchemas,
   enum: list(string()).optional(),
   transform: strTransformersSchema
 })
 
-export const jsonBinaryAttrSchema = map({
+export const jsonizedBinaryAttrSchema = map({
   type: string().const('binary'),
-  ...jsonAttrOptionSchemas,
+  ...jsonizedAttrOptionSchemas,
   enum: list(string()).optional()
 })
