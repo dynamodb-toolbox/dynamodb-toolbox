@@ -1,6 +1,6 @@
 import type { Attribute } from '~/attributes/index.js'
 
-import type { JSONizedAttr } from '../schemas/index.js'
+import type { JSONizedAttr } from '../schema/index.js'
 import { jsonizeAnyAttribute } from './any.js'
 import { jsonizeAnyOfAttribute } from './anyOf.js'
 import { jsonizeListAttribute } from './list.js'

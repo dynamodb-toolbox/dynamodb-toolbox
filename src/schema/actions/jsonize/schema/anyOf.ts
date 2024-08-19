@@ -1,31 +1,37 @@
 import { any } from '~/attributes/any/index.js'
+import { list } from '~/attributes/list/index.js'
 import { map } from '~/attributes/map/index.js'
-import { record } from '~/attributes/record/index.js'
 import { string } from '~/attributes/string/index.js'
 
-import { jsonAttrParser } from './attribute.js'
-import { jsonAttrOptionSchemas } from './common.js'
+import { jsonizedAttrParser } from './attribute.js'
+import { jsonizedAttrOptionSchemas } from './common.js'
 
-export const jsonMapAttrSchema = map({
-  type: string().const('map'),
-  ...jsonAttrOptionSchemas,
-  attributes: record(string(), any())
+export const jsonAnyOfAttrSchema = map({
+  type: string().const('anyOf'),
+  ...jsonizedAttrOptionSchemas,
+  elements: list(any())
 }).validate(input => {
-  const { attributes } = input
-
-  const allSavedAs = new Set<string>()
-
-  for (const [attributeName, attribute] of Object.entries(attributes)) {
-    // Child attribute should be valid attribute
-    if (!jsonAttrParser.validate(attribute)) {
+  for (const element of input.elements) {
+    // Elements should be valid attributes
+    if (!jsonizedAttrParser.validate(element)) {
       return false
     }
 
-    const savedAs = attribute.savedAs ?? attributeName
-    if (allSavedAs.has(savedAs)) {
+    // Elements should follow `anyOf` constraints
+    const areConstraintsVerified = [
+      element.required === undefined || element.required === 'atLeastOnce',
+      element.hidden === undefined || element.hidden === false,
+      element.savedAs === undefined,
+      element.defaults?.key === undefined,
+      element.defaults?.put === undefined,
+      element.defaults?.update === undefined,
+      element.links?.key === undefined,
+      element.links?.put === undefined,
+      element.links?.update === undefined
+    ].every(Boolean)
+
+    if (!areConstraintsVerified) {
       return false
-    } else {
-      allSavedAs.add(savedAs)
     }
   }
 

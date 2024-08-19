@@ -2,7 +2,7 @@ import type { RecordAttribute } from '~/attributes/record/index.js'
 import { RECORD_DEFAULT_OPTIONS } from '~/attributes/record/options.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
-import type { JSONizedAttr } from '../schemas/index.js'
+import type { JSONizedAttr } from '../schema/index.js'
 import { jsonizeAttribute } from './attribute.js'
 import { jsonizeDefaults } from './utils.js'
 

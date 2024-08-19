@@ -6,7 +6,7 @@ import type { JSONizableTransformer } from '~/attributes/primitive/types.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import type { JSONizedAttr } from '../schemas/index.js'
+import type { JSONizedAttr } from '../schema/index.js'
 import { jsonizeDefaults } from './utils.js'
 
 const isJSONizableTransformer = (transformer: unknown): transformer is JSONizableTransformer =>

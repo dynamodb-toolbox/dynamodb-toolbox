@@ -2,7 +2,7 @@ import type { MapAttribute } from '~/attributes/map/index.js'
 import { MAP_DEFAULT_OPTIONS } from '~/attributes/map/options.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
-import type { JSONizedAttr } from '../schemas/index.js'
+import type { JSONizedAttr } from '../schema/index.js'
 import { jsonizeAttribute } from './attribute.js'
 import { jsonizeDefaults } from './utils.js'
 

@@ -14,7 +14,7 @@ import { string } from '~/attributes/string/index.js'
 import { schema } from '~/schema/index.js'
 
 import { JSONizer } from './jsonize.js'
-import type { JSONizedSchema } from './schemas/index.js'
+import type { JSONizedSchema } from './schema/index.js'
 
 describe('jsonize', () => {
   test('correctly jsonize simple schema', () => {

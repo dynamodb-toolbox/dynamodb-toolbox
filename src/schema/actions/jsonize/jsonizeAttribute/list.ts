@@ -3,7 +3,7 @@ import { LIST_DEFAULT_OPTIONS } from '~/attributes/list/options.js'
 import type { ListAttributeElementConstraints } from '~/attributes/list/types.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
-import type { JSONizedAttr } from '../schemas/index.js'
+import type { JSONizedAttr } from '../schema/index.js'
 import { jsonizeAttribute } from './attribute.js'
 import { jsonizeDefaults } from './utils.js'
 

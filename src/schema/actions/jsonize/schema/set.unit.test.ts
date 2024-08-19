@@ -1,18 +1,18 @@
-import { jsonAttrParser } from './attribute.js'
+import { jsonizedAttrParser } from './attribute.js'
 import type { JSONizedAttr } from './attribute.js'
 
 describe('jsonize - set schema', () => {
   test('accepts valid set definition', () => {
-    const jsonSetAttr: JSONizedAttr = {
+    const jsonizedSetAttr: JSONizedAttr = {
       type: 'set',
       elements: { type: 'string' }
     }
 
-    expect(jsonAttrParser.validate(jsonSetAttr)).toBe(true)
+    expect(jsonizedAttrParser.validate(jsonizedSetAttr)).toBe(true)
   })
 
   test('rejects invalid enum', () => {
-    const jsonSetAttr: JSONizedAttr = {
+    const jsonizedSetAttr: JSONizedAttr = {
       type: 'set',
       elements: {
         type: 'string',
@@ -21,26 +21,26 @@ describe('jsonize - set schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonSetAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedSetAttr)).toBe(false)
   })
 
   test('accepts set with valid default value', () => {
-    const jsonSetAttr: JSONizedAttr = {
+    const jsonizedSetAttr: JSONizedAttr = {
       type: 'set',
       elements: { type: 'string' },
       defaults: { put: { defaulterId: 'value', value: ['foo', 'bar'] } }
     }
 
-    expect(jsonAttrParser.validate(jsonSetAttr)).toBe(true)
+    expect(jsonizedAttrParser.validate(jsonizedSetAttr)).toBe(true)
   })
 
   test.todo('rejects set with invalid default value', () => {
-    const jsonSetAttr: JSONizedAttr = {
+    const jsonizedSetAttr: JSONizedAttr = {
       type: 'set',
       elements: { type: 'string' },
       defaults: { put: { defaulterId: 'value', value: ['foo', 'bar', 42] } }
     }
 
-    expect(jsonAttrParser.validate(jsonSetAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedSetAttr)).toBe(false)
   })
 })

@@ -2,7 +2,7 @@ import { SchemaAction } from '~/schema/index.js'
 import type { Schema } from '~/schema/index.js'
 
 import { jsonizeAttribute } from './jsonizeAttribute/index.js'
-import type { JSONizedSchema } from './schemas/index.js'
+import type { JSONizedSchema } from './schema/index.js'
 
 export class JSONizer<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
   static actionName = 'jsonize' as const

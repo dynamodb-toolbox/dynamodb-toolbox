@@ -165,6 +165,11 @@
       "require": "./dist/cjs/schema/actions/jsonize/index.js",
       "types": "./dist/types/schema/actions/jsonize/index.d.ts"
     },
+    "./schema/actions/jsonize/schema": {
+      "import": "./dist/esm/schema/actions/jsonize/schema/index.js",
+      "require": "./dist/cjs/schema/actions/jsonize/schema/index.js",
+      "types": "./dist/types/schema/actions/jsonize/schema/index.d.ts"
+    },
     "./schema/actions/jsonSchemer": {
       "import": "./dist/esm/schema/actions/jsonSchemer/index.js",
       "require": "./dist/cjs/schema/actions/jsonSchemer/index.js",

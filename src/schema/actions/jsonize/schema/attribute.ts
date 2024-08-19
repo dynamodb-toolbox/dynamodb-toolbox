@@ -6,39 +6,39 @@ import type { FormattedValue } from '~/schema/actions/format/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
-import { jsonAnyAttrSchema } from './any.js'
+import { jsonizedAnyAttrSchema } from './any.js'
 import { jsonAnyOfAttrSchema } from './anyOf.js'
-import { jsonListAttrSchema } from './list.js'
-import { jsonMapAttrSchema } from './map.js'
+import { jsonizedListAttrSchema } from './list.js'
+import { jsonizedMapAttrSchema } from './map.js'
 import {
-  jsonBinaryAttrSchema,
-  jsonBooleanAttrSchema,
-  jsonNullAttrSchema,
-  jsonNumberAttrSchema,
-  jsonStringAttrSchema
+  jsonizedBinaryAttrSchema,
+  jsonizedBooleanAttrSchema,
+  jsonizedNullAttrSchema,
+  jsonizedNumberAttrSchema,
+  jsonizedStringAttrSchema
 } from './primitive.js'
-import { jsonRecordAttrSchema } from './record.js'
-import { setAttrJSONRepresentationSchema } from './set.js'
+import { jsonizedRecordAttrSchema } from './record.js'
+import { jsonizedSetAttrSchema } from './set.js'
 
-export const $jsonAttrSchema = anyOf(
-  jsonAnyAttrSchema,
-  jsonNullAttrSchema,
-  jsonBooleanAttrSchema,
-  jsonNumberAttrSchema,
-  jsonStringAttrSchema,
-  jsonBinaryAttrSchema,
-  setAttrJSONRepresentationSchema,
-  jsonListAttrSchema,
-  jsonMapAttrSchema,
-  jsonRecordAttrSchema,
+export const $jsonizedAttrSchema = anyOf(
+  jsonizedAnyAttrSchema,
+  jsonizedNullAttrSchema,
+  jsonizedBooleanAttrSchema,
+  jsonizedNumberAttrSchema,
+  jsonizedStringAttrSchema,
+  jsonizedBinaryAttrSchema,
+  jsonizedSetAttrSchema,
+  jsonizedListAttrSchema,
+  jsonizedMapAttrSchema,
+  jsonizedRecordAttrSchema,
   jsonAnyOfAttrSchema
 )
 
-export const jsonAttrSchema = $jsonAttrSchema.freeze()
-export const jsonAttrParser = new Parser(jsonAttrSchema)
+export const jsonizedAttrSchema = $jsonizedAttrSchema.freeze()
+export const jsonizedAttrParser = new Parser(jsonizedAttrSchema)
 
 export type JSONizedAttr =
-  FormattedValue<typeof jsonAttrSchema> extends infer TYPE
+  FormattedValue<typeof jsonizedAttrSchema> extends infer TYPE
     ? TYPE extends { type: 'list' }
       ? Overwrite<TYPE, { elements: JSONizedAttr & Partial<ListAttributeElementConstraints> }>
       : TYPE extends { type: 'map' }
@@ -52,3 +52,6 @@ export type JSONizedAttr =
               >
             : TYPE
     : never
+
+export const parseJSONizedAttribute = (input: unknown): JSONizedAttr =>
+  jsonizedAttrParser.parse(input) as JSONizedAttr

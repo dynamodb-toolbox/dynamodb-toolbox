@@ -1,19 +1,19 @@
-import { jsonAttrParser } from './attribute.js'
+import { jsonizedAttrParser } from './attribute.js'
 import type { JSONizedAttr } from './attribute.js'
 
 describe('jsonize - record schema', () => {
   test('accepts valid record definition', () => {
-    const jsonRecordAttr: JSONizedAttr = {
+    const jsonizedRecordAttr: JSONizedAttr = {
       type: 'record',
       keys: { type: 'string' },
       elements: { type: 'string' }
     }
 
-    expect(jsonAttrParser.validate(jsonRecordAttr)).toBe(true)
+    expect(jsonizedAttrParser.validate(jsonizedRecordAttr)).toBe(true)
   })
 
   test('rejects record with invalid keys', () => {
-    const jsonRecordAttr: JSONizedAttr = {
+    const jsonizedRecordAttr: JSONizedAttr = {
       type: 'record',
       keys: {
         // @ts-expect-error
@@ -22,11 +22,11 @@ describe('jsonize - record schema', () => {
       elements: { type: 'string' }
     }
 
-    expect(jsonAttrParser.validate(jsonRecordAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedRecordAttr)).toBe(false)
   })
 
   test('rejects record with invalid elements attribute', () => {
-    const jsonRecordAttr: JSONizedAttr = {
+    const jsonizedRecordAttr: JSONizedAttr = {
       type: 'record',
       keys: { type: 'string' },
       elements: {
@@ -35,11 +35,11 @@ describe('jsonize - record schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonRecordAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedRecordAttr)).toBe(false)
   })
 
   test('rejects record with invalid element constraint', () => {
-    const jsonRecordAttr: JSONizedAttr = {
+    const jsonizedRecordAttr: JSONizedAttr = {
       type: 'record',
       keys: { type: 'string' },
       elements: {
@@ -49,11 +49,11 @@ describe('jsonize - record schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonRecordAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedRecordAttr)).toBe(false)
   })
 
   test('accepts record with valid default value', () => {
-    const jsonRecordAttr: JSONizedAttr = {
+    const jsonizedRecordAttr: JSONizedAttr = {
       type: 'record',
       keys: { type: 'string' },
       elements: { type: 'string' },
@@ -65,11 +65,11 @@ describe('jsonize - record schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonRecordAttr)).toBe(true)
+    expect(jsonizedAttrParser.validate(jsonizedRecordAttr)).toBe(true)
   })
 
   test.todo('rejects record with invalid default value', () => {
-    const jsonRecordAttr: JSONizedAttr = {
+    const jsonizedRecordAttr: JSONizedAttr = {
       type: 'record',
       keys: { type: 'string' },
       elements: { type: 'string' },
@@ -81,6 +81,6 @@ describe('jsonize - record schema', () => {
       }
     }
 
-    expect(jsonAttrParser.validate(jsonRecordAttr)).toBe(false)
+    expect(jsonizedAttrParser.validate(jsonizedRecordAttr)).toBe(false)
   })
 })

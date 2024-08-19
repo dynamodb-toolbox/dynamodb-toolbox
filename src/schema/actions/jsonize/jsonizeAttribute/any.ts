@@ -2,7 +2,7 @@ import type { AnyAttribute } from '~/attributes/any/index.js'
 import { ANY_DEFAULT_OPTIONS } from '~/attributes/any/options.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
-import type { JSONizedAttr } from '../schemas/index.js'
+import type { JSONizedAttr } from '../schema/index.js'
 import { jsonizeDefaults } from './utils.js'
 
 /**
