@@ -35,7 +35,7 @@ In this example, an `enum` would have done the trick. However, `anyOf` becomes p
 ```ts
 const pokemonSchema = schema({
   ...
-  captureState: anyOf([
+  captureState: anyOf(
     map({
       status: string().const('caught'),
       // 👇 captureState.trainerId exists if status is "caught"...
@@ -43,7 +43,7 @@ const pokemonSchema = schema({
     }),
     // ...but not otherwise! 🙌
     map({ status: string().const('wild') })
-  ])
+  )
 })
 
 type FormattedPokemon = FormattedItem<typeof PokemonEntity>
@@ -54,6 +54,14 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>
 //     | { status: "wild" }
 // }
 ```
+
+:::caution
+
+Parsing an `anyOf` attribute value returns the parsed output of the first sub-schema it validates against.
+
+This means the **order of the sub-schemas matters**: you should always start with the **strictest** schemas.
+
+:::
 
 :::info
 
