@@ -64,6 +64,7 @@ export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 
 // entities
 export { Entity } from './entity/index.js'
+export type { TimestampsOptions, TimestampsDefaultOptions } from './entity/index.js'
 export { GetItemCommand } from './entity/actions/get/index.js'
 export type { GetItemOptions, GetItemResponse } from './entity/actions/get/index.js'
 export { PutItemCommand } from './entity/actions/put/index.js'
