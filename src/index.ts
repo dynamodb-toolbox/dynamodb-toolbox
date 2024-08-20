@@ -63,7 +63,7 @@ export { TableSpy } from './table/actions/spy/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 
 // entities
-export { Entity } from './entity/index.js'
+export { Entity, EntityAction } from './entity/index.js'
 export type { TimestampsOptions, TimestampsDefaultOptions } from './entity/index.js'
 export { GetItemCommand } from './entity/actions/get/index.js'
 export type { GetItemOptions, GetItemResponse } from './entity/actions/get/index.js'
