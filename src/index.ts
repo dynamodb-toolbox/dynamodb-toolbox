@@ -42,7 +42,7 @@ export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
 export type { FormattedItemJSONSchema } from './schema/actions/jsonSchemer/index.js'
 
 // tables
-export { Table } from './table/index.js'
+export { Table, TableAction } from './table/index.js'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey/index.js'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey/index.js'
 export { QueryCommand } from './table/actions/query/index.js'
@@ -63,7 +63,7 @@ export { TableSpy } from './table/actions/spy/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 
 // entities
-export { Entity } from './entity/index.js'
+export { Entity, EntityAction } from './entity/index.js'
 export type { TimestampsOptions, TimestampsDefaultOptions } from './entity/index.js'
 export { GetItemCommand } from './entity/actions/get/index.js'
 export type { GetItemOptions, GetItemResponse } from './entity/actions/get/index.js'
@@ -125,6 +125,7 @@ export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'
 export { EntitySpy } from './entity/actions/spy/index.js'
 
+// errors
 export { DynamoDBToolboxError } from './errors/index.js'
 
 // transformers

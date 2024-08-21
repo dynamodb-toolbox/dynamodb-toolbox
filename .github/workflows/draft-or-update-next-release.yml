@@ -17,8 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v1
+      - name: ♻️ Checkout
+        uses: actions/checkout@v4
 
-      - uses: release-drafter/release-drafter@v5
+      - name: 📝 Release/Draft next release
+        uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
