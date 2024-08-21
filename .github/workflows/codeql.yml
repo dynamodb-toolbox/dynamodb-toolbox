@@ -36,7 +36,7 @@ jobs:
           - language: javascript-typescript
             build-mode: none
     steps:
-      - name: Checkout repository
+      - name: ♻️ Checkout
         uses: actions/checkout@v4
 
       - name: Initialize CodeQL
