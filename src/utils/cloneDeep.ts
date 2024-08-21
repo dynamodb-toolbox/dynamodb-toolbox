@@ -14,9 +14,13 @@ export const cloneDeep: DeepCloner = <OBJ>(obj: OBJ): OBJ => {
   }
 
   if (obj instanceof Object) {
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [key, cloneDeep(value)])
-    ) as OBJ
+    return Object.fromEntries([
+      ...Object.entries(obj).map(([key, value]) => [key, cloneDeep(value)]),
+      ...Object.getOwnPropertySymbols(obj).map(symbol => [
+        symbol,
+        cloneDeep((obj as { [KEY in typeof symbol]: unknown })[symbol])
+      ])
+    ]) as OBJ
   }
 
   throw new Error('Unable to clone object')

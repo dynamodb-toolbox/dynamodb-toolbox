@@ -1906,4 +1906,25 @@ describe('update', () => {
       }
     })
   })
+
+  test('any attribute', () => {
+    const TestEntity6 = new Entity({
+      name: 'TestEntity',
+      schema: schema({
+        pk: string().key(),
+        sk: string().key(),
+        any: any().optional()
+      }),
+      table: TestTable
+    })
+
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity6.build(UpdateItemCommand)
+        .item({ pk: 'pk', sk: 'sk', any: { key: $set({ foo: 'bar' }) } })
+        .params()
+
+    expect(UpdateExpression).toContain('SET #s_1.#s_2 = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'any', '#s_2': 'key' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': { foo: 'bar' } })
+  })
 })
