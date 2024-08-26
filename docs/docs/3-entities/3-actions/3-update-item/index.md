@@ -234,8 +234,14 @@ PokemonEntity.build(UpdateItemCommand).item({
   skills: $append(['thunder', 'dragon-tail']),
   levelHistory: $append($get('level')),
   types: $prepend(['flight']),
-});
+})
 ```
+
+:::info
+
+`$append` and `$prepend` are **upserts**: they create a new list if the attribute is missing from the item.
+
+:::
 
 ### `.options(...)`
 

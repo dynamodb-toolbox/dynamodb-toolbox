@@ -45,7 +45,7 @@ const transaction = PokemonEntity.build(UpdateTransaction)
   })
 ```
 
-You can use the `UpdateItemInput` type from the [`UpdateItemCommand`](../3-update-item/index.md) action to explicitly type an object as an `UpdateTransaction` item object:
+Check the [`UpdateItemCommand`](../3-update-item/index.md) action to learn more about the `UpdateItem` syntax. You can use the `UpdateItemInput` type to explicitly type an object as an `UpdateTransaction` item object:
 
 ```ts
 import type { UpdateItemInput } from 'dynamodb-toolbox/entity/actions/update'

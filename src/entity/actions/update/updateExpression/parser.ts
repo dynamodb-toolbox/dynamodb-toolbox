@@ -130,9 +130,11 @@ export class UpdateExpressionParser {
     if (isAppendUpdate(input)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
-      this.set.appendToExpression(' = list_append(')
+      this.set.appendToExpression(' = list_append(if_not_exists(')
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(', ')
+      this.set.appendValidAttributeValue([])
+      this.set.appendToExpression('), ')
       /**
        * @debt type "Fix this cast"
        */
@@ -151,9 +153,11 @@ export class UpdateExpressionParser {
       this.set.appendValidAttributeValue(
         input[$PREPEND] as AttributeValue<UpdateItemInputExtension>
       )
-      this.set.appendToExpression(', ')
+      this.set.appendToExpression(', if_not_exists(')
       this.set.appendValidAttributePath(currentPath)
-      this.set.appendToExpression(')')
+      this.set.appendToExpression(', ')
+      this.set.appendValidAttributeValue([])
+      this.set.appendToExpression('))')
       return
     }
 

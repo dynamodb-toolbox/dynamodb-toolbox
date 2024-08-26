@@ -208,12 +208,8 @@ describe('generateTransactWriteCommandInput', () => {
         {
           ConditionCheck: {
             ConditionExpression: '#c_1 > :c_1',
-            ExpressionAttributeNames: {
-              '#c_1': 'test_number'
-            },
-            ExpressionAttributeValues: {
-              ':c_1': 4
-            },
+            ExpressionAttributeNames: { '#c_1': 'test_number' },
+            ExpressionAttributeValues: { ':c_1': 4 },
             Key: {
               pk: 'tata@example.com',
               sk: 'tata'
@@ -234,9 +230,7 @@ describe('generateTransactWriteCommandInput', () => {
               test_binary_set: new Set([new Uint8Array([2]), new Uint8Array([3])]),
               test_boolean: true,
               test_list: ['titi', 'tata'],
-              test_map: {
-                str: 'A'
-              },
+              test_map: { str: 'A' },
               test_number: 5,
               test_number_defaulted: 0,
               test_number_set: new Set([1, 2, 3]),
@@ -262,7 +256,7 @@ describe('generateTransactWriteCommandInput', () => {
               sk: 'titi'
             },
             UpdateExpression:
-              'SET #s_1 = list_append(#s_1, :s_1), #s_2 = :s_2, #s_3 = if_not_exists(#s_4, :s_3), #s_5 = if_not_exists(#s_6, :s_4), #s_7 = :s_5 ADD #a_1 :a_1',
+              'SET #s_1 = list_append(if_not_exists(#s_1, :s_1), :s_2), #s_2 = :s_3, #s_3 = if_not_exists(#s_4, :s_4), #s_5 = if_not_exists(#s_6, :s_5), #s_7 = :s_6 ADD #a_1 :a_1',
             ExpressionAttributeNames: {
               '#a_1': 'test_number',
               '#s_1': 'test_list',
@@ -275,13 +269,12 @@ describe('generateTransactWriteCommandInput', () => {
             },
             ExpressionAttributeValues: {
               ':a_1': 3,
-              ':s_1': ['toutou'],
-              ':s_2': {
-                str: 'B'
-              },
-              ':s_3': 'TestEntity',
-              ':s_4': mockDate,
-              ':s_5': mockDate
+              ':s_1': [],
+              ':s_2': ['toutou'],
+              ':s_3': { str: 'B' },
+              ':s_4': 'TestEntity',
+              ':s_5': mockDate,
+              ':s_6': mockDate
             },
             TableName: 'test-table'
           }
