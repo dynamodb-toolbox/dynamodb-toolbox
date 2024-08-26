@@ -1085,13 +1085,14 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpressionA).toContain('SET #s_1 = list_append(#s_1, :s_1)')
+    expect(UpdateExpressionA).toContain('SET #s_1 = list_append(if_not_exists(#s_1, :s_1), :s_2)')
     expect(ExpressionAttributeNamesA).toMatchObject({ '#s_1': 'test_list' })
-    expect(ExpressionAttributeValuesA).toMatchObject({ ':s_1': ['1', '2', '3'] })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':s_1': [], ':s_2': ['1', '2', '3'] })
 
     const {
       UpdateExpression: UpdateExpressionB,
-      ExpressionAttributeNames: ExpressionAttributeNamesB
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
     } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -1100,8 +1101,9 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpressionB).toContain('SET #s_1 = list_append(#s_1, #s_2)')
+    expect(UpdateExpressionB).toContain('SET #s_1 = list_append(if_not_exists(#s_1, :s_1), #s_2)')
     expect(ExpressionAttributeNamesB).toMatchObject({ '#s_1': 'test_list', '#s_2': 'test_string' })
+    expect(ExpressionAttributeValuesB).toMatchObject({ ':s_1': [] })
 
     const {
       UpdateExpression: UpdateExpressionC,
@@ -1115,9 +1117,11 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpressionC).toContain('SET #s_1 = list_append(#s_1, if_not_exists(#s_2, :s_1))')
+    expect(UpdateExpressionC).toContain(
+      'SET #s_1 = list_append(if_not_exists(#s_1, :s_1), if_not_exists(#s_2, :s_2))'
+    )
     expect(ExpressionAttributeNamesC).toMatchObject({ '#s_1': 'test_list', '#s_2': 'test_string' })
-    expect(ExpressionAttributeValuesC).toMatchObject({ ':s_1': ['1', '2', '3'] })
+    expect(ExpressionAttributeValuesC).toMatchObject({ ':s_1': [], ':s_2': ['1', '2', '3'] })
   })
 
   test('rejects invalid appended values', () => {
@@ -1163,13 +1167,14 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpressionA).toContain('SET #s_1 = list_append(:s_1, #s_1)')
+    expect(UpdateExpressionA).toContain('SET #s_1 = list_append(:s_1, if_not_exists(#s_1, :s_2))')
     expect(ExpressionAttributeNamesA).toMatchObject({ '#s_1': 'test_list' })
-    expect(ExpressionAttributeValuesA).toMatchObject({ ':s_1': ['a', 'b', 'c'] })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':s_1': ['a', 'b', 'c'], ':s_2': [] })
 
     const {
       UpdateExpression: UpdateExpressionB,
-      ExpressionAttributeNames: ExpressionAttributeNamesB
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
     } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -1178,8 +1183,9 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpressionB).toContain('SET #s_1 = list_append(#s_2, #s_1)')
+    expect(UpdateExpressionB).toContain('SET #s_1 = list_append(#s_2, if_not_exists(#s_1, :s_1))')
     expect(ExpressionAttributeNamesB).toMatchObject({ '#s_1': 'test_list', '#s_2': 'test_string' })
+    expect(ExpressionAttributeValuesB).toMatchObject({ ':s_1': [] })
 
     const {
       UpdateExpression: UpdateExpressionC,
@@ -1193,9 +1199,11 @@ describe('update', () => {
       })
       .params()
 
-    expect(UpdateExpressionC).toContain('SET #s_1 = list_append(if_not_exists(#s_2, :s_1), #s_1)')
+    expect(UpdateExpressionC).toContain(
+      'SET #s_1 = list_append(if_not_exists(#s_2, :s_1), if_not_exists(#s_1, :s_2))'
+    )
     expect(ExpressionAttributeNamesC).toMatchObject({ '#s_1': 'test_list', '#s_2': 'test_string' })
-    expect(ExpressionAttributeValuesC).toMatchObject({ ':s_1': ['1', '2', '3'] })
+    expect(ExpressionAttributeValuesC).toMatchObject({ ':s_1': ['1', '2', '3'], ':s_2': [] })
   })
 
   test('rejects invalid prepended values', () => {
@@ -1862,7 +1870,7 @@ describe('update', () => {
         .params()
 
     expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
-    expect(UpdateExpression).toContain('SET #s_1 = list_append(#s_1, :s_1)')
+    expect(UpdateExpression).toContain('SET #s_1 = list_append(if_not_exists(#s_1, :s_1), :s_2)')
     expect(UpdateExpression).toContain('DELETE #d_1 :d_1')
     expect(ExpressionAttributeNames).toMatchObject({
       '#d_1': 'transformedSet',
@@ -1870,7 +1878,8 @@ describe('update', () => {
     })
     expect(ExpressionAttributeValues).toMatchObject({
       ':d_1': new Set(['SET#set']),
-      ':s_1': ['LIST#list']
+      ':s_1': [],
+      ':s_2': ['LIST#list']
     })
   })
 
@@ -1898,12 +1907,8 @@ describe('update', () => {
     expect(ExpressionAttributeValues).toMatchObject({
       ':s_1': new Set(['SET#set']),
       ':s_2': ['LIST#list'],
-      ':s_3': {
-        str: 'MAP#map'
-      },
-      ':s_4': {
-        'RECORD_KEY#recordKey': 'RECORD_VALUE#recordValue'
-      }
+      ':s_3': { str: 'MAP#map' },
+      ':s_4': { 'RECORD_KEY#recordKey': 'RECORD_VALUE#recordValue' }
     })
   })
 
