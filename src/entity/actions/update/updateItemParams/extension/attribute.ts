@@ -2,9 +2,8 @@ import type { Attribute, AttributeBasicValue, PrimitiveAttribute } from '~/attri
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 
-import { $REMOVE } from '../../constants.js'
+import { $REMOVE, isGetting } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
-import { isReferenceUpdate } from '../../utils.js'
 import { parseListExtension } from './list.js'
 import { parseMapExtension } from './map.js'
 import { parseNumberExtension } from './number.js'
@@ -47,7 +46,7 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
     }
   }
 
-  if (isReferenceUpdate(input)) {
+  if (isGetting(input)) {
     return parseReferenceExtension(attribute, input, options)
   }
 

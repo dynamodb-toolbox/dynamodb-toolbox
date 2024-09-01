@@ -9,9 +9,8 @@ import type { Schema } from '~/schema/index.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
 
-import { $GET } from '../constants.js'
+import { $GET, isGetting } from '../symbols/index.js'
 import type { ReferenceExtension, UpdateItemInputExtension } from '../types.js'
-import { isReferenceUpdate } from '../utils.js'
 import type { ParsedUpdate } from './type.js'
 
 export class UpdateExpressionVerbParser implements ExpressionParser {
@@ -84,7 +83,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
       { mode: 'update'; extension: UpdateItemInputExtension }
     >
   ): void => {
-    if (isReferenceUpdate(validAttributeValue)) {
+    if (isGetting(validAttributeValue)) {
       // TODO: Fix this cast
       const [expression, fallback] = validAttributeValue[$GET] as [
         string,

@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import type { AtLeastOnce } from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
-import { $get } from '~/entity/actions/update/utils.js'
+import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { schema } from '~/schema/index.js'
 import { Table } from '~/table/index.js'
