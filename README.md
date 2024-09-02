@@ -1,5 +1,3 @@
-# DynamoDB Toolbox <!-- omit in toc -->
-
 ![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
 
 <p align="center">
@@ -13,6 +11,16 @@
     <br/>
     <br/>
 </p>
+
+💖 _Huge thanks to the [sponsors](https://github.com/sponsors/ThomasAribart) who help me maintain this repo:_
+
+<p align="center">
+  <a href="https://www.theodo.fr/"><img src="https://github.com/theodo.png" width="50px" alt="Theodo" title="Theodo"/></a></td>&nbsp;&nbsp;
+  <!-- sponsors --><!-- sponsors -->
+  <a href="https://github.com/sponsors/ThomasAribart"><img src="assets/plus-sign.png" width="50px" alt="Plus sign" title="Your brand here!"/></a>
+</p>
+
+# DynamoDB-Toolbox <!-- omit in toc -->
 
 ---
 

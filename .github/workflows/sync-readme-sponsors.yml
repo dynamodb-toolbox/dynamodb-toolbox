@@ -1,0 +1,33 @@
+name: 💖 Sync README sponsors
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 00 12 1,15 * *
+
+permissions:
+  contents: write
+
+jobs:
+  sync-readme-sponsors:
+    name: 💖 Sync README sponsors
+    runs-on: ubuntu-latest
+    steps:
+      - name: ♻️ Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: 💖 Sync README sponsors
+        uses: JamesIves/github-sponsors-readme-action@v1.5.0
+        with:
+          token: ${{ secrets.PAT }}
+          file: README.md
+          template: <a href="https://github.com/{{ login }}"><img src="https://github.com/{{ login }}.png" width="50px" alt="{{ name }}" title="{{ name }}"/></a>&nbsp;&nbsp;
+          active-only: false
+
+      - name: 💾 Commit README
+        uses: EndBug/add-and-commit@v9.1.3
+        with:
+          default_author: github_actions
+          message: 'Automatically synchronize README sponsors'
