@@ -44,6 +44,7 @@ import type {
   Extension,
   GET,
   PREPEND,
+  REMOVE,
   SET,
   SUBTRACT,
   SUM
@@ -56,7 +57,7 @@ export type ReferenceExtension = {
 
 export type UpdateItemInputExtension =
   | ReferenceExtension
-  | { type: '*'; value: $REMOVE }
+  | { type: '*'; value: Extension<{ [$REMOVE]: true }> }
   | {
       type: 'number'
       value:
@@ -213,7 +214,7 @@ export type AttributeUpdateItemInput<
   ? AttributeValue<UpdateItemInputExtension> | undefined
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRE_DEFAULTS>, never, undefined>
-      | If<CanBeRemoved<ATTRIBUTE>, $REMOVE, never>
+      | If<CanBeRemoved<ATTRIBUTE>, REMOVE, never>
       // Not using Reference<...> for improved type display
       | GET<
           [
@@ -282,7 +283,7 @@ export type AttributeUpdateItemInput<
                               REQUIRE_DEFAULTS,
                               SCHEMA_ATTRIBUTE_PATHS
                             >
-                          | $REMOVE
+                          | REMOVE
                       }>
                     | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]>
                     | APPEND<
@@ -336,7 +337,7 @@ export type AttributeUpdateItemInput<
                                   REQUIRE_DEFAULTS,
                                   SCHEMA_ATTRIBUTE_PATHS
                                 >
-                              | $REMOVE
+                              | REMOVE
                           }>
                         | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
                     : ATTRIBUTE extends AnyOfAttribute

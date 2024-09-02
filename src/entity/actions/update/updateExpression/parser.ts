@@ -11,7 +11,6 @@ import {
   $APPEND,
   $DELETE,
   $PREPEND,
-  $REMOVE,
   $SET,
   $SUBTRACT,
   $SUM,
@@ -20,6 +19,7 @@ import {
   isDeletion,
   isGetting,
   isPrepending,
+  isRemoval,
   isSetting,
   isSubtraction,
   isSum
@@ -70,7 +70,7 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (input === $REMOVE) {
+    if (isRemoval(input)) {
       this.remove.beginNewInstruction()
       this.remove.appendValidAttributePath(currentPath)
       return

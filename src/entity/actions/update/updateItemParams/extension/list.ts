@@ -14,10 +14,10 @@ import { isObject } from '~/utils/validation/isObject.js'
 import {
   $APPEND,
   $PREPEND,
-  $REMOVE,
   $SET,
   isAppending,
   isPrepending,
+  isRemoval,
   isSetting
 } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
@@ -33,15 +33,15 @@ function* listElementParser(
   ParsedValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
   ParsedValue<Schema, { extension: UpdateItemInputExtension }> | undefined
 > {
-  if (inputValue === $REMOVE) {
-    const parsedValue: typeof $REMOVE = $REMOVE
+  if (isRemoval(inputValue)) {
+    const parsedValue = inputValue
     if (transform) {
       yield parsedValue
     } else {
       return parsedValue
     }
 
-    const transformedValue: typeof $REMOVE = $REMOVE
+    const transformedValue = parsedValue
     return transformedValue
   }
 

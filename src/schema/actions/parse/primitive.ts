@@ -101,7 +101,7 @@ export function* primitiveAttrParser<
   }
 
   /**
-   * @debt type "validator should act as typeguard"
+   * @debt type "validator should act as type guard"
    */
   const parsedValue = linkedValue as ResolvedPrimitiveAttribute
   applyCustomValidation(attribute, parsedValue, options)

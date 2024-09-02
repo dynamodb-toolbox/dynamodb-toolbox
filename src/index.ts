@@ -101,6 +101,7 @@ export {
   isDeletion,
   isPrepending,
   isGetting,
+  isRemoval,
   isSetting,
   isSubtraction,
   isSum

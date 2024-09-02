@@ -2,7 +2,7 @@ import type { Attribute, AttributeBasicValue, PrimitiveAttribute } from '~/attri
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 
-import { $REMOVE, isGetting } from '../../symbols/index.js'
+import { isGetting, isRemoval } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
 import { parseListExtension } from './list.js'
 import { parseMapExtension } from './map.js'
@@ -18,7 +18,7 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
 ) => {
   const { transform = true } = options
 
-  if (input === $REMOVE) {
+  if (isRemoval(input)) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -33,14 +33,14 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
           })
         }
 
-        const parsedValue: typeof $REMOVE = $REMOVE
+        const parsedValue = input
         if (transform) {
           yield parsedValue
         } else {
           return parsedValue
         }
 
-        const transformedValue: typeof $REMOVE = $REMOVE
+        const transformedValue = input
         return transformedValue
       }
     }
