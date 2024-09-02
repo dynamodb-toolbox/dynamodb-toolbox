@@ -369,7 +369,7 @@ const addOne = {
 }
 ```
 
-In case you need to build complex update links, **all those symbols are exported**, as well as **dedicated type guards**. You can **exclude extended syntax** altogether with the `isExtension` type guard.
+If you need to build complex update links, **all those symbols are exported**, as well as **dedicated type guards**. If you don't, you can **exclude extended syntax** altogether with the `isExtension` type guard.
 
 Here's an example in which we automatically derive pokemon level upgrades:
 
