@@ -110,7 +110,7 @@ const pokemonSchema = schema({
 }))
 ```
 
-If you want to leverage extended syntax within the link, check the [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md#extended-syntax) docs for more details. If you don't, you can escape it with the `isExtension` typeguard:
+If you want to leverage extended syntax within the link, check the [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md#extended-syntax) docs for more details. If you don't, you can escape it with the `isExtension` type guard:
 
 ```ts
 import { isExtension } from 'dynamodb-toolbox/entity/actions/update/symbols'
