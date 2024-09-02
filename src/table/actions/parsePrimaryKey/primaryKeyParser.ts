@@ -59,7 +59,7 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
     }
 
     /**
-     * @debt type "Make validator act as primitive typeguard"
+     * @debt type "Make validator act as primitive type guard"
      */
     primaryKey[partitionKey.name] = partitionKeyValue as number | string | Uint8Array
 
@@ -83,7 +83,7 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
     }
 
     /**
-     * @debt type "Make validator act as primitive typeguard"
+     * @debt type "Make validator act as primitive type guard"
      */
     primaryKey[sortKey.name] = sortKeyValue as number | string | Uint8Array
 

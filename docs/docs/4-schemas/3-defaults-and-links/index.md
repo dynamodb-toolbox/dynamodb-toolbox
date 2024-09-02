@@ -87,3 +87,47 @@ The `link` method is a shorthand that acts as `keyLink` on key attributes and `p
 :::
 
 Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../16-actions/1-parse.md) action for more details).
+
+### Update Syntax
+
+If you use TypeScript, you may notice that the `updateLink` input type can be quite complex. This is to reflect that **extended syntax** (e.g. `$add`, `$get` etc.) is also passed to `updateLink`:
+
+```ts
+const pokemonSchema = schema({
+  ...
+  level: number()
+}).and(prevSchema => ({
+  levelPlusOne: number().updateLink<typeof prevSchema>(
+    ({ level }) => {
+      if (level === undefined) {
+        return undefined
+      }
+
+      // ❌ `level` may be `$add(1)`, `$get('otherAttr')` etc.
+      return level + 1
+    }
+  )
+}))
+```
+
+If you want to leverage extended syntax within the link, check the [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md#extended-syntax) docs for more details. If you don't, you can escape it with the `isExtension` type guard:
+
+```ts
+import { isExtension } from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const pokemonSchema = schema({
+  ...
+  level: number()
+}).and(prevSchema => ({
+  levelPlusOne: number().updateLink<typeof prevSchema>(
+    ({ level }) => {
+      if (level === undefined || isExtension(level)) {
+        return undefined
+      }
+
+      // 🙌 `level` is a number
+      return level + 1
+    }
+  )
+}))
+```

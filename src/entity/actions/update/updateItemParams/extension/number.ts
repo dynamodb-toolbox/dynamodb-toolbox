@@ -5,9 +5,8 @@ import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import { $ADD, $SUBTRACT, $SUM } from '../../constants.js'
+import { $ADD, $SUBTRACT, $SUM, isAddition, isSubtraction, isSum } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
-import { isAddUpdate, isSubtractUpdate, isSumUpdate } from '../../utils.js'
 import { parseReferenceExtension } from './reference.js'
 
 export const parseNumberExtension = (
@@ -15,7 +14,7 @@ export const parseNumberExtension = (
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  if (isSumUpdate(inputValue) && inputValue[$SUM] !== undefined) {
+  if (isSum(inputValue) && inputValue[$SUM] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -62,7 +61,7 @@ export const parseNumberExtension = (
     }
   }
 
-  if (isSubtractUpdate(inputValue) && inputValue[$SUBTRACT] !== undefined) {
+  if (isSubtraction(inputValue) && inputValue[$SUBTRACT] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -110,7 +109,7 @@ export const parseNumberExtension = (
     }
   }
 
-  if (isAddUpdate(inputValue) && inputValue[$ADD] !== undefined) {
+  if (isAddition(inputValue) && inputValue[$ADD] !== undefined) {
     const parser = new Parser(number().freeze(`${attribute.path}[$ADD]`)).start(inputValue[$ADD], {
       fill: false,
       transform,

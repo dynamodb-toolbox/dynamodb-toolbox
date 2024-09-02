@@ -2,16 +2,15 @@ import type { AttributeBasicValue, SetAttribute } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
 
-import { $ADD, $DELETE } from '../../constants.js'
+import { $ADD, $DELETE, isAddition, isDeletion } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
-import { isAddUpdate, isDeleteUpdate } from '../../utils.js'
 
 export const parseSetExtension = (
   attribute: SetAttribute,
   input: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  if (isAddUpdate(input) && input[$ADD] !== undefined) {
+  if (isAddition(input) && input[$ADD] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -30,7 +29,7 @@ export const parseSetExtension = (
     }
   }
 
-  if (isDeleteUpdate(input) && input[$DELETE] !== undefined) {
+  if (isDeletion(input) && input[$DELETE] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {

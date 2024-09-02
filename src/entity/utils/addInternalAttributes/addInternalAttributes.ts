@@ -1,7 +1,7 @@
 import { $state } from '~/attributes/constants/attributeOptions.js'
 import type { $Attribute } from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
-import { $get } from '~/entity/actions/update/utils.js'
+import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'

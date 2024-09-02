@@ -32,47 +32,43 @@ import type {
   $APPEND,
   $DELETE,
   $GET,
-  $HAS_VERB,
   $PREPEND,
   $REMOVE,
   $SET,
   $SUBTRACT,
-  $SUM
-} from './constants.js'
-
-// Distinguishing verbal syntax vs non-verbal for type inference & parsing
-export type Verbal<VALUE> = { [$HAS_VERB]: true } & VALUE
-
-export type ADD<VALUE> = Verbal<{ [$ADD]: VALUE }>
-export type SET<VALUE> = Verbal<{ [$SET]: VALUE }>
-export type GET<VALUE> = Verbal<{ [$GET]: VALUE }>
-export type SUM<A, B> = Verbal<{ [$SUM]: [A, B] }>
-export type SUBTRACT<A, B> = Verbal<{ [$SUBTRACT]: [A, B] }>
-export type DELETE<VALUE> = Verbal<{ [$DELETE]: VALUE }>
-export type APPEND<VALUE> = Verbal<{ [$APPEND]: VALUE }>
-export type PREPEND<VALUE> = Verbal<{ [$PREPEND]: VALUE }>
-
-export type NonVerbal<VALUE> = { [$HAS_VERB]?: false } & VALUE
+  $SUM,
+  ADD,
+  APPEND,
+  Basic,
+  DELETE,
+  Extension,
+  GET,
+  PREPEND,
+  REMOVE,
+  SET,
+  SUBTRACT,
+  SUM
+} from './symbols/index.js'
 
 export type ReferenceExtension = {
   type: '*'
-  value: Verbal<{ [$GET]: [ref: string, fallback?: AttributeValue<ReferenceExtension>] }>
+  value: Extension<{ [$GET]: [ref: string, fallback?: AttributeValue<ReferenceExtension>] }>
 }
 
 export type UpdateItemInputExtension =
   | ReferenceExtension
-  | { type: '*'; value: $REMOVE }
+  | { type: '*'; value: Extension<{ [$REMOVE]: true }> }
   | {
       type: 'number'
       value:
-        | Verbal<{ [$ADD]: number }>
-        | Verbal<{
+        | Extension<{ [$ADD]: number }>
+        | Extension<{
             [$SUM]: [
               PrimitiveAttributeValue<ReferenceExtension>,
               PrimitiveAttributeValue<ReferenceExtension>
             ]
           }>
-        | Verbal<{
+        | Extension<{
             [$SUBTRACT]: [
               PrimitiveAttributeValue<ReferenceExtension>,
               PrimitiveAttributeValue<ReferenceExtension>
@@ -81,14 +77,14 @@ export type UpdateItemInputExtension =
     }
   | {
       type: 'set'
-      value: Verbal<{ [$ADD]: SetAttributeValue } | { [$DELETE]: SetAttributeValue }>
+      value: Extension<{ [$ADD]: SetAttributeValue } | { [$DELETE]: SetAttributeValue }>
     }
   | {
       type: 'list'
       value:
-        | NonVerbal<{ [INDEX in number]: AttributeValue<UpdateItemInputExtension> | undefined }>
-        | Verbal<{ [$SET]: ListAttributeValue }>
-        | Verbal<
+        | Basic<{ [INDEX in number]: AttributeValue<UpdateItemInputExtension> | undefined }>
+        | Extension<{ [$SET]: ListAttributeValue }>
+        | Extension<
             | { [$APPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
             | { [$PREPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
             // TODO: CONCAT to join two unrelated lists
@@ -96,11 +92,11 @@ export type UpdateItemInputExtension =
     }
   | {
       type: 'map'
-      value: Verbal<{ [$SET]: MapAttributeValue }>
+      value: Extension<{ [$SET]: MapAttributeValue }>
     }
   | {
       type: 'record'
-      value: Verbal<{ [$SET]: RecordAttributeValue }>
+      value: Extension<{ [$SET]: RecordAttributeValue }>
     }
 
 type MustBeDefined<
@@ -218,7 +214,7 @@ export type AttributeUpdateItemInput<
   ? AttributeValue<UpdateItemInputExtension> | undefined
   :
       | If<MustBeDefined<ATTRIBUTE, REQUIRE_DEFAULTS>, never, undefined>
-      | If<CanBeRemoved<ATTRIBUTE>, $REMOVE, never>
+      | If<CanBeRemoved<ATTRIBUTE>, REMOVE, never>
       // Not using Reference<...> for improved type display
       | GET<
           [
@@ -280,14 +276,14 @@ export type AttributeUpdateItemInput<
                   | DELETE<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
               : ATTRIBUTE extends ListAttribute
                 ?
-                    | NonVerbal<{
+                    | Basic<{
                         [INDEX in number]?:
                           | AttributeUpdateItemInput<
                               ATTRIBUTE['elements'],
                               REQUIRE_DEFAULTS,
                               SCHEMA_ATTRIBUTE_PATHS
                             >
-                          | $REMOVE
+                          | REMOVE
                       }>
                     | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]>
                     | APPEND<
@@ -315,7 +311,7 @@ export type AttributeUpdateItemInput<
                       >
                 : ATTRIBUTE extends MapAttribute
                   ?
-                      | NonVerbal<
+                      | Basic<
                           OptionalizeUndefinableProperties<
                             {
                               [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
@@ -334,14 +330,14 @@ export type AttributeUpdateItemInput<
                       | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
                   : ATTRIBUTE extends RecordAttribute
                     ?
-                        | NonVerbal<{
+                        | Basic<{
                             [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
                               | AttributeUpdateItemInput<
                                   ATTRIBUTE['elements'],
                                   REQUIRE_DEFAULTS,
                                   SCHEMA_ATTRIBUTE_PATHS
                                 >
-                              | $REMOVE
+                              | REMOVE
                           }>
                         | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
                     : ATTRIBUTE extends AnyOfAttribute

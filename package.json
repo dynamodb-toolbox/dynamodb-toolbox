@@ -230,6 +230,11 @@
       "require": "./dist/cjs/entity/actions/update/index.js",
       "types": "./dist/types/entity/actions/update/index.d.ts"
     },
+    "./entity/actions/update/symbols": {
+      "import": "./dist/esm/entity/actions/update/symbols/index.js",
+      "require": "./dist/cjs/entity/actions/update/symbols/index.js",
+      "types": "./dist/types/entity/actions/update/symbols/index.d.ts"
+    },
     "./entity/actions/delete": {
       "import": "./dist/esm/entity/actions/delete/index.js",
       "require": "./dist/cjs/entity/actions/delete/index.js",

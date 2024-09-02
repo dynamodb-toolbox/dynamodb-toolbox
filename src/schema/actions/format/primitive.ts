@@ -45,7 +45,7 @@ export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
   }
 
   /**
-   * @debt type "validator should act as typeguard"
+   * @debt type "validator should act as type guard"
    */
   const rawPrimitive = rawValue as ResolvedPrimitiveAttribute
   const transformer = attribute.transform as Transformer

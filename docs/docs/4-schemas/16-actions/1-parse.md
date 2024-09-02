@@ -522,7 +522,7 @@ Runs only the **parsing step** of the parsing workflow on the provided input. Re
 const isValid = pokemonSchema.build(Parser).validate(input)
 ```
 
-Note that `.validate(...)` acts as a [typeguard](https://www.typescriptlang.org/docs/handbook/advanced-types.html):
+Note that `.validate(...)` acts as a [type guard](https://www.typescriptlang.org/docs/handbook/advanced-types.html):
 
 ```ts
 if (pokemonSchema.build(Parser).validate(input)) {

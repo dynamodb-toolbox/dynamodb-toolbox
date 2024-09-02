@@ -56,12 +56,16 @@ const item: UpdateItemInput<typeof PokemonEntity> = {
 await PokemonEntity.build(UpdateItemCommand).item(item).send()
 ```
 
+`UpdateItemInput` differ from [`PutItemInput`](../2-put-item/index.md#item) as it is **partial by default**, except for `always` required attributes without defaults or links.
+
+It also benefits from an **extended syntax** that reflects the [capabilities of DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html):
+
 ### Removing an attribute
 
-Any optional attribute can be removed with the `$remove` verb:
+Any optional attribute can be removed with the `$remove` extension:
 
 ```ts
-import { $remove } from 'dynamodb-toolbox'
+import { $remove } from 'dynamodb-toolbox/entity/actions/update'
 
 await PokemonEntity.build(UpdateItemCommand)
   .item({
@@ -74,10 +78,10 @@ await PokemonEntity.build(UpdateItemCommand)
 
 ### References
 
-You can indicate DynamoDB to resolve an attribute **at write time** with the `$get` verb:
+You can indicate DynamoDB to resolve an attribute **at write time** with the `$get` extension:
 
 ```ts
-import { $get } from 'dynamodb-toolbox'
+import { $get } from 'dynamodb-toolbox/entity/actions/update'
 
 await PokemonEntity.build(UpdateItemCommand)
   .item({
@@ -136,7 +140,7 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-Numbers benefit from additional `$sum`, `$subtract` and `$add` verbs, which can use references:
+Numbers benefit from additional `$sum`, `$subtract` and `$add` extensions, which can use references:
 
 ```ts
 import {
@@ -158,7 +162,7 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-Sets benefit from additional `$add` and `$delete` verbs, which can be used to add or remove specific values:
+Sets benefit from additional `$add` and `$delete` extensions, which can be used to add or remove specific values:
 
 ```ts
 import {
@@ -177,7 +181,7 @@ await PokemonEntity.build(UpdateItemCommand)
 
 ### Nested attributes
 
-In the case of nested attributes, e.g. `lists`, `maps` and `records`, updates are **partial by default**. You can use the `$set` verb to specify a complete override:
+In the case of nested attributes, e.g. `lists`, `maps` and `records`, updates are **partial by default**:
 
 ```ts
 // 👇 Partial overrides
@@ -191,42 +195,46 @@ await PokemonEntity.build(UpdateItemCommand)
       0: 'thunder',
       2: $remove()
     },
-    // 👇 map example
+    // 👇 Map
     some: {
       nested: {
         field: 'foo'
       }
     },
-    // Record
+    // 👇 Record
     bestSkillByType: {
       electric: 'thunder',
       flight: $remove()
     }
   })
   .send()
+```
 
-import { $set } from 'dynamodb-toolbox'
+You can use the `$set` extension to specify a complete override:
+
+```ts
+import { $set } from 'dynamodb-toolbox/entity/actions/update'
 
 // 👇 Complete overrides
 await PokemonEntity.build(UpdateItemCommand).item({
-  ...
-  // reset list
-  skills: $set(['thunder']),
-  // Removes all other map attributes
-  some: $set({
-    nested: {
-      field: 'foo',
-      otherField: 42
-    }
-  }),
-  // Removes all other record keys
-  bestSkillByType: $set({
-    electric: 'thunder'
-  })
+ ...
+ // Resets list
+ skills: $set(['thunder']),
+ // Removes all other map attributes
+ some: $set({
+   nested: {
+     field: 'foo',
+     otherField: 42
+   }
+ }),
+ // Removes all other record keys
+ bestSkillByType: $set({
+   electric: 'thunder'
+ })
 })
 ```
 
-Lists benefit from additional `$append` and `$prepend` verbs, which can use references:
+Lists benefit from additional `$append` and `$prepend` extensions, which can use references:
 
 ```ts
 PokemonEntity.build(UpdateItemCommand).item({
@@ -337,3 +345,344 @@ const response: UpdateItemResponse<
   // 👇 Typed as Pokemon | undefined
 > = { Attributes: ... }
 ```
+
+## Extended Syntax
+
+In some contexts, like when defining [`updateLinks`](../../../4-schemas/3-defaults-and-links/index.md), it may be useful to understand extended syntax in greater details.
+
+To avoid conflicts with regular syntax, extensions are defined through **objects** with [symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) as keys:
+
+```ts
+import {
+  $add,
+  // 👇 Unique symbols
+  $ADD,
+  $IS_EXTENSION
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const addOne = $add(1)
+
+// 👇 Equivalent to
+const addOne = {
+  [$ADD]: 1,
+  [$IS_EXTENSION]: true
+}
+```
+
+In case you need to build complex update links, **all those symbols are exported**, as well as **dedicated type guards**. You can **exclude extended syntax** altogether with the `isExtension` type guard.
+
+Here's an example in which we automatically derive pokemon level upgrades:
+
+```ts
+import {
+  $add,
+  $get,
+  $subtract,
+  isAddition,
+  isExtension,
+  isGetting,
+  $ADD
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const pokemonSchema = schema({
+  ...
+  level: number()
+}).and(prevSchema => ({
+  lastLevelUpgrade: number().updateLink<typeof prevSchema>(
+    ({ level }) => {
+      if (level === undefined) {
+        return undefined
+      }
+
+      if (isAddition(level)) {
+        return level[$ADD]
+      }
+
+      if (!isExtension(level) || isGetting(level)) {
+        return $subtract(level, $get('level'))
+      }
+    }
+  )
+}))
+
+await PokemonEntity.build(UpdateItemCommand)
+  .item({
+    pokemonId,
+    // 👇 lastLevelUpgrade = 3
+    level: $add(3)
+    // 👇 lastLevelUpgrade = $subtract(10, $get('level'))
+    level: 10,
+    // 👇 lastLevelUpgrade = $subtract($get('otherAttr'), $get('level'))
+    level: $get('otherAttr'),
+  })
+  .send()
+```
+
+:::noteExample
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$remove</b></summary>
+
+```ts
+import {
+  $remove,
+  $REMOVE,
+  $IS_EXTENSION,
+  isRemoval
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const removal = $remove()
+
+// 👇 Equivalent to
+const removal = {
+  [$REMOVE]: true,
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isRemoval(input)) {
+    input[$REMOVE] // => true
+  }
+}
+```
+
+</details>
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$get</b></summary>
+
+```ts
+import {
+  $get,
+  $GET,
+  $IS_EXTENSION,
+  isGetting
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const getting = $get('attr', 'fallback')
+
+// 👇 Equivalent to
+const getting = {
+  [$GET]: ['attr', 'fallback'],
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isGetting(input)) {
+    input[$GET] // => ['attr', 'fallback']
+  }
+}
+```
+
+</details>
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$sum</b></summary>
+
+```ts
+import {
+  $sum,
+  $SUM,
+  $IS_EXTENSION,
+  isSum
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const sum = $sum(1, 2)
+
+// 👇 Equivalent to
+const sum = {
+  [$SUM]: [1, 2],
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isSum(input)) {
+    input[$SUM] // => [1, 2]
+  }
+}
+```
+
+</details>
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$subtract</b></summary>
+
+```ts
+import {
+  $subtract,
+  $SUBTRACT,
+  $IS_EXTENSION,
+  isSubtraction
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const subtraction = $subtract(1, 2)
+
+// 👇 Equivalent to
+const subtraction = {
+  [$SUBTRACT]: [1, 2],
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isSubtraction(input)) {
+    input[$SUBTRACT] // => [1, 2]
+  }
+}
+```
+
+</details>
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$add</b></summary>
+
+```ts
+import {
+  $add,
+  $ADD,
+  $IS_EXTENSION,
+  isAddition
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const addition = $add(1)
+
+// 👇 Equivalent to
+const addition = {
+  [$ADD]: 1,
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isAddition(input)) {
+    input[$ADD] // => 1
+  }
+}
+```
+
+</details>
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$delete</b></summary>
+
+```ts
+import {
+  $delete,
+  $DELETE,
+  $IS_EXTENSION,
+  isDeletion
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const deletion = $delete(new Set(['flight']))
+
+// 👇 Equivalent to
+const deletion = {
+  [$DELETE]: new Set(['flight']),
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isDeletion(input)) {
+    input[$DELETE] // => new Set(['flight'])
+  }
+}
+```
+
+</details>
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$set</b></summary>
+
+```ts
+import {
+  $set,
+  $SET,
+  $IS_EXTENSION,
+  isSetting
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const setting = $set({
+  nested: {
+    field: 'foo',
+    otherField: 42
+  }
+})
+
+// 👇 Equivalent to
+const setting = {
+  [$SET]: {
+    nested: {
+      field: 'foo',
+      otherField: 42
+    }
+  },
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isSetting(input)) {
+    input[$SET] // => {
+    //   nested: {
+    //     field: 'foo',
+    //     otherField: 42
+    //   }
+    // }
+  }
+}
+```
+
+</details>
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$append</b></summary>
+
+```ts
+import {
+  $append,
+  $APPEND,
+  $IS_EXTENSION,
+  isAppending
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const appending = $append(['thunder', 'dragon-tail'])
+
+// 👇 Equivalent to
+const appending = {
+  [$APPEND]: ['thunder', 'dragon-tail'],
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isAppending(input)) {
+    input[$APPEND] // => ['thunder', 'dragon-tail']
+  }
+}
+```
+
+</details>
+
+<details className="details-in-admonition">
+<summary>🔎 <b>$prepend</b></summary>
+
+```ts
+import {
+  $prepend,
+  $PREPEND,
+  $IS_EXTENSION,
+  isPrepending
+} from 'dynamodb-toolbox/entity/actions/update/symbols'
+
+const prepending = $prepend(['thunder', 'dragon-tail'])
+
+// 👇 Equivalent to
+const prepending = {
+  [$PREPEND]: ['thunder', 'dragon-tail'],
+  [$IS_EXTENSION]: true
+}
+
+const link = (input: UpdateItemInput) => {
+  if (isPrepending(input)) {
+    input[$PREPEND] // => ['thunder', 'dragon-tail']
+  }
+}
+```
+
+</details>

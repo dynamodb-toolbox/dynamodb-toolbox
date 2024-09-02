@@ -5,9 +5,8 @@ import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/p
 import { isArray } from '~/utils/validation/isArray.js'
 import { isString } from '~/utils/validation/isString.js'
 
-import { $GET } from '../../constants.js'
+import { $GET, isGetting } from '../../symbols/index.js'
 import type { ReferenceExtension, UpdateItemInputExtension } from '../../types.js'
-import { isReferenceUpdate } from '../../utils.js'
 
 export const parseReferenceExtension: ExtensionParser<
   ReferenceExtension,
@@ -17,7 +16,7 @@ export const parseReferenceExtension: ExtensionParser<
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ) => {
-  if (isReferenceUpdate(inputValue) && inputValue[$GET] !== undefined) {
+  if (isGetting(inputValue) && inputValue[$GET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {

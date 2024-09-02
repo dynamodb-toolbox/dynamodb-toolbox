@@ -84,6 +84,28 @@ export {
   $append,
   $prepend
 } from './entity/actions/update/index.js'
+export {
+  $IS_EXTENSION,
+  $ADD,
+  $APPEND,
+  $DELETE,
+  $GET,
+  $PREPEND,
+  $REMOVE,
+  $SET,
+  $SUBTRACT,
+  $SUM,
+  isExtension,
+  isAddition,
+  isAppending,
+  isDeletion,
+  isPrepending,
+  isGetting,
+  isRemoval,
+  isSetting,
+  isSubtraction,
+  isSum
+} from './entity/actions/update/symbols/index.js'
 export type {
   UpdateItemInput,
   UpdateItemOptions,

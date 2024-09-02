@@ -11,9 +11,16 @@ import { isArray } from '~/utils/validation/isArray.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { $APPEND, $PREPEND, $REMOVE, $SET } from '../../constants.js'
+import {
+  $APPEND,
+  $PREPEND,
+  $SET,
+  isAppending,
+  isPrepending,
+  isRemoval,
+  isSetting
+} from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
-import { isAppendUpdate, isPrependUpdate, isSetUpdate } from '../../utils.js'
 import { parseUpdateExtension } from './attribute.js'
 import { parseReferenceExtension } from './reference.js'
 
@@ -26,15 +33,15 @@ function* listElementParser(
   ParsedValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
   ParsedValue<Schema, { extension: UpdateItemInputExtension }> | undefined
 > {
-  if (inputValue === $REMOVE) {
-    const parsedValue: typeof $REMOVE = $REMOVE
+  if (isRemoval(inputValue)) {
+    const parsedValue = inputValue
     if (transform) {
       yield parsedValue
     } else {
       return parsedValue
     }
 
-    const transformedValue: typeof $REMOVE = $REMOVE
+    const transformedValue = parsedValue
     return transformedValue
   }
 
@@ -65,7 +72,7 @@ export const parseListExtension = (
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { transform = true } = options
 
-  if (isSetUpdate(input) && input[$SET] !== undefined) {
+  if (isSetting(input) && input[$SET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
@@ -85,7 +92,7 @@ export const parseListExtension = (
   }
 
   if (isObject(input) || isArray(input)) {
-    if (isAppendUpdate(input) && input[$APPEND] !== undefined) {
+    if (isAppending(input) && input[$APPEND] !== undefined) {
       const appendedValue = input[$APPEND]
 
       if (isArray(appendedValue)) {
@@ -132,7 +139,7 @@ export const parseListExtension = (
       }
     }
 
-    if (isPrependUpdate(input) && input[$PREPEND] !== undefined) {
+    if (isPrepending(input) && input[$PREPEND] !== undefined) {
       const prependedValue = input[$PREPEND]
 
       if (isArray(prependedValue)) {
