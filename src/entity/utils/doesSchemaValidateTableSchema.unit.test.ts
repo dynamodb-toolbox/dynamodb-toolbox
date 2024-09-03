@@ -1,4 +1,4 @@
-import { number, schema, string } from '~/index'
+import { number, schema, string } from '~/index.js'
 
 import { doesSchemaValidateTableSchemaKey } from './doesSchemaValidateTableSchema.js'
 

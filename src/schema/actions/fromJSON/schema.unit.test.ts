@@ -7,7 +7,7 @@ import { SetAttribute } from '~/attributes/set/index.js'
 import type { JSONizedSchema } from '~/schema/actions/jsonize/index.js'
 import { Schema } from '~/schema/index.js'
 
-import { fromJSON } from './schema'
+import { fromJSON } from './schema.js'
 
 describe('fromJSON - schema', () => {
   test('creates correct schema', () => {

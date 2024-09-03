@@ -9,7 +9,7 @@
     "plugin:prettier/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports", "prettier"],
+  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports", "prettier", "import"],
   "parser": "@typescript-eslint/parser",
   "root": true,
   "parserOptions": {
@@ -17,6 +17,7 @@
     "sourceType": "module"
   },
   "rules": {
+    "import/extensions": ["error", "always"],
     "prettier/prettier": "error",
     "linebreak-style": ["error", "unix"],
     "quotes": [
