@@ -1,7 +1,7 @@
 import { binary, string } from '~/attributes/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
-import { jsonizePrimitiveAttribute } from './primitive'
+import { jsonizePrimitiveAttribute } from './primitive.js'
 
 describe('jsonizePrimitiveAttribute', () => {
   test('correctly exports attribute', () => {

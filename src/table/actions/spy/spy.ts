@@ -2,7 +2,7 @@ import { $interceptor, $sentArgs } from '~/table/constants.js'
 import { TableAction } from '~/table/index.js'
 import type { Table, TableSendableAction } from '~/table/table.js'
 
-import { TableActionInspector } from './actionInspector'
+import { TableActionInspector } from './actionInspector.js'
 import { TableActionStub } from './actionStub.js'
 import { $mocks, $sentActions } from './constants.js'
 
